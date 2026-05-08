@@ -68,7 +68,7 @@ is_live_functional_delivery_evidence_file() {
 
 pr_body_claims_product_delivery() {
   [ -n "$PR_BODY" ] || return 1
-  echo "$PR_BODY" | grep -qiE 'full functional delivery|functional pass|100% build|one-time build|complete product workflow|FULL_FUNCTIONAL_DELIVERY|handover|merge-ready|ready to merge'
+  echo "$PR_BODY" | grep -qiE 'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+|FUNCTIONAL_PASS:[[:space:]]*yes|FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)|VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)|Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
 }
 
 PRODUCT_FACING=false
@@ -115,7 +115,7 @@ resolve_evidence_path() {
     fi
   done
 
-  ls .functional-delivery/pr-*.md 2>/dev/null | head -1 || true
+  ls .functional-delivery/pr-[0-9]*.md 2>/dev/null | grep -E '^\.functional-delivery/pr-[0-9]+\.md$' | head -1 || true
 }
 
 EVIDENCE_PATH="$(resolve_evidence_path)"

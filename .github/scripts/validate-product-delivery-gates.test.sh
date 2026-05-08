@@ -31,13 +31,16 @@ run_test() {
   git branch -M main
   git checkout -q -b test-branch
 
+  TEST_PR_BODY=""
+
   "$setup_fn"
 
-  local base_sha head_sha code output
+  local base_sha head_sha code output pr_body
   base_sha=$(git rev-parse main)
   head_sha=$(git rev-parse HEAD)
+  pr_body="${TEST_PR_BODY:-}"
   set +e
-  output=$(BASE_SHA="$base_sha" PR_NUMBER="9999" PR_BODY="" PR_LABELS="" HEAD_SHA="$head_sha" bash "$GATE_SCRIPT" 2>&1)
+  output=$(BASE_SHA="$base_sha" PR_NUMBER="9999" PR_BODY="$pr_body" PR_LABELS="" HEAD_SHA="$head_sha" bash "$GATE_SCRIPT" 2>&1)
   code=$?
   set -e
 
@@ -79,6 +82,17 @@ EOF
   git commit -q -m "functional-delivery template only"
 }
 run_test "T0b .functional-delivery/pr-template.md only -> PASS / not applicable" 0 t0b_pr_template_only
+
+t0c_pr_body_examples_not_claim() {
+  cat > docs/governance/PHASE5_PRODUCT_DELIVERY_GATES.md << 'EOF'
+# Governance documentation update
+EOF
+  TEST_PR_BODY=$'Gate docs update only.\n# Required\n#   VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "governance docs with non-claim verdict example"
+}
+run_test "T0c PR body verdict-options example only -> PASS / not applicable" 0 t0c_pr_body_examples_not_claim
 
 seed_valid_evidence() {
   cat > .functional-delivery/pr-9999.md << 'EOF'
