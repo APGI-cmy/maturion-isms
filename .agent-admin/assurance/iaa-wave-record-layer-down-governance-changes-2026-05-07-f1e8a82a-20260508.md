@@ -35,9 +35,9 @@ Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BU
 - Session memory artifact
 - `iaa_audit_token` reference present and coherent with active bundle
 
-### Scope blockers
-- `ceremony_admin_appointed` source for this requested wave not present in current tracker context
-- Any protected-path changes without ECAP appointment (or committed CS2 waiver) block handover
+### Scope status
+- `ceremony_admin_appointed`: true, evidenced by `.agent-admin/prehandover/proof-pr-1572-ecap-admin-ceremony-20260508.md`
+- Protected-path changes: covered by committed ECAP/PREHANDOVER evidence
 
 ---
 
