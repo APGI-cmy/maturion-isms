@@ -13,7 +13,7 @@ ecap_required: true
 ecap_invoked: true  
 ceremony_admin_appointed: execution-ceremony-admin-agent  
 ecap_verdict: PASS
-CURRENT_HEAD_SHA: 944f9bedbec762094c7c9d46a47ca117cf1fdb97
+CURRENT_HEAD_SHA: 9282f2f36d83d1efc0406367fe6c41662de7ce01
 handover_allowed: no
 
 ## Artifacts
