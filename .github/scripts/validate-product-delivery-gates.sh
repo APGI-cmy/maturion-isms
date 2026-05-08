@@ -46,28 +46,45 @@ fi
 
 is_product_path() {
   local file="$1"
-  [[ "$file" =~ ^(apps|modules/MMM|packages)/ ]] && return 0
-  [[ "$file" =~ \.(tsx|jsx|ts|js)$ ]] && [[ "$file" =~ (src/|app/|pages?/|components?/|routes?/|api/) ]] && return 0
-  [[ "$file" =~ ^supabase/functions/ ]] && return 0
+  case "$file" in
+    .github/*|governance/*|docs/*|.agent-admin/*|.agent-workspace/*)
+      return 1
+      ;;
+    .functional-delivery/pr-template.md)
+      return 1
+      ;;
+  esac
+
+  [[ "$file" =~ ^(apps|packages|supabase/functions|api)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
+  [[ "$file" =~ ^modules/[^/]+/(src|app|api|frontend|backend|pages?|components?|routes?)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
+  [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && [[ "$file" =~ (^|/)(src|app|api|pages?|components?|routes?)/ ]] && return 0
   return 1
 }
 
-is_claiming_product_delivery_in_doc() {
+is_live_functional_delivery_evidence_file() {
   local file="$1"
-  [ -f "$file" ] || return 1
-  [[ "$file" =~ \.md$ ]] || return 1
-  grep -qiE 'full functional delivery|functional pass|100% build|one-time build|complete product workflow|FULL_FUNCTIONAL_DELIVERY' "$file"
+  [[ "$file" =~ ^\.functional-delivery/pr-[0-9]+\.md$ ]]
+}
+
+pr_body_claims_product_delivery() {
+  [ -n "$PR_BODY" ] || return 1
+  echo "$PR_BODY" | grep -qiE 'full functional delivery|functional pass|100% build|one-time build|complete product workflow|FULL_FUNCTIONAL_DELIVERY|handover|merge-ready|ready to merge'
 }
 
 PRODUCT_FACING=false
 PRODUCT_FILES=""
 while IFS= read -r file; do
   [ -z "$file" ] && continue
-  if is_product_path "$file" || is_claiming_product_delivery_in_doc "$file"; then
+  if is_product_path "$file" || is_live_functional_delivery_evidence_file "$file"; then
     PRODUCT_FACING=true
     PRODUCT_FILES="${PRODUCT_FILES}\n${file}"
   fi
 done <<< "$CHANGED_FILES"
+
+if [ "$PRODUCT_FACING" = false ] && pr_body_claims_product_delivery; then
+  PRODUCT_FACING=true
+  PRODUCT_FILES="${PRODUCT_FILES}\n<pr-body-product-delivery-claim>"
+fi
 
 if [ "$PRODUCT_FACING" = false ]; then
   echo "ℹ️  Not a product-facing PR by classifier — Phase 5 product gates N/A."

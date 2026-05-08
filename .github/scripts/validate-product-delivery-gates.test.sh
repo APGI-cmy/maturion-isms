@@ -24,7 +24,7 @@ run_test() {
   git init -q
   git config user.email "test@example.com"
   git config user.name "Test User"
-  mkdir -p .functional-delivery .agent-admin/assurance apps/mmm/src apps/mmm/tests
+  mkdir -p .functional-delivery .agent-admin/assurance apps/mmm/src apps/mmm/tests governance/checklists governance/templates docs/governance .agent-workspace/foreman-v2/knowledge
   echo "init" > README.md
   git add .
   git commit -q -m "init"
@@ -50,6 +50,35 @@ run_test() {
     FAIL_COUNT=$((FAIL_COUNT + 1))
   fi
 }
+
+t0_governance_only_hardening() {
+  cat > governance/checklists/phase4-role-separation-operational-guidance.md << 'EOF'
+# Governance-only checklist update
+EOF
+  cat > governance/templates/iaa-wave-record.template.md << 'EOF'
+# Governance-only template update
+EOF
+  cat > docs/governance/PHASE5_PRODUCT_DELIVERY_GATES.md << 'EOF'
+# Governance documentation update
+EOF
+  cat > .agent-workspace/foreman-v2/knowledge/index.md << 'EOF'
+# Tier 2 index update
+EOF
+  git add .
+  git commit -q -m "governance/template-only hardening"
+}
+run_test "T0 governance/template-only gate-hardening -> PASS / not applicable" 0 t0_governance_only_hardening
+
+t0b_pr_template_only() {
+  cat > .functional-delivery/pr-template.md << 'EOF'
+PR: #template
+Issue: #template
+Current head SHA reviewed:
+EOF
+  git add .
+  git commit -q -m "functional-delivery template only"
+}
+run_test "T0b .functional-delivery/pr-template.md only -> PASS / not applicable" 0 t0b_pr_template_only
 
 seed_valid_evidence() {
   cat > .functional-delivery/pr-9999.md << 'EOF'

@@ -1,0 +1,40 @@
+{
+  "pr": 1574,
+  "issue": 1573,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1574.json",
+    ".agent-admin/prehandover/proof-pr-1574-ecap-admin-ceremony-20260508.md",
+    ".agent-admin/scope-declarations/pr-1574.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1574-ecap-admin-ceremony-20260508.md",
+    ".agent-workspace/execution-ceremony-admin-agent/knowledge/index.md",
+    ".agent-workspace/foreman-v2/knowledge/index.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/index.md",
+    ".agent-workspace/qa-builder/knowledge/index.md",
+    ".functional-delivery/pr-template.md",
+    ".github/scripts/validate-product-delivery-gates.sh",
+    ".github/scripts/validate-product-delivery-gates.test.sh",
+    ".github/workflows/handover-claim-gate.yml",
+    ".github/workflows/preflight-evidence-gate.yml",
+    ".github/workflows/product-delivery-gates-regression.yml",
+    "docs/governance/PHASE5_PRODUCT_DELIVERY_GATES.md",
+    "governance/checklists/phase4-role-separation-operational-guidance.md",
+    "governance/templates/execution-ceremony-admin/FOREMAN_ADMIN_READINESS_HANDBACK.template.md",
+    "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
+    "governance/templates/iaa-wave-record.template.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "run id: 25542182881 reviewed for failing preflight jobs and remediation targets",
+    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh",
+    "local command output: BASE_SHA=$(git rev-parse origin/main) bash .github/scripts/validate-product-delivery-gates.sh",
+    "local command output: BASE_SHA=$(git rev-parse origin/main) bash .github/scripts/ecap-admin-ceremony-gate.sh",
+    "local command output: PR_NUMBER=1574 bash .github/scripts/enforce-scope-declaration-policy.sh",
+    "validate-product-delivery-gates.sh classifier excludes governance/template/Tier2-only changes and .functional-delivery/pr-template.md",
+    "validate-product-delivery-gates.test.sh includes governance/template-only and pr-template-only non-product regression cases"
+  ],
+  "merge_authority": "CS2"
+}
