@@ -13,7 +13,7 @@
 pr: 1582
 issue: 1581
 branch: copilot/harden-current-head-gate-snapshot-enforcement
-date_utc: 2026-05-08T11:00:00Z
+date_utc: 2026-05-08T12:43:00Z
 protected_path_touched: true
 ecap_required: true
 ecap_invoked: true
@@ -21,24 +21,21 @@ ceremony_admin_appointed: true
 ecap_verdict: PASS
 ecap_waiver_ref: none
 ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1582-ecap-admin-ceremony-20260508.md
-CURRENT_HEAD_SHA: c828c1d635419534bb00f1b23398c1409c7846b3
+CURRENT_HEAD_SHA: 20c46b2523edae3a31c194406c6c594d7ca8f88c
 protected_paths_changed:
   - governance/checklists/phase4-role-separation-operational-guidance.md
   - governance/templates/execution-ceremony-admin/PREHANDOVER.template.md
   - .github/workflows/handover-claim-gate.yml
-gate_run_ids: []
+gate_run_ids: [25555407196]
 failing_checks: none
 pending_checks: none
-missing_checks: tbd-ci-pending
-# Note: ECAP ceremony is PASS (ceremony complete). Overall handover_allowed is no because
-# CI has not yet run at this HEAD. handover_allowed will become yes once all required
-# preflight checks are green at the current HEAD SHA (ECAP ceremony does not make CI green).
-# iaa_audit_token is PENDING because IAA cannot be invoked until CI is green and all
-# preflight gates pass. Per FAIL-ONLY-ONCE A-021 and PREHANDOVER template guidance,
-# handover_allowed MUST remain NO while iaa_audit_token is PENDING.
+missing_checks: none
+# CI is green at 20c46b25. iaa_audit_token remains PENDING because IAA has not yet
+# been invoked at this HEAD. Per FAIL-ONLY-ONCE A-021 and PREHANDOVER template
+# guidance (v1.3.0+), handover_allowed MUST remain NO while iaa_audit_token is PENDING.
 iaa_audit_token: PENDING
 handover_allowed: no
-handover_state: STOP_AND_FIX — ECAP ceremony complete; awaiting green CI and resolved IAA token before claiming handover
+handover_state: STOP_AND_FIX — CI green at 20c46b25; IAA token PENDING — handover blocked until IAA issues a PASS token
 ```
 
 Protected-path classification for this PR includes:

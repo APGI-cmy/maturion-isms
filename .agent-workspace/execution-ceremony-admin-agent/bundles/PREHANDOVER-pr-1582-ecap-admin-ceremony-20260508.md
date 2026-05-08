@@ -56,11 +56,18 @@ The following test cases were executed locally against the snapshot precondition
 - Expected: all 11 fields successfully parsed (matches `readSnapshotField` regex `^\\s*(?:[-*]\\s+)?FIELD:`)
 - Result: All fields parsed ✅
 
+**Test case 6 — Full green snapshot with `HANDOVER_ALLOWED: no` + handover claim → BLOCK**
+- Input: all fields set, `FAILING_CHECKS: none`, `PENDING_CHECKS: none`, `MISSING_CHECKS: none`, `HANDOVER_ALLOWED: no`; comment does NOT contain STOP_AND_FIX or HANDOVER_BLOCKED language
+- Expected: preconditionFailures includes "HANDOVER_ALLOWED is no; handover claim must be STOP_AND_FIX or must not be posted"
+- Result: BLOCK ✅ (enforced by new explicit check in handover-claim-gate.yml: `if (snapshotAllowsHandover === false && !claimUsesBlockedLanguage)`)
+- Regression purpose: verifies that a producer cannot post a full green snapshot that explicitly says `HANDOVER_ALLOWED: no` and still have the handover acknowledged — the claim must either use STOP_AND_FIX language or not be posted at all
+
 All test cases confirm the gate logic correctly enforces:
 - `ready_for_review` without snapshot → BLOCK
 - Internal snapshot inconsistency (`FAILING_CHECKS` set + `HANDOVER_ALLOWED: yes`) → BLOCK
-- Valid all-green snapshot → preconditions PASS
+- Valid all-green snapshot with `HANDOVER_ALLOWED: yes` → preconditions PASS
 - Bullet-prefixed field format accepted by parser
+- Full green snapshot with `HANDOVER_ALLOWED: no` + handover claim → BLOCK (new)
 
 ## IAA Token Pending Hardening (v1.3.0)
 

@@ -383,6 +383,9 @@ jobs:
               if (snapshotAllowsHandover === true && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
                 preconditionFailures.push('HANDOVER_ALLOWED is yes but current gate snapshot is not fully green.');
               }
+              if (snapshotAllowsHandover === false && !claimUsesBlockedLanguage) {
+                preconditionFailures.push('HANDOVER_ALLOWED is no; handover claim must be STOP_AND_FIX or must not be posted. A snapshot with HANDOVER_ALLOWED: no is valid only as a HANDOVER_BLOCKED / STOP_AND_FIX producer comment.');
+              }
               if (snapshotEcapRequired !== null && snapshotEcapRequired !== expectedEcapRequired) {
                 preconditionFailures.push(`ECAP_REQUIRED mismatch. Snapshot=${snapshot.ECAP_REQUIRED}, expected=${expectedEcapRequired ? 'yes' : 'no'}.`);
               }
