@@ -39,6 +39,16 @@ scope_fresh_at_head_sha: YES                 # YES | NO — scope declaration re
 evidence_refresh_status: REFRESHED           # REFRESHED | STALE (STALE is BLOCKING)
 gate_run_ids:           [<run-id-1>, <run-id-2>] # CI run IDs used in this proof (or [] if local-only)
 failing_pending_missing_checks: none         # list check names still failing/pending/missing, or 'none'
+handover_allowed:       NO                   # YES | NO — BLOCKING: must be YES before any handover claim is posted.
+                                             # Set YES only when: all required checks are green at gate_snapshot_head_sha,
+                                             # gate_snapshot_head_sha matches post_push_head_sha, and no active artifact
+                                             # reports FAIL or 'no' for any gate or required ceremony check.
+                                             # "No active artifact may say FAIL/no while claiming handover."
+                                             # MUST remain NO if iaa_audit_token (## IAA Assurance below) is PENDING or absent
+                                             # — a resolved IAA token is required before this field may be set to YES.
+                                             # The Governance Watchdog (gap3-prehandover-pending-token) enforces this;
+                                             # FAIL-ONLY-ONCE A-021 treats PENDING token + handover claim as automatic merge gate failure.
+                                             # Validated by handover-claim-gate CI; mismatch is a hard precondition failure.
 scope_declaration_parity: PASS              # PASS | FAIL | N/A
 scope_refreshed_post_final_edit: YES        # YES | NO — §4.3g: SCOPE_DECLARATION.md refreshed from final diff after all edits; AAP-28 auto-fail if NO or absent; BLOCKING — Foreman must reject handover if NO
 admin_ceremony_compliance: PASS             # PASS | FAIL | N/A (ECAP jobs only)
@@ -48,6 +58,9 @@ ecap_waiver_ref:        none                # path to committed CS2 waiver artif
 
 ## IAA Assurance
 iaa_audit_token:        <token-file-path>    # e.g., .agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md
+                                             # BLOCKING: while this field is PENDING or absent, handover_allowed MUST be NO.
+                                             # Use the value PENDING only as an explicit interim state (not as a permanent value).
+                                             # Set to the committed token file path only after IAA has been invoked and issued a PASS token.
 iaa_session_reference:  <IAA session ID>     # e.g., IAA-20260417-042 — from token file
 iaa_reinvocation_round: 0                   # 0 = first invocation; 1+ = re-invocation round
 iaa_rejection_reference: none               # path to rejection-package file if round >= 1
