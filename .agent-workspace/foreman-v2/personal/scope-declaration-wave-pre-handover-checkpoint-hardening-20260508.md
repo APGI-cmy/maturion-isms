@@ -20,7 +20,7 @@ approved_artifact_paths:
   - ".github/workflows/handover-claim-gate.yml"
   - ".github/workflows/governance-watchdog.yml"
   - ".github/workflows/injection-audit-report.yml"
-  - ".github/scripts/pre-handover-checkpoint.sh"
+  - ".github/scripts/pre-handover-checkpoint.js"
   - ".github/scripts/pre-handover-checkpoint.test.sh"
   - ".admin/prs/pr-1586.json"
   - ".agent-admin/assurance/iaa-wave-record-pre-handover-checkpoint-hardening-20260508-20260508.md"
@@ -49,11 +49,11 @@ approved_artifact_paths:
 ## Build Authorization
 
 ```yaml
-build_authorization: NOT CLEARED
-implementation_blocked: YES
-builder_delegation: governance-liaison-isms-agent (planned)
+build_authorization: CLEARED FOR GOVERNANCE HARDENING
+implementation_blocked: NO
+builder_delegation: qa-builder
 architecture_gate_pass: N/A — governance hardening wave
-qa_to_red_gate_pass: REQUIRED IN DIFF (planned under builder scope)
+qa_to_red_gate_pass: Targeted regression coverage in .github/scripts/pre-handover-checkpoint.test.sh
 pbfag_pass: N/A — governance hardening wave
 deployment_authorisation: NONE
 ```

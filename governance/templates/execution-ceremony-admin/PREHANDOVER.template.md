@@ -33,6 +33,9 @@ opojd_compliance:       CONFIRMED            # CONFIRMED | VIOLATED (violated mu
 ## Gate Results
 merge_gate_verdict:     PASS                 # PASS | FAIL
 pre_iaa_commit_state:   PASS                 # PASS | FAIL
+pre_handover_checkpoint_comment_ref: <comment-url> # mandatory deliberate checkpoint result comment for this HEAD
+pre_handover_checkpoint_result: HANDOVER_ALLOWED # HANDOVER_ALLOWED | STOP_AND_FIX
+pre_handover_checkpoint_head_sha: <HEAD_SHA_AT_CHECKPOINT> # must match CURRENT_HEAD/POST_PUSH SHA used for handover
 gate_snapshot_head_sha: <HEAD_SHA_AT_GATE_RUN>  # required: exact SHA used when gate results were collected
 post_push_head_sha:     <HEAD_SHA_AFTER_LAST_PUSH> # required: verify evidence freshness after final push
 scope_fresh_at_head_sha: YES                 # YES | NO — scope declaration reflects post_push_head_sha
@@ -130,6 +133,9 @@ If `ecap_required: YES` and `ecap_invoked: NO` and `ecap_waiver_ref: none` → *
 > a separate blocker (AAP-28).
 
 **Timestamp (check run)**: [YYYY-MM-DD HH:MM:SS UTC — record exact time; must postdate the last SCOPE_DECLARATION.md commit]
+**Pre-handover checkpoint comment**: [comment URL for the deliberate `PRE_HANDOVER_CHECKPOINT_RESULT`]
+**Pre-handover checkpoint result**: [HANDOVER_ALLOWED / STOP_AND_FIX]
+**Pre-handover checkpoint HEAD SHA**: [exact SHA reviewed by the deliberate checkpoint; must match the final HEAD claimed below]
 **Gate snapshot head SHA**: [exact SHA used at evidence/gate snapshot time]
 **Post-push head SHA**: [exact SHA after final push; must match current branch head]
 **Evidence refresh status**: [REFRESHED / STALE — if STALE, handover is blocked]

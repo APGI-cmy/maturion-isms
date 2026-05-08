@@ -4,7 +4,7 @@ name: Handover Claim Gate
 # Purpose: Prevent failed-gate handovers by detecting handover/merge-ready/completion
 #          claims and verifying that:
 #          (1) required CI checks on the current HEAD SHA are complete and green,
-#          (2) the producing agent posted a current-head gate snapshot precondition,
+#          (2) a deliberate current-head PRE_HANDOVER_CHECKPOINT_RESULT exists,
 #          (3) after a blocked claim, a corrective commit or corrective producer comment
 #              exists before any later claim can be accepted.
 #
@@ -18,10 +18,8 @@ name: Handover Claim Gate
 # - If the latest-head checks are all green: posts an acknowledgement.
 # - If any required check is red, pending, or missing: posts HANDOVER BLOCKED
 #   listing the failing / pending / missing checks.
-# - Handover-claim precondition: claim comments must include required snapshot fields
-#   (CURRENT_HEAD_SHA / REQUIRED_CHECKS_TOTAL / PASSING_CHECKS / FAILING_CHECKS /
-#   PENDING_CHECKS / MISSING_CHECKS / ECAP_REQUIRED / ECAP_ARTIFACT_PRESENT /
-#   IAA_REQUIRED / IAA_ARTIFACT_PRESENT / HANDOVER_ALLOWED).
+# - Handover-claim precondition: a prior PRE_HANDOVER_CHECKPOINT_RESULT comment for
+#   the current HEAD SHA must state HANDOVER_ALLOWED: yes and RESULT: HANDOVER_ALLOWED.
 # - If gate previously blocked on this PR, acceptance requires corrective commit
 #   (HEAD SHA advanced since blocked marker) or corrective comment from producing agent.
 # - Product-fix PRs (manifest requires_iaa=false, requires_ecap=false)
@@ -132,9 +130,24 @@ jobs:
             const isIssueComment = context.eventName === 'issue_comment';
             const commentBody = context.payload.comment?.body || '';
             const commentCreatedAt = context.payload.comment?.created_at ? new Date(context.payload.comment.created_at) : null;
+            const checkpointTriggerPattern = /^(?:ECAP_)?PRE_HANDOVER_CHECKPOINT(?:\b.*)?$|^\/prepare-handover(?:\b.*)?$/i;
+            const checkpointResultPattern = /PRE_HANDOVER_CHECKPOINT_RESULT/i;
 
             if (!prNumber || !headSha) {
               core.warning('Could not determine PR number or HEAD SHA — skipping handover claim gate.');
+              return;
+            }
+
+            if (
+              isIssueComment &&
+              (
+                checkpointTriggerPattern.test(commentBody.trim()) ||
+                checkpointResultPattern.test(commentBody) ||
+                /RESULT:\s*STOP_AND_FIX/i.test(commentBody) ||
+                /HANDOVER_ALLOWED:\s*no/i.test(commentBody)
+              )
+            ) {
+              core.info('Checkpoint trigger/result or STOP_AND_FIX status comment detected — not treating as handover claim.');
               return;
             }
 
@@ -282,28 +295,15 @@ jobs:
               per_page: 100,
             });
 
-            // ── Claim precondition snapshot validation (issue_comment only) ───────
-            const requiredSnapshotFields = [
-              'CURRENT_HEAD_SHA',
-              'REQUIRED_CHECKS_TOTAL',
-              'PASSING_CHECKS',
-              'FAILING_CHECKS',
-              'PENDING_CHECKS',
-              'MISSING_CHECKS',
-              'ECAP_REQUIRED',
-              'ECAP_ARTIFACT_PRESENT',
-              'IAA_REQUIRED',
-              'IAA_ARTIFACT_PRESENT',
-              'HANDOVER_ALLOWED',
-            ];
             const preconditionFailures = [];
+            const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
             const escapeRegex = (s) => {
               const special = '\\\\^$*+?.()|{}[]';
               return String(s).split('').map((ch) => (special.includes(ch) ? `\\${ch}` : ch)).join('');
             };
 
-            const readSnapshotField = (fieldName) => {
-              const m = commentBody.match(new RegExp(`^\\s*(?:[-*]\\s+)?${escapeRegex(fieldName)}:\\s*(.+)\\s*$`, 'im'));
+            const readField = (text, fieldName) => {
+              const m = String(text || '').match(new RegExp(`^\\s*(?:[-*]\\s+)?${escapeRegex(fieldName)}:\\s*(.+)\\s*$`, 'im'));
               return m ? m[1].trim() : '';
             };
             const isNonEmptySignal = (value) => {
@@ -317,74 +317,49 @@ jobs:
               return null;
             };
 
-            const snapshot = Object.fromEntries(requiredSnapshotFields.map((f) => [f, isIssueComment ? readSnapshotField(f) : '']));
-            const missingSnapshotFields = requiredSnapshotFields.filter((f) => isIssueComment && !snapshot[f]);
-            const claimUsesBlockedLanguage = /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(commentBody);
-            const snapshotSignalsBlocked = isIssueComment && (
-              isNonEmptySignal(snapshot.FAILING_CHECKS) ||
-              isNonEmptySignal(snapshot.PENDING_CHECKS) ||
-              isNonEmptySignal(snapshot.MISSING_CHECKS)
+            const checkpointComments = existingComments
+              .filter(c => c.body && c.body.includes(CHECKPOINT_MARKER))
+              .map((comment) => {
+                const checkpointHead = String(readField(comment.body, 'CURRENT_HEAD_SHA') || '').replace(/[`]/g, '');
+                const handoverValue = asBoolYesNo(readField(comment.body, 'HANDOVER_ALLOWED'));
+                const resultValue = readField(comment.body, 'RESULT');
+                return {
+                  comment,
+                  checkpointHead,
+                  handoverValue,
+                  resultValue,
+                  reasonValue: readField(comment.body, 'REASON'),
+                };
+              })
+              .filter(({ checkpointHead }) => {
+                const normalized = checkpointHead.toLowerCase();
+                const target = headSha.toLowerCase();
+                return normalized && (normalized === target || target.startsWith(normalized));
+              })
+              .sort((a, b) => new Date(b.comment.updated_at || b.comment.created_at) - new Date(a.comment.updated_at || a.comment.created_at));
+            const latestCurrentHeadCheckpoint = checkpointComments[0];
+            const successfulCurrentHeadCheckpoint = checkpointComments.find(({ handoverValue, resultValue }) =>
+              handoverValue === true && /^HANDOVER_ALLOWED$/i.test(String(resultValue || '').trim())
             );
-            const snapshotAllowsHandover = asBoolYesNo(snapshot.HANDOVER_ALLOWED);
-            const snapshotHead = String(snapshot.CURRENT_HEAD_SHA || '').replace(/[`]/g, '');
-            const requiredChecksTotal = Number.parseInt(String(snapshot.REQUIRED_CHECKS_TOTAL || ''), 10);
-            const expectedEcapRequired = requiresEcap;
-            const expectedIaaRequired = requiresIaa;
-            const snapshotEcapRequired = asBoolYesNo(snapshot.ECAP_REQUIRED);
-            const snapshotIaaRequired = asBoolYesNo(snapshot.IAA_REQUIRED);
-            const snapshotEcapArtifactPresent = asBoolYesNo(snapshot.ECAP_ARTIFACT_PRESENT);
-            const snapshotIaaArtifactPresent = asBoolYesNo(snapshot.IAA_ARTIFACT_PRESENT);
             const hasEcapEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/ecap-admin-ceremony') && !pending.some((p) => p.name === 'preflight/ecap-admin-ceremony') && !missing.some((m) => m.name === 'preflight/ecap-admin-ceremony');
             const hasIaaEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/iaa-final-assurance') && !pending.some((p) => p.name === 'preflight/iaa-final-assurance') && !missing.some((m) => m.name === 'preflight/iaa-final-assurance');
 
-            if (!isIssueComment) {
-              preconditionFailures.push('Handover trigger came from ready_for_review without required current-head snapshot comment.');
-            } else {
-              if (missingSnapshotFields.length > 0) {
-                preconditionFailures.push(`Missing required snapshot field(s): ${missingSnapshotFields.join(', ')}`);
-              }
-              if (snapshotHead) {
-                if (!/^[0-9a-f]{12,40}$/i.test(snapshotHead)) {
-                  preconditionFailures.push(`CURRENT_HEAD_SHA (${snapshotHead}) must be a 12-40 char hex SHA.`);
-                } else {
-                  const normalizedSnapshotHead = snapshotHead.toLowerCase();
-                  const normalizedHeadSha = headSha.toLowerCase();
-                  const normalizedHeadPrefix = normalizedHeadSha.slice(0, normalizedSnapshotHead.length);
-                  if (normalizedSnapshotHead !== normalizedHeadSha && normalizedSnapshotHead !== normalizedHeadPrefix) {
-                    preconditionFailures.push(`CURRENT_HEAD_SHA (${snapshotHead}) does not match PR HEAD (${headSha}).`);
-                  }
-                }
-              }
-              if (!Number.isNaN(requiredChecksTotal) && requiredChecksTotal !== REQUIRED_CHECKS.length) {
-                preconditionFailures.push(`REQUIRED_CHECKS_TOTAL (${requiredChecksTotal}) does not match enforced set (${REQUIRED_CHECKS.length}).`);
-              }
-              if (snapshotSignalsBlocked && !claimUsesBlockedLanguage) {
-                preconditionFailures.push('Snapshot reports failing/pending/missing checks, but claim is not HANDOVER_BLOCKED or STOP_AND_FIX.');
-              }
-              if (snapshotSignalsBlocked && snapshotAllowsHandover === true) {
-                preconditionFailures.push('Snapshot reports failing/pending/missing checks while HANDOVER_ALLOWED is yes.');
-              }
-              if (snapshotAllowsHandover === true && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
-                preconditionFailures.push('HANDOVER_ALLOWED is yes but current gate snapshot is not fully green.');
-              }
-              if (snapshotEcapRequired !== null && snapshotEcapRequired !== expectedEcapRequired) {
-                preconditionFailures.push(`ECAP_REQUIRED mismatch. Snapshot=${snapshot.ECAP_REQUIRED}, expected=${expectedEcapRequired ? 'yes' : 'no'}.`);
-              }
-              if (snapshotIaaRequired !== null && snapshotIaaRequired !== expectedIaaRequired) {
-                preconditionFailures.push(`IAA_REQUIRED mismatch. Snapshot=${snapshot.IAA_REQUIRED}, expected=${expectedIaaRequired ? 'yes' : 'no'}.`);
-              }
-              if (expectedEcapRequired && snapshotEcapArtifactPresent !== true) {
-                preconditionFailures.push('ECAP is required but ECAP_ARTIFACT_PRESENT is not yes.');
-              }
-              if (expectedIaaRequired && snapshotIaaArtifactPresent !== true) {
-                preconditionFailures.push('IAA is required but IAA_ARTIFACT_PRESENT is not yes.');
-              }
-              if (expectedEcapRequired && !hasEcapEvidenceByChecks) {
-                preconditionFailures.push('ECAP precondition failed: preflight/ecap-admin-ceremony is not green for current HEAD.');
-              }
-              if (expectedIaaRequired && !hasIaaEvidenceByChecks) {
-                preconditionFailures.push('IAA precondition failed: preflight/iaa-final-assurance is not green for current HEAD.');
-              }
+            if (!successfulCurrentHeadCheckpoint) {
+              const latestCheckpointReason = latestCurrentHeadCheckpoint?.reasonValue;
+              preconditionFailures.push(
+                latestCheckpointReason
+                  ? `Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes. Latest checkpoint says: ${latestCheckpointReason}`
+                  : 'Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes.'
+              );
+            }
+            if (requiresEcap && !hasEcapEvidenceByChecks) {
+              preconditionFailures.push('ECAP precondition failed: preflight/ecap-admin-ceremony is not green for current HEAD.');
+            }
+            if (requiresIaa && !hasIaaEvidenceByChecks) {
+              preconditionFailures.push('IAA precondition failed: preflight/iaa-final-assurance is not green for current HEAD.');
+            }
+            if (successfulCurrentHeadCheckpoint && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
+              preconditionFailures.push('Checkpoint says handover allowed, but current required checks are not fully green.');
             }
 
             // ── Corrective-action requirement after prior HANDOVER BLOCKED ────────
@@ -444,7 +419,9 @@ jobs:
                 `- ECAP_ARTIFACT_PRESENT: ${requiresEcap ? (hasEcapEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                 `- IAA_REQUIRED: ${requiresIaa ? 'yes' : 'no'}`,
                 `- IAA_ARTIFACT_PRESENT: ${requiresIaa ? (hasIaaEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
-                `- HANDOVER_ALLOWED: no`,
+                 `- HANDOVER_ALLOWED: no`,
+                 `- CHECKPOINT_REQUIRED: yes`,
+                 `- CHECKPOINT_PRESENT_FOR_CURRENT_HEAD: ${successfulCurrentHeadCheckpoint ? 'yes' : 'no'}`,
               ].join('\n');
 
               body = [
@@ -455,9 +432,11 @@ jobs:
                 '',
                 [statusSummary, preconditionSummary].filter(Boolean).join('\n\n'),
                 '',
-                '> **A PR cannot claim handover or merge-ready while any required check is red, pending, or missing.**',
-                '> Fix all failing checks, wait for pending checks to complete, and ensure all required checks have run before re-claiming handover.',
-                '> If this gate already blocked previously, post a corrective producer comment (HANDOVER_BLOCKED / STOP_AND_FIX) or push a corrective commit before the next claim.',
+                 '> **A PR cannot claim handover or merge-ready while any required check is red, pending, or missing.**',
+                 '> **A PR also cannot claim handover without a successful current-head PRE_HANDOVER_CHECKPOINT_RESULT.**',
+                 '> Fix all failing checks, wait for pending checks to complete, and ensure all required checks have run before re-claiming handover.',
+                 '> Deliberate path: comment `ECAP_PRE_HANDOVER_CHECKPOINT`, `PRE_HANDOVER_CHECKPOINT`, or `/prepare-handover` first.',
+                 '> If this gate already blocked previously, post a corrective producer comment (HANDOVER_BLOCKED / STOP_AND_FIX) or push a corrective commit before the next claim.',
                 '',
                 isProductFix
                   ? `> ℹ️  This is a **product-fix PR** (\`type: ${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`). No PREHANDOVER/IAA/ECAP ceremony is required — only CI must be green.`
@@ -482,7 +461,9 @@ jobs:
                 `- ECAP_ARTIFACT_PRESENT: ${requiresEcap ? (hasEcapEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                 `- IAA_REQUIRED: ${requiresIaa ? 'yes' : 'no'}`,
                 `- IAA_ARTIFACT_PRESENT: ${requiresIaa ? (hasIaaEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
-                '- HANDOVER_ALLOWED: yes',
+                 '- HANDOVER_ALLOWED: yes',
+                 '- CHECKPOINT_REQUIRED: yes',
+                 '- CHECKPOINT_PRESENT_FOR_CURRENT_HEAD: yes',
               ].join('\n');
               body = [
                 `${OK_MARKER}`,
@@ -492,7 +473,7 @@ jobs:
                 '',
                 isProductFix
                   ? `> ℹ️  This is a **product-fix PR** (\`type: ${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`). CI is green — handover is unblocked.`
-                  : '> ✅ CI checks are green. Ensure PREHANDOVER proof and IAA token artifacts are committed before merge.',
+                   : '> ✅ CI checks are green and a successful current-head PRE_HANDOVER_CHECKPOINT_RESULT exists. Ensure PREHANDOVER proof and IAA token artifacts are committed before merge.',
                 '',
                 `**HEAD SHA verified**: \`${headSha}\``,
                 '',

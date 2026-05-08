@@ -68,6 +68,11 @@ Do not create live `ADMIN_CEREMONY_REPORT`, `ECAP_GATE_AND_ADMIN_REPORT`, `BUILD
 **Purpose**: Make the admin record clean.  
 **Boundary**: Admin Ceremony Agent does not decide whether the build works.
 
+Checkpoint-first requirement:
+- Admin Ceremony output is a **PRE_HANDOVER_CHECKPOINT_INPUT** when admin ceremony / ECAP is required.
+- Admin Ceremony completion alone does not permit handover; the deliberate current-head checkpoint must still return `HANDOVER_ALLOWED: yes`.
+- Admin Ceremony must not publish handover or ready-for-review language; it prepares inputs for ECAP and the checkpoint.
+
 Responsibilities checklist:
 - manifest exists;
 - scope declaration exists;
@@ -111,6 +116,8 @@ STALE_ARTIFACT_RISK: low/medium/high
 ADMIN_RISK_SCAN_COMPLETE: yes/no
 OPEN_ADMIN_RISKS: ...
 REQUIRED_CORRECTIONS: ...
+CHECKPOINT_INPUT_READY: yes/no
+CHECKPOINT_INPUT_HEAD_SHA: ...
 ```
 
 ---
@@ -119,6 +126,11 @@ REQUIRED_CORRECTIONS: ...
 
 **Purpose**: Run the gates, verify the admin package at current head, prove stop-and-fix happened, and block handover if anything is red, stale, pending, missing, or mismatched.  
 **Boundary**: ECAP proves admin + gates at current head. ECAP does not issue final functional delivery assurance.
+
+Checkpoint-first requirement:
+- ECAP owns the deliberate pre-handover checkpoint trigger (`ECAP_PRE_HANDOVER_CHECKPOINT`, `PRE_HANDOVER_CHECKPOINT`, or `/prepare-handover`) unless Foreman explicitly delegates the trigger step.
+- ECAP must treat the checkpoint result as authoritative for handover eligibility at the reviewed HEAD SHA.
+- ECAP must not recommend handover when the checkpoint result is `STOP_AND_FIX`, stale, or for an older SHA.
 
 Responsibilities checklist:
 - Admin Ceremony Agent report exists;
@@ -183,6 +195,10 @@ POST_PUSH_SCOPE_STILL_VALID: yes/no
 POST_PUSH_CI_TRIGGERED: yes/no
 POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
 POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
+PRE_HANDOVER_CHECKPOINT_TRIGGERED: yes/no
+PRE_HANDOVER_CHECKPOINT_HEAD_SHA: ...
+PRE_HANDOVER_CHECKPOINT_RESULT: HANDOVER_ALLOWED | STOP_AND_FIX
+PRE_HANDOVER_CHECKPOINT_COMMENT_REF: ...
 ```
 
 ---
@@ -191,6 +207,11 @@ POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 
 **Purpose**: Test the product behaviour, not the paperwork.  
 **Boundary**: Builder QA provides product-behaviour evidence. IAA still independently assesses whether the evidence supports full functional delivery.
+
+Checkpoint-first requirement:
+- For product-facing PRs, Builder QA output is a **PRE_HANDOVER_CHECKPOINT_INPUT**.
+- Builder QA evidence must be current to HEAD before the checkpoint is triggered.
+- Builder QA must not use handover, merge-ready, or ready-for-review language as a substitute for the checkpoint result.
 
 Responsibilities checklist:
 - user journeys;
@@ -243,6 +264,8 @@ QA_FUNCTIONAL_RECOMMENDATION: FULL / PARTIAL / FAIL
 ORIGINAL_USER_INTENT_UNDERSTOOD: yes/no
 ORIGINAL_USER_INTENT_SUMMARY: ...
 INTENT_MATCHES_DELIVERED_BEHAVIOUR: yes/no
+CHECKPOINT_INPUT_READY: yes/no
+CHECKPOINT_INPUT_HEAD_SHA: ...
 ```
 
 ---
@@ -250,6 +273,11 @@ INTENT_MATCHES_DELIVERED_BEHAVIOUR: yes/no
 ## 8) IAA Agent Tier 2 guidance
 
 **Purpose**: Independent final assurance that the build is complete, not just administratively valid.
+
+Checkpoint-first requirement:
+- IAA pre-brief presence, final assurance, and token state are **PRE_HANDOVER_CHECKPOINT_INPUTS** when IAA is required.
+- `iaa_audit_token: PENDING` or an absent current-head token is a deliberate checkpoint hard stop.
+- IAA artifacts must reference the same current HEAD SHA reviewed by the deliberate checkpoint before handover may proceed.
 
 ### 8.A Admin assurance quick scan
 
@@ -325,6 +353,8 @@ ONE_TIME_BUILD: yes/no
 ONE_HUNDRED_PERCENT_BUILD: yes/no
 FULL_FUNCTIONAL_DELIVERY_CLAIMED: yes/no
 FULL_FUNCTIONAL_DELIVERY_REFUSAL_REASON: ...
+CHECKPOINT_INPUT_READY: yes/no
+CHECKPOINT_INPUT_HEAD_SHA: ...
 ```
 
 IAA must be able to say:
@@ -342,6 +372,11 @@ Or explicitly refuse full functional delivery with reasons.
 
 **Purpose**: Orchestrate and enforce role boundaries.  
 Foreman does not build. Foreman ensures the right agents build, test, run gates, and assure.
+
+Checkpoint-first requirement:
+- Foreman must not accept handover, use handover language, or mark ready-for-review unless a current-head `PRE_HANDOVER_CHECKPOINT_RESULT` exists with `HANDOVER_ALLOWED: yes`.
+- Foreman may delegate the checkpoint trigger, but Foreman remains responsible for ensuring the successful checkpoint comment exists for the exact current HEAD SHA.
+- Safety-net comments from watchdog workflows do not substitute for the deliberate checkpoint result.
 
 Responsibilities checklist:
 - assign the correct agent for each role;
@@ -383,6 +418,9 @@ NO_SELF_CERTIFICATION: yes/no
 ALL_REPORTS_PRESENT: yes/no
 UNRESOLVED_RISKS: ...
 MERGE_OR_HANDOVER_ALLOWED: yes/no
+PRE_HANDOVER_CHECKPOINT_PRESENT: yes/no
+PRE_HANDOVER_CHECKPOINT_HEAD_SHA: ...
+PRE_HANDOVER_CHECKPOINT_RESULT: HANDOVER_ALLOWED | STOP_AND_FIX
 GIT_BRANCH_VERIFIED: yes/no
 REMOTE_BRANCH_VERIFIED: yes/no
 PUSH_COMPLETED: yes/no
@@ -402,6 +440,27 @@ Foreman assignment matrix template (required columns):
 ---
 
 ## 10) Cross-cutting Tier 2 operational blocks
+
+### Deliberate checkpoint rule
+```text
+PRE_HANDOVER_CHECKPOINT_REQUIRED_BEFORE_HANDOVER: yes
+PRE_HANDOVER_CHECKPOINT_TRIGGER_COMMANDS: ECAP_PRE_HANDOVER_CHECKPOINT | PRE_HANDOVER_CHECKPOINT | /prepare-handover
+PRE_HANDOVER_CHECKPOINT_RESULT_REQUIRED: HANDOVER_ALLOWED: yes + RESULT: HANDOVER_ALLOWED
+```
+
+### Workflow classification quick map
+```text
+handover-claim-gate.yml: REQUIRED_BLOCKING_GATE
+governance-watchdog.yml: ADVISORY_ONLY
+iaa-prebrief-inject.yml: ADVISORY_ONLY
+iaa-prebrief-gate.yml: ADVISORY_ONLY
+preflight/iaa-prebrief-existence: PRE_HANDOVER_CHECKPOINT_INPUT
+preflight/iaa-final-assurance: PRE_HANDOVER_CHECKPOINT_INPUT
+preflight/ecap-admin-ceremony: PRE_HANDOVER_CHECKPOINT_INPUT
+preflight/scope-declaration-parity: PRE_HANDOVER_CHECKPOINT_INPUT
+preflight/product-delivery-gates: PRE_HANDOVER_CHECKPOINT_INPUT
+preflight/mmm-pr-admin: PRE_HANDOVER_CHECKPOINT_INPUT
+```
 
 ### Current-head lock rule
 ```text
