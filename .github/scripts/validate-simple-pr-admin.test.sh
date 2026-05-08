@@ -919,6 +919,34 @@ EOF
 }
 run_test "T30 — .agent-workspace/**/knowledge/** changed + flags true" 0 "setup_t30"
 
+# ================================================================
+# T31: .agent-workspace/**/knowledge/** changed + per-PR manifest + flags true → exit 0
+# ================================================================
+setup_t31() {
+    mkdir -p .agent-workspace/governance-liaison-isms/knowledge .admin/prs
+    echo "# updated knowledge" > .agent-workspace/governance-liaison-isms/knowledge/patterns.md
+    git add .agent-workspace/governance-liaison-isms/knowledge/patterns.md
+    git commit -q -m "Change tier-2 knowledge file"
+    export PR_NUMBER=2012
+    cat > .admin/prs/pr-2012.json << 'EOF'
+{
+  "pr": 2012,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [".agent-workspace/governance-liaison-isms/knowledge/patterns.md"],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/prs/pr-2012.json
+    git commit -q -m "Knowledge-path per-PR manifest with flags true"
+}
+run_test "T31 — .agent-workspace/**/knowledge/** changed + per-PR manifest + flags true" 0 "setup_t31"
+
 # ----------------------------------------------------------------
 # Cleanup
 # ----------------------------------------------------------------
