@@ -28,6 +28,6 @@ ecap_waiver_ref: none
 
 ## Ripple/Cross-Agent Assessment
 
-Agent / System | Change Scope Assessed | Impact Conclusion
----|---|---
-foreman-v2-agent + execution-ceremony-admin-agent | ECAP admin ceremony evidence alignment for protected-path governance handover | NO DIRECT PRODUCT RUNTIME IMPACT
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| foreman-v2-agent + execution-ceremony-admin-agent | ECAP admin ceremony evidence alignment for protected-path governance handover | NO DIRECT PRODUCT RUNTIME IMPACT |
