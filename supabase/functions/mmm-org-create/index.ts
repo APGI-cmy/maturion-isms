@@ -2,7 +2,7 @@
  * Supabase Edge Function: mmm-org-create
  *
  * Wave B3 — Core UI: Onboarding
- * Route:   POST /api/organisations
+ * Capability: mmm-org-create (Supabase Edge Function invoke)
  * Tests:   T-MMM-S6-013, T-MMM-S6-017
  * Issue:   maturion-isms#1428
  * Builder: ui-builder
@@ -20,7 +20,7 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
+import { corsHeaders, jsonResponse } from '../_shared/mmm-auth.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -40,12 +40,14 @@ Deno.serve(async (req: Request) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-  // NBR-002: HTTP 403 if no valid JWT
-  let claims: { userId: string; orgId: string; role: string };
-  try {
-    claims = await validateJWT(req, supabase);
-  } catch (response) {
-    return response as Response;
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return jsonResponse({ error: 'Missing or malformed Authorization header' }, 401);
+  }
+  const token = authHeader.replace('Bearer ', '').trim();
+  const { data: userData, error: authError } = await supabase.auth.getUser(token);
+  if (authError || !userData?.user) {
+    return jsonResponse({ error: 'Invalid or expired JWT' }, 401);
   }
 
   let body: { name?: string; tier?: string };
@@ -82,7 +84,7 @@ Deno.serve(async (req: Request) => {
     .from('mmm_profiles')
     .upsert(
       {
-        user_id: claims.userId,
+        user_id: userData.user.id,
         organisation_id: org.id,
         role: 'ADMIN',
       },

@@ -185,11 +185,11 @@ describe("T-MMM-S6-091: PitExportPage invalidates ['pit-exports', exportId] on s
   });
 });
 
-// ─── T-MMM-S6-092: DashboardPage queries /api/qiw/status ─────────────────────
-describe('T-MMM-S6-092: DashboardPage queries /api/qiw/status', () => {
-  it('fetches /api/qiw/status', () => {
+// ─── T-MMM-S6-092: DashboardPage queries mmm-qiw-status capability ────────────
+describe('T-MMM-S6-092: DashboardPage queries mmm-qiw-status capability', () => {
+  it('invokes mmm-qiw-status via Supabase functions', () => {
     const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
-    expect(src).toContain('/api/qiw/status');
+    expect(src).toContain("supabase.functions.invoke('mmm-qiw-status')");
   });
   it('uses dashboard query key', () => {
     const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
@@ -346,11 +346,12 @@ describe('T-MMM-S6-178: DashboardPage renders useful empty state when dashboard 
 
 // ─── T-MMM-S6-179: DashboardPage renders explicit error/permission error state ───────────────────
 // Oversight: dashboard did not distinguish permission failure, API failure, or malformed response
-describe('T-MMM-S6-179: DashboardPage renders explicit error state on /api/qiw/status failure', () => {
-  it('checks HTTP response status before calling res.json()', () => {
+describe('T-MMM-S6-179: DashboardPage renders explicit error state on mmm-qiw-status failure', () => {
+  it('checks function invoke error status before throwing', () => {
     const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
-    expect(src).toContain('res.status');
-    expect(src).toContain('res.ok');
+    expect(src).toContain("supabase.functions.invoke('mmm-qiw-status')");
+    expect(src).toContain('getInvokeStatus');
+    expect(src).toContain('if (error)');
   });
   it('handles 403 permission error distinctly', () => {
     const src = readFile('apps/mmm/src/pages/DashboardPage.tsx');
