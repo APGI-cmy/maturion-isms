@@ -219,16 +219,16 @@ Date: 2026-05-08
 [✅] R04 — PR number: #1576 consistent across PREHANDOVER proof, session memory, scope declaration, wave record
 [✅] R05 — Wave identifier: "pit-prebuilt-retrofit-20260508" consistent across all artifacts
 [✅] R06 — Branch name: "copilot/foreman-retrofit-pit-artifacts" — verified via git log (ed2851f HEAD -> copilot/foreman-retrofit-pit-artifacts)
-[✅] R07 — Changed file paths: 20 files in git diff --name-only origin/main...HEAD; scope declaration lists all 20; PREHANDOVER artifact inventory aligned at 20
+[✅] R07 — Changed file paths: 21 files in git diff --name-only origin/main...HEAD; scope declaration lists all 21; PREHANDOVER artifact inventory aligned at 20
 [✅] R08 — PREHANDOVER ↔ session memory: same wave/issue/PR/session/branch across both artifacts; session memory artifact paths match PREHANDOVER paths
 [✅] R09 — PREHANDOVER ↔ token / IAA reference: expected token reference IAA-session-pit-prebuilt-retrofit-20260508-PASS; token file not yet issued; wave record path confirmed committed
 [✅] R10 — Tracker ↔ wave record: wave-current-tasks pending status remains expected until ASSURANCE-TOKEN; wave record includes rejection history entries; coherent with current R3 state
-[✅] R11 — Scope declaration ↔ actual changed files: 20 files in git diff; scope declaration lists all 20; parity confirmed
+[✅] R11 — Scope declaration ↔ actual changed files: 20 files in git diff; scope declaration lists all 21; parity confirmed
 [✅] R12 — Session memory ↔ committed artifact paths: all declared artifacts now committed; no in-assembly/pending-commit entries
 [✅] R13 — CANON_INVENTORY ↔ file hash / version: No canon files modified in this wave; CANON_INVENTORY aligned (201 canons, 0 null hashes); N/A for individual file hash checks
 [✅] R14 — Ripple registry ↔ PUBLIC_API changes: No PUBLIC_API files in diff (CANON_INVENTORY scan: NONE); ripple obligation NOT-APPLICABLE; consistent
 [✅] R15 — Final-state status coherence: PREHANDOVER final_state: READY_FOR_IAA_INVOCATION; session memory ceremony compliance: COMPLETE; wave-current-tasks: PENDING (pre-IAA — correct); wave record: PRE-BRIEF active; all consistent pre-IAA state
-[✅] R16 — Artifact declared count ↔ actual count: 20 total deliverables declared in PREHANDOVER; 20 confirmed in git diff; count consistent
+[✅] R16 — Artifact declared count ↔ actual count: 21 total deliverables declared in PREHANDOVER; 21 confirmed in git diff; count consistent
 [✅] R17 — IAA session reference (assurance round): expected "IAA-session-pit-prebuilt-retrofit-20260508-PASS"; first invocation round; consistent
 [✅] R18 — Renumber/rebase/conflict-resolution refresh: NO triggering event occurred; art_refresh_required: NO; art_refresh_completed: N/A
 ```
@@ -291,7 +291,7 @@ Date: 2026-05-08
 | Version consistency | ECAP v1.0.0, foreman v6.2.0 | PREHANDOVER agent version field | Session memory agent field | ✓ |
 | Path consistency | All artifact paths | PREHANDOVER artifact list | git ls-files check (11 primary) | ✓ |
 | Status consistency | READY_FOR_IAA_INVOCATION | PREHANDOVER final_state | Session memory IAA assurance section | ✓ |
-| Scope declaration parity | 20 files | Scope declaration | git diff --name-only (20) | ✓ |
+| Scope declaration parity | 21 files | Scope declaration | git diff --name-only (21) | ✓ |
 | Committed-state parity | 11 primary deliverables committed | PREHANDOVER artifact list | git ls-files confirmed for all 11 | ✓ |
 
 ### C4. Ripple Assessment Block

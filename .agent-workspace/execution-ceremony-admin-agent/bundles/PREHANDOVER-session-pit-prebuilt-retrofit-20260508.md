@@ -84,7 +84,7 @@ scope_declaration_path: .agent-admin/scope-declarations/pr-1576.md
 scope_declaration_committed: YES — SHA ed2851f
 scope_declaration_schema: v2.0.0
 files_changed_count_at_bundle_assembly: 14 (pre-ECAP commit)
-files_changed_count_final_expected: 20 (post-ECAP + IAA-R2 artifacts committed)
+files_changed_count_final_expected: 21 (post-ECAP + IAA-R2 artifacts committed)
 ```
 
 **Files in diff (pre-ECAP — 14 files):**
