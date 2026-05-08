@@ -75,10 +75,10 @@ jobs:
           contains(github.event.comment.body, 'Ready for review') ||
           contains(github.event.comment.body, 'ready-for-review') ||
           contains(github.event.comment.body, 'Ready-for-review') ||
-          contains(github.event.comment.body, 'completion') ||
-          contains(github.event.comment.body, 'Completion') ||
-          contains(github.event.comment.body, 'complete') ||
-          contains(github.event.comment.body, 'Complete') ||
+          contains(github.event.comment.body, 'work complete') ||
+          contains(github.event.comment.body, 'Work complete') ||
+          contains(github.event.comment.body, 'implementation complete') ||
+          contains(github.event.comment.body, 'Implementation complete') ||
           contains(github.event.comment.body, 'Phase 4') ||
           contains(github.event.comment.body, 'OPOJD') ||
           contains(github.event.comment.body, 'merge gate released') ||
@@ -297,9 +297,13 @@ jobs:
               'HANDOVER_ALLOWED',
             ];
             const preconditionFailures = [];
+            const escapeRegex = (s) => {
+              const special = '\\\\^$*+?.()|{}[]';
+              return String(s).split('').map((ch) => (special.includes(ch) ? `\\${ch}` : ch)).join('');
+            };
 
             const readSnapshotField = (fieldName) => {
-              const m = commentBody.match(new RegExp(`^\\s*${fieldName}:\\s*(.+)\\s*$`, 'im'));
+              const m = commentBody.match(new RegExp(`^\\s*${escapeRegex(fieldName)}:\\s*(.+)\\s*$`, 'im'));
               return m ? m[1].trim() : '';
             };
             const isNonEmptySignal = (value) => {
@@ -339,8 +343,17 @@ jobs:
               if (missingSnapshotFields.length > 0) {
                 preconditionFailures.push(`Missing required snapshot field(s): ${missingSnapshotFields.join(', ')}`);
               }
-              if (snapshotHead && !headSha.startsWith(snapshotHead)) {
-                preconditionFailures.push(`CURRENT_HEAD_SHA (${snapshotHead}) does not match PR HEAD (${headSha}).`);
+              if (snapshotHead) {
+                if (!/^[0-9a-f]{12,40}$/i.test(snapshotHead)) {
+                  preconditionFailures.push(`CURRENT_HEAD_SHA (${snapshotHead}) must be a 12-40 char hex SHA.`);
+                } else {
+                  const normalizedSnapshotHead = snapshotHead.toLowerCase();
+                  const normalizedHeadSha = headSha.toLowerCase();
+                  const normalizedHeadPrefix = normalizedHeadSha.slice(0, normalizedSnapshotHead.length);
+                  if (normalizedSnapshotHead !== normalizedHeadSha && normalizedSnapshotHead !== normalizedHeadPrefix) {
+                    preconditionFailures.push(`CURRENT_HEAD_SHA (${snapshotHead}) does not match PR HEAD (${headSha}).`);
+                  }
+                }
               }
               if (!Number.isNaN(requiredChecksTotal) && requiredChecksTotal !== REQUIRED_CHECKS.length) {
                 preconditionFailures.push(`REQUIRED_CHECKS_TOTAL (${requiredChecksTotal}) does not match enforced set (${REQUIRED_CHECKS.length}).`);
@@ -381,13 +394,13 @@ jobs:
             if (isIssueComment && latestBlockedGateComment && commentCreatedAt) {
               const blockedAt = new Date(latestBlockedGateComment.updated_at || latestBlockedGateComment.created_at);
               if (commentCreatedAt > blockedAt) {
-                const blockedHeadMatch = latestBlockedGateComment.body.match(/HEAD SHA verified[^`]*`([0-9a-f]{7,40})`/i);
+                const blockedHeadMatch = latestBlockedGateComment.body.match(/HEAD SHA verified:\s*`([0-9a-f]{7,40})`/i);
                 const blockedHead = blockedHeadMatch ? blockedHeadMatch[1] : '';
                 const headAdvanced = blockedHead && blockedHead !== headSha;
                 const correctiveProducerComment = existingComments.some(c =>
                   c.user?.login === producerLogin &&
                   new Date(c.created_at) > blockedAt &&
-                  /HANDOVER_BLOCKED|STOP_AND_FIX|corrective|remediat|fixed|resolved/i.test(c.body || '')
+                  /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '')
                 );
                 if (!headAdvanced && !correctiveProducerComment) {
                   preconditionFailures.push(
