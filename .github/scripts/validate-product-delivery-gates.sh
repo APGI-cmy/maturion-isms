@@ -127,8 +127,6 @@ resolve_evidence_path() {
       return 0
     fi
   done
-
-  ls .functional-delivery/pr-[0-9]*.md 2>/dev/null | grep -E '^\.functional-delivery/pr-[0-9]+\.md$' | head -1 || true
 }
 
 EVIDENCE_PATH="$(resolve_evidence_path)"

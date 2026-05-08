@@ -161,6 +161,39 @@ t1_missing_evidence() {
 }
 run_test "T1 missing functional evidence -> FAIL" 1 t1_missing_evidence
 
+t1b_missing_pr_specific_evidence_no_stale_fallback() {
+  seed_product_change_with_cta
+  seed_valid_iaa
+  cat > .functional-delivery/pr-1111.md << 'EOF'
+PR: #1111
+Issue: #1573
+Current head SHA reviewed: CURRENT_HEAD
+Product/user journey: stale evidence
+User journey tested: yes
+CTA/API map: present
+Backend target proof: present
+Screenshots or recording: present
+Preview/live URL: url
+Pass/fail result: pass
+Known partials: none
+Known limitations: none
+Partial scope accepted by CS2: not_applicable
+Builder QA functional report reference: ref
+ECAP/admin-gate report reference: ref
+IAA final assurance reference: ref
+| CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
+|---|---|---|---|---|---|---|---|
+| cta | intent | route | /api/frameworks/init | obj | ok | fail | ev |
+mmm-framework-init
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+ADMIN_PASS: yes
+EOF
+  git add .
+  git commit -q -m "stale non-pr-specific functional evidence only"
+}
+run_test "T1b stale evidence fallback disabled (must require pr-9999 or explicit path) -> FAIL" 1 t1b_missing_pr_specific_evidence_no_stale_fallback
+
 t2_missing_cta_map_fields() {
   seed_product_change_with_cta
   cat > .functional-delivery/pr-9999.md << 'EOF'
