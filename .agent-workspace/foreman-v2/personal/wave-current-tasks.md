@@ -31,7 +31,7 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-layer-down-governance-
 
 ## Wave Completion Gate
 
-- [ ] All tasks above show 🟢 DONE
+- [x] All tasks above show 🟢 DONE
 - [ ] Session memory written
-- [ ] PREHANDOVER proof committed
+- [x] PREHANDOVER proof committed
 - [ ] CS2 notified for merge approval
