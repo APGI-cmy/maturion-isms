@@ -16,8 +16,8 @@ ceremony_admin_appointed: NO — only required after QP PASS in Phase 4
 
 | # | Task | Executor | Status | Evidence |
 |---|------|----------|--------|----------|
-| T-1 | Correct wave admin artifacts for issue #1583 / PR #1586 and secure IAA pre-brief wave record | foreman-v2-agent (POLC-Orchestration) | 🟡 IN PROGRESS | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`, `.agent-workspace/foreman-v2/personal/scope-declaration-wave-pre-handover-checkpoint-hardening-20260508.md`, `.agent-admin/scope-declarations/pr-1586.md` |
-| T-2 | Implement deliberate pre-handover checkpoint workflow, gate integration, workflow classification audit, regression coverage, and required guidance updates | governance-liaison-isms-agent | 🔴 PENDING | PR #1586 |
+| T-1 | Correct wave admin artifacts for issue #1583 / PR #1586 and secure IAA pre-brief wave record | foreman-v2-agent (POLC-Orchestration) | 🟢 DONE | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`, `.agent-workspace/foreman-v2/personal/scope-declaration-wave-pre-handover-checkpoint-hardening-20260508.md`, `.agent-admin/scope-declarations/pr-1586.md`, `.agent-admin/assurance/iaa-wave-record-pre-handover-checkpoint-hardening-20260508-20260508.md` |
+| T-2 | Implement deliberate pre-handover checkpoint workflow, gate integration, workflow classification audit, regression coverage, and required guidance updates | governance-liaison-isms-agent | 🟡 IN PROGRESS | PR #1586 |
 | T-3 | Review builder handback, verify validations/evidence, and prepare final ceremony path | foreman-v2-agent (Quality Professor) | 🔴 PENDING | PR #1586 evidence bundle |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
@@ -30,7 +30,7 @@ ceremony_admin_appointed: NO — only required after QP PASS in Phase 4
 - **Protected paths expected**: `.github/workflows/**`, `.github/scripts/**`, `governance/**`, `.agent-workspace/**/knowledge/**`
 - **Build Authorization**: NOT CLEARED — Foreman orchestration only; implementation delegated
 - **Planned builder**: `governance-liaison-isms-agent`
-- **IAA pre-brief status**: BLOCKED pending correct wave artifacts and committed wave record
+- **IAA pre-brief status**: CLEAR — `.agent-admin/assurance/iaa-wave-record-pre-handover-checkpoint-hardening-20260508-20260508.md` committed
 
 ---
 
