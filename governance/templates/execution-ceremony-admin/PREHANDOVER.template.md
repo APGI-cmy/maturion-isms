@@ -39,6 +39,12 @@ scope_fresh_at_head_sha: YES                 # YES | NO — scope declaration re
 evidence_refresh_status: REFRESHED           # REFRESHED | STALE (STALE is BLOCKING)
 gate_run_ids:           [<run-id-1>, <run-id-2>] # CI run IDs used in this proof (or [] if local-only)
 failing_pending_missing_checks: none         # list check names still failing/pending/missing, or 'none'
+handover_allowed:       NO                   # YES | NO — BLOCKING: must be YES before any handover claim is posted.
+                                             # Set YES only when: all required checks are green at gate_snapshot_head_sha,
+                                             # gate_snapshot_head_sha matches post_push_head_sha, and no active artifact
+                                             # reports FAIL or 'no' for any gate or required ceremony check.
+                                             # "No active artifact may say FAIL/no while claiming handover."
+                                             # Validated by handover-claim-gate CI; mismatch is a hard precondition failure.
 scope_declaration_parity: PASS              # PASS | FAIL | N/A
 scope_refreshed_post_final_edit: YES        # YES | NO — §4.3g: SCOPE_DECLARATION.md refreshed from final diff after all edits; AAP-28 auto-fail if NO or absent; BLOCKING — Foreman must reject handover if NO
 admin_ceremony_compliance: PASS             # PASS | FAIL | N/A (ECAP jobs only)
