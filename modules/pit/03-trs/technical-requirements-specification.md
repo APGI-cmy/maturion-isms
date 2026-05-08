@@ -11,20 +11,20 @@
 | Module | PIT (Project Implementation Tracker) |
 | Application Name | Project Implementation Tracker |
 | Artifact Type | Technical Requirements Specification (TRS — Stage 4) |
-| Version | v0.1-draft |
-| Status | **DRAFT_CREATED — pending upstream CS2 approvals (Stage 2 and Stage 3, maturion-isms#1548)** |
+| Version | v0.2-draft |
+| Status | **DRAFT_UPDATED — pending upstream CS2 approvals (Stage 2 and Stage 3, maturion-isms#1548)** |
 | Approval Status | Not approved — blocked until Stage 3 FRS and Stage 2 UX Spec are CS2-approved |
 | Derived From (Stage 1) | `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06, ref: maturion-isms#1540) |
 | Derived From (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft |
-| Derived From (Stage 3) | `modules/pit/02-frs/functional-requirements.md` v0.1-draft |
+| Derived From (Stage 3) | `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** (hardened 2026-05-07, ref: maturion-isms#1556; pending CS2 approval) |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
-| Date | 2026-05-07 |
-| Issue | maturion-isms#1554 |
+| Date | 2026-05-07; updated 2026-05-08 (retrofit wave maturion-isms#1575 / PR #1576) |
+| Issue | maturion-isms#1554 (original); maturion-isms#1575 (retrofit — PIT-TR-116 to PIT-TR-123 added) |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 
 > **Governance Note:** This TRS is a draft artifact. It may not be declared complete, approved, or gate-passed until Stage 3 FRS and Stage 2 UX Workflow & Wiring Spec are approved by CS2. Stage 5 Architecture remains blocked until Stage 4 TRS is approved. Build Authorization remains NOT CLEARED. This TRS does not authorise code implementation, builder appointment, schema migration, or deployment.
 
-> **Issue #1556 Dependency Notice:** This TRS is draft-only and derives from the current Stage 3 FRS v0.1-draft. Issue #1556 has identified required FRS hardening for one-time build readiness. Any changes made under #1556 must be propagated into this TRS before Stage 4 can be reviewed, approved, or used to gate-pass Stage 5 Architecture.
+> **Retrofit Note (maturion-isms#1575):** This TRS was updated in the PIT pre-build functional delivery retrofit wave (PR #1576) to propagate PIT-FR-113 through PIT-FR-123 from FRS v0.2-hardened into new technical requirements PIT-TR-116 through PIT-TR-123. The stale Issue #1556 dependency notice has been resolved: Section 31 of this document now contains the technical requirements derived from FRS v0.2-hardened additions. The derivation source is now listed as FRS v0.2-hardened (pending CS2 approval) rather than v0.1-draft.
 
 ---
 
@@ -34,7 +34,7 @@ This Technical Requirements Specification (TRS) translates the functional requir
 
 1. **Stage 1** — `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06)
 2. **Stage 2** — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft (Foreman-reviewed 2026-05-06)
-3. **Stage 3** — `modules/pit/02-frs/functional-requirements.md` v0.1-draft (draft, pending CS2 approval)
+3. **Stage 3** — `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** (hardened 2026-05-07 per maturion-isms#1556; pending CS2 approval)
 
 Any conflict discovered between this TRS and the FRS, UX Wiring Spec, or App Description **must be resolved upstream** before Stage 5 Architecture proceeds. Changes in upstream stages propagate to this TRS per L-008.
 
@@ -124,6 +124,14 @@ Technical requirements are identified as `PIT-TR-NNN` (three-digit, zero-padded,
 | Cross-module integrations | PIT-FR-100 to PIT-FR-102 | API, data model |
 | Deployment surface | PIT-FR-103 to PIT-FR-105 | Deployment, routing |
 | My Work | PIT-FR-111, PIT-FR-112 | API, frontend |
+| Permission Negative-Path Contract | PIT-FR-113 | RBAC / RLS enforcement |
+| Progress Roll-Up Method | PIT-FR-114 | Data model, API |
+| Notification Read / History / Preferences | PIT-FR-115 to PIT-FR-117 | Notification system |
+| Report Permissions / States / History | PIT-FR-118, PIT-FR-119 | Reporting, storage |
+| QA Dashboard Enhanced | PIT-FR-120 | QA Dashboard, RLS |
+| Lifecycle Removal Semantics | PIT-FR-121 | Data model, API, RLS |
+| Accessibility Outcomes | PIT-FR-122 | Frontend, tooling |
+| Bulk Operations Non-Scope | PIT-FR-123 | Non-functional — explicit exclusion |
 | Non-functional placeholders | NF-001 to NF-010 | Performance, security, tool validation |
 | MMM controls | L-001 to L-008 | Cross-cutting technical controls |
 
@@ -1035,12 +1043,15 @@ Stage 6 QA-to-Red must:
 | A-008 | Deep integration mechanism for upstream modules (Maturity Roadmap, Risk, Incident) | Stage 5 Architecture | OPEN |
 | A-009 | Final deployment platform (Vercel vs alternatives) | Stage 7 PBFAG | OPEN |
 | A-010 | Maximum file size for evidence uploads (50 MB candidate) | CS2 decision | OPEN |
+| A-011 | FRS v0.2-hardened CS2 approval (maturion-isms#1556) — TRS v0.2-draft incorporates the technical requirements for PIT-FR-113–123 but final approval of TRS is still contingent on CS2 approval of FRS v0.2-hardened | Stage 4 gate-pass | OPEN — pending CS2 approval of FRS |
 
 ---
 
 ## 29. Change-Propagation Note
 
 Any TRS conflict with the FRS, UX Wiring Spec, or App Description must be resolved upstream before Stage 5 Architecture. The improvement register (`modules/pit/_readiness/pit-build-process-improvement-register.md`) must be updated with any conflict discovered during TRS review.
+
+**FRS v0.2-Hardened Propagation (Retrofit Wave maturion-isms#1575)**: The technical requirements for PIT-FR-113 through PIT-FR-123 were propagated into this TRS in PR #1576. See Section 31 for the propagated requirements. The FRS-to-TRS traceability matrix in `modules/pit/03-trs/frs-to-trs-traceability.md` was updated correspondingly to cover all 123 FRS requirements.
 
 ---
 
@@ -1056,11 +1067,169 @@ Stage 5 Architecture is **BLOCKED** until:
 
 ---
 
-**End of PIT Technical Requirements Specification v0.1-draft**
+## 31. FRS v0.2-Hardened Propagation Requirements (Retrofit Wave maturion-isms#1575)
+
+This section contains technical requirements derived from PIT-FR-113 through PIT-FR-123, which were added to the FRS in the hardening wave (maturion-isms#1556). These requirements were propagated into the TRS in the PIT pre-build functional delivery retrofit wave (maturion-isms#1575 / PR #1576).
+
+### PIT-TR-116 — Permission Negative-Path Enforcement Contract
+
+For every role-gated route, API endpoint, and data operation, both a positive-path (allowed) and negative-path (denied) enforcement mechanism must be implemented:
+
+1. **RLS layer**: Every relevant table must have RLS policies that enforce the access boundary at the database level. A `SELECT`, `INSERT`, `UPDATE`, or `DELETE` on a row that the authenticated user does not own or does not have role access to must be denied silently at the RLS layer.
+2. **API/Edge Function layer**: Every Edge Function that performs a gated operation must verify the caller's role before execution and return `{ error: "permission_denied" }` with HTTP 403 if the check fails.
+3. **Frontend layer**: When a user navigates to a route they are not authorised to access, the route component must render the permission-denied UI state (PIT-TR-025). The frontend must not expose data from the 403 response.
+4. **QA-to-Red coverage**: At least one denied-path test must exist for every role boundary. Denied-path tests must verify that the API returns 403, that the UI renders the permission-denied state, and that no protected data appears in the DOM.
+
+**Derived from**: PIT-FR-113; PIT-TR-025, PIT-TR-026
+
+---
+
+### PIT-TR-117 — Progress Roll-Up Computation Contract
+
+Project, milestone, and deliverable progress percentages must be computed server-side as follows:
+
+1. **Task-level**: Progress = (count of tasks with `status IN ('completed', 'verified')`) / (count of all tasks in deliverable) × 100, rounded to nearest integer.
+2. **Deliverable-level**: Progress = average of task-level progress for all tasks in the deliverable.
+3. **Milestone-level**: Progress = average of deliverable-level progress for all deliverables in the milestone.
+4. **Project-level**: Progress = average of milestone-level progress for all milestones in the project.
+5. **RAG thresholds** (from FRS §29): Green ≥ 80%, Amber 60–79%, Red < 60%. RAG status must be stored as a computed field or derived at query time.
+6. Computation must be triggered on every `tasks.status`, `deliverables.status`, or `milestones.status` update via database trigger or Edge Function.
+7. The progress computation logic must be testable in isolation (unit-testable pure function or Edge Function).
+
+**Derived from**: PIT-FR-114; PIT-TR-035 to PIT-TR-037
+
+---
+
+### PIT-TR-118 — Notification Read and Mark-as-Read Technical Contract
+
+1. The `notifications` table must include a `read_at TIMESTAMPTZ` column (nullable). A `null` value means unread.
+2. A `PATCH /notifications/:id/read` API endpoint (or equivalent Edge Function) must set `read_at = now()` for the authenticated user's notification. RLS must prevent users from marking other users' notifications as read.
+3. A `PATCH /notifications/read-all` endpoint must set `read_at = now()` on all unread notifications for the authenticated user.
+4. The notification bell in the app shell must display a badge count of unread notifications (where `read_at IS NULL`). The badge count must update in real time via Supabase Realtime on the `notifications` table.
+5. Mark-as-read operations must be optimistically updated in the UI and reconciled via TanStack Query invalidation.
+
+**Derived from**: PIT-FR-115; PIT-TR-056, PIT-TR-007
+
+---
+
+### PIT-TR-119 — Notification History View Technical Contract
+
+1. A dedicated `/notifications` route must be registered (see Route Coverage Appendix, PIT-FR Appendix A, route `/notifications`).
+2. The notification history view must support server-side pagination (cursor-based, page size 20). Fetching all notifications without pagination is prohibited.
+3. Each history entry must display: notification type icon, message, timestamp, read/unread state, and a CTA link to the relevant entity.
+4. Unread notifications must be visually distinguished from read notifications.
+5. The five UI states (PIT-TR-091) must be implemented for the notification history view.
+
+**Derived from**: PIT-FR-116; PIT-TR-074 (pagination pattern)
+
+---
+
+### PIT-TR-120 — Notification Preferences Technical Contract
+
+1. The `notification_preferences` table must store per-user, per-event-type email opt-in flags. Schema: `(id, user_id, event_type, email_enabled BOOLEAN DEFAULT true, updated_at)`.
+2. A settings page section (Profile/Notifications) must expose toggles for each notification event type.
+3. The notification preference check (PIT-TR-058) must read from this table before sending email.
+4. Default: all email notifications enabled for new users. A `notification_preferences` row is inserted (or defaults applied) when a user is created.
+
+**Derived from**: PIT-FR-117; PIT-TR-058
+
+---
+
+### PIT-TR-121 — Report Access Control and State Management Technical Contract
+
+1. Report generation must enforce the role-based access matrix from PIT-FR-118: `cs2_admin` can generate all report types; `org_admin` can generate org-scoped reports; `project_manager` can generate project-scoped reports; `viewer` cannot generate any report.
+2. Report generation state must transition through: `queued → generating → ready | failed`. The `report_history` table must include a `status` column with these values.
+3. Failed reports must store an `error_reason` column for admin visibility.
+4. Report download links must be signed URLs (PIT-TR-062 pattern) that expire after the configurable period. When a signed URL expires, re-generating it on demand (without re-running the report) must be supported.
+5. The Reports page must implement all five UI states (PIT-TR-091), including a dedicated "generating" loading state while a report is in progress.
+
+**Derived from**: PIT-FR-118; PIT-TR-068 to PIT-TR-072
+
+---
+
+### PIT-TR-122 — Report History Retention Technical Contract
+
+1. The `report_history` table must retain all report records for a minimum of 30 days. Automated purge of records older than the retention window must be configurable via an environment variable (`REPORT_RETENTION_DAYS`, default: 30).
+2. Report files in Supabase Storage must be retained for the same period as their `report_history` record.
+3. On expiry of a `report_history` record: the associated file must be deleted from storage, and the record status set to `expired`.
+4. The `report_history` table must be readable by the report owner, `org_admin`, and `cs2_admin` (enforced by RLS). All other roles must be denied.
+5. A report history list must be displayed on the Reports screen, sorted by generation timestamp descending, with pagination (page size 20).
+
+**Derived from**: PIT-FR-119; PIT-TR-071
+
+---
+
+### PIT-TR-123 — QA Dashboard Evidence Visibility Technical Contract
+
+1. The `/qa-dashboard` route must be accessible only to `cs2_admin` (PIT-TR-077). All other roles see the permission-denied state.
+2. The QA Dashboard must display, per wave: wave identifier, run date, suite name, total/passing/failing/skipped test counts, coverage percentage, and direct links to evidence artifacts.
+3. Evidence artifact links must point to files in `.agent-admin/evidence/` or equivalent storage. Links must be navigable from the QA Dashboard.
+4. QA runs must be insertable by `cs2_admin` only. The `qa_runs` table must have an RLS INSERT policy restricted to `cs2_admin`.
+5. The QA Dashboard must implement the five UI states (PIT-TR-091).
+
+**Derived from**: PIT-FR-120; PIT-TR-076, PIT-TR-077
+
+---
+
+### PIT-TR-124 — Lifecycle Removal Semantics Technical Contract
+
+The following status states are the canonical lifecycle states for PIT entities:
+
+**Tasks**: `not_started → in_progress → completed → verified` (positive path); `→ cancelled` (terminal, from any state); `→ overdue` (system-set watchdog state); archived (soft-delete — `archived_at TIMESTAMPTZ` column set).
+
+**Deliverables / Milestones**: `not_started → in_progress → completed → verified → archived`. Archived deliverables and milestones must not be deleted from the database.
+
+**Projects**: `active → paused → completed → archived`. A project may only be archived when all milestones are completed or archived.
+
+**Archive vs Delete**: All entity removal must be implemented as soft-delete (archive) only. Hard delete is prohibited at the application layer. Hard delete via database admin may be performed only by `cs2_admin` and must be audit-logged.
+
+**Restore**: Archived entities may be restored to their previous active state by `org_admin` or `cs2_admin`. A restore operation must be audit-logged.
+
+**Cancel**: Task cancellation must store a `cancellation_reason` (free text, optional). Cancelled tasks count as "removed from scope" and are excluded from progress roll-up computation (PIT-TR-117).
+
+**Implementation**: Soft-delete must be implemented via `archived_at TIMESTAMPTZ` (nullable) column on each entity table. RLS `SELECT` policies must exclude archived rows from default queries. A separate `include_archived=true` query parameter must be available for `org_admin` and `cs2_admin` to retrieve archived entities.
+
+**Derived from**: PIT-FR-121; PIT-TR-027 to PIT-TR-041
+
+---
+
+### PIT-TR-125 — Minimum Accessibility Technical Contract
+
+1. The PIT application must meet WCAG 2.1 AA compliance. This extends and supersedes PIT-TR-087 (which states Lighthouse ≥ 80).
+2. All interactive elements (buttons, links, form fields, dropdowns) must have accessible names (visible label or `aria-label`).
+3. All images must have `alt` text. Decorative images must have `alt=""`.
+4. Keyboard navigation must be fully functional: all interactive elements must be reachable via Tab, and all actions must be activatable via Enter/Space.
+5. Focus ring must be visible on all focused elements. Focus ring must not be suppressed globally.
+6. Colour contrast ratio for text must meet WCAG AA minimum (4.5:1 for body text, 3:1 for large text).
+7. The Gantt chart (timeline page) must provide a table-based accessible alternative view.
+8. Axe-core accessibility scan at build time must produce zero violations. This is a blocking quality gate.
+9. Lighthouse accessibility score must be ≥ 90 in the deployed environment.
+
+**Derived from**: PIT-FR-122; PIT-TR-087
+
+---
+
+### PIT-TR-126 — Bulk Operations, CSV Import, and Project Templates — Explicit Non-Scope
+
+The following features are explicitly **NOT IN SCOPE** for PIT v1:
+
+1. Bulk task creation (selecting multiple tasks and applying an action to all).
+2. CSV import of tasks, deliverables, milestones, or projects.
+3. Project templates (saving a project structure as a reusable template with all milestones, deliverables, and tasks).
+4. Bulk evidence upload (uploading multiple evidence files simultaneously via a single action).
+5. Bulk status transitions (e.g., marking all tasks in a deliverable as complete in a single action).
+
+These features must NOT be implemented in Stage 12 Build without an explicit CS2-approved scope change to the FRS and TRS. Any builder who encounters a request for these features must raise it with Foreman.
+
+**Derived from**: PIT-FR-123
+
+---
+
+**End of PIT Technical Requirements Specification v0.2-draft**
 
 ---
 
 **Template Version**: 1.0.0
 **Template Authority**: `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
-**Last Updated**: 2026-05-07
+**Last Updated**: 2026-05-08 (retrofit wave maturion-isms#1575 / PR #1576 — PIT-TR-116 to PIT-TR-126 added)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)

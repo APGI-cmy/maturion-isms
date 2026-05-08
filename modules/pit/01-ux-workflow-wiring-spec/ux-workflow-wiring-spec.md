@@ -1507,3 +1507,39 @@ The following items must be true before Stage 3 (FRS) can commence. Status is de
 ---
 
 **End of PIT UX Workflow & Wiring Spec v0.2-draft**
+
+---
+
+## Section 12: Functional Delivery Retrofit Verification (maturion-isms#1575 / PR #1576)
+
+> **Authority Preservation**: This section is a non-material governance verification note added in the PIT pre-build functional delivery retrofit wave. It does NOT alter the Foreman-reviewed v0.2-draft content. The retrofit verification confirms what is present; it does not substitute for CS2 approval of Stage 2.
+
+**Retrofit Review Date**: 2026-05-08  
+**Retrofit Wave**: pit-prebuilt-retrofit-20260508 (PR #1576)  
+**Reviewed By**: foreman-v2-agent (POLC-Orchestration mode)
+
+### Functional Delivery Completeness Verification
+
+| Required Element (per maturion-isms#1575) | Status | Evidence in UX Spec |
+|---|---|---|
+| Route coverage — public, auth, protected, admin, system, fallback | ✅ CONFIRMED | Section 9: Deployment Surface Map (all 27 routes enumerated by type) |
+| Screen-to-route-to-state-to-wiring traceability | ✅ CONFIRMED | Section 2 (21 screens); Section 4 (5-state matrix per screen); Section 7 (screen-to-data wiring table) |
+| Five-state UI coverage for every route | ✅ CONFIRMED | Section 4: UI States for Every Primary Page — all 21 screens covered with 5 states each |
+| App-shell and global layout rendering expectations | ✅ CONFIRMED | Section 5: App Shell / Navigation and Root-Level Notification Pattern — exact rendering expectations |
+| Notification, toast, and root-provider behaviour | ✅ CONFIRMED | Section 5: Root-level NotificationProvider spec; bell badge; real-time delivery |
+| Denied-path UX for every role-gated route/action | ✅ CONFIRMED | Section 4: permission-denied state (State 3) for all protected screens; Section 2: role notes per screen |
+| Empty/loading/error/network/permission states | ✅ CONFIRMED | Section 4: all 5 states defined per screen (loading, empty, permission-denied, network-error, data) |
+| Direct browser route-load behaviour and SPA fallback | ✅ CONFIRMED | Section 9: SPA fallback requirement noted; Section 9 `vercel.json` rewrite requirement |
+| Visual acceptance hints for QA-to-Red and PBFAG | ✅ CONFIRMED | Section 4: acceptance criteria per state; Section 3: top indicators (testable); Section 7: data wiring (verifiable) |
+| Mobile/responsive expectations | ✅ CONFIRMED — IN SCOPE EXPLICITLY | Section 2 and Section 5 note responsive design expectation; mobile-responsive layouts required |
+
+### Gaps Identified During Retrofit Review
+
+The following minor gaps were identified during the functional delivery retrofit review of Stage 2. These do not block Stage 2 from re-confirmation after retrofit, but must be addressed before Stage 5 Architecture gate-pass:
+
+| Gap ID | Gap Description | Artifact | Recommended Action |
+|---|---|---|---|
+| UX-GAP-001 | The 404 fallback route (`/404` or catch-all) is listed in Section 9 but its 5-state UI matrix entry and wiring entry are absent from Sections 4 and 7 respectively. The 404 route has a simpler state model (data-only) but should be documented for completeness. | Section 4, Section 7 | Add 404 route entry to Section 4 (state: data-only — no empty/permission/error states applicable) and Section 7 (wiring: static — no API calls). Foreman judges this non-blocking for Stage 2 re-confirmation. |
+| UX-GAP-002 | The `/notifications` history route (per FRS PIT-FR-116 and TRS PIT-TR-119) is listed in Section 9 but its Section 2 screen spec (screen states, data wiring) is not present in v0.2-draft. | Section 2, Section 4 | This gap was introduced when PIT-FR-116 was added in FRS v0.2-hardening (maturion-isms#1556). The notification history screen spec must be added to Stage 2 before Stage 2 re-confirmation or as a Stage 2 amendment with CS2 approval. |
+
+**Retrofit Verdict**: Stage 2 UX Workflow & Wiring Spec v0.2-draft is substantially complete for functional delivery. Two minor gaps (UX-GAP-001, UX-GAP-002) are identified. UX-GAP-002 requires resolution before Stage 2 re-confirmation. UX-GAP-001 is non-blocking. Both gaps are captured in `modules/pit/_readiness/pit-functional-delivery-gap-register.md`.
