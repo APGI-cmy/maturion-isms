@@ -202,7 +202,22 @@ for route in "${GUARDED_ROUTES[@]}"; do
   done <<< "$CHANGED_FILES"
 
   if [ "$route_hit" = true ]; then
-    exists_proof=$(grep -R -l -F "$route" supabase apps modules packages api .github 2>/dev/null | grep -vE '\.md$' | head -1 || true)
+    exists_proof=$(grep -R -l -F "$route" supabase/functions api modules apps packages 2>/dev/null | grep -E '(^supabase/functions/|^api/|/api/|/backend/|/server/|/edge/)' | grep -vE '(^|/)(tests?|__tests__|spec|fixtures?)/|(\.test|\.spec)\.' | grep -vE '\.md$' | head -1 || true)
+    if [ -z "$exists_proof" ]; then
+      route_without_prefix="${route#/api/}"
+      for candidate in \
+        "api/${route_without_prefix}.ts" \
+        "api/${route_without_prefix}.js" \
+        "api/${route_without_prefix}.py" \
+        "api/${route_without_prefix}.go" \
+        "api/${route_without_prefix}/index.ts" \
+        "api/${route_without_prefix}/route.ts"; do
+        if [ -f "$candidate" ]; then
+          exists_proof="$candidate"
+          break
+        fi
+      done
+    fi
     test_proof=$(grep -R -l -F "$route" apps modules packages supabase 2>/dev/null | grep -E '(test|spec)\.(ts|tsx|js|jsx|py)$' | head -1 || true)
     capability="$(route_capability "$route")"
     map_proof=""
@@ -261,12 +276,10 @@ echo "✅ Functional Delivery Evidence gate: PASS"
 # Gate 4: IAA functional verdict split (product-facing requires split fields)
 # ---------------------------------------------------------------------------
 IAA_FILES="$(git diff --name-only --diff-filter=AM "${BASE_SHA:-HEAD~1}...HEAD" 2>/dev/null | grep -E '^\.agent-admin/assurance/(iaa-token-|iaa-wave-record-).+\.md$' || true)"
-if [ -z "$IAA_FILES" ]; then
-  IAA_FILES="$(ls .agent-admin/assurance/iaa-token-*.md .agent-admin/assurance/iaa-wave-record-*.md 2>/dev/null || true)"
-fi
 
 if [ -z "$IAA_FILES" ]; then
-  echo "❌ FAIL — Product-facing PR requires IAA assurance artifact with split verdict fields."
+  echo "❌ FAIL — Product-facing PR requires a PR-diff IAA assurance artifact with split verdict fields."
+  echo "   No added/modified IAA token/wave-record file was found in this PR diff."
   exit 1
 fi
 
@@ -299,7 +312,7 @@ echo "✅ IAA Functional Verdict gate: PASS"
 # ---------------------------------------------------------------------------
 # Gate 5: Placeholder honesty
 # ---------------------------------------------------------------------------
-placeholder_regex='not yet wired|placeholder|TODO backend'
+placeholder_regex='not yet wired|TODO[[:space:]:_-]*backend|placeholder[[:space:]]+(wiring|implementation|backend)|temporary[[:space:]]+(stub|shim)'
 pass_claim_regex='FUNCTIONAL_PASS:[[:space:]]*yes|FULL_FUNCTIONAL_DELIVERY|functional PASS|full functional delivery|100% build|one-time build|complete product workflow'
 partial_allowed=false
 
@@ -312,16 +325,18 @@ fi
 PLACEHOLDER_FOUND=false
 PASS_CLAIM_FOUND=false
 
-while IFS= read -r file; do
-  [ -z "$file" ] && continue
-  [ -f "$file" ] || continue
-  if grep -qiE "$placeholder_regex" "$file"; then
-    PLACEHOLDER_FOUND=true
-  fi
-  if grep -qiE "$pass_claim_regex" "$file"; then
-    PASS_CLAIM_FOUND=true
-  fi
-done <<< "$(printf "%s\n%s\n" "$CHANGED_FILES" "$EVIDENCE_PATH")"
+if [ -f "$EVIDENCE_PATH" ] && grep -qiE "$placeholder_regex" "$EVIDENCE_PATH"; then
+  PLACEHOLDER_FOUND=true
+fi
+if [ -f "$EVIDENCE_PATH" ] && grep -qiE "$pass_claim_regex" "$EVIDENCE_PATH"; then
+  PASS_CLAIM_FOUND=true
+fi
+if [ -n "$PR_BODY" ] && echo "$PR_BODY" | grep -qiE "$placeholder_regex"; then
+  PLACEHOLDER_FOUND=true
+fi
+if [ -n "$PR_BODY" ] && echo "$PR_BODY" | grep -qiE "$pass_claim_regex"; then
+  PASS_CLAIM_FOUND=true
+fi
 
 if [ "$PLACEHOLDER_FOUND" = true ] && [ "$PASS_CLAIM_FOUND" = true ] && [ "$partial_allowed" = false ]; then
   echo "❌ FAIL — Placeholder Honesty gate."

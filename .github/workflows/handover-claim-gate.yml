@@ -334,8 +334,8 @@ jobs:
             const snapshotIaaRequired = asBoolYesNo(snapshot.IAA_REQUIRED);
             const snapshotEcapArtifactPresent = asBoolYesNo(snapshot.ECAP_ARTIFACT_PRESENT);
             const snapshotIaaArtifactPresent = asBoolYesNo(snapshot.IAA_ARTIFACT_PRESENT);
-            const hasEcapEvidenceByChecks = !failing.some((f) => f.name === 'preflight/ecap-admin-ceremony') && !pending.some((p) => p.name === 'preflight/ecap-admin-ceremony');
-            const hasIaaEvidenceByChecks = !failing.some((f) => f.name === 'preflight/iaa-final-assurance') && !pending.some((p) => p.name === 'preflight/iaa-final-assurance');
+            const hasEcapEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/ecap-admin-ceremony') && !pending.some((p) => p.name === 'preflight/ecap-admin-ceremony') && !missing.some((m) => m.name === 'preflight/ecap-admin-ceremony');
+            const hasIaaEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/iaa-final-assurance') && !pending.some((p) => p.name === 'preflight/iaa-final-assurance') && !missing.some((m) => m.name === 'preflight/iaa-final-assurance');
 
             if (!isIssueComment) {
               preconditionFailures.push('Handover trigger came from ready_for_review without required current-head snapshot comment.');

@@ -12,7 +12,7 @@ A PR is treated as product-facing when it changes one or more of:
 - `apps/**`, `modules/MMM/**`, `packages/**` product code paths
 - frontend/runtime code files (`.ts/.tsx/.js/.jsx`) in app/page/component/route/api locations
 - `supabase/functions/**`
-- markdown files that claim product delivery outcomes (e.g., full functional delivery / functional PASS claims)
+- explicit PR body claim markers (for example `Functional-Delivery-Artifact: ...`, `FUNCTIONAL_PASS: yes`, or `VERDICT: FULL_FUNCTIONAL_DELIVERY`)
 
 Governance-only or admin-only PRs are not classified as product-facing unless they assert product-delivery completion claims.
 

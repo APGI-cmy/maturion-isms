@@ -26,6 +26,12 @@ run_test() {
   git config user.name "Test User"
   mkdir -p .functional-delivery .agent-admin/assurance apps/mmm/src apps/mmm/tests governance/checklists governance/templates docs/governance .agent-workspace/foreman-v2/knowledge
   echo "init" > README.md
+  cat > .agent-admin/assurance/iaa-token-historical.md << 'EOF'
+PHASE_B_BLOCKING_TOKEN: IAA-session-historical-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
   git add .
   git commit -q -m "init"
   git branch -M main
@@ -137,6 +143,10 @@ seed_product_change_with_cta() {
   cat > apps/mmm/src/Page.tsx << 'EOF'
 export const Page = () => <button onClick={() => fetch('/api/frameworks/init')}>Run</button>;
 EOF
+  mkdir -p api/frameworks
+  cat > api/frameworks/init.ts << 'EOF'
+export default function handler(_req, res) { res.status(200).json({ ok: true }) }
+EOF
   cat > apps/mmm/tests/page.test.ts << 'EOF'
 it('calls framework init route', () => {
   expect('/api/frameworks/init').toBe('/api/frameworks/init')
@@ -187,6 +197,22 @@ t3_invented_endpoint_without_tests() {
 }
 run_test "T3 guarded endpoint no test proof -> FAIL" 1 t3_invented_endpoint_without_tests
 
+t3b_frontend_route_with_test_but_no_backend_impl() {
+  cat > apps/mmm/src/Page.tsx << 'EOF'
+export const Page = () => <button onClick={() => fetch('/api/organisations')}>Create org</button>;
+EOF
+  cat > apps/mmm/tests/page.test.ts << 'EOF'
+it('references organisations route', () => {
+  expect('/api/organisations').toBe('/api/organisations')
+})
+EOF
+  seed_valid_evidence
+  seed_valid_iaa
+  git add .
+  git commit -q -m "frontend route string with test but no backend implementation"
+}
+run_test "T3b guarded endpoint must have backend implementation proof -> FAIL" 1 t3b_frontend_route_with_test_but_no_backend_impl
+
 t4_iaa_generic_pass_only() {
   seed_product_change_with_cta
   seed_valid_evidence
@@ -198,6 +224,14 @@ EOF
   git commit -q -m "generic iaa pass only"
 }
 run_test "T4 IAA token without split verdict fields -> FAIL" 1 t4_iaa_generic_pass_only
+
+t4b_no_iaa_file_in_diff_even_if_repo_has_old_token() {
+  seed_product_change_with_cta
+  seed_valid_evidence
+  git add .
+  git commit -q -m "product change without updated iaa artifact"
+}
+run_test "T4b product PR without PR-diff IAA artifact -> FAIL" 1 t4b_no_iaa_file_in_diff_even_if_repo_has_old_token
 
 t5_placeholder_with_full_claim() {
   seed_product_change_with_cta
@@ -263,6 +297,26 @@ EOF
   git commit -q -m "partial scope declaration"
 }
 run_test "T6 explicit partial scope with CS2 acceptance -> PASS" 0 t6_partial_scope_allowed
+
+t6b_ui_placeholder_prop_should_not_trigger_placeholder_honesty() {
+  mkdir -p api/frameworks
+  cat > apps/mmm/src/Page.tsx << 'EOF'
+export const Page = () => <input placeholder="Type framework name" onChange={() => fetch('/api/frameworks/init')} />;
+EOF
+  cat > apps/mmm/tests/page.test.ts << 'EOF'
+it('calls framework init route', () => {
+  expect('/api/frameworks/init').toBe('/api/frameworks/init')
+})
+EOF
+  cat > api/frameworks/init.ts << 'EOF'
+export default function handler(_req, res) { res.status(200).json({ ok: true }) }
+EOF
+  seed_valid_evidence
+  seed_valid_iaa
+  git add .
+  git commit -q -m "ui placeholder attribute with complete evidence"
+}
+run_test "T6b UI placeholder prop alone -> PASS" 0 t6b_ui_placeholder_prop_should_not_trigger_placeholder_honesty
 
 t7_full_valid() {
   seed_product_change_with_cta
