@@ -1304,10 +1304,10 @@ The system shall enforce the following lifecycle removal semantics for all entit
 - An archived project may be **restored** to active status by `org_admin` or `cs2_admin`. Restoration creates an audit log entry.
 
 #### Milestones / Deliverables / Tasks
-- **Soft delete (cancel)** is the preferred removal action. Soft-deleting a milestone, deliverable, or task sets its status to `cancelled` and removes it from active list views; it remains in history and audit records.
+- **Soft delete (cancel)** is the preferred removal action. For **tasks**, soft-delete sets task status to `cancelled` and removes the task from active list views while preserving it in history and audit records. For **milestones** and **deliverables**, soft-delete does not introduce a new status value; instead, the item shall be marked as cancelled via lifecycle metadata (for example `is_cancelled`, `cancelled_at`, `cancelled_by`) and removed from active list views while remaining available in history and audit records.
 - **Hard delete** of milestones, deliverables, or tasks is prohibited if the item has child records, approved evidence items, or audit entries.
 - **Cascade behaviour**: Cancelling a milestone cascades to offer the user the choice to cancel all child deliverables and tasks, or leave them active (with a warning that they are now orphaned from their parent milestone's completion path).
-- Cancelled items may be **restored** to their prior status by a user with `deliverable_leader` role or above for tasks; `project_leader` for deliverables and milestones. Restoration creates an audit log entry and triggers a review of progress roll-up recalculation.
+- Cancelled items may be **restored** by a user with `deliverable_leader` role or above for tasks; `project_leader` for deliverables and milestones. For tasks, restoration returns the task to its prior valid task status. For milestones and deliverables, restoration clears the cancellation lifecycle metadata and returns the item to the active view. Restoration creates an audit log entry and triggers a review of progress roll-up recalculation.
 
 #### Evidence Items
 - Evidence items (files, URLs, notes) are **never hard-deleted** through the normal user interface.
