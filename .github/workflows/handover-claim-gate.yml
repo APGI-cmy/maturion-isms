@@ -303,7 +303,7 @@ jobs:
             };
 
             const readSnapshotField = (fieldName) => {
-              const m = commentBody.match(new RegExp(`^\\s*(?:[-*]\\s*)?${escapeRegex(fieldName)}:\\s*(.+)\\s*$`, 'im'));
+              const m = commentBody.match(new RegExp(`^\\s*(?:[-*]\\s+)?${escapeRegex(fieldName)}:\\s*(.+)\\s*$`, 'im'));
               return m ? m[1].trim() : '';
             };
             const isNonEmptySignal = (value) => {
