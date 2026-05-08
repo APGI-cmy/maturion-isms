@@ -24,6 +24,9 @@
 | Cross-artifact consistency table | [path or "embedded in reconciliation summary"] | ✓/✗ |
 | Ripple assessment block | [path or "embedded" or "N/A — no PUBLIC_API changes"] | ✓/✗ |
 | §4.3e gate run evidence | [path or "confirmed via ECAP reconciliation summary"] | ✓/✗ |
+| Current-head SHA snapshot evidence | [path/section] | ✓/✗ |
+| Post-push SHA and freshness evidence | [path/section] | ✓/✗ |
+| Failing/pending/missing checks report | [path/section] | ✓/✗ |
 
 ---
 
@@ -50,6 +53,8 @@
 | 4 | Stage-readiness tables and final handback wording tell one coherent post-token story | CONFIRMED / FAILED |
 | 5 | "IAA Agent Response (verbatim)" sections contain actual IAA response text, not instruction prose | CONFIRMED / FAILED |
 | 6 | Any "carried forward" / "verbatim from canonical source" claims verified against cited source | CONFIRMED / N/A |
+| 7 | Gate evidence includes run IDs, snapshot SHA, and post-push SHA with refresh status | CONFIRMED / FAILED |
+| 8 | Any failing/pending/missing checks are explicitly listed (or confirmed as none) | CONFIRMED / FAILED |
 
 **Post-Token Normalization Verdict**: `CONFIRMED` | `FAILED — [list each failed check]`
 

@@ -27,6 +27,12 @@ opojd_compliance:       CONFIRMED            # CONFIRMED | VIOLATED (violated mu
 ## Gate Results
 merge_gate_verdict:     PASS                 # PASS | FAIL
 pre_iaa_commit_state:   PASS                 # PASS | FAIL
+gate_snapshot_head_sha: <HEAD_SHA_AT_GATE_RUN>  # required: exact SHA used when gate results were collected
+post_push_head_sha:     <HEAD_SHA_AFTER_LAST_PUSH> # required: verify evidence freshness after final push
+scope_fresh_at_head_sha: YES                 # YES | NO — scope declaration reflects post_push_head_sha
+evidence_refresh_status: REFRESHED           # REFRESHED | STALE (STALE is BLOCKING)
+gate_run_ids:           [<run-id-1>, <run-id-2>] # CI run IDs used in this proof (or [] if local-only)
+failing_pending_missing_checks: none         # list check names still failing/pending/missing, or 'none'
 scope_declaration_parity: PASS              # PASS | FAIL | N/A
 scope_refreshed_post_final_edit: YES        # YES | NO — §4.3g: SCOPE_DECLARATION.md refreshed from final diff after all edits; AAP-28 auto-fail if NO or absent; BLOCKING — Foreman must reject handover if NO
 admin_ceremony_compliance: PASS             # PASS | FAIL | N/A (ECAP jobs only)
@@ -118,6 +124,11 @@ If `ecap_required: YES` and `ecap_invoked: NO` and `ecap_waiver_ref: none` → *
 > a separate blocker (AAP-28).
 
 **Timestamp (check run)**: [YYYY-MM-DD HH:MM:SS UTC — record exact time; must postdate the last SCOPE_DECLARATION.md commit]
+**Gate snapshot head SHA**: [exact SHA used at evidence/gate snapshot time]
+**Post-push head SHA**: [exact SHA after final push; must match current branch head]
+**Evidence refresh status**: [REFRESHED / STALE — if STALE, handover is blocked]
+**Gate run IDs**: [[run IDs or URLs used for this snapshot], or "local-only"]
+**Failing/pending/missing checks at snapshot**: [none / list check contexts]
 **Command**: [`<exact command executed>` — record the full local command exactly as run, e.g. `.github/scripts/validate-governance-evidence-exactness.sh` or `.github/scripts/refresh-scope-and-validate.sh`]
 **Exit code**: [0 = PASS / 1 = FAIL]
 **Scope refreshed after final edit**: [YES — SCOPE_DECLARATION.md refreshed from final diff and committed as last action / NO — BLOCKED]

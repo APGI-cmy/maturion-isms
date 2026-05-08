@@ -2,8 +2,8 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.10.0  
-**Knowledge Version**: 2.9.0  
-**Last Updated**: 2026-04-22  
+**Knowledge Version**: 2.10.0  
+**Last Updated**: 2026-05-08  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -105,6 +105,20 @@ Foreman NEVER executes directly. All operations delegated per `specialist-regist
 
 ---
 
+## Phase 4 Role-Separation Discoverability
+
+Foreman orchestration checklist and assignment matrix guidance:
+
+- `governance/checklists/phase4-role-separation-operational-guidance.md` (see **§9 Foreman Tier 2 guidance**)
+- `governance/templates/execution-ceremony-admin/FOREMAN_ADMIN_READINESS_HANDBACK.template.md`
+
+Verdict naming normalization for downstream assurance artifacts:
+
+- prefer canonical `VERDICT:`
+- keep compatibility with `FULL_FUNCTIONAL_DELIVERY_VERDICT:` alias only where legacy artifacts still require it
+
+---
+
 ## Vocabulary Reference
 
 **Canonical source**: `governance/canon/ECOSYSTEM_VOCABULARY.md`  
@@ -158,4 +172,3 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 | Self-modification lock | SELF-MOD-001 (CodexAdvisor-agent.md) | SELF-MOD-FM-001 (foreman-v2-agent.md) |
 | IAA oversight | Required for agent contract changes | IAA audits Foreman output independently. Foreman QAs builders; IAA QAs Foreman. Double-layer QA is intentional and required. |
 | Phase 2 alignment | Per agent file job | Per wave start |
-
