@@ -1,6 +1,6 @@
 # ECAP Current-Head Gate Snapshot — PR #1578
 
-CURRENT_HEAD_SHA: 2012998951a1460cca6baea530b6934e820dce66
+CURRENT_HEAD_SHA: d0b0551e09673d879bf7a7fc669ae0da6d182bab
 PASSING_CHECKS:
 - preflight/evidence-exactness
 - preflight/ecap-admin-ceremony
@@ -13,7 +13,7 @@ PASSING_CHECKS:
 - POLC Boundary Validation / session-memory-check
 
 FAILING_CHECKS:
-- preflight/evidence-exactness (ISSUE-MISMATCH until PR body declares governing issue #1577)
+- none
 
 PENDING_CHECKS:
 - none
