@@ -370,8 +370,12 @@ IAA will challenge the following at handover:
 
 ## REJECTION_HISTORY
 
-> **[PLACEHOLDER]** — No rejections recorded at pre-brief time.
-> Rejection findings, if any, will be appended here during handover assurance.
+**Rejection 1**: IAA-session-pit-prebuilt-retrofit-20260508-FAIL-20260508
+- FAIL-1 (A-021): ECAP bundles staged but not committed before IAA invocation
+- FAIL-2 (A-026): Scope declaration listed uncommitted files
+- FAIL-3 (ACR-01): Dependent on FAIL-1
+- Substantive content: PASS (all OVL-PBG checks passed)
+- Resolution: Committed all staged/untracked files; re-invoking IAA
 
 ---
 
