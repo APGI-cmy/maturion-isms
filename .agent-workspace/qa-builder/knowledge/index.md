@@ -2,8 +2,8 @@
 
 **Agent**: qa-builder
 **Contract Version**: 4.0.0
-**Knowledge Version**: 1.0.0
-**Last Updated**: 2026-02-25
+**Knowledge Version**: 1.1.0
+**Last Updated**: 2026-05-08
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -12,7 +12,7 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 | PRESENT |
+| `index.md` (this file) | Knowledge entry point and version reference | 1.1.0 | PRESENT |
 
 ---
 
@@ -40,6 +40,22 @@ A prose narrative attestation is non-compliant from 2026-02-25 forward.
 QA Builder implements performance testing, security scanning, accessibility auditing,
 compliance validation, and regression management. Operates under Foreman supervision.
 Build Philosophy: Architecture → QA-to-Red → Build-to-Green → Validation.
+
+---
+
+## Phase 4 Role-Separation Discoverability
+
+QA Builder functional-behaviour guidance for the role-separated model is maintained at:
+
+- `governance/checklists/phase4-role-separation-operational-guidance.md` (see **§7 Builder QA Agent Tier 2 guidance**)
+
+When producing product-facing evidence, align output with the verdict split expected by Phase 5 gates:
+
+- `ADMIN_PASS: yes/no`
+- `FUNCTIONAL_PASS: yes/no`
+- `VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL`
+
+(`FULL_FUNCTIONAL_DELIVERY_VERDICT:` remains accepted as alias where legacy templates still include it.)
 
 ---
 
