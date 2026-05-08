@@ -792,6 +792,32 @@ jobs:
           chmod +x .github/scripts/validate-simple-pr-admin.sh
           .github/scripts/validate-simple-pr-admin.sh
 
+  # ============================================================================
+  # Phase 5 Product Delivery Gates (maturion-isms#1573)
+  # CTA mapping, endpoint integrity, functional evidence, IAA split verdict,
+  # and placeholder honesty for product-facing PRs.
+  # ============================================================================
+  product-delivery-gates:
+    name: "preflight/product-delivery-gates"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Product Delivery Gate Suite
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          chmod +x .github/scripts/validate-product-delivery-gates.sh
+          .github/scripts/validate-product-delivery-gates.sh
+
 
   # ============================================================================
   # Gate-changing PR rule (maturion-isms#1542)
