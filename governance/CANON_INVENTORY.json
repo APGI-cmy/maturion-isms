@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-05-04",
-  "total_canons": 200,
-  "generation_timestamp": "2026-05-04T14:55:00Z",
+  "last_updated": "2026-05-07",
+  "total_canons": 201,
+  "generation_timestamp": "2026-05-07T12:34:45Z",
   "canons": [
     {
       "filename": "ACTIVATION_STATE_MODEL.md",
@@ -185,7 +185,7 @@
       "version": "1",
       "file_hash": "963eed45e027e02a3ae595d5043ec09b4e604203eec71f7de790bbd4d0675e18",
       "effective_date": "unknown",
-      "description": "This document defines the only legitimate process by which software agents may be introduced (\u201crecruited\u201d) into the governance system administered by the Foreman.",
+      "description": "This document defines the only legitimate process by which software agents may be introduced (“recruited”) into the governance system administered by the Foreman.",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT.md",
       "layer_down_status": "PUBLIC_API",
@@ -284,7 +284,7 @@
       "version": "1.0.0",
       "file_hash": "dfe539fe290148e6e7c9112fa269b5cd0124c456954de1d75c9a7870cd79b2dc",
       "effective_date": "2026-02-23",
-      "description": "This document defines the **Maturion AI Management Centre (AIMC)** \u2014 a centralised AI capability platform that serves as the single, governed integration point for all AI capabilities across the Ma...",
+      "description": "This document defines the **Maturion AI Management Centre (AIMC)** — a centralised AI capability platform that serves as the single, governed integration point for all AI capabilities across the Ma...",
       "type": "canon",
       "path": "governance/canon/AIMC_STRATEGY.md",
       "layer_down_status": "PUBLIC_API",
@@ -512,7 +512,7 @@
     },
     {
       "filename": "COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
-      "version": "1.1.0 \u2014 ACTIVE OPERATIONAL GOVERNANCE",
+      "version": "1.1.0 — ACTIVE OPERATIONAL GOVERNANCE",
       "file_hash": "2a25d4c67b1efcbc5a2bfa7fd635597aafecdbb7350868f124ea7694c324e0c7",
       "effective_date": "2026-01-03 (Activation), 2025-12-24 (Original)",
       "description": "This document formally defines the **Cognitive Capability Orchestration Model** for the Maturion ecosystem.",
@@ -812,7 +812,7 @@
       "version": "1.2.0",
       "file_hash": "252ac6e167e0913e56e08c1555b8dce87e47cf0176ec6dbbe9d3d0328e813f7a",
       "effective_date": "2026-04-08",
-      "description": "This protocol defines the **canonical role, authority boundaries, and handover sequence** for the `execution-ceremony-admin-agent` \u2014 an administrator-class agent appointed to own **job-administrati...",
+      "description": "This protocol defines the **canonical role, authority boundaries, and handover sequence** for the `execution-ceremony-admin-agent` — an administrator-class agent appointed to own **job-administrati...",
       "type": "canon",
       "path": "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
       "layer_down_status": "PUBLIC_API",
@@ -974,14 +974,14 @@
     },
     {
       "filename": "FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
-      "version": "1.0.0",
-      "file_hash": "7a71beefcc7eab51f99cb8d0865585cf4a6450304e9cf1ae07dfa4deb731d69c",
-      "effective_date": "2026-02-16",
+      "version": "2.0.0",
+      "file_hash": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871",
+      "effective_date": "2026-05-07",
       "description": "This standard establishes explicit definitions and enforcement mechanisms for \"fully functional\" delivery across design, implementation, and deployment phases.",
       "type": "canon",
       "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "7a71beefcc7eab51f99cb8d0865585cf4a6450304e9cf1ae07dfa4deb731d69c"
+      "file_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871"
     },
     {
       "filename": "GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md",
@@ -1041,13 +1041,13 @@
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
+      "file_hash": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a"
+      "file_hash_sha256": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -1238,21 +1238,21 @@
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.8.0 | **Authority**: CS2",
-      "file_hash": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
+      "version": "1.9.0 | **Authority**: CS2",
+      "file_hash": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
       "effective_date": "unknown",
       "description": "Canonical governance document: INDEPENDENT_ASSURANCE_AGENT_CANON",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78"
+      "file_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
       "version": "1.0",
       "file_hash": "23d86014f109ddcd13fb2ade8c3a911deb698d04e772563b570b12fa67b9320a",
       "effective_date": "unknown",
-      "description": "This document defines the **Initialization Completeness Gate** \u2014 a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
+      "description": "This document defines the **Initialization Completeness Gate** — a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
       "type": "canon",
       "path": "governance/canon/INITIALIZATION_COMPLETENESS_GATE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1480,14 +1480,14 @@
     },
     {
       "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
-      "version": "1.2.0",
-      "file_hash": "69f5382abb983bab003ae5d3036213858c83acc9407acf927e5aad0ea94bf936",
+      "version": "1.1.0",
+      "file_hash": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251",
       "effective_date": "2026-05-04",
       "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL",
       "type": "canon",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
-      "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "69f5382abb983bab003ae5d3036213858c83acc9407acf927e5aad0ea94bf936"
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251"
     },
     {
       "filename": "MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
@@ -1549,7 +1549,7 @@
       "version": "1.0.0",
       "file_hash": "1faef6d0741cf3b67b98eb0b7419d4fe4f98eb73ee0a89e8786c39d6e06e576d",
       "effective_date": "2025-12-25",
-      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** \u2014 execution authority within repositories\n- **Maturion** \u2014 control-plane authority for platform actions (GitHub)",
+      "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** — execution authority within repositories\n- **Maturion** — control-plane authority for platform actions (GitHub)",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
       "layer_down_status": "PUBLIC_API",
@@ -1565,6 +1565,17 @@
       "path": "governance/canon/PLATFORM_READINESS_FOR_GOVERNED_BUILD_EXECUTION.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "c3837f94ce8b65e749bcff3acfc94690b77f1d8d6879355557c7b0bc55b8852b"
+    },
+    {
+      "filename": "POLC_EXECUTION_MODEL_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "3e4294c8549d814a51f4b35e6d85a3f1bf588b82d2c44a333547a55f01bf5db6",
+      "effective_date": "2026-05-06",
+      "description": "This canon establishes the **explicit execution model** requirement for any PR that changes implementation files.",
+      "type": "canon",
+      "path": "governance/canon/POLC_EXECUTION_MODEL_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "3e4294c8549d814a51f4b35e6d85a3f1bf588b82d2c44a333547a55f01bf5db6"
     },
     {
       "filename": "POST_MORTEM_PROTOCOL.md",
@@ -1780,7 +1791,7 @@
       "version": "1",
       "file_hash": "d2c96ce6d14c34e28ff79c39c7c97f69ffbf9a905fff32feaf8d310f3f5825ed",
       "effective_date": "unknown",
-      "description": "This rule enforces alignment between a PR\u2019s declared scope\nand the files actually modified in the PR.",
+      "description": "This rule enforces alignment between a PR’s declared scope\nand the files actually modified in the PR.",
       "type": "canon",
       "path": "governance/canon/SCOPE_TO_DIFF_RULE.md",
       "layer_down_status": "PUBLIC_API",
@@ -1857,7 +1868,7 @@
       "version": "1.0.0 | **Authority**: CS2 (Johan Ras)",
       "file_hash": "410370f548ca3431ab695070f3061be0259279095d2d3ce15cf9bedfd7529796",
       "effective_date": "unknown",
-      "description": "This policy expands the **'We Only Fail Once'** breach registry and preflight attestation requirement\u2014previously mandated only for the Foreman agent\u2014to **every agent class** in the Living Agent Sys...",
+      "description": "This policy expands the **'We Only Fail Once'** breach registry and preflight attestation requirement—previously mandated only for the Foreman agent—to **every agent class** in the Living Agent Sys...",
       "type": "canon",
       "path": "governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md",
       "layer_down_status": "PUBLIC_API",
@@ -2096,7 +2107,7 @@
     },
     {
       "filename": "scope-declaration.template.md",
-      "version": "2.0.0 | Amended: 2026-04-29 \u2014 per-PR immutable scope declaration format; authority: CS2 \u2014 issue #1359 -->",
+      "version": "2.0.0 | Amended: 2026-04-29 — per-PR immutable scope declaration format; authority: CS2 — issue #1359 -->",
       "file_hash": "f233e0bd21d745f5e2df0d0c9625913168a2ff94baa77e790084485c78afdf53",
       "effective_date": "unknown",
       "description": "Canonical governance document: scope-declaration.template",

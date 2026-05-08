@@ -9,13 +9,18 @@
     ".agent-admin/scope-declarations/pr-1557.md",
     ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage3-frs-hardening-20260507.md",
     ".agent-workspace/foreman-v2/memory/session-pit-stage3-frs-hardening-20260507.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-iaa-pit-stage3-frs-hardening-20260507.md",
     "modules/pit/02-frs/functional-requirements.md",
     "modules/pit/BUILD_PROGRESS_TRACKER.md"
   ],
   "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "implementing_agent": "foreman-v2-agent",
+  "orchestrating_agent": "foreman-v2-agent",
   "evidence_required": [
     "modules/pit/02-frs/functional-requirements.md version is v0.2-hardened",
     "modules/pit/02-frs/functional-requirements.md contains PIT-FR-001 through PIT-FR-123 (123 requirements)",

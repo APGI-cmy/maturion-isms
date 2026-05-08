@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-04-30
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE)
+**Last Updated**: 2026-05-07  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -511,7 +511,69 @@ The following live operational confirmation items are still required before MMM 
 | OC-006 | GitHub secrets aligned | ⚠️ PARTIALLY CONFIRMED — CS2 SIGN-OFF NEEDED | Agent-verifiable evidence shows secrets required by `deploy-mmm-vercel.yml`, `deploy-mmm-supabase-migrations.yml`, `deploy-mmm-edge-functions.yml`, and `deploy-mmm-ai-gateway.yml` are present because those workflows executed successfully (Runs #90, #11, #9, #22, 2026-05-06). However, this remains pending CS2 live platform sign-off, and `RENDER_SERVICE_ID_STAGING`, `RENDER_SERVICE_URL_STAGING`, `LIVENESS_TEST_EMAIL`, and `LIVENESS_TEST_PASSWORD` were not verified in recent runs. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
 | OC-007 | AIMC / PIT live endpoint values confirmed | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | AIMC Render gateway health check HTTP 200 (CI Run #22, 2026-05-06) — `RENDER_SERVICE_URL` is live. `PIT_BASE_URL` still PENDING — not present in any agent-accessible CI log. CS2 must confirm PIT endpoint deployment and set `PIT_BASE_URL` secret. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
 | OC-008 | External service envs on Render confirmed | ⚠️ PARTIALLY CONFIRMED — CS2 VERIFICATION NEEDED | Render service health check HTTP 200 (CI Run #22, 2026-05-06). `RENDER_API_KEY`, `RENDER_SERVICE_ID`, `RENDER_SERVICE_URL`, `SUPABASE_SERVICE_ROLE_KEY` all present. `AIMC_SERVICE_TOKEN`, `PIT_SERVICE_TOKEN` are masked — cannot verify values. CS2 must confirm these are set correctly in Render service env vars. Evidence: `modules/MMM/evidence/oc-001-008-agent-verification-20260506.md` |
-| OC-009 | Live E2E validation run at least once | ⚠️ PENDING — BLOCKED BY PRODUCT DEFECTS | Blocked: (1) MMM Edge Functions not deployed (only `invoke-ai-parse-criteria` deployed; all `mmm-*` functions return 404); (2) Vercel SPA routing broken for direct sub-path navigation. E2E not demonstrable until product-fix queue below is addressed. |
+| OC-009 | Live E2E validation run at least once | ⚠️ PARTIALLY VALIDATED — BLOCKED BY FUNCTIONAL WIRING DEFECTS | Deployment/routing is no longer the primary blocker; UI routes now render. Current blocker is incomplete frontend↔backend functional wiring: framework upload/generation modes do not complete against real backend capabilities, onboarding Continue does not complete the intended flow, and dashboard state remains functionally incomplete. |
+
+## 2026-05-07 Functional Delivery Failure Record — MMM Frameworks / Upload / OC-009
+
+**Status**: FAIL-ONCE RECORD — FOUNDATION HARDENING REQUIRED BEFORE NEXT PRODUCT BUILD  
+**Detected By**: CS2 live deployment validation  
+**Related PRs**: APGI-cmy/maturion-isms#1553  
+**Related Issue**: APGI-cmy/maturion-isms#1552  
+**Affected OC Item**: OC-009 live E2E validation  
+**Classification**: Functional delivery failure despite administratively green PR
+
+### Summary
+
+The MMM Frameworks and Framework Source upload UI rendered after deployment, but the live workflow was not functionally complete.
+
+Observed live behaviour:
+
+- `/frameworks` rendered an improved empty-state page.
+- `/frameworks/upload` rendered styled Mode A / Mode B / Mode C selector cards.
+- Mode A, Mode B, and Mode C did not execute the intended workflows.
+- Upload/chunk/parse subject-knowledge workflow was not available.
+- AI-generated framework workflow did not navigate to the maturity model/domain/MPS/criteria workflow.
+- Organisation setup Continue did not complete the expected onboarding path.
+- Dashboard remained functionally incomplete.
+- OC-009 could not be marked PASS.
+
+### Root Cause
+
+The build process allowed a visually improved UI shell to pass as product delivery without proving full functional delivery.
+
+Specific causes:
+
+1. Frontend actions were wired to missing or incorrect `/api/...` routes rather than the deployed MMM backend capabilities.
+2. The UI did not include the actual document upload, chunking, parsing, or review workflow.
+3. AI framework generation was not wired to the legacy maturity model/domain/MPS/criteria pages.
+4. Organisation onboarding was not proven live end-to-end.
+5. Dashboard data loading was not proven against a real backend contract.
+6. IAA assurance focused on admin correctness, PR evidence, SHAs, scope exactness, and role evidence, but did not block the PR for incomplete functional delivery.
+7. QA-to-Red and pre-build artifacts did not force a visible CTA/API/workflow completion proof before merge.
+
+### Fail-Only-Once Rule
+
+This failure class must not recur.
+
+Future product PRs must not be considered complete unless they prove:
+
+- every visible CTA has a real implemented action;
+- every frontend action maps to an existing deployed backend capability;
+- every required user journey has loading, success, failure, and next-state handling;
+- live or preview evidence demonstrates the promised workflow;
+- IAA explicitly issues a functional delivery verdict, not only an admin assurance verdict.
+
+### Immediate Remediation Order
+
+1. Harden governance canon for full functional delivery.
+2. Retrofit all 12 MMM pre-build artifacts from App Description through Build Execution.
+3. Clarify Admin Ceremony, ECAP, IAA, Builder QA, Builder, and Foreman role boundaries.
+4. Update gates/templates so IAA cannot issue product PASS without functional evidence.
+5. Only then resume the P4 product wiring fix.
+
+### Phase 0 Temporary Build Freeze
+
+Effective immediately, only emergency-only remediation PRs or explicitly partial/visual-shell PRs are admissible until foundation hardening is in motion and the remediation order above has been formally activated.
 
 **Operational closure criterion**: MMM is operationally closed (L3) when all 9 items above are evidenced as CONFIRMED by CS2 live platform sign-off and this table is updated with confirmation timestamps and evidence references.
 
@@ -658,11 +720,11 @@ The following settings/secrets are NOT agent-verifiable due to masking or permis
 ## Current Stage Summary
 
 **Current Stage**: Stage 12 (Build Execution) ACTIVE — B1–B9 ALL COMPLETE (982/982 tests GREEN); B9 QP PASS — all 10 golden paths GREEN; CG-003/CG-004 declared; NBR-001/002/003 verified. Phase 4 ECAP ceremony bundle committed; IAA Final Audit COMPLETE — ASSURANCE-TOKEN: IAA-session-mmm-stage12-build-execution-20260420-PASS. PR #1429 MERGED 2026-04-21 by CS2 (APGI-cmy). **MMM is at L1 (Build-Complete). Operational closure (L3) requires §12.2 OC-001 through OC-009 confirmed (see §12.2 and §12.3 below).** Vercel frontend deployment path now functioning (wave: align-vercel-deployment-workflow-20260422, PR #1454). **Backend deployment alignment COMPLETE** (wave mmm-post-stage12-backend-alignment-20260422, issue #1455, 2026-04-22) — MAT-era deployment workflows renamed to MMM-era; deployment alignment doc added.
-**Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21) = **L1 Build-Complete**. Vercel frontend deployment path functioning (PR #1454). **OC agent-verification complete (issue #1536, PR #1537, 2026-05-06)**: OC-001–OC-008 all PARTIALLY CONFIRMED — CS2 verification required (agent confirms presence, not correctness; see §12.2a). OC-009 BLOCKED by product defects (Edge Functions not deployed; SPA routing broken). **Operational closure (L3)**: 0/9 OC items confirmed by CS2; 8/9 partially confirmed; 1/9 blocked. CDV tracking document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`. **Deployment alignment**: COMPLETE — all 3 deployment workflows now MMM-aligned.
-**Blockers**: **[ACTIVE] P1 — MMM Edge Functions not deployed**: `deploy-mmm-edge-functions.yml` only deploys `invoke-ai-parse-criteria`; 27 `mmm-*` functions return 404 — this is the root cause of dashboard data-load failure. **[ACTIVE] P2 — Vercel SPA routing broken**: direct navigation to `/dashboard`, `/frameworks`, `/frameworks/upload` returns HTTP 404 (Vercel routing warning: "vercel.json file should be inside provided root directory"). **[ACTIVE] P3 — `NEXT_PUBLIC_SITE_URL` not set**: smoke test defaults to `https://mmm.maturion.com` which does not resolve; live URL is `https://maturity-model-management.vercel.app`. SB-003 E2E: BLOCKED pending Edge Functions deployment + PIT endpoint.
+**Overall Progress**: Build execution 100% complete (B1–B9 DONE; ECAP bundle committed; IAA ASSURANCE-TOKEN issued; PR #1429 MERGED 2026-04-21) = **L1 Build-Complete**. Vercel frontend deployment path functioning (PR #1454). **OC agent-verification complete (issue #1536, PR #1537, 2026-05-06)**: OC-001–OC-008 all PARTIALLY CONFIRMED — CS2 verification required (agent confirms presence, not correctness; see §12.2a). OC-009 PARTIALLY VALIDATED — blocked by functional wiring defects across rendered UI workflows; deployment/routing is no longer the primary blocker. **Operational closure (L3)**: 0/9 OC items confirmed by CS2; 8/9 partially confirmed; 1/9 blocked. CDV tracking document: `modules/MMM/12-phase4-ecap/cdv-staging-validation.md`. **Deployment alignment**: COMPLETE — all 3 deployment workflows now MMM-aligned.
+**Blockers**: **[ACTIVE] P1 — Functional wiring defects across rendered UI workflows**: deployment/routing is no longer the primary blocker; current live blocker is incomplete frontend↔backend workflow wiring where framework upload/generation modes, onboarding Continue, and dashboard state do not complete against real backend capabilities. **[CONTEXT] Prior deployment/routing failures** (Edge Function deployment and direct-route SPA 404s) are historical findings captured in the fail-once record, not the current primary blocker. **[ACTIVE] P2 — `NEXT_PUBLIC_SITE_URL` not set**: smoke test defaults to `https://mmm.maturion.com` which does not resolve; live URL is `https://maturity-model-management.vercel.app`. SB-003 E2E: BLOCKED pending functional wiring completion + PIT endpoint.
 **LKIAC Carry-Over**: ✅ No remaining blockers — CL-3.5 COMPLETE, CL-13 extended scope (D5/D6/D7) COMPLETE (CL-13 core D1–D4 remain PENDING as separate LKIAC items, not MMM blockers). See `modules/MMM/_readiness/lkiac-carryover-closure-note.md`.
 **Open Questions**: All RESOLVED through Stage 5. OQ-001 RESOLVED (Stage 4 TRS — CONNECTIVITY-REQUIRED, TR-039–TR-042). OQ-002 RESOLVED (Stage 5 Architecture — capabilities/index.md legacy sub-folder disposition). OQ-003 RESOLVED (Stage 5 Architecture — duplication audit, architecture.md §A12). OQ-004 through OQ-009 RESOLVED in Stage 3 FRS. See `modules/MMM/harvest-map/harvest-map.md` §Open Questions Register.
-**Last Updated**: 2026-05-06 (OC agent verification complete — OC-001–OC-008 inspected via CI logs/GitHub MCP; OC-001–OC-008 all PARTIALLY CONFIRMED — agent confirms presence/reachability, not correctness; CS2 verification needed for all items (see §12.2a); OC-009 BLOCKED by Edge Functions gap; live UI screenshots captured; Vercel SPA routing failure and missing Edge Functions root-cause identified; product-fix queue documented — issue #1536, PR #1537; previously: 2026-04-23 storage bucket model codified — issue #1458)
+**Last Updated**: 2026-05-07 (functional delivery failure record added for OC-009 (`/frameworks` + `/frameworks/upload` live workflow incompleteness) including fail-once rule, remediation order, and Phase 0 temporary build freeze; previously: 2026-05-06 OC agent verification complete — OC-001–OC-008 inspected via CI logs/GitHub MCP; OC-001–OC-008 all PARTIALLY CONFIRMED — agent confirms presence/reachability, not correctness; CS2 verification needed for all items (see §12.2a); OC-009 BLOCKED by Edge Functions gap; live UI screenshots captured; Vercel SPA routing failure and missing Edge Functions root-cause identified; product-fix queue documented — issue #1536, PR #1537)
 **Phase 4 ECAP Ceremony**:
 - [x] ECAP ceremony bundle committed — execution-ceremony-admin-agent (artifacts in PR #1429, merged 2026-04-21)
 - [x] PREHANDOVER proof: `modules/MMM/12-phase4-ecap/PREHANDOVER.md`
@@ -812,6 +874,29 @@ canonical 12-stage per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. See Stage Migrat
 **MMM Strategy**: MMM (`MMM_strategy.md`) defines the convergence of MAT, Maturity Roadmap, and
 legacy maturity capabilities into a single Maturity Model Management product. Strategy is in
 DRAFT status pending CS2 review and canonisation.
+
+---
+
+**Phase 3 Retrofit (2026-05-07, maturion-isms#1564)**: Wave `mmm-phase3-retrofit-20260507` completed
+a full retrofit of all 12 MMM pre-build artifacts to absorb the Full Functional Delivery governance
+standard. All 12 stages (Stage 1 through Stage 12) were updated in one atomic wave. Key additions:
+
+- **Stage 1** (App Description): Functional Delivery Definition — capability-to-FD map; maturion-isms#1553 failure class
+- **Stage 2** (UX Wiring Spec): CTA/API/Data Contract Matrix — 11 CTAs with full backend targets; mandatory for all future waves
+- **Stage 3** (FRS): FD-STD-001 Full Functional Delivery Standard + FR-FD-001 through FR-FD-007
+- **Stage 4** (TRS): TR-FD-001 through TR-FD-006 Full Functional Delivery Technical Requirements
+- **Stage 5** (Architecture): ARCH-LAW-001 Typed Integration Client Law (constitutional) + Route-to-Capability Map
+- **Stage 6** (QA-to-Red): Domain 12 — 6 new RED tests (T-MMM-S6-FD-001 through FD-006)
+- **Stage 7** (PBFAG): Part F — Full Functional Delivery Gate (FFD Gate) with rejection rule
+- **Stage 8** (Implementation Plan): Wave Functional Completion Standard (mandatory per-wave criteria)
+- **Stage 9** (Builder Checklist): Builder FFD Affirmations (10 mandatory affirmations + sign-off)
+- **Stage 10** (IAA Pre-Brief): IAA Functional Delivery Mandate (FDM Section)
+- **Stage 11** (Builder Appointment): Wave Role Assignment Matrix (5 mandatory roles per wave)
+- **Stage 12** (Build): New file `modules/MMM/11-build/wave-execution-standard.md` — Functional Delivery Evidence Pack (FDEP) standard
+- **Change-Propagation Audit**: New entry filed for this retrofit wave
+
+No existing stage completion statuses changed. This retrofit adds governance guardrails only.
+Governed by PR #1565. Produced by: mat-specialist (delegated by foreman-v2-agent).
 
 ---
 

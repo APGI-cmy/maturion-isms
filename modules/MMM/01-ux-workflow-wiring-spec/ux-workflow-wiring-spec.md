@@ -9,10 +9,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: UX Workflow & Wiring Spec (Stage 2)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.1.0
-- **Date**: 2026-04-13
-- **Owner**: CS2 (Johan Ras / @APGI-cmy)
-- **Produced By**: foreman-v2-agent (POLC-Orchestration mode)
+- **Version**: 0.2.0 (POLC-Orchestration mode)
 - **Issue**: maturion-isms#1352
 - **Upstream Authority**: `MMM_app_description.md` v0.5.0 (CS2-approved)
 - **Inputs Used**:
@@ -1327,6 +1324,38 @@ are deferred to FRS.
 - OQ-007 (switchover gate) → FRS/Architecture
 - OQ-008 (MAT label survival) → FRS
 - OQ-009 (hybrid mode timing) → FRS
+
+---
+
+## CTA/API/Data Contract Matrix (Mandatory)
+
+No CTA may be accepted in any MMM screen without a declared backend target. This matrix is
+mandatory. Any CTA that does not appear in this table is a governance violation and must be
+rejected at PBFAG.
+
+This gate would have failed PR maturion-isms#1553 at Stage 2, before build was authorized.
+A wiring spec that accepts a CTA without a target route is incomplete and must not proceed
+to Stage 3.
+
+### Complete CTA/API/Data Contract Matrix
+
+| CTA | User Intent | Route | Backend Capability | DB/Storage Object | Success State | Failure State |
+|---|---|---|---|---|---|---|
+| Start Free Assessment | Begin unauthenticated assessment | POST /api/free-assessment/start | `mmm-free-assessment` | `free_assessments` | Assessment session created; domain questions shown | Error toast; session not created |
+| Subscribe | Begin subscription flow | POST /api/subscriptions/create | `mmm-subscription-create` | `subscriptions` | Subscription created; onboarding starts | Payment error; subscription not created |
+| Create Organisation | Complete org onboarding | POST /api/organisations/create | `mmm-org-create` | `organisations` | Org record created; framework origin screen shown | Validation error; org not created |
+| Upload Framework Source | Upload existing framework document | POST /api/upload/framework-source | `mmm-upload-framework-source` + parse/chunk pipeline | `document_uploads`, `framework_source_chunks` | Upload accepted; parse/chunk queued | Upload rejected; error toast |
+| Generate Framework (AI) | AI generates framework from org context | POST /api/frameworks/generate | `mmm-ai-framework-generate` | `frameworks`, `domains`, `criteria` | Framework skeleton created; review screen shown | AI error; no framework created |
+| Approve Framework | Approve framework for activation | POST /api/frameworks/{id}/approve | `mmm-framework-approve` | `frameworks.status` | Framework status → approved | Approval rejected; status unchanged |
+| Publish Framework | Make framework live | POST /api/frameworks/{id}/publish | `mmm-publish-framework` | `published_frameworks` | Framework published; dashboard activated | Publishing error; framework remains draft |
+| Attach Evidence | Link evidence artifact to criterion | POST /api/criteria/{id}/evidence | `mmm-evidence-create` | `evidence` | Evidence record created; criterion updated | Evidence rejected; error shown |
+| Request AI Analysis | Get AI analysis of evidence/maturity | POST /api/ai/analyse | AIMC gateway | `ai_requests`, `ai_responses` | AI response shown inline | AI unavailable; fallback message shown |
+| Export to PIT | Export findings to PIT | POST /api/pit/export | `mmm-pit-export` | `pit_export_packages` | Export package created; PIT receives it | Export failed; error with retry option |
+| View Dashboard | See live maturity position | GET /api/dashboard/status | `mmm-qiw-status` | `maturity_scores` aggregate | Dashboard renders with domain scores | Dashboard shows error state; not blank |
+
+For every future wave in MMM: before any CTA is added to any UI screen, it MUST be added to
+this matrix with its full backend target declared. CTA without target = build authorization
+denied.
 
 ---
 

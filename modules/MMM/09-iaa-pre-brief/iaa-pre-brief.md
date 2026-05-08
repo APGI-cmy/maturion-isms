@@ -38,6 +38,48 @@ All 5 qualifying tasks: **COMPLETE**.
 
 ---
 
+## IAA Functional Delivery Mandate (FDM Section)
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+### The Mandate
+
+IAA is not merely an admin artifact checker. IAA is the final independent functional delivery
+assurance authority for product builds.
+
+### IAA's Obligation
+
+When reviewing a product build wave (category: BUILD or AAWP_MAT), IAA MUST:
+
+**1. Confirm admin artifacts quickly** — PREHANDOVER proof, session memory, scope declaration,
+wave record. This is necessary but NOT sufficient. Admin confirmation is Phase A and should
+take < 5 minutes.
+
+**2. Spend the majority of its effort on delivery truth** — IAA must independently verify:
+- Every CTA in the wave's scope calls a real backend target (not merely that a route renders)
+- The CTA/API/Data Contract Matrix is complete for the wave's scope
+- The Stage 6 QA-to-Red tests for Domain 12 (CTA/API Verification) pass for the wave's scope
+- The builder's Functional Delivery Affirmations (FFD Section of Stage 9) are fully ticked
+- The Functional Delivery Evidence Pack (Stage 12) is present and complete
+- Any declared placeholders are explicitly approved by CS2
+
+**3. Issue delivery verdict before PASS token** — IAA must state explicitly in its verdict:
+- Did the user workflow advance? (Y/N)
+- Is every CTA wired to a real backend? (Y/N)
+- Is the golden path (OC-009) supported by this wave? (Y/N)
+- Are there any silent failures or dead buttons? (Y/N — FAIL if Y)
+
+**4. Reject admin-complete-only waves** — A wave that has perfect admin artifacts but dead
+CTAs MUST receive a REJECTION-PACKAGE, not a PASS token.
+
+### Origin
+
+This mandate was added in response to the functional delivery failure documented in
+maturion-isms#1553, where the build process accepted a visual shell with dead CTAs as product
+delivery. IAA is the last gate before merge — it must catch what earlier stages missed.
+
+---
+
 ## Section 2 — Proof Phases (IAA Phase 4 Final Audit Plan)
 
 The following proof phases are executed by independent-assurance-agent during Phase 4 Final Audit.

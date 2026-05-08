@@ -2,8 +2,7 @@
 
 **Module**: MMM — Maturity Model Management
 **Artifact**: QA-to-Red Catalog (Stage 6)
-**Version**: 0.1.0
-**Date**: 2026-04-15
+**Version**: 0.2.0
 **Wave**: mmm-stage6-qa-to-red-20260415
 **Issue**: maturion-isms#1384
 **Produced By**: qa-builder (delegated by foreman-v2-agent v6.2.0)
@@ -27,7 +26,8 @@
 | D9 | Cross-Cutting — Security & Compliance | T-MMM-S6-139–152 | 14 |
 | D10 | Cross-Cutting — Infrastructure & Quality Gates | T-MMM-S6-153–164 | 12 |
 | D11 | Product Identity & Governance | T-MMM-S6-165–176 | 12 |
-| **TOTAL** | | **T-MMM-S6-001–176** | **176** |
+| D12 | Full Functional Delivery Gate (CTA/API Verification) | T-MMM-S6-FD-001–006 | 6 |
+| **TOTAL** | | **T-MMM-S6-001–176 + FD-001–006** | **182** |
 
 **FR Coverage**: 80/80 (100%)
 **TR Coverage**: 66/66 (all security/integration/quality TRs fully covered; all others by domain)
@@ -1333,5 +1333,79 @@
 
 ---
 
+## Domain 12: Full Functional Delivery Gate (CTA/API Verification)
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+> A 'route renders' test is no longer sufficient as a RED gate for this domain. Tests must
+> verify CTA-to-backend wiring, not merely page load. This domain was added in response to
+> the functional delivery failure documented in maturion-isms#1553.
+
+### T-MMM-S6-FD-001 — Every Visible CTA Has A Declared Backend Target
+
+- **Source**: ARCH-LAW-001, TR-FD-001, FD-STD-001 / Stage 2 CTA/API Matrix
+- **Layer**: Unit/Integration
+- **Description**: For every visible CTA button in MMM, verify it is registered in the
+  CTA/API/Data Contract Matrix and has a non-null backend capability declared.
+- **RED Condition**: Any visible CTA found in the DOM without a corresponding matrix entry.
+- **Acceptance Criteria**: CTA matrix coverage check passes — 100% of rendered CTAs have
+  declared targets.
+
+### T-MMM-S6-FD-002 — Every CTA Calls A Real Backend Target (Not 404)
+
+- **Source**: TR-FD-001, TR-FD-002 / Stage 2 CTA/API Matrix
+- **Layer**: Integration
+- **Description**: Click-simulate every CTA. Verify the resulting API call returns a response
+  (even an error response) — NOT a 404, NOT a network connection refused.
+- **RED Condition**: Any CTA triggers a 404 or connection-refused response.
+- **Acceptance Criteria**: Zero 404 or unreachable responses from any CTA-triggered API call.
+
+### T-MMM-S6-FD-003 — Failed Backend Call Shows Visible User Error
+
+- **Source**: TR-FD-005, FD-STD-001(e) / Stage 3 FR-FD-001 through FR-FD-007
+- **Layer**: E2E
+- **Description**: For each CTA-triggered API call, simulate a backend error (500). Verify a
+  user-readable error message appears in the UI within 3 seconds.
+- **RED Condition**: Backend error results in blank screen, silent failure, or console-only
+  error.
+- **Acceptance Criteria**: Every backend error shows a user-readable toast or inline error
+  message.
+
+### T-MMM-S6-FD-004 — Successful Backend Call Updates UI State
+
+- **Source**: TR-FD-001, FD-STD-001(d) / Stage 3 FR-FD-006
+- **Layer**: E2E
+- **Description**: For each mutating CTA (create, upload, approve, publish), simulate a
+  successful backend response. Verify the UI reflects the new state (navigation, count
+  update, status change).
+- **RED Condition**: UI shows no change after successful mutation.
+- **Acceptance Criteria**: Every successful mutation CTA results in visible state change in
+  the UI.
+
+### T-MMM-S6-FD-005 — No Placeholder Counts As Success
+
+- **Source**: FD-STD-001, TR-FD-004 / Stage 8 Wave Functional Completion Standard
+- **Layer**: E2E / Code Review
+- **Description**: Verify no placeholder UI element (static text, hardcoded count, grayed-out
+  CTA) is accepted as functional delivery evidence. Tests must confirm actual data from
+  backend, not static mock.
+- **RED Condition**: Test passes against hardcoded/mocked data instead of live backend data.
+- **Acceptance Criteria**: All CTA tests use real backend responses (integration mode); static
+  mocks prohibited in E2E suite.
+
+### T-MMM-S6-FD-006 — OC-009 Golden Path: Full Live Workflow Proof
+
+- **Source**: FD-STD-001, TR-FD-006 / Stage 2 CTA/API Matrix; maturion-isms#1553
+- **Layer**: E2E (Golden Path)
+- **Description**: Execute the full OC-009 golden path workflow end-to-end: org create →
+  framework init → evidence attach → approval → publish → dashboard live. Verify every step
+  calls its declared backend capability and the system advances state correctly.
+- **RED Condition**: Any step in the golden path fails, is bypassed, or shows placeholder data.
+- **Acceptance Criteria**: Full golden path completes with: org created, framework published,
+  evidence attached, dashboard showing live maturity scores. Each step produces a
+  backend-confirmed state change.
+
+---
+
 *End of MMM Stage 6 — QA-to-Red Catalog*
-*Total: 176 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys covered*
+*Total: 182 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys covered*

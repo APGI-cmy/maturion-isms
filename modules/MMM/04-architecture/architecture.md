@@ -9,11 +9,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: Architecture (Stage 5)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.1.0
-- **Date**: 2026-04-14
-- **Owner**: CS2 (Johan Ras / @APGI-cmy)
-- **Produced By**: mat-specialist (POLC-Orchestration mode, delegated by foreman-v2-agent v6.2.0)
-- **Issue**: maturion-isms#1378 (MMM Stage 5 wave-start authorization)
+- **Version**: 0.2.0
 - **Wave**: mmm-stage5-architecture-20260414
 
 ### Upstream Authority References
@@ -106,6 +102,52 @@ Architecturally, MMM is:
    for all downstream stages. No boundary change without CS2-authorized architecture revision.
 4. **No legacy component injection**: The legacy sub-folders in `capabilities/` are formally
    retired artifacts. MMM is built fresh from FRS/TRS specifications.
+
+---
+
+## ARCH-LAW-001: Typed Integration Client Law (CONSTITUTIONAL)
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+### The Law
+
+MMM frontend actions MUST call the approved backend runtime through a typed integration
+client. Pages MAY NOT invent ad-hoc `/api/...` endpoints. This is an architecture law — not
+a guideline. Any PR that introduces a direct `fetch('/api/...')` call from a UI component
+without going through the typed integration client is a **CONSTITUTIONAL VIOLATION** of MMM
+architecture and MUST be rejected at code review.
+
+### Enforcement
+
+This law is enforced at:
+
+- **(a) PR code review** — reviewer must reject direct fetch calls
+- **(b) PBFAG** — pre-build pack must declare the integration client for each new call
+- **(c) Builder Checklist** — builder must affirm integration client compliance
+- **(d) QA-to-Red** — tests must verify all calls go through the client
+
+### MMM Route-to-Capability Map
+
+This table is authoritative. Every MMM user journey MUST map to a declared backend capability
+before build is authorized.
+
+| Journey / Route Area | Backend Capability | Edge Function / Route | DB Tables |
+|---|---|---|---|
+| Free Assessment (unauthenticated) | `mmm-free-assessment` | `/api/free-assessment/start` | `free_assessments` |
+| Subscribe / Sign-up | `mmm-subscription-create` | `/api/subscriptions/create` | `subscriptions` |
+| Onboarding | `mmm-org-create` | `/api/organisations/create` | `organisations`, `organisation_members` |
+| Framework init | `mmm-framework-init` | `/api/frameworks/init` | `frameworks`, `domains`, `mps`, `criteria`, `level_descriptors` |
+| Mode A upload | `mmm-upload-framework-source` + parse/chunk | `/api/upload/framework-source`, `/api/frameworks/parse` | `document_uploads`, `framework_source_chunks` |
+| Mode B generate | `mmm-ai-framework-generate` | `/api/frameworks/generate` | `frameworks`, `domains`, `criteria` (AI-populated) |
+| Dashboard | `mmm-qiw-status` | `/api/dashboard/status` | `maturity_scores`, `published_frameworks` |
+| Evidence | `mmm-evidence-create` | `/api/criteria/{id}/evidence` | `evidence`, `evidence_metadata` |
+| Approval | `mmm-framework-approve` | `/api/frameworks/{id}/approve` | `approval_requests`, `frameworks.status` |
+| Publishing | `mmm-publish-framework` | `/api/frameworks/{id}/publish` | `published_frameworks` |
+| PIT Export | `mmm-pit-export` | `/api/pit/export` | `pit_export_packages` |
+| AI Analysis | AIMC gateway | `/api/ai/analyse` | `ai_requests`, `ai_responses` |
+
+Any journey area not in this table is NOT build-authorized. A builder who creates a frontend
+call without a matching row in this table is in violation of ARCH-LAW-001.
 
 ---
 

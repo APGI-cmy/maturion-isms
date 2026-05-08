@@ -23,6 +23,11 @@
 #   9. All files changed in git diff are within the declared scope array
 #      (the active manifest path itself is always implicitly permitted)
 #  10. evidence_required is a non-empty list
+#  13. execution_model: when implementation files are in
+#      scope, execution_model must be one of:
+#      - builder-governed       (requires implementing_agent)
+#      - foreman-orchestrated   (requires orchestrating_agent + implementing_agent)
+#      - cs2-hotfix-override    (requires non-empty cs2_justification)
 #
 # Usage:
 #   PR_NUMBER=1545 .github/scripts/validate-simple-pr-admin.sh
@@ -376,6 +381,70 @@ if [[ "$EVID_CHECK" != PASS* ]]; then
   ERRORS=$((ERRORS + 1))
 else
   echo "✅ $EVID_CHECK"
+fi
+echo ""
+
+# ── CHECK 13: Execution model requirement ────────────────────────────────────
+# Trigger: any implementation files in declared scope:
+#   apps/, src/, modules/, lib/, packages/
+echo "── CHECK 13: EXECUTION-MODEL ──"
+EXEC_MODEL_CHECK=$(MANIFEST_PATH="$MANIFEST" python3 - <<'PYEOF'
+import json, os
+
+manifest = json.load(open(os.environ['MANIFEST_PATH']))
+scope = manifest.get("scope", [])
+if not isinstance(scope, list):
+    # CHECK 4 already handles this, but fail closed here as well.
+    print("FAIL: scope must be a list before execution_model can be validated")
+    raise SystemExit(0)
+
+impl_prefixes = ("apps/", "src/", "modules/", "lib/", "packages/")
+impl_paths = [p for p in scope if isinstance(p, str) and any(p.startswith(pref) for pref in impl_prefixes)]
+
+if not impl_paths:
+    print("PASS: no implementation files in scope")
+    raise SystemExit(0)
+
+allowed = ("builder-governed", "foreman-orchestrated", "cs2-hotfix-override")
+execution_model = manifest.get("execution_model", None)
+
+if not isinstance(execution_model, str) or execution_model not in allowed:
+    if execution_model is None:
+        print("FAIL: implementation files are in scope but execution_model field is missing from manifest. Add execution_model with one of: builder-governed, foreman-orchestrated, cs2-hotfix-override")
+    else:
+        print("FAIL: execution_model must be one of: " + ", ".join(allowed) + "; got: " + repr(execution_model))
+    raise SystemExit(0)
+
+def non_empty_string(value):
+    return isinstance(value, str) and value.strip() != ""
+
+if execution_model in ("builder-governed", "foreman-orchestrated"):
+    implementing_agent = manifest.get("implementing_agent")
+    if not non_empty_string(implementing_agent):
+        print("FAIL: implementing_agent is required and must be non-empty when execution_model=" + execution_model)
+        raise SystemExit(0)
+
+if execution_model == "foreman-orchestrated":
+    orchestrating_agent = manifest.get("orchestrating_agent")
+    if not non_empty_string(orchestrating_agent):
+        print("FAIL: orchestrating_agent is required and must be non-empty when execution_model=foreman-orchestrated")
+        raise SystemExit(0)
+
+if execution_model == "cs2-hotfix-override":
+    justification = manifest.get("cs2_justification")
+    placeholders = {"tbd", "todo", "na", "n/a", "placeholder"}
+    if not non_empty_string(justification) or justification.strip().lower() in placeholders:
+        print("FAIL: cs2_justification is required and must be non-empty (not placeholder) when execution_model=cs2-hotfix-override")
+        raise SystemExit(0)
+
+print("PASS: execution_model=" + execution_model + " validated for " + str(len(impl_paths)) + " implementation scope path(s)")
+PYEOF
+)
+if [[ "$EXEC_MODEL_CHECK" != PASS* ]]; then
+  echo "❌ ERROR: $EXEC_MODEL_CHECK"
+  ERRORS=$((ERRORS + 1))
+else
+  echo "✅ $EXEC_MODEL_CHECK"
 fi
 echo ""
 
