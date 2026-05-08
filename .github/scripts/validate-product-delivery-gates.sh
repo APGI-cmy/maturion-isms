@@ -278,7 +278,7 @@ echo "✅ Functional Delivery Evidence gate: PASS"
 IAA_FILES="$(git diff --name-only --diff-filter=AM "${BASE_SHA:-HEAD~1}...HEAD" 2>/dev/null | grep -E '^\.agent-admin/assurance/(iaa-token-|iaa-wave-record-).+\.md$' || true)"
 
 if [ -z "$IAA_FILES" ]; then
-  echo "❌ FAIL — Product-facing PR requires a PR-diff IAA assurance artifact with split verdict fields."
+  echo "❌ FAIL - Product-facing PR requires a PR-diff IAA assurance artifact with split verdict fields."
   echo "   No added/modified IAA token/wave-record file was found in this PR diff."
   exit 1
 fi
