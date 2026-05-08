@@ -2,7 +2,7 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-08  
+**Last Updated**: 2026-05-08 (r2 — evidence-exactness fix: restored Closes #1556 to PR body)  
 **Updated By**: foreman-v2-agent (wave: pit-stage3-frs-hardening — maturion-isms#1556; PR #1557; FRS upgraded from v0.1-draft to v0.2-hardened)
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
