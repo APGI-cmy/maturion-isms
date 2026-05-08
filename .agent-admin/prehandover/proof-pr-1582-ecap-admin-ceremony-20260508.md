@@ -13,7 +13,7 @@
 pr: 1582
 issue: 1581
 branch: copilot/harden-current-head-gate-snapshot-enforcement
-date_utc: 2026-05-08T12:43:00Z
+date_utc: 2026-05-08T12:58:00Z
 protected_path_touched: true
 ecap_required: true
 ecap_invoked: true
@@ -21,21 +21,23 @@ ceremony_admin_appointed: true
 ecap_verdict: PASS
 ecap_waiver_ref: none
 ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1582-ecap-admin-ceremony-20260508.md
-CURRENT_HEAD_SHA: 20c46b2523edae3a31c194406c6c594d7ca8f88c
+CURRENT_HEAD_SHA: 3426be2dc1e9fdfa2d6dea5fccfc19418583ad0c
 protected_paths_changed:
   - governance/checklists/phase4-role-separation-operational-guidance.md
   - governance/templates/execution-ceremony-admin/PREHANDOVER.template.md
   - .github/workflows/handover-claim-gate.yml
-gate_run_ids: [25555407196]
+gate_run_ids: [25556326802]
 failing_checks: none
 pending_checks: none
 missing_checks: none
-# CI is green at 20c46b25. iaa_audit_token remains PENDING because IAA has not yet
-# been invoked at this HEAD. Per FAIL-ONLY-ONCE A-021 and PREHANDOVER template
-# guidance (v1.3.0+), handover_allowed MUST remain NO while iaa_audit_token is PENDING.
+# CI is green at 3426be2 (run 25556326802, all 11 jobs PASS). iaa_audit_token remains
+# PENDING because IAA has not yet been invoked at this HEAD. Per FAIL-ONLY-ONCE A-021
+# and PREHANDOVER template guidance (v1.3.0+), handover_allowed MUST remain NO while
+# iaa_audit_token is PENDING. This corrective commit refreshes evidence and adds the
+# missing ECAP_GATE_AND_ADMIN_REPORT fields; PR remains in STOP_AND_FIX pending IAA.
 iaa_audit_token: PENDING
 handover_allowed: no
-handover_state: STOP_AND_FIX — CI green at 20c46b25; IAA token PENDING — handover blocked until IAA issues a PASS token
+handover_state: STOP_AND_FIX — CI green at 3426be2; IAA token PENDING — handover blocked until IAA issues a PASS token
 ```
 
 Protected-path classification for this PR includes:
