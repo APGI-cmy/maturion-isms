@@ -185,6 +185,33 @@ POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
 POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 ```
 
+### Final current-head verification must be non-mutating
+
+- A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
+- Final current-head verification before handover MUST be non-mutating.
+- Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
+- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Any commit after final verification invalidates that verification.
+- Verification is valid only if:
+  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - all required checks are green on that head;
+  - substantive review blockers are fixed;
+  - POST_VERIFICATION_COMMITS_PUSHED: no.
+- A committed evidence artifact may reference the last evidence-producing commit, but final handover decision must rely on non-mutating verification after final push.
+
+Required final verification output:
+```text
+FINAL_CURRENT_HEAD_VERIFICATION
+PR: #...
+CURRENT_PR_HEAD_FROM_GITHUB: ...
+HEAD_BEING_VERIFIED: ...
+ALL_REQUIRED_CHECKS_GREEN_ON_HEAD: yes/no
+SUBSTANTIVE_REVIEW_BLOCKERS_FIXED: yes/no
+POST_VERIFICATION_COMMITS_PUSHED: yes/no
+VERIFICATION_METHOD: PR_COMMENT | PR_REVIEW_COMMENT | CI_CHECK_OUTPUT | REVIEWER_VERIFICATION
+FINAL_CURRENT_HEAD_VERIFICATION_VALID: yes/no
+```
+
 ---
 
 ## 7) Builder QA Agent Tier 2 guidance
@@ -394,6 +421,33 @@ POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
 POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 ```
 
+### Final current-head verification must be non-mutating
+
+- A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
+- Final current-head verification before handover MUST be non-mutating.
+- Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
+- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Any commit after final verification invalidates that verification.
+- Verification is valid only if:
+  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - all required checks are green on that head;
+  - substantive review blockers are fixed;
+  - POST_VERIFICATION_COMMITS_PUSHED: no.
+- A committed evidence artifact may reference the last evidence-producing commit, but final handover decision must rely on non-mutating verification after final push.
+
+Required final verification output:
+```text
+FINAL_CURRENT_HEAD_VERIFICATION
+PR: #...
+CURRENT_PR_HEAD_FROM_GITHUB: ...
+HEAD_BEING_VERIFIED: ...
+ALL_REQUIRED_CHECKS_GREEN_ON_HEAD: yes/no
+SUBSTANTIVE_REVIEW_BLOCKERS_FIXED: yes/no
+POST_VERIFICATION_COMMITS_PUSHED: yes/no
+VERIFICATION_METHOD: PR_COMMENT | PR_REVIEW_COMMENT | CI_CHECK_OUTPUT | REVIEWER_VERIFICATION
+FINAL_CURRENT_HEAD_VERIFICATION_VALID: yes/no
+```
+
 Foreman assignment matrix template (required columns):
 | Responsibility | Assigned agent | Evidence required | Cannot be self-certified by | Status |
 |---|---|---|---|---|
@@ -440,6 +494,33 @@ Will this require another corrective PR before CS2 can use the promised workflow
 ```
 
 If yes, it is not full functional delivery.
+
+### Final current-head verification must be non-mutating
+
+- A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
+- Final current-head verification before handover MUST be non-mutating.
+- Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
+- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Any commit after final verification invalidates that verification.
+- Verification is valid only if:
+  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - all required checks are green on that head;
+  - substantive review blockers are fixed;
+  - POST_VERIFICATION_COMMITS_PUSHED: no.
+- A committed evidence artifact may reference the last evidence-producing commit, but final handover decision must rely on non-mutating verification after final push.
+
+Required final verification output:
+```text
+FINAL_CURRENT_HEAD_VERIFICATION
+PR: #...
+CURRENT_PR_HEAD_FROM_GITHUB: ...
+HEAD_BEING_VERIFIED: ...
+ALL_REQUIRED_CHECKS_GREEN_ON_HEAD: yes/no
+SUBSTANTIVE_REVIEW_BLOCKERS_FIXED: yes/no
+POST_VERIFICATION_COMMITS_PUSHED: yes/no
+VERIFICATION_METHOD: PR_COMMENT | PR_REVIEW_COMMENT | CI_CHECK_OUTPUT | REVIEWER_VERIFICATION
+FINAL_CURRENT_HEAD_VERIFICATION_VALID: yes/no
+```
 
 ---
 
@@ -494,6 +575,33 @@ POST_PUSH_SCOPE_STILL_VALID: yes/no
 POST_PUSH_CI_TRIGGERED: yes/no
 POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
 POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
+```
+
+### Final current-head verification must be non-mutating
+
+- A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
+- Final current-head verification before handover MUST be non-mutating.
+- Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
+- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Any commit after final verification invalidates that verification.
+- Verification is valid only if:
+  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - all required checks are green on that head;
+  - substantive review blockers are fixed;
+  - POST_VERIFICATION_COMMITS_PUSHED: no.
+- A committed evidence artifact may reference the last evidence-producing commit, but final handover decision must rely on non-mutating verification after final push.
+
+Required final verification output:
+```text
+FINAL_CURRENT_HEAD_VERIFICATION
+PR: #...
+CURRENT_PR_HEAD_FROM_GITHUB: ...
+HEAD_BEING_VERIFIED: ...
+ALL_REQUIRED_CHECKS_GREEN_ON_HEAD: yes/no
+SUBSTANTIVE_REVIEW_BLOCKERS_FIXED: yes/no
+POST_VERIFICATION_COMMITS_PUSHED: yes/no
+VERIFICATION_METHOD: PR_COMMENT | PR_REVIEW_COMMENT | CI_CHECK_OUTPUT | REVIEWER_VERIFICATION
+FINAL_CURRENT_HEAD_VERIFICATION_VALID: yes/no
 ```
 
 ---
