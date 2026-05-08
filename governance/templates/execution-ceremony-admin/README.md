@@ -38,6 +38,7 @@ Starting with the MMM simplified governance model, PRs use `.admin/pr.json` as t
 - `.github/workflows/**`, `.github/scripts/**`, `.github/agents/**`
 - `governance/**` (all sub-paths)
 - `.agent-admin/**`
+- `.agent-workspace/**/knowledge/**`
 - Any `*.agent.md` file
 
 **Do NOT generate ceremony templates for low-ceremony product-fix PRs.** Agents should not be instructed to produce `PREHANDOVER.template.md`, `ECAP_RECONCILIATION_SUMMARY.template.md`, or session memory artifacts for MMM `product-fix` PRs where `requires_iaa=false`.
