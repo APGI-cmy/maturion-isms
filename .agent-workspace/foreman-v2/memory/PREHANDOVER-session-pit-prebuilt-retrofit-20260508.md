@@ -401,7 +401,7 @@ expected_iaa_token: IAA-session-pit-prebuilt-retrofit-20260508-PASS
 | 16 | Session Memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` | ✅ ECAP-assembled (pending commit) |
 
 **Total deliverables**: 16 (14 Foreman wave artifacts + 2 ECAP ceremony artifacts)
-**All committed or in-assembly**: YES ✅
+**All committed**: YES ✅
 
 ---
 
@@ -433,7 +433,7 @@ expected_iaa_token: IAA-session-pit-prebuilt-retrofit-20260508-PASS
 
 > Per A-029: Scope written. Files in diff as listed in Scope Declaration section above.
 
-Scope files confirmed matching `git diff --name-only origin/main...HEAD` (14 files pre-ECAP; +2 ECAP artifacts at commit = 16 final). Scope declaration at `.agent-admin/scope-declarations/pr-1576.md` lists all files with descriptions. No stale content from prior sessions.
+Scope files confirmed matching `git diff --name-only origin/main...HEAD` (20 files final). Scope declaration at `.agent-admin/scope-declarations/pr-1576.md` lists all files with descriptions. No stale content from prior sessions.
 
 ```
 scope_refreshed_post_final_edit: YES
@@ -466,17 +466,17 @@ M  .admin/prs/pr-1576.json
 > - The 2 uncommitted admin artifact updates
 > Then `git status --porcelain` must be empty before IAA invocation.
 
-**Expected `git log --oneline -5` AFTER committing all ceremony artifacts:**
+**Current `git log --oneline -5` (post-ceremony commits):**
 ```
-[PENDING ECAP+FOREMAN COMMIT] — ECAP ceremony artifacts + admin updates
+2e97543f Foreman: fix ceremony parity for IAA R3 (scope diff parity, prehandover count, scope policy field)
+c9c21f46 IAA: final audit R2 rejection record for pit-prebuilt-retrofit-20260508
+57d40e0 Foreman: ECAP bundle committed, pr-1576.json updated (requires_ecap:true, ECAP paths), scope declaration updated — pre-IAA commit-state gate PASS
 ed2851f Foreman: PIT pre-build functional delivery retrofit — Stage 1-4 artifacts, tracker, readiness artifacts (maturion-isms#1575)
 f5e8f48 IAA: PRE-BRIEF wave record — pit-prebuilt-retrofit-20260508
-81b355a Initial plan
-fe446f0 (grafted, origin/main) Foreman: PIT Stage 4 TRS — complete wave (pit-stage4-trs) (#1555)
 ```
 
-All primary Foreman ceremony artifacts committed before ECAP appointment: ✅ (ed2851f)
-ECAP ceremony artifacts pending commit: ⏳ (to be committed by Foreman after review)
+All primary Foreman ceremony artifacts committed: ✅
+ECAP ceremony artifacts committed: ✅
 
 ---
 
@@ -492,13 +492,13 @@ iaa_adoption_phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 iaa_version: v6.2.0
 ```
 
-**IAA Token Self-Certification Guard (pre-invocation — completed at pre-bundle time):**
+**IAA Token Self-Certification Guard (current state after R3 rejection):**
 ```
 iaa_token_self_cert_guard:
-  token_file_exists: NO — token not yet issued (IAA invocation pending)
-  phase_b_blocking_token_present: PENDING — token not yet issued
-  phase_a_advisory_absent: N/A — pre-invocation
-  guard_result: PENDING — to be completed by Foreman at §4.3b post-IAA-invocation
+  token_file_exists: NO — ASSURANCE-TOKEN not issued yet
+  phase_b_blocking_token_present: NO — latest IAA verdict is REJECTION-PACKAGE
+  phase_a_advisory_absent: YES
+  guard_result: IN_PROGRESS — pending successful re-invocation (R4)
 ```
 
 > **Note for Foreman**: After IAA invocation, complete the token self-certification guard:
@@ -588,9 +588,10 @@ merge_authority: CS2 ONLY (@APGI-cmy)
 
 ## IAA Agent Response (verbatim)
 
-> [PENDING — IAA invocation to be performed by Foreman after ECAP bundle review and commit. IAA will issue ASSURANCE-TOKEN or REJECTION-PACKAGE. Paste verbatim IAA response here after invocation.]
->
-> Per S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014): Foreman MUST paste the complete raw IAA output here before this proof is considered final. A blank or placeholder IAA response section is a HANDOVER BLOCKER. This is the pre-IAA draft; it becomes the authoritative record only after IAA verbatim paste.
+> R1 verdict: REJECTION-PACKAGE (commit-state and scope parity issues).  
+> R2 verdict: REJECTION-PACKAGE (ACR-04/07 and A-026).  
+> R3 verdict: REJECTION-PACKAGE (ACR-02, ACR-07, ACR-10) — ceremony wording/count normalization required in active bundle/session artifacts.  
+> Authoritative rejection records are captured in `.agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md` under `## REJECTION_HISTORY`.
 
 ---
 
@@ -608,16 +609,15 @@ security_observations: No security-relevant changes in this PR (no code, no sche
 ```
 final_state: READY_FOR_IAA_INVOCATION
   (All ECAP bundle evidence complete; all OVL-PBG and OVL-INJ gates verified PASS;
-   IAA invocation not yet performed — pending Foreman commit + IAA invocation)
+   IAA invoked through R3 with rejection results logged; this artifact is normalized for R4 re-invocation)
 foreman_readiness_declaration: YES — Foreman declared QP PASS + §4.3 parity PASS
 ecap_bundle_readiness: COMPLETE
 iaa_invocation_authorized: YES (Foreman QP PASS declared; bundle completeness verified)
 remaining_steps:
-  1. Foreman reviews and accepts this PREHANDOVER proof
-  2. Foreman commits ECAP bundle files + 2 admin artifact updates
-  3. Foreman verifies git status --porcelain is clean
-  4. Foreman invokes IAA with wave record path as context
-  5. IAA writes PHASE_B_BLOCKING_TOKEN to wave record ## TOKEN section
+  1. Foreman verifies scope/count parity remains exact after latest commit
+  2. Foreman verifies git status --porcelain is clean
+  3. Foreman invokes IAA (R4) with wave record path as context
+  4. IAA writes PHASE_B_BLOCKING_TOKEN to wave record ## TOKEN section on PASS
   6. Foreman updates ## IAA Agent Response (verbatim) section of this proof
   7. CS2 approves merge
 ```

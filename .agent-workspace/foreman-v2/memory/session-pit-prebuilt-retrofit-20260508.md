@@ -63,8 +63,8 @@ unresolved_items_from_prior_sessions:
 
 | Artifact Class | Path | Status |
 |---|---|---|
-| PREHANDOVER proof | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-prebuilt-retrofit-20260508.md` | ✅ Created (pending Foreman commit) |
-| Session memory (this file) | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` | ✅ Created (pending Foreman commit) |
+| PREHANDOVER proof | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-prebuilt-retrofit-20260508.md` | ✅ Committed |
+| Session memory (this file) | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` | ✅ Committed |
 | ECAP reconciliation summary | Embedded in §4.3e Gate section below and in PREHANDOVER proof bundle | ✅ Complete |
 
 ---
@@ -143,12 +143,12 @@ unresolved_breaches: none
 
 | Field | Value |
 |---|---|
-| IAA invoked by Foreman | PENDING — awaiting Foreman commit + invocation |
-| IAA result | PENDING |
+| IAA invoked by Foreman | YES — invoked (R1, R2, R3) |
+| IAA result | REJECTION-PACKAGE (R3) |
 | Token file path | `.agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md` (## TOKEN section) |
 | Expected token reference | IAA-session-pit-prebuilt-retrofit-20260508-PASS |
 | IAA adoption phase | PHASE_B_BLOCKING |
-| Re-invocation round | 0 (first invocation — not yet invoked) |
+| Re-invocation round | 3 |
 
 ---
 
@@ -176,11 +176,11 @@ unresolved_breaches: none
 |--------|---------|--------|
 | AAP-01 | Issued token but PENDING/in-progress wording remains | ✅ PASS — iaa_audit_token pre-populated as expected reference format (not PENDING); provisional wording in IAA Audit section is appropriately labelled as pre-IAA draft |
 | AAP-02 | Mixed internal version labels | ✅ PASS — no contradictory version strings; ECAP v1.0.0 and foreman-v2 v6.2.0 consistently declared |
-| AAP-03 | Stale artifact path references | ✅ PASS — all 14 primary artifact paths verified committed via git ls-files; ECAP bundle paths are in-assembly |
-| AAP-04 | Stale scope declaration after file changes | ✅ PASS — scope declaration lists 16 expected final paths (14 wave + 2 ECAP); files match actual diff + ECAP additions |
+| AAP-03 | Stale artifact path references | ✅ PASS — all active artifact paths are committed and present in current diff/scope set |
+| AAP-04 | Stale scope declaration after file changes | ✅ PASS — scope declaration now lists all 20 current diff files |
 | AAP-05 | Stale hash after file finalization | ✅ PASS — no SHA256 hashes declared in PREHANDOVER proof for individual artifacts (governance-only wave; hash verification performed for CANON_INVENTORY) |
 | AAP-06 | Requested vs completed assurance session mismatch | ✅ PASS — expected token reference format consistent: IAA-session-pit-prebuilt-retrofit-20260508-PASS |
-| AAP-07 | Declared file/artifact count mismatch | ✅ PASS — 16 total deliverables declared (14 pre-ECAP + 2 ECAP); consistent with git diff count (14) + 2 ECAP additions |
+| AAP-07 | Declared file/artifact count mismatch | ✅ PASS — 20 total deliverables declared and aligned with current diff count (20) |
 | AAP-08 | PUBLIC_API ripple obligations omitted | ✅ PASS — no PUBLIC_API files in diff (verified via CANON_INVENTORY scan); ripple obligation NOT-APPLICABLE |
 | AAP-09 | Committed truth not matching proof claims | ✅ PASS — all 11 primary deliverables git ls-files verified; 2 uncommitted files are admin-only and documented |
 | AAP-15 | Gate inventory absent from PREHANDOVER proof | ✅ PASS — gate_set_checked populated: [OVL-PBG-001, OVL-PBG-002, OVL-PBG-006, OVL-PBG-008, OVL-PBG-009, OVL-PBG-014, OVL-PBG-ADM-001, OVL-INJ-001, OVL-INJ-ADM-001, OVL-INJ-ADM-002, OVL-INJ-ADM-003] |
@@ -197,7 +197,7 @@ All sections of `governance/checklists/execution-ceremony-admin-checklist.md` co
 - Section 2: Commit-state hygiene — ✅ COMPLETE (with documented discrepancies)
 - Section 3: PREHANDOVER proof assembly — ✅ COMPLETE
 - Section 4: Session memory assembly — ✅ COMPLETE
-- Section 5: Token/session/path checks — ✅ COMPLETE (pre-IAA; token pending)
+- Section 5: Token/session/path checks — ✅ COMPLETE (IAA invoked; R3 rejection logged)
 - Section 6: Ripple/registry assessment — ✅ COMPLETE (NOT-APPLICABLE)
 - Section 7: Parking station entry — ✅ COMPLETE
 - Section 8: Bundle handback — ✅ COMPLETE
@@ -219,16 +219,16 @@ Date: 2026-05-08
 [✅] R04 — PR number: #1576 consistent across PREHANDOVER proof, session memory, scope declaration, wave record
 [✅] R05 — Wave identifier: "pit-prebuilt-retrofit-20260508" consistent across all artifacts
 [✅] R06 — Branch name: "copilot/foreman-retrofit-pit-artifacts" — verified via git log (ed2851f HEAD -> copilot/foreman-retrofit-pit-artifacts)
-[✅] R07 — Changed file paths: 14 files in git diff --name-only origin/main...HEAD; scope declaration lists all 14 + 2 ECAP additions = 16 total; PREHANDOVER artifact inventory lists all 16; consistent
+[✅] R07 — Changed file paths: 20 files in git diff --name-only origin/main...HEAD; scope declaration lists all 20; PREHANDOVER artifact inventory aligned at 20
 [✅] R08 — PREHANDOVER ↔ session memory: same wave/issue/PR/session/branch across both artifacts; session memory artifact paths match PREHANDOVER paths
 [✅] R09 — PREHANDOVER ↔ token / IAA reference: expected token reference IAA-session-pit-prebuilt-retrofit-20260508-PASS; token file not yet issued; wave record path confirmed committed
-[✅] R10 — Tracker ↔ wave record: wave-current-tasks shows PENDING (pre-IAA state — expected; status key notes DONE only after ASSURANCE-TOKEN received); wave record phase = PRE-BRIEF; consistent
-[✅] R11 — Scope declaration ↔ actual changed files: 14 files in git diff; scope declaration lists 14 Foreman wave files + 2 ECAP files; consistent at final expected state
-[✅] R12 — Session memory ↔ committed artifact paths: 11 primary deliverables git ls-files verified; 2 ECAP bundles in-assembly; 2 admin updates pending commit; all documented consistently
+[✅] R10 — Tracker ↔ wave record: wave-current-tasks pending status remains expected until ASSURANCE-TOKEN; wave record includes rejection history entries; coherent with current R3 state
+[✅] R11 — Scope declaration ↔ actual changed files: 20 files in git diff; scope declaration lists all 20; parity confirmed
+[✅] R12 — Session memory ↔ committed artifact paths: all declared artifacts now committed; no in-assembly/pending-commit entries
 [✅] R13 — CANON_INVENTORY ↔ file hash / version: No canon files modified in this wave; CANON_INVENTORY aligned (201 canons, 0 null hashes); N/A for individual file hash checks
 [✅] R14 — Ripple registry ↔ PUBLIC_API changes: No PUBLIC_API files in diff (CANON_INVENTORY scan: NONE); ripple obligation NOT-APPLICABLE; consistent
 [✅] R15 — Final-state status coherence: PREHANDOVER final_state: READY_FOR_IAA_INVOCATION; session memory ceremony compliance: COMPLETE; wave-current-tasks: PENDING (pre-IAA — correct); wave record: PRE-BRIEF active; all consistent pre-IAA state
-[✅] R16 — Artifact declared count ↔ actual count: 16 total deliverables (14 wave + 2 ECAP) declared in PREHANDOVER; 14 confirmed in git diff; 2 ECAP in-assembly; count consistent
+[✅] R16 — Artifact declared count ↔ actual count: 20 total deliverables declared in PREHANDOVER; 20 confirmed in git diff; count consistent
 [✅] R17 — IAA session reference (assurance round): expected "IAA-session-pit-prebuilt-retrofit-20260508-PASS"; first invocation round; consistent
 [✅] R18 — Renumber/rebase/conflict-resolution refresh: NO triggering event occurred; art_refresh_required: NO; art_refresh_completed: N/A
 ```
@@ -291,7 +291,7 @@ Date: 2026-05-08
 | Version consistency | ECAP v1.0.0, foreman v6.2.0 | PREHANDOVER agent version field | Session memory agent field | ✓ |
 | Path consistency | All artifact paths | PREHANDOVER artifact list | git ls-files check (11 primary) | ✓ |
 | Status consistency | READY_FOR_IAA_INVOCATION | PREHANDOVER final_state | Session memory IAA assurance section | ✓ |
-| Scope declaration parity | 14 files (pre-ECAP) + 2 (ECAP additions) = 16 | Scope declaration | git diff --name-only (14) + 2 ECAP | ✓ |
+| Scope declaration parity | 20 files | Scope declaration | git diff --name-only (20) | ✓ |
 | Committed-state parity | 11 primary deliverables committed | PREHANDOVER artifact list | git ls-files confirmed for all 11 | ✓ |
 
 ### C4. Ripple Assessment Block
@@ -376,7 +376,7 @@ Date: 2026-05-08
 | Branch | copilot/foreman-retrofit-pit-artifacts |
 | Branch HEAD SHA | ed2851f3146d |
 | All primary Foreman artifacts committed | YES (ed2851f) |
-| ECAP bundle files | Created (pending Foreman commit) |
+| ECAP bundle files | Committed |
 | Scope declaration current | YES (updated in uncommitted admin modifications) |
 
 ---
