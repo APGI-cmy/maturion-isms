@@ -21,8 +21,8 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | Old Stage | Old Name | New Stage | New Name | Status |
 |-----------|----------|-----------|----------|--------|
 | Stage 0 | App Description | Stage 1 | App Description | CS2_APPROVED_AUTHORITATIVE |
-| Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
-| Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
+| Stage 1 | FRS | Stage 3 | FRS | DRAFT_CREATED |
+| Stage 1.5 | TRS | Stage 4 | TRS | DRAFT_CREATED |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
@@ -78,7 +78,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Timeline creator interactions and date-alignment expectations (Section 6)
 - [x] AIMC-only AI touchpoints documented (Section 8)
 - [x] Deployment surface map (Section 9)
-- [x] Approved by CS2 (pending review — maturion-isms#1548)
+- [ ] Approved by CS2 (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
@@ -95,7 +95,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Auth/onboarding, all primary screens, 5 UI states, project hierarchy, timeline, evidence, assignment, watchdog, reporting, audit, QA dashboard, AIMC, cross-module integrations covered
 - [x] Acceptance criteria for every requirement or requirement group
 - [x] Traceability matrix (App Description → Stage 2 → FRS requirement ID → future stage placeholder)
-- [x] Approved by CS2 (pending review — maturion-isms#1548)
+- [ ] Approved by CS2 (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Draft created 2026-05-06, pending CS2 approval  
 **Notes**: FRS v0.1-draft created per maturion-isms#1548. Derived from docs/governance/PIT_APP_DESCRIPTION.md v1.0 and modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md v0.2-draft. 112 functional requirements (PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-112) with acceptance criteria and traceability matrix covering 23 journeys and 21 screens. Traceability updated to v0.2 baseline. Open items from Stage 2 Section 10 are resolved in FRS. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.
@@ -112,7 +112,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [ ] TRS approved by designated authority — **BLOCKED**: pending CS2 approval of Stage 3 FRS and Stage 2 UX Spec (maturion-isms#1548)
 
 **Completion Date**: N/A — Draft created 2026-05-07, pending upstream CS2 approvals
-**Notes**: TRS v0.1-draft created per maturion-isms#1554 (wave: pit-stage4-trs). Derived from `docs/governance/PIT_APP_DESCRIPTION.md` v1.0, `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft, and `modules/pit/02-frs/functional-requirements.md` v0.1-draft. 115 technical requirements (PIT-TR-001 through PIT-TR-115) covering runtime baseline, frontend architecture, routing, auth/session, RBAC, data model (21 canonical tables), RLS design, API/Edge Functions (8 functions), AIMC (4 capabilities), notifications, evidence storage, Gantt, reporting, audit log, QA dashboard, performance, security, observability, error handling, deployment/secrets, tool validation, and MMM controls L-001–L-008. FRS-to-TRS traceability covers all 112 FRS requirements, 10 NF placeholders, and 8 MMM controls. Stage 4 approval is BLOCKED until Stage 3 and Stage 2 are CS2-approved. Stage 5 Architecture remains blocked. Build Authorization remains NOT CLEARED.
+**Notes**: TRS v0.1-draft created per maturion-isms#1554 (wave: pit-stage4-trs). Derived from `docs/governance/PIT_APP_DESCRIPTION.md` v1.0, `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft, and `modules/pit/02-frs/functional-requirements.md` v0.1-draft. 115 technical requirements (PIT-TR-001 through PIT-TR-115) covering runtime baseline, frontend architecture, routing, auth/session, RBAC, data model (21 canonical tables), RLS design, API/Edge Functions (8 functions), AIMC (4 capabilities), notifications, evidence storage, Gantt, reporting, audit log, QA dashboard, performance, security, observability, error handling, deployment/secrets, tool validation, and MMM controls L-001–L-008. FRS-to-TRS traceability covers all 112 FRS requirements, 10 NF placeholders, and 8 MMM controls. Stage 4 approval is BLOCKED until Stage 3 and Stage 2 are CS2-approved. Stage 5 Architecture remains blocked. Build Authorization remains NOT CLEARED. **Issue #1556 Dependency**: This TRS is draft-only and derives from the current Stage 3 FRS v0.1-draft. Issue #1556 has identified required FRS hardening for one-time build readiness. Any changes made under #1556 must be propagated into this TRS before Stage 4 can be reviewed, approved, or used to gate-pass Stage 5 Architecture.
 
 ---
 
@@ -277,7 +277,7 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 4 TRS: DRAFT_CREATED (maturion-isms#1554) — pending upstream CS2 approvals (Stage 2 and Stage 3)
 - [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS (DRAFT_CREATED) → Architecture (gate-pass pending)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
-- [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 3–11 complete
+- [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Stage 2 completion evidence: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`
 - [x] Stage 3 FRS artifact created: `modules/pit/02-frs/functional-requirements.md`

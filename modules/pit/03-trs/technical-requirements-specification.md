@@ -24,6 +24,8 @@
 
 > **Governance Note:** This TRS is a draft artifact. It may not be declared complete, approved, or gate-passed until Stage 3 FRS and Stage 2 UX Workflow & Wiring Spec are approved by CS2. Stage 5 Architecture remains blocked until Stage 4 TRS is approved. Build Authorization remains NOT CLEARED. This TRS does not authorise code implementation, builder appointment, schema migration, or deployment.
 
+> **Issue #1556 Dependency Notice:** This TRS is draft-only and derives from the current Stage 3 FRS v0.1-draft. Issue #1556 has identified required FRS hardening for one-time build readiness. Any changes made under #1556 must be propagated into this TRS before Stage 4 can be reviewed, approved, or used to gate-pass Stage 5 Architecture.
+
 ---
 
 ## 0. Derivation Statement and Change-Propagation Note
