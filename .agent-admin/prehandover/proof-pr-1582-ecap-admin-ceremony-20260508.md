@@ -30,8 +30,11 @@ gate_run_ids: []
 failing_checks: none
 pending_checks: none
 missing_checks: tbd-ci-pending
+# Note: ECAP ceremony is PASS (ceremony complete). Overall handover_allowed is no because
+# CI has not yet run at this HEAD. handover_allowed will become yes once all required
+# preflight checks are green at the current HEAD SHA (ECAP ceremony does not make CI green).
 handover_allowed: no
-handover_state: STOP_AND_FIX — awaiting green CI at current HEAD before handover
+handover_state: STOP_AND_FIX — ECAP ceremony complete; awaiting green CI at current HEAD before claiming handover
 ```
 
 Protected-path classification for this PR includes:

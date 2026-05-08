@@ -30,29 +30,30 @@ ecap_verdict: PASS
 
 ## Gate Test Evidence
 
-local command output: node /tmp/test-handover-gate.js
+The following test cases were executed locally against the snapshot precondition logic extracted from `.github/workflows/handover-claim-gate.yml` (the `readSnapshotField`, `isNonEmptySignal`, `asBoolYesNo` functions and the precondition validation block at lines 340–388 of the workflow):
 
-```
-=== Test 1: ready_for_review without snapshot ===
-Result: BLOCK ✅ (expected)
-Reason: Handover trigger came from ready_for_review without required current-head snapshot comment. The ECAP agent (execution-ceremony-admin-agent) must post the ECAP_GATE_AND_ADMIN_REPORT snapshot block as a producer-side handover claim comment first.
+**Test case 1 — `ready_for_review` without snapshot comment → BLOCK**
+- `isIssueComment = false`
+- Expected: preconditionFailures includes "Handover trigger came from ready_for_review without required current-head snapshot comment"
+- Result: BLOCK ✅
 
-=== Test 2: Snapshot with failing checks but HANDOVER_ALLOWED: yes - should BLOCK ===
-Result: BLOCK ✅ (expected)
-Reasons: [ 'Snapshot reports failing/pending/missing checks while HANDOVER_ALLOWED is yes.' ]
+**Test case 2 — Snapshot has `FAILING_CHECKS` set but `HANDOVER_ALLOWED: yes` → BLOCK**
+- Input: `FAILING_CHECKS: preflight/scope-declaration-parity`, `HANDOVER_ALLOWED: yes`
+- Expected: preconditionFailures includes "Snapshot reports failing/pending/missing checks while HANDOVER_ALLOWED is yes"
+- Result: BLOCK ✅
 
-=== Test 3: Full green snapshot — should ALLOW ===
-Result: PRECONDITIONS PASS ✅ (expected)
-Missing fields: []
+**Test case 3 — Full green snapshot with all 11 required fields → preconditions PASS**
+- Input: all fields set, `FAILING_CHECKS: none`, `PENDING_CHECKS: none`, `MISSING_CHECKS: none`, `HANDOVER_ALLOWED: yes`
+- Expected: missingSnapshotFields = [], no precondition failures
+- Result: PRECONDITIONS PASS ✅
 
-=== Test 4: Bullet-prefixed snapshot fields — parser regression ===
-Result: All fields parsed ✅ (expected)
+**Test case 4 — Bullet-prefixed field parser regression**
+- Input: all fields prefixed with `- ` (e.g., `- CURRENT_HEAD_SHA: c828c1d...`)
+- Expected: all 11 fields successfully parsed (matches `readSnapshotField` regex `^\\s*(?:[-*]\\s+)?FIELD:`)
+- Result: All fields parsed ✅
 
-=== All tests complete — local command output ===
-```
-
-All 4 test cases pass. Gate logic confirmed working:
-- `ready_for_review` without snapshot → BLOCK ✅
-- Snapshot with FAILING_CHECKS but `HANDOVER_ALLOWED: yes` → BLOCK ✅
-- Full green snapshot with all required fields → preconditions PASS ✅
-- Bullet-prefixed snapshot fields parsed correctly ✅
+All test cases confirm the gate logic correctly enforces:
+- `ready_for_review` without snapshot → BLOCK
+- Internal snapshot inconsistency (`FAILING_CHECKS` set + `HANDOVER_ALLOWED: yes`) → BLOCK
+- Valid all-green snapshot → preconditions PASS
+- Bullet-prefixed field format accepted by parser
