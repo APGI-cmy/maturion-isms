@@ -362,9 +362,11 @@ IAA will challenge the following at handover:
 
 ## TOKEN
 
-> **[PLACEHOLDER]** — IAA final-verdict token to be appended here after Phase 3–4 assurance at PR handover.
-> Token format: `PHASE_B_BLOCKING_TOKEN: IAA-session-pit-prebuilt-retrofit-20260508-[PASS/FAIL]-[date]`
-> This section is populated by IAA only. No other agent may write to this section.
+PHASE_B_BLOCKING_TOKEN: IAA-session-pit-prebuilt-retrofit-20260508-20260508-PASS
+
+Token status: PASS  
+Issued at: 2026-05-08 (R5 final audit)  
+Assurance summary: 41 checks, 41 PASS, 0 FAIL. Merge gate parity PASS.
 
 ---
 
