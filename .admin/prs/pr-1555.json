@@ -30,5 +30,8 @@
     "IAA ASSURANCE-TOKEN received and committed to wave record",
     "Scope declaration matches actual diff"
   ],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2",
+  "implementing_agent": "pit-specialist"
 }
