@@ -1,6 +1,6 @@
 # ECAP Current-Head Gate Snapshot — PR #1578
 
-CURRENT_HEAD_SHA: d7ef408dda70bc9d59b899be1822fc6403618f40
+CURRENT_HEAD_SHA: 2012998951a1460cca6baea530b6934e820dce66
 PASSING_CHECKS:
 - preflight/evidence-exactness
 - preflight/ecap-admin-ceremony
@@ -13,15 +13,10 @@ PASSING_CHECKS:
 - POLC Boundary Validation / session-memory-check
 
 FAILING_CHECKS:
-- handover-claim/check-current-head
-- preflight/product-delivery-gates
-- preflight/scope-declaration-parity
-- preflight/iaa-final-assurance
-- POLC Boundary Validation / foreman-implementation-check
-- POLC Boundary Validation / builder-involvement-check
+- preflight/evidence-exactness (ISSUE-MISMATCH until PR body declares governing issue #1577)
 
 PENDING_CHECKS:
-- Addressing comment on PR #1578 (dynamic workflow run still in progress when snapshot captured)
+- none
 
 MISSING_CHECKS:
 - none
