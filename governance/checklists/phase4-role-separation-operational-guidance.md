@@ -48,9 +48,11 @@
 Tier 2 operational guidance must cite governing canon or pending canon-alignment source for:
 - `FULL_FUNCTIONAL_DELIVERY`
 - `PARTIAL_FUNCTIONAL_DELIVERY`
+- `UI_SHELL_ONLY`
 - `ADMIN_ONLY`
 - `FAIL`
 - split `ADMIN_PASS` / `FUNCTIONAL_PASS` verdicts
+- calibration failure class: `APGI-cmy/maturion-isms#1553` (`OC-009`)
 
 Tier 2 operationalizes these terms through checklists/templates here and does not redefine canon semantics.
 
@@ -139,7 +141,30 @@ Responsibilities checklist:
 - reruns tied to correct commit SHA;
 - no handover claimed while required checks are red, pending, or missing;
 - no green claim relies on an old SHA;
-- no evidence artifact was added after scope declaration without scope update.
+- no evidence artifact was added after scope declaration without scope update;
+- mandatory current-head gate snapshot produced and included in handover claim comment before any handover claim is posted;
+- HANDOVER_ALLOWED: yes set only when ALL required checks are green at the snapshot SHA and snapshot SHA matches current HEAD;
+- STOP_AND_FIX output issued if any required check is red, pending, or missing at snapshot time;
+- handover claim withheld if snapshot SHA does not match current branch HEAD.
+
+### Pre-handover mandatory snapshot enforcement
+
+Before posting any handover claim comment, ECAP MUST:
+
+1. Run the merge-gate snapshot against the current HEAD SHA.
+2. Populate all required snapshot fields from the `ECAP_GATE_AND_ADMIN_REPORT` output template in §6 (Required Tier 2 output template) of this document.
+3. Set `HANDOVER_ALLOWED: yes` ONLY when ALL required checks are green at the current HEAD SHA.
+4. If any required check is red, pending, or missing: set `HANDOVER_ALLOWED: no` and output `STOP_AND_FIX`.
+5. Include the snapshot block in the handover claim comment — this is the required **producer-side handover format** validated by the `handover-claim-gate` CI.
+
+ECAP MUST NOT:
+- copy the snapshot fields from the gate-bot's prior blocked comment (the gate-bot-emitted snapshot is authoritative output, not a template to fill in);
+- claim `HANDOVER_ALLOWED: yes` based on an older SHA or stale gate run;
+- post a handover claim while any required check is red, pending, or missing;
+- set `handover_allowed: YES` in the PREHANDOVER proof while `iaa_audit_token` is PENDING or absent — the IAA token must be resolved and committed before `handover_allowed` may be YES (FAIL-ONLY-ONCE A-021);
+- post any handover claim comment while `iaa_audit_token` is PENDING or absent — Governance Watchdog gap3-prehandover-pending-token enforces this automatically.
+
+The `handover-claim-gate` CI enforces this format as a hard precondition: a handover claim comment that lacks the required snapshot fields, presents a stale SHA, or sets `HANDOVER_ALLOWED: yes` while checks are not fully green will be rejected.
 
 Required ECAP risk scan questions:
 ```text
@@ -153,6 +178,9 @@ Required ECAP risk scan questions:
 8. Are there stale bot comments saying handover is blocked?
 9. Are there stale human review comments that remain unresolved?
 10. What needs to happen so this PR can be submitted once and pass all admin/gate scrutiny?
+11. Was the current-head gate snapshot produced and included in the handover claim comment before it was posted?
+12. Does HANDOVER_ALLOWED: yes reflect a genuinely fully-green snapshot at the current HEAD SHA — or is it assumed from a prior gate run?
+13. Is iaa_audit_token resolved (not PENDING or absent) in the PREHANDOVER proof before posting the handover claim? If PENDING, handover_allowed MUST remain NO.
 ```
 
 Required Tier 2 output template:
@@ -160,6 +188,8 @@ Required Tier 2 output template:
 ECAP_GATE_AND_ADMIN_REPORT
 
 CURRENT_HEAD_SHA: ...
+REQUIRED_CHECKS_TOTAL: N
+PASSING_CHECKS: N
 ADMIN_REPORT_PRESENT: yes/no
 SCOPE_DECLARATION_VALID: yes/no
 MANIFEST_VALID: yes/no
@@ -168,6 +198,10 @@ ALL_REQUIRED_CHECKS_GREEN: yes/no
 FAILING_CHECKS: ...
 PENDING_CHECKS: ...
 MISSING_CHECKS: ...
+ECAP_REQUIRED: yes/no
+ECAP_ARTIFACT_PRESENT: yes/no/not_applicable
+IAA_REQUIRED: yes/no
+IAA_ARTIFACT_PRESENT: yes/no/not_applicable
 STOP_AND_FIX_EVIDENCED: yes/no
 STALE_SHA_RISK: low/medium/high
 ECAP_RISK_SCAN_COMPLETE: yes/no
@@ -305,18 +339,23 @@ Required Tier 2 output template:
 IAA_FINAL_ASSURANCE
 
 ADMIN_PASS: yes/no
-FUNCTIONAL_PASS: yes/no
+FUNCTIONAL_PASS: yes/no/NOT-ASSESSED
 VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL
 
 ADMIN_SCAN_SUMMARY: ...
 ECAP_VERIFICATION: ...
 FUNCTIONAL_DELIVERY_SUMMARY: ...
+CURRENT_HEAD_SHA: ...
+ADMIN_GATE_EVIDENCE_FRESH_AT_HEAD: yes/no
 ORIGINAL_USER_INTENT_SATISFIED: yes/no
 ALL_VISIBLE_CTAS_WIRED: yes/no
 BACKEND_CAPABILITIES_DEPLOYED: yes/no
 SUCCESS_FAILURE_LOADING_STATES_VISIBLE: yes/no
 STATE_UPDATED_OR_DISPLAYED: yes/no
 LIVE_OR_PREVIEW_EVIDENCE_PRESENT: yes/no
+LIMITATIONS_DECLARED: yes/no
+PARTIAL_SCOPE_CS2_ACCEPTANCE: yes/no/N/A
+CALIBRATION_REFERENCE: APGI-cmy/maturion-isms#1553 (failure class OC-009) / N/A
 PLACEHOLDER_MISREPRESENTATION: yes/no
 ADJACENT_COMPONENT_IMPACT_REVIEWED: yes/no
 IAA_FUNCTIONAL_RISK_SCAN_COMPLETE: yes/no
@@ -354,7 +393,11 @@ Responsibilities checklist:
 - ensure all roles produce their required reports;
 - ensure unresolved risks are routed back to correct agent;
 - block merge if any role is missing or conflicted;
-- confirm product intent, not just issue wording, is understood.
+- confirm product intent, not just issue wording, is understood;
+- reject handover if ECAP gate snapshot is absent from the handover claim comment;
+- confirm HANDOVER_ALLOWED: yes is present in ECAP snapshot before accepting handover;
+- do not mark PR ready-for-review unless HANDOVER_ALLOWED: yes is confirmed in the ECAP snapshot;
+- verify iaa_audit_token is resolved (not PENDING or absent) in the PREHANDOVER proof before accepting handover — if PENDING, halt and route back to ECAP for IAA invocation.
 
 Required Foreman risk scan questions:
 ```text
@@ -368,6 +411,9 @@ Required Foreman risk scan questions:
 8. Are there hidden assumptions about who checked the workflow?
 9. Are downstream components affected but unassigned?
 10. Is this delivery likely to pass once, cleanly, without a corrective PR?
+11. Does the ECAP gate snapshot exist in the handover claim comment and show HANDOVER_ALLOWED: yes?
+12. Is the snapshot SHA (CURRENT_HEAD_SHA in the ECAP snapshot) current — does it match the current HEAD at time of handover?
+13. Is iaa_audit_token resolved (not PENDING or absent) in the PREHANDOVER proof? If PENDING, this is an automatic merge gate failure (A-021) — halt and route to ECAP for IAA invocation.
 ```
 
 Required Tier 2 output template:
@@ -382,6 +428,8 @@ ROLE_BOUNDARIES_CONFIRMED: yes/no
 NO_SELF_CERTIFICATION: yes/no
 ALL_REPORTS_PRESENT: yes/no
 UNRESOLVED_RISKS: ...
+ECAP_SNAPSHOT_PRESENT: yes/no
+ECAP_SNAPSHOT_HANDOVER_ALLOWED: yes/no
 MERGE_OR_HANDOVER_ALLOWED: yes/no
 GIT_BRANCH_VERIFIED: yes/no
 REMOTE_BRANCH_VERIFIED: yes/no
@@ -513,4 +561,4 @@ Conclusion (required format): **Follow-up required, with proposed issue title, r
 
 ---
 
-*Version: 1.2.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*
+*Version: 1.3.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*

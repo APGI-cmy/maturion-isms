@@ -1,0 +1,26 @@
+{
+  "pr": 1582,
+  "issue": 1581,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1582.json",
+    ".agent-admin/prehandover/proof-pr-1582-ecap-admin-ceremony-20260508.md",
+    ".agent-admin/scope-declarations/pr-1582.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1582-ecap-admin-ceremony-20260508.md",
+    ".github/workflows/handover-claim-gate.yml",
+    "governance/checklists/phase4-role-separation-operational-guidance.md",
+    "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "local command output: node /tmp/test-handover-gate.js — all 4 test cases PASS",
+    "Test case 1: ready_for_review without snapshot -> BLOCK (precondition enforced)",
+    "Test case 2: snapshot with FAILING_CHECKS set but HANDOVER_ALLOWED: yes -> BLOCK (internal consistency enforced)",
+    "Test case 3: full green snapshot with all required fields -> preconditions PASS",
+    "Test case 4: bullet-prefixed snapshot field parser -> all 11 fields parsed correctly"
+  ],
+  "merge_authority": "CS2"
+}

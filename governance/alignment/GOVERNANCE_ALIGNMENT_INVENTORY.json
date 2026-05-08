@@ -4,11 +4,11 @@
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-05-08",
-  "last_ripple_commit": "f1e8a82a145c946ce4553085c72204fc3a720e50",
-  "last_ripple_timestamp": "2026-05-07T13:53:46Z",
+  "last_ripple_commit": "4e200025fba62c86204e01a37880b6f535fac05d",
+  "last_ripple_timestamp": "2026-05-07T14:13:46Z",
   "alignment_summary": {
     "total_artifacts": 56,
-    "aligned": 46,
+    "aligned": 47,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -155,14 +155,14 @@
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "canonical_version": "1.8.0",
-      "local_version": "1.3.0+isms.5",
-      "canonical_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
+      "canonical_version": "1.9.0",
+      "local_version": "1.9.0",
+      "canonical_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
       "local_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-05-07T14:14:54Z",
-      "change_note": "v1.8.0: Corrected version from erroneous 1.10.0 to actual file version 1.8.0; canonical hash corrected to match actual file (29a06ca7...). Layered down via CI ripple PR #1510 (canonical commit 2ba1d6a3cf9c97dd67fff483ca04a90549cba293)."
+      "last_verified": "2026-05-07T14:13:46Z",
+      "change_note": "v1.9.0 aligned to canonical commit 4e200025fba62c86204e01a37880b6f535fac05d; split IAA verdict semantics (ADMIN_PASS/FUNCTIONAL_PASS/VERDICT) and FULLY_FUNCTIONAL_DELIVERY cross-reference synced."
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
@@ -181,12 +181,12 @@
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
-      "canonical_hash_sha256": "4a56c52cf142f2860b27309252fc41764145065fb4df1c0ed6427026d09ac64a",
+      "canonical_hash_sha256": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae",
       "local_hash_sha256": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-05-07T14:14:54Z",
-      "change_note": "v1.0.0 (content update): Added \u00a73.15 AIMC Platform Models (2 new canon files); totals 93\u219295 (issue #1343). Hash updated via ripple PR #1393 (canonical commit a9283eaf)."
+      "last_verified": "2026-05-07T14:13:46Z",
+      "change_note": "Manifest aligned to canonical commit 4e200025fba62c86204e01a37880b6f535fac05d with FULLY_FUNCTIONAL_DELIVERY_STANDARD v2.0.0 and INDEPENDENT_ASSURANCE_AGENT_CANON v1.9.0 registered in canon index totals."
     },
     {
       "filename": "GOVERNANCE_WATCHDOG_CANON.md",
@@ -673,14 +673,14 @@
     {
       "filename": "FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
       "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
-      "canonical_version": "TBD",
-      "local_version": "TBD",
-      "canonical_hash_sha256": "TBD",
+      "canonical_version": "2.0.0",
+      "local_version": "2.0.0",
+      "canonical_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871",
       "local_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871",
-      "alignment_status": "PENDING_REVIEW",
+      "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-05-07T14:14:54Z",
-      "change_note": "Auto-added by ripple-integration inventory update step"
+      "last_verified": "2026-05-07T14:13:46Z",
+      "change_note": "Resolved TBD/PENDING entry to canonical v2.0.0 at commit 4e200025fba62c86204e01a37880b6f535fac05d; delivery verdict taxonomy synchronized (FULL_FUNCTIONAL_DELIVERY, PARTIAL_FUNCTIONAL_DELIVERY, UI_SHELL_ONLY, ADMIN_PASS, FUNCTIONAL_PASS)."
     }
   ],
   "metadata": {
@@ -688,7 +688,7 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms wave-layer-down-governance-changes-2026-05-07-f1e8a82a",
+    "last_updated_by": "governance-liaison-isms wave-layer-down-governance-changes-2026-05-07-4e200025",
     "local_extension_versioning": "When local governance text intentionally extends canonical content, `local_version` appends `+isms.N` while preserving canonical base version."
   },
   "last_ripple_pr": 1569
