@@ -650,13 +650,13 @@
       "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "canonical_version": "1.2.0",
-      "local_version": "1.2.1",
+      "local_version": "1.2.0+isms.1",
       "canonical_hash_sha256": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4",
       "local_hash_sha256": "85204573f54733d7eea15c89ee3744201ac341d97b5a2c4e2c4bf6317af69a68",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
       "last_verified": "2026-05-08T06:32:00Z",
-      "change_note": "Canonical v1.2.0 from commit f1e8a82a145c946ce4553085c72204fc3a720e50 plus ISMS parity extension clarifying governance-control coverage for `.agent-workspace/**/knowledge/**` to match validator enforcement."
+      "change_note": "Canonical v1.2.0 from commit f1e8a82a145c946ce4553085c72204fc3a720e50 plus ISMS parity extension clarifying governance-control coverage for `.agent-workspace/**/knowledge/**` to match validator enforcement. Local extension version format uses `+isms.N` suffix."
     },
     {
       "filename": "POLC_EXECUTION_MODEL_CANON.md",
@@ -688,7 +688,8 @@
     "governing_protocol": "GOVERNANCE_RIPPLE_MODEL.md v1.1.0",
     "canonical_checklist": "GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
     "created_by": "governance-liaison-isms session-035",
-    "last_updated_by": "governance-liaison-isms wave-layer-down-governance-changes-2026-05-07-f1e8a82a"
+    "last_updated_by": "governance-liaison-isms wave-layer-down-governance-changes-2026-05-07-f1e8a82a",
+    "local_extension_versioning": "When local governance text intentionally extends canonical content, `local_version` appends `+isms.N` while preserving canonical base version."
   },
   "last_ripple_pr": 1569
 }
