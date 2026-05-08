@@ -296,7 +296,7 @@ if not failures:
             return True
         # Tier 2 operational knowledge path
         # Pattern: .agent-workspace/**/knowledge/**
-        if re.match(r"^\.agent-workspace/.+/knowledge/", path):
+        if re.match(r"^\.agent-workspace/(?:[^/]+/)*knowledge/", path):
             return True
         return False
 
