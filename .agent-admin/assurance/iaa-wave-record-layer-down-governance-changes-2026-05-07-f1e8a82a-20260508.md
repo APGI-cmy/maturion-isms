@@ -36,8 +36,6 @@ Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BU
 - `iaa_audit_token` reference present and coherent with active bundle
 
 ### Scope blockers
-- No active branch diff currently (`origin/main...HEAD` empty) → trigger classification is provisional until concrete file set exists
-- `wave-current-tasks.md` currently points to a different wave; no matching tracker found for `layer-down-governance-changes-2026-05-07-f1e8a82a`
 - `ceremony_admin_appointed` source for this requested wave not present in current tracker context
 - Any protected-path changes without ECAP appointment (or committed CS2 waiver) block handover
 
