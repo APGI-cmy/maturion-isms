@@ -20,6 +20,14 @@ const REQUIRED_CHECKS = [
 
 const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
 const VIRTUAL_FILES = (() => {
+  const filePath = process.env.CHECKPOINT_REPO_FILES_PATH;
+  if (filePath) {
+    try {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch (error) {
+      throw new Error(`CHECKPOINT_REPO_FILES_PATH could not be read as JSON: ${error.message}`);
+    }
+  }
   const raw = process.env.CHECKPOINT_REPO_FILES_JSON;
   if (!raw) return null;
   try {
@@ -37,8 +45,13 @@ function safeRead(filePath) {
   const repoRelativePath = toPosix(path.isAbsolute(filePath)
     ? path.relative(process.cwd(), filePath)
     : filePath);
-  if (VIRTUAL_FILES && Object.prototype.hasOwnProperty.call(VIRTUAL_FILES, repoRelativePath)) {
-    return String(VIRTUAL_FILES[repoRelativePath] || '');
+  if (VIRTUAL_FILES) {
+    if (Object.prototype.hasOwnProperty.call(VIRTUAL_FILES, repoRelativePath)) {
+      return String(VIRTUAL_FILES[repoRelativePath] || '');
+    }
+    // In virtual-file mode the provided snapshot is authoritative for this HEAD.
+    // Do not fall back to disk, or missing virtual paths can accidentally read stale local files.
+    return '';
   }
   try {
     return fs.readFileSync(filePath, 'utf8');
@@ -56,6 +69,8 @@ function readJson(filePath) {
       return null;
     }
   }
+  // Keep JSON reads inside the virtual snapshot only when virtual-file mode is active.
+  if (VIRTUAL_FILES) return null;
   try {
     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch {
@@ -183,17 +198,21 @@ function headMatches(candidate, headSha) {
 
 function artifactCurrentness(text, headSha) {
   const fieldValues = [
-    readSimpleField(text, 'CURRENT_HEAD_SHA'),
-    readSimpleField(text, 'gate_snapshot_head_sha'),
-    readSimpleField(text, 'post_push_head_sha'),
-    readSimpleField(text, 'Current head SHA reviewed'),
-    readSimpleField(text, 'Reviewed SHA'),
-    readSimpleField(text, 'HEAD SHA'),
-    readSimpleField(text, 'Commit SHA'),
-  ].filter(Boolean);
+    'CURRENT_HEAD_SHA',
+    'gate_snapshot_head_sha',
+    'post_push_head_sha',
+    'Current head SHA reviewed',
+    'Reviewed SHA',
+    'HEAD SHA',
+    'Commit SHA',
+  ]
+    .map((label) => readSimpleField(text, label))
+    .filter(Boolean);
 
   if (fieldValues.length > 0) {
-    const matches = fieldValues.some((value) => headMatches(value, headSha));
+    // Explicit SHA fields are authoritative: every declared SHA must match the current head
+    // so one refreshed field cannot mask another stale field in the same artifact.
+    const matches = fieldValues.every((value) => headMatches(value, headSha));
     return {
       current: matches,
       stale: !matches,
@@ -545,10 +564,13 @@ function evaluateCheckpoint(input = {}) {
 module.exports = {
   CHECKPOINT_MARKER,
   REQUIRED_CHECKS,
+  artifactCurrentness,
   evaluateCheckpoint,
   isCheckpointTriggerComment,
   isCheckpointResultComment,
   isHandoverClaimComment,
+  readJson,
+  safeRead,
 };
 
 if (require.main === module) {

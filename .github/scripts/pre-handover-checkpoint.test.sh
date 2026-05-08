@@ -102,6 +102,46 @@ EOF
   fi
 }
 
+run_virtual_file_test() {
+  local name="$1"
+  local mode="$2"
+  local virtual_files_json="$3"
+  local expected="$4"
+  local ws actual
+
+  ws="$(mktemp -d -p "$TEST_DIR")"
+  mkdir -p "$ws/.admin"
+  printf '%s\n' '{"disk":"present"}' > "$ws/.admin/pr.json"
+  printf '%s\n' "$virtual_files_json" > "$ws/virtual-files.json"
+
+  actual="$(WORKSPACE="$ws" MODE="$mode" node - "$CHECKPOINT_SCRIPT" <<'EOF'
+const path = require('path');
+process.chdir(process.env.WORKSPACE);
+process.env.CHECKPOINT_REPO_FILES_PATH = path.join(process.env.WORKSPACE, 'virtual-files.json');
+const checkpoint = require(process.argv[2]);
+
+let value;
+if (process.env.MODE === 'safeRead') {
+  value = checkpoint.safeRead(path.join(process.env.WORKSPACE, '.admin/pr.json'));
+} else if (process.env.MODE === 'readJson') {
+  value = checkpoint.readJson(path.join(process.env.WORKSPACE, '.admin/pr.json'));
+} else {
+  throw new Error(`Unknown MODE: ${process.env.MODE}`);
+}
+
+process.stdout.write(typeof value === 'string' ? value : JSON.stringify(value));
+EOF
+)"
+
+  if [[ "$actual" == "$expected" ]]; then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name (expected $expected got $actual)"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
 seed_manifest_and_scope() {
   local head_sha
   head_sha="$(git rev-parse HEAD)"
@@ -298,6 +338,22 @@ EOF
 }
 run_checkpoint_test "7. stale SHA in ECAP artifact -> STOP_AND_FIX" "STOP_AND_FIX" "no" "stale against current HEAD" setup_stale_ecap_sha
 
+setup_mixed_ecap_sha() {
+  setup_green_checkpoint
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  cat > .agent-admin/prehandover/proof-test.md <<EOF
+gate_snapshot_head_sha: ${head_sha}
+post_push_head_sha: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+ecap_invoked: yes
+admin_ceremony_compliance: PASS
+iaa_audit_token: .agent-admin/assurance/iaa-wave-record-test.md
+EOF
+  git add .agent-admin/prehandover/proof-test.md
+  git commit -q -m "mixed ecap proof"
+}
+run_checkpoint_test "8. mixed explicit SHA fields require all current -> STOP_AND_FIX" "STOP_AND_FIX" "no" "stale against current HEAD" setup_mixed_ecap_sha
+
 setup_product_missing_evidence() {
   seed_manifest_and_scope
   seed_green_checks
@@ -326,7 +382,7 @@ EOF
   git add apps/mmm/src/Page.tsx .agent-admin/assurance/iaa-wave-record-test.md .agent-admin/prehandover/proof-test.md
   git commit -q -m "product change no evidence"
 }
-run_checkpoint_test "8. product-facing missing functional evidence -> STOP_AND_FIX" "STOP_AND_FIX" "no" "Functional delivery evidence missing." setup_product_missing_evidence
+run_checkpoint_test "9. product-facing missing functional evidence -> STOP_AND_FIX" "STOP_AND_FIX" "no" "Functional delivery evidence missing." setup_product_missing_evidence
 
 setup_product_functional_fail() {
   setup_product_missing_evidence
@@ -344,13 +400,17 @@ EOF
   git add .functional-delivery/pr-9999.md
   git commit -q -m "functional pass no"
 }
-run_checkpoint_test "9. product-facing FUNCTIONAL_PASS no -> STOP_AND_FIX" "STOP_AND_FIX" "no" "Functional PASS verdict not confirmed." setup_product_functional_fail
+run_checkpoint_test "10. product-facing FUNCTIONAL_PASS no -> STOP_AND_FIX" "STOP_AND_FIX" "no" "Functional PASS verdict not confirmed." setup_product_functional_fail
 
-run_claim_test "10. handover language without checkpoint remains claim" claim "handover complete" true
-run_claim_test "11. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
-run_claim_test "12. draft/status comment without handover language stays false" claim "status update only" false
-run_claim_test "12b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
-run_claim_test "12c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
+run_virtual_file_test "11. virtual mode safeRead does not fall back to disk" safeRead '{}' ""
+run_virtual_file_test "12. virtual mode readJson does not fall back to disk" readJson '{}' "null"
+run_virtual_file_test "13. virtual file path provides readJson content" readJson '{".admin/pr.json":"{\"virtual\":\"present\"}"}' '{"virtual":"present"}'
+
+run_claim_test "14. handover language without checkpoint remains claim" claim "handover complete" true
+run_claim_test "15. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
+run_claim_test "16. draft/status comment without handover language stays false" claim "status update only" false
+run_claim_test "16b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
+run_claim_test "16c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
 
 echo ""
 echo "Passed: $PASS_COUNT"

@@ -304,12 +304,25 @@ jobs:
             const GATE_MARKERS = [BLOCKED_MARKER, OK_MARKER];
 
             // ── Load existing PR comments once (preconditions + idempotency) ─────
-            const { data: existingComments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              per_page: 100,
-            });
+            const listAllIssueComments = async () => {
+              const comments = [];
+              let page = 1;
+              let hasMore = true;
+              while (hasMore) {
+                const { data } = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  per_page: 100,
+                  page,
+                });
+                comments.push(...data);
+                hasMore = data.length === 100;
+                page += 1;
+              }
+              return comments;
+            };
+            const existingComments = await listAllIssueComments();
 
             const requiredSnapshotFields = [
               'CURRENT_HEAD_SHA',
@@ -385,8 +398,10 @@ jobs:
               })
               .sort((a, b) => new Date(b.comment.updated_at || b.comment.created_at) - new Date(a.comment.updated_at || a.comment.created_at));
             const latestCurrentHeadCheckpoint = checkpointComments[0];
-            const successfulCurrentHeadCheckpoint = checkpointComments.find(({ handoverValue, resultValue }) =>
-              handoverValue === true && /^HANDOVER_ALLOWED$/i.test(String(resultValue || '').trim())
+            const latestCurrentHeadCheckpointSuccessful = Boolean(
+              latestCurrentHeadCheckpoint &&
+              latestCurrentHeadCheckpoint.handoverValue === true &&
+              /^HANDOVER_ALLOWED$/i.test(String(latestCurrentHeadCheckpoint.resultValue || '').trim())
             );
             const hasEcapEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/ecap-admin-ceremony') && !pending.some((p) => p.name === 'preflight/ecap-admin-ceremony') && !missing.some((m) => m.name === 'preflight/ecap-admin-ceremony');
             const hasIaaEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/iaa-final-assurance') && !pending.some((p) => p.name === 'preflight/iaa-final-assurance') && !missing.some((m) => m.name === 'preflight/iaa-final-assurance');
@@ -436,17 +451,17 @@ jobs:
               if (expectedIaaRequired && snapshotIaaArtifactPresent !== true) {
                 preconditionFailures.push('IAA is required but IAA_ARTIFACT_PRESENT is not yes.');
               }
-              if (!successfulCurrentHeadCheckpoint) {
-                const latestCheckpointReason = latestCurrentHeadCheckpoint?.reasonValue;
-                preconditionFailures.push(
-                  latestCheckpointReason
-                    ? `Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes. Latest checkpoint says: ${latestCheckpointReason}`
-                    : 'Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes.'
-                );
-              }
-              if (successfulCurrentHeadCheckpoint && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
-                preconditionFailures.push('Checkpoint says handover allowed, but current required checks are not fully green.');
-              }
+               if (!latestCurrentHeadCheckpointSuccessful) {
+                 const latestCheckpointReason = latestCurrentHeadCheckpoint?.reasonValue;
+                 preconditionFailures.push(
+                   latestCheckpointReason
+                     ? `Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes. Latest checkpoint says: ${latestCheckpointReason}`
+                     : 'Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes.'
+                 );
+               }
+               if (latestCurrentHeadCheckpointSuccessful && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
+                 preconditionFailures.push('Checkpoint says handover allowed, but current required checks are not fully green.');
+               }
               if (expectedEcapRequired && !hasEcapEvidenceByChecks) {
                 preconditionFailures.push('ECAP precondition failed: preflight/ecap-admin-ceremony is not green for current HEAD.');
               }
@@ -514,7 +529,7 @@ jobs:
                 `- IAA_ARTIFACT_PRESENT: ${requiresIaa ? (hasIaaEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                  `- HANDOVER_ALLOWED: no`,
                  `- CHECKPOINT_REQUIRED: yes`,
-                 `- CHECKPOINT_PRESENT_FOR_CURRENT_HEAD: ${successfulCurrentHeadCheckpoint ? 'yes' : 'no'}`,
+                 `- CHECKPOINT_PRESENT_FOR_CURRENT_HEAD: ${latestCurrentHeadCheckpointSuccessful ? 'yes' : 'no'}`,
               ].join('\n');
 
               body = [
