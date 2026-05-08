@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-05-07",
-  "total_canons": 201,
-  "generation_timestamp": "2026-05-07T12:34:45Z",
+  "last_updated": "2026-05-08",
+  "total_canons": 202,
+  "generation_timestamp": "2026-05-08T10:10:34Z",
   "canons": [
     {
       "filename": "ACTIVATION_STATE_MODEL.md",
@@ -1041,13 +1041,13 @@
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae",
+      "file_hash": "2b3d55e15b100b2a72ffa8d3b40d44266a9904551f9083a95327fcab0ce5eac1",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae"
+      "file_hash_sha256": "2b3d55e15b100b2a72ffa8d3b40d44266a9904551f9083a95327fcab0ce5eac1"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -1481,13 +1481,13 @@
     {
       "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "version": "1.2.0",
-      "file_hash": "85204573f54733d7eea15c89ee3744201ac341d97b5a2c4e2c4bf6317af69a68",
+      "file_hash": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4",
       "effective_date": "2026-05-04",
       "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL",
       "type": "canon",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "85204573f54733d7eea15c89ee3744201ac341d97b5a2c4e2c4bf6317af69a68"
+      "file_hash_sha256": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4"
     },
     {
       "filename": "MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
@@ -1774,6 +1774,17 @@
       "path": "governance/canon/RIPPLE_RUNTIME_INTEGRATION_SURVEY.md",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "36c2f5d5cb4621d3a7f677a629b70cb8ada219b2f10d883d6333526d89c45723"
+    },
+    {
+      "filename": "ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "9bbcc4ce37a9b5e3265df472e90512236b5d7dff4680a6a1026f75863c3d6835",
+      "effective_date": "2026-05-08",
+      "description": "Canonical governance document: ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON",
+      "type": "canon",
+      "path": "governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "9bbcc4ce37a9b5e3265df472e90512236b5d7dff4680a6a1026f75863c3d6835"
     },
     {
       "filename": "SCOPE_DECLARATION_SCHEMA.md",

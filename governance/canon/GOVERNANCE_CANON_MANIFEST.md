@@ -6,13 +6,15 @@
 **Version**: 1.0.0  
 **Effective Date**: 2026-01-05  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
-**Purpose**: Authoritative index of all canonical governance standards with layer-down status
+**Purpose**: Authoritative human-readable layer-down index for canonical governance standards curated in this manifest
 
 ---
 
 ## 1. Purpose
 
-This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.
+This manifest is the **authoritative human-readable layer-down index** for the canonical governance standards curated in this document.
+
+For exhaustive machine-counted canon coverage across the repository, use `governance/CANON_INVENTORY.json`.
 
 It serves to:
 - Define which canon files are **Public API** (stable interfaces for downstream repos) vs. **Internal** (governance implementation details)
@@ -21,7 +23,7 @@ It serves to:
 - Provide audit trail for governance propagation
 - Prevent governance drift through explicit scoping
 
-**Constitutional Principle**: Every canonical governance standard MUST be listed in this manifest with explicit layer-down status.
+**Constitutional Principle**: Every canonical governance standard curated for this manifest's downstream layer-down contract MUST be listed here with explicit layer-down status.
 
 ---
 
@@ -152,6 +154,7 @@ It serves to:
 | `LEARNING_INTAKE_AND_PROMOTION_MODEL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `LEARNING_PROMOTION_RULE.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
 | `MANDATORY_ENHANCEMENT_CAPTURE_STANDARD.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster | 2026-01-05 |
+| `ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster, maturion-isms, All Repos | 2026-05-08 |
 
 ### 3.7 Memory & Audit Models (OPTIONAL)
 
@@ -274,13 +277,15 @@ These policies are located in `governance/policy/` and establish constitutional 
 
 ## 4. Governance Public API Summary
 
-**Total Canon Files**: 97  
+**Total Canon Files Listed in This Manifest**: 98  
 **Total Policy Files**: 15  
-**Combined Total**: 112  
-**PUBLIC_API**: 82 files (73%)  
+**Combined Total**: 113  
+**PUBLIC_API**: 83 files (73%)  
 **OPTIONAL**: 16 files (14%)  
 **INTERNAL**: 14 files (13%)  
 **DEPRECATED**: 0 files (0%)
+
+**Scope Note**: This summary is for files listed in this manifest only. Exhaustive repository canon inventory totals are tracked in `governance/CANON_INVENTORY.json`.
 
 ### 4.1 Critical Path Canon (Must-Have for Downstream Repos)
 
