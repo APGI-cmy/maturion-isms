@@ -6,8 +6,7 @@
 **Branch**: copilot/foreman-retrofit-pit-artifacts
 **PR**: #1576
 **CS2 Authorization**: CS2-direct-assignment (issue assigned to foreman-v2-agent by CS2/Johan Ras)
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md
+**iaa_prebrief_path**: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md
 
 ---
 

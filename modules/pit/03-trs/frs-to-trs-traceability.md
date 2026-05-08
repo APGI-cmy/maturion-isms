@@ -10,11 +10,12 @@
 |---|---|
 | Module | PIT (Project Implementation Tracker) |
 | Artifact Type | FRS-to-TRS Traceability Matrix |
-| Version | v0.1-draft |
-| Status | **DRAFT_CREATED — pending upstream CS2 approvals (Stage 2 and Stage 3)** |
-| Derived From | `modules/pit/02-frs/functional-requirements.md` v0.1-draft → `modules/pit/03-trs/technical-requirements-specification.md` v0.1-draft |
-| Date | 2026-05-07 |
-| Issue | maturion-isms#1554 |
+| Version | v0.2-draft |
+| Status | **DRAFT_UPDATED — pending upstream CS2 approvals (Stage 2 and Stage 3)** |
+| Derived From | `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** (maturion-isms#1556) → `modules/pit/03-trs/technical-requirements-specification.md` v0.2-draft |
+| Coverage | All 123 FRS requirements (PIT-FR-001 through PIT-FR-123) + 10 NF placeholders + 8 MMM controls |
+| Date | 2026-05-07 (original); updated 2026-05-08 (retrofit wave maturion-isms#1575 / PR #1576 — traceability rows for PIT-FR-113 to PIT-FR-123 added) |
+| Issue | maturion-isms#1554 (original); maturion-isms#1575 (retrofit) |
 
 ---
 
@@ -394,24 +395,45 @@
 
 | Coverage Category | Count | Status |
 |---|---|---|
-| FRS functional requirements traced | 112 of 112 (PIT-FR-001 to PIT-FR-112, individually verified across 31 matrix sections) | COMPLETE |
+| FRS functional requirements traced | **123 of 123** (PIT-FR-001 to PIT-FR-123; PIT-FR-113 to PIT-FR-123 added in retrofit wave maturion-isms#1575) | COMPLETE |
 | NF placeholders resolved in TRS | 10 of 10 (NF-001 to NF-010) | COMPLETE |
 | MMM controls carried forward | 8 of 8 (L-001 to L-008) | COMPLETE |
-| TRS requirements created | PIT-TR-001 to PIT-TR-115 | COMPLETE |
-| Traceability domains covered | 31 domains (including App Shell/5-State, Project Creation, and Filter Bar sub-sections) | COMPLETE |
+| TRS requirements created | PIT-TR-001 to PIT-TR-126 (PIT-TR-116 to PIT-TR-126 added in retrofit wave maturion-isms#1575) | COMPLETE |
+| Traceability domains covered | 32 domains (Section 30 added in retrofit wave for FRS v0.2-hardened additions) | COMPLETE |
 | Stage 2 v0.2 additions traced | My Work (PIT-FR-111, PIT-FR-112); Invitation Acceptance (PIT-FR-110) | COMPLETE |
 | AIMC touchpoints traced | 4 touchpoints (PIT-FR-095 to PIT-FR-099) | COMPLETE |
 | Deployment surface traced | All 27 routes (PIT-FR-103 to PIT-FR-105) | COMPLETE |
+| FRS v0.2-hardened additions traced | PIT-FR-113 to PIT-FR-123 → PIT-TR-116 to PIT-TR-126 (Section 30) | COMPLETE |
 
-**Coverage Note:** Every PIT-FR-NNN identifier appears in at least one explicit table row in this matrix. Cross-cutting requirements (PIT-FR-016 to PIT-FR-021: App Shell / Five-State UI) are captured in Section 5A. Project creation requirements (PIT-FR-031 to PIT-FR-035) are captured in Section 6A. Implementation page filter bar requirements (PIT-FR-085, PIT-FR-086) are captured in Section 17A.
+**Coverage Note:** Every PIT-FR-NNN identifier appears in at least one explicit table row in this matrix. Cross-cutting requirements (PIT-FR-016 to PIT-FR-021: App Shell / Five-State UI) are captured in Section 5A. Project creation requirements (PIT-FR-031 to PIT-FR-035) are captured in Section 6A. Implementation page filter bar requirements (PIT-FR-085, PIT-FR-086) are captured in Section 17A. FRS v0.2-hardened additions (PIT-FR-113 to PIT-FR-123) are captured in Section 30.
 
 ---
 
-**End of PIT FRS-to-TRS Traceability Matrix v0.1-draft**
+## 30. FRS v0.2-Hardened Additions Traceability (Retrofit Wave maturion-isms#1575)
+
+*This section was added in PR #1576 to cover PIT-FR-113 through PIT-FR-123, which were added to the FRS in the hardening wave (maturion-isms#1556). See TRS Section 31 for the full technical requirement definitions.*
+
+| FRS Group | FRS ID(s) | TRS ID(s) | Technical Domain | Future Architecture Component | Future QA-to-Red Test Placeholder |
+|---|---|---|---|---|---|
+| Permission Negative-Path Contract | PIT-FR-113 | PIT-TR-116 | RBAC / RLS enforcement — both allowed-path and denied-path | Role-check middleware; RLS policies; permission-denied UI component | E2E denied: non-owner cannot read/write protected entity; API returns 403; UI renders permission-denied state |
+| Progress Roll-Up Method | PIT-FR-114 | PIT-TR-117 | Data model, API — server-side progress computation | Progress computation Edge Function or database trigger | Unit: roll-up computation returns correct % for known dataset; E2E: project progress updates after task status change |
+| Notification Read / Mark-as-Read | PIT-FR-115 | PIT-TR-118 | Notification system — read/unread state management | `notifications` table `read_at` column; PATCH endpoint; bell badge | E2E: mark notification as read → badge count decrements; real-time badge update |
+| Notification History View | PIT-FR-116 | PIT-TR-119 | Notification system — paginated history page | `/notifications` route component; paginated query | E2E: navigate to `/notifications`; pagination works; all five UI states present |
+| Notification Preferences | PIT-FR-117 | PIT-TR-120 | Notification system — per-user email opt-in storage | `notification_preferences` table; Settings UI | Unit: email not sent when preference disabled; E2E: toggle preference → subsequent notification skips email |
+| Report Generation Permissions / States | PIT-FR-118 | PIT-TR-121 | Reporting — access control and state transitions | `report_history.status` column; role-check in `generate_report` Edge Function | E2E: viewer cannot generate report (403); org_admin can generate project report; status transitions visible in UI |
+| Report History Retention | PIT-FR-119 | PIT-TR-122 | Reporting — retention policy and storage | Retention purge scheduler; `report_history` RLS; re-sign URL on demand | E2E: expired signed URL → re-sign succeeds; record older than retention window removed |
+| QA Dashboard Enhanced Requirements | PIT-FR-120 | PIT-TR-123 | QA Dashboard — evidence visibility, run details | `qa_runs` table; evidence artifact links; `/qa-dashboard` component | E2E: cs2_admin sees wave evidence links; non-admin sees permission-denied; all five states present |
+| Lifecycle Removal Semantics | PIT-FR-121 | PIT-TR-124 | Data model / API — soft-delete, archive, restore, cancel | `archived_at` column on entity tables; restore API; archive/restore audit log | E2E: archive task → excluded from progress roll-up; restore → re-included; cancel → cancellation_reason stored |
+| Accessibility Minimum Outcomes | PIT-FR-122 | PIT-TR-125 | Frontend — WCAG 2.1 AA compliance | Axe-core integration; keyboard focus management; colour contrast enforcement | Build: axe-core zero violations; E2E: keyboard navigation to all primary actions; Lighthouse accessibility ≥ 90 |
+| Bulk Operations Non-Scope | PIT-FR-123 | PIT-TR-126 | Non-functional — explicit v1 exclusion | No implementation required in v1 | Test: no bulk-create, CSV-import, or project-template routes exist in deployed app |
+
+---
+
+**End of PIT FRS-to-TRS Traceability Matrix v0.2-draft**
 
 ---
 
 **Template Version**: 1.0.0
 **Template Authority**: `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
-**Last Updated**: 2026-05-07
+**Last Updated**: 2026-05-08 (retrofit wave maturion-isms#1575 / PR #1576 — Section 30 added; coverage updated to 123 FRS requirements)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
