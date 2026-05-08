@@ -4,7 +4,7 @@
 **Branch**: copilot/mm-p4-wire-framework-flows  
 **Issue**: #1577 — "MMM P4: Wire live Framework onboarding, upload, AI generation, and dashboard flows to deployed Edge Functions"  
 **Agent**: independent-assurance-agent  
-**Mode**: PRE-BRIEF (PHASE 0 only)
+**Mode**: FINAL ASSURANCE — STOP_AND_FIX
 
 ---
 
@@ -53,7 +53,7 @@ Anti-regression obligations: YES — FAIL-ONLY-ONCE A-001/A-002/A-003/A-015 and 
 ### Scope Blockers (Must be Cleared Before IAA-FINAL)
 
 - **SB-001 (Hard blocker)**: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` must be updated for wave `mmm-p4-wire-framework-flows` with task table and `ceremony_admin_appointed: YES/NO`.
-- **SB-002 (Hard blocker)**: Governing issue number must be declared (currently unknown-number).
+- **SB-002 (Hard blocker)**: Governing issue number must remain declared and consistent across PR artifacts (#1577).
 - **SB-003 (Hard blocker)**: Scope declaration parity artifact required with exact changed paths.
 - **SB-004 (Hard blocker)**: PREHANDOVER proof + session memory must exist and be git-committed.
 - **SB-005 (Hard blocker)**: Runtime evidence obligations must be met for all live Edge Function flows.
@@ -76,9 +76,25 @@ Anti-regression obligations: YES — FAIL-ONLY-ONCE A-001/A-002/A-003/A-015 and 
 
 ---
 
+## FINAL ASSURANCE (CURRENT HEAD)
+
+Current state classification: STOP_AND_FIX  
+Handover claim status: BLOCKED  
+Merge readiness: NO
+
+ADMIN_PASS: no  
+FUNCTIONAL_PASS: no  
+VERDICT: FAIL
+
 ## TOKEN
 
-Pending PRE-BRIEF mode only — no Phase 1–4 assurance token issued.
+PHASE_B_BLOCKING_TOKEN: IAA-session-pr-1578-stop-and-fix-20260508
+**Type**: ASSURANCE-TOKEN (FAIL)
+**PR**: #1578
+**Issue**: #1577
+**Reviewed SHA**: d7ef408dda70bc9d59b899be1822fc6403618f40
+**Handover Allowed**: no
+**Required Action**: STOP_AND_FIX / RCA_REQUIRED
 
 ## REJECTION_HISTORY
 
