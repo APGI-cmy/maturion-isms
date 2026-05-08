@@ -87,6 +87,8 @@ t0c_pr_body_examples_not_claim() {
   cat > docs/governance/PHASE5_PRODUCT_DELIVERY_GATES.md << 'EOF'
 # Governance documentation update
 EOF
+  # This line intentionally mirrors non-claim docs/examples where FULL_FUNCTIONAL_DELIVERY
+  # is followed by pipe-separated alternatives, not an explicit verdict assertion.
   TEST_PR_BODY=$'Gate docs update only.\n# Required\n#   VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL'
   export TEST_PR_BODY
   git add .

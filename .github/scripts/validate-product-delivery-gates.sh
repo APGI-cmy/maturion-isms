@@ -68,7 +68,20 @@ is_live_functional_delivery_evidence_file() {
 
 pr_body_claims_product_delivery() {
   [ -n "$PR_BODY" ] || return 1
-  echo "$PR_BODY" | grep -qiE 'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+|FUNCTIONAL_PASS:[[:space:]]*yes|FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)|VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)|Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
+  local claim_patterns=(
+    'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+'
+    'FUNCTIONAL_PASS:[[:space:]]*yes'
+    'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    'VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    'Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
+  )
+  local pattern
+  for pattern in "${claim_patterns[@]}"; do
+    if echo "$PR_BODY" | grep -qiE "$pattern"; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 PRODUCT_FACING=false
