@@ -5,7 +5,7 @@
 **PR**: #1586
 **Issue**: #1583
 **IAA Contract Version**: 2.10.0
-**Current HEAD Before Refresh**: `0819d9587bac8c0fc71845e7b956b21ed566790d`
+**Current HEAD Before Refresh**: `35ddef977cf9060a0e9dfcda668243d259b63a18`
 **Created / Refreshed**: 2026-05-08
 **Created By**: independent-assurance-agent (Phase 0 — PRE-BRIEF-AMEND)
 **Adoption Phase**: PHASE_B_BLOCKING
@@ -17,7 +17,7 @@
 **Pre-Brief Mode**: PHASE_0 — PRE-BRIEF-AMEND invocation. Phases 1–4 assurance NOT executed.
 **Pre-Brief Date**: 2026-05-08
 **Trigger Context**: PR #1586 ECAP evidence wave refresh for protected-path admin evidence readiness.
-**ceremony_admin_appointed**: NO in `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+**ceremony_admin_appointed**: execution-ceremony-admin-agent in `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` (appointed 2026-05-08T15:42:50Z)
 
 ---
 
@@ -39,8 +39,8 @@
 - `protected-path admin evidence overlay` — applies because this refresh is gated on admin/evidence artifacts that must exist on-branch before ceremony delegation can begin.
 
 **Core blocker posture**:
-- STOP-AND-FIX remains active.
-- Foreman is **not clear to proceed** with delegation to `execution-ceremony-admin-agent`.
+- STOP-AND-FIX for missing ECAP evidence is resolved on-branch.
+- Foreman is clear to proceed with review of the committed `execution-ceremony-admin-agent` evidence bundle before final IAA assurance.
 
 ---
 
@@ -48,10 +48,10 @@
 
 | Blocker ID | Finding | Required Fix |
 |------------|---------|--------------|
-| B-ECAP-01 | Missing PREHANDOVER proof in diff | Commit `.agent-admin/prehandover/proof-pr-1586-pre-handover-checkpoint-hardening-20260508.md` to the branch diff |
-| B-ECAP-02 | Missing ECAP bundle in diff | Commit `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md` to the branch diff |
-| B-ECAP-03 | `wave-current-tasks.md` still records `ceremony_admin_appointed: NO` | Update wave tracking only when Foreman formally delegates to `execution-ceremony-admin-agent`; until then ECAP delegation is not authorised |
-| B-ECAP-04 | Scope/admin artifacts are stale for the added evidence files | Refresh scope/admin evidence artifacts so the two required paths above are explicitly represented and coherent across the bundle |
+| B-ECAP-01 | RESOLVED — PREHANDOVER proof is now in the diff | `.agent-admin/prehandover/proof-pr-1586-pre-handover-checkpoint-hardening-20260508.md` committed in branch state |
+| B-ECAP-02 | RESOLVED — ECAP bundle is now in the diff | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md` committed in branch state |
+| B-ECAP-03 | RESOLVED — `wave-current-tasks.md` now records `ceremony_admin_appointed: execution-ceremony-admin-agent` | Foreman delegation recorded in the active wave tracker |
+| B-ECAP-04 | RESOLVED — scope/admin artifacts refreshed for the added evidence files | `.admin/prs/pr-1586.json`, `.agent-admin/scope-declarations/pr-1586.md`, and `.agent-workspace/foreman-v2/personal/scope-declaration-wave-pre-handover-checkpoint-hardening-20260508.md` refreshed |
 
 ---
 
@@ -82,9 +82,9 @@ Anti-regression obligations: [NO — FUNCTIONAL-BEHAVIOUR-REGISTRY not triggered
 
 ### Clearance
 
-**Foreman delegation status**: **NOT CLEAR TO PROCEED**
+**Foreman delegation status**: **CLEAR TO PROCEED**
 
-**Reason**: The required PREHANDOVER proof and ECAP bundle are not yet present in the branch diff, `wave-current-tasks.md` still records `ceremony_admin_appointed: NO`, and scope/admin artifacts still need refresh for the added evidence files.
+**Reason**: The required PREHANDOVER proof and ECAP bundle are now present in the branch diff, the active wave tracker records the ECAP appointment, and the coupled scope/admin artifacts were refreshed to include the new evidence paths. Final IAA assurance remains pending.
 
 ---
 
