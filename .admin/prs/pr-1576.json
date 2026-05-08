@@ -22,7 +22,8 @@
     "modules/pit/03-trs/technical-requirements-specification.md",
     "modules/pit/BUILD_PROGRESS_TRACKER.md",
     "modules/pit/_readiness/functional-delivery-retrofit-checklist.md",
-    "modules/pit/_readiness/pit-functional-delivery-gap-register.md"
+    "modules/pit/_readiness/pit-functional-delivery-gap-register.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-iaa-pit-prebuilt-retrofit-r2-20260508.md"
   ],
   "risk": "medium",
   "requires_iaa": true,

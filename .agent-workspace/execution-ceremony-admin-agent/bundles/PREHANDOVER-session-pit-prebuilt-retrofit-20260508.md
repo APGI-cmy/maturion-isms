@@ -84,7 +84,7 @@ scope_declaration_path: .agent-admin/scope-declarations/pr-1576.md
 scope_declaration_committed: YES — SHA ed2851f
 scope_declaration_schema: v2.0.0
 files_changed_count_at_bundle_assembly: 14 (pre-ECAP commit)
-files_changed_count_final_expected: 16 (post-ECAP commit — adds 2 ECAP bundle files)
+files_changed_count_final_expected: 20 (post-ECAP + IAA-R2 artifacts committed)
 ```
 
 **Files in diff (pre-ECAP — 14 files):**
@@ -103,9 +103,13 @@ files_changed_count_final_expected: 16 (post-ECAP commit — adds 2 ECAP bundle 
 13. `modules/pit/_readiness/functional-delivery-retrofit-checklist.md` — NEW: Stage 1–12 retrofit checklist
 14. `modules/pit/_readiness/pit-functional-delivery-gap-register.md` — NEW: Gap register (UX-GAP-001, UX-GAP-002, TRS-GAP-001 resolved)
 
-**ECAP additions (post-ECAP commit — 2 additional files):**
+**Post-ECAP + IAA-R2 additions (post-bundle assembly — 6 additional files):**
 15. `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-prebuilt-retrofit-20260508.md` — THIS FILE
 16. `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` — Session memory
+17. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-prebuilt-retrofit-20260508.md` — Foreman accepted PREHANDOVER copy
+18. `.agent-workspace/foreman-v2/memory/session-pit-prebuilt-retrofit-20260508.md` — Foreman accepted session memory copy
+19. `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` — Suggestions log updated (2 entries appended)
+20. `.agent-workspace/independent-assurance-agent/memory/session-iaa-pit-prebuilt-retrofit-r2-20260508.md` — IAA R2 rejection session memory artifact
 
 ---
 
