@@ -1,12 +1,12 @@
-# Wave Current Tasks — phase4-tier2-role-guidance-1566
+# Wave Current Tasks — layer-down-governance-changes-2026-05-07-f1e8a82a
 
-**Wave**: phase4-tier2-role-guidance-1566
-**Session ID**: session-phase4-tier2-role-guidance-20260507
-**Date**: 2026-05-07
-**Branch**: copilot/align-operational-role-guidance
-**CS2 Authorization**: Issue opened by @APGI-cmy (`maturion-isms#1566`)
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-phase4-tier2-role-guidance-1566-20260507.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-phase4-tier2-role-guidance-1566-20260507.md
+**Wave**: layer-down-governance-changes-2026-05-07-f1e8a82a
+**Session ID**: session-layer-down-governance-changes-20260508
+**Date**: 2026-05-08
+**Branch**: copilot/layer-down-governance-changes-again
+**CS2 Authorization**: Comment by @APGI-cmy in triggering issue (CS2 Scope Clarification — Full Implementation Layer-Down Required)
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-layer-down-governance-changes-2026-05-07-f1e8a82a-20260508.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-layer-down-governance-changes-2026-05-07-f1e8a82a-20260508.md
 
 ---
 
@@ -14,9 +14,10 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-phase4-tier2-role-guid
 
 | # | Task | Builder | Status | PR / Evidence |
 |---|------|---------|--------|---------------|
-| 1 | Tier 2 inventory + preservation/conflict map for role-separation guidance | governance-liaison-isms-agent | 🟢 DONE | governance/checklists/phase4-role-separation-operational-guidance.md |
-| 2 | Tier 2 guidance/template updates for Admin Ceremony, ECAP, Builder QA, IAA, Foreman and cross-cutting rules | governance-liaison-isms-agent | 🟢 DONE | governance/checklists/phase4-role-separation-operational-guidance.md |
-| 3 | Tier 1/Tier 3 follow-up impact assessment + queued-behind-#1565 note | governance-liaison-isms-agent | 🟢 DONE | .agent-admin/scope-declarations/pr-1567.md |
+| 1 | Sync changed canonical artifacts (MMM model + ECAP templates) | governance-liaison-isms-agent | 🟡 TODO | governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md; governance/templates/execution-ceremony-admin/* |
+| 2 | Validator + regression parity assessment for governance-control paths | governance-liaison-isms-agent | 🟡 TODO | .github/scripts/validate-simple-pr-admin.sh(.test.sh) |
+| 3 | Alignment inventory update and impact assessments | governance-liaison-isms-agent | 🟡 TODO | governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json |
+| 4 | Agent contract impact assessment (.github/agents/*) | governance-liaison-isms-agent | 🟡 TODO | governance/alignment/ISSUE_LAYER_DOWN_20260507_F1E8A82A_AGENT_CONTRACT_IMPACT_ASSESSMENT.md |
 
 ---
 
@@ -24,13 +25,13 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-phase4-tier2-role-guid
 
 | PR # | Token | Date |
 |------|-------|------|
-| 1567 | phase-b-blocking-phase4-tier2-role-guidance-1566-20260507 | 2026-05-07 |
+| TBD | phase-b-blocking-layer-down-governance-changes-2026-05-07-f1e8a82a-20260508 | 2026-05-08 |
 
 ---
 
 ## Wave Completion Gate
 
-- [x] All tasks above show 🟢 DONE
+- [ ] All tasks above show 🟢 DONE
 - [ ] Session memory written
-- [x] PREHANDOVER proof committed
+- [ ] PREHANDOVER proof committed
 - [ ] CS2 notified for merge approval
