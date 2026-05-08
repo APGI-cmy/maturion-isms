@@ -2,8 +2,9 @@
 
 > **Usage**: Copy this template to `.agent-admin/prehandover/proof-<PR#>.md`. Fill every field. Do NOT leave placeholder values. Once committed, this document is immutable — create a new proof file for any subsequent round.
 >
-> **PR type routing** (from `.admin/pr.json`):
-> - `product-fix` / `test-only` with `requires_iaa=false` and `requires_ecap=false`: **low-ceremony path** — legacy ceremony artifacts (IAA wave records, ECAP bundles, PREHANDOVER proofs) are **frozen** and not required for merge. Use `.admin/pr.json` as the single source of truth. Do NOT generate this template for these PRs.
+> **PR type routing** (from the active PR manifest):
+> - Resolve the active PR manifest as `.admin/prs/pr-<PR_NUMBER>.json` when present; otherwise use `.admin/pr.json` as fallback.
+> - `product-fix` / `test-only` with `requires_iaa=false` and `requires_ecap=false`: **low-ceremony path** — legacy ceremony artifacts (IAA wave records, ECAP bundles, PREHANDOVER proofs) are **frozen** and not required for merge. Use the active PR manifest as the single source of truth. Do NOT generate this template for these PRs.
 > - `governance-change` / `agent-contract-change` or any PR with `requires_iaa=true`: **full-ceremony path** — this template applies. All fields below are mandatory.
 > - Any PR whose scope crosses governance-control paths (`.github/workflows/**`, `.github/scripts/**`, `.github/agents/**`, `governance/**`, `.agent-admin/**`) is automatically full-ceremony regardless of declared type.
 
