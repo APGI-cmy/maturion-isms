@@ -1480,14 +1480,14 @@
     },
     {
       "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
-      "version": "1.1.0",
-      "file_hash": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251",
+      "version": "1.2.0",
+      "file_hash": "85204573f54733d7eea15c89ee3744201ac341d97b5a2c4e2c4bf6317af69a68",
       "effective_date": "2026-05-04",
       "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL",
       "type": "canon",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "4620b6d57d93fed8467772ac0d40c5f1663c42c190b6035c089b747689b7c251"
+      "file_hash_sha256": "85204573f54733d7eea15c89ee3744201ac341d97b5a2c4e2c4bf6317af69a68"
     },
     {
       "filename": "MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
