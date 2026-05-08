@@ -19,7 +19,7 @@ APPROVED_ARTIFACT_PATHS:
 - governance/templates/execution-ceremony-admin/PREHANDOVER.template.md
 - governance/templates/execution-ceremony-admin/README.md
 - governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json
-- governance/alignment/ISSUE_LAYER_DOWN_20260507_F1E8A82A_AGENT_CONTRACT_IMPACT_ASSESSMENT.md
+- governance/alignment/ALIGNMENT_ASSESSMENT_f1e8a82a.md
 - .github/scripts/validate-simple-pr-admin.sh
 - .github/scripts/validate-simple-pr-admin.test.sh
 
