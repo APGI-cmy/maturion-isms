@@ -92,7 +92,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-pr-1578-stop-and-fix-20260508
 **Type**: ASSURANCE-TOKEN (FAIL)
 **PR**: #1578
 **Issue**: #1577
-**Reviewed SHA**: 2fa5c516d70dfd5ccf6e00810c9acdf7795b570f
+**Reviewed SHA**: 3daab9b9b480bb4203d1b869e5562480bf8346e0
 **Handover Allowed**: no
 **Required Action**: STOP_AND_FIX / RCA_REQUIRED
 

@@ -1,6 +1,6 @@
 # ECAP Current-Head Gate Snapshot — PR #1578
 
-CURRENT_HEAD_SHA: 2fa5c516d70dfd5ccf6e00810c9acdf7795b570f
+CURRENT_HEAD_SHA: 3daab9b9b480bb4203d1b869e5562480bf8346e0
 PASSING_CHECKS:
 - preflight/evidence-exactness
 - preflight/ecap-admin-ceremony
