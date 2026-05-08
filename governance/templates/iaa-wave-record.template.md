@@ -124,13 +124,25 @@
 
 ### 3.1 IAA Verdict
 - ADMIN_PASS: {yes / no}
-- FUNCTIONAL_PASS: {yes / no}
+- FUNCTIONAL_PASS: {yes / no / NOT-ASSESSED}
 - VERDICT: {FULL_FUNCTIONAL_DELIVERY / PARTIAL_FUNCTIONAL_DELIVERY / ADMIN_ONLY / FAIL}
 - FULL_FUNCTIONAL_DELIVERY_VERDICT: {FULL_FUNCTIONAL_DELIVERY / PARTIAL_FUNCTIONAL_DELIVERY / ADMIN_ONLY / FAIL} # optional alias for compatibility
 - IAA_EXECUTION_VERDICT: {PASS / REJECTED / BLOCKED_PENDING_RUNTIME_EVIDENCE / BLOCKED_PENDING_BUILD_CORRECTNESS / PASS_WITH_CS2_WAIVER / INVALID_PRIOR_TOKEN}
 - Token: IAA-session-{NNN}-wave-{wave}-{YYYYMMDD}-{PASS / REJECTED / BLOCKED_PENDING_RUNTIME_EVIDENCE / BLOCKED_PENDING_BUILD_CORRECTNESS / PASS_WITH_CS2_WAIVER / INVALID_PRIOR_TOKEN}
 - Date: {YYYY-MM-DD}
 - PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal execution-verdict artifact. The token suffix must align with `IAA_EXECUTION_VERDICT` (PASS/REJECTED/BLOCKED_*), not with functional-delivery `VERDICT`.}
+
+### 3.1b Split Verdict Evidence Pack (when applicable)
+- CURRENT_HEAD_SHA: {sha used for final IAA review}
+- ADMIN_GATE_EVIDENCE_FRESH_AT_HEAD: {yes / no}
+- FUNCTIONAL_CTA_EVIDENCE: {present / missing}
+- FUNCTIONAL_BACKEND_EVIDENCE: {present / missing}
+- FUNCTIONAL_STATE_EVIDENCE: {present / missing}
+- FUNCTIONAL_SUCCESS_FAILURE_EVIDENCE: {present / missing}
+- LIMITATIONS_DECLARED: {yes / no}
+- PARTIAL_SCOPE_CS2_ACCEPTANCE: {yes / no / N/A}
+- CALIBRATION_REFERENCE: {APGI-cmy/maturion-isms#1553 (OC-009) when PARTIAL_FUNCTIONAL_DELIVERY is issued or UI_SHELL_ONLY classification evidence is referenced}
+- APPLICABILITY: {REQUIRED for product-facing T2 PRs / N/A for non-product-facing PRs with classification rationale}
 
 ### 3.1a Mandatory ECAP Presence Gate
 
