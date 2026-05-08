@@ -312,7 +312,7 @@ echo "✅ IAA Functional Verdict gate: PASS"
 # ---------------------------------------------------------------------------
 # Gate 5: Placeholder honesty
 # ---------------------------------------------------------------------------
-placeholder_regex='not yet wired|TODO[[:space:]:_-]*backend|placeholder[[:space:]]+(wiring|implementation|backend)|temporary[[:space:]]+(stub|shim)'
+placeholder_regex='not yet wired|TODO([[:space:]]+|:[[:space:]]*|_[[:space:]]*|-+[[:space:]]*)backend|placeholder[[:space:]]+(wiring|implementation|backend)|temporary[[:space:]]+(stub|shim)'
 pass_claim_regex='FUNCTIONAL_PASS:[[:space:]]*yes|FULL_FUNCTIONAL_DELIVERY|functional PASS|full functional delivery|100% build|one-time build|complete product workflow'
 partial_allowed=false
 
