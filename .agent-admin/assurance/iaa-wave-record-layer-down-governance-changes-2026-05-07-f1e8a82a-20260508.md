@@ -37,7 +37,7 @@ Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BU
 
 ### Scope status
 - `ceremony_admin_appointed`: true, evidenced by `.agent-admin/prehandover/proof-pr-1572-ecap-admin-ceremony-20260508.md`
-- Protected-path changes: covered by committed ECAP/PREHANDOVER evidence
+- Protected-path changes: covered by committed ECAP/PREHANDOVER evidence in `.agent-admin/prehandover/proof-pr-1572-ecap-admin-ceremony-20260508.md` and `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1572-ecap-admin-ceremony-20260508.md`
 
 ---
 
