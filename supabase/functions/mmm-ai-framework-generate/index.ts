@@ -3,7 +3,7 @@
  *
  * Wave B4 — Framework Lifecycle (stub)
  * Wave B7 — Boundary Integrations (AIMC stub (B7 live wire complete — AIMC_STUB replaced with callAimc consumer boundary))
- * Route:   POST /api/ai/framework-generate
+ * Capability: mmm-ai-framework-generate (Supabase Edge Function invoke)
  * Tests:   T-MMM-S6-025, T-MMM-S6-099, T-MMM-S6-106, T-MMM-S6-107, T-MMM-S6-108
  * Issue:   maturion-isms#1428
  * Builder: integration-builder (B7 live wire)
@@ -17,7 +17,7 @@
  * AIMC_SERVICE_TOKEN: Deno.env.get('AIMC_SERVICE_TOKEN') — provisioned via SB-003
  *
  * Behaviour (B7 live):
- *   - Calls AIMC /api/ai/framework-generate (TR-011–TR-015)
+ *   - Calls AIMC framework-generate operation (TR-011–TR-015)
  *   - Authorization: Bearer AIMC_SERVICE_TOKEN (TR-011)
  *   - AbortController timeout 90s + 1 retry (TR-014)
  *   - Circuit breaker (TR-009)

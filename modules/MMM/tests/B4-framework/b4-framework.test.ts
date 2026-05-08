@@ -437,13 +437,14 @@ describe('T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode'
     expect(src).toContain("source_type: sourceType");
     expect(src).toContain("supabase.functions.invoke('mmm-ai-framework-generate',");
     expect(src).toContain('framework_id: frameworkId');
+    expect(src).toContain("body: { name: 'New Framework', mode, framework_id: frameworkId }");
   });
   it('Mode C calls mmm-ai-framework-generate with hybrid payload', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
     expect(src).toContain("mode==='C'");
     expect(src).toContain('hybrid: true');
-    expect(src).toContain("origin_mode: sourceType");
     expect(src).toContain('framework_id: frameworkId');
+    expect(src).toContain("body: { name: 'Hybrid Framework', hybrid: true, mode, framework_id: frameworkId }");
   });
   it('renders visible failure state without unwired-backend placeholder copy', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');

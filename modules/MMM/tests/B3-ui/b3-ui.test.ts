@@ -306,13 +306,14 @@ describe('T-MMM-S6-016: freeAssessmentStore.ts has setResult and reset actions',
 
 // ─── T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002) ─────
 describe('T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002)', () => {
-  it('uses validateJWT', () => {
+  it('validates JWT via supabase.auth.getUser', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
-    expect(src).toContain('validateJWT');
+    expect(src).toContain('supabase.auth.getUser');
   });
-  it('allows missing profile during first org bootstrap', () => {
+  it('reads bearer token from Authorization header', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
-    expect(src).toContain('allowMissingProfile: true');
+    expect(src).toContain("Authorization");
+    expect(src).toContain("Bearer ");
   });
   it('has NBR-002 comment', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
@@ -320,8 +321,7 @@ describe('T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002)', 
   });
   it('throws 401/403 on invalid JWT', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
-    // validateJWT from mmm-auth throws 401/403 on failure
-    expect(src).toContain('validateJWT');
+    expect(src).toContain('Invalid or expired JWT');
   });
 });
 

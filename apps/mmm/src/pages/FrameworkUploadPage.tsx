@@ -52,7 +52,7 @@ export default function FrameworkUploadPage() {
     mutationFn: async () => {
       const initFramework = async (name: string, sourceType: 'GENERATED' | 'HYBRID') => {
         const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
-          body: { name, source_type: sourceType, origin_mode: sourceType },
+          body: { name, source_type: sourceType },
         });
         if (error) throw new Error(error.message || 'Failed to init framework');
         const frameworkId = data?.framework?.id;
