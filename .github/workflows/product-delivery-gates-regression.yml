@@ -1,0 +1,36 @@
+name: Product Delivery Gates Regression
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/scripts/validate-product-delivery-gates.sh"
+      - ".github/scripts/validate-product-delivery-gates.test.sh"
+      - ".github/workflows/product-delivery-gates-regression.yml"
+      - ".github/workflows/preflight-evidence-gate.yml"
+      - ".functional-delivery/pr-template.md"
+  push:
+    paths:
+      - ".github/scripts/validate-product-delivery-gates.sh"
+      - ".github/scripts/validate-product-delivery-gates.test.sh"
+      - ".github/workflows/product-delivery-gates-regression.yml"
+      - ".github/workflows/preflight-evidence-gate.yml"
+      - ".functional-delivery/pr-template.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  product-delivery-gates-regression:
+    name: "regression/product-delivery-gates"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Run gate regression suite
+        run: |
+          chmod +x .github/scripts/validate-product-delivery-gates.sh
+          chmod +x .github/scripts/validate-product-delivery-gates.test.sh
+          .github/scripts/validate-product-delivery-gates.test.sh
