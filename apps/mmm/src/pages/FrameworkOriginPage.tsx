@@ -63,6 +63,11 @@ export default function FrameworkOriginPage() {
               </label>
             ))}
           </div>
+          {mutation.isError ? (
+            <p role="alert" className="text-sm text-red-600">
+              We couldn&apos;t start your framework. Please try again.
+            </p>
+          ) : null}
           <button className="btn btn-primary w-full" onClick={() => mutation.mutate()} disabled={mutation.isPending}>
             {mutation.isPending ? 'Starting…' : 'Start'}
           </button>
