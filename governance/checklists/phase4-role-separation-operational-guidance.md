@@ -224,10 +224,10 @@ POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 - A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
 - Final current-head verification before handover MUST be non-mutating.
 - Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
-- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Disallowed forms: editing PREHANDOVER only to update `gate_snapshot_head_sha` / `post_push_head_sha` (PREHANDOVER head SHA fields); editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
 - Any commit after final verification invalidates that verification.
 - Verification is valid only if:
-  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - CURRENT_PR_HEAD_FROM_GITHUB equals HEAD_BEING_VERIFIED;
   - all required checks are green on that head;
   - substantive review blockers are fixed;
   - POST_VERIFICATION_COMMITS_PUSHED: no.
@@ -474,10 +474,10 @@ POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 - A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
 - Final current-head verification before handover MUST be non-mutating.
 - Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
-- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Disallowed forms: editing PREHANDOVER only to update `gate_snapshot_head_sha` / `post_push_head_sha` (PREHANDOVER head SHA fields); editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
 - Any commit after final verification invalidates that verification.
 - Verification is valid only if:
-  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - CURRENT_PR_HEAD_FROM_GITHUB equals HEAD_BEING_VERIFIED;
   - all required checks are green on that head;
   - substantive review blockers are fixed;
   - POST_VERIFICATION_COMMITS_PUSHED: no.
@@ -548,10 +548,10 @@ If yes, it is not full functional delivery.
 - A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
 - Final current-head verification before handover MUST be non-mutating.
 - Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
-- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Disallowed forms: editing PREHANDOVER only to update `gate_snapshot_head_sha` / `post_push_head_sha` (PREHANDOVER head SHA fields); editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
 - Any commit after final verification invalidates that verification.
 - Verification is valid only if:
-  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - CURRENT_PR_HEAD_FROM_GITHUB equals HEAD_BEING_VERIFIED;
   - all required checks are green on that head;
   - substantive review blockers are fixed;
   - POST_VERIFICATION_COMMITS_PUSHED: no.
@@ -630,10 +630,10 @@ POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 - A committed evidence-refresh artifact cannot be final proof of current PR head because that commit creates a new head SHA.
 - Final current-head verification before handover MUST be non-mutating.
 - Allowed forms: PR comment by producing agent; PR review comment; CI/check output; reviewer verification.
-- Disallowed forms: editing PREHANDOVER only to update CURRENT_HEAD_SHA; editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
+- Disallowed forms: editing PREHANDOVER only to update `gate_snapshot_head_sha` / `post_push_head_sha` (PREHANDOVER head SHA fields); editing ECAP only to update CURRENT_HEAD_SHA; editing IAA only to update Reviewed SHA; committing a “final verification” file after supposed completion.
 - Any commit after final verification invalidates that verification.
 - Verification is valid only if:
-  - CURRENT_PR_HEAD_FROM_GITHUB matches head being verified;
+  - CURRENT_PR_HEAD_FROM_GITHUB equals HEAD_BEING_VERIFIED;
   - all required checks are green on that head;
   - substantive review blockers are fixed;
   - POST_VERIFICATION_COMMITS_PUSHED: no.
