@@ -389,7 +389,18 @@ IAA will challenge the following at handover:
   3. Run `git diff --name-only origin/main...HEAD | wc -l` after fix commit to confirm = 20 (or whatever final count is after the fix commit itself is included).
   4. Verify no other undeclared files exist in diff.
   5. Re-commit both documents with clean `git status --porcelain`.
-  6. Re-invoke IAA.
+   6. Re-invoke IAA.
+
+**Rejection 3 (R4 invocation)**: IAA-session-pit-prebuilt-retrofit-20260508-R4-FAIL-20260508
+- **FAIL-1 (ACR-02 AUTO-REJECT)**: Active-bundle session memory still contains stale pre-invocation wording while PASS gates are declared and final assurance is being requested. Evidence: `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` line 269 (`IAA assurance verdict | PENDING — IAA invocation not yet performed`) and lines 277–278/282 (`Pending Foreman commit` for already committed artifacts).
+- **FAIL-2 (ACR-10 AUTO-REJECT)**: Final-state proof contains pending/in-progress gate language while `merge_gate_parity: PASS` is declared. Evidence: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-prebuilt-retrofit-20260508.md` lines 501 (`guard_result: IN_PROGRESS — pending successful re-invocation`) and 514 (`merge_gate_parity: PASS`).
+- **FAIL-3 (ACR-12 AUTO-REJECT)**: Cross-artifact final-state contradiction inside active bundle. Evidence: same session artifact declares ECAP artifacts `✅ Committed` (lines 66–67) and later `Pending Foreman commit` (lines 277–278/282) for the same files.
+- **Classification**: Ceremony + Systemic recurrence (same stale-status normalization family as prior rejection chain).
+- **Required fix**:
+  1. Normalize active-bundle PREHANDOVER and session-memory files to a single committed/post-invocation truth model (remove `PENDING — IAA invocation not yet performed`, `Pending Foreman commit`, and `guard_result: IN_PROGRESS` wording).
+  2. Ensure no active artifact contains pending/in-progress gate language when asserting `merge_gate_parity: PASS`.
+  3. Re-run cross-artifact coherence sweep and commit synchronized ECAP + Foreman memory copies.
+  4. Re-invoke IAA after commit; no additional scope/count drift permitted.
 
 ---
 

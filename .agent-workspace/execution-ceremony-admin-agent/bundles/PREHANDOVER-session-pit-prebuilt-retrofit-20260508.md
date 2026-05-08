@@ -498,7 +498,7 @@ iaa_token_self_cert_guard:
   token_file_exists: NO — ASSURANCE-TOKEN not issued yet
   phase_b_blocking_token_present: NO — latest IAA verdict is REJECTION-PACKAGE
   phase_a_advisory_absent: YES
-  guard_result: IN_PROGRESS — pending successful re-invocation (R4)
+  guard_result: BLOCKED — latest IAA verdict is REJECTION-PACKAGE (R4); awaiting R5 re-invocation
 ```
 
 > **Note for Foreman**: After IAA invocation, complete the token self-certification guard:

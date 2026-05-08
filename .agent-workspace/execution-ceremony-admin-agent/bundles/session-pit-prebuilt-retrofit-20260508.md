@@ -182,7 +182,7 @@ unresolved_breaches: none
 | AAP-06 | Requested vs completed assurance session mismatch | ✅ PASS — expected token reference format consistent: IAA-session-pit-prebuilt-retrofit-20260508-PASS |
 | AAP-07 | Declared file/artifact count mismatch | ✅ PASS — 20 total deliverables declared and aligned with current diff count (20) |
 | AAP-08 | PUBLIC_API ripple obligations omitted | ✅ PASS — no PUBLIC_API files in diff (verified via CANON_INVENTORY scan); ripple obligation NOT-APPLICABLE |
-| AAP-09 | Committed truth not matching proof claims | ✅ PASS — all 11 primary deliverables git ls-files verified; 2 uncommitted files are admin-only and documented |
+| AAP-09 | Committed truth not matching proof claims | ✅ PASS — committed-state claims align with current branch artifacts |
 | AAP-15 | Gate inventory absent from PREHANDOVER proof | ✅ PASS — gate_set_checked populated: [OVL-PBG-001, OVL-PBG-002, OVL-PBG-006, OVL-PBG-008, OVL-PBG-009, OVL-PBG-014, OVL-PBG-ADM-001, OVL-INJ-001, OVL-INJ-ADM-001, OVL-INJ-ADM-002, OVL-INJ-ADM-003] |
 | AAP-16 | Stale gate-pass wording | ✅ PASS — no "verify gates pass", "gates TBD", "gates pending" in bundle; all gate states are definitive PASS declarations |
 
@@ -266,7 +266,7 @@ Date: 2026-05-08
 |---|---|
 | Substantive readiness | ACCEPTED by Foreman (QP PASS declared) |
 | Administrative readiness | ACCEPTED (ECAP bundle assembled and complete) |
-| IAA assurance verdict | PENDING — IAA invocation not yet performed |
+| IAA assurance verdict | REJECTION-PACKAGE — R4 (pending R5 re-invocation) |
 | Ripple status | NOT-APPLICABLE (no PUBLIC_API files changed) |
 | Admin-compliance result | PASS (§4.3e gate PASS) |
 
@@ -274,12 +274,12 @@ Date: 2026-05-08
 
 | Artifact Class | Required Path | Present | Committed | Final-State Normalized |
 |---|---|---|---|---|
-| PREHANDOVER proof | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-prebuilt-retrofit-20260508.md` | ✓ | Pending Foreman commit | ✓ |
-| Session memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` | ✓ | Pending Foreman commit | ✓ |
+| PREHANDOVER proof | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-prebuilt-retrofit-20260508.md` | ✓ | Committed | ✓ |
+| Session memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` | ✓ | Committed | ✓ |
 | IAA wave record (pre-brief) | `.agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md` | ✓ | ✓ (f5e8f48) | ✓ |
 | Scope declaration | `.agent-admin/scope-declarations/pr-1576.md` | ✓ | ✓ (ed2851f) | ✓ |
 | IAA token file | `.agent-admin/assurance/iaa-token-session-pit-prebuilt-retrofit-20260508.md` | N/A (not yet issued) | N/A | N/A — pending IAA invocation |
-| ECAP reconciliation summary | Embedded in this session memory | ✓ | Pending Foreman commit | ✓ |
+| ECAP reconciliation summary | Embedded in this session memory | ✓ | Committed | ✓ |
 
 ### C3. Cross-Artifact Consistency Table
 
