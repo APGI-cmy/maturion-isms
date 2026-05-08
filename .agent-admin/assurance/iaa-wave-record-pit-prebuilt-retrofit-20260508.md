@@ -377,6 +377,20 @@ IAA will challenge the following at handover:
 - Substantive content: PASS (all OVL-PBG checks passed)
 - Resolution: Committed all staged/untracked files; re-invoking IAA
 
+**Rejection 2**: IAA-session-pit-prebuilt-retrofit-20260508-R2-FAIL-20260508
+- **FAIL-1 (ACR-04 AUTO-REJECT)**: PREHANDOVER `files_changed_count_final_expected: 16` — actual `git diff --name-only origin/main...HEAD | wc -l` = **19**. Count understated by 3. AUTO-REJECT per ACR-04.
+- **FAIL-2 (A-026 / ACR-07)**: Scope declaration IN_SCOPE list declares **18 files**; actual diff contains **19 files**. Undeclared file: `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md`. Scope declaration's own rule states `.agent-workspace/**` is out of scope except explicitly listed files — this file is NOT listed. PREHANDOVER (16), scope declaration (18), actual (19) are mutually inconsistent across artifacts — ACR-07 AUTO-REJECT.
+- **Classification**: Ceremony (process/artifact/naming). Introduced by Rejection 1 fix: committing staged files added this ECAP session-memory bundle file but scope declaration and PREHANDOVER counts were not updated.
+- **Systemic pattern**: Second consecutive rejection for file-count/scope-declaration staleness. Pattern: "fix-commit adds files not tracked in scope declaration counts." Prevention action required: FAIL-ONLY-ONCE promotion.
+- **Substantive content**: PASS — OVL-PBG-001/002/006/008/014, OVL-INJ-001, non-scope verification, build-authorization, and stage-gating all PASS. No src/supabase/CI files in diff.
+- **Required fix**:
+  1. Add `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-prebuilt-retrofit-20260508.md` to scope declaration IN_SCOPE list with description.
+  2. Update PREHANDOVER `files_changed_count_final_expected` from `16` to `19`.
+  3. Run `git diff --name-only origin/main...HEAD | wc -l` after fix commit to confirm = 20 (or whatever final count is after the fix commit itself is included).
+  4. Verify no other undeclared files exist in diff.
+  5. Re-commit both documents with clean `git status --porcelain`.
+  6. Re-invoke IAA.
+
 ---
 
 *Wave record created: 2026-05-08 | IAA v6.2.0 | Phase 0 PRE-BRIEF mode | Adoption: PHASE_B_BLOCKING*
