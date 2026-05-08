@@ -21,7 +21,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | Old Stage | Old Name | New Stage | New Name | Status |
 |-----------|----------|-----------|----------|--------|
 | Stage 0 | App Description | Stage 1 | App Description | CS2_APPROVED_AUTHORITATIVE |
-| Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
+| Stage 1 | FRS | Stage 3 | FRS | DRAFT_HARDENED v0.2 (pending CS2 approval) |
 | Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
@@ -78,7 +78,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Timeline creator interactions and date-alignment expectations (Section 6)
 - [x] AIMC-only AI touchpoints documented (Section 8)
 - [x] Deployment surface map (Section 9)
-- [x] Approved by CS2 (pending review — maturion-isms#1548)
+- [ ] Approved by CS2 (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
@@ -114,7 +114,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Section 33 Build-Completeness Guardrails added
 - [x] Section 34 QA-to-Red Derivation Requirements added
 - [x] Section 38 Stage 4 readiness wording aligned with draft-only TRS governance
-- [x] Approved by CS2 (pending review — maturion-isms#1556)
+- [ ] Approved by CS2 (pending review — maturion-isms#1556)
 
 **Completion Date**: N/A — Draft hardened 2026-05-07, pending CS2 approval  
 **Notes**: FRS v0.2-hardened created per maturion-isms#1556. All 19 acceptance criteria from the hardening issue applied. Total functional requirements: 123 (PIT-FR-001 through PIT-FR-123). Report history changed from optional to mandatory (PIT-FR-118, PIT-FR-119). Task lifecycle `cancelled` status added and made consistent with watchdog (PIT-FR-054, PIT-FR-077). Evidence completion logic clarified for task-level and deliverable-level paths. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.
@@ -266,7 +266,7 @@ artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 
 **Current Stage**: Stage 3 ACTIVE — FRS v0.2-hardened (maturion-isms#1556); Stage 2 FOREMAN_REVIEWED pending CS2 approval  
 **Overall Progress**: ~30% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2; Stage 3 FRS hardened to v0.2 pending CS2 approval; Architecture substantially IN_PROGRESS)  
-**Blockers**: None for Stage 3 review. Stage 4 TRS blocked until Stage 3 FRS is approved by CS2. Build Authorization NOT CLEARED — implementation blocked until Stages 3–11 completed and gate-passed.  
+**Blockers**: None for Stage 3 review. Stage 4 TRS blocked until Stage 3 FRS is approved by CS2. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed.  
 **Next Steps**:
 1. CS2 review and approval of Stage 2 UX Workflow & Wiring Spec
 2. CS2 review and approval of Stage 3 FRS
@@ -293,9 +293,9 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — pending CS2 approval
 - [x] Stage 3 FRS: DRAFT_HARDENED (maturion-isms#1556) — v0.2-hardened, pending CS2 approval
-- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)
+- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_HARDENED) → TRS → Architecture (gate-pass pending)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
-- [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 3–11 complete
+- [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Stage 2 completion evidence: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`
 - [x] Stage 3 FRS artifact updated: `modules/pit/02-frs/functional-requirements.md` (v0.2-hardened per maturion-isms#1556)
