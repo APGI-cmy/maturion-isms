@@ -23,6 +23,15 @@
 #   T17  evidence_required is empty list                       → exit 1
 #   T18  Per-PR manifest at .admin/prs/pr-N.json (no legacy)   → exit 0
 #   T19  Both per-PR and legacy manifest for same PR number    → exit 1 (MANIFEST-CONFLICT)
+#   T20  Implementation scope + missing execution_model         → exit 1
+#   T21  Implementation scope + invalid execution_model value   → exit 1
+#   T22  builder-governed + missing implementing_agent          → exit 1
+#   T23  foreman-orchestrated + missing orchestrating_agent     → exit 1
+#   T24  foreman-orchestrated + missing implementing_agent      → exit 1
+#   T25  cs2-hotfix-override + missing cs2_justification        → exit 1
+#   T26  builder-governed + implementing_agent present          → exit 0
+#   T27  foreman-orchestrated + both companions present         → exit 0
+#   T28  cs2-hotfix-override + justification present            → exit 0
 #
 # Usage:
 #   .github/scripts/validate-simple-pr-admin.test.sh
@@ -138,7 +147,9 @@ setup_t4() {
   "requires_iaa": false,
   "requires_ecap": false,
   "evidence_required": ["tests pass"],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
 EOF
     git add .admin/pr.json
@@ -162,7 +173,9 @@ setup_t5() {
   "requires_iaa": false,
   "requires_ecap": false,
   "evidence_required": ["tests pass"],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
 EOF
     git add .admin/pr.json
@@ -345,7 +358,9 @@ setup_t12() {
   "requires_iaa": false,
   "requires_ecap": false,
   "evidence_required": ["tests pass", "screenshot of dashboard empty state"],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
 EOF
     git add .admin/pr.json
@@ -409,7 +424,9 @@ setup_t14() {
   "requires_iaa": false,
   "requires_ecap": false,
   "evidence_required": ["tests pass"],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
 EOF
     git add .admin/pr.json
@@ -475,7 +492,9 @@ setup_t16() {
   "requires_iaa": false,
   "requires_ecap": false,
   "evidence_required": ["tests pass"],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
 EOF
     git add .admin/pr.json
@@ -531,7 +550,9 @@ setup_t18() {
   "requires_iaa": false,
   "requires_ecap": false,
   "evidence_required": ["tests pass", "screenshot of dashboard"],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
 EOF
     git add .admin/prs/pr-9999.json
@@ -582,6 +603,263 @@ EOF
 }
 run_test "T19 — per-PR and legacy manifest for same PR number (MANIFEST-CONFLICT)" 1 "setup_t19"
 unset PR_NUMBER
+
+# ================================================================
+# T20: Implementation scope + missing execution_model → exit 1
+# ================================================================
+setup_t20() {
+    mkdir -p apps/mmm/src .admin
+    echo "export const x = 1;" > apps/mmm/src/DashboardPage.tsx
+    git add apps/mmm/src/DashboardPage.tsx
+    git commit -q -m "Change implementation file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2001,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/DashboardPage.tsx"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Manifest missing execution_model"
+}
+run_test "T20 — implementation scope missing execution_model" 1 "setup_t20"
+
+# ================================================================
+# T21: Implementation scope + invalid execution_model value → exit 1
+# ================================================================
+setup_t21() {
+    mkdir -p apps/mmm/src .admin
+    echo "export const x = 2;" > apps/mmm/src/Feature.tsx
+    git add apps/mmm/src/Feature.tsx
+    git commit -q -m "Change implementation file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2002,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/Feature.tsx"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "random-model"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Manifest with invalid execution_model"
+}
+run_test "T21 — implementation scope invalid execution_model" 1 "setup_t21"
+
+# ================================================================
+# T22: builder-governed + missing implementing_agent → exit 1
+# ================================================================
+setup_t22() {
+    mkdir -p apps/mmm/src .admin
+    echo "export const x = 3;" > apps/mmm/src/Builder.tsx
+    git add apps/mmm/src/Builder.tsx
+    git commit -q -m "Change implementation file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2003,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/Builder.tsx"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Missing implementing_agent for builder-governed"
+}
+run_test "T22 — builder-governed missing implementing_agent" 1 "setup_t22"
+
+# ================================================================
+# T23: foreman-orchestrated + missing orchestrating_agent → exit 1
+# ================================================================
+setup_t23() {
+    mkdir -p modules/pit .admin
+    echo "# PIT doc" > modules/pit/functional.md
+    git add modules/pit/functional.md
+    git commit -q -m "Change implementation path under modules"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2004,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["modules/pit/functional.md"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "implementing_agent": "pit-specialist"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Missing orchestrating_agent for foreman-orchestrated"
+}
+run_test "T23 — foreman-orchestrated missing orchestrating_agent" 1 "setup_t23"
+
+# ================================================================
+# T24: foreman-orchestrated + missing implementing_agent → exit 1
+# ================================================================
+setup_t24() {
+    mkdir -p modules/pit .admin
+    echo "# PIT spec" > modules/pit/spec.md
+    git add modules/pit/spec.md
+    git commit -q -m "Change implementation path under modules"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2005,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["modules/pit/spec.md"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Missing implementing_agent for foreman-orchestrated"
+}
+run_test "T24 — foreman-orchestrated missing implementing_agent" 1 "setup_t24"
+
+# ================================================================
+# T25: cs2-hotfix-override + missing cs2_justification → exit 1
+# ================================================================
+setup_t25() {
+    mkdir -p apps/mmm/src .admin
+    echo "export const x = 4;" > apps/mmm/src/Hotfix.tsx
+    git add apps/mmm/src/Hotfix.tsx
+    git commit -q -m "Change implementation file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2006,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/Hotfix.tsx"],
+  "risk": "high",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "cs2-hotfix-override"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Missing cs2_justification for hotfix override"
+}
+run_test "T25 — cs2-hotfix-override missing cs2_justification" 1 "setup_t25"
+
+# ================================================================
+# T26: builder-governed + implementing_agent present → exit 0
+# ================================================================
+setup_t26() {
+    mkdir -p apps/mmm/src .admin
+    echo "export const x = 5;" > apps/mmm/src/BuilderValid.tsx
+    git add apps/mmm/src/BuilderValid.tsx
+    git commit -q -m "Change implementation file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2007,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "ui-builder",
+  "scope": ["apps/mmm/src/BuilderValid.tsx"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Valid builder-governed execution model"
+}
+run_test "T26 — builder-governed valid companion field" 0 "setup_t26"
+
+# ================================================================
+# T27: foreman-orchestrated + both companions present → exit 0
+# ================================================================
+setup_t27() {
+    mkdir -p modules/pit .admin
+    echo "# PIT implementation doc" > modules/pit/implementation.md
+    git add modules/pit/implementation.md
+    git commit -q -m "Change implementation file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2008,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["modules/pit/implementation.md"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2",
+  "implementing_agent": "pit-specialist"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Valid foreman-orchestrated execution model"
+}
+run_test "T27 — foreman-orchestrated valid companion fields" 0 "setup_t27"
+
+# ================================================================
+# T28: cs2-hotfix-override + justification present → exit 0
+# ================================================================
+setup_t28() {
+    mkdir -p apps/mmm/src .admin
+    echo "export const x = 6;" > apps/mmm/src/HotfixValid.tsx
+    git add apps/mmm/src/HotfixValid.tsx
+    git commit -q -m "Change implementation file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2009,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": ["apps/mmm/src/HotfixValid.tsx"],
+  "risk": "high",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2",
+  "execution_model": "cs2-hotfix-override",
+  "cs2_justification": "CS2 emergency approval: issue #1561"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Valid cs2-hotfix-override execution model"
+}
+run_test "T28 — cs2-hotfix-override valid justification" 0 "setup_t28"
 
 # ----------------------------------------------------------------
 # Cleanup

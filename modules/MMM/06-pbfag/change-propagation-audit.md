@@ -284,3 +284,58 @@ ready for Stage 8 (Implementation Plan).
 *End of MMM Stage 7 — Change-Propagation Audit*
 
 **Produced by**: mat-specialist | **Wave**: mmm-stage7-pbfag-20260415 | **Date**: 2026-04-15
+
+---
+
+## Phase 3 Retrofit — Change-Propagation Entry
+
+**Wave**: mmm-phase3-retrofit-20260507
+**Date**: 2026-05-07
+**Trigger**: Phase 3 retrofit per maturion-isms#1564 — Full Functional Delivery governance standard absorbed into all 12 pre-build artifacts
+
+### Stages Modified
+
+All 12 stages (Stage 1 through Stage 12) were modified in the same atomic wave:
+
+| Stage | Artifact | Change Summary |
+|---|---|---|
+| Stage 1 | `modules/MMM/00-app-description/MMM_app_description.md` | Added §Functional Delivery Definition: capability-to-FD map + maturion-isms#1553 failure class reference |
+| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | Added CTA/API/Data Contract Matrix (mandatory): 11 CTAs with full backend targets |
+| Stage 3 | `modules/MMM/02-frs/functional-requirements.md` | Added FD-STD-001 Full Functional Delivery Standard + FR-FD-001 through FR-FD-007 |
+| Stage 4 | `modules/MMM/03-trs/technical-requirements-specification.md` | Added TR-FD-001 through TR-FD-006 Full Functional Delivery Technical Requirements |
+| Stage 5 | `modules/MMM/04-architecture/architecture.md` | Added ARCH-LAW-001 Typed Integration Client Law (constitutional) + Route-to-Capability Map |
+| Stage 6 | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` | Added Domain 12: Full Functional Delivery Gate — 6 new RED tests (T-MMM-S6-FD-001 through FD-006) |
+| Stage 7 | `modules/MMM/06-pbfag/pbfag-checklist.md` | Added Part F — Full Functional Delivery Gate (FFD Gate) with 6-item checklist and rejection rule |
+| Stage 7 | `modules/MMM/06-pbfag/change-propagation-audit.md` | This entry |
+| Stage 8 | `modules/MMM/07-implementation-plan/implementation-plan.md` | Added Wave Functional Completion Standard (mandatory per-wave criteria table) |
+| Stage 9 | `modules/MMM/08-builder-checklist/builder-checklist.md` | Added Builder FFD Affirmations (10 mandatory builder affirmations + sign-off) |
+| Stage 10 | `modules/MMM/09-iaa-pre-brief/iaa-pre-brief.md` | Added IAA Functional Delivery Mandate (FDM Section): delivery truth obligation |
+| Stage 11 | `modules/MMM/10-builder-appointment/builder-contract.md` | Added Wave Role Assignment Matrix: 5 mandatory roles per wave |
+| Stage 12 | `modules/MMM/11-build/wave-execution-standard.md` (NEW) | Created Functional Delivery Evidence Pack (FDEP) standard — 7 mandatory evidence sections |
+
+### Upstream Changes
+
+Stage 1 (App Description) — Functional Delivery Definition section added, establishing the
+foundational principle that capability is not delivered until the user can perform the action
+live. All downstream stages (2–12) absorb this principle through their stage-specific
+additions.
+
+### Stage 2 Changes
+
+CTA/API/Data Contract Matrix added — declaring backend targets for all 11 major CTAs across
+the 17 user journeys. This matrix is now mandatory for every future wave.
+
+### Downstream Impact Review
+
+All downstream stages (3–12) were co-updated in the same wave, so no cascade risk exists.
+Every stage received a stage-appropriate addition in the correct vocabulary. No stage was left
+without its corresponding functional delivery governance addition.
+
+### Verdict
+
+**CHANGE-PROPAGATION REVIEWED** — all 12 stages updated together in one atomic wave;
+no orphaned dependencies. The functional delivery governance standard is now consistently
+represented from Stage 1 (App Description) through Stage 12 (Build Execution). Zero drift.
+Zero ambiguity introduced. The addition strengthens the chain without contradicting any
+existing requirement.
+

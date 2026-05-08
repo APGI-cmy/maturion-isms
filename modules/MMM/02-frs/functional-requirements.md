@@ -9,11 +9,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: Functional Requirements Specification (FRS — Stage 3)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.1.0
-- **Date**: 2026-04-14
-- **Owner**: CS2 (Johan Ras / @APGI-cmy)
-- **Produced By**: foreman-v2-agent (POLC-Orchestration mode)
-- **Issue**: maturion-isms#1365 (MMM Stage 3 wave-start authorization)
+- **Version**: 0.2.0 (MMM Stage 3 wave-start authorization)
 - **Upstream Authority (Stage 1)**: `modules/MMM/00-app-description/MMM_app_description.md` v0.5.0
   — CS2-approved (maturion-isms#1298, 2026-04-08)
 - **Upstream Authority (Stage 2)**: `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.1.0
@@ -80,6 +76,65 @@ All seventeen user journeys (J-01 through J-17) in `ux-workflow-wiring-spec.md` 
 are traced in this FRS.
 
 **100% §AD traceability: CONFIRMED. Zero TBD items.**
+
+---
+
+## FD-STD-001: Full Functional Delivery Standard
+
+**Completion means the user can perform the action live, not merely see the UI control.**
+This rule applies to every functional requirement in this document without exception.
+
+A functional requirement is satisfied when and only when:
+
+- **(a)** the user can initiate the action from the UI,
+- **(b)** the request reaches a real backend capability,
+- **(c)** the backend performs the operation and returns a response,
+- **(d)** the UI reflects the new system state, and
+- **(e)** error states are visible to the user.
+
+### FR-FD-001 — Upload Source Document
+
+**Acceptance**: User can select and upload a PDF/DOCX framework source document. Upload
+request reaches `mmm-upload-framework-source`. Document record created in `document_uploads`.
+Parse/chunk pipeline queued. User sees progress indicator. Failure shows visible error with
+retry option.
+
+### FR-FD-002 — Parse/Chunk Document
+
+**Acceptance**: After upload, the framework source document is automatically parsed into
+chunks. `framework_source_chunks` records created. User is notified when parsing is complete.
+Failure shows visible status with recovery path.
+
+### FR-FD-003 — AI-Generate Framework
+
+**Acceptance**: User can trigger AI framework generation from their org context or parsed
+chunks. Request reaches `mmm-ai-framework-generate`. Framework skeleton created in
+`frameworks`, `domains`, `criteria`. User sees generated framework for review. Partial
+generation shows explicit incomplete state.
+
+### FR-FD-004 — Hybrid Flow
+
+**Acceptance**: User can switch between Mode A (upload) and Mode B (AI generate) within the
+same framework session. Switching states are persisted. Hybrid results (partial upload +
+partial AI) merge correctly. No data loss on mode switch.
+
+### FR-FD-005 — Organisation Onboarding
+
+**Acceptance**: User can complete full org onboarding from scratch. `mmm-org-create` called.
+Organisation record created. User lands on framework origin screen after onboarding. No dead
+step in onboarding flow.
+
+### FR-FD-006 — Dashboard State Update
+
+**Acceptance**: After any evidence attachment, score change, or approval event, the live
+dashboard reflects the new state within one page refresh. Dashboard does not show stale data.
+`mmm-qiw-status` reflects current aggregate scores.
+
+### FR-FD-007 — Domain/MPS/Criteria Navigation
+
+**Acceptance**: User can navigate from dashboard → domain → MPS → criterion in a single
+session without broken links. Each level shows correct data from backend. Criterion detail
+shows evidence, level descriptors, and scoring. No navigation target is a dead route.
 
 ---
 

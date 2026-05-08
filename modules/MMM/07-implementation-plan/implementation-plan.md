@@ -37,6 +37,38 @@
 
 ---
 
+## Wave Functional Completion Standard (Mandatory for All Waves)
+
+*Added: Phase 3 retrofit — maturion-isms#1564 (2026-05-07)*
+
+Every build wave in MMM must satisfy ALL of the following before handover is accepted:
+
+### Functional Completion Criteria (Per-Wave Checklist)
+
+| Criterion | What Is Required | How Evidenced |
+|---|---|---|
+| Functional completion criteria | List which user workflows are complete after this wave | Wave completion statement in PREHANDOVER proof |
+| User journey evidence | Which journeys (J-01 to J-17) advance after this wave | Journey coverage table in PREHANDOVER proof |
+| Backend capabilities touched | Which Edge Functions / Vercel routes were created or modified | Route manifest in wave evidence pack |
+| Screenshots required | Before/after screenshots of every new user-facing screen | Screenshot gallery in wave evidence pack |
+| Live/preview smoke required | Preview URL with documented smoke test results | Smoke test log in wave evidence pack |
+| Non-functional placeholders declared | Explicit list of any placeholder UI or incomplete feature | Placeholder declaration in wave evidence pack |
+
+### The Non-Negotiable Rule
+
+A wave that delivers screens without backend wiring is NOT complete. A wave that delivers
+backend routes without user-facing confirmation is NOT complete. Both sides must close
+together. Explicit placeholders are permitted only when declared in the wave evidence pack
+and approved by CS2.
+
+### Origin
+
+This standard was added in response to PR maturion-isms#1553. The failure mode: wave marked
+complete when visible CTAs had no backend target, no error handling, and no journey-level
+evidence.
+
+---
+
 ## 0. Document Purpose
 
 This Implementation Plan answers the eight mandatory planning questions established by

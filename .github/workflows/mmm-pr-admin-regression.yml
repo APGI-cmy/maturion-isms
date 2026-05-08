@@ -1,0 +1,36 @@
+name: MMM PR Admin Regression
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/scripts/validate-simple-pr-admin.sh"
+      - ".github/scripts/validate-simple-pr-admin.test.sh"
+      - ".github/workflows/mmm-pr-admin-regression.yml"
+      - "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md"
+      - "governance/canon/POLC_EXECUTION_MODEL_CANON.md"
+  push:
+    paths:
+      - ".github/scripts/validate-simple-pr-admin.sh"
+      - ".github/scripts/validate-simple-pr-admin.test.sh"
+      - ".github/workflows/mmm-pr-admin-regression.yml"
+      - "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md"
+      - "governance/canon/POLC_EXECUTION_MODEL_CANON.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mmm-pr-admin-regression:
+    name: "regression/mmm-pr-admin-validator"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Run validator regression suite
+        run: |
+          chmod +x .github/scripts/validate-simple-pr-admin.sh
+          chmod +x .github/scripts/validate-simple-pr-admin.test.sh
+          .github/scripts/validate-simple-pr-admin.test.sh

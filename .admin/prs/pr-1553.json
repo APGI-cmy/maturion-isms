@@ -25,5 +25,7 @@
     "Start action leads to an explicit next state or clear not-yet-implemented state",
     "No Vercel 404 on direct route refresh"
   ],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "ui-builder"
 }
