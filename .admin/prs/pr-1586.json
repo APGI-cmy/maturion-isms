@@ -5,8 +5,11 @@
   "owner": "Copilot",
   "scope": [
     ".admin/prs/pr-1586.json",
+    ".agent-admin/assurance/iaa-wave-record-pr1586-ecap-evidence-20260508-20260508.md",
     ".agent-admin/assurance/iaa-wave-record-pre-handover-checkpoint-hardening-20260508-20260508.md",
+    ".agent-admin/prehandover/proof-pr-1586-pre-handover-checkpoint-hardening-20260508.md",
     ".agent-admin/scope-declarations/pr-1586.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md",
     ".agent-workspace/foreman-v2/personal/scope-declaration-wave-pre-handover-checkpoint-hardening-20260508.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     ".github/scripts/pre-handover-checkpoint.js",
@@ -32,6 +35,8 @@
     "audit document governance/architecture/pre-handover-checkpoint-workflow-audit-20260508.md classifies safety-net and checkpoint-input workflows",
     "Tier 2 guidance update in governance/checklists/phase4-role-separation-operational-guidance.md requires checkpoint-first handover flow",
     "PREHANDOVER template records checkpoint comment reference and current-head checkpoint verdict",
+    "ECAP PREHANDOVER proof records protected-path classification, current-head binding, and handover_allowed: no pending IAA token",
+    "ECAP bundle is committed alongside the proof for protected-path admin-evidence remediation",
     "Existing wave record and foreman wave tracker artifacts remain within declared PR scope"
   ],
   "merge_authority": "CS2"
