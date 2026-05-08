@@ -2,8 +2,8 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-06  
-**Updated By**: foreman-v2-agent (wave: pit-stage2-verification-stage3-frs — maturion-isms#1548; incorporating Stage 2 v0.2-draft upgrade from maturion-isms#1550 PR #1551)
+**Last Updated**: 2026-05-08 (r2 — evidence-exactness fix: restored Closes #1556 to PR body)  
+**Updated By**: foreman-v2-agent (wave: pit-stage3-frs-hardening — maturion-isms#1556; PR #1557; FRS upgraded from v0.1-draft to v0.2-hardened)
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
 > **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -21,7 +21,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | Old Stage | Old Name | New Stage | New Name | Status |
 |-----------|----------|-----------|----------|--------|
 | Stage 0 | App Description | Stage 1 | App Description | CS2_APPROVED_AUTHORITATIVE |
-| Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
+| Stage 1 | FRS | Stage 3 | FRS | DRAFT_HARDENED v0.2 (pending CS2 approval) |
 | Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
 | Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
@@ -78,7 +78,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Timeline creator interactions and date-alignment expectations (Section 6)
 - [x] AIMC-only AI touchpoints documented (Section 8)
 - [x] Deployment surface map (Section 9)
-- [x] Approved by CS2 (pending review — maturion-isms#1548)
+- [ ] CS2 approval received (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
@@ -86,19 +86,38 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 ---
 
 ### Stage 3: Functional Requirements Specification (FRS)
-**Status**: [x] DRAFT_CREATED — pending CS2 approval (maturion-isms#1548)  
+**Status**: [x] DRAFT_HARDENED — pending CS2 approval (maturion-isms#1556)  
 **Location**: `modules/pit/02-frs/`  
 **Key Artifacts**:
-- [x] `functional-requirements.md` — Stage 3 FRS v0.1-draft, derived from App Description v1.0 + UX Workflow & Wiring Spec v0.2-draft
+- [x] `functional-requirements.md` — Stage 3 FRS **v0.2-hardened**, derived from App Description v1.0 + UX Workflow & Wiring Spec v0.2-draft
 - [x] Derivation statements from both upstream artifacts included
-- [x] Numbered functional requirements (PIT-FR-001 through PIT-FR-112) — testable, phrased as "The system shall..."
+- [x] Numbered functional requirements (PIT-FR-001 through PIT-FR-123) — testable, phrased as "The system shall..."
 - [x] Auth/onboarding, all primary screens, 5 UI states, project hierarchy, timeline, evidence, assignment, watchdog, reporting, audit, QA dashboard, AIMC, cross-module integrations covered
 - [x] Acceptance criteria for every requirement or requirement group
 - [x] Traceability matrix (App Description → Stage 2 → FRS requirement ID → future stage placeholder)
-- [x] Approved by CS2 (pending review — maturion-isms#1548)
+- [x] Domain-based Requirement Index added (§1.5)
+- [x] Table/entity naming caveat added (§1.4)
+- [x] Role-scope matrix added (§3.1)
+- [x] PIT-FR-113 Permission Negative-Path Contract added
+- [x] PIT-FR-121 Lifecycle Removal Semantics (archive/delete/restore/cancel) added
+- [x] PIT-FR-054 task status lifecycle updated (added `cancelled`)
+- [x] PIT-FR-052 evidence completion logic clarified (task-level and deliverable-level paths)
+- [x] PIT-FR-114 Progress Roll-Up Method added
+- [x] RAG Threshold Central Table added (§29)
+- [x] PIT-FR-115–117 Notification read/history/preference requirements added
+- [x] PIT-FR-118–119 Report permissions/states/history scope hardened (report history now mandatory)
+- [x] PIT-FR-120 QA Dashboard expanded requirements added
+- [x] AIMC endpoint candidate wording added (§24)
+- [x] Route Coverage Appendix added (Appendix A — all 27 routes)
+- [x] PIT-FR-122 Minimum Accessibility Outcomes added
+- [x] PIT-FR-123 Bulk Operations Non-Scope Declaration added
+- [x] Section 33 Build-Completeness Guardrails added
+- [x] Section 34 QA-to-Red Derivation Requirements added
+- [x] Section 38 Stage 4 readiness wording aligned with draft-only TRS governance
+- [ ] CS2 approval received (pending review — maturion-isms#1556)
 
-**Completion Date**: N/A — Draft created 2026-05-06, pending CS2 approval  
-**Notes**: FRS v0.1-draft created per maturion-isms#1548. Derived from docs/governance/PIT_APP_DESCRIPTION.md v1.0 and modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md v0.2-draft. 112 functional requirements (PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-112) with acceptance criteria and traceability matrix covering 23 journeys and 21 screens. Traceability updated to v0.2 baseline. Open items from Stage 2 Section 10 are resolved in FRS. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.
+**Completion Date**: N/A — Draft hardened 2026-05-07, pending CS2 approval  
+**Notes**: FRS v0.2-hardened created per maturion-isms#1556. All 19 acceptance criteria from the hardening issue applied. Total functional requirements: 123 (PIT-FR-001 through PIT-FR-123). Report history changed from optional to mandatory (PIT-FR-118, PIT-FR-119). Task lifecycle `cancelled` status added and made consistent with watchdog (PIT-FR-054, PIT-FR-077). Evidence completion logic clarified for task-level and deliverable-level paths. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -245,9 +264,9 @@ artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 3 ACTIVE — FRS Draft Created (maturion-isms#1548); Stage 2 FOREMAN_REVIEWED pending CS2 approval  
-**Overall Progress**: ~30% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2; Stage 3 FRS draft created; Architecture substantially IN_PROGRESS)  
-**Blockers**: None for Stage 3 review. Stage 4 TRS blocked until Stage 3 FRS is approved by CS2. Build Authorization NOT CLEARED — implementation blocked until Stages 3–11 completed and gate-passed.  
+**Current Stage**: Stage 3 ACTIVE — FRS v0.2-hardened (maturion-isms#1556); Stage 2 FOREMAN_REVIEWED pending CS2 approval  
+**Overall Progress**: ~30% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2; Stage 3 FRS hardened to v0.2 pending CS2 approval; Architecture substantially IN_PROGRESS)  
+**Blockers**: None for Stage 3 review. Stage 4 TRS blocked until Stage 3 FRS is approved by CS2. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed.  
 **Next Steps**:
 1. CS2 review and approval of Stage 2 UX Workflow & Wiring Spec
 2. CS2 review and approval of Stage 3 FRS
@@ -273,13 +292,13 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06)
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — pending CS2 approval
-- [x] Stage 3 FRS: DRAFT_CREATED (maturion-isms#1548) — pending CS2 approval
-- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_CREATED) → TRS → Architecture (gate-pass pending)
+- [x] Stage 3 FRS: DRAFT_HARDENED (maturion-isms#1556) — v0.2-hardened, pending CS2 approval
+- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_HARDENED) → TRS → Architecture (gate-pass pending)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
-- [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 3–11 complete
+- [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Stage 2 completion evidence: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`
-- [x] Stage 3 FRS artifact created: `modules/pit/02-frs/functional-requirements.md`
+- [x] Stage 3 FRS artifact updated: `modules/pit/02-frs/functional-requirements.md` (v0.2-hardened per maturion-isms#1556)
 - [x] Module manifest updated (module_name corrected to "PIT (Project Implementation Tracker)")
 - [x] Stage 2 upgrade checklist evidence at `.agent-admin/evidence/stage2-upgrade-checklist/pit-stage2-20260506.md`
 
@@ -288,6 +307,8 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 ## Notes and Observations
 
 **Stage 2 Foreman-Reviewed (2026-05-06)**: All 13 Stage 2 completion criteria verified per maturion-isms#1548. UX Workflow & Wiring Spec v0.2-draft satisfies all requirements: derivation statement, L-001–L-008 carry-forward, 23 user journeys including all auth flows, My Work and Invitation Acceptance, 21 primary screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. Status: STAGE_2_COMPLETE_FOREMAN_REVIEWED pending CS2 approval.
+
+**Stage 3 FRS v0.2-hardened (2026-05-07)**: FRS upgraded from v0.1-draft to v0.2-hardened per maturion-isms#1556 (PR #1557). 19 hardening areas applied: domain-based requirement index, table/entity naming caveat, role-scope matrix, PIT-FR-113 permission negative-path contract, PIT-FR-121 lifecycle removal semantics, PIT-FR-054 task status lifecycle (added `cancelled`), PIT-FR-052 evidence completion logic clarified, PIT-FR-114 progress roll-up method, RAG threshold central table (§29), PIT-FR-115–117 notification read/history/preference, PIT-FR-118–119 report permissions/states/history (history now mandatory), PIT-FR-120 QA Dashboard expanded, AIMC candidate wording (§24), Route Coverage Appendix A (all 27 routes), PIT-FR-122 accessibility outcomes, PIT-FR-123 bulk ops non-scope, §33 Build-Completeness Guardrails, §34 QA-to-Red Derivation Requirements, §38 Stage 4 readiness wording aligned. Total: 123 functional requirements. Stage status: DRAFT_HARDENED pending CS2 approval. Build Authorization remains NOT CLEARED.
 
 **Stage 3 FRS Draft Created (2026-05-06)**: Stage 3 FRS v0.1-draft created per maturion-isms#1548. Derived from App Description v1.0 and UX Workflow & Wiring Spec v0.2-draft. 112 functional requirements (PIT-FR-001 through PIT-FR-112) with acceptance criteria and traceability matrix. PIT-FR-106–109 add admin sub-screen coverage (Role Management, Notification Templates, Task Cluster Templates, Invitation Settings). PIT-FR-110 adds Invitation Acceptance screen (§UX-S-20). PIT-FR-111–112 add My Work screen and task actions (§UX-J-23, §UX-S-21). PIT-FR-088 updated to include `cs2_admin` in audit export permission. PIT-FR-101 updated to use `cs2_admin` for cross-org visibility. Prescriptive Supabase/RLS/Vercel wording softened to functional outcomes; implementation details deferred to TRS. Status: DRAFT_CREATED pending CS2 approval. Stage 4 TRS remains blocked until Stage 3 FRS is approved.
 
