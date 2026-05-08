@@ -1,0 +1,6 @@
+- session_id: session-iaa-pit-prebuilt-retrofit-r4-20260508
+- pr_reviewed: PR #1576 — Foreman: Retrofit PIT pre-build artifacts with functional delivery upgrades
+- overlay_applied: PRE_BUILD_STAGE_MODEL
+- verdict: REJECTION-PACKAGE
+- checks_run: 28 substance checks: 25 PASS, 3 FAIL
+- learning_note: Recurring stale pending/in-progress wording in active ECAP bundle after rejection-loop corrections is systemic; enforce post-commit normalization sweep before re-invocation.

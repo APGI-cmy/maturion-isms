@@ -1582,5 +1582,38 @@ The following conditions must be met before Stage 4 is approved (draft may proce
 
 **Template Version**: 1.0.0  
 **Template Authority**: `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
-**Last Updated**: 2026-05-07  
+**Last Updated**: 2026-05-07; retrofit annotation added 2026-05-08 (maturion-isms#1575 / PR #1576)  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+
+---
+
+## Functional Delivery Retrofit Verification Note (maturion-isms#1575 / PR #1576)
+
+> **Governance Note**: This section is a non-material retrofit verification note. It does NOT alter the FRS v0.2-hardened content reviewed under maturion-isms#1556. It confirms that the FRS v0.2-hardened is verified as meeting the functional-delivery standard per the retrofit issue.
+
+**Retrofit Review Date**: 2026-05-08  
+**Retrofit Wave**: pit-prebuilt-retrofit-20260508 (PR #1576)  
+**Reviewed By**: foreman-v2-agent (POLC-Orchestration mode)
+
+### FRS v0.2-Hardened Retrofit Verification
+
+Foreman has reviewed FRS v0.2-hardened (maturion-isms#1556 / PR #1557) against the functional-delivery standard per maturion-isms#1575. The following confirms that all required functional-delivery elements are present:
+
+| Required Element | Status | Evidence in FRS |
+|---|---|---|
+| Build-completeness guardrails | ✅ CONFIRMED | §33 Build-Completeness Guardrails (PIT-FR-113 through PIT-FR-123) |
+| QA-to-Red derivation requirements | ✅ CONFIRMED | §34 QA-to-Red Derivation Requirements |
+| Route coverage appendix | ✅ CONFIRMED | Appendix A — all 27 routes |
+| Role-scope and denied-path requirements | ✅ CONFIRMED | §3.1 Role-scope matrix; PIT-FR-113 Permission Negative-Path Contract |
+| Lifecycle removal semantics | ✅ CONFIRMED | PIT-FR-121 Lifecycle Removal Semantics |
+| Evidence completion blocking rules | ✅ CONFIRMED | PIT-FR-052 evidence completion logic |
+| Progress roll-up and RAG rules | ✅ CONFIRMED | PIT-FR-114 Progress Roll-Up Method; §29 RAG Threshold Table |
+| Notification / read / history / preferences | ✅ CONFIRMED | PIT-FR-115 (read/mark-as-read), PIT-FR-116 (history), PIT-FR-117 (preferences) |
+| Report generation states and history | ✅ CONFIRMED | PIT-FR-118 (permissions/states), PIT-FR-119 (history scope) |
+| QA dashboard evidence visibility | ✅ CONFIRMED | PIT-FR-120 QA Dashboard Enhanced Requirements |
+| Accessibility outcomes | ✅ CONFIRMED | PIT-FR-122 Minimum Accessibility Outcomes |
+| Bulk/import/templates non-scope declaration | ✅ CONFIRMED | PIT-FR-123 Bulk Operations Non-Scope Declaration |
+| Functional persistence labels / entity caveat | ✅ CONFIRMED | §1.4 Table/Entity Naming Caveat |
+| Stage 4 TRS derivation alignment note | ✅ CONFIRMED | §38 Stage 4 readiness wording — TRS must derive from FRS v0.2-hardened |
+
+**Retrofit Conclusion**: FRS v0.2-hardened satisfies all functional-delivery standard requirements. No additional hardening is required. The FRS v0.2-hardened is confirmed as the authoritative Stage 3 source for the PIT functional-delivery retrofit wave. The TRS (Stage 4) has been updated in PR #1576 to propagate PIT-FR-113 through PIT-FR-123 into TRS technical requirements (PIT-TR-116 through PIT-TR-126).

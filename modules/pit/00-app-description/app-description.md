@@ -1748,3 +1748,34 @@ Future PIT versions may include:
 ---
 
 **End of PIT App Description**
+
+---
+
+## Functional Delivery Retrofit Annotation (Non-Material — maturion-isms#1575 / PR #1576)
+
+> **Authority Preservation**: This annotation is a non-material governance note. It does NOT alter CS2-approved substance. The CS2-approved content (§AD-01 through §AD-24, MMM Lessons Promoted section, Approval Record) is unchanged and remains authoritative. Any material amendment to CS2-approved content requires CS2 explicit approval.
+
+**Retrofit Review Date**: 2026-05-08  
+**Retrofit Wave**: pit-prebuilt-retrofit-20260508 (PR #1576)  
+**Reviewed By**: foreman-v2-agent (POLC-Orchestration mode)
+
+### Functional Delivery Intent Confirmation
+
+Foreman has reviewed this App Description against the functional-delivery standard per maturion-isms#1575. The following confirms that the required functional-delivery elements are present in the CS2-approved App Description v1.0:
+
+| Functional Delivery Element | Status | Evidence in App Description |
+|---|---|---|
+| Fully functional runtime delivery target | ✅ CONFIRMED | §AD-09 Build Governance Obligations; §AD-18 L1/L2/L3 closure model; L-007 Operational closure |
+| All primary route families | ✅ CONFIRMED | §AD-06 App Screens / Routes section (all routes enumerated); UX Workflow carry-forward requirement |
+| Onboarding / auth completeness | ✅ CONFIRMED | §AD-05 Auth and User Management; §AD-11 onboarding flow; UX L-004 carry-forward |
+| App-shell and visual-rendering expectations | ✅ CONFIRMED | L-002 (global CSS + app shell first-class); Stage 2 carry-forward requirement §AD-21 |
+| Role-gated behaviour and denied-path expectations | ✅ CONFIRMED | §AD-04 Role Hierarchy; §AD-22 permission model; L-003 five-state UI including permission-denied |
+| Deployment / live evidence expectation | ✅ CONFIRMED | L-006 deployment contract; L-007 live operational closure evidence; §AD-18 L3 requirement |
+| Operational closure distinction from build completion | ✅ CONFIRMED | L-001 L1/L2/L3 closure model; §AD-18 operational closure definition |
+| MMM Lessons L-001 through L-008 | ✅ CONFIRMED | § MMM Lessons Promoted Into PIT section — all 8 controls present |
+| Downstream one-time-build guardrail propagation requirement | ✅ CONFIRMED | Stage 2 carry-forward requirements; §AD-21; §AD-22 |
+
+**Retrofit Conclusion**: The App Description v1.0 contains all required functional-delivery elements. No material amendments are required. The App Description is sufficient as the upstream authority for the functional-delivery retrofit of PIT Stages 2–5 and the future-stage tracker guardrails (Stages 6–12).
+
+**Proposed Amendments**: None. No proposed amendments to CS2-approved content arise from this retrofit review.
+
