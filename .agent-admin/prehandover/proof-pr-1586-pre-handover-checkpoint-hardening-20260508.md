@@ -23,7 +23,7 @@ ecap_waiver_ref: none
 ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md
 scope_declaration_ref: .agent-admin/scope-declarations/pr-1586.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr1586-ecap-evidence-20260508-20260508.md
-pre_delegation_head_sha: e967eca475951f991769c58eea864b71e48a7a75
+PRE_DELEGATION_HEAD_SHA: e967eca475951f991769c58eea864b71e48a7a75
 CURRENT_HEAD_SHA: e967eca475951f991769c58eea864b71e48a7a75
 current_head_binding: MATCHED_PRE_DELEGATION_HEAD
 protected_paths_changed:

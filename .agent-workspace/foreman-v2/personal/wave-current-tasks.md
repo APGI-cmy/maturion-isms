@@ -16,7 +16,8 @@ assigned_scope:
 expected_return_artifact_paths:
   - .agent-admin/prehandover/proof-pr-1586-pre-handover-checkpoint-hardening-20260508.md
   - .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md
-current_head_before_ecap: e967eca475951f991769c58eea864b71e48a7a75
+pre_delegation_head_note: SHA captured before ECAP delegation; used for current-head binding validation
+PRE_DELEGATION_HEAD_SHA: e967eca475951f991769c58eea864b71e48a7a75
 
 ---
 
