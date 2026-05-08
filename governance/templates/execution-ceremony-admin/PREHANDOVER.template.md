@@ -6,7 +6,7 @@
 > - Resolve the active PR manifest as `.admin/prs/pr-<PR_NUMBER>.json` when present; otherwise use `.admin/pr.json` as fallback.
 > - `product-fix` / `test-only` with `requires_iaa=false` and `requires_ecap=false`: **low-ceremony path** — legacy ceremony artifacts (IAA wave records, ECAP bundles, PREHANDOVER proofs) are **frozen** and not required for merge. Use the active PR manifest as the single source of truth. Do NOT generate this template for these PRs.
 > - `governance-change` / `agent-contract-change` or any PR with `requires_iaa=true`: **full-ceremony path** — this template applies. All fields below are mandatory.
-> - Any PR whose scope crosses governance-control paths (`.github/workflows/**`, `.github/scripts/**`, `.github/agents/**`, `governance/**`, `.agent-admin/**`) is automatically full-ceremony regardless of declared type.
+> - Any PR whose scope crosses governance-control paths (`.github/workflows/**`, `.github/scripts/**`, `.github/agents/**`, `governance/**`, `.agent-admin/**`, `.agent-workspace/**/knowledge/**`) is automatically full-ceremony regardless of declared type.
 
 ---
 
