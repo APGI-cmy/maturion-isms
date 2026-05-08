@@ -1489,7 +1489,7 @@ Stage 6 QA-to-Red shall derive test cases directly from these acceptance criteri
 | §AD-16 (Deployment) | §UX-SEC-9 | PIT-FR-103 through PIT-FR-105 | Architecture §deployment; Stage 7 PBFAG |
 | §AD-06 (My Work) | §UX-J-23, §UX-S-21 | PIT-FR-111, PIT-FR-112 | QA-to-Red my-work suite |
 | §AD-01–§AD-05 (Identity) | — | PIT-FR-001, PIT-FR-002, PIT-FR-113 | Architecture §roles |
-| maturion-isms#1556 (hardening) | — | PIT-FR-113–123, §RAG-Central, §33 Build Guardrails, §34 QA-to-Red Derivation, Appendix A | QA-to-Red all suites |
+| maturion-isms#1556 (hardening) | — | PIT-FR-113–123, §29, §33 Build Guardrails, §34 QA-to-Red Derivation, Appendix A | QA-to-Red all suites |
 
 **FRS Coverage Totals (v0.2-hardened)**:
 - Functional Requirements: PIT-FR-001 through PIT-FR-123 (123 requirements)
