@@ -18,6 +18,12 @@ name: Handover Claim Gate
 # HANDOVER_ALLOWED: no. Foreman must reject any handover claim missing this snapshot
 # or presenting HANDOVER_ALLOWED: no.
 #
+# Related blocking condition (Governance Watchdog gap3-prehandover-pending-token):
+# If the PREHANDOVER proof in .agent-workspace/ contains iaa_audit_token: PENDING or
+# the field is absent, the Watchdog will flag this as a gap. ECAP must not post a
+# handover claim while iaa_audit_token is unresolved — FAIL-ONLY-ONCE A-021 treats
+# PENDING token + handover claim as an automatic merge gate failure.
+#
 # Triggers:
 # - issue_comment: created — catches "handover", "merge-ready", "all gates pass",
 #   "ready to merge", "ready for review", "complete/completion" keywords posted in PR comments.

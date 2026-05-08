@@ -14,6 +14,10 @@ ecap_required: true
 ecap_invoked: true
 ceremony_admin_appointed: execution-ceremony-admin-agent
 ecap_verdict: PASS
+iaa_audit_token: PENDING
+# iaa_audit_token is PENDING because IAA cannot be invoked until CI is green.
+# Per FAIL-ONLY-ONCE A-021 and PREHANDOVER template guidance (v1.3.0+),
+# handover_allowed MUST remain NO while iaa_audit_token is PENDING or absent.
 
 ## Artifacts
 
@@ -57,3 +61,20 @@ All test cases confirm the gate logic correctly enforces:
 - Internal snapshot inconsistency (`FAILING_CHECKS` set + `HANDOVER_ALLOWED: yes`) → BLOCK
 - Valid all-green snapshot → preconditions PASS
 - Bullet-prefixed field format accepted by parser
+
+## IAA Token Pending Hardening (v1.3.0)
+
+The following evidence covers the `iaa_audit_token: PENDING` watchdog pattern addressed by this PR's hardening of the PREHANDOVER template, Phase 4 guidance, and handover-claim-gate.yml. (Test cases 1–4 above cover the current-head snapshot gate; the numbering continues here.)
+
+**Test case 5 — `iaa_audit_token: PENDING` + handover language → Governance Watchdog Gap 3 fires**
+- Input: PREHANDOVER proof with `iaa_audit_token: PENDING` (or field absent) + file contains handover language
+- Expected: Governance Watchdog `gap3-prehandover-pending-token` posts "IAA Token Missing at Handover" alert
+- Result: WATCHDOG FIRES ✅ (observed on this PR: comment 4406151257)
+- Confirmed: `handover_allowed: no` is the correct state while `iaa_audit_token: PENDING`; ECAP bundle and proof updated to make `iaa_audit_token: PENDING` explicit rather than absent.
+
+Governance hardening added in this PR to prevent future occurrences:
+- PREHANDOVER template: `handover_allowed` comment extended — MUST be NO if `iaa_audit_token` is PENDING/absent
+- PREHANDOVER template: `iaa_audit_token` comment extended — BLOCKING while PENDING; set to resolved path only after IAA PASS token issued
+- Phase 4 guidance ECAP section: MUST NOT rule added for IAA token pending + risk-scan question #13
+- Phase 4 guidance Foreman section: checklist item added for IAA token verification + risk-scan question #13
+- handover-claim-gate.yml header: documents IAA-token-pending as related blocking condition referencing Watchdog gap3 and A-021

@@ -158,7 +158,9 @@ Before posting any handover claim comment, ECAP MUST:
 ECAP MUST NOT:
 - copy the snapshot fields from the gate-bot's prior blocked comment (the gate-bot-emitted snapshot is authoritative output, not a template to fill in);
 - claim `HANDOVER_ALLOWED: yes` based on an older SHA or stale gate run;
-- post a handover claim while any required check is red, pending, or missing.
+- post a handover claim while any required check is red, pending, or missing;
+- set `handover_allowed: YES` in the PREHANDOVER proof while `iaa_audit_token` is PENDING or absent — the IAA token must be resolved and committed before `handover_allowed` may be YES (FAIL-ONLY-ONCE A-021);
+- post any handover claim comment while `iaa_audit_token` is PENDING or absent — Governance Watchdog gap3-prehandover-pending-token enforces this automatically.
 
 The `handover-claim-gate` CI enforces this format as a hard precondition: a handover claim comment that lacks the required snapshot fields, presents a stale SHA, or sets `HANDOVER_ALLOWED: yes` while checks are not fully green will be rejected.
 
@@ -176,6 +178,7 @@ Required ECAP risk scan questions:
 10. What needs to happen so this PR can be submitted once and pass all admin/gate scrutiny?
 11. Was the current-head gate snapshot produced and included in the handover claim comment before it was posted?
 12. Does HANDOVER_ALLOWED: yes reflect a genuinely fully-green snapshot at the current HEAD SHA — or is it assumed from a prior gate run?
+13. Is iaa_audit_token resolved (not PENDING or absent) in the PREHANDOVER proof before posting the handover claim? If PENDING, handover_allowed MUST remain NO.
 ```
 
 Required Tier 2 output template:
@@ -380,7 +383,8 @@ Responsibilities checklist:
 - confirm product intent, not just issue wording, is understood;
 - reject handover if ECAP gate snapshot is absent from the handover claim comment;
 - confirm HANDOVER_ALLOWED: yes is present in ECAP snapshot before accepting handover;
-- do not mark PR ready-for-review unless HANDOVER_ALLOWED: yes is confirmed in the ECAP snapshot.
+- do not mark PR ready-for-review unless HANDOVER_ALLOWED: yes is confirmed in the ECAP snapshot;
+- verify iaa_audit_token is resolved (not PENDING or absent) in the PREHANDOVER proof before accepting handover — if PENDING, halt and route back to ECAP for IAA invocation.
 
 Required Foreman risk scan questions:
 ```text
@@ -396,6 +400,7 @@ Required Foreman risk scan questions:
 10. Is this delivery likely to pass once, cleanly, without a corrective PR?
 11. Does the ECAP gate snapshot exist in the handover claim comment and show HANDOVER_ALLOWED: yes?
 12. Is the snapshot SHA (CURRENT_HEAD_SHA in the ECAP snapshot) current — does it match the current HEAD at time of handover?
+13. Is iaa_audit_token resolved (not PENDING or absent) in the PREHANDOVER proof? If PENDING, this is an automatic merge gate failure (A-021) — halt and route to ECAP for IAA invocation.
 ```
 
 Required Tier 2 output template:

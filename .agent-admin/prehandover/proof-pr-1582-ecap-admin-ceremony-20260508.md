@@ -33,8 +33,12 @@ missing_checks: tbd-ci-pending
 # Note: ECAP ceremony is PASS (ceremony complete). Overall handover_allowed is no because
 # CI has not yet run at this HEAD. handover_allowed will become yes once all required
 # preflight checks are green at the current HEAD SHA (ECAP ceremony does not make CI green).
+# iaa_audit_token is PENDING because IAA cannot be invoked until CI is green and all
+# preflight gates pass. Per FAIL-ONLY-ONCE A-021 and PREHANDOVER template guidance,
+# handover_allowed MUST remain NO while iaa_audit_token is PENDING.
+iaa_audit_token: PENDING
 handover_allowed: no
-handover_state: STOP_AND_FIX — ECAP ceremony complete; awaiting green CI at current HEAD before claiming handover
+handover_state: STOP_AND_FIX — ECAP ceremony complete; awaiting green CI and resolved IAA token before claiming handover
 ```
 
 Protected-path classification for this PR includes:
