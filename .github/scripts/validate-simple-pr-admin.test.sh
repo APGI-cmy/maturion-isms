@@ -32,6 +32,8 @@
 #   T26  builder-governed + implementing_agent present          → exit 0
 #   T27  foreman-orchestrated + both companions present         → exit 0
 #   T28  cs2-hotfix-override + justification present            → exit 0
+#   T29  .agent-workspace/**/knowledge/** changed + flags false → exit 1
+#   T30  .agent-workspace/**/knowledge/** changed + flags true  → exit 0
 #
 # Usage:
 #   .github/scripts/validate-simple-pr-admin.test.sh
@@ -860,6 +862,90 @@ EOF
     git commit -q -m "Valid cs2-hotfix-override execution model"
 }
 run_test "T28 — cs2-hotfix-override valid justification" 0 "setup_t28"
+
+# ================================================================
+# T29: .agent-workspace/**/knowledge/** changed + flags false → exit 1
+# Regression: tier-2 knowledge paths are governance-control and
+# must require requires_iaa/requires_ecap=true.
+# ================================================================
+setup_t29() {
+    mkdir -p .agent-workspace/governance-liaison-isms/knowledge .admin
+    echo "# updated knowledge" > .agent-workspace/governance-liaison-isms/knowledge/index.md
+    git add .agent-workspace/governance-liaison-isms/knowledge/index.md
+    git commit -q -m "Change tier-2 knowledge file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2010,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [".agent-workspace/governance-liaison-isms/knowledge/index.md"],
+  "risk": "medium",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Knowledge-path manifest with flags false"
+}
+run_test "T29 — .agent-workspace/**/knowledge/** changed + flags false" 1 "setup_t29"
+
+# ================================================================
+# T30: .agent-workspace/**/knowledge/** changed + flags true → exit 0
+# ================================================================
+setup_t30() {
+    mkdir -p .agent-workspace/governance-liaison-isms/knowledge .admin
+    echo "# updated knowledge" > .agent-workspace/governance-liaison-isms/knowledge/patterns.md
+    git add .agent-workspace/governance-liaison-isms/knowledge/patterns.md
+    git commit -q -m "Change tier-2 knowledge file"
+    cat > .admin/pr.json << 'EOF'
+{
+  "pr": 2011,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [".agent-workspace/governance-liaison-isms/knowledge/patterns.md"],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/pr.json
+    git commit -q -m "Knowledge-path manifest with flags true"
+}
+run_test "T30 — .agent-workspace/**/knowledge/** changed + flags true" 0 "setup_t30"
+
+# ================================================================
+# T31: .agent-workspace/**/knowledge/** changed + per-PR manifest + flags true → exit 0
+# ================================================================
+setup_t31() {
+    mkdir -p .agent-workspace/governance-liaison-isms/knowledge .admin/prs
+    echo "# updated knowledge" > .agent-workspace/governance-liaison-isms/knowledge/patterns.md
+    git add .agent-workspace/governance-liaison-isms/knowledge/patterns.md
+    git commit -q -m "Change tier-2 knowledge file"
+    export PR_NUMBER=2012
+    cat > .admin/prs/pr-2012.json << 'EOF'
+{
+  "pr": 2012,
+  "issue": 1561,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [".agent-workspace/governance-liaison-isms/knowledge/patterns.md"],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": ["tests pass"],
+  "merge_authority": "CS2"
+}
+EOF
+    git add .admin/prs/pr-2012.json
+    git commit -q -m "Knowledge-path per-PR manifest with flags true"
+}
+run_test "T31 — .agent-workspace/**/knowledge/** changed + per-PR manifest + flags true" 0 "setup_t31"
 
 # ----------------------------------------------------------------
 # Cleanup
