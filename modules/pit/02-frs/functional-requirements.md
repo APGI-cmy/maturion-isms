@@ -1004,7 +1004,7 @@ The system shall enforce the following report generation permissions and UI stat
 - **Failure state**: If generation fails (server error, timeout, or storage failure), an error message is shown with a "Try again" option. The failed attempt is logged but not stored in report history.
 - **Success state**: Download link is shown immediately (or via notification for long-running reports).
 
-**Export access control**: A report download link shall expire after a configurable period (default: 24 hours). Only the user who generated the report, plus `org_admin` and `cs2_admin`, may download the report via the history list.
+**Export access control**: Report download links are implemented as signed URLs that expire after a configurable period (default: 24 hours). Expiry applies to the signed URL only — the underlying report file is retained for the full retention period (minimum 30 days per PIT-FR-119). When a user accesses a report from history after the signed URL has expired, the system shall re-generate a new signed URL for that report on demand. Only the user who generated the report, plus `org_admin` and `cs2_admin`, may download the report via the history list.
 
 **Acceptance**: (a) A user with `viewer` role attempting to generate a Portfolio Summary sees the permission-denied state. (b) A report generation that takes 8 seconds shows the "being prepared" state; the user receives a notification when the link is ready. (c) A failed report generation shows an error message and the failed attempt does not appear in report history.
 **Derived from**: §UX-J-20; §UX-S-15; maturion-isms#1556 (report permissions and states)
@@ -1531,7 +1531,7 @@ The following conditions must be met before Stage 4 is approved (draft may proce
 - [ ] UX Workflow & Wiring Spec (Stage 2) approved by CS2
 - [ ] Open assumption A-004 (AIMC endpoint paths) resolved or formally deferred with CS2 approval
 - [ ] Improvement register updated with any oversights discovered during FRS review (L-008)
-- [ ] Build Authorization remains NOT CLEARED — implementation is blocked until Stages 3–11 are completed and gate-passed
+- [ ] Build Authorization remains NOT CLEARED — implementation is blocked until Stages 2–11 are completed, approved, and gate-passed
 
 ---
 

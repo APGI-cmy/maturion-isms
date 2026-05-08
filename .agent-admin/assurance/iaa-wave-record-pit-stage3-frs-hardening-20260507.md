@@ -4,7 +4,7 @@
 **Date**: 2026-05-07
 **Issue**: maturion-isms#1556
 **Branch**: copilot/harden-pit-stage-3-frs
-**PR**: PENDING (not yet opened)
+**PR**: maturion-isms#1557
 **Category**: PRE_BUILD_STAGE_MODEL
 **IAA Agent Version**: 6.2.0
 **Adoption Phase**: PHASE_B_BLOCKING
@@ -58,7 +58,7 @@
 | # | Task | Trigger Reason |
 |---|------|----------------|
 | T-1 | Harden FRS `modules/pit/02-frs/functional-requirements.md` v0.1-draft → v0.2-hardened | PRE_BUILD_STAGE_MODEL — Stage 3 FRS pre-build lifecycle artifact |
-| T-2 | Update `modules/pit/BUILD_PROGRESS_TRACKER.md` (Stage 3 remains DRAFT_CREATED) | PRE_BUILD_STAGE_MODEL — direct BUILD_PROGRESS_TRACKER modification (trigger step 8) |
+| T-2 | Update `modules/pit/BUILD_PROGRESS_TRACKER.md` (Stage 3 advanced to DRAFT_HARDENED v0.2 by this wave) | PRE_BUILD_STAGE_MODEL — direct BUILD_PROGRESS_TRACKER modification (trigger step 8) |
 | T-3 | Governance ceremony artifacts (wave-current-tasks, scope declaration, pr.json) | Supporting ceremony — PRE_BUILD_STAGE_MODEL wave standard |
 | T-4 | PREHANDOVER proof | Ceremony requirement per A-015 |
 | T-5 | Session memory | Ceremony requirement per A-015 |

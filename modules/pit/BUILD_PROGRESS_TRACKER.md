@@ -78,7 +78,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Timeline creator interactions and date-alignment expectations (Section 6)
 - [x] AIMC-only AI touchpoints documented (Section 8)
 - [x] Deployment surface map (Section 9)
-- [ ] Approved by CS2 (pending review — maturion-isms#1548)
+- [ ] CS2 approval received (pending review — maturion-isms#1548)
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
@@ -114,7 +114,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Section 33 Build-Completeness Guardrails added
 - [x] Section 34 QA-to-Red Derivation Requirements added
 - [x] Section 38 Stage 4 readiness wording aligned with draft-only TRS governance
-- [ ] Approved by CS2 (pending review — maturion-isms#1556)
+- [ ] CS2 approval received (pending review — maturion-isms#1556)
 
 **Completion Date**: N/A — Draft hardened 2026-05-07, pending CS2 approval  
 **Notes**: FRS v0.2-hardened created per maturion-isms#1556. All 19 acceptance criteria from the hardening issue applied. Total functional requirements: 123 (PIT-FR-001 through PIT-FR-123). Report history changed from optional to mandatory (PIT-FR-118, PIT-FR-119). Task lifecycle `cancelled` status added and made consistent with watchdog (PIT-FR-054, PIT-FR-077). Evidence completion logic clarified for task-level and deliverable-level paths. Stage 4 TRS remains blocked until Stage 3 FRS is approved by CS2. Build Authorization remains NOT CLEARED.

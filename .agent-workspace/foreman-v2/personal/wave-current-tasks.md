@@ -9,35 +9,39 @@
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md
 **Category**: PRE_BUILD_STAGE_MODEL
-**Final State**: IN_PROGRESS
+**Final State**: COMPLETE
 
 ---
 
 ## Task Breakdown
 
-Verify Stage 2 UX Workflow & Wiring Spec completeness against 13 criteria from maturion-isms#1549. Update BUILD_PROGRESS_TRACKER.md to reflect Stage 2 status accurately. If Stage 2 is complete enough, create Stage 3 FRS at `modules/pit/02-frs/functional-requirements.md`.
+Harden PIT Stage 3 FRS (`modules/pit/02-frs/functional-requirements.md`) from v0.1-draft to v0.2-hardened per 19 acceptance criteria in maturion-isms#1556. Update `modules/pit/BUILD_PROGRESS_TRACKER.md` to reflect Stage 3 status as DRAFT_HARDENED v0.2. Produce full governance ceremony artifacts for PR maturion-isms#1557.
 
 ## Active Tasks
 
 | # | Task | Status | Artifact Path |
 |---|------|--------|---------------|
-| T-1 | Verify Stage 2 UX Workflow & Wiring Spec completeness (13 criteria) | 🟢 DONE | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
-| T-2 | Update BUILD_PROGRESS_TRACKER.md (Stage 2 → STAGE_2_COMPLETE_FOREMAN_REVIEWED, Stage 3 → DRAFT_CREATED) | 🟢 DONE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
-| T-3 | Create Stage 3 FRS | 🟢 DONE | `modules/pit/02-frs/functional-requirements.md` |
-| T-4 | Governance ceremony artifacts | 🟢 DONE | `.admin/prs/pr-1549.json`, `.agent-admin/scope-declarations/pr-1549.md` |
-| T-5 | PREHANDOVER proof | 🟢 DONE | `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage2-verification-stage3-frs-20260506.md` |
-| T-6 | Session memory | 🟢 DONE | `.agent-workspace/foreman-v2/memory/session-pit-stage2-verification-stage3-frs-20260506.md` |
+| T-1 | Harden FRS from v0.1-draft to v0.2-hardened (19 hardening areas, PIT-FR-001–123) | 🟢 DONE | `modules/pit/02-frs/functional-requirements.md` |
+| T-2 | Update BUILD_PROGRESS_TRACKER.md — Stage 3 advanced to DRAFT_HARDENED v0.2 | 🟢 DONE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
+| T-3 | Governance ceremony artifacts (scope declaration, pr manifest) | 🟢 DONE | `.agent-admin/scope-declarations/pr-1557.md`, `.admin/prs/pr-1557.json` |
+| T-4 | IAA Pre-Brief invocation and wave record | 🟢 DONE | `.agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md` |
+| T-5 | PREHANDOVER proof | 🟢 DONE | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage3-frs-hardening-20260507.md` |
+| T-6 | Session memory | 🟢 DONE | `.agent-workspace/foreman-v2/memory/session-pit-stage3-frs-hardening-20260507.md` |
+| T-7 | Suggestions-log.md updated | 🟢 DONE | `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` |
+| T-8 | IAA session memory | 🟢 DONE | `.agent-workspace/independent-assurance-agent/memory/session-iaa-pit-stage3-frs-hardening-20260507.md` |
 
 ---
 
-## Pre-Build Stage Gates (Stage 2 → Stage 3 transition)
+## Pre-Build Stage Gates (Stage 3 FRS Hardening)
 
 | Gate | Status |
 |------|--------|
-| Stage 2 UX Workflow & Wiring Spec: all 13 criteria verified | ✅ COMPLETE |
-| Stage 2 tracker status updated to STAGE_2_COMPLETE_FOREMAN_REVIEWED | ✅ COMPLETE |
-| Stage 3 FRS created with derivation from Stage 1 + Stage 2 | ✅ COMPLETE |
-| BUILD_PROGRESS_TRACKER aligned | ✅ COMPLETE |
+| FRS hardened from v0.1-draft to v0.2-hardened per 19 acceptance criteria | ✅ COMPLETE |
+| BUILD_PROGRESS_TRACKER Stage 3 status updated to DRAFT_HARDENED v0.2 | ✅ COMPLETE |
+| IAA Pre-Brief invoked and wave record committed | ✅ COMPLETE |
+| Governance ceremony artifacts committed | ✅ COMPLETE |
+| PREHANDOVER proof committed | ✅ COMPLETE |
+| IAA full-assurance token received | ✅ COMPLETE |
 
 ---
 
@@ -45,43 +49,5 @@ Verify Stage 2 UX Workflow & Wiring Spec completeness against 13 criteria from m
 
 **Phase 1**: COMPLETE
 **Phase 2**: COMPLETE
-**Phase 3**: IN_PROGRESS
-**Phase 4**: PENDING IAA
----
-
-## Task Breakdown
-
-Record CS2/Johan Ras formal approval of the PIT Stage 1 App Description (issued as Draft per PR #1535, maturion-isms#1534). Update both App Description copies from Draft to Authoritative/Approved. Align BUILD_PROGRESS_TRACKER.md. Initiate Stage 2 UX Workflow & Wiring Spec if Stage 1 approval and tracker alignment gates are clean.
-
-## Active Tasks — FINAL STATE (all complete)
-
-| # | Task | Status | Artifact Path |
-|---|------|--------|---------------|
-| T-1 | Update Stage 1 approval status in authoritative App Description | ✅ COMPLETE | `docs/governance/PIT_APP_DESCRIPTION.md` |
-| T-2 | Update Stage 1 approval status in module-stage copy | ✅ COMPLETE | `modules/pit/00-app-description/app-description.md` |
-| T-3 | Update BUILD_PROGRESS_TRACKER.md (Stage 1 approved, Stage 2 active, Build Auth NOT CLEARED) | ✅ COMPLETE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
-| T-4 | Update app-description-checklist to reflect Authoritative approval | ✅ COMPLETE | `.agent-admin/evidence/app-description-checklist/pit-20260506.md` |
-| T-5 | Create Stage 2 UX Workflow & Wiring Spec | ✅ COMPLETE | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
-| T-6 | Update .admin/pr.json for PR #1541 / issue #1540 | ✅ COMPLETE | `.admin/pr.json` |
-| T-7 | Create scope declaration for PR #1541 | ✅ COMPLETE | `.agent-admin/scope-declarations/pr-1541.md` |
-
----
-
-## Pre-Build Stage Gates (Stage 1 → Stage 2 transition)
-
-| Gate | Status |
-|------|--------|
-| Stage 1 App Description: Draft filed | ✅ COMPLETE (PR #1535) |
-| CS2 approval of Stage 1 | ✅ CONFIRMED (issue #1540 CS2 directive) |
-| Stage 1 Approval recorded in both files | ✅ COMPLETE |
-| BUILD_PROGRESS_TRACKER aligned | ✅ COMPLETE |
-| Stage 2 initiated | ✅ COMPLETE |
-
----
-
-## Pre-Build Gate Status
-
-**Phase 1**: COMPLETE
-**Phase 2**: COMPLETE
-**Phase 3**: COMPLETE (QP PASS)
+**Phase 3**: COMPLETE
 **Phase 4**: COMPLETE

@@ -8,7 +8,7 @@
 **Date**: 2026-05-07
 **Agent Version**: foreman-v2-agent v6.2.0
 **FRS Version**: v0.2-hardened
-**Final State**: COMPLETE (pending IAA token)
+**Final State**: COMPLETE
 
 ---
 
@@ -22,7 +22,7 @@
 | PR | maturion-isms#1557 |
 | Date | 2026-05-07 |
 | frs_version | v0.2-hardened |
-| final_state | COMPLETE (pending IAA token) |
+| final_state | COMPLETE |
 | Build Authorization | NOT CLEARED |
 
 ---
@@ -42,7 +42,9 @@ Files changed in this wave (complete and exhaustive list):
 | `.admin/prs/pr-1557.json` | CREATED |
 | `.agent-workspace/foreman-v2/memory/session-pit-stage3-frs-hardening-20260507.md` | CREATED |
 | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage3-frs-hardening-20260507.md` | CREATED (this file) |
-| `.agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md` | MODIFIED — pre-brief section populated by IAA; TOKEN section pending |
+| `.agent-admin/assurance/iaa-wave-record-pit-stage3-frs-hardening-20260507.md` | MODIFIED — pre-brief populated by IAA; TOKEN section issued |
+| `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | MODIFIED — parking-station entry added |
+| `.agent-workspace/independent-assurance-agent/memory/session-iaa-pit-stage3-frs-hardening-20260507.md` | CREATED — IAA session memory |
 
 No implementation code, schema migrations, CI scripts, test files, or agent contract files are included in this PR diff.
 
@@ -143,26 +145,26 @@ The following table maps each acceptance criterion from maturion-isms#1556 to a 
 
 | Gate | Status | Evidence |
 |------|--------|----------|
-| preflight/iaa-prebrief-existence | PENDING CI | wave record committed at SHA 19a3cc9 |
-| governance-artifact-gate | PENDING CI | scope declaration at `.agent-admin/scope-declarations/pr-1557.md` |
-| validate-simple-pr-admin | PENDING CI | `.admin/prs/pr-1557.json` created |
-| iaa-final-assurance-gate | PENDING IAA | IAA full-assurance not yet invoked |
-| validate-governance-evidence-exactness | PENDING CI | PR body must include `Closes #1556` before any bare `#N` reference |
-| enforce-scope-declaration-policy | PENDING CI | scope declaration uses bare-key format |
+| preflight/iaa-prebrief-existence | ✅ PASS | wave record committed at SHA 19a3cc9 |
+| governance-artifact-gate | ✅ PASS | scope declaration at `.agent-admin/scope-declarations/pr-1557.md` |
+| validate-simple-pr-admin | ✅ PASS | `.admin/prs/pr-1557.json` created with execution_model: foreman-orchestrated |
+| iaa-final-assurance-gate | ✅ PASS | IAA ASSURANCE-TOKEN: IAA-session-iaa-pit-stage3-frs-hardening-20260507-PASS |
+| validate-governance-evidence-exactness | ✅ PASS | PR body includes `Closes #1556` before any bare `#N` reference |
+| enforce-scope-declaration-policy | ✅ PASS | scope declaration uses bare-key format |
 
-merge_gate_parity: PENDING (IAA full-assurance required before PASS)
+merge_gate_parity: PASS
 
 ---
 
 ## 9. IAA Audit Token
 
-iaa_audit_token: [pending IAA invocation]
+iaa_audit_token: IAA-session-iaa-pit-stage3-frs-hardening-20260507-PASS
 
 ---
 
 ## 10. Final State
 
-final_state: PENDING IAA TOKEN
+final_state: COMPLETE
 
 ---
 
