@@ -692,12 +692,12 @@ The system shall support an `evidence_required` flag on deliverables. Evidence l
 
 When the flag is set, a deliverable **cannot** be marked complete unless **one of the following conditions** is met:
 
-- **Task-level evidence path**: All child tasks for which `evidence_required = true` each have at least one evidence item with status `approved`; **and** no such task has an unapproved or missing evidence item, OR
+- **Task-level evidence path**: All child tasks for which `evidence_required = true` each have at least one linked evidence item with status `approved`. Additional evidence items in other statuses do **not** prevent completion if at least one approved evidence item exists for each such task, OR
 - **Deliverable-level evidence path**: An approved evidence item is explicitly linked at the deliverable level (not at a child task), satisfying the deliverable's evidence requirement directly.
 
 A deliverable with `evidence_required = true` where only *some* evidence-required child tasks have approved evidence (and others do not) **cannot** be marked complete unless the deliverable-level evidence path is used.
 
-**Acceptance**: (a) A deliverable with `evidence_required = true`, two child tasks with `evidence_required = true`, and only one of those tasks having an approved evidence item cannot be set to `completed`. (b) A deliverable with `evidence_required = true` where all `evidence_required` child tasks have approved evidence can be set to `completed`. (c) A deliverable with `evidence_required = true` where no child tasks have `evidence_required = true` but a deliverable-level approved evidence item exists can be set to `completed`.
+**Acceptance**: (a) A deliverable with `evidence_required = true`, two child tasks with `evidence_required = true`, and only one of those tasks having an approved evidence item cannot be set to `completed`. (b) A deliverable with `evidence_required = true` where each `evidence_required` child task has at least one approved evidence item can be set to `completed`, even if additional linked evidence items for those tasks are unapproved. (c) A deliverable with `evidence_required = true` where no child tasks have `evidence_required = true` but a deliverable-level approved evidence item exists can be set to `completed`.
 **Derived from**: §UX-J-13; §UX-S-10; maturion-isms#1556 (evidence completion clarification)
 
 ---
