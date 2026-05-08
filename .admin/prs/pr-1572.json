@@ -1,0 +1,32 @@
+{
+  "pr": 1572,
+  "issue": 1568,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1572.json",
+    ".agent-admin/assurance/iaa-wave-record-layer-down-governance-changes-2026-05-07-f1e8a82a-20260508.md",
+    ".agent-admin/prehandover/proof-pr-1572-ecap-admin-ceremony-20260508.md",
+    ".agent-admin/scope-declarations/pr-1572.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1572-ecap-admin-ceremony-20260508.md",
+    ".agent-workspace/foreman-v2/personal/scope-declaration-wave-layer-down-governance-changes-2026-05-07-f1e8a82a.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".github/scripts/validate-simple-pr-admin.sh",
+    ".github/scripts/validate-simple-pr-admin.test.sh",
+    "governance/CANON_INVENTORY.json",
+    "governance/alignment/ALIGNMENT_ASSESSMENT_f1e8a82a.md",
+    "governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json",
+    "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
+    "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",
+    "governance/templates/execution-ceremony-admin/README.md"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "Local command: bash .github/scripts/validate-simple-pr-admin.test.sh PASS",
+    "Local command: PR_NUMBER=1572 bash .github/scripts/validate-simple-pr-admin.sh PASS",
+    "CI: preflight/mmm-pr-admin runs in enforce mode with active manifest .admin/prs/pr-1572.json"
+  ],
+  "merge_authority": "CS2"
+}

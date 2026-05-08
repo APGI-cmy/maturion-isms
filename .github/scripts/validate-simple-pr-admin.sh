@@ -19,7 +19,8 @@
 #   8. requires_iaa and requires_ecap are JSON booleans; EITHER a governance-
 #      control type (governance-change, agent-contract-change) OR any changed
 #      file matching .github/workflows/**, .github/scripts/**, .github/agents/**,
-#      governance/**, or .agent-admin/** requires both flags to be true
+#      governance/**, .agent-admin/**, or .agent-workspace/**/knowledge/** requires
+#      both flags to be true
 #   9. All files changed in git diff are within the declared scope array
 #      (the active manifest path itself is always implicitly permitted)
 #  10. evidence_required is a non-empty list
@@ -264,10 +265,10 @@ fi
 #
 # Governance-control path prefixes:
 #   .github/workflows/   .github/scripts/   .github/agents/
-#   governance/          .agent-admin/
+#   governance/          .agent-admin/       .agent-workspace/**/knowledge/**
 echo "── CHECK 8: GOVERNANCE-CONTROL-FLAGS ──"
 GOV_CHECK=$(MANIFEST_PATH="$MANIFEST" CHANGED_FILES_STR="$GIT_CHANGED" python3 - <<'PYEOF'
-import json, os
+import json, os, re
 manifest = json.load(open(os.environ['MANIFEST_PATH']))
 pr_type = manifest.get("type", "")
 requires_iaa = manifest.get("requires_iaa", None)
@@ -290,7 +291,16 @@ if not failures:
     # Detect governance-control files in the git diff (passed via env var)
     raw = os.environ.get("CHANGED_FILES_STR", "")
     changed = [f.strip() for f in raw.splitlines() if f.strip()]
-    gov_changed = [f for f in changed if any(f.startswith(p) for p in gov_prefixes)]
+    def is_governance_control_path(path: str) -> bool:
+        if any(path.startswith(p) for p in gov_prefixes):
+            return True
+        # Tier 2 operational knowledge path
+        # Pattern: .agent-workspace/**/knowledge/**
+        if re.match(r"^\.agent-workspace/(?:[^/]+/)*knowledge/", path):
+            return True
+        return False
+
+    gov_changed = [f for f in changed if is_governance_control_path(f)]
 
     # Flags are required when type is governance-control OR governance-control paths are touched
     need_flags = pr_type in governance_types or bool(gov_changed)
