@@ -335,7 +335,7 @@ describe('T-MMM-S6-042: mmm-ai-framework-generate returns proposed_domains count
   });
   it('requires framework_id before generation', () => {
     const src = readFile('supabase/functions/mmm-ai-framework-generate/index.ts');
-    expect(src).toContain('framework_id is required');
+    expect(src).toContain('framework_id is required and must be a string');
   });
   it('creates proposed domain records', () => {
     const src = readFile('supabase/functions/mmm-ai-framework-generate/index.ts');
@@ -434,6 +434,7 @@ describe('T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode'
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
     expect(src).toContain("mode==='B'");
     expect(src).toContain("supabase.functions.invoke('mmm-framework-init',");
+    expect(src).toContain("const frameworkId = await initFramework('New Framework', 'GENERATED');");
     expect(src).toContain("source_type: sourceType");
     expect(src).toContain("supabase.functions.invoke('mmm-ai-framework-generate',");
     expect(src).toContain('framework_id: frameworkId');
@@ -442,6 +443,7 @@ describe('T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode'
   it('Mode C calls mmm-ai-framework-generate with hybrid payload', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
     expect(src).toContain("mode==='C'");
+    expect(src).toContain("const frameworkId = await initFramework('Hybrid Framework', 'HYBRID');");
     expect(src).toContain('hybrid: true');
     expect(src).toContain('framework_id: frameworkId');
     expect(src).toContain("body: { name: 'Hybrid Framework', hybrid: true, mode, framework_id: frameworkId }");

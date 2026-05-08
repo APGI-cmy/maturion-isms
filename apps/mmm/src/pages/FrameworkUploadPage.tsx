@@ -54,9 +54,9 @@ export default function FrameworkUploadPage() {
         const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
           body: { name, source_type: sourceType },
         });
-        if (error) throw new Error(error.message || 'Failed to init framework');
+        if (error) throw new Error(error.message || `Failed to init framework for ${name}`);
         const frameworkId = data?.framework?.id;
-        if (!frameworkId) throw new Error('Failed to resolve framework id');
+        if (!frameworkId) throw new Error(`Framework init returned no id for ${name}`);
         return frameworkId as string;
       };
 

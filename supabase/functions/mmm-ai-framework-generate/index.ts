@@ -71,7 +71,7 @@ Deno.serve(async (req: Request) => {
   const { framework_id, name, context } = body;
 
   if (!framework_id || typeof framework_id !== 'string') {
-    return jsonResponse({ error: 'framework_id is required' }, 400);
+    return jsonResponse({ error: 'framework_id is required and must be a string' }, 400);
   }
 
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
