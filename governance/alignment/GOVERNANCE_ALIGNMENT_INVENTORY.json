@@ -156,7 +156,7 @@
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "canonical_version": "1.8.0",
-      "local_version": "1.8.0",
+      "local_version": "1.3.0+isms.5",
       "canonical_hash_sha256": "29a06ca7ad9c95f1dfca5eb94f8fb5493b6c215d21d872a78d75045184753b78",
       "local_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
       "alignment_status": "ALIGNED",
@@ -440,7 +440,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "TIER2_TEMPLATE",
       "last_verified": "2026-05-08T06:30:00Z",
-      "change_note": "Canonical v1.3.0 routing updates from commit f1e8a82a145c946ce4553085c72204fc3a720e50 merged into existing ISMS hardening baseline; local v1.8.0 retains prior evidence-exactness/ART/protected-path controls while adding manifest-era low/full-ceremony routing and per-PR scope declaration authority."
+      "change_note": "Canonical v1.3.0 routing updates from commit f1e8a82a145c946ce4553085c72204fc3a720e50 merged into existing ISMS hardening baseline; local extension versioned as `1.3.0+isms.5` (retains prior ISMS hardening lineage while adding manifest-era low/full-ceremony routing and per-PR scope declaration authority)."
     },
     {
       "filename": "SCOPE_DECLARATION.template.md",
