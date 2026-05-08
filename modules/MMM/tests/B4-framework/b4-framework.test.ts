@@ -420,15 +420,27 @@ describe('T-MMM-S6-048: apps/mmm/index.html exists', () => {
   });
 });
 
-// ─── T-MMM-S6-049: FrameworkUploadPage calls correct endpoints per mode ───────
-describe('T-MMM-S6-049: FrameworkUploadPage calls correct endpoints per mode', () => {
-  it('Mode A calls /api/upload/framework-source', () => {
+// ─── T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode ─────
+describe('T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode', () => {
+  it('Mode A calls mmm-upload-framework-source', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
-    expect(src).toContain('/api/upload/framework-source');
+    expect(src).toContain("supabase.functions.invoke('mmm-upload-framework-source'");
   });
-  it('Mode B calls /api/ai/framework-generate', () => {
+  it('Mode B calls mmm-ai-framework-generate', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
-    expect(src).toContain('/api/ai/framework-generate');
+    expect(src).toContain("mode==='B'");
+    expect(src).toContain("supabase.functions.invoke('mmm-ai-framework-generate'");
+  });
+  it('Mode C calls mmm-ai-framework-generate with hybrid payload', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
+    expect(src).toContain("mode==='C'");
+    expect(src).toContain('hybrid: true');
+  });
+  it('renders visible failure state without unwired-backend placeholder copy', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
+    expect(src).toContain('upload-page__next-state-panel');
+    expect(src).toContain('framework action right now');
+    expect(src).not.toContain('Full backend workflow is not yet wired for this mode');
   });
 });
 

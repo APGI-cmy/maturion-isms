@@ -15,6 +15,15 @@ function pipelineStatusClass(status: string): string {
   return STATUS_BADGE_CLASSES[status.toLowerCase()] ?? '';
 }
 
+// Supabase function invoke errors can carry HTTP status in either error.status
+// or error.context.status depending on error path/client shape.
+function getInvokeStatus(error: unknown): number | undefined {
+  if (!error || typeof error !== 'object') return undefined;
+  const invokeError = error as { status?: unknown; context?: { status?: unknown } };
+  const status = invokeError.context?.status ?? invokeError.status;
+  return typeof status === 'number' ? status : undefined;
+}
+
 function AppNav() {
   return (
     <header className="app-shell__header">
@@ -35,19 +44,19 @@ export default function DashboardPage() {
   const { data: dashboard, isLoading, isError, error } = useQuery({
     queryKey: ['dashboard'],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch('/api/qiw/status', { headers: { 'Authorization': `Bearer ${session?.access_token}` } });
-      if (res.status === 403) {
+      const { data, error } = await supabase.functions.invoke('mmm-qiw-status');
+      const status = getInvokeStatus(error);
+      if (status === 403) {
         const err = new Error('Permission denied') as Error & { status: number };
         err.status = 403;
         throw err;
       }
-      if (!res.ok) {
+      if (error) {
         const err = new Error('Failed to load dashboard') as Error & { status: number };
-        err.status = res.status;
+        err.status = status ?? 500;
         throw err;
       }
-      return res.json();
+      return data;
     },
     staleTime: 30_000, // TR-005: cache for dashboard render performance
   });

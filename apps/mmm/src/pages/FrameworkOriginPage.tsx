@@ -27,10 +27,11 @@ export default function FrameworkOriginPage() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch('/api/frameworks/init', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':`Bearer ${session?.access_token}`}, body: JSON.stringify({ name: 'My Framework', source_type: mode, origin_mode: mode }) });
-      if (!res.ok) throw new Error('Failed to init framework');
-      return res.json();
+      const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
+        body: { name: 'My Framework', source_type: mode, origin_mode: mode },
+      });
+      if (error) throw new Error(error.message || 'Failed to init framework');
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['frameworks'] }); // NBR-001: invalidate frameworks cache
@@ -70,4 +71,3 @@ export default function FrameworkOriginPage() {
     </main>
   );
 }
-

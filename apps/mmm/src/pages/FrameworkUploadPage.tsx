@@ -50,15 +50,26 @@ export default function FrameworkUploadPage() {
   const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` };
       if (mode==='A') {
-        return fetch('/api/upload/framework-source', { method: 'POST', headers, body: JSON.stringify({ source_type: 'VERBATIM' }) }).then(r => r.json());
+        const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
+          body: { source_type: 'VERBATIM', mode },
+        });
+        if (error) throw new Error(error.message || 'Failed to upload framework source');
+        return data;
       } else if (mode==='B') {
-        return fetch('/api/ai/framework-generate', { method: 'POST', headers, body: JSON.stringify({ name: 'New Framework' }) }).then(r => r.json());
-      } else {
-        return fetch('/api/ai/framework-generate', { method: 'POST', headers, body: JSON.stringify({ name: 'Hybrid Framework', hybrid: true }) }).then(r => r.json());
+        const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
+          body: { name: 'New Framework', mode },
+        });
+        if (error) throw new Error(error.message || 'Failed to generate framework');
+        return data;
+      } else if (mode==='C') {
+        const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
+          body: { name: 'Hybrid Framework', hybrid: true, mode },
+        });
+        if (error) throw new Error(error.message || 'Failed to generate hybrid framework');
+        return data;
       }
+      throw new Error(`Unsupported framework mode: ${mode}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['frameworks'] }); // NBR-001
@@ -139,7 +150,9 @@ export default function FrameworkUploadPage() {
                     Next step: {selectedMode.description}
                   </p>
                   <p className="upload-page__next-state-note">
-                    Full backend workflow is not yet wired for this mode. Your selection has been recorded.{' '}
+                    We couldn&rsquo;t complete this framework action right now (
+                    {mutation.error instanceof Error ? mutation.error.message : 'action failed'}
+                    ). Please try again or{' '}
                     <Link to="/frameworks">Return to Frameworks</Link>.
                   </p>
                 </div>

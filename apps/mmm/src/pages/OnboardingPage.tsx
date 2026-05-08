@@ -8,10 +8,11 @@ export default function OnboardingPage() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch('/api/organisations', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':`Bearer ${session?.access_token}`}, body: JSON.stringify({ name, tier }) });
-      if (!res.ok) throw new Error('Failed to create org');
-      return res.json();
+      const { data, error } = await supabase.functions.invoke('mmm-org-create', {
+        body: { name, tier },
+      });
+      if (error) throw new Error(error.message || 'Failed to create org');
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organisations'] }); // NBR-001: invalidate org cache
@@ -57,4 +58,3 @@ export default function OnboardingPage() {
     </main>
   );
 }
-

@@ -105,18 +105,14 @@ describe('T-MMM-S6-004: SignUpPage.tsx uses supabase auth signUp', () => {
   });
 });
 
-// ─── T-MMM-S6-005: OnboardingPage.tsx calls /api/organisations ──────────────
-describe('T-MMM-S6-005: OnboardingPage.tsx calls /api/organisations', () => {
+// ─── T-MMM-S6-005: OnboardingPage.tsx calls mmm-org-create capability ─────────
+describe('T-MMM-S6-005: OnboardingPage.tsx calls mmm-org-create capability', () => {
   it('file exists', () => {
     expect(fileExists('apps/mmm/src/pages/OnboardingPage.tsx')).toBe(true);
   });
-  it('calls /api/organisations endpoint', () => {
+  it('invokes mmm-org-create via Supabase functions', () => {
     const src = readFile('apps/mmm/src/pages/OnboardingPage.tsx');
-    expect(src).toContain('/api/organisations');
-  });
-  it('uses POST method', () => {
-    const src = readFile('apps/mmm/src/pages/OnboardingPage.tsx');
-    expect(src).toContain("method: 'POST'");
+    expect(src).toContain("supabase.functions.invoke('mmm-org-create'");
   });
 });
 
@@ -136,6 +132,10 @@ describe('T-MMM-S6-006: FrameworkOriginPage.tsx has 3 radio options (VERBATIM/GE
   it('contains HYBRID option', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');
     expect(src).toContain('HYBRID');
+  });
+  it('invokes mmm-framework-init via Supabase functions', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-init'");
   });
 });
 
