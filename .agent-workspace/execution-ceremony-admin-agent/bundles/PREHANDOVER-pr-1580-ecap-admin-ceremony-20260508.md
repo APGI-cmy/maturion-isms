@@ -21,6 +21,6 @@ ecap_verdict: PASS
 
 ## Ripple/Cross-Agent Assessment
 
-| Agent / System | Change Scope Assessed | Impact Conclusion |
-|---|---|---|
-| foreman-v2-agent + execution-ceremony-admin-agent | Admin ceremony bundle registration for PR #1580 | NO DIRECT PRODUCT RUNTIME IMPACT |
+Agent / System | Change Scope Assessed | Impact Conclusion
+---|---|---
+foreman-v2-agent + execution-ceremony-admin-agent | Admin ceremony bundle registration for PR #1580 | NO DIRECT PRODUCT RUNTIME IMPACT
