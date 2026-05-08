@@ -229,6 +229,8 @@ Verdict field naming alignment for product-facing assurance artifacts:
 - Canonical field: `VERDICT:`
 - Required split fields: `ADMIN_PASS:`, `FUNCTIONAL_PASS:`
 - Compatibility alias accepted by Phase 5 gates: `FULL_FUNCTIONAL_DELIVERY_VERDICT:`
+- Canonical verdict classes to operationalize in Tier 2/Tier 3 templates: `FULL_FUNCTIONAL_DELIVERY`, `PARTIAL_FUNCTIONAL_DELIVERY`, `UI_SHELL_ONLY`, `ADMIN_ONLY`, `FAIL`
+- Required calibration anchor for partial or shell verdicts: `APGI-cmy/maturion-isms#1553` (`OC-009`) per `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §12.5`
 
 ---
 
