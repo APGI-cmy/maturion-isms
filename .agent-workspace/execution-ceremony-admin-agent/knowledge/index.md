@@ -1,8 +1,8 @@
 # Tier 2 Knowledge Index — execution-ceremony-admin-agent
 
 **Agent**: execution-ceremony-admin-agent
-**Knowledge Version**: 1.2.0
-**Last Updated**: 2026-04-15
+**Knowledge Version**: 1.3.0
+**Last Updated**: 2026-05-08
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ## Required Files
@@ -44,3 +44,11 @@ It does NOT commit primary substantive deliverables. Escalation is to Foreman on
 3. **IAA**: Independent assurance gate — binary verdict and token writing ONLY
 
 These roles are mutually exclusive. No substitution permitted.
+
+## Phase 4 Role-Separation Discoverability
+
+Primary operational guidance for ECAP/admin-and-gate scrutiny:
+
+- `governance/checklists/phase4-role-separation-operational-guidance.md` (see **§6 ECAP Agent Tier 2 guidance**)
+- `governance/checklists/execution-ceremony-admin-checklist.md`
+- `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md`

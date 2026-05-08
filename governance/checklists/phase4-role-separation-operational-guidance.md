@@ -32,6 +32,17 @@
 
 ---
 
+## 2.A) Discoverability quick links (Phase 4 operational proof)
+
+- QA Builder index: `.agent-workspace/qa-builder/knowledge/index.md`
+- IAA index: `.agent-workspace/independent-assurance-agent/knowledge/index.md`
+- ECAP index: `.agent-workspace/execution-ceremony-admin-agent/knowledge/index.md`
+- Foreman index: `.agent-workspace/foreman-v2/knowledge/index.md`
+- Foreman handback template: `governance/templates/execution-ceremony-admin/FOREMAN_ADMIN_READINESS_HANDBACK.template.md`
+- PREHANDOVER template: `governance/templates/execution-ceremony-admin/PREHANDOVER.template.md`
+
+---
+
 ## 3) Canon reference requirement for verdict terms (no redefinition)
 
 Tier 2 operational guidance must cite governing canon or pending canon-alignment source for:

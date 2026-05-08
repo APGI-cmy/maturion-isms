@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 3.8.0
-**Last Updated**: 2026-04-28
+**Knowledge Version**: 3.9.0
+**Last Updated**: 2026-05-08
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -215,6 +215,20 @@ that produced the work under review. Every invocation is logged in session memor
 `learning_notes` are used to refine future decisions and grow the FAIL-ONLY-ONCE registry.
 
 IAA applies the Acceptance-Criteria Evidence Matrix (CORE-026) and Independent Risk Challenge (CORE-027) on every qualifying invocation before issuing any PASS token. Agent claims are not evidence.
+
+---
+
+## Phase 4 Role-Separation Discoverability
+
+IAA split-role operational guidance location:
+
+- `governance/checklists/phase4-role-separation-operational-guidance.md` (see **§8 IAA Agent Tier 2 guidance**)
+
+Verdict field naming alignment for product-facing assurance artifacts:
+
+- Canonical field: `VERDICT:`
+- Required split fields: `ADMIN_PASS:`, `FUNCTIONAL_PASS:`
+- Compatibility alias accepted by Phase 5 gates: `FULL_FUNCTIONAL_DELIVERY_VERDICT:`
 
 ---
 
