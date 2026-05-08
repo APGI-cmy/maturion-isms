@@ -44,7 +44,7 @@ Implement PIT Stage 4 TRS — Technical Requirements Specification. Stage 3 FRS 
 
 ---
 
-## IAA Tokens Received This Wave
+## IAA Tokens
 
 | PR # | Token | Date |
 |------|-------|------|
@@ -52,7 +52,7 @@ Implement PIT Stage 4 TRS — Technical Requirements Specification. Stage 3 FRS 
 
 ---
 
-## Wave Completion Gate
+## Pre-Build Gate Status
 
 - [x] All tasks above show 🟢 DONE
 - [x] Session memory written

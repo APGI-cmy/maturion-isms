@@ -11,16 +11,17 @@
 | Module | PIT (Project Implementation Tracker) |
 | Application Name | Project Implementation Tracker |
 | Artifact Type | Functional Requirements Specification (FRS — Stage 3) |
-| Version | v0.1-draft |
-| Status | Draft — For CS2 review and approval |
+| Version | v0.2-hardened |
+| Status | Draft — Hardened for CS2 review and approval |
 | Approval Status | Pending CS2 approval |
 | Derived From (Stage 1) | `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06, ref: maturion-isms#1540) |
 | Derived From (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
-| Date | 2026-05-06 |
-| Issue | maturion-isms#1548 |
+| Date | 2026-05-07 |
+| Issue | maturion-isms#1556 (hardening); maturion-isms#1548 (initial draft) |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 | Upstream Authority (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft — Foreman-reviewed 2026-05-06 (maturion-isms#1548) |
+| Hardening Issue | maturion-isms#1556 — 19 hardening areas applied; total FRS requirements 123 |
 
 > **Governance Note:** This document establishes the formal functional requirement baseline
 > for all downstream PIT artifacts: TRS (Stage 4), Architecture gate-pass (Stage 5),
@@ -71,6 +72,49 @@ Acceptance criteria follow each requirement inline.
 All App Description sections (§AD-01 through §AD-24) are traced in this FRS.
 All 23 user journeys (§UX-J-01 through §UX-J-23) in the UX Wiring Spec are traced.
 All 21 screens (§UX-S-01 through §UX-S-21) are traced.
+
+### 1.4 Functional Persistence Labels and Candidate Entity Naming Caveat
+
+> **Global Naming Caveat**: Table names, entity names, Edge Function names, and storage labels used in this FRS (such as `milestones`, `deliverables`, `tasks`, `notifications`, `audit_log`, `status_logs`, `evidence_items`, `source_links`, `escalation_log`, `task_dependencies`, `integration_configs`) are **functional persistence labels and candidate canonical entities**. Stage 4 TRS must confirm, rename, split, or supersede them. Functional behaviour described in this FRS remains binding even if the technical schema changes. No builder may treat FRS entity names as a substitute for TRS-confirmed schema definitions.
+
+---
+
+## 1.5 Requirement Index by Domain
+
+The requirement series is non-linear because later additions (PIT-FR-106 through PIT-FR-123) were appended after the initial sequence. Requirements are NOT renumbered. Use this index to navigate by domain.
+
+| Domain | Requirement IDs |
+|---|---|
+| Roles / Permissions | PIT-FR-001–002, PIT-FR-113 |
+| Auth / Onboarding | PIT-FR-003–015, PIT-FR-110 |
+| Five-State UI / App Shell | PIT-FR-016–021 |
+| Notification System | PIT-FR-022–026, PIT-FR-115–117 |
+| Portfolio Dashboard | PIT-FR-027–030 |
+| Project Creation | PIT-FR-031–035 |
+| Implementation Page | PIT-FR-036–045 |
+| Project Hierarchy | PIT-FR-046–047 |
+| Milestones | PIT-FR-048–050 |
+| Deliverables | PIT-FR-051–052 |
+| Tasks | PIT-FR-053–057, PIT-FR-114 |
+| Assignment / Invitation | PIT-FR-058–061 |
+| Evidence | PIT-FR-062–067 |
+| Timeline / Gantt | PIT-FR-068–076 |
+| Watchdog / Escalation | PIT-FR-077–079 |
+| Reports | PIT-FR-080–084, PIT-FR-118–119 |
+| Filters / Search | PIT-FR-085–086 |
+| Audit Log | PIT-FR-087–089 |
+| Admin / Settings | PIT-FR-090–092, PIT-FR-106–109 |
+| QA Dashboard | PIT-FR-093–094, PIT-FR-120 |
+| AIMC / AI | PIT-FR-095–099 |
+| Cross-Module Integration | PIT-FR-100–102 |
+| Deployment Surface | PIT-FR-103–105 |
+| My Work | PIT-FR-111–112 |
+| Lifecycle Removal (Archive/Delete/Restore/Cancel) | PIT-FR-121 |
+| Accessibility | PIT-FR-122 |
+| Bulk Operations / Import / Templates (Non-Scope) | PIT-FR-123 |
+| RAG Threshold Central Table | Section 29 |
+| Permission Negative-Path Contract | PIT-FR-113 |
+| Progress Roll-Up Method | PIT-FR-114 |
 
 ---
 
@@ -138,12 +182,46 @@ The system shall support the following user roles in order of authority:
 **Acceptance**: Given a user with role `viewer`, when they attempt to add a milestone, then the system blocks the action and shows the permission-denied state. Role hierarchy enforcement is functionally validated by attempting the action with insufficient permissions and observing the denied outcome (access control implementation deferred to TRS).
 **Derived from**: §AD-08, §UX-J-09, §UX-SEC-5.3
 
+### 3.1 Role-Scope Matrix
+
+The following table defines the scope, inheritance, and assignment rules for each role. This matrix is required to prevent ambiguity in cross-org visibility, audit export, QA Dashboard access, admin screens, project membership, and task ownership.
+
+| Role | Scope | Can be inherited? | Can be assigned by | Applies to | Negative-path expectation |
+|------|-------|-------------------|--------------------|------------|---------------------------|
+| `cs2_admin` | Global (cross-organisation) | No | CS2 only | All organisations, all projects | Access denied to any action not explicitly granted to `cs2_admin` |
+| `org_admin` | Organisation-scoped | No | `cs2_admin` | All projects within the organisation | Cannot access other organisations' data; denied cross-org audit except via `cs2_admin` delegation |
+| `pit_admin` | Organisation-scoped | No | `org_admin`, `cs2_admin` | All projects within the organisation | Same cross-org restriction as `org_admin` |
+| `project_creator` | Organisation-scoped | No | `org_admin`, `pit_admin` | Create new projects; read Portfolio Dashboard | Cannot manage projects they did not create unless also assigned a project-scoped role |
+| `project_leader` | Project-scoped | No | `org_admin`, `pit_admin` | All milestones, deliverables, tasks, and team within the project | Cannot access projects they are not assigned to; denied admin screen unless also `pit_admin` |
+| `milestone_leader` | Project-scoped (milestone) | No | `project_leader` or above | All deliverables and tasks within assigned milestone | Cannot manage milestones other than their own; denied project settings |
+| `deliverable_leader` | Project-scoped (deliverable) | No | `milestone_leader` or above | All tasks within assigned deliverable | Cannot manage deliverables other than their own |
+| `task_owner` | Task-scoped | No | `deliverable_leader` or above | The specific assigned task(s) | Cannot modify tasks not assigned to them; cannot approve evidence |
+| `reviewer` | Project-scoped | No | `project_leader` or above | Evidence items within the project | Cannot approve evidence outside their project scope; denied admin |
+| `reporter` | Organisation-scoped | No | `org_admin`, `pit_admin` | Report generation and download within the organisation | Cannot generate reports for organisations they are not a member of |
+| `auditor` | Organisation-scoped | No | `org_admin`, `pit_admin` | Read-only audit log within the organisation | Cannot modify any records; denied all write actions |
+| `viewer` | Project-scoped | No | `project_leader` or above | Read-only access to project data | Cannot create, edit, delete, or archive any record; denied evidence submission |
+
+> **TRS Note**: Database-level row-security rules implementing this matrix are deferred to Stage 4 TRS (see PIT-FR-101). The matrix above defines the functional requirement; TRS must confirm the enforcement mechanism.
+
 ### PIT-FR-002 — Role-Based Navigation Visibility
 
 The system shall hide (not grey out) navigation items the current user lacks permission to access. Navigating directly to a hidden route via URL shall render the permission-denied state (not a 404).
 
 **Acceptance**: Given a user with role `viewer`, when they navigate directly to `/admin`, then the system shows the permission-denied state, not the admin screen.
 **Derived from**: §UX-SEC-5.3, §UX-J-09
+
+### PIT-FR-113 — Permission Negative-Path Contract
+
+The system shall define and enforce denied-action behaviour for every role-gated action group. Denied-action behaviour is required for: create, edit, delete, archive, approve, export, admin, AI advisory, assignment, evidence submission, evidence approval, report generation, and role management actions.
+
+A denied action shall:
+- not mutate any data record or state,
+- show a permission-denied state or inline denial message appropriate to the context,
+- not expose sensitive data from the resource the action targeted,
+- create an audit log entry when the denial involves a security-sensitive action (delete, export, admin, evidence approval).
+
+**Acceptance**: QA-to-Red must include at least one insufficient-permission test per protected action group. Given a user with `viewer` role attempting to delete a task, the system shows a permission-denied message and the task record is unchanged; no audit event for the task mutation is created (but the denial attempt is logged).
+**Derived from**: §AD-08, §UX-SEC-5.3, PIT-FR-001, role-scope matrix §3.1
 
 ---
 
@@ -362,6 +440,39 @@ The system shall support optional email notification delivery for each notificat
 **Acceptance**: A user disabling "Task Overdue" email notifications does not receive emails for that event but still receives in-app notifications.
 **Derived from**: §UX-SEC-5.4
 
+### PIT-FR-115 — Notification Read and Mark-as-Read Behaviour
+
+The system shall support the following read-state management actions for in-app notifications:
+- **Mark individual as read**: A user can mark a single notification as read from the notification drawer or notification history list. Marking as read removes it from the unread badge count.
+- **Mark all read**: Clicking "Mark all read" marks all current unread notifications as read in a single action. The bell badge resets to zero.
+- **Unread persistence**: Unread state persists across sessions. Navigating away from the notification drawer does not automatically mark notifications as read.
+
+**Acceptance**: Given 5 unread notifications, marking one as read reduces the badge to 4. Clicking "Mark all read" reduces the badge to 0. Refreshing the page shows the updated read state.
+**Derived from**: §UX-SEC-5.4; maturion-isms#1556 (notification read behaviour)
+
+### PIT-FR-116 — Notification History View
+
+The system shall provide a full notification history page or panel accessible via a "View all" link from the notification drawer. The history view shall:
+- display all notifications (read and unread) for the current user in reverse-chronological order,
+- retain notifications for a minimum of 90 days from the event date (retention period configurable by admin; default 90 days),
+- paginate results server-side (maximum 50 per page),
+- show at most one notification per unique event occurrence (duplicate suppression: if the same event triggers multiple notifications to the same user within a configurable de-duplication window, only one notification is created),
+- group or de-duplicate repeated notification events of the same type from the same source item within a 24-hour window.
+
+**Acceptance**: A user navigating to the notification history page sees all notifications older than 20 (the drawer limit), paginated. Notifications older than 90 days are not shown.
+**Derived from**: §UX-SEC-5.4; maturion-isms#1556 (notification history)
+
+### PIT-FR-117 — Notification Preferences
+
+The system shall provide a Notification Preferences screen in User Settings allowing each user to configure, per notification type:
+- whether the event generates an **in-app** notification (on/off; default on for all types),
+- whether the event generates an **email** notification (on/off; default on for: task_assigned, evidence_approved, evidence_returned, invitation_received; default off for: all other types).
+
+Notification type preferences are user-scoped and do not affect other users. The default email preference (off except listed types) applies to all users on first access until they configure their preferences.
+
+**Acceptance**: A user disabling in-app notifications for "evidence_submitted" no longer receives in-app notifications for that event type but still receives them for other types. Another user's preferences are not affected. Email notifications respect the per-type preference independently of in-app preference.
+**Derived from**: §UX-SEC-5.4; PIT-FR-026; maturion-isms#1556 (notification preferences)
+
 ---
 
 ## 8. Portfolio Dashboard Requirements
@@ -577,10 +688,17 @@ The system shall allow users with `milestone_leader` role or above to create del
 
 ### PIT-FR-052 — Deliverable Evidence Requirement Flag
 
-The system shall support an `evidence_required` flag on deliverables. When set, the deliverable is not marked complete until at least one evidence item with status `approved` is linked to one of its tasks.
+The system shall support an `evidence_required` flag on deliverables. Evidence linkage is supported at both task level and deliverable level.
 
-**Acceptance**: A deliverable with `evidence_required = true` and no approved evidence cannot be set to `completed`.
-**Derived from**: §UX-J-13; §UX-S-10
+When the flag is set, a deliverable **cannot** be marked complete unless **one of the following conditions** is met:
+
+- **Task-level evidence path**: All child tasks for which `evidence_required = true` each have at least one linked evidence item with status `approved`. Additional evidence items in other statuses do **not** prevent completion if at least one approved evidence item exists for each such task, OR
+- **Deliverable-level evidence path**: An approved evidence item is explicitly linked at the deliverable level (not at a child task), satisfying the deliverable's evidence requirement directly.
+
+A deliverable with `evidence_required = true` where only *some* evidence-required child tasks have approved evidence (and others do not) **cannot** be marked complete unless the deliverable-level evidence path is used.
+
+**Acceptance**: (a) A deliverable with `evidence_required = true`, two child tasks with `evidence_required = true`, and only one of those tasks having an approved evidence item cannot be set to `completed`. (b) A deliverable with `evidence_required = true` where each `evidence_required` child task has at least one approved evidence item can be set to `completed`, even if additional linked evidence items for those tasks are unapproved. (c) A deliverable with `evidence_required = true` where no child tasks have `evidence_required = true` but a deliverable-level approved evidence item exists can be set to `completed`.
+**Derived from**: §UX-J-13; §UX-S-10; maturion-isms#1556 (evidence completion clarification)
 
 ---
 
@@ -597,10 +715,18 @@ The system shall allow users with `deliverable_leader` role or above to create t
 
 ### PIT-FR-054 — Task Status Lifecycle
 
-The system shall support the following task status values: `not_started`, `upcoming`, `active`, `in_progress`, `completed`, `overdue`, `blocked`. Status transitions shall be logged in a `status_logs` table.
+The system shall support the following task status values: `not_started`, `upcoming`, `active`, `in_progress`, `completed`, `overdue`, `blocked`, `cancelled`. Status transitions shall be logged in a `status_logs` table.
 
-**Acceptance**: Changing a task from `in_progress` to `completed` creates a status_log entry with timestamp and actor. A `completed` task cannot be set to `overdue` by the system (it remains `completed`).
-**Derived from**: §UX-S-11
+A task may be **cancelled** by a user with `deliverable_leader` role or above. When a task is cancelled:
+- it is excluded from progress roll-up calculations (it does not count as 0% progress),
+- it is excluded from watchdog overdue detection,
+- any `evidence_required` requirement on the task is considered void for deliverable completion purposes,
+- a `status_log` entry is created with the cancellation actor, timestamp, and a mandatory cancellation reason.
+
+A `completed` task cannot be set to `overdue` by the system (it remains `completed`). A `cancelled` task cannot be set to `overdue` or `completed` by normal user action; cancellation may be reversed to `not_started` by a user with `deliverable_leader` role or above, with an audit entry.
+
+**Acceptance**: (a) Changing a task from `in_progress` to `completed` creates a `status_log` entry with timestamp and actor. (b) A task cancelled by a `deliverable_leader` is excluded from the project's progress calculation. (c) A cancelled task does not appear in the watchdog overdue list. (d) Reversing a cancellation requires `deliverable_leader` role or above and creates an audit entry.
+**Derived from**: §UX-S-11; maturion-isms#1556 (lifecycle consistency with PIT-FR-077)
 
 ### PIT-FR-055 — Task Progress Percentage
 
@@ -624,6 +750,17 @@ When a task has an unmet dependency, the system shall display a "Blocked" status
 
 **Acceptance**: Task B blocked by incomplete Task A shows status `blocked` and "Blocked by: Task A" in the detail panel.
 **Derived from**: §UX-SEC-10 Open Item 2 (resolved here)
+
+### PIT-FR-114 — Progress Roll-Up Method
+
+The system shall calculate roll-up progress from child items using **equal weighting by default**. The roll-up chain is: task progress % → deliverable progress % → milestone progress % → project progress %.
+
+- **Equal weighting (default)**: Each child item contributes equally to the parent's progress percentage. The parent's progress is the arithmetic mean of all non-cancelled child item progress percentages.
+- **Excluded items**: Cancelled tasks (status `cancelled`) are excluded from the roll-up denominator and numerator. Completed tasks contribute 100% to the calculation.
+- **Manual weights (future)**: If manual weights are introduced by TRS, the weights for all non-cancelled children under a parent must total 100%. Incomplete or invalid weights (e.g., total ≠ 100%, negative values) cause the system to revert to equal weighting for that parent and display a validation warning.
+
+**Acceptance**: (a) Given three child tasks at 0%, 50%, and 100% with no manual weights, the parent deliverable progress is 50%. (b) Given three child tasks where one is `cancelled`, at 0% and 100%, the parent deliverable progress is 50% (two non-cancelled items, mean of 0% and 100%). (c) Given a project with two milestones at 40% and 60%, the project progress is 50%.
+**Derived from**: §UX-SEC-3, Indicator 7; PIT-FR-055; maturion-isms#1556 (progress roll-up method)
 
 ---
 
@@ -786,10 +923,12 @@ The system shall provide a toggle on the Timeline page to show or hide task bars
 
 ### PIT-FR-077 — Watchdog Engine
 
-The system shall run a watchdog evaluation process that flags items meeting at least one of the following conditions: task is overdue (due_date < today and status ≠ completed/cancelled), milestone or deliverable is stalled (no progress update in configured time window), evidence submission is overdue (evidence_required = true and no approved evidence past a configurable threshold date).
+The system shall run a watchdog evaluation process that flags items meeting at least one of the following conditions: task is overdue (due_date < today and status ∉ {completed, cancelled}), milestone or deliverable is stalled (no progress update in configured time window), evidence submission is overdue (evidence_required = true and no approved evidence past a configurable threshold date).
 
-**Acceptance**: A task with due_date = yesterday and status = in_progress is flagged by the watchdog.
-**Derived from**: §AD-12; §UX-J-19
+Tasks with status `cancelled` are explicitly excluded from watchdog overdue detection (see PIT-FR-054).
+
+**Acceptance**: A task with due_date = yesterday and status = in_progress is flagged by the watchdog. A task with due_date = yesterday and status = `cancelled` is NOT flagged by the watchdog.
+**Derived from**: §AD-12; §UX-J-19; PIT-FR-054 (cancelled task exclusion)
 
 ### PIT-FR-078 — Watchdog Dashboard Display
 
@@ -843,10 +982,45 @@ The system shall generate reports server-side via the `generate_report` Edge Fun
 
 ### PIT-FR-084 — Report History
 
-The system shall optionally store generated reports in the configured file storage service and display a report history list on the Reports screen with download links for previous reports.
+The system shall store all generated reports in the configured file storage service and display a report history list on the Reports screen. Report history is **mandatory** (not optional — see §PIT-FR-119 for scope definition). Each history entry shall include: report type, scope parameters, generated-by user, generation timestamp, download link, and expiry date (if applicable).
 
-**Acceptance**: After generating a report, it appears in the "Previous Reports" list with a download button.
-**Derived from**: §UX-S-15
+**Acceptance**: After generating a report, it appears in the "Previous Reports" list with a download button, report type label, scope summary, and generation timestamp.
+**Derived from**: §UX-S-15; maturion-isms#1556 (report history mandatory)
+
+### PIT-FR-118 — Report Generation Permissions and States
+
+The system shall enforce the following report generation permissions and UI states:
+
+**Generation permissions** (who may generate each report type):
+- Project Status Report: `project_leader` or above within the project scope; `org_admin`, `pit_admin`, `reporter`, `cs2_admin` for org-wide scope
+- Portfolio Summary: `org_admin`, `pit_admin`, `reporter`, `cs2_admin`
+- Task Completion Report: same as Portfolio Summary
+- Audit Trail Extract: `auditor`, `org_admin`, `cs2_admin` only
+- CAPEX/OPEX Summary: `org_admin`, `pit_admin`, `reporter`, `cs2_admin`
+
+**UI states for report generation**:
+- **Loading state**: After clicking "Generate", a loading indicator is shown; the generate button is disabled to prevent duplicate submissions.
+- **Long-running state**: If report generation exceeds 5 seconds, a "This report is being prepared — you will be notified when it is ready" status message is shown. The user may navigate away; a notification is sent on completion.
+- **Failure state**: If generation fails (server error, timeout, or storage failure), an error message is shown with a "Try again" option. The failed attempt is logged but not stored in report history.
+- **Success state**: Download link is shown immediately (or via notification for long-running reports).
+
+**Export access control**: Report download links are implemented as signed URLs that expire after a configurable period (default: 24 hours). Expiry applies to the signed URL only — the underlying report file is retained for the full retention period (minimum 30 days per PIT-FR-119). When a user accesses a report from history after the signed URL has expired, the system shall re-generate a new signed URL for that report on demand. Only the user who generated the report, plus `org_admin` and `cs2_admin`, may download the report via the history list.
+
+**Acceptance**: (a) A user with `viewer` role attempting to generate a Portfolio Summary sees the permission-denied state. (b) A report generation that takes 8 seconds shows the "being prepared" state; the user receives a notification when the link is ready. (c) A failed report generation shows an error message and the failed attempt does not appear in report history.
+**Derived from**: §UX-J-20; §UX-S-15; maturion-isms#1556 (report permissions and states)
+
+### PIT-FR-119 — Report History Scope
+
+Report history scope is **per-user within organisation context** (not global or cross-user). Each user sees only reports they generated, plus reports generated by `cs2_admin` that are explicitly shared.
+
+Report history shall:
+- retain reports for a minimum of 30 days (default; configurable by admin),
+- display reports across all projects the user has access to (no single-project scope restriction on the history list),
+- allow `org_admin` and `cs2_admin` to view all reports generated within their organisation (not per-user restricted),
+- not expose `cs2_admin`-only reports (e.g., cross-org audit extracts) to `org_admin` unless explicitly shared.
+
+**Acceptance**: User A sees only their own generated reports in the history list. The `org_admin` sees all reports generated by all users in the organisation. A cross-org audit extract generated by `cs2_admin` is not visible to `org_admin` by default.
+**Derived from**: §UX-S-15; maturion-isms#1556 (report history scope)
 
 ---
 
@@ -970,11 +1144,30 @@ The system shall display on the QA Dashboard: test suite summary (total tests, p
 **Acceptance**: After a test run, the QA Dashboard shows updated counts and the last run timestamp.
 **Derived from**: §UX-S-17
 
+### PIT-FR-120 — QA Dashboard Enhanced Requirements
+
+The system shall provide the following enhanced QA Dashboard capabilities, accessible only to users with the `cs2_admin` role (see PIT-FR-093):
+
+- **Empty state**: Before any test runs exist, the QA Dashboard shall show an informative empty state explaining that no test data is available and providing a link to the test execution documentation.
+- **Failed-test drilldown**: Clicking on a failed test count shall expand or navigate to a drilldown list of individual failed tests with: test name, test file path, failure message, and timestamp. Each failed test entry shall link to the source artifact (test file) where available.
+- **Evidence artifact links**: The QA Dashboard shall display links to deployment evidence artifacts (screenshots, logs, or CI run URLs) associated with each test run.
+- **Wave filter**: A filter control shall allow filtering the QA Dashboard by build wave or test suite label.
+- **Test run history**: The QA Dashboard shall show a chronological history of test runs with: run timestamp, total/pass/fail/skip counts, triggered-by label (CI, manual, or agent), and pass/fail outcome badge.
+- **QA-to-Red vs QA-to-Green distinction**: Each test run shall be labelled as `QA-TO-RED` (failing baseline — expected failures before build) or `QA-TO-GREEN` (post-build run — expected passes). The distinction shall be visually clear.
+- **Deployment evidence visibility**: Evidence items marked as deployment evidence shall be linked from the relevant test run entry.
+- **Manual physical verification evidence**: Any manually captured physical verification evidence (screenshots, signed-off artefacts) shall be displayable as linked attachments from the test run detail.
+- **Last run status and source link**: The main QA Dashboard header shall display the last run timestamp, overall pass/fail status, and a direct link to the source CI run.
+
+**Acceptance**: (a) With no test runs, the QA Dashboard shows an empty state with guidance text. (b) Clicking on "5 failed" in a test run shows a list of 5 individual failed tests with names and failure messages. (c) A test run labelled `QA-TO-RED` is visually distinct from a `QA-TO-GREEN` run.
+**Derived from**: §AD-20; §UX-S-17; maturion-isms#1556 (QA Dashboard expanded requirements)
+
 ---
 
 ## 24. AI / AIMC Functional Requirements
 
 *Derived from: §AD-14, §UX-SEC-8; MMM carry-forward AIMC governance*
+
+> **AIMC Route Candidate Notice**: The AIMC endpoint paths in PIT-FR-096 through PIT-FR-099 (e.g., `/api/aimc/pit/task-advisor`) are **functional route candidates**. Stage 4 TRS must confirm the exact AIMC gateway contract and may rename, consolidate, or restructure endpoints without changing the functional behaviour specified here. The functional requirement (AI advisory, human-confirmation-required, audit-logged) remains binding regardless of the final endpoint path. No builder may implement against these candidate paths without TRS confirmation.
 
 ### PIT-FR-095 — AIMC Gateway Routing Mandatory
 
@@ -1097,7 +1290,103 @@ The My Work screen shall provide:
 
 ---
 
-## 28. Non-Functional Placeholders (TRS-Only)
+## 28. Lifecycle Removal Semantics — Archive, Delete, Restore, and Cancel
+
+*Derived from: §AD-07, §AD-09, §UX-S-06; maturion-isms#1556 (lifecycle removal requirement)*
+
+### PIT-FR-121 — Lifecycle Removal Semantics
+
+The system shall enforce the following lifecycle removal semantics for all entity types. The goal is to prevent data loss, preserve audit integrity, and protect evidence records.
+
+#### Projects
+- **Archive** is the preferred removal action. Archiving a project sets its status to `archived`, removes it from the active Portfolio Dashboard view, and preserves all child records.
+- **Hard delete** is prohibited once a project has any child records (milestones, deliverables, tasks, evidence items, or audit entries). If a project has no child records, hard delete is permitted by `org_admin` or `cs2_admin` only.
+- An archived project may be **restored** to active status by `org_admin` or `cs2_admin`. Restoration creates an audit log entry.
+
+#### Milestones / Deliverables / Tasks
+- **Soft delete (cancel)** is the preferred removal action. For **tasks**, soft-delete sets task status to `cancelled` and removes the task from active list views while preserving it in history and audit records. For **milestones** and **deliverables**, soft-delete does not introduce a new status value; instead, the item shall be marked as cancelled via lifecycle metadata (for example `is_cancelled`, `cancelled_at`, `cancelled_by`) and removed from active list views while remaining available in history and audit records.
+- **Hard delete** of milestones, deliverables, or tasks is prohibited if the item has child records, approved evidence items, or audit entries.
+- **Cascade behaviour**: Cancelling a milestone cascades to offer the user the choice to cancel all child deliverables and tasks, or leave them active (with a warning that they are now orphaned from their parent milestone's completion path).
+- Cancelled items may be **restored** by a user with `deliverable_leader` role or above for tasks; `project_leader` for deliverables and milestones. For tasks, restoration returns the task to its prior valid task status. For milestones and deliverables, restoration clears the cancellation lifecycle metadata and returns the item to the active view. Restoration creates an audit log entry and triggers a review of progress roll-up recalculation.
+
+#### Evidence Items
+- Evidence items (files, URLs, notes) are **never hard-deleted** through the normal user interface.
+- Evidence may only be removed via an explicitly approved **retention workflow** (process defined in TRS/Architecture). The retention workflow requires `org_admin` or `cs2_admin` authorisation and creates an audit log entry.
+- Returning an evidence item for revision (PIT-FR-065) does not delete it; the returned item remains in history with status `returned`.
+
+#### Audit Log Entries
+- Audit log entries (`audit_log` table) are **never user-deletable** through any user interface.
+- No role, including `cs2_admin`, may delete audit log entries through the PIT application. Physical deletion requires a database-level administrative action outside the application, governed by the data retention policy (deferred to Architecture).
+
+**Acceptance**: (a) A project with 3 milestones cannot be hard-deleted; the delete option is not available in the UI for that project. (b) Archiving a project preserves all child records and removes the project from the active Portfolio Dashboard. (c) Cancelling a task excludes it from progress roll-up and watchdog detection. (d) Attempting to delete an evidence item through the UI shows an error message stating evidence cannot be deleted. (e) The audit log has no delete button for any user role.
+**Derived from**: §AD-07; §AD-09; §UX-S-06; maturion-isms#1556 (lifecycle removal semantics)
+
+---
+
+## 29. RAG Threshold Central Table
+
+*Derived from: §UX-SEC-3; maturion-isms#1556 (centralised RAG thresholds)*
+
+All Red/Amber/Green (RAG) logic in this FRS must reference this table. Requirements that specify RAG behaviour shall name the applicable RAG Rule ID. Conflicting threshold definitions in individual requirements are superseded by this table.
+
+| RAG Rule | Green | Amber | Red | Applies To | Override Allowed? | Derived From |
+|----------|-------|-------|-----|------------|-------------------|--------------|
+| RAG-001 | Time elapsed ≤ actual progress + 15% | Time elapsed > actual progress + 15% | Time elapsed > actual progress + 25% | Project Duration (Indicator 1, PIT-FR-037) | No | §UX-SEC-3 Indicator 1 |
+| RAG-002 | No milestones overdue | Any milestone overdue by 1–7 days | Any milestone overdue by > 7 days | Milestone Count (Indicator 2, PIT-FR-038) | No | §UX-SEC-3 Indicator 2 |
+| RAG-003 | No deliverables overdue | Any deliverable overdue by 1–7 days | Any deliverable overdue by > 7 days | Deliverable Count (Indicator 3, PIT-FR-039) | No | §UX-SEC-3 Indicator 3 |
+| RAG-004 | Overdue tasks = 0 | Overdue tasks 1–10% of total | Overdue tasks > 10% of total | Task Count / Overdue (Indicator 4, PIT-FR-040) | No | §UX-SEC-3 Indicator 4 |
+| RAG-005 | Delta ≥ 0% (actual ≥ planned) | Delta −5% to −15% (actual < planned) | Delta < −15% (actual << planned) | Progress Against Plan (Indicator 6, PIT-FR-042) | No | §UX-SEC-3 Indicator 6 |
+| RAG-006 | ≥ 50% overall progress with < 75% time elapsed | < 25% progress with 25–75% time elapsed | < 50% overall progress with > 75% time elapsed | Overall Progress % (Indicator 7, PIT-FR-043) | No | §UX-SEC-3 Indicator 7 |
+| RAG-007 | All milestones on-track | Any milestone at-risk (amber per RAG-002) | Any milestone overdue (red per RAG-002) | Portfolio Dashboard project cards (PIT-FR-028) | No | §UX-S-05 |
+| RAG-008 | Item within configured threshold | Item approaching threshold (configurable Amber window) | Item past threshold (configurable Red window) | Watchdog / Escalation (PIT-FR-077, PIT-FR-092) | Yes (admin configures thresholds per PIT-FR-092) | §UX-S-14; §UX-J-19 |
+
+> **Note**: Threshold overrides for RAG-008 (watchdog) are admin-configurable per PIT-FR-092. All other RAG rules are system-fixed and not user-overridable. TRS may define additional RAG rules; they must be added to this table and must not conflict with existing rules.
+
+---
+
+## 30. Minimum Accessibility Outcomes
+
+*Derived from: §AD-11; maturion-isms#1556 (minimum accessibility functional outcomes)*
+
+### PIT-FR-122 — Minimum Accessibility Outcomes
+
+The system shall achieve the following minimum accessibility functional outcomes. These are functional requirements, not implementation constraints (WCAG compliance level is deferred to TRS per NF-010). TRS must confirm the WCAG target level; these outcomes define the minimum functional baseline regardless of WCAG target.
+
+1. **Keyboard navigation**: All interactive elements (forms, modals, menus, dropdowns, CTAs, and Gantt zoom controls) shall be reachable and operable using keyboard navigation alone (Tab, Shift+Tab, Enter, Space, Arrow keys as appropriate). Icon-only button actions shall have keyboard-accessible equivalents.
+2. **Focus management**: When a modal or drawer opens, focus shall move to the modal or drawer. When the modal or drawer closes, focus shall return to the element that triggered it (or to a logical fallback if the trigger no longer exists).
+3. **Screen-reader labels for icon-only buttons**: All icon-only buttons (e.g., notification bell, close modal, edit row, delete row, expand/collapse) shall have a programmatic text label (e.g., `aria-label`) that is announced by screen readers but not visible in the UI.
+4. **Colour is not the sole status indicator**: RAG status indicators, task status badges, and error/success states shall convey their meaning through text or pattern in addition to colour (e.g., "Overdue" text alongside the red chip; error text beneath an invalid field).
+5. **Accessible form errors**: Form validation errors shall be programmatically associated with their input fields and announced on submission failure without requiring the user to visually scan the form.
+6. **Accessible toast/notification announcements**: In-app toast messages and notification bell updates shall be announced to screen readers via a live region where technically practical.
+
+**Acceptance**: (a) A user can complete the project creation wizard using only keyboard navigation. (b) Opening a "Create Task" modal moves focus inside; pressing Escape closes it and returns focus to the trigger button. (c) All icon-only buttons have accessible labels confirmed by accessibility audit. (d) The red overdue task chip displays "Overdue" as visible or screen-reader text. (e) A form submission with a missing required field announces the error to screen readers.
+**Derived from**: §AD-11; NF-010; maturion-isms#1556 (accessibility outcomes)
+
+---
+
+## 31. Bulk Operations and Import/Template Non-Scope Declaration
+
+*Derived from: maturion-isms#1556 (bulk operations and import explicit scoping)*
+
+### PIT-FR-123 — Bulk Operations, CSV Import, and Project Templates — Explicit v1 Non-Scope
+
+The following capabilities are **explicitly excluded from PIT v1 scope**. They shall not be implemented in any build wave unless a separate CS2-authorised requirement is added to this FRS and the Build Authorization is updated accordingly.
+
+| Feature | v1 Scope Decision | Rationale |
+|---------|-------------------|-----------|
+| Bulk assign tasks | **OUT OF SCOPE** | Adds complexity to permission model; not required for MVP workflow |
+| Bulk status update | **OUT OF SCOPE** | Single-task status update (PIT-FR-054) covers the primary workflow |
+| Bulk due-date update | **OUT OF SCOPE** | Gantt drag-and-drop (PIT-FR-072) covers multi-item date management |
+| Bulk export filtered task list | **OUT OF SCOPE** | Report exports (PIT-FR-080–082) cover export needs |
+| CSV import (projects, tasks, or users) | **OUT OF SCOPE** | Adds data validation complexity; deferred post-MVP |
+| Project-level templates | **OUT OF SCOPE** | Task Cluster Templates (PIT-FR-047) cover the reuse pattern at task level; project-level templates deferred post-MVP |
+
+**Acceptance**: None of the features listed above appear in the Stage 4 TRS, Stage 5 Architecture, Stage 6 QA-to-Red, or Stage 12 Build deliverables without explicit CS2-authorised FRS amendment.
+**Derived from**: maturion-isms#1556 (explicit v1 scope declaration for bulk ops and import)
+
+---
+
+## 32. Non-Functional Placeholders (TRS-Only)
 
 The following items are intentionally deferred to Stage 4 (TRS) and Stage 5 (Architecture). They are listed here as reminders only and must not be allowed to replace the functional requirements above.
 
@@ -1116,7 +1405,55 @@ The following items are intentionally deferred to Stage 4 (TRS) and Stage 5 (Arc
 
 ---
 
-## 29. Acceptance Criteria Summary
+## 33. Build-Completeness Guardrails
+
+*Derived from: maturion-isms#1556 (build-completeness guardrails for one-time build readiness)*
+
+The implementation is not functionally complete unless **all** of the following are true:
+
+1. Every route in the deployment surface map (§UX-SEC-9 — 27 routes; see also Appendix A) renders a correctly functioning component in the deployed environment (not a 404 or blank screen).
+2. Every primary page implements the required five-state model (PIT-FR-016): loading, empty, permission-denied, network error, and data states are all reachable and render correctly.
+3. Every role-gated action has at least one allowed-path test (verifying the action succeeds for an authorised role) and at least one denied-path test (verifying the action is blocked for an insufficient role), per PIT-FR-113.
+4. Every create, edit, delete, archive, cancel, status-change, evidence, and report action creates the required audit event in `audit_log`, as specified in PIT-FR-087 and §UX-SEC-7.
+5. Every notification-generating action (per PIT-FR-025) creates an in-app notification record for the relevant recipient(s), confirmed by a test that queries the `notifications` table.
+6. Every evidence-required completion path is blocked until evidence criteria are satisfied (PIT-FR-052, PIT-FR-066), confirmed by a test that attempts completion without required evidence and observes the block.
+7. Every report type (PIT-FR-080) can be generated, downloaded, and permission-checked (allowed-path and denied-path per PIT-FR-118).
+8. All AIMC actions route through the AIMC Gateway (PIT-FR-095) and require explicit human confirmation before any suggestion takes effect (PIT-FR-096 through PIT-FR-099). No AI suggestion auto-applies.
+9. All Gantt date changes show conflict/cascade consequences before save (PIT-FR-072, PIT-FR-073): the confirmation dialog must appear and must be confirmed before dates are written.
+10. No downstream stage (TRS, Architecture, QA-to-Red, Implementation Plan, Builder Checklist, Build) may substitute implementation assumptions for unresolved FRS or TRS decisions. If an FRS or TRS decision is unresolved at the time a downstream stage is being executed, the downstream stage must halt and escalate to CS2.
+
+> **Note for Quality Professor (Foreman QP mode)**: These guardrails are the build-completeness pass/fail criteria for the Stage 12 QP PASS verdict. Any builder deliverable that cannot satisfy all 10 guardrails at the time of handover is a QP FAIL. There are no exceptions or partial-credit outcomes.
+
+---
+
+## 34. QA-to-Red Derivation Requirements
+
+*Derived from: `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 Stage 6; maturion-isms#1556 (QA-to-Red derivation guardrails)*
+
+Stage 6 QA-to-Red **must** derive RED-phase tests (failing tests before implementation) covering every item in the following checklist. This derivation is mandatory and constitutes the QA-to-Red completeness gate. A QA-to-Red suite that does not cover all items listed here is incomplete and must not be gate-passed.
+
+| Category | Derivation Source | Coverage Required |
+|----------|-------------------|-------------------|
+| All functional requirements (PIT-FR-001 through PIT-FR-123) | This FRS | At least one test per requirement or requirement group |
+| All routes (27 routes — see Appendix A) | §UX-SEC-9; Appendix A | At least one test per route verifying: route is registered, renders correct component, applies correct auth guard |
+| All screens (§UX-S-01 through §UX-S-21) | §UX-S-NN screen definitions | At least one test per screen verifying correct render |
+| All user journeys (§UX-J-01 through §UX-J-23) | §UX-J-NN journey definitions | At least one end-to-end or integration test per journey |
+| All five UI states per primary page | PIT-FR-016 | At least one test per state per primary page (loading, empty, permission-denied, network error, data) |
+| All role-denied paths | PIT-FR-113; role-scope matrix §3.1 | At least one insufficient-permission test per protected action group |
+| All evidence workflows | PIT-FR-062–067; PIT-FR-052 | Tests for submit, approve, return, evidence-required block, task completion path |
+| All audit-generating actions | PIT-FR-087; §UX-SEC-7 | One test per audit event type verifying `audit_log` entry is created |
+| All notification events | PIT-FR-025; PIT-FR-115–117 | One test per notification type verifying in-app notification record is created; one test for mark-as-read |
+| All report exports | PIT-FR-080–082; PIT-FR-118–119 | One test per report type for generation (allowed path) and permission denial |
+| All AIMC touchpoints | PIT-FR-095–099 | One test per AIMC touchpoint verifying: gateway routed (no direct provider call), human confirmation required, audit log entry created |
+| Direct SPA route loads (bypassing client-side routing) | PIT-FR-014; PIT-FR-103 | One test per protected route verifying direct URL load renders correctly (SPA fallback working) |
+| Visual rendering / app shell / global-style checks | PIT-FR-017; PIT-FR-018; L-002 | At least one test per primary page verifying app shell (sidebar + top nav) is present in all five UI states |
+| Live deployment smoke checks | PIT-FR-103; L-006; L-007 | After each deployment wave: at least one smoke test per deployed route confirming the route renders in the deployed environment |
+| Cancelled-task exclusions | PIT-FR-054; PIT-FR-077; PIT-FR-114 | Tests verifying cancelled tasks are excluded from watchdog, progress roll-up, and evidence requirements |
+| Lifecycle removal and deletion blocks | PIT-FR-121 | Tests verifying: project with children cannot be hard-deleted, evidence items cannot be deleted via UI, audit log entries cannot be deleted |
+
+---
+
+## 35. Acceptance Criteria Summary
 
 Each functional requirement above includes inline acceptance criteria in the format:
 
@@ -1126,44 +1463,46 @@ Stage 6 QA-to-Red shall derive test cases directly from these acceptance criteri
 
 ---
 
-## 30. Traceability Matrix
+## 36. Traceability Matrix
 
 | App Description Section | Stage 2 Journey/Screen/Section | FRS Requirement IDs | Future Stage Placeholder |
 |--------------------------|-------------------------------|---------------------|--------------------------|
 | §AD-06 (User Flows) | §UX-J-01 through §UX-J-10; §UX-S-20 | PIT-FR-003 through PIT-FR-015, PIT-FR-110 | TRS §auth; QA-to-Red auth suite |
 | §AD-11 (5-State UI) | §UX-SEC-4 | PIT-FR-016, PIT-FR-017 | QA-to-Red 5-state suite |
 | §AD-11 (App Shell) | §UX-SEC-5 | PIT-FR-018 through PIT-FR-021 | Architecture §shell; QA-to-Red shell suite |
-| §AD-13 (Notifications) | §UX-SEC-5.4 | PIT-FR-022 through PIT-FR-026 | TRS §notifications; QA-to-Red notification suite |
+| §AD-13 (Notifications) | §UX-SEC-5.4 | PIT-FR-022 through PIT-FR-026, PIT-FR-115–117 | TRS §notifications; QA-to-Red notification suite |
 | §AD-06 (Dashboard) | §UX-S-05; §UX-J-11 | PIT-FR-027 through PIT-FR-030 | QA-to-Red dashboard suite |
 | §AD-07 (Projects) | §UX-J-11, §UX-S-07 | PIT-FR-031 through PIT-FR-035 | TRS §project; QA-to-Red project suite |
 | §AD-07 (Implementation Page) | §UX-S-06, §UX-SEC-3 | PIT-FR-036 through PIT-FR-045 | QA-to-Red implementation suite |
-| §AD-07 (Hierarchy) | §UX-J-12–14, §UX-S-09–11 | PIT-FR-046 through PIT-FR-057 | TRS §hierarchy; QA-to-Red hierarchy suite |
+| §AD-07 (Hierarchy) | §UX-J-12–14, §UX-S-09–11 | PIT-FR-046 through PIT-FR-057, PIT-FR-114 | TRS §hierarchy; QA-to-Red hierarchy suite |
 | §AD-08 (Assignment) | §UX-J-15, §UX-S-12 | PIT-FR-058 through PIT-FR-061 | QA-to-Red assignment suite |
 | §AD-09 (Evidence) | §UX-J-16–17, §UX-S-13 | PIT-FR-062 through PIT-FR-067 | TRS §evidence; QA-to-Red evidence suite |
 | §AD-07 (Timeline) | §UX-J-18, §UX-S-08, §UX-SEC-6 | PIT-FR-068 through PIT-FR-076 | TRS §timeline; QA-to-Red timeline suite |
 | §AD-12 (Watchdog) | §UX-J-19, §UX-S-14 | PIT-FR-077 through PIT-FR-079 | TRS §watchdog; QA-to-Red watchdog suite |
-| §AD-13 (Reports) | §UX-J-20, §UX-S-15 | PIT-FR-080 through PIT-FR-084 | TRS §reports; QA-to-Red reports suite |
+| §AD-13 (Reports) | §UX-J-20, §UX-S-15 | PIT-FR-080 through PIT-FR-084, PIT-FR-118–119 | TRS §reports; QA-to-Red reports suite |
 | §AD-07 (Filters) | §UX-S-06, §UX-S-16 | PIT-FR-085, PIT-FR-086 | QA-to-Red filter suite |
 | §AD-14 (Audit) | §UX-J-21, §UX-S-16 | PIT-FR-087 through PIT-FR-089 | TRS §audit; QA-to-Red audit suite |
 | §AD-08 (Admin) | §UX-J-22, §UX-S-18 | PIT-FR-090 through PIT-FR-092, PIT-FR-106 through PIT-FR-109 | QA-to-Red admin suite |
-| §AD-20 (QA Dashboard) | §UX-S-17 | PIT-FR-093, PIT-FR-094 | QA-to-Red QA dashboard suite |
+| §AD-20 (QA Dashboard) | §UX-S-17 | PIT-FR-093, PIT-FR-094, PIT-FR-120 | QA-to-Red QA dashboard suite |
 | §AD-14 (AIMC) | §UX-SEC-8 | PIT-FR-095 through PIT-FR-099 | TRS §aimc; QA-to-Red AIMC suite |
 | §AD-15 (Integrations) | §UX-SEC-10 OI-8; §UX-J-11 | PIT-FR-100 through PIT-FR-102 | Architecture §integrations; QA-to-Red integration suite |
 | §AD-16 (Deployment) | §UX-SEC-9 | PIT-FR-103 through PIT-FR-105 | Architecture §deployment; Stage 7 PBFAG |
 | §AD-06 (My Work) | §UX-J-23, §UX-S-21 | PIT-FR-111, PIT-FR-112 | QA-to-Red my-work suite |
-| §AD-01–§AD-05 (Identity) | — | PIT-FR-001, PIT-FR-002 | Architecture §roles |
+| §AD-01–§AD-05 (Identity) | — | PIT-FR-001, PIT-FR-002, PIT-FR-113 | Architecture §roles |
+| maturion-isms#1556 (hardening) | — | PIT-FR-113–123, §29, §33 Build Guardrails, §34 QA-to-Red Derivation, Appendix A | QA-to-Red all suites |
 
-**FRS Coverage Totals**:
-- Functional Requirements: PIT-FR-001 through PIT-FR-105, PIT-FR-106 through PIT-FR-112 (112 requirements)
-- Acceptance Criteria: 1 per requirement (112 inline acceptance criteria)
+**FRS Coverage Totals (v0.2-hardened)**:
+- Functional Requirements: PIT-FR-001 through PIT-FR-123 (123 requirements)
+- Acceptance Criteria: 1 per requirement (123 inline acceptance criteria)
 - Non-Functional Placeholders: NF-001 through NF-010 (10 deferred to TRS/Architecture)
 - App Description Sections Traced: §AD-01 through §AD-24 — COMPLETE
 - UX Journeys Traced: §UX-J-01 through §UX-J-23 — COMPLETE
 - UX Screens Traced: §UX-S-01 through §UX-S-21 — COMPLETE
+- v0.2 Hardening Areas Applied: 19 (per maturion-isms#1556 acceptance criteria)
 
 ---
 
-## 31. Open Questions / Assumptions
+## 37. Open Questions / Assumptions
 
 The following assumptions are made in this FRS. Items marked [CS2] require CS2 decision before Stage 4 (TRS) proceeds. Items marked [ARCH] are deferred to Architecture.
 
@@ -1172,30 +1511,76 @@ The following assumptions are made in this FRS. Items marked [CS2] require CS2 d
 | A-001 | Default signup mode is **open** (invite-only is opt-in per org). Resolved in PIT-FR-007. | [RESOLVED] |
 | A-002 | Task dependency UI (blocked task indicator) is a first-class feature. Resolved in PIT-FR-056, PIT-FR-057. | [RESOLVED] |
 | A-003 | Cross-org data scoping: `cs2_admin` role (already in role hierarchy, PIT-FR-001) handles cross-org audit/reporting. Resolved in PIT-FR-101. | [RESOLVED] |
-| A-004 | AIMC endpoint paths (`/api/aimc/pit/...`) are subject to confirmation with AIMC module owner. Final paths must be confirmed before Stage 6 QA-to-Red. | [CS2] Before Stage 6 |
+| A-004 | AIMC endpoint paths (`/api/aimc/pit/...`) are subject to confirmation with AIMC module owner. Final paths must be confirmed before Stage 6 QA-to-Red. Candidate paths are now explicitly labelled in §24 AIMC section. | [CS2] Before Stage 6 |
 | A-005 | Email provider selection is deferred to TRS (NF-004). | [ARCH/TRS] |
 | A-006 | Task Cluster Template schema versioning and override model defined in PIT-FR-047. Full schema detail is TRS. | [TRS] |
 | A-007 | Report generation library selection is deferred to TRS (NF-005). | [TRS] |
 | A-008 | Deep integration mechanism for upstream modules (Maturity Roadmap, Risk, Incident) is deferred to TRS/Architecture. PIT-FR-100 covers functional requirement only. | [ARCH/TRS] |
+| A-009 | Cancelled task reversal authority level. Resolved in PIT-FR-054: reversal requires `deliverable_leader` role or above. | [RESOLVED] |
+| A-010 | RAG thresholds for Indicator 2 (milestones) and Indicator 3 (deliverables) were undefined. Resolved in §29 RAG Central Table (RAG-002, RAG-003). | [RESOLVED] |
 
 ---
 
-## 32. Stage 4 (TRS) Readiness Statement
+## 38. Stage 4 (TRS) Readiness Statement
 
-This FRS is sufficiently complete to derive the TRS. The following conditions must be met before Stage 4 begins:
+This FRS (v0.2-hardened) is sufficiently complete to derive the TRS. Stage 4 may be prepared as draft-only before CS2 approval if governance explicitly permits it, but **Stage 4 may not be approved, gate-passed, or used to authorise Architecture until Stage 2 and Stage 3 approvals are recorded**.
 
-- [ ] This FRS reviewed and approved by CS2
+The following conditions must be met before Stage 4 is approved (draft may proceed before these are all met, but gate-pass is blocked until all are satisfied):
+
+- [ ] This FRS (Stage 3) reviewed and approved by CS2
 - [ ] UX Workflow & Wiring Spec (Stage 2) approved by CS2
 - [ ] Open assumption A-004 (AIMC endpoint paths) resolved or formally deferred with CS2 approval
 - [ ] Improvement register updated with any oversights discovered during FRS review (L-008)
+- [ ] Build Authorization remains NOT CLEARED — implementation is blocked until Stages 2–11 are completed, approved, and gate-passed
 
 ---
 
-**End of PIT Functional Requirements Specification v0.1-draft**
+**End of PIT Functional Requirements Specification v0.2-hardened**
+
+---
+
+## Appendix A — Route Coverage
+
+*Derived from: §UX-SEC-9 (Deployment Surface Map); PIT-FR-103; maturion-isms#1556 (route coverage appendix requirement)*
+
+> **Status**: All 27 routes from Stage 2 §UX-SEC-9 are listed below. QA-to-Red Placeholder column identifies the QA suite responsible for testing each route. Every route must have at least one test confirming: (a) the route is registered, (b) the route renders the correct component in the deployed environment, (c) the auth guard applies correctly.
+
+| Route | Screen | Auth Required | Minimum Role | FRS Requirement IDs | QA-to-Red Placeholder |
+|-------|--------|---------------|--------------|---------------------|----------------------|
+| `/` | Landing / Public Entry | No | — | PIT-FR-003, PIT-FR-013 | auth suite |
+| `/login` | Login | No | — | PIT-FR-004, PIT-FR-005, PIT-FR-013 | auth suite |
+| `/signup` | Signup | No | — | PIT-FR-006, PIT-FR-007 | auth suite |
+| `/forgot-password` | Forgot Password | No | — | PIT-FR-011 | auth suite |
+| `/reset-password` | Reset Password | No | — | PIT-FR-012 | auth suite |
+| `/invite/[token]` | Invitation Acceptance | No (token-validated) | — | PIT-FR-008, PIT-FR-009, PIT-FR-010, PIT-FR-110 | auth suite |
+| `/onboarding` | Onboarding | Yes | Any authenticated | PIT-FR-015 | auth suite |
+| `/dashboard` | Portfolio Dashboard | Yes | Any authenticated | PIT-FR-027–030, PIT-FR-097 | dashboard suite |
+| `/projects` | Project List | Yes | `project_creator` or above | PIT-FR-031–033 | project suite |
+| `/projects/new` | Project Creation Wizard | Yes | `project_creator` or above | PIT-FR-031–035 | project suite |
+| `/projects/[id]` | Implementation Page | Yes | `viewer` or above (project-scoped) | PIT-FR-036–045, PIT-FR-085, PIT-FR-096 | implementation suite |
+| `/projects/[id]/edit` | Project Edit | Yes | `project_leader` or above | PIT-FR-031–035 | project suite |
+| `/projects/[id]/timeline` | Timeline / Gantt | Yes | `viewer` or above (project-scoped) | PIT-FR-068–076 | timeline suite |
+| `/projects/[id]/milestones/[mid]` | Milestone Management | Yes | `milestone_leader` or above | PIT-FR-048–050 | hierarchy suite |
+| `/projects/[id]/deliverables/[did]` | Deliverable Management | Yes | `deliverable_leader` or above | PIT-FR-051–052 | hierarchy suite |
+| `/projects/[id]/tasks/[tid]` | Task Management | Yes | `task_owner` or above (task-scoped) | PIT-FR-053–057, PIT-FR-096, PIT-FR-114 | hierarchy suite |
+| `/tasks/[tid]/evidence` | Evidence Upload | Yes | `task_owner` or above | PIT-FR-062–067 | evidence suite |
+| `/watchdog` | Watchdog Dashboard | Yes | `project_leader` or above | PIT-FR-077–079, PIT-FR-098 | watchdog suite |
+| `/reports` | Reports | Yes | `reporter` or above | PIT-FR-080–084, PIT-FR-099, PIT-FR-118–119 | reports suite |
+| `/audit` | Audit Log | Yes | `auditor` or above | PIT-FR-087–089 | audit suite |
+| `/my-work` | My Work | Yes | Any authenticated | PIT-FR-111–112 | my-work suite |
+| `/qa-dashboard` | QA Dashboard | Yes | `cs2_admin` only | PIT-FR-093–094, PIT-FR-120 | QA dashboard suite |
+| `/admin` | Admin / Settings (root) | Yes | `pit_admin` or above | PIT-FR-090–092, PIT-FR-106–109 | admin suite |
+| `/admin/roles` | Role Management | Yes | `pit_admin` or above | PIT-FR-106 | admin suite |
+| `/admin/notifications` | Notification Templates | Yes | `pit_admin` or above | PIT-FR-107 | admin suite |
+| `/admin/task-clusters` | Task Cluster Templates | Yes | `pit_admin` or above | PIT-FR-108 | admin suite |
+| `/admin/integrations` | Integration Settings | Yes | `pit_admin` or above | PIT-FR-102 | admin suite |
+| `/*` (404) | 404 Not Found | No | — | PIT-FR-104 | deployment suite |
+
+> **Note**: Admin sub-routes (`/admin/roles`, `/admin/notifications`, `/admin/task-clusters`, `/admin/integrations`) are confirmed as separate routes. Invitation Settings (PIT-FR-109) may be a section within `/admin` rather than a separate route; TRS/Architecture must confirm the route path. My Work (`/my-work`), Invitation Acceptance (`/invite/[token]`), and QA Dashboard (`/qa-dashboard`) are confirmed as first-class routes. Total: 27 named routes + 1 catch-all 404.
 
 ---
 
 **Template Version**: 1.0.0  
 **Template Authority**: `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
-**Last Updated**: 2026-05-06  
+**Last Updated**: 2026-05-07  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
