@@ -50,6 +50,16 @@ export default function FrameworkUploadPage() {
   const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: async () => {
+      const initFramework = async (name: string, sourceType: 'GENERATED' | 'HYBRID') => {
+        const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
+          body: { name, source_type: sourceType, origin_mode: sourceType },
+        });
+        if (error) throw new Error(error.message || 'Failed to init framework');
+        const frameworkId = data?.framework?.id;
+        if (!frameworkId) throw new Error('Failed to resolve framework id');
+        return frameworkId as string;
+      };
+
       if (mode==='A') {
         const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
           body: { source_type: 'VERBATIM', mode },
@@ -57,14 +67,16 @@ export default function FrameworkUploadPage() {
         if (error) throw new Error(error.message || 'Failed to upload framework source');
         return data;
       } else if (mode==='B') {
+        const frameworkId = await initFramework('New Framework', 'GENERATED');
         const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
-          body: { name: 'New Framework', mode },
+          body: { name: 'New Framework', mode, framework_id: frameworkId },
         });
         if (error) throw new Error(error.message || 'Failed to generate framework');
         return data;
       } else if (mode==='C') {
+        const frameworkId = await initFramework('Hybrid Framework', 'HYBRID');
         const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
-          body: { name: 'Hybrid Framework', hybrid: true, mode },
+          body: { name: 'Hybrid Framework', hybrid: true, mode, framework_id: frameworkId },
         });
         if (error) throw new Error(error.message || 'Failed to generate hybrid framework');
         return data;

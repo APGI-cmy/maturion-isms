@@ -70,12 +70,16 @@ Deno.serve(async (req: Request) => {
 
   const { framework_id, name, context } = body;
 
+  if (!framework_id || typeof framework_id !== 'string') {
+    return jsonResponse({ error: 'framework_id is required' }, 400);
+  }
+
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
   const aimcResult = await callAimc(
     'framework-generate',
     claims.orgId,
     claims.userId,
-    { framework_id: framework_id ?? null, name: name ?? null, ...(context ?? {}) },
+    { framework_id, name: name ?? null, ...(context ?? {}) },
   );
 
   if (aimcResult.fallback) {
@@ -114,7 +118,7 @@ Deno.serve(async (req: Request) => {
     const { data: proposedDomain, error: domError } = await supabase
       .from('mmm_proposed_domains')
       .insert({
-        framework_id: framework_id ?? null,
+        framework_id,
         name: domain.name,
         description: domain.description,
         position: di + 1,
@@ -132,7 +136,7 @@ Deno.serve(async (req: Request) => {
       const { data: proposedMPS } = await supabase
         .from('mmm_proposed_mps')
         .insert({
-          framework_id: framework_id ?? null,
+          framework_id,
           proposed_domain_id: proposedDomain.id,
           name: mps.name,
           description: mps.description,
@@ -146,7 +150,7 @@ Deno.serve(async (req: Request) => {
       for (let ci = 0; ci < (mps.criteria ?? []).length; ci++) {
         const crit = (mps.criteria ?? [])[ci];
         await supabase.from('mmm_proposed_criteria').insert({
-          framework_id: framework_id ?? null,
+          framework_id,
           proposed_mps_id: proposedMPS.id,
           name: crit.name,
           description: crit.description,
@@ -159,4 +163,3 @@ Deno.serve(async (req: Request) => {
 
   return jsonResponse({ proposed_domains: domainCount, request_id: aimcResult.request_id });
 });
-

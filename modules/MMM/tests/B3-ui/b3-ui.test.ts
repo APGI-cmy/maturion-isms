@@ -310,6 +310,10 @@ describe('T-MMM-S6-017: mmm-org-create has HTTP 403 for missing JWT (NBR-002)', 
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
     expect(src).toContain('validateJWT');
   });
+  it('allows missing profile during first org bootstrap', () => {
+    const src = readFile('supabase/functions/mmm-org-create/index.ts');
+    expect(src).toContain('allowMissingProfile: true');
+  });
   it('has NBR-002 comment', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
     expect(src).toContain('NBR-002');

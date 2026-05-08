@@ -82,9 +82,9 @@ Current state classification: STOP_AND_FIX
 Handover claim status: BLOCKED  
 Merge readiness: NO
 
-ADMIN_PASS: no  
+ADMIN_PASS: yes  
 FUNCTIONAL_PASS: no  
-VERDICT: FAIL
+VERDICT: ADMIN_ONLY
 
 ## TOKEN
 
@@ -92,7 +92,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-session-pr-1578-stop-and-fix-20260508
 **Type**: ASSURANCE-TOKEN (FAIL)
 **PR**: #1578
 **Issue**: #1577
-**Reviewed SHA**: d7ef408dda70bc9d59b899be1822fc6403618f40
+**Reviewed SHA**: af3f24284aa338cf95eae6ed7adac67a42ae7e1e
 **Handover Allowed**: no
 **Required Action**: STOP_AND_FIX / RCA_REQUIRED
 

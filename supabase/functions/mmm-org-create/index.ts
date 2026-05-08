@@ -43,7 +43,7 @@ Deno.serve(async (req: Request) => {
   // NBR-002: HTTP 403 if no valid JWT
   let claims: { userId: string; orgId: string; role: string };
   try {
-    claims = await validateJWT(req, supabase);
+    claims = await validateJWT(req, supabase, { allowMissingProfile: true });
   } catch (response) {
     return response as Response;
   }

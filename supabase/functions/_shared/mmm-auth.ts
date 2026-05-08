@@ -24,6 +24,10 @@ export interface JwtClaims {
   role: string;
 }
 
+export interface ValidateJwtOptions {
+  allowMissingProfile?: boolean;
+}
+
 /**
  * Validates the Bearer JWT in the Authorization header using the Supabase admin client.
  *
@@ -37,6 +41,7 @@ export interface JwtClaims {
 export async function validateJWT(
   req: Request,
   supabase: any,
+  options: ValidateJwtOptions = {},
 ): Promise<JwtClaims> {
   const authHeader = req.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -67,6 +72,13 @@ export async function validateJWT(
     .maybeSingle();
 
   if (profileError || !profile) {
+    if (options.allowMissingProfile) {
+      return {
+        userId,
+        orgId: '',
+        role: 'UNASSIGNED',
+      };
+    }
     throw new Response(
       JSON.stringify({ error: 'No profile found for authenticated user' }),
       { status: 403, headers: { 'Content-Type': 'application/json' } },

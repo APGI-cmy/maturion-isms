@@ -1,6 +1,6 @@
 # ECAP Current-Head Gate Snapshot — PR #1578
 
-CURRENT_HEAD_SHA: d0b0551e09673d879bf7a7fc669ae0da6d182bab
+CURRENT_HEAD_SHA: af3f24284aa338cf95eae6ed7adac67a42ae7e1e
 PASSING_CHECKS:
 - preflight/evidence-exactness
 - preflight/ecap-admin-ceremony
@@ -9,6 +9,14 @@ PASSING_CHECKS:
 - preflight/phase-1-evidence
 - preflight/iaa-prebrief-existence
 - preflight/hfmc-ripple-presence
+- preflight/product-delivery-gates
+- preflight/iaa-final-assurance
+- preflight/scope-declaration-parity
+- preflight/ecap-admin-ceremony
+- CodeQL
+- Stub Detection Check
+- Routing Governance Check
+- Deploy MMM Frontend to Vercel
 - POLC Boundary Validation / scope-declaration-check
 - POLC Boundary Validation / session-memory-check
 
