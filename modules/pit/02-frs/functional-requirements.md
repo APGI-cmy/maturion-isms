@@ -112,7 +112,7 @@ The requirement series is non-linear because later additions (PIT-FR-106 through
 | Lifecycle Removal (Archive/Delete/Restore/Cancel) | PIT-FR-121 |
 | Accessibility | PIT-FR-122 |
 | Bulk Operations / Import / Templates (Non-Scope) | PIT-FR-123 |
-| RAG Threshold Central Table | §RAG-Central (Section 3.1) |
+| RAG Threshold Central Table | Section 29 |
 | Permission Negative-Path Contract | PIT-FR-113 |
 | Progress Roll-Up Method | PIT-FR-114 |
 
