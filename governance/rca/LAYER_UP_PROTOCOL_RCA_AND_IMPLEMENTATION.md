@@ -187,6 +187,11 @@ The workflow will automatically escalate it to governance.
 
 3. **Hourly schedule still active**: `governance-alignment-schedule.yml` continues as a safety net. This is by design.
 
+## 8. Continuous Improvement Strategy Cross-Reference
+
+For local RCA/continuous-improvement execution strategy and lowest-effective-layer guidance, see:
+`Maturion/strategy/AGENT_ADVISOR_CONTINUOUS_IMPROVEMENT_STRATEGY.md`
+
 ---
 
 **Foreman Session**: 049  
