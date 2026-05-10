@@ -577,7 +577,9 @@ jobs:
           if [ -d "$ASSURANCE_DIR" ]; then
             # Legacy pattern: standalone iaa-prebrief-*.md
             PREBRIEF_FILES=$(find "$ASSURANCE_DIR" \
-              -name "iaa-prebrief-*.md" 2>/dev/null | head -5)
+              -path "$ASSURANCE_DIR/archive" -prune -o \
+              -path "$ASSURANCE_DIR/archive/*" -prune -o \
+              -name "iaa-prebrief-*.md" -print 2>/dev/null | head -5)
             if [ -n "$PREBRIEF_FILES" ]; then
               PREBRIEF_FOUND=true
               echo "✅ IAA pre-brief artifact(s) found (legacy pattern):"
@@ -587,12 +589,16 @@ jobs:
             # New pattern (PR #1348): iaa-wave-record-*.md with ## PRE-BRIEF section
             if [ "$PREBRIEF_FOUND" = false ]; then
               while IFS= read -r -d '' f; do
-                if grep -q "## PRE-BRIEF" "$f" 2>/dev/null; then
+                if grep -q "## PRE-BRIEF" "$f" 2>/dev/null && \
+                   ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
                   PREBRIEF_FOUND=true
                   echo "✅ IAA wave-record pre-brief found (new pattern): $f"
                   break
                 fi
-              done < <(find "$ASSURANCE_DIR" -name "iaa-wave-record-*.md" -print0 2>/dev/null)
+              done < <(find "$ASSURANCE_DIR" \
+                -path "$ASSURANCE_DIR/archive" -prune -o \
+                -path "$ASSURANCE_DIR/archive/*" -prune -o \
+                -name "iaa-wave-record-*.md" -print0 2>/dev/null)
             fi
           fi
 

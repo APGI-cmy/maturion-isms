@@ -339,8 +339,11 @@ else
         grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]*#)([0-9]+)' | \
         grep -oE '[0-9]+$' | head -1 || true)
       if [ -z "$EXPECTED_ISSUE_NUM" ]; then
-        # Fallback: first explicit #N reference in PR body (bare or with any prefix)
-        EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
+        # Fallback: first issue-style reference in PR body.
+        # Ignore known non-governing numeric references (comment/run/job/workflow/check/PR IDs).
+        FILTERED_PR_BODY=$(printf '%s' "$PR_BODY" | \
+          sed -E 's/\b(comment|comments|run|runs|job|jobs|workflow|workflows|check|checks|artifact|artifacts|pr|pull request)[[:space:]]*#[0-9]+/ /Ig')
+        EXPECTED_ISSUE_NUM=$(printf '%s' "$FILTERED_PR_BODY" | \
           grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
       fi
       [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (parsed closing/issue ref)"

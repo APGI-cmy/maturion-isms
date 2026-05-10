@@ -240,6 +240,20 @@ run_issue_test "'Resolves #1521' establishes authority (match) → PASS" 0 "setu
 # ============================================================
 # Cleanup
 # ============================================================
+setup_test_comment_id_not_issue() {
+  make_per_pr_scope_file "1234" "1521" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Addressing PR comment #4414916723 with merge conflict resolution notes only"
+
+run_issue_test "PR comment ID refs (e.g. #4414916723) are ignored as governing issues → PASS" 0 "setup_test_comment_id_not_issue"
+
+# ============================================================
+# Cleanup
+# ============================================================
 rm -rf "$TEST_DIR"
 unset PR_NUMBER PR_BODY EXPECTED_ISSUE_NUMBER
 
