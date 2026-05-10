@@ -3,7 +3,7 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-05-07T14:14:48Z",
+    "timestamp": "2026-05-10T09:23:04Z",
     "session_id": "align-20260507-141448",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
@@ -11,13 +11,10 @@
     "total_canons_synced": 4,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
-    "canonical_commit": "4e200025fba62c86204e01a37880b6f535fac05d",
+    "canonical_commit": "481a57b127484ecf5bdbf2b1d876f71e47aeb6ae",
     "files_layered_down": [
-      "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
-      "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
-      "governance/canon/MERGE_GATE_PHILOSOPHY.md",
-      "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
-      "governance/policy/minimizing_language_patterns.json"
+      "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+      "governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md"
     ],
     "upstream_ripple_pr": "1289",
     "followup_pr": "1290",
