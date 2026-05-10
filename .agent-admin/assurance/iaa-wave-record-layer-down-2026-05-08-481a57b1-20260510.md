@@ -11,13 +11,13 @@
 
 ## PRE-BRIEF
 
-Qualifying tasks: [T-01 propagate `governance/canon/GOVERNANCE_CANON_MANIFEST.md`; T-02 propagate `governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md`; T-03 update `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json`; T-04 advance `governance/sync_state.json` to canonical commit `481a57b127484ecf5bdbf2b1d876f71e47aeb6ae`; T-05 operationalize RCA role via Tier 1, Tier 2, and Tier 3 local artifacts]
-Applicable overlay: [CANON_GOVERNANCE]
+Qualifying tasks: [F-01 add ECAP/PREHANDOVER evidence bundle for PR #1591 head; F-02 resolve RCA Tier2 path mismatch vs Tier1 contract (`.github/agents/root-cause-corrective-action-agent.md` ↔ `.agent-workspace/root-cause-corrective-action-agent/knowledge/**`); F-03 add CodexAdvisor proof artifact reference and cross-artifact linkage]
+Applicable overlay: [MIXED — AGENT_CONTRACT + CANON_GOVERNANCE + KNOWLEDGE_GOVERNANCE]
 Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BUILD/AAWP_MAT behavioural code paths, not this governance layer-down propagation]
 
 ### Trigger categories (declared)
-- Primary: `CANON_GOVERNANCE`
-- Escalation rule: if additional trigger-class files appear, classify as `MIXED` (IAA mandatory)
+- Primary: `MIXED`
+- Escalation rule: AGENT_CONTRACT changes require full assurance path with ECAP evidence.
 
 ### FFA checks (declared)
 - A-003 ambiguity rule: if unclear classification emerges, force mandatory IAA path
@@ -35,12 +35,19 @@ Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BU
 6. Cross-artifact coherence (wave/issue/branch/session/token identifiers)
 7. Session memory artifact
 8. `iaa_audit_token` reference coherent with active bundle
+9. CodexAdvisor proof reference for Tier 1 contract routing
+10. Explicit phase declaration (Phase A only / Phase B) and hard-gate statement
+
+### Follow-up status
+
+- ceremony_admin_appointed: execution-ceremony-admin-agent
+- codexadvisor_proof_ref: `.agent-admin/assurance/codexadvisor-proof-pr-1591.md`
+- ecap_proof_ref: `.agent-admin/prehandover/proof-pr-1591-rca-operationalization-20260510.md`
+- ecap_bundle_ref: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1591-rca-operationalization-20260510.md`
 
 ### Scope blockers
-- SB-01: Per-PR scope declaration and wave tracker must align to this wave and branch
-- SB-02: Mandatory Tier 1/Tier 2/Tier 3 RCA artifacts must exist together in branch diff
-- SB-03: Alignment inventory and sync-state must both point to canonical commit `481a57b127484ecf5bdbf2b1d876f71e47aeb6ae`
-- SB-04: PREHANDOVER/session-memory bundle still required before handover release
+- SB-01: IAA final token still pending in this wave record
+- SB-02: Session memory and final assurance artifacts still required before handover release
 
 ---
 
