@@ -5,7 +5,9 @@
   "owner": "Copilot",
   "scope": [
     ".admin/prs/pr-1595.json",
+    ".agent-admin/prehandover/proof-pr-1595-foreman-execution-locks-20260510.md",
     ".agent-admin/scope-declarations/pr-1595.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1595-foreman-execution-locks-20260510.md",
     ".agent-workspace/foreman-v2/knowledge/FOREMAN_EXECUTION_LOCKS.md",
     ".agent-workspace/foreman-v2/knowledge/index.md",
     ".agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md",
@@ -22,6 +24,7 @@
   "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,
+  "ecap_bundle_artifact": ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1595-foreman-execution-locks-20260510.md",
   "execution_model": "codex-advisor-direct",
   "orchestrating_agent": "CodexAdvisor",
   "implementing_agent": "copilot-swe-agent",
@@ -31,9 +34,13 @@
     "Tier 3 templates created: FOREMAN_ORCHESTRATION_RECORD, FOREMAN_EXECUTION_LOCK_STATUS, FOREMAN_STOP_AND_FIX_RESPONSE",
     "foreman-start-lock.yml workflow created to enforce START_LOCK and PRODUCT_LOCK early",
     "validate-governance-evidence-exactness.sh parser hardened to ignore comment/run/job/review #IDs",
+    "validate-governance-evidence-exactness.test.sh: local command output — 11/11 tests passed (bash .github/scripts/validate-governance-evidence-exactness.test.sh)",
     "iaa-prebrief-gate.yml updated to exclude archive paths from active pre-brief check",
     "phase4-role-separation-operational-guidance.md updated with execution lock guidance section",
-    "WAVE-CURRENT-TASKS-PROTOCOL.md updated with execution lock integration section"
+    "WAVE-CURRENT-TASKS-PROTOCOL.md updated with execution lock integration section",
+    "PR_NUMBER=1595 bash .github/scripts/validate-simple-pr-admin.sh — PASS",
+    "ECAP proof: .agent-admin/prehandover/proof-pr-1595-foreman-execution-locks-20260510.md",
+    "ECAP bundle: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1595-foreman-execution-locks-20260510.md"
   ],
   "merge_authority": "CS2"
 }
