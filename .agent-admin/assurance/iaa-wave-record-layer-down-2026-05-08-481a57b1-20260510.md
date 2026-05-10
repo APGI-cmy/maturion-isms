@@ -47,11 +47,18 @@ Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BU
 - ecap_bundle_ref: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1591-rca-operationalization-20260510.md`
 
 ### Scope blockers
-- SB-01: IAA final token still pending in this wave record
-- SB-02: Session memory and final assurance artifacts still required before handover release
+- none
 
 ---
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING
+PHASE_B_BLOCKING_TOKEN: IAA-pr-1591-rca-operationalization-20260510
+PR: PR 1591
+Issue: #1587
+Reviewed SHA: 840a203f65b359a5bf3410725bdcb06e519635cb
+
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+HANDOVER_ALLOWED: yes
