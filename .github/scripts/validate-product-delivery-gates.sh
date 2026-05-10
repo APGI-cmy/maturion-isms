@@ -307,12 +307,13 @@ if grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*yes' "$EVID
 fi
 
 if grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)' "$EVIDENCE_PATH"; then
-  known_partials_value="$(grep -iE '^[[:space:]]*(KNOWN_PARTIALS|Known partials):' "$EVIDENCE_PATH" | head -1 | cut -d: -f2- | tr -d '[:space:]' || true)"
-  if [ -n "$known_partials_value" ] && [ "${known_partials_value,,}" != "none" ]; then
+  known_partials_value="$(grep -iE '^[[:space:]]*(KNOWN_PARTIALS|Known partials):' "$EVIDENCE_PATH" | head -1 | cut -d: -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' || true)"
+  known_partials_value_lower="$(printf '%s' "$known_partials_value" | tr '[:upper:]' '[:lower:]')"
+  if [ -n "$known_partials_value" ] && [ "$known_partials_value_lower" != "none" ]; then
     echo "❌ FAIL — FULL_FUNCTIONAL_DELIVERY cannot coexist with known partials."
     exit 1
   fi
-  if grep -qiE 'outstanding|pending|not[[:space:]-]?verified|incomplete' "$EVIDENCE_PATH"; then
+  if grep -qiE 'outstanding|pending|not[[:space:]-]verified|incomplete' "$EVIDENCE_PATH"; then
     echo "❌ FAIL — FULL_FUNCTIONAL_DELIVERY cannot coexist with outstanding/pending/not-verified language."
     exit 1
   fi
@@ -356,11 +357,13 @@ fi
 echo "✅ IAA Functional Verdict gate: PASS"
 
 # Gate 4b: PASS_WITH_CS2_WAIVER must quote explicit CS2 waiver text
+# Expected format in IAA artifact:
+#   CS2 waiver quote: "<explicit waiver text>"
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
   if grep -qiE 'PASS_WITH_CS2_WAIVER' "$iaa_file"; then
-    if ! grep -qiE 'CS2[[:space:]_-]*waiver[^:\n]*:[[:space:]]*".+"' "$iaa_file"; then
+    if ! grep -qiE 'CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?[[:space:]]*:[[:space:]]*".+"' "$iaa_file"; then
       echo "❌ FAIL — PASS_WITH_CS2_WAIVER in $iaa_file requires quoted explicit CS2 waiver text."
       exit 1
     fi

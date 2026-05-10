@@ -38,14 +38,23 @@ EOF
   git checkout -q -b test-branch
 
   TEST_PR_BODY=""
+  rm -f .skip-head-sha-rewrite
 
   "$setup_fn"
 
   local base_sha head_sha code output pr_body
   base_sha=$(git rev-parse main)
   head_sha=$(git rev-parse HEAD)
-  if [ -d .functional-delivery ]; then
-    find .functional-delivery -maxdepth 1 -name 'pr-*.md' -type f -exec sed -i "s/CURRENT_HEAD/${head_sha}/g" {} \;
+  if [ -d .functional-delivery ] && [ ! -f .skip-head-sha-rewrite ]; then
+    python3 - "$head_sha" <<'PYEOF'
+import pathlib, sys
+head_sha = sys.argv[1]
+for path in pathlib.Path(".functional-delivery").glob("pr-*.md"):
+    if not path.is_file():
+        continue
+    content = path.read_text()
+    path.write_text(content.replace("CURRENT_HEAD", head_sha))
+PYEOF
   fi
   pr_body="${TEST_PR_BODY:-}"
   set +e
@@ -481,6 +490,17 @@ EOF
   git commit -q -m "functional no with handover language"
 }
 run_test "T7b FUNCTIONAL_PASS no cannot include handover/merge acceptance language -> FAIL" 1 t7b_functional_no_with_handover_language
+
+t7c_missing_current_head_sha_in_evidence() {
+  seed_product_change_with_cta
+  seed_valid_evidence
+  seed_valid_iaa
+  # Force the test to keep CURRENT_HEAD placeholder so Gate 7 fails explicitly.
+  touch .skip-head-sha-rewrite
+  git add .
+  git commit -q -m "missing reviewed current head sha"
+}
+run_test "T7c evidence missing current HEAD SHA must fail" 1 t7c_missing_current_head_sha_in_evidence
 
 t8_pr1590_dry_run_incomplete_workflow() {
   seed_product_change_with_cta

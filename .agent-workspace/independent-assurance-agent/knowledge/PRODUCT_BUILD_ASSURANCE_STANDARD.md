@@ -5,7 +5,7 @@
 **Status**: ACTIVE — MANDATORY  
 **Last Updated**: 2026-05-10  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
-**Issue Anchor**: APGI-cmy/maturion-isms#1590
+**Issue Anchor**: #1590
 
 ---
 
@@ -173,4 +173,3 @@ Required proof before re-invocation:
 ```
 
 No vague "please verify". No unresolved functional finding is waivable by IAA.
-

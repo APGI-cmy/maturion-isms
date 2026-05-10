@@ -47,6 +47,7 @@ FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_
 - If `KNOWN_PARTIALS` is not `none`, `FUNCTIONAL_PASS` must be `no`.
 - `FULL_FUNCTIONAL_DELIVERY` cannot coexist with `pending`, `outstanding`, `not verified`, or unresolved partial language.
 - If partial delivery is claimed, include explicit CS2 waiver quote under `CS2_PARTIAL_ACCEPTANCE`.
+- Enforcement reference: `.github/scripts/validate-product-delivery-gates.sh`.
 
 ## Rejection Package Shape (for failed functional delivery)
 
