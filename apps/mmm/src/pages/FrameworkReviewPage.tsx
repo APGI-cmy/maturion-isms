@@ -14,10 +14,11 @@ export default function FrameworkReviewPage() {
   });
   const compileMutation = useMutation({
     mutationFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`/api/frameworks/${id}/compile`, { method: 'POST', headers: { 'Authorization': `Bearer ${session?.access_token}` } });
-      if (!res.ok) throw new Error('Compile failed');
-      return res.json();
+      const { data, error } = await supabase.functions.invoke('mmm-framework-compile', {
+        body: { framework_id: id },
+      });
+      if (error) throw new Error(error.message || 'Compile failed');
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['frameworks', id] }); // NBR-001
@@ -26,10 +27,11 @@ export default function FrameworkReviewPage() {
   });
   const publishMutation = useMutation({
     mutationFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`/api/frameworks/${id}/publish`, { method: 'POST', headers: { 'Authorization': `Bearer ${session?.access_token}` } });
-      if (!res.ok) throw new Error('Publish failed');
-      return res.json();
+      const { data, error } = await supabase.functions.invoke('mmm-framework-publish', {
+        body: { framework_id: id },
+      });
+      if (error) throw new Error(error.message || 'Publish failed');
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['frameworks'] }); // NBR-001

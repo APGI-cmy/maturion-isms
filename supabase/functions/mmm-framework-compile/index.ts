@@ -58,13 +58,23 @@ Deno.serve(async (req: Request) => {
     return response as Response;
   }
 
-  // Extract framework id from URL path
-  const url = new URL(req.url);
-  const pathParts = url.pathname.split('/');
-  const frameworkId = pathParts[pathParts.indexOf('frameworks') + 1] ?? pathParts[pathParts.length - 2];
+  // Extract framework id from request body (invoke path) or URL path (direct path)
+  let frameworkId: string | undefined;
+  try {
+    const body = await req.json().catch(() => ({}));
+    frameworkId = body?.framework_id;
+  } catch {
+    // body not JSON; fall through to URL extraction
+  }
+  if (!frameworkId) {
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split('/');
+    const idx = pathParts.indexOf('frameworks');
+    frameworkId = idx >= 0 ? pathParts[idx + 1] : undefined;
+  }
 
   if (!frameworkId || frameworkId === 'compile') {
-    return jsonResponse({ error: 'framework id is required in path' }, 400);
+    return jsonResponse({ error: 'framework_id is required in request body or URL path' }, 400);
   }
 
   // Fetch proposed domains
