@@ -12,7 +12,7 @@
 ## PRE-BRIEF
 
 **Invocation Type**: Phase 0 — PRE-BRIEF (`action: "PRE-BRIEF"`)  
-**Ceremony Admin Appointed**: NOT_YET_DETERMINABLE (wave task-tracker for `mmm-p4-phase6-stop-and-fix` not found in `.agent-workspace/foreman-v2/personal/`)
+**Ceremony Admin Appointed**: PENDING (wave task-tracker for `mmm-p4-phase6-stop-and-fix` not found in `.agent-workspace/foreman-v2/personal/`)
 
 ### Trigger Categories (pre-brief declaration)
 
@@ -54,7 +54,7 @@ Anti-regression obligations: [yes — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: [pending]
+PHASE_B_BLOCKING_TOKEN: PENDING
 
 ---
 
