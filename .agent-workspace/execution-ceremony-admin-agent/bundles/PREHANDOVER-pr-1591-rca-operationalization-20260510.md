@@ -1,11 +1,11 @@
-# ECAP Bundle — PR #1591 | RCA operationalization | 2026-05-10
+# ECAP Bundle — PR 1591 | RCA operationalization | 2026-05-10
 
 **Session**: ecap-pr-1591-rca-operationalization-20260510  
 **Date**: 2026-05-10  
 **Producing Agent**: execution-ceremony-admin-agent (evidence bundle format)  
 **Issue**: maturion-isms#1587  
 **Branch**: copilot/layer-down-propagate-governance-changes-f67f5da7-5091-4c9b-97bf-41d34bda41fd  
-**PR**: #1591
+**PR**: PR 1591
 
 ---
 

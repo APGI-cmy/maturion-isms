@@ -1,6 +1,6 @@
-# CodexAdvisor Proof — PR #1591
+# CodexAdvisor Proof — PR 1591
 
-**PR**: #1591  
+**PR**: PR 1591  
 **Issue**: #1587  
 **Artifact**: `.github/agents/root-cause-corrective-action-agent.md`
 

@@ -1,6 +1,6 @@
-# ECAP Reconciliation Summary — PR #1591
+# ECAP Reconciliation Summary — PR 1591
 
-**PR**: #1591  
+**PR**: PR 1591  
 **Issue**: #1587  
 **Date**: 2026-05-10
 

@@ -2,7 +2,7 @@
 
 **Branch**: copilot/layer-down-propagate-governance-changes-f67f5da7-5091-4c9b-97bf-41d34bda41fd
 **Issue**: #1587
-**PR**: #1591
+**PR**: PR 1591
 **Wave**: layer-down-2026-05-08-481a57b1
 **Session**: layer-down-2026-05-08-481a57b1
 **Date**: 2026-05-10

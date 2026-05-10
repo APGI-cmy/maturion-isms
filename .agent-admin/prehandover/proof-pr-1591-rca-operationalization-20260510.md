@@ -1,11 +1,11 @@
-# PREHANDOVER Proof — PR #1591 | RCA operationalization | 2026-05-10
+# PREHANDOVER Proof — PR 1591 | RCA operationalization | 2026-05-10
 
 **Session**: ecap-pr-1591-rca-operationalization-20260510  
 **Date**: 2026-05-10  
 **Producing Agent**: execution-ceremony-admin-agent (evidence format)  
 **Issue**: maturion-isms#1587  
 **Branch**: copilot/layer-down-propagate-governance-changes-f67f5da7-5091-4c9b-97bf-41d34bda41fd  
-**PR**: #1591
+**PR**: PR 1591
 
 ---
 
@@ -55,3 +55,15 @@ Protected governance paths touched in this PR:
   3. Foreman routing handoff template is available.
   4. IAA RCA review template is available for mandatory invocation.
   5. Recurrence-prevention routing is captured through lowest-effective-layer guidance and handoff artifacts.
+
+## Ripple/Cross-Agent Assessment
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| Root Cause and Corrective Action Agent | New Tier 1 RCA contract, RCA Tier 2 knowledge tree, RCA Tier 3 templates | IMPACTED — new operational RCA role is available for failed-delivery recurrence-prevention workflows. |
+| Foreman / orchestration | RCA routing and handoff expectations | IMPACTED — Foreman can route mandatory RCA after failed delivery; this PR does not alter Foreman execution-lock behavior from issue #1593 governance thread. |
+| IAA | IAA RCA review template and mandatory RCA review model | IMPACTED — IAA has a dedicated RCA review template and `RCA_REVIEW: PASS | REFER_BACK` closure model. |
+| ECAP / Admin Ceremony | Stale evidence and protected-path interaction guidance | IMPACTED — ECAP now has explicit RCA interaction guidance for stale evidence and failed gate triggers. |
+| Product runtime / MMM app | Product code, Supabase schema, UI flows | NO IMPACT — this PR is governance/agent activation only and does not change runtime product code. |
+
+**Downstream ripple conclusion**: IMPACTED for governance agents and RCA/IAA/Foreman operating model; NO IMPACT for product runtime.

@@ -4,7 +4,7 @@
 **Session ID**: session-layer-down-2026-05-08-481a57b1-20260510
 **Date**: 2026-05-10
 **Branch**: copilot/layer-down-propagate-governance-changes-f67f5da7-5091-4c9b-97bf-41d34bda41fd
-**PR**: #1591
+**PR**: PR 1591
 **CS2 Authorization**: issue #1587 opened by @APGI-cmy with explicit CS2 RCA operationalization directive in issue comments
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-layer-down-2026-05-08-481a57b1-20260510.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-layer-down-2026-05-08-481a57b1-20260510.md

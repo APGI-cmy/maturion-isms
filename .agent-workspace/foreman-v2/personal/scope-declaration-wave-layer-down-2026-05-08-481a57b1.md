@@ -3,7 +3,7 @@
 **Foreman**: foreman-v2-agent v6.2.0
 **Wave**: layer-down-2026-05-08-481a57b1
 **Issue**: #1587
-**PR**: #1591
+**PR**: PR 1591
 **Date**: 2026-05-10
 **Schema Version**: SCOPE_DECLARATION_SCHEMA.md §5.7
 
@@ -47,5 +47,5 @@ APPROVED_ARTIFACT_PATHS:
 ## Scope Summary
 
 Operational RCA model activation for layer-down commit `481a57b127484ecf5bdbf2b1d876f71e47aeb6ae`.
-Includes ECAP/PREHANDOVER evidence bundle and CodexAdvisor proof artifact for PR #1591 follow-up.
+Includes ECAP/PREHANDOVER evidence bundle and CodexAdvisor proof artifact for PR 1591 follow-up.
 No hard RCA gate added in this wave.
