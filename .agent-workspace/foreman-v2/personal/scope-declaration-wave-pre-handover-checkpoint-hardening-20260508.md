@@ -18,7 +18,6 @@ Harden deliberate pre-handover checkpointing for handover-adjacent claims. Plann
 approved_artifact_paths:
   - ".admin/prs/pr-1586.json"
   - ".agent-admin/assurance/iaa-wave-record-pr1586-ecap-evidence-20260508-20260508.md"
-  - ".agent-admin/assurance/iaa-wave-record-pre-handover-checkpoint-hardening-20260508-20260508.md"
   - ".agent-admin/prehandover/proof-pr-1586-pre-handover-checkpoint-hardening-20260508.md"
   - ".agent-admin/scope-declarations/pr-1586.md"
   - ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md"
