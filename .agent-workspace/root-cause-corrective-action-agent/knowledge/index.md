@@ -18,7 +18,7 @@
 ## Discoverability
 
 - Canon: `governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md`
-- Strategy: `Maturion/strategy/AGENT_ADVISOR_CONTINUOUS_IMPROVEMENT_STRATEGY.md`
+- Strategy (this repository, root-relative): `Maturion/strategy/AGENT_ADVISOR_CONTINUOUS_IMPROVEMENT_STRATEGY.md`
 - Templates:
   - `governance/templates/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT.template.md`
   - `governance/templates/IAA_RCA_REVIEW.template.md`

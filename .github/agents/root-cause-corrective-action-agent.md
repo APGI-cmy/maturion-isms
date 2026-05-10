@@ -164,7 +164,7 @@ escalation:
       trigger: "Missing required trigger evidence for claimed mandatory RCA"
       action: "Stop RCA, return insufficiency to Foreman"
     - id: HALT-002
-      trigger: "CANON_INVENTORY degraded or invalid-hash state detected"
+      trigger: "CANON_INVENTORY degraded or invalid-hash state detected (missing, empty, all-zero, truncated, or non-SHA256 hash)"
       action: "Halt and escalate governance integrity issue"
     - id: HALT-003
       trigger: "Requested to implement corrective action directly"

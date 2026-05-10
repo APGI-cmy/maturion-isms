@@ -12,6 +12,7 @@
 ## PRE-BRIEF
 
 Qualifying tasks: [F-01 add ECAP/PREHANDOVER evidence bundle for PR #1591 head; F-02 resolve RCA Tier2 path mismatch vs Tier1 contract (`.github/agents/root-cause-corrective-action-agent.md` ↔ `.agent-workspace/root-cause-corrective-action-agent/knowledge/**`); F-03 add CodexAdvisor proof artifact reference and cross-artifact linkage]
+Task ID convention: `F-*` denotes follow-up tasks requested after CS2 review on the same wave.
 Applicable overlay: [MIXED — AGENT_CONTRACT + CANON_GOVERNANCE + KNOWLEDGE_GOVERNANCE]
 Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BUILD/AAWP_MAT behavioural code paths, not this governance layer-down propagation]
 
