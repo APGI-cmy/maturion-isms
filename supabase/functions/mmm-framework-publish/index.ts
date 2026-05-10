@@ -95,12 +95,12 @@ Deno.serve(async (req: Request) => {
   const newVersion = (framework.version ?? 0) + 1;
 
   // Set status = 'PUBLISHED' and increment version
+  // mmm_frameworks schema: id, organisation_id, name, version, status, source_type, origin_mode, created_at, updated_at
   const { data: updatedFramework, error: updateError } = await supabase
     .from('mmm_frameworks')
     .update({
       status: 'PUBLISHED',
       version: newVersion,
-      published_at: new Date().toISOString(),
     })
     .eq('id', frameworkId)
     .select()

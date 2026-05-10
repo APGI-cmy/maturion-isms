@@ -82,7 +82,7 @@ Deno.serve(async (req: Request) => {
     .from('mmm_proposed_domains')
     .select('*')
     .eq('framework_id', frameworkId)
-    .order('position');
+    .order('sort_order');
 
   if (domError) {
     return jsonResponse({ error: 'Failed to fetch proposed domains' }, 500);
@@ -92,23 +92,29 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'No proposed domains found for this framework' }, 400);
   }
 
-  // Fetch proposed MPS
+  const domainIds = proposedDomains.map((d: any) => d.id);
+
+  // Fetch proposed MPS (keyed by proposed_domain_id, not framework_id)
   const { data: proposedMPS, error: mpsError } = await supabase
     .from('mmm_proposed_mps')
     .select('*')
-    .eq('framework_id', frameworkId)
-    .order('position');
+    .in('proposed_domain_id', domainIds)
+    .order('sort_order');
 
   if (mpsError) {
     return jsonResponse({ error: 'Failed to fetch proposed MPS' }, 500);
   }
 
-  // Fetch proposed criteria
-  const { data: proposedCriteria, error: critError } = await supabase
-    .from('mmm_proposed_criteria')
-    .select('*')
-    .eq('framework_id', frameworkId)
-    .order('position');
+  const mpsIds = (proposedMPS ?? []).map((m: any) => m.id);
+
+  // Fetch proposed criteria (keyed by proposed_mps_id, not framework_id)
+  const { data: proposedCriteria, error: critError } = mpsIds.length > 0
+    ? await supabase
+        .from('mmm_proposed_criteria')
+        .select('*')
+        .in('proposed_mps_id', mpsIds)
+        .order('sort_order')
+    : { data: [], error: null };
 
   if (critError) {
     return jsonResponse({ error: 'Failed to fetch proposed criteria' }, 500);
@@ -142,14 +148,14 @@ Deno.serve(async (req: Request) => {
     const domainCode = `D${padNum(di + 1)}`;
 
     // Write to mmm_domains (canonical)
+    // Schema: id, framework_id, name, code, sort_order, created_at, updated_at
     const { data: canonicalDomain, error: cdError } = await supabase
       .from('mmm_domains')
       .insert({
         framework_id: frameworkId,
         name: domain.name,
-        description: domain.description ?? null,
         code: domainCode,
-        position: di + 1,
+        sort_order: di + 1,
       })
       .select()
       .single();
@@ -167,15 +173,15 @@ Deno.serve(async (req: Request) => {
       const mpsCode = `${domainCode}.MPS${padNum(mi + 1)}`;
 
       // Write to mmm_maturity_process_steps (canonical)
+      // Schema: id, domain_id, name, code, sort_order, intent_statement, created_at, updated_at
       const { data: canonicalMPS, error: cmError } = await supabase
         .from('mmm_maturity_process_steps')
         .insert({
-          framework_id: frameworkId,
           domain_id: canonicalDomain.id,
           name: mps.name,
-          description: mps.description ?? null,
           code: mpsCode,
-          position: mi + 1,
+          sort_order: mi + 1,
+          intent_statement: mps.intent_statement ?? null,
         })
         .select()
         .single();
@@ -193,17 +199,15 @@ Deno.serve(async (req: Request) => {
         const criterionCode = `${mpsCode}.C${padNum(ci + 1)}`;
 
         // Write to mmm_criteria (canonical)
+        // Schema: id, mps_id, name, code, sort_order, maturity_level_target, created_at, updated_at
         const { error: ccError } = await supabase
           .from('mmm_criteria')
           .insert({
-            framework_id: frameworkId,
             mps_id: canonicalMPS.id,
-            domain_id: canonicalDomain.id,
             name: criterion.name,
-            description: criterion.description ?? null,
             code: criterionCode,
-            maturity_level: criterion.maturity_level ?? 1,
-            position: ci + 1,
+            sort_order: ci + 1,
+            maturity_level_target: criterion.maturity_level_target ?? null,
           });
 
         if (ccError) {
