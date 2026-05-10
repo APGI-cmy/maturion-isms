@@ -251,9 +251,20 @@ describe('T-MMM-S6-013: mmm-org-create Edge Function exists', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
     expect(src).toContain('mmm_organisations');
   });
+  it('writes slug on mmm_organisations insert (schema requires non-null unique slug)', () => {
+    const src = readFile('supabase/functions/mmm-org-create/index.ts');
+    expect(src).toContain('toSlug(');
+    expect(src).toContain('slug');
+  });
   it('creates/updates mmm_profiles', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
     expect(src).toContain('mmm_profiles');
+  });
+  it('upserts mmm_profiles by id with onConflict id (not user_id)', () => {
+    const src = readFile('supabase/functions/mmm-org-create/index.ts');
+    expect(src).toContain('id: userData.user.id');
+    expect(src).toContain("{ onConflict: 'id' }");
+    expect(src).not.toContain("onConflict: 'user_id'");
   });
 });
 

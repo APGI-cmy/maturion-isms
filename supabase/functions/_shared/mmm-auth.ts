@@ -63,7 +63,7 @@ export async function validateJWT(
   const { data: profile, error: profileError } = await supabase
     .from('mmm_profiles')
     .select('organisation_id, role')
-    .eq('user_id', userId)
+    .eq('id', userId)
     .maybeSingle();
 
   if (profileError || !profile) {
