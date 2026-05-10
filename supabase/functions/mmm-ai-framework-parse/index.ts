@@ -40,6 +40,12 @@ function toCode(n: string, idx: number): string {
   return slug || `ITEM_${idx + 1}`;
 }
 
+/** Mark a parse job as FAILED with the given error message. */
+async function failParseJob(supabase: ReturnType<typeof createClient>, parseJobId: string | undefined, reason: string): Promise<void> {
+  if (!parseJobId) return;
+  await supabase.from('mmm_parse_jobs').update({ status: 'FAILED', result_json: { error: reason } }).eq('id', parseJobId);
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders() });
@@ -100,9 +106,7 @@ Deno.serve(async (req: Request) => {
 
   // TR-009: Circuit breaker fallback — return graceful degradation response
   if (aimcResult.fallback) {
-    if (parse_job_id) {
-      await supabase.from('mmm_parse_jobs').update({ status: 'FAILED', result_json: { error: 'circuit_breaker_open' } }).eq('id', parse_job_id);
-    }
+    await failParseJob(supabase, parse_job_id, 'circuit_breaker_open');
     return jsonResponse(
       {
         fallback: true,
@@ -116,9 +120,7 @@ Deno.serve(async (req: Request) => {
   // NBR-002: Non-200 from AIMC propagated as error
   if (!aimcResult.success) {
     console.error(`[mmm-ai-framework-parse] AIMC error: ${aimcResult.error}`);
-    if (parse_job_id) {
-      await supabase.from('mmm_parse_jobs').update({ status: 'FAILED', result_json: { error: aimcResult.error } }).eq('id', parse_job_id);
-    }
+    await failParseJob(supabase, parse_job_id, aimcResult.error ?? 'aimc_error');
     return jsonResponse({ error: 'AIMC call failed', detail: aimcResult.error }, 502);
   }
 

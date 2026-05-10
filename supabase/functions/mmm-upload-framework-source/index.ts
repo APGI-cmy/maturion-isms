@@ -175,7 +175,7 @@ Deno.serve(async (req: Request) => {
         parse_job_id: parseJob.id,
         framework_id: frameworkIdForJob,
       }),
-    }).catch((err: Error) => console.warn(`[mmm-upload-framework-source] parse trigger warn: ${err.message}`));
+    }).catch((err: Error) => console.warn(`[mmm-upload-framework-source] Failed to trigger mmm-ai-framework-parse: ${err.message}`));
   }
 
   // NBR-001: UI must invalidate ['parse-jobs']
