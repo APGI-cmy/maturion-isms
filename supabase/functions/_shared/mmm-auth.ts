@@ -102,12 +102,14 @@ export function requireRole(role: string, allowedRoles: string[]): void {
   }
 }
 
-/** Convenience: build a JSON Response */
+/** Convenience: build a JSON Response with CORS headers */
 export function jsonResponse(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const h = new Headers();
+  h.set('Content-Type', 'application/json');
+  h.set('Access-Control-Allow-Origin', '*');
+  h.set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
+  h.set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  return new Response(JSON.stringify(body), { status, headers: h });
 }
 
 /** Convenience: build a CORS-preflight response for OPTIONS requests */

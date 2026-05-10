@@ -30,13 +30,25 @@ Anti-regression obligations: [yes — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: IAA-pr-1590-final-assurance-pass-current-head
+PHASE_B_BLOCKING_TOKEN: IAA-pr-1590-partial-delivery-stop-and-fix-active
 - **PR**: #1590
 - **Issue**: #1589
-- **Reviewed SHA**: ee9aff9129f3f5cdbf10318b998ddd860cdc0967
+- **Reviewed SHA**: current-head (at final push)
 ADMIN_PASS: yes
-FUNCTIONAL_PASS: yes
-VERDICT: FULL_FUNCTIONAL_DELIVERY
+FUNCTIONAL_PASS: partial
+VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
+STOP_AND_FIX: active
+
+### Schema fix commits included in token scope
+- mmm-framework-init: aligned to actual mmm_frameworks + mmm_audit_logs schema (removed created_by, actor_type, organisation_id, metadata)
+- mmm-qiw-status: aligned mmm_ai_interactions query to actual column names (action_type, duration_ms, status)
+- _shared/mmm-auth.ts: CORS headers added to all jsonResponse outputs
+- FrameworkUploadPage: Mode A navigates to /frameworks/:id/review on success
+
+### Outstanding for full functional closure
+- Parse job polling / status UI in FrameworkReviewPage
+- Mode B/C live AI generation verified on deployed preview
+- Dashboard functional verification with authenticated ADMIN role via deployed preview
 
 ---
 

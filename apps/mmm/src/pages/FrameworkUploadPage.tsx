@@ -75,27 +75,34 @@ export default function FrameworkUploadPage() {
           body: formData,
         });
         if (error) throw new Error(error.message || 'Failed to upload framework source');
-        return data;
+        return { frameworkId, uploadData: data };
       } else if (mode==='B') {
         const frameworkId = await initFramework('New Framework', 'GENERATED');
         const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
           body: { name: 'New Framework', mode, framework_id: frameworkId },
         });
         if (error) throw new Error(error.message || 'Failed to generate framework');
-        return data;
+        return { frameworkId, uploadData: data };
       } else if (mode==='C') {
         const frameworkId = await initFramework('Hybrid Framework', 'HYBRID');
         const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
           body: { name: 'Hybrid Framework', hybrid: true, mode, framework_id: frameworkId },
         });
         if (error) throw new Error(error.message || 'Failed to generate hybrid framework');
-        return data;
+        return { frameworkId, uploadData: data };
       }
       throw new Error(`Unsupported framework mode: ${mode}`);
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['frameworks'] }); // NBR-001
-      navigate('/frameworks');
+      const fwId = result?.frameworkId;
+      // Mode A: navigate to review/workbench so user can inspect parse results
+      // Mode B/C: list page — framework is auto-generated, no parse job to review
+      if (mode === 'A' && fwId) {
+        navigate(`/frameworks/${fwId}/review`);
+      } else {
+        navigate('/frameworks');
+      }
     },
   });
 
@@ -211,7 +218,7 @@ export default function FrameworkUploadPage() {
               {mutation.isSuccess && (
                 <p className="upload-page__next-state-text upload-page__next-state-text--success">
                   {mode === 'A'
-                    ? '✅ Mode A framework initialized and source uploaded. Redirecting…'
+                    ? '✅ Mode A framework initialized and source uploaded. Redirecting to review…'
                     : '✅ Framework created. Redirecting…'}
                 </p>
               )}
