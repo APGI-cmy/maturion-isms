@@ -16,7 +16,7 @@ assigned_scope:
   - Keep activation in Phase A/soft mode only (no hard RCA merge gate)
 expected_return_artifact_paths:
   - .github/agents/root-cause-corrective-action-agent.md
-  - .agent-admin/assurance/codexadvisor-proof-pr-1591.md
+  - .agent-admin/prehandover/codexadvisor-proof-pr-1591.md
   - .agent-admin/prehandover/proof-pr-1591-rca-operationalization-20260510.md
   - .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1591-rca-operationalization-20260510.md
   - governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md
@@ -34,7 +34,7 @@ expected_return_artifact_paths:
 | T-1 | Tier 1 RCA agent contract creation via Codex Advisor | CodexAdvisor-agent | 🟢 DONE | `.github/agents/root-cause-corrective-action-agent.md` |
 | T-2 | Canon + alignment + sync-state layer-down for commit 481a57b1 | governance-liaison-isms-agent | 🟢 DONE | `governance/canon/*`, `governance/alignment/GOVERNANCE_ALIGNMENT_INVENTORY.json`, `governance/sync_state.json` |
 | T-3 | Tier 2/Tier 3 RCA operational artifacts | governance-liaison-isms-agent + foreman-v2-agent | 🟢 DONE | `.agent-workspace/root-cause-corrective-action-agent/knowledge/**`, `governance/templates/*RCA*` |
-| T-4 | PR governance hygiene artifacts for preflight gates (ECAP bundle + codex proof) | foreman-v2-agent | 🟢 DONE | `.agent-admin/prehandover/proof-pr-1591-rca-operationalization-20260510.md`, `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1591-rca-operationalization-20260510.md`, `.agent-admin/assurance/codexadvisor-proof-pr-1591.md` |
+| T-4 | PR governance hygiene artifacts for preflight gates (ECAP bundle + codex proof) | foreman-v2-agent | 🟢 DONE | `.agent-admin/prehandover/proof-pr-1591-rca-operationalization-20260510.md`, `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1591-rca-operationalization-20260510.md`, `.agent-admin/prehandover/codexadvisor-proof-pr-1591.md` |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE | ❌ BLOCKED
 

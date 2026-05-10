@@ -24,7 +24,7 @@ ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PR
 ecap_reconciliation_artifact: .agent-admin/prehandover/ecap-reconciliation-1591.md
 scope_declaration_ref: .agent-admin/scope-declarations/pr-1591.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-layer-down-2026-05-08-481a57b1-20260510.md
-codexadvisor_proof_ref: .agent-admin/assurance/codexadvisor-proof-pr-1591.md
+codexadvisor_proof_ref: .agent-admin/prehandover/codexadvisor-proof-pr-1591.md
 CURRENT_HEAD_SHA: a6d772c45f1d7768151ca75087afc9e50322926e
 gate_set_checked:
   - preflight/ecap-admin-ceremony

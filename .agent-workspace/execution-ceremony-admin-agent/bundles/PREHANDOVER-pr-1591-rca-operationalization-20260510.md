@@ -23,7 +23,7 @@ handover_allowed: NO
 - prehandover_proof: `.agent-admin/prehandover/proof-pr-1591-rca-operationalization-20260510.md`
 - ecap_bundle: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1591-rca-operationalization-20260510.md`
 - ecap_reconciliation: `.agent-admin/prehandover/ecap-reconciliation-1591.md`
-- codexadvisor_proof: `.agent-admin/assurance/codexadvisor-proof-pr-1591.md`
+- codexadvisor_proof: `.agent-admin/prehandover/codexadvisor-proof-pr-1591.md`
 - scope_declaration: `.agent-admin/scope-declarations/pr-1591.md`
 - wave_scope_declaration: `.agent-workspace/foreman-v2/personal/scope-declaration-wave-layer-down-2026-05-08-481a57b1.md`
 - wave_tracker: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`

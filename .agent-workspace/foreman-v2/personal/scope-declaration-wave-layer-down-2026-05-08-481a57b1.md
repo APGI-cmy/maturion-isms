@@ -13,7 +13,7 @@
 
 APPROVED_ARTIFACT_PATHS:
 - .agent-admin/assurance/iaa-wave-record-layer-down-2026-05-08-481a57b1-20260510.md
-- .agent-admin/assurance/codexadvisor-proof-pr-1591.md
+- .agent-admin/prehandover/codexadvisor-proof-pr-1591.md
 - .agent-admin/prehandover/ecap-reconciliation-1591.md
 - .agent-admin/prehandover/proof-pr-1591-rca-operationalization-20260510.md
 - .agent-admin/scope-declarations/pr-1591.md

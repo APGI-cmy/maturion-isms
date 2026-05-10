@@ -42,7 +42,7 @@ Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY applies to BU
 ### Follow-up status
 
 - ceremony_admin_appointed: execution-ceremony-admin-agent
-- codexadvisor_proof_ref: `.agent-admin/assurance/codexadvisor-proof-pr-1591.md`
+- codexadvisor_proof_ref: `.agent-admin/prehandover/codexadvisor-proof-pr-1591.md`
 - ecap_proof_ref: `.agent-admin/prehandover/proof-pr-1591-rca-operationalization-20260510.md`
 - ecap_bundle_ref: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1591-rca-operationalization-20260510.md`
 
