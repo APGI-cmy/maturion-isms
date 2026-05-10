@@ -2,7 +2,7 @@
 
 **Wave**: mmm-p4-phase6-stop-and-fix  
 **Branch**: copilot/stop-and-fix-mmm-phase-6  
-**Issue**: STOP_AND_FIX: MMM P4 Phase 6 closed without live functional delivery  
+**Issue**: maturion-isms#1577 (STOP_AND_FIX follow-up: MMM P4 Phase 6 closed without live functional delivery)  
 **Date Created**: 2026-05-10  
 **Created By**: independent-assurance-agent (Phase 0 — PRE-BRIEF mode)  
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
