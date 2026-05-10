@@ -1,0 +1,281 @@
+name: Foreman Start Lock
+
+# Authority: LIVING_AGENT_SYSTEM.md v6.2.0, foreman-v2-agent.md §FOREMAN EXECUTION LOCKS
+# Issue: #1593 (Harden Foreman execution locks)
+# Purpose: Early advisory/alert gate that checks for required Foreman orchestration artifacts
+#          before implementation/product/governance paths are closed.
+#          Advisory for governance-only changes; blocking when implementation or product files
+#          are in scope and orchestration evidence is absent.
+
+on:
+  pull_request_target:
+    types: [opened, ready_for_review, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  foreman-start-lock:
+    name: "foreman/start-lock"
+    runs-on: ubuntu-latest
+
+    # Only run for Foreman PRs (copilot/ branches or Copilot-authored PRs)
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Evaluate Foreman Start Lock
+        id: evaluate
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          echo "=== Foreman Start Lock Gate ==="
+          echo "Authority: foreman-v2-agent.md §FOREMAN EXECUTION LOCKS (contract 2.16.0)"
+          echo "Issue: #1593"
+          echo "PR: #${PR_NUMBER}"
+          echo ""
+
+          VIOLATIONS=()
+          WARNINGS=()
+          IMPLEMENTATION_IN_SCOPE=false
+          PRODUCT_IN_SCOPE=false
+          GOVERNANCE_IN_SCOPE=false
+          AGENT_FILES_IN_SCOPE=false
+
+          # ── Determine changed files ──────────────────────────────────────────
+          CHANGED_FILES=$(git diff --name-only "${BASE_SHA}..HEAD" 2>/dev/null || \
+                          git diff --name-only HEAD~1 2>/dev/null || true)
+
+          echo "── Changed file classification ──"
+
+          # Classify changed files
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            # Product/runtime paths
+            if echo "$f" | grep -qE '^(apps/|supabase/functions/|supabase/migrations/|packages/)'; then
+              PRODUCT_IN_SCOPE=true
+              echo "  [PRODUCT]  $f"
+            # Agent files (protected — CodexAdvisor only)
+            elif echo "$f" | grep -qE '^\.github/agents/'; then
+              AGENT_FILES_IN_SCOPE=true
+              GOVERNANCE_IN_SCOPE=true
+              echo "  [AGENT]    $f"
+            # Governance paths
+            elif echo "$f" | grep -qE '^(governance/|\.github/workflows/|\.github/scripts/)'; then
+              GOVERNANCE_IN_SCOPE=true
+              echo "  [GOV]      $f"
+            # Implementation / knowledge / workspace paths
+            elif echo "$f" | grep -qE '^(\.agent-workspace/|\.agent-admin/)'; then
+              IMPLEMENTATION_IN_SCOPE=true
+              echo "  [IMPL]     $f"
+            else
+              echo "  [OTHER]    $f"
+            fi
+          done <<< "$CHANGED_FILES"
+
+          echo ""
+
+          # Any product, governance, or agent files = implementation in scope for lock purposes
+          if $PRODUCT_IN_SCOPE || $GOVERNANCE_IN_SCOPE; then
+            IMPLEMENTATION_IN_SCOPE=true
+          fi
+
+          echo "── Lock scope summary ──"
+          echo "  IMPLEMENTATION_IN_SCOPE: $IMPLEMENTATION_IN_SCOPE"
+          echo "  PRODUCT_IN_SCOPE:        $PRODUCT_IN_SCOPE"
+          echo "  GOVERNANCE_IN_SCOPE:     $GOVERNANCE_IN_SCOPE"
+          echo "  AGENT_FILES_IN_SCOPE:    $AGENT_FILES_IN_SCOPE"
+          echo ""
+
+          # ── CHECK 1: Scope declaration (START_LOCK prerequisite) ──────────────
+          echo "── CHECK 1: Scope declaration ──"
+          SCOPE_DECL=".agent-admin/scope-declarations/pr-${PR_NUMBER}.md"
+          if [ -f "$SCOPE_DECL" ]; then
+            echo "  ✅ Scope declaration present: $SCOPE_DECL"
+          else
+            echo "  ❌ MISSING: $SCOPE_DECL"
+            VIOLATIONS+=("START_LOCK: Scope declaration missing at ${SCOPE_DECL}")
+          fi
+          echo ""
+
+          # ── CHECK 2: Session memory / wave-current-tasks (START_LOCK) ─────────
+          echo "── CHECK 2: Wave-current-tasks.md ──"
+          WAVE_TASKS=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+          if [ -f "$WAVE_TASKS" ]; then
+            # Check agents_delegated_to is populated
+            if grep -q "agents_delegated_to" "$WAVE_TASKS" 2>/dev/null; then
+              echo "  ✅ wave-current-tasks.md present"
+            else
+              echo "  ⚠️  wave-current-tasks.md present but agents_delegated_to not found"
+              WARNINGS+=("START_LOCK: agents_delegated_to not found in wave-current-tasks.md")
+            fi
+          else
+            echo "  ⚠️  wave-current-tasks.md absent (expected at ${WAVE_TASKS})"
+            WARNINGS+=("START_LOCK: wave-current-tasks.md absent")
+          fi
+          echo ""
+
+          # ── CHECK 3: Functional delivery evidence (PRODUCT_LOCK) ─────────────
+          echo "── CHECK 3: Functional delivery evidence (PRODUCT_LOCK) ──"
+          if $PRODUCT_IN_SCOPE; then
+            FD_EVIDENCE=".functional-delivery/pr-${PR_NUMBER}.md"
+            if [ -f "$FD_EVIDENCE" ]; then
+              echo "  ✅ Functional delivery evidence present: $FD_EVIDENCE"
+            else
+              echo "  ❌ MISSING: $FD_EVIDENCE (required — product/runtime files in scope)"
+              VIOLATIONS+=("PRODUCT_LOCK: Functional delivery evidence missing at ${FD_EVIDENCE}")
+            fi
+          else
+            echo "  ✅ N/A — no product/runtime files in scope"
+          fi
+          echo ""
+
+          # ── CHECK 4: IAA pre-brief (ASSURANCE_LOCK prerequisite) ─────────────
+          echo "── CHECK 4: IAA pre-brief artifact ──"
+          ASSURANCE_DIR=".agent-admin/assurance"
+          PREBRIEF_FOUND=false
+          if [ -d "$ASSURANCE_DIR" ]; then
+            # Search for non-archived, non-superseded wave records with ## PRE-BRIEF
+            while IFS= read -r -d '' f; do
+              # Skip archive paths
+              if echo "$f" | grep -q "/archive/"; then
+                continue
+              fi
+              if grep -q "## PRE-BRIEF" "$f" 2>/dev/null && \
+                 ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
+                PREBRIEF_FOUND=true
+                echo "  ✅ IAA pre-brief found: $f"
+                break
+              fi
+            done < <(find "$ASSURANCE_DIR" -name "iaa-wave-record-*.md" -print0 2>/dev/null)
+
+            if [ "$PREBRIEF_FOUND" = false ]; then
+              # Legacy pattern
+              while IFS= read -r -d '' f; do
+                if echo "$f" | grep -q "/archive/"; then
+                  continue
+                fi
+                if ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
+                  PREBRIEF_FOUND=true
+                  echo "  ✅ IAA pre-brief (legacy) found: $f"
+                  break
+                fi
+              done < <(find "$ASSURANCE_DIR" -name "iaa-prebrief-*.md" -print0 2>/dev/null)
+            fi
+          fi
+          if [ "$PREBRIEF_FOUND" = false ]; then
+            echo "  ⚠️  No active IAA pre-brief artifact found (archive paths excluded)"
+            WARNINGS+=("ASSURANCE_LOCK: No active IAA pre-brief artifact found")
+          fi
+          echo ""
+
+          # ── RESULT ───────────────────────────────────────────────────────────
+          echo "── Lock evaluation result ──"
+          echo ""
+
+          if [ ${#VIOLATIONS[@]} -gt 0 ]; then
+            echo "START_LOCK_RESULT=FAIL" >> "$GITHUB_OUTPUT"
+            echo "VIOLATION_COUNT=${#VIOLATIONS[@]}" >> "$GITHUB_OUTPUT"
+            echo "WARNING_COUNT=${#WARNINGS[@]}" >> "$GITHUB_OUTPUT"
+            echo "PRODUCT_IN_SCOPE=$PRODUCT_IN_SCOPE" >> "$GITHUB_OUTPUT"
+
+            echo "❌ START LOCK VIOLATIONS:"
+            for v in "${VIOLATIONS[@]}"; do
+              echo "   • $v"
+            done
+            if [ ${#WARNINGS[@]} -gt 0 ]; then
+              echo ""
+              echo "⚠️  WARNINGS:"
+              for w in "${WARNINGS[@]}"; do
+                echo "   • $w"
+              done
+            fi
+            echo ""
+            echo "RESULT: STOP_AND_FIX"
+            echo "  Foreman must resolve all lock violations before implementation closure."
+          else
+            echo "START_LOCK_RESULT=PASS" >> "$GITHUB_OUTPUT"
+            echo "VIOLATION_COUNT=0" >> "$GITHUB_OUTPUT"
+            echo "WARNING_COUNT=${#WARNINGS[@]}" >> "$GITHUB_OUTPUT"
+            echo "PRODUCT_IN_SCOPE=$PRODUCT_IN_SCOPE" >> "$GITHUB_OUTPUT"
+
+            echo "✅ START LOCK: PASS — orchestration artifacts present"
+            if [ ${#WARNINGS[@]} -gt 0 ]; then
+              echo ""
+              echo "⚠️  WARNINGS (non-blocking):"
+              for w in "${WARNINGS[@]}"; do
+                echo "   • $w"
+              done
+            fi
+          fi
+
+      - name: Post Start Lock alert comment
+        if: steps.evaluate.outputs.START_LOCK_RESULT == 'FAIL'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const MARKER = '## ⚠️ FOREMAN START LOCK';
+            const productInScope = '${{ steps.evaluate.outputs.PRODUCT_IN_SCOPE }}' === 'true';
+            const violationCount = parseInt('${{ steps.evaluate.outputs.VIOLATION_COUNT }}', 10);
+
+            // Idempotency: skip if an active alert already exists (will be updated on next push)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.body && c.body.includes(MARKER) && c.user.type === 'Bot'
+            );
+            if (existing) {
+              core.notice('Foreman Start Lock alert already posted — skipping duplicate.');
+              return;
+            }
+
+            const lines = [
+              `## ⚠️ FOREMAN START LOCK — orchestration evidence required`,
+              '',
+              `This PR has **${violationCount} START LOCK violation(s)** before implementation/product/governance closure.`,
+              '',
+              '### Required before closure:',
+              '',
+              '- [ ] Per-PR scope declaration exists at `.agent-admin/scope-declarations/pr-' + prNumber + '.md`',
+              productInScope ? '- [ ] Functional delivery evidence exists at `.functional-delivery/pr-' + prNumber + '.md`' : '',
+              '- [ ] `wave-current-tasks.md` committed with `agents_delegated_to` populated',
+              '- [ ] Implementation owner declared',
+              productInScope ? '- [ ] Builder QA owner declared for product/runtime files' : '',
+              '- [ ] ECAP owner declared for admin/current-head evidence',
+              '- [ ] IAA owner declared for pre-brief and final assurance',
+              '',
+              'Until all violations are resolved:',
+              '',
+              '```',
+              'HANDOVER_ALLOWED: no',
+              'RESULT: STOP_AND_FIX',
+              '```',
+              '',
+              '**Authority**: CS2 — @APGI-cmy | Issue: #1593',
+            ].filter(l => l !== '').join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: lines,
+            });
+
+      - name: Log Start Lock PASS
+        if: steps.evaluate.outputs.START_LOCK_RESULT == 'PASS'
+        run: |
+          echo "::notice::Foreman Start Lock PASS — orchestration artifacts present."

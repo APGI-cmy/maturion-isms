@@ -1,0 +1,39 @@
+{
+  "pr": 1595,
+  "issue": 1593,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1595.json",
+    ".agent-admin/scope-declarations/pr-1595.md",
+    ".agent-workspace/foreman-v2/knowledge/FOREMAN_EXECUTION_LOCKS.md",
+    ".agent-workspace/foreman-v2/knowledge/index.md",
+    ".agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md",
+    ".github/agents/foreman-v2-agent.md",
+    ".github/scripts/validate-governance-evidence-exactness.sh",
+    ".github/scripts/validate-governance-evidence-exactness.test.sh",
+    ".github/workflows/foreman-start-lock.yml",
+    ".github/workflows/iaa-prebrief-gate.yml",
+    "governance/checklists/phase4-role-separation-operational-guidance.md",
+    "governance/templates/foreman/FOREMAN_ORCHESTRATION_RECORD.template.md",
+    "governance/templates/foreman/FOREMAN_EXECUTION_LOCK_STATUS.template.md",
+    "governance/templates/foreman/FOREMAN_STOP_AND_FIX_RESPONSE.template.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "codex-advisor-direct",
+  "orchestrating_agent": "CodexAdvisor",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "foreman-v2-agent.md contract version updated to 2.16.0 with FOREMAN EXECUTION LOCKS section",
+    "FOREMAN_EXECUTION_LOCKS.md Tier 2 guidance created with all four lock specifications",
+    "Tier 3 templates created: FOREMAN_ORCHESTRATION_RECORD, FOREMAN_EXECUTION_LOCK_STATUS, FOREMAN_STOP_AND_FIX_RESPONSE",
+    "foreman-start-lock.yml workflow created to enforce START_LOCK and PRODUCT_LOCK early",
+    "validate-governance-evidence-exactness.sh parser hardened to ignore comment/run/job/review #IDs",
+    "iaa-prebrief-gate.yml updated to exclude archive paths from active pre-brief check",
+    "phase4-role-separation-operational-guidance.md updated with execution lock guidance section",
+    "WAVE-CURRENT-TASKS-PROTOCOL.md updated with execution lock integration section"
+  ],
+  "merge_authority": "CS2"
+}

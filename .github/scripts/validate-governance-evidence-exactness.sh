@@ -14,6 +14,9 @@
 #              (a) EXPECTED_ISSUE_NUMBER env var (explicit CI injection), or
 #              (b) PR_BODY env var parsed for closing/fixing keywords + maturion-isms# refs.
 #            If no authority source is available the check is informational only.
+#            Parser hardening (issue #1593): non-governing #NNN tokens (preceded by "comment",
+#            "review", "run", "job", "workflow", "check", "commit", "PR") are stripped before
+#            fallback extraction — prevents comment IDs from being treated as governing issues.
 # Exit codes: 0=PASS (errors=0), 1=FAIL (any error)
 set -uo pipefail
 
@@ -333,14 +336,21 @@ else
     elif [ -n "${PR_BODY:-}" ]; then
       # Parse PR body for closing/fixing keywords followed by optional repo prefix + number.
       # Pattern uses [a-zA-Z0-9_-]* (zero or more) so it handles:
-      #   "Closes #1521"          (bare bare #N)
+      #   "Closes #1521"          (bare #N)
       #   "Fixes maturion-isms#1521"  (repo-prefixed)
       EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
         grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]*#)([0-9]+)' | \
         grep -oE '[0-9]+$' | head -1 || true)
       if [ -z "$EXPECTED_ISSUE_NUM" ]; then
-        # Fallback: first explicit #N reference in PR body (bare or with any prefix)
-        EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
+        # Fallback: first explicit #N reference in PR body that is NOT preceded by
+        # a non-governing keyword (comment, review, run, job, workflow, check, PR, commit).
+        # This prevents comment IDs (e.g. "comment #4414916723") from being treated
+        # as governing issue references — which was the PR #1590 failure mode.
+        # Sanitize: remove all "non-governing-keyword #NNN" tokens first, then extract
+        # the first remaining #NNN as the governing issue reference.
+        SANITIZED_BODY=$(printf '%s' "$PR_BODY" | \
+          sed -E 's/(comment|review|run|job|workflow|check|commit|PR)[[:space:]]+#[0-9]+//gI')
+        EXPECTED_ISSUE_NUM=$(printf '%s' "$SANITIZED_BODY" | \
           grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
       fi
       [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (parsed closing/issue ref)"

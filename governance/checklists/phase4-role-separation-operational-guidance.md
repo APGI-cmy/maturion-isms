@@ -729,3 +729,62 @@ Conclusion (required format): **Follow-up required, with proposed issue title, r
 ---
 
 *Version: 1.3.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*
+
+---
+
+## §Exec-Locks) Foreman Execution Lock Guidance (contract 2.16.0 — issue #1593)
+
+**Added**: 2026-05-10 | **Authority**: CS2 — issue #1593 | **Tier**: 2
+
+This section provides Phase 4 role-separation context for the four Foreman Execution Locks
+added in contract version 2.16.0. Full operational detail is in:
+
+```text
+.agent-workspace/foreman-v2/knowledge/FOREMAN_EXECUTION_LOCKS.md
+```
+
+### Checkpoint-first requirement (updated)
+
+The checkpoint-first requirement previously required only a current-head pre-handover checkpoint.
+With execution locks, the sequence is now:
+
+1. START_LOCK must PASS before any builder delegation.
+2. PRODUCT_LOCK must PASS (or be N/A) before handover.
+3. ASSURANCE_LOCK must PASS before handover.
+4. **HANDOVER_LOCK must PASS** before any closure language — including the checkpoint result.
+5. Only after all four locks PASS may closure language be used.
+
+### Foreman checklist — execution lock pre-flight (Phase 3 exit gate)
+
+Before entering Phase 4, Foreman MUST confirm:
+
+```text
+[ ] Orchestration record committed (START_LOCK)
+[ ] agents_delegated_to populated (START_LOCK)
+[ ] Functional delivery evidence present and current if product files in scope (PRODUCT_LOCK)
+[ ] IAA final token non-PENDING and tied to current HEAD (ASSURANCE_LOCK)
+[ ] Current-head checkpoint returned HANDOVER_ALLOWED: yes (HANDOVER_LOCK)
+[ ] Lock status record committed (governance/templates/foreman/FOREMAN_EXECUTION_LOCK_STATUS.template.md)
+```
+
+If any check fails: output `STOP_AND_FIX` using `governance/templates/foreman/FOREMAN_STOP_AND_FIX_RESPONSE.template.md`.
+
+### Role assignments for execution lock artifacts
+
+| Lock | Required artifact | Producing role | Verifying role |
+|------|------------------|---------------|---------------|
+| START_LOCK | Orchestration record | Foreman | IAA (pre-brief) |
+| START_LOCK | Scope declaration | Foreman / builder | ECAP |
+| PRODUCT_LOCK | `.functional-delivery/pr-<PR>.md` | QA Builder | ECAP, IAA |
+| ASSURANCE_LOCK | `iaa-wave-record-*.md ## TOKEN` | IAA | Foreman (verify non-PENDING) |
+| HANDOVER_LOCK | Pre-handover checkpoint result | ECAP / Foreman | IAA (confirm in audit) |
+
+### STOP_AND_FIX escalation path
+
+1. Foreman outputs `STOP_AND_FIX` with failing lock and owner.
+2. Named owner creates the missing artifact.
+3. Foreman verifies artifact is correct and current.
+4. Foreman re-evaluates the execution lock.
+5. If PASS: proceed; if still FAIL: escalate to CS2.
+
+*Version update: §Exec-Locks added in v1.4.0 — 2026-05-10*

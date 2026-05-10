@@ -1,7 +1,7 @@
 # WAVE-CURRENT-TASKS-PROTOCOL
 
-**Version**: 1.2.0
-**Date**: 2026-04-22
+**Version**: 1.3.0
+**Date**: 2026-05-10
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **Status**: ACTIVE
 
@@ -81,10 +81,28 @@ The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads th
 
 ---
 
+## Execution Lock Integration (contract 2.16.0 — issue #1593)
+
+The `wave-current-tasks.md` file is also a START_LOCK prerequisite. The following fields are
+now required in the wave-current-tasks.md before any builder delegation:
+
+```text
+agents_delegated_to: [list of agents]
+Implementation owner: [specific agent]
+```
+
+If these fields are absent or empty when implementation/product/governance files are in scope,
+the foreman-start-lock CI gate will flag a START_LOCK violation.
+
+See `FOREMAN_EXECUTION_LOCKS.md` §LOCK 1 for full START_LOCK guidance.
+
+---
+
 ## Version History
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.0 | 2026-05-10 | Added §Execution Lock Integration — agents_delegated_to and Implementation owner are START_LOCK prerequisites; START_LOCK violation if absent when implementation/product/governance files in scope; issue #1593 |
 | 1.2.0 | 2026-04-22 | Added §Stage 10 Ceremony Contract Integration — documents the wave-level Admin Ceremony Contract alongside task-level assurance expectations; ACR-18 through ACR-21 enforcement references; CS2 mandate from maturion-isms#1447 |
 | 1.1.0 | 2026-03-18 | Added mandatory Step 11 — Wave Reconciliation Checklist (`wave-reconciliation-checklist.md`) at wave close before PR open; CS2 mandate from wave 19/20 retrospective |
 | 1.0.0 | 2026-03-03 | Initial protocol — wave-current-tasks.md creation mandate, Re-Anchor Pulse integration, absence behaviour |

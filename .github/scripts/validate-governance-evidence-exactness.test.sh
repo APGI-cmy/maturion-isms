@@ -238,6 +238,56 @@ export PR_BODY="Resolves #1521"
 run_issue_test "'Resolves #1521' establishes authority (match) → PASS" 0 "setup_test_resolves_bare"
 
 # ============================================================
+# TEST 9: PR body has "comment #4414916723" before governing "Closes #1521"
+#         Regression test for PR #1590 failure mode (issue #1593).
+#         comment IDs must NOT be treated as governing issue refs.
+# ============================================================
+setup_test_comment_id_before_closes() {
+  make_per_pr_scope_file "1234" "1521" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="See comment #4414916723 for details.
+Closes #1521"
+
+run_issue_test "'comment #ID' before 'Closes #1521' — comment ID ignored, governing issue extracted → PASS" 0 "setup_test_comment_id_before_closes"
+
+# ============================================================
+# TEST 10: PR body has only "run #123456789" and "job #987654321", no closing keyword
+#          Regression test for PR #1590 failure mode (issue #1593).
+#          Non-governing IDs should NOT be extracted as governing issue.
+#          ISSUE field has no matching authority → WARNING, not error.
+# ============================================================
+setup_test_only_non_governing_ids() {
+  make_per_pr_scope_file "1234" "1521" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="See run #123456789 and job #987654321 for CI results."
+
+run_issue_test "only run/job IDs in PR body — no governing issue extracted, no ISSUE-MISMATCH error → PASS" 0 "setup_test_only_non_governing_ids"
+
+# ============================================================
+# TEST 11: PR body has "comment #4414916723" fallback — scope declares #1521
+#          Sanitized fallback must NOT extract 4414916723 as governing issue.
+#          Since no authority can be determined → informational only, no error.
+# ============================================================
+setup_test_comment_id_only_fallback() {
+  make_per_pr_scope_file "1234" "1521" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="See comment #4414916723 for the review thread."
+
+run_issue_test "only 'comment #ID' in PR body — sanitized to empty, no ISSUE-MISMATCH error → PASS" 0 "setup_test_comment_id_only_fallback"
+
+# ============================================================
 # Cleanup
 # ============================================================
 rm -rf "$TEST_DIR"

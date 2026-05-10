@@ -43,6 +43,10 @@ jobs:
           if [ -d "$ASSURANCE_DIR" ]; then
             # Legacy pattern: standalone iaa-prebrief-*.md
             while IFS= read -r -d '' f; do
+              # Skip archive paths — archived files must not satisfy active PR pre-brief (issue #1593)
+              if echo "$f" | grep -q "/archive/"; then
+                continue
+              fi
               if ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
                 PREBRIEF_FOUND=true; break
               fi
@@ -51,6 +55,10 @@ jobs:
             # New pattern (PR #1348): iaa-wave-record-*.md with ## PRE-BRIEF section
             if [ "$PREBRIEF_FOUND" = false ]; then
               while IFS= read -r -d '' f; do
+                # Skip archive paths — archived files must not satisfy active PR pre-brief (issue #1593)
+                if echo "$f" | grep -q "/archive/"; then
+                  continue
+                fi
                 if grep -q "## PRE-BRIEF" "$f" 2>/dev/null && \
                    ! grep -qi "SUPERSEDED" "$f" 2>/dev/null; then
                   PREBRIEF_FOUND=true; break
