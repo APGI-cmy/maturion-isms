@@ -1,6 +1,6 @@
 # IAA Wave Record — {wave} — {date}
 
-**Record Version**: 1.3.0
+**Record Version**: 1.4.0
 **Wave**: {wave}
 **Branch**: {branch}
 **Issue**: {issue_ref}
@@ -144,6 +144,32 @@
 - CALIBRATION_REFERENCE: {APGI-cmy/maturion-isms#1553 (OC-009) when PARTIAL_FUNCTIONAL_DELIVERY is issued or UI_SHELL_ONLY classification evidence is referenced}
 - APPLICABILITY: {REQUIRED for product-facing T2 PRs / N/A for non-product-facing PRs with classification rationale}
 
+### 3.1c Product-Build Functional Gates (product-facing BUILD/T2)
+- USER_JOURNEY_COMPLETE: {yes / no}
+- ALL_CTAS_FUNCTIONAL: {yes / no}
+- ALL_BACKEND_TARGETS_DEPLOYED_OR_PROVEN: {yes / no}
+- ALL_SUPABASE_WRITES_SCHEMA_ALIGNED: {yes / no}
+- ASYNC_JOBS_VISIBLE_AND_ACTIONABLE: {yes / no}
+- SUCCESS_FAILURE_STATES_VISIBLE: {yes / no}
+- DASHBOARD_OR_STATE_REFLECTION_PROVEN: {yes / no}
+- LIVE_OR_PREVIEW_E2E_PROVEN: {yes / no}
+- FUNCTIONAL_PASS: {yes / no}
+- VERDICT: {FULL_FUNCTIONAL_DELIVERY / PARTIAL_FUNCTIONAL_DELIVERY / ADMIN_ONLY / FAIL}
+
+Rule: any `no` above means full functional delivery assurance is not permitted.
+
+### 3.1d Rejection Package Template (product-build)
+
+```text
+REJECTION-PACKAGE
+Functional verdict: no
+Blocking finding:
+Evidence:
+Why this fails the promised workflow:
+Required fix:
+Required proof before re-invocation:
+```
+
 ### 3.1a Mandatory ECAP Presence Gate
 
 > **EXECUTE FIRST — before any ACR check or checklist evaluation (§Mandatory ECAP Presence Gate, INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0).**
@@ -243,7 +269,7 @@
 ---
 
 ## 5. Record Metadata
-- Record Schema Version: 1.3.0
+- Record Schema Version: 1.4.0
 - Created By: {agent_id}
 - Last Modified By: {agent_id}
 - Last Modified Date: {YYYY-MM-DD}
@@ -252,3 +278,4 @@
 - Storage Location: `.agent-admin/assurance/`
 - Amendment: v1.3.0 (2026-04-28) — Added §3.1a Mandatory ECAP Presence Gate (P-1 through P-4 four-question check, executed before any ACR/checklist evaluation; REJECTED-ACR-27 if ecap_required YES, ECAP not invoked, and no committed CS2 waiver); authority: CS2 — maturion-isms#1493; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0
 - Amendment: v1.2.0 (2026-04-28) — Added §3.2 Acceptance-Criteria Evidence Matrix, §3.3 Build-Correctness Assessment, §3.4 Independent Risk Challenge; renumbered prior §3.2/3.3 to §3.5/3.6; updated Record Schema Version; authority: CS2 — maturion-isms#1492
+- Amendment: v1.4.0 (2026-05-10) — Added explicit product-build functional yes/no gate block (§3.1c) and mandatory rejection-package template (§3.1d) for issue #1590 functional-delivery assurance hardening.

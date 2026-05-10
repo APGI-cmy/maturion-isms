@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 4.3.0
+**Version**: 4.4.0
 **Status**: ACTIVE
-**Last Updated**: 2026-04-28
+**Last Updated**: 2026-05-10
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -42,6 +42,8 @@ Before any category-specific checks, run these existence checks only. Each is bi
 ## BUILD_DELIVERABLE Overlay — PRIMARY FOCUS
 
 Applied when PR category is `AAWP_MAT`, `MAT_DELIVERABLE`, or any T2 PR delivering executable application behaviour (schema migrations, API endpoints, frontend components, hooks, Supabase operations, integrations, workflows, services).
+
+**Mandatory load requirement**: For product-facing BUILD/T2 workflows (including UI/backend/API product-fix or functional-delivery claims), IAA MUST load `.agent-workspace/independent-assurance-agent/knowledge/PRODUCT_BUILD_ASSURANCE_STANDARD.md` before issuing any verdict.
 
 > **Mindset**: IAA acts as a senior engineer reviewing the delivery. The question is not "did the agent follow the ceremony?" The question is "will this build actually work, be safe, scale, and deliver the intended user outcome — the first time it is deployed?"
 
@@ -484,6 +486,7 @@ OVL-GE-004 Acceptance-Criteria Coverage:
 | 4.0.0 | 2026-04-07 | PRE_BUILD_GATES overlay: OVL-PBG-010 through OVL-PBG-016 added — Stage 2 UX Wiring Spec, Stage 6 QA-to-Red, Stage 7 PBFAG, Stage 9 Builder Checklist, §7.1 Change-Propagation Audit, §7.2 Runtime/Deployment Contract, §7.3 Golden Path Verification Pack enforcement; PRE_BRIEF_ASSURANCE overlay: stage-readiness view requirement and OVL-INJ-ADM-003 added; wave: iaa-12stage-upgrade (issue #1258) |
 | 4.1.0 | 2026-04-22 | GOVERNANCE_EVIDENCE overlay added (OVL-GE-001 through OVL-GE-003, OVL-GE-ADM-001) — temporal integrity check (no future-dated claims) and evidence-type discipline (LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by lower-fidelity evidence); canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; regression from PR #1444; governance hardening issue maturion-isms#1445. |
 | 4.2.0 | 2026-04-26 | PRE_BUILD_GATES overlay: OVL-PBG-017 added — §7.4 Deployment Execution Contract filed before first build wave (mandatory items: workflow ownership per surface, runner access rules, migration mechanism, CI/preview/production execution boundaries, CS2 approval requirements, env validation); OVL-PBG-ADM-001 updated to reference through OVL-PBG-017; wave: mmm-deploy-strategy-oversight-20260426 (issue maturion-isms#1468). |
+| 4.4.0 | 2026-05-10 | Product-facing BUILD/T2 hardening (issue #1590): BUILD_DELIVERABLE overlay now explicitly requires loading PRODUCT_BUILD_ASSURANCE_STANDARD.md before any verdict on product-fix/functional-delivery claims. |
 | 4.3.0 | 2026-04-28 | GOVERNANCE_EVIDENCE overlay: OVL-GE-004 added — Acceptance-Criteria Coverage: IAA extracts governing-issue acceptance criteria from the issue itself and verifies each maps to a hard evidence artifact; agent claims are not evidence (A-039/ACR-22/ACR-24); evidence-type downgrade prohibited without CS2 waiver (A-040/ACR-23); gate_triggered: false must be independently verified from diff; output format updated to include OVL-GE-004 section; authority: CS2 — maturion-isms#1492. |
 
 ---

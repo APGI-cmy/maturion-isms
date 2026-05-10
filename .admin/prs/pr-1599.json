@@ -1,0 +1,35 @@
+{
+  "pr": 1599,
+  "issue": 1590,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".agent-admin/scope-declarations/pr-1599.md",
+    ".admin/prs/pr-1599.json",
+    ".agent-workspace/independent-assurance-agent/knowledge/PRODUCT_BUILD_ASSURANCE_STANDARD.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/index.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md",
+    ".functional-delivery/pr-template.md",
+    "governance/templates/iaa-wave-record.template.md",
+    "governance/scope-declaration.md",
+    ".github/scripts/validate-product-delivery-gates.sh",
+    ".github/scripts/validate-product-delivery-gates.test.sh"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "independent-assurance-agent",
+  "evidence_required": [
+    "Tier 2 product build assurance standard exists and is referenced as mandatory for product-facing BUILD/T2",
+    "IAA trigger/index/overlay wiring requires loading PRODUCT_BUILD_ASSURANCE_STANDARD.md",
+    "Functional delivery template includes journey, CTA/backend/schema/async/visible-state/preview/dashboard sections",
+    "IAA wave record template includes explicit yes/no product-build functional gates",
+    "Product delivery CI gate script enforces split-verdict and false-PASS contradiction checks",
+    "Regression test suite includes PR #1590-style dry-run rejection fixture and passes"
+  ],
+  "merge_authority": "CS2"
+}
