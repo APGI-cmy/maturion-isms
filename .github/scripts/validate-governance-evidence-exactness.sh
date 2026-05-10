@@ -342,7 +342,7 @@ else
         # Fallback: first issue-style reference in PR body.
         # Ignore known non-governing numeric references (comment/run/job/workflow/check/PR IDs).
         FILTERED_PR_BODY=$(printf '%s' "$PR_BODY" | tr '[:upper:]' '[:lower:]' | \
-          sed -E 's/\b(comment|comments|run|runs|job|jobs|workflow|workflows|check|checks|artifact|artifacts|pr|pull request)[[:space:]]*#[0-9]+/ /g')
+          sed -E 's/(^|[[:space:]])(comment|comments|run|runs|job|jobs|workflow|workflows|check|checks|artifact|artifacts|pr|pull[[:space:]]+request)[[:space:]]*#[0-9]+/\1/g')
         EXPECTED_ISSUE_NUM=$(printf '%s' "$FILTERED_PR_BODY" | \
           grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
       fi
