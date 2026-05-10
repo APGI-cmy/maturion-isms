@@ -33,7 +33,7 @@ Anti-regression obligations: [yes — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR
 PHASE_B_BLOCKING_TOKEN: IAA-pr-1590-schema-blockers-resolved-20260510
 - **PR**: #1590
 - **Issue**: #1589
-- **Reviewed SHA**: 3cf9e9872bddf044ee50d2da185d1fdb4c11b547
+- **Reviewed SHA**: 737698a9aa744bebdfaed1f36f899c409a883c0a
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: no
 VERDICT: PARTIAL_FUNCTIONAL_DELIVERY

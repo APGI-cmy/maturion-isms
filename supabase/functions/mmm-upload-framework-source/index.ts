@@ -131,12 +131,16 @@ Deno.serve(async (req: Request) => {
   // Schema columns: id, upload_id, document_id, status, result_json, created_at, updated_at
   // + migration 20260429000001: organisation_id, created_by, source_type
   // + migration 20260510000001: framework_id (first-class link — not only in result_json)
+  const rawFrameworkId = metadata.framework_id as string | undefined;
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const frameworkIdForJob = rawFrameworkId && UUID_RE.test(rawFrameworkId) ? rawFrameworkId : null;
+
   const { data: parseJob, error: jobError } = await supabase
     .from('mmm_parse_jobs')
     .insert({
       organisation_id: claims.orgId,
       created_by: claims.userId,
-      framework_id: (metadata.framework_id as string) ?? null,
+      framework_id: frameworkIdForJob,
       status: 'PENDING',
       source_type: (metadata.source_type as string) ?? 'VERBATIM',
       result_json: {

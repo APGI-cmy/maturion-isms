@@ -33,6 +33,12 @@ import { callAimc } from '../_shared/mmm-aimc-client.ts';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
+/** Derive a DB-safe code slug from a name if the AI response omits the 'code' field. */
+function toCode(n: string, idx: number): string {
+  const slug = n.toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 20);
+  return slug || `ITEM_${idx + 1}`;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders() });
@@ -116,10 +122,7 @@ Deno.serve(async (req: Request) => {
   }> = aiData.proposed_domains ?? [];
 
   // Derive a code slug from a name if the AI response omits it
-  function toCode(n: string, idx: number): string {
-    const slug = n.toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 20);
-    return slug || `ITEM_${idx + 1}`;
-  }
+  // (moved to module scope — see toCode() above)
 
   let domainCount = 0;
 
@@ -153,6 +156,7 @@ Deno.serve(async (req: Request) => {
           name: mps.name,
           code: mps.code ?? toCode(mps.name, mi),
           sort_order: mi + 1,
+          // intent_statement: prefer AIMC 'intent_statement'; fall back to 'description' if AIMC uses that field name
           intent_statement: mps.intent_statement ?? mps.description ?? null,
           source: 'AI',
         })
