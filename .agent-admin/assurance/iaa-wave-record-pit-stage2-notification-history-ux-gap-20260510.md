@@ -4,7 +4,7 @@
 **Wave**: pit-stage2-notification-history-ux-gap  
 **Branch**: copilot/resolve-pit-stage-2-notification-gap  
 **Issue**: maturion-isms#1592  
-**PR**: (pending)  
+**PR**: #1594  
 **Date Created**: 2026-05-10  
 **Authority**: INDEPENDENT_ASSURANCE_AGENT_CANON.md §Phase 0  
 
