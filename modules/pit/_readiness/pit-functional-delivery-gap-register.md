@@ -3,10 +3,10 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Wave**: pit-prebuilt-retrofit-20260508  
 **Governing Issue**: maturion-isms#1575  
-**PR**: #1576  
+**PR**: #1576, #1594  
 **Reviewed By**: foreman-v2-agent (POLC-Orchestration mode)  
-**Date**: 2026-05-08  
-**Status**: ACTIVE — gaps identified; resolution required before stage re-confirmation
+**Date**: 2026-05-10  
+**Status**: ACTIVE — documented gaps resolved; pending CS2 stage re-confirmation
 
 ---
 
@@ -32,9 +32,9 @@ A "functional delivery gap" is a missing specification, missing technical contro
 | Derivation | PIT-FR-104 (404 Not Found route requirement); PIT-TR-016 (Catch-all 404 route TRS requirement) |
 | Required Resolution | Add 404 route entry to Section 4 of the UX Spec (state: data-only — `loading`, `empty`, `permission-denied`, `network-error` states N/A for a static 404 page) and Section 7 (wiring: static — no API calls, no data dependencies). This is a documentation completeness action, not a design decision. |
 | Blocking Stage | Does not block Stage 2 re-confirmation. Must be resolved before Stage 5 Architecture gate-pass. |
-| Resolution Status | ❌ OPEN |
-| Resolution PR | — |
-| Resolution Date | — |
+| Resolution Status | ✅ RESOLVED |
+| Resolution PR | #1594 |
+| Resolution Date | 2026-05-10 |
 
 ---
 
@@ -50,9 +50,9 @@ A "functional delivery gap" is a missing specification, missing technical contro
 | Derivation | PIT-FR-116 (Notification History View); PIT-TR-119 (Notification History View Technical Contract); Route: `/notifications` (Appendix A row 25) |
 | Required Resolution | Add the following to Stage 2 UX Spec: (1) Screen 22: Notification History — Section 2 screen spec with screen description, route, authentication requirement, role access, layout, key components, primary actions, empty state; (2) Section 4 entry for Notification History with all 5 UI states (loading → skeleton cards; empty → "No notifications" state; permission-denied → N/A (all authenticated users can view their own notifications); network-error → retry CTA; data → paginated notification list); (3) Section 7 wiring entry for Notification History (data source: `notifications` table filtered to current user, sorted by `created_at DESC`, paginated by 20; API: `GET /notifications?page=N`). |
 | Blocking Stage | **BLOCKING for Stage 2 re-confirmation**. Must be resolved before Stage 2 can be re-confirmed by CS2. Must also be resolved before Stage 5 Architecture gate-pass. |
-| Resolution Status | ❌ OPEN |
-| Resolution PR | — |
-| Resolution Date | — |
+| Resolution Status | ✅ RESOLVED |
+| Resolution PR | #1594 |
+| Resolution Date | 2026-05-10 |
 
 ---
 
@@ -75,23 +75,23 @@ A "functional delivery gap" is a missing specification, missing technical contro
 
 | Gap ID | Description | Severity | Status |
 |---|---|---|---|
-| UX-GAP-001 | 404 route state/wiring entries missing from UX Spec | NON-BLOCKING | ❌ OPEN |
-| UX-GAP-002 | Notification history screen spec missing from UX Spec | **BLOCKING (Stage 2 re-confirmation)** | ❌ OPEN |
+| UX-GAP-001 | 404 route state/wiring entries missing from UX Spec | NON-BLOCKING | ✅ RESOLVED (PR #1594) |
+| UX-GAP-002 | Notification history screen spec missing from UX Spec | **BLOCKING (Stage 2 re-confirmation)** | ✅ RESOLVED (PR #1594) |
 | TRS-GAP-001 | FRS v0.2-hardened not propagated into TRS | BLOCKING (Stage 4 approval) | ✅ RESOLVED (PR #1576) |
 
-**Open Blocking Gaps**: 1 (UX-GAP-002)  
-**Open Non-Blocking Gaps**: 1 (UX-GAP-001)  
-**Resolved Gaps**: 1 (TRS-GAP-001)
+**Open Blocking Gaps**: 0  
+**Open Non-Blocking Gaps**: 0  
+**Resolved Gaps**: 3 (UX-GAP-001, UX-GAP-002, TRS-GAP-001)
 
 ---
 
 ## Gap Resolution Instructions
 
-**For UX-GAP-001**: A non-material documentation completeness PR to add 404 route entries to UX Spec Sections 4 and 7. Can be delegated to pit-specialist or handled in the next Stage 2 amendment wave.
+**For UX-GAP-001**: RESOLVED in PR #1594. Section 4 and Section 7 404 entries are present and complete (static 404 state model and no-API wiring).
 
-**For UX-GAP-002**: Requires a Stage 2 UX Spec amendment PR adding the notification history screen specification (Screen 22) to Sections 2, 4, and 7. This PR requires Foreman review and CS2 approval as a Stage 2 amendment. The notification history screen must be added before Stage 2 can be re-confirmed. Can be delegated to pit-specialist with Foreman QP review.
+**For UX-GAP-002**: RESOLVED in PR #1594. Stage 2 UX Spec amendment adds Notification History (Screen 22) in Section 2, Section 4, Section 7, and aligns Section 9 route map (`/notifications`), with traceability to PIT-FR-115/116/117 and PIT-TR-118/119/120.
 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
-**Last Updated**: 2026-05-08 (maturion-isms#1575 / PR #1576)
+**Last Updated**: 2026-05-10 (maturion-isms#1592 / PR #1594 amendment; preserves TRS-GAP-001 resolution from PR #1576)

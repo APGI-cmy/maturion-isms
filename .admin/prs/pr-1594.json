@@ -1,0 +1,30 @@
+{
+  "pr": 1594,
+  "issue": 1592,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".agent-admin/assurance/iaa-wave-record-pit-stage2-notification-history-ux-gap-20260510.md",
+    ".agent-admin/scope-declarations/pr-1594.md",
+    ".admin/prs/pr-1594.json",
+    "modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md",
+    "modules/pit/_readiness/pit-functional-delivery-gap-register.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
+  "evidence_required": [
+    "Stage 2 UX spec adds Screen 22 Notification History in Section 2 with route /notifications and read-state behaviors",
+    "Section 4 matrix includes Notification History five-state UI definition",
+    "Section 7 wiring includes notification load, mark one read, and mark all read contracts scoped to current user",
+    "Section 9 deployment surface map includes /notifications and aligns with Section 2/4/7",
+    "Gap register marks UX-GAP-002 resolved with PR/date and preserves TRS-GAP-001 resolved state",
+    "Build progress tracker reflects Stage 2 ready for CS2 re-confirmation, Stage 3 pending CS2 approval, Stage 4/5 blocked, and Build Authorization NOT CLEARED",
+    "Per-PR scope declaration exists at .agent-admin/scope-declarations/pr-1594.md"
+  ],
+  "merge_authority": "CS2"
+}
