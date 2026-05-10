@@ -33,11 +33,13 @@ Anti-regression obligations: [yes — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR
 PHASE_B_BLOCKING_TOKEN: IAA-pr-1590-schema-blockers-resolved-20260510
 - **PR**: #1590
 - **Issue**: #1589
-- **Reviewed SHA**: CURRENT_HEAD
+- **Reviewed SHA**: 615cd7b0038925a8eca479780774873b70e68b70
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: no
 VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
 - **Verdict**: PASS_WITH_CS2_WAIVER — IAA code quality PASS; schema/CORS build blockers resolved; full functional delivery pending deployed preview confirmation
+
+Gate CI evidence: Actions run 25628089130 — all 11 Preflight Evidence Gate jobs ✅ on SHA 615cd7b0038925a8eca479780774873b70e68b70 (preflight/gate-changing-pr-rule ✅, preflight/iaa-final-assurance ✅, preflight/product-delivery-gates ✅)
 
 IAA scope of review: schema-incompatible column removals (mmm-framework-init, mmm-qiw-status), CORS header repair (_shared/mmm-auth.ts), Mode A next-state navigation (FrameworkUploadPage). All verified against migration schema columns in 20260420000001_mmm_core_tables.sql. B3 vitest suite (91 tests) passes. Code changes are technically correct and do not introduce regressions.
 

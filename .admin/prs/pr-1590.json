@@ -37,7 +37,8 @@
     "smoke test pass: mmm-qiw-status query uses actual mmm_ai_interactions columns (action_type, duration_ms, status)",
     "smoke test pass: _shared/mmm-auth.ts jsonResponse includes CORS headers on all responses",
     "locally confirmed: Mode A FrameworkUploadPage navigates to /frameworks/:id/review on success",
-    "run id: 25627790638 (IAA Pre-Brief Gate — success on head 89901db)"
+    "run id: 25628089130 — all 11 Preflight Evidence Gate jobs PASS on HEAD 615cd7b0 including preflight/gate-changing-pr-rule, preflight/iaa-final-assurance, preflight/product-delivery-gates — https://github.com/APGI-cmy/maturion-isms/actions/runs/25628089130",
+    "gate-change validation: actions/runs/25628089130 confirms .github/scripts/validate-governance-evidence-exactness.sh and .github/workflows/preflight-evidence-gate.yml changes pass all gate checks on current PR context"
   ],
   "merge_authority": "CS2"
 }
