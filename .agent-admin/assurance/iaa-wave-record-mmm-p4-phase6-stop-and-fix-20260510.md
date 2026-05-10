@@ -33,7 +33,7 @@ Anti-regression obligations: [yes — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR
 PHASE_B_BLOCKING_TOKEN: IAA-pr-1590-final-assurance-pass-current-head
 - **PR**: #1590
 - **Issue**: #1589
-- **Reviewed SHA**: CURRENT_HEAD
+- **Reviewed SHA**: ee9aff9129f3f5cdbf10318b998ddd860cdc0967
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: yes
 VERDICT: FULL_FUNCTIONAL_DELIVERY
