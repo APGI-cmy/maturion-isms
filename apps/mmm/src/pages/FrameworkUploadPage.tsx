@@ -75,21 +75,21 @@ export default function FrameworkUploadPage() {
           body: formData,
         });
         if (error) throw new Error(error.message || 'Failed to upload framework source');
-        return { frameworkId, uploadData: data };
+        return { frameworkId, responseData: data };
       } else if (mode==='B') {
         const frameworkId = await initFramework('New Framework', 'GENERATED');
         const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
           body: { name: 'New Framework', mode, framework_id: frameworkId },
         });
         if (error) throw new Error(error.message || 'Failed to generate framework');
-        return { frameworkId, uploadData: data };
+        return { frameworkId, responseData: data };
       } else if (mode==='C') {
         const frameworkId = await initFramework('Hybrid Framework', 'HYBRID');
         const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
           body: { name: 'Hybrid Framework', hybrid: true, mode, framework_id: frameworkId },
         });
         if (error) throw new Error(error.message || 'Failed to generate hybrid framework');
-        return { frameworkId, uploadData: data };
+        return { frameworkId, responseData: data };
       }
       throw new Error(`Unsupported framework mode: ${mode}`);
     },

@@ -98,10 +98,10 @@ Deno.serve(async (req: Request) => {
       by_model: {} as Record<string, number>,
     };
 
-    // Metric 4: error_rate — failed interactions (status != null and != 'success') / total in 7-day window
+    // Metric 4: error_rate — failed interactions (status not null/success) / total in 7-day window
     const totalInteractions = aiInteractions.length;
     const failedInteractions = aiInteractions.filter(
-      i => i.status !== null && i.status !== 'success' && i.status !== 'SUCCESS',
+      i => i.status !== null && i.status?.toLowerCase() !== 'success',
     ).length;
 
     const error_rate = {
