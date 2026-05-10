@@ -1,13 +1,23 @@
 # Wave Current Tasks — foreman-v2-agent
 
-**Wave**: pit-prebuilt-retrofit-20260508 — PIT Pre-Build Functional Delivery Retrofit
-**Session ID**: session-pit-prebuilt-retrofit-20260508
+**Wave**: pre-handover-checkpoint-hardening-20260508 — Deliberate pre-handover checkpoint hardening
+**Session ID**: session-pre-handover-checkpoint-hardening-20260508
 **Date**: 2026-05-08
-**Branch**: copilot/foreman-retrofit-pit-artifacts
-**PR**: #1576
-**CS2 Authorization**: CS2-direct-assignment (issue assigned to foreman-v2-agent by CS2/Johan Ras)
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md
+**Branch**: copilot/harden-pre-handover-checkpoint-trigger
+**PR**: #1586
+**CS2 Authorization**: issue #1583 opened by @APGI-cmy and assigned to Copilot/@APGI-cmy
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pr1586-ecap-evidence-20260508-20260508.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr1586-ecap-evidence-20260508-20260508.md
+ceremony_admin_appointed: execution-ceremony-admin-agent
+appointment_timestamp: 2026-05-08T15:42:50Z
+assigned_scope:
+  - Commit PR #1586 ECAP PREHANDOVER proof and paired ECAP bundle for protected-path admin-evidence remediation
+  - Refresh scope/admin artifacts so the added ECAP evidence files and appointment state are coherent
+expected_return_artifact_paths:
+  - .agent-admin/prehandover/proof-pr-1586-pre-handover-checkpoint-hardening-20260508.md
+  - .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md
+pre_delegation_head_note: SHA captured before ECAP delegation; used for current-head binding validation
+PRE_DELEGATION_HEAD_SHA: e967eca475951f991769c58eea864b71e48a7a75
 
 ---
 
@@ -15,10 +25,10 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrof
 
 | # | Task | Executor | Status | Evidence |
 |---|------|----------|--------|----------|
-| T-1 | Review and retrofit Stage 1–4 PIT pre-build governance artifacts | foreman-v2-agent (POLC-Orchestration — governance docs) | 🔴 PENDING | — |
-| T-2 | Update BUILD_PROGRESS_TRACKER.md — Stages 6–12 functional-delivery guardrails | foreman-v2-agent (POLC-Orchestration) | 🔴 PENDING | — |
-| T-3 | Create _readiness/ artifacts (functional-delivery-retrofit-checklist.md, gap-register.md) | foreman-v2-agent (POLC-Orchestration) | 🔴 PENDING | — |
-| T-4 | Create pr-1576.json, scope declaration, PREHANDOVER proof, session memory | foreman-v2-agent (ceremony) | 🔴 PENDING | — |
+| T-1 | Correct wave admin artifacts for issue #1583 / PR #1586 and secure IAA pre-brief wave record | foreman-v2-agent (POLC-Orchestration) | 🟢 DONE | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`, `.agent-workspace/foreman-v2/personal/scope-declaration-wave-pre-handover-checkpoint-hardening-20260508.md`, `.agent-admin/scope-declarations/pr-1586.md`, `.agent-admin/assurance/iaa-wave-record-pr1586-ecap-evidence-20260508-20260508.md` |
+| T-2 | Implement deliberate pre-handover checkpoint workflow, gate integration, workflow classification audit, regression coverage, and required guidance updates | qa-builder | 🟡 IN PROGRESS | PR #1586 |
+| T-3 | Review builder handback, verify validations/evidence, and prepare final ceremony path | foreman-v2-agent (Quality Professor) | 🔴 PENDING | PR #1586 evidence bundle |
+| T-4 | Commit ECAP protected-path proof/bundle and refresh admin scope artifacts for the live CS2 HOLD on PR #1586 | execution-ceremony-admin-agent | 🟢 DONE | `.agent-admin/prehandover/proof-pr-1586-pre-handover-checkpoint-hardening-20260508.md`, `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1586-pre-handover-checkpoint-hardening-20260508.md`, `.agent-admin/scope-declarations/pr-1586.md`, `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
 
@@ -26,11 +36,11 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrof
 
 ## Governance Notes
 
-- **Wave type**: GOVERNANCE_ONLY — no code, no schema, no CI, no builder delegation
-- **Build Authorization**: NOT CLEARED — confirmed throughout this wave
-- **Stage advancement**: No stage advancement claimed or authorised in this wave
-- **Stages 2–4**: Remain PARTIAL/DRAFT — re-confirmation required after retrofit review
-- **IAA pre-brief**: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrofit-20260508.md (SHA f5e8f48)
+- **Wave type**: MIXED — CI_WORKFLOW + KNOWLEDGE_GOVERNANCE
+- **Protected paths expected**: `.github/workflows/**`, `.github/scripts/**`, `governance/**`, `.agent-workspace/**/knowledge/**`
+- **Build Authorization**: CLEARED FOR GOVERNANCE HARDENING — implementation delegated to qa-builder
+- **Planned builder**: `qa-builder`
+- **IAA pre-brief status**: CLEAR — `.agent-admin/assurance/iaa-wave-record-pr1586-ecap-evidence-20260508-20260508.md` committed
 
 ---
 
@@ -38,22 +48,21 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-prebuilt-retrof
 
 | PR # | Token | Date |
 |------|-------|------|
-| 1576 | PENDING (final audit at handover) | — |
+| 1586 | PENDING (pre-brief/final assurance outstanding) | — |
 
 ---
 
 ## Wave Completion Gate
 
 - [ ] All tasks above show 🟢 DONE
-- [ ] Stage 1–4 artifact review and retrofit complete
-- [ ] BUILD_PROGRESS_TRACKER.md updated with Stages 6–12 guardrails
-- [ ] _readiness/ artifacts created
-- [ ] pr-1576.json and scope declaration committed
-- [ ] PREHANDOVER proof committed
+- [x] IAA wave record committed for this wave
+- [ ] Builder implementation handback reviewed by Foreman
+- [ ] Validation evidence recorded for workflow/script/test changes
+- [x] PREHANDOVER proof committed
 - [ ] Session memory committed
 - [ ] IAA final audit invoked and ASSURANCE-TOKEN received
 - [ ] CS2 notified for merge approval
 
 ---
 
-*Wave: pit-prebuilt-retrofit-20260508 | Branch: copilot/foreman-retrofit-pit-artifacts | PR: #1576*
+*Wave: pre-handover-checkpoint-hardening-20260508 | Branch: copilot/harden-pre-handover-checkpoint-trigger | PR: #1586*
