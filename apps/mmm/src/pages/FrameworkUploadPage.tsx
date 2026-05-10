@@ -96,9 +96,10 @@ export default function FrameworkUploadPage() {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['frameworks'] }); // NBR-001
       const fwId = result?.frameworkId;
-      // Mode A: navigate to review/workbench so user can inspect parse results
-      // Mode B/C: list page — framework is auto-generated, no parse job to review
-      if (mode === 'A' && fwId) {
+      // All modes navigate to the review page:
+      // Mode A: polls parse job until proposed domains are ready, then enables Compile
+      // Mode B/C: proposed domains are created synchronously by mmm-ai-framework-generate, Compile is available immediately
+      if (fwId) {
         navigate(`/frameworks/${fwId}/review`);
       } else {
         navigate('/frameworks');
@@ -219,7 +220,7 @@ export default function FrameworkUploadPage() {
                 <p className="upload-page__next-state-text upload-page__next-state-text--success">
                   {mode === 'A'
                     ? '✅ Mode A framework initialized and source uploaded. Redirecting to review…'
-                    : '✅ Framework created. Redirecting…'}
+                    : '✅ Framework created. Redirecting to review…'}
                 </p>
               )}
             </div>

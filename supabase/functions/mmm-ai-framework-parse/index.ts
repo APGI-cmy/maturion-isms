@@ -34,6 +34,12 @@ import { callAimc } from '../_shared/mmm-aimc-client.ts';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
+/** Derive a DB-safe code slug from a name if the AI response omits the 'code' field. */
+function toCode(n: string, idx: number): string {
+  const slug = n.toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 20);
+  return slug || `ITEM_${idx + 1}`;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders() });
@@ -71,6 +77,14 @@ Deno.serve(async (req: Request) => {
 
   const { parse_job_id, framework_id, source_text } = body;
 
+  // Mark parse job as PROCESSING before starting AIMC call
+  if (parse_job_id) {
+    await supabase
+      .from('mmm_parse_jobs')
+      .update({ status: 'PROCESSING' })
+      .eq('id', parse_job_id);
+  }
+
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
   // Authorization: Bearer AIMC_SERVICE_TOKEN on every call (TR-011)
   const aimcResult = await callAimc(
@@ -86,6 +100,9 @@ Deno.serve(async (req: Request) => {
 
   // TR-009: Circuit breaker fallback — return graceful degradation response
   if (aimcResult.fallback) {
+    if (parse_job_id) {
+      await supabase.from('mmm_parse_jobs').update({ status: 'FAILED', result_json: { error: 'circuit_breaker_open' } }).eq('id', parse_job_id);
+    }
     return jsonResponse(
       {
         fallback: true,
@@ -99,20 +116,22 @@ Deno.serve(async (req: Request) => {
   // NBR-002: Non-200 from AIMC propagated as error
   if (!aimcResult.success) {
     console.error(`[mmm-ai-framework-parse] AIMC error: ${aimcResult.error}`);
+    if (parse_job_id) {
+      await supabase.from('mmm_parse_jobs').update({ status: 'FAILED', result_json: { error: aimcResult.error } }).eq('id', parse_job_id);
+    }
     return jsonResponse({ error: 'AIMC call failed', detail: aimcResult.error }, 502);
   }
 
   // Record ai_interaction for audit trail (TR-034, T-MMM-S6-124, T-MMM-S6-128)
+  // Columns: actor_id, action_type, context_type, target_entity_id, status, request_json, response_json
   await supabase.from('mmm_ai_interactions').insert({
-    organisation_id: claims.orgId,
     actor_id: claims.userId,
-    interaction_type: 'FRAMEWORK_PARSE',
-    operation: 'framework-parse',
-    aimc_request_id: aimcResult.request_id,
-    model_id: (aimcResult.data as any)?.model_id ?? 'aimc-routed',
-    model_version: (aimcResult.data as any)?.model_version ?? null,
-    confidence: (aimcResult.data as any)?.confidence ?? null,
-    created_at: new Date().toISOString(),
+    action_type: 'FRAMEWORK_PARSE',
+    context_type: 'parse_job',
+    target_entity_id: parse_job_id ?? framework_id ?? null,
+    status: 'completed',
+    request_json: { parse_job_id: parse_job_id ?? null, framework_id: framework_id ?? null, source_text: source_text ?? null },
+    response_json: (aimcResult.data as Record<string, unknown>) ?? null,
   }).catch((err: Error) => {
     console.warn(`[mmm-ai-framework-parse] ai_interactions insert warn: ${err.message}`);
   });
@@ -121,8 +140,14 @@ Deno.serve(async (req: Request) => {
   const aiData = (aimcResult.data as any) ?? {};
   const proposedDomains: Array<{
     name: string;
-    description: string;
-    mps?: Array<{ name: string; description: string; criteria?: Array<{ name: string; description: string; maturity_level: number }> }>;
+    code?: string;
+    mps?: Array<{
+      name: string;
+      code?: string;
+      intent_statement?: string;
+      description?: string;
+      criteria?: Array<{ name: string; code?: string; maturity_level?: number }>;
+    }>;
   }> = aiData.proposed_domains ?? [];
 
   let domainCount = 0;
@@ -131,16 +156,15 @@ Deno.serve(async (req: Request) => {
   for (let di = 0; di < proposedDomains.length; di++) {
     const domain = proposedDomains[di];
 
+    // mmm_proposed_domains: framework_id (NOT NULL), name, code, sort_order, source ('AI'|'HUMAN')
     const { data: proposedDomain, error: domError } = await supabase
       .from('mmm_proposed_domains')
       .insert({
         framework_id: framework_id ?? null,
-        parse_job_id: parse_job_id ?? null,
         name: domain.name,
-        description: domain.description,
-        position: di + 1,
-        source: 'AIMC_LIVE',
-        aimc_request_id: aimcResult.request_id,
+        code: domain.code ?? toCode(domain.name, di),
+        sort_order: di + 1,
+        source: 'AI',
       })
       .select()
       .single();
@@ -150,14 +174,16 @@ Deno.serve(async (req: Request) => {
 
     for (let mi = 0; mi < (domain.mps ?? []).length; mi++) {
       const mps = (domain.mps ?? [])[mi];
+      // mmm_proposed_mps: proposed_domain_id, name, code, sort_order, intent_statement, source
       const { data: proposedMPS } = await supabase
         .from('mmm_proposed_mps')
         .insert({
-          framework_id: framework_id ?? null,
           proposed_domain_id: proposedDomain.id,
           name: mps.name,
-          description: mps.description,
-          position: mi + 1,
+          code: mps.code ?? toCode(mps.name, mi),
+          sort_order: mi + 1,
+          intent_statement: mps.intent_statement ?? mps.description ?? null,
+          source: 'AI',
         })
         .select()
         .single();
@@ -166,26 +192,26 @@ Deno.serve(async (req: Request) => {
 
       for (let ci = 0; ci < (mps.criteria ?? []).length; ci++) {
         const crit = (mps.criteria ?? [])[ci];
+        // mmm_proposed_criteria: proposed_mps_id, name, code, sort_order, maturity_level_target, source
         await supabase.from('mmm_proposed_criteria').insert({
-          framework_id: framework_id ?? null,
           proposed_mps_id: proposedMPS.id,
           name: crit.name,
-          description: crit.description,
-          maturity_level: crit.maturity_level,
-          position: ci + 1,
+          code: crit.code ?? toCode(crit.name, ci),
+          sort_order: ci + 1,
+          maturity_level_target: crit.maturity_level ?? null,
+          source: 'AI',
         });
       }
     }
   }
 
-  // Update parse job status to 'COMPLETE'
+  // Update parse job status to 'COMPLETE' — only update valid schema columns (status, result_json)
   if (parse_job_id) {
     await supabase
       .from('mmm_parse_jobs')
       .update({
         status: 'COMPLETE',
-        completed_at: new Date().toISOString(),
-        aimc_request_id: aimcResult.request_id,
+        result_json: { proposed_domains: domainCount, request_id: aimcResult.request_id },
       })
       .eq('id', parse_job_id);
   }

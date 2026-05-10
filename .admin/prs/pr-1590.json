@@ -27,6 +27,7 @@
     "supabase/functions/mmm-framework-publish/index.ts",
     "supabase/functions/mmm-qiw-status/index.ts",
     "supabase/functions/mmm-ai-framework-generate/index.ts",
+    "supabase/functions/mmm-ai-framework-parse/index.ts",
     "supabase/functions/mmm-upload-framework-source/index.ts",
     "supabase/migrations/20260510000001_mmm_parse_jobs_framework_id.sql"
   ],

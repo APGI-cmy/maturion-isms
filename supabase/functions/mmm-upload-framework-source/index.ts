@@ -158,6 +158,26 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Failed to create parse job' }, 500);
   }
 
+  // Fire-and-forget: invoke mmm-ai-framework-parse to convert the uploaded document into
+  // proposed domains/MPS/criteria. This is the functional bridge for Mode A.
+  // The parse function updates the parse job from PENDING → PROCESSING → COMPLETE/FAILED.
+  if (frameworkIdForJob) {
+    const authHeader = req.headers.get('Authorization') ?? '';
+    const parseUrl = `${SUPABASE_URL}/functions/v1/mmm-ai-framework-parse`;
+    fetch(parseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader,
+        'apikey': SUPABASE_SERVICE_ROLE_KEY,
+      },
+      body: JSON.stringify({
+        parse_job_id: parseJob.id,
+        framework_id: frameworkIdForJob,
+      }),
+    }).catch((err: Error) => console.warn(`[mmm-upload-framework-source] parse trigger warn: ${err.message}`));
+  }
+
   // NBR-001: UI must invalidate ['parse-jobs']
   // T-MMM-S6-102: kuc_classification returned in response
   return jsonResponse(
