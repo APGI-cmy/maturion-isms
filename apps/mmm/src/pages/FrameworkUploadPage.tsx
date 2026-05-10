@@ -45,12 +45,14 @@ const MODES = [
 
 export default function FrameworkUploadPage() {
   const [mode, setMode] = useState<'A'|'B'|'C'>('B');
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [started, setStarted] = useState(false);
+  const [modeAValidationError, setModeAValidationError] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: async () => {
-      const initFramework = async (name: string, sourceType: 'GENERATED' | 'HYBRID') => {
+      const initFramework = async (name: string, sourceType: 'GENERATED' | 'HYBRID' | 'VERBATIM') => {
         const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
           body: { name, source_type: sourceType },
         });
@@ -61,8 +63,16 @@ export default function FrameworkUploadPage() {
       };
 
       if (mode==='A') {
+        if (!sourceFile) throw new Error('Please select a source file before starting Mode A.');
+        const frameworkId = await initFramework('Uploaded Framework', 'VERBATIM');
+        const formData = new FormData();
+        formData.append('file', sourceFile);
+        formData.append('source_type', 'VERBATIM');
+        formData.append('mode', mode);
+        formData.append('metadata', JSON.stringify({ source_type: 'VERBATIM', mode, framework_id: frameworkId }));
+
         const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
-          body: { source_type: 'VERBATIM', mode },
+          body: formData,
         });
         if (error) throw new Error(error.message || 'Failed to upload framework source');
         return data;
@@ -92,6 +102,12 @@ export default function FrameworkUploadPage() {
   const selectedMode = MODES.find(m => m.id === mode)!;
 
   const handleStart = () => {
+    setModeAValidationError(null);
+    if (mode === 'A' && !sourceFile) {
+      setStarted(true);
+      setModeAValidationError('Please select a framework source file to continue with Mode A.');
+      return;
+    }
     setStarted(true);
     mutation.mutate();
   };
@@ -139,10 +155,23 @@ export default function FrameworkUploadPage() {
           </div>
 
           <div className="upload-page__actions">
+            {mode === 'A' && (
+              <div className="upload-page__file-input">
+                <label htmlFor="framework-source-file" className="upload-page__next-state-label">
+                  Framework source file
+                </label>
+                <input
+                  id="framework-source-file"
+                  type="file"
+                  accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                  onChange={(e) => setSourceFile(e.target.files?.[0] ?? null)}
+                />
+              </div>
+            )}
             <button
               className="btn btn-primary"
               onClick={handleStart}
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || (mode === 'A' && !sourceFile)}
             >
               {mutation.isPending ? 'Starting…' : 'Start'}
             </button>
@@ -150,9 +179,17 @@ export default function FrameworkUploadPage() {
 
           {started && (
             <div className="upload-page__next-state" role="status" aria-live="polite">
+              {modeAValidationError && (
+                <div className="upload-page__next-state-panel">
+                  <p className="upload-page__next-state-label">Mode selected: {selectedMode.title}</p>
+                  <p className="upload-page__next-state-note">{modeAValidationError}</p>
+                </div>
+              )}
               {mutation.isPending && (
                 <p className="upload-page__next-state-text">
-                  ⏳ Creating framework — please wait…
+                  {mode === 'A'
+                    ? '⏳ Initializing framework and uploading source document — please wait…'
+                    : '⏳ Creating framework — please wait…'}
                 </p>
               )}
               {mutation.isError && (
@@ -162,14 +199,20 @@ export default function FrameworkUploadPage() {
                     Next step: {selectedMode.description}
                   </p>
                   <p className="upload-page__next-state-note">
-                    We couldn&rsquo;t complete this framework action right now. Please try again or{' '}
+                    {mode === 'A'
+                      ? 'We couldn&rsquo;t initialize or upload your Mode A framework source right now.'
+                      : 'We couldn&rsquo;t complete this framework action right now.'}{' '}
+                    {(mutation.error as Error | null)?.message ? `${(mutation.error as Error).message} ` : ''}
+                    Please try again or{' '}
                     <Link to="/frameworks">Return to Frameworks</Link>.
                   </p>
                 </div>
               )}
               {mutation.isSuccess && (
                 <p className="upload-page__next-state-text upload-page__next-state-text--success">
-                  ✅ Framework created. Redirecting…
+                  {mode === 'A'
+                    ? '✅ Mode A framework initialized and source uploaded. Redirecting…'
+                    : '✅ Framework created. Redirecting…'}
                 </p>
               )}
             </div>

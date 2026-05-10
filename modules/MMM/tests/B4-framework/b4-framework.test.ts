@@ -430,6 +430,27 @@ describe('T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode'
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
     expect(src).toContain("supabase.functions.invoke('mmm-upload-framework-source',");
   });
+  it('Mode A renders file picker input for source upload', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
+    expect(src).toContain('id="framework-source-file"');
+    expect(src).toContain('type="file"');
+  });
+  it('Mode A sends FormData with file and source_type', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
+    expect(src).toContain('const formData = new FormData();');
+    expect(src).toContain("formData.append('file', sourceFile);");
+    expect(src).toContain("formData.append('source_type', 'VERBATIM');");
+    expect(src).toContain('body: formData');
+  });
+  it('Mode A initializes framework with VERBATIM before upload invoke', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
+    expect(src).toContain("const frameworkId = await initFramework('Uploaded Framework', 'VERBATIM');");
+    const initIndex = src.indexOf("const frameworkId = await initFramework('Uploaded Framework', 'VERBATIM');");
+    const uploadIndex = src.indexOf("supabase.functions.invoke('mmm-upload-framework-source',");
+    expect(initIndex).toBeGreaterThan(-1);
+    expect(uploadIndex).toBeGreaterThan(-1);
+    expect(initIndex).toBeLessThan(uploadIndex);
+  });
   it('Mode B calls mmm-ai-framework-generate', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
     expect(src).toContain("mode==='B'");
