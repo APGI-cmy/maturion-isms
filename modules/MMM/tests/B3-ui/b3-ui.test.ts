@@ -269,6 +269,7 @@ describe('T-MMM-S6-013: mmm-org-create Edge Function exists', () => {
 });
 
 // ─── T-MMM-S6-014: mmm-framework-init Edge Function exists ───────────────────
+// Route: POST /api/frameworks/init (Supabase Edge Function: mmm-framework-init)
 describe('T-MMM-S6-014: mmm-framework-init Edge Function exists', () => {
   it('file exists', () => {
     expect(fileExists('supabase/functions/mmm-framework-init/index.ts')).toBe(true);
@@ -520,5 +521,23 @@ describe('T-MMM-S6-022: MPS-level questionnaire has 5 domains × 5 MPSs × 1+ qu
   it('edge function computes mps_scores aggregate', () => {
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
     expect(src).toContain('mps_scores');
+  });
+});
+
+// ─── T-MMM-S6-QIW: mmm-qiw-status Edge Function exists ───────────────────────
+// Route: GET /api/qiw/status (Supabase Edge Function: mmm-qiw-status)
+describe('T-MMM-S6-QIW: mmm-qiw-status Edge Function exists', () => {
+  it('file exists', () => {
+    expect(fileExists('supabase/functions/mmm-qiw-status/index.ts')).toBe(true);
+  });
+  it('returns pipeline_stages in response body', () => {
+    const src = readFile('supabase/functions/mmm-qiw-status/index.ts');
+    expect(src).toContain('pipeline_stages');
+  });
+  it('queries mmm_ai_interactions with correct schema columns', () => {
+    const src = readFile('supabase/functions/mmm-qiw-status/index.ts');
+    expect(src).toContain('action_type');
+    expect(src).toContain('duration_ms');
+    expect(src).toContain('status');
   });
 });
