@@ -57,6 +57,7 @@ PHASE_B_BLOCKING_TOKEN: IAA-pr-1591-rca-operationalization-20260510
 PR: PR 1591
 Issue: #1587
 Reviewed SHA: 840a203f65b359a5bf3410725bdcb06e519635cb
+Final assurance date: 2026-05-10
 
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: yes
