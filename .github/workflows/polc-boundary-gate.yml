@@ -578,7 +578,6 @@ jobs:
             # Legacy pattern: standalone iaa-prebrief-*.md
             PREBRIEF_FILES=$(find "$ASSURANCE_DIR" \
               -path "$ASSURANCE_DIR/archive" -prune -o \
-              -path "$ASSURANCE_DIR/archive/*" -prune -o \
               -name "iaa-prebrief-*.md" -print 2>/dev/null | head -5)
             if [ -n "$PREBRIEF_FILES" ]; then
               PREBRIEF_FOUND=true
@@ -597,7 +596,6 @@ jobs:
                 fi
               done < <(find "$ASSURANCE_DIR" \
                 -path "$ASSURANCE_DIR/archive" -prune -o \
-                -path "$ASSURANCE_DIR/archive/*" -prune -o \
                 -name "iaa-wave-record-*.md" -print0 2>/dev/null)
             fi
           fi

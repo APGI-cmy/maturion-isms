@@ -267,7 +267,6 @@ jobs:
               fi
             done < <(find "$ASSURANCE_DIR" \
               -path "$ASSURANCE_DIR/archive" -prune -o \
-              -path "$ASSURANCE_DIR/archive/*" -prune -o \
               -name "iaa-prebrief-*.md" -print0 2>/dev/null)
 
             # New pattern (PR #1348): iaa-wave-record-*.md with ## PRE-BRIEF section
@@ -281,7 +280,6 @@ jobs:
                 fi
               done < <(find "$ASSURANCE_DIR" \
                 -path "$ASSURANCE_DIR/archive" -prune -o \
-                -path "$ASSURANCE_DIR/archive/*" -prune -o \
                 -name "iaa-wave-record-*.md" -print0 2>/dev/null)
             fi
           fi
