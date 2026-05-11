@@ -38,6 +38,7 @@ EOF
   git checkout -q -b test-branch
 
   TEST_PR_BODY=""
+  TEST_PR_LABELS=""
   rm -f .skip-head-sha-rewrite
 
   "$setup_fn"
@@ -58,7 +59,7 @@ PYEOF
   fi
   pr_body="${TEST_PR_BODY:-}"
   set +e
-  output=$(BASE_SHA="$base_sha" PR_NUMBER="9999" PR_BODY="$pr_body" PR_LABELS="" HEAD_SHA="$head_sha" bash "$GATE_SCRIPT" 2>&1)
+  output=$(BASE_SHA="$base_sha" PR_NUMBER="9999" PR_BODY="$pr_body" PR_LABELS="${TEST_PR_LABELS:-}" HEAD_SHA="$head_sha" bash "$GATE_SCRIPT" 2>&1)
   code=$?
   set -e
 
@@ -187,6 +188,15 @@ t1_missing_evidence() {
 }
 run_test "T1 missing functional evidence -> FAIL" 1 t1_missing_evidence
 
+t1d_cs_signoff_label_does_not_bypass_product_gates() {
+  seed_product_change_with_cta
+  TEST_PR_LABELS='CS sign-off: approved'
+  export TEST_PR_LABELS
+  git add .
+  git commit -q -m "product change with cs sign-off label but no evidence"
+}
+run_test "T1d CS sign-off label does not bypass product-delivery evidence gates -> FAIL" 1 t1d_cs_signoff_label_does_not_bypass_product_gates
+
 t1c_migration_only_change_requires_product_evidence() {
   mkdir -p supabase/migrations
   cat > supabase/migrations/20260511070000_add_test_table.sql << 'EOF'
@@ -198,6 +208,28 @@ EOF
   git commit -q -m "migration-only schema change without functional evidence"
 }
 run_test "T1c migration-only schema change is product-facing and requires evidence -> FAIL" 1 t1c_migration_only_change_requires_product_evidence
+
+t1e_pr_body_partial_delivery_claim_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Operational note\nVERDICT: PARTIAL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body partial delivery claim without product evidence"
+}
+run_test "T1e PR-body PARTIAL_FUNCTIONAL_DELIVERY claim triggers evidence requirement -> FAIL" 1 t1e_pr_body_partial_delivery_claim_requires_evidence
+
+t1f_pr_body_handover_claim_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Release status: ready for handover'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body handover claim without product evidence"
+}
+run_test "T1f PR-body handover claim triggers evidence requirement -> FAIL" 1 t1f_pr_body_handover_claim_requires_evidence
 
 t1b_missing_pr_specific_evidence_no_stale_fallback() {
   seed_product_change_with_cta

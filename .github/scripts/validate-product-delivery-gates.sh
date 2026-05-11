@@ -18,11 +18,6 @@ echo "=== Product Delivery Gate Suite ==="
 echo "Issue: maturion-isms#1573"
 echo ""
 
-if [[ "$PR_LABELS" == *"CS sign-off: approved"* ]]; then
-  echo "✅ PASS — CS2 sign-off label present."
-  exit 0
-fi
-
 if [[ "$PR_LABELS" == *"governance"* ]] && [[ "$PR_LABELS" == *"automated"* ]] && [[ "$PR_LABELS" == *"agent:liaison"* ]]; then
   echo "✅ PASS — Automated governance alignment PR bypass."
   exit 0
@@ -74,7 +69,13 @@ pr_body_claims_product_delivery() {
     'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+'
     'FUNCTIONAL_PASS:[[:space:]]*yes'
     'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    'VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    'functional[[:space:]]+delivery'
+    'handover[[:space:]]+readiness|ready[[:space:]]+for[[:space:]]+handover'
+    'product[[:space:]]+fix'
     'Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
   )
   local pattern
