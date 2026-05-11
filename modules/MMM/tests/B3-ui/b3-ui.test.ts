@@ -541,3 +541,28 @@ describe('T-MMM-S6-QIW: mmm-qiw-status Edge Function exists', () => {
     expect(src).toContain('status');
   });
 });
+
+// ─── T-MMM-S6-UPL: mmm-upload-framework-source Edge Function exists ──────────
+// Route: POST /api/upload/framework-source (Supabase Edge Function: mmm-upload-framework-source)
+describe('T-MMM-S6-UPL: mmm-upload-framework-source Edge Function exists', () => {
+  it('file exists', () => {
+    expect(fileExists('supabase/functions/mmm-upload-framework-source/index.ts')).toBe(true);
+  });
+  it('creates mmm_parse_jobs row with PENDING status', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('mmm_parse_jobs');
+    expect(src).toContain('PENDING');
+  });
+  it('stores framework_id in parse job for review-page polling', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('framework_id');
+  });
+  it('triggers mmm-ai-framework-parse after upload (Mode A/C parse bridge)', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('mmm-ai-framework-parse');
+  });
+  it('handles fire-and-forget failures by marking parse job FAILED', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('FAILED');
+  });
+});
