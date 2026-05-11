@@ -2,9 +2,9 @@
 
 ## Status
 **Type**: Canonical Governance Definition  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Authority**: CS2 (Johan Ras / Maturion)  
-**Effective Date**: 2026-04-05  
+**Effective Date**: 2026-05-11  
 **Owner**: Maturion Engineering Leadership  
 **Applies To**: All modules — MAT, ROADMAP, PIT, AIMC, RADAM, and any future Maturion delivery modules  
 **Precedence**: Subordinate only to GOVERNANCE_PURPOSE_AND_SCOPE.md  
@@ -182,10 +182,12 @@ The following 12 stages form the mandatory governed pre-build lifecycle. No stag
 - Integration paths and external dependency map
 - Deployment logic and target environment definition
 - Runtime responsibility assignments
-- All §AD-10–§AD-16, §AD-20–§AD-22 coverage checkboxes satisfied
+- Complete App Description → Architecture coverage matrix for §AD-01 through §AD-24 with columns: `§AD ID | App Description requirement | Architecture coverage section/artifact | Status | Notes / N/A justification`
+- Every §AD row present exactly once (no missing rows)
+- Status values restricted to: `COVERED`, `NOT_APPLICABLE_WITH_JUSTIFICATION`, `BLOCKING_GAP`
 - Architecture completeness checklist per ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md
 
-**Gate Condition**: Architecture approved by Foreman; all TRS requirements traceable to architecture components; ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md checklist PASS.
+**Gate Condition**: Architecture approved by Foreman; all TRS requirements traceable to architecture components; ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md checklist PASS; §AD-01 through §AD-24 matrix rows complete with no missing §AD IDs and no `BLOCKING_GAP` status rows.
 
 **Authority Reference**: `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md`, `governance/templates/minimum-architecture-template.md`
 
@@ -487,6 +489,10 @@ This canon is complete and accepted when:
 ---
 
 ## 13. Version History
+
+**v1.1.0** (2026-05-11): Stage 5 Architecture gate upgraded to require complete §AD-01–§AD-24 App Description → Architecture coverage matrix with explicit status semantics (`COVERED`, `NOT_APPLICABLE_WITH_JUSTIFICATION`, `BLOCKING_GAP`) and blocking enforcement for missing rows or `BLOCKING_GAP` rows. Authority: CS2. Issue: Governance: Upgrade Stage 5 Architecture checklist for full App Description AD-01 to AD-24 coverage.
+
+---
 
 **v1.0.0** (2026-04-05): Initial canon creation. Formalises the 12-stage End-to-End Pre-Build Stage Model as mandatory governance for all governed builds under the 100% one-time build philosophy. Establishes UX Workflow & Wiring Spec, PBFAG, Builder Checklist, and IAA Pre-Brief as explicit mandatory stages. Establishes Change-Propagation Audit, Runtime/Deployment Contract, and Golden Path Verification Pack as required supporting controls. Authority: CS2. Issue: APGI-cmy/maturion-foreman-governance#1319.
 
