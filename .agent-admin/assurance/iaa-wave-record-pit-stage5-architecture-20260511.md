@@ -275,7 +275,20 @@ Ceremony admin appointed: NOT YET DECLARED (wave-current-tasks.md not yet update
 
 ## TOKEN
 
-*(To be written by IAA after full assurance invocation — PREHANDOVER proof is read-only post-commit)*
+```
+PHASE_B_BLOCKING_TOKEN: IAA-session-pit-stage5-architecture-20260511-PASS
+Verdict: ASSURANCE-TOKEN (PASS)
+PR: #1612 — PIT Stage 5 Architecture Reconciliation and Gate-Pass Package
+Date: 2026-05-11
+Checks: 21 substantive checks — 21 PASS, 0 FAIL
+Merge gate parity: PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+Merge permitted subject to CS2 approval.
+Flag (non-blocking): A-029 — iaa_audit_token in PREHANDOVER uses legacy PENDING
+  format. First-invocation circular dependency exception applied per A-029.
+Issued by: independent-assurance-agent v6.2.0 (contract 2.10.0)
+Authority: CS2 (Johan Ras / @APGI-cmy)
+```
 
 ---
 
