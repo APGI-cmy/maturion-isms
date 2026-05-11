@@ -24,10 +24,11 @@
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "independent-assurance-agent",
   "evidence_required": [
+    "calibration evidence: .agent-admin/assurance/iaa-wave-record-pr1599-dry-run-product-build-assurance-20260511.md is intentionally reused as the #1596 dry-run fixture",
     "local command output: PR_NUMBER=1610 .github/scripts/validate-scope-to-diff.sh",
     "local command output: PR_NUMBER=1610 .github/scripts/validate-governance-evidence-exactness.sh",
-    "local command output: PR_NUMBER=1610 BASE_SHA=<merge-base> bash .github/scripts/enforce-scope-declaration-policy.sh",
-    "local command output: PR_NUMBER=1610 BASE_SHA=<merge-base> HEAD_SHA=<head> bash .github/scripts/ecap-admin-ceremony-gate.sh",
+    "local command output: BASE_SHA=$(git merge-base origin/main HEAD) PR_NUMBER=1610 ENFORCE_SCOPE=true bash .github/scripts/enforce-scope-declaration-policy.sh",
+    "local command output: BASE_SHA=$(git merge-base origin/main HEAD) PR_NUMBER=1610 HEAD_SHA=$(git rev-parse HEAD) bash .github/scripts/ecap-admin-ceremony-gate.sh",
     "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh"
   ],
   "merge_authority": "CS2"
