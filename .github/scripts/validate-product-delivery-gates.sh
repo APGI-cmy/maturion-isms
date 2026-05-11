@@ -18,11 +18,6 @@ echo "=== Product Delivery Gate Suite ==="
 echo "Issue: maturion-isms#1573"
 echo ""
 
-if [[ "$PR_LABELS" == *"CS sign-off: approved"* ]]; then
-  echo "✅ PASS — CS2 sign-off label present."
-  exit 0
-fi
-
 if [[ "$PR_LABELS" == *"governance"* ]] && [[ "$PR_LABELS" == *"automated"* ]] && [[ "$PR_LABELS" == *"agent:liaison"* ]]; then
   echo "✅ PASS — Automated governance alignment PR bypass."
   exit 0
@@ -55,6 +50,8 @@ is_product_path() {
       ;;
   esac
 
+  [[ "$file" =~ ^supabase/migrations/ ]] && return 0
+  [[ "$file" =~ ^supabase/seed/ ]] && return 0
   [[ "$file" =~ ^(apps|packages|supabase/functions|api)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
   [[ "$file" =~ ^modules/[^/]+/(src|app|api|frontend|backend|pages?|components?|routes?)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
   [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && [[ "$file" =~ (^|/)(src|app|api|pages?|components?|routes?)/ ]] && return 0
@@ -68,11 +65,19 @@ is_live_functional_delivery_evidence_file() {
 
 pr_body_claims_product_delivery() {
   [ -n "$PR_BODY" ] || return 1
+  # Intentionally broad: this classifier treats PR-body delivery/handover/product-fix language
+  # as delivery claims so evidence is required instead of allowing under-detection.
   local claim_patterns=(
     'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+'
     'FUNCTIONAL_PASS:[[:space:]]*yes'
     'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    'VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    '(^|[[:space:][:punct:]])functional[[:space:]]+delivery([[:space:][:punct:]]|$)'
+    '(^|[[:space:][:punct:]])(handover[[:space:]]+readiness|ready[[:space:]]+for[[:space:]]+handover)([[:space:][:punct:]]|$)'
+    '(^|[[:space:][:punct:]])product[[:space:]]+fix([[:space:][:punct:]]|$)'
     'Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
   )
   local pattern
@@ -247,14 +252,28 @@ required_sections=(
   "PR:"
   "Issue:"
   "Current head SHA reviewed:"
+  "PROMISED_USER_JOURNEY:"
+  "ENTRY_POINT:"
+  "FINAL_EXPECTED_STATE:"
+  "USER_CAN_COMPLETE_JOURNEY:"
   "Product/user journey:"
   "User journey tested:"
+  "CTA_MAP:"
   "CTA/API map:"
+  "BACKEND_CAPABILITY_MAP:"
   "Backend target proof:"
+  "SCHEMA_CONTRACT_CHECK:"
+  "CROSS_FUNCTION_COMPATIBILITY_CHECK:"
+  "ASYNC_JOB_CHECK:"
+  "VISIBLE_STATE_CHECK:"
+  "DEPLOYED_PREVIEW_CHECK:"
+  "DASHBOARD_OR_STATE_REFLECTION_CHECK:"
   "Screenshots or recording:"
   "Preview/live URL:"
   "Pass/fail result:"
+  "KNOWN_PARTIALS:"
   "Known partials:"
+  "CS2_PARTIAL_ACCEPTANCE:"
   "Known limitations:"
   "Partial scope accepted by CS2:"
   "Builder QA functional report reference:"
@@ -269,6 +288,41 @@ for section in "${required_sections[@]}"; do
   fi
 done
 echo "✅ Functional Delivery Evidence gate: PASS"
+
+# ---------------------------------------------------------------------------
+# Gate 3b: Split verdict and contradiction integrity (evidence-level)
+# ---------------------------------------------------------------------------
+if ! grep -qiE '^[[:space:]]*(\*\*)?ADMIN_PASS(\*\*)?:[[:space:]]*(yes|no)' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — Evidence missing split verdict field: ADMIN_PASS"
+  exit 1
+fi
+if ! grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*(yes|no)' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — Evidence missing split verdict field: FUNCTIONAL_PASS"
+  exit 1
+fi
+if ! grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*(FULL_FUNCTIONAL_DELIVERY|PARTIAL_FUNCTIONAL_DELIVERY|ADMIN_ONLY|FAIL)' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — Evidence missing split verdict field: VERDICT/FULL_FUNCTIONAL_DELIVERY_VERDICT"
+  exit 1
+fi
+
+if grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*yes' "$EVIDENCE_PATH" && \
+   ! grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — FUNCTIONAL_PASS: yes requires VERDICT: FULL_FUNCTIONAL_DELIVERY."
+  exit 1
+fi
+
+if grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)' "$EVIDENCE_PATH"; then
+  known_partials_value="$(grep -iE '^[[:space:]]*(KNOWN_PARTIALS|Known partials):' "$EVIDENCE_PATH" | head -1 | cut -d: -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' || true)"
+  known_partials_value_lower="$(printf '%s' "$known_partials_value" | tr '[:upper:]' '[:lower:]')"
+  if [ -n "$known_partials_value" ] && [ "$known_partials_value_lower" != "none" ]; then
+    echo "❌ FAIL — FULL_FUNCTIONAL_DELIVERY cannot coexist with known partials."
+    exit 1
+  fi
+  if grep -qiE 'outstanding|pending|not[[:space:]-]verified|incomplete' "$EVIDENCE_PATH"; then
+    echo "❌ FAIL — FULL_FUNCTIONAL_DELIVERY cannot coexist with outstanding/pending/not-verified language."
+    exit 1
+  fi
+fi
 
 # ---------------------------------------------------------------------------
 # Gate 4: IAA functional verdict split (product-facing requires split fields)
@@ -307,6 +361,22 @@ if [ "$IAA_VERDICT_OK" = false ]; then
 fi
 echo "✅ IAA Functional Verdict gate: PASS"
 
+# Gate 4b: PASS_WITH_CS2_WAIVER must quote explicit CS2 waiver text
+# Accepted formats in evidence/templates:
+#   CS2 waiver quote: "<explicit waiver text>"
+#   CS2_WAIVER_QUOTE: "<explicit waiver text>"
+cs2_waiver_quote_regex='((CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?)|CS2_WAIVER_QUOTE)[[:space:]]*:[[:space:]]*".+"'
+while IFS= read -r iaa_file; do
+  [ -n "$iaa_file" ] || continue
+  [ -f "$iaa_file" ] || continue
+  if grep -qiE 'PASS_WITH_CS2_WAIVER' "$iaa_file"; then
+    if ! grep -qiE "$cs2_waiver_quote_regex" "$iaa_file"; then
+      echo "❌ FAIL — PASS_WITH_CS2_WAIVER in $iaa_file requires quoted explicit CS2 waiver text."
+      exit 1
+    fi
+  fi
+done <<< "$IAA_FILES"
+
 # ---------------------------------------------------------------------------
 # Gate 5: Placeholder honesty
 # ---------------------------------------------------------------------------
@@ -317,7 +387,13 @@ partial_allowed=false
 if grep -qiE 'FUNCTIONAL_PASS:[[:space:]]*no' "$EVIDENCE_PATH" && \
    grep -qiE '(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT):[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY' "$EVIDENCE_PATH" && \
    grep -qiE 'Partial scope accepted by CS2:[[:space:]]*yes' "$EVIDENCE_PATH"; then
-  partial_allowed=true
+  if grep -qiE "$cs2_waiver_quote_regex" "$EVIDENCE_PATH"; then
+    partial_allowed=true
+  else
+    echo "❌ FAIL — Partial functional delivery with CS2 acceptance requires quoted explicit CS2 waiver text in functional evidence."
+    echo "   Required line example: CS2_WAIVER_QUOTE: \"<exact CS2 waiver / partial-scope acceptance text>\""
+    exit 1
+  fi
 fi
 
 PLACEHOLDER_FOUND=false
@@ -343,12 +419,31 @@ if [ "$PLACEHOLDER_FOUND" = true ] && [ "$PASS_CLAIM_FOUND" = true ] && [ "$part
   echo "   - FUNCTIONAL_PASS: no"
   echo "   - VERDICT (or FULL_FUNCTIONAL_DELIVERY_VERDICT): PARTIAL_FUNCTIONAL_DELIVERY"
   echo "   - Partial scope accepted by CS2: yes"
+  echo "   - CS2_WAIVER_QUOTE (or CS2 waiver quote): \"<explicit text>\""
   exit 1
 fi
 echo "✅ Placeholder Honesty gate: PASS"
 
+# ---------------------------------------------------------------------------
+# Gate 6: False-PASS phrase contradictions and handover language discipline
+# ---------------------------------------------------------------------------
+if grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*no' "$EVIDENCE_PATH"; then
+  if grep -qiE 'code[[:space:]]+quality[[:space:]]+PASS|technically[[:space:]]+correct|no[[:space:]]+regressions' "$EVIDENCE_PATH"; then
+    echo "❌ FAIL — product-facing evidence cannot use acceptance language while FUNCTIONAL_PASS: no."
+    exit 1
+  fi
+  if grep -qiE 'ready[[:space:]]+for[[:space:]]+handover|merge[[:space:]]+gate[[:space:]]+released|ready[[:space:]]+for[[:space:]]+merge|closure[[:space:]]+approved' "$EVIDENCE_PATH"; then
+    echo "❌ FAIL — handover/merge/closure language is prohibited when FUNCTIONAL_PASS: no."
+    exit 1
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+# Gate 7: Evidence must include current reviewed head SHA
+# ---------------------------------------------------------------------------
 if [ -n "$HEAD_SHA" ] && ! grep -qiF "$HEAD_SHA" "$EVIDENCE_PATH"; then
-  echo "⚠️  WARNING — Evidence file does not contain current HEAD SHA value ($HEAD_SHA)."
+  echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
+  exit 1
 fi
 
 echo ""

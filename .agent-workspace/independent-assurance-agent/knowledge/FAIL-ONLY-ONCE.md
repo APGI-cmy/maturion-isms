@@ -1,8 +1,8 @@
 # IAA FAIL-ONLY-ONCE Registry
 
 **Agent**: independent-assurance-agent
-**Version**: 3.0.0
-**Last Updated**: 2026-04-28
+**Version**: 3.1.0
+**Last Updated**: 2026-05-10
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -929,3 +929,32 @@ IAA is not limited to existing checklist items. IAA has an affirmative duty to i
 > Challenge status: COMPLETE / INCOMPLETE [list unanswered questions].
 
 **Status**: ACTIVE — enforced on all qualifying IAA invocations (A-042)
+
+---
+
+### A-043 — Product-Build Assurance Must Validate Workflow Correctness (PR #1590 Lesson)
+
+**Triggered by**: APGI-cmy/maturion-isms#1590 — IAA certified narrow patch correctness while workflow-level functional defects remained unresolved.
+
+**Incident pattern**: Route fragments, selected schema fixes, and ceremony evidence were accepted while the promised end-to-end user journey was incomplete (pending async jobs not surfaced to completion, CTA preconditions and success/failure states not fully proven, schema-contract coverage incomplete across invoked downstream functions).
+
+**Permanent Rule**:
+For product-facing BUILD/T2 PRs, IAA must assure full workflow correctness — not patch correctness.
+
+Required future behaviour:
+1. Evaluate whole promised user journey end-to-end.
+2. Schema-check all backend functions in the invoked workflow path.
+3. Verify visible loading/success/failure states for every CTA.
+4. Reject partial product jobs with actionable REJECTION-PACKAGE outputs.
+5. Never allow patch-level correctness language to imply functional delivery.
+
+**How this is checked in Phase 3/4**:
+> A-043 Product-Build Workflow Correctness:
+> - PRODUCT_BUILD_ASSURANCE_STANDARD loaded? [YES/NO]
+> - Promised journey complete? [YES/NO]
+> - CTA capability map complete? [YES/NO]
+> - Schema contract checks complete for all invoked workflow functions? [YES/NO]
+> - Async/pending job visibility and actionability proven? [YES/NO]
+> - Any NO above => FUNCTIONAL_PASS: no and REJECTION-PACKAGE or PARTIAL_FUNCTIONAL_DELIVERY.
+
+**Status**: ACTIVE — enforced on product-facing BUILD/T2 invocations
