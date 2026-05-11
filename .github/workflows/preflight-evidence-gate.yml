@@ -670,12 +670,6 @@ jobs:
     name: "preflight/rca-invocation-evidence"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR head branch
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 1
-
       - name: Detect active RCA_REQUIRED marker
         id: rca_marker
         uses: actions/github-script@v7
@@ -697,7 +691,21 @@ jobs:
             core.setOutput('required', activeMarker ? 'yes' : 'no');
             core.setOutput('marker_url', activeMarker ? activeMarker.html_url : '');
 
+      - name: RCA not required — pass safely
+        if: steps.rca_marker.outputs.required != 'yes'
+        run: |
+          echo "✅ PASS — RCA_REQUIRED marker is not active for this PR."
+          echo "No PR-head RCA enforcement script/artifact checkout is required."
+
+      - name: Checkout PR head branch
+        if: steps.rca_marker.outputs.required == 'yes'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
       - name: RCA Invocation Evidence Gate
+        if: steps.rca_marker.outputs.required == 'yes'
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           RCA_REQUIRED: ${{ steps.rca_marker.outputs.required }}
