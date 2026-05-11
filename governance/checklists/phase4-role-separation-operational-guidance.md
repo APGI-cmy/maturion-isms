@@ -63,6 +63,36 @@ Tier 2 operationalizes these terms through checklists/templates here and does no
 All report formats in this file are reusable Tier 2 templates/examples only.  
 Do not create live `ADMIN_CEREMONY_REPORT`, `ECAP_GATE_AND_ADMIN_REPORT`, `BUILDER_QA_FUNCTIONAL_REPORT`, `IAA_FINAL_ASSURANCE`, or `FOREMAN_ORCHESTRATION_RECORD` artifacts for unrelated active PRs in this issue.
 
+### 4.A) Lightweight rejection notice model (Tier 2)
+
+When any required gate/evidence/assurance check fails, pends, is missing, stale, or not run, the checking agent MUST issue a rejection notice instead of handover language.
+
+Required shape:
+```text
+REJECTION_NOTICE
+
+PR:
+ISSUE:
+REJECTING_AGENT:
+REJECTED_AGENT_OR_ROLE:
+CURRENT_HEAD_SHA:
+FAILED_CHECK_OR_CONTROL:
+FAILURE_CLASS:
+REQUIRED_CORRECTION:
+RECHECK_REQUIRED:
+HANDOVER_ALLOWED: no
+RESULT: REJECTED_BACK_TO_PRODUCER
+```
+
+Allowed specialized prefixes:
+- `ADMIN_REJECTION_NOTICE`
+- `IAA_REJECTION_NOTICE`
+- `FOREMAN_REJECTION_NOTICE`
+
+RCA interaction rule:
+- First failed gate event → rejection loop only (`STOP_AND_FIX` or `REJECTION_NOTICE`).
+- Trigger RCA only for repeated same-class failed handover after correction, repeated re-claim without fix, explicit CS2 RCA directive, or repeated/systemic finding identified by ECAP/IAA.
+
 ---
 
 ## 5) Admin Ceremony Agent Tier 2 guidance
@@ -157,6 +187,7 @@ Responsibilities checklist:
 - mandatory current-head gate snapshot produced and included in handover claim comment before any handover claim is posted;
 - HANDOVER_ALLOWED: yes set only when ALL required checks are green at the snapshot SHA and snapshot SHA matches current HEAD;
 - STOP_AND_FIX output issued if any required check is red, pending, or missing at snapshot time;
+- ADMIN_REJECTION_NOTICE issued when admin evidence is missing, stale, inconsistent, or current-head-invalid;
 - handover claim withheld if snapshot SHA does not match current branch HEAD.
 
 ### Pre-handover mandatory snapshot enforcement
@@ -166,7 +197,7 @@ Before posting any handover claim comment, ECAP MUST:
 1. Run the merge-gate snapshot against the current HEAD SHA.
 2. Populate all required snapshot fields from the `ECAP_GATE_AND_ADMIN_REPORT` output template in §6 (Required Tier 2 output template) of this document.
 3. Set `HANDOVER_ALLOWED: yes` ONLY when ALL required checks are green at the current HEAD SHA.
-4. If any required check is red, pending, or missing: set `HANDOVER_ALLOWED: no` and output `STOP_AND_FIX`.
+4. If any required check is red, pending, missing, stale, or not run: set `HANDOVER_ALLOWED: no` and output `STOP_AND_FIX` or `ADMIN_REJECTION_NOTICE`.
 5. Include the snapshot block in the handover claim comment — this is the required **producer-side handover format** validated by the `handover-claim-gate` CI.
 
 ECAP MUST NOT:
@@ -175,6 +206,7 @@ ECAP MUST NOT:
 - post a handover claim while any required check is red, pending, or missing;
 - set `handover_allowed: YES` in the PREHANDOVER proof while `iaa_audit_token` is PENDING or absent — the IAA token must be resolved and committed before `handover_allowed` may be YES (FAIL-ONLY-ONCE A-021);
 - post any handover claim comment while `iaa_audit_token` is PENDING or absent — Governance Watchdog gap3-prehandover-pending-token enforces this automatically.
+- soften a failing admin/gate state into a handover-ready summary; reject it back to the producer.
 
 The `handover-claim-gate` CI enforces this format as a hard precondition: a handover claim comment that lacks the required snapshot fields, presents a stale SHA, or sets `HANDOVER_ALLOWED: yes` while checks are not fully green will be rejected.
 
@@ -200,6 +232,7 @@ Required Tier 2 output template:
 ECAP_GATE_AND_ADMIN_REPORT
 
 CURRENT_HEAD_SHA: ...
+LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN: yes/no
 REQUIRED_CHECKS_TOTAL: N
 PASSING_CHECKS: N
 ADMIN_REPORT_PRESENT: yes/no
@@ -210,6 +243,7 @@ ALL_REQUIRED_CHECKS_GREEN: yes/no
 FAILING_CHECKS: ...
 PENDING_CHECKS: ...
 MISSING_CHECKS: ...
+STALE_EVIDENCE_FOUND: yes/no
 ECAP_REQUIRED: yes/no
 ECAP_ARTIFACT_PRESENT: yes/no/not_applicable
 IAA_REQUIRED: yes/no
@@ -218,6 +252,7 @@ STOP_AND_FIX_EVIDENCED: yes/no
 STALE_SHA_RISK: low/medium/high
 ECAP_RISK_SCAN_COMPLETE: yes/no
 HANDOVER_ALLOWED: yes/no
+RESULT: HANDOVER_ALLOWED | STOP_AND_FIX | REJECTED_BACK_TO_PRODUCER
 ADMIN_PACKAGE_SURVIVES_SCRUTINY: yes/no
 GATES_GREEN_AT_CURRENT_HEAD: yes/no
 GIT_BRANCH_VERIFIED: yes/no
@@ -339,6 +374,7 @@ Checkpoint-first requirement:
 - IAA pre-brief presence, final assurance, and token state are **PRE_HANDOVER_CHECKPOINT_INPUTS** when IAA is required.
 - `iaa_audit_token: PENDING` or an absent current-head token is a deliberate checkpoint hard stop.
 - IAA artifacts must reference the same current HEAD SHA reviewed by the deliberate checkpoint before handover may proceed.
+- If evidence does not support the claimed verdict, IAA must issue `IAA_REJECTION_NOTICE` and route correction back to producer.
 
 ### 8.A Admin assurance quick scan
 
@@ -396,6 +432,7 @@ IAA_FINAL_ASSURANCE
 ADMIN_PASS: yes/no
 FUNCTIONAL_PASS: yes/no/NOT-ASSESSED
 VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL
+RCA_REVIEW: PASS | REFER_BACK
 
 ADMIN_SCAN_SUMMARY: ...
 ECAP_VERIFICATION: ...
@@ -421,6 +458,8 @@ FULL_FUNCTIONAL_DELIVERY_CLAIMED: yes/no
 FULL_FUNCTIONAL_DELIVERY_REFUSAL_REASON: ...
 CHECKPOINT_INPUT_READY: yes/no
 CHECKPOINT_INPUT_HEAD_SHA: ...
+HANDOVER_ALLOWED: yes/no
+RESULT: HANDOVER_ALLOWED | REJECTED_BACK_TO_PRODUCER
 ```
 
 IAA must be able to say:
@@ -431,6 +470,7 @@ This is full functional delivery.
 ```
 
 Or explicitly refuse full functional delivery with reasons.
+IAA must not soften failed assurance into "approved with notes"; failed assurance is a rejection event.
 
 ---
 
@@ -443,6 +483,8 @@ Checkpoint-first requirement:
 - Foreman must not accept handover, use handover language, or mark ready-for-review unless a current-head `PRE_HANDOVER_CHECKPOINT_RESULT` exists with `HANDOVER_ALLOWED: yes`.
 - Foreman may delegate the checkpoint trigger, but Foreman remains responsible for ensuring the successful checkpoint comment exists for the exact current HEAD SHA.
 - Safety-net comments from watchdog workflows do not substitute for the deliberate checkpoint result.
+- If required checks/evidence are failing, pending, missing, stale, or not run, Foreman must reject producer output (`FOREMAN_REJECTION_NOTICE` or `STOP_AND_FIX`) and require rework before any handover language.
+- If an invoked agent returns inadequate work, Foreman must reject and route correction to that producer; do not convert failed substantive work into administrative summary.
 
 Responsibilities checklist:
 - assign the correct agent for each role;

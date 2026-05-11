@@ -14,7 +14,8 @@ name: Handover Claim Gate
 # (see governance/checklists/phase4-role-separation-operational-guidance.md §6).
 # It must NOT be copied from a prior gate-bot blocked comment.
 # HANDOVER_ALLOWED: yes must reflect a genuine all-green snapshot at the current HEAD SHA.
-# If any required check is red/pending/missing, ECAP must output STOP_AND_FIX and set
+# If any required check is red/pending/missing, ECAP must output STOP_AND_FIX or
+# REJECTION_NOTICE and set
 # HANDOVER_ALLOWED: no. Foreman must reject any handover claim missing this snapshot
 # or presenting HANDOVER_ALLOWED: no.
 #
@@ -326,16 +327,19 @@ jobs:
 
             const requiredSnapshotFields = [
               'CURRENT_HEAD_SHA',
+              'LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN',
               'REQUIRED_CHECKS_TOTAL',
               'PASSING_CHECKS',
               'FAILING_CHECKS',
               'PENDING_CHECKS',
               'MISSING_CHECKS',
+              'STALE_EVIDENCE_FOUND',
               'ECAP_REQUIRED',
               'ECAP_ARTIFACT_PRESENT',
               'IAA_REQUIRED',
               'IAA_ARTIFACT_PRESENT',
               'HANDOVER_ALLOWED',
+              'RESULT',
             ];
             const preconditionFailures = [];
             const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
@@ -348,6 +352,7 @@ jobs:
               const m = String(text || '').match(new RegExp(`^\\s*(?:[-*]\\s+)?${escapeRegex(fieldName)}:\\s*(.+)\\s*$`, 'im'));
               return m ? m[1].trim() : '';
             };
+            const REJECTION_NOTICE_REGEX = /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE/i;
             const isNonEmptySignal = (value) => {
               const t = String(value || '').trim().toLowerCase();
               return t !== '' && !['none', 'n/a', 'na', '0', '[]', '{}', 'not_applicable'].includes(t);
@@ -361,13 +366,16 @@ jobs:
 
             const snapshot = Object.fromEntries(requiredSnapshotFields.map((f) => [f, isIssueComment ? readField(commentBody, f) : '']));
             const missingSnapshotFields = requiredSnapshotFields.filter((f) => isIssueComment && !snapshot[f]);
-            const claimUsesBlockedLanguage = /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(commentBody);
+            const claimUsesBlockedLanguage = /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(commentBody) || REJECTION_NOTICE_REGEX.test(commentBody);
             const snapshotSignalsBlocked = isIssueComment && (
               isNonEmptySignal(snapshot.FAILING_CHECKS) ||
               isNonEmptySignal(snapshot.PENDING_CHECKS) ||
-              isNonEmptySignal(snapshot.MISSING_CHECKS)
+              isNonEmptySignal(snapshot.MISSING_CHECKS) ||
+              /^yes$/i.test(String(snapshot.STALE_EVIDENCE_FOUND || '').trim())
             );
             const snapshotAllowsHandover = asBoolYesNo(snapshot.HANDOVER_ALLOWED);
+            const snapshotResult = String(snapshot.RESULT || '').trim();
+            const snapshotChecksRun = asBoolYesNo(snapshot.LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN);
             const snapshotHead = String(snapshot.CURRENT_HEAD_SHA || '').replace(/[`]/g, '');
             const requiredChecksTotal = Number.parseInt(String(snapshot.REQUIRED_CHECKS_TOTAL || ''), 10);
             const expectedEcapRequired = requiresEcap;
@@ -428,16 +436,25 @@ jobs:
                 preconditionFailures.push(`REQUIRED_CHECKS_TOTAL (${requiredChecksTotal}) does not match enforced set (${REQUIRED_CHECKS.length}).`);
               }
               if (snapshotSignalsBlocked && !claimUsesBlockedLanguage) {
-                preconditionFailures.push('Snapshot reports failing/pending/missing checks, but claim is not HANDOVER_BLOCKED or STOP_AND_FIX.');
+                preconditionFailures.push('Snapshot reports failing/pending/missing/stale checks, but claim is not HANDOVER_BLOCKED, STOP_AND_FIX, or REJECTION_NOTICE.');
               }
               if (snapshotSignalsBlocked && snapshotAllowsHandover === true) {
-                preconditionFailures.push('Snapshot reports failing/pending/missing checks while HANDOVER_ALLOWED is yes.');
+                preconditionFailures.push('Snapshot reports failing/pending/missing/stale checks while HANDOVER_ALLOWED is yes.');
               }
               if (snapshotAllowsHandover === true && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
                 preconditionFailures.push('HANDOVER_ALLOWED is yes but current gate snapshot is not fully green.');
               }
               if (snapshotAllowsHandover === false && !claimUsesBlockedLanguage) {
-                preconditionFailures.push('HANDOVER_ALLOWED is no; handover claim must be STOP_AND_FIX or must not be posted. A snapshot with HANDOVER_ALLOWED: no is valid only as a HANDOVER_BLOCKED / STOP_AND_FIX producer comment.');
+                preconditionFailures.push('HANDOVER_ALLOWED is no; handover claim must be STOP_AND_FIX, REJECTION_NOTICE, or must not be posted. A snapshot with HANDOVER_ALLOWED: no is valid only as a HANDOVER_BLOCKED / STOP_AND_FIX / REJECTION_NOTICE producer comment.');
+              }
+              if (snapshotChecksRun === false && snapshotAllowsHandover === true) {
+                preconditionFailures.push('LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN is set to no while HANDOVER_ALLOWED is set to yes.');
+              }
+              if (snapshotAllowsHandover === true && !/^HANDOVER_ALLOWED$/i.test(snapshotResult)) {
+                preconditionFailures.push(`RESULT (${snapshotResult || 'missing'}) must be HANDOVER_ALLOWED when HANDOVER_ALLOWED is yes.`);
+              }
+              if (snapshotAllowsHandover === false && !/^(STOP_AND_FIX|REJECTED_BACK_TO_PRODUCER)$/i.test(snapshotResult)) {
+                preconditionFailures.push(`RESULT (${snapshotResult || 'missing'}) must be STOP_AND_FIX or REJECTED_BACK_TO_PRODUCER when HANDOVER_ALLOWED is no.`);
               }
               if (snapshotEcapRequired !== null && snapshotEcapRequired !== expectedEcapRequired) {
                 preconditionFailures.push(`ECAP_REQUIRED mismatch. Snapshot=${snapshot.ECAP_REQUIRED}, expected=${expectedEcapRequired ? 'yes' : 'no'}.`);
@@ -483,7 +500,10 @@ jobs:
                 const correctiveProducerComment = existingComments.some(c =>
                   c.user?.login === producerLogin &&
                   new Date(c.created_at) > blockedAt &&
-                  /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '')
+                  (
+                    /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '') ||
+                    REJECTION_NOTICE_REGEX.test(c.body || '')
+                  )
                 );
                 if (!headAdvanced && !correctiveProducerComment) {
                   preconditionFailures.push(
@@ -494,6 +514,7 @@ jobs:
             }
 
             const isBlocked = failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll || preconditionFailures.length > 0;
+            const staleEvidenceFound = preconditionFailures.some((entry) => /stale|does not match PR HEAD|older SHA/i.test(String(entry || '')));
 
             // ── Build comment body ────────────────────────────────────────────────
             let body;
@@ -518,16 +539,19 @@ jobs:
                 : null;
               const currentHeadSnapshot = [
                 `- CURRENT_HEAD_SHA: ${headSha}`,
+                `- LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN: ${noChecksAtAll ? 'no' : 'yes'}`,
                 `- REQUIRED_CHECKS_TOTAL: ${REQUIRED_CHECKS.length}`,
                 `- PASSING_CHECKS: ${passing.length}`,
                 `- FAILING_CHECKS: ${failing.length > 0 ? failing.map(f => f.name).join(', ') : 'none'}`,
                 `- PENDING_CHECKS: ${pending.length > 0 ? pending.map(p => p.name).join(', ') : 'none'}`,
                 `- MISSING_CHECKS: ${(missing.length > 0 || noChecksAtAll) ? (noChecksAtAll ? 'all' : missing.map(m => m.name).join(', ')) : 'none'}`,
+                `- STALE_EVIDENCE_FOUND: ${staleEvidenceFound ? 'yes' : 'no'}`,
                 `- ECAP_REQUIRED: ${requiresEcap ? 'yes' : 'no'}`,
                 `- ECAP_ARTIFACT_PRESENT: ${requiresEcap ? (hasEcapEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                 `- IAA_REQUIRED: ${requiresIaa ? 'yes' : 'no'}`,
                 `- IAA_ARTIFACT_PRESENT: ${requiresIaa ? (hasIaaEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                  `- HANDOVER_ALLOWED: no`,
+                 `- RESULT: STOP_AND_FIX`,
                  `- CHECKPOINT_REQUIRED: yes`,
                  `- CHECKPOINT_PRESENT_FOR_CURRENT_HEAD: ${latestCurrentHeadCheckpointSuccessful ? 'yes' : 'no'}`,
               ].join('\n');
@@ -540,11 +564,11 @@ jobs:
                 '',
                 [statusSummary, preconditionSummary].filter(Boolean).join('\n\n'),
                 '',
-                 '> **A PR cannot claim handover or merge-ready while any required check is red, pending, or missing.**',
-                 '> **A PR also cannot claim handover without a successful current-head PRE_HANDOVER_CHECKPOINT_RESULT.**',
-                 '> Fix all failing checks, wait for pending checks to complete, and ensure all required checks have run before re-claiming handover.',
-                 '> Deliberate path: comment `ECAP_PRE_HANDOVER_CHECKPOINT`, `PRE_HANDOVER_CHECKPOINT`, or `/prepare-handover` first.',
-                 '> If this gate already blocked previously, post a corrective producer comment (HANDOVER_BLOCKED / STOP_AND_FIX) or push a corrective commit before the next claim.',
+                '> **A PR cannot claim handover or merge-ready while any required check is red, pending, or missing.**',
+                '> **A PR also cannot claim handover without a successful current-head PRE_HANDOVER_CHECKPOINT_RESULT.**',
+                '> Fix all failing checks, wait for pending checks to complete, and ensure all required checks have run before re-claiming handover.',
+                '> Deliberate path: comment `ECAP_PRE_HANDOVER_CHECKPOINT`, `PRE_HANDOVER_CHECKPOINT`, or `/prepare-handover` first.',
+                '> If this gate already blocked previously, post a corrective producer comment (HANDOVER_BLOCKED / STOP_AND_FIX / REJECTION_NOTICE) or push a corrective commit before the next claim.',
                 '',
                 '> ⚠️  **Producer-side snapshot requirement**: The snapshot block in your handover claim comment must be produced by the ECAP agent (execution-ceremony-admin-agent) as part of the `ECAP_GATE_AND_ADMIN_REPORT` output. Do NOT copy it from this gate-bot response. `HANDOVER_ALLOWED: yes` must reflect a genuine all-green snapshot at the current HEAD SHA — set it only after verifying all required checks are green. See `governance/checklists/phase4-role-separation-operational-guidance.md` §6.',
                 '',
@@ -562,16 +586,19 @@ jobs:
             } else {
               const currentHeadSnapshot = [
                 `- CURRENT_HEAD_SHA: ${headSha}`,
+                `- LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN: yes`,
                 `- REQUIRED_CHECKS_TOTAL: ${REQUIRED_CHECKS.length}`,
                 `- PASSING_CHECKS: ${passing.length}`,
                 '- FAILING_CHECKS: none',
                 '- PENDING_CHECKS: none',
                 '- MISSING_CHECKS: none',
+                '- STALE_EVIDENCE_FOUND: no',
                 `- ECAP_REQUIRED: ${requiresEcap ? 'yes' : 'no'}`,
                 `- ECAP_ARTIFACT_PRESENT: ${requiresEcap ? (hasEcapEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                 `- IAA_REQUIRED: ${requiresIaa ? 'yes' : 'no'}`,
                 `- IAA_ARTIFACT_PRESENT: ${requiresIaa ? (hasIaaEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                  '- HANDOVER_ALLOWED: yes',
+                 '- RESULT: HANDOVER_ALLOWED',
                  '- CHECKPOINT_REQUIRED: yes',
                  '- CHECKPOINT_PRESENT_FOR_CURRENT_HEAD: yes',
               ].join('\n');

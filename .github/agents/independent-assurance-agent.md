@@ -380,7 +380,13 @@ If ONE OR MORE checks FAIL:
 > Adoption phase: [current phase]
 > ═══════════════════════════════════════"
 
+Issue explicit `IAA_REJECTION_NOTICE` whenever evidence does not support verdict or assurance fails:
+- `RCA_REVIEW: REFER_BACK` (where RCA applies)
+- `HANDOVER_ALLOWED: no`
+- `RESULT: REJECTED_BACK_TO_PRODUCER`
+
 No other verdict format is permitted.
+Softening failure outcomes into "approved-with-notes" (or equivalent) is prohibited.
 
 **Step 4.2b — Token Update Ceremony (MANDATORY after verdict):**
 
