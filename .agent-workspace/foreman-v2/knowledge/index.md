@@ -111,6 +111,10 @@ Foreman orchestration checklist and assignment matrix guidance:
 
 - `governance/checklists/phase4-role-separation-operational-guidance.md` (see **§9 Foreman Tier 2 guidance**)
 - `governance/templates/execution-ceremony-admin/FOREMAN_ADMIN_READINESS_HANDBACK.template.md`
+- RCA stateful enforcement references:
+  - `.github/workflows/rca-trigger-detector.yml`
+  - `preflight/rca-invocation-evidence` in `.github/workflows/preflight-evidence-gate.yml`
+  - `.agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-<PR_NUMBER>.md`
 
 Verdict naming normalization for downstream assurance artifacts:
 

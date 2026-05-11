@@ -175,8 +175,16 @@ ECAP MUST NOT:
 - post a handover claim while any required check is red, pending, or missing;
 - set `handover_allowed: YES` in the PREHANDOVER proof while `iaa_audit_token` is PENDING or absent — the IAA token must be resolved and committed before `handover_allowed` may be YES (FAIL-ONLY-ONCE A-021);
 - post any handover claim comment while `iaa_audit_token` is PENDING or absent — Governance Watchdog gap3-prehandover-pending-token enforces this automatically.
+- post handover / merge-ready / complete language while the RCA marker
+  `<!-- rca-required-marker -->` is active with `RCA_REQUIRED: yes` and the required RCA artifact is absent/incomplete.
 
 The `handover-claim-gate` CI enforces this format as a hard precondition: a handover claim comment that lacks the required snapshot fields, presents a stale SHA, or sets `HANDOVER_ALLOWED: yes` while checks are not fully green will be rejected.
+
+RCA stateful enforcement:
+- Trigger detector workflow (`.github/workflows/rca-trigger-detector.yml`) posts/updates the RCA marker when mandatory trigger conditions are detected.
+- Required artifact path when marker is active:
+  `.agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-<PR_NUMBER>.md`
+- `preflight/rca-invocation-evidence` is a blocking preflight gate for marker+artifact completeness.
 
 Required ECAP risk scan questions:
 ```text

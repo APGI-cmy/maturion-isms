@@ -1,0 +1,163 @@
+name: RCA Trigger Detector
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize, reopened]
+  issue_comment:
+    types: [created]
+  workflow_run:
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+jobs:
+  detect-and-mark-rca:
+    name: "rca/trigger-detector"
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null) ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request')
+    steps:
+      - name: Resolve PR context
+        id: context
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let prNumber = null;
+            let headSha = '';
+            let isDraft = false;
+            let actorLogin = '';
+            let commentBody = '';
+            let workflowRunName = '';
+            let workflowRunConclusion = '';
+
+            if (context.eventName === 'pull_request') {
+              const pr = context.payload.pull_request;
+              prNumber = pr.number;
+              headSha = pr.head.sha;
+              isDraft = Boolean(pr.draft);
+              actorLogin = context.payload.sender?.login || '';
+            } else if (context.eventName === 'issue_comment') {
+              prNumber = context.payload.issue.number;
+              actorLogin = context.payload.comment?.user?.login || '';
+              commentBody = context.payload.comment?.body || '';
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+              headSha = pr.head.sha;
+              isDraft = Boolean(pr.draft);
+            } else if (context.eventName === 'workflow_run') {
+              const linkedPr = context.payload.workflow_run.pull_requests?.[0];
+              if (!linkedPr) {
+                core.setOutput('skip', 'true');
+                return;
+              }
+              prNumber = linkedPr.number;
+              workflowRunName = context.payload.workflow_run.name || '';
+              workflowRunConclusion = context.payload.workflow_run.conclusion || '';
+              actorLogin = context.payload.sender?.login || '';
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+              headSha = pr.head.sha;
+              isDraft = Boolean(pr.draft);
+            }
+
+            core.setOutput('skip', prNumber ? 'false' : 'true');
+            core.setOutput('pr_number', String(prNumber || ''));
+            core.setOutput('head_sha', headSha);
+            core.setOutput('is_draft', isDraft ? 'true' : 'false');
+            core.setOutput('actor_login', actorLogin);
+            core.setOutput('comment_body', commentBody);
+            core.setOutput('workflow_run_name', workflowRunName);
+            core.setOutput('workflow_run_conclusion', workflowRunConclusion);
+
+      - name: Checkout PR head
+        if: steps.context.outputs.skip != 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.context.outputs.head_sha }}
+          fetch-depth: 1
+
+      - name: Detect RCA trigger and upsert marker
+        if: steps.context.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          IS_DRAFT: ${{ steps.context.outputs.is_draft }}
+          ACTOR_LOGIN: ${{ steps.context.outputs.actor_login }}
+          COMMENT_BODY: ${{ steps.context.outputs.comment_body }}
+          WORKFLOW_RUN_NAME: ${{ steps.context.outputs.workflow_run_name }}
+          WORKFLOW_RUN_CONCLUSION: ${{ steps.context.outputs.workflow_run_conclusion }}
+        with:
+          script: |
+            const detector = require('./.github/scripts/rca-trigger-detector.js');
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const headSha = process.env.HEAD_SHA || '';
+            const isDraft = process.env.IS_DRAFT === 'true';
+            const actorLogin = process.env.ACTOR_LOGIN || '';
+            const commentBody = process.env.COMMENT_BODY || '';
+            const workflowRunName = process.env.WORKFLOW_RUN_NAME || '';
+            const workflowRunConclusion = process.env.WORKFLOW_RUN_CONCLUSION || '';
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+
+            const result = detector.detectRcaRequirement({
+              prNumber,
+              headSha,
+              isDraft,
+              actorLogin,
+              eventName: context.eventName,
+              commentBody,
+              workflowRunName,
+              workflowRunConclusion,
+              comments,
+            });
+
+            core.info(`RCA required: ${result.required ? 'yes' : 'no'}`);
+            if (!result.required) return;
+
+            const markerBody = detector.buildRcaRequiredMarker({
+              prNumber,
+              headSha,
+              trigger: result.trigger,
+              failureClass: result.failureClass,
+              artifactPath: result.artifactPath,
+            });
+
+            const existing = comments
+              .filter((comment) => comment.body && comment.body.includes(detector.RCA_REQUIRED_MARKER))
+              .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at))[0];
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: markerBody,
+              });
+              core.info(`Updated RCA_REQUIRED marker comment: ${existing.id}`);
+            } else {
+              const created = await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: markerBody,
+              });
+              core.info(`Created RCA_REQUIRED marker comment: ${created.data.id}`);
+            }
