@@ -12,17 +12,17 @@
 | Application Name | Project Implementation Tracker |
 | Artifact Type | Technical Requirements Specification (TRS — Stage 4) |
 | Version | v0.2-draft |
-| Status | **DRAFT_UPDATED — pending upstream CS2 approvals (Stage 2 and Stage 3, maturion-isms#1548)** |
-| Approval Status | Not approved — blocked until Stage 3 FRS and Stage 2 UX Spec are CS2-approved |
+| Status | **DRAFT_UPDATED — Stage 2 and Stage 3 baselines re-confirmed by CS2; Stage 4 technical validation update prepared for CS2 review (maturion-isms#1604)** |
+| Approval Status | Not approved — pending CS2 Stage 4 TRS approval/re-confirmation |
 | Derived From (Stage 1) | `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06, ref: maturion-isms#1540) |
-| Derived From (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft |
-| Derived From (Stage 3) | `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** (hardened 2026-05-07, ref: maturion-isms#1556; pending CS2 approval) |
+| Derived From (Stage 2) | `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2 baseline (CS2 re-confirmed in tracker context) |
+| Derived From (Stage 3) | `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** baseline (CS2 re-confirmed in tracker context) |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-07; updated 2026-05-08 (retrofit wave maturion-isms#1575 / PR #1576) |
 | Issue | maturion-isms#1554 (original); maturion-isms#1575 (retrofit — PIT-TR-116 to PIT-TR-126 added) |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 
-> **Governance Note:** This TRS is a draft artifact. It may not be declared complete, approved, or gate-passed until Stage 3 FRS and Stage 2 UX Workflow & Wiring Spec are approved by CS2. Stage 5 Architecture remains blocked until Stage 4 TRS is approved. Build Authorization remains NOT CLEARED. This TRS does not authorise code implementation, builder appointment, schema migration, or deployment.
+> **Governance Note:** This TRS is a Stage 4 draft artifact under CS2 review. Stage 2 UX and Stage 3 FRS baselines are now re-confirmed in tracker context; Stage 5 Architecture remains blocked until this Stage 4 TRS is explicitly approved/gate-passed by CS2. Build Authorization remains NOT CLEARED. This TRS does not authorise code implementation, builder appointment, schema migration, or deployment.
 
 > **Retrofit Note (maturion-isms#1575):** This TRS was updated in the PIT pre-build functional delivery retrofit wave (PR #1576) to propagate PIT-FR-113 through PIT-FR-123 from FRS v0.2-hardened into new technical requirements PIT-TR-116 through PIT-TR-126. The stale Issue #1556 dependency notice has been resolved: Section 31 of this document now contains the technical requirements derived from FRS v0.2-hardened additions. The derivation source is now listed as FRS v0.2-hardened (pending CS2 approval) rather than v0.1-draft.
 
@@ -34,7 +34,7 @@ This Technical Requirements Specification (TRS) translates the functional requir
 
 1. **Stage 1** — `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06)
 2. **Stage 2** — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft (Foreman-reviewed 2026-05-06)
-3. **Stage 3** — `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** (hardened 2026-05-07 per maturion-isms#1556; pending CS2 approval)
+3. **Stage 3** — `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** baseline (re-confirmed in tracker context)
 
 Any conflict discovered between this TRS and the FRS, UX Wiring Spec, or App Description **must be resolved upstream** before Stage 5 Architecture proceeds. Changes in upstream stages propagate to this TRS per L-008.
 
@@ -622,34 +622,81 @@ Evidence status transitions must be: `pending → approved` (by reviewer) and `p
 
 ## 16. Timeline / Gantt Technical Requirements
 
-### PIT-TR-064 — Gantt Library (Candidate)
+### PIT-TR-064 — Timeline Rendering Model and Alignment Architecture Contract
 
-The Gantt chart on the Timeline page must be implemented using a React-compatible Gantt library. Candidates: `react-gantt-elastic`, `dhtmlx-gantt`, or a custom SVG renderer. Final library selection deferred to Architecture. The library must support: horizontal date axis, drag-to-resize, today line, progress fill, and zoom levels (day/week/month/quarter/year).
+The Timeline engine must be implemented as a split-plane layout with:
+1. Fixed descriptor/progress columns on the left.
+2. A horizontally scrollable time-grid on the right.
+3. Shared row identity between both panes so project/milestone/deliverable/task rows never drift out of alignment.
+4. Multi-row date headers that can render year/quarter/month/week/day denominators.
+5. Bars and progress overlays rendered on the same coordinate system as the date grid.
 
-**Derived from**: PIT-FR-068 to PIT-FR-076, NF-005 (TRS)
+Stage 5 Architecture must select and justify one rendering family (DOM/virtualised grid, SVG, Canvas, or hybrid). Generic "use a Gantt library" wording is insufficient.
 
-### PIT-TR-065 — Date Storage and Display Contract
+**Derived from**: PIT-FR-068 to PIT-FR-076, PIT-FR-085, PIT-FR-086
 
-All dates must be stored as `date` type (ISO 8601 date-only, `YYYY-MM-DD`) in PostgreSQL. All UI displays must render dates as `DD MMM YYYY` (e.g. "07 May 2026"). Time components must not be stored in date fields to avoid timezone drift.
+### PIT-TR-065 — Timeline Tool/Library Selection Criteria Contract
 
-**Derived from**: PIT-FR-075
+Stage 5 Architecture must evaluate timeline tooling against these mandatory capabilities and document the final choice (including licensing, customisability, and testability):
 
-### PIT-TR-066 — Drag-and-Drop Date Update Contract
+- Exact date↔pixel mapping and inverse hover/cursor date resolution.
+- Drag and resize handles for start/end updates.
+- Progress overlay rendering inside each bar.
+- Multi-row denominator headers (year/quarter/month/week/day).
+- User-selectable denominator + viewport presets (e.g. 12 months, 4 quarters, 5 years).
+- Horizontal scrolling for long ranges (minimum 10-year range).
+- Row virtualisation for large datasets.
+- Dependency/predecessor link rendering.
+- Nested hierarchy rendering (project → milestone → deliverable → task).
+- Keyboard/mouse accessibility support and compatible fallback views.
+- Snapshot/export support.
+- Styling compatibility with PIT/Maturion UI system.
+- Testability through Playwright/E2E and visual regression checks.
 
-Drag operations on Gantt bars must:
-1. Compute new start/end dates from the drag delta.
-2. Display a confirmation dialog with new dates and cascade implications.
-3. On user confirmation: update the `milestones` or `deliverables` table via API.
-4. Trigger a cascade check for child items (deliverables under the milestone, tasks under the deliverable).
-5. Support undo (Ctrl+Z / Cmd+Z) within the current browser session via local state management.
+No timeline tool may be selected only because it is easy to integrate.
 
-**Derived from**: PIT-FR-072, PIT-FR-073
+**Derived from**: PIT-FR-068 to PIT-FR-076, PIT-FR-122, NF-005 (TRS)
 
-### PIT-TR-067 — Server-Side Circular Dependency Validation for Gantt
+### PIT-TR-066 — Timeline Date Mathematics and Alignment Contract
 
-Task dependency arrows on the Gantt must be rendered client-side only. The server-side circular dependency detection (PIT-TR-039) applies to all dependency insert operations, regardless of whether they originate from the Gantt or the Task Management page.
+Timeline date calculations must use a canonical organisation timezone and enforce:
 
-**Derived from**: PIT-FR-056, PIT-FR-074
+1. Milestone/deliverable/project boundaries persisted as ISO dates (`YYYY-MM-DD`).
+2. Task scheduling supports predecessor + offset + duration logic with day/hour/minute precision for calculation.
+3. Start date inclusive, internal end boundary exclusive, user-facing end date displayed as inclusive calendar day.
+4. Date→pixel and pixel→date mappings share one denominator math contract (no drift between grid and bars).
+5. Snap behaviour configurable per denominator (day/week/month).
+6. Hover, drag, and handle labels all use the same mapping contract.
+7. Progress overlay width = bar span × progress percentage.
+8. DST/timezone edge cases neutralised by calendar-cell calculations in canonical timezone before display formatting.
+
+**Derived from**: PIT-FR-072 to PIT-FR-076, PIT-FR-114
+
+### PIT-TR-067 — Timeline Interaction, Persistence, Performance, and QA Contract
+
+The timeline subsystem must provide and persist:
+
+1. Visual timeline creation/editing for project and milestone bars within project boundary constraints.
+2. Deliverable timeline population from child task schedules.
+3. Task schedule derivation from predecessor + offset + duration where direct manual dates are not supplied.
+4. Drag body + start/end handles with visible date labels during drag.
+5. Hover exact-date labels at any x-position over grid/bar.
+6. Auto-scroll while dragging beyond visible viewport.
+7. Denominator switching (year/quarter/month/week/day), collapsible header behaviour, and viewport presets while full range remains scrollable.
+8. Timeline filters for project/milestone/deliverable/task/responsible person/company/department/date/status.
+9. Persistence for predecessor links, offsets, durations, progress overlay values, timeline view settings, denominator/viewport settings, and collapsed/expanded states.
+10. Locked timeline override/approval workflow: changing a locked project/milestone/deliverable timeline requires approval request + audit event before final mutation.
+11. Stage 5/6 performance targets:
+    - 10-year horizontal range supported.
+    - 1,000 visible hierarchy rows supported with virtualisation.
+    - Initial timeline render target ≤ 2 seconds (p95 reference dataset).
+    - Drag interaction target ≥ 30 FPS where browser/device permits.
+    - No descriptor/grid alignment drift under scroll, zoom, or resize.
+12. Stage 6 QA-to-Red timeline tests for date-to-pixel exactness, drag date calculations, hover-date accuracy, overlay proportionality, denominator switching, viewport presets, long horizontal scroll, alignment integrity, filter correctness, predecessor-derived scheduling, and locked-change approval behaviour.
+
+Task dependency arrows may render client-side, but server-side circular dependency validation (PIT-TR-039) remains mandatory for all dependency writes.
+
+**Derived from**: PIT-FR-056, PIT-FR-068 to PIT-FR-076, PIT-FR-085, PIT-FR-086, PIT-FR-113, PIT-FR-121, PIT-FR-122
 
 ---
 
@@ -738,7 +785,7 @@ The `/qa-dashboard` route must enforce `cs2_admin` role at both the RLS level (d
 
 ### PIT-TR-079 — Gantt Rendering Performance
 
-The Timeline page must load and render the Gantt chart in < 1 second for a project with up to 50 milestones.
+The Timeline page must satisfy the baseline performance envelope defined in PIT-TR-067 and load/render core timeline content in < 1 second for a project with up to 50 milestones.
 
 **Derived from**: NF-001 (TRS)
 
@@ -1043,7 +1090,7 @@ Stage 6 QA-to-Red must:
 | A-008 | Deep integration mechanism for upstream modules (Maturity Roadmap, Risk, Incident) | Stage 5 Architecture | OPEN |
 | A-009 | Final deployment platform (Vercel vs alternatives) | Stage 7 PBFAG | OPEN |
 | A-010 | Maximum file size for evidence uploads (50 MB candidate) | CS2 decision | OPEN |
-| A-011 | FRS v0.2-hardened CS2 approval (maturion-isms#1556) — TRS v0.2-draft incorporates the technical requirements for PIT-FR-113–123 but final approval of TRS is still contingent on CS2 approval of FRS v0.2-hardened | Stage 4 gate-pass | OPEN — pending CS2 approval of FRS |
+| A-011 | Stage 4 final approval/re-confirmation by CS2 after timeline-engine technical validation and legacy requirement coverage reconciliation (maturion-isms#1604) | Stage 4 gate-pass | OPEN |
 
 ---
 
@@ -1059,8 +1106,6 @@ Any TRS conflict with the FRS, UX Wiring Spec, or App Description must be resolv
 
 Stage 5 Architecture is **BLOCKED** until:
 - [ ] This TRS is approved by CS2
-- [ ] Stage 3 FRS is approved by CS2 (maturion-isms#1548)
-- [ ] Stage 2 UX Workflow & Wiring Spec is approved by CS2 (maturion-isms#1548)
 - [ ] Open assumption A-004 (AIMC endpoint paths) resolved or deferred with CS2 approval
 
 **Build Authorization**: NOT CLEARED. No implementation code, schema migrations, tests, or CI changes are authorised by this document.
@@ -1222,6 +1267,25 @@ The following features are explicitly **NOT IN SCOPE** for PIT v1:
 These features must NOT be implemented in Stage 12 Build without an explicit CS2-approved scope change to the FRS and TRS. Any builder who encounters a request for these features must raise it with Foreman.
 
 **Derived from**: PIT-FR-123
+
+---
+
+## 32. Legacy Action Tracker Requirement Coverage and Gap Classification (Stage 4 Re-Confirmation)
+
+Legacy source reviewed: `apps/pit/Legacy/Action tracker.docx` (timeline/action-tracker baseline requirements).
+
+| Legacy requirement cluster | Coverage classification | Evidence |
+|---|---|---|
+| Visual timeline matrix (descriptors left, calendar axis right; draggable/resizable bars; exact grid alignment) | Covered by Stage 1 + Stage 2 + Stage 3 + Stage 4 | App Description timeline clauses; UX Timeline screen; FRS PIT-FR-068–076; PIT-TR-064/065/066/067 |
+| Year/quarter/month/week/day denominators, viewport presets, long horizontal scrolling | Covered by Stage 1 + Stage 2 + Stage 4 | App Description timeline behavior; UX timeline controls; PIT-TR-064/065/067 |
+| Hover exact-date labels, visible start/end during drag, auto-scroll while dragging | Covered by Stage 2 + Stage 3 + Stage 4 | UX interaction flow; FRS PIT-FR-072/PIT-FR-075; PIT-TR-066/067 |
+| Progress overlay inside timeline bars | Covered by Stage 1 + Stage 3 + Stage 4 | App Description timeline definition; FRS PIT-FR-070; PIT-TR-064/066/067 |
+| Filters across project/milestone/deliverable/task/responsible/company/department/date/status | Covered by Stage 1 + Stage 2 + Stage 3 + Stage 4 | App Description filtering model; UX filter wiring; FRS PIT-FR-085/PIT-FR-086; PIT-TR-067 |
+| Task scheduling via predecessor + offset + duration instead of manual date-only entry | Covered by Stage 1 + Stage 3 + Stage 4 | App Description scheduling logic; FRS PIT-FR-056/PIT-FR-072/PIT-FR-073; PIT-TR-066/067 |
+| Locked timeline change override with approval + audit trail | Covered by Stage 1 + Stage 3 + Stage 4 | App Description override principle; FRS escalation/approval and audit controls; PIT-TR-067 locked-change contract |
+| QA must prove runtime behavior and UI alignment (not file-existence checks) | Covered by Stage 1 + Stage 2 + Stage 3 + Stage 4 | MMM L-005 propagation; UX five-state + wiring; FRS Stage 6 derivation clauses; PIT-TR-067 + PIT-TR-112 |
+
+**Gap statement:** No unclassified legacy timeline gaps remain after this Stage 4 update. No Stage 1 or Stage 2 amendment is required by this wave; remaining action is CS2 approval/re-confirmation of Stage 4.
 
 ---
 
