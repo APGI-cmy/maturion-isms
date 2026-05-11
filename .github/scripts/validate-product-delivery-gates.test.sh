@@ -470,6 +470,7 @@ Known partials: backend wiring
 CS2_PARTIAL_ACCEPTANCE: yes
 Known limitations: placeholder wiring remains
 Partial scope accepted by CS2: yes
+CS2_WAIVER_QUOTE: "CS2 accepts partial scope for this wave while known partials are tracked."
 Builder QA functional report reference: ref
 ECAP/admin-gate report reference: ref
 IAA final assurance reference: ref
@@ -485,6 +486,53 @@ EOF
   git commit -q -m "partial scope declaration"
 }
 run_test "T6 explicit partial scope with CS2 acceptance -> PASS" 0 t6_partial_scope_allowed
+
+t6c_partial_scope_cs2_yes_without_quote_fails() {
+  seed_product_change_with_cta
+  seed_valid_iaa
+  cat > .functional-delivery/pr-9999.md << 'EOF'
+PR: #9999
+Issue: #1573
+Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: partial accepted by CS2 but quote missing
+ENTRY_POINT: /framework/create
+FINAL_EXPECTED_STATE: partial
+USER_CAN_COMPLETE_JOURNEY: no
+Product/user journey: partial flow
+User journey tested: no
+CTA_MAP: present
+CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
+Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
+Screenshots or recording: present
+Preview/live URL: url
+Pass/fail result: partial
+KNOWN_PARTIALS: backend wiring
+Known partials: backend wiring
+CS2_PARTIAL_ACCEPTANCE: yes
+Known limitations: partial accepted but quote missing
+Partial scope accepted by CS2: yes
+Builder QA functional report reference: ref
+ECAP/admin-gate report reference: ref
+IAA final assurance reference: ref
+| CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
+|---|---|---|---|---|---|---|---|
+| cta | intent | route | /api/frameworks/init | obj | ok | fail | ev |
+mmm-framework-init
+FUNCTIONAL_PASS: no
+VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
+ADMIN_PASS: yes
+EOF
+  git add .
+  git commit -q -m "partial scope cs2 yes without waiver quote"
+}
+run_test "T6c partial scope with CS2 yes but missing CS2_WAIVER_QUOTE -> FAIL" 1 t6c_partial_scope_cs2_yes_without_quote_fails
 
 t6b_ui_placeholder_prop_should_not_trigger_placeholder_honesty() {
   mkdir -p api/frameworks

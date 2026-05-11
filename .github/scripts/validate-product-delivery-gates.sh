@@ -382,11 +382,23 @@ done <<< "$IAA_FILES"
 placeholder_regex='not yet wired|TODO([[:space:]]+|:[[:space:]]*|_[[:space:]]*|-+[[:space:]]*)backend|placeholder[[:space:]]+(wiring|implementation|backend)|temporary[[:space:]]+(stub|shim)'
 pass_claim_regex='FUNCTIONAL_PASS:[[:space:]]*yes|FULL_FUNCTIONAL_DELIVERY|functional PASS|full functional delivery|100% build|one-time build|complete product workflow'
 partial_allowed=false
+partial_with_cs2=false
+partial_has_cs2_quote=false
 
 if grep -qiE 'FUNCTIONAL_PASS:[[:space:]]*no' "$EVIDENCE_PATH" && \
    grep -qiE '(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT):[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY' "$EVIDENCE_PATH" && \
    grep -qiE 'Partial scope accepted by CS2:[[:space:]]*yes' "$EVIDENCE_PATH"; then
-  partial_allowed=true
+  partial_with_cs2=true
+  if grep -qiE '((CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?)|CS2_WAIVER_QUOTE)[[:space:]]*:[[:space:]]*".+"' "$EVIDENCE_PATH"; then
+    partial_has_cs2_quote=true
+    partial_allowed=true
+  fi
+fi
+
+if [ "$partial_with_cs2" = true ] && [ "$partial_has_cs2_quote" = false ]; then
+  echo "❌ FAIL — Partial functional delivery with CS2 acceptance requires quoted explicit CS2 waiver text in functional evidence."
+  echo "   Required line example: CS2_WAIVER_QUOTE: \"<exact CS2 waiver / partial-scope acceptance text>\""
+  exit 1
 fi
 
 PLACEHOLDER_FOUND=false
@@ -412,6 +424,7 @@ if [ "$PLACEHOLDER_FOUND" = true ] && [ "$PASS_CLAIM_FOUND" = true ] && [ "$part
   echo "   - FUNCTIONAL_PASS: no"
   echo "   - VERDICT (or FULL_FUNCTIONAL_DELIVERY_VERDICT): PARTIAL_FUNCTIONAL_DELIVERY"
   echo "   - Partial scope accepted by CS2: yes"
+  echo "   - CS2_WAIVER_QUOTE (or CS2 waiver quote): \"<explicit text>\""
   exit 1
 fi
 echo "✅ Placeholder Honesty gate: PASS"
