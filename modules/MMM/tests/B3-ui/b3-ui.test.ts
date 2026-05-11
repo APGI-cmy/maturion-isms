@@ -565,4 +565,11 @@ describe('T-MMM-S6-UPL: mmm-upload-framework-source Edge Function exists', () =>
     const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
     expect(src).toContain('FAILED');
   });
+  it('requires ADMIN role to align with mmm-ai-framework-parse role contract', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    // Role contract alignment: upload requires ADMIN so that the forwarded JWT
+    // is accepted by mmm-ai-framework-parse (which also requires ADMIN).
+    // Prevents non-admin uploads creating parse jobs that the parser then rejects (403).
+    expect(src).toContain("requireRole(claims.role, ['ADMIN'])");
+  });
 });

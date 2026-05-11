@@ -9,9 +9,12 @@
  * Builder: integration-builder (B7 live wire)
  * Date:    2026-04-25
  *
- * JWT required (per architecture §A4.2: any authenticated user may upload).
- * See migration 20260429000001_mmm_parse_jobs_org_columns.sql for organisation_id,
- * created_by, source_type columns added to mmm_parse_jobs.
+ * JWT required + ADMIN role.
+ * The full framework lifecycle (init → upload → parse → compile → publish) is ADMIN-only.
+ * ADMIN required here to align with mmm-ai-framework-parse (which also requires ADMIN),
+ * preventing a role mismatch where a non-admin upload creates a parse job that the parser
+ * then rejects (403), leaving the job permanently in PENDING/FAILED.
+ * See architecture §A4.2 (ADMIN-only framework operations).
  *
  * Stub replaced with live KUC wiring in B7.
  * OB-3 / CG-002: No KUC internal logic in MMM — MMM routes to KUC and receives classification.
@@ -34,7 +37,7 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
+import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/mmm-auth.ts';
 import { uploadToKuc } from '../_shared/mmm-kuc-client.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
@@ -62,9 +65,18 @@ Deno.serve(async (req: Request) => {
     return response as Response;
   }
 
-  // Auth policy: JWT required only (per architecture §A4.2).
-  // NBR-002: Any authenticated user may upload a framework source document.
-  // Do not add an ADMIN-only gate here; ADMIN enforcement belongs in mmm-framework-publish at publish time.
+  // Auth policy: ADMIN role required.
+  // The full framework lifecycle (init → upload → parse → compile → publish) is ADMIN-only.
+  // This aligns with mmm-framework-init, mmm-ai-framework-parse, mmm-framework-compile,
+  // and mmm-framework-publish which all require ADMIN.
+  // Enforcing ADMIN here prevents a role mismatch where a non-admin upload would
+  // successfully create a parse job but then fail the parse trigger (403 from
+  // mmm-ai-framework-parse), leaving the parse job stuck in PENDING/FAILED.
+  try {
+    requireRole(claims.role, ['ADMIN']);
+  } catch (response) {
+    return response as Response;
+  }
 
   // TR-019: Accept multipart or JSON
   let fileBlob: Blob | null = null;
