@@ -372,16 +372,17 @@ echo "✅ IAA Functional Verdict gate: PASS"
 
 # Gate 4c: No-current-head-drift (IAA artifact must bind to current reviewed head)
 IAA_HEAD_BOUND=false
+IAA_HEAD_KEY_REGEX='^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
-  if awk -v sha="$HEAD_SHA" '
+  if awk -v sha="$HEAD_SHA" -v keyre="$IAA_HEAD_KEY_REGEX" '
     BEGIN { IGNORECASE=1 }
     {
       line = $0
       sub(/\r$/, "", line)
-      if (line ~ /^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*/) {
-        sub(/^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*/, "", line)
+      if (line ~ keyre) {
+        sub(keyre, "", line)
         sub(/[[:space:]]+$/, "", line)
         if (line == sha) {
           found = 1
