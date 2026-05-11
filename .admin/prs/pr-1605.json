@@ -1,0 +1,28 @@
+{
+  "pr": 1605,
+  "issue": 1604,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".agent-admin/scope-declarations/pr-1605.md",
+    ".admin/prs/pr-1605.json",
+    "modules/pit/03-trs/technical-requirements-specification.md",
+    "modules/pit/03-trs/frs-to-trs-traceability.md",
+    "modules/pit/03-trs/timeline-engine-technical-validation.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
+  "evidence_required": [
+    "TRS status/derivation reflects Stage 2 and Stage 3 CS2 re-confirmed baselines",
+    "TRS timeline section defines rendering constraints, tool-selection criteria, date-math contract, interaction contract, persistence contract, performance targets, and Stage 6 QA obligations",
+    "Legacy Action tracker requirements are reconciled with explicit coverage/gap classification evidence",
+    "FRS-to-TRS traceability timeline rows map to precise TRS IDs for timeline behavior and QA-relevant contracts",
+    "BUILD_PROGRESS_TRACKER reflects Stage 2/3 re-confirmed baseline, Stage 4 ready for CS2 review, Stage 5 blocked, Build Authorization NOT CLEARED"
+  ],
+  "merge_authority": "CS2"
+}

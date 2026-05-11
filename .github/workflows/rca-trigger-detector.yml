@@ -1,0 +1,240 @@
+name: RCA Trigger Detector
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize, reopened]
+  issue_comment:
+    types: [created]
+  workflow_run:
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+jobs:
+  detect-and-mark-rca:
+    name: "rca/trigger-detector"
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null) ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request')
+    steps:
+      - name: Resolve PR context
+        id: context
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let prNumber = null;
+            let headSha = '';
+            let isDraft = false;
+            let actorLogin = '';
+            let commentBody = '';
+            let workflowRunName = '';
+            let workflowRunConclusion = '';
+
+            if (context.eventName === 'pull_request') {
+              const pr = context.payload.pull_request;
+              prNumber = pr.number;
+              headSha = pr.head.sha;
+              isDraft = Boolean(pr.draft);
+              actorLogin = context.payload.sender?.login || '';
+            } else if (context.eventName === 'issue_comment') {
+              prNumber = context.payload.issue.number;
+              actorLogin = context.payload.comment?.user?.login || '';
+              commentBody = context.payload.comment?.body || '';
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+              headSha = pr.head.sha;
+              isDraft = Boolean(pr.draft);
+            } else if (context.eventName === 'workflow_run') {
+              const linkedPr = context.payload.workflow_run.pull_requests?.[0];
+              if (!linkedPr) {
+                core.setOutput('skip', 'true');
+                return;
+              }
+              prNumber = linkedPr.number;
+              workflowRunName = context.payload.workflow_run.name || '';
+              workflowRunConclusion = context.payload.workflow_run.conclusion || '';
+              actorLogin = context.payload.sender?.login || '';
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+              headSha = pr.head.sha;
+              isDraft = Boolean(pr.draft);
+            }
+
+            core.setOutput('skip', prNumber ? 'false' : 'true');
+            core.setOutput('pr_number', String(prNumber || ''));
+            core.setOutput('head_sha', headSha);
+            core.setOutput('is_draft', isDraft ? 'true' : 'false');
+            core.setOutput('actor_login', actorLogin);
+            core.setOutput('comment_body', commentBody);
+            core.setOutput('workflow_run_name', workflowRunName);
+            core.setOutput('workflow_run_conclusion', workflowRunConclusion);
+
+      - name: Detect RCA trigger and upsert marker
+        if: steps.context.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          IS_DRAFT: ${{ steps.context.outputs.is_draft }}
+          ACTOR_LOGIN: ${{ steps.context.outputs.actor_login }}
+          COMMENT_BODY: ${{ steps.context.outputs.comment_body }}
+          WORKFLOW_RUN_NAME: ${{ steps.context.outputs.workflow_run_name }}
+          WORKFLOW_RUN_CONCLUSION: ${{ steps.context.outputs.workflow_run_conclusion }}
+        with:
+          script: |
+            const RCA_REQUIRED_MARKER = '<!-- rca-required-marker -->';
+            const RCA_COMMAND_PATTERN = /\b(RCA_REQUIRED|ROOT_CAUSE_REQUIRED|CONTINUOUS_IMPROVEMENT_REQUIRED)\b/i;
+            const STOP_AND_FIX_PATTERN = /\b(STOP_AND_FIX|HANDOVER_ALLOWED:\s*no)\b/i;
+            const HANDOVER_CLAIM_PATTERN = /\b(handover(?: claim)?|merge-ready|merge ready|ready to merge|ready for review|ready-for-review|all gates pass|merge gate released)\b/i;
+            const BLOCKED_PATTERN = /\bHANDOVER BLOCKED\b/i;
+
+            function isHandoverClaim(text) {
+              if (!String(text || '').trim()) return false;
+              if (STOP_AND_FIX_PATTERN.test(String(text || ''))) return false;
+              return HANDOVER_CLAIM_PATTERN.test(String(text || ''));
+            }
+
+            function classifyFailureClasses(text) {
+              const body = String(text || '');
+              const classes = [];
+              if (/\b(stale[-\s]?head|stale\s+current_head_sha|current_head_sha.*stale)\b/i.test(body)) classes.push('stale-head handover evidence');
+              if (/\b(stale.*(ecap|prehandover)|(ecap|prehandover).*stale)\b/i.test(body)) classes.push('stale ECAP/PREHANDOVER evidence');
+              if (/\b(missing\s+ecap|ecap.*missing)\b/i.test(body)) classes.push('missing ECAP after protected-path changes');
+              if (/\b(missing functional delivery evidence|functional delivery evidence missing|functional_pass:\s*no)\b/i.test(body)) classes.push('missing functional delivery evidence');
+              if (/\b(iaa.*(missing|pending)|iaa final assurance.*(missing|pending|fail))\b/i.test(body)) classes.push('missing or pending IAA final assurance');
+              if (/\b(issue-mismatch|evidence-exactness mismatch)\b/i.test(body)) classes.push('repeated issue-reference / evidence-exactness mismatch');
+              if (/\b(gate-changing pr rule|gate-changing.*proof failure|gate-changing.*fail)\b/i.test(body)) classes.push('repeated gate-changing PR proof failure');
+              return classes;
+            }
+
+            function extractSha(text) {
+              const match = String(text || '').match(/\b([0-9a-f]{7,40})\b/i);
+              return match ? match[1].toLowerCase() : '';
+            }
+
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const headSha = process.env.HEAD_SHA || '';
+            const isDraft = process.env.IS_DRAFT === 'true';
+            const actorLogin = process.env.ACTOR_LOGIN || '';
+            const commentBody = process.env.COMMENT_BODY || '';
+            const workflowRunName = process.env.WORKFLOW_RUN_NAME || '';
+            const workflowRunConclusion = process.env.WORKFLOW_RUN_CONCLUSION || '';
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+
+            const claims = comments.filter((comment) => isHandoverClaim(comment.body || ''));
+            const blocked = comments.filter((comment) => BLOCKED_PATTERN.test(String(comment.body || '')));
+            const blockedAfterClaim = claims.length > 0 && blocked.some((block) => {
+              const blockTime = new Date(block.created_at || 0).getTime();
+              return claims.some((claim) => blockTime >= new Date(claim.created_at || 0).getTime());
+            });
+
+            const classCounts = new Map();
+            const classShas = new Map();
+            for (const comment of comments) {
+              for (const failureClass of classifyFailureClasses(comment.body || '')) {
+                classCounts.set(failureClass, (classCounts.get(failureClass) || 0) + 1);
+                const sha = extractSha(comment.body || '');
+                if (sha) {
+                  if (!classShas.has(failureClass)) classShas.set(failureClass, new Set());
+                  classShas.get(failureClass).add(sha);
+                }
+              }
+            }
+
+            const repeatedClass = Array.from(classCounts.entries()).find(([, count]) => count >= 2);
+            const staleHeadShaSet = classShas.get('stale-head handover evidence') || new Set();
+            const repeatedStaleHeadAfterCorrection =
+              (classCounts.get('stale-head handover evidence') || 0) >= 2 &&
+              (staleHeadShaSet.size >= 2 || staleHeadShaSet.size === 0);
+            const cs2Explicit = actorLogin.toLowerCase() === 'apgi-cmy' && RCA_COMMAND_PATTERN.test(commentBody);
+            const reviewerExplicit = RCA_COMMAND_PATTERN.test(commentBody) && /\bREQUEST_CHANGES\b/i.test(commentBody);
+            const iaaBlockingVerdict = comments.some((comment) =>
+              /\bVERDICT:\s*(FAIL|ADMIN_ONLY|PARTIAL_FUNCTIONAL_DELIVERY)\b/i.test(String(comment.body || ''))
+            );
+            const workflowRunAllowList = new Set([
+              'preflight evidence gate',
+              'handover claim gate',
+              'merge gate interface',
+              'polc boundary validation',
+              'governance ceremony gate',
+            ]);
+
+            const workflowRunFailureAfterClaim =
+              context.eventName === 'workflow_run' &&
+              workflowRunConclusion.toLowerCase() === 'failure' &&
+              claims.length > 0 &&
+              workflowRunAllowList.has(workflowRunName.toLowerCase());
+
+            const triggers = [];
+            if (cs2Explicit) triggers.push({ trigger: 'CS2 explicit RCA_REQUIRED comment', failureClass: 'explicit CS2 RCA requirement' });
+            if (reviewerExplicit) triggers.push({ trigger: 'Reviewer REQUEST_CHANGES with RCA_REQUIRED marker', failureClass: 'substantive review failure requiring RCA' });
+            if (blockedAfterClaim && !isDraft) triggers.push({ trigger: 'Handover Claim Gate posted HANDOVER BLOCKED after handover claim', failureClass: 'blocked handover after claim' });
+            if (workflowRunFailureAfterClaim && !isDraft) triggers.push({ trigger: `Required CI workflow failed after handover claim (${workflowRunName})`, failureClass: 'required CI gate failed after handover claim' });
+            if (iaaBlockingVerdict) triggers.push({ trigger: 'IAA posted blocking verdict', failureClass: 'IAA assurance failure' });
+            if (repeatedClass) triggers.push({ trigger: `Same failure class repeated (${repeatedClass[0]})`, failureClass: repeatedClass[0] });
+            if (repeatedStaleHeadAfterCorrection) triggers.push({ trigger: 'Repeated stale CURRENT_HEAD_SHA / stale-head evidence after corrective push', failureClass: 'stale-head handover evidence' });
+
+            const antiBurdenOnlyDraftFirstPass = isDraft && triggers.every((entry) => !/explicit|repeated/i.test(entry.trigger));
+            const required = triggers.length > 0 && !antiBurdenOnlyDraftFirstPass;
+            const selected = triggers[0] || { trigger: '', failureClass: '' };
+            const artifactPath = `.agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-${prNumber}.md`;
+
+            core.info(`RCA required: ${required ? 'yes' : 'no'}`);
+            if (!required) return;
+
+            const markerBody = [
+              RCA_REQUIRED_MARKER,
+              '## RCA_REQUIRED — Root Cause and Corrective Action Agent invocation required',
+              '',
+              'RCA_REQUIRED: yes',
+              'RCA_AGENT_REQUIRED: root-cause-corrective-action-agent',
+              `PR: #${prNumber}`,
+              `TRIGGER: ${selected.trigger || 'detected trigger condition'}`,
+              `FAILURE_CLASS: ${selected.failureClass || 'meaningful failure repeat / blocked handover'}`,
+              `CURRENT_HEAD_SHA: ${headSha || 'unknown'}`,
+              `RCA_ARTIFACT_REQUIRED: ${artifactPath}`,
+              'HANDOVER_ALLOWED: no',
+              'RESULT: STOP_AND_FIX',
+              '',
+              'The producing agent must invoke the Root Cause and Corrective Action Agent and commit the required RCA assessment before further handover / merge-ready / complete claims.',
+            ].join('\n');
+
+            const existing = comments
+              .filter((comment) => comment.body && comment.body.includes(RCA_REQUIRED_MARKER))
+              .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at))[0];
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: markerBody,
+              });
+              core.info(`Updated RCA_REQUIRED marker comment: ${existing.id}`);
+            } else {
+              const created = await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: markerBody,
+              });
+              core.info(`Created RCA_REQUIRED marker comment: ${created.data.id}`);
+            }
