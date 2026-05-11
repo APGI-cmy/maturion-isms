@@ -144,8 +144,8 @@ This section attests that all Stage 1–4 approved artifacts were consulted in p
 | A-005 | Email provider selection | **CLOSED — Resend selected at Architecture** | `architecture.md` §1.3 |
 | A-007 | Report generation library | **CLOSED — Puppeteer selected at Architecture** | `architecture.md` §1.3 |
 | A-008 | Deep integration mechanism | OPEN — Stage 5–7 | Bounded by `source_links` + `integration_configs` pattern |
-| A-009 | Final deployment platform | OPEN — Stage 7 PBFAG | Vercel confirmed; alternatives allowed with equivalent SPA fallback |
-| A-010 | Maximum evidence file size | OPEN — CS2 decision | Architecture supports up to 50 MB |
+| A-009 | Final deployment platform | **CLOSED — Vercel selected at Architecture** | `architecture.md` §21 |
+| A-010 | Maximum evidence file size | **CLOSED — 50 MB per file** | `architecture.md` §11 |
 | A-011 | Stage 4 final approval (from Stage 4 TRS) | **CLOSED — maturion-isms#1604 closed by @APGI-cmy 2026-05-11** | Verifiable GitHub reference |
 
 ---

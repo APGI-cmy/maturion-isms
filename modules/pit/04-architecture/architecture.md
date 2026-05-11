@@ -359,7 +359,7 @@ Every table in PIT schema has RLS enabled. Tables without RLS = blocking defect.
 | `generate_report` | `POST /functions/v1/generate-report` | Yes | Report generation |
 | `watchdog_evaluation` | `POST /functions/v1/watchdog-evaluation` | Service role | Watchdog evaluation |
 | `send_notification_email` | DB webhook trigger | Service role | Email delivery |
-| `compute_progress_rollup` | DB trigger/webhook | Service role | Progress roll-up |
+| `compute_progress_rollup` | DB trigger/webhook | Service role | Progress roll-up **and** predecessor schedule recomputation (`calculated_start_date` / `calculated_end_date`) |
 | `pit-task-advisor` | `POST /functions/v1/pit-task-advisor` | Yes | AIMC proxy |
 | `pit-portfolio-risk` | `POST /functions/v1/pit-portfolio-risk` | Yes | AIMC proxy |
 | `pit-escalation-advisor` | `POST /functions/v1/pit-escalation-advisor` | Yes | AIMC proxy |
@@ -496,7 +496,7 @@ Locked bars: drag disabled (visual indicator). Override request: creates DB entr
 calculated_start = MAX(predecessor.calculated_end + offset_days, milestone.start_date)
 calculated_end   = calculated_start + duration_days
 ```
-Computation triggered on every relevant mutation via DB trigger / `compute_progress_rollup` Edge Function.
+Computation triggered on every relevant mutation via DB trigger / `compute_progress_rollup` Edge Function (which handles both schedule recomputation and progress roll-up — see §8.2).
 
 Circular dependency detection: server-side graph traversal before insert. Rejected with clear error on cycle.
 
@@ -709,8 +709,8 @@ No secrets committed to repository. All stored in Supabase Edge Function secrets
 | A-005 | Email provider | **Closed: Resend selected** | Binding |
 | A-007 | PDF generation library | **Closed: Puppeteer selected** | Binding |
 | A-008 | Deep integration mechanism | Open — Stage 5–7 | Bounded via source_links pattern (§18) |
-| A-009 | Final deployment platform | Open — Stage 7 PBFAG | Vercel confirmed; equivalent fallback required if changed |
-| A-010 | Max evidence file size | Open — CS2 decision | Architecture supports up to 50 MB |
+| A-009 | Final deployment platform | **Closed: Vercel selected** | Binding — Vercel confirmed as deployment target in §21; equivalent fallback requires CS2 approval if changed |
+| A-010 | Max evidence file size | **Closed: 50 MB per file** | Binding — enforced at API layer and Supabase Storage config (§11) |
 
 ---
 

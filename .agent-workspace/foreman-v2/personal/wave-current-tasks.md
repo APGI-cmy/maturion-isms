@@ -77,7 +77,7 @@ expected_return_artifact_paths:
 | T-6 | Create scope declaration pr-1612.md | foreman-v2-agent (governance doc) | 🟢 DONE | `.agent-admin/scope-declarations/pr-1612.md` |
 | T-7 | Create PREHANDOVER proof | foreman-v2-agent (governance doc) | 🟢 DONE | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage5-20260511.md` |
 | T-8 | Create session memory | foreman-v2-agent (governance doc) | 🟢 DONE | `.agent-workspace/foreman-v2/memory/session-pit-stage5-architecture-20260511.md` |
-| T-9 | Invoke IAA full assurance | independent-assurance-agent | 🔴 PENDING | TBD |
+| T-9 | Invoke IAA full assurance | independent-assurance-agent | 🟢 DONE | Token: `IAA-session-pit-stage5-architecture-20260511-PASS` (21/21 checks) |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE | ❌ BLOCKED
 
@@ -87,7 +87,7 @@ expected_return_artifact_paths:
 
 | PR # | Token | Date |
 |------|-------|------|
-| 1612 | PENDING | 2026-05-11 |
+| 1612 | `IAA-session-pit-stage5-architecture-20260511-PASS` | 2026-05-11 |
 
 ---
 

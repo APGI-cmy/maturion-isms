@@ -218,22 +218,34 @@ All project/milestone/deliverable/task dates persisted as ISO `YYYY-MM-DD` (date
 
 ```typescript
 // Pure functions — exported for unit testing
+// Contract: dates are day-only (YYYY-MM-DD); config boundaries are calendar-day integers.
+// No millisecond deltas — day-count arithmetic avoids DST and timezone ambiguity.
+
+/** Number of whole calendar days from config.startDate to date (both in canonical org TZ). */
+function dayOffset(date: Date, startDate: Date, tz: string): number {
+  const { differenceInCalendarDays } = require('date-fns');
+  const { toZonedTime } = require('date-fns-tz');
+  return differenceInCalendarDays(toZonedTime(date, tz), toZonedTime(startDate, tz));
+}
+
 export function getPixelForDate(date: Date, config: TimelineConfig): number {
-  const totalMs = config.endDate.getTime() - config.startDate.getTime();
-  const dateMs = date.getTime() - config.startDate.getTime();
-  return (dateMs / totalMs) * config.viewportWidthPx;
+  const totalDays = dayOffset(config.endDate, config.startDate, config.canonicalTz);
+  const offsetDays = dayOffset(date, config.startDate, config.canonicalTz);
+  return (offsetDays / totalDays) * config.viewportWidthPx;
 }
 
 export function getDateForPixel(px: number, config: TimelineConfig): Date {
-  const totalMs = config.endDate.getTime() - config.startDate.getTime();
-  const dateMs = (px / config.viewportWidthPx) * totalMs;
-  return new Date(config.startDate.getTime() + dateMs);
+  const totalDays = dayOffset(config.endDate, config.startDate, config.canonicalTz);
+  const offsetDays = Math.round((px / config.viewportWidthPx) * totalDays);
+  const { addDays } = require('date-fns');
+  const { toZonedTime } = require('date-fns-tz');
+  return addDays(toZonedTime(config.startDate, config.canonicalTz), offsetDays);
 }
 ```
 
-Where `TimelineConfig = { startDate: Date, endDate: Date, viewportWidthPx: number, denominator: Denominator }`.
+Where `TimelineConfig = { startDate: Date, endDate: Date, viewportWidthPx: number, denominator: Denominator, canonicalTz: string }`.
 
-DST and timezone: all date calculations use `date-fns-tz` with the organisation's canonical timezone. Internal boundaries are in canonical timezone; no UTC/local conversion ambiguity.
+`canonicalTz` is the organisation's IANA timezone string (e.g. `"Africa/Johannesburg"`), resolved at session start and injected into the config. All boundary dates are converted to the canonical timezone before arithmetic — no raw `Date.getTime()` millisecond deltas are used, eliminating DST drift and UTC/local conversion ambiguity. Dates are persisted as `YYYY-MM-DD` (day-only) and treated as calendar days in the canonical timezone throughout.
 
 ### 5.3 Predecessor + Offset + Duration Formula
 
@@ -253,6 +265,8 @@ Computation: triggered by DB trigger or `compute_progress_rollup` Edge Function 
 - `tasks.offset_days` change
 - `tasks.duration_days` change
 - parent `milestone.start_date` change
+
+> **Naming note**: `compute_progress_rollup` is responsible for **both** predecessor schedule recomputation (`calculated_start_date` / `calculated_end_date`) and progress roll-up aggregation. Both operations are co-located in one Edge Function because they share the same dependency graph traversal. Stage 6 QA targets must exercise this function for both trigger paths.
 
 ### 5.4 Progress Overlay
 
