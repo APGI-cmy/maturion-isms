@@ -157,13 +157,14 @@ function isCheckpointResultComment(body) {
 
 function isHandoverClaimComment(body) {
   const text = String(body || '');
+  const rejectionNoticePattern = /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE\b/i;
   if (!text.trim()) return false;
   if (isCheckpointTriggerComment(text) || isCheckpointResultComment(text)) return false;
   if (
     /RESULT:\s*STOP_AND_FIX/i.test(text) ||
     /RESULT:\s*REJECTED_BACK_TO_PRODUCER/i.test(text) ||
     /HANDOVER_ALLOWED:\s*no/i.test(text) ||
-    /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE\b/i.test(text)
+    rejectionNoticePattern.test(text)
   ) return false;
   const claimPatterns = [
     /\bhandover\b/i,

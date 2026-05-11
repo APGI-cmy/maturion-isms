@@ -352,6 +352,7 @@ jobs:
               const m = String(text || '').match(new RegExp(`^\\s*(?:[-*]\\s+)?${escapeRegex(fieldName)}:\\s*(.+)\\s*$`, 'im'));
               return m ? m[1].trim() : '';
             };
+            const REJECTION_NOTICE_REGEX = /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE/i;
             const isNonEmptySignal = (value) => {
               const t = String(value || '').trim().toLowerCase();
               return t !== '' && !['none', 'n/a', 'na', '0', '[]', '{}', 'not_applicable'].includes(t);
@@ -365,7 +366,7 @@ jobs:
 
             const snapshot = Object.fromEntries(requiredSnapshotFields.map((f) => [f, isIssueComment ? readField(commentBody, f) : '']));
             const missingSnapshotFields = requiredSnapshotFields.filter((f) => isIssueComment && !snapshot[f]);
-            const claimUsesBlockedLanguage = /HANDOVER_BLOCKED|STOP_AND_FIX|(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE/i.test(commentBody);
+            const claimUsesBlockedLanguage = /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(commentBody) || REJECTION_NOTICE_REGEX.test(commentBody);
             const snapshotSignalsBlocked = isIssueComment && (
               isNonEmptySignal(snapshot.FAILING_CHECKS) ||
               isNonEmptySignal(snapshot.PENDING_CHECKS) ||
@@ -447,7 +448,7 @@ jobs:
                 preconditionFailures.push('HANDOVER_ALLOWED is no; handover claim must be STOP_AND_FIX, REJECTION_NOTICE, or must not be posted. A snapshot with HANDOVER_ALLOWED: no is valid only as a HANDOVER_BLOCKED / STOP_AND_FIX / REJECTION_NOTICE producer comment.');
               }
               if (snapshotChecksRun === false && snapshotAllowsHandover === true) {
-                preconditionFailures.push('LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN is no while HANDOVER_ALLOWED is yes.');
+                preconditionFailures.push('LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN is set to no while HANDOVER_ALLOWED is set to yes.');
               }
               if (snapshotAllowsHandover === true && !/^HANDOVER_ALLOWED$/i.test(snapshotResult)) {
                 preconditionFailures.push(`RESULT (${snapshotResult || 'missing'}) must be HANDOVER_ALLOWED when HANDOVER_ALLOWED is yes.`);
@@ -499,7 +500,7 @@ jobs:
                 const correctiveProducerComment = existingComments.some(c =>
                   c.user?.login === producerLogin &&
                   new Date(c.created_at) > blockedAt &&
-                  /HANDOVER_BLOCKED|STOP_AND_FIX|(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE/i.test(c.body || '')
+                  /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '') || REJECTION_NOTICE_REGEX.test(c.body || '')
                 );
                 if (!headAdvanced && !correctiveProducerComment) {
                   preconditionFailures.push(
