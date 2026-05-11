@@ -113,6 +113,10 @@ if [ -z "$HEAD_SHA" ]; then
   echo "❌ FAIL — HEAD_SHA is required for product-facing PR validation."
   exit 1
 fi
+if ! [[ "$HEAD_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+  echo "❌ FAIL — HEAD_SHA must be a 40-character git SHA."
+  exit 1
+fi
 
 echo "Product-facing scope detected:"
 echo -e "$PRODUCT_FILES" | sed '/^$/d' | sed 's/^/  - /'
