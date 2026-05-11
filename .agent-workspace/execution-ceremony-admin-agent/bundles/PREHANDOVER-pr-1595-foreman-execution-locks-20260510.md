@@ -15,7 +15,7 @@ ecap_invoked: true
 ceremony_admin_appointed: execution-ceremony-admin-agent
 ecap_verdict: PASS
 ecap_waiver_ref: none
-CURRENT_HEAD_SHA: 5d2c2ffe20d9f2ee4787cc83cc55d3fcea4eae08
+CURRENT_HEAD_SHA: e3b4cd033ef68864def554d213e2ea16b547f058
 iaa_audit_token: PENDING
 handover_allowed: NO
 

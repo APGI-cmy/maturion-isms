@@ -24,7 +24,7 @@ ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PR
 scope_declaration_ref: .agent-admin/scope-declarations/pr-1595.md
 rca_assessment: .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-1595.md
 iaa_audit_token: PENDING
-CURRENT_HEAD_SHA: 5d2c2ffe20d9f2ee4787cc83cc55d3fcea4eae08
+CURRENT_HEAD_SHA: e3b4cd033ef68864def554d213e2ea16b547f058
 protected_paths_changed:
   - .github/agents/foreman-v2-agent.md
   - governance/checklists/phase4-role-separation-operational-guidance.md
@@ -37,7 +37,7 @@ gate_set_checked:
   - preflight/scope-declaration-parity
   - preflight/gate-changing-pr-rule
 handover_allowed: NO
-handover_state: STOP_AND_FIX — ECAP evidence committed; IAA token pending
+handover_state: STOP_AND_FIX — ECAP evidence committed; IAA token pending; gate fix committed (yaml-validation); RCA A-038 confirmed
 ```
 
 ## Protected-Path Classification
