@@ -32,9 +32,9 @@ VERDICT: FAIL
 ```text
 REJECTION-PACKAGE
 Functional verdict: no
-Blocking finding: Required live authenticated deployed verification evidence is not attached on this PR head.
-Evidence: Functional-delivery artifact documents runtime blockers (browser automation lock, missing ADMIN/LEAD_AUDITOR credentials, and missing direct production log access) and no Mode A/B/C live proof.
-Why this fails the promised workflow: User journey completion and dashboard/state reflection are not proven in a live authenticated run.
+Blocking finding: Required live authenticated deployed verification evidence is not attached on this PR head, and manual live testing reports dashboard load failure in deployed runtime.
+Evidence: Functional-delivery artifact documents runtime blockers (browser automation lock, missing ADMIN/LEAD_AUDITOR credentials, and missing direct production log access), no Mode A/B/C live proof, and a reported dashboard error ("Unable to load dashboard data. Please check your connection and try again.").
+Why this fails the promised workflow: User journey completion and dashboard/state reflection are not proven in a live authenticated run; current live runtime behavior is a confirmed FAIL signal.
 Required fix: Execute live deployed verification with authenticated ADMIN/LEAD_AUDITOR for Mode A/B/C plus dashboard reflection and attach screenshots/recording and logs/traces.
 Required proof before re-invocation: Updated `.functional-delivery/pr-1609.md` with real live evidence and known partials set to none.
 ```
