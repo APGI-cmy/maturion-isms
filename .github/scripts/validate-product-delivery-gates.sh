@@ -109,6 +109,15 @@ if [ "$PRODUCT_FACING" = false ]; then
   exit 0
 fi
 
+if [ -z "$HEAD_SHA" ]; then
+  echo "❌ FAIL — HEAD_SHA is required for product-facing PR validation."
+  exit 1
+fi
+if ! [[ "$HEAD_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+  echo "❌ FAIL — HEAD_SHA must be a 40-character git SHA."
+  exit 1
+fi
+
 echo "Product-facing scope detected:"
 echo -e "$PRODUCT_FILES" | sed '/^$/d' | sed 's/^/  - /'
 echo ""
@@ -336,6 +345,8 @@ if [ -z "$IAA_FILES" ]; then
 fi
 
 IAA_VERDICT_OK=false
+IAA_VERDICT_HEAD_BOUND=false
+IAA_HEAD_KEY_REGEX='^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
@@ -346,7 +357,25 @@ while IFS= read -r iaa_file; do
 
   if [ "$has_admin" = "yes" ] && [ "$has_functional" = "yes" ] && [ "$has_verdict" = "yes" ]; then
     IAA_VERDICT_OK=true
-    break
+    if awk -v sha="$HEAD_SHA" -v keyre="$IAA_HEAD_KEY_REGEX" '
+      BEGIN { IGNORECASE=1 }
+      {
+        line = $0
+        sub(/\r$/, "", line)
+        if (line ~ keyre) {
+          sub(keyre, "", line)
+          sub(/[[:space:]]+$/, "", line)
+          if (line == sha) {
+            found = 1
+            exit 0
+          }
+        }
+      }
+      END { exit(found ? 0 : 1) }
+    ' "$iaa_file"; then
+      IAA_VERDICT_HEAD_BOUND=true
+      break
+    fi
   fi
 done <<< "$IAA_FILES"
 
@@ -360,6 +389,14 @@ if [ "$IAA_VERDICT_OK" = false ]; then
   exit 1
 fi
 echo "✅ IAA Functional Verdict gate: PASS"
+
+# Gate 4c: No-current-head-drift (same artifact must contain verdict split + current head)
+if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
+  echo "❌ FAIL — IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD ($HEAD_SHA) in the same artifact."
+  echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
+  exit 1
+fi
+echo "✅ No-current-head-drift gate: PASS"
 
 # Gate 4b: PASS_WITH_CS2_WAIVER must quote explicit CS2 waiver text
 # Accepted formats in evidence/templates:
@@ -440,8 +477,10 @@ fi
 
 # ---------------------------------------------------------------------------
 # Gate 7: Evidence must include current reviewed head SHA
+# Note: SHA match is intentionally case-sensitive (`grep -qF`) because commit
+# hashes are canonical lowercase hex strings and should match exactly.
 # ---------------------------------------------------------------------------
-if [ -n "$HEAD_SHA" ] && ! grep -qiF "$HEAD_SHA" "$EVIDENCE_PATH"; then
+if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
   echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
   exit 1
 fi

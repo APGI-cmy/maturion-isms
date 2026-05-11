@@ -1,9 +1,9 @@
 # Product Build Assurance Standard (IAA)
 
 **Agent**: independent-assurance-agent  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Status**: ACTIVE — MANDATORY  
-**Last Updated**: 2026-05-10  
+**Last Updated**: 2026-05-11  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Governing Issue Anchor**: #1596  
 **Incident / Dry-Run Calibration Anchor**: PR #1590
@@ -154,8 +154,15 @@ Rules:
 
 - `FUNCTIONAL_PASS: yes` requires `VERDICT: FULL_FUNCTIONAL_DELIVERY`
 - Any unresolved functional defect requires `FUNCTIONAL_PASS: no`
-- Partial scope is non-mergeable unless CS2 explicit waiver is committed and quoted
+- `PARTIAL_FUNCTIONAL_DELIVERY` is non-mergeable by default for product-facing build PRs
+- Partial scope becomes mergeable only when explicit CS2 partial-scope acceptance is committed and quoted
 - Language such as "code quality PASS", "technically correct", "no regressions", "ready for handover" is prohibited when `FUNCTIONAL_PASS: no`
+
+### No-current-head-drift rule
+
+- IAA assurance must bind to the current PR head SHA at verdict time
+- If PR head SHA changes after IAA verdict, product-build assurance is stale
+- Stale assurance requires full IAA re-invocation before merge
 
 ---
 

@@ -1,0 +1,35 @@
+{
+  "pr": 1610,
+  "issue": 1596,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".agent-admin/scope-declarations/pr-1610.md",
+    ".admin/prs/pr-1610.json",
+    ".agent-admin/assurance/iaa-wave-record-pr1599-dry-run-product-build-assurance-20260511.md",
+    ".agent-admin/assurance/iaa-wave-record-tighten-iaa-product-build-assurance-live-calibration-20260511.md",
+    ".agent-admin/prehandover/proof-pr-1610-ecap-admin-ceremony-20260511.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1610-ecap-admin-ceremony-20260511.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/PRODUCT_BUILD_ASSURANCE_STANDARD.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/index.md",
+    ".functional-delivery/pr-template.md",
+    ".github/scripts/validate-product-delivery-gates.sh",
+    ".github/scripts/validate-product-delivery-gates.test.sh",
+    "governance/templates/iaa-wave-record.template.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "independent-assurance-agent",
+  "evidence_required": [
+    "calibration evidence: .agent-admin/assurance/iaa-wave-record-pr1599-dry-run-product-build-assurance-20260511.md is intentionally reused as the #1596 dry-run fixture",
+    "local command output: PR_NUMBER=1610 .github/scripts/validate-scope-to-diff.sh",
+    "local command output: PR_NUMBER=1610 .github/scripts/validate-governance-evidence-exactness.sh",
+    "local command output: BASE_SHA=$(git merge-base origin/main HEAD) PR_NUMBER=1610 ENFORCE_SCOPE=true bash .github/scripts/enforce-scope-declaration-policy.sh",
+    "local command output: BASE_SHA=$(git merge-base origin/main HEAD) PR_NUMBER=1610 HEAD_SHA=$(git rev-parse HEAD) bash .github/scripts/ecap-admin-ceremony-gate.sh",
+    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh"
+  ],
+  "merge_authority": "CS2"
+}
