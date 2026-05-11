@@ -18,15 +18,15 @@ protected_path_touched: true
 ecap_required: true
 ecap_invoked: true
 ceremony_admin_appointed: execution-ceremony-admin-agent
-ecap_verdict: ECAP_EVIDENCE_PRESENT — handover blocked pending IAA invocation and all-green CI state
+ecap_verdict: PASS
 ecap_waiver_ref: none
 ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1607-ecap-admin-ceremony-20260511.md
 scope_declaration_ref: .agent-admin/scope-declarations/pr-1607.md
 wave_scope_declaration_ref: .agent-workspace/foreman-v2/personal/scope-declaration-wave-pr1607-rejection-first-handover-protocol-20260511.md
 wave_current_tasks_ref: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr1607-rejection-first-handover-protocol-20260511.md
-PRE_DELEGATION_HEAD_SHA: efcbca8f2a819e1f1aadc060f249f416adbff685
-CURRENT_HEAD_SHA: efcbca8f2a819e1f1aadc060f249f416adbff685
+PRE_DELEGATION_HEAD_SHA: 5385f3947d3385bb5cfe068c1c271ab95a12a697
+CURRENT_HEAD_SHA: 5385f3947d3385bb5cfe068c1c271ab95a12a697
 current_head_binding: MATCHED_PRE_DELEGATION_HEAD
 protected_paths_changed:
   - .github/agents/execution-ceremony-admin-agent.md
@@ -55,7 +55,7 @@ The following protected paths are touched in PR #1607:
 | `.github/workflows/handover-claim-gate.yml` | CI_WORKFLOW | `.github/workflows/` — A-019 CI_WORKFLOW trigger |
 | `governance/checklists/phase4-role-separation-operational-guidance.md` | CANON_GOVERNANCE | `governance/checklists/` — CANON_GOVERNANCE trigger |
 
-All seven files fall within protected paths requiring ECAP evidence. ECAP is now appointed and evidence artifacts are committed at HEAD SHA `efcbca8f2a819e1f1aadc060f249f416adbff685`.
+All seven files fall within protected paths requiring ECAP evidence. ECAP is now appointed and evidence artifacts are committed at HEAD SHA `5385f3947d3385bb5cfe068c1c271ab95a12a697`.
 
 ## CS2 Authorization Reference
 
@@ -104,7 +104,7 @@ The following blockers are recorded in the IAA wave record pre-brief and remain 
 
 ## ECAP Verdict Statement
 
-ECAP evidence for PR #1607 is now present and committed at HEAD SHA `efcbca8f2a819e1f1aadc060f249f416adbff685`. The `preflight/ecap-admin-ceremony` gate blocker (BLOCKER-3) is resolved by this session.
+ECAP evidence for PR #1607 is now present and committed at HEAD SHA `5385f3947d3385bb5cfe068c1c271ab95a12a697`. The `preflight/ecap-admin-ceremony` gate blocker (BLOCKER-3) is resolved by this session.
 
 **Handover remains BLOCKED** pending:
 1. IAA full assurance invocation (after all blockers cleared)
@@ -112,4 +112,4 @@ ECAP evidence for PR #1607 is now present and committed at HEAD SHA `efcbca8f2a8
 3. Gate-test evidence for modified scripts/workflow (BLOCKER-5)
 4. All CI checks GREEN on current HEAD SHA (BLOCKER-6)
 
-`ecap_required: true` | `ecap_invoked: true` | `ecap_verdict: ECAP_EVIDENCE_PRESENT`
+`ecap_required: true` | `ecap_invoked: true` | `ecap_verdict: PASS`

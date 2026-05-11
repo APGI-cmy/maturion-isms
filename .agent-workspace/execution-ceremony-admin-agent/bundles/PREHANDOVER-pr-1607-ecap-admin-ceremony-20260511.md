@@ -13,10 +13,10 @@ protected_path_touched: true
 ecap_required: true
 ecap_invoked: true
 ceremony_admin_appointed: execution-ceremony-admin-agent
-ecap_verdict: ECAP_EVIDENCE_PRESENT — handover blocked pending IAA invocation and all-green CI state
+ecap_verdict: PASS
 ecap_waiver_ref: none
-PRE_DELEGATION_HEAD_SHA: efcbca8f2a819e1f1aadc060f249f416adbff685
-CURRENT_HEAD_SHA: efcbca8f2a819e1f1aadc060f249f416adbff685
+PRE_DELEGATION_HEAD_SHA: 5385f3947d3385bb5cfe068c1c271ab95a12a697
+CURRENT_HEAD_SHA: 5385f3947d3385bb5cfe068c1c271ab95a12a697
 current_head_binding: MATCHED_PRE_DELEGATION_HEAD
 iaa_audit_token: IAA-session-NNN-pr1607-rejection-first-handover-protocol-20260511-PASS
 handover_allowed: NO
@@ -59,6 +59,6 @@ CS2 authorization provided by issue maturion-isms#1606 — opened by @APGI-cmy. 
 
 ## Handover Status
 
-ECAP evidence for PR #1607 is committed at HEAD SHA `efcbca8f2a819e1f1aadc060f249f416adbff685`. The `preflight/ecap-admin-ceremony` gate blocker (BLOCKER-3) is resolved by this session.
+ECAP evidence for PR #1607 is committed at HEAD SHA `5385f3947d3385bb5cfe068c1c271ab95a12a697`. The `preflight/ecap-admin-ceremony` gate blocker (BLOCKER-3) is resolved by this session.
 
 **Handover remains BLOCKED** pending resolution of BLOCKER-1 (SELF-MOD-IAA-001 / CS2), BLOCKER-5 (gate-test evidence), BLOCKER-6 (all CI checks GREEN), and successful IAA full assurance invocation.
