@@ -413,6 +413,69 @@ run_claim_test "16. draft/status comment without handover language stays false" 
 run_claim_test "16b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
 run_claim_test "16c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
 
+# ── Corrective producer comment predicate (operator-precedence regression) ──
+# Mirrors the fixed logic in handover-claim-gate.yml:
+#   c.user?.login === producerLogin &&
+#   new Date(c.created_at) > blockedAt &&
+#   ( /HANDOVER_BLOCKED|STOP_AND_FIX/.test(c.body||'') || REJECTION_NOTICE_REGEX.test(c.body||'') )
+# Without the parentheses the || escapes both &&-guards so any REJECTION_NOTICE
+# from any user at any time incorrectly satisfies the corrective-comment check.
+
+run_corrective_comment_test() {
+  local name="$1"
+  local producer_login="$2"
+  local blocked_at_iso="$3"
+  local comments_json="$4"
+  local expected="$5"
+  local actual
+
+  actual="$(
+    PRODUCER_LOGIN="$producer_login" \
+    BLOCKED_AT="$blocked_at_iso" \
+    COMMENTS_JSON="$comments_json" \
+    node - <<'JSEOF'
+const REJECTION_NOTICE_REGEX = /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE/i;
+const producerLogin = process.env.PRODUCER_LOGIN || '';
+const blockedAt = new Date(process.env.BLOCKED_AT || 0);
+const comments = JSON.parse(process.env.COMMENTS_JSON || '[]');
+// Fixed predicate (parentheses around the || alternatives)
+const correctiveProducerComment = comments.some(c =>
+  c.user?.login === producerLogin &&
+  new Date(c.created_at) > blockedAt &&
+  (
+    /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '') ||
+    REJECTION_NOTICE_REGEX.test(c.body || '')
+  )
+);
+process.stdout.write(correctiveProducerComment ? 'true' : 'false');
+JSEOF
+  )"
+
+  if [[ "$actual" == "$expected" ]]; then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name (expected $expected got $actual)"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
+# 17. Non-producer REJECTION_NOTICE after prior HANDOVER_BLOCKED must NOT unlock.
+run_corrective_comment_test \
+  "17. non-producer REJECTION_NOTICE after HANDOVER_BLOCKED does NOT unlock" \
+  "producer-agent" \
+  "2026-01-01T10:00:00Z" \
+  '[{"user":{"login":"other-user"},"created_at":"2026-01-01T11:00:00Z","body":"FOREMAN_REJECTION_NOTICE"}]' \
+  "false"
+
+# 18. Producer REJECTION_NOTICE after prior HANDOVER_BLOCKED MAY unlock next claim.
+run_corrective_comment_test \
+  "18. producer REJECTION_NOTICE after HANDOVER_BLOCKED DOES unlock" \
+  "producer-agent" \
+  "2026-01-01T10:00:00Z" \
+  '[{"user":{"login":"producer-agent"},"created_at":"2026-01-01T11:00:00Z","body":"FOREMAN_REJECTION_NOTICE"}]' \
+  "true"
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"

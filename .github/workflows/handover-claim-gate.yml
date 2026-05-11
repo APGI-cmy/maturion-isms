@@ -500,7 +500,10 @@ jobs:
                 const correctiveProducerComment = existingComments.some(c =>
                   c.user?.login === producerLogin &&
                   new Date(c.created_at) > blockedAt &&
-                  /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '') || REJECTION_NOTICE_REGEX.test(c.body || '')
+                  (
+                    /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '') ||
+                    REJECTION_NOTICE_REGEX.test(c.body || '')
+                  )
                 );
                 if (!headAdvanced && !correctiveProducerComment) {
                   preconditionFailures.push(
