@@ -159,7 +159,12 @@ function isHandoverClaimComment(body) {
   const text = String(body || '');
   if (!text.trim()) return false;
   if (isCheckpointTriggerComment(text) || isCheckpointResultComment(text)) return false;
-  if (/RESULT:\s*STOP_AND_FIX/i.test(text) || /HANDOVER_ALLOWED:\s*no/i.test(text)) return false;
+  if (
+    /RESULT:\s*STOP_AND_FIX/i.test(text) ||
+    /RESULT:\s*REJECTED_BACK_TO_PRODUCER/i.test(text) ||
+    /HANDOVER_ALLOWED:\s*no/i.test(text) ||
+    /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE\b/i.test(text)
+  ) return false;
   const claimPatterns = [
     /\bhandover\b/i,
     /\bmerge-ready\b/i,
@@ -529,10 +534,12 @@ function evaluateCheckpoint(input = {}) {
     FUNCTIONAL_DELIVERY_EVIDENCE_CURRENT: yesNoNotRequired(functionalEvidenceCurrent, productDeliveryRequired),
     FUNCTIONAL_PASS: yesNoNotRequired(functionalPass, productDeliveryRequired),
     REQUIRED_CHECKS_TOTAL: String(checks.total),
+    LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN: checks.noChecksAtAll ? 'no' : 'yes',
     PASSING_CHECKS: checks.passing.length ? checks.passing.join(', ') : 'none',
     FAILING_CHECKS: checks.failing.length ? checks.failing.join(', ') : 'none',
     PENDING_CHECKS: checks.pending.length ? checks.pending.join(', ') : 'none',
     MISSING_CHECKS: checks.noChecksAtAll ? 'all' : (checks.missing.length ? checks.missing.join(', ') : 'none'),
+    STALE_EVIDENCE_FOUND: staleShaFound ? 'yes' : 'no',
     ACTIVE_ARTIFACTS_REPORT_FAIL_OR_NO: activeArtifactsReportFailOrNo ? 'yes' : 'no',
     STALE_SHA_FOUND: staleShaFound ? 'yes' : 'no',
     HANDOVER_ALLOWED: handoverAllowed ? 'yes' : 'no',

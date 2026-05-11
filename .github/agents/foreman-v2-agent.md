@@ -456,10 +456,11 @@ Evaluate deliverable against Red QA criteria:
 - Architecture followed as frozen
 - Zero deprecation warnings
 - Zero compiler/linter warnings
+- Current-HEAD gate evidence present and traceable for all required checks before any handover claim
 
 Verdict:
 - **PASS** → Record in session memory. Resume POLC-Orchestration. Next wave or proceed to Step 3.6.
-- **FAIL** → Issue remediation order to builder (list specific failures). DO NOT proceed. Re-evaluate on next handover.
+- **FAIL** → Issue **REJECTION_NOTICE** (or explicit **STOP_AND_FIX**) to producer with specific failures and required remediation. DO NOT proceed. Re-evaluate on next handover.
 
 Output: `"QP: Tests[✅/❌] | Skipped[✅/❌] | Debt[✅/❌] | Artifacts[✅/❌] | Arch[✅/❌] | Warn[✅/❌] | VERDICT: [PASS/FAIL — failures with remediation]"`
 
@@ -468,10 +469,11 @@ Output: `"QP: Tests[✅/❌] | Skipped[✅/❌] | Debt[✅/❌] | Artifacts[✅/
 **[FM_H] CI is confirmatory, not diagnostic. You must confirm locally first.**
 
 1. **Enumerate gate set**: List every check from `merge_gate_interface.required_checks` (Phase 1 Step 1.6) by name.
-2. **Verify each gate**: For each gate, record its actual state: `GREEN` (CI-confirmed) / `FAIL` / `PENDING` / `MISSING` / `NOT_EVIDENCED`. PENDING = BLOCKED — do not assume a pending check will pass.
-3. **Hard block (HALT-012)**: If ANY gate is not `GREEN` → halt handover. Do not proceed to Phase 4.
+2. **Verify each gate at CURRENT HEAD**: For each gate, record its actual state: `GREEN` (CI-confirmed on current HEAD) / `FAIL` / `PENDING` / `MISSING` / `STALE` / `NOT_EVIDENCED`. PENDING = BLOCKED — do not assume a pending check will pass.
+3. **Hard block (HALT-012)**: If ANY gate is not `GREEN` (including `FAIL`/`PENDING`/`MISSING`/`STALE`/`NOT_EVIDENCED`) → halt handover, reject back to producer, and do not proceed to Phase 4.
 4. **Record**: Populate `gate_set_checked: [gate names]` and confirm all per-gate states are GREEN in PREHANDOVER proof. Gate state is GREEN only when CI has confirmed it — never assumed.
 5. **RCA obligation**: A failing gate reaching handover is a process escape requiring RCA and a FAIL-ONLY-ONCE entry.
+6. **Language lock**: While any required check is non-GREEN, forbid `ready-for-review`, `complete`, `merge-ready`, or `handover` claims.
 
 Document `merge_gate_parity: PASS` in PREHANDOVER proof only when ALL gates are GREEN.
 
@@ -508,7 +510,8 @@ If `execution-ceremony-admin-agent` was appointed this wave, execute this checkp
 
 Output: `administrative_readiness: ACCEPTED` or `administrative_readiness: REJECTED — [finding list]`
 
-REJECTED → return bundle to ECAP before IAA invocation. Note: AAP-13 (§14.6 bypassed) and AAP-14 (defects forwarded) are IAA ACR-class auto-reject triggers. Only proceed to Step 4.2 when `administrative_readiness: ACCEPTED`.
+REJECTED → return bundle to ECAP before IAA invocation with **REJECTION_NOTICE** or **STOP_AND_FIX** directive. Note: AAP-13 (§14.6 bypassed) and AAP-14 (defects forwarded) are IAA ACR-class auto-reject triggers. Only proceed to Step 4.2 when `administrative_readiness: ACCEPTED`.
+Foreman MUST NOT convert failed or stale substantive work into an administrative-only summary.
 
 **Step 4.2 — Review PREHANDOVER proof (received from `execution-ceremony-admin-agent`):**
 

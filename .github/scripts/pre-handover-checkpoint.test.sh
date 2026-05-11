@@ -408,6 +408,7 @@ run_virtual_file_test "13. virtual file path provides readJson content" readJson
 
 run_claim_test "14. handover language without checkpoint remains claim" claim "handover complete" true
 run_claim_test "15. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
+run_claim_test "15b. REJECTION_NOTICE summary is not a handover claim" claim $'FOREMAN_REJECTION_NOTICE\nRESULT: REJECTED_BACK_TO_PRODUCER\nHANDOVER_ALLOWED: no' false
 run_claim_test "16. draft/status comment without handover language stays false" claim "status update only" false
 run_claim_test "16b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
 run_claim_test "16c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
