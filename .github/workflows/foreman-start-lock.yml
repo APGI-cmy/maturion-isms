@@ -4,8 +4,8 @@ name: Foreman Start Lock
 # Issue: #1593 (Harden Foreman execution locks)
 # Purpose: Early advisory/alert gate that checks for required Foreman orchestration artifacts
 #          before implementation/product/governance paths are closed.
-#          Advisory for governance-only changes; blocking when implementation or product files
-#          are in scope and orchestration evidence is absent.
+#          Advisory-only: posts an alert when orchestration evidence is absent for
+#          governance, implementation, or product changes in scope.
 
 on:
   pull_request_target:
