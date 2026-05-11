@@ -350,6 +350,10 @@ Before returning any bundle to Foreman, run the full §4.3e compliance gate:
 Output: `"§4.3e Gate: AAP-01–09/15–16 [PASS/BLOCKED — list any hits] | Checklist [COMPLETE/INCOMPLETE] | R01–R17 [COMPLETE/INCOMPLETE] | Reconciliation Summary [PRESENT/ABSENT]"`
 
 If ANY item is BLOCKED, INCOMPLETE, or ABSENT → **DO NOT return bundle**. Remediate and re-run this gate.
+If evidence is missing, stale, inconsistent, or invalid for current HEAD, issue:
+`ADMIN_REJECTION_NOTICE`
+`HANDOVER_ALLOWED: no`
+`RESULT: REJECTED_BACK_TO_PRODUCER`
 Only proceed to return the bundle when all four items are PASS / COMPLETE / PRESENT.
 
 **Step 3.6 — Return bundle to Foreman:**
