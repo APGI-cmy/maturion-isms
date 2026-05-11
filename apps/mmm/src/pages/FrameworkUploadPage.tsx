@@ -38,7 +38,7 @@ const MODES = [
     id: 'C' as const,
     title: 'Mode C — Hybrid',
     description:
-      'Upload a source document and use AI to extend, refine, or restructure it into a custom maturity framework.',
+      'Upload a source document for AI-assisted hybrid framework generation. The system will parse your document and use AI to extend or restructure it into a custom maturity framework.',
     icon: '🔀',
   },
 ];
@@ -84,11 +84,18 @@ export default function FrameworkUploadPage() {
         if (error) throw new Error(error.message || 'Failed to generate framework');
         return { frameworkId, responseData: data };
       } else if (mode==='C') {
+        if (!sourceFile) throw new Error('Please select a source file before starting Mode C.');
         const frameworkId = await initFramework('Hybrid Framework', 'HYBRID');
-        const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
-          body: { name: 'Hybrid Framework', hybrid: true, mode, framework_id: frameworkId },
+        const formData = new FormData();
+        formData.append('file', sourceFile);
+        formData.append('source_type', 'HYBRID');
+        formData.append('mode', mode);
+        formData.append('metadata', JSON.stringify({ source_type: 'HYBRID', mode, framework_id: frameworkId }));
+
+        const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
+          body: formData,
         });
-        if (error) throw new Error(error.message || 'Failed to generate hybrid framework');
+        if (error) throw new Error(error.message || 'Failed to upload hybrid framework source');
         return { frameworkId, responseData: data };
       }
       throw new Error(`Unsupported framework mode: ${mode}`);
@@ -97,8 +104,8 @@ export default function FrameworkUploadPage() {
       queryClient.invalidateQueries({ queryKey: ['frameworks'] }); // NBR-001
       const fwId = result?.frameworkId;
       // All modes navigate to the review page:
-      // Mode A: polls parse job until proposed domains are ready, then enables Compile
-      // Mode B/C: proposed domains are created synchronously by mmm-ai-framework-generate, Compile is available immediately
+      // Mode A/C: polls parse job until proposed domains are ready, then enables Compile
+      // Mode B: proposed domains are created synchronously by mmm-ai-framework-generate, Compile is available immediately
       if (fwId) {
         navigate(`/frameworks/${fwId}/review`);
       } else {
@@ -111,9 +118,9 @@ export default function FrameworkUploadPage() {
 
   const handleStart = () => {
     setModeAValidationError(null);
-    if (mode === 'A' && !sourceFile) {
+    if ((mode === 'A' || mode === 'C') && !sourceFile) {
       setStarted(true);
-      setModeAValidationError('Please select a framework source file to continue with Mode A.');
+      setModeAValidationError(`Please select a framework source file to continue with ${mode === 'C' ? 'Mode C' : 'Mode A'}.`);
       return;
     }
     setStarted(true);
@@ -163,7 +170,7 @@ export default function FrameworkUploadPage() {
           </div>
 
           <div className="upload-page__actions">
-            {mode === 'A' && (
+            {(mode === 'A' || mode === 'C') && (
               <div className="upload-page__file-input">
                 <label htmlFor="framework-source-file" className="upload-page__next-state-label">
                   Framework source file
@@ -179,7 +186,7 @@ export default function FrameworkUploadPage() {
             <button
               className="btn btn-primary"
               onClick={handleStart}
-              disabled={mutation.isPending || (mode === 'A' && !sourceFile)}
+              disabled={mutation.isPending || ((mode === 'A' || mode === 'C') && !sourceFile)}
             >
               {mutation.isPending ? 'Starting…' : 'Start'}
             </button>
@@ -195,7 +202,7 @@ export default function FrameworkUploadPage() {
               )}
               {mutation.isPending && (
                 <p className="upload-page__next-state-text">
-                  {mode === 'A'
+                  {(mode === 'A' || mode === 'C')
                     ? '⏳ Initializing framework and uploading source document — please wait…'
                     : '⏳ Creating framework — please wait…'}
                 </p>
@@ -207,9 +214,9 @@ export default function FrameworkUploadPage() {
                     Next step: {selectedMode.description}
                   </p>
                   <p className="upload-page__next-state-note">
-                    {mode === 'A'
-                      ? 'We couldn&rsquo;t initialize or upload your Mode A framework source right now.'
-                      : 'We couldn&rsquo;t complete this framework action right now.'}{' '}
+                    {(mode === 'A' || mode === 'C')
+                      ? `We couldn\u2019t initialize or upload your ${mode === 'C' ? 'Mode C' : 'Mode A'} framework source right now.`
+                      : 'We couldn\u2019t complete this framework action right now.'}{' '}
                     {(mutation.error as Error | null)?.message ? `${(mutation.error as Error).message} ` : ''}
                     Please try again or{' '}
                     <Link to="/frameworks">Return to Frameworks</Link>.
@@ -218,8 +225,8 @@ export default function FrameworkUploadPage() {
               )}
               {mutation.isSuccess && (
                 <p className="upload-page__next-state-text upload-page__next-state-text--success">
-                  {mode === 'A'
-                    ? '✅ Mode A framework initialized and source uploaded. Redirecting to review…'
+                  {(mode === 'A' || mode === 'C')
+                    ? `✅ ${mode === 'C' ? 'Mode C' : 'Mode A'} framework initialized and source uploaded. Redirecting to review…`
                     : '✅ Framework created. Redirecting to review…'}
                 </p>
               )}

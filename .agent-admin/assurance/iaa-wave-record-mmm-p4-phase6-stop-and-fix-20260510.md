@@ -33,17 +33,17 @@ Anti-regression obligations: [yes — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR
 PHASE_B_BLOCKING_TOKEN: IAA-pr-1590-schema-blockers-resolved-20260510
 - **PR**: #1590
 - **Issue**: #1589
-- **Reviewed SHA**: 06084f4125b8d45128279a7f6191595817c7d651
+- **Reviewed SHA**: 06b6960aac1ec614a3c983a55dc07e562368242d
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: no
 VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
-- **Verdict**: PASS_WITH_CS2_WAIVER — IAA code quality PASS; schema/CORS build blockers resolved; compile/publish schema and UI feedback states resolved; full functional delivery pending deployed preview confirmation
+- **Verdict**: PASS_WITH_CS2_WAIVER — IAA code quality PASS; schema/CORS build blockers resolved; compile/publish schema and UI feedback states resolved; Mode A/C parse bridge (KUC pass-through, fire-and-forget failure handling) resolved; Mode C hybrid now requires and uploads source document; dashboard error_rate now treats 'completed' as success; full functional delivery pending deployed preview confirmation
 
 Gate CI evidence: Actions run 25628089130 — all 11 Preflight Evidence Gate jobs ✅ on SHA 615cd7b0 (preflight/gate-changing-pr-rule ✅, preflight/iaa-final-assurance ✅, preflight/product-delivery-gates ✅). CS2 admin/process APPROVED on SHA 3cf9e9872bddf044ee50d2da185d1fdb4c11b547 (comment 4415303629).
 
-IAA scope of review: schema-incompatible column removals (mmm-framework-init, mmm-qiw-status, mmm-framework-compile, mmm-framework-publish), CORS header repair (_shared/mmm-auth.ts), Mode A next-state navigation (FrameworkUploadPage), compile/publish UI feedback states (FrameworkReviewPage). All verified against migration schema columns in 20260420000001_mmm_core_tables.sql. B3 vitest suite (91 tests) passes. Code changes are technically correct and do not introduce regressions.
+IAA scope of review: schema-incompatible column removals (mmm-framework-init, mmm-qiw-status, mmm-framework-compile, mmm-framework-publish), CORS header repair (_shared/mmm-auth.ts), Mode A/C next-state navigation (FrameworkUploadPage), compile/publish UI feedback states (FrameworkReviewPage), Mode A/C parse bridge (mmm-upload-framework-source + mmm-ai-framework-parse KUC pass-through), Mode C hybrid upload path, dashboard error_rate fix. All verified against migration schema columns in 20260420000001_mmm_core_tables.sql. Code changes are technically correct and do not introduce regressions.
 
-Full functional delivery (parse job polling UI, Mode B/C AI generation, dashboard with authenticated ADMIN role) remains pending CS2 sign-off and deployed preview confirmation. STOP_AND_FIX status continues until CS2 lifts hold on #1589.
+Full functional delivery (dashboard with authenticated ADMIN role live verification) remains pending CS2 sign-off and deployed preview confirmation. STOP_AND_FIX status continues until CS2 lifts hold on #1589.
 
 ### Schema fix commits in scope
 - mmm-framework-init: removed created_by from mmm_frameworks insert; removed actor_type/organisation_id/metadata from mmm_audit_logs insert
