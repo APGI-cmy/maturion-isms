@@ -15,3 +15,13 @@ ecap_waiver_ref: none
 ```
 
 ECAP outcome recorded for protected-path PR compliance.
+
+## Ripple/Cross-Agent Assessment
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| independent-assurance-agent | Tier 2 product-build assurance policy and trigger/overlay loading | IMPACT — stricter functional-delivery assurance and rejection criteria for product-facing BUILD/T2 PRs |
+| execution-ceremony-admin-agent | ECAP bundle evidence for protected-path compliance on this PR | IMPACT — required ceremony evidence added and linked to PREHANDOVER proof |
+| preflight gates | Product-delivery classifier and HFMC/ECAP evidence expectations | IMPACT — migration-only schema changes now classified as product-facing; ripple section + ECAP evidence now explicit |
+
+**Downstream ripple conclusion**: IMPACT — governance/assurance behavior intentionally tightened for product-facing build assurance quality.
