@@ -15,7 +15,7 @@ ecap_invoked: true
 ceremony_admin_appointed: execution-ceremony-admin-agent
 ecap_verdict: PASS
 ecap_waiver_ref: none
-CURRENT_HEAD_SHA: 8adae94f5f6afad1eb41d2bad5abce2b47a93196
+CURRENT_HEAD_SHA: 7f68714eb69ab05c311ed7781bda3419f6b35c7b
 iaa_audit_token: PENDING
 handover_allowed: NO
 
@@ -26,6 +26,7 @@ handover_allowed: NO
 - pr_manifest: `.admin/prs/pr-1595.json`
 - scope_declaration: `.agent-admin/scope-declarations/pr-1595.md`
 - wave_tracker: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+- rca_assessment: `.agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-1595.md`
 
 ## Protected Paths Changed
 

@@ -13,7 +13,7 @@
 pr: 1595
 issue: 1593
 branch: copilot/harden-foreman-execution-locks
-date_utc: 2026-05-10T14:30:00Z
+date_utc: 2026-05-11T06:40:00Z
 protected_path_touched: true
 ecap_required: true
 ecap_invoked: true
@@ -22,8 +22,9 @@ ecap_verdict: PASS
 ecap_waiver_ref: none
 ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1595-foreman-execution-locks-20260510.md
 scope_declaration_ref: .agent-admin/scope-declarations/pr-1595.md
+rca_assessment: .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-1595.md
 iaa_audit_token: PENDING
-CURRENT_HEAD_SHA: 8adae94f5f6afad1eb41d2bad5abce2b47a93196
+CURRENT_HEAD_SHA: 7f68714eb69ab05c311ed7781bda3419f6b35c7b
 protected_paths_changed:
   - .github/agents/foreman-v2-agent.md
   - governance/checklists/phase4-role-separation-operational-guidance.md
@@ -60,12 +61,12 @@ This PR modifies the following gate/script/workflow files:
 - `.github/workflows/foreman-start-lock.yml` (new START_LOCK enforcement workflow)
 - `.github/workflows/iaa-prebrief-gate.yml` (archive path exclusion)
 
-**Local validation evidence:**
+**Local validation evidence (refreshed at current head 7f68714):**
 
 ```text
 Command: bash .github/scripts/validate-governance-evidence-exactness.test.sh
-Head SHA: 8adae94f5f6afad1eb41d2bad5abce2b47a93196
-Date: 2026-05-10
+Head SHA: 7f68714eb69ab05c311ed7781bda3419f6b35c7b
+Date: 2026-05-11
 
 === Governance Evidence Exactness — ISSUE-MISMATCH Tests ===
 Test: ISSUE: #1521 — long title parses as 1521 (match) → PASS
