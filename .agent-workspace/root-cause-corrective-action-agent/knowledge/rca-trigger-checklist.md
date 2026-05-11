@@ -11,6 +11,7 @@
 - ECAP detects stale evidence after final push/handover claim
 - Gate is stale/paradoxical/over-broad/under-enforcing
 - CS2 explicitly posts RCA_REQUIRED / ROOT_CAUSE_REQUIRED / CONTINUOUS_IMPROVEMENT_REQUIRED
+- Workflow marker `<!-- rca-required-marker -->` is present with `RCA_REQUIRED: yes`
 
 ## Optional
 
@@ -24,3 +25,13 @@
 - Typo/wording-only cleanup
 - Normal first-pass comment covered by current guidance
 - Straightforward gate failure with existing-standard fix
+- First-pass draft-only misses where no repeat/substantive trigger exists
+
+## Stateful Enforcement
+
+- RCA trigger detector workflow posts/updates one authoritative marker comment:
+  `<!-- rca-required-marker -->` with `RCA_REQUIRED: yes`.
+- While marker is active, handover/merge-ready/complete claims stay blocked (`HANDOVER_ALLOWED: no`).
+- Required evidence path:
+  `.agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-<PR_NUMBER>.md`
+- `preflight/rca-invocation-evidence` fails when marker is active and RCA evidence is missing/incomplete.

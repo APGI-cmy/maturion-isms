@@ -20,6 +20,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  issues: read
 
 jobs:
   preflight-evidence-check:
@@ -664,6 +665,54 @@ jobs:
           echo ""
           chmod +x .github/scripts/validate-governance-evidence-exactness.sh
           .github/scripts/validate-governance-evidence-exactness.sh
+
+  rca-invocation-evidence-gate:
+    name: "preflight/rca-invocation-evidence"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect active RCA_REQUIRED marker
+        id: rca_marker
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- rca-required-marker -->';
+            const prNumber = context.payload.pull_request.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+            const activeMarker = comments.find((comment) =>
+              comment.body &&
+              comment.body.includes(marker) &&
+              /RCA_REQUIRED:\s*yes/i.test(comment.body)
+            );
+            core.setOutput('required', activeMarker ? 'yes' : 'no');
+            core.setOutput('marker_url', activeMarker ? activeMarker.html_url : '');
+
+      - name: RCA not required — pass safely
+        if: steps.rca_marker.outputs.required != 'yes'
+        run: |
+          echo "✅ PASS — RCA_REQUIRED marker is not active for this PR."
+          echo "No PR-head RCA enforcement script/artifact checkout is required."
+
+      - name: Checkout PR head branch
+        if: steps.rca_marker.outputs.required == 'yes'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: RCA Invocation Evidence Gate
+        if: steps.rca_marker.outputs.required == 'yes'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RCA_REQUIRED: ${{ steps.rca_marker.outputs.required }}
+          RCA_MARKER_URL: ${{ steps.rca_marker.outputs.marker_url }}
+        run: |
+          chmod +x .github/scripts/rca-invocation-evidence-gate.sh
+          .github/scripts/rca-invocation-evidence-gate.sh
 
   # ============================================================================
   # Hard gate: IAA Final Assurance (maturion-isms#1503)
