@@ -365,11 +365,12 @@ echo "✅ IAA Functional Verdict gate: PASS"
 # Accepted formats in evidence/templates:
 #   CS2 waiver quote: "<explicit waiver text>"
 #   CS2_WAIVER_QUOTE: "<explicit waiver text>"
+cs2_waiver_quote_regex='((CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?)|CS2_WAIVER_QUOTE)[[:space:]]*:[[:space:]]*".+"'
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
   if grep -qiE 'PASS_WITH_CS2_WAIVER' "$iaa_file"; then
-    if ! grep -qiE '((CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?)|CS2_WAIVER_QUOTE)[[:space:]]*:[[:space:]]*".+"' "$iaa_file"; then
+    if ! grep -qiE "$cs2_waiver_quote_regex" "$iaa_file"; then
       echo "❌ FAIL — PASS_WITH_CS2_WAIVER in $iaa_file requires quoted explicit CS2 waiver text."
       exit 1
     fi
@@ -389,7 +390,7 @@ if grep -qiE 'FUNCTIONAL_PASS:[[:space:]]*no' "$EVIDENCE_PATH" && \
    grep -qiE '(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT):[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY' "$EVIDENCE_PATH" && \
    grep -qiE 'Partial scope accepted by CS2:[[:space:]]*yes' "$EVIDENCE_PATH"; then
   partial_with_cs2=true
-  if grep -qiE '((CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?)|CS2_WAIVER_QUOTE)[[:space:]]*:[[:space:]]*".+"' "$EVIDENCE_PATH"; then
+  if grep -qiE "$cs2_waiver_quote_regex" "$EVIDENCE_PATH"; then
     partial_has_cs2_quote=true
     partial_allowed=true
   fi
