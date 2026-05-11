@@ -9,10 +9,18 @@
 
 ## DRY-RUN ASSURANCE OUTPUT (Fixture: PR #1590 class failures)
 
-### Loading attestation
+### Loading attestation proof (invocation path)
+- product-facing BUILD/T2 PR detected: yes
 - PRODUCT_BUILD_ASSURANCE_STANDARD.md loaded: yes
-- BUILD_DELIVERABLE overlay loaded: yes
-- GOVERNANCE_EVIDENCE overlay loaded: yes
+- rejection-package template loaded: yes
+- functional-delivery evidence template loaded: yes
+- CI/false-pass rules considered: yes
+
+### Enforcement proof shape
+- Artifact created: yes
+- Artifact loaded by IAA: yes
+- Artifact applied to PR fixture: yes
+- Artifact changed verdict/rejection behaviour: yes
 
 ### Product-build gate evaluation
 - USER_JOURNEY_COMPLETE: no
@@ -28,6 +36,10 @@
 - ADMIN_PASS: yes
 - FUNCTIONAL_PASS: no
 - VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
+- PARTIAL_FUNCTIONAL_DELIVERY default mergeability: NON-MERGEABLE unless explicit quoted CS2 partial-scope acceptance
+- CURRENT_HEAD_SHA: CURRENT_HEAD
+- NO_CURRENT_HEAD_DRIFT: yes
+- HEAD_DRIFT_ACTION: N/A (no head drift observed at review time; if head changes, IAA re-run required)
 
 ### REJECTION-PACKAGE
 ```text

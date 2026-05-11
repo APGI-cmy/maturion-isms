@@ -46,15 +46,21 @@ EOF
   local base_sha head_sha code output pr_body
   base_sha=$(git rev-parse main)
   head_sha=$(git rev-parse HEAD)
-  if [ -d .functional-delivery ] && [ ! -f .skip-head-sha-rewrite ]; then
+  if ( [ -d .functional-delivery ] || [ -d .agent-admin/assurance ] ) && [ ! -f .skip-head-sha-rewrite ]; then
     python3 - "$head_sha" <<'PYEOF'
 import pathlib, sys
 head_sha = sys.argv[1]
-for path in pathlib.Path(".functional-delivery").glob("pr-*.md"):
-    if not path.is_file():
+for root, pattern in [
+    (pathlib.Path(".functional-delivery"), "pr-*.md"),
+    (pathlib.Path(".agent-admin/assurance"), "*.md"),
+]:
+    if not root.exists():
         continue
-    content = path.read_text()
-    path.write_text(content.replace("CURRENT_HEAD", head_sha))
+    for path in root.glob(pattern):
+        if not path.is_file():
+            continue
+        content = path.read_text()
+        path.write_text(content.replace("CURRENT_HEAD", head_sha))
 PYEOF
   fi
   pr_body="${TEST_PR_BODY:-}"
@@ -171,6 +177,7 @@ EOF
 seed_valid_iaa() {
   cat > .agent-admin/assurance/iaa-token-session-9999.md << 'EOF'
 PHASE_B_BLOCKING_TOKEN: IAA-session-9999-PASS
+CURRENT_HEAD_SHA: CURRENT_HEAD
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: yes
 VERDICT: FULL_FUNCTIONAL_DELIVERY
@@ -626,6 +633,20 @@ t7c_missing_current_head_sha_in_evidence() {
   git commit -q -m "missing reviewed current head sha"
 }
 run_test "T7c evidence missing current HEAD SHA must fail" 1 t7c_missing_current_head_sha_in_evidence
+
+t7d_iaa_artifact_missing_current_head_sha() {
+  seed_product_change_with_cta
+  seed_valid_evidence
+  cat > .agent-admin/assurance/iaa-token-session-9999.md << 'EOF'
+PHASE_B_BLOCKING_TOKEN: IAA-session-9999-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  git add .
+  git commit -q -m "iaa artifact missing current head sha binding"
+}
+run_test "T7d IAA artifact missing current HEAD SHA binding must fail" 1 t7d_iaa_artifact_missing_current_head_sha
 
 t8_pr1590_dry_run_incomplete_workflow() {
   seed_product_change_with_cta

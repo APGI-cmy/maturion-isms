@@ -109,6 +109,11 @@ if [ "$PRODUCT_FACING" = false ]; then
   exit 0
 fi
 
+if [ -z "$HEAD_SHA" ]; then
+  echo "❌ FAIL — HEAD_SHA is required for product-facing PR validation."
+  exit 1
+fi
+
 echo "Product-facing scope detected:"
 echo -e "$PRODUCT_FILES" | sed '/^$/d' | sed 's/^/  - /'
 echo ""
@@ -361,6 +366,24 @@ if [ "$IAA_VERDICT_OK" = false ]; then
 fi
 echo "✅ IAA Functional Verdict gate: PASS"
 
+# Gate 4c: No-current-head-drift (IAA artifact must bind to current reviewed head)
+IAA_HEAD_BOUND=false
+while IFS= read -r iaa_file; do
+  [ -n "$iaa_file" ] || continue
+  [ -f "$iaa_file" ] || continue
+  if grep -qF "$HEAD_SHA" "$iaa_file"; then
+    IAA_HEAD_BOUND=true
+    break
+  fi
+done <<< "$IAA_FILES"
+
+if [ "$IAA_HEAD_BOUND" = false ]; then
+  echo "❌ FAIL — IAA assurance artifact must bind verdict to current HEAD SHA ($HEAD_SHA)."
+  echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
+  exit 1
+fi
+echo "✅ No-current-head-drift gate: PASS"
+
 # Gate 4b: PASS_WITH_CS2_WAIVER must quote explicit CS2 waiver text
 # Accepted formats in evidence/templates:
 #   CS2 waiver quote: "<explicit waiver text>"
@@ -440,8 +463,10 @@ fi
 
 # ---------------------------------------------------------------------------
 # Gate 7: Evidence must include current reviewed head SHA
+# Note: SHA match is intentionally case-sensitive (`grep -qF`) because commit
+# hashes are canonical lowercase hex strings and should match exactly.
 # ---------------------------------------------------------------------------
-if [ -n "$HEAD_SHA" ] && ! grep -qiF "$HEAD_SHA" "$EVIDENCE_PATH"; then
+if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
   echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
   exit 1
 fi
