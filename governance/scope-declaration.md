@@ -1,7 +1,7 @@
 # Scope Declaration
 
 **Branch**: copilot/improve-iaa-product-build-assurance-again
-**Issue**: #1590
+**Issue**: #1596
 **PR**: PR 1599
 **Wave**: improve-iaa-product-build-assurance-again
 **Session**: improve-iaa-product-build-assurance-again
@@ -11,7 +11,7 @@
 
 ---
 
-FILES_CHANGED: 12
+FILES_CHANGED: 15
 
 ## FILES_CHANGED
 
@@ -22,6 +22,9 @@ FILES_CHANGED: 12
 - .agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md
 - .agent-workspace/independent-assurance-agent/knowledge/iaa-trigger-table.md
 - .agent-workspace/independent-assurance-agent/knowledge/index.md
+- .agent-admin/assurance/iaa-wave-record-pr1599-dry-run-product-build-assurance-20260511.md
+- .agent-admin/prehandover/proof-pr-1599-ecap-admin-ceremony-20260511.md
+- .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1599-ecap-admin-ceremony-20260511.md
 - .functional-delivery/pr-template.md
 - .github/scripts/validate-product-delivery-gates.sh
 - .github/scripts/validate-product-delivery-gates.test.sh

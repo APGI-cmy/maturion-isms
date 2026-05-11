@@ -1,6 +1,6 @@
 {
   "pr": 1599,
-  "issue": 1590,
+  "issue": 1596,
   "type": "governance-change",
   "owner": "Copilot",
   "scope": [
@@ -14,6 +14,9 @@
     ".functional-delivery/pr-template.md",
     "governance/templates/iaa-wave-record.template.md",
     "governance/scope-declaration.md",
+    ".agent-admin/assurance/iaa-wave-record-pr1599-dry-run-product-build-assurance-20260511.md",
+    ".agent-admin/prehandover/proof-pr-1599-ecap-admin-ceremony-20260511.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1599-ecap-admin-ceremony-20260511.md",
     ".github/scripts/validate-product-delivery-gates.sh",
     ".github/scripts/validate-product-delivery-gates.test.sh"
   ],
@@ -29,7 +32,8 @@
     "Functional delivery template includes journey, CTA/backend/schema/async/visible-state/preview/dashboard sections",
     "IAA wave record template includes explicit yes/no product-build functional gates",
     "Product delivery CI gate script enforces split-verdict and false-PASS contradiction checks",
-    "Regression test suite includes PR #1590-style dry-run rejection fixture and passes"
+    "Regression test suite includes migration-only schema change classification and PR #1590-style dry-run rejection fixture",
+    "Dry-run IAA rejection proof demonstrates workflow-based FUNCTIONAL_PASS: no with pasteable REJECTION-PACKAGE"
   ],
   "merge_authority": "CS2"
 }

@@ -187,6 +187,18 @@ t1_missing_evidence() {
 }
 run_test "T1 missing functional evidence -> FAIL" 1 t1_missing_evidence
 
+t1c_migration_only_change_requires_product_evidence() {
+  mkdir -p supabase/migrations
+  cat > supabase/migrations/20260511070000_add_test_table.sql << 'EOF'
+create table if not exists test_product_delivery_gate (
+  id uuid primary key
+);
+EOF
+  git add .
+  git commit -q -m "migration-only schema change without functional evidence"
+}
+run_test "T1c migration-only schema change is product-facing and requires evidence -> FAIL" 1 t1c_migration_only_change_requires_product_evidence
+
 t1b_missing_pr_specific_evidence_no_stale_fallback() {
   seed_product_change_with_cta
   seed_valid_iaa

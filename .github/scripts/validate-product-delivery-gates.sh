@@ -55,6 +55,8 @@ is_product_path() {
       ;;
   esac
 
+  [[ "$file" =~ ^supabase/migrations/ ]] && return 0
+  [[ "$file" =~ ^supabase/seed/ ]] && return 0
   [[ "$file" =~ ^(apps|packages|supabase/functions|api)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
   [[ "$file" =~ ^modules/[^/]+/(src|app|api|frontend|backend|pages?|components?|routes?)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
   [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && [[ "$file" =~ (^|/)(src|app|api|pages?|components?|routes?)/ ]] && return 0

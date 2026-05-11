@@ -5,7 +5,8 @@
 **Status**: ACTIVE — MANDATORY  
 **Last Updated**: 2026-05-10  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
-**Issue Anchor**: #1590
+**Governing Issue Anchor**: #1596  
+**Incident / Dry-Run Calibration Anchor**: PR #1590
 
 ---
 

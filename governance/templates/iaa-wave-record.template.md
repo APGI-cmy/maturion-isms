@@ -278,4 +278,4 @@ Required proof before re-invocation:
 - Storage Location: `.agent-admin/assurance/`
 - Amendment: v1.3.0 (2026-04-28) — Added §3.1a Mandatory ECAP Presence Gate (P-1 through P-4 four-question check, executed before any ACR/checklist evaluation; REJECTED-ACR-27 if ecap_required YES, ECAP not invoked, and no committed CS2 waiver); authority: CS2 — maturion-isms#1493; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0
 - Amendment: v1.2.0 (2026-04-28) — Added §3.2 Acceptance-Criteria Evidence Matrix, §3.3 Build-Correctness Assessment, §3.4 Independent Risk Challenge; renumbered prior §3.2/3.3 to §3.5/3.6; updated Record Schema Version; authority: CS2 — maturion-isms#1492
-- Amendment: v1.4.0 (2026-05-10) — Added explicit product-build functional yes/no gate block (§3.1c) and mandatory rejection-package template (§3.1d) for issue #1590 functional-delivery assurance hardening.
+- Amendment: v1.4.0 (2026-05-10) — Added explicit product-build functional yes/no gate block (§3.1c) and mandatory rejection-package template (§3.1d) for governing issue #1596 (incident calibration PR #1590) functional-delivery assurance hardening.
