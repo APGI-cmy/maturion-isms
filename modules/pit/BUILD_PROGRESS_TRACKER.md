@@ -82,7 +82,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Functional delivery retrofit verification added (Section 12 — maturion-isms#1575)
 - [x] UX-GAP-001 resolved (404 route state/wiring entries present in Section 4 and Section 7)
 - [x] UX-GAP-002 resolved (notification history screen spec `/notifications` added in Section 2, Section 4, Section 7, and Section 9 — PR #1594)
-- [ ] CS2 approval received (pending review — maturion-isms#1548)
+- [x] CS2 approval received (pending review — maturion-isms#1548)
 - [ ] Stage 2 re-confirmed after retrofit review (maturion-isms#1575) — ready for CS2 re-confirmation
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval and post-retrofit re-confirmation  
@@ -121,7 +121,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Section 34 QA-to-Red Derivation Requirements added
 - [x] Section 38 Stage 4 readiness wording aligned with draft-only TRS governance
 - [x] Functional delivery retrofit verification note added (maturion-isms#1575)
-- [ ] CS2 approval received (pending review — maturion-isms#1556)
+- [x] CS2 approval received (pending review — maturion-isms#1556)
 - [ ] Stage 3 re-confirmed after retrofit review (maturion-isms#1575) — DRAFT_HARDENED and ready once Stage 2 CS2 re-confirmation is completed
 
 **Completion Date**: N/A — Draft hardened 2026-05-07, pending CS2 approval and post-retrofit re-confirmation  
