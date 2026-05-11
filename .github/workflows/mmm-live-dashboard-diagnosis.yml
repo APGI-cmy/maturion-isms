@@ -7,28 +7,38 @@ name: MMM Live Dashboard Diagnosis
 # CAN access them, so the diagnosis must happen here.
 #
 # Trigger:
-#   workflow_dispatch — pass `preview_url` pointing at the protected-preview
-#   /dashboard URL (with `?_vercel_share=...` token). The secrets
-#   MMM_TEST_ADMIN_EMAIL / MMM_TEST_ADMIN_PASSWORD / MMM_TEST_ADMIN_USER_ID /
-#   MMM_TEST_ORGANISATION_ID are read from repository secrets.
+#   workflow_dispatch. The `preview_url` input is optional — when omitted, the
+#   workflow uses the permanent `MMM_PREVIEW_URL` repository secret (which
+#   points at the PR #1590 preview deployment, not production main, per the
+#   CS2 directive of 2026-05-11).
+#
+# Required repository secrets (configured permanently by CS2):
+#   VERCEL_AUTOMATION_BYPASS_SECRET   Vercel Deployment Protection bypass
+#   MMM_PREVIEW_URL                   PR #1590 preview /dashboard URL
+#   MMM_TEST_ADMIN_EMAIL              Test ADMIN user email
+#   MMM_TEST_ADMIN_PASSWORD           Test ADMIN user password
+#   MMM_TEST_ADMIN_USER_ID            (recorded only)
+#   MMM_TEST_ORGANISATION_ID          (recorded only)
 #
 # The workflow:
 #   1. launches Playwright + Chromium
-#   2. opens the preview URL, logs in as the test admin
-#   3. captures screenshot / console / network / trace
-#   4. fails when the dashboard renders the "Unable to load dashboard data."
+#   2. applies the Vercel protection-bypass cookie via diagnose.mjs
+#   3. opens the preview URL, logs in as the test admin
+#   4. captures screenshot / console / network / trace
+#   5. fails when the dashboard renders the "Unable to load dashboard data."
 #      error banner, so the failure is recorded as an unmistakable signal
-#   5. uploads all artifacts
-#   6. posts a comment on the triggering PR (when invoked via
-#      workflow_dispatch with `pr_number`) with the standard diagnosis fields
+#   6. uploads all artifacts
+#   7. posts a comment on the triggering PR (default: 1590) with the
+#      standard diagnosis fields
 
 on:
   workflow_dispatch:
     inputs:
       preview_url:
-        description: "Full /dashboard URL with the ?_vercel_share=... token"
-        required: true
+        description: "Full /dashboard URL. If empty, the MMM_PREVIEW_URL repository secret (PR #1590 preview) is used."
+        required: false
         type: string
+        default: ""
       pr_number:
         description: "PR number to comment on (default: 1590)"
         required: false
@@ -50,11 +60,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      MMM_PREVIEW_URL: ${{ inputs.preview_url }}
+      # Prefer the workflow_dispatch input if provided; otherwise fall back to
+      # the permanent MMM_PREVIEW_URL repository secret (which points at the
+      # PR #1590 preview deployment, per CS2 directive).
+      MMM_PREVIEW_URL: ${{ inputs.preview_url != '' && inputs.preview_url || secrets.MMM_PREVIEW_URL }}
       MMM_TEST_ADMIN_EMAIL: ${{ secrets.MMM_TEST_ADMIN_EMAIL }}
       MMM_TEST_ADMIN_PASSWORD: ${{ secrets.MMM_TEST_ADMIN_PASSWORD }}
       MMM_TEST_ADMIN_USER_ID: ${{ secrets.MMM_TEST_ADMIN_USER_ID }}
       MMM_TEST_ORGANISATION_ID: ${{ secrets.MMM_TEST_ORGANISATION_ID }}
+      # Vercel Deployment Protection bypass — applied by diagnose.mjs as a
+      # query param + cookie on first navigation so subsequent requests pass
+      # through protection. See:
+      # https://vercel.com/docs/security/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
       ARTIFACT_DIR: diagnosis-artifacts
     steps:
       - name: Checkout
@@ -75,8 +93,11 @@ jobs:
             fi
           done
           if [ -z "${MMM_PREVIEW_URL}" ]; then
-            echo "::error::preview_url input is empty"
+            echo "::error::MMM_PREVIEW_URL is empty — provide preview_url input or set the MMM_PREVIEW_URL repository secret (must point at the PR #1590 preview, not production main)"
             missing=1
+          fi
+          if [ -z "${VERCEL_AUTOMATION_BYPASS_SECRET}" ]; then
+            echo "::warning::VERCEL_AUTOMATION_BYPASS_SECRET is not set; protected previews will not be reachable"
           fi
           if [ "$missing" -ne 0 ]; then
             exit 1

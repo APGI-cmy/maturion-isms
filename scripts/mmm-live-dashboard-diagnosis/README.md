@@ -13,7 +13,8 @@ secrets and the protected-preview share URL are available).
 
 | Name | Source | Purpose |
 | --- | --- | --- |
-| `MMM_PREVIEW_URL` | workflow input or repo variable | Full URL pointing at `/dashboard`, including `?_vercel_share=...` token |
+| `MMM_PREVIEW_URL` | repo secret (or workflow input) | Full URL pointing at `/dashboard` on the PR #1590 preview deployment. The workflow falls back to this secret when the `preview_url` input is empty. |
+| `VERCEL_AUTOMATION_BYPASS_SECRET` | repo secret | Vercel Deployment Protection bypass secret. Applied as `x-vercel-protection-bypass` query param (sets bypass cookie) and as a header on every request. |
 | `MMM_TEST_ADMIN_EMAIL` | repo secret | Test admin email |
 | `MMM_TEST_ADMIN_PASSWORD` | repo secret | Test admin password |
 | `MMM_TEST_ADMIN_USER_ID` | repo secret | Recorded in summary only |
@@ -33,7 +34,8 @@ secrets and the protected-preview share URL are available).
 ```bash
 npm install --no-save playwright@1.48.2
 npx playwright install --with-deps chromium
-MMM_PREVIEW_URL='https://…/dashboard?_vercel_share=…' \
+MMM_PREVIEW_URL='https://…/dashboard' \
+VERCEL_AUTOMATION_BYPASS_SECRET='…' \
 MMM_TEST_ADMIN_EMAIL='…' \
 MMM_TEST_ADMIN_PASSWORD='…' \
 node scripts/mmm-live-dashboard-diagnosis/diagnose.mjs

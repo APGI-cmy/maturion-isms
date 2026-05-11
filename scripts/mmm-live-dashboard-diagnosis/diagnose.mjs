@@ -16,12 +16,18 @@
  * mmm-qiw-status (or any dashboard-related) network call fails.
  *
  * Required environment variables:
- *   MMM_PREVIEW_URL                 Full URL pointing at /dashboard, including
- *                                   any Vercel protection ?_vercel_share=... token
+ *   MMM_PREVIEW_URL                 Full URL pointing at /dashboard
  *   MMM_TEST_ADMIN_EMAIL            Test admin email
  *   MMM_TEST_ADMIN_PASSWORD         Test admin password
  *
  * Optional:
+ *   VERCEL_AUTOMATION_BYPASS_SECRET Vercel Deployment Protection bypass secret.
+ *                                   When set, the script appends
+ *                                   `x-vercel-protection-bypass=<secret>` and
+ *                                   `x-vercel-set-bypass-cookie=samesitenone`
+ *                                   to the first navigation so subsequent
+ *                                   requests carry the protection-bypass
+ *                                   cookie.
  *   MMM_TEST_ADMIN_USER_ID          (recorded into summary only)
  *   MMM_TEST_ORGANISATION_ID        (recorded into summary only)
  *   ARTIFACT_DIR                    Output directory (default ./diagnosis-artifacts)
@@ -63,11 +69,26 @@ async function main() {
   const previewUrl = required('MMM_PREVIEW_URL');
   const email = required('MMM_TEST_ADMIN_EMAIL');
   const password = required('MMM_TEST_ADMIN_PASSWORD');
+  const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '').trim();
   const headless = (process.env.HEADLESS || 'true').toLowerCase() !== 'false';
 
   if (!existsSync(ARTIFACT_DIR)) {
     await mkdir(ARTIFACT_DIR, { recursive: true });
   }
+
+  // If a Vercel Deployment Protection bypass secret is supplied, attach it to
+  // the first navigation URL so Vercel sets the bypass cookie for the rest of
+  // the session. Both query params are required by Vercel's documented
+  // "Automation Bypass" flow.
+  // See: https://vercel.com/docs/security/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
+  function withBypassParams(rawUrl) {
+    if (!bypassSecret) return rawUrl;
+    const u = new URL(rawUrl);
+    u.searchParams.set('x-vercel-protection-bypass', bypassSecret);
+    u.searchParams.set('x-vercel-set-bypass-cookie', 'samesitenone');
+    return u.toString();
+  }
+  const navigateUrl = withBypassParams(previewUrl);
 
   const consoleLogPath = path.join(ARTIFACT_DIR, 'console.log');
   const networkLogPath = path.join(ARTIFACT_DIR, 'network.log');
@@ -86,6 +107,12 @@ async function main() {
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     viewport: { width: 1366, height: 900 },
+    // Forward the Vercel protection-bypass header on every request as a
+    // belt-and-braces measure in addition to the bypass cookie set via the
+    // navigation query params above.
+    extraHTTPHeaders: bypassSecret
+      ? { 'x-vercel-protection-bypass': bypassSecret }
+      : undefined,
   });
   await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
   const page = await context.newPage();
@@ -183,13 +210,13 @@ async function main() {
 
   try {
     await step('navigate-to-preview', async () => {
-      const resp = await page.goto(previewUrl, {
+      const resp = await page.goto(navigateUrl, {
         waitUntil: 'domcontentloaded',
         timeout: 60_000,
       });
       const s = resp?.status();
       deploymentAccess = !!resp && s !== undefined && s < 400;
-      return `status=${s ?? 'n/a'}`;
+      return `status=${s ?? 'n/a'}${bypassSecret ? ' (vercel-bypass=applied)' : ''}`;
     });
 
     // The MMM SPA redirects unauthenticated users to /login. Detect and log in.
@@ -388,7 +415,8 @@ NEXT_FIX: ${nextFix}
 
 ## Run context
 
-- Preview URL: ${origin}${previewURL.pathname}${previewURL.search ? ' (with share token)' : ''}
+- Preview URL: ${origin}${previewURL.pathname}${previewURL.search ? ' (with query params)' : ''}
+- Vercel protection bypass: ${bypassSecret ? 'applied (VERCEL_AUTOMATION_BYPASS_SECRET present)' : 'not applied'}
 - Steps:
 ${steps.map((s) => `  - ${s.ok ? '✓' : '✗'} ${s.step}${s.detail ? ` — ${s.detail}` : ''}`).join('\n')}
 
