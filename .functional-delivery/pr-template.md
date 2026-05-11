@@ -38,6 +38,7 @@ IAA final assurance reference: <path/url>
 ADMIN_PASS: yes/no
 FUNCTIONAL_PASS: yes/no
 VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL
+MERGE_STATUS_IF_PARTIAL: BLOCKED_BY_DEFAULT | CS2_WAIVER_QUOTED
 # Optional alias for compatibility with existing templates/gates:
 FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL
 ```
@@ -48,6 +49,8 @@ FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_
 - If `KNOWN_PARTIALS` is not `none`, `FUNCTIONAL_PASS` must be `no`.
 - `FULL_FUNCTIONAL_DELIVERY` cannot coexist with `pending`, `outstanding`, `not verified`, or unresolved partial language.
 - If partial delivery is claimed, include explicit CS2 waiver quote under `CS2_WAIVER_QUOTE`.
+- `PARTIAL_FUNCTIONAL_DELIVERY` is non-mergeable by default. Only explicit quoted CS2 acceptance can remove that block.
+- IAA verdict/evidence must remain bound to current PR head SHA; if head changes, re-run IAA and refresh evidence.
 - Enforcement reference: `.github/scripts/validate-product-delivery-gates.sh`.
 
 ## Rejection Package Shape (for failed functional delivery)

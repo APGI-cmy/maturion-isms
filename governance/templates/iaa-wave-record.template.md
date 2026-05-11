@@ -1,6 +1,6 @@
 # IAA Wave Record — {wave} — {date}
 
-**Record Version**: 1.4.0
+**Record Version**: 1.4.1
 **Wave**: {wave}
 **Branch**: {branch}
 **Issue**: {issue_ref}
@@ -157,6 +157,8 @@
 
 ### 3.1b Split Verdict Evidence Pack (when applicable)
 - CURRENT_HEAD_SHA: {sha used for final IAA review}
+- NO_CURRENT_HEAD_DRIFT: {yes / no}
+- HEAD_DRIFT_ACTION: {N/A / RE-RUN_REQUIRED}
 - ADMIN_GATE_EVIDENCE_FRESH_AT_HEAD: {yes / no}
 - FUNCTIONAL_CTA_EVIDENCE: {present / missing}
 - FUNCTIONAL_BACKEND_EVIDENCE: {present / missing}
@@ -166,6 +168,19 @@
 - PARTIAL_SCOPE_CS2_ACCEPTANCE: {yes / no / N/A}
 - CALIBRATION_REFERENCE: {APGI-cmy/maturion-isms#1553 (OC-009) when PARTIAL_FUNCTIONAL_DELIVERY is issued or UI_SHELL_ONLY classification evidence is referenced}
 - APPLICABILITY: {REQUIRED for product-facing T2 PRs / N/A for non-product-facing PRs with classification rationale}
+
+#### Loading attestation proof (product-facing BUILD/T2 mandatory)
+- product-facing BUILD/T2 PR detected: {yes / no}
+- PRODUCT_BUILD_ASSURANCE_STANDARD.md loaded: {yes / no}
+- rejection-package template loaded: {yes / no}
+- functional-delivery evidence template loaded: {yes / no}
+- CI/false-pass rules considered: {yes / no}
+
+#### Enforcement proof shape (document vs enforced)
+- Artifact created: {yes / no}
+- Artifact loaded by IAA: {yes / no}
+- Artifact applied to PR fixture: {yes / no}
+- Artifact changed verdict/rejection behaviour: {yes / no}
 
 ### 3.1c Product-Build Functional Gates (product-facing BUILD/T2)
 - USER_JOURNEY_COMPLETE: {yes / no}
@@ -180,6 +195,7 @@
 - VERDICT: {FULL_FUNCTIONAL_DELIVERY / PARTIAL_FUNCTIONAL_DELIVERY / ADMIN_ONLY / FAIL}
 
 Rule: any `no` above means full functional delivery assurance is not permitted.
+`PARTIAL_FUNCTIONAL_DELIVERY` is non-mergeable by default unless explicit CS2 partial-scope acceptance is committed and quoted.
 
 ### 3.1d Rejection Package Template (product-build)
 
@@ -269,7 +285,7 @@ Required proof before re-invocation:
 ---
 
 ## 5. Record Metadata
-- Record Schema Version: 1.4.0
+- Record Schema Version: 1.4.1
 - Created By: {agent_id}
 - Last Modified By: {agent_id}
 - Last Modified Date: {YYYY-MM-DD}
@@ -279,3 +295,4 @@ Required proof before re-invocation:
 - Amendment: v1.3.0 (2026-04-28) — Added §3.1a Mandatory ECAP Presence Gate (P-1 through P-4 four-question check, executed before any ACR/checklist evaluation; REJECTED-ACR-27 if ecap_required YES, ECAP not invoked, and no committed CS2 waiver); authority: CS2 — maturion-isms#1493; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0
 - Amendment: v1.2.0 (2026-04-28) — Added §3.2 Acceptance-Criteria Evidence Matrix, §3.3 Build-Correctness Assessment, §3.4 Independent Risk Challenge; renumbered prior §3.2/3.3 to §3.5/3.6; updated Record Schema Version; authority: CS2 — maturion-isms#1492
 - Amendment: v1.4.0 (2026-05-10) — Added explicit product-build functional yes/no gate block (§3.1c) and mandatory rejection-package template (§3.1d) for governing issue #1596 (incident calibration PR #1590) functional-delivery assurance hardening.
+- Amendment: v1.4.1 (2026-05-11) — Added loading attestation proof block, enforcement proof shape, explicit no-current-head-drift fields, and explicit non-mergeable partial default wording per issue #1596 CS2 clarification.
