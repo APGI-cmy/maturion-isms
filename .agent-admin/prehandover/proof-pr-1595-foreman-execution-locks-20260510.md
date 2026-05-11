@@ -37,7 +37,7 @@ gate_set_checked:
   - preflight/scope-declaration-parity
   - preflight/gate-changing-pr-rule
 handover_allowed: NO
-handover_state: STOP_AND_FIX — ECAP evidence committed; IAA token pending; gate fix committed (yaml-validation); RCA A-038 confirmed
+handover_state: STOP_AND_FIX — ECAP evidence committed; IAA token pending; gate fix committed (yaml-validation); RCA A-038 noted as candidate in linked RCA
 ```
 
 ## Protected-Path Classification
