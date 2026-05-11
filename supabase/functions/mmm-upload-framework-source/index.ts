@@ -161,9 +161,12 @@ Deno.serve(async (req: Request) => {
   // Fire-and-forget: invoke mmm-ai-framework-parse to convert the uploaded document into
   // proposed domains/MPS/criteria. This is the functional bridge for Mode A.
   // The parse function updates the parse job from PENDING → PROCESSING → COMPLETE/FAILED.
+  // If the trigger itself fails (network error or non-2xx), the parse job is updated to FAILED
+  // so the review page polling does not hang indefinitely.
   if (frameworkIdForJob) {
     const authHeader = req.headers.get('Authorization') ?? '';
     const parseUrl = `${SUPABASE_URL}/functions/v1/mmm-ai-framework-parse`;
+    const parseJobId = parseJob.id;
     fetch(parseUrl, {
       method: 'POST',
       headers: {
@@ -172,10 +175,24 @@ Deno.serve(async (req: Request) => {
         'apikey': SUPABASE_SERVICE_ROLE_KEY,
       },
       body: JSON.stringify({
-        parse_job_id: parseJob.id,
+        parse_job_id: parseJobId,
         framework_id: frameworkIdForJob,
       }),
-    }).catch((err: Error) => console.warn(`[mmm-upload-framework-source] Failed to trigger mmm-ai-framework-parse: ${err.message}`));
+    }).then(async (res: Response) => {
+      if (!res.ok) {
+        console.warn(`[mmm-upload-framework-source] mmm-ai-framework-parse returned HTTP ${res.status} for parse_job ${parseJobId}`);
+        await supabase
+          .from('mmm_parse_jobs')
+          .update({ status: 'FAILED', result_json: { error_type: 'parse_trigger_failed', http_status: res.status } })
+          .eq('id', parseJobId);
+      }
+    }).catch(async (err: Error) => {
+      console.warn(`[mmm-upload-framework-source] Failed to trigger mmm-ai-framework-parse: ${err.message}`);
+      await supabase
+        .from('mmm_parse_jobs')
+        .update({ status: 'FAILED', result_json: { error_type: 'parse_trigger_network_error', message: err.message } })
+        .eq('id', parseJobId);
+    });
   }
 
   // NBR-001: UI must invalidate ['parse-jobs']

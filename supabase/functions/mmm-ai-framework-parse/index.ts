@@ -91,8 +91,32 @@ Deno.serve(async (req: Request) => {
       .eq('id', parse_job_id);
   }
 
+  // Fetch parse job row to extract KUC identifiers stored by mmm-upload-framework-source.
+  // These are passed to AIMC so the parse operation is grounded in the actual uploaded document.
+  let kucUploadId: string | null = null;
+  let kucParseJobId: string | null = null;
+  let uploadMetadata: Record<string, unknown> | null = null;
+
+  if (parse_job_id) {
+    const { data: parseJobRow } = await supabase
+      .from('mmm_parse_jobs')
+      .select('result_json')
+      .eq('id', parse_job_id)
+      .single();
+
+    if (parseJobRow?.result_json) {
+      const rj = parseJobRow.result_json as Record<string, unknown>;
+      kucUploadId = typeof rj.kuc_upload_id === 'string' ? rj.kuc_upload_id : null;
+      kucParseJobId = typeof rj.kuc_parse_job_id === 'string' ? rj.kuc_parse_job_id : null;
+      uploadMetadata = rj.upload_metadata && typeof rj.upload_metadata === 'object' && !Array.isArray(rj.upload_metadata)
+        ? (rj.upload_metadata as Record<string, unknown>)
+        : null;
+    }
+  }
+
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
   // Authorization: Bearer AIMC_SERVICE_TOKEN on every call (TR-011)
+  // Pass KUC identifiers so AIMC can retrieve and parse the uploaded document.
   const aimcResult = await callAimc(
     'framework-parse',
     claims.orgId,
@@ -101,6 +125,9 @@ Deno.serve(async (req: Request) => {
       parse_job_id: parse_job_id ?? null,
       framework_id: framework_id ?? null,
       source_text: source_text ?? null,
+      kuc_upload_id: kucUploadId,
+      kuc_parse_job_id: kucParseJobId,
+      upload_metadata: uploadMetadata,
     },
   );
 
@@ -132,7 +159,7 @@ Deno.serve(async (req: Request) => {
     context_type: 'parse_job',
     target_entity_id: parse_job_id ?? framework_id ?? null,
     status: 'completed',
-    request_json: { parse_job_id: parse_job_id ?? null, framework_id: framework_id ?? null, source_text: source_text ?? null },
+    request_json: { parse_job_id: parse_job_id ?? null, framework_id: framework_id ?? null, source_text: source_text ?? null, kuc_upload_id: kucUploadId, kuc_parse_job_id: kucParseJobId },
     response_json: (aimcResult.data as Record<string, unknown>) ?? null,
   }).catch((err: Error) => {
     console.warn(`[mmm-ai-framework-parse] ai_interactions insert warn: ${err.message}`);
