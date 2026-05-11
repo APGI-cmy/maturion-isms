@@ -38,6 +38,7 @@ ADMIN_PASS: yes
 FUNCTIONAL_PASS: no
 VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
 - **Verdict**: PASS_WITH_CS2_WAIVER — IAA code quality PASS; schema/CORS build blockers resolved; compile/publish schema and UI feedback states resolved; Mode A/C parse bridge (KUC pass-through, fire-and-forget failure handling) resolved; Mode B/C navigation to /frameworks/:id/review resolved; Mode C hybrid now requires and uploads source document via mmm-upload-framework-source (source_type: HYBRID); dashboard error_rate now treats both 'completed' and 'success' as successful; parse-job polling and proposed-domain gate on review page implemented; T-MMM-S6-UPL test coverage added for /api/upload/framework-source; full functional delivery pending deployed preview confirmation with authenticated ADMIN/LEAD_AUDITOR role
+CS2_WAIVER_QUOTE: "That is acceptable from the admin/process side because this PR no longer claims full functional delivery. It preserves the distinction between administrative admissibility and functional completion. Admin/process position: APPROVED."
 
 Gate CI evidence: Actions run 25628089130 — all 11 Preflight Evidence Gate jobs ✅ on SHA 615cd7b0. CS2 admin/process APPROVED on SHA 3cf9e9872bddf044ee50d2da185d1fdb4c11b547 (comment 4415303629). All gates pass on HEAD 2e9e4c72a6e303b35ab8ecefeb87dca957a5f758 (preflight/product-delivery-gates ✅, regression/product-delivery-gates ✅, CodeQL ✅, Build ✅) — run 25657187431.
 
