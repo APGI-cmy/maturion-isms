@@ -33,7 +33,7 @@
 This Technical Requirements Specification (TRS) translates the functional requirements of PIT into technical constraints and implementation contracts. It derives exclusively from:
 
 1. **Stage 1** — `docs/governance/PIT_APP_DESCRIPTION.md` v1.0 (CS2 Approved 2026-05-06)
-2. **Stage 2** — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2-draft (Foreman-reviewed 2026-05-06)
+2. **Stage 2** — `modules/pit/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.2 baseline (CS2 re-confirmed in tracker context)
 3. **Stage 3** — `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** baseline (re-confirmed in tracker context)
 
 Any conflict discovered between this TRS and the FRS, UX Wiring Spec, or App Description **must be resolved upstream** before Stage 5 Architecture proceeds. Changes in upstream stages propagate to this TRS per L-008.
@@ -624,7 +624,7 @@ Evidence status transitions must be: `pending → approved` (by reviewer) and `p
 
 ### PIT-TR-064 — Timeline Rendering Model and Alignment Architecture Contract
 
-The Timeline engine must be implemented as a split-plane layout with:
+The Timeline engine must be implemented as a split-pane layout with:
 1. Fixed descriptor/progress columns on the left.
 2. A horizontally scrollable time-grid on the right.
 3. Shared row identity between both panes so project/milestone/deliverable/task rows never drift out of alignment.
@@ -662,13 +662,14 @@ No timeline tool may be selected only because it is easy to integrate.
 Timeline date calculations must use a canonical organisation timezone and enforce:
 
 1. Milestone/deliverable/project boundaries persisted as ISO dates (`YYYY-MM-DD`).
-2. Task scheduling supports predecessor + offset + duration logic with day/hour/minute precision for calculation.
-3. Start date inclusive, internal end boundary exclusive, user-facing end date displayed as inclusive calendar day.
-4. Date→pixel and pixel→date mappings share one denominator math contract (no drift between grid and bars).
-5. Snap behaviour configurable per denominator (day/week/month).
-6. Hover, drag, and handle labels all use the same mapping contract.
-7. Progress overlay width = bar span × progress percentage.
-8. DST/timezone edge cases neutralised by calendar-cell calculations in canonical timezone before display formatting.
+2. User-facing dates must render in `DD MMM YYYY` format while persisted values remain ISO date-only (`YYYY-MM-DD`); no time component is stored.
+3. Task scheduling supports predecessor + offset + duration logic using calendar-day granularity only (no hour/minute timestamp precision).
+4. Start date inclusive, internal end boundary exclusive, user-facing end date displayed as inclusive calendar day.
+5. Date→pixel and pixel→date mappings share one denominator math contract (no drift between grid and bars).
+6. Snap behaviour configurable per denominator (day/week/month).
+7. Hover, drag, and handle labels all use the same mapping contract.
+8. Progress overlay width = bar span × progress percentage.
+9. DST/timezone edge cases neutralised by calendar-cell calculations in canonical timezone before display formatting.
 
 **Derived from**: PIT-FR-072 to PIT-FR-076, PIT-FR-114
 

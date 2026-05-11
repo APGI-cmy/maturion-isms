@@ -246,14 +246,14 @@
 
 | FRS Group | FRS ID(s) | TRS ID(s) | Technical Domain | Future Architecture Component | Future QA-to-Red Test Placeholder |
 |---|---|---|---|---|---|
-| Gantt rendering | PIT-FR-068 | PIT-TR-064, PIT-TR-065, PIT-TR-067 | Rendering model contract + tooling criteria + interaction/performance/QA contract | Timeline split-plane engine + virtualised grid + interaction layer | Integration: project with 3M+8D renders aligned bars; Visual regression: no row/grid drift |
+| Gantt rendering | PIT-FR-068 | PIT-TR-064, PIT-TR-065, PIT-TR-067 | Rendering model contract + tooling criteria + interaction/performance/QA contract | Timeline split-pane engine + virtualised grid + interaction layer | Integration: project with 3M+8D renders aligned bars; Visual regression: no row/grid drift |
 | Gantt zoom | PIT-FR-069 | PIT-TR-064, PIT-TR-065, PIT-TR-067 | Denominator and viewport controls contract | Zoom/denominator control component | Integration: denominator switches day/week/month/quarter/year; viewport preset remains scrollable |
 | Gantt progress fill | PIT-FR-070 | PIT-TR-064, PIT-TR-066, PIT-TR-067 | Progress overlay render + width calculation contract | Bar overlay renderer | Integration: 60% deliverable shows proportional 60% fill |
 | Today line | PIT-FR-071 | PIT-TR-064 | Timeline calendar-axis rendering contract | Timeline header/grid renderer | Integration: today line renders at current date position |
 | Drag-and-drop date adjust | PIT-FR-072 | PIT-TR-066, PIT-TR-067 | Date math contract + drag interaction contract | Drag body + handle interactions | Integration: drag/resize updates visible start/end labels and persisted dates |
 | Cascade on milestone change | PIT-FR-073 | PIT-TR-066, PIT-TR-067, PIT-TR-040 | Cascade + locked-change approval/audit contract | Cascade dialog + override request workflow | Integration: conflicting date move requires cascade resolution and records approval/audit event |
 | Conflict detection | PIT-FR-074 | PIT-TR-067, PIT-TR-039 | Dependency/conflict + server validation contract | Conflict indicator component + dependency API | Integration: deliverable end > milestone end shows marker; circular dependency rejected server-side |
-| Date format | PIT-FR-075 | PIT-TR-064, PIT-TR-066 | Date display/ISO storage + timeline mapping contract | Date formatting and timeline mapping utility | Unit: UI dates render as DD MMM YYYY, persisted values remain ISO date-only, and timeline hover/drag labels resolve consistently with the same canonical dates |
+| Date format | PIT-FR-075 | PIT-TR-066 | Date display/ISO storage + timeline mapping contract | Date formatting utility + timeline mapping utility | Unit: UI dates render as DD MMM YYYY and persisted values remain ISO date-only; Unit: timeline hover/drag labels resolve to the same canonical dates |
 | Task bar overlay | PIT-FR-076 | PIT-TR-064, PIT-TR-067 | Optional task overlay + performance contract | Task bar toggle component | Integration: toggle shows/hides task bars with no alignment drift |
 
 ---
