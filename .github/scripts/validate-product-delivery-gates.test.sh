@@ -220,6 +220,17 @@ EOF
 }
 run_test "T1e PR-body PARTIAL_FUNCTIONAL_DELIVERY claim triggers evidence requirement -> FAIL" 1 t1e_pr_body_partial_delivery_claim_requires_evidence
 
+t1g_pr_body_standalone_partial_token_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Operational note\nPARTIAL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body standalone partial token without product evidence"
+}
+run_test "T1g PR-body standalone PARTIAL_FUNCTIONAL_DELIVERY token triggers evidence requirement -> FAIL" 1 t1g_pr_body_standalone_partial_token_requires_evidence
+
 t1f_pr_body_handover_claim_requires_evidence() {
   cat > docs/governance/notes.md << 'EOF'
 doc-only change
@@ -230,6 +241,17 @@ EOF
   git commit -q -m "pr body handover claim without product evidence"
 }
 run_test "T1f PR-body handover claim triggers evidence requirement -> FAIL" 1 t1f_pr_body_handover_claim_requires_evidence
+
+t1h_pr_body_handover_readiness_claim_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Release status: handover readiness'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body handover readiness claim without product evidence"
+}
+run_test "T1h PR-body handover readiness claim triggers evidence requirement -> FAIL" 1 t1h_pr_body_handover_readiness_claim_requires_evidence
 
 t1b_missing_pr_specific_evidence_no_stale_fallback() {
   seed_product_change_with_cta

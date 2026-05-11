@@ -65,6 +65,8 @@ is_live_functional_delivery_evidence_file() {
 
 pr_body_claims_product_delivery() {
   [ -n "$PR_BODY" ] || return 1
+  # Intentionally broad: this classifier treats PR-body delivery/handover/product-fix language
+  # as delivery claims so evidence is required instead of allowing under-detection.
   local claim_patterns=(
     'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+'
     'FUNCTIONAL_PASS:[[:space:]]*yes'
@@ -73,9 +75,10 @@ pr_body_claims_product_delivery() {
     'VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
-    'functional[[:space:]]+delivery'
-    'handover[[:space:]]+readiness|ready[[:space:]]+for[[:space:]]+handover'
-    'product[[:space:]]+fix'
+    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY[[:space:]]*[,.;:!?)]'
+    '(^|[[:space:][:punct:]])functional[[:space:]]+delivery([[:space:][:punct:]]|$)'
+    '(^|[[:space:][:punct:]])handover[[:space:]]+readiness([[:space:][:punct:]]|$)|ready[[:space:]]+for[[:space:]]+handover'
+    '(^|[[:space:][:punct:]])product[[:space:]]+fix([[:space:][:punct:]]|$)'
     'Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
   )
   local pattern
