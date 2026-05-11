@@ -648,6 +648,24 @@ EOF
 }
 run_test "T7d IAA artifact missing current HEAD SHA binding must fail" 1 t7d_iaa_artifact_missing_current_head_sha
 
+t7e_split_verdict_and_head_sha_in_different_iaa_artifacts() {
+  seed_product_change_with_cta
+  seed_valid_evidence
+  cat > .agent-admin/assurance/iaa-token-session-9999.md << 'EOF'
+PHASE_B_BLOCKING_TOKEN: IAA-session-9999-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  cat > .agent-admin/assurance/iaa-wave-record-head-only.md << 'EOF'
+PHASE_B_BLOCKING_TOKEN: IAA-session-9999-PASS
+CURRENT_HEAD_SHA: CURRENT_HEAD
+EOF
+  git add .
+  git commit -q -m "split verdict fields and head sha across different iaa artifacts"
+}
+run_test "T7e verdict fields and CURRENT_HEAD_SHA split across IAA artifacts must fail" 1 t7e_split_verdict_and_head_sha_in_different_iaa_artifacts
+
 t8_pr1590_dry_run_incomplete_workflow() {
   seed_product_change_with_cta
   seed_valid_iaa

@@ -345,6 +345,8 @@ if [ -z "$IAA_FILES" ]; then
 fi
 
 IAA_VERDICT_OK=false
+IAA_VERDICT_HEAD_BOUND=false
+IAA_HEAD_KEY_REGEX='^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
@@ -355,7 +357,25 @@ while IFS= read -r iaa_file; do
 
   if [ "$has_admin" = "yes" ] && [ "$has_functional" = "yes" ] && [ "$has_verdict" = "yes" ]; then
     IAA_VERDICT_OK=true
-    break
+    if awk -v sha="$HEAD_SHA" -v keyre="$IAA_HEAD_KEY_REGEX" '
+      BEGIN { IGNORECASE=1 }
+      {
+        line = $0
+        sub(/\r$/, "", line)
+        if (line ~ keyre) {
+          sub(keyre, "", line)
+          sub(/[[:space:]]+$/, "", line)
+          if (line == sha) {
+            found = 1
+            exit 0
+          }
+        }
+      }
+      END { exit(found ? 0 : 1) }
+    ' "$iaa_file"; then
+      IAA_VERDICT_HEAD_BOUND=true
+      break
+    fi
   fi
 done <<< "$IAA_FILES"
 
@@ -370,35 +390,9 @@ if [ "$IAA_VERDICT_OK" = false ]; then
 fi
 echo "✅ IAA Functional Verdict gate: PASS"
 
-# Gate 4c: No-current-head-drift (IAA artifact must bind to current reviewed head)
-IAA_HEAD_BOUND=false
-IAA_HEAD_KEY_REGEX='^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'
-while IFS= read -r iaa_file; do
-  [ -n "$iaa_file" ] || continue
-  [ -f "$iaa_file" ] || continue
-  if awk -v sha="$HEAD_SHA" -v keyre="$IAA_HEAD_KEY_REGEX" '
-    BEGIN { IGNORECASE=1 }
-    {
-      line = $0
-      sub(/\r$/, "", line)
-      if (line ~ keyre) {
-        sub(keyre, "", line)
-        sub(/[[:space:]]+$/, "", line)
-        if (line == sha) {
-          found = 1
-          exit 0
-        }
-      }
-    }
-    END { exit(found ? 0 : 1) }
-  ' "$iaa_file"; then
-    IAA_HEAD_BOUND=true
-    break
-  fi
-done <<< "$IAA_FILES"
-
-if [ "$IAA_HEAD_BOUND" = false ]; then
-  echo "❌ FAIL — IAA assurance artifact must bind verdict to current HEAD SHA ($HEAD_SHA)."
+# Gate 4c: No-current-head-drift (same artifact must contain verdict split + current head)
+if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
+  echo "❌ FAIL — IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD ($HEAD_SHA) in the same artifact."
   echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
   exit 1
 fi
