@@ -728,7 +728,7 @@ Conclusion (required format): **Follow-up required, with proposed issue title, r
 
 ---
 
-*Version: 1.3.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*
+*Version: 1.4.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*
 
 ---
 

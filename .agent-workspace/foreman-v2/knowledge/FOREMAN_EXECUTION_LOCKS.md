@@ -286,7 +286,7 @@ The execution locks are **earlier** enforcement than the existing CI gates:
 | `preflight/iaa-final-assurance` | CI on PR push | ASSURANCE_LOCK |
 | `preflight/ecap-admin-ceremony` | CI on PR push | HANDOVER_LOCK (via ECAP) |
 | `handover-claim-gate` | CI on PR push | HANDOVER_LOCK (language gate) |
-| `foreman-start-lock` (NEW) | CI on PR push | START_LOCK (orchestration record) |
+| `foreman-start-lock` (NEW) | CI on PR push | START_LOCK (scope declaration) / PRODUCT_LOCK (functional delivery) |
 
 The locks are Foreman's **behavioral enforcement** (pre-CI). The CI gates are **confirmatory**.
 CI catching a failure means Foreman failed the lock earlier — this is a FAIL-ONLY-ONCE candidate.

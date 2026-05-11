@@ -183,12 +183,12 @@ jobs:
           echo ""
 
           if [ ${#VIOLATIONS[@]} -gt 0 ]; then
-            echo "START_LOCK_RESULT=FAIL" >> "$GITHUB_OUTPUT"
+            echo "LOCK_RESULT=FAIL" >> "$GITHUB_OUTPUT"
             echo "VIOLATION_COUNT=${#VIOLATIONS[@]}" >> "$GITHUB_OUTPUT"
             echo "WARNING_COUNT=${#WARNINGS[@]}" >> "$GITHUB_OUTPUT"
             echo "PRODUCT_IN_SCOPE=$PRODUCT_IN_SCOPE" >> "$GITHUB_OUTPUT"
 
-            echo "❌ START LOCK VIOLATIONS:"
+            echo "❌ EXECUTION LOCK VIOLATIONS:"
             for v in "${VIOLATIONS[@]}"; do
               echo "   • $v"
             done
@@ -203,12 +203,12 @@ jobs:
             echo "RESULT: STOP_AND_FIX"
             echo "  Foreman must resolve all lock violations before implementation closure."
           else
-            echo "START_LOCK_RESULT=PASS" >> "$GITHUB_OUTPUT"
+            echo "LOCK_RESULT=PASS" >> "$GITHUB_OUTPUT"
             echo "VIOLATION_COUNT=0" >> "$GITHUB_OUTPUT"
             echo "WARNING_COUNT=${#WARNINGS[@]}" >> "$GITHUB_OUTPUT"
             echo "PRODUCT_IN_SCOPE=$PRODUCT_IN_SCOPE" >> "$GITHUB_OUTPUT"
 
-            echo "✅ START LOCK: PASS — orchestration artifacts present"
+            echo "✅ EXECUTION LOCKS: PASS — orchestration artifacts present"
             if [ ${#WARNINGS[@]} -gt 0 ]; then
               echo ""
               echo "⚠️  WARNINGS (non-blocking):"
@@ -218,8 +218,8 @@ jobs:
             fi
           fi
 
-      - name: Post Start Lock alert comment
-        if: steps.evaluate.outputs.START_LOCK_RESULT == 'FAIL'
+      - name: Post execution lock alert comment
+        if: steps.evaluate.outputs.LOCK_RESULT == 'FAIL'
         uses: actions/github-script@v7
         with:
           script: |
@@ -228,7 +228,7 @@ jobs:
             const productInScope = '${{ steps.evaluate.outputs.PRODUCT_IN_SCOPE }}' === 'true';
             const violationCount = parseInt('${{ steps.evaluate.outputs.VIOLATION_COUNT }}', 10);
 
-            // Idempotency: skip if an active alert already exists (will be updated on next push)
+            // Idempotency: skip if an alert for this PR already exists (post-only; no update path)
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -239,14 +239,14 @@ jobs:
               (c) => c.body && c.body.includes(MARKER) && c.user.type === 'Bot'
             );
             if (existing) {
-              core.notice('Foreman Start Lock alert already posted — skipping duplicate.');
+              core.notice('Foreman execution lock alert already posted — skipping duplicate.');
               return;
             }
 
             const lines = [
               `## ⚠️ FOREMAN START LOCK — orchestration evidence required`,
               '',
-              `This PR has **${violationCount} START LOCK violation(s)** before implementation/product/governance closure.`,
+              `This PR has **${violationCount} execution lock violation(s)** before implementation/product/governance closure.`,
               '',
               '### Required before closure:',
               '',
@@ -275,7 +275,7 @@ jobs:
               body: lines,
             });
 
-      - name: Log Start Lock PASS
-        if: steps.evaluate.outputs.START_LOCK_RESULT == 'PASS'
+      - name: Log execution lock PASS
+        if: steps.evaluate.outputs.LOCK_RESULT == 'PASS'
         run: |
-          echo "::notice::Foreman Start Lock PASS — orchestration artifacts present."
+          echo "::notice::Foreman execution lock PASS — orchestration artifacts present."

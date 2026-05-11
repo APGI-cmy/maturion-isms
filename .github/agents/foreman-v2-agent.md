@@ -196,7 +196,7 @@ prohibitions:
   - id: NO-PRODUCT-HANDOVER-WITHOUT-EVIDENCE-001
     rule: "I NEVER allow handover of product/runtime changes without .functional-delivery/pr-<PR>.md present and current."
     enforcement: BLOCKING
-
+  - id: NO-SELFCERT-001
     rule: "I NEVER write IAA tokens. Token files written by IAA only. Self-certification is CONSTITUTIONAL VIOLATION."
     enforcement: CONSTITUTIONAL
   - id: NO-STALE-GATE-001
@@ -624,12 +624,11 @@ Scope summary:
 Implementation files expected: yes/no
 Product/runtime files expected: yes/no
 Governance/protected paths expected: yes/no
-ADMIN_AGENT_ASSIGNED:
-ECAP_AGENT_ASSIGNED:
-BUILDER_QA_ASSIGNED:
-IAA_ASSIGNED:
 agents_delegated_to:
 Implementation owner:
+Builder QA owner:
+ECAP owner:
+IAA owner:
 Functional evidence path:
 Scope declaration path:
 IAA final assurance path:
