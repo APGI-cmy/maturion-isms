@@ -371,7 +371,7 @@ IAA_HEAD_BOUND=false
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
-  if grep -qiE "^[[:space:]]*(-[[:space:]]*)?(\\*\\*)?CURRENT_HEAD_SHA(\\*\\*)?:[[:space:]]*$HEAD_SHA([[:space:]]|$)" "$iaa_file"; then
+  if grep -qiE '^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'"$HEAD_SHA"'([[:space:]]|$)' "$iaa_file"; then
     IAA_HEAD_BOUND=true
     break
   fi
