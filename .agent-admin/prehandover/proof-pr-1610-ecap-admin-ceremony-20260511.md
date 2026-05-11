@@ -15,3 +15,10 @@ ecap_waiver_ref: none
 ```
 
 ECAP outcome recorded for protected-path PR compliance.
+
+## Ripple/Cross-Agent Assessment
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| execution-ceremony-admin-agent | Protected-path template change required ECAP evidence package in this PR | IMPACT — ECAP prehandover proof + bundle artifacts are now present for gate conformance |
+| preflight-evidence-gate | Scope/evidence/admin checks on PR #1610 artifacts | IMPACT — scope parity, ECAP ceremony, and gate-changing evidence checks can evaluate against committed artifacts |
