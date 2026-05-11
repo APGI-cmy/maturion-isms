@@ -74,7 +74,7 @@ pr_body_claims_product_delivery() {
     'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
-    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$|[[:space:]]*[,.;:!?()])'
+    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     '(^|[[:space:][:punct:]])functional[[:space:]]+delivery([[:space:][:punct:]]|$)'
     '(^|[[:space:][:punct:]])(handover[[:space:]]+readiness|ready[[:space:]]+for[[:space:]]+handover)([[:space:][:punct:]]|$)'
     '(^|[[:space:][:punct:]])product[[:space:]]+fix([[:space:][:punct:]]|$)'

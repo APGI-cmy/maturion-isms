@@ -115,6 +115,17 @@ EOF
 }
 run_test "T0c PR body verdict-options example only -> PASS / not applicable" 0 t0c_pr_body_examples_not_claim
 
+t0d_pr_body_partial_option_list_not_claim() {
+  cat > docs/governance/PHASE5_PRODUCT_DELIVERY_GATES.md << 'EOF'
+# Governance documentation update
+EOF
+  TEST_PR_BODY=$'Docs-only note.\nOptions: PARTIAL_FUNCTIONAL_DELIVERY, FULL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "governance docs with comma-separated partial/full options"
+}
+run_test "T0d PR body comma-separated partial/full options should not trigger classifier -> PASS" 0 t0d_pr_body_partial_option_list_not_claim
+
 seed_valid_evidence() {
   cat > .functional-delivery/pr-9999.md << 'EOF'
 PR: #9999
