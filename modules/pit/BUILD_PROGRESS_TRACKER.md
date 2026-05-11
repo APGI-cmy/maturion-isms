@@ -3,8 +3,8 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-11
-**Updated By**: foreman-v2-agent (issue #1604 Stage 4 TRS re-confirmation wave)
-> **Classification**: ACTIVE — RETROFIT COMPLETE — PENDING CS2 RE-CONFIRMATION  
+**Updated By**: foreman-v2-agent (issue #1612 Stage 5 Architecture reconciliation wave)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — PENDING CS2 STAGE 5 REVIEW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -130,7 +130,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 ---
 
 ### Stage 4: Technical Requirements Specification (TRS)
-**Status**: [x] DRAFT_UPDATED — timeline-engine technical feasibility validation completed; **READY_FOR_CS2_REVIEW**  
+**Status**: [x] **CS2_APPROVED** — CS2/Johan Ras approved/re-confirmed Stage 4 TRS v0.2-draft (ref: maturion-isms#1604, closed as "completed" by @APGI-cmy 2026-05-11)
 **Location**: `modules/pit/03-trs/`  
 **Key Artifacts**:
 - [x] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements, AIMC contracts, RLS design, table definitions, Edge Function contracts (PIT-TR-001 to PIT-TR-126)
@@ -141,56 +141,58 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] FRS-to-TRS traceability Section 30 added — all 123 FRS requirements now traced
 - [x] Tool validation and quality gate definitions — included in `technical-requirements-specification.md` (Section 25, PIT-TR-100 to PIT-TR-107)
 - [x] Stale maturion-isms#1556 dependency notice resolved in retrofit wave (maturion-isms#1575 / PR #1576)
-- [x] TRS approved by designated authority — pending CS2 Stage 4 approval/re-confirmation
+- [x] TRS approved by designated authority — **CS2 APPROVED 2026-05-11 (maturion-isms#1604, closed by @APGI-cmy)**
 - [x] TRS re-confirmation preparation completed after retrofit review (maturion-isms#1575) with explicit timeline-engine feasibility validation (maturion-isms#1604)
 
-**Completion Date**: N/A — Draft updated 2026-05-11 for Stage 4 CS2 review package  
-**Notes**: TRS v0.1-draft created per maturion-isms#1554 (wave: pit-stage4-trs). Updated to v0.2-draft in retrofit wave (maturion-isms#1575 / PR #1576): derivation updated to FRS v0.2-hardened; Section 31 added with PIT-TR-116 through PIT-TR-126 covering all FRS v0.2-hardened additions (PIT-FR-113 to PIT-FR-123); FRS-to-TRS traceability updated to cover all 123 FRS requirements. This wave adds explicit timeline-engine technical feasibility contracts (rendering model constraints, tool-selection criteria, date-math/alignment, interaction/persistence, performance, and Stage 6 QA obligations) plus legacy Action tracker requirement coverage/gap classification evidence. Stage 5 Architecture remains blocked until Stage 4 is CS2-approved/gate-passed. Build Authorization remains NOT CLEARED.
+**Completion Date**: 2026-05-11 (CS2 approval — maturion-isms#1604 closed by @APGI-cmy)
+**Notes**: TRS v0.1-draft created per maturion-isms#1554 (wave: pit-stage4-trs). Updated to v0.2-draft in retrofit wave (maturion-isms#1575 / PR #1576): derivation updated to FRS v0.2-hardened; Section 31 added with PIT-TR-116 through PIT-TR-126 covering all FRS v0.2-hardened additions (PIT-FR-113 to PIT-FR-123); FRS-to-TRS traceability updated to cover all 123 FRS requirements. Stage 4 timeline-engine technical feasibility validation added per maturion-isms#1604. CS2/Johan Ras approved/re-confirmed Stage 4 TRS v0.2-draft by closing maturion-isms#1604 as "completed" on 2026-05-11. Stage 5 Architecture reconciliation now underway (maturion-isms#1612). Build Authorization remains NOT CLEARED.
 
 ---
 
 ### Stage 5: Architecture
-**Status**: [ ] BLOCKED — awaiting upstream Stage 2, 3, and 4 approvals  
+**Status**: [x] **RECONCILIATION_COMPLETE — READY_FOR_CS2_REVIEW** (maturion-isms#1612)
 **Location**: `modules/pit/04-architecture/`  
 **Key Artifacts**:
-- [x] `architecture.md` — Architecture document exists (legacy content — not gate-passed)
-- [x] `data-contracts/` — Data contracts folder exists
-- [x] `exports/` — Exports folder exists
-- [x] `integrations/` — Integrations folder exists
-- [x] `qa/` — QA strategy folder exists
-- [x] `ui-ux/` — UI/UX specifications folder exists
-- [x] `watchdog/` — Watchdog/monitoring folder exists
-- [x] `_legacy/` — Legacy architecture reference folder exists
-- [ ] Architecture formally reconciled against all upstream approved artifacts (see reconciliation checklist below)
-- [ ] All TRS requirements (PIT-TR-001 to PIT-TR-126) traceable to architecture components
-- [ ] Architecture completeness checklist per `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` PASS
-- [ ] Architecture approved by designated authority
+- [x] `architecture.md` — Stage 5 Architecture v1.0 — **REPLACED** legacy content; derived from approved Stages 1–4; all 27 routes and 22 screens mapped; all 126 TRS requirements reconciled (maturion-isms#1612)
+- [x] `stage5-architecture-reconciliation.md` — Stage 5 reconciliation evidence checklist (NEW — maturion-isms#1612)
+- [x] `trs-to-architecture-traceability.md` — Full TRS-to-Architecture traceability: all 126 TRS requirements (PIT-TR-001–PIT-TR-126) mapped to architecture sections (NEW — maturion-isms#1612)
+- [x] `timeline-engine-architecture-decision.md` — ADR-PIT-001: Timeline engine library evaluation (5 candidates), date-math contract, QA hooks, accessibility architecture (NEW — maturion-isms#1612)
+- [x] `data-contracts/` — Legacy reference (superseded by architecture.md §6)
+- [x] `exports/` — Legacy reference (superseded by architecture.md §14)
+- [x] `integrations/` — Legacy reference (superseded by architecture.md §18)
+- [x] `qa/` — Legacy reference (superseded by per-section QA hooks in architecture.md)
+- [x] `ui-ux/` — Legacy reference (superseded by architecture.md §2–§3)
+- [x] `watchdog/` — Legacy reference (superseded by architecture.md §17)
+- [x] `_legacy/` — Legacy pre-canonical content preserved as reference only
+- [x] Architecture formally reconciled against all upstream approved artifacts (see reconciliation checklist)
+- [x] All TRS requirements (PIT-TR-001 to PIT-TR-126) traceable to architecture components (see trs-to-architecture-traceability.md — 126/126 COVERED)
+- [ ] Architecture approved by CS2 — PENDING CS2 STAGE 5 REVIEW
 
 **Stage 5 Reconciliation Requirements (added in retrofit wave maturion-isms#1575)**:
 
 Before Stage 5 Architecture can be gate-passed, it must be formally reconciled against ALL of the following:
 
-- [ ] Approved Stage 1 App Description (`docs/governance/PIT_APP_DESCRIPTION.md` v1.0)
-- [ ] CS2-approved Stage 2 UX Workflow & Wiring Spec (including UX-GAP-001 and UX-GAP-002 resolved)
-- [ ] CS2-approved Stage 3 FRS v0.2-hardened (all 123 requirements, including PIT-FR-113 to PIT-FR-123)
-- [ ] Updated Stage 4 TRS v0.2-draft (including PIT-TR-116 to PIT-TR-126)
-- [ ] Route Coverage Appendix A (all 27 routes — component-level architecture for each route)
-- [ ] RLS / access-control model (all tables with RLS policies per PIT-TR-026; negative-path enforcement per PIT-TR-116)
-- [ ] Evidence upload / storage model (Supabase Storage per PIT-TR-060; retention per PIT-TR-122)
-- [ ] Notification / report / audit / QA dashboard model (system-level component architecture for each domain)
-- [ ] Deployment / runtime delivery contract (per PIT-TR-095, PIT-TR-098, PIT-TR-113)
-- [ ] MMM-derived functional delivery controls (L-001 through L-008 mapped to architecture components)
-- [ ] Lifecycle removal semantics architecture (soft-delete, archive, restore, cancel — per PIT-TR-124)
-- [ ] Accessibility compliance architecture (Axe-core integration per PIT-TR-125)
-- [ ] Progress roll-up computation architecture (Edge Function or trigger per PIT-TR-117)
+- [x] Approved Stage 1 App Description (`docs/governance/PIT_APP_DESCRIPTION.md` v1.0)
+- [x] CS2-approved Stage 2 UX Workflow & Wiring Spec (including UX-GAP-001 and UX-GAP-002 resolved)
+- [x] CS2-approved Stage 3 FRS v0.2-hardened (all 123 requirements, including PIT-FR-113 to PIT-FR-123)
+- [x] Updated Stage 4 TRS v0.2-draft (including PIT-TR-116 to PIT-TR-126) — CS2 approved maturion-isms#1604
+- [x] Route Coverage Appendix A (all 27 routes — component-level architecture for each route) — architecture.md §3.1
+- [x] RLS / access-control model (all tables with RLS policies per PIT-TR-026; negative-path enforcement per PIT-TR-116) — architecture.md §7
+- [x] Evidence upload / storage model (Supabase Storage per PIT-TR-060; retention per PIT-TR-122) — architecture.md §11
+- [x] Notification / report / audit / QA dashboard model (system-level component architecture for each domain) — architecture.md §12–§16
+- [x] Deployment / runtime delivery contract (per PIT-TR-095, PIT-TR-098, PIT-TR-113) — architecture.md §19
+- [x] MMM-derived functional delivery controls (L-001 through L-008 mapped to architecture components) — architecture.md §22
+- [x] Lifecycle removal semantics architecture (soft-delete, archive, restore, cancel — per PIT-TR-124) — architecture.md §6.4
+- [x] Accessibility compliance architecture (Axe-core integration per PIT-TR-125) — architecture.md §20
+- [x] Progress roll-up computation architecture (Edge Function or trigger per PIT-TR-117) — architecture.md §13
 
-**Completion Date**: N/A  
-**Notes**: PIT has the most complete architecture structure alongside Course Crafter. Full architecture structure is populated. The existing content is rich but was created under the legacy 6-stage model and has not been gate-passed under the canonical 12-stage chain. Formal gate-pass requires upstream stages (App Description → UX → FRS → TRS) to be completed and CS2-approved first, followed by formal reconciliation against all Stage 5 reconciliation requirements listed above. Mapped from old Stage 2. Build Authorization remains NOT CLEARED.
+**Completion Date**: 2026-05-11 (reconciliation complete; pending CS2 Stage 5 gate-pass)
+**Notes**: Stage 5 Architecture reconciliation complete per maturion-isms#1612. Legacy v0.1 architecture.md superseded by Stage 5 gate-passable artifact derived from approved/re-confirmed Stages 1–4. Three new evidence artifacts produced: stage5-architecture-reconciliation.md, trs-to-architecture-traceability.md, timeline-engine-architecture-decision.md (ADR-PIT-001). All legacy subfolder content preserved as reference only and clearly marked superseded. Stage 6 Architecture gate-pass BLOCKED until CS2 approves this Stage 5 package. Build Authorization remains NOT CLEARED.
 
 ---
 
 ### Stage 6: QA-to-Red
-**Status**: [ ] NOT_STARTED  
+**Status**: [ ] BLOCKED — awaiting CS2 Stage 5 Architecture gate-pass  
 **Location**: `modules/pit/05-qa-to-red/`  
 **Key Artifacts**:
 - [ ] Full RED test suite derived from all 123 FRS requirements + all 126 TRS requirements + Architecture
@@ -395,13 +397,13 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 ACTIVE — TRS DRAFT_UPDATED and **READY_FOR_CS2_REVIEW** (maturion-isms#1604); Stage 2 UX Workflow & Wiring Spec CS2 re-confirmed; Stage 3 FRS baseline CS2 re-confirmed  
+**Current Stage**: Stage 5 ACTIVE — Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1612); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~38% complete (Stage 1 App Description approved; Stage 2 baseline re-confirmed by CS2; Stage 3 baseline re-confirmed by CS2; Stage 4 TRS updated with timeline-engine technical validation and ready for CS2 review; Stage 5 Architecture remains blocked pending Stage 4 gate-pass)  
-**Blockers**: Stage 5 Architecture gate-pass BLOCKED until Stage 4 TRS is CS2-approved/gate-passed. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed.  
+**Overall Progress**: ~43% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass)  
+**Blockers**: Stage 6 QA-to-Red BLOCKED until CS2 approves Stage 5 Architecture package. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed.  
 **Next Steps**:
-1. CS2 review and approval of Stage 4 TRS package (maturion-isms#1554 / maturion-isms#1575 / maturion-isms#1604)
-2. Formally gate-pass Stage 5 Architecture after Stage 4 approval and Stage 5 reconciliation checklist completion
+1. CS2 review and gate-pass of Stage 5 Architecture package (maturion-isms#1612)
+2. Proceed to Stage 6 QA-to-Red after Stage 5 CS2 gate-pass
 3. Complete Stages 6–11 before Build Authorization can be requested
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
@@ -422,9 +424,9 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06) — Functional delivery retrofit review: PASS (no material gaps; retrofit annotation added)
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — ready for CS2 re-confirmation after PR #1594 gap closure
-- [x] Stage 3 FRS: DRAFT_HARDENED (maturion-isms#1556) — v0.2-hardened, pending CS2 approval; retrofit verification: PASS
-- [x] Stage 4 TRS: DRAFT_UPDATED (maturion-isms#1554 + maturion-isms#1575) — v0.2-draft with FRS v0.2-hardened propagation, pending upstream CS2 approvals
-- [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_HARDENED) → TRS (DRAFT_UPDATED v0.2) → Architecture (gate-pass pending)
+- [x] Stage 3 FRS: DRAFT_HARDENED_CS2_RECONFIRMED (maturion-isms#1556) — v0.2-hardened, CS2 re-confirmed
+- [x] Stage 4 TRS: **CS2_APPROVED** (maturion-isms#1554 + maturion-isms#1575 + maturion-isms#1604) — v0.2-draft CS2 approved 2026-05-11 by @APGI-cmy
+- [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (RECONCILIATION_COMPLETE_PENDING_CS2)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
