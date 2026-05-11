@@ -35,7 +35,7 @@ Merge position: HOLD — refresh CURRENT_HEAD_SHA in both PREHANDOVER proof and 
   - `CURRENT_HEAD_SHA: 7f68714eb69ab05c311ed7781bda3419f6b35c7b`
 - ECAP bundle refreshed: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1595-foreman-execution-locks-20260510.md`
   - `CURRENT_HEAD_SHA: 7f68714eb69ab05c311ed7781bda3419f6b35c7b`
-- Local validation re-run at current head `7f68714`:
+- Local validation re-run at current head `7f68714` then refreshed to `a793130` after commit:
   - `bash .github/scripts/validate-governance-evidence-exactness.test.sh` — 11/11 PASS
 
 ---
