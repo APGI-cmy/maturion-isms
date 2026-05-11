@@ -253,7 +253,7 @@
 | Drag-and-drop date adjust | PIT-FR-072 | PIT-TR-066, PIT-TR-067 | Date math contract + drag interaction contract | Drag body + handle interactions | Integration: drag/resize updates visible start/end labels and persisted dates |
 | Cascade on milestone change | PIT-FR-073 | PIT-TR-066, PIT-TR-067, PIT-TR-040 | Cascade + locked-change approval/audit contract | Cascade dialog + override request workflow | Integration: conflicting date move requires cascade resolution and records approval/audit event |
 | Conflict detection | PIT-FR-074 | PIT-TR-067, PIT-TR-039 | Dependency/conflict + server validation contract | Conflict indicator component + dependency API | Integration: deliverable end > milestone end shows marker; circular dependency rejected server-side |
-| Date format | PIT-FR-075 | PIT-TR-066 | Canonical timezone/date-display mapping contract | Date mapping utility | Unit: date↔pixel mapping + hover/drag labels resolve consistently |
+| Date format | PIT-FR-075 | PIT-TR-064, PIT-TR-066 | Date display/ISO storage + timeline mapping contract | Date formatting and timeline mapping utility | Unit: UI dates render as DD MMM YYYY, persisted values remain ISO date-only, and timeline hover/drag labels resolve consistently with the same canonical dates |
 | Task bar overlay | PIT-FR-076 | PIT-TR-064, PIT-TR-067 | Optional task overlay + performance contract | Task bar toggle component | Integration: toggle shows/hides task bars with no alignment drift |
 
 ---
