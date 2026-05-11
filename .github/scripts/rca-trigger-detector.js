@@ -3,7 +3,7 @@
 const RCA_REQUIRED_MARKER = '<!-- rca-required-marker -->';
 const RCA_AGENT = 'root-cause-corrective-action-agent';
 const RCA_COMMAND_PATTERN = /\b(RCA_REQUIRED|ROOT_CAUSE_REQUIRED|CONTINUOUS_IMPROVEMENT_REQUIRED)\b/i;
-const HANDOVER_CLAIM_PATTERN = /\b(handover|merge-ready|merge ready|ready to merge|ready for review|ready-for-review|work complete|implementation complete|complete|completion|all gates pass|merge gate released)\b/i;
+const HANDOVER_CLAIM_PATTERN = /\b(handover(?: claim)?|merge-ready|merge ready|ready to merge|ready for review|ready-for-review|all gates pass|merge gate released)\b/i;
 const STOP_AND_FIX_PATTERN = /\b(STOP_AND_FIX|HANDOVER_ALLOWED:\s*no)\b/i;
 const BLOCKED_PATTERN = /\bHANDOVER BLOCKED\b/i;
 
@@ -80,11 +80,19 @@ function detectRcaRequirement(input = {}) {
     /\bVERDICT:\s*(FAIL|ADMIN_ONLY|PARTIAL_FUNCTIONAL_DELIVERY)\b/i.test(String(comment.body || ''))
   );
 
+  const workflowRunAllowList = new Set([
+    'preflight evidence gate',
+    'handover claim gate',
+    'merge gate interface',
+    'polc boundary validation',
+    'governance ceremony gate',
+  ]);
+
   const workflowRunFailureAfterClaim =
     eventName === 'workflow_run' &&
     workflowRunConclusion === 'failure' &&
     claims.length > 0 &&
-    /\b(preflight|merge gate|handover claim gate|polc boundary|governance)\b/i.test(workflowRunName);
+    workflowRunAllowList.has(workflowRunName.toLowerCase());
 
   const triggers = [];
 
