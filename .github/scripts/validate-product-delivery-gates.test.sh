@@ -48,7 +48,7 @@ EOF
   head_sha=$(git rev-parse HEAD)
   if ( [ -d .functional-delivery ] || [ -d .agent-admin/assurance ] ) && [ ! -f .skip-head-sha-rewrite ]; then
     python3 - "$head_sha" <<'PYEOF'
-import pathlib, sys
+import pathlib, re, sys
 head_sha = sys.argv[1]
 for root, pattern in [
     (pathlib.Path(".functional-delivery"), "pr-*.md"),
@@ -60,7 +60,7 @@ for root, pattern in [
         if not path.is_file():
             continue
         content = path.read_text()
-        path.write_text(content.replace("CURRENT_HEAD", head_sha))
+        path.write_text(re.sub(r"\bCURRENT_HEAD\b", head_sha, content))
 PYEOF
   fi
   pr_body="${TEST_PR_BODY:-}"

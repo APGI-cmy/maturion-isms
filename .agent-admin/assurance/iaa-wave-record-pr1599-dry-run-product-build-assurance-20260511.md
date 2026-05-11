@@ -37,7 +37,7 @@
 - FUNCTIONAL_PASS: no
 - VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
 - PARTIAL_FUNCTIONAL_DELIVERY default mergeability: NON-MERGEABLE unless explicit quoted CS2 partial-scope acceptance
-- CURRENT_HEAD_SHA: CURRENT_HEAD
+- CURRENT_HEAD_SHA: 74b8eae31e2918429a17218face4a2faa9176962
 - NO_CURRENT_HEAD_DRIFT: yes
 - HEAD_DRIFT_ACTION: N/A (no head drift observed at review time; if head changes, IAA re-run required)
 
