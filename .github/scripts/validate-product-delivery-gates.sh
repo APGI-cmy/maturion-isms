@@ -359,13 +359,14 @@ fi
 echo "✅ IAA Functional Verdict gate: PASS"
 
 # Gate 4b: PASS_WITH_CS2_WAIVER must quote explicit CS2 waiver text
-# Expected format in IAA artifact:
+# Accepted formats in evidence/templates:
 #   CS2 waiver quote: "<explicit waiver text>"
+#   CS2_WAIVER_QUOTE: "<explicit waiver text>"
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
   if grep -qiE 'PASS_WITH_CS2_WAIVER' "$iaa_file"; then
-    if ! grep -qiE 'CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?[[:space:]]*:[[:space:]]*".+"' "$iaa_file"; then
+    if ! grep -qiE '((CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?)|CS2_WAIVER_QUOTE)[[:space:]]*:[[:space:]]*".+"' "$iaa_file"; then
       echo "❌ FAIL — PASS_WITH_CS2_WAIVER in $iaa_file requires quoted explicit CS2 waiver text."
       exit 1
     fi

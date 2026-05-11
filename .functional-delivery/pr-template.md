@@ -29,6 +29,7 @@ KNOWN_PARTIALS: <none or list>
 Known partials: <none or list>
 Known limitations: <none or list>
 CS2_PARTIAL_ACCEPTANCE: yes/no/not_applicable
+CS2_WAIVER_QUOTE: "<explicit CS2 waiver text>" or not_applicable
 Partial scope accepted by CS2: yes/no/not_applicable
 Builder QA functional report reference: <path/url>
 ECAP/admin-gate report reference: <path/url>
@@ -46,7 +47,7 @@ FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_
 - `FUNCTIONAL_PASS: yes` requires `VERDICT: FULL_FUNCTIONAL_DELIVERY`.
 - If `KNOWN_PARTIALS` is not `none`, `FUNCTIONAL_PASS` must be `no`.
 - `FULL_FUNCTIONAL_DELIVERY` cannot coexist with `pending`, `outstanding`, `not verified`, or unresolved partial language.
-- If partial delivery is claimed, include explicit CS2 waiver quote under `CS2_PARTIAL_ACCEPTANCE`.
+- If partial delivery is claimed, include explicit CS2 waiver quote under `CS2_WAIVER_QUOTE`.
 - Enforcement reference: `.github/scripts/validate-product-delivery-gates.sh`.
 
 ## Rejection Package Shape (for failed functional delivery)
