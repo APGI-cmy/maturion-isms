@@ -40,8 +40,8 @@
     "phase4-role-separation-operational-guidance.md updated with execution lock guidance section",
     "WAVE-CURRENT-TASKS-PROTOCOL.md updated with execution lock integration section",
     "PR_NUMBER=1595 bash .github/scripts/validate-simple-pr-admin.sh — PASS",
-    "ECAP proof: .agent-admin/prehandover/proof-pr-1595-foreman-execution-locks-20260510.md — CURRENT_HEAD_SHA refreshed to 30ea4a4a79b79726d5089c87c278c11011dcd444",
-    "ECAP bundle: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1595-foreman-execution-locks-20260510.md — CURRENT_HEAD_SHA refreshed to 30ea4a4a79b79726d5089c87c278c11011dcd444",
+    "ECAP proof: .agent-admin/prehandover/proof-pr-1595-foreman-execution-locks-20260510.md — CURRENT_HEAD_SHA refreshed to 65d9582e6e3dbd53c64fb577d00f0a4c4a133167",
+    "ECAP bundle: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1595-foreman-execution-locks-20260510.md — CURRENT_HEAD_SHA refreshed to 65d9582e6e3dbd53c64fb577d00f0a4c4a133167",
     "RCA assessment: .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-1595.md — stale-head failure class, CORRECTIVE_ACTION_REQUIRED"
   ],
   "merge_authority": "CS2"
