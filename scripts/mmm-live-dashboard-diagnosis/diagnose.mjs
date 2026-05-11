@@ -63,8 +63,6 @@ async function main() {
   const previewUrl = required('MMM_PREVIEW_URL');
   const email = required('MMM_TEST_ADMIN_EMAIL');
   const password = required('MMM_TEST_ADMIN_PASSWORD');
-  const adminUserId = process.env.MMM_TEST_ADMIN_USER_ID || '(not provided)';
-  const orgId = process.env.MMM_TEST_ORGANISATION_ID || '(not provided)';
   const headless = (process.env.HEADLESS || 'true').toLowerCase() !== 'false';
 
   if (!existsSync(ARTIFACT_DIR)) {
@@ -391,8 +389,6 @@ NEXT_FIX: ${nextFix}
 ## Run context
 
 - Preview URL: ${origin}${previewURL.pathname}${previewURL.search ? ' (with share token)' : ''}
-- Test admin user id: ${adminUserId}
-- Test organisation id: ${orgId}
 - Steps:
 ${steps.map((s) => `  - ${s.ok ? '✓' : '✗'} ${s.step}${s.detail ? ` — ${s.detail}` : ''}`).join('\n')}
 
@@ -414,7 +410,11 @@ ${
 `;
 
   await writeFile(summaryPath, summary);
-  console.log('\n=== diagnosis-summary.md ===\n' + summary);
+  // NOTE: do not echo the full summary to stdout. The summary file is uploaded
+  // as a workflow artifact and mirrored to $GITHUB_STEP_SUMMARY by the workflow.
+  // We avoid echoing the full body (which may include env-derived identifiers
+  // or response bodies) into the public runner log. Print only a short marker.
+  console.log(`\n[diagnose] wrote diagnosis-summary.md (${summary.length} bytes)`);
 
   // Exit non-zero when the live dashboard failure is reproduced or no diagnosis possible.
   const reproduced = dashboardErrorVisible || !!failingDashboardCall;

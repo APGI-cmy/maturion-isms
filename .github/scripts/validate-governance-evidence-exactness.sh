@@ -341,8 +341,10 @@ else
       if [ -z "$EXPECTED_ISSUE_NUM" ]; then
         # Fallback: first issue-style reference in PR body.
         # Ignore known non-governing numeric references (comment/run/job/workflow/check/PR IDs).
+        # Use non-alphanumeric boundary (not just whitespace) so patterns like
+        # "(PR #1590)" or "[pr #1590]" are also filtered as non-governing refs.
         FILTERED_PR_BODY=$(printf '%s' "$PR_BODY" | tr '[:upper:]' '[:lower:]' | \
-          sed -E 's/(^|[[:space:]])(comment|comments|run|runs|job|jobs|workflow|workflows|check|checks|artifact|artifacts|pr|pull[[:space:]]+request)[[:space:]]*#[0-9]+/\1/g')
+          sed -E 's/(^|[^a-z0-9])(comment|comments|run|runs|job|jobs|workflow|workflows|check|checks|artifact|artifacts|pr|pull[[:space:]]+request)[[:space:]]*#[0-9]+/\1/g')
         EXPECTED_ISSUE_NUM=$(printf '%s' "$FILTERED_PR_BODY" | \
           grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
       fi
