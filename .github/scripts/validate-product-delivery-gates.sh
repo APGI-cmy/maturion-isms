@@ -117,6 +117,7 @@ if ! [[ "$HEAD_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
   echo "❌ FAIL — HEAD_SHA must be a 40-character git SHA."
   exit 1
 fi
+HEAD_SHA_REGEX_SAFE="$(printf '%s' "$HEAD_SHA" | sed 's/[][\\.^$*+?(){}|]/\\&/g')"
 
 echo "Product-facing scope detected:"
 echo -e "$PRODUCT_FILES" | sed '/^$/d' | sed 's/^/  - /'
@@ -375,7 +376,7 @@ IAA_HEAD_BOUND=false
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
-  if grep -qiE '^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'"$HEAD_SHA"'([[:space:]]|$)' "$iaa_file"; then
+  if grep -qiE '^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'"$HEAD_SHA_REGEX_SAFE"'([[:space:]]|$)' "$iaa_file"; then
     IAA_HEAD_BOUND=true
     break
   fi
