@@ -2,7 +2,7 @@
 
 ## Status
 Canonical Governance Standard  
-Version: v1.3  
+Version: v1.4  
 Authority: Johan Ras  
 Applies To: All Applications, All Builds, Foreman, Builders, Governance Administrator
 
@@ -461,7 +461,7 @@ Before implementation begins, architecture MUST pass completeness validation:
 
 ### 4.1 Completeness Checklist
 
-All items in Section 3 (3.1 through 3.13) MUST be explicitly addressed.
+All items in Section 3 (3.1 through 3.17) MUST be explicitly addressed.
 
 **Validation Method**: 
 - Governance Administrator or Foreman performs completeness scan
@@ -578,7 +578,66 @@ This document formalizes **validated learning from PartPulse failures**:
 
 ---
 
-### 3.14 QA Catalog Alignment and Validation (BL-018/BL-019-Derived) (MANDATORY)
+### 3.14 Frontend Application Scaffolding and UI Wiring (MANDATORY)
+
+**Requirement**: User-facing systems MUST include explicit frontend scaffolding and UI→API wiring definitions as architecture prerequisites.
+
+**Required Elements**:
+- Frontend scaffold and framework baseline defined
+- Routing and navigation wiring defined (if multi-page)
+- UI state ownership and update pathways defined
+- API client integration and request/response contract mapping defined
+- Authentication token/credential propagation path defined
+
+**Completeness Test**:
+- [ ] Can a builder scaffold the frontend without assumptions?
+- [ ] Are all primary UI→API wiring paths explicitly defined?
+- [ ] Are auth and state wiring points documented?
+
+**Violation**: If frontend scaffolding or UI wiring is left implied, architecture is incomplete.
+
+---
+
+### 3.15 Infrastructure Deployment and Provisioning (MANDATORY)
+
+**Requirement**: Architecture MUST define deployment/provisioning obligations for frontend, backend, and data infrastructure before implementation.
+
+**Required Elements**:
+- Deployment targets for frontend and backend
+- Provisioning sequence for runtime, network, and storage dependencies
+- Environment variable provisioning and validation checkpoints
+- Health check and readiness verification requirements
+- Rollback or redeploy strategy for failed provisioning
+
+**Completeness Test**:
+- [ ] Are frontend/backend deployment targets explicitly named?
+- [ ] Can infrastructure be provisioned without external discovery?
+- [ ] Are post-provisioning verification steps defined?
+
+**Violation**: If infrastructure deployment/provisioning responsibilities are undefined, architecture is incomplete.
+
+---
+
+### 3.16 End-to-End Integration and Deployment Evidence (MANDATORY)
+
+**Requirement**: Architecture MUST define the minimum evidence package proving integrated frontend, backend, and persistence behavior in deployed conditions.
+
+**Required Elements**:
+- At least one complete end-to-end workflow path definition
+- Evidence requirements (URLs, test logs, screenshots/video, persistence checks)
+- Integration gate criteria for deployment readiness
+- Explicit prohibition on "deploy later" closure without evidence
+
+**Completeness Test**:
+- [ ] Is at least one full workflow traced from UI to persisted data and back?
+- [ ] Are evidence artifacts required and explicitly listed?
+- [ ] Is deployment readiness blocked when evidence is missing?
+
+**Violation**: If architecture cannot produce integrated deployment evidence, architecture is incomplete.
+
+---
+
+### 3.17 QA Catalog Alignment and Validation (BL-018/BL-019-Derived) (MANDATORY)
 
 **Requirement**: Architecture MUST be aligned with a validated QA Catalog before wave planning, subwave assignment, or builder appointment.
 
@@ -676,6 +735,25 @@ If any architecture artifact, builder behavior, or Foreman process conflicts wit
 
 ## 10. Changelog
 
+### Version 1.4 (2026-05-11)
+
+**Status**: Stage 5 Architecture Drift Reconciliation  
+**Authority**: Johan Ras  
+**Trigger**: Governance drift repair — Stage 5 architecture gate alignment for full App Description coverage and architecture completeness modernization.
+
+**Summary**: Upgraded architecture completeness standard to v1.4 by introducing three mandatory architecture domains and re-indexing QA Catalog alignment from §3.14 to §3.17.
+
+**Key Requirements Added**:
+- Frontend Application Scaffolding and UI Wiring (3.14)
+- Infrastructure Deployment and Provisioning (3.15)
+- End-to-End Integration and Deployment Evidence (3.16)
+- Completeness checklist range extended to Section 3.1 through 3.17
+
+**Renumbering Note**:
+- Prior v1.3 section "QA Catalog Alignment and Validation" moved from 3.14 to 3.17 to preserve continuity while inserting new mandatory domains.
+
+---
+
 ### Version 1.3 (2026-01-05)
 
 **Status**: QA Catalog Alignment Canonization  
@@ -685,7 +763,7 @@ If any architecture artifact, builder behavior, or Foreman process conflicts wit
 **Summary**: Extended architecture completeness to mandate QA Catalog alignment validation before wave planning and subwave assignment.
 
 **Key Requirements Added**:
-- QA Catalog Alignment and Validation (3.14) — Architecture must be aligned with validated QA Catalog before planning
+- QA Catalog Alignment and Validation (3.14 at v1.3; renumbered to 3.17 in v1.4) — Architecture must be aligned with validated QA Catalog before planning
 - Mandatory flow: Architecture → QA Catalog → QA-to-Red → Planning (no skipping)
 - QA-CATALOG-ALIGNMENT-GATE validation checklist (mandatory before authorization)
 - Automation requirement for wave-based delivery validation

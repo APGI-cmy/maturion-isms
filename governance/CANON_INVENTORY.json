@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-05-07",
-  "total_canons": 201,
-  "generation_timestamp": "2026-05-07T12:34:45Z",
+  "last_updated": "2026-05-11",
+  "total_canons": 202,
+  "generation_timestamp": "2026-05-11T15:13:03Z",
   "canons": [
     {
       "filename": "ACTIVATION_STATE_MODEL.md",
@@ -303,14 +303,14 @@
     },
     {
       "filename": "ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md",
-      "version": "1.3",
-      "file_hash": "1db9160d2ee2a2abc321b0e9c7b98311e5012b268e6e974fc76c8a758e26d51d",
+      "version": "1.4",
+      "file_hash": "66d41bc7ffaccf2e7016bc8a5daff04e03128a23fbb5d8e0b4f2b2f6d87824a3",
       "effective_date": "unknown",
       "description": "This document defines the **mandatory completeness requirements** for all architecture artifacts in the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "1db9160d2ee2a2abc321b0e9c7b98311e5012b268e6e974fc76c8a758e26d51d"
+      "file_hash_sha256": "66d41bc7ffaccf2e7016bc8a5daff04e03128a23fbb5d8e0b4f2b2f6d87824a3"
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
@@ -1041,13 +1041,13 @@
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae",
+      "file_hash": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05",
       "effective_date": "2026-01-05",
-      "description": "This manifest is the **single authoritative index** of all canonical governance standards in the maturion-foreman-governance repository.",
+      "description": "This manifest is the **authoritative human-readable layer-down index** for the canonical governance standards curated in this document.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "457bfdf4aac5ba88e1e5df57d5c4e4eb8292473d356fea71b27ff4ed365cacae"
+      "file_hash_sha256": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -1481,13 +1481,13 @@
     {
       "filename": "MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "version": "1.2.0",
-      "file_hash": "85204573f54733d7eea15c89ee3744201ac341d97b5a2c4e2c4bf6317af69a68",
+      "file_hash": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4",
       "effective_date": "2026-05-04",
       "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL",
       "type": "canon",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "85204573f54733d7eea15c89ee3744201ac341d97b5a2c4e2c4bf6317af69a68"
+      "file_hash_sha256": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4"
     },
     {
       "filename": "MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
@@ -1612,14 +1612,14 @@
     },
     {
       "filename": "PRE_BUILD_STAGE_MODEL_CANON.md",
-      "version": "1.0.0",
-      "file_hash": "91764b68657c0e910abf7d01cf9a28b840292a5df99fadc12bd86b0e63349d9b",
-      "effective_date": "2026-04-05",
+      "version": "1.1.0",
+      "file_hash": "98a1b9bb70e12f172f35be31dc6c50ebec1a2c4ac93bef6cb773b345d58203ff",
+      "effective_date": "2026-05-11",
       "description": "This canon formalises the **End-to-End Pre-Build Stage Model** as mandatory governance for all future governed builds operating under the 100% one-time build philosophy.",
       "type": "canon",
       "path": "governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "91764b68657c0e910abf7d01cf9a28b840292a5df99fadc12bd86b0e63349d9b"
+      "file_hash_sha256": "98a1b9bb70e12f172f35be31dc6c50ebec1a2c4ac93bef6cb773b345d58203ff"
     },
     {
       "filename": "PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md",
@@ -1774,6 +1774,17 @@
       "path": "governance/canon/RIPPLE_RUNTIME_INTEGRATION_SURVEY.md",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "36c2f5d5cb4621d3a7f677a629b70cb8ada219b2f10d883d6333526d89c45723"
+    },
+    {
+      "filename": "ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md",
+      "version": "1.0.0",
+      "file_hash": "9edbf7678f64264b5fb764e86ccacf5339b405098aec2c7208d94640552ff45e",
+      "effective_date": "2026-05-08",
+      "description": "Canonical governance document: ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON",
+      "type": "canon",
+      "path": "governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "9edbf7678f64264b5fb764e86ccacf5339b405098aec2c7208d94640552ff45e"
     },
     {
       "filename": "SCOPE_DECLARATION_SCHEMA.md",
