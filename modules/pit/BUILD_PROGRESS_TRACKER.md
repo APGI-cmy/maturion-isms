@@ -2,8 +2,8 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-08
-**Updated By**: foreman-v2-agent (wave: pit-prebuilt-retrofit-20260508 — maturion-isms#1575 / PR #1576; includes Stage 4 FRS v0.2-hardened propagation + Stage 5 reconciliation requirements + Stages 6–12 functional-delivery guardrails)
+**Last Updated**: 2026-05-10
+**Updated By**: pit-specialist (issue #1592 documentation amendment — PR #1594)
 > **Classification**: ACTIVE — RETROFIT COMPLETE — PENDING CS2 RE-CONFIRMATION  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -67,7 +67,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 ---
 
 ### Stage 2: UX Workflow & Wiring Spec
-**Status**: [x] STAGE_2_COMPLETE_FOREMAN_REVIEWED — pending CS2 approval (maturion-isms#1548) — **REQUIRES RE-CONFIRMATION after retrofit review (maturion-isms#1575)**  
+**Status**: [x] STAGE_2_COMPLETE_FOREMAN_REVIEWED — **READY_FOR_CS2_RE-CONFIRMATION** (not yet CS2-approved)  
 **Location**: `modules/pit/01-ux-workflow-wiring-spec/`  
 **Key Artifacts**:
 - [x] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring (v0.2-draft)
@@ -80,15 +80,15 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] AIMC-only AI touchpoints documented (Section 8)
 - [x] Deployment surface map (Section 9)
 - [x] Functional delivery retrofit verification added (Section 12 — maturion-isms#1575)
-- [ ] UX-GAP-001 resolved (404 route state/wiring entries — non-blocking)
-- [ ] UX-GAP-002 resolved (notification history screen spec `/notifications` — **BLOCKING for Stage 2 re-confirmation**)
+- [x] UX-GAP-001 resolved (404 route state/wiring entries present in Section 4 and Section 7)
+- [x] UX-GAP-002 resolved (notification history screen spec `/notifications` added in Section 2, Section 4, Section 7, and Section 9 — PR #1594)
 - [ ] CS2 approval received (pending review — maturion-isms#1548)
-- [ ] Stage 2 re-confirmed after retrofit review (maturion-isms#1575) — requires resolution of UX-GAP-002
+- [ ] Stage 2 re-confirmed after retrofit review (maturion-isms#1575) — ready for CS2 re-confirmation
 
 **Completion Date**: N/A — Foreman-reviewed 2026-05-06, pending CS2 approval and post-retrofit re-confirmation  
 **Stage 2 Completion Evidence**: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`  
 **Retrofit Gap Register**: `modules/pit/_readiness/pit-functional-delivery-gap-register.md` (UX-GAP-001, UX-GAP-002)  
-**Notes**: Stage 2 UX Workflow & Wiring Spec v0.2-draft reviewed in retrofit wave (maturion-isms#1575). Substantially complete. Two gaps identified: UX-GAP-001 (404 route entries — non-blocking), UX-GAP-002 (notification history screen spec — blocking for re-confirmation). Stage 2 must be re-confirmed by CS2 after UX-GAP-002 is resolved. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 2 UX Workflow & Wiring Spec v0.2-draft reviewed in retrofit wave (maturion-isms#1575). UX-GAP-001 and UX-GAP-002 are resolved in PR #1594. Stage 2 is now ready for CS2 re-confirmation (not yet approved). Build Authorization remains NOT CLEARED.
 ---
 
 ### Stage 3: Functional Requirements Specification (FRS)
@@ -122,7 +122,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] Section 38 Stage 4 readiness wording aligned with draft-only TRS governance
 - [x] Functional delivery retrofit verification note added (maturion-isms#1575)
 - [ ] CS2 approval received (pending review — maturion-isms#1556)
-- [ ] Stage 3 re-confirmed after retrofit review (maturion-isms#1575) — no material gaps; re-confirmation straightforward
+- [ ] Stage 3 re-confirmed after retrofit review (maturion-isms#1575) — DRAFT_HARDENED and ready once Stage 2 CS2 re-confirmation is completed
 
 **Completion Date**: N/A — Draft hardened 2026-05-07, pending CS2 approval and post-retrofit re-confirmation  
 **Notes**: FRS v0.2-hardened verified in retrofit wave (maturion-isms#1575). All 19 hardening areas confirmed present. Retrofit verification note added to FRS. No additional hardening required. Stage 3 is ready for CS2 approval re-confirmation after retrofit. Build Authorization remains NOT CLEARED.
@@ -204,7 +204,7 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 - [ ] Every functional requirement (PIT-FR-001 through PIT-FR-123)
 - [ ] Every TRS requirement that specifies a testable contract (PIT-TR-001 through PIT-TR-126)
 - [ ] Every route (all 27 routes in Appendix A / Section 9) — direct browser load test per route
-- [ ] Every screen (all 21 screens from Stage 2 Section 2)
+- [ ] Every screen (all 22 screens from Stage 2 Section 2)
 - [ ] Every primary user journey (all 23 journeys from Stage 2 Section 1)
 - [ ] Every five-state UI outcome on every primary screen (loading/empty/permission-denied/network-error/data)
 - [ ] Every role-denied path (per PIT-FR-113 / PIT-TR-116): at least one denied-path test per protected action group
@@ -394,17 +394,16 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 ACTIVE — TRS Updated to v0.2-draft with FRS v0.2-hardened propagation (maturion-isms#1575 / PR #1576); Stage 3 FRS DRAFT_HARDENED v0.2 (maturion-isms#1556) pending CS2 approval; Stage 2 FOREMAN_REVIEWED pending CS2 approval  
+**Current Stage**: Stage 4 ACTIVE — TRS Updated to v0.2-draft with FRS v0.2-hardened propagation (maturion-isms#1575 / PR #1576); Stage 3 FRS DRAFT_HARDENED v0.2 (maturion-isms#1556) pending CS2 approval; Stage 2 FOREMAN_REVIEWED and ready for CS2 re-confirmation  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
 **Overall Progress**: ~38% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2 + retrofit re-confirmation; Stage 3 FRS hardened to v0.2 pending CS2 approval + retrofit re-confirmation; Stage 4 TRS updated to v0.2-draft with FRS v0.2-hardened propagation pending CS2 upstream approvals; Architecture substantially IN_PROGRESS pending gate-pass)  
 **Blockers**: Stage 4 TRS approval BLOCKED until Stage 2 UX Spec and Stage 3 FRS are CS2-approved. Stage 5 Architecture gate-pass BLOCKED until Stage 4 TRS is approved. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed.  
 **Next Steps**:
-1. Resolve UX-GAP-002 (notification history screen spec in Stage 2 UX Spec)
-2. CS2 review and approval of Stage 2 UX Workflow & Wiring Spec (maturion-isms#1548) — re-confirmation after retrofit
-3. CS2 review and approval of Stage 3 FRS (maturion-isms#1556) — re-confirmation after retrofit
-4. CS2 review and approval of Stage 4 TRS (maturion-isms#1554 / maturion-isms#1575) — after upstream approvals
-5. Formally gate-pass Stage 5 Architecture (after Stage 4 approval + Stage 5 reconciliation checklist complete)
-6. Complete Stages 6–11 before Build Authorization can be requested
+1. CS2 review and re-confirmation of Stage 2 UX Workflow & Wiring Spec (maturion-isms#1548), post PR #1594 gap closure
+2. CS2 review and approval of Stage 3 FRS (maturion-isms#1556) — re-confirmation after retrofit
+3. CS2 review and approval of Stage 4 TRS (maturion-isms#1554 / maturion-isms#1575) — after upstream approvals
+4. Formally gate-pass Stage 5 Architecture (after Stage 4 approval + Stage 5 reconciliation checklist complete)
+5. Complete Stages 6–11 before Build Authorization can be requested
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
@@ -423,7 +422,7 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 ## Governance Compliance
 
 - [x] Stage 1 App Description: CS2_APPROVED_AUTHORITATIVE (2026-05-06) — Functional delivery retrofit review: PASS (no material gaps; retrofit annotation added)
-- [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — pending CS2 approval and post-retrofit re-confirmation (UX-GAP-002 blocking)
+- [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — ready for CS2 re-confirmation after PR #1594 gap closure
 - [x] Stage 3 FRS: DRAFT_HARDENED (maturion-isms#1556) — v0.2-hardened, pending CS2 approval; retrofit verification: PASS
 - [x] Stage 4 TRS: DRAFT_UPDATED (maturion-isms#1554 + maturion-isms#1575) — v0.2-draft with FRS v0.2-hardened propagation, pending upstream CS2 approvals
 - [ ] Traceability chain: App Description ✅ → UX Workflow (FOREMAN_REVIEWED) → FRS (DRAFT_HARDENED) → TRS (DRAFT_UPDATED v0.2) → Architecture (gate-pass pending)
@@ -440,15 +439,15 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Functional delivery gap register: `modules/pit/_readiness/pit-functional-delivery-gap-register.md`
 
 **Re-Confirmation Policy (maturion-isms#1575)**: Stages 2, 3, and 4 were reviewed in the functional delivery retrofit wave (maturion-isms#1575 / PR #1576). Any previously confirmed stage must be re-signed only after the retrofit review confirms it meets the upgraded functional-delivery standard. Specifically:
-- Stage 2: re-confirmation blocked by UX-GAP-002; requires CS2 approval after UX-GAP-002 resolution
-- Stage 3: retrofit verified PASS; re-confirmation straightforward after CS2 approval of FRS v0.2-hardened
+- Stage 2: UX-GAP-001 and UX-GAP-002 resolved in PR #1594; ready for CS2 re-confirmation (not yet approved)
+- Stage 3: retrofit verified PASS; DRAFT_HARDENED and ready for CS2 approval after Stage 2 re-confirmation
 - Stage 4: retrofit updated to v0.2-draft; re-confirmation requires CS2 approval of upstream stages first
 
 ---
 
 ## Notes and Observations
 
-**Stage 2 Foreman-Reviewed (2026-05-06)**: All 13 Stage 2 completion criteria verified per maturion-isms#1548. UX Workflow & Wiring Spec v0.2-draft satisfies all requirements: derivation statement, L-001–L-008 carry-forward, 23 user journeys including all auth flows, My Work and Invitation Acceptance, 21 primary screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map. Status: STAGE_2_COMPLETE_FOREMAN_REVIEWED pending CS2 approval.
+**Stage 2 Foreman-Reviewed (2026-05-06)**: All 13 Stage 2 completion criteria verified per maturion-isms#1548. UX Workflow & Wiring Spec v0.2-draft satisfies all requirements: derivation statement, L-001–L-008 carry-forward, 23 user journeys including all auth flows, My Work, and Invitation Acceptance, 22 primary screens, 5-state UI matrix, 7 top indicators, app shell, timeline wiring, screen-to-data wiring table, AIMC touchpoints, deployment surface map, and Notification History coverage as a screen/route/global flow rather than a dedicated journey. Status: STAGE_2_COMPLETE_FOREMAN_REVIEWED and ready for CS2 re-confirmation (not yet approved).
 
 **Stage 3 FRS v0.2-hardened (2026-05-07)**: FRS upgraded from v0.1-draft to v0.2-hardened per maturion-isms#1556 (PR #1557). 19 hardening areas applied: domain-based requirement index, table/entity naming caveat, role-scope matrix, PIT-FR-113 permission negative-path contract, PIT-FR-121 lifecycle removal semantics, PIT-FR-054 task status lifecycle (added `cancelled`), PIT-FR-052 evidence completion logic clarified, PIT-FR-114 progress roll-up method, RAG threshold central table (§29), PIT-FR-115–117 notification read/history/preference, PIT-FR-118–119 report permissions/states/history (history now mandatory), PIT-FR-120 QA Dashboard expanded, AIMC candidate wording (§24), Route Coverage Appendix A (all 27 routes), PIT-FR-122 accessibility outcomes, PIT-FR-123 bulk ops non-scope, §33 Build-Completeness Guardrails, §34 QA-to-Red Derivation Requirements, §38 Stage 4 readiness wording aligned. Total: 123 functional requirements. Stage status: DRAFT_HARDENED pending CS2 approval. Build Authorization remains NOT CLEARED.
 

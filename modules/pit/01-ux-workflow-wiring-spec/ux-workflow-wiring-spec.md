@@ -895,6 +895,43 @@ All auth routes must be in QA-to-Red before implementation begins.
 
 ---
 
+### Screen 22 — Notification History Screen
+
+**Purpose**: Provide a full, user-scoped notification history view for authenticated users, including read/unread management and deep-link navigation into linked work items.  
+**Route**: `/notifications`  
+**Authentication Requirement**: Yes (authenticated session required)  
+**Role / Access Scope**: Any authenticated role; access is restricted to **own notifications only** (no cross-user notification visibility).  
+**Layout**: Standard authenticated app shell (top nav + sidebar) with page header, notification list area, filter/pagination controls, and action bar for read-state operations.  
+**Key UI Components**:
+- Notification list (newest first) with per-item timestamp, type, summary, and optional linked entity context
+- Read/unread visual state indicator (unread emphasized)
+- Per-item "Mark as read" action
+- "Mark all read" bulk action
+- Pagination controls (server-driven page navigation)
+- Empty-state panel with safe navigation CTA
+- Retry CTA for transient load failures  
+**Primary Actions**:
+- Open notification-linked destination (task/project/watchdog/evidence context as applicable)
+- Mark one notification as read
+- Mark all notifications as read
+- Page through notification history  
+**Empty State**: "No notifications yet." + safe CTA ("Go to Dashboard") so user is never stranded.  
+**Pagination Behaviour**: Server-side pagination aligned to TRS (`20` default page size, capped by server guardrail if a higher size is requested).  
+**Read/Unread Behaviour**:
+- Unread notifications are visually differentiated
+- Opening a notification or explicit "Mark as read" updates that notification to read
+- "Mark all read" updates all unread notifications in current-user scope  
+**Link-Back Behaviour from Bell/Drawer**: Top-nav bell drawer "View all" navigates to `/notifications`; this screen is the canonical history destination for that action.  
+**Entry points**: Top-nav bell drawer "View all"; direct URL navigation to `/notifications`  
+**Navigation from this screen**:
+- → Linked task / project / evidence / watchdog destination (notification target)
+- → Dashboard via empty-state CTA
+- → Previous context via standard browser/app navigation
+
+**Traceability**: PIT-FR-115, PIT-FR-116, PIT-FR-117; PIT-TR-118, PIT-TR-119, PIT-TR-120.
+
+---
+
 ## Section 3: Implementation Page Top Indicators
 
 The Implementation Page (Screen 6) must display the following seven summary indicators at the top of the page in a persistent indicator row. These indicators give the project manager immediate situational awareness without scrolling.
@@ -1016,6 +1053,7 @@ Every primary page MUST implement all five required UI states. Below is the spec
 | Admin / Settings | Skeleton settings forms | N/A | "You don't have permission to access settings." | "Failed to load settings. Retry" | Full settings forms |
 | Invitation Acceptance | Spinner while validating token | N/A | N/A (token-based, not role-based) | "Invalid or expired invitation. Request a new invitation." + CTA | Valid state: shows org name, inviter, role; new-user form (sub-state within Data); existing-user accept button |
 | My Work | Skeleton task cards | "No tasks assigned to you yet." with helpful explanation | "You don't have permission to view your task list." | "Failed to load your tasks. Retry" | Full personal task list with filters |
+| Notification History | Loading skeleton/spinner in main content while app shell remains visible | "No notifications yet." + safe CTA ("Go to Dashboard") | N/A (own-notifications-only screen; no cross-user scope on `/notifications`; access constrained by RLS) | "Failed to load notifications. Retry" CTA | Paginated notification list (newest first) with read/unread indicators and actions (mark one read, mark all read) |
 | Assignment / Invitation Management | Skeleton team member rows | "No team members yet. Add your first team member." + CTA | "You don't have permission to manage this project team." | "Failed to load team. Retry" | Full team list with pending invitations |
 
 ---
@@ -1093,7 +1131,7 @@ Navigation items are shown or hidden based on the current user's role within the
 
 **Location**: Bell icon in top navigation bar.  
 **Badge count**: Number of unread notifications shown as a red badge on the bell icon. Badge disappears when all notifications are marked read.  
-**Click behaviour**: Clicking the bell opens a notification drawer (slide-in panel from top right). Notification drawer shows the 20 most recent unread notifications with "Mark all read" and "View all" options.  
+**Click behaviour**: Clicking the bell opens a notification drawer (slide-in panel from top right). Notification drawer shows the 20 most recent unread notifications with "Mark all read" and "View all" options; "View all" routes to `/notifications` (Screen 22 Notification History).  
 **Notification types**:
 - Task assigned to you
 - Task due in X days (configurable warning period)
@@ -1240,6 +1278,9 @@ Each breadcrumb segment is a clickable link.
 | Admin settings save | Supabase update or `update_org_settings` Edge Function | `organisations`, `organisation_settings`, `roles`, `notification_templates` | JWT + `pit_admin` or `org_admin` | `settings_updated` | Settings saved; confirmation toast |
 | User invite (from team management) | `send_invitation` Edge Function | `invitations`, `notifications` | JWT + `org_admin` | `invitation_sent` | Invitation email sent; pending invitation shown in team list |
 | Notification bell open | Supabase query | `notifications` filtered by `user_id` | JWT (own notifications only) | None | Unread notifications shown; mark-as-read available |
+| Notification History screen load | `GET /notifications?page=N` (or TRS-equivalent notification history endpoint) | `notifications` | JWT (current user scope only via RLS) | None | Notifications filtered to current user, sorted `created_at DESC`, server-side paginated (default 20 per page; server cap enforced if needed) |
+| Notification History — mark one read | `PATCH /notifications/:id/read` (or TRS-equivalent mutation) | `notifications` | JWT (current user scope only) | `notification_read` | Only targeted notification in current-user scope changes to read; unread badge/list updates |
+| Notification History — mark all read | `PATCH /notifications/read-all` (or TRS-equivalent mutation) | `notifications` | JWT (current user scope only) | `notifications_mark_all_read` | All unread notifications in current-user scope transition to read; badge count resets accordingly |
 | Sign out | `supabase.auth.signOut` | `auth.sessions` | JWT | None | Session cleared; redirected to Landing screen |
 | My Work screen load | `list_my_tasks` Edge Function or Supabase query | `tasks`, `deliverables`, `milestones`, `projects` | JWT (own tasks only via RLS) | None | All 5 states handled; only current user's assigned tasks returned |
 | My Work filter apply | Client-side filter OR `list_my_tasks?filter=overdue` | `tasks`, `deliverables`, `milestones`, `projects` | JWT (own tasks only via RLS) | None | Filter reduces displayed tasks immediately |
@@ -1295,6 +1336,7 @@ The following table provides a compact cross-reference from each deployment rout
 | `/admin/notifications` | Admin — Notifications | J-22 | Notification templates load | Templates render; edit/save functional |
 | `/admin/task-clusters` | Admin — Task Cluster Templates | J-22 | Template list load, create/edit/delete | Template list renders; CRUD functional |
 | `/my-work` | My Work | J-23 | My Work load, filter, status update, evidence action | Personal tasks render; filters work; status update saves |
+| `/notifications` | Notification History | Global notification flow (Section 5.4) | Notification History load, mark one read, mark all read | History renders in descending time order; pagination works; read-state actions update correctly |
 | `/*` (404) | 404 Not Found | J-8 (SPA fallback) | SPA fallback (static) | Non-existent route shows 404 page; "Go Home" link works |
 
 ---
@@ -1401,6 +1443,7 @@ Every route in PIT must be covered by deployment wave evidence. The following ma
 | `/admin/notifications` | Admin — Notification Templates | Yes | `pit_admin` or `org_admin` | Wave: notification templates render; save updates templates |
 | `/admin/task-clusters` | Admin — Task Cluster Templates | Yes | `pit_admin` or `org_admin` | Wave: template list renders; create/edit/delete functional |
 | `/my-work` | My Work (personal task view) | Yes | `task_owner` or above | Wave: personal task list renders; tasks assigned to current user only; status updates save |
+| `/notifications` | Notification History | Yes | Any authenticated (current user notifications only) | Wave: notification history renders newest-first with server pagination; mark one read + mark all read succeed; bell/drawer "View all" navigates here |
 | `/*` (unmatched) | 404 Not Found | No | None | Wave: non-existent route shows 404 page; "Go Home" link works |
 
 **Deployment Infrastructure Requirement** (from L-006):
@@ -1484,7 +1527,7 @@ The following items must be true before Stage 3 (FRS) can commence. Status is de
 | P-03 | All auth routes (Journey 1–9 + Journey 23) confirmed as complete by Foreman | ✅ RESOLVED — Journeys 1–9 confirmed in this upgrade; Journey 23 (My Work) added | Resolved by this PR |
 | P-04 | All 5 UI states confirmed for all primary screens | ✅ RESOLVED — Section 4 expanded in this upgrade to include all screens | Resolved by this PR |
 | P-05 | All 7 top indicators confirmed for Implementation Page | ✅ RESOLVED — Section 3 defines all 7 indicators completely | Resolved in v0.1-draft; confirmed |
-| P-06 | Deployment surface map confirmed as complete (no routes missing) | ✅ RESOLVED — Section 9 reviewed and complete in this upgrade including /my-work, /404, all admin sub-routes | Resolved by this PR |
+| P-06 | Deployment surface map confirmed as complete (no routes missing) | ✅ RESOLVED — Section 9 reviewed and complete in this upgrade including /my-work, /notifications, /404, all admin sub-routes | Resolved by this PR |
 | P-07 | AIMC gateway endpoint paths confirmed with AIMC module owner | 🔄 DEFERRED — Functional touchpoints confirmed (Section 8); exact endpoint paths deferred to Stage 4/TRS per A-10 | Deferred to Stage 4 / QA-to-Red |
 | P-08 | Improvement register updated with design oversights from Stage 2 (L-008) | 🔄 DEFERRED — No new oversights requiring register entry discovered in this upgrade; register remains current | Deferred to Stage 3 (FRS author to update register if new gaps found) |
 
@@ -1523,8 +1566,8 @@ The following items must be true before Stage 3 (FRS) can commence. Status is de
 | Required Element (per maturion-isms#1575) | Status | Evidence in UX Spec |
 |---|---|---|
 | Route coverage — public, auth, protected, admin, system, fallback | ✅ CONFIRMED | Section 9: Deployment Surface Map (all 27 routes enumerated by type) |
-| Screen-to-route-to-state-to-wiring traceability | ✅ CONFIRMED | Section 2 (21 screens); Section 4 (5-state matrix per screen); Section 7 (screen-to-data wiring table) |
-| Five-state UI coverage for every route | ✅ CONFIRMED | Section 4: UI States for Every Primary Page — all 21 screens covered with 5 states each |
+| Screen-to-route-to-state-to-wiring traceability | ✅ CONFIRMED | Section 2 (22 screens); Section 4 (5-state matrix per screen); Section 7 (screen-to-data wiring table) |
+| Five-state UI coverage for every route | ✅ CONFIRMED | Section 4: UI States for Every Primary Page — all 22 screens covered with 5 states each |
 | App-shell and global layout rendering expectations | ✅ CONFIRMED | Section 5: App Shell / Navigation and Root-Level Notification Pattern — exact rendering expectations |
 | Notification, toast, and root-provider behaviour | ✅ CONFIRMED | Section 5: Root-level NotificationProvider spec; bell badge; real-time delivery |
 | Denied-path UX for every role-gated route/action | ✅ CONFIRMED | Section 4: permission-denied state (State 3) for all protected screens; Section 2: role notes per screen |
@@ -1542,4 +1585,6 @@ The following minor gaps were identified during the functional delivery retrofit
 | UX-GAP-001 | The 404 fallback route (`/404` or catch-all) is listed in Section 9 but its 5-state UI matrix entry and wiring entry are absent from Sections 4 and 7 respectively. The 404 route has a simpler state model (data-only) but should be documented for completeness. | Section 4, Section 7 | Add 404 route entry to Section 4 (state: data-only — no empty/permission/error states applicable) and Section 7 (wiring: static — no API calls). Foreman judges this non-blocking for Stage 2 re-confirmation. |
 | UX-GAP-002 | The `/notifications` history route (per FRS PIT-FR-116 and TRS PIT-TR-119) is listed in Section 9 but its Section 2 screen spec (screen states, data wiring) is not present in v0.2-draft. | Section 2, Section 4 | This gap was introduced when PIT-FR-116 was added in FRS v0.2-hardening (maturion-isms#1556). The notification history screen spec must be added to Stage 2 before Stage 2 re-confirmation or as a Stage 2 amendment with CS2 approval. |
 
-**Retrofit Verdict**: Stage 2 UX Workflow & Wiring Spec v0.2-draft is substantially complete for functional delivery. Two minor gaps (UX-GAP-001, UX-GAP-002) are identified. UX-GAP-002 requires resolution before Stage 2 re-confirmation. UX-GAP-001 is non-blocking. Both gaps are captured in `modules/pit/_readiness/pit-functional-delivery-gap-register.md`.
+**Retrofit Verdict**: Stage 2 UX Workflow & Wiring Spec v0.2-draft is substantially complete for functional delivery. Two minor gaps (UX-GAP-001, UX-GAP-002) were identified in retrofit and are captured in `modules/pit/_readiness/pit-functional-delivery-gap-register.md`.
+
+**Resolution Update (PR #1594, 2026-05-10)**: UX-GAP-001 and UX-GAP-002 addressed by Stage 2 amendment in this document (404 entries confirmed in Sections 4 and 7; `/notifications` Notification History now fully specified in Sections 2, 4, 7, and 9).
