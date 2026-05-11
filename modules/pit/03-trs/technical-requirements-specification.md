@@ -19,7 +19,7 @@
 | Derived From (Stage 3) | `modules/pit/02-frs/functional-requirements.md` **v0.2-hardened** baseline (CS2 re-confirmed in tracker context) |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-07; updated 2026-05-08 (retrofit wave maturion-isms#1575 / PR #1576) |
-| Issue | maturion-isms#1554 (original); maturion-isms#1575 (retrofit — PIT-TR-116 to PIT-TR-126 added) |
+| Issue | maturion-isms#1554 (original); maturion-isms#1575 (retrofit — PIT-TR-116 to PIT-TR-126 added); maturion-isms#1604 (Stage 4 timeline-engine technical validation re-confirmation) |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 
 > **Governance Note:** This TRS is a Stage 4 draft artifact under CS2 review. Stage 2 UX and Stage 3 FRS baselines are now re-confirmed in tracker context; Stage 5 Architecture remains blocked until this Stage 4 TRS is explicitly approved/gate-passed by CS2. Build Authorization remains NOT CLEARED. This TRS does not authorise code implementation, builder appointment, schema migration, or deployment.

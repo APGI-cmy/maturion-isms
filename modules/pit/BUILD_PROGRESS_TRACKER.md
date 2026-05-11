@@ -395,16 +395,14 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 ACTIVE — TRS Updated to v0.2-draft with FRS v0.2-hardened propagation (maturion-isms#1575 / PR #1576); Stage 3 FRS DRAFT_HARDENED v0.2 (maturion-isms#1556) pending CS2 approval; Stage 2 FOREMAN_REVIEWED and ready for CS2 re-confirmation  
+**Current Stage**: Stage 4 ACTIVE — TRS DRAFT_UPDATED and **READY_FOR_CS2_REVIEW** (maturion-isms#1604); Stage 2 UX Workflow & Wiring Spec CS2 re-confirmed; Stage 3 FRS baseline CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~38% complete (Stage 1 App Description approved; Stage 2 Foreman-reviewed pending CS2 + retrofit re-confirmation; Stage 3 FRS hardened to v0.2 pending CS2 approval + retrofit re-confirmation; Stage 4 TRS updated to v0.2-draft with FRS v0.2-hardened propagation pending CS2 upstream approvals; Architecture substantially IN_PROGRESS pending gate-pass)  
-**Blockers**: Stage 4 TRS approval BLOCKED until Stage 2 UX Spec and Stage 3 FRS are CS2-approved. Stage 5 Architecture gate-pass BLOCKED until Stage 4 TRS is approved. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed.  
+**Overall Progress**: ~38% complete (Stage 1 App Description approved; Stage 2 baseline re-confirmed by CS2; Stage 3 baseline re-confirmed by CS2; Stage 4 TRS updated with timeline-engine technical validation and ready for CS2 review; Stage 5 Architecture remains blocked pending Stage 4 gate-pass)  
+**Blockers**: Stage 5 Architecture gate-pass BLOCKED until Stage 4 TRS is CS2-approved/gate-passed. Build Authorization NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed.  
 **Next Steps**:
-1. CS2 review and re-confirmation of Stage 2 UX Workflow & Wiring Spec (maturion-isms#1548), post PR #1594 gap closure
-2. CS2 review and approval of Stage 3 FRS (maturion-isms#1556) — re-confirmation after retrofit
-3. CS2 review and approval of Stage 4 TRS (maturion-isms#1554 / maturion-isms#1575) — after upstream approvals
-4. Formally gate-pass Stage 5 Architecture (after Stage 4 approval + Stage 5 reconciliation checklist complete)
-5. Complete Stages 6–11 before Build Authorization can be requested
+1. CS2 review and approval of Stage 4 TRS package (maturion-isms#1554 / maturion-isms#1575 / maturion-isms#1604)
+2. Formally gate-pass Stage 5 Architecture after Stage 4 approval and Stage 5 reconciliation checklist completion
+3. Complete Stages 6–11 before Build Authorization can be requested
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
