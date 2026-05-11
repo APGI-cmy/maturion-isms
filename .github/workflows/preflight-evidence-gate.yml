@@ -820,6 +820,19 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
+      - name: Inject HEAD SHA into evidence files
+        run: |
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          python3 - "$HEAD_SHA" <<'PYEOF'
+          import pathlib, sys
+          head_sha = sys.argv[1]
+          for path in pathlib.Path(".functional-delivery").glob("pr-*.md"):
+              if not path.is_file():
+                  continue
+              content = path.read_text()
+              path.write_text(content.replace("CURRENT_HEAD", head_sha))
+          PYEOF
+
       - name: Product Delivery Gate Suite
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}

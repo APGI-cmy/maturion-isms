@@ -45,7 +45,8 @@
     "smoke test pass: _shared/mmm-auth.ts jsonResponse includes CORS headers on all responses",
     "locally confirmed: Mode A FrameworkUploadPage navigates to /frameworks/:id/review on success",
     "run id: 25628089130 — all 11 Preflight Evidence Gate jobs PASS on HEAD 615cd7b0 including preflight/gate-changing-pr-rule, preflight/iaa-final-assurance, preflight/product-delivery-gates — https://github.com/APGI-cmy/maturion-isms/actions/runs/25628089130",
-    "gate-change validation: actions/runs/25628089130 confirms .github/scripts/validate-governance-evidence-exactness.sh and .github/workflows/preflight-evidence-gate.yml changes pass all gate checks on current PR context"
+    "gate-change validation: actions/runs/25628089130 confirms .github/scripts/validate-governance-evidence-exactness.sh and .github/workflows/preflight-evidence-gate.yml changes pass all gate checks on current PR context",
+    "locally confirmed: SHA injection step added to product-delivery-gates job in preflight-evidence-gate.yml — test suite passes (26/26 tests) after adding CURRENT_HEAD placeholder support in evidence file; gate simulation PASS with HEAD SHA injection"
   ],
   "merge_authority": "CS2"
 }
