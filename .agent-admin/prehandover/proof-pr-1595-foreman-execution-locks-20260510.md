@@ -24,7 +24,7 @@ ecap_bundle_artifact: .agent-workspace/execution-ceremony-admin-agent/bundles/PR
 scope_declaration_ref: .agent-admin/scope-declarations/pr-1595.md
 rca_assessment: .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-1595.md
 iaa_audit_token: PENDING
-CURRENT_HEAD_SHA: 5d2c2ffe20d9f2ee4787cc83cc55d3fcea4eae08
+CURRENT_HEAD_SHA: e3b4cd033ef68864def554d213e2ea16b547f058
 protected_paths_changed:
   - .github/agents/foreman-v2-agent.md
   - governance/checklists/phase4-role-separation-operational-guidance.md
@@ -61,7 +61,7 @@ This PR modifies the following gate/script/workflow files:
 - `.github/workflows/foreman-start-lock.yml` (new START_LOCK enforcement workflow)
 - `.github/workflows/iaa-prebrief-gate.yml` (archive path exclusion)
 
-**Local validation evidence (refreshed at current head 5d2c2ff):**
+**Local validation evidence (refreshed at head e3b4cd0 → fixed at this commit):**
 
 ```text
 Command: bash .github/scripts/validate-governance-evidence-exactness.test.sh
