@@ -226,6 +226,20 @@ release
 PASS (as a final verdict)
 ```
 
+### Pre-Handover Gate Scan (mandatory)
+
+Before triggering the HANDOVER_LOCK checkpoint, Foreman MUST enumerate ALL CI gates on the current PR head. This is not optional.
+
+```text
+Protocol: Before any HANDOVER_ALLOWED claim
+1. Use GitHub MCP list_workflow_runs (branch, status: completed) filtered to current PR HEAD SHA.
+2. For every required_check in merge_gate_interface.required_checks: confirm status = success.
+3. Any gate that is failure, in_progress, queued, or missing = HALT-012 / STOP_AND_FIX.
+4. Pre-existing failures (failing before this PR's first commit) are NOT exempt — HALT-012 applies to all required gates regardless of origin.
+```
+
+This scan must be performed BEFORE the HANDOVER_ALLOWED comment is posted. Posting HANDOVER_ALLOWED while a required gate is non-GREEN is a HALT-012 violation (INC-GATE-HANDOVER-FAIL-001).
+
 ### Owner by role
 
 | Role | Responsibility |

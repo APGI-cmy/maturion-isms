@@ -61,7 +61,7 @@ This PR modifies the following gate/script/workflow files:
 - `.github/workflows/foreman-start-lock.yml` (new START_LOCK enforcement workflow)
 - `.github/workflows/iaa-prebrief-gate.yml` (archive path exclusion)
 
-**Local validation evidence (refreshed at current head 5d2c2ff):**
+**Local validation evidence (refreshed at head e3b4cd0 → fixed at this commit):**
 
 ```text
 Command: bash .github/scripts/validate-governance-evidence-exactness.test.sh
