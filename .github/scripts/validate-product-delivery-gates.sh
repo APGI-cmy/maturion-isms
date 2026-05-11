@@ -117,8 +117,6 @@ if ! [[ "$HEAD_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
   echo "❌ FAIL — HEAD_SHA must be a 40-character git SHA."
   exit 1
 fi
-HEAD_SHA_REGEX_SAFE="$(printf '%s' "$HEAD_SHA" | sed 's/[][\\.^$*+?(){}|-]/\\&/g')"
-IAA_HEAD_SHA_PATTERN='^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*'"$HEAD_SHA_REGEX_SAFE"'([[:space:]]|$)'
 
 echo "Product-facing scope detected:"
 echo -e "$PRODUCT_FILES" | sed '/^$/d' | sed 's/^/  - /'
@@ -377,7 +375,22 @@ IAA_HEAD_BOUND=false
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
-  if grep -qiE "$IAA_HEAD_SHA_PATTERN" "$iaa_file"; then
+  if awk -v sha="$HEAD_SHA" '
+    BEGIN { IGNORECASE=1 }
+    {
+      line = $0
+      sub(/\r$/, "", line)
+      if (line ~ /^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*/) {
+        sub(/^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*/, "", line)
+        sub(/[[:space:]]+$/, "", line)
+        if (line == sha) {
+          found = 1
+          exit 0
+        }
+      }
+    }
+    END { exit(found ? 0 : 1) }
+  ' "$iaa_file"; then
     IAA_HEAD_BOUND=true
     break
   fi
