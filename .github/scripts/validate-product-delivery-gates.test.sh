@@ -38,15 +38,28 @@ EOF
   git checkout -q -b test-branch
 
   TEST_PR_BODY=""
+  TEST_PR_LABELS=""
+  rm -f .skip-head-sha-rewrite
 
   "$setup_fn"
 
   local base_sha head_sha code output pr_body
   base_sha=$(git rev-parse main)
   head_sha=$(git rev-parse HEAD)
+  if [ -d .functional-delivery ] && [ ! -f .skip-head-sha-rewrite ]; then
+    python3 - "$head_sha" <<'PYEOF'
+import pathlib, sys
+head_sha = sys.argv[1]
+for path in pathlib.Path(".functional-delivery").glob("pr-*.md"):
+    if not path.is_file():
+        continue
+    content = path.read_text()
+    path.write_text(content.replace("CURRENT_HEAD", head_sha))
+PYEOF
+  fi
   pr_body="${TEST_PR_BODY:-}"
   set +e
-  output=$(BASE_SHA="$base_sha" PR_NUMBER="9999" PR_BODY="$pr_body" PR_LABELS="" HEAD_SHA="$head_sha" bash "$GATE_SCRIPT" 2>&1)
+  output=$(BASE_SHA="$base_sha" PR_NUMBER="9999" PR_BODY="$pr_body" PR_LABELS="${TEST_PR_LABELS:-}" HEAD_SHA="$head_sha" bash "$GATE_SCRIPT" 2>&1)
   code=$?
   set -e
 
@@ -102,19 +115,44 @@ EOF
 }
 run_test "T0c PR body verdict-options example only -> PASS / not applicable" 0 t0c_pr_body_examples_not_claim
 
+t0d_pr_body_partial_option_list_not_claim() {
+  cat > docs/governance/PHASE5_PRODUCT_DELIVERY_GATES.md << 'EOF'
+# Governance documentation update
+EOF
+  TEST_PR_BODY=$'Docs-only note.\nOptions: PARTIAL_FUNCTIONAL_DELIVERY, FULL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "governance docs with comma-separated partial/full options"
+}
+run_test "T0d PR body comma-separated partial/full options should not trigger classifier -> PASS" 0 t0d_pr_body_partial_option_list_not_claim
+
 seed_valid_evidence() {
   cat > .functional-delivery/pr-9999.md << 'EOF'
 PR: #9999
 Issue: #1573
 Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: user creates org -> creates framework -> uploads/generates source -> review/compile/publish states visible
+ENTRY_POINT: /onboarding
+FINAL_EXPECTED_STATE: framework review state visible with compile/publish actions wired
+USER_CAN_COMPLETE_JOURNEY: yes
 Product/user journey: MMM create framework flow
 User journey tested: yes
+CTA_MAP: present
 CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
 Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
 Screenshots or recording: present
 Preview/live URL: https://example.invalid
 Pass/fail result: pass
+KNOWN_PARTIALS: none
 Known partials: none
+CS2_PARTIAL_ACCEPTANCE: not_applicable
 Known limitations: none
 Partial scope accepted by CS2: not_applicable
 Builder QA functional report reference: modules/MMM/05-qa-to-red/qa-to-red-catalog.md
@@ -161,6 +199,71 @@ t1_missing_evidence() {
 }
 run_test "T1 missing functional evidence -> FAIL" 1 t1_missing_evidence
 
+t1d_cs_signoff_label_does_not_bypass_product_gates() {
+  seed_product_change_with_cta
+  TEST_PR_LABELS='CS sign-off: approved'
+  export TEST_PR_LABELS
+  git add .
+  git commit -q -m "product change with cs sign-off label but no evidence"
+}
+run_test "T1d CS sign-off label does not bypass product-delivery evidence gates -> FAIL" 1 t1d_cs_signoff_label_does_not_bypass_product_gates
+
+t1c_migration_only_change_requires_product_evidence() {
+  mkdir -p supabase/migrations
+  cat > supabase/migrations/20260511070000_add_test_table.sql << 'EOF'
+create table if not exists test_product_delivery_gate (
+  id uuid primary key
+);
+EOF
+  git add .
+  git commit -q -m "migration-only schema change without functional evidence"
+}
+run_test "T1c migration-only schema change is product-facing and requires evidence -> FAIL" 1 t1c_migration_only_change_requires_product_evidence
+
+t1e_pr_body_partial_delivery_claim_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Operational note\nVERDICT: PARTIAL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body partial delivery claim without product evidence"
+}
+run_test "T1e PR-body PARTIAL_FUNCTIONAL_DELIVERY claim triggers evidence requirement -> FAIL" 1 t1e_pr_body_partial_delivery_claim_requires_evidence
+
+t1g_pr_body_standalone_partial_token_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Operational note\nPARTIAL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body standalone partial token without product evidence"
+}
+run_test "T1g PR-body standalone PARTIAL_FUNCTIONAL_DELIVERY token triggers evidence requirement -> FAIL" 1 t1g_pr_body_standalone_partial_token_requires_evidence
+
+t1f_pr_body_handover_claim_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Release status: ready for handover'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body handover claim without product evidence"
+}
+run_test "T1f PR-body handover claim triggers evidence requirement -> FAIL" 1 t1f_pr_body_handover_claim_requires_evidence
+
+t1h_pr_body_handover_readiness_claim_requires_evidence() {
+  cat > docs/governance/notes.md << 'EOF'
+doc-only change
+EOF
+  TEST_PR_BODY=$'Release status: handover readiness'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "pr body handover readiness claim without product evidence"
+}
+run_test "T1h PR-body handover readiness claim triggers evidence requirement -> FAIL" 1 t1h_pr_body_handover_readiness_claim_requires_evidence
+
 t1b_missing_pr_specific_evidence_no_stale_fallback() {
   seed_product_change_with_cta
   seed_valid_iaa
@@ -168,14 +271,28 @@ t1b_missing_pr_specific_evidence_no_stale_fallback() {
 PR: #1111
 Issue: #1573
 Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: stale evidence
+ENTRY_POINT: /stale
+FINAL_EXPECTED_STATE: stale
+USER_CAN_COMPLETE_JOURNEY: yes
 Product/user journey: stale evidence
 User journey tested: yes
+CTA_MAP: present
 CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
 Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
 Screenshots or recording: present
 Preview/live URL: url
 Pass/fail result: pass
+KNOWN_PARTIALS: none
 Known partials: none
+CS2_PARTIAL_ACCEPTANCE: not_applicable
 Known limitations: none
 Partial scope accepted by CS2: not_applicable
 Builder QA functional report reference: ref
@@ -200,10 +317,22 @@ t2_missing_cta_map_fields() {
 PR: #9999
 Issue: #1573
 Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: MMM flow
+ENTRY_POINT: /framework/create
+FINAL_EXPECTED_STATE: framework created
+USER_CAN_COMPLETE_JOURNEY: yes
 Product/user journey: MMM flow
 User journey tested: yes
+CTA_MAP: present
 CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
 Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
 Screenshots or recording: present
 Preview/live URL: url
 Pass/fail result: pass
@@ -273,10 +402,22 @@ t5_placeholder_with_full_claim() {
 PR: #9999
 Issue: #1573
 Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: TODO backend wiring remains
+ENTRY_POINT: /framework/create
+FINAL_EXPECTED_STATE: framework created
+USER_CAN_COMPLETE_JOURNEY: yes
 Product/user journey: TODO backend wiring remains
 User journey tested: yes
+CTA_MAP: present
 CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
 Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
 Screenshots or recording: present
 Preview/live URL: url
 Pass/fail result: pass
@@ -305,16 +446,31 @@ t6_partial_scope_allowed() {
 PR: #9999
 Issue: #1573
 Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: TODO backend wiring remains
+ENTRY_POINT: /framework/create
+FINAL_EXPECTED_STATE: partial
+USER_CAN_COMPLETE_JOURNEY: no
 Product/user journey: TODO backend wiring remains
 User journey tested: no
+CTA_MAP: present
 CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
 Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
 Screenshots or recording: present
 Preview/live URL: url
 Pass/fail result: partial
+KNOWN_PARTIALS: backend wiring
 Known partials: backend wiring
+CS2_PARTIAL_ACCEPTANCE: yes
 Known limitations: placeholder wiring remains
 Partial scope accepted by CS2: yes
+CS2_WAIVER_QUOTE: "CS2 accepts partial scope for this wave while known partials are tracked."
 Builder QA functional report reference: ref
 ECAP/admin-gate report reference: ref
 IAA final assurance reference: ref
@@ -330,6 +486,53 @@ EOF
   git commit -q -m "partial scope declaration"
 }
 run_test "T6 explicit partial scope with CS2 acceptance -> PASS" 0 t6_partial_scope_allowed
+
+t6c_partial_scope_cs2_yes_without_quote_fails() {
+  seed_product_change_with_cta
+  seed_valid_iaa
+  cat > .functional-delivery/pr-9999.md << 'EOF'
+PR: #9999
+Issue: #1573
+Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: partial accepted by CS2 but quote missing
+ENTRY_POINT: /framework/create
+FINAL_EXPECTED_STATE: partial
+USER_CAN_COMPLETE_JOURNEY: no
+Product/user journey: partial flow
+User journey tested: no
+CTA_MAP: present
+CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
+Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
+Screenshots or recording: present
+Preview/live URL: url
+Pass/fail result: partial
+KNOWN_PARTIALS: backend wiring
+Known partials: backend wiring
+CS2_PARTIAL_ACCEPTANCE: yes
+Known limitations: partial accepted but quote missing
+Partial scope accepted by CS2: yes
+Builder QA functional report reference: ref
+ECAP/admin-gate report reference: ref
+IAA final assurance reference: ref
+| CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
+|---|---|---|---|---|---|---|---|
+| cta | intent | route | /api/frameworks/init | obj | ok | fail | ev |
+mmm-framework-init
+FUNCTIONAL_PASS: no
+VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
+ADMIN_PASS: yes
+EOF
+  git add .
+  git commit -q -m "partial scope cs2 yes without waiver quote"
+}
+run_test "T6c partial scope with CS2 yes but missing CS2_WAIVER_QUOTE -> FAIL" 1 t6c_partial_scope_cs2_yes_without_quote_fails
 
 t6b_ui_placeholder_prop_should_not_trigger_placeholder_honesty() {
   mkdir -p api/frameworks
@@ -350,6 +553,125 @@ EOF
   git commit -q -m "ui placeholder attribute with complete evidence"
 }
 run_test "T6b UI placeholder prop alone -> PASS" 0 t6b_ui_placeholder_prop_should_not_trigger_placeholder_honesty
+
+t7a_pass_with_cs2_waiver_without_quote() {
+  seed_product_change_with_cta
+  seed_valid_evidence
+  cat > .agent-admin/assurance/iaa-token-session-9999.md << 'EOF'
+PHASE_B_BLOCKING_TOKEN: IAA-session-9999-PASS_WITH_CS2_WAIVER
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: no
+VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
+IAA_EXECUTION_VERDICT: PASS_WITH_CS2_WAIVER
+EOF
+  git add .
+  git commit -q -m "waiver without explicit quote"
+}
+run_test "T7a PASS_WITH_CS2_WAIVER requires explicit quoted CS2 waiver text -> FAIL" 1 t7a_pass_with_cs2_waiver_without_quote
+
+t7b_functional_no_with_handover_language() {
+  seed_product_change_with_cta
+  seed_valid_iaa
+  cat > .functional-delivery/pr-9999.md << 'EOF'
+PR: #9999
+Issue: #1573
+Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: journey partial
+ENTRY_POINT: /framework/upload
+FINAL_EXPECTED_STATE: pending parse job
+USER_CAN_COMPLETE_JOURNEY: no
+Product/user journey: incomplete workflow
+User journey tested: no
+CTA_MAP: present
+CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
+Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
+Screenshots or recording: present
+Preview/live URL: url
+Pass/fail result: partial
+KNOWN_PARTIALS: pending parse conversion
+Known partials: pending parse conversion
+CS2_PARTIAL_ACCEPTANCE: no
+Known limitations: workflow incomplete
+Partial scope accepted by CS2: no
+Builder QA functional report reference: ref
+ECAP/admin-gate report reference: ref
+IAA final assurance reference: ref
+| CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
+|---|---|---|---|---|---|---|---|
+| Upload | upload source | route | /api/upload/framework-source | obj | pending | fail | ev |
+FUNCTIONAL_PASS: no
+ADMIN_PASS: yes
+VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
+ready for handover
+EOF
+  git add .
+  git commit -q -m "functional no with handover language"
+}
+run_test "T7b FUNCTIONAL_PASS no cannot include handover/merge acceptance language -> FAIL" 1 t7b_functional_no_with_handover_language
+
+t7c_missing_current_head_sha_in_evidence() {
+  seed_product_change_with_cta
+  seed_valid_evidence
+  seed_valid_iaa
+  # Force the test to keep CURRENT_HEAD placeholder so Gate 7 fails explicitly.
+  touch .skip-head-sha-rewrite
+  git add .
+  git commit -q -m "missing reviewed current head sha"
+}
+run_test "T7c evidence missing current HEAD SHA must fail" 1 t7c_missing_current_head_sha_in_evidence
+
+t8_pr1590_dry_run_incomplete_workflow() {
+  seed_product_change_with_cta
+  seed_valid_iaa
+  cat > .functional-delivery/pr-9999.md << 'EOF'
+PR: #9999
+Issue: #1590
+Current head SHA reviewed: CURRENT_HEAD
+PROMISED_USER_JOURNEY: create organisation -> initialise framework -> upload/generate source -> review -> compile -> publish -> dashboard reflects state
+ENTRY_POINT: /framework/upload
+FINAL_EXPECTED_STATE: compile and publish completed with dashboard state reflected
+USER_CAN_COMPLETE_JOURNEY: yes
+Product/user journey: MMM full flow
+User journey tested: yes
+CTA_MAP: present
+CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
+Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
+Screenshots or recording: present
+Preview/live URL: url
+Pass/fail result: pass
+KNOWN_PARTIALS: mode A upload only creates pending parse job and compile path not proven
+Known partials: mode A upload pending parse only; compile/publish success-failure states not fully evidenced
+CS2_PARTIAL_ACCEPTANCE: no
+Known limitations: outstanding schema alignment and dashboard reflection pending
+Partial scope accepted by CS2: no
+Builder QA functional report reference: ref
+ECAP/admin-gate report reference: ref
+IAA final assurance reference: ref
+| CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
+|---|---|---|---|---|---|---|---|
+| Upload | upload source | route | /api/upload/framework-source | parse_job | pending parse only | fail | ev |
+FUNCTIONAL_PASS: yes
+ADMIN_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  git add .
+  git commit -q -m "pr1590 dry run incomplete workflow claims full pass"
+}
+run_test "T8 dry-run PR#1590-style incomplete workflow must be rejected -> FAIL" 1 t8_pr1590_dry_run_incomplete_workflow
 
 t7_full_valid() {
   seed_product_change_with_cta
