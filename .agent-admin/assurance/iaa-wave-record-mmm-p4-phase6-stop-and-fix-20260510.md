@@ -33,18 +33,43 @@ Anti-regression obligations: [yes — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR
 PHASE_B_BLOCKING_TOKEN: IAA-pr-1590-schema-blockers-resolved-20260510
 - **PR**: #1590
 - **Issue**: #1589
-- **Reviewed SHA**: 2e9e4c72a6e303b35ab8ecefeb87dca957a5f758
+- **Reviewed SHA**: fc3a16c335ef2ad73c86774cd8743e9b6e2c1a9d (current branch HEAD as at 2026-05-11)
+
+### Loading attestation (upgraded #1596 standard)
+- PRODUCT_BUILD_ASSURANCE_STANDARD.md loaded: yes
+- BUILD_DELIVERABLE overlay loaded: yes
+- GOVERNANCE_EVIDENCE overlay loaded: yes
+
+### Product-build gate evaluation
+- USER_JOURNEY_COMPLETE: no — deployed preview end-to-end not yet executed with authenticated ADMIN/LEAD_AUDITOR
+- ALL_CTAS_FUNCTIONAL: partial — all CTAs are code-path wired and schema-aligned; live runtime proof not yet attached
+- ALL_BACKEND_TARGETS_DEPLOYED_OR_PROVEN: partial — Edge Functions schema-aligned and committed; live deployed invocation not yet proven
+- ALL_SUPABASE_WRITES_SCHEMA_ALIGNED: yes — all Edge Functions verified against migration schema (20260420000001_mmm_core_tables.sql)
+- ASYNC_JOBS_VISIBLE_AND_ACTIONABLE: yes — parse job polling, status rendering, and Compile gate implemented in FrameworkReviewPage
+- SUCCESS_FAILURE_STATES_VISIBLE: yes — Compile and Publish show loading/success/error UI states
+- DASHBOARD_OR_STATE_REFLECTION_PROVEN: no — mmm-qiw-status error_rate fix committed; live dashboard load with ADMIN/LEAD_AUDITOR not yet verified
+
+### Split verdict
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: no
 VERDICT: PARTIAL_FUNCTIONAL_DELIVERY
-- **Verdict**: PASS_WITH_CS2_WAIVER — IAA code quality PASS; schema/CORS build blockers resolved; compile/publish schema and UI feedback states resolved; Mode A/C parse bridge (KUC pass-through, fire-and-forget failure handling) resolved; Mode B/C navigation to /frameworks/:id/review resolved; Mode C hybrid now requires and uploads source document via mmm-upload-framework-source (source_type: HYBRID); dashboard error_rate now treats both 'completed' and 'success' as successful; parse-job polling and proposed-domain gate on review page implemented; T-MMM-S6-UPL test coverage added for /api/upload/framework-source; full functional delivery pending deployed preview confirmation with authenticated ADMIN/LEAD_AUDITOR role
-CS2_WAIVER_QUOTE: "That is acceptable from the admin/process side because this PR no longer claims full functional delivery. It preserves the distinction between administrative admissibility and functional completion. Admin/process position: APPROVED."
 
-Gate CI evidence: Actions run 25628089130 — all 11 Preflight Evidence Gate jobs ✅ on SHA 615cd7b0. CS2 admin/process APPROVED on SHA 3cf9e9872bddf044ee50d2da185d1fdb4c11b547 (comment 4415303629). All gates pass on HEAD 2e9e4c72a6e303b35ab8ecefeb87dca957a5f758 (preflight/product-delivery-gates ✅, regression/product-delivery-gates ✅, CodeQL ✅, Build ✅) — run 25657187431.
+### REJECTION-PACKAGE
+```text
+REJECTION-PACKAGE
+Functional verdict: no
+Blocking finding: Full end-to-end workflow not yet proven on deployed preview with authenticated ADMIN/LEAD_AUDITOR role.
+Evidence: All code paths implemented and CI gates green. Live deployed verification (org create → Mode A/B/C → review/compile/publish → dashboard reflection) has not been executed. This is a workflow-level incompleteness, not a code-level defect.
+Why this fails the promised workflow: USER_JOURNEY_COMPLETE: no; DASHBOARD_OR_STATE_REFLECTION_PROVEN: no.
+Required fix: Execute end-to-end workflow on deployed preview with ADMIN role; attach current-head screenshots or recording as functional delivery evidence.
+Required proof before re-invocation: Updated functional-delivery evidence with preview/live run at current head SHA, authenticated ADMIN/LEAD_AUDITOR role confirmed, all three modes (A/B/C) reaching publish, dashboard accurately reflecting telemetry.
+```
 
-IAA scope of review: schema-incompatible column removals (mmm-framework-init, mmm-qiw-status, mmm-framework-compile, mmm-framework-publish, mmm-ai-framework-generate, mmm-ai-framework-parse), CORS header repair (_shared/mmm-auth.ts), Mode A/C/B next-state navigation (FrameworkUploadPage), compile/publish UI feedback states (FrameworkReviewPage), parse-job polling + proposed-domain gate (FrameworkReviewPage), Mode A parse bridge (mmm-upload-framework-source fires mmm-ai-framework-parse with KUC pass-through), Mode C hybrid upload path (source_type: HYBRID), dashboard error_rate fix (mmm-qiw-status), mmm_parse_jobs.framework_id migration. All verified against migration schema columns in 20260420000001_mmm_core_tables.sql. Code changes are technically correct and do not introduce regressions.
+Gate CI evidence: Actions run 25662329910 — preflight/product-delivery-gates ✅ on SHA fc3a16c335ef2ad73c86774cd8743e9b6e2c1a9d (2026-05-11T09:37:15Z).
 
-Full functional delivery (dashboard with authenticated ADMIN/LEAD_AUDITOR role live verification, end-to-end Mode A/B/C workflow on deployed preview) remains pending CS2 sign-off and deployed preview confirmation. STOP_AND_FIX status continues until CS2 lifts hold on #1589.
+IAA scope of review: schema-incompatible column removals (mmm-framework-init, mmm-qiw-status, mmm-framework-compile, mmm-framework-publish, mmm-ai-framework-generate, mmm-ai-framework-parse), CORS header repair (_shared/mmm-auth.ts), Mode A/C/B next-state navigation (FrameworkUploadPage), compile/publish UI feedback states (FrameworkReviewPage), parse-job polling + proposed-domain gate (FrameworkReviewPage), Mode A parse bridge (mmm-upload-framework-source fires mmm-ai-framework-parse with KUC pass-through), Mode C hybrid upload path (source_type: HYBRID), dashboard error_rate fix (mmm-qiw-status), mmm_parse_jobs.framework_id migration. All schema writes verified against migration columns in 20260420000001_mmm_core_tables.sql. ADMIN role enforcement added to mmm-upload-framework-source. CURRENT_HEAD injection step added to product-delivery-gates workflow.
+
+Full functional delivery (dashboard with authenticated ADMIN/LEAD_AUDITOR role live verification, end-to-end Mode A/B/C workflow on deployed preview) remains pending. STOP_AND_FIX status continues until CS2 lifts hold on #1589.
 
 ### All code fixes committed (code-level complete)
 - mmm-framework-init: removed created_by from mmm_frameworks insert; removed actor_type/organisation_id/metadata from mmm_audit_logs insert
