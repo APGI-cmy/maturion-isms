@@ -92,9 +92,12 @@ Governance canon consulted in this wave:
 ## IAA Audit Token Reference
 
 IAA Pre-Brief issued at: `.agent-admin/assurance/iaa-wave-record-pit-stage5-architecture-20260511.md`
-IAA Full Assurance Token: PENDING IAA invocation
+IAA Full Assurance Token: **IAA-session-pit-stage5-architecture-20260511-PASS**
+IAA Token committed at: SHA `f488b10`
+IAA 21/21 checks: PASS. 0 FAIL.
+IAA Flag (non-blocking): A-029 first-invocation exception applied.
 
-`iaa_audit_token: PENDING — IAA session-pit-stage5-architecture-20260511-WAVE`
+`iaa_audit_token: IAA-session-pit-stage5-architecture-20260511-PASS`
 
 ---
 

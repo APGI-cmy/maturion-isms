@@ -180,4 +180,6 @@ See `suggestions-log.md` for parking station entry.
 **fail_only_once_attested**: true
 **fail_only_once_version**: current
 **unresolved_breaches**: none
-**iaa_audit_token**: PENDING IAA full assurance invocation
+**iaa_audit_token**: IAA-session-pit-stage5-architecture-20260511-PASS (committed SHA f488b10)
+**merge_gate_parity**: PASS — all 21 IAA checks PASS, 0 FAIL
+**phase_b_blocking_token**: ACTIVE — PHASE_B_BLOCKING_TOKEN: IAA-session-pit-stage5-architecture-20260511-PASS
