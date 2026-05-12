@@ -153,7 +153,8 @@ async function runMode(page, origin, mode, sampleFilePath) {
     const isChecked = await radioLocator.isChecked();
     if (!isChecked) {
       await page.evaluate((modeValue) => {
-        const el = document.querySelector(`input[name="framework-mode"][value="${modeValue}"]`);
+        const escaped = CSS.escape(modeValue);
+        const el = document.querySelector(`input[name="framework-mode"][value="${escaped}"]`);
         if (el) el.click();
       }, mode);
       // Verify radio is now checked after the JS click
@@ -198,7 +199,7 @@ async function runMode(page, origin, mode, sampleFilePath) {
         mutationErrorNote
           .waitFor({ state: 'visible', timeout: reviewWaitTimeout })
           .then(async () => {
-            const errText = await mutationErrorNote.innerText().catch(() => 'unknown backend error');
+            const errText = await mutationErrorNote.innerText().catch(() => 'Failed to retrieve error text');
             throw new Error(`Backend mutation error: ${errText.replace(/\s+/g, ' ').slice(0, 200)}`);
           }),
       ]),
