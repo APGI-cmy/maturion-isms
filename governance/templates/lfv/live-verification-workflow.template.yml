@@ -1,0 +1,241 @@
+# Live Verification Workflow Template
+# Authority: LIVE_FUNCTIONAL_VERIFICATION_CANON.md §5 | Issue: maturion-isms#1617
+# Usage: Copy to .github/workflows/{module}-live-verification.yml and customize marked sections
+
+name: "[MODULE] Live Functional Verification"
+# CUSTOMIZE: Replace [MODULE] with your module name (e.g. "MAT", "PIT", "AIMC")
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: "Deployment URL to verify (e.g. https://your-preview.vercel.app)"
+        required: true
+        type: string
+  # OPTIONAL: Uncomment to run automatically on pull_request
+  # pull_request:
+  #   paths:
+  #     - "[module]/**"      # CUSTOMIZE: set to your module path
+
+env:
+  # CUSTOMIZE: Set your module name
+  MODULE_NAME: "[MODULE]"
+
+jobs:
+  live-verify:
+    name: "Live Functional Verification"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright
+        run: |
+          npm install @playwright/test playwright
+          npx playwright install chromium --with-deps
+
+      - name: Run Live Verification
+        id: verify
+        env:
+          DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+          BYPASS_TOKEN: ${{ secrets.BYPASS_TOKEN }}
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          HEAD_SHA: ${{ github.sha }}
+          # CUSTOMIZE: Add module-specific secrets here
+        run: |
+          # CUSTOMIZE: Replace this script with your module's verification logic
+          # The script must produce all required output fields listed below
+
+          node - << 'EOF'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+
+          (async () => {
+            const deploymentUrl = process.env.DEPLOYMENT_URL;
+            const bypassToken = process.env.BYPASS_TOKEN;
+            const testEmail = process.env.TEST_USER_EMAIL;
+            const testPassword = process.env.TEST_USER_PASSWORD;
+            const headSha = process.env.HEAD_SHA;
+
+            let results = {
+              DEPLOYMENT_ACCESS: 'no',
+              LOGIN_SUCCESS: 'no',
+              DASHBOARD_OR_PAGE_LOAD: 'no',
+              USER_JOURNEY_COMPLETE: 'no',
+              FAILING_REQUEST: 'none',
+              HTTP_STATUS: 'none',
+              RESPONSE_BODY: 'none',
+              CONSOLE_ERROR: 'none',
+              LIKELY_ROOT_CAUSE: 'none',
+              ARTIFACT_LINKS: 'none',
+              HEAD_SHA: headSha,
+            };
+
+            const consoleErrors = [];
+            let failingRequest = null;
+
+            const browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({
+              extraHTTPHeaders: bypassToken ? {
+                'x-vercel-protection-bypass': bypassToken,
+              } : {},
+              recordVideo: { dir: 'artifacts/' },
+            });
+
+            // Capture console errors
+            context.on('page', page => {
+              page.on('console', msg => {
+                if (msg.type() === 'error') {
+                  consoleErrors.push(msg.text());
+                }
+              });
+            });
+
+            const page = await context.newPage();
+
+            // Step 1: Access deployment with bypass
+            try {
+              const bypassUrl = bypassToken
+                ? `${deploymentUrl}?x-vercel-protection-bypass=${bypassToken}&x-vercel-set-bypass-cookie=samesitenone`
+                : deploymentUrl;
+
+              const response = await page.goto(bypassUrl, { waitUntil: 'networkidle', timeout: 30000 });
+              if (response && response.status() < 400) {
+                results.DEPLOYMENT_ACCESS = 'yes';
+              } else {
+                results.FAILING_REQUEST = bypassUrl;
+                results.HTTP_STATUS = response ? String(response.status()) : 'timeout';
+                results.LIKELY_ROOT_CAUSE = 'Deployment URL not reachable or returned error';
+              }
+            } catch (e) {
+              results.FAILING_REQUEST = deploymentUrl;
+              results.LIKELY_ROOT_CAUSE = `Navigation failed: ${e.message}`;
+            }
+
+            if (results.DEPLOYMENT_ACCESS === 'yes') {
+              // Step 2: Authenticate
+              // CUSTOMIZE: Replace with your module's login flow
+              try {
+                await page.fill('[data-testid="email"], input[type="email"]', testEmail);
+                await page.fill('[data-testid="password"], input[type="password"]', testPassword);
+                await page.click('[data-testid="login-button"], button[type="submit"]');
+                await page.waitForURL('**/dashboard**', { timeout: 10000 });
+                results.LOGIN_SUCCESS = 'yes';
+              } catch (e) {
+                results.LIKELY_ROOT_CAUSE = `Login failed: ${e.message}`;
+              }
+            }
+
+            if (results.LOGIN_SUCCESS === 'yes') {
+              // Step 3: Verify dashboard loads
+              // CUSTOMIZE: Update selector for your module's dashboard
+              try {
+                await page.waitForSelector('[data-testid="dashboard"], main, .dashboard', { timeout: 10000 });
+                results.DASHBOARD_OR_PAGE_LOAD = 'yes';
+              } catch (e) {
+                results.LIKELY_ROOT_CAUSE = `Dashboard did not load: ${e.message}`;
+              }
+            }
+
+            if (results.DASHBOARD_OR_PAGE_LOAD === 'yes') {
+              // Step 4: Complete user journey
+              // CUSTOMIZE: Replace with your module's specific user journey steps
+              // Example: results.USER_JOURNEY_COMPLETE = 'yes';
+              results.USER_JOURNEY_COMPLETE = 'no'; // CUSTOMIZE: set to 'yes' when journey completes
+              results.LIKELY_ROOT_CAUSE = 'CUSTOMIZE: implement user journey steps for this module';
+            }
+
+            // Capture console errors
+            if (consoleErrors.length > 0) {
+              results.CONSOLE_ERROR = consoleErrors.slice(0, 3).join(' | ');
+            }
+
+            // Take screenshot
+            try {
+              await page.screenshot({ path: 'artifacts/screenshot.png', fullPage: true });
+            } catch (e) {
+              // continue
+            }
+
+            // Start Playwright tracing
+            await context.tracing.stop({ path: 'artifacts/trace.zip' }).catch(() => {});
+
+            await browser.close();
+
+            // Write results
+            fs.writeFileSync('verification-report.txt', Object.entries(results).map(([k,v]) => `${k}: ${v}`).join('\n'));
+            console.log('Verification results:', JSON.stringify(results, null, 2));
+
+            // Set GitHub Actions outputs
+            for (const [key, value] of Object.entries(results)) {
+              console.log(`::set-output name=${key}::${value}`);
+            }
+
+            // Exit with failure if journey not complete
+            if (results.USER_JOURNEY_COMPLETE !== 'yes') {
+              process.exit(1);
+            }
+          })();
+          EOF
+
+      - name: Capture network log
+        if: always()
+        run: |
+          # CUSTOMIZE: Add network log capture using Playwright's HAR recording if needed
+          echo "Network log capture — customize for your module" > artifacts/network-log.txt
+
+      - name: Write Gate Summary
+        if: always()
+        run: |
+          echo "## Live Verification Gate Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Gate | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f verification-report.txt ]; then
+            DEPLOYMENT_ACCESS=$(grep "^DEPLOYMENT_ACCESS:" verification-report.txt | cut -d' ' -f2)
+            LOGIN_SUCCESS=$(grep "^LOGIN_SUCCESS:" verification-report.txt | cut -d' ' -f2)
+            DASHBOARD=$(grep "^DASHBOARD_OR_PAGE_LOAD:" verification-report.txt | cut -d' ' -f2)
+            JOURNEY=$(grep "^USER_JOURNEY_COMPLETE:" verification-report.txt | cut -d' ' -f2)
+            CONSOLE=$(grep "^CONSOLE_ERROR:" verification-report.txt | cut -d' ' -f2-)
+            ROOT_CAUSE=$(grep "^LIKELY_ROOT_CAUSE:" verification-report.txt | cut -d' ' -f2-)
+            
+            echo "| DEPLOYMENT_ACCESS | $DEPLOYMENT_ACCESS |" >> $GITHUB_STEP_SUMMARY
+            echo "| LOGIN_SUCCESS | $LOGIN_SUCCESS |" >> $GITHUB_STEP_SUMMARY
+            echo "| DASHBOARD_OR_PAGE_LOAD | $DASHBOARD |" >> $GITHUB_STEP_SUMMARY
+            echo "| USER_JOURNEY_COMPLETE | $JOURNEY |" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "$CONSOLE" != "none" ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Console errors**: $CONSOLE" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [ "$ROOT_CAUSE" != "none" ]; then
+              echo "**Likely root cause**: $ROOT_CAUSE" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Head SHA**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment URL**: ${{ inputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-verification-artifacts-${{ github.sha }}
+          path: |
+            artifacts/screenshot.png
+            artifacts/trace.zip
+            artifacts/network-log.txt
+            verification-report.txt
+          retention-days: 30
