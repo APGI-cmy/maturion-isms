@@ -130,7 +130,7 @@ jobs:
                   const isTextResponse = /^(text\/|.*\/(json|xml|javascript|.*\+xml))/.test(contentType);
                   if (isTextResponse) {
                     const body = await response.text().catch(() => '');
-                    // Keep RESPONSE_BODY single-line so verification-report.txt and summary parsing remain stable.
+                    // RESPONSE_BODY is a bounded, single-line excerpt because verification-report.txt uses one KEY: value per line.
                     const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, responseBodyExcerptLimit);
                     results.RESPONSE_BODY = excerpt || 'empty';
                   } else {
@@ -260,9 +260,10 @@ jobs:
 
           if [ -f verification-report.txt ]; then
             for FIELD in DEPLOYMENT_ACCESS LOGIN_SUCCESS DASHBOARD_OR_PAGE_LOAD USER_JOURNEY_COMPLETE FAILING_REQUEST HTTP_STATUS RESPONSE_BODY CONSOLE_ERROR LIKELY_ROOT_CAUSE ARTIFACT_LINKS; do
-              VALUE=$(grep "^${FIELD}:" verification-report.txt | sed 's/^[^:]*: //' || true)
+              VALUE=$(grep "^${FIELD}:" verification-report.txt | sed "s/^${FIELD}: //" || true)
               VALUE=${VALUE:-missing}
-              VALUE=$(printf '%s' "$VALUE" | tr '\n' ' ' | sed 's/|/⎮/g')
+              # Use the HTML pipe entity so Markdown tables remain valid without changing displayed text.
+              VALUE=$(printf '%s' "$VALUE" | tr '\n' ' ' | sed 's/|/\&#124;/g')
               echo "| ${FIELD} | ${VALUE} |" >> $GITHUB_STEP_SUMMARY
             done
           fi
