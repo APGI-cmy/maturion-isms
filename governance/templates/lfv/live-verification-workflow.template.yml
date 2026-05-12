@@ -41,6 +41,9 @@ jobs:
           npm install @playwright/test playwright
           npx playwright install chromium --with-deps
 
+      - name: Create artifacts directory
+        run: mkdir -p artifacts
+
       - name: Run Live Verification
         id: verify
         env:
@@ -51,6 +54,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           HEAD_SHA: ${{ github.sha }}
+          GITHUB_OUTPUT: ${{ env.GITHUB_OUTPUT }}
           # CUSTOMIZE: Add module-specific secrets here
         run: |
           # CUSTOMIZE: Replace this script with your module's verification logic
@@ -66,6 +70,7 @@ jobs:
             const testEmail = process.env.TEST_USER_EMAIL;
             const testPassword = process.env.TEST_USER_PASSWORD;
             const headSha = process.env.HEAD_SHA;
+            const githubOutput = process.env.GITHUB_OUTPUT;
 
             let results = {
               DEPLOYMENT_ACCESS: 'no',
@@ -81,27 +86,31 @@ jobs:
               HEAD_SHA: headSha,
             };
 
+            const allConsoleMsgs = [];
             const consoleErrors = [];
-            let failingRequest = null;
 
             const browser = await chromium.launch({ headless: true });
             const context = await browser.newContext({
               extraHTTPHeaders: bypassToken ? {
                 'x-vercel-protection-bypass': bypassToken,
               } : {},
-              recordVideo: { dir: 'artifacts/' },
+              // HAR recording captures all HTTP requests and responses as a standard .har file
+              recordHar: { path: 'artifacts/network.har', mode: 'full' },
             });
 
-            // Capture console errors
-            context.on('page', page => {
-              page.on('console', msg => {
-                if (msg.type() === 'error') {
-                  consoleErrors.push(msg.text());
-                }
-              });
-            });
+            // Start Playwright tracing before any page actions
+            await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
 
             const page = await context.newPage();
+
+            // Capture all console messages to file; surface errors in results
+            page.on('console', msg => {
+              const entry = `[${msg.type()}] ${msg.text()}`;
+              allConsoleMsgs.push(entry);
+              if (msg.type() === 'error') {
+                consoleErrors.push(msg.text());
+              }
+            });
 
             // Step 1: Access deployment with bypass
             try {
@@ -155,30 +164,38 @@ jobs:
               results.LIKELY_ROOT_CAUSE = 'CUSTOMIZE: implement user journey steps for this module';
             }
 
-            // Capture console errors
+            // Surface console errors in results (first 3 for brevity)
             if (consoleErrors.length > 0) {
               results.CONSOLE_ERROR = consoleErrors.slice(0, 3).join(' | ');
             }
+
+            // Write full console log to artifact file
+            fs.writeFileSync('artifacts/console.log', allConsoleMsgs.join('\n') || '(no console output)');
 
             // Take screenshot
             try {
               await page.screenshot({ path: 'artifacts/screenshot.png', fullPage: true });
             } catch (e) {
-              // continue
+              // screenshot failure is non-fatal
             }
 
-            // Start Playwright tracing
-            await context.tracing.stop({ path: 'artifacts/trace.zip' }).catch(() => {});
+            // Stop tracing — produces trace.zip covering the entire run
+            await context.tracing.stop({ path: 'artifacts/trace.zip' });
 
+            // Close context to flush HAR file to disk
+            await context.close();
             await browser.close();
 
-            // Write results
+            // Write verification report
             fs.writeFileSync('verification-report.txt', Object.entries(results).map(([k,v]) => `${k}: ${v}`).join('\n'));
             console.log('Verification results:', JSON.stringify(results, null, 2));
 
-            // Set GitHub Actions outputs
-            for (const [key, value] of Object.entries(results)) {
-              console.log(`::set-output name=${key}::${value}`);
+            // Write outputs to $GITHUB_OUTPUT (modern replacement for ::set-output)
+            if (githubOutput) {
+              const outputLines = Object.entries(results)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('\n');
+              fs.appendFileSync(githubOutput, outputLines + '\n');
             }
 
             // Exit with failure if journey not complete
@@ -188,11 +205,25 @@ jobs:
           })();
           EOF
 
-      - name: Capture network log
+      - name: Upload verification artifacts
+        if: always()
+        id: upload-artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-verification-artifacts-${{ github.sha }}
+          path: |
+            artifacts/screenshot.png
+            artifacts/trace.zip
+            artifacts/network.har
+            artifacts/console.log
+            verification-report.txt
+          retention-days: 30
+
+      - name: Set ARTIFACT_LINKS output
         if: always()
         run: |
-          # CUSTOMIZE: Add network log capture using Playwright's HAR recording if needed
-          echo "Network log capture — customize for your module" > artifacts/network-log.txt
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "ARTIFACT_LINKS=${RUN_URL}" >> "$GITHUB_OUTPUT"
 
       - name: Write Gate Summary
         if: always()
@@ -201,7 +232,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Gate | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
-          
+
           if [ -f verification-report.txt ]; then
             DEPLOYMENT_ACCESS=$(grep "^DEPLOYMENT_ACCESS:" verification-report.txt | cut -d' ' -f2)
             LOGIN_SUCCESS=$(grep "^LOGIN_SUCCESS:" verification-report.txt | cut -d' ' -f2)
@@ -209,12 +240,12 @@ jobs:
             JOURNEY=$(grep "^USER_JOURNEY_COMPLETE:" verification-report.txt | cut -d' ' -f2)
             CONSOLE=$(grep "^CONSOLE_ERROR:" verification-report.txt | cut -d' ' -f2-)
             ROOT_CAUSE=$(grep "^LIKELY_ROOT_CAUSE:" verification-report.txt | cut -d' ' -f2-)
-            
+
             echo "| DEPLOYMENT_ACCESS | $DEPLOYMENT_ACCESS |" >> $GITHUB_STEP_SUMMARY
             echo "| LOGIN_SUCCESS | $LOGIN_SUCCESS |" >> $GITHUB_STEP_SUMMARY
             echo "| DASHBOARD_OR_PAGE_LOAD | $DASHBOARD |" >> $GITHUB_STEP_SUMMARY
             echo "| USER_JOURNEY_COMPLETE | $JOURNEY |" >> $GITHUB_STEP_SUMMARY
-            
+
             if [ "$CONSOLE" != "none" ]; then
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "**Console errors**: $CONSOLE" >> $GITHUB_STEP_SUMMARY
@@ -223,19 +254,8 @@ jobs:
               echo "**Likely root cause**: $ROOT_CAUSE" >> $GITHUB_STEP_SUMMARY
             fi
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Head SHA**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "**Deployment URL**: ${{ inputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload verification artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: live-verification-artifacts-${{ github.sha }}
-          path: |
-            artifacts/screenshot.png
-            artifacts/trace.zip
-            artifacts/network-log.txt
-            verification-report.txt
-          retention-days: 30
+          echo "**Artifacts**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
