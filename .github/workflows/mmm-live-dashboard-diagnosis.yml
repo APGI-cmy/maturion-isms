@@ -112,9 +112,26 @@ jobs:
           fi
           echo "Secrets and inputs present."
 
-      - name: Install Playwright browsers
+      - name: Install Playwright package and browsers
         run: |
-          npx -y playwright@1.48.2 install --with-deps chromium
+          # Install in an isolated temp dir to avoid monorepo workspace:* conflicts,
+          # then expose via a root node_modules symlink so ESM imports resolve correctly.
+          mkdir -p /tmp/pw
+          echo '{"name":"pw-install","version":"1.0.0"}' > /tmp/pw/package.json
+          npm install --prefix /tmp/pw --no-audit --no-fund playwright@1.48.2
+          /tmp/pw/node_modules/.bin/playwright install --with-deps chromium
+          # Make playwright resolvable for ESM imports from anywhere in the workspace.
+          # If node_modules is an existing real directory (e.g. partially installed
+          # workspace), create a symlink only for playwright inside it.
+          # Otherwise create a full node_modules symlink at the workspace root.
+          if [ -d node_modules ] && [ ! -L node_modules ]; then
+            ln -sf /tmp/pw/node_modules/playwright node_modules/playwright
+          else
+            ln -sf /tmp/pw/node_modules node_modules
+          fi
+
+      - name: Verify diagnosis runtime
+        run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(err => { console.error(err); process.exit(1); })"
 
       - name: Run live dashboard diagnosis
         id: diagnose
@@ -122,7 +139,7 @@ jobs:
         run: |
           mkdir -p "${ARTIFACT_DIR}"
           set +e
-          npx -y -p playwright@1.48.2 node scripts/mmm-live-dashboard-diagnosis/diagnose.mjs
+          node scripts/mmm-live-dashboard-diagnosis/diagnose.mjs
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
 
       - name: Upload diagnosis artifacts
