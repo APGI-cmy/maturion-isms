@@ -124,6 +124,10 @@ jobs:
               } else {
                 results.FAILING_REQUEST = bypassUrl;
                 results.HTTP_STATUS = response ? String(response.status()) : 'timeout';
+                if (response) {
+                  const body = await response.text().catch(() => '');
+                  results.RESPONSE_BODY = body.slice(0, 2000) || 'empty';
+                }
                 results.LIKELY_ROOT_CAUSE = 'Deployment URL not reachable or returned error';
               }
             } catch (e) {
@@ -242,29 +246,16 @@ jobs:
         run: |
           echo "## Live Verification Gate Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Gate | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Output Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------------|-------|" >> $GITHUB_STEP_SUMMARY
 
           if [ -f verification-report.txt ]; then
-            DEPLOYMENT_ACCESS=$(grep "^DEPLOYMENT_ACCESS:" verification-report.txt | cut -d' ' -f2)
-            LOGIN_SUCCESS=$(grep "^LOGIN_SUCCESS:" verification-report.txt | cut -d' ' -f2)
-            DASHBOARD=$(grep "^DASHBOARD_OR_PAGE_LOAD:" verification-report.txt | cut -d' ' -f2)
-            JOURNEY=$(grep "^USER_JOURNEY_COMPLETE:" verification-report.txt | cut -d' ' -f2)
-            CONSOLE=$(grep "^CONSOLE_ERROR:" verification-report.txt | cut -d' ' -f2-)
-            ROOT_CAUSE=$(grep "^LIKELY_ROOT_CAUSE:" verification-report.txt | cut -d' ' -f2-)
-
-            echo "| DEPLOYMENT_ACCESS | $DEPLOYMENT_ACCESS |" >> $GITHUB_STEP_SUMMARY
-            echo "| LOGIN_SUCCESS | $LOGIN_SUCCESS |" >> $GITHUB_STEP_SUMMARY
-            echo "| DASHBOARD_OR_PAGE_LOAD | $DASHBOARD |" >> $GITHUB_STEP_SUMMARY
-            echo "| USER_JOURNEY_COMPLETE | $JOURNEY |" >> $GITHUB_STEP_SUMMARY
-
-            if [ "$CONSOLE" != "none" ]; then
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "**Console errors**: $CONSOLE" >> $GITHUB_STEP_SUMMARY
-            fi
-            if [ "$ROOT_CAUSE" != "none" ]; then
-              echo "**Likely root cause**: $ROOT_CAUSE" >> $GITHUB_STEP_SUMMARY
-            fi
+            for FIELD in DEPLOYMENT_ACCESS LOGIN_SUCCESS DASHBOARD_OR_PAGE_LOAD USER_JOURNEY_COMPLETE FAILING_REQUEST HTTP_STATUS RESPONSE_BODY CONSOLE_ERROR LIKELY_ROOT_CAUSE ARTIFACT_LINKS; do
+              VALUE=$(grep "^${FIELD}:" verification-report.txt | cut -d' ' -f2- || true)
+              VALUE=${VALUE:-missing}
+              VALUE=${VALUE//'|'/'\|'}
+              echo "| ${FIELD} | ${VALUE} |" >> $GITHUB_STEP_SUMMARY
+            done
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
