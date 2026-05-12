@@ -195,7 +195,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 ### Stage 5b: PIT LFV Package
 **Status**: [x] CREATED — PENDING CS2 STAGE 5 REVIEW
 **Location**: `modules/pit/05-live-functional-verification/`
-**Governing Issue**: [maturion-isms#1623](https://github.com/APGI-cmy/maturion-isms/issues/1619)
+**Governing Issue**: [maturion-isms#1623](https://github.com/APGI-cmy/maturion-isms/issues/1623)
 **PR**: [#1624](https://github.com/APGI-cmy/maturion-isms/pulls/1624)
 **Wave**: pit-lfv-package-20260512 (2026-05-12)
 
