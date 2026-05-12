@@ -149,9 +149,11 @@ function detectRcaRequirement(input = {}) {
   }
 
   if (mergeReadyNoInComments && !cs2RejectionComment) {
-    // Guard: if cs2RejectionComment already fired, the MERGE_READY:no in the
-    // comment thread was posted by CS2 itself — report only the more specific
-    // CS2-rejection trigger to avoid a redundant duplicate entry.
+    // Guard: suppresses a duplicate entry when CS2 is the current event actor AND their
+    // current comment contains MERGE_READY:no — in that case cs2RejectionComment already
+    // fired a more specific trigger for the same comment. When cs2RejectionComment is false
+    // (e.g., a different user is the actor, or CS2 posted MERGE_READY:no in a prior comment
+    // rather than the current event comment), this trigger fires independently.
     triggers.push({
       trigger: 'MERGE_READY: no posted in PR comments',
       failureClass: 'MERGE_READY: no — unresolved defect keeping merge blocked',

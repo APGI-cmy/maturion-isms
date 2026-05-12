@@ -65,8 +65,13 @@ is_live_functional_delivery_evidence_file() {
 
 pr_body_claims_product_delivery() {
   [ -n "$PR_BODY" ] || return 1
-  # Intentionally broad: this classifier treats PR-body delivery/handover/product-fix language
-  # as delivery claims so evidence is required instead of allowing under-detection.
+  # Formal claim classifier: only explicit product-delivery field patterns trigger evidence
+  # requirements. Narrative English phrases ("functional delivery controls", "product fix") do
+  # NOT trigger. PARTIAL_FUNCTIONAL_DELIVERY (bare, without a VERDICT: prefix) is intentionally
+  # retained because it is a governance-specific ALL_CAPS token that does not occur as ordinary
+  # narrative prose — it is structurally distinct from removed patterns like "functional delivery"
+  # (natural language). Lines covering the prefixed forms (VERDICT:/FULL_FUNCTIONAL_DELIVERY_VERDICT:)
+  # are present for completeness; the bare form covers PR authors using it as a standalone status line.
   local claim_patterns=(
     'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+'
     'FUNCTIONAL_PASS:[[:space:]]*yes'
