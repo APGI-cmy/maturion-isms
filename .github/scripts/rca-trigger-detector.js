@@ -149,6 +149,9 @@ function detectRcaRequirement(input = {}) {
   }
 
   if (mergeReadyNoInComments && !cs2RejectionComment) {
+    // Guard: if cs2RejectionComment already fired, the MERGE_READY:no in the
+    // comment thread was posted by CS2 itself — report only the more specific
+    // CS2-rejection trigger to avoid a redundant duplicate entry.
     triggers.push({
       trigger: 'MERGE_READY: no posted in PR comments',
       failureClass: 'MERGE_READY: no — unresolved defect keeping merge blocked',
