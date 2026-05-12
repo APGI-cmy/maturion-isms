@@ -721,6 +721,23 @@ t7_full_valid() {
 }
 run_test "T7 full valid product-delivery pack -> PASS" 0 t7_full_valid
 
+t9_governance_pr_narrative_functional_delivery_no_formal_claim() {
+  cat > governance/checklists/hardening-notes.md << 'EOF'
+# Governance hardening
+This PR improves functional delivery pipeline controls for governance hardening.
+No feature complete or user journey changes were introduced.
+EOF
+  cat > docs/governance/iaa-pipeline-notes.md << 'EOF'
+# IAA pipeline hardening notes
+Documenting the functional delivery control improvements made in this wave.
+EOF
+  TEST_PR_BODY=$'Governance admin hardening — improves functional delivery controls.\nNo product code changed. Pipeline script updates only.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "governance: hardening for functional delivery pipeline controls"
+}
+run_test "T9 governance-only PR with narrative 'functional delivery' and no formal claim -> PASS" 0 t9_governance_pr_narrative_functional_delivery_no_formal_claim
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"

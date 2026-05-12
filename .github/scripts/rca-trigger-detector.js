@@ -6,6 +6,8 @@ const RCA_COMMAND_PATTERN = /\b(RCA_REQUIRED|ROOT_CAUSE_REQUIRED|CONTINUOUS_IMPR
 const HANDOVER_CLAIM_PATTERN = /\b(handover(?: claim)?|merge-ready|merge ready|ready to merge|ready for review|ready-for-review|all gates pass|merge gate released)\b/i;
 const STOP_AND_FIX_PATTERN = /\b(STOP_AND_FIX|HANDOVER_ALLOWED:\s*no)\b/i;
 const BLOCKED_PATTERN = /\bHANDOVER BLOCKED\b/i;
+const MERGE_READY_NO_PATTERN = /MERGE_READY\s*[:=]\s*no\b/i;
+const REJECTION_LANGUAGE_PATTERN = /\b(REJECTION[-_]PACKAGE|REJECTION_NOTICE|ADMIN_DEFECT|JOB_DEFECT|HANDOVER_DEFECT|EVIDENCE_DEFECT|GATE_DEFECT)\b/i;
 
 const FAILURE_CLASS_PATTERNS = [
   ['stale-head handover evidence', /\b(stale[-\s]?head|stale\s+current_head_sha|current_head_sha.*stale)\b/i],
@@ -80,6 +82,14 @@ function detectRcaRequirement(input = {}) {
     /\bVERDICT:\s*(FAIL|ADMIN_ONLY|PARTIAL_FUNCTIONAL_DELIVERY)\b/i.test(String(comment.body || ''))
   );
 
+  const mergeReadyNoInComments = !isDraft && comments.some((comment) =>
+    MERGE_READY_NO_PATTERN.test(String(comment.body || ''))
+  );
+
+  const cs2RejectionComment = !isDraft &&
+    actorLogin.toLowerCase() === 'apgi-cmy' &&
+    (MERGE_READY_NO_PATTERN.test(commentBody) || REJECTION_LANGUAGE_PATTERN.test(commentBody));
+
   const workflowRunAllowList = new Set([
     'preflight evidence gate',
     'handover claim gate',
@@ -128,6 +138,20 @@ function detectRcaRequirement(input = {}) {
     triggers.push({
       trigger: 'IAA posted blocking verdict',
       failureClass: 'IAA assurance failure',
+    });
+  }
+
+  if (cs2RejectionComment) {
+    triggers.push({
+      trigger: 'CS2 rejection comment (MERGE_READY: no or explicit rejection language)',
+      failureClass: 'CS2 rejection or hold requiring RCA',
+    });
+  }
+
+  if (mergeReadyNoInComments && !cs2RejectionComment) {
+    triggers.push({
+      trigger: 'MERGE_READY: no posted in PR comments',
+      failureClass: 'MERGE_READY: no — unresolved defect keeping merge blocked',
     });
   }
 
