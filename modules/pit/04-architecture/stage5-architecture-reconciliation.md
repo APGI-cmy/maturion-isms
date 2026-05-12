@@ -14,7 +14,7 @@
 | Date | 2026-05-11 |
 | Author | foreman-v2-agent |
 | Authority | CS2 (Johan Ras / @APGI-cmy) |
-| Issue | maturion-isms#1612 — PIT Stage 5 Architecture reconciliation |
+| Issue | maturion-isms#1611 — PIT Stage 5 Architecture reconciliation |
 
 ---
 

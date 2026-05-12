@@ -1,0 +1,36 @@
+{
+  "pr": 1612,
+  "issue": 1611,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1612.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage5-architecture-20260511.md",
+    ".agent-admin/scope-declarations/pr-1612.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage5-20260511.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage5-architecture-20260511.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/04-architecture/app-description-to-architecture-traceability.md",
+    "modules/pit/04-architecture/architecture.md",
+    "modules/pit/04-architecture/stage5-architecture-reconciliation.md",
+    "modules/pit/04-architecture/timeline-engine-architecture-decision.md",
+    "modules/pit/04-architecture/trs-to-architecture-traceability.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": false,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
+  "evidence_required": [
+    "Stage 5 architecture.md v1.0 derived from approved/re-confirmed Stages 1-4 chain",
+    "stage5-architecture-reconciliation.md: 6-dimension reconciliation checklist all PASS",
+    "trs-to-architecture-traceability.md: all 126 TRS requirements (PIT-TR-001-PIT-TR-126) mapped",
+    "timeline-engine-architecture-decision.md: ADR-PIT-001 library evaluation + DST-safe date-math contract",
+    "app-description-to-architecture-traceability.md: all AD-01-AD-24 covered with zero BLOCKING_GAP",
+    "BUILD_PROGRESS_TRACKER.md: Stage 5 RECONCILIATION_COMPLETE, Build Authorization NOT CLEARED",
+    "IAA PASS token: IAA-session-pit-stage5-architecture-20260511-PASS (21/21 checks)"
+  ],
+  "merge_authority": "CS2"
+}

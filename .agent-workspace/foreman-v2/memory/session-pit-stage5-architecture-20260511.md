@@ -5,7 +5,7 @@
 **Agent Version**: foreman-v2-agent v6.2.0 (contract v2.15.0)
 **Branch**: copilot/implement-pit-stage-5-architecture
 **PR**: #1612
-**Issue**: maturion-isms#1612 — Foreman: Implement PIT Stage 5 Architecture reconciliation and gate-pass package
+**Issue**: maturion-isms#1611 — Foreman: Implement PIT Stage 5 Architecture reconciliation and gate-pass package
 
 ---
 
@@ -33,7 +33,7 @@ prebrief_tasks_count: 9
 ## Wave Summary
 
 **Wave**: pit-stage5-architecture-reconciliation — PIT Stage 5 Architecture reconciliation and gate-pass package
-**Trigger**: CS2 issue maturion-isms#1612 — opened by @APGI-cmy after Stage 4 TRS approval (maturion-isms#1604 closed by @APGI-cmy 2026-05-11)
+**Trigger**: CS2 issue maturion-isms#1611 — opened by @APGI-cmy after Stage 4 TRS approval (maturion-isms#1604 closed by @APGI-cmy 2026-05-11)
 **Wave type**: POLC-Orchestration — governance documentation only; no builder delegation; no production code
 **Deliverables**: 4 architecture documents created/replaced; 1 tracker updated; governance evidence produced
 

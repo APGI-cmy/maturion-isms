@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-11
-**Updated By**: foreman-v2-agent (issue #1612 Stage 5 Architecture reconciliation wave)
+**Updated By**: foreman-v2-agent (issue #1611 Stage 5 Architecture reconciliation wave)
 > **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — PENDING CS2 STAGE 5 REVIEW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -145,18 +145,19 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] TRS re-confirmation preparation completed after retrofit review (maturion-isms#1575) with explicit timeline-engine feasibility validation (maturion-isms#1604)
 
 **Completion Date**: 2026-05-11 (CS2 approval — maturion-isms#1604 closed by @APGI-cmy)
-**Notes**: TRS v0.1-draft created per maturion-isms#1554 (wave: pit-stage4-trs). Updated to v0.2-draft in retrofit wave (maturion-isms#1575 / PR #1576): derivation updated to FRS v0.2-hardened; Section 31 added with PIT-TR-116 through PIT-TR-126 covering all FRS v0.2-hardened additions (PIT-FR-113 to PIT-FR-123); FRS-to-TRS traceability updated to cover all 123 FRS requirements. Stage 4 timeline-engine technical feasibility validation added per maturion-isms#1604. CS2/Johan Ras approved/re-confirmed Stage 4 TRS v0.2-draft by closing maturion-isms#1604 as "completed" on 2026-05-11. Stage 5 Architecture reconciliation now underway (maturion-isms#1612). Build Authorization remains NOT CLEARED.
+**Notes**: TRS v0.1-draft created per maturion-isms#1554 (wave: pit-stage4-trs). Updated to v0.2-draft in retrofit wave (maturion-isms#1575 / PR #1576): derivation updated to FRS v0.2-hardened; Section 31 added with PIT-TR-116 through PIT-TR-126 covering all FRS v0.2-hardened additions (PIT-FR-113 to PIT-FR-123); FRS-to-TRS traceability updated to cover all 123 FRS requirements. Stage 4 timeline-engine technical feasibility validation added per maturion-isms#1604. CS2/Johan Ras approved/re-confirmed Stage 4 TRS v0.2-draft by closing maturion-isms#1604 as "completed" on 2026-05-11. Stage 5 Architecture reconciliation now underway (maturion-isms#1611). Build Authorization remains NOT CLEARED.
 
 ---
 
 ### Stage 5: Architecture
-**Status**: [x] **RECONCILIATION_COMPLETE — READY_FOR_CS2_REVIEW** (maturion-isms#1612)
+**Status**: [x] **RECONCILIATION_COMPLETE — READY_FOR_CS2_REVIEW** (maturion-isms#1611)
 **Location**: `modules/pit/04-architecture/`  
 **Key Artifacts**:
-- [x] `architecture.md` — Stage 5 Architecture v1.0 — **REPLACED** legacy content; derived from approved Stages 1–4; all 27 routes and 22 screens mapped; all 126 TRS requirements reconciled (maturion-isms#1612)
-- [x] `stage5-architecture-reconciliation.md` — Stage 5 reconciliation evidence checklist (NEW — maturion-isms#1612)
-- [x] `trs-to-architecture-traceability.md` — Full TRS-to-Architecture traceability: all 126 TRS requirements (PIT-TR-001–PIT-TR-126) mapped to architecture sections (NEW — maturion-isms#1612)
-- [x] `timeline-engine-architecture-decision.md` — ADR-PIT-001: Timeline engine library evaluation (5 candidates), date-math contract, QA hooks, accessibility architecture (NEW — maturion-isms#1612)
+- [x] `architecture.md` — Stage 5 Architecture v1.0 — **REPLACED** legacy content; derived from approved Stages 1–4; all 27 routes and 22 screens mapped; all 126 TRS requirements reconciled (maturion-isms#1611)
+- [x] `stage5-architecture-reconciliation.md` — Stage 5 reconciliation evidence checklist (NEW — maturion-isms#1611)
+- [x] `trs-to-architecture-traceability.md` — Full TRS-to-Architecture traceability: all 126 TRS requirements (PIT-TR-001–PIT-TR-126) mapped to architecture sections (NEW — maturion-isms#1611)
+- [x] `timeline-engine-architecture-decision.md` — ADR-PIT-001: Timeline engine library evaluation (5 candidates), date-math contract, QA hooks, accessibility architecture (NEW — maturion-isms#1611)
+- [x] `app-description-to-architecture-traceability.md` — App Description §AD-01–AD-24 → Architecture coverage matrix: all 24 AD requirements COVERED, zero BLOCKING_GAP (NEW — maturion-isms#1611)
 - [x] `data-contracts/` — Legacy reference (superseded by architecture.md §6)
 - [x] `exports/` — Legacy reference (superseded by architecture.md §14)
 - [x] `integrations/` — Legacy reference (superseded by architecture.md §18)
@@ -187,7 +188,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 - [x] Progress roll-up computation architecture (Edge Function or trigger per PIT-TR-117) — architecture.md §13
 
 **Completion Date**: 2026-05-11 (reconciliation complete; pending CS2 Stage 5 gate-pass)
-**Notes**: Stage 5 Architecture reconciliation complete per maturion-isms#1612. Legacy v0.1 architecture.md superseded by Stage 5 gate-passable artifact derived from approved/re-confirmed Stages 1–4. Three new evidence artifacts produced: stage5-architecture-reconciliation.md, trs-to-architecture-traceability.md, timeline-engine-architecture-decision.md (ADR-PIT-001). All legacy subfolder content preserved as reference only and clearly marked superseded. Stage 6 Architecture gate-pass BLOCKED until CS2 approves this Stage 5 package. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 5 Architecture reconciliation complete per maturion-isms#1611. Legacy v0.1 architecture.md superseded by Stage 5 gate-passable artifact derived from approved/re-confirmed Stages 1–4. Four new evidence artifacts produced: stage5-architecture-reconciliation.md, trs-to-architecture-traceability.md, timeline-engine-architecture-decision.md (ADR-PIT-001), app-description-to-architecture-traceability.md (§AD-01–AD-24 coverage). All legacy subfolder content preserved as reference only and clearly marked superseded. Stage 6 Architecture gate-pass BLOCKED until CS2 approves this Stage 5 package. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -397,12 +398,12 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 ACTIVE — Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1612); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
+**Current Stage**: Stage 5 ACTIVE — Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
 **Overall Progress**: ~43% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass)  
 **Blockers**: Stage 6 QA-to-Red BLOCKED until CS2 approves Stage 5 Architecture package. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed.  
 **Next Steps**:
-1. CS2 review and gate-pass of Stage 5 Architecture package (maturion-isms#1612)
+1. CS2 review and gate-pass of Stage 5 Architecture package (maturion-isms#1611)
 2. Proceed to Stage 6 QA-to-Red after Stage 5 CS2 gate-pass
 3. Complete Stages 6–11 before Build Authorization can be requested
 **MMM-Derived Learning Controls (Carry-Forward)**:

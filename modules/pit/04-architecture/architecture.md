@@ -20,7 +20,7 @@
 | Derived From (Stage 4) | `modules/pit/03-trs/technical-requirements-specification.md` v0.2-draft (CS2 approved 2026-05-11, ref: maturion-isms#1604 closed by @APGI-cmy) |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-11 |
-| Issue | maturion-isms#1612 — PIT Stage 5 Architecture reconciliation |
+| Issue | maturion-isms#1611 — PIT Stage 5 Architecture reconciliation |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
 
 > **Governance Notice — Stage 5 Design/Gate Artifact Only**: This document is a pre-build architecture gate artifact. It authorises NO code implementation, schema migration, builder appointment, QA-to-Red gate-pass, PBFAG pass, deployment configuration, or Edge Function creation. Build Authorization remains **NOT CLEARED**. No downstream stage (Stages 6–12) may proceed without explicit CS2 gate-pass of this Stage 5 Architecture.

@@ -6,7 +6,6 @@
 **Effective Date**: 2026-05-04  
 **Amended**: 2026-05-06—v1.1.0: Added `execution_model` field to schema and Check 13 enforcement per POLC_EXECUTION_MODEL_CANON.md; authority: CS2 — Canon alignment: require explicit execution_model for implementation PRs.  
 **Amended**: 2026-05-07 — v1.2.0: Expanded governance-control path coverage to include `governance/**` (all sub-paths) and `.agent-admin/**`; aligned with ISMS-side validator parity (PR #1529); updated Tier 1/2 policy bindings for single-source-of-truth and manifest-era product-fix simplification.  
-**Amended**: 2026-05-08 — ISMS parity extension: governance-control validator coverage includes `.agent-workspace/**/knowledge/**` for Tier 2 operational knowledge protection.  
 **Reference Failure Case**: `maturion-isms` PR #1515 — closed unmerged after a fix/fail governance loop
 
 ---
@@ -237,7 +236,6 @@ Any PR touching the following governance-control paths **must** have `requires_i
 - `.github/agents/**`
 - `governance/**` (all sub-paths)
 - `.agent-admin/**`
-- `.agent-workspace/**/knowledge/**`
 - Any `*.agent.md` file (agent contracts)
 
 This is consistent with the ISMS-side validator behaviour (PR #1529). A `product-fix` or `test-only` PR that inadvertently crosses into these paths cannot be treated as a low-ceremony PR — it becomes a governance-change.
@@ -273,7 +271,6 @@ The validator script `.github/scripts/validate-simple-pr-admin.sh`:
 .github/agents/
 governance/           (all sub-paths: canon/, templates/, policies/, checklists/, etc.)
 .agent-admin/
-.agent-workspace/**/knowledge/
 *.agent.md files (agent contracts)
 ```
 - Fails if `merge_authority` is missing or not `CS2`

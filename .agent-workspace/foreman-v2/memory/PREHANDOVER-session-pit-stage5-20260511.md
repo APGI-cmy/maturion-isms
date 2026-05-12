@@ -13,11 +13,11 @@
 | Wave | pit-stage5-architecture-reconciliation |
 | Branch | copilot/implement-pit-stage-5-architecture |
 | PR | #1612 |
-| Issue | maturion-isms#1612 — PIT Stage 5 Architecture reconciliation |
+| Issue | maturion-isms#1611 — PIT Stage 5 Architecture reconciliation |
 | Agent Version | foreman-v2-agent v6.2.0 / contract v2.15.0 |
 | Author | foreman-v2-agent |
 | IAA Pre-Brief | `.agent-admin/assurance/iaa-wave-record-pit-stage5-architecture-20260511.md` |
-| CS2 Authorization | Issue maturion-isms#1604 closed as "completed" by @APGI-cmy 2026-05-11; triggering issue maturion-isms#1612 opened by @APGI-cmy |
+| CS2 Authorization | Issue maturion-isms#1604 closed as "completed" by @APGI-cmy 2026-05-11; triggering issue maturion-isms#1611 opened by @APGI-cmy |
 
 ---
 
@@ -105,7 +105,7 @@ IAA Flag (non-blocking): A-029 first-invocation exception applied.
 
 CS2 authorization verified:
 - Issue maturion-isms#1604 (Stage 4 TRS re-confirmation) — closed as "completed" by @APGI-cmy on 2026-05-11. This is the verifiable CS2 Stage 4 approval reference.
-- Issue maturion-isms#1612 (this wave) — opened by @APGI-cmy, explicitly instructing Stage 5 Architecture reconciliation. This is the CS2 wave-start authorization.
+- Issue maturion-isms#1611 (this wave) — opened by @APGI-cmy, explicitly instructing Stage 5 Architecture reconciliation. This is the CS2 wave-start authorization.
 
 Both conditions from Foreman contract §2.1 are satisfied:
 > "The triggering issue was opened by CS2 directly and assigns this agent"
