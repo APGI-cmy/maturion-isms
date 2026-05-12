@@ -169,8 +169,9 @@ jobs:
               results.CONSOLE_ERROR = consoleErrors.slice(0, 3).join(' | ');
             }
 
-            // Write full console log to artifact file
-            fs.writeFileSync('artifacts/console.log', allConsoleMsgs.join('\n') || '(no console output)');
+            // Write full console log to artifact file (SHA-suffixed to match spec pattern console-*.log)
+            const consoleLogPath = `artifacts/console-${headSha}.log`;
+            fs.writeFileSync(consoleLogPath, allConsoleMsgs.join('\n') || '(no console output)');
 
             // Take screenshot
             try {
@@ -179,12 +180,21 @@ jobs:
               // screenshot failure is non-fatal
             }
 
-            // Stop tracing — produces trace.zip covering the entire run
-            await context.tracing.stop({ path: 'artifacts/trace.zip' });
+            // Stop tracing — produces trace-<sha>.zip covering the entire run (SHA-suffixed to match spec pattern trace-*.zip)
+            const traceZipPath = `artifacts/trace-${headSha}.zip`;
+            await context.tracing.stop({ path: traceZipPath });
 
             // Close context to flush HAR file to disk
             await context.close();
             await browser.close();
+
+            // Populate ARTIFACT_LINKS before writing the report so it appears in verification-report.txt
+            const serverUrl = process.env.GITHUB_SERVER_URL || '';
+            const repository = process.env.GITHUB_REPOSITORY || '';
+            const runId = process.env.GITHUB_RUN_ID || '';
+            if (serverUrl && repository && runId) {
+              results.ARTIFACT_LINKS = `${serverUrl}/${repository}/actions/runs/${runId}`;
+            }
 
             // Write verification report
             fs.writeFileSync('verification-report.txt', Object.entries(results).map(([k,v]) => `${k}: ${v}`).join('\n'));
@@ -213,9 +223,9 @@ jobs:
           name: live-verification-artifacts-${{ github.sha }}
           path: |
             artifacts/screenshot.png
-            artifacts/trace.zip
+            artifacts/trace-${{ github.sha }}.zip
             artifacts/network.har
-            artifacts/console.log
+            artifacts/console-${{ github.sha }}.log
             verification-report.txt
           retention-days: 30
 
