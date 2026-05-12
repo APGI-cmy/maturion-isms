@@ -1,0 +1,275 @@
+# Live Verification Workflow Template
+# Authority: LIVE_FUNCTIONAL_VERIFICATION_CANON.md §5 | Issue: maturion-isms#1617
+# Usage: Copy to .github/workflows/{module}-live-verification.yml and customize marked sections
+
+name: "[MODULE] Live Functional Verification"
+# CUSTOMIZE: Replace [MODULE] with your module name (e.g. "MAT", "PIT", "AIMC")
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: "Deployment URL to verify (e.g. https://your-preview.vercel.app)"
+        required: true
+        type: string
+  # OPTIONAL: Uncomment to run automatically on pull_request
+  # pull_request:
+  #   paths:
+  #     - "[module]/**"      # CUSTOMIZE: set to your module path
+
+env:
+  # CUSTOMIZE: Set your module name
+  MODULE_NAME: "[MODULE]"
+
+jobs:
+  live-verify:
+    name: "Live Functional Verification"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright
+        run: |
+          npm install @playwright/test playwright
+          npx playwright install chromium --with-deps
+
+      - name: Create artifacts directory
+        run: mkdir -p artifacts
+
+      - name: Run Live Verification
+        id: verify
+        env:
+          DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+          BYPASS_TOKEN: ${{ secrets.BYPASS_TOKEN }}
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          HEAD_SHA: ${{ github.sha }}
+          GITHUB_OUTPUT: ${{ env.GITHUB_OUTPUT }}
+          # CUSTOMIZE: Add module-specific secrets here
+        run: |
+          # CUSTOMIZE: Replace this script with your module's verification logic
+          # The script must produce all required output fields listed below
+
+          node - << 'EOF'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+
+          (async () => {
+            const deploymentUrl = process.env.DEPLOYMENT_URL;
+            const bypassToken = process.env.BYPASS_TOKEN;
+            const testEmail = process.env.TEST_USER_EMAIL;
+            const testPassword = process.env.TEST_USER_PASSWORD;
+            const headSha = process.env.HEAD_SHA;
+            const githubOutput = process.env.GITHUB_OUTPUT;
+            const responseBodyExcerptLimit = 2000;
+
+            let results = {
+              DEPLOYMENT_ACCESS: 'no',
+              LOGIN_SUCCESS: 'no',
+              DASHBOARD_OR_PAGE_LOAD: 'no',
+              USER_JOURNEY_COMPLETE: 'no',
+              FAILING_REQUEST: 'none',
+              HTTP_STATUS: 'none',
+              RESPONSE_BODY: 'none',
+              CONSOLE_ERROR: 'none',
+              LIKELY_ROOT_CAUSE: 'none',
+              ARTIFACT_LINKS: 'none',
+              HEAD_SHA: headSha,
+            };
+
+            const allConsoleMsgs = [];
+            const consoleErrors = [];
+
+            const browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({
+              extraHTTPHeaders: bypassToken ? {
+                'x-vercel-protection-bypass': bypassToken,
+              } : {},
+              // HAR recording captures all HTTP requests and responses as a standard .har file
+              recordHar: { path: 'artifacts/network.har', mode: 'full' },
+            });
+
+            // Start Playwright tracing before any page actions
+            await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
+
+            const page = await context.newPage();
+
+            // Capture all console messages to file; surface errors in results
+            page.on('console', msg => {
+              const entry = `[${msg.type()}] ${msg.text()}`;
+              allConsoleMsgs.push(entry);
+              if (msg.type() === 'error') {
+                consoleErrors.push(msg.text());
+              }
+            });
+
+            // Step 1: Access deployment with bypass
+            try {
+              const bypassUrl = bypassToken
+                ? `${deploymentUrl}?x-vercel-protection-bypass=${bypassToken}&x-vercel-set-bypass-cookie=samesitenone`
+                : deploymentUrl;
+
+              const response = await page.goto(bypassUrl, { waitUntil: 'networkidle', timeout: 30000 });
+              if (response && response.status() < 400) {
+                results.DEPLOYMENT_ACCESS = 'yes';
+              } else {
+                results.FAILING_REQUEST = bypassUrl;
+                results.HTTP_STATUS = response ? String(response.status()) : 'timeout';
+                if (response) {
+                  const contentType = ((await response.headerValue('content-type').catch(() => 'content-type-header-missing')) || '').toLowerCase();
+                  const isTextResponse = /^(text\/|.*\/(json|xml|javascript|.*\+xml))/.test(contentType);
+                  if (isTextResponse) {
+                    const body = await response.text().catch(() => 'body-retrieval-failed');
+                    // RESPONSE_BODY is a bounded, single-line excerpt because verification-report.txt uses one KEY: value per line.
+                    // Example: formatted JSON/newlines become spaces; full response details remain in the HAR artifact.
+                    const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, responseBodyExcerptLimit);
+                    results.RESPONSE_BODY = excerpt || 'empty';
+                  } else {
+                    results.RESPONSE_BODY = `non-text response omitted: ${contentType || 'unknown content-type'}`;
+                  }
+                }
+                results.LIKELY_ROOT_CAUSE = 'Deployment URL not reachable or returned error';
+              }
+            } catch (e) {
+              results.FAILING_REQUEST = deploymentUrl;
+              results.LIKELY_ROOT_CAUSE = `Navigation failed: ${e.message}`;
+            }
+
+            if (results.DEPLOYMENT_ACCESS === 'yes') {
+              // Step 2: Authenticate
+              // CUSTOMIZE: Replace with your module's login flow
+              try {
+                await page.fill('[data-testid="email"], input[type="email"]', testEmail);
+                await page.fill('[data-testid="password"], input[type="password"]', testPassword);
+                await page.click('[data-testid="login-button"], button[type="submit"]');
+                await page.waitForURL('**/dashboard**', { timeout: 10000 });
+                results.LOGIN_SUCCESS = 'yes';
+              } catch (e) {
+                results.LIKELY_ROOT_CAUSE = `Login failed: ${e.message}`;
+              }
+            }
+
+            if (results.LOGIN_SUCCESS === 'yes') {
+              // Step 3: Verify dashboard loads
+              // CUSTOMIZE: Update selector for your module's dashboard
+              try {
+                await page.waitForSelector('[data-testid="dashboard"], main, .dashboard', { timeout: 10000 });
+                results.DASHBOARD_OR_PAGE_LOAD = 'yes';
+              } catch (e) {
+                results.LIKELY_ROOT_CAUSE = `Dashboard did not load: ${e.message}`;
+              }
+            }
+
+            if (results.DASHBOARD_OR_PAGE_LOAD === 'yes') {
+              // Step 4: Complete user journey
+              // CUSTOMIZE: Replace with your module's specific user journey steps
+              // Example: results.USER_JOURNEY_COMPLETE = 'yes';
+              results.USER_JOURNEY_COMPLETE = 'no'; // CUSTOMIZE: set to 'yes' when journey completes
+              results.LIKELY_ROOT_CAUSE = 'CUSTOMIZE: implement user journey steps for this module';
+            }
+
+            // Surface console errors in results (first 3 for brevity)
+            if (consoleErrors.length > 0) {
+              results.CONSOLE_ERROR = consoleErrors.slice(0, 3).join(' | ');
+            }
+
+            // Write full console log to artifact file (SHA-suffixed to match spec pattern console-*.log)
+            const consoleLogPath = `artifacts/console-${headSha}.log`;
+            fs.writeFileSync(consoleLogPath, allConsoleMsgs.join('\n') || '(no console output)');
+
+            // Take screenshot
+            try {
+              await page.screenshot({ path: 'artifacts/screenshot.png', fullPage: true });
+            } catch (e) {
+              // screenshot failure is non-fatal
+            }
+
+            // Stop tracing — produces trace-<sha>.zip covering the entire run (SHA-suffixed to match spec pattern trace-*.zip)
+            const traceZipPath = `artifacts/trace-${headSha}.zip`;
+            await context.tracing.stop({ path: traceZipPath });
+
+            // Close context to flush HAR file to disk
+            await context.close();
+            await browser.close();
+
+            // Populate ARTIFACT_LINKS before writing the report so it appears in verification-report.txt
+            const serverUrl = process.env.GITHUB_SERVER_URL || '';
+            const repository = process.env.GITHUB_REPOSITORY || '';
+            const runId = process.env.GITHUB_RUN_ID || '';
+            if (serverUrl && repository && runId) {
+              results.ARTIFACT_LINKS = `${serverUrl}/${repository}/actions/runs/${runId}`;
+            } else {
+              results.ARTIFACT_LINKS = 'unavailable';
+            }
+
+            // Write verification report
+            fs.writeFileSync('verification-report.txt', Object.entries(results).map(([k,v]) => `${k}: ${v}`).join('\n'));
+            console.log('Verification results:', JSON.stringify(results, null, 2));
+
+            // Write outputs to $GITHUB_OUTPUT (modern replacement for ::set-output)
+            if (githubOutput) {
+              const outputLines = Object.entries(results)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('\n');
+              fs.appendFileSync(githubOutput, outputLines + '\n');
+            }
+
+            // Exit with failure if journey not complete
+            if (results.USER_JOURNEY_COMPLETE !== 'yes') {
+              process.exit(1);
+            }
+          })();
+          EOF
+
+      - name: Upload verification artifacts
+        if: always()
+        id: upload-artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-verification-artifacts-${{ github.sha }}
+          path: |
+            artifacts/screenshot.png
+            artifacts/trace-${{ github.sha }}.zip
+            artifacts/network.har
+            artifacts/console-${{ github.sha }}.log
+            verification-report.txt
+          retention-days: 30
+
+      - name: Set ARTIFACT_LINKS output
+        if: always()
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "ARTIFACT_LINKS=${RUN_URL}" >> "$GITHUB_OUTPUT"
+
+      - name: Write Gate Summary
+        if: always()
+        run: |
+          echo "## Live Verification Gate Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Output Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------------|-------|" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f verification-report.txt ]; then
+            for FIELD in DEPLOYMENT_ACCESS LOGIN_SUCCESS DASHBOARD_OR_PAGE_LOAD USER_JOURNEY_COMPLETE FAILING_REQUEST HTTP_STATUS RESPONSE_BODY CONSOLE_ERROR LIKELY_ROOT_CAUSE ARTIFACT_LINKS; do
+              VALUE=$(grep "^${FIELD}:" verification-report.txt | sed "s/^${FIELD}: *//" || true)
+              VALUE=${VALUE:-missing}
+              # Use the HTML pipe entity so Markdown tables remain valid without changing displayed text.
+              VALUE=$(printf '%s' "$VALUE" | perl -pe 's/\|/&#124;/g')
+              echo "| ${FIELD} | ${VALUE} |" >> $GITHUB_STEP_SUMMARY
+            done
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Head SHA**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment URL**: ${{ inputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Artifacts**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY

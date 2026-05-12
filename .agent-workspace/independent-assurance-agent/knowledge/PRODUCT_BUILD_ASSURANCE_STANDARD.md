@@ -1,9 +1,9 @@
 # Product Build Assurance Standard (IAA)
 
 **Agent**: independent-assurance-agent  
-**Version**: 1.1.0  
+**Version**: 1.2.0  
 **Status**: ACTIVE — MANDATORY  
-**Last Updated**: 2026-05-11  
+**Last Updated**: 2026-05-12  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **Governing Issue Anchor**: #1596  
 **Incident / Dry-Run Calibration Anchor**: PR #1590
@@ -147,8 +147,17 @@ If missing, `FUNCTIONAL_PASS` must be `no`.
 Required fields:
 
 - `ADMIN_PASS: yes/no`
+- `CODE_PASS: yes/no`
 - `FUNCTIONAL_PASS: yes/no`
 - `VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL`
+
+**Three-Tier Delivery Assurance** (per `LIVE_FUNCTIONAL_VERIFICATION_CANON.md` §7 and `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` §2a):
+
+| Tier | Verdict Field | Definition | PR Status |
+|------|--------------|------------|-----------|
+| 1 | `ADMIN_PASS` | All governance ceremony artifacts present and correct | Admissible |
+| 2 | `CODE_PASS` | All CI tests pass; linters pass; type checks pass; build succeeds; code correct as implemented | Plausible |
+| 3 | `FUNCTIONAL_PASS` | Live verification ran against deployed build; all 8 LFV gates passed; CS2 acceptance complete | **Acceptable** |
 
 Rules:
 
@@ -157,6 +166,8 @@ Rules:
 - `PARTIAL_FUNCTIONAL_DELIVERY` is non-mergeable by default for product-facing build PRs
 - Partial scope becomes mergeable only when explicit CS2 partial-scope acceptance is committed and quoted
 - Language such as "code quality PASS", "technically correct", "no regressions", "ready for handover" is prohibited when `FUNCTIONAL_PASS: no`
+- `CODE_PASS: yes` with `FUNCTIONAL_PASS: no` does NOT constitute merge eligibility for UI/application builds
+- `ADMIN_PASS: yes` + `CODE_PASS: yes` → PR is admissible and plausible, but NOT acceptable; `FUNCTIONAL_PASS: yes` is additionally required
 
 ### No-current-head-drift rule
 
