@@ -974,14 +974,14 @@
     },
     {
       "filename": "FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
-      "version": "2.0.0",
-      "file_hash": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871",
-      "effective_date": "2026-05-07",
+      "version": "2.1.0",
+      "file_hash": "52a0aa68ef7d9f24e1482016d8dec4b0d4306d1cf53e3145e64ea4cbc2bdfc3c",
+      "effective_date": "2026-05-12",
       "description": "This standard establishes explicit definitions and enforcement mechanisms for \"fully functional\" delivery across design, implementation, and deployment phases.",
       "type": "canon",
       "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871"
+      "file_hash_sha256": "52a0aa68ef7d9f24e1482016d8dec4b0d4306d1cf53e3145e64ea4cbc2bdfc3c"
     },
     {
       "filename": "GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md",
