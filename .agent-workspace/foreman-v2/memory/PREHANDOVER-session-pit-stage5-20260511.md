@@ -29,6 +29,8 @@
 | Stage 5 Reconciliation Evidence | COMMITTED | `modules/pit/04-architecture/stage5-architecture-reconciliation.md` |
 | TRS-to-Architecture Traceability | COMMITTED | `modules/pit/04-architecture/trs-to-architecture-traceability.md` |
 | Timeline Engine ADR | COMMITTED | `modules/pit/04-architecture/timeline-engine-architecture-decision.md` |
+| App Description → Architecture Traceability | COMMITTED | `modules/pit/04-architecture/app-description-to-architecture-traceability.md` |
+| PR Manifest | COMMITTED | `.admin/prs/pr-1612.json` |
 | BUILD_PROGRESS_TRACKER update | COMMITTED | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
 | Scope Declaration | COMMITTED | `.agent-admin/scope-declarations/pr-1612.md` |
 | Wave Current Tasks | COMMITTED | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` |
