@@ -5,7 +5,7 @@
 **Last Updated**: 2026-05-11
 **Updated By**: foreman-v2-agent (issue #1611 Stage 5 Architecture reconciliation wave)
 > **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — PENDING CS2 STAGE 5 REVIEW  
-> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
+> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
 
@@ -38,7 +38,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 
 ## Module Lifecycle Progress
 
-Track the progression through the canonical module lifecycle stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0.
+Track the progression through the canonical module lifecycle stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0.
 
 ### Stage 1: App Description
 **Status**: [x] CS2_APPROVED_AUTHORITATIVE  
@@ -468,7 +468,7 @@ App Description per maturion-isms#1540. Status changed from Draft to Authoritati
 blocked until Stages 2–11 completed and gate-passed.
 
 **Governance Upgrade (2026-04-06)**: Stage model migrated from legacy 6-stage (Stage 0–5) to
-canonical 12-stage per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. See Stage Migration Note above.
+canonical 12-stage per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0. See Stage Migration Note above.
 
 **Prior Note (2026-02-13)**: TRS stage introduced per governance upgrade "Governance Upgrade:
 Insert Technical Requirements Specification (TRS) Step".
@@ -481,6 +481,6 @@ See `10-governance-notes/` and `20-ai/` for AI integration governance context.
 
 ---
 
-**Template Version**: 1.0.0 (12-stage model per PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0)  
+**Template Version**: 1.0.0 (12-stage model per PRE_BUILD_STAGE_MODEL_CANON.md v1.1.0)  
 **Template Authority**: `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md`  
 **Last Template Update**: 2026-04-06

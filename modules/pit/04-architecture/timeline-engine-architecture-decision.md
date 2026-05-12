@@ -15,7 +15,7 @@
 | Date | 2026-05-11 |
 | Author | foreman-v2-agent |
 | TRS Authority | PIT-TR-064, PIT-TR-065, PIT-TR-066, PIT-TR-067 |
-| Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
+| Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 |
 
 > **Governance Notice**: This ADR is a Stage 5 design/gate artifact. It does NOT authorise build implementation. Library selection is the PROPOSED candidate — final confirmation occurs at Stage 7 PBFAG after Stage 6 QA-to-Red is designed.
 
@@ -334,7 +334,7 @@ All functions are pure (no side effects) and exported from the timeline utility 
 ### 6.3 Visual Regression Architecture
 
 - Playwright `expect(page).toHaveScreenshot('timeline-main.png')` for main timeline render.
-- Baseline screenshots committed to `modules/pit/04-architecture/qa/visual-baselines/`.
+- Baseline screenshots **must be committed during Stage 6 QA-to-Red** to `modules/pit/04-architecture/qa/visual-baselines/`.
 - Tolerance: 1px threshold for layout alignment; pixel-exact for bar positions.
 - Visual regression run: per CI commit on timeline-affecting changes.
 

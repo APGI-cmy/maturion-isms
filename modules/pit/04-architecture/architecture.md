@@ -55,7 +55,7 @@ Companion documents:
 
 ### 1.1 Frontend Runtime
 
-- React 18+ SPA, TypeScript (`strict: true`), React Router v6 (`createBrowserRouter`)
+- React 18+ SPA, TypeScript (`strict: true`), TanStack Router v1 (file-based routing)
 - State: TanStack Query v5 (server state) + React Context / `useState` (client state)
 - Build: Vite
 - Zero TypeScript compilation errors required (hard gate)
