@@ -194,6 +194,8 @@ jobs:
             const runId = process.env.GITHUB_RUN_ID || '';
             if (serverUrl && repository && runId) {
               results.ARTIFACT_LINKS = `${serverUrl}/${repository}/actions/runs/${runId}`;
+            } else {
+              results.ARTIFACT_LINKS = 'unavailable';
             }
 
             // Write verification report
