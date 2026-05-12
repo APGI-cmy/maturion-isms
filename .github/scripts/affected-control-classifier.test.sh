@@ -18,7 +18,7 @@
 #   0 = All tests passed
 #   1 = One or more tests failed
 
-set -uo pipefail
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLASSIFIER="$SCRIPT_DIR/affected-control-classifier.sh"

@@ -81,13 +81,13 @@ while IFS= read -r file; do
   esac
 done <<< "$CHANGED_FILES"
 
-GATE_SCRIPT_CHANGED=false
+GATE_CONTROL_CHANGED=false
 if [ "$GATE_SCRIPTS_CHANGED" = true ] || [ "$GATE_WORKFLOWS_CHANGED" = true ]; then
-  GATE_SCRIPT_CHANGED=true
+  GATE_CONTROL_CHANGED=true
 fi
 
 GOVERNANCE_CONTROLLED_CHANGED=false
-if [ "$CANON_CHANGED" = true ] || [ "$TEMPLATE_CHANGED" = true ] || [ "$IAA_AGENT_CHANGED" = true ] || [ "$GATE_SCRIPT_CHANGED" = true ]; then
+if [ "$CANON_CHANGED" = true ] || [ "$TEMPLATE_CHANGED" = true ] || [ "$IAA_AGENT_CHANGED" = true ] || [ "$GATE_CONTROL_CHANGED" = true ]; then
   GOVERNANCE_CONTROLLED_CHANGED=true
 fi
 
