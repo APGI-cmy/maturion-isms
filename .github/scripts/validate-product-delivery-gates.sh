@@ -63,10 +63,40 @@ is_live_functional_delivery_evidence_file() {
   [[ "$file" =~ ^\.functional-delivery/pr-[0-9]+\.md$ ]]
 }
 
-pr_body_claims_product_delivery() {
+# Returns 0 (true) if the file is a governance-controlled control-surface path:
+#   governance/canon/**, governance/templates/**, .agent-workspace/independent-assurance-agent/**
+# These paths are subject to ECAP/IAA/canon-inventory gates, not product-delivery gates.
+is_governance_controlled_path() {
+  local file="$1"
+  case "$file" in
+    governance/canon/*|governance/templates/*|.agent-workspace/independent-assurance-agent/*)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+# Returns 0 (true) if ALL changed files are governance-controlled paths.
+# When true, narrative PR body language must not trigger product-facing classification;
+# only explicit formal claim markers remain active.
+is_governance_controlled_only_pr() {
+  # Empty diff → not governance-only (conservative)
+  [ -n "$CHANGED_FILES" ] || return 1
+  local all_gov_controlled=true
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    if ! is_governance_controlled_path "$file"; then
+      all_gov_controlled=false
+      break
+    fi
+  done <<< "$CHANGED_FILES"
+  [ "$all_gov_controlled" = "true" ]
+}
+
+# Explicit formal claim markers — always trigger product-facing classification regardless of diff.
+# These represent structured fields that assert delivery status.
+pr_body_explicit_product_claim() {
   [ -n "$PR_BODY" ] || return 1
-  # Intentionally broad: this classifier treats PR-body delivery/handover/product-fix language
-  # as delivery claims so evidence is required instead of allowing under-detection.
   local claim_patterns=(
     'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+'
     'FUNCTIONAL_PASS:[[:space:]]*yes'
@@ -74,11 +104,6 @@ pr_body_claims_product_delivery() {
     'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
-    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
-    '(^|[[:space:][:punct:]])functional[[:space:]]+delivery([[:space:][:punct:]]|$)'
-    '(^|[[:space:][:punct:]])(handover[[:space:]]+readiness|ready[[:space:]]+for[[:space:]]+handover)([[:space:][:punct:]]|$)'
-    '(^|[[:space:][:punct:]])product[[:space:]]+fix([[:space:][:punct:]]|$)'
-    'Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
   )
   local pattern
   for pattern in "${claim_patterns[@]}"; do
@@ -86,6 +111,33 @@ pr_body_claims_product_delivery() {
       return 0
     fi
   done
+  return 1
+}
+
+# Narrative hint patterns — trigger product-facing classification only when the diff is NOT
+# governance-controlled-only. Governance/canon/template PRs routinely discuss these concepts
+# without making formal delivery assertions, so suppressing them avoids false positives.
+pr_body_narrative_product_hint() {
+  [ -n "$PR_BODY" ] || return 1
+  local hint_patterns=(
+    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
+    '(^|[[:space:][:punct:]])functional[[:space:]]+delivery([[:space:][:punct:]]|$)'
+    '(^|[[:space:][:punct:]])(handover[[:space:]]+readiness|ready[[:space:]]+for[[:space:]]+handover)([[:space:][:punct:]]|$)'
+    '(^|[[:space:][:punct:]])product[[:space:]]+fix([[:space:][:punct:]]|$)'
+    'Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
+  )
+  local pattern
+  for pattern in "${hint_patterns[@]}"; do
+    if echo "$PR_BODY" | grep -qiE "$pattern"; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+pr_body_claims_product_delivery() {
+  pr_body_explicit_product_claim && return 0
+  ! is_governance_controlled_only_pr && pr_body_narrative_product_hint && return 0
   return 1
 }
 
@@ -99,9 +151,14 @@ while IFS= read -r file; do
   fi
 done <<< "$CHANGED_FILES"
 
-if [ "$PRODUCT_FACING" = false ] && pr_body_claims_product_delivery; then
-  PRODUCT_FACING=true
-  PRODUCT_FILES="${PRODUCT_FILES}\n<pr-body-product-delivery-claim>"
+if [ "$PRODUCT_FACING" = false ]; then
+  if pr_body_explicit_product_claim; then
+    PRODUCT_FACING=true
+    PRODUCT_FILES="${PRODUCT_FILES}\n<pr-body-explicit-product-claim>"
+  elif ! is_governance_controlled_only_pr && pr_body_narrative_product_hint; then
+    PRODUCT_FACING=true
+    PRODUCT_FILES="${PRODUCT_FILES}\n<pr-body-narrative-product-hint>"
+  fi
 fi
 
 if [ "$PRODUCT_FACING" = false ]; then
