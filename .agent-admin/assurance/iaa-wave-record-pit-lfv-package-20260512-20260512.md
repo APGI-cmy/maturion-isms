@@ -4,7 +4,7 @@
 **Date**: 2026-05-12
 **Branch**: copilot/add-lfv-package-to-pit-module
 **PR**: #1624
-**Issue**: maturion-isms#1619 — Add mandatory PIT Live Functional Verification package before QA-to-Red / build handover
+**Issue**: maturion-isms#1623 — Add mandatory PIT Live Functional Verification package before QA-to-Red / build handover
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.10.0
 **Mode**: PRE-BRIEF
@@ -107,7 +107,7 @@ The PREHANDOVER proof at `.agent-admin/prehandover/proof-pr-1624-pit-lfv-package
 | `wave_id` | `pit-lfv-package-20260512` — must match exactly | A-003, ACR-03 |
 | `pr_number` | `1624` | ACR-03 |
 | `branch` | `copilot/add-lfv-package-to-pit-module` | ACR-03 |
-| `issue_reference` | `maturion-isms#1619` | ACR-03 |
+| `issue_reference` | `maturion-isms#1623` | ACR-03 |
 | `session_id` | Session identifier used by producing agent | ACR-03 |
 | `final_state` | `COMPLETE` (not PENDING, not in-progress) | ACR-02, ACR-10 |
 | `scope_declaration_path` | `.agent-admin/scope-declarations/pr-1624.md` | ACR-08 |
@@ -132,10 +132,10 @@ The PREHANDOVER proof at `.agent-admin/prehandover/proof-pr-1624-pit-lfv-package
 
 | # | Blocker | Severity | Resolution Path |
 |---|---------|----------|-----------------|
-| SB-01 | **Stage 5 Architecture (PR #1612) pending CS2 merge approval** — OVL-PBG-008 requires prior stages COMPLETE before advancing. Stage 5 has IAA PASS token but is not yet merged. | ADVISORY — will be evaluated at full assurance. If PR #1612 merges before IAA invocation, SB-01 resolves automatically. If not, Foreman must obtain explicit CS2 waiver or sequence the merge appropriately. | CS2 merges PR #1612 first, OR CS2 provides written exception in issue #1619 |
+| SB-01 | **Stage 5 Architecture (PR #1612) pending CS2 merge approval** — OVL-PBG-008 requires prior stages COMPLETE before advancing. Stage 5 has IAA PASS token but is not yet merged. | ADVISORY — will be evaluated at full assurance. If PR #1612 merges before IAA invocation, SB-01 resolves automatically. If not, Foreman must obtain explicit CS2 waiver or sequence the merge appropriately. | CS2 merges PR #1612 first, OR CS2 provides written exception in issue #1623 |
 | SB-02 | **LFV artifacts must be PIT-specific, not empty templates** — LIVE_FUNCTIONAL_VERIFICATION_CANON.md §4 requires PIT-specific content. At full assurance, IAA will verify all 9 artifacts contain PIT-specific content (PIT journey, PIT roles, PIT CTAs, PIT secrets, PIT test identities) — not placeholder lorem ipsum or generic template content. | HARD — if any artifact is a template clone with no PIT-specific content, REJECTION-PACKAGE will be issued. | Foreman/pit-specialist must instantiate PIT-specific content in all 9 artifacts |
 | SB-03 | **`pit-live-verification-workflow.yml` must be a spec/template file, not a deployed workflow** — If this file is placed in `.github/workflows/`, it triggers CI_WORKFLOW category requiring different overlay and evidence. | HARD — IAA will independently verify file placement via A-041 (Diff-First Classification). If in `.github/workflows/`: PR re-classification required. | Confirm file lives in `modules/pit/05-live-functional-verification/` only — actual deployed workflow is a Stage 12 Build wave deliverable |
-| SB-04 | **No build authorization may be implied or introduced** — Issue #1619 and wave scope explicitly state no build authorization is introduced. At full assurance, IAA will verify BUILD_PROGRESS_TRACKER update does not advance any stage to BUILD_AUTHORIZED or equivalent. | HARD — any build authorization claim not explicitly cleared by CS2 → REJECTION-PACKAGE. | Foreman must ensure BUILD_PROGRESS_TRACKER update reflects LFV package completion only, not stage advancement beyond LFV pre-build package |
+| SB-04 | **No build authorization may be implied or introduced** — Issue #1623 and wave scope explicitly state no build authorization is introduced. At full assurance, IAA will verify BUILD_PROGRESS_TRACKER update does not advance any stage to BUILD_AUTHORIZED or equivalent. | HARD — any build authorization claim not explicitly cleared by CS2 → REJECTION-PACKAGE. | Foreman must ensure BUILD_PROGRESS_TRACKER update reflects LFV package completion only, not stage advancement beyond LFV pre-build package |
 | SB-05 | **All 9 LFV artifacts + workflow spec must be git-committed (not just on-disk)** — A-033 mandates git-committed verification for all claimed artifacts. IAA will run `git ls-tree HEAD` for each file — disk presence alone is insufficient. | HARD — any artifact present on disk but not in git index → REJECTION-PACKAGE. | Foreman must ensure `git add` + `git commit` + `git push` for all files before PREHANDOVER proof is declared COMPLETE |
 
 ---
@@ -150,7 +150,7 @@ IAA will verify the following at full (Phase 2–4) assurance invocation:
 4. **A-041 (Diff-First)**: IAA independently computes actual changed-file set; verifies `pit-live-verification-workflow.yml` is in `modules/pit/05-live-functional-verification/` not `.github/workflows/`
 5. **A-033 (Git-Committed)**: All 11 produced artifacts are in git index, not just on disk
 6. **LFV Canon §4**: All 9 LFV artifacts are PIT-specific (not generic template content)
-7. **A-039 (Acceptance-Criteria Matrix)**: IAA extracts every acceptance criterion from issue #1619 and maps hard evidence to each
+7. **A-039 (Acceptance-Criteria Matrix)**: IAA extracts every acceptance criterion from issue #1623 and maps hard evidence to each
 8. **A-042 (Independent Risk Challenge)**: Five-question challenge completed before PASS token issued
 9. **CORE-020/021**: Zero partial passes; zero severity tolerance
 10. **ACR-09/10/11**: Gate set identified, no stale pending language, gate states CI-confirmed
@@ -181,9 +181,9 @@ IAA will verify the following at full (Phase 2–4) assurance invocation:
 
 | ID | Check | Finding Summary | Fix Required | Classification |
 |----|-------|----------------|--------------|----------------|
-| F-01 | CORE-026 (Acceptance-Criteria Matrix) | Issue #1619 is "Tune affected-control classifier" — 7/7 acceptance criteria unmet by PIT LFV artifact deliverables | Identify correct governing issue for PIT LFV package; update all wave artifacts to reference it; re-invoke IAA | Substantive |
-| F-02 | CORE-020 (Zero Partial Pass / CS2 Auth Unverifiable) | PREHANDOVER claims issue #1619 contains "explicit directive to create PIT LFV package" — actual issue #1619 contains no such directive | Cite correct CS2-authorising issue; update PREHANDOVER CS2 Authorization Statement; OR have CS2 update issue #1619 with explicit LFV directive | Substantive |
-| F-03 | CORE-027 (Independent Risk Challenge) | Broken governing-issue link creates audit traceability void; future reviewers will incorrectly associate classifier-tuning issue #1619 with PIT LFV wave | Resolved by fixing F-01 and F-02 | Substantive |
+| F-01 | CORE-026 (Acceptance-Criteria Matrix) | Issue #1623 is "Tune affected-control classifier" — 7/7 acceptance criteria unmet by PIT LFV artifact deliverables | Identify correct governing issue for PIT LFV package; update all wave artifacts to reference it; re-invoke IAA | Substantive |
+| F-02 | CORE-020 (Zero Partial Pass / CS2 Auth Unverifiable) | PREHANDOVER claims issue #1623 contains "explicit directive to create PIT LFV package" — actual issue #1623 contains no such directive | Cite correct CS2-authorising issue; update PREHANDOVER CS2 Authorization Statement; OR have CS2 update issue #1623 with explicit LFV directive | Substantive |
+| F-03 | CORE-027 (Independent Risk Challenge) | Broken governing-issue link creates audit traceability void; future reviewers will incorrectly associate classifier-tuning issue #1623 with PIT LFV wave | Resolved by fixing F-01 and F-02 | Substantive |
 | F-04 | PR Draft Status / Open Checklist Items | PR #1624 is draft:true; PR body has multiple unchecked [ ] items contradicting final_state: COMPLETE | Remove WIP prefix; mark PR ready for review; tick all completed checklist items | Ceremony |
 | F-05 | wave-current-tasks.md T-6 IN_PROGRESS vs COMPLETE | T-6 status is 🟡 IN_PROGRESS while PREHANDOVER declares final_state: COMPLETE | Update T-6 to 🟢 DONE with evidence reference | Ceremony |
 

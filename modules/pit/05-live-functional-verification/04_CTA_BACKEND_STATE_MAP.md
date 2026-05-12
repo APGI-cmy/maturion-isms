@@ -1,6 +1,6 @@
 # 04 — CTA Backend State Map
 <!-- LFV Template v1.0.0 | Authority: LIVE_FUNCTIONAL_VERIFICATION_CANON.md §4 | Issue: maturion-isms#1617 -->
-<!-- PIT instantiation | Issue: maturion-isms#1619 | PR: #1624 -->
+<!-- PIT instantiation | Issue: maturion-isms#1623 | PR: #1624 -->
 
 ## Header
 
@@ -9,7 +9,7 @@
 | Module | PIT (Project Implementation Tracker) |
 | Wave | pit-lfv-package-20260512 |
 | PR | #1624 |
-| Issue | maturion-isms#1619 |
+| Issue | maturion-isms#1623 |
 | Date | 2026-05-12 |
 | Author | foreman-v2-agent |
 | Status | DESIGN ARTIFACT — not a deployment claim |

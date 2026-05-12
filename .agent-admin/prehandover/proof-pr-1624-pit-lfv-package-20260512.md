@@ -2,7 +2,7 @@
 
 ```yaml
 pr: 1624
-issue: 1619
+issue: 1623
 branch: copilot/add-lfv-package-to-pit-module
 date_utc: 2026-05-12T14:00:00Z
 wave_id: pit-lfv-package-20260512
@@ -24,18 +24,18 @@ files_changed: 17
 | Wave | pit-lfv-package-20260512 |
 | Branch | copilot/add-lfv-package-to-pit-module |
 | PR | #1624 |
-| Issue | maturion-isms#1619 — Add mandatory PIT Live Functional Verification package before QA-to-Red / build handover |
+| Issue | maturion-isms#1623 — Add mandatory PIT Live Functional Verification package before QA-to-Red / build handover |
 | Agent Version | foreman-v2-agent v6.2.0 / contract v2.15.0 |
 | Author | foreman-v2-agent |
 | IAA Pre-Brief | `.agent-admin/assurance/iaa-wave-record-pit-lfv-package-20260512-20260512.md` |
-| CS2 Authorization | Issue maturion-isms#1619 opened by @APGI-cmy assigning foreman-v2-agent |
+| CS2 Authorization | Issue maturion-isms#1623 opened by @APGI-cmy assigning foreman-v2-agent |
 | build_authorization_status | NOT_CLEARED — no build authorization introduced in this wave |
 
 ---
 
 ## Wave Description
 
-This wave creates the mandatory PIT Live Functional Verification (LFV) package as required by `governance/canon/LIVE_FUNCTIONAL_VERIFICATION_CANON.md` and Issue maturion-isms#1619. The package instantiates all nine LFV governance templates for PIT with PIT-specific content, creates a PIT live verification workflow design artifact, and updates the BUILD_PROGRESS_TRACKER to record the LFV requirement.
+This wave creates the mandatory PIT Live Functional Verification (LFV) package as required by `governance/canon/LIVE_FUNCTIONAL_VERIFICATION_CANON.md` and Issue maturion-isms#1623. The package instantiates all nine LFV governance templates for PIT with PIT-specific content, creates a PIT live verification workflow design artifact, and updates the BUILD_PROGRESS_TRACKER to record the LFV requirement.
 
 **Scope**: Pre-build hardening bridge between Stage 5 Architecture (PR #1612) and Stage 6 QA-to-Red.
 **Builders involved**: pit-specialist (LFV artifact creation), foreman-v2-agent (POLC orchestration + governance artifacts)
@@ -252,7 +252,7 @@ Expected IAA token (pre-populated per A-029): **IAA-session-pit-lfv-package-2026
 ## CS2 Authorization Statement
 
 CS2 authorization verified:
-- Issue maturion-isms#1619 opened by @APGI-cmy with explicit directive to create PIT LFV package.
+- Issue maturion-isms#1623 opened by @APGI-cmy with explicit directive to create PIT LFV package.
 - This satisfies Foreman contract §2.1: "The triggering issue was opened by CS2 directly and assigns this agent."
 
 ---

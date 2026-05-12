@@ -1,6 +1,6 @@
 # 06 — Live Verification Workflow Spec
 <!-- LFV Template v1.0.0 | Authority: LIVE_FUNCTIONAL_VERIFICATION_CANON.md §4 | Issue: maturion-isms#1617 -->
-<!-- PIT instantiation | Issue: maturion-isms#1619 | PR: #1624 -->
+<!-- PIT instantiation | Issue: maturion-isms#1623 | PR: #1624 -->
 
 ## Header
 
@@ -9,7 +9,7 @@
 | Module | PIT (Project Implementation Tracker) |
 | Wave | pit-lfv-package-20260512 |
 | PR | #1624 |
-| Issue | maturion-isms#1619 |
+| Issue | maturion-isms#1623 |
 | Date | 2026-05-12 |
 | Author | foreman-v2-agent |
 | Status | DESIGN ARTIFACT — not a deployment claim |
@@ -36,7 +36,7 @@ This file is a DESIGN ARTIFACT only. It defines the workflow structure for revie
 ```
 **Active workflow installation is deferred to Stage 8 (Implementation Plan).** This file MUST NOT be placed in `.github/workflows/` until Stage 8 explicitly authorises active workflow installation.
 
-> **Authority**: LIVE_FUNCTIONAL_VERIFICATION_CANON.md §5 | Issue maturion-isms#1619
+> **Authority**: LIVE_FUNCTIONAL_VERIFICATION_CANON.md §5 | Issue maturion-isms#1623
 
 ---
 
