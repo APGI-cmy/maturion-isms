@@ -41,6 +41,7 @@ const NAV_TIMEOUT = 60_000;
 const WAIT_TIMEOUT = 30_000;
 const PARSE_JOB_TIMEOUT = 120_000; // 2 minutes for parse job to complete
 const COMPILE_TIMEOUT = 60_000;
+const AI_GENERATION_TIMEOUT = 180_000; // 3 minutes — AIMC framework-generate can take up to 90s+retry
 
 function required(name) {
   const v = process.env[name];
@@ -138,12 +139,23 @@ async function runMode(page, origin, mode, sampleFilePath) {
     await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
     log('Navigated to /frameworks/upload');
 
-    // 2. Select the mode via the radio button
+    // 2. Select the mode via the radio button.
+    // NOTE: The radio input has className="sr-only" (visually hidden); the parent
+    // <label class="mode-card"> intercepts pointer events. Click the label instead
+    // of the hidden radio so the React onChange handler fires reliably.
     const radioLocator = page.locator(`input[name="framework-mode"][value="${mode}"]`);
     await radioLocator.waitFor({ state: 'attached', timeout: WAIT_TIMEOUT });
     const isChecked = await radioLocator.isChecked();
     if (!isChecked) {
-      await radioLocator.check();
+      const labelLocator = page.locator(`label:has(input[name="framework-mode"][value="${mode}"])`);
+      await labelLocator.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+      await labelLocator.click();
+      // Verify radio is now checked (React state update is sync via onChange)
+      const nowChecked = await radioLocator.isChecked().catch(() => false);
+      if (!nowChecked) {
+        // Fallback: force-set the radio state directly
+        await radioLocator.check({ force: true });
+      }
       log(`Selected Mode ${mode}`);
     } else {
       log(`Mode ${mode} already selected`);
@@ -157,7 +169,9 @@ async function runMode(page, origin, mode, sampleFilePath) {
       log(`Attached sample file: ${path.basename(sampleFilePath)}`);
     }
 
-    // 4. Click Start — wait for redirect to review page
+    // 4. Click Start — wait for redirect to review page.
+    // Mode B (AI generate) uses a longer timeout since the AIMC call can take up to 90s
+    // with one retry + 15s backoff — total worst-case ~3 min.
     const startBtn = page.getByRole('button', { name: 'Start' });
     await startBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
     const isEnabled = await startBtn.isEnabled();
@@ -165,8 +179,9 @@ async function runMode(page, origin, mode, sampleFilePath) {
       throw new Error('Start button is disabled — file may not be attached or mode not selected');
     }
 
+    const reviewWaitTimeout = mode === 'B' ? AI_GENERATION_TIMEOUT : WAIT_TIMEOUT;
     await Promise.all([
-      page.waitForURL(/\/frameworks\/[a-f0-9-]+\/review/, { timeout: WAIT_TIMEOUT }),
+      page.waitForURL(/\/frameworks\/[a-f0-9-]+\/review/, { timeout: reviewWaitTimeout }),
       startBtn.click(),
     ]);
 
@@ -335,6 +350,21 @@ async function runMode(page, origin, mode, sampleFilePath) {
   } catch (err) {
     const msg = err?.message || String(err);
     details.push(`ERROR: ${msg}`);
+    // Capture the page's mutation error state (if visible) to help diagnose backend failures
+    try {
+      const mutationErrPanel = await page.locator('.upload-page__next-state-panel').first().isVisible();
+      if (mutationErrPanel) {
+        const panelText = await page.locator('.upload-page__next-state-panel').first().innerText();
+        details.push(`Page state: ${panelText.replace(/\s+/g, ' ').slice(0, 400)}`);
+      }
+      const mutationErrNote = await page.locator('.upload-page__next-state-note').first().isVisible();
+      if (mutationErrNote) {
+        const noteText = await page.locator('.upload-page__next-state-note').first().innerText();
+        details.push(`Mutation error: ${noteText.replace(/\s+/g, ' ').slice(0, 300)}`);
+      }
+    } catch {
+      // ignore secondary capture errors
+    }
     return { success: false, frameworkId, compileResult, publishResult, details, error: msg };
   }
 }
@@ -410,7 +440,12 @@ async function main() {
       timeout: NAV_TIMEOUT,
     });
     await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
-    await page.waitForTimeout(3000); // Allow dashboard data to load
+    // Wait for the page to leave the isLoading state — the heading <h1>Maturity Dashboard</h1>
+    // only renders when isLoading is false (success or error). Do NOT rely on a fixed delay.
+    await page
+      .getByRole('heading', { name: /Maturity Dashboard/i })
+      .waitFor({ state: 'visible', timeout: WAIT_TIMEOUT })
+      .catch(() => {});
 
     const dashboardError = await page.getByTestId('dashboard-error').isVisible().catch(() => false);
     const dashboardHeading = await page
