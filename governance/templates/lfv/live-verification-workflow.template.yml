@@ -125,8 +125,15 @@ jobs:
                 results.FAILING_REQUEST = bypassUrl;
                 results.HTTP_STATUS = response ? String(response.status()) : 'timeout';
                 if (response) {
-                  const body = await response.text().catch(() => '');
-                  results.RESPONSE_BODY = body.slice(0, 2000) || 'empty';
+                  const contentType = (response.headers()['content-type'] || '').toLowerCase();
+                  const isTextResponse = /^(text\/)|json|xml|html|javascript|css/.test(contentType);
+                  if (isTextResponse) {
+                    const body = await response.text().catch(() => '');
+                    const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, 2000);
+                    results.RESPONSE_BODY = excerpt || 'empty';
+                  } else {
+                    results.RESPONSE_BODY = `non-text response omitted: ${contentType || 'unknown content-type'}`;
+                  }
                 }
                 results.LIKELY_ROOT_CAUSE = 'Deployment URL not reachable or returned error';
               }
@@ -253,7 +260,7 @@ jobs:
             for FIELD in DEPLOYMENT_ACCESS LOGIN_SUCCESS DASHBOARD_OR_PAGE_LOAD USER_JOURNEY_COMPLETE FAILING_REQUEST HTTP_STATUS RESPONSE_BODY CONSOLE_ERROR LIKELY_ROOT_CAUSE ARTIFACT_LINKS; do
               VALUE=$(grep "^${FIELD}:" verification-report.txt | cut -d' ' -f2- || true)
               VALUE=${VALUE:-missing}
-              VALUE=${VALUE//'|'/'\|'}
+              VALUE=$(printf '%s' "$VALUE" | tr '\n' ' ' | tr '|' '/')
               echo "| ${FIELD} | ${VALUE} |" >> $GITHUB_STEP_SUMMARY
             done
           fi
