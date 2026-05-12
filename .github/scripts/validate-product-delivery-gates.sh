@@ -65,11 +65,16 @@ is_live_functional_delivery_evidence_file() {
 
 # Returns 0 (true) if the file is a governance-controlled control-surface path:
 #   governance/canon/**, governance/templates/**, .agent-workspace/independent-assurance-agent/**
-# These paths are subject to ECAP/IAA/canon-inventory gates, not product-delivery gates.
+#   .github/scripts/**, .github/workflows/**
+# These paths are subject to ECAP/IAA/canon-inventory or gate-changing-pr-rule gates,
+# not product-delivery gates.
 is_governance_controlled_path() {
   local file="$1"
   case "$file" in
     governance/canon/*|governance/templates/*|.agent-workspace/independent-assurance-agent/*)
+      return 0
+      ;;
+    .github/scripts/*|.github/workflows/*)
       return 0
       ;;
   esac

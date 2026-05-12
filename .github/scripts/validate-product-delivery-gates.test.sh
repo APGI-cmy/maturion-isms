@@ -809,6 +809,56 @@ EOF
 }
 run_test "T_gov1618e mixed governance/canon + product code + narrative body -> FAIL (product code present)" 1 t_mixed_gov_and_product_code_with_narrative_body
 
+# ─── PR#1620-style regression tests ─────────────────────────────────────────
+# These tests cover the misclassification observed in PR APGI-cmy/maturion-isms#1620:
+# A PR changing .github/scripts/** and .github/workflows/** (governance/admin gate
+# control-surface work) whose body discussed "functional delivery" narratively was
+# incorrectly classified as product-facing, requiring .functional-delivery/pr-N.md.
+# Fix: .github/scripts/** and .github/workflows/** are governance-controlled paths;
+# narrative hints must be suppressed for them.
+
+t_github_scripts_workflows_with_narrative_functional_delivery_body() {
+  # Only .github/scripts/** and .github/workflows/** changed.
+  # PR body mentions "functional delivery" and "product delivery" narratively
+  # (as PR#1620 does — the PR is about gate tuning, not product delivery).
+  mkdir -p .github/scripts .github/workflows
+  cat > .github/scripts/validate-product-delivery-gates.sh << 'EOF'
+#!/bin/bash
+# stub for test
+exit 0
+EOF
+  cat > .github/workflows/preflight-evidence-gate.yml << 'EOF'
+# stub workflow for test
+name: preflight
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ok
+EOF
+  TEST_PR_BODY=$'Tune affected-control classifier and gate classification for governance.\n\nFixes product-delivery gate false-positive on governance/admin gate-control-surface PRs.\nFunctional delivery classification updated. No .functional-delivery/pr-*.md required for gate-only changes.\nProduct delivery gate suppressed for governance-only diff.\nHandover readiness tracking improved.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "PR#1620-style: .github/scripts + .github/workflows with functional delivery language in body"
+}
+run_test "T_gov1620 .github/scripts+workflows + narrative functional/product-delivery body -> PASS (not product-facing)" 0 t_github_scripts_workflows_with_narrative_functional_delivery_body
+
+t_github_scripts_workflows_explicit_verdict_still_triggers() {
+  # Even when only .github/scripts/** is changed, an explicit formal VERDICT claim
+  # in the PR body must still trigger product-facing classification.
+  mkdir -p .github/scripts
+  cat > .github/scripts/some-gate.sh << 'EOF'
+#!/bin/bash
+exit 0
+EOF
+  TEST_PR_BODY=$'Gate script update. VERDICT: FULL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m ".github/scripts with explicit VERDICT: FULL_FUNCTIONAL_DELIVERY in body"
+}
+run_test "T_gov1620b .github/scripts-only + explicit VERDICT claim in body -> FAIL (must require evidence)" 1 t_github_scripts_workflows_explicit_verdict_still_triggers
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"
