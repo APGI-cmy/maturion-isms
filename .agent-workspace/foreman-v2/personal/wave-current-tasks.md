@@ -1,5 +1,21 @@
 # Wave Current Tasks — foreman-v2-agent
 
+**Wave**: iaa-rca-hardening-1621
+**Session ID**: session-iaa-rca-hardening-1621-20260512
+**Date**: 2026-05-12
+**Branch**: copilot/harden-iaa-rca-behavior
+**PR**: TBD (issue #1621)
+**Issue**: maturion-isms#1621 — Harden IAA pre-build assurance and RCA-before-fix admin gap closure
+**CS2 Authorization**: Issue #1621 opened by @APGI-cmy with implementation mandate
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-iaa-rca-hardening-1621-20260512.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-iaa-rca-hardening-1621-20260512.md
+ceremony_admin_appointed: NONE — KNOWLEDGE_GOVERNANCE wave (direct delegation to governance-liaison and qa-builder)
+appointment_timestamp: N/A
+
+---
+
+**[PRIOR WAVE ARCHIVE]: Wave pit-stage5-architecture-reconciliation (PR #1612)**
+
 **Wave**: pit-stage5-architecture-reconciliation
 **Session ID**: session-pit-stage5-architecture-20260511
 **Date**: 2026-05-11
