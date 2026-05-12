@@ -842,6 +842,31 @@ jobs:
           .github/scripts/validate-simple-pr-admin.sh
 
   # ============================================================================
+  # Affected-Control Classifier (maturion-isms#1640)
+  # Pre-alert for PRs touching governance/canon/**, governance/templates/**,
+  # or .agent-workspace/independent-assurance-agent/**.
+  # Informational step — emits required-controls pre-alert. Exit 0 always.
+  # ============================================================================
+  affected-control-classifier:
+    name: "preflight/affected-control-classifier"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Affected-Control Classification
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          chmod +x .github/scripts/affected-control-classifier.sh
+          .github/scripts/affected-control-classifier.sh
+
+  # ============================================================================
   # Phase 5 Product Delivery Gates (maturion-isms#1573)
   # CTA mapping, endpoint integrity, functional evidence, IAA split verdict,
   # and placeholder honesty for product-facing PRs.
