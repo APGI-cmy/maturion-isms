@@ -153,7 +153,10 @@ async function runMode(page, origin, mode, sampleFilePath) {
       // Verify radio is now checked (React state update is sync via onChange)
       const nowChecked = await radioLocator.isChecked().catch(() => false);
       if (!nowChecked) {
-        // Fallback: force-set the radio state directly
+        // Fallback: check({force:true}) dispatches the browser click+change events on the element
+        // directly, bypassing actionability checks. This still fires React onChange because
+        // Playwright emits real DOM events — the "force" only skips the intercept guard.
+        log(`WARN: label click did not register for Mode ${mode} — using force fallback`);
         await radioLocator.check({ force: true });
       }
       log(`Selected Mode ${mode}`);
@@ -352,14 +355,14 @@ async function runMode(page, origin, mode, sampleFilePath) {
     details.push(`ERROR: ${msg}`);
     // Capture the page's mutation error state (if visible) to help diagnose backend failures
     try {
-      const mutationErrPanel = await page.locator('.upload-page__next-state-panel').first().isVisible();
-      if (mutationErrPanel) {
-        const panelText = await page.locator('.upload-page__next-state-panel').first().innerText();
+      const errPanel = page.locator('.upload-page__next-state-panel').first();
+      const errNote = page.locator('.upload-page__next-state-note').first();
+      if (await errPanel.isVisible()) {
+        const panelText = await errPanel.innerText();
         details.push(`Page state: ${panelText.replace(/\s+/g, ' ').slice(0, 400)}`);
       }
-      const mutationErrNote = await page.locator('.upload-page__next-state-note').first().isVisible();
-      if (mutationErrNote) {
-        const noteText = await page.locator('.upload-page__next-state-note').first().innerText();
+      if (await errNote.isVisible()) {
+        const noteText = await errNote.innerText();
         details.push(`Mutation error: ${noteText.replace(/\s+/g, ' ').slice(0, 300)}`);
       }
     } catch {
