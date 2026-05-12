@@ -104,7 +104,7 @@ pr_body_explicit_product_claim() {
   [ -n "$PR_BODY" ] || return 1
   local claim_patterns=(
     'Functional-Delivery-Artifact:[[:space:]]*[^[:space:]]+'
-    'FUNCTIONAL_PASS:[[:space:]]*yes'
+    'FUNCTIONAL_PASS:[[:space:]]*yes([[:space:]]*$)'
     'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'FULL_FUNCTIONAL_DELIVERY_VERDICT:[[:space:]]*PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
     'VERDICT:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)'

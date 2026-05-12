@@ -20,13 +20,13 @@
   "requires_ecap": true,
   "execution_model": "copilot-direct",
   "gate_change_evidence": [
-    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh — Passed: 35, Failed: 0 (includes T_gov1620 and T_gov1620b new regression tests)",
+    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh — Passed: 36, Failed: 0 (includes T_gov1620, T_gov1620b, and T_gov1620c new regression tests)",
     "local command output: bash .github/scripts/validate-governance-evidence-exactness.test.sh — Passed: 13, Failed: 0",
     "local command output: bash .github/scripts/affected-control-classifier.test.sh — Passed: 6, Failed: 0 (includes T_acc5 PR#1620 shape: .github/scripts+workflows → GATE_CONTROL, PRODUCT_DELIVERY_REQUIRED: no)",
     "local command output: bash .github/scripts/affected-control-classifier.sh — classifier correctly identifies .github/scripts and .github/workflows as GATE_CONTROL governance-controlled paths with ECAP_REQUIRED: yes, IAA_REQUIRED: yes, PRODUCT_DELIVERY_REQUIRED: no"
   ],
   "evidence_required": [
-    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh (Passed: 35 / Failed: 0)",
+    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh (Passed: 36 / Failed: 0)",
     "local command output: bash .github/scripts/validate-governance-evidence-exactness.test.sh (Passed: 13 / Failed: 0)",
     "local command output: bash .github/scripts/affected-control-classifier.test.sh (Passed: 6 / Failed: 0)"
   ],

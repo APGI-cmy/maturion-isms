@@ -859,6 +859,29 @@ EOF
 }
 run_test "T_gov1620b .github/scripts-only + explicit VERDICT claim in body -> FAIL (must require evidence)" 1 t_github_scripts_workflows_explicit_verdict_still_triggers
 
+t_github_scripts_functional_pass_inline_not_trigger() {
+  # PR body contains `FUNCTIONAL_PASS: yes` as backtick-quoted inline text (narrative example),
+  # not as a standalone formal field. This should NOT trigger product-facing classification.
+  mkdir -p .github/scripts .github/workflows
+  cat > .github/scripts/validate-product-delivery-gates.sh << 'EOF'
+#!/bin/bash
+exit 0
+EOF
+  cat > .github/workflows/preflight-evidence-gate.yml << 'EOF'
+name: Preflight
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: [{ run: echo ok }]
+EOF
+  TEST_PR_BODY=$'Gate fix: explicit formal claims (`FUNCTIONAL_PASS: yes`, `VERDICT: FULL_FUNCTIONAL_DELIVERY`) still trigger product evidence.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "Gate scripts with FUNCTIONAL_PASS: yes as inline backtick narrative in body"
+}
+run_test "T_gov1620c .github/scripts+workflows + FUNCTIONAL_PASS:yes as inline backtick text -> PASS (not product-facing)" 0 t_github_scripts_functional_pass_inline_not_trigger
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"
