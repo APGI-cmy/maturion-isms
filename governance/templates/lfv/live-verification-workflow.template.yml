@@ -130,6 +130,7 @@ jobs:
                   const isTextResponse = /^(text\/|.*\/(json|xml|javascript|.*\+xml))/.test(contentType);
                   if (isTextResponse) {
                     const body = await response.text().catch(() => '');
+                    // Keep RESPONSE_BODY single-line so verification-report.txt and summary parsing remain stable.
                     const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, responseBodyExcerptLimit);
                     results.RESPONSE_BODY = excerpt || 'empty';
                   } else {
@@ -261,7 +262,7 @@ jobs:
             for FIELD in DEPLOYMENT_ACCESS LOGIN_SUCCESS DASHBOARD_OR_PAGE_LOAD USER_JOURNEY_COMPLETE FAILING_REQUEST HTTP_STATUS RESPONSE_BODY CONSOLE_ERROR LIKELY_ROOT_CAUSE ARTIFACT_LINKS; do
               VALUE=$(grep "^${FIELD}:" verification-report.txt | sed 's/^[^:]*: //' || true)
               VALUE=${VALUE:-missing}
-              VALUE=$(printf '%s' "$VALUE" | tr '\n' ' ' | tr '|' '/')
+              VALUE=$(printf '%s' "$VALUE" | tr '\n' ' ' | sed 's/|/⎮/g')
               echo "| ${FIELD} | ${VALUE} |" >> $GITHUB_STEP_SUMMARY
             done
           fi
