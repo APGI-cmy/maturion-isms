@@ -152,7 +152,7 @@ jobs:
         if: always() && (inputs.pr_number != '' || github.event_name == 'pull_request')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number || '1590' }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
