@@ -112,10 +112,9 @@ jobs:
           fi
           echo "Secrets and inputs present."
 
-      - name: Install Playwright
+      - name: Install Playwright browsers
         run: |
-          npm install --no-save --no-audit --no-fund playwright@1.48.2
-          npx playwright install --with-deps chromium
+          npx -y playwright@1.48.2 install --with-deps chromium
 
       - name: Run live dashboard diagnosis
         id: diagnose
@@ -123,7 +122,7 @@ jobs:
         run: |
           mkdir -p "${ARTIFACT_DIR}"
           set +e
-          node scripts/mmm-live-dashboard-diagnosis/diagnose.mjs
+          npx -y -p playwright@1.48.2 node scripts/mmm-live-dashboard-diagnosis/diagnose.mjs
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
 
       - name: Upload diagnosis artifacts
