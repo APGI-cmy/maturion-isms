@@ -57,6 +57,8 @@ permissions:
   contents: read
   pull-requests: write
   issues: write
+  deployments: read
+  statuses: read
 
 concurrency:
   group: mmm-live-dashboard-diagnosis-${{ github.ref }}
@@ -281,7 +283,7 @@ jobs:
             missing=1
           fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
-          echo "Secrets and inputs present. MMM_PREVIEW_URL origin: $(node -e \"try{console.log(new URL(process.env.MMM_PREVIEW_URL).origin)}catch{console.log('invalid URL')}\")"
+          echo "Secrets and inputs present."
 
       - name: Install Playwright package and browsers
         run: |
