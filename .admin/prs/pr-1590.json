@@ -22,6 +22,8 @@
     "modules/MMM/tests/B4-framework/b4-framework.test.ts",
     "scripts/mmm-live-dashboard-diagnosis/README.md",
     "scripts/mmm-live-dashboard-diagnosis/diagnose.mjs",
+    "scripts/mmm-live-dashboard-diagnosis/sample-framework.txt",
+    "scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs",
     "supabase/functions/_shared/mmm-auth.ts",
     "supabase/functions/mmm-framework-compile/index.ts",
     "supabase/functions/mmm-framework-init/index.ts",

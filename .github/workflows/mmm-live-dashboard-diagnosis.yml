@@ -196,3 +196,119 @@ jobs:
           # 1 = dashboard failure reproduced (expected outcome; fail the job so signal is clear).
           # 2 = setup error (missing env, fatal).
           exit "${code:-2}"
+
+  verify-modes:
+    name: Verify Mode A/B/C
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: diagnose
+    # Run mode verification even if dashboard diagnosis failed so we get evidence
+    if: always() && (needs.diagnose.result == 'success' || needs.diagnose.result == 'failure')
+    env:
+      MMM_PREVIEW_URL: ${{ inputs.preview_url != '' && inputs.preview_url || secrets.MMM_PREVIEW_URL }}
+      MMM_TEST_ADMIN_EMAIL: ${{ secrets.MMM_TEST_ADMIN_EMAIL }}
+      MMM_TEST_ADMIN_PASSWORD: ${{ secrets.MMM_TEST_ADMIN_PASSWORD }}
+      MMM_TEST_ADMIN_USER_ID: ${{ secrets.MMM_TEST_ADMIN_USER_ID }}
+      MMM_TEST_ORGANISATION_ID: ${{ secrets.MMM_TEST_ORGANISATION_ID }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ARTIFACT_DIR: verify-artifacts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify required secrets
+        run: |
+          missing=0
+          for v in MMM_TEST_ADMIN_EMAIL MMM_TEST_ADMIN_PASSWORD; do
+            if [ -z "${!v}" ]; then
+              echo "::error::Repository secret $v is empty or not set"
+              missing=1
+            fi
+          done
+          if [ -z "${MMM_PREVIEW_URL}" ]; then
+            echo "::error::MMM_PREVIEW_URL is empty"
+            missing=1
+          fi
+          if [ "$missing" -ne 0 ]; then exit 1; fi
+          echo "Secrets and inputs present."
+
+      - name: Install Playwright package and browsers
+        run: |
+          mkdir -p /tmp/pw
+          echo '{"name":"pw-install","version":"1.0.0"}' > /tmp/pw/package.json
+          npm install --prefix /tmp/pw --no-audit --no-fund playwright@1.48.2
+          /tmp/pw/node_modules/.bin/playwright install --with-deps chromium
+          if [ -d node_modules ] && [ ! -L node_modules ]; then
+            ln -sf /tmp/pw/node_modules/playwright node_modules/playwright
+          else
+            ln -sf /tmp/pw/node_modules node_modules
+          fi
+
+      - name: Verify playwright runtime
+        run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(err => { console.error(err); process.exit(1); })"
+
+      - name: Run Mode A/B/C verification
+        id: verify
+        continue-on-error: true
+        run: |
+          mkdir -p "${ARTIFACT_DIR}"
+          set +e
+          node scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Upload verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mmm-mode-verification
+          path: verify-artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Print summary to job log
+        if: always()
+        run: |
+          if [ -f verify-artifacts/verify-modes-summary.md ]; then
+            {
+              echo "## MMM Mode A/B/C Verification";
+              echo "";
+              cat verify-artifacts/verify-modes-summary.md;
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "verify-modes-summary.md not produced" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Comment verification results on PR
+        if: always() && (inputs.pr_number != '' || github.event_name == 'pull_request')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          summary_path="verify-artifacts/verify-modes-summary.md"
+          if [ ! -f "$summary_path" ]; then
+            printf 'MMM Mode A/B/C verification did not produce a summary. See run log: %s\n' "$RUN_URL" > /tmp/verify-comment.md
+          else
+            {
+              printf '<!-- mmm-mode-verification -->\n'
+              printf '## MMM Mode A/B/C Verification — run %s\n\n' "${{ github.run_id }}"
+              cat "$summary_path"
+              printf '\n---\n'
+              printf 'ARTIFACT_LINKS: %s\n' "$RUN_URL#artifacts"
+              printf '\nRun: %s\n' "$RUN_URL"
+            } > /tmp/verify-comment.md
+          fi
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/verify-comment.md
+
+      - name: Re-emit verification exit code
+        if: always()
+        run: |
+          code="${{ steps.verify.outputs.exit_code }}"
+          echo "verify-mmm-modes.mjs exit code: $code"
+          exit "${code:-2}"
