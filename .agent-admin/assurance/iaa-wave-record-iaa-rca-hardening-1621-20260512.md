@@ -208,7 +208,7 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 *(To be populated after handover assurance — IAA only)*
 
 **Expected reference**: `IAA-session-iaa-rca-hardening-1621-20260512-PASS`
-**Status**: PENDING — pre-brief stage only
+**Status**: PENDING — R1 REJECTION-PACKAGE issued; R2 REJECTION-PACKAGE issued; awaiting R3
 
 ---
 
@@ -245,7 +245,76 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 
 ---
 
+### Rejection Entry — 2026-05-12 — IAA Handover Assurance Session R2
+
+**Date**: 2026-05-12
+**IAA Session**: session-iaa-rca-hardening-1621-R2-20260512
+**PR**: #1622 (copilot/harden-iaa-rca-behavior)
+**Verdict**: REJECTION-PACKAGE
+
+**Checks run**: 13 | PASS: 12 | FAIL: 1
+
+**PREFLIGHT**: 4/4 PASS
+- YAML identity: PASS (agent.id: independent-assurance-agent, version 6.2.0, SELF-MOD-IAA-001 active)
+- Tier 2A files: PASS (all 5 required files present)
+- CANON_INVENTORY: PASS (203 canons, 0 bad hashes, INDEPENDENT_ASSURANCE_AGENT_CANON.md present)
+- FAIL-ONLY-ONCE: PASS (A-001–A-043 loaded, no open breaches)
+
+**Independence**: CONFIRMED — IAA did not produce or contribute to any artifact in this PR
+
+**Category (diff-first, A-041)**: KNOWLEDGE_GOVERNANCE
+- Actual PR diff: 15 files (confirmed via GitHub API — `.agent-admin/`, `.agent-workspace/`, `.github/scripts/` only; no `.github/agents/`, no `governance/canon/`, no `.github/workflows/`)
+- Ceremony-admin: NOT appointed (ACR-01 through ACR-16 suppressed)
+
+**FAIL-ONLY-ONCE checks**:
+- A-001: IAA invocation evidence PRESENT — `iaa_audit_token: IAA-session-iaa-rca-hardening-1621-20260512-PASS` in PREHANDOVER proof ✅
+- A-002: N/A — no agent contract files
+
+**CORE invariants**:
+- CORE-020: Files_changed_count mismatch — declared 13, actual 15 → FAIL ❌ (absence of correct evidence = REJECTION-PACKAGE)
+- CORE-021: Zero-severity-tolerance — finding present → REJECTION-PACKAGE ❌
+
+**KNOWLEDGE_GOVERNANCE substance checks (OVL-KG-001 through OVL-KG-004)**:
+- OVL-KG-001: Rule clarity | Evidence: New rules in rca-trigger-checklist.md v1.1.0 (RCA-before-fix mandatory trigger), rca-operating-guidance.md v1.1.0 (admin-gap closure output shape, rule 10), iaa-category-overlays.md v4.5.0 (OVL-SAA-001–008, OVL-SMP-001–003) are unambiguous and actionable without interpretation | PASS ✅
+- OVL-KG-002: Incident grounding | Evidence: RCA-before-fix grounded in R1 REJECTION-PACKAGE (5 CERT failures from ceremony gap); OVL-SAA overlay grounded in #1618/#1620 evidence-model misapplication; OVL-SMP-003 grounded in nit-resolution gap confirmed in wave record rejection history | PASS ✅
+- OVL-KG-003: No duplication | Evidence: rca-trigger-checklist.md (when to invoke) and rca-operating-guidance.md (how to operate) are complementary not duplicative; MERGE_READY_NO_PATTERN and REJECTION_LANGUAGE_PATTERN in rca-trigger-detector.js are new detection patterns extending existing coverage | PASS ✅
+- OVL-KG-004: Cross-reference consistency | Evidence: rca-invocation-evidence-gate.sh confirmed present (pre-existing); `<!-- rca-required-marker -->` in rca-trigger-checklist.md matches marker consumed by rca-invocation-evidence-gate.sh; OVL-SAA and OVL-SMP IDs are self-defining in iaa-category-overlays.md v4.5.0; no dangling references detected | PASS ✅
+
+**KNOWLEDGE_GOVERNANCE admin checks**:
+- OVL-KG-ADM-001: PREHANDOVER ceremony | Evidence: PREHANDOVER proof present at `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-iaa-rca-hardening-1621-20260512.md`, session memory present at `.agent-workspace/foreman-v2/memory/session-iaa-rca-hardening-1621-20260512.md`, scope declaration at `.agent-admin/scope-declarations/pr-1622.md` | PASS ✅ (ceremony present — file count accuracy is covered by A-041 below)
+- OVL-KG-ADM-002: Version bumps consistent | Evidence: iaa-category-overlays.md header=4.5.0 / index declares 4.5.0 ✓; IAA knowledge index header=4.1.0 / self-declares 4.1.0 ✓; rca-trigger-checklist.md header=1.1.0 / rca index declares 1.1.0 ✓; rca-operating-guidance.md header=1.1.0 / rca index declares 1.1.0 ✓; rca knowledge index header=1.1.0 ✓; qa-builder/knowledge/index.md header=1.2.0 / self-declares 1.2.0 ✓ | PASS ✅
+- OVL-KG-ADM-003: Index.md updated | Evidence: IAA knowledge index v4.1.0 reflects iaa-category-overlays.md v4.5.0 with SIMPLIFIED_ADMIN_ASSURANCE and STRICT_MERGE_POSTURE overlays documented; RCA knowledge index v1.1.0 reflects rca-operating-guidance.md v1.1.0 and rca-trigger-checklist.md v1.1.0; QA knowledge index v1.2.0 reflects QA Risk-Radar addition | PASS ✅
+
+**Merge gate parity**:
+- merge-gate/verdict: PASS ✅ (https://github.com/APGI-cmy/maturion-isms/actions/runs/25742393040/job/75596228314)
+- governance/alignment: PASS ✅ (https://github.com/APGI-cmy/maturion-isms/actions/runs/25742393040/job/75596228238)
+- stop-and-fix/enforcement: PASS ✅ (https://github.com/APGI-cmy/maturion-isms/actions/runs/25742393040/job/75596228273)
+
+---
+
+**FAILURES (1 check FAILED)**:
+
+**FAIL-1 — A-041 / CORE-020 / CORE-021: FILES_CHANGED count and PREHANDOVER file list do not match actual PR diff**
+- **Finding**: Scope declaration declares `FILES_CHANGED: 13`. PREHANDOVER proof declares `files_changed_count: 13` and lists 13 files explicitly. GitHub API diff-first count: **15 files**. Two files present in the actual PR diff are absent from the PREHANDOVER proof's file list:
+  - `.github/scripts/validate-product-delivery-gates.sh` (present in scope declaration IN_SCOPE ✓, absent from PREHANDOVER file list ✗)
+  - `.github/scripts/validate-product-delivery-gates.test.sh` (present in scope declaration IN_SCOPE ✓, absent from PREHANDOVER file list ✗)
+- **Classification**: CEREMONY (same error class as R1 FILES_CHANGED finding — NO-REPEAT-PREVENTABLE-001 applies)
+- **Systemic pattern**: This is the second consecutive FILES_CHANGED integrity failure in this wave. R1 had FILES_CHANGED: 14 vs actual 13. R2 has FILES_CHANGED: 13 vs actual 15. Root cause: scope declaration FILES_CHANGED counter and PREHANDOVER proof file list were not updated when validate-product-delivery-gates.sh and .test.sh were recognised as deliverables. The `validate-scope-to-diff.sh` script exists in the repository (`.github/scripts/validate-scope-to-diff.sh`) but was not run before IAA invocation.
+- **Fix required**:
+  1. Correct scope declaration `FILES_CHANGED` from `13` to `15`
+  2. Produce corrected PREHANDOVER proof with `files_changed_count: 15` and complete 15-file list (add `validate-product-delivery-gates.sh` and `validate-product-delivery-gates.test.sh` to the numbered file list). Per A-029, the existing PREHANDOVER proof is read-only; produce a corrected replacement at the same path or a clearly labelled PREHANDOVER-R3 artifact.
+  3. Run `validate-scope-to-diff.sh` pre-IAA to confirm parity before re-invoking IAA.
+  4. Commit all corrections and re-invoke IAA (R3).
+- **Systemic prevention action**: Foreman must add `validate-scope-to-diff.sh` execution to the pre-IAA checklist at every KNOWLEDGE_GOVERNANCE wave handover. This is the permanent structural fix for recurring FILES_CHANGED integrity failures (NO-REPEAT-PREVENTABLE-001).
+
+**SUBSTANTIVE CONTENT VERDICT** (for Foreman's planning): All 7 acceptance criteria verified against actual evidence. KNOWLEDGE_GOVERNANCE substance (OVL-KG-001 through OVL-KG-004, OVL-KG-ADM-002, OVL-KG-ADM-003) evaluates **PASS**. CI merge gates all GREEN. The sole blocking finding is ceremony-class (FILES_CHANGED counter). R3 re-invocation after correction is expected to yield ASSURANCE-TOKEN.
+
+**HANDOVER_ALLOWED**: no
+**RESULT**: REJECTED_BACK_TO_PRODUCER
+
+---
+
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **IAA Agent Version**: 6.2.0 | **Contract Version**: 2.10.0
 **Adoption Phase**: PHASE_B_BLOCKING — hard gate ACTIVE
-**Generated**: 2026-05-12
+**Generated**: 2026-05-12 (R1) / Updated: 2026-05-12 (R2)
