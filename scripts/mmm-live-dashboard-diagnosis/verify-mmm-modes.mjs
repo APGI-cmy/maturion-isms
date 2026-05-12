@@ -205,7 +205,27 @@ async function runMode(page, origin, mode, sampleFilePath) {
     // 3. For Mode A/C, attach the sample file
     if (mode === 'A' || mode === 'C') {
       const fileInput = page.locator('#framework-source-file');
-      await fileInput.waitFor({ state: 'attached', timeout: WAIT_TIMEOUT });
+      try {
+        await fileInput.waitFor({ state: 'attached', timeout: WAIT_TIMEOUT });
+      } catch (fileErr) {
+        // Capture DOM diagnostic context to help diagnose why the file input did not render
+        const pageUrl = page.url();
+        const modeState = await page.evaluate(() => {
+          const sel = document.querySelector('.mode-card--selected');
+          const radio = sel?.querySelector('input[name="framework-mode"]');
+          return sel
+            ? `mode-card--selected present (radio value=${radio?.value ?? 'unknown'})`
+            : 'no .mode-card--selected in DOM';
+        }).catch(() => 'eval-error');
+        const actionsHtml = await page.evaluate(() => {
+          const el = document.querySelector('.upload-page__actions');
+          return el ? el.innerHTML.slice(0, 600) : '.upload-page__actions not found';
+        }).catch(() => 'eval-error');
+        log(`DIAG url=${pageUrl}`);
+        log(`DIAG modeCard=${modeState}`);
+        log(`DIAG actionsHtml=${actionsHtml}`);
+        throw fileErr;
+      }
       await fileInput.setInputFiles(sampleFilePath);
       log(`Attached sample file: ${path.basename(sampleFilePath)}`);
     }
