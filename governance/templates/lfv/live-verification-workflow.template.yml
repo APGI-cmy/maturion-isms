@@ -71,6 +71,7 @@ jobs:
             const testPassword = process.env.TEST_USER_PASSWORD;
             const headSha = process.env.HEAD_SHA;
             const githubOutput = process.env.GITHUB_OUTPUT;
+            const responseBodyExcerptLimit = 2000;
 
             let results = {
               DEPLOYMENT_ACCESS: 'no',
@@ -126,10 +127,10 @@ jobs:
                 results.HTTP_STATUS = response ? String(response.status()) : 'timeout';
                 if (response) {
                   const contentType = (response.headers()['content-type'] || '').toLowerCase();
-                  const isTextResponse = /^(text\/)|json|xml|html|javascript|css/.test(contentType);
+                  const isTextResponse = /^(text\/|.*\/(json|xml|javascript|.*\+xml))/.test(contentType);
                   if (isTextResponse) {
                     const body = await response.text().catch(() => '');
-                    const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, 2000);
+                    const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, responseBodyExcerptLimit);
                     results.RESPONSE_BODY = excerpt || 'empty';
                   } else {
                     results.RESPONSE_BODY = `non-text response omitted: ${contentType || 'unknown content-type'}`;
@@ -258,7 +259,7 @@ jobs:
 
           if [ -f verification-report.txt ]; then
             for FIELD in DEPLOYMENT_ACCESS LOGIN_SUCCESS DASHBOARD_OR_PAGE_LOAD USER_JOURNEY_COMPLETE FAILING_REQUEST HTTP_STATUS RESPONSE_BODY CONSOLE_ERROR LIKELY_ROOT_CAUSE ARTIFACT_LINKS; do
-              VALUE=$(grep "^${FIELD}:" verification-report.txt | cut -d' ' -f2- || true)
+              VALUE=$(grep "^${FIELD}:" verification-report.txt | sed 's/^[^:]*: //' || true)
               VALUE=${VALUE:-missing}
               VALUE=$(printf '%s' "$VALUE" | tr '\n' ' ' | tr '|' '/')
               echo "| ${FIELD} | ${VALUE} |" >> $GITHUB_STEP_SUMMARY
