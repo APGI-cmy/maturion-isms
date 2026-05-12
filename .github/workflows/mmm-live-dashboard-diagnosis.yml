@@ -202,7 +202,7 @@ jobs:
   verify-modes:
     name: Verify Mode A/B/C
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     needs: diagnose
     # Run mode verification even if dashboard diagnosis failed so we get evidence
     if: always() && (needs.diagnose.result == 'success' || needs.diagnose.result == 'failure')
@@ -213,6 +213,8 @@ jobs:
       MMM_TEST_ADMIN_USER_ID: ${{ secrets.MMM_TEST_ADMIN_USER_ID }}
       MMM_TEST_ORGANISATION_ID: ${{ secrets.MMM_TEST_ORGANISATION_ID }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
       ARTIFACT_DIR: verify-artifacts
     steps:
       - name: Checkout
@@ -299,6 +301,30 @@ jobs:
 
       - name: Verify playwright runtime
         run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(err => { console.error(err); process.exit(1); })"
+
+      - name: Set up Supabase CLI
+        # Deploy Edge Functions from this branch before verification so the CORS
+        # fix (and any other branch changes to supabase/functions) take effect
+        # without requiring a separate manual deploy step by CS2.
+        # Skipped when SUPABASE_ACCESS_TOKEN or SUPABASE_PROJECT_REF are not set.
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
+        uses: supabase/setup-cli@v1
+
+      - name: Deploy MMM Edge Functions (pre-verification)
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          deployed=0
+          for fn_dir in supabase/functions/*; do
+            [ -d "$fn_dir" ] || continue
+            fn_name="$(basename "$fn_dir")"
+            # Skip shared utility directories (prefixed with _)
+            case "$fn_name" in _*) continue ;; esac
+            echo "Deploying $fn_name …"
+            supabase functions deploy "$fn_name" --project-ref "$SUPABASE_PROJECT_REF"
+            deployed=$((deployed + 1))
+          done
+          echo "Pre-verification deploy complete: $deployed Edge Functions from $(git rev-parse --short HEAD)."
 
       - name: Run Mode A/B/C verification
         id: verify
