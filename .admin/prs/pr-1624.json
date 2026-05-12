@@ -1,0 +1,42 @@
+{
+  "pr": 1624,
+  "issue": 1619,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1624.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-lfv-package-20260512-20260512.md",
+    ".agent-admin/scope-declarations/pr-1624.md",
+    ".agent-admin/prehandover/proof-pr-1624-pit-lfv-package-20260512.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/foreman-v2/personal/scope-declaration-wave-pit-lfv-package.md",
+    "modules/pit/05-live-functional-verification/01_FUNCTIONAL_USER_JOURNEY_CONTRACT.md",
+    "modules/pit/05-live-functional-verification/02_AGENT_ACCESS_MATRIX.md",
+    "modules/pit/05-live-functional-verification/03_DEPLOYED_VERIFICATION_PLAN.md",
+    "modules/pit/05-live-functional-verification/04_CTA_BACKEND_STATE_MAP.md",
+    "modules/pit/05-live-functional-verification/05_TEST_IDENTITY_AND_ROLE_MATRIX.md",
+    "modules/pit/05-live-functional-verification/06_LIVE_VERIFICATION_WORKFLOW_SPEC.md",
+    "modules/pit/05-live-functional-verification/07_DASHBOARD_STATE_REFLECTION_GATE.md",
+    "modules/pit/05-live-functional-verification/08_HANDOVER_EVIDENCE_REQUIREMENTS.md",
+    "modules/pit/05-live-functional-verification/09_CS2_UI_ACCEPTANCE_CHECKLIST.md",
+    "modules/pit/05-live-functional-verification/pit-live-verification-workflow.yml",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": false,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
+  "evidence_required": [
+    "IAA Pre-Brief: .agent-admin/assurance/iaa-wave-record-pit-lfv-package-20260512-20260512.md committed at e25e606",
+    "9 PIT LFV artifacts instantiated with PIT-specific content (not generic placeholders)",
+    "pit-live-verification-workflow.yml placed in modules/pit/05-live-functional-verification/ (design artifact only — NOT activated in .github/workflows/)",
+    "BUILD_PROGRESS_TRACKER.md updated: Stage 5b LFV Package CREATED, Build Authorization NOT CLEARED",
+    "No application code, schema migrations, deployment config, builder appointment, or build authorization introduced",
+    "local command output: PR_NUMBER=1624 .github/scripts/validate-scope-to-diff.sh",
+    "local command output: PR_NUMBER=1624 .github/scripts/validate-governance-evidence-exactness.sh",
+    "local command output: BASE_SHA=$(git merge-base origin/main HEAD) PR_NUMBER=1624 ENFORCE_SCOPE=true bash .github/scripts/enforce-scope-declaration-policy.sh"
+  ],
+  "merge_authority": "CS2"
+}
