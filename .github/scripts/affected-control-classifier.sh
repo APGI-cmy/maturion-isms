@@ -4,8 +4,9 @@
 # Authority: maturion-isms#1640
 #
 # Runs early in the preflight pipeline as an informational step.
-# For PRs touching governance/canon/**, governance/templates/**, or
-# .agent-workspace/independent-assurance-agent/**, the pre-alert explicitly declares:
+# For PRs touching governance/canon/**, governance/templates/**,
+# .agent-workspace/independent-assurance-agent/**,
+# .github/scripts/**, or .github/workflows/**, the pre-alert explicitly declares:
 #   ECAP_REQUIRED, IAA_REQUIRED, CANON_INVENTORY_SYNC_REQUIRED,
 #   PRODUCT_DELIVERY_REQUIRED, GOVERNING_ISSUE_REQUIRED, HANDOVER_ALLOWED
 #
@@ -45,6 +46,7 @@ fi
 CANON_CHANGED=false
 TEMPLATE_CHANGED=false
 IAA_AGENT_CHANGED=false
+GATE_SCRIPT_CHANGED=false
 PRODUCT_CODE_CHANGED=false
 
 while IFS= read -r file; do
@@ -58,6 +60,9 @@ while IFS= read -r file; do
       ;;
     .agent-workspace/independent-assurance-agent/*)
       IAA_AGENT_CHANGED=true
+      ;;
+    .github/scripts/*|.github/workflows/*)
+      GATE_SCRIPT_CHANGED=true
       ;;
     .github/*|governance/*|docs/*|.agent-admin/*|.agent-workspace/*|.functional-delivery/pr-template.md)
       # Non-product governance/admin paths — no product code flag
@@ -73,12 +78,12 @@ while IFS= read -r file; do
 done <<< "$CHANGED_FILES"
 
 GOVERNANCE_CONTROLLED_CHANGED=false
-if [ "$CANON_CHANGED" = true ] || [ "$TEMPLATE_CHANGED" = true ] || [ "$IAA_AGENT_CHANGED" = true ]; then
+if [ "$CANON_CHANGED" = true ] || [ "$TEMPLATE_CHANGED" = true ] || [ "$IAA_AGENT_CHANGED" = true ] || [ "$GATE_SCRIPT_CHANGED" = true ]; then
   GOVERNANCE_CONTROLLED_CHANGED=true
 fi
 
 if [ "$GOVERNANCE_CONTROLLED_CHANGED" = false ]; then
-  echo "ℹ️  No governance-controlled control surfaces affected (governance/canon/**, governance/templates/**, .agent-workspace/independent-assurance-agent/**)."
+  echo "ℹ️  No governance-controlled control surfaces affected (governance/canon/**, governance/templates/**, .agent-workspace/independent-assurance-agent/**, .github/scripts/**, .github/workflows/**)."
   echo "   Affected-control pre-alert: N/A"
   echo ""
   echo "Changed files:"
@@ -91,14 +96,14 @@ fi
 echo "⚠️  Governance-controlled control surfaces detected in PR diff."
 echo ""
 echo "Changed control-surface files:"
-echo "$CHANGED_FILES" | grep -E '^(governance/canon/|governance/templates/|\.agent-workspace/independent-assurance-agent/)' | sed 's/^/  - /' || true
+echo "$CHANGED_FILES" | grep -E '^(governance/canon/|governance/templates/|\.agent-workspace/independent-assurance-agent/|\.github/scripts/|\.github/workflows/)' | sed 's/^/  - /' || true
 echo ""
 
 # Determine PRODUCT_DELIVERY_REQUIRED
 if [ "$PRODUCT_CODE_CHANGED" = true ]; then
   PRODUCT_DELIVERY_REQUIRED="yes — product code also changed in this PR"
 else
-  PRODUCT_DELIVERY_REQUIRED="no — only governance/canon/template/IAA-agent control surfaces changed"
+  PRODUCT_DELIVERY_REQUIRED="no — only governance/canon/template/IAA-agent/gate-script control surfaces changed"
 fi
 
 # CANON_INVENTORY_SYNC_REQUIRED only when governance/canon/** is touched
@@ -123,6 +128,8 @@ echo "  Control surfaces triggered:"
 [ "$CANON_CHANGED" = true ]    && echo "    - governance/canon/**      → CANON_GOVERNANCE class"
 [ "$TEMPLATE_CHANGED" = true ] && echo "    - governance/templates/**  → CANON_GOVERNANCE class"
 [ "$IAA_AGENT_CHANGED" = true ] && echo "    - .agent-workspace/independent-assurance-agent/** → AGENT_CONTRACT class"
+[ "$GATE_SCRIPT_CHANGED" = true ] && echo "    - .github/scripts/**       → GATE_CONTROL class"
+[ "$GATE_SCRIPT_CHANGED" = true ] && echo "    - .github/workflows/**     → GATE_CONTROL class (if changed)"
 echo ""
 echo "  Required agents:"
 echo "    - execution-ceremony-admin-agent  (ECAP_REQUIRED)"
