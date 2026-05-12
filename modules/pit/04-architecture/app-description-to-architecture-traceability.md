@@ -74,7 +74,7 @@ Each §AD requirement is addressed either:
 - **Directly** by a named architecture section (§1–§25 of `architecture.md`), or
 - **Indirectly** through cross-artifact coverage (`stage5-architecture-reconciliation.md`, `trs-to-architecture-traceability.md`, `timeline-engine-architecture-decision.md`, `BUILD_PROGRESS_TRACKER.md`)
 
-No §AD requirement relies on a future stage artifact. All coverage is available in the Stage 5 package committed under PR #1612 / maturion-isms#1611.
+No §AD requirement relies on a future stage artifact. All coverage is available in the Stage 5 package committed under PR #1612 (governing issue maturion-isms#1611).
 
 ---
 
