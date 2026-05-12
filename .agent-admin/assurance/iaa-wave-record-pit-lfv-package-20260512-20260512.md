@@ -159,11 +159,44 @@ IAA will verify the following at full (Phase 2–4) assurance invocation:
 
 ## TOKEN
 
-*Awaiting full IAA assurance — to be populated after Phase 2–4 invocation*
+*REJECTION-PACKAGE issued — no ASSURANCE-TOKEN at this time. See REJECTION_HISTORY below.*
 
 ---
 
 ## REJECTION_HISTORY
 
-*No rejections recorded — PRE-BRIEF phase only*
+### Rejection Entry 001
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-05-12 |
+| IAA Session | IAA-session-pit-lfv-package-20260512-REJECT-001 |
+| Phase | PHASE_B_BLOCKING |
+| Total Checks | 10 |
+| PASS | 5 |
+| FAIL | 5 |
+| Verdict | REJECTION-PACKAGE |
+
+#### Failures
+
+| ID | Check | Finding Summary | Fix Required | Classification |
+|----|-------|----------------|--------------|----------------|
+| F-01 | CORE-026 (Acceptance-Criteria Matrix) | Issue #1619 is "Tune affected-control classifier" — 7/7 acceptance criteria unmet by PIT LFV artifact deliverables | Identify correct governing issue for PIT LFV package; update all wave artifacts to reference it; re-invoke IAA | Substantive |
+| F-02 | CORE-020 (Zero Partial Pass / CS2 Auth Unverifiable) | PREHANDOVER claims issue #1619 contains "explicit directive to create PIT LFV package" — actual issue #1619 contains no such directive | Cite correct CS2-authorising issue; update PREHANDOVER CS2 Authorization Statement; OR have CS2 update issue #1619 with explicit LFV directive | Substantive |
+| F-03 | CORE-027 (Independent Risk Challenge) | Broken governing-issue link creates audit traceability void; future reviewers will incorrectly associate classifier-tuning issue #1619 with PIT LFV wave | Resolved by fixing F-01 and F-02 | Substantive |
+| F-04 | PR Draft Status / Open Checklist Items | PR #1624 is draft:true; PR body has multiple unchecked [ ] items contradicting final_state: COMPLETE | Remove WIP prefix; mark PR ready for review; tick all completed checklist items | Ceremony |
+| F-05 | wave-current-tasks.md T-6 IN_PROGRESS vs COMPLETE | T-6 status is 🟡 IN_PROGRESS while PREHANDOVER declares final_state: COMPLETE | Update T-6 to 🟢 DONE with evidence reference | Ceremony |
+
+#### Systemic Prevention Action
+Add mandatory `Issue-Title-Verified:` field to scope declaration template. Foreman must retrieve actual GitHub issue title before ceremony completion. IAA will cross-check at next full assurance invocation.
+
+#### Passing Checks (for producer reference)
+- A-041 (Diff-First Classification): PASS — 17 files, exactly matching scope; pit-live-verification-workflow.yml correctly in modules/pit/ not .github/workflows/
+- A-033 (Git-committed): PASS — all 17 artifacts in git index; working tree clean at HEAD 7b8830e
+- OVL-PBG-001/002 (Module identity): PASS
+- OVL-PBG-006 (12-stage model): PASS
+- SB-02/SB-04 (PIT-specific content / No build auth): PASS — LFV artifact substance is high quality; BUILD_PROGRESS_TRACKER correctly NOT CLEARED
+
+#### Note to Producers
+The LFV artifact substance (9 artifacts + workflow spec) is of high quality and is the correct category of work. The rejection is entirely about the governing issue linkage and PR hygiene. Once the correct governing issue is confirmed and PR hygiene items resolved, this wave should pass re-invocation with minimal additional work.
 
