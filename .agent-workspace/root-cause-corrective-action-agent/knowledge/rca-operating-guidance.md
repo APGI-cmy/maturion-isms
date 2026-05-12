@@ -31,7 +31,7 @@ RCA is used to convert meaningful failures into recurrence-prevention actions.
 Every mandatory RCA assessment MUST produce all five sections below. Omitting any section is a
 protocol violation.
 
-```
+```text
 Root cause:
   Specific missed rule, weak classifier, bad assumption, missing test, stale evidence, or
   agent instruction failure. Must name the exact rule/classifier/assumption that failed,

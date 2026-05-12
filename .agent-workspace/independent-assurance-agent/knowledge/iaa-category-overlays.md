@@ -475,7 +475,12 @@ OVL-GE-004 Acceptance-Criteria Coverage:
 
 **Evidence sources**: `.admin/pr.json`, PR diff, changed-file classes, current CI check status, governing issue text, prior CS2/QA rejection comments, known failure patterns from `FAIL-ONLY-ONCE.md`, evidence model selection rules below.
 
-**Evidence model selection rule**: Governance/admin/gate-control PRs MUST be evaluated using the gate/admin evidence model (not the product-delivery model). Exception: if the PR diff includes runtime product code in `apps/`, `modules/`, or `packages/`, OR if the PR body makes an explicit formal product-delivery claim (e.g., `USER_JOURNEY_COMPLETE:`, `FUNCTIONAL_PASS:`, `FULL_FUNCTIONAL_DELIVERY_VERDICT:`), the product-delivery model MUST be applied in addition to the gate/admin evidence model.
+**Evidence model selection rule**:
+
+- **Default**: Governance/admin/gate-control PRs MUST be evaluated using the gate/admin evidence model (not the product-delivery model).
+- **Exception — apply product-delivery model in addition**: If EITHER of the following is true, the product-delivery model MUST also be applied:
+  - The PR diff includes runtime product code in `apps/`, `modules/`, or `packages/`
+  - The PR body contains an explicit formal product-delivery claim (e.g., `USER_JOURNEY_COMPLETE:`, `FUNCTIONAL_PASS:`, `FULL_FUNCTIONAL_DELIVERY_VERDICT:`)
 
 | Check ID | Question | Pass Condition | Fail Action |
 |----------|----------|----------------|-------------|
