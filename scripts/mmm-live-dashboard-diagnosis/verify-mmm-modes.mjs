@@ -492,6 +492,23 @@ async function main() {
   await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
   const page = await context.newPage();
 
+  // Capture browser console errors and failed network requests for diagnostics.
+  // These surface the exact CORS error message (e.g. "Access to fetch at
+  // 'https://xxx.supabase.co/functions/v1/...' from origin '...' has been blocked
+  // by CORS policy") and failed request URLs, making root-cause analysis faster.
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      console.error(`[verify-modes][browser-console][error] ${msg.text()}`);
+    } else if (msg.type() === 'warning') {
+      console.warn(`[verify-modes][browser-console][warn] ${msg.text()}`);
+    }
+  });
+  page.on('requestfailed', (request) => {
+    console.error(
+      `[verify-modes][network-failed] ${request.method()} ${request.url()} — ${request.failure()?.errorText ?? 'unknown error'}`,
+    );
+  });
+
   const results = {};
 
   try {

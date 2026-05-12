@@ -326,6 +326,38 @@ jobs:
           done
           echo "Pre-verification deploy complete: $deployed Edge Functions from $(git rev-parse --short HEAD)."
 
+      - name: Wait for Edge Function propagation
+        # Supabase Edge Function deployments need ~30-90 s to propagate globally.
+        # Without this wait, the Playwright verification starts immediately after
+        # deploy, the new function versions are not yet serving, and all requests
+        # fail with "Failed to send a request to the Edge Function" (CORS preflight
+        # fails because the old version may still be responding).
+        # Strategy: initial 15 s sleep, then poll mmm-health (verify_jwt=false)
+        # every 10 s until it returns any HTTP response or 3 minutes elapse.
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
+        run: |
+          SUPABASE_FUNCTIONS_URL="https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1"
+          echo "Waiting 15 s for initial propagation…"
+          sleep 15
+          # Poll every 10 s, up to 18 iterations = 15 s initial + 18×10 s polling = 195 s max wait.
+          echo "Polling mmm-health until live (up to 195 s total)…"
+          for i in $(seq 1 18); do
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              --max-time 8 \
+              "${SUPABASE_FUNCTIONS_URL}/mmm-health" 2>/dev/null || echo "000")
+            elapsed=$((15 + (i - 1) * 10))
+            echo "  Attempt ${i}/18 (${elapsed}s elapsed) — mmm-health HTTP status: ${HTTP_STATUS}"
+            # Any real HTTP response (including 401/403 — no apikey) means the
+            # function is live and serving.  000 = connection failed (not yet live).
+            if [ "$HTTP_STATUS" != "000" ]; then
+              echo "Edge Functions live after ${elapsed}s."
+              break
+            fi
+            if [ "$i" -lt 18 ]; then
+              sleep 10
+            fi
+          done
+
       - name: Run Mode A/B/C verification
         id: verify
         continue-on-error: true
