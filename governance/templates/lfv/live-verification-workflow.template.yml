@@ -126,10 +126,10 @@ jobs:
                 results.FAILING_REQUEST = bypassUrl;
                 results.HTTP_STATUS = response ? String(response.status()) : 'timeout';
                 if (response) {
-                  const contentType = ((await response.headerValue('content-type').catch(() => 'header-unavailable')) || '').toLowerCase();
+                  const contentType = ((await response.headerValue('content-type').catch(() => 'content-type-header-missing')) || '').toLowerCase();
                   const isTextResponse = /^(text\/|.*\/(json|xml|javascript|.*\+xml))/.test(contentType);
                   if (isTextResponse) {
-                    const body = await response.text().catch(() => '[body retrieval failed]');
+                    const body = await response.text().catch(() => 'body-retrieval-failed');
                     // RESPONSE_BODY is a bounded, single-line excerpt because verification-report.txt uses one KEY: value per line.
                     // Example: formatted JSON/newlines become spaces; full response details remain in the HAR artifact.
                     const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, responseBodyExcerptLimit);
@@ -261,7 +261,7 @@ jobs:
 
           if [ -f verification-report.txt ]; then
             for FIELD in DEPLOYMENT_ACCESS LOGIN_SUCCESS DASHBOARD_OR_PAGE_LOAD USER_JOURNEY_COMPLETE FAILING_REQUEST HTTP_STATUS RESPONSE_BODY CONSOLE_ERROR LIKELY_ROOT_CAUSE ARTIFACT_LINKS; do
-              VALUE=$(grep "^${FIELD}:" verification-report.txt | sed -e "s/^${FIELD}: //" -e "s/^${FIELD}://" || true)
+              VALUE=$(grep "^${FIELD}:" verification-report.txt | sed "s/^${FIELD}: *//" || true)
               VALUE=${VALUE:-missing}
               # Use the HTML pipe entity so Markdown tables remain valid without changing displayed text.
               VALUE=$(printf '%s' "$VALUE" | perl -pe 's/\|/&#124;/g')
