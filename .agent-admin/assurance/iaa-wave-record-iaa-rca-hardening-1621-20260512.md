@@ -214,7 +214,34 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 
 ## REJECTION_HISTORY
 
-*(Empty — no rejections recorded for this wave yet)*
+### Rejection Entry — 2026-05-12 — IAA Handover Assurance Session
+
+**Date**: 2026-05-12
+**IAA Session**: session-iaa-rca-hardening-1621-20260512
+**PR**: #1622 (copilot/harden-iaa-rca-behavior)
+**Verdict**: REJECTION-PACKAGE
+
+**Failures (5 checks FAILED + 2 supplementary findings):**
+
+1. **CERT-001 / OVL-KG-ADM-001 / A-015** — PREHANDOVER proof absent. No file matching `*PREHANDOVER*iaa-rca*` or `*PREHANDOVER*1621*` found in the repository. A-015 requires full PREHANDOVER ceremony for knowledge patches. Fix: produce and commit PREHANDOVER proof with all required fields (wave_id, pr_number, branch, session_id, final_state: PENDING, iaa_audit_token per A-029, files_changed_count, trigger_category_confirmed, version_bumps, index_updates).
+
+2. **CERT-002** — Session memory for producing agent(s) absent. No session memory file for this wave found. Fix: commit session memory at `.agent-workspace/<agent>/memory/session-<NNN>-20260512.md`.
+
+3. **CERT-003** — FAIL-ONLY-ONCE attestation unverifiable — session memory absent. Fix: resolve CERT-002, include `fail_only_once_attested` declaration.
+
+4. **CERT-004** — `iaa_audit_token` field unverifiable — PREHANDOVER proof absent. Fix: resolve CERT-001, ensure `iaa_audit_token: IAA-session-iaa-rca-hardening-1621-20260512-PASS` present per A-029.
+
+5. **FILES_CHANGED declared-state integrity** — Scope declaration declares `FILES_CHANGED: 14`; A-041 independent diff-first count yields 13 files; IN_SCOPE list has 13 entries. Fix: correct `FILES_CHANGED` to `13` in `pr-1622.md`.
+
+**Supplementary findings (blocking under CORE-020):**
+
+- **AC7 CI evidence unverifiable** — 45-test GREEN claim made but no CI run artifact or URL present in PR bundle. Fix: include CI run URL or test output artifact in PREHANDOVER proof.
+- **NO-REPEAT-PREVENTABLE-001** — PREHANDOVER proof omission recurs. Prevention: include PREHANDOVER proof template in builder delegation package at every KNOWLEDGE_GOVERNANCE wave delegation. Foreman must enforce at delegation, not at handover.
+
+**Substantive content verdict**: KNOWLEDGE_GOVERNANCE substance (OVL-KG-001 through OVL-KG-004) evaluates PASS — new overlays are clear, grounded, non-duplicative, and cross-reference consistent. Failures are ceremony-class. Re-invocation after ceremony remediation is expected to proceed quickly.
+
+**HANDOVER_ALLOWED**: no
+**RESULT**: REJECTED_BACK_TO_PRODUCER
 
 ---
 
