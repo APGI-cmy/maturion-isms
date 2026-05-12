@@ -89,7 +89,6 @@ check_t_acc1() {
   local output="$1"
   local exit_code="$2"
   [ "$exit_code" -eq 0 ] || return 1
-  echo "$output" | grep -q "GOVERNANCE_CONTROLLED_CHANGED" || echo "$output" | grep -q "GATE_CONTROL class" || return 1
   echo "$output" | grep -q "GATE_CONTROL class" || return 1
   echo "$output" | grep -q "ECAP_REQUIRED" || return 1
   echo "$output" | grep -q "IAA_REQUIRED" || return 1

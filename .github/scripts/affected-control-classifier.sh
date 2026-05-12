@@ -46,7 +46,8 @@ fi
 CANON_CHANGED=false
 TEMPLATE_CHANGED=false
 IAA_AGENT_CHANGED=false
-GATE_SCRIPT_CHANGED=false
+GATE_SCRIPTS_CHANGED=false
+GATE_WORKFLOWS_CHANGED=false
 PRODUCT_CODE_CHANGED=false
 
 while IFS= read -r file; do
@@ -61,8 +62,11 @@ while IFS= read -r file; do
     .agent-workspace/independent-assurance-agent/*)
       IAA_AGENT_CHANGED=true
       ;;
-    .github/scripts/*|.github/workflows/*)
-      GATE_SCRIPT_CHANGED=true
+    .github/scripts/*)
+      GATE_SCRIPTS_CHANGED=true
+      ;;
+    .github/workflows/*)
+      GATE_WORKFLOWS_CHANGED=true
       ;;
     .github/*|governance/*|docs/*|.agent-admin/*|.agent-workspace/*|.functional-delivery/pr-template.md)
       # Non-product governance/admin paths — no product code flag
@@ -76,6 +80,11 @@ while IFS= read -r file; do
       ;;
   esac
 done <<< "$CHANGED_FILES"
+
+GATE_SCRIPT_CHANGED=false
+if [ "$GATE_SCRIPTS_CHANGED" = true ] || [ "$GATE_WORKFLOWS_CHANGED" = true ]; then
+  GATE_SCRIPT_CHANGED=true
+fi
 
 GOVERNANCE_CONTROLLED_CHANGED=false
 if [ "$CANON_CHANGED" = true ] || [ "$TEMPLATE_CHANGED" = true ] || [ "$IAA_AGENT_CHANGED" = true ] || [ "$GATE_SCRIPT_CHANGED" = true ]; then
@@ -125,11 +134,11 @@ echo "  GOVERNING_ISSUE_REQUIRED:      explicit"
 echo "  HANDOVER_ALLOWED:              no until preflight green"
 echo ""
 echo "  Control surfaces triggered:"
-[ "$CANON_CHANGED" = true ]    && echo "    - governance/canon/**      → CANON_GOVERNANCE class"
-[ "$TEMPLATE_CHANGED" = true ] && echo "    - governance/templates/**  → CANON_GOVERNANCE class"
-[ "$IAA_AGENT_CHANGED" = true ] && echo "    - .agent-workspace/independent-assurance-agent/** → AGENT_CONTRACT class"
-[ "$GATE_SCRIPT_CHANGED" = true ] && echo "    - .github/scripts/**       → GATE_CONTROL class"
-[ "$GATE_SCRIPT_CHANGED" = true ] && echo "    - .github/workflows/**     → GATE_CONTROL class (if changed)"
+[ "$CANON_CHANGED" = true ]           && echo "    - governance/canon/**      → CANON_GOVERNANCE class"
+[ "$TEMPLATE_CHANGED" = true ]        && echo "    - governance/templates/**  → CANON_GOVERNANCE class"
+[ "$IAA_AGENT_CHANGED" = true ]       && echo "    - .agent-workspace/independent-assurance-agent/** → AGENT_CONTRACT class"
+[ "$GATE_SCRIPTS_CHANGED" = true ]    && echo "    - .github/scripts/**       → GATE_CONTROL class"
+[ "$GATE_WORKFLOWS_CHANGED" = true ]  && echo "    - .github/workflows/**     → GATE_CONTROL class"
 echo ""
 echo "  Required agents:"
 echo "    - execution-ceremony-admin-agent  (ECAP_REQUIRED)"
