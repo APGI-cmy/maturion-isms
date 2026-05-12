@@ -84,6 +84,7 @@ Full functional delivery (dashboard with authenticated ADMIN/LEAD_AUDITOR role l
 - mmm-framework-compile: proposed-table queries use proposed_domain_id/proposed_mps_id; sort_order; intent_statement; maturity_level_target
 - mmm-framework-publish: removed published_at; audit log uses after_state
 - mmm_parse_jobs.framework_id migration: 20260510000001_mmm_parse_jobs_framework_id.sql
+- mmm-live-dashboard-diagnosis.yml: added pull_request trigger so workflow runs automatically on PR updates (resolves workflow_dispatch UI limitation where default-branch-only workflows are not visible for branch PRs)
 
 ### Outstanding for full functional closure (live verification only — code is complete)
 - Mode A: deployed preview verification (parse job PENDING→PROCESSING→COMPLETE, proposed domains created, compile succeeds, publish succeeds)

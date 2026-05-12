@@ -32,6 +32,14 @@ name: MMM Live Dashboard Diagnosis
 #      standard diagnosis fields
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/mmm-live-dashboard-diagnosis.yml'
+      - 'scripts/mmm-live-dashboard-diagnosis/**'
+      - 'apps/mmm/**'
+      - 'supabase/functions/**'
   workflow_dispatch:
     inputs:
       preview_url:
@@ -141,10 +149,10 @@ jobs:
           fi
 
       - name: Comment diagnosis on PR
-        if: always() && inputs.pr_number != ''
+        if: always() && (inputs.pr_number != '' || github.event_name == 'pull_request')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ inputs.pr_number }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number || '1590' }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
