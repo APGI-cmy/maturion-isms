@@ -140,30 +140,63 @@ async function runMode(page, origin, mode, sampleFilePath) {
     log('Navigated to /frameworks/upload');
 
     // 2. Select the mode via the radio button.
-    // NOTE: The radio input has className="sr-only" (visually hidden).
-    // Previous approach (labelLocator.click()) registered in the DOM but did NOT reliably
-    // trigger React's event delegation (onChange → setMode) in headless Chromium — the
-    // label click fires browser pointer events but Playwright's synthetic dispatch can be
-    // intercepted before reaching React's root event listener.
-    // FIX: use page.evaluate to call the browser's native el.click() directly on the radio
-    // input. This fires a trusted browser event that bubbles through React's root delegation,
-    // guaranteeing onChange → setMode fires regardless of element visibility.
+    // The radio input has className="sr-only" — visually hidden, controlled by React.
+    //
+    // IMPORTANT: Do NOT verify selection via radioLocator.isChecked().
+    // isChecked() reads the DOM attribute, which can be temporarily true (the browser sets it
+    // during a click) before React's controlled-component re-render resets it to the value
+    // dictated by React state. If React's onChange never fired (state stays 'B'), the DOM
+    // reverts to checked=false — but by then isChecked() has already returned true, the
+    // fallback was skipped, and #framework-source-file never renders (mode still 'B').
+    //
+    // Instead, verify via React's mode-card--selected CSS class, which is ONLY applied when
+    // React state === m.id. This class is the ground-truth signal that React re-rendered
+    // with the new mode.
+    //
+    // Primary click target: .mode-card__content (the visible text span inside the label).
+    // Clicking a visible child element bubbles to the <label>, which triggers the browser's
+    // native label-radio activation mechanism — the browser fires an additional click on the
+    // associated radio input, React's root event listener catches it, onChange fires, setMode
+    // is called, and React re-renders with the new mode.
     const radioLocator = page.locator(`input[name="framework-mode"][value="${mode}"]`);
+    const modeCardSelectedLocator = page.locator(
+      `label.mode-card--selected:has(input[value="${mode}"])`,
+    );
+
     await radioLocator.waitFor({ state: 'attached', timeout: WAIT_TIMEOUT });
-    const isChecked = await radioLocator.isChecked();
-    if (!isChecked) {
-      await page.evaluate((modeValue) => {
-        const escaped = CSS.escape(modeValue);
-        const el = document.querySelector(`input[name="framework-mode"][value="${escaped}"]`);
-        if (el) el.click();
-      }, mode);
-      // Verify radio is now checked after the JS click
-      const nowChecked = await radioLocator.isChecked().catch(() => false);
-      if (!nowChecked) {
-        // Fallback: Playwright force-check (still dispatches DOM change/click events)
-        log(`WARN: JS evaluate click did not register for Mode ${mode} — using force fallback`);
+
+    // Check if React already has this mode selected (confirmed via CSS class, not DOM attr)
+    const alreadySelected = await modeCardSelectedLocator
+      .waitFor({ state: 'attached', timeout: 500 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (!alreadySelected) {
+      // Click the visible text content area inside the mode-card label
+      const contentLocator = page.locator(
+        `label.mode-card:has(input[value="${mode}"]) .mode-card__content`,
+      );
+      await contentLocator.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+      await contentLocator.click();
+
+      // Verify React state updated — CSS class confirms re-render, not just DOM attr change
+      const reactUpdated = await modeCardSelectedLocator
+        .waitFor({ state: 'attached', timeout: 3000 })
+        .then(() => true)
+        .catch(() => false);
+
+      if (!reactUpdated) {
+        // Fallback: force-check the hidden radio (bypasses visibility guards)
+        log(
+          `WARN: mode-card content click did not update React state for Mode ${mode} — using force-check fallback`,
+        );
         await radioLocator.check({ force: true });
+        // Give React one final chance to re-render
+        await modeCardSelectedLocator
+          .waitFor({ state: 'attached', timeout: 2000 })
+          .catch(() => {});
       }
+
       log(`Selected Mode ${mode}`);
     } else {
       log(`Mode ${mode} already selected`);
