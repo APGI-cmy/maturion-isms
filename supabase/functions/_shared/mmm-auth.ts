@@ -42,7 +42,7 @@ export async function validateJWT(
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw new Response(
       JSON.stringify({ error: 'Missing or malformed Authorization header' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } },
+      { status: 401, headers: _corsResponseHeaders() },
     );
   }
 
@@ -53,7 +53,7 @@ export async function validateJWT(
   if (authError || !userData?.user) {
     throw new Response(
       JSON.stringify({ error: 'Invalid or expired JWT' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } },
+      { status: 401, headers: _corsResponseHeaders() },
     );
   }
 
@@ -69,7 +69,7 @@ export async function validateJWT(
   if (profileError || !profile) {
     throw new Response(
       JSON.stringify({ error: 'No profile found for authenticated user' }),
-      { status: 403, headers: { 'Content-Type': 'application/json' } },
+      { status: 403, headers: _corsResponseHeaders() },
     );
   }
 
@@ -97,26 +97,28 @@ export function requireRole(role: string, allowedRoles: string[]): void {
         required: allowedRoles,
         actual: role,
       }),
-      { status: 403, headers: { 'Content-Type': 'application/json' } },
+      { status: 403, headers: _corsResponseHeaders() },
     );
   }
 }
 
+/** Internal: standard CORS response headers (JSON + CORS). Used by error throws and jsonResponse. */
+function _corsResponseHeaders(): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
+
 /** Convenience: build a JSON Response with CORS headers */
 export function jsonResponse(body: unknown, status = 200): Response {
-  const h = new Headers();
-  h.set('Content-Type', 'application/json');
-  h.set('Access-Control-Allow-Origin', '*');
-  h.set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
-  h.set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
-  return new Response(JSON.stringify(body), { status, headers: h });
+  return new Response(JSON.stringify(body), { status, headers: _corsResponseHeaders() });
 }
 
 /** Convenience: build a CORS-preflight response for OPTIONS requests */
 export function corsHeaders(): Headers {
-  const h = new Headers();
-  h.set('Access-Control-Allow-Origin', '*');
-  h.set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
-  h.set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  const h = new Headers(_corsResponseHeaders());
   return h;
 }
