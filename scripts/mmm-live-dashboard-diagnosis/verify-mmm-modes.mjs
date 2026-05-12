@@ -228,6 +228,17 @@ async function runMode(page, origin, mode, sampleFilePath) {
       }
       await fileInput.setInputFiles(sampleFilePath);
       log(`Attached sample file: ${path.basename(sampleFilePath)}`);
+      // Wait for React to process the onChange event from setInputFiles and re-render
+      // the Start button as enabled (React state update is asynchronous after DOM events).
+      await page.waitForFunction(
+        () => {
+          const btn = document.querySelector('.upload-page__start-btn');
+          return btn !== null && !btn.hasAttribute('disabled');
+        },
+        { timeout: 5000 },
+      ).catch(() => {
+        // Best-effort; fall through to the isEnabled check which will report the failure.
+      });
     }
 
     // 4. Click Start — wait for redirect to review page.
