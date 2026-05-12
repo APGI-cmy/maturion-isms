@@ -721,6 +721,167 @@ t7_full_valid() {
 }
 run_test "T7 full valid product-delivery pack -> PASS" 0 t7_full_valid
 
+# ─── PR#1618-style regression tests ─────────────────────────────────────────
+# These tests cover the misclassification observed in PR APGI-cmy/maturion-isms#1618:
+# A governance/canon + governance/templates PR whose body discussed "functional delivery"
+# concepts (as historical/governance context) was incorrectly classified as product-facing,
+# requiring .functional-delivery/pr-<n>.md evidence that was not applicable.
+
+t_gov_canon_with_functional_delivery_body() {
+  # Only governance/canon/** and governance/templates/** files changed.
+  # PR body contains narrative "functional delivery" language from PR#1618.
+  mkdir -p governance/canon governance/templates/lfv
+  cat > governance/canon/LIVE_FUNCTIONAL_VERIFICATION_CANON.md << 'EOF'
+# Live Functional Verification Canon v1.0.0
+Governance-only canon update.
+EOF
+  cat > governance/templates/lfv/01_FUNCTIONAL_USER_JOURNEY_CONTRACT.md << 'EOF'
+# LFV Template: Functional User Journey Contract
+Governance-only template.
+EOF
+  # PR body mirrors PR#1618: discusses functional delivery concepts as governance context,
+  # includes a historical reference (#1590), and an explicit Governing-Issue (#1617).
+  TEST_PR_BODY=$'Adds mandatory Live Functional Verification package.\n\n**Governance-only PR** — no runtime product code changes. Historical reference: PR APGI-cmy/maturion-isms#1590 exposed a gap in the pre-build assurance model (builds could be CI-green and admin-complete yet have no upfront contract for a deployed live verification pass). This PR closes that gap at the governance/canon level.\n\nGoals: enforce functional delivery workflow. Deployed workflow evidence required. Live verification mandatory for UI/application builds.\n\nGoverning-Issue: APGI-cmy/maturion-isms#1617'
+  export TEST_PR_BODY
+  mkdir -p governance/templates/lfv
+  git add .
+  git commit -q -m "PR#1618-style: governance/canon+templates with functional delivery language in body"
+}
+run_test "T_gov1618 governance/canon+templates + PR#1618-style body (functional delivery language) -> PASS (not product-facing)" 0 t_gov_canon_with_functional_delivery_body
+
+t_gov_canon_explicit_verdict_claim_still_triggers() {
+  # If a governance/canon-only PR body contains an EXPLICIT formal claim
+  # (VERDICT: FULL_FUNCTIONAL_DELIVERY), it must still be classified as product-facing
+  # and require functional delivery evidence.
+  mkdir -p governance/canon
+  cat > governance/canon/SOME_CANON_UPDATE.md << 'EOF'
+# Canon update
+EOF
+  TEST_PR_BODY=$'Canon update. VERDICT: FULL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "governance/canon with explicit VERDICT: FULL_FUNCTIONAL_DELIVERY in body"
+}
+run_test "T_gov1618b governance/canon-only + explicit VERDICT claim in body -> FAIL (must require evidence)" 1 t_gov_canon_explicit_verdict_claim_still_triggers
+
+t_gov_templates_with_handover_readiness_body() {
+  # governance/templates/** only. PR body contains "handover readiness" (narrative pattern).
+  # Governance-controlled-only → narrative hint suppressed → not product-facing.
+  mkdir -p governance/templates
+  cat > governance/templates/SOME_TEMPLATE.md << 'EOF'
+# Template update
+EOF
+  TEST_PR_BODY=$'Template update for handover readiness tracking. Improves the functional delivery evidence checklist.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "governance/templates with handover readiness language in body"
+}
+run_test "T_gov1618c governance/templates-only + handover readiness language in body -> PASS (not product-facing)" 0 t_gov_templates_with_handover_readiness_body
+
+t_iaa_agent_workspace_with_narrative_body() {
+  # .agent-workspace/independent-assurance-agent/** only. PR body has "product fix" language.
+  # Governance-controlled-only → narrative hint suppressed → not product-facing.
+  mkdir -p .agent-workspace/independent-assurance-agent/knowledge
+  cat > .agent-workspace/independent-assurance-agent/knowledge/index.md << 'EOF'
+# IAA Tier 2 knowledge index update
+EOF
+  TEST_PR_BODY=$'IAA knowledge update. This is a product fix for the assurance workflow. Functional delivery standards updated.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "IAA agent workspace with narrative product-fix language in body"
+}
+run_test "T_gov1618d .agent-workspace/independent-assurance-agent + narrative product-fix language -> PASS (not product-facing)" 0 t_iaa_agent_workspace_with_narrative_body
+
+t_mixed_gov_and_product_code_with_narrative_body() {
+  # governance/canon/** AND a product code file changed together.
+  # Mixed PR: governance-controlled-only check fails → narrative hints remain active.
+  mkdir -p governance/canon apps/mmm/src
+  cat > governance/canon/SOME_CANON.md << 'EOF'
+# Canon update
+EOF
+  cat > apps/mmm/src/SomePage.tsx << 'EOF'
+export const SomePage = () => <div>page</div>;
+EOF
+  TEST_PR_BODY=$'Mixed PR: canon update + UI page. Functional delivery note.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "mixed governance/canon + product code with functional delivery in body"
+}
+run_test "T_gov1618e mixed governance/canon + product code + narrative body -> FAIL (product code present)" 1 t_mixed_gov_and_product_code_with_narrative_body
+
+# ─── PR#1620-style regression tests ─────────────────────────────────────────
+# These tests cover the misclassification observed in PR APGI-cmy/maturion-isms#1620:
+# A PR changing .github/scripts/** and .github/workflows/** (governance/admin gate
+# control-surface work) whose body discussed "functional delivery" narratively was
+# incorrectly classified as product-facing, requiring .functional-delivery/pr-N.md.
+# Fix: .github/scripts/** and .github/workflows/** are governance-controlled paths;
+# narrative hints must be suppressed for them.
+
+t_github_scripts_workflows_with_narrative_functional_delivery_body() {
+  # Only .github/scripts/** and .github/workflows/** changed.
+  # PR body mentions "functional delivery" and "product delivery" narratively
+  # (as PR#1620 does — the PR is about gate tuning, not product delivery).
+  mkdir -p .github/scripts .github/workflows
+  cat > .github/scripts/validate-product-delivery-gates.sh << 'EOF'
+#!/bin/bash
+# stub for test
+exit 0
+EOF
+  cat > .github/workflows/preflight-evidence-gate.yml << 'EOF'
+# stub workflow for test
+name: preflight
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ok
+EOF
+  TEST_PR_BODY=$'Tune affected-control classifier and gate classification for governance.\n\nFixes product-delivery gate false-positive on governance/admin gate-control-surface PRs.\nFunctional delivery classification updated. No .functional-delivery/pr-*.md required for gate-only changes.\nProduct delivery gate suppressed for governance-only diff.\nHandover readiness tracking improved.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "PR#1620-style: .github/scripts + .github/workflows with functional delivery language in body"
+}
+run_test "T_gov1620 .github/scripts+workflows + narrative functional/product-delivery body -> PASS (not product-facing)" 0 t_github_scripts_workflows_with_narrative_functional_delivery_body
+
+t_github_scripts_workflows_explicit_verdict_still_triggers() {
+  # Even when only .github/scripts/** is changed, an explicit formal VERDICT claim
+  # in the PR body must still trigger product-facing classification.
+  mkdir -p .github/scripts
+  cat > .github/scripts/some-gate.sh << 'EOF'
+#!/bin/bash
+exit 0
+EOF
+  TEST_PR_BODY=$'Gate script update. VERDICT: FULL_FUNCTIONAL_DELIVERY'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m ".github/scripts with explicit VERDICT: FULL_FUNCTIONAL_DELIVERY in body"
+}
+run_test "T_gov1620b .github/scripts-only + explicit VERDICT claim in body -> FAIL (must require evidence)" 1 t_github_scripts_workflows_explicit_verdict_still_triggers
+
+t_github_scripts_functional_pass_inline_not_trigger() {
+  # PR body contains `FUNCTIONAL_PASS: yes` as backtick-quoted inline text (narrative example),
+  # not as a standalone formal field. This should NOT trigger product-facing classification.
+  mkdir -p .github/scripts .github/workflows
+  cat > .github/scripts/validate-product-delivery-gates.sh << 'EOF'
+#!/bin/bash
+exit 0
+EOF
+  cat > .github/workflows/preflight-evidence-gate.yml << 'EOF'
+name: Preflight
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: [{ run: echo ok }]
+EOF
+  TEST_PR_BODY=$'Gate fix: explicit formal claims (`FUNCTIONAL_PASS: yes`, `VERDICT: FULL_FUNCTIONAL_DELIVERY`) still trigger product evidence.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "Gate scripts with FUNCTIONAL_PASS: yes as inline backtick narrative in body"
+}
+run_test "T_gov1620c .github/scripts+workflows + FUNCTIONAL_PASS:yes as inline backtick text -> PASS (not product-facing)" 0 t_github_scripts_functional_pass_inline_not_trigger
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"

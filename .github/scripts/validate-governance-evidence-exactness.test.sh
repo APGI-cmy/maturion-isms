@@ -238,6 +238,98 @@ export PR_BODY="Resolves #1521"
 run_issue_test "'Resolves #1521' establishes authority (match) → PASS" 0 "setup_test_resolves_bare"
 
 # ============================================================
+# PR#1618-style regression tests
+# Tests covering the incidental historical reference case observed in
+# PR APGI-cmy/maturion-isms#1618.
+# ============================================================
+
+# TEST 9: Historical reference + explicit Governing-Issue → Governing-Issue wins
+# PR body: "PR APGI-cmy/maturion-isms#1590 exposed a gap..." (historical)
+#          + "Governing-Issue: APGI-cmy/maturion-isms#1617" (explicit)
+# Scope: ISSUE: #1617
+# Expected: Governing-Issue field takes priority → match → PASS
+setup_test_governing_issue_priority_over_historical_ref() {
+  make_per_pr_scope_file "1618" "1617" "Add mandatory LFV package"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file for PR#1618-style test"
+}
+
+export PR_NUMBER="1618"
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Governance-only PR. Historical reference: PR APGI-cmy/maturion-isms#1590 exposed a gap in the pre-build assurance model. This PR closes that gap at the governance/canon level.
+
+Governing-Issue: APGI-cmy/maturion-isms#1617"
+
+run_issue_test "PR#1618-style: historical ref #1590 + Governing-Issue: #1617 → Governing-Issue wins (match) → PASS" 0 "setup_test_governing_issue_priority_over_historical_ref"
+
+# TEST 10: Historical reference only (no Governing-Issue, no closing keyword)
+# PR body: "PR APGI-cmy/maturion-isms#1590 exposed a gap..." (historical only)
+# Scope: ISSUE: #1617
+# Expected: No authoritative source found → informational only → PASS
+# (historical reference must NOT be treated as expected issue anchor)
+setup_test_historical_ref_no_authority() {
+  make_per_pr_scope_file "1618" "1617" "Add mandatory LFV package"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export PR_NUMBER="1618"
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Governance-only PR. Historical reference: PR APGI-cmy/maturion-isms#1590 exposed a gap. No closing keyword, no Governing-Issue field."
+
+run_issue_test "PR#1618-style: historical ref #1590 only, no authority → informational only → PASS" 0 "setup_test_historical_ref_no_authority"
+
+# TEST 11: Governing-Issue field overrides closing keyword in same PR body
+# PR body: "Closes #9999" + "Governing-Issue: #1617"
+# Scope: ISSUE: #1617
+# Expected: Governing-Issue takes priority over closing keyword → match → PASS
+setup_test_governing_issue_beats_closing_keyword() {
+  make_per_pr_scope_file "1618" "1617" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export PR_NUMBER="1618"
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Closes #9999
+
+Governing-Issue: #1617"
+
+run_issue_test "Governing-Issue: #1617 overrides 'Closes #9999' closing keyword → match → PASS" 0 "setup_test_governing_issue_beats_closing_keyword"
+
+# TEST 12: Governing-Issue with mismatch
+# PR body: "Governing-Issue: #9999"
+# Scope: ISSUE: #1617
+# Expected: Governing-Issue #9999 ≠ declared #1617 → FAIL
+setup_test_governing_issue_mismatch() {
+  make_per_pr_scope_file "1618" "1617" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export PR_NUMBER="1618"
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Governing-Issue: APGI-cmy/maturion-isms#9999"
+
+run_issue_test "Governing-Issue: #9999 vs scope #1617 (mismatch) → FAIL" 1 "setup_test_governing_issue_mismatch"
+
+# TEST 13: Governing-Issue bare format (#N without repo prefix)
+# PR body: "Governing-Issue: #1617"
+# Scope: ISSUE: #1617
+# Expected: match → PASS
+setup_test_governing_issue_bare() {
+  make_per_pr_scope_file "1618" "1617" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export PR_NUMBER="1618"
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Governing-Issue: #1617"
+
+run_issue_test "Governing-Issue: #1617 (bare format) → match → PASS" 0 "setup_test_governing_issue_bare"
+
+# ============================================================
 # Cleanup
 # ============================================================
 setup_test_comment_id_not_issue() {

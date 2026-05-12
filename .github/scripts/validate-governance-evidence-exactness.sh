@@ -288,8 +288,14 @@ echo ""
 # PR's authoritative issue.  Authority is determined from
 # (priority order):
 #   (a) EXPECTED_ISSUE_NUMBER env var — explicitly set by CI,
-#   (b) PR_BODY env var — parsed for closing/fixing keywords
-#       (closes/fixes/resolves/addresses) and maturion-isms#N refs.
+#   (b) PR_BODY: explicit 'Governing-Issue: #N' field — takes
+#       priority over closing keywords to prevent incidental
+#       historical references (e.g. "PR #1590 exposed...") from
+#       overriding the intended governing issue,
+#   (c) PR_BODY: closing/fixing keywords (closes/fixes/resolves/
+#       addresses) followed by a repo-prefixed or bare issue ref.
+# Historical/contextual references are intentionally NOT used as
+# authority sources — only explicit signals qualify.
 # If no expected issue can be determined the check is
 # informational only (records declared value, no failure).
 # ============================================================
@@ -323,7 +329,14 @@ else
     fi
     echo "   Declared: $DECLARED_ISSUE_RAW (issue #${DECLARED_ISSUE_NUM:-?})"
 
-    # Determine expected issue number (priority: explicit env var > PR_BODY parsing)
+    # Determine expected issue number (priority order):
+    #   (a) EXPECTED_ISSUE_NUMBER env var — explicitly set by CI,
+    #   (b) PR_BODY: explicit 'Governing-Issue: #N' or 'Governing-Issue: repo#N' field
+    #       (takes priority over closing keywords to prevent historical references from
+    #       overriding the intended governing issue),
+    #   (c) PR_BODY: closing/fixing keywords (closes/fixes/resolves/addresses).
+    # Historical references such as "PR maturion-isms#1590 exposed a gap..." must not
+    # be treated as the authoritative governing issue; only explicit signals are accepted.
     EXPECTED_ISSUE_NUM=""
     EXPECTED_SOURCE=""
 
@@ -331,28 +344,28 @@ else
       EXPECTED_ISSUE_NUM=$(echo "$EXPECTED_ISSUE_NUMBER" | grep -oE '[0-9]+' | tail -1)
       EXPECTED_SOURCE="EXPECTED_ISSUE_NUMBER env var"
     elif [ -n "${PR_BODY:-}" ]; then
-      # Parse PR body for closing/fixing keywords followed by optional repo prefix + number.
-      # Pattern uses [a-zA-Z0-9_-]* (zero or more) so it handles:
-      #   "Closes #1521"          (bare bare #N)
-      #   "Fixes maturion-isms#1521"  (repo-prefixed)
+      # (b) Explicit Governing-Issue field in PR body — highest priority among PR body signals.
+      # Matches: "Governing-Issue: #1617", "Governing-Issue: maturion-isms#1617",
+      #          "Governing-Issue: APGI-cmy/maturion-isms#1617"
       EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
-        grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]*#)([0-9]+)' | \
+        grep -ioE 'Governing-Issue:[[:space:]]*([A-Za-z0-9_/-]*#)([0-9]+)' | \
         grep -oE '[0-9]+$' | head -1 || true)
+      [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (Governing-Issue field)"
+
       if [ -z "$EXPECTED_ISSUE_NUM" ]; then
-        # Fallback: first issue-style reference in PR body.
-        # Ignore known non-governing numeric references (comment/run/job/workflow/check/PR IDs).
-        # Use non-alphanumeric boundary (not just whitespace) so patterns like
-        # "(PR #1590)" or "[pr #1590]" are also filtered as non-governing refs.
-        FILTERED_PR_BODY=$(printf '%s' "$PR_BODY" | tr '[:upper:]' '[:lower:]' | \
-          sed -E 's/(^|[^a-z0-9])(comment|comments|run|runs|job|jobs|workflow|workflows|check|checks|artifact|artifacts|pr|pull[[:space:]]+request)[[:space:]]*#[0-9]+/\1/g')
-        EXPECTED_ISSUE_NUM=$(printf '%s' "$FILTERED_PR_BODY" | \
-          grep -oE '#[0-9]+' | head -1 | grep -oE '[0-9]+' || true)
+        # (c) Closing/fixing keywords — unambiguous intent signals.
+        # Pattern uses [a-zA-Z0-9_-]* (zero or more) so it handles:
+        #   "Closes #1521"          (bare #N)
+        #   "Fixes maturion-isms#1521"  (repo-prefixed)
+        EXPECTED_ISSUE_NUM=$(printf '%s' "$PR_BODY" | \
+          grep -ioE '(closes|fixes|resolves|addresses)[[:space:]]+([a-zA-Z0-9_-]*#)([0-9]+)' | \
+          grep -oE '[0-9]+$' | head -1 || true)
+        [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (closing keyword)"
       fi
-      [ -n "$EXPECTED_ISSUE_NUM" ] && EXPECTED_SOURCE="PR_BODY (parsed closing/issue ref)"
     fi
 
     if [ -z "$EXPECTED_ISSUE_NUM" ]; then
-      echo "   ℹ️  No expected issue authority available (set EXPECTED_ISSUE_NUMBER or PR_BODY) — recorded as-declared, not validated against PR authority"
+      echo "   ℹ️  No expected issue authority available (set EXPECTED_ISSUE_NUMBER, use 'Governing-Issue: #N' in PR body, or use closing keywords) — recorded as-declared, not validated against PR authority"
     elif [ -z "$DECLARED_ISSUE_NUM" ]; then
       echo "   ❌ ISSUE-MISMATCH: could not parse issue number from declared value '$DECLARED_ISSUE_RAW'; expected #${EXPECTED_ISSUE_NUM} (${EXPECTED_SOURCE})"
       ERRORS=$((ERRORS + 1))
