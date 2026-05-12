@@ -43,7 +43,7 @@ This section attests that all Stage 1–4 approved artifacts were consulted in p
   - Stage 4 CS2 approval: maturion-isms#1604 closed by @APGI-cmy on 2026-05-11
 
 - [x] **Existing `modules/pit/04-architecture/` content is reconciled against the approved Stage 1–4 chain**
-  - Evidence: `architecture.md` §24 — Legacy Architecture Reconciliation; all subfolder content reviewed and superseded or preserved as reference only
+  - Evidence: `architecture.md` §28 — Legacy Architecture Reconciliation; all subfolder content reviewed and superseded or preserved as reference only
 
 - [x] **All TRS requirements PIT-TR-001 through PIT-TR-126 are mapped to architecture components or decisions**
   - Evidence: `trs-to-architecture-traceability.md` — 126/126 requirements COVERED; zero NOT_COVERED or PARTIALLY_COVERED
@@ -96,12 +96,28 @@ This section attests that all Stage 1–4 approved artifacts were consulted in p
   - Evidence: `BUILD_PROGRESS_TRACKER.md` — Stage 6 status: BLOCKED pending Stage 5 CS2 gate-pass
 
 - [x] **Build Authorization remains NOT CLEARED**
-  - Evidence: `architecture.md` §25; `BUILD_PROGRESS_TRACKER.md` Build Authorization section
+  - Evidence: `architecture.md` §29; `BUILD_PROGRESS_TRACKER.md` Build Authorization section
 
 ### 2.9 Non-Goals Confirmation
 
 - [x] **No app code, DB migration, deployment config, builder appointment, QA-to-Red gate-pass, PBFAG pass, implementation plan approval, or build execution introduced**
   - Evidence: Scope declaration `.agent-admin/scope-declarations/pr-1612.md` — non-goals section explicitly lists all exclusions; git diff for PR #1612 contains only governance/architecture markdown files
+
+### 2.10 ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md v1.4 Alignment (NEW §§3.14–3.17)
+
+> **Canon Version**: `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` v1.4 (2026-05-11)
+
+- [x] **§3.14 Frontend Application Scaffolding and UI Wiring**
+  - Evidence: `architecture.md` §23 — Framework scaffold (React 18, Vite, TanStack Router), UI→API wiring, CORS, auth token propagation path all explicitly defined
+
+- [x] **§3.15 Infrastructure Deployment and Provisioning**
+  - Evidence: `architecture.md` §24 — Deployment targets (Vercel/Supabase), provisioning sequence (4-step), environment variable validation checkpoints, health check criteria, rollback strategy all explicitly defined
+
+- [x] **§3.16 End-to-End Integration and Deployment Evidence**
+  - Evidence: `architecture.md` §25 — Three end-to-end workflow paths (A/B/C) defined; evidence requirements table (7 blocking artifacts); deployment readiness gate criteria; explicit "deploy later" prohibition
+
+- [x] **§3.17 QA Catalog Alignment and Validation**
+  - Evidence: `architecture.md` §26 — QA Catalog precondition for Stage 6 stated; 24 QA domains catalogued with architectural source, category, and coverage scope; alignment gate status explicit (architecture frozen, QA Catalog/QA-to-Red deferred to Stage 6 post CS2 Stage 5 gate-pass)
 
 ---
 

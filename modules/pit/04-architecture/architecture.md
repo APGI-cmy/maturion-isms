@@ -21,7 +21,7 @@
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-11 |
 | Issue | maturion-isms#1611 — PIT Stage 5 Architecture reconciliation |
-| Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
+| Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 |
 
 > **Governance Notice — Stage 5 Design/Gate Artifact Only**: This document is a pre-build architecture gate artifact. It authorises NO code implementation, schema migration, builder appointment, QA-to-Red gate-pass, PBFAG pass, deployment configuration, or Edge Function creation. Build Authorization remains **NOT CLEARED**. No downstream stage (Stages 6–12) may proceed without explicit CS2 gate-pass of this Stage 5 Architecture.
 
@@ -701,7 +701,278 @@ No secrets committed to repository. All stored in Supabase Edge Function secrets
 
 ---
 
-## 23. Deferred Open Assumptions
+## 23. Frontend Application Scaffolding and UI Wiring
+
+> **Canon Reference**: `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` v1.4 §3.14
+
+### 23.1 Framework Scaffold Baseline
+
+| Item | Decision | Notes |
+|---|---|---|
+| Framework | React 18 + TypeScript | Strict mode enabled |
+| Build Tool | Vite 5 | `vite.config.ts` with path aliases |
+| Router | TanStack Router v1 (file-based) | Code-split per route |
+| Component Library | Radix UI primitives + custom design tokens | No opinionated UI kit |
+| State (server) | TanStack Query v5 | Cache, background refetch |
+| State (client) | React Context (§2.1) | AuthContext, OrgContext, ProjectContext, NotificationContext |
+| Styling | Tailwind CSS v3 + CSS variables | Design tokens in `tokens.css` |
+| Icons | Lucide React | Tree-shakeable |
+| Forms | React Hook Form + Zod | Schema-validated |
+
+Completeness test: ✅ Builder can scaffold without research — all tools named and versioned.
+
+### 23.2 Build Configuration
+
+- **Entry point**: `src/main.tsx` → mounts `<App />` → `<RouterProvider />`
+- **Production build**: `vite build` → `dist/` (HTML + JS chunks + CSS)
+- **Development server**: `vite dev` on `localhost:5173` (configured)
+- **Environment**: `.env.local` for local secrets; Vercel environment for deployment
+- **TypeScript**: `tsconfig.json` strict mode; `tsc --noEmit` in CI (blocking gate)
+- **Path aliases**: `@/` → `src/` (configured in `vite.config.ts` and `tsconfig.json`)
+
+### 23.3 UI → API Wiring Architecture
+
+```
+React Component
+  → useQuery / useMutation (TanStack Query)
+    → Supabase client SDK (createClient)
+      → PostgREST (table queries with RLS filter)
+        → PostgreSQL (Supabase managed)
+```
+
+Auth token propagation path:
+1. `supabaseClient = createClient(url, anonKey)` — singleton in `src/lib/supabase.ts`
+2. `supabase.auth.getSession()` → returns JWT; automatically attached to all subsequent requests by Supabase SDK
+3. `AuthContext` (§4) wraps the app; providers receive `session.user` from `onAuthStateChange` listener
+4. TanStack Query keys include `user.id` → cache scoped per user; stale cache is invalidated on sign-out
+
+**API endpoint configurable via env**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — never hardcoded.
+
+### 23.4 CORS Architecture
+
+- Supabase PostgREST: CORS managed by Supabase platform (no custom config required)
+- Edge Functions: `Access-Control-Allow-Origin` restricted to Vercel deployment origin + localhost
+- Evidence: Edge Function CORS tested as part of Stage 6 integration QA
+
+### 23.5 Authentication Token Propagation Path (§3.14 Explicit)
+
+```
+Login form submit
+  → supabase.auth.signInWithPassword()
+    → Supabase Auth service (JWT issued)
+      → Stored in Supabase SDK session store (localStorage/in-memory)
+        → onAuthStateChange fires → AuthContext updates
+          → All queries re-executed with new session JWT
+            → RLS filters activate for org-scoped access
+```
+
+Credential scope: `SUPABASE_SERVICE_ROLE_KEY` used ONLY inside Edge Functions; never exposed to client.
+
+---
+
+## 24. Infrastructure Deployment and Provisioning
+
+> **Canon Reference**: `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` v1.4 §3.15
+
+### 24.1 Deployment Targets
+
+| Component | Platform | Notes |
+|---|---|---|
+| Frontend (SPA) | Vercel | A-009 Closed/Binding (§29.3) |
+| Backend API (PostgREST) | Supabase (managed) | PIT Supabase project |
+| Edge Functions | Supabase Edge Runtime (Deno) | 8 catalogued functions (§8.2) |
+| Database | Supabase (PostgreSQL 15) | PIT Supabase project |
+| Storage | Supabase Storage | `evidence` bucket, `reports` bucket |
+
+### 24.2 Provisioning Sequence
+
+```
+Step 1 — Supabase project provisioning
+  1a. Create PIT Supabase project (separate from MAT/MMM)
+  1b. Apply schema migrations (Stage 7 Schema Builder)
+  1c. Enable RLS on all 13 tables (Stage 7 gate — zero exceptions)
+  1d. Create storage buckets: evidence (50 MB limit), reports
+  1e. Set Edge Function secrets: SERVICE_ROLE_KEY, AIMC_GATEWAY_URL, AIMC_API_KEY,
+      EMAIL_PROVIDER_API_KEY, STORAGE_BUCKET_EVIDENCE, STORAGE_BUCKET_REPORTS, REPORT_RETENTION_DAYS
+
+Step 2 — Vercel project provisioning
+  2a. Link Vercel project to repository (PIT module path)
+  2b. Set environment variables: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+  2c. Configure `vercel.json` SPA fallback rewrite (all non-asset paths → index.html)
+  2d. Configure build command: `vite build`
+
+Step 3 — Edge Function deployment
+  3a. Deploy all 8 Edge Functions (supabase functions deploy)
+  3b. Verify each function responds to preflight OPTIONS request
+  3c. Verify AIMC gateway connectivity from Edge Function environment
+
+Step 4 — Seed and readiness verification
+  4a. Insert seed org record for acceptance testing
+  4b. Create seed user with confirmed email
+  4c. Execute RLS smoke test (org-scoped reads return only org data)
+  4d. Execute SPA fallback smoke test (direct deep URL → 200 HTML, not 404)
+```
+
+### 24.3 Environment Variable Provisioning and Validation
+
+| Variable | Source | Validation Checkpoint |
+|---|---|---|
+| `VITE_SUPABASE_URL` | Vercel env | Vercel preview deployment build succeeds |
+| `VITE_SUPABASE_ANON_KEY` | Vercel env | Supabase client initialises without error |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Edge Function secrets | Edge Function responds with non-auth-error |
+| `AIMC_GATEWAY_URL` | Supabase Edge Function secrets | AIMC proxy test call returns 200 |
+| `AIMC_API_KEY` | Supabase Edge Function secrets | AIMC proxy test call returns 200 |
+| `EMAIL_PROVIDER_API_KEY` | Supabase Edge Function secrets | Notification test returns 200 |
+
+**Validation checkpoint protocol**: All variables must be confirmed populated before Stage 7 PBFAG. Unset variables are a blocking deployment defect, not a runtime failure.
+
+### 24.4 Health Check and Readiness Verification
+
+| Check | Method | Pass Criterion |
+|---|---|---|
+| Frontend reachable | HTTP GET deployment URL | 200 + `<div id="root">` in body |
+| SPA fallback | HTTP GET `/some/deep/path` | 200 HTML (not 404) |
+| Supabase PostgREST | GET `/rest/v1/` with anon key | 200 (schema introspection) |
+| Auth endpoint | POST `/auth/v1/token?grant_type=password` | 400 (invalid creds) or 200 (valid) — not 500 |
+| Edge Function | GET `/functions/v1/compute_progress_rollup` | 200 or 405 (method not allowed) — not 500 |
+| RLS | Select from `projects` with org-A session | Returns only org-A projects |
+
+### 24.5 Rollback and Redeploy Strategy
+
+- **Vercel**: Instant rollback to prior deployment via Vercel dashboard (no rebuild required)
+- **Edge Functions**: `supabase functions deploy <name> --version <prev>` or re-deploy prior commit
+- **Database schema**: Schema migrations are append-only (no destructive migration in Stage 7); rollback = apply reverse migration if migration is backwards-compatible
+- **Blocking condition**: If rollback is required in production, CS2 must authorise before re-engagement
+
+---
+
+## 25. End-to-End Integration and Deployment Evidence
+
+> **Canon Reference**: `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` v1.4 §3.16
+
+### 25.1 Mandatory End-to-End Workflow Paths
+
+Architecture defines the following integration-critical paths that must be evidenced at Stage 7 PBFAG (L-007):
+
+#### Path A — Project Create + Task Assignment + Audit Log
+
+```
+1. CS2 user logs in (POST /auth/v1/token → JWT)
+2. CS2 user creates project (POST /rest/v1/projects → row created, audit_log entry written)
+3. CS2 user assigns task to assignee (PATCH /rest/v1/tasks → updated, audit_log entry)
+4. Assignee logs in (separate session)
+5. Assignee views own tasks (GET /rest/v1/tasks?assignee_id=eq.{uid} → only own org's tasks)
+6. RLS verification: assignee cannot see other org's tasks (GET /rest/v1/tasks?org_id=neq.{own_org} → 0 rows)
+7. Assignee updates task status (PATCH /rest/v1/tasks → status updated, audit_log entry written)
+```
+
+**Persistence check**: `audit_log` table shows 3 entries from this workflow.
+
+#### Path B — Evidence Upload + Storage Constraint
+
+```
+1. User uploads evidence file ≤ 50 MB (POST /storage/v1/object/evidence/{org_id}/{task_id}/{filename})
+2. Edge Function validates file size + org ownership → stores object
+3. User uploads evidence file > 50 MB → rejected at API layer (413 response)
+4. User retrieves evidence URL (GET /functions/v1/evidence → signed URL returned)
+```
+
+#### Path C — Timeline Progress Roll-up
+
+```
+1. Task status changed to COMPLETE (PATCH /rest/v1/tasks)
+2. compute_progress_rollup Edge Function triggered (manual or via DB trigger)
+3. Milestone completion_percentage updated (verified via GET /rest/v1/milestones)
+4. Predecessor scheduling recalculated (calculated_start_date, calculated_end_date updated)
+```
+
+### 25.2 Evidence Requirements (PBFAG L-007 Gate)
+
+At Stage 7 PBFAG, the following evidence artifacts are required:
+
+| Evidence Artifact | Description | Blocking? |
+|---|---|---|
+| Deployment URLs | Frontend URL + Supabase project URL | YES — no abstract deployments |
+| Path A screenshot/video | User login → project create → task → audit log | YES |
+| Path B screenshot | Evidence upload ≤ 50 MB PASS, > 50 MB REJECT | YES |
+| Path C screenshot | Progress roll-up triggered → completion% updated | YES |
+| RLS test logs | Role-switching test results (Playwright E2E) | YES |
+| SPA fallback test | Direct deep URL navigation → 200 HTML | YES |
+| CI/CD green screenshot | Full CI run green for deployed commit | YES |
+
+Evidence must reference a live deployment SHA, not a local dev server.
+
+### 25.3 Integration Gate Criteria (Deployment Readiness)
+
+Deployment readiness is blocked when:
+1. Any evidence artifact listed in §25.2 is missing
+2. RLS test shows cross-org data leakage
+3. SPA fallback returns 404 for any registered route
+4. Any Edge Function returns 500 on health check
+5. Audit log is absent for any state-changing operation
+
+**"Deploy later" prohibition** (aligns with MMM L-007 carry-forward):
+Architecture explicitly prohibits closing Stage 7 PBFAG without live deployment evidence. Claiming evidence "will be added" or "is acceptable in the next wave" is not permitted. Evidence must exist at gate review time.
+
+---
+
+## 26. QA Catalog Alignment
+
+> **Canon Reference**: `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` v1.4 §3.17
+
+### 26.1 QA Catalog Precondition for Stage 6
+
+This architecture constitutes the **architectural freeze** required before Stage 6 (QA-to-Red) can proceed. The QA Catalog for PIT MUST be created and validated at the start of Stage 6 before any QA-to-Red test creation or wave planning.
+
+**Required QA Catalog action at Stage 6**:
+- QA components must be created for all architecture sections §1–§22 (functional domains) plus §23–§26 (scaffolding, provisioning, e2e evidence, QA catalog) of this document
+- QA ID ranges must be allocated and must not overlap with other modules
+- Each QA component must have: unique QA ID, semantic description matching architectural feature intent, category (component/flow/state/failure), architectural element reference
+- All QA-to-Red tests must be in RED status (architecture exists, implementation does not) before planning proceeds
+
+### 26.2 QA Domains Derived from This Architecture
+
+| QA Domain | Architectural Source | QA Category | Coverage Scope |
+|---|---|---|---|
+| Frontend scaffolding and build | §23 | component | React 18 + Vite scaffold, routing, build config |
+| Authentication flow | §4, §23.5 | flow | Login, session, role assignment, logout |
+| Role-based access control | §5 | flow | Navigation gating, permission-denied pattern |
+| Route surface | §3 | component | All 27 routes render correct components |
+| RLS enforcement | §7 | flow | Org-scoped reads, cross-org blocking |
+| Data model integrity | §6 | component | Referential integrity, lifecycle semantics |
+| API/Edge Function contracts | §8 | flow | All 8 Edge Functions respond per contract |
+| AIMC gateway enforcement | §9 | flow | Zero-tolerance AI gateway, human approval |
+| Timeline rendering | §10 | component | Date header, bar rendering, virtualisation |
+| Timeline date-math | §10.5 | component | DST-safe day-count arithmetic |
+| Predecessor scheduling | §10.9 | flow | Predecessor + offset + duration recalculation |
+| Evidence upload | §11 | flow | 50 MB limit enforcement, storage |
+| Notifications | §12 | flow | Realtime delivery, in-app centre |
+| Progress roll-up | §13 | flow | compute_progress_rollup dual role |
+| Reporting/export | §14 | flow | PDF/CSV export, retention policy |
+| Audit log | §15 | flow | All state-changing operations logged |
+| QA dashboard | §16 | component | Org-scoped QA metrics |
+| Watchdog/escalation | §17 | flow | Escalation triggers, notifications |
+| Cross-module integration | §18 | flow | MAT/MMM status sync |
+| Deployment | §19, §24 | flow | Vercel SPA, env vars, Edge Function health |
+| Accessibility | §20 | component | WCAG 2.1 AA, keyboard nav, axe-core |
+| Five-state UI contract | §2.2 | component | Loading/Empty/Populated/Error/No-Permission |
+| End-to-end path evidence | §25 | flow | Paths A/B/C per §25.1 |
+| MMM carry-forward controls | §22 | flow | L-001 through L-008 |
+
+### 26.3 QA Catalog Alignment Gate Status
+
+| Criterion | Stage 5 Status |
+|---|---|
+| Architecture sections exist and are frozen | ✅ 29 sections (§1–§29, including §23–§26 covering v1.4 §§3.14–3.17) |
+| QA Catalog created | ⏳ Stage 6 — not yet; blocked until CS2 approves Stage 5 |
+| QA-to-Red tests created and RED | ⏳ Stage 6 — not yet |
+| Wave planning validated against QA Catalog | ⏳ Stage 7+ — not yet |
+
+**Stage 5 gate compliance**: Architecture is **complete** for Stage 5 purposes. Stage 6 begins ONLY after CS2 gate-passes Stage 5. No QA-to-Red tests may be created before Stage 5 CS2 approval.
+
+---
+
+## 27. Deferred Open Assumptions
 
 | ID | Assumption | Status at Stage 5 | Architecture Constraint |
 |---|---|---|---|
@@ -714,7 +985,7 @@ No secrets committed to repository. All stored in Supabase Edge Function secrets
 
 ---
 
-## 24. Legacy Architecture Reconciliation
+## 28. Legacy Architecture Reconciliation
 
 Legacy `modules/pit/04-architecture/` subfolder content review:
 
@@ -730,7 +1001,7 @@ No stale legacy architecture contradicts the approved Stage 1–4 chain. All rec
 
 ---
 
-## 25. Build Authorization Statement
+## 29. Build Authorization Statement
 
 **Build Authorization**: NOT CLEARED.
 
@@ -753,8 +1024,8 @@ Stages 6–12 remain blocked until this Stage 5 Architecture receives explicit C
 
 ---
 
-**Template Version**: 1.0.0
-**Template Authority**: `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
+**Template Version**: 1.1.0
+**Template Authority**: `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0
 **Date**: 2026-05-11
 **Author**: foreman-v2-agent (POLC-Orchestration mode)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)

@@ -13,7 +13,7 @@
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-12 |
 | Issue | maturion-isms#1611 — PIT Stage 5 Architecture reconciliation |
-| Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 |
+| Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 |
 
 > **Governance Notice**: This traceability matrix satisfies the Stage 5 Architecture gate requirement to demonstrate full coverage of all App Description mandatory sections (§AD-01–§AD-24) by the Stage 5 Architecture artifact. Merge of Stage 5 Architecture remains blocked until CS2 gate-passes this package. Build Authorization remains **NOT CLEARED**.
 
