@@ -126,10 +126,10 @@ jobs:
                 results.FAILING_REQUEST = bypassUrl;
                 results.HTTP_STATUS = response ? String(response.status()) : 'timeout';
                 if (response) {
-                  const contentType = ((await response.headerValue('content-type')) || '').toLowerCase();
+                  const contentType = ((await response.headerValue('content-type').catch(() => '')) || '').toLowerCase();
                   const isTextResponse = /^(text\/|.*\/(json|xml|javascript|.*\+xml))/.test(contentType);
                   if (isTextResponse) {
-                    const body = await response.text().catch(() => '');
+                    const body = await response.text().catch(() => 'body retrieval failed');
                     // RESPONSE_BODY is a bounded, single-line excerpt because verification-report.txt uses one KEY: value per line.
                     // Example: formatted JSON/newlines become spaces; full response details remain in the HAR artifact.
                     const excerpt = body.replace(/\s+/g, ' ').trim().slice(0, responseBodyExcerptLimit);
