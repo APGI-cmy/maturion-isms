@@ -1,7 +1,7 @@
 {
   "pr": 1620,
   "issue": 1619,
-  "type": "gate-changing",
+  "type": "governance-change",
   "owner": "Copilot",
   "scope": [
     ".agent-admin/scope-declarations/pr-1620.md",
