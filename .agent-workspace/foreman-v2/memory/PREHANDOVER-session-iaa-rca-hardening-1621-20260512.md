@@ -24,20 +24,22 @@ KNOWLEDGE_GOVERNANCE hardening wave implementing 7 deliverables from issue #1621
 
 **Builders involved**: governance-liaison-isms-agent (D-1 through D-6), qa-builder (D-7 + rca-trigger-detector.js enhancement)
 
-**Files changed** (13 files):
+**Files changed** (15 files):
 1. `.agent-admin/assurance/iaa-wave-record-iaa-rca-hardening-1621-20260512.md`
 2. `.agent-admin/scope-declarations/pr-1622.md`
 3. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
-4. `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` v4.4.0→4.5.0
-5. `.agent-workspace/independent-assurance-agent/knowledge/index.md` v4.0.0→4.1.0
-6. `.agent-workspace/qa-builder/knowledge/index.md` v1.1.0→1.2.0
-7. `.agent-workspace/root-cause-corrective-action-agent/knowledge/index.md` v1.0.0→1.1.0
-8. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-operating-guidance.md` v1.0.0→1.1.0
-9. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-trigger-checklist.md` v1.0.0→1.1.0
-10. `.github/scripts/rca-trigger-detector.js`
-11. `.github/scripts/rca-trigger-detector.test.sh`
-12. `.github/scripts/validate-product-delivery-gates.sh`
-13. `.github/scripts/validate-product-delivery-gates.test.sh`
+4. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-iaa-rca-hardening-1621-20260512.md`
+5. `.agent-workspace/foreman-v2/memory/session-iaa-rca-hardening-1621-20260512.md`
+6. `.agent-workspace/independent-assurance-agent/knowledge/iaa-category-overlays.md` v4.4.0→4.5.0
+7. `.agent-workspace/independent-assurance-agent/knowledge/index.md` v4.0.0→4.1.0
+8. `.agent-workspace/qa-builder/knowledge/index.md` v1.1.0→1.2.0
+9. `.agent-workspace/root-cause-corrective-action-agent/knowledge/index.md` v1.0.0→1.1.0
+10. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-operating-guidance.md` v1.0.0→1.1.0
+11. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-trigger-checklist.md` v1.0.0→1.1.0
+12. `.github/scripts/rca-trigger-detector.js`
+13. `.github/scripts/rca-trigger-detector.test.sh`
+14. `.github/scripts/validate-product-delivery-gates.sh`
+15. `.github/scripts/validate-product-delivery-gates.test.sh`
 
 ---
 
@@ -115,7 +117,7 @@ CANON_INVENTORY: ALIGNED — no Tier 1 canon files modified in this wave
 ## Trigger Category
 
 trigger_category_confirmed: KNOWLEDGE_GOVERNANCE
-files_changed_count: 13
+files_changed_count: 15
 product_delivery_required: NO
 
 ---
@@ -131,6 +133,8 @@ iaa_prebrief_committed: YES (commit 6aee74e)
 
 IAA R1: REJECTION-PACKAGE — 5 CERT failures (missing ceremony artifacts, FILES_CHANGED 14→13)
 IAA R1 remediation: CERT-001 fixed (this PREHANDOVER), CERT-002 fixed (session memory below), FILES_CHANGED corrected to 13
+IAA R2: REJECTION-PACKAGE — 1 CERT failure (FILES_CHANGED 13→15; PREHANDOVER file list missing validate-product-delivery-gates.sh and validate-product-delivery-gates.test.sh)
+IAA R2 remediation: FILES_CHANGED corrected to 15, PREHANDOVER file list updated to 15 files
 
 ---
 
