@@ -307,7 +307,7 @@
       "layer_down_status": "TEMPLATE",
       "last_verified": "2026-05-12T06:24:04Z",
       "canonical_commit": "8684f42b39d1a1927b34cd9c64c3c3dc85a986ad",
-      "change_note": "Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad \u2014 Stage 5 template update layered down via ripple PR #1615."
+      "change_note": "Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad \u2014 Stage 5 checklist metadata layered down via ripple PR #1615; template intro remains pinned to PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0 pending content revision."
     },
     {
       "filename": "UX_WORKFLOW_WIRING_SPEC_TEMPLATE.md",
