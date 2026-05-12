@@ -80,6 +80,16 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'framework_id is required and must be a string' }, 400);
   }
 
+  // Validate AIMC is configured before attempting the call — return a clear 503 with a
+  // `message` field so the Supabase JS SDK surfaces it to the caller as error.message.
+  const aimcBaseUrl = Deno.env.get('AIMC_BASE_URL') ?? '';
+  if (!aimcBaseUrl) {
+    return jsonResponse({
+      error: 'AIMC_BASE_URL_MISSING',
+      message: 'AI generation unavailable: AIMC_BASE_URL is not set in Supabase Edge Function secrets',
+    }, 503);
+  }
+
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
   const aimcResult = await callAimc(
     'framework-generate',
@@ -93,7 +103,8 @@ Deno.serve(async (req: Request) => {
   }
 
   if (!aimcResult.success) {
-    return jsonResponse({ error: 'AIMC call failed', detail: aimcResult.error }, 502);
+    const errDetail = aimcResult.error ?? 'AIMC call failed';
+    return jsonResponse({ error: 'AIMC_CALL_FAILED', detail: errDetail, message: `AI generation failed: ${errDetail}` }, 502);
   }
 
   // Record ai_interaction (TR-034, T-MMM-S6-124)

@@ -140,23 +140,27 @@ async function runMode(page, origin, mode, sampleFilePath) {
     log('Navigated to /frameworks/upload');
 
     // 2. Select the mode via the radio button.
-    // NOTE: The radio input has className="sr-only" (visually hidden); the parent
-    // <label class="mode-card"> intercepts pointer events. Click the label instead
-    // of the hidden radio so the React onChange handler fires reliably.
+    // NOTE: The radio input has className="sr-only" (visually hidden).
+    // Previous approach (labelLocator.click()) registered in the DOM but did NOT reliably
+    // trigger React's event delegation (onChange → setMode) in headless Chromium — the
+    // label click fires browser pointer events but Playwright's synthetic dispatch can be
+    // intercepted before reaching React's root event listener.
+    // FIX: use page.evaluate to call the browser's native el.click() directly on the radio
+    // input. This fires a trusted browser event that bubbles through React's root delegation,
+    // guaranteeing onChange → setMode fires regardless of element visibility.
     const radioLocator = page.locator(`input[name="framework-mode"][value="${mode}"]`);
     await radioLocator.waitFor({ state: 'attached', timeout: WAIT_TIMEOUT });
     const isChecked = await radioLocator.isChecked();
     if (!isChecked) {
-      const labelLocator = page.locator(`label:has(input[name="framework-mode"][value="${mode}"])`);
-      await labelLocator.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
-      await labelLocator.click();
-      // Verify radio is now checked (React state update is sync via onChange)
+      await page.evaluate((modeValue) => {
+        const el = document.querySelector(`input[name="framework-mode"][value="${modeValue}"]`);
+        if (el) el.click();
+      }, mode);
+      // Verify radio is now checked after the JS click
       const nowChecked = await radioLocator.isChecked().catch(() => false);
       if (!nowChecked) {
-        // Fallback: check({force:true}) dispatches the browser click+change events on the element
-        // directly, bypassing actionability checks. This still fires React onChange because
-        // Playwright emits real DOM events — the "force" only skips the intercept guard.
-        log(`WARN: label click did not register for Mode ${mode} — using force fallback`);
+        // Fallback: Playwright force-check (still dispatches DOM change/click events)
+        log(`WARN: JS evaluate click did not register for Mode ${mode} — using force fallback`);
         await radioLocator.check({ force: true });
       }
       log(`Selected Mode ${mode}`);
@@ -183,8 +187,21 @@ async function runMode(page, origin, mode, sampleFilePath) {
     }
 
     const reviewWaitTimeout = mode === 'B' ? AI_GENERATION_TIMEOUT : WAIT_TIMEOUT;
+    // Race the success redirect against the mutation-error note appearing.
+    // This ensures Mode B fails fast (within seconds) when the AIMC backend returns an
+    // error, rather than waiting the full AI_GENERATION_TIMEOUT (180s) for a redirect
+    // that will never come. For Mode A/C the same guard catches upload/init failures.
+    const mutationErrorNote = page.locator('.upload-page__next-state-note').first();
     await Promise.all([
-      page.waitForURL(/\/frameworks\/[a-f0-9-]+\/review/, { timeout: reviewWaitTimeout }),
+      Promise.race([
+        page.waitForURL(/\/frameworks\/[a-f0-9-]+\/review/, { timeout: reviewWaitTimeout }),
+        mutationErrorNote
+          .waitFor({ state: 'visible', timeout: reviewWaitTimeout })
+          .then(async () => {
+            const errText = await mutationErrorNote.innerText().catch(() => 'unknown backend error');
+            throw new Error(`Backend mutation error: ${errText.replace(/\s+/g, ' ').slice(0, 200)}`);
+          }),
+      ]),
       startBtn.click(),
     ]);
 
