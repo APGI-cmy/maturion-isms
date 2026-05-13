@@ -155,6 +155,8 @@
 | PIT-RED-TIMELINE-008 | PIT-TR-067, PIT-TR-087 | Keyboard accessibility | keyboard user | Timeline open | Tab to task bar, use arrow keys | Non-interactive via keyboard | Task bars keyboard-accessible, dates adjustable | Playwright E2E + axe | accessibility report | P2 |
 | PIT-RED-TIMELINE-009 | PIT-FR-069 | Zoom controls | project_leader | Timeline open | Click zoom in/out | No zoom effect | Timeline zoom changes, tasks remain proportional | Playwright E2E | screenshot | P3 |
 | PIT-RED-TIMELINE-010 | PIT-FR-071 | Today line | project_leader | Timeline open | View current date on timeline | No today line | Vertical today line visible at current date | Playwright E2E | screenshot | P3 |
+| PIT-RED-TIMELINE-011 | PIT-TR-080 | Visual regression baseline | project_leader | Timeline populated with representative tasks | Capture timeline baseline screenshot | Timeline layout/styles regress without detection | Baseline screenshot matches approved layout and styling | Playwright E2E | visual regression screenshot | P3 |
+| PIT-RED-TIMELINE-012 | PIT-FR-068, PIT-TR-065 | Horizontal scroll | project_leader | Timeline wider than viewport | Scroll horizontally through timeline | Timeline cannot scroll horizontally or header/body desynchronise | Horizontal scrolling works and header/grid/task bars remain aligned | Playwright E2E | screenshot | P2 |
 
 ---
 
