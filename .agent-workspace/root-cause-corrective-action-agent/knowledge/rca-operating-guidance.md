@@ -1,13 +1,13 @@
 # RCA Operating Guidance
 
-**Version**: 1.1.0
-**Last Updated**: 2026-05-12
+**Version**: 1.2.0
+**Last Updated**: 2026-05-13
 
 RCA is used to convert meaningful failures into recurrence-prevention actions.
 
 ## Operating Rules
 
-1. Diagnose and route only; do not implement remediation.
+1. Diagnose and route by default; implement a corrective change only when explicitly authorized and within RCA-owned Tier 2 knowledge scope — otherwise, issue precise Foreman instructions.
 2. Classify trigger as mandatory, optional, or prohibited before assessment.
 3. Produce the required RCA assessment output shape.
 4. Select the lowest effective corrective layer.

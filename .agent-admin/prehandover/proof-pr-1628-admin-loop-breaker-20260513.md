@@ -2,13 +2,13 @@
 
 ```yaml
 pr: 1628
-issue: 1631
+issue: 1627
 branch: copilot/add-admin-loop-breaker-behavior
 date_utc: 2026-05-13T14:41:00Z
 wave_id: admin-loop-breaker-20260513
 protected_path_touched: true
 ecap_required: false
-ecap_waiver_ref: "Tier 2 knowledge-only update — governance/checklists change is additive operational guidance text only; no agent contract, canon document, template, or CANON_INVENTORY change; ADMIN_LOOP_BREAKER-001 rule text does not create new canon; waived per CS2 issue #1631 direct assignment to Copilot for Tier 2-only scope"
+ecap_waiver_ref: "Tier 2 knowledge-only update — governance/checklists change is additive operational guidance text only; no agent contract, canon document, template, or CANON_INVENTORY change; ADMIN_LOOP_BREAKER-001 rule text does not create new canon; waived per CS2 issue #1627 direct assignment to Copilot for Tier 2-only scope"
 final_state: COMPLETE
 files_changed: 5
 ```
@@ -22,7 +22,7 @@ files_changed: 5
 | Wave | admin-loop-breaker-20260513 |
 | Branch | copilot/add-admin-loop-breaker-behavior |
 | PR | #1628 |
-| Issue | maturion-isms#1631 — Add admin-loop breaker behavior to Tier 2 agents and gate evidence handling |
+| Issue | maturion-isms#1627 — Add admin-loop breaker behavior to Tier 2 agents and gate evidence handling |
 | Author | Copilot (foreman-v2-agent mode) |
 
 ---
@@ -63,8 +63,8 @@ ECAP/admin ceremony is waived for this PR under Case A of the ECAP gate:
 - No governance template is changed (governance/templates/).
 - No CANON_INVENTORY.json is changed.
 - The `.agent-workspace/**/knowledge/` changes are Tier 2 operational knowledge updates.
-- This is a Tier 2-first implementation as explicitly directed by issue #1631.
-- CS2 (@APGI-cmy) opened issue #1631 and directly assigned this agent.
+- This is a Tier 2-first implementation as explicitly directed by issue #1627.
+- CS2 (@APGI-cmy) opened issue #1627 and directly assigned this agent.
 
 ---
 
@@ -94,7 +94,17 @@ Documentation/guidance-only wave. QP evaluation:
 - Zero skipped/incomplete tests: N/A
 - Zero deprecation warnings: N/A
 - Evidence artifacts present: All 5 deliverables committed
-- Architecture compliance: Follows issue #1631 Tier 2 operating decision
+- Architecture compliance: Follows issue #1627 Tier 2 operating decision
 - Merge gate parity: PASS
 
 **OPOJD: PASS**
+
+---
+
+## Ripple/Cross-Agent Assessment
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| Foreman / IAA / RCA / QA Tier 2 guidance | Admin-loop breaker guidance and RCA taxonomy/guidance updates | IMPACT — late-stage assurance behavior changes to prefer non-mutating closure and reject proof-refresh churn. No runtime product/schema/API impact. |
+
+**Downstream ripple conclusion**: Governance/agent-behavior impact only; no application runtime, database, API, or deployment impact.
