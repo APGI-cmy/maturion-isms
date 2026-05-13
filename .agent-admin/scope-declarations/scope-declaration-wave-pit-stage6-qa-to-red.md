@@ -52,10 +52,10 @@ This wave MUST NOT create or modify:
 
 ## Non-Goals Confirmed
 
-- [ ] No CODE_PASS claimed
-- [ ] No FUNCTIONAL_PASS claimed
-- [ ] No Build Authorization cleared
-- [ ] No builder appointed
-- [ ] No PBFAG started
-- [ ] No Implementation Plan started
-- [ ] No Build Execution started
+- [x] No CODE_PASS claimed
+- [x] No FUNCTIONAL_PASS claimed
+- [x] No Build Authorization cleared
+- [x] No builder appointed
+- [x] No PBFAG started
+- [x] No Implementation Plan started
+- [x] No Build Execution started
