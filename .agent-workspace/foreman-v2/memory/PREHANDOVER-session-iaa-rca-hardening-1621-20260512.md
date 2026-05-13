@@ -24,7 +24,7 @@ KNOWLEDGE_GOVERNANCE hardening wave implementing 7 deliverables from issue #1621
 
 **Builders involved**: governance-liaison-isms-agent (D-1 through D-6), qa-builder (D-7 + rca-trigger-detector.js enhancement)
 
-**Files changed** (16 files):
+**Files changed** (17 files):
 1. `.agent-admin/assurance/iaa-wave-record-iaa-rca-hardening-1621-20260512.md`
 2. `.agent-admin/scope-declarations/pr-1622.md`
 3. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
@@ -34,13 +34,14 @@ KNOWLEDGE_GOVERNANCE hardening wave implementing 7 deliverables from issue #1621
 7. `.agent-workspace/independent-assurance-agent/knowledge/index.md` v4.0.0→4.1.0
 8. `.agent-workspace/qa-builder/knowledge/index.md` v1.1.0→1.2.0
 9. `.agent-workspace/independent-assurance-agent/memory/session-iaa-rca-hardening-1621-R2-20260512.md`
-10. `.agent-workspace/root-cause-corrective-action-agent/knowledge/index.md` v1.0.0→1.1.0
-11. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-operating-guidance.md` v1.0.0→1.1.0
-12. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-trigger-checklist.md` v1.0.0→1.1.0
-13. `.github/scripts/rca-trigger-detector.js`
-14. `.github/scripts/rca-trigger-detector.test.sh`
-15. `.github/scripts/validate-product-delivery-gates.sh`
+10. `.agent-workspace/independent-assurance-agent/memory/session-iaa-rca-hardening-1621-R4-20260513.md`
+11. `.agent-workspace/root-cause-corrective-action-agent/knowledge/index.md` v1.0.0→1.1.0
+12. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-operating-guidance.md` v1.0.0→1.1.0
+13. `.agent-workspace/root-cause-corrective-action-agent/knowledge/rca-trigger-checklist.md` v1.0.0→1.1.0
+14. `.github/scripts/rca-trigger-detector.js`
+15. `.github/scripts/rca-trigger-detector.test.sh`
 16. `.github/scripts/validate-product-delivery-gates.test.sh`
+17. `.github/workflows/rca-trigger-detector.yml`
 
 ---
 
@@ -50,7 +51,7 @@ KNOWLEDGE_GOVERNANCE hardening wave implementing 7 deliverables from issue #1621
 - Zero skipped/todo/stub tests: ✅
 - Zero test debt: ✅
 - Evidence artifacts present: ✅ (scope declaration, pre-brief, wave record all committed)
-- Architecture followed (KNOWLEDGE_GOVERNANCE — no agent contracts, no canon, no workflows): ✅
+- Architecture followed (KNOWLEDGE_GOVERNANCE — no agent contracts, no canon; workflow parity update included): ✅
 - Zero deprecation warnings: ✅
 - Zero compiler/linter warnings: ✅ (JS syntax check PASS)
 
@@ -118,7 +119,7 @@ CANON_INVENTORY: ALIGNED — no Tier 1 canon files modified in this wave
 ## Trigger Category
 
 trigger_category_confirmed: KNOWLEDGE_GOVERNANCE
-files_changed_count: 16
+files_changed_count: 17
 product_delivery_required: NO
 
 ---

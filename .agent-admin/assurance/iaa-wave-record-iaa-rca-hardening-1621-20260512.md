@@ -208,7 +208,7 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 *(To be populated after handover assurance — IAA only)*
 
 **Expected reference**: `IAA-session-iaa-rca-hardening-1621-20260512-PASS`
-**Status**: FINAL PASS — R1/R2/R3 remediations verified at HEAD `0d0fe01e`
+**Status**: PENDING_REVALIDATION — prior FINAL PASS was recorded at HEAD `0d0fe01e`; current-head assurance must be re-invoked
 
 ### Final Assurance Entry — 2026-05-13 — IAA Handover Assurance Session R4
 
@@ -218,6 +218,13 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 - Scope parity: PASS (`PR_NUMBER=1622 .github/scripts/validate-scope-to-diff.sh` → exact 16/16 match)
 - Local regression evidence: PASS (`rca-trigger-detector.test.sh` 11/11, `validate-product-delivery-gates.test.sh` 29/29)
 - PHASE_B_BLOCKING_TOKEN: `IAA-session-iaa-rca-hardening-1621-20260512-PASS`
+
+### Current-Head Revalidation Snapshot — 2026-05-13 — Producer refresh (pending IAA re-invocation)
+
+- Current HEAD: `4e28f9bea5cd95deeb58218fbf7b9c96e1d1690d`
+- Scope parity: PASS (`PR_NUMBER=1622 .github/scripts/validate-scope-to-diff.sh` → exact 17/17 match)
+- Local regression evidence: PASS (`rca-trigger-detector.test.sh` 11/11, `validate-product-delivery-gates.test.sh` 37/37)
+- Merge-gate / preflight checks at current head: pending CI re-run and IAA final assurance re-invocation
 
 ---
 
