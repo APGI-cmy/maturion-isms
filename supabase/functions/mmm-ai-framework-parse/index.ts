@@ -30,7 +30,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/mmm-auth.ts';
 import { callAimc } from '../_shared/mmm-aimc-client.ts';
-import { buildFallbackFrameworkStructure, insertProposedFrameworkStructure } from '../_shared/mmm-fallback-framework.ts';
+import { buildFallbackFrameworkStructure, insertProposedFrameworkStructure, toFallbackSourceType } from '../_shared/mmm-fallback-framework.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -122,7 +122,8 @@ Deno.serve(async (req: Request) => {
     }
 
     try {
-      const proposedDomains = buildFallbackFrameworkStructure('VERBATIM');
+      const sourceType = toFallbackSourceType(uploadMetadata?.source_type, 'VERBATIM');
+      const proposedDomains = buildFallbackFrameworkStructure(sourceType);
       const domainCount = await insertProposedFrameworkStructure(supabase, framework_id, proposedDomains);
       if (parse_job_id) {
         await supabase

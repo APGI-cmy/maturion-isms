@@ -4,6 +4,8 @@ type SupabaseClientLike = {
   from: (table: string) => any;
 };
 
+export type FallbackSourceType = 'VERBATIM' | 'GENERATED' | 'HYBRID';
+
 type ProposedDomain = {
   name: string;
   code: string;
@@ -19,7 +21,11 @@ type ProposedDomain = {
   }>;
 };
 
-export function buildFallbackFrameworkStructure(sourceType = 'framework'): ProposedDomain[] {
+export function toFallbackSourceType(value: unknown, fallback: FallbackSourceType): FallbackSourceType {
+  return value === 'VERBATIM' || value === 'GENERATED' || value === 'HYBRID' ? value : fallback;
+}
+
+export function buildFallbackFrameworkStructure(sourceType: FallbackSourceType): ProposedDomain[] {
   const label = sourceType === 'HYBRID'
     ? 'Hybrid'
     : sourceType === 'VERBATIM'
