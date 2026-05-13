@@ -69,8 +69,9 @@
 | PIT-RED-ROUTE-024 | PIT-TR-011 | `/admin/settings` | org_admin | Logged in | Navigate to `/admin/settings` | 404 or blank | Org settings renders | Playwright E2E | screenshot | P2 |
 | PIT-RED-ROUTE-025 | PIT-TR-011 | `/admin/audit-log` | auditor | Logged in | Navigate to `/admin/audit-log` | 404 or blank | Audit log renders | Playwright E2E | screenshot | P2 |
 | PIT-RED-ROUTE-026 | PIT-TR-011, PIT-TR-046 | `/qa-dashboard` | cs2_admin | Logged in as cs2_admin | Navigate to `/qa-dashboard` | 404 or permission denied | QA dashboard renders | Playwright E2E | screenshot | P1 |
-| PIT-RED-ROUTE-027 | PIT-TR-016, PIT-FR-104 | `*` (404) | authenticated | Logged in | Navigate to `/unknown-route` | White screen or 500 | 404 NotFoundPage renders with Go Home CTA | Playwright E2E | screenshot | P2 |
+| PIT-RED-ROUTE-027 | PIT-TR-016 | `*` (404) | authenticated | Logged in | Navigate to `/unknown-route` | White screen or 500 | 404 NotFoundPage renders with Go Home CTA | Playwright E2E | screenshot | P2 |
 | PIT-RED-ROUTE-028 | PIT-TR-015, PIT-FR-014 | SPA fallback | unauthenticated | Vercel deployed | Navigate directly to `/projects/123` | 404 from server | SPA loads, protected route guard fires | Playwright E2E | HAR, screenshot | P1 |
+| PIT-RED-ROUTE-029 | PIT-TR-089, PIT-FR-104 | Global error boundary | authenticated | Logged in and client-side error tracking configured | Trigger an unhandled client-side rendering error | White screen, uncaught crash, or no telemetry | Error boundary fallback renders and Sentry event is captured | Playwright E2E | screenshot, telemetry/log capture | P1 |
 
 ---
 
