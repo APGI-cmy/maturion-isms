@@ -39,6 +39,10 @@ run_checkpoint_test() {
   CHECK_RUNS_JSON='[]'
   COMMIT_STATUSES_JSON='[]'
   TEST_HEAD_SHA_OVERRIDE=""
+  TEST_MERGE_CONFLICT_CHECKED="yes"
+  TEST_MERGEABLE_WITH_BASE="yes"
+  TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
+  TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER=""
 
   "$setup_fn"
 
@@ -56,6 +60,10 @@ run_checkpoint_test() {
     HEAD_SHA="$head_sha" \
     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+    CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
+    CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
+    CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
+    CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
     node "$CHECKPOINT_SCRIPT"
   )"
 
@@ -402,16 +410,31 @@ EOF
 }
 run_checkpoint_test "10. product-facing FUNCTIONAL_PASS no -> STOP_AND_FIX" "STOP_AND_FIX" "no" "Functional PASS verdict not confirmed." setup_product_functional_fail
 
-run_virtual_file_test "11. virtual mode safeRead does not fall back to disk" safeRead '{}' ""
-run_virtual_file_test "12. virtual mode readJson does not fall back to disk" readJson '{}' "null"
-run_virtual_file_test "13. virtual file path provides readJson content" readJson '{".admin/pr.json":"{\"virtual\":\"present\"}"}' '{"virtual":"present"}'
+setup_merge_conflict_not_resolved() {
+  setup_green_checkpoint
+  TEST_MERGE_CONFLICT_CHECKED="yes"
+  TEST_MERGEABLE_WITH_BASE="no"
+  TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="no"
+}
+run_checkpoint_test "11. unresolved merge conflicts -> STOP_AND_FIX" "STOP_AND_FIX" "no" "mergeable with base" setup_merge_conflict_not_resolved
 
-run_claim_test "14. handover language without checkpoint remains claim" claim "handover complete" true
-run_claim_test "15. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
-run_claim_test "15b. REJECTION_NOTICE summary is not a handover claim" claim $'FOREMAN_REJECTION_NOTICE\nRESULT: REJECTED_BACK_TO_PRODUCER\nHANDOVER_ALLOWED: no' false
-run_claim_test "16. draft/status comment without handover language stays false" claim "status update only" false
-run_claim_test "16b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
-run_claim_test "16c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
+setup_out_of_sandbox_blocker() {
+  setup_green_checkpoint
+  TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="preflight/phase-1-evidence depends on protected-file change requiring CS2 authority"
+}
+run_checkpoint_test "12. out-of-sandbox blocker -> CS2_INTERVENTION_REQUIRED" "CS2_INTERVENTION_REQUIRED" "no" "CS2 intervention needed" setup_out_of_sandbox_blocker
+
+run_virtual_file_test "13. virtual mode safeRead does not fall back to disk" safeRead '{}' ""
+run_virtual_file_test "14. virtual mode readJson does not fall back to disk" readJson '{}' "null"
+run_virtual_file_test "15. virtual file path provides readJson content" readJson '{".admin/pr.json":"{\"virtual\":\"present\"}"}' '{"virtual":"present"}'
+
+run_claim_test "16. handover language without checkpoint remains claim" claim "handover complete" true
+run_claim_test "17. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
+run_claim_test "17b. CS2_INTERVENTION_REQUIRED summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: CS2_INTERVENTION_REQUIRED\nOUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: missing required secret\nHANDOVER_ALLOWED: no' false
+run_claim_test "17c. REJECTION_NOTICE summary is not a handover claim" claim $'FOREMAN_REJECTION_NOTICE\nRESULT: REJECTED_BACK_TO_PRODUCER\nHANDOVER_ALLOWED: no' false
+run_claim_test "18. draft/status comment without handover language stays false" claim "status update only" false
+run_claim_test "18b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
+run_claim_test "18c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
 
 # ── Corrective producer comment predicate (operator-precedence regression) ──
 # Mirrors the fixed logic in handover-claim-gate.yml:
@@ -460,17 +483,17 @@ JSEOF
   fi
 }
 
-# 17. Non-producer REJECTION_NOTICE after prior HANDOVER_BLOCKED must NOT unlock.
+# 19. Non-producer REJECTION_NOTICE after prior HANDOVER_BLOCKED must NOT unlock.
 run_corrective_comment_test \
-  "17. non-producer REJECTION_NOTICE after HANDOVER_BLOCKED does NOT unlock" \
+  "19. non-producer REJECTION_NOTICE after HANDOVER_BLOCKED does NOT unlock" \
   "producer-agent" \
   "2026-01-01T10:00:00Z" \
   '[{"user":{"login":"other-user"},"created_at":"2026-01-01T11:00:00Z","body":"FOREMAN_REJECTION_NOTICE"}]' \
   "false"
 
-# 18. Producer REJECTION_NOTICE after prior HANDOVER_BLOCKED MAY unlock next claim.
+# 20. Producer REJECTION_NOTICE after prior HANDOVER_BLOCKED MAY unlock next claim.
 run_corrective_comment_test \
-  "18. producer REJECTION_NOTICE after HANDOVER_BLOCKED DOES unlock" \
+  "20. producer REJECTION_NOTICE after HANDOVER_BLOCKED DOES unlock" \
   "producer-agent" \
   "2026-01-01T10:00:00Z" \
   '[{"user":{"login":"producer-agent"},"created_at":"2026-01-01T11:00:00Z","body":"FOREMAN_REJECTION_NOTICE"}]' \
