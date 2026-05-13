@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 4.4.0
+**Version**: 4.5.0
 **Status**: ACTIVE
-**Last Updated**: 2026-05-10
+**Last Updated**: 2026-05-12
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -469,6 +469,79 @@ OVL-GE-004 Acceptance-Criteria Coverage:
 
 ---
 
+## SIMPLIFIED_ADMIN_ASSURANCE Overlay
+
+**Trigger**: PR touches `.github/scripts/`, `.github/workflows/`, `governance/`, `.github/agents/`, or `.agent-workspace/` paths **AND** the PR diff includes **no** runtime product code in `apps/`, `modules/`, or `packages/`.
+
+**Evidence sources**: `.admin/pr.json`, PR diff, changed-file classes, current CI check status, governing issue text, prior CS2/QA rejection comments, known failure patterns from `FAIL-ONLY-ONCE.md`, evidence model selection rules below.
+
+**Evidence model selection rule**:
+
+- **Default**: Governance/admin/gate-control PRs MUST be evaluated using the gate/admin evidence model (not the product-delivery model).
+- **Exception — apply product-delivery model in addition**: If EITHER of the following is true, the product-delivery model MUST also be applied:
+  - The PR diff includes runtime product code in `apps/`, `modules/`, or `packages/`
+  - The PR body contains an explicit formal product-delivery claim (e.g., `USER_JOURNEY_COMPLETE:`, `FUNCTIONAL_PASS:`, `FULL_FUNCTIONAL_DELIVERY_VERDICT:`)
+
+| Check ID | Question | Pass Condition | Fail Action |
+|----------|----------|----------------|-------------|
+| OVL-SAA-001 | Was the governing issue unambiguous? | The governing issue clearly describes a single change class with no contradictory scope statements | FAIL: state the ambiguity; block MERGE_READY |
+| OVL-SAA-002 | Was the change class correctly detected? | IAA independently computed changed-file classes from PR diff; declared change class matches detected class | FAIL: state the mismatch; block MERGE_READY |
+| OVL-SAA-003 | Were the right agents required? | For each detected change class, the agents required by contract were required (or explicitly waived by CS2) | FAIL: state which agents were missing/wrongly required |
+| OVL-SAA-004 | Was product-delivery evidence required or correctly suppressed? | If no runtime product code in `apps/`/`modules/`/`packages/` and no explicit product-delivery claim in the PR description (pull request body text — not issue description or comments): product-delivery evidence was correctly suppressed. If product code or explicit claim in the PR body present: product-delivery evidence was required. "PR body" means the pull request description field only — issue descriptions and PR comments are not included in this check. | FAIL: state which evidence model was wrongly applied |
+| OVL-SAA-005 | Was gate/admin evidence required? | Gate/admin evidence (CI status, PREHANDOVER proof, session memory) was required and present | FAIL: state missing gate/admin evidence artifacts |
+| OVL-SAA-006 | Were known failure patterns considered? | IAA checked `FAIL-ONLY-ONCE.md` active rules and `niggle-pattern-library.md` patterns applicable to this change class | FAIL: state which patterns were not considered |
+| OVL-SAA-007 | Were handover claims blocked while checks are red? | No MERGE_READY/handover-ready/complete claim was accepted while any required CI check was failing | FAIL: identify the specific failing check and the claim made while it was red |
+| OVL-SAA-008 | Were risks identified before implementation and handover? | PREHANDOVER proof or PR body includes an explicit risk identification statement; no undeclared risk found in diff by IAA independent review | FAIL: state the unidentified risk; block MERGE_READY |
+
+**Output format** (append to IAA verdict block for governance/admin PRs):
+
+```
+SIMPLIFIED_ADMIN_ASSURANCE:
+  OVL-SAA-001 Governing issue clarity: PASS ✅ / FAIL ❌ — [detail]
+  OVL-SAA-002 Change class detection: PASS ✅ / FAIL ❌ — [detail]
+  OVL-SAA-003 Agent requirement correctness: PASS ✅ / FAIL ❌ — [detail]
+  OVL-SAA-004 Evidence model selection: PASS ✅ / FAIL ❌ — [detail]
+  OVL-SAA-005 Gate/admin evidence presence: PASS ✅ / FAIL ❌ — [detail]
+  OVL-SAA-006 Known failure pattern check: PASS ✅ / FAIL ❌ — [detail]
+  OVL-SAA-007 No handover claim while red: PASS ✅ / FAIL ❌ — [detail]
+  OVL-SAA-008 Risk identification: PASS ✅ / FAIL ❌ — [detail]
+  SAA Verdict: PASS ✅ / FAIL ❌
+```
+
+---
+
+## STRICT_MERGE_POSTURE (Universal — Applies to ALL PRs)
+
+**Trigger**: Applies universally to every IAA invocation regardless of PR category.
+
+**Rule**: `MERGE_READY` requires ALL three conditions to be true simultaneously:
+
+| Check ID | Condition | Requirement |
+|----------|-----------|-------------|
+| OVL-SMP-001 | ADMIN_PASS | Admin/gate/evidence correctness check must be `yes`. All ceremony artifacts present, correctly formed, and non-stale. |
+| OVL-SMP-002 | JOB_PASS | Content/job correctness check must be `yes`. The actual work the PR is performing (governance change, build deliverable, admin task) must be correct and complete. |
+| OVL-SMP-003 | NO_UNRESOLVED_DEFECTS | No unresolved issue, nit, ambiguity, stale evidence, weak proof, missing risk treatment, or quality defect. |
+
+**Critical interpretation of OVL-SMP-003**:
+
+> "Non-blocking" means "not catastrophic" — it does **NOT** mean "mergeable while unresolved".
+>
+> Any unresolved issue, nit, ambiguity, stale evidence, weak proof, missing risk treatment, or quality defect keeps `MERGE_READY: no` until resolved.
+>
+> IAA MUST NOT issue `MERGE_READY: yes` while ANY observation remains unresolved — regardless of severity classification. The severity classification of an observation controls how urgently it must be fixed, not whether the PR may merge before it is fixed.
+
+**Output format** (include in every IAA verdict block):
+
+```
+STRICT_MERGE_POSTURE:
+  OVL-SMP-001 ADMIN_PASS: yes / no — [detail if no]
+  OVL-SMP-002 JOB_PASS: yes / no — [detail if no]
+  OVL-SMP-003 NO_UNRESOLVED_DEFECTS: yes / no — [list all unresolved items if no]
+  MERGE_READY: yes / no
+```
+
+---
+
 ## Version History
 
 | Version | Date | Change |
@@ -488,6 +561,7 @@ OVL-GE-004 Acceptance-Criteria Coverage:
 | 4.2.0 | 2026-04-26 | PRE_BUILD_GATES overlay: OVL-PBG-017 added — §7.4 Deployment Execution Contract filed before first build wave (mandatory items: workflow ownership per surface, runner access rules, migration mechanism, CI/preview/production execution boundaries, CS2 approval requirements, env validation); OVL-PBG-ADM-001 updated to reference through OVL-PBG-017; wave: mmm-deploy-strategy-oversight-20260426 (issue maturion-isms#1468). |
 | 4.3.0 | 2026-04-28 | GOVERNANCE_EVIDENCE overlay: OVL-GE-004 added — Acceptance-Criteria Coverage: IAA extracts governing-issue acceptance criteria from the issue itself and verifies each maps to a hard evidence artifact; agent claims are not evidence (A-039/ACR-22/ACR-24); evidence-type downgrade prohibited without CS2 waiver (A-040/ACR-23); gate_triggered: false must be independently verified from diff; output format updated to include OVL-GE-004 section; authority: CS2 — maturion-isms#1492. |
 | 4.4.0 | 2026-05-10 | Product-facing BUILD/T2 hardening (governing issue #1596; incident calibration PR #1590): BUILD_DELIVERABLE overlay now explicitly requires loading PRODUCT_BUILD_ASSURANCE_STANDARD.md before any verdict on product-fix/functional-delivery claims. |
+| 4.5.0 | 2026-05-12 | SIMPLIFIED_ADMIN_ASSURANCE overlay added (OVL-SAA-001 through OVL-SAA-008) — 8 admin/gate-control assurance checks for governance/admin PRs; explicit evidence-model selection rule added; STRICT_MERGE_POSTURE section added (OVL-SMP-001 through OVL-SMP-003) — universal strict merge posture; governing issue #1621. |
 
 ---
 

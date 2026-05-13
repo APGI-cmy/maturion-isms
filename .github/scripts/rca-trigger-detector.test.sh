@@ -66,6 +66,36 @@ run_case \
   "no" \
   ""
 
+run_case \
+  "CS2 rejection comment MERGE_READY no -> required" \
+  '{"prNumber":1622,"headSha":"aaaaaaaabbbbbbbbccccccccddddddddeeeeeeee","isDraft":false,"actorLogin":"APGI-cmy","eventName":"issue_comment","commentBody":"MERGE_READY: no — unresolved admin defects found in PR #1622","comments":[]}' \
+  "yes" \
+  "CS2 rejection or hold requiring RCA"
+
+run_case \
+  "CS2 REJECTION-PACKAGE comment -> required" \
+  '{"prNumber":1622,"headSha":"bbbbbbbbccccccccddddddddeeeeeeeeffffffff","isDraft":false,"actorLogin":"APGI-cmy","eventName":"issue_comment","commentBody":"REJECTION-PACKAGE: missing evidence artifacts","comments":[]}' \
+  "yes" \
+  "CS2 rejection or hold requiring RCA"
+
+run_case \
+  "Non-blocking comment with MERGE_READY no in thread -> required" \
+  '{"prNumber":1622,"headSha":"ccccccccddddddddeeeeeeeeffffffff00000000","isDraft":false,"actorLogin":"Copilot","eventName":"issue_comment","commentBody":"","comments":[{"body":"MERGE_READY: no — nit unresolved: missing version bump in index.md","created_at":"2026-05-12T10:00:00Z"}]}' \
+  "yes" \
+  "MERGE_READY: no"
+
+run_case \
+  "Draft PR with MERGE_READY no -> no marker (draft exemption)" \
+  '{"prNumber":1622,"headSha":"ddddddddeeeeeeeeffffffff0000000011111111","isDraft":true,"actorLogin":"APGI-cmy","eventName":"issue_comment","commentBody":"MERGE_READY: no — draft state","comments":[]}' \
+  "no" \
+  ""
+
+run_case \
+  "Governance PR narrative functional delivery language, no formal claim -> no marker" \
+  '{"prNumber":1622,"headSha":"eeeeeeeeffffffff000000001111111122222222","isDraft":false,"actorLogin":"Copilot","eventName":"pull_request","commentBody":"","comments":[]}' \
+  "no" \
+  ""
+
 echo ""
 echo "Passed: $PASS"
 echo "Failed: $FAIL"
