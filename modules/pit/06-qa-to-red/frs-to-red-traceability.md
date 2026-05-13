@@ -53,7 +53,6 @@
 | PIT-FR-026 | Optional email notification delivery | PIT-RED-NOTIFICATION-005 | E2E | screenshot, HAR | RED_TEST_DEFINED |
 | PIT-FR-027 | Portfolio dashboard summary cards | PIT-RED-ROUTE-007 | E2E | screenshot | RED_TEST_DEFINED |
 | PIT-FR-028 | Project list with RAG status | PIT-RED-ROUTE-007, PIT-RED-ROUTE-008 | E2E | screenshot | RED_TEST_DEFINED |
-| PIT-RED-FR-029 (mapped) | Portfolio dashboard filtering | PIT-RED-ROUTE-007 | E2E | screenshot | RED_TEST_DEFINED |
 | PIT-FR-029 | Portfolio dashboard filtering | PIT-RED-ROUTE-007 | E2E | screenshot | RED_TEST_DEFINED |
 | PIT-FR-030 | Watchdog alert banner on portfolio dashboard | PIT-RED-ROUTE-007 | E2E | screenshot | RED_TEST_DEFINED |
 | PIT-FR-031 | Project creation modal/wizard | PIT-RED-PROJECT-001 | E2E | screenshot, HAR | RED_TEST_DEFINED |
