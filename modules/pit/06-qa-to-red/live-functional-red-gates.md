@@ -14,7 +14,7 @@
 | Source | Stage 5b LFV Package (all 9 artifacts), TRS (PIT-TR-113, PIT-TR-114), FRS (PIT-FR-103) |
 | Author | foreman-v2-agent |
 | Date | 2026-05-13 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 
 > These gates enforce the key lesson from MMM (PR #1590): **No deployed LFV evidence, no functional pass. No functional pass, no handover. No handover, no merge.**
 

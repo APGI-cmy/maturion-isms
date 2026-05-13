@@ -15,7 +15,7 @@
 | Source | FRS v0.2-hardened (PIT-FR-001–123), TRS v0.2-draft (PIT-TR-001–126), Architecture v1.0, LFV Package |
 | Author | foreman-v2-agent |
 | Date | 2026-05-13 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 
 > All tests in this catalog are in **RED state** — they will fail before implementation begins. The expected GREEN behaviour defines what the builder must implement to pass.
 

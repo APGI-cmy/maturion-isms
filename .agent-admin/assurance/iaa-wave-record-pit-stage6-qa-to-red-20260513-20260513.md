@@ -5,7 +5,7 @@
 | Wave | pit-stage6-qa-to-red-20260513 |
 | Date | 2026-05-13 |
 | Branch | copilot/create-stage-6-red-test-package |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 | PR | Not yet created (Pre-Brief only) |
 | IAA Session (Pre-Brief) | IAA-session-pit-stage6-qa-to-red-20260513-PREBRIEF |
 | Adoption Phase | PHASE_B_BLOCKING |
@@ -17,7 +17,7 @@
 
 **Generated**: 2026-05-13
 **Invocation type**: PRE-BRIEF (Phase 0 — Wave start)
-**Triggered by**: Foreman wave start request, Issue #1634 opened by @APGI-cmy
+**Triggered by**: Foreman wave start request, Issue #1625 opened by @APGI-cmy
 
 ---
 
@@ -93,7 +93,7 @@ The following FAIL-ONLY-ONCE rules will be enforced at full assurance invocation
 | A-033 | Git-committed vs disk existence | IAA will verify via `git ls-tree HEAD` — disk presence alone is insufficient |
 | A-036 | Temporal integrity | No future-dated Stage 6 clearance or build authorization claims permitted |
 | A-037 | Evidence-type discipline | LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by STATIC_CODE or CONFIG evidence |
-| A-039 | Agent claims are not evidence | Acceptance-Criteria Matrix required per governing issue #1634 acceptance criteria |
+| A-039 | Agent claims are not evidence | Acceptance-Criteria Matrix required per governing issue #1625 acceptance criteria |
 | A-040 | Evidence-type downgrade prohibition | Runtime evidence cannot be substituted without explicit CS2 written waiver |
 | A-041 | Diff-first classification | IAA will independently compute changed files from `git diff main..HEAD` before accepting any declared scope |
 | A-042 | Independent risk challenge | Five-question challenge completed before PASS token issued |
@@ -113,7 +113,7 @@ The PREHANDOVER proof (to be created by Foreman before full IAA assurance invoca
 
 2. **Stage Gate Advancement Declaration**
    - Prior stage confirmation: Stage 5 Architecture (PR #1612, token `IAA-session-pit-stage5-architecture-20260511-PASS`)
-   - Prior stage confirmation: Stage 5b LFV (**SCOPE BLOCKER SB-01 — see below** — must be MERGED with ASSURANCE-TOKEN before this field can show COMPLETE)
+   - Prior stage confirmation: Stage 5b LFV (PR #1624 — MERGED; available as Stage 6 input)
    - Stage 6 advancement: QA-to-Red artifacts created and committed
 
 3. **Artifact Evidence Block**
@@ -122,9 +122,9 @@ The PREHANDOVER proof (to be created by Foreman before full IAA assurance invoca
    - Git-committed confirmation (not just on-disk — A-033)
 
 4. **CS2 Authorization Statement**
-   - Must reference Issue #1634 opened by @APGI-cmy
-   - Must accurately describe Issue #1634 scope (QA-to-Red package, not any other issue)
-   - **WARNING**: F-01/F-02 of LFV REJECTION-PACKAGE occurred because the CS2 authorization cited the wrong governing issue. Verify issue title matches before declaring complete.
+   - Must reference Issue #1625 opened by @APGI-cmy
+   - Must accurately describe Issue #1625 scope (QA-to-Red package, not any other issue)
+   - **NOTE**: Earlier governance artifacts incorrectly referenced issue #1634 instead of #1625. This has been corrected in all files.
 
 5. **IAA Token Reference Field**
    - `iaa_audit_token`: Must be pre-populated with expected format `IAA-session-pit-stage6-qa-to-red-20260513-PASS`
@@ -143,7 +143,7 @@ The PREHANDOVER proof (to be created by Foreman before full IAA assurance invoca
 
 | ID | Blocker | Severity | Resolution Path |
 |----|---------|----------|----------------|
-| **SB-01** | **CRITICAL — Stage 5b LFV (PR #1624) has active REJECTION-PACKAGE** (IAA-session-pit-lfv-package-20260512-REJECT-001, 5 failures). OVL-PBG-008 requires all prior stages COMPLETE before Stage 6 can advance. IAA cannot issue ASSURANCE-TOKEN for Stage 6 until Stage 5b LFV has a valid ASSURANCE-TOKEN and is merged. | **HARD BLOCK** — Stage 6 IAA full assurance cannot proceed until resolved | Foreman must resolve all 5 LFV REJECTION failures (F-01: wrong governing issue reference; F-02: CS2 authorization unverifiable; F-03: audit traceability void; F-04: PR draft status + open checklist; F-05: wave-current-tasks T-6 status mismatch), re-invoke IAA for PR #1624, obtain ASSURANCE-TOKEN, and merge PR #1624 before triggering Stage 6 full assurance |
+| ~~**SB-01**~~ | ~~CRITICAL — Stage 5b LFV (PR #1624) had active REJECTION-PACKAGE~~ | **RESOLVED** — PR #1624 is closed and merged; Stage 5b LFV is available as Stage 6 input. OVL-PBG-008 stage-gating no longer blocked on this item. | Resolved: PR #1624 merged |
 | SB-02 | Stage 6 artifacts must derive from Stages 1–5 FRS/TRS/Architecture and Stage 5b LFV — not generic templates. IAA will verify RED test traceability chains to prior-stage artifacts at full assurance. | HARD — artifact fabrication without genuine traceability = REJECTION-PACKAGE | pit-specialist must derive RED tests from actual PIT FRS IDs, TRS IDs, Architecture ADRs, and LFV journey steps |
 | SB-03 | BUILD_PROGRESS_TRACKER.md update must reflect Stage 6 posture only — no build authorization, no Stage 7+ advancement claims | HARD — premature build authorization = REJECTION-PACKAGE | Foreman must ensure Stage 6 = COMPLETE/REVIEW and Stage 7+ = NOT_STARTED |
 | SB-04 | No production code, no migrations, no `.github/workflows/` installations permitted per wave description. If any such file appears in the diff, PR re-classification to CI_WORKFLOW or PRODUCT_BUILD_ASSURANCE is required. | HARD — IAA will independently verify via A-041 diff-first classification | Wave must contain only `modules/pit/06-qa-to-red/` files + `modules/pit/BUILD_PROGRESS_TRACKER.md` + ceremony artifacts |
@@ -164,7 +164,7 @@ The following PRE_BUILD_GATES checks will be applied at full assurance. Pre-brie
 | OVL-PBG-005 | AGENT_HANDOVER_AUTOMATION version cited matches canonical | Standard check at full assurance |
 | OVL-PBG-006 | BUILD_PROGRESS_TRACKER uses full 12-stage model | Verify Stage 6 update does not truncate the 12-stage model |
 | OVL-PBG-007 | Architecture doc references full lifecycle sequence | Not directly applicable to Stage 6 — advisory |
-| **OVL-PBG-008** | **Stage gating respected (no skipped stages)** | **CRITICAL — SB-01 dependency: Stage 5b LFV must be COMPLETE before Stage 6 advance** |
+| **OVL-PBG-008** | **Stage gating respected (no skipped stages)** | **Stage 5b LFV (PR #1624) is merged — OVL-PBG-008 stage-gating satisfied for Stage 5b. Remaining prerequisite: Stage 5 Architecture (PR #1612) CS2 gate-pass.** |
 | OVL-PBG-009 | Legacy directory numbering flagged | Verify `06-qa-to-red/` is correct canonical numbering |
 | OVL-PBG-010 | Stage 2 UX Wiring Spec present | Verify Stage 2 documented as COMPLETE in BUILD_PROGRESS_TRACKER |
 | **OVL-PBG-011** | **Stage 6 QA-to-Red suite exists before implementation** | **This wave IS creating Stage 6 — verify completeness of RED suite against FRS/TRS/Architecture coverage** |
@@ -182,7 +182,7 @@ The following PRE_BUILD_GATES checks will be applied at full assurance. Pre-brie
 
 *Pre-Brief only — no assurance performed. ASSURANCE-TOKEN will be appended here after full assurance.*
 
-**BLOCKED pending SB-01 resolution**: Stage 5b LFV (PR #1624) must obtain ASSURANCE-TOKEN and be merged before Stage 6 full assurance can be cleared.
+**Stage 5b LFV (PR #1624) is merged** — SB-01 resolved. Remaining Stage 6 gate-pass prerequisite: Stage 5 Architecture CS2 gate-pass (PR #1612).
 
 ---
 

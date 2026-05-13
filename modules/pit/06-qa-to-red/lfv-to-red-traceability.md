@@ -14,7 +14,7 @@
 | Source | `modules/pit/05-live-functional-verification/` (all 9 artifacts + workflow) |
 | Author | foreman-v2-agent |
 | Date | 2026-05-13 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 
 > The LFV package (Stage 5b) defines the live functional verification requirements that the PIT build must satisfy before claiming FUNCTIONAL_PASS. This matrix maps every LFV artifact to the RED tests that enforce those requirements.
 

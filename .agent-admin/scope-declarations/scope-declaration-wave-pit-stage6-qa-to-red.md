@@ -7,7 +7,7 @@
 | Wave | pit-stage6-qa-to-red-20260513 |
 | Session ID | session-pit-stage6-qa-to-red-20260513 |
 | PR | #1626 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 | Branch | copilot/create-stage-6-red-test-package |
 | Date | 2026-05-13 |
 | Orchestrating Agent | foreman-v2-agent |

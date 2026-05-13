@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-13
-**Updated By**: foreman-v2-agent (issue #1634 Stage 6 QA-to-Red wave — pit-stage6-qa-to-red-20260513)
+**Updated By**: foreman-v2-agent (issue #1625 Stage 6 QA-to-Red wave — pit-stage6-qa-to-red-20260513)
 > **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — STAGE 5b LFV PACKAGE CREATED — STAGE 6 QA-TO-RED IN PROGRESS — PENDING CS2 STAGE 5 REVIEW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -193,7 +193,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 ---
 
 ### Stage 5b: PIT LFV Package
-**Status**: [x] CREATED — PENDING CS2 STAGE 5 REVIEW
+**Status**: [x] MERGED — PR #1624 closed and merged
 **Location**: `modules/pit/05-live-functional-verification/`
 **Governing Issue**: [maturion-isms#1623](https://github.com/APGI-cmy/maturion-isms/issues/1623)
 **PR**: [#1624](https://github.com/APGI-cmy/maturion-isms/pulls/1624)
@@ -234,7 +234,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 ---
 
 ### Stage 6: QA-to-Red
-**Status**: [x] IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED (maturion-isms#1634 / PR #1626)  
+**Status**: [x] IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED (maturion-isms#1625 / PR #1626)  
 **Location**: `modules/pit/06-qa-to-red/`  
 > **Path Note**: Stage 5b LFV Package occupies `modules/pit/05-live-functional-verification/`. Stage 6 QA-to-Red is correctly located at `modules/pit/06-qa-to-red/` to avoid path conflict.  
 **Key Artifacts**:
@@ -274,14 +274,14 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 - [x] Progress roll-up computation (per PIT-FR-114 / PIT-TR-117): unit test for computation; E2E for project-level update
 - [x] Lifecycle removal semantics (per PIT-FR-121 / PIT-TR-124): archive/restore/cancel confirmed excluded/included in roll-up
 
-> **LFV Derivation Added (maturion-isms#1634)**: Stage 5b LFV Package treated as input to Stage 6. All 9 LFV artifacts + workflow mapped in `lfv-to-red-traceability.md`. 10 LFV RED gates defined in `live-functional-red-gates.md`. No FUNCTIONAL_PASS without deployed LFV evidence.
+> **LFV Derivation Added (maturion-isms#1625)**: Stage 5b LFV Package treated as input to Stage 6. All 9 LFV artifacts + workflow mapped in `lfv-to-red-traceability.md`. 10 LFV RED gates defined in `live-functional-red-gates.md`. No FUNCTIONAL_PASS without deployed LFV evidence.
 
-**Gate-Pass Blocker**: Stage 6 gate-pass requires Stage 5 Architecture CS2 gate-pass (PR #1612) AND Stage 5b LFV Package CS2 gate-pass (PR #1624 REJECTION-PACKAGE must be resolved) before gate-pass can be claimed.
+**Gate-Pass Blocker**: Stage 6 gate-pass requires Stage 5 Architecture CS2 gate-pass (PR #1612) before gate-pass can be claimed. Stage 5b LFV Package (PR #1624) is merged and available as input.
 
 **Stage 6 RED Suite Statistics**: 144 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
 
 **Completion Date**: 2026-05-13 (derivation complete; gate-pass pending prerequisites)  
-**Notes**: Stage 6 QA-to-Red derivation package created per maturion-isms#1634 (PR #1626). Artifact path corrected from `05-qa-to-red/` to `06-qa-to-red/` to avoid conflict with Stage 5b LFV Package at `05-live-functional-verification/`. Stage 6 does NOT start implementation, appoint a builder, start PBFAG, or clear Build Authorization. Stage 7+ remains NOT_STARTED. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 6 QA-to-Red derivation package created per maturion-isms#1625 (PR #1626). Artifact path corrected from `05-qa-to-red/` to `06-qa-to-red/` to avoid conflict with Stage 5b LFV Package at `05-live-functional-verification/`. Stage 6 does NOT start implementation, appoint a builder, start PBFAG, or clear Build Authorization. Stage 7+ remains NOT_STARTED. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -453,13 +453,13 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 6 QA-to-Red IN_PROGRESS — RED_SUITE_DERIVATION_STARTED (maturion-isms#1634 / PR #1626); Stage 5 Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 5b LFV Package CREATED — PENDING CS2 STAGE 5 REVIEW (maturion-isms#1623, PR #1624); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
+**Current Stage**: Stage 6 QA-to-Red IN_PROGRESS — RED_SUITE_DERIVATION_STARTED (maturion-isms#1625 / PR #1626); Stage 5 Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 5b LFV Package MERGED (maturion-isms#1623, PR #1624); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
 **Overall Progress**: ~50% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass; Stage 5b LFV Package created 2026-05-12; Stage 6 QA-to-Red RED derivation complete 2026-05-13 — 144 tests defined, 0 BLOCKING_GAP)  
-**Blockers**: Stage 6 gate-pass BLOCKED pending CS2 Stage 5 Architecture gate-pass (PR #1612) AND resolution of Stage 5b LFV REJECTION-PACKAGE (PR #1624). Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
+**Blockers**: Stage 6 gate-pass BLOCKED pending CS2 Stage 5 Architecture gate-pass (PR #1612). Stage 5b LFV (PR #1624) is merged. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
 1. CS2 review and gate-pass of Stage 5 Architecture package (maturion-isms#1611)
-2. CS2 review and gate-pass of Stage 5b LFV Package (maturion-isms#1623 / PR #1624) — resolve REJECTION-PACKAGE first
+2. Stage 5b LFV Package (maturion-isms#1623 / PR #1624) — MERGED
 3. Stage 6 gate-pass can be claimed once P-1 and P-2 are confirmed
 4. Complete Stages 7–11 before Build Authorization can be requested
 5. Stage 8 Implementation Plan must explicitly authorise activation of `pit-live-verification.yml`
@@ -484,8 +484,8 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — ready for CS2 re-confirmation after PR #1594 gap closure
 - [x] Stage 3 FRS: DRAFT_HARDENED_CS2_RECONFIRMED (maturion-isms#1556) — v0.2-hardened, CS2 re-confirmed
 - [x] Stage 4 TRS: **CS2_APPROVED** (maturion-isms#1554 + maturion-isms#1575 + maturion-isms#1604) — v0.2-draft CS2 approved 2026-05-11 by @APGI-cmy
-- [x] Stage 5b LFV Package: **CREATED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; ADMIN_PASS claimable on merge; FUNCTIONAL_PASS deferred to Stage 12 post-deployment
-- [x] Stage 6 QA-to-Red: **IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED** (maturion-isms#1634 / PR #1626) — 2026-05-13 — 144 RED tests defined; 0 BLOCKING_GAP; gate-pass pending Stage 5 + Stage 5b CS2 approval
+- [x] Stage 5b LFV Package: **MERGED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; merged as Stage 6 input
+- [x] Stage 6 QA-to-Red: **IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED** (maturion-isms#1625 / PR #1626) — 2026-05-13 — 144 RED tests defined; 0 BLOCKING_GAP; gate-pass pending Stage 5 Architecture CS2 approval
 - [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (RECONCILIATION_COMPLETE_PENDING_CS2) → LFV Package (CREATED) → QA-to-Red (DERIVATION_COMPLETE_PENDING_PREREQUISITES)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed

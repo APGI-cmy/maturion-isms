@@ -5,14 +5,17 @@
 **Date**: 2026-05-13
 **Branch**: copilot/create-stage-6-red-test-package
 **PR**: PR #1626
-**Issue**: maturion-isms#1634 — Foreman: PIT Stage 6 QA-to-Red — derive RED suite from Stages 1–5 and LFV package
+**Issue**: maturion-isms#1625 — Foreman: PIT Stage 6 QA-to-Red — derive RED suite from Stages 1–5 and LFV package
 **iaa_prebrief_path**: `.agent-admin/assurance/iaa-wave-record-pit-stage6-qa-to-red-20260513-20260513.md`
 **iaa_wave_record_path**: `.agent-admin/assurance/iaa-wave-record-pit-stage6-qa-to-red-20260513-20260513.md`
 **ceremony_admin_appointed**: NONE — governance documentation wave (Foreman direct execution; no builder delegation)
 
-## Blocker (SB-01)
+## Blocker Update
 
-IAA flagged SB-01: PR #1624 (Stage 5b LFV) has active REJECTION-PACKAGE (IAA-session-pit-lfv-package-20260512-REJECT-001). IAA full assurance for Stage 6 is blocked until PR #1624 receives ASSURANCE-TOKEN and is merged. Stage 6 artifact creation (content authoring) proceeds in parallel per IAA authorization.
+~~SB-01 (was ACTIVE): PR #1624 (Stage 5b LFV) had active REJECTION-PACKAGE.~~
+**SB-01 RESOLVED**: PR #1624 is closed and merged. Stage 5b LFV is available as Stage 6 input.
+
+Remaining Stage 6 gate-pass prerequisite: Stage 5 Architecture CS2 gate-pass (PR #1612).
 
 ## Outstanding Tasks — Wave: pit-stage6-qa-to-red-20260513
 
@@ -32,9 +35,9 @@ IAA flagged SB-01: PR #1624 (Stage 5b LFV) has active REJECTION-PACKAGE (IAA-ses
 | T-12 | Update modules/pit/BUILD_PROGRESS_TRACKER.md | foreman-v2-agent | 🟢 DONE | Stage 6 path corrected to 06-qa-to-red/; status IN_PROGRESS |
 | T-13 | Create .admin/prs/pr-1626.json | foreman-v2-agent | 🟢 DONE | PR manifest |
 | T-14 | Create .agent-admin/scope-declarations/scope-declaration-wave-pit-stage6-qa-to-red.md | foreman-v2-agent | 🟢 DONE | Scope declaration |
-| T-15 | Create PREHANDOVER proof | foreman-v2-agent | ⏳ PENDING (blocked: SB-01) | .agent-admin/prehandover/proof-pr-1626-pit-stage6-qa-to-red-20260513.md |
+| T-15 | Create PREHANDOVER proof | foreman-v2-agent | ⏳ PENDING (pending Stage 5 Arch CS2 gate-pass for full gate-pass claim) | .agent-admin/prehandover/proof-pr-1626-pit-stage6-qa-to-red-20260513.md |
 | T-16 | Create session memory | foreman-v2-agent | ⏳ PENDING | .agent-workspace/foreman-v2/memory/session-pit-stage6-qa-to-red-20260513.md |
 
 ---
 
-**Blocker Status**: SB-01 (PR #1624 REJECTION-PACKAGE) must be cleared before T-15/T-16 and IAA full assurance.
+**Blocker Status**: SB-01 RESOLVED (PR #1624 merged). Remaining: Stage 5 Architecture CS2 gate-pass (PR #1612) required before Stage 6 full gate-pass. Governing issue corrected to #1625 (was erroneously #1634 in prior commit).

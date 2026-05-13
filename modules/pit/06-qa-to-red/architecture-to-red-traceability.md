@@ -14,7 +14,7 @@
 | Source | `modules/pit/04-architecture/architecture.md` v1.0 |
 | Author | foreman-v2-agent |
 | Date | 2026-05-13 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 
 ---
 

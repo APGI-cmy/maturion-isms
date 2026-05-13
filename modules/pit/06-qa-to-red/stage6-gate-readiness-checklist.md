@@ -14,7 +14,7 @@
 | Status | IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED |
 | Author | foreman-v2-agent |
 | Date | 2026-05-13 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 | PR | #1626 |
 
 ---
@@ -24,13 +24,13 @@
 | # | Gate | Required Evidence | Status |
 |---|---|---|---|
 | P-1 | Stage 5 Architecture CS2 gate-pass received | PR #1612 merged with IAA PASS token | ⏳ PENDING — PR #1612 ready for CS2 review |
-| P-2 | Stage 5b LFV Package CS2 gate-pass received | PR #1624 merged with IAA PASS token | ❌ BLOCKED — PR #1624 has active REJECTION-PACKAGE (IAA-session-pit-lfv-package-20260512-REJECT-001); F-01 through F-05 must be resolved |
+| P-2 | Stage 5b LFV Package merged | PR #1624 closed and merged | ✅ MERGED — PR #1624 is closed and merged; Stage 5b LFV is available as input to Stage 6 |
 | P-3 | Stage 4 TRS CS2-approved | PR confirmed closed by @APGI-cmy (maturion-isms#1604) | ✅ CONFIRMED |
 | P-4 | Stage 3 FRS CS2 re-confirmed | CS2 re-confirmed 2026-05-11 | ✅ CONFIRMED |
 | P-5 | Stage 2 UX Spec CS2 re-confirmed | CS2 re-confirmed 2026-05-11 | ✅ CONFIRMED |
 | P-6 | Stage 1 App Description CS2 approved | Approved 2026-05-06 (maturion-isms#1540) | ✅ CONFIRMED |
 
-> **Stage 6 gate-pass is BLOCKED until P-1 and P-2 are CONFIRMED.**
+> **Stage 6 gate-pass is BLOCKED until P-1 is CONFIRMED** (Stage 5 Architecture CS2 gate-pass — PR #1612).
 
 ---
 
@@ -110,9 +110,8 @@ Stage 6 Status: **IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED**
 
 Current blockers preventing gate-pass:
 - **P-1 BLOCKED**: Stage 5 Architecture PR #1612 pending CS2 review
-- **P-2 BLOCKED**: Stage 5b LFV Package PR #1624 has active REJECTION-PACKAGE; must be resolved and re-approved before Stage 6 gate-pass
 
-Stage 6 artifacts are complete and accurate. Stage 6 gate-pass will be claimed as a separate action once P-1 and P-2 are resolved.
+Stage 6 artifacts are complete and accurate. Stage 6 gate-pass will be claimed as a separate action once P-1 is confirmed.
 
 > **Note**: This PR does not claim Stage 6 gate-pass. The PR posture is `IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED`.
 

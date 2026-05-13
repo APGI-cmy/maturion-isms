@@ -15,7 +15,7 @@
 | Derived From | Stages 1–5 baseline (App Description, UX Spec, FRS, TRS, Architecture) + Stage 5b LFV Package |
 | Author | foreman-v2-agent (POLC-Orchestration mode) |
 | Date | 2026-05-13 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 | PR | #1626 |
 | Pre-Build Authority | `governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 |
 
@@ -51,9 +51,9 @@ Stage 6 derives RED tests from all approved/re-confirmed upstream stages:
 | Stage 3 | `modules/pit/02-frs/functional-requirements.md` v0.2-hardened | CS2_RECONFIRMED — 2026-05-11 (123 FRs) |
 | Stage 4 | `modules/pit/03-trs/technical-requirements-specification.md` v0.2-draft | CS2_APPROVED — 2026-05-11 (maturion-isms#1604, 126 TRs) |
 | Stage 5 | `modules/pit/04-architecture/architecture.md` v1.0 | RECONCILIATION_COMPLETE — READY_FOR_CS2_REVIEW (PR #1612) |
-| Stage 5b | `modules/pit/05-live-functional-verification/` (9 artifacts + workflow) | CREATED — PENDING CS2 STAGE 5 REVIEW (PR #1624) |
+| Stage 5b | `modules/pit/05-live-functional-verification/` (9 artifacts + workflow) | MERGED — PR #1624 closed and merged |
 
-> **Note**: Stage 5 Architecture is READY_FOR_CS2_REVIEW (not yet CS2-approved). Stage 5b LFV has active REJECTION-PACKAGE. Stage 6 content authoring proceeds per IAA authorization. Stage 6 gate-pass is blocked until Stage 5 + Stage 5b are CS2-approved and merged.
+> **Note**: Stage 5 Architecture is READY_FOR_CS2_REVIEW (not yet CS2-approved). Stage 5b LFV is merged and available as Stage 6 input. Stage 6 gate-pass is blocked until Stage 5 Architecture is CS2-approved and merged.
 
 ---
 
@@ -164,7 +164,7 @@ Stage 6 gate-pass requires ALL of the following:
 ### 4.4 Prerequisite Gates (Blocking for final gate-pass)
 
 - [ ] Stage 5 Architecture CS2 gate-pass received (PR #1612 merged)
-- [ ] Stage 5b LFV Package CS2 gate-pass received (PR #1624 REJECTION-PACKAGE resolved + merged)
+- [x] Stage 5b LFV Package merged (PR #1624 closed and merged)
 
 ---
 
@@ -224,5 +224,5 @@ This Stage 6 package MUST NOT:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Governing Issue**: maturion-isms#1634
+**Governing Issue**: maturion-isms#1625
 **Wave**: pit-stage6-qa-to-red-20260513

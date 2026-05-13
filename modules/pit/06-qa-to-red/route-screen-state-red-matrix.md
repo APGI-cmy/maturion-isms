@@ -14,7 +14,7 @@
 | Source | Architecture v1.0 (27 routes, 22 screens), FRS (PIT-FR-016), TRS (PIT-TR-091, PIT-TR-092) |
 | Author | foreman-v2-agent |
 | Date | 2026-05-13 |
-| Issue | maturion-isms#1634 |
+| Issue | maturion-isms#1625 |
 
 ---
 
