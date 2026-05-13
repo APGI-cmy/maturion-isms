@@ -2,9 +2,9 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-11
-**Updated By**: foreman-v2-agent (issue #1611 Stage 5 Architecture reconciliation wave)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — PENDING CS2 STAGE 5 REVIEW  
+**Last Updated**: 2026-05-12
+**Updated By**: foreman-v2-agent (issue #1623 Stage 5b LFV Package wave — pit-lfv-package-20260512)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — STAGE 5b LFV PACKAGE CREATED — PENDING CS2 STAGE 5 REVIEW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -189,6 +189,47 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 
 **Completion Date**: 2026-05-11 (reconciliation complete; pending CS2 Stage 5 gate-pass)
 **Notes**: Stage 5 Architecture reconciliation complete per maturion-isms#1611. Legacy v0.1 architecture.md superseded by Stage 5 gate-passable artifact derived from approved/re-confirmed Stages 1–4. Four new evidence artifacts produced: stage5-architecture-reconciliation.md, trs-to-architecture-traceability.md, timeline-engine-architecture-decision.md (ADR-PIT-001), app-description-to-architecture-traceability.md (§AD-01–AD-24 coverage). All legacy subfolder content preserved as reference only and clearly marked superseded. Stage 6 Architecture gate-pass BLOCKED until CS2 approves this Stage 5 package. Build Authorization remains NOT CLEARED.
+
+---
+
+### Stage 5b: PIT LFV Package
+**Status**: [x] CREATED — PENDING CS2 STAGE 5 REVIEW
+**Location**: `modules/pit/05-live-functional-verification/`
+**Governing Issue**: [maturion-isms#1623](https://github.com/APGI-cmy/maturion-isms/issues/1623)
+**PR**: [#1624](https://github.com/APGI-cmy/maturion-isms/pulls/1624)
+**Wave**: pit-lfv-package-20260512 (2026-05-12)
+
+**Key Artifacts**:
+- [x] `01_FUNCTIONAL_USER_JOURNEY_CONTRACT.md` — 16 PIT user journeys with step tables, success/failure criteria
+- [x] `02_AGENT_ACCESS_MATRIX.md` — 18 secrets and runtime access matrix (all 5 execution contexts)
+- [x] `03_DEPLOYED_VERIFICATION_PLAN.md` — Vercel URL strategy, bypass mechanism, 8-gate pass/fail table
+- [x] `04_CTA_BACKEND_STATE_MAP.md` — 17 CTAs mapped: UI element → endpoint → table/bucket → state change → audit evidence
+- [x] `05_TEST_IDENTITY_AND_ROLE_MATRIX.md` — 7 test identities (cs2_admin through unauthenticated), fixture files, seed data
+- [x] `06_LIVE_VERIFICATION_WORKFLOW_SPEC.md` — Workflow architecture, 10 output fields, 5 artifacts, 8 readiness criteria
+- [x] `07_DASHBOARD_STATE_REFLECTION_GATE.md` — 11 reflection checks (before/after/evidence for each state change)
+- [x] `08_HANDOVER_EVIDENCE_REQUIREMENTS.md` — 8 evidence artifacts, 8 gates with evidence types, IAA three-tier verdict
+- [x] `09_CS2_UI_ACCEPTANCE_CHECKLIST.md` — CS2 (Johan Ras) manual verification checklist, 11 sections, sign-off block
+- [x] `pit-live-verification-workflow.yml` — DESIGN ARTIFACT (7 jobs, all PIT-specific secrets, full Playwright script)
+
+**IAA Verdict (this wave)**:
+- [x] ADMIN_PASS: yes — all 10 governance artifacts created and PIT-specific
+- [ ] CODE_PASS: deferred — no application code in this wave; CODE_PASS applies to Stage 12 build wave
+- [ ] FUNCTIONAL_PASS: NOT CLAIMABLE — PIT not yet built or deployed; requires live deployment + LFV workflow run + CS2 sign-off
+
+> **PIT LFV Package Lifecycle Note**:  
+> LFV artifacts are mandatory pre-build governance evidence required before Stage 12 (Build Execution)  
+> can claim FUNCTIONAL_PASS. These artifacts define the verification requirements; they do not execute  
+> them. FUNCTIONAL_PASS will be claimable only after:  
+> 1. Stage 12 build is complete and PIT is deployed to a live Vercel environment  
+> 2. `pit-live-verification.yml` workflow has been activated (Stage 8 authorisation) and run successfully  
+> 3. All 8 LFV gates PASS in the deployed environment  
+> 4. CS2 (Johan Ras) completes `09_CS2_UI_ACCEPTANCE_CHECKLIST.md` with FUNCTIONAL_PASS: yes sign-off  
+>
+> **No implementation, builder appointment, or handover is authorised by this issue.**  
+> Build Authorization remains NOT CLEARED. Stage 6 remains BLOCKED until Stage 5 is CS2 gate-passed.
+
+**Completion Date**: 2026-05-12 (LFV package created; pending CS2 Stage 5 review)
+**Notes**: PIT LFV Package created per maturion-isms#1623 (PR #1624). All 9 markdown artifacts + 1 workflow design artifact produced. Content is PIT-specific (not generic template text). Covers all 27 PIT routes, all 7 roles, all 10 Edge Functions, both storage buckets, Supabase Realtime, and AIMC Gateway pattern. Workflow design artifact stored in `modules/pit/05-live-functional-verification/` — NOT in `.github/workflows/` (active installation deferred to Stage 8).
 
 ---
 
@@ -398,14 +439,16 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 ACTIVE — Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
+**Current Stage**: Stage 5 ACTIVE — Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 5b LFV Package CREATED (maturion-isms#1623, PR #1624); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~43% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass)  
-**Blockers**: Stage 6 QA-to-Red BLOCKED until CS2 approves Stage 5 Architecture package. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed.  
+**Overall Progress**: ~45% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass; Stage 5b LFV Package created 2026-05-12)  
+**Blockers**: Stage 6 QA-to-Red BLOCKED until CS2 approves Stage 5 Architecture package. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
 1. CS2 review and gate-pass of Stage 5 Architecture package (maturion-isms#1611)
-2. Proceed to Stage 6 QA-to-Red after Stage 5 CS2 gate-pass
-3. Complete Stages 6–11 before Build Authorization can be requested
+2. CS2 review of Stage 5b LFV Package (maturion-isms#1623 / PR #1624) — ADMIN_PASS claimable on merge
+3. Proceed to Stage 6 QA-to-Red after Stage 5 CS2 gate-pass
+4. Complete Stages 6–11 before Build Authorization can be requested
+5. Stage 8 Implementation Plan must explicitly authorise activation of `pit-live-verification.yml`
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
@@ -427,7 +470,8 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — ready for CS2 re-confirmation after PR #1594 gap closure
 - [x] Stage 3 FRS: DRAFT_HARDENED_CS2_RECONFIRMED (maturion-isms#1556) — v0.2-hardened, CS2 re-confirmed
 - [x] Stage 4 TRS: **CS2_APPROVED** (maturion-isms#1554 + maturion-isms#1575 + maturion-isms#1604) — v0.2-draft CS2 approved 2026-05-11 by @APGI-cmy
-- [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (RECONCILIATION_COMPLETE_PENDING_CS2)
+- [x] Stage 5b LFV Package: **CREATED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; ADMIN_PASS claimable on merge; FUNCTIONAL_PASS deferred to Stage 12 post-deployment
+- [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (RECONCILIATION_COMPLETE_PENDING_CS2) → LFV Package (CREATED)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
