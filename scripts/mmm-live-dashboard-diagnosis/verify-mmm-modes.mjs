@@ -42,6 +42,8 @@ const WAIT_TIMEOUT = 30_000;
 const PARSE_JOB_TIMEOUT = 120_000; // 2 minutes for parse job to complete
 const COMPILE_TIMEOUT = 60_000;
 const AI_GENERATION_TIMEOUT = 180_000; // 3 minutes — AIMC framework-generate can take up to 90s+retry
+const MISSING_PROFILE_ERROR = 'No profile found for authenticated user';
+const RESPONSE_LISTENER_FLUSH_DELAY = 500;
 
 function required(name) {
   const v = process.env[name];
@@ -547,7 +549,7 @@ async function main() {
       if (!url.includes('/functions/v1/')) return;
       if (response.status() !== 403) return;
       const body = await response.text().catch(() => '');
-      if (body.includes('No profile found for authenticated user')) {
+      if (body.includes(MISSING_PROFILE_ERROR)) {
         observedMissingProfile403 = true;
         console.warn('[verify-modes][diag] observed 403 with missing mmm_profiles record');
       }
@@ -570,11 +572,23 @@ async function main() {
     // --- Mode B (no file upload — simplest, run first) ---
     console.log('[verify-modes] === Mode B: AI Generate ===');
     results.modeB = await runMode(page, origin, 'B', sampleFilePath);
+    if (!results.modeB?.success) {
+      // Allow async response listeners to flush any final 403 payloads before we decide
+      // whether to run onboarding bootstrap. This avoids a timing gap where the mode
+      // failure is observed just before the response listener sets observedMissingProfile403.
+      await page.waitForTimeout(RESPONSE_LISTENER_FLUSH_DELAY);
+    }
     if (!results.modeB?.success && observedMissingProfile403) {
       console.warn(
         '[verify-modes] Missing mmm_profiles detected from 403 response. Attempting onboarding bootstrap, then retrying Mode B once.',
       );
-      const provisioned = await bootstrapOrganisationIfMissing(page, origin, bypassSecret);
+      let provisioned = false;
+      try {
+        provisioned = await bootstrapOrganisationIfMissing(page, origin, bypassSecret);
+      } catch (bootstrapErr) {
+        await page.screenshot({ path: path.join(ARTIFACT_DIR, 'verify-onboarding-bootstrap-failed.png') });
+        throw bootstrapErr;
+      }
       if (provisioned) {
         await page.screenshot({ path: path.join(ARTIFACT_DIR, 'verify-onboarding-bootstrap.png') });
       }
@@ -677,6 +691,7 @@ ${modeDetails(modeC)}
 - verify-mode-c.png (Mode C final state)
 - verify-dashboard.png (dashboard state after all modes)
 - verify-onboarding-bootstrap.png (optional screenshot if onboarding bootstrap was required)
+- verify-onboarding-bootstrap-failed.png (optional screenshot if onboarding bootstrap failed)
 - verify-modes-trace.zip (Playwright trace)
 `;
 
