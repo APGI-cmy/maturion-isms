@@ -115,6 +115,38 @@ async function loginIfNeeded(page, loginUrl, email, password) {
   return true;
 }
 
+async function bootstrapOrganisationIfMissing(page, origin, bypassSecret) {
+  const onboardingUrl = withBypassParams(`${origin}/onboarding`, bypassSecret);
+  await page.goto(onboardingUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT });
+  await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
+
+  const orgNameInput = page.locator('#org-name');
+  const onboardingVisible = await orgNameInput
+    .waitFor({ state: 'visible', timeout: 10_000 })
+    .then(() => true)
+    .catch(() => false);
+
+  if (!onboardingVisible) {
+    return false;
+  }
+
+  const orgName = `MMM CI Org ${Date.now()}`;
+  await orgNameInput.fill(orgName);
+  const continueBtn = page.getByRole('button', { name: /^Continue$/ });
+  await continueBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+  await Promise.all([
+    page.waitForURL(/\/(framework-origin|dashboard|frameworks)/, { timeout: WAIT_TIMEOUT }).catch(() => null),
+    continueBtn.click(),
+  ]);
+
+  const createErr = await page.locator('[role="alert"]').first().innerText().catch(() => '');
+  if (createErr) {
+    throw new Error(`Onboarding bootstrap failed: ${createErr.replace(/\s+/g, ' ').slice(0, 240)}`);
+  }
+
+  return true;
+}
+
 /**
  * Run a single framework mode (A, B, or C) end-to-end.
  * Returns an object with: success, frameworkId, compileResult, publishResult, details[]
@@ -508,6 +540,21 @@ async function main() {
       `[verify-modes][network-failed] ${request.method()} ${request.url()} — ${request.failure()?.errorText ?? 'unknown error'}`,
     );
   });
+  let observedMissingProfile403 = false;
+  page.on('response', async (response) => {
+    try {
+      const url = response.url();
+      if (!url.includes('/functions/v1/')) return;
+      if (response.status() !== 403) return;
+      const body = await response.text().catch(() => '');
+      if (body.includes('No profile found for authenticated user')) {
+        observedMissingProfile403 = true;
+        console.warn('[verify-modes][diag] observed 403 with missing mmm_profiles record');
+      }
+    } catch {
+      // ignore diagnostics errors
+    }
+  });
 
   const results = {};
 
@@ -523,6 +570,16 @@ async function main() {
     // --- Mode B (no file upload — simplest, run first) ---
     console.log('[verify-modes] === Mode B: AI Generate ===');
     results.modeB = await runMode(page, origin, 'B', sampleFilePath);
+    if (!results.modeB?.success && observedMissingProfile403) {
+      console.warn(
+        '[verify-modes] Missing mmm_profiles detected from 403 response. Attempting onboarding bootstrap, then retrying Mode B once.',
+      );
+      const provisioned = await bootstrapOrganisationIfMissing(page, origin, bypassSecret);
+      if (provisioned) {
+        await page.screenshot({ path: path.join(ARTIFACT_DIR, 'verify-onboarding-bootstrap.png') });
+      }
+      results.modeB = await runMode(page, origin, 'B', sampleFilePath);
+    }
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'verify-mode-b.png') });
 
     // --- Mode A (upload document) ---
@@ -619,6 +676,7 @@ ${modeDetails(modeC)}
 - verify-mode-a.png (Mode A final state)
 - verify-mode-c.png (Mode C final state)
 - verify-dashboard.png (dashboard state after all modes)
+- verify-onboarding-bootstrap.png (optional screenshot if onboarding bootstrap was required)
 - verify-modes-trace.zip (Playwright trace)
 `;
 
