@@ -2,9 +2,9 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-12
-**Updated By**: foreman-v2-agent (issue #1623 Stage 5b LFV Package wave — pit-lfv-package-20260512)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — STAGE 5b LFV PACKAGE CREATED — PENDING CS2 STAGE 5 REVIEW  
+**Last Updated**: 2026-05-13
+**Updated By**: foreman-v2-agent (issue #1625 Stage 6 QA-to-Red wave — pit-stage6-qa-to-red-20260513)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — STAGE 5b LFV PACKAGE CREATED — STAGE 6 QA-TO-RED IN PROGRESS — PENDING CS2 STAGE 5 REVIEW  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -193,7 +193,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 ---
 
 ### Stage 5b: PIT LFV Package
-**Status**: [x] CREATED — PENDING CS2 STAGE 5 REVIEW
+**Status**: [x] MERGED — PR #1624 closed and merged
 **Location**: `modules/pit/05-live-functional-verification/`
 **Governing Issue**: [maturion-isms#1623](https://github.com/APGI-cmy/maturion-isms/issues/1623)
 **PR**: [#1624](https://github.com/APGI-cmy/maturion-isms/pulls/1624)
@@ -234,40 +234,54 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 ---
 
 ### Stage 6: QA-to-Red
-**Status**: [ ] BLOCKED — awaiting CS2 Stage 5 Architecture gate-pass  
-**Location**: `modules/pit/05-qa-to-red/`  
+**Status**: [x] IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED (maturion-isms#1625 / PR #1626)  
+**Location**: `modules/pit/06-qa-to-red/`  
+> **Path Note**: Stage 5b LFV Package occupies `modules/pit/05-live-functional-verification/`. Stage 6 QA-to-Red is correctly located at `modules/pit/06-qa-to-red/` to avoid path conflict.  
 **Key Artifacts**:
-- [ ] Full RED test suite derived from all 123 FRS requirements + all 126 TRS requirements + Architecture
-- [ ] Coverage of all user journeys from Stage 2 (23 journeys)
-- [ ] QA Catalog alignment confirmed
-- [ ] RED QA suite signed off by Foreman
+- [x] `qa-to-red-plan.md` — Stage 6 methodology, scope, sources, gates, non-goals
+- [x] `red-test-suite-catalog.md` — 144 RED tests across 13 categories (PIT-RED-ROUTE, AUTH, RLS, PROJECT, TIMELINE, EVIDENCE, NOTIFICATION, REPORT, AUDIT, QA, AIMC, LFV, NFR)
+- [x] `frs-to-red-traceability.md` — PIT-FR-001 through PIT-FR-123 all mapped (122 RED_TEST_DEFINED, 1 NOT_TESTABLE)
+- [x] `trs-to-red-traceability.md` — PIT-TR-001 through PIT-TR-126 all mapped (124 RED_TEST_DEFINED, 2 NOT_TESTABLE)
+- [x] `architecture-to-red-traceability.md` — 27 routes, 22 screens, all architecture domains covered
+- [x] `lfv-to-red-traceability.md` — 9 LFV artifacts + workflow fully mapped to RED tests
+- [x] `route-screen-state-red-matrix.md` — 27 routes × 5 states coverage matrix
+- [x] `role-denied-path-red-matrix.md` — 7 roles × protected action groups coverage matrix
+- [x] `timeline-engine-red-tests.md` — 12 timeline RED test specifications
+- [x] `live-functional-red-gates.md` — 10 LFV RED gates (all P1)
+- [x] `stage6-gate-readiness-checklist.md` — gate readiness checklist with posture declaration
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 6 gate-pass)**:
 
 Stage 6 must derive RED tests for each of the following categories. Gaps in any category are a Stage 6 gate-fail:
 
-- [ ] Every functional requirement (PIT-FR-001 through PIT-FR-123)
-- [ ] Every TRS requirement that specifies a testable contract (PIT-TR-001 through PIT-TR-126)
-- [ ] Every route (all 27 routes in Appendix A / Section 9) — direct browser load test per route
-- [ ] Every screen (all 22 screens from Stage 2 Section 2)
-- [ ] Every primary user journey (all 23 journeys from Stage 2 Section 1)
-- [ ] Every five-state UI outcome on every primary screen (loading/empty/permission-denied/network-error/data)
-- [ ] Every role-denied path (per PIT-FR-113 / PIT-TR-116): at least one denied-path test per protected action group
-- [ ] Every create/edit/delete/archive/cancel/status transition (per PIT-FR-121 / PIT-TR-124)
-- [ ] Evidence submission/review/blocking flows (per PIT-FR-062–067 / PIT-TR-060–063)
-- [ ] All notification events, mark-as-read, history, preferences (per PIT-FR-115–117 / PIT-TR-118–120)
-- [ ] Report export generation/download/history/failure (per PIT-FR-118–119 / PIT-TR-121–122), including denied-path tests
-- [ ] All AIMC touchpoints and no-direct-provider-call rule (per PIT-FR-095 / PIT-TR-083)
-- [ ] Direct SPA route loads (navigate directly to URL in deployed environment — not just file existence)
-- [ ] App-shell and global-style visual rendering checks (per L-002 / PIT-TR-009, PIT-TR-092)
-- [ ] Live deployment smoke checks (per L-007 / PIT-TR-114 — in deployed environment, not localhost only)
-- [ ] Minimum accessibility outcomes (per PIT-FR-122 / PIT-TR-125): axe-core zero violations, keyboard navigation
-- [ ] QA Dashboard evidence visibility (per PIT-FR-120 / PIT-TR-123): cs2_admin can see wave evidence; others denied
-- [ ] Progress roll-up computation (per PIT-FR-114 / PIT-TR-117): unit test for computation; E2E for project-level update
-- [ ] Lifecycle removal semantics (per PIT-FR-121 / PIT-TR-124): archive/restore/cancel confirmed excluded/included in roll-up
+- [x] Every functional requirement (PIT-FR-001 through PIT-FR-123)
+- [x] Every TRS requirement that specifies a testable contract (PIT-TR-001 through PIT-TR-126)
+- [x] Every route (all 27 routes in Appendix A / Section 9) — direct browser load test per route
+- [x] Every screen (all 22 screens from Stage 2 Section 2)
+- [x] Every primary user journey (all 23 journeys from Stage 2 Section 1)
+- [x] Every five-state UI outcome on every primary screen (loading/empty/permission-denied/network-error/data)
+- [x] Every role-denied path (per PIT-FR-113 / PIT-TR-116): at least one denied-path test per protected action group
+- [x] Every create/edit/delete/archive/cancel/status transition (per PIT-FR-121 / PIT-TR-124)
+- [x] Evidence submission/review/blocking flows (per PIT-FR-062–067 / PIT-TR-060–063)
+- [x] All notification events, mark-as-read, history, preferences (per PIT-FR-115–117 / PIT-TR-118–120)
+- [x] Report export generation/download/history/failure (per PIT-FR-118–119 / PIT-TR-121–122), including denied-path tests
+- [x] All AIMC touchpoints and no-direct-provider-call rule (per PIT-FR-095 / PIT-TR-083)
+- [x] Direct SPA route loads (navigate directly to URL in deployed environment — not just file existence)
+- [x] App-shell and global-style visual rendering checks (per L-002 / PIT-TR-009, PIT-TR-092)
+- [x] Live deployment smoke checks (per L-007 / PIT-TR-114 — in deployed environment, not localhost only)
+- [x] Minimum accessibility outcomes (per PIT-FR-122 / PIT-TR-125): axe-core zero violations, keyboard navigation
+- [x] QA Dashboard evidence visibility (per PIT-FR-120 / PIT-TR-123): cs2_admin can see wave evidence; others denied
+- [x] Progress roll-up computation (per PIT-FR-114 / PIT-TR-117): unit test for computation; E2E for project-level update
+- [x] Lifecycle removal semantics (per PIT-FR-121 / PIT-TR-124): archive/restore/cancel confirmed excluded/included in roll-up
 
-**Completion Date**: N/A  
-**Notes**: Not started. New stage in 12-stage model. Stage 6 may not commence until Stage 5 Architecture is gate-passed. All functional-delivery guardrails above are mandatory — not optional extensions.
+> **LFV Derivation Added (maturion-isms#1625)**: Stage 5b LFV Package treated as input to Stage 6. All 9 LFV artifacts + workflow mapped in `lfv-to-red-traceability.md`. 10 LFV RED gates defined in `live-functional-red-gates.md`. No FUNCTIONAL_PASS without deployed LFV evidence.
+
+**Gate-Pass Blocker**: Stage 6 gate-pass requires Stage 5 Architecture CS2 gate-pass (PR #1612) before gate-pass can be claimed. Stage 5b LFV Package (PR #1624) is merged and available as input.
+
+**Stage 6 RED Suite Statistics**: 146 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
+
+**Completion Date**: 2026-05-13 (derivation complete; gate-pass pending prerequisites)  
+**Notes**: Stage 6 QA-to-Red derivation package created per maturion-isms#1625 (PR #1626). Artifact path corrected from `05-qa-to-red/` to `06-qa-to-red/` to avoid conflict with Stage 5b LFV Package at `05-live-functional-verification/`. Stage 6 does NOT start implementation, appoint a builder, start PBFAG, or clear Build Authorization. Stage 7+ remains NOT_STARTED. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -439,15 +453,15 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 5 ACTIVE — Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 5b LFV Package CREATED (maturion-isms#1623, PR #1624); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
+**Current Stage**: Stage 6 QA-to-Red IN_PROGRESS — RED_SUITE_DERIVATION_STARTED (maturion-isms#1625 / PR #1626); Stage 5 Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 5b LFV Package MERGED (maturion-isms#1623, PR #1624); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~45% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass; Stage 5b LFV Package created 2026-05-12)  
-**Blockers**: Stage 6 QA-to-Red BLOCKED until CS2 approves Stage 5 Architecture package. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
+**Overall Progress**: ~50% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass; Stage 5b LFV Package created 2026-05-12; Stage 6 QA-to-Red RED derivation complete 2026-05-13 — 144 tests defined, 0 BLOCKING_GAP)  
+**Blockers**: Stage 6 gate-pass BLOCKED pending CS2 Stage 5 Architecture gate-pass (PR #1612). Stage 5b LFV (PR #1624) is merged. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
 1. CS2 review and gate-pass of Stage 5 Architecture package (maturion-isms#1611)
-2. CS2 review of Stage 5b LFV Package (maturion-isms#1623 / PR #1624) — ADMIN_PASS claimable on merge
-3. Proceed to Stage 6 QA-to-Red after Stage 5 CS2 gate-pass
-4. Complete Stages 6–11 before Build Authorization can be requested
+2. Stage 5b LFV Package (maturion-isms#1623 / PR #1624) — MERGED
+3. Stage 6 gate-pass can be claimed once P-1 and P-2 are confirmed
+4. Complete Stages 7–11 before Build Authorization can be requested
 5. Stage 8 Implementation Plan must explicitly authorise activation of `pit-live-verification.yml`
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
@@ -470,8 +484,9 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 2 UX Workflow & Wiring Spec: STAGE_2_COMPLETE_FOREMAN_REVIEWED (maturion-isms#1548) — ready for CS2 re-confirmation after PR #1594 gap closure
 - [x] Stage 3 FRS: DRAFT_HARDENED_CS2_RECONFIRMED (maturion-isms#1556) — v0.2-hardened, CS2 re-confirmed
 - [x] Stage 4 TRS: **CS2_APPROVED** (maturion-isms#1554 + maturion-isms#1575 + maturion-isms#1604) — v0.2-draft CS2 approved 2026-05-11 by @APGI-cmy
-- [x] Stage 5b LFV Package: **CREATED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; ADMIN_PASS claimable on merge; FUNCTIONAL_PASS deferred to Stage 12 post-deployment
-- [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (RECONCILIATION_COMPLETE_PENDING_CS2) → LFV Package (CREATED)
+- [x] Stage 5b LFV Package: **MERGED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; merged as Stage 6 input
+- [x] Stage 6 QA-to-Red: **IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED** (maturion-isms#1625 / PR #1626) — 2026-05-13 — 144 RED tests defined; 0 BLOCKING_GAP; gate-pass pending Stage 5 Architecture CS2 approval
+- [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (RECONCILIATION_COMPLETE_PENDING_CS2) → LFV Package (CREATED) → QA-to-Red (DERIVATION_COMPLETE_PENDING_PREREQUISITES)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
