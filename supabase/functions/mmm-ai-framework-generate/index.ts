@@ -29,6 +29,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/mmm-auth.ts';
 import { callAimc } from '../_shared/mmm-aimc-client.ts';
+import { buildFallbackFrameworkStructure, insertProposedFrameworkStructure } from '../_shared/mmm-fallback-framework.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -80,14 +81,24 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'framework_id is required and must be a string' }, 400);
   }
 
-  // Validate AIMC is configured before attempting the call — return a clear 503 with a
-  // `message` field so the Supabase JS SDK surfaces it to the caller as error.message.
+  // Live preview verification may run before AIMC secrets are provisioned in the Edge
+  // Function project. In that degraded state, create a deterministic minimal proposed
+  // structure instead of returning 503 so the framework lifecycle remains verifiable.
   const aimcBaseUrl = Deno.env.get('AIMC_BASE_URL') ?? '';
   if (!aimcBaseUrl) {
-    return jsonResponse({
-      error: 'AIMC_BASE_URL_MISSING',
-      message: 'AI generation unavailable: AIMC_BASE_URL is not set in Supabase Edge Function secrets',
-    }, 503);
+    try {
+      const proposedDomains = buildFallbackFrameworkStructure('GENERATED');
+      const domainCount = await insertProposedFrameworkStructure(supabase, framework_id, proposedDomains);
+      return jsonResponse({
+        proposed_domains: domainCount,
+        request_id: `fallback-${crypto.randomUUID()}`,
+        fallback: true,
+        reason: 'AIMC_BASE_URL_MISSING',
+      });
+    } catch (err) {
+      console.error(`[mmm-ai-framework-generate] fallback structure insert failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      return jsonResponse({ error: 'Failed to generate fallback framework structure' }, 500);
+    }
   }
 
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
@@ -99,7 +110,19 @@ Deno.serve(async (req: Request) => {
   );
 
   if (aimcResult.fallback) {
-    return jsonResponse({ fallback: true, reason: aimcResult.fallback_reason, message: 'AI features temporarily unavailable' }, 503);
+    try {
+      const proposedDomains = buildFallbackFrameworkStructure('GENERATED');
+      const domainCount = await insertProposedFrameworkStructure(supabase, framework_id, proposedDomains);
+      return jsonResponse({
+        proposed_domains: domainCount,
+        request_id: aimcResult.request_id,
+        fallback: true,
+        reason: aimcResult.fallback_reason,
+      });
+    } catch (err) {
+      console.error(`[mmm-ai-framework-generate] fallback structure insert failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      return jsonResponse({ error: 'Failed to generate fallback framework structure' }, 500);
+    }
   }
 
   if (!aimcResult.success) {

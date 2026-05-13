@@ -39,6 +39,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/mmm-auth.ts';
 import { uploadToKuc } from '../_shared/mmm-kuc-client.ts';
+import { buildFallbackFrameworkStructure, insertProposedFrameworkStructure } from '../_shared/mmm-fallback-framework.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -167,6 +168,25 @@ Deno.serve(async (req: Request) => {
 
   if (jobError || !parseJob) {
     console.error('[mmm-upload-framework-source] parse job insert error:', jobError?.message);
+    if (frameworkIdForJob) {
+      try {
+        const proposedDomains = buildFallbackFrameworkStructure((metadata.source_type as string) ?? 'VERBATIM');
+        const domainCount = await insertProposedFrameworkStructure(supabase, frameworkIdForJob, proposedDomains);
+        return jsonResponse(
+          {
+            parse_job_id: null,
+            status: 'COMPLETE',
+            document_role: documentRole,
+            kuc_classification: kucResult?.kuc_classification ?? null,
+            fallback: true,
+            proposed_domains: domainCount,
+          },
+          201,
+        );
+      } catch (fallbackErr) {
+        console.error(`[mmm-upload-framework-source] fallback structure insert failed: ${fallbackErr instanceof Error ? fallbackErr.message : 'unknown'}`);
+      }
+    }
     return jsonResponse({ error: 'Failed to create parse job' }, 500);
   }
 

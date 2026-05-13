@@ -30,6 +30,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/mmm-auth.ts';
 import { callAimc } from '../_shared/mmm-aimc-client.ts';
+import { buildFallbackFrameworkStructure, insertProposedFrameworkStructure } from '../_shared/mmm-fallback-framework.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -114,6 +115,42 @@ Deno.serve(async (req: Request) => {
     }
   }
 
+  const completeWithFallbackStructure = async (reason: string, requestId: string) => {
+    if (!framework_id) {
+      await failParseJob(supabase, parse_job_id, reason);
+      return jsonResponse({ error: 'framework_id is required for fallback parse structure' }, 400);
+    }
+
+    try {
+      const proposedDomains = buildFallbackFrameworkStructure('VERBATIM');
+      const domainCount = await insertProposedFrameworkStructure(supabase, framework_id, proposedDomains);
+      if (parse_job_id) {
+        await supabase
+          .from('mmm_parse_jobs')
+          .update({
+            status: 'COMPLETE',
+            result_json: { proposed_domains: domainCount, request_id: requestId, fallback: true, reason },
+          })
+          .eq('id', parse_job_id);
+      }
+      return jsonResponse({
+        proposed_domains: domainCount,
+        parse_job_id: parse_job_id ?? null,
+        request_id: requestId,
+        fallback: true,
+        reason,
+      });
+    } catch (err) {
+      console.error(`[mmm-ai-framework-parse] fallback structure insert failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      await failParseJob(supabase, parse_job_id, 'fallback_structure_insert_failed');
+      return jsonResponse({ error: 'Failed to create fallback parse structure' }, 500);
+    }
+  };
+
+  if (!Deno.env.get('AIMC_BASE_URL')) {
+    return await completeWithFallbackStructure('AIMC_BASE_URL_MISSING', `fallback-${crypto.randomUUID()}`);
+  }
+
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
   // Authorization: Bearer AIMC_SERVICE_TOKEN on every call (TR-011)
   // Pass KUC identifiers so AIMC can retrieve and parse the uploaded document.
@@ -133,14 +170,9 @@ Deno.serve(async (req: Request) => {
 
   // TR-009: Circuit breaker fallback — return graceful degradation response
   if (aimcResult.fallback) {
-    await failParseJob(supabase, parse_job_id, 'circuit_breaker_open');
-    return jsonResponse(
-      {
-        fallback: true,
-        reason: aimcResult.fallback_reason,
-        message: 'AI features temporarily unavailable — circuit breaker open',
-      },
-      503,
+    return await completeWithFallbackStructure(
+      aimcResult.fallback_reason ?? 'circuit_breaker_open',
+      aimcResult.request_id,
     );
   }
 

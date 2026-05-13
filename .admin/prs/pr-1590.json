@@ -29,6 +29,7 @@
     "scripts/mmm-live-dashboard-diagnosis/sample-framework.txt",
     "scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs",
     "supabase/functions/_shared/mmm-auth.ts",
+    "supabase/functions/_shared/mmm-fallback-framework.ts",
     "supabase/functions/mmm-framework-compile/index.ts",
     "supabase/functions/mmm-framework-init/index.ts",
     "supabase/functions/mmm-org-create/index.ts",
