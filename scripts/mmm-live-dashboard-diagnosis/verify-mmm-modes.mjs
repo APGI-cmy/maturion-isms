@@ -586,7 +586,11 @@ async function main() {
       try {
         provisioned = await bootstrapOrganisationIfMissing(page, origin, bypassSecret);
       } catch (bootstrapErr) {
-        await page.screenshot({ path: path.join(ARTIFACT_DIR, 'verify-onboarding-bootstrap-failed.png') });
+        try {
+          await page.screenshot({ path: path.join(ARTIFACT_DIR, 'verify-onboarding-bootstrap-failed.png') });
+        } catch {
+          // keep original bootstrap error
+        }
         throw bootstrapErr;
       }
       if (provisioned) {
