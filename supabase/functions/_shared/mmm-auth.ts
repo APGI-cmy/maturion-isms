@@ -108,7 +108,18 @@ function _corsResponseHeaders(): Record<string, string> {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Headers': [
+      'authorization',
+      'x-client-info',
+      'apikey',
+      'content-type',
+      'x-vercel-protection-bypass',
+      'x-vercel-set-bypass-cookie',
+      // Some browser/network diagnostics surface shortened header family labels.
+      // Include these aliases to avoid false preflight rejections on preview builds.
+      'x-vercel-protection',
+      'x-vercel-pro',
+    ].join(', '),
   };
 }
 
