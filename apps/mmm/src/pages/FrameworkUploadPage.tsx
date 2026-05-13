@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase, getEdgeInvokeHeaders } from '@/lib/supabase';
 
 function AppNav() {
   return (
@@ -54,6 +54,7 @@ export default function FrameworkUploadPage() {
     mutationFn: async () => {
       const initFramework = async (name: string, sourceType: 'GENERATED' | 'HYBRID' | 'VERBATIM') => {
         const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
+          headers: await getEdgeInvokeHeaders(),
           body: { name, source_type: sourceType },
         });
         if (error) throw new Error(error.message || `Failed to init framework for ${name}`);
@@ -72,6 +73,7 @@ export default function FrameworkUploadPage() {
         formData.append('metadata', JSON.stringify({ source_type: 'VERBATIM', mode, framework_id: frameworkId }));
 
         const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
+          headers: await getEdgeInvokeHeaders(),
           body: formData,
         });
         if (error) throw new Error(error.message || 'Failed to upload framework source');
@@ -79,6 +81,7 @@ export default function FrameworkUploadPage() {
       } else if (mode==='B') {
         const frameworkId = await initFramework('New Framework', 'GENERATED');
         const { data, error } = await supabase.functions.invoke('mmm-ai-framework-generate', {
+          headers: await getEdgeInvokeHeaders(),
           body: { name: 'New Framework', mode, framework_id: frameworkId },
         });
         if (error) throw new Error(error.message || 'Failed to generate framework');
@@ -93,6 +96,7 @@ export default function FrameworkUploadPage() {
         formData.append('metadata', JSON.stringify({ source_type: 'HYBRID', mode, framework_id: frameworkId }));
 
         const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
+          headers: await getEdgeInvokeHeaders(),
           body: formData,
         });
         if (error) throw new Error(error.message || 'Failed to upload hybrid framework source');

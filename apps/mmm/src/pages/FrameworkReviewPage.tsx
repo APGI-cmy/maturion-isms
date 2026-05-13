@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase, getEdgeInvokeHeaders } from '@/lib/supabase';
 // NOTE: Parse-job polling and proposed-domain count queries allow the review page to show
 // actionable status for Mode A (document upload) and Mode B/C (AI generation) workflows.
 
@@ -54,6 +54,7 @@ export default function FrameworkReviewPage() {
   const compileMutation = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.functions.invoke('mmm-framework-compile', {
+        headers: await getEdgeInvokeHeaders(),
         body: { framework_id: id },
       });
       if (error) throw new Error(error.message || 'Compile failed');
@@ -69,6 +70,7 @@ export default function FrameworkReviewPage() {
   const publishMutation = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.functions.invoke('mmm-framework-publish', {
+        headers: await getEdgeInvokeHeaders(),
         body: { framework_id: id },
       });
       if (error) throw new Error(error.message || 'Publish failed');
