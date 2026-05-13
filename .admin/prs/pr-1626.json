@@ -1,0 +1,53 @@
+{
+  "pr": 1626,
+  "issue": 1625,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1626.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage6-qa-to-red-20260513-20260513.md",
+    ".agent-admin/scope-declarations/pr-1626.md",
+    ".agent-admin/scope-declarations/scope-declaration-wave-pit-stage6-qa-to-red.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks-pit-stage6-qa-to-red.md",
+    "modules/pit/06-qa-to-red/qa-to-red-plan.md",
+    "modules/pit/06-qa-to-red/red-test-suite-catalog.md",
+    "modules/pit/06-qa-to-red/frs-to-red-traceability.md",
+    "modules/pit/06-qa-to-red/trs-to-red-traceability.md",
+    "modules/pit/06-qa-to-red/architecture-to-red-traceability.md",
+    "modules/pit/06-qa-to-red/lfv-to-red-traceability.md",
+    "modules/pit/06-qa-to-red/route-screen-state-red-matrix.md",
+    "modules/pit/06-qa-to-red/role-denied-path-red-matrix.md",
+    "modules/pit/06-qa-to-red/timeline-engine-red-tests.md",
+    "modules/pit/06-qa-to-red/live-functional-red-gates.md",
+    "modules/pit/06-qa-to-red/stage6-gate-readiness-checklist.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "foreman-v2-agent",
+  "evidence_required": [
+    "qa-to-red-plan.md: Stage 6 methodology, scope, sources, gates, non-goals",
+    "red-test-suite-catalog.md: 144 RED tests across 13 categories with stable PIT-RED-* IDs",
+    "frs-to-red-traceability.md: 123 FRS requirements (PIT-FR-001–PIT-FR-123) all mapped; 0 BLOCKING_GAP",
+    "trs-to-red-traceability.md: 126 TRS requirements (PIT-TR-001–PIT-TR-126) all mapped; 0 BLOCKING_GAP",
+    "architecture-to-red-traceability.md: 27 routes, 22 screens, all architecture domains covered",
+    "lfv-to-red-traceability.md: 10/10 LFV artifacts (9 files + workflow) mapped to RED tests",
+    "route-screen-state-red-matrix.md: 27 routes × 5 states; SPA deep-link tests",
+    "role-denied-path-red-matrix.md: 7 roles × protected action groups; network payload isolation",
+    "timeline-engine-red-tests.md: 12 timeline RED test specifications",
+    "live-functional-red-gates.md: 10 LFV RED gates (all P1)",
+    "stage6-gate-readiness-checklist.md: gate posture — IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED",
+    "BUILD_PROGRESS_TRACKER.md: Stage 6 status updated; path corrected to 06-qa-to-red/; Build Authorization NOT CLEARED",
+    "No implementation, migration, builder appointment, PBFAG, or Build Authorization introduced"
+  ],
+  "stage6_posture": "IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED",
+  "gate_pass_claimed": false,
+  "gate_pass_blockers": [
+    "Stage 5 Architecture PR #1612 pending CS2 review"
+  ],
+  "build_authorization": "NOT_CLEARED",
+  "merge_authority": "CS2"
+}
