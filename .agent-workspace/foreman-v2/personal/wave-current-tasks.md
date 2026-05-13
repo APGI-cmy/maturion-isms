@@ -1,5 +1,32 @@
 # Wave Current Tasks — foreman-v2-agent
 
+**Wave**: mmm-phase6-post-merge-assurance-20260513
+**Session ID**: session-mmm-phase6-post-merge-assurance-20260513
+**Date**: 2026-05-13
+**Branch**: copilot/post-merge-assurance-hardening
+**PR**: PR #1634
+**Issue**: maturion-isms#1633 — Post-merge assurance and hardening for MMM Phase 6 live workflow
+**CS2 Authorization**: Issue #1633 opened by @APGI-cmy; post-merge assurance mandate
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md
+ceremony_admin_appointed: NONE — GOVERNANCE_AUDIT wave (post-merge assurance only; no product code; no ECAP)
+appointment_timestamp: N/A
+
+## Outstanding Tasks — Wave: mmm-phase6-post-merge-assurance-20260513
+
+| # | Task | Executor | Status | Evidence |
+|---|------|----------|--------|----------|
+| T-1 | Update wave-current-tasks.md for this wave | foreman-v2-agent | 🟢 DONE | This file |
+| T-2 | Create `.agent-admin/scope-declarations/pr-1634.md` | foreman-v2-agent | 🟢 DONE | .agent-admin/scope-declarations/pr-1634.md |
+| T-3 | Create assurance evidence record (15 required fields) | foreman-v2-agent | 🟢 DONE | .agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md |
+| T-4 | Create PREHANDOVER proof | foreman-v2-agent | 🟢 DONE | .agent-admin/prehandover/proof-pr-1634-mmm-phase6-post-merge-assurance-20260513.md |
+| T-5 | Invoke IAA final assurance | foreman-v2-agent | 🟢 DONE | IAA-session-216-wave-mmm-phase6-post-merge-assurance-20260513-PASS |
+| T-6 | Record hardening gap: parse-job completion as separate follow-up issue | foreman-v2-agent | 🟢 DONE | See assurance record hardening gaps section |
+
+---
+
+**[PRIOR WAVE ARCHIVE]: Wave iaa-rca-hardening-1621 (PR #1622)**
+
 **Wave**: iaa-rca-hardening-1621
 **Session ID**: session-iaa-rca-hardening-1621-20260512
 **Date**: 2026-05-12
