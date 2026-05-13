@@ -2,8 +2,8 @@
 
 **Agent**: independent-assurance-agent
 **Contract Version**: 2.0.0
-**Knowledge Version**: 4.0.0
-**Last Updated**: 2026-05-10
+**Knowledge Version**: 4.1.0
+**Last Updated**: 2026-05-12
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -12,11 +12,11 @@
 
 | File | Purpose | Version | Status |
 |------|---------|---------|--------|
-| `index.md` (this file) | Knowledge entry point and version reference | 3.0.0 | PRESENT |
+| `index.md` (this file) | Knowledge entry point and version reference | 4.1.0 | PRESENT |
 | `FAIL-ONLY-ONCE.md` | Permanent rules recording governance failures IAA must never repeat | 3.1.0 | PRESENT — Rules A-001 through A-043 active (A-039: Acceptance-Criteria Matrix required before PASS — agent claims are not evidence; A-040: Evidence-Type Downgrade Prohibition — runtime evidence cannot be substituted without CS2 waiver; A-041: Diff-First Classification — IAA must independently compute changed files; A-042: Independent Risk Challenge mandatory before PASS token; A-043: product-build workflow correctness lesson from #1590) |
 | `iaa-core-invariants-checklist.md` | Core checks applied to every IAA invocation regardless of category | 4.1.0 | CORE-026 (Acceptance-Criteria Evidence Matrix complete — §Evidence-First Assurance Mandate Rule 1 / ACR-22) and CORE-027 (Independent Risk Challenge — §Evidence-First Assurance Mandate Rule 6 / ACR-26) added; IAA-retained invariants updated from 2 to 4 (v4.1.0) |
 | `iaa-trigger-table.md` | PR category classification table — when IAA activates and when it is exempt | 2.6.0 | PRODUCT_BUILD_ASSURANCE trigger added — product-facing BUILD/T2 and functional-delivery claim PRs require mandatory loading of PRODUCT_BUILD_ASSURANCE_STANDARD.md before verdict (governing issue #1596; incident calibration PR #1590) |
-| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES, GOVERNANCE_EVIDENCE) | 4.4.0 | BUILD_DELIVERABLE overlay now explicitly requires loading PRODUCT_BUILD_ASSURANCE_STANDARD.md for product-facing BUILD/T2 functional-delivery claims (governing issue #1596; incident calibration PR #1590) |
+| `iaa-category-overlays.md` | Per-category additional checks (AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, AAWP_MAT, KNOWLEDGE_GOVERNANCE, PRE_BRIEF_ASSURANCE, PRE_BUILD_GATES, GOVERNANCE_EVIDENCE, SIMPLIFIED_ADMIN_ASSURANCE, STRICT_MERGE_POSTURE) | 4.5.0 | SIMPLIFIED_ADMIN_ASSURANCE overlay added (OVL-SAA-001–OVL-SAA-008) with evidence-model selection rule; STRICT_MERGE_POSTURE section added (OVL-SMP-001–OVL-SMP-003) universal strict merge posture; governing issue #1621 |
 | `session-memory-template.md` | Standard session memory template for IAA invocations | 1.0.0 | PRESENT |
 | `IAA_ZERO_SEVERITY_TOLERANCE.md` | Tier 2 operational note for Zero-Severity-Tolerance Rule — prohibited language table, machine-readable logic, exception procedure | 1.0.0 | ACTIVE |
 | `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` | **AGENT_CONTRACT Audit Standard** — mandatory audit steps, pre-approval doctrine, protected components checklist, tier placement discipline, decision matrix for all agent contract PRs reviewed by IAA | 1.0.0 | ACTIVE — Load at Step 2.4 when PR category is AGENT_CONTRACT |

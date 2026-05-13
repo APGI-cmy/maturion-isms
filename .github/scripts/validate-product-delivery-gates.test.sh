@@ -882,6 +882,23 @@ EOF
 }
 run_test "T_gov1620c .github/scripts+workflows + FUNCTIONAL_PASS:yes as inline backtick text -> PASS (not product-facing)" 0 t_github_scripts_functional_pass_inline_not_trigger
 
+t10_governance_pr_narrative_product_fix_no_formal_claim() {
+  cat > governance/checklists/product-fix-language-notes.md << 'EOF'
+# Governance terminology hardening
+This governance-only change documents product fix review terminology for policy alignment.
+No shipped fix, feature completion, or user journey change is claimed here.
+EOF
+  cat > docs/governance/release-language-guidance.md << 'EOF'
+# Release language guidance
+Guidance for governance reviewers on how to discuss product fix requests without making delivery claims.
+EOF
+  TEST_PR_BODY=$'Governance documentation update discussing product fix terminology.\nNo product code changed. No formal delivery claim is being made.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "governance: document product fix terminology guidance"
+}
+run_test "T10 governance-only PR with narrative 'product fix' and no formal claim -> PASS" 0 t10_governance_pr_narrative_product_fix_no_formal_claim
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"

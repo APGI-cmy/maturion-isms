@@ -70,4 +70,3 @@ RCA MUST NOT introduce:
 Any proposed new artifact in an RCA recommendation MUST include explicit justification showing
 why existing sources are insufficient. The justification must appear in the RCA assessment document
 under a clearly labelled `New-Artifact Justification:` subsection.
-
