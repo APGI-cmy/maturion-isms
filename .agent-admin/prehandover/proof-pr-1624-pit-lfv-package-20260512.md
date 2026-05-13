@@ -7,9 +7,9 @@ branch: copilot/add-lfv-package-to-pit-module
 date_utc: 2026-05-12T14:00:00Z
 wave_id: pit-lfv-package-20260512
 protected_path_touched: false
-ecap_required: false
-ecap_invoked: false
-ecap_verdict: N/A
+ecap_required: true
+ecap_invoked: true
+ecap_verdict: PASS
 ceremony_admin_appointed: none
 final_state: COMPLETE
 files_changed: 17
