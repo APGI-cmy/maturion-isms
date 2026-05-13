@@ -101,7 +101,10 @@ jobs:
             const fs = require('node:fs');
             const detectorPath = `${process.env.GITHUB_WORKSPACE}/.github/scripts/rca-trigger-detector.js`;
             if (!fs.existsSync(detectorPath)) {
-              throw new Error(`RCA detector script not found at expected path: ${detectorPath}`);
+              throw new Error(
+                `RCA detector script not found at expected path: ${detectorPath}. ` +
+                'Ensure checkout succeeded and the repository includes .github/scripts/rca-trigger-detector.js.'
+              );
             }
             const {
               RCA_REQUIRED_MARKER,
@@ -113,7 +116,12 @@ jobs:
               typeof detectRcaRequirement !== 'function' ||
               typeof buildRcaRequiredMarker !== 'function'
             ) {
-              throw new Error(`RCA detector module has unexpected exports: ${detectorPath}`);
+              throw new Error(
+                'RCA detector module has unexpected exports at ' + detectorPath +
+                ` (RCA_REQUIRED_MARKER=${typeof RCA_REQUIRED_MARKER}, ` +
+                `detectRcaRequirement=${typeof detectRcaRequirement}, ` +
+                `buildRcaRequiredMarker=${typeof buildRcaRequiredMarker}).`
+              );
             }
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA || '';
