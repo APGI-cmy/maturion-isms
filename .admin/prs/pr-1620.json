@@ -1,0 +1,36 @@
+{
+  "pr": 1620,
+  "issue": 1619,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".agent-admin/scope-declarations/pr-1620.md",
+    ".admin/prs/pr-1620.json",
+    ".github/scripts/affected-control-classifier.sh",
+    ".github/scripts/affected-control-classifier.test.sh",
+    ".github/scripts/validate-governance-evidence-exactness.sh",
+    ".github/scripts/validate-governance-evidence-exactness.test.sh",
+    ".github/scripts/validate-product-delivery-gates.sh",
+    ".github/scripts/validate-product-delivery-gates.test.sh",
+    ".github/workflows/preflight-evidence-gate.yml",
+    ".github/workflows/codeql.yml",
+    "docs/governance/PHASE5_PRODUCT_DELIVERY_GATES.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "copilot-direct",
+  "gate_change_evidence": [
+    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh — Passed: 36, Failed: 0 (includes T_gov1620, T_gov1620b, and T_gov1620c new regression tests)",
+    "local command output: bash .github/scripts/validate-governance-evidence-exactness.test.sh — Passed: 13, Failed: 0",
+    "local command output: bash .github/scripts/affected-control-classifier.test.sh — Passed: 6, Failed: 0 (includes T_acc5 PR#1620 shape: .github/scripts+workflows → GATE_CONTROL, PRODUCT_DELIVERY_REQUIRED: no)",
+    "local command output: bash .github/scripts/affected-control-classifier.sh — classifier correctly identifies .github/scripts and .github/workflows as GATE_CONTROL governance-controlled paths with ECAP_REQUIRED: yes, IAA_REQUIRED: yes, PRODUCT_DELIVERY_REQUIRED: no",
+    "codeql.yml: pinned github/codeql-action/init and /analyze steps to SHA 7fd177fa680c9881b53cdab4d346d32574c9f7f4 to eliminate @v3 floating-tag download failures (HTTP 429)"
+  ],
+  "evidence_required": [
+    "local command output: bash .github/scripts/validate-product-delivery-gates.test.sh (Passed: 36 / Failed: 0)",
+    "local command output: bash .github/scripts/validate-governance-evidence-exactness.test.sh (Passed: 13 / Failed: 0)",
+    "local command output: bash .github/scripts/affected-control-classifier.test.sh (Passed: 6 / Failed: 0)"
+  ],
+  "merge_authority": "CS2"
+}
