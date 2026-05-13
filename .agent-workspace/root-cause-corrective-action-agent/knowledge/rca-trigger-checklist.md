@@ -15,9 +15,9 @@
 - Gate is stale/paradoxical/over-broad/under-enforcing
 - CS2 explicitly posts RCA_REQUIRED / ROOT_CAUSE_REQUIRED / CONTINUOUS_IMPROVEMENT_REQUIRED
 - Workflow marker `<!-- rca-required-marker -->` is present with `RCA_REQUIRED: yes`
-- CS2 or QA agent submits a comment that identifies a failure, rejection, hold, admin defect, job
-  defect, handover defect, evidence defect, gate defect, or `MERGE_READY: no` — the NEXT agent
-  session MUST invoke RCA before implementing any fix.
+- CS2 submits a comment that identifies a failure, rejection, hold, admin defect, job defect,
+  handover defect, evidence defect, or gate defect, or any comment includes `MERGE_READY: no`
+  — the NEXT agent session MUST invoke RCA before implementing any fix.
 
 ## Optional
 
