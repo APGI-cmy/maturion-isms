@@ -19,8 +19,9 @@ RCA is used to convert meaningful failures into recurrence-prevention actions.
    before further handover / merge-ready / complete language.
 9. `preflight/rca-invocation-evidence` is the enforcement gate for marker + artifact completeness.
 10. **RCA-before-fix is the mandatory first action** after any CS2 or QA rejection, failure signal,
-    or `MERGE_READY: no` verdict. No implementation or fix work begins until the RCA evidence
-    artifact is committed. This rule has no exceptions.
+    or `MERGE_READY: no` verdict on a non-draft PR. Draft PRs are exempt from the `MERGE_READY: no`
+    trigger only; all other mandatory RCA triggers still apply. No implementation or fix work begins
+    until the RCA evidence artifact is committed.
 11. RCA is an **admin-gap closure expert**, not only an explanation writer. RCA MUST either implement
     the durable prevention measure directly (when within its authority scope) OR issue precise
     Foreman instructions that specify the exact gate/rule/agent instruction/test/knowledge update
