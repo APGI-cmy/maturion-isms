@@ -115,7 +115,7 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  const completeWithFallbackStructure = async (reason: string, requestId: string) => {
+  const completeWithFallbackStructure = async (reason: string, request_id: string) => {
     if (!framework_id) {
       await failParseJob(supabase, parse_job_id, reason);
       return jsonResponse({ error: 'framework_id is required for fallback parse structure' }, 400);
@@ -130,14 +130,14 @@ Deno.serve(async (req: Request) => {
           .from('mmm_parse_jobs')
           .update({
             status: 'COMPLETE',
-            result_json: { proposed_domains: domainCount, request_id: requestId, fallback: true, reason },
+            result_json: { proposed_domains: domainCount, request_id, fallback: true, reason },
           })
           .eq('id', parse_job_id);
       }
       return jsonResponse({
         proposed_domains: domainCount,
         parse_job_id: parse_job_id ?? null,
-        request_id: requestId,
+        request_id,
         fallback: true,
         reason,
       });

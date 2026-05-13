@@ -61,8 +61,7 @@ export async function insertProposedFrameworkStructure(
 ): Promise<number> {
   let domainCount = 0;
 
-  for (let di = 0; di < proposedDomains.length; di++) {
-    const domain = proposedDomains[di];
+  for (const [di, domain] of proposedDomains.entries()) {
     const { data: proposedDomain, error: domError } = await supabase
       .from('mmm_proposed_domains')
       .insert({
@@ -80,8 +79,7 @@ export async function insertProposedFrameworkStructure(
     }
     domainCount++;
 
-    for (let mi = 0; mi < domain.mps.length; mi++) {
-      const mps = domain.mps[mi];
+    for (const [mi, mps] of domain.mps.entries()) {
       const { data: proposedMPS, error: mpsError } = await supabase
         .from('mmm_proposed_mps')
         .insert({
@@ -99,8 +97,7 @@ export async function insertProposedFrameworkStructure(
         throw new Error(`proposed_mps_insert_failed:${mpsError?.message ?? 'unknown'}`);
       }
 
-      for (let ci = 0; ci < mps.criteria.length; ci++) {
-        const criterion = mps.criteria[ci];
+      for (const [ci, criterion] of mps.criteria.entries()) {
         const { error: critError } = await supabase
           .from('mmm_proposed_criteria')
           .insert({
