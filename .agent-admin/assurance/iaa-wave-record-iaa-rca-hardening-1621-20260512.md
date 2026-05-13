@@ -208,7 +208,7 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 *(To be populated after handover assurance — IAA only)*
 
 **Expected reference**: `IAA-session-iaa-rca-hardening-1621-20260512-PASS`
-**Status**: PENDING_REVALIDATION — prior FINAL PASS was recorded at HEAD `0d0fe01e`; current-head assurance must be re-invoked
+**Status**: REJECTED_CURRENT_HEAD — R5 revalidation failed at HEAD `4e28f9bea5cd95deeb58218fbf7b9c96e1d1690d`; remediation required before PASS re-invocation
 
 ### Final Assurance Entry — 2026-05-13 — IAA Handover Assurance Session R4
 
@@ -226,9 +226,42 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 - Local regression evidence: PASS (`rca-trigger-detector.test.sh` 11/11, `validate-product-delivery-gates.test.sh` 37/37)
 - Merge-gate / preflight checks at current head: pending CI re-run and IAA final assurance re-invocation
 
+### Current-Head Final Assurance Entry — 2026-05-13 — IAA Session R5 (REJECTION-PACKAGE)
+
+- PR: #1622 — Harden IAA pre-build assurance and RCA-before-fix admin gap closure
+- IAA Session: session-iaa-rca-hardening-1621-R5-20260513
+- Scope parity: **FAIL** (`PR_NUMBER=1622 .github/scripts/validate-scope-to-diff.sh` → 17 declared vs 18 actual; missing `.github/scripts/validate-product-delivery-gates.sh`)
+- Merge-gate evidence: **FAIL** (current HEAD has red preflight checks: `preflight/evidence-exactness` and `preflight/gate-changing-pr-rule`)
+- Merge Gate Interface required checks (`merge-gate/verdict`, `governance/alignment`, `stop-and-fix/enforcement`): PASS ✅ (confirmatory only; insufficient while preflight gates are red)
+- Result: REJECTION-PACKAGE (STOP-AND-FIX remains active)
+
 ---
 
 ## REJECTION_HISTORY
+
+### Rejection Entry — 2026-05-13 — IAA Current-Head Final Assurance Session R5
+
+**Date**: 2026-05-13
+**IAA Session**: session-iaa-rca-hardening-1621-R5-20260513
+**PR**: #1622 (copilot/harden-iaa-rca-behavior)
+**Verdict**: REJECTION-PACKAGE
+
+**Failures (2 checks FAILED):**
+
+1. **CORE-020 / OVL-SAA-002 / A-041** — Scope-to-diff parity failure at current HEAD.  
+   **Finding**: `.agent-admin/scope-declarations/pr-1622.md` declares `FILES_CHANGED: 17`, but `git diff origin/main...HEAD` returns 18 files. Missing declaration: `.github/scripts/validate-product-delivery-gates.sh`.  
+   **Fix required**: Update `pr-1622.md` IN_SCOPE and `FILES_CHANGED` to exact 18/18 parity, then re-run `PR_NUMBER=1622 .github/scripts/validate-scope-to-diff.sh`.  
+   **Classification**: Systemic.
+
+2. **OVL-SAA-005 / OVL-SAA-007 / OVL-CI-005 / CORE-021** — Gate/admin evidence not merge-ready at current HEAD.  
+   **Finding**: `preflight/evidence-exactness` fails (COUNT-MISMATCH 17 vs 18), and `preflight/gate-changing-pr-rule` fails (no required gate-test evidence in PR body or manifest for changed `.github/scripts/**` / `.github/workflows/**` files).  
+   **Fix required**: Provide compliant gate-changing proof evidence in PR description or `.admin/pr.json evidence_required`, clear both failing preflight checks to GREEN, then re-invoke IAA.  
+   **Classification**: Substantive.
+
+**Systemic prevention action (NO-REPEAT-PREVENTABLE-001):** Add mandatory pre-IAA local gate sequence to the handover checklist: (1) `validate-scope-to-diff.sh`, (2) governance evidence exactness gate, and (3) gate-changing rule evidence confirmation before requesting final assurance.
+
+**HANDOVER_ALLOWED**: no
+**RESULT**: REJECTED_BACK_TO_PRODUCER
 
 ### Rejection Entry — 2026-05-12 — IAA Handover Assurance Session
 
