@@ -266,7 +266,9 @@ jobs:
                 PREBRIEF_PATH="$f"
                 break
               fi
-            done < <(find "$ASSURANCE_DIR" -name "iaa-prebrief-*.md" -print0 2>/dev/null)
+            done < <(find "$ASSURANCE_DIR" \
+              -path "$ASSURANCE_DIR/archive" -prune -o \
+              -name "iaa-prebrief-*.md" -print0 2>/dev/null)
 
             # New pattern (PR #1348): iaa-wave-record-*.md with ## PRE-BRIEF section
             if [ "$PREBRIEF_FOUND" = false ]; then
@@ -277,7 +279,9 @@ jobs:
                   PREBRIEF_PATH="$f"
                   break
                 fi
-              done < <(find "$ASSURANCE_DIR" -name "iaa-wave-record-*.md" -print0 2>/dev/null)
+              done < <(find "$ASSURANCE_DIR" \
+                -path "$ASSURANCE_DIR/archive" -prune -o \
+                -name "iaa-wave-record-*.md" -print0 2>/dev/null)
             fi
           fi
 
@@ -298,7 +302,16 @@ jobs:
               FAIL=true
             elif grep -qE "iaa_prebrief_path:|iaa_wave_record_path:" "$WAVE_TASKS_PATH" 2>/dev/null; then
               PREBRIEF_FIELD=$(grep -E "iaa_prebrief_path:|iaa_wave_record_path:" "$WAVE_TASKS_PATH" | head -1)
-              echo "✅ Pre-Brief/wave-record path field resolved: $PREBRIEF_FIELD"
+              PREBRIEF_FIELD_PATH=$(echo "$PREBRIEF_FIELD" | sed -E 's/^[^:]+:[[:space:]]*//')
+              if [ -z "$PREBRIEF_FIELD_PATH" ] || [ ! -f "$PREBRIEF_FIELD_PATH" ]; then
+                echo "❌ Pre-Brief/wave-record path does not exist: $PREBRIEF_FIELD"
+                FAIL=true
+              elif [[ "$PREBRIEF_FIELD_PATH" == *"/archive/"* ]]; then
+                echo "❌ Pre-Brief/wave-record path points to archived evidence: $PREBRIEF_FIELD_PATH"
+                FAIL=true
+              else
+                echo "✅ Pre-Brief/wave-record path field resolved: $PREBRIEF_FIELD"
+              fi
             else
               echo "⚠️  Neither iaa_prebrief_path nor iaa_wave_record_path found in $WAVE_TASKS_PATH"
               echo "   Add iaa_prebrief_path or iaa_wave_record_path per IAA_PRE_BRIEF_PROTOCOL.md v1.2.0"
@@ -880,6 +893,25 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+
+      - name: Inject HEAD SHA into evidence files
+        run: |
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          python3 - "$HEAD_SHA" <<'PYEOF'
+          import pathlib, sys
+          head_sha = sys.argv[1]
+          for path in pathlib.Path(".functional-delivery").glob("pr-*.md"):
+              if not path.is_file():
+                  continue
+              content = path.read_text()
+              path.write_text(content.replace("CURRENT_HEAD", head_sha))
+          for path in pathlib.Path(".agent-admin/assurance").glob("iaa-*.md"):
+              if not path.is_file():
+                  continue
+              content = path.read_text()
+              if "CURRENT_HEAD_SHA: CURRENT_HEAD" in content:
+                  path.write_text(content.replace("CURRENT_HEAD_SHA: CURRENT_HEAD", f"CURRENT_HEAD_SHA: {head_sha}"))
+          PYEOF
 
       - name: Product Delivery Gate Suite
         env:

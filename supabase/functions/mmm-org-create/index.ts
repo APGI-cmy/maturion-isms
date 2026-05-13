@@ -24,6 +24,16 @@ import { corsHeaders, jsonResponse } from '../_shared/mmm-auth.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const UNIQUE_VIOLATION_CODE = '23505';
+
+function toSlug(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || 'organisation';
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -68,11 +78,28 @@ Deno.serve(async (req: Request) => {
   }
 
   // Create mmm_organisations record
-  const { data: org, error: orgError } = await supabase
-    .from('mmm_organisations')
-    .insert({ name: name.trim(), tier })
-    .select()
-    .single();
+  const trimmedName = name.trim();
+  const baseSlug = toSlug(trimmedName);
+  let org: { id: string } | null = null;
+  let orgError: { code?: string; message?: string } | null = null;
+
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const slug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt}`;
+    const result = await supabase
+      .from('mmm_organisations')
+      .insert({ name: trimmedName, slug, tier })
+      .select()
+      .single();
+
+    org = result.data;
+    orgError = result.error;
+    if (!orgError && org) {
+      break;
+    }
+    if (orgError?.code !== UNIQUE_VIOLATION_CODE) {
+      break;
+    }
+  }
 
   if (orgError || !org) {
     console.error('[mmm-org-create] org insert error:', orgError?.message);
@@ -84,11 +111,11 @@ Deno.serve(async (req: Request) => {
     .from('mmm_profiles')
     .upsert(
       {
-        user_id: userData.user.id,
+        id: userData.user.id,
         organisation_id: org.id,
         role: 'ADMIN',
       },
-      { onConflict: 'user_id' },
+      { onConflict: 'id' },
     );
 
   if (profileError) {

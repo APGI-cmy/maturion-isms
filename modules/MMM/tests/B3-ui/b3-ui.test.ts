@@ -251,13 +251,25 @@ describe('T-MMM-S6-013: mmm-org-create Edge Function exists', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
     expect(src).toContain('mmm_organisations');
   });
+  it('writes slug on mmm_organisations insert (schema requires non-null unique slug)', () => {
+    const src = readFile('supabase/functions/mmm-org-create/index.ts');
+    expect(src).toContain('toSlug(');
+    expect(src).toContain('slug');
+  });
   it('creates/updates mmm_profiles', () => {
     const src = readFile('supabase/functions/mmm-org-create/index.ts');
     expect(src).toContain('mmm_profiles');
   });
+  it('upserts mmm_profiles by id with onConflict id (not user_id)', () => {
+    const src = readFile('supabase/functions/mmm-org-create/index.ts');
+    expect(src).toContain('id: userData.user.id');
+    expect(src).toContain("{ onConflict: 'id' }");
+    expect(src).not.toContain("onConflict: 'user_id'");
+  });
 });
 
 // ─── T-MMM-S6-014: mmm-framework-init Edge Function exists ───────────────────
+// Route: POST /api/frameworks/init (Supabase Edge Function: mmm-framework-init)
 describe('T-MMM-S6-014: mmm-framework-init Edge Function exists', () => {
   it('file exists', () => {
     expect(fileExists('supabase/functions/mmm-framework-init/index.ts')).toBe(true);
@@ -509,5 +521,55 @@ describe('T-MMM-S6-022: MPS-level questionnaire has 5 domains × 5 MPSs × 1+ qu
   it('edge function computes mps_scores aggregate', () => {
     const src = readFile('supabase/functions/mmm-assessment-free-respond/index.ts');
     expect(src).toContain('mps_scores');
+  });
+});
+
+// ─── T-MMM-S6-QIW: mmm-qiw-status Edge Function exists ───────────────────────
+// Route: GET /api/qiw/status (Supabase Edge Function: mmm-qiw-status)
+describe('T-MMM-S6-QIW: mmm-qiw-status Edge Function exists', () => {
+  it('file exists', () => {
+    expect(fileExists('supabase/functions/mmm-qiw-status/index.ts')).toBe(true);
+  });
+  it('returns pipeline_stages in response body', () => {
+    const src = readFile('supabase/functions/mmm-qiw-status/index.ts');
+    expect(src).toContain('pipeline_stages');
+  });
+  it('queries mmm_ai_interactions with correct schema columns', () => {
+    const src = readFile('supabase/functions/mmm-qiw-status/index.ts');
+    expect(src).toContain('action_type');
+    expect(src).toContain('duration_ms');
+    expect(src).toContain('status');
+  });
+});
+
+// ─── T-MMM-S6-UPL: mmm-upload-framework-source Edge Function exists ──────────
+// Route: POST /api/upload/framework-source (Supabase Edge Function: mmm-upload-framework-source)
+describe('T-MMM-S6-UPL: mmm-upload-framework-source Edge Function exists', () => {
+  it('file exists', () => {
+    expect(fileExists('supabase/functions/mmm-upload-framework-source/index.ts')).toBe(true);
+  });
+  it('creates mmm_parse_jobs row with PENDING status', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('mmm_parse_jobs');
+    expect(src).toContain('PENDING');
+  });
+  it('stores framework_id in parse job for review-page polling', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('framework_id');
+  });
+  it('triggers mmm-ai-framework-parse after upload (Mode A/C parse bridge)', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('mmm-ai-framework-parse');
+  });
+  it('handles fire-and-forget failures by marking parse job FAILED', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    expect(src).toContain('FAILED');
+  });
+  it('requires ADMIN role to align with mmm-ai-framework-parse role contract', () => {
+    const src = readFile('supabase/functions/mmm-upload-framework-source/index.ts');
+    // Role contract alignment: upload requires ADMIN so that the forwarded JWT
+    // is accepted by mmm-ai-framework-parse (which also requires ADMIN).
+    // Prevents non-admin uploads creating parse jobs that the parser then rejects (403).
+    expect(src).toContain("requireRole(claims.role, ['ADMIN'])");
   });
 });

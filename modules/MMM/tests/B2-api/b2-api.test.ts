@@ -171,6 +171,12 @@ describe('D6 Roles & Permissions (T-MMM-S6-113–120)', () => {
     expect(src).toContain('export async function validateJWT');
   });
 
+  it('T-MMM-S6-119A: validateJWT reads mmm_profiles by id (PK), not user_id', () => {
+    const src = read(SHARED_AUTH);
+    expect(src).toContain(".eq('id', userId)");
+    expect(src).not.toContain(".eq('user_id', userId)");
+  });
+
   it('T-MMM-S6-120: Org-scoped permission checks enforced in mmm-org-update', () => {
     const src = read(EDGE_FUNCTIONS['mmm-org-update']);
     // Checks claims.orgId !== orgId → returns 403
