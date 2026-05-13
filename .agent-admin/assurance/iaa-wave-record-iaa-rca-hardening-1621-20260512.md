@@ -231,6 +231,7 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 - PR: #1622 — Harden IAA pre-build assurance and RCA-before-fix admin gap closure
 - IAA Session: session-iaa-rca-hardening-1621-R5-20260513
 - Scope parity: **FAIL** (`PR_NUMBER=1622 .github/scripts/validate-scope-to-diff.sh` → 17 declared vs 18 actual; missing `.github/scripts/validate-product-delivery-gates.sh`)
+- Context: this R5 finding was captured at intermediate HEAD `4e28f9b`; scope declaration was subsequently refreshed to 19/19 at HEAD `dca5612f`.
 - Merge-gate evidence: **FAIL** (current HEAD has red preflight checks: `preflight/evidence-exactness` and `preflight/gate-changing-pr-rule`)
 - Merge Gate Interface required checks (`merge-gate/verdict`, `governance/alignment`, `stop-and-fix/enforcement`): PASS ✅ (confirmatory only; insufficient while preflight gates are red)
 - Result: REJECTION-PACKAGE (STOP-AND-FIX remains active)
