@@ -11,7 +11,8 @@ Primary RCA classes:
 7. Product behavior failure
 8. IAA assurance quality failure
 9. ECAP stale-evidence failure
-10. Discoverability/index failure
-11. Canon conflict
-12. Tooling limitation
-13. Product backlog gap
+10. Admin-loop continuation failure (proof-mutation-causes-proof-drift)
+11. Discoverability/index failure
+12. Canon conflict
+13. Tooling limitation
+14. Product backlog gap

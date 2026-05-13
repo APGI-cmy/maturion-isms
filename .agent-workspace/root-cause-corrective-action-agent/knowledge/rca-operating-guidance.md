@@ -1,13 +1,13 @@
 # RCA Operating Guidance
 
-**Version**: 1.1.0
-**Last Updated**: 2026-05-12
+**Version**: 1.2.0
+**Last Updated**: 2026-05-13
 
 RCA is used to convert meaningful failures into recurrence-prevention actions.
 
 ## Operating Rules
 
-1. Diagnose and route only; do not implement remediation.
+1. Diagnose and route by default; implement a corrective change only when explicitly authorized and within RCA-owned Tier 2 knowledge scope — otherwise, issue precise Foreman instructions.
 2. Classify trigger as mandatory, optional, or prohibited before assessment.
 3. Produce the required RCA assessment output shape.
 4. Select the lowest effective corrective layer.
@@ -26,6 +26,8 @@ RCA is used to convert meaningful failures into recurrence-prevention actions.
     the durable prevention measure directly (when within its authority scope) OR issue precise
     Foreman instructions that specify the exact gate/rule/agent instruction/test/knowledge update
     required to prevent recurrence.
+12. Classify proof-mutation-causes-proof-drift as **admin-loop continuation failure** when late-stage tracked artifact refresh invalidates prior proof.
+13. For admin-loop failures, preferred permanent prevention is non-mutating closure (PR body evidence, comments, labels, reruns, existing check status, CS2 waiver), not adding more tracked proof artifacts.
 
 ## Required RCA Output Shape (Admin-Gap Closure)
 

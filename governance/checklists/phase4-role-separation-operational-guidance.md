@@ -309,6 +309,11 @@ Checkpoint-first requirement:
 - Builder QA evidence must be current to HEAD before the checkpoint is triggered.
 - Builder QA must not use handover, merge-ready, or ready-for-review language as a substitute for the checkpoint result.
 
+Admin-loop breaker requirement:
+- Do not add another tracked proof/memory/scope artifact only to refresh evidence phrasing.
+- If closure can be achieved by non-mutating evidence (PR body evidence, comments, labels, check reruns, existing check status, or CS2 waiver), Builder QA must use that path.
+- If a tracked file must change, treat the PR as re-entering build mode and require a fresh checkpoint cycle.
+
 Responsibilities checklist:
 - user journeys;
 - every visible CTA;
@@ -375,6 +380,11 @@ Checkpoint-first requirement:
 - `iaa_audit_token: PENDING` or an absent current-head token is a deliberate checkpoint hard stop.
 - IAA artifacts must reference the same current HEAD SHA reviewed by the deliberate checkpoint before handover may proceed.
 - If evidence does not support the claimed verdict, IAA must issue `IAA_REJECTION_NOTICE` and route correction back to producer.
+
+Late-stage admin-loop detection requirement:
+- When final assurance is active and the remaining blocker is evidence phrasing, stale comment state, missing PR-body run reference, or rerunnable CI, IAA must reject proof-refresh churn.
+- IAA must require a non-mutating closure path first (PR body evidence update, comment, label, rerun, existing check result, or CS2 waiver).
+- IAA must not demand a newly committed PREHANDOVER/session/scope/wave-record artifact when a non-mutating closure path is available.
 
 ### 8.A Admin assurance quick scan
 
@@ -485,6 +495,12 @@ Checkpoint-first requirement:
 - Safety-net comments from watchdog workflows do not substitute for the deliberate checkpoint result.
 - If required checks/evidence are failing, pending, missing, stale, or not run, Foreman must reject producer output (`FOREMAN_REJECTION_NOTICE` or `STOP_AND_FIX`) and require rework before any handover language.
 - If an invoked agent returns inadequate work, Foreman must reject and route correction to that producer; do not convert failed substantive work into administrative summary.
+
+Admin-loop breaker requirement:
+- Before requesting final assurance / CS2 review, Foreman must run scope-to-diff parity, confirm tracked evidence artifacts are already in scope declarations, and confirm current-head required checks are green or explicitly pending.
+- After this freeze point, Foreman must not commit tracked admin/proof/scope/memory artifacts solely to refresh evidence.
+- Foreman must prefer non-mutating closure (PR body evidence, comments, labels, check reruns, existing check status, CS2 waiver).
+- Any tracked-file change after final assurance starts reopens build mode and voids finality unless the change fixes a substantive content defect.
 
 Responsibilities checklist:
 - assign the correct agent for each role;
@@ -643,6 +659,30 @@ Will this require another corrective PR before CS2 can use the promised workflow
 ```
 
 If yes, it is not full functional delivery.
+
+### ADMIN_LOOP_BREAKER-001 (cross-cutting, late-stage)
+
+```text
+After final assurance begins, agents must not commit or modify tracked admin/proof/memory/scope artifacts solely to refresh evidence.
+
+If the remaining blocker can be resolved by PR body evidence, rerunning checks, a non-mutating comment, a label, an existing check result, or CS2 waiver, the non-mutating path is mandatory.
+
+Any tracked file change after final assurance begins reopens build mode and voids current finality unless it fixes a substantive content defect.
+
+A tracked-file change whose only purpose is evidence refresh, proof refresh, scope-refresh-after-proof, or final-assurance-after-final-assurance is admin-loop continuation and must be rejected.
+```
+
+### Admin-loop documented validation scenario (non-mutating closure)
+
+Scenario:
+1. Final assurance has started.
+2. A new tracked artifact commit makes scope/proof references stale.
+3. Remaining blocker is evidence phrasing / missing run reference only.
+
+Expected behaviour:
+- Stop tracked-file churn.
+- Use non-mutating closure (PR body evidence update or comment with run reference at current head, check rerun if needed).
+- If a tracked file must change for substantive defect correction, explicitly re-enter build mode and re-run checkpoint/handover cycle.
 
 ### Final current-head verification must be non-mutating
 
