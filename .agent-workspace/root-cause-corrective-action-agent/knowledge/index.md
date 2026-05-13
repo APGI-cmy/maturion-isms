@@ -1,13 +1,13 @@
 # Root Cause and Corrective Action Agent — Tier 2 Knowledge Index
 
 **Agent**: root-cause-corrective-action-agent  
-**Knowledge Version**: 1.0.0  
-**Last Updated**: 2026-05-10
+**Knowledge Version**: 1.1.0  
+**Last Updated**: 2026-05-12
 
 ## Files
 
-- `rca-operating-guidance.md` — Operating model and anti-burden guardrails
-- `rca-trigger-checklist.md` — Mandatory/optional/prohibited trigger checks
+- `rca-operating-guidance.md` — Operating model, RCA-before-fix rule, admin-gap closure output shape, artifact creep prevention (v1.1.0)
+- `rca-trigger-checklist.md` — Mandatory/optional/prohibited trigger checks; CS2/QA comment trigger; stateful enforcement (v1.1.0)
 - `failure-classification-taxonomy.md` — Failure-class categories used by RCA
 - `lowest-effective-layer-routing-matrix.md` — Minimum effective corrective-layer selection
 - `foreman-rca-orchestration-guidance.md` — Foreman routing and handback expectations
