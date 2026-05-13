@@ -98,12 +98,23 @@ jobs:
           WORKFLOW_RUN_CONCLUSION: ${{ steps.context.outputs.workflow_run_conclusion }}
         with:
           script: |
+            const fs = require('node:fs');
             const detectorPath = `${process.env.GITHUB_WORKSPACE}/.github/scripts/rca-trigger-detector.js`;
+            if (!fs.existsSync(detectorPath)) {
+              throw new Error(`RCA detector script not found at expected path: ${detectorPath}`);
+            }
             const {
               RCA_REQUIRED_MARKER,
               detectRcaRequirement,
               buildRcaRequiredMarker,
             } = require(detectorPath);
+            if (
+              typeof RCA_REQUIRED_MARKER !== 'string' ||
+              typeof detectRcaRequirement !== 'function' ||
+              typeof buildRcaRequiredMarker !== 'function'
+            ) {
+              throw new Error(`RCA detector module has unexpected exports: ${detectorPath}`);
+            }
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA || '';
             const isDraft = process.env.IS_DRAFT === 'true';
