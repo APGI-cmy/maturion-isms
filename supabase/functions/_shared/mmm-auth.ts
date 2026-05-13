@@ -115,8 +115,8 @@ function _corsResponseHeaders(): Record<string, string> {
       'content-type',
       'x-vercel-protection-bypass',
       'x-vercel-set-bypass-cookie',
-      // Some browser/network diagnostics surface shortened header family labels.
-      // Include these aliases to avoid false preflight rejections on preview builds.
+      // Defensive compatibility for observed live-verification preflight failures where
+      // header names were surfaced with truncated/variant `x-vercel-pro*` labels.
       'x-vercel-protection',
       'x-vercel-pro',
     ].join(', '),
