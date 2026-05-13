@@ -121,11 +121,11 @@ Stage 6 artifacts are complete and accurate. Stage 6 gate-pass will be claimed a
 
 | Category | Total | Pass | Blocked/Pending |
 |---|---|---|---|
-| Prerequisite Gates | 6 | 4 | 2 (P-1, P-2) |
+| Prerequisite Gates | 6 | 5 | 1 (P-1) |
 | Coverage Completeness | 6 | 6 | 0 |
 | Domain Completeness | 12 | 12 | 0 |
 | Artifact Completeness | 11 | 11 | 0 |
 | Boundary Enforcement | 13 | 13 | 0 |
-| **TOTAL** | **48** | **46** | **2** |
+| **TOTAL** | **48** | **47** | **1** |
 
-**Gate-pass status: PENDING (P-1 + P-2 must clear)**
+**Gate-pass status: PENDING (P-1 must clear — Stage 5 Architecture CS2 gate-pass, PR #1612)**
