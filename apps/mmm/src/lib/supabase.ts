@@ -6,7 +6,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export async function getEdgeInvokeHeaders(): Promise<Record<string, string>> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) {
-    throw new Error('Authentication required for MMM Edge Function call');
+    throw new Error('User session expired or not authenticated. Please log in again.');
   }
   const headers: Record<string, string> = {
     Authorization: `Bearer ${session.access_token}`,
