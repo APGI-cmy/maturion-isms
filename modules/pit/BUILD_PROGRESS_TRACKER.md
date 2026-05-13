@@ -278,7 +278,7 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 
 **Gate-Pass Blocker**: Stage 6 gate-pass requires Stage 5 Architecture CS2 gate-pass (PR #1612) before gate-pass can be claimed. Stage 5b LFV Package (PR #1624) is merged and available as input.
 
-**Stage 6 RED Suite Statistics**: 144 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
+**Stage 6 RED Suite Statistics**: 146 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
 
 **Completion Date**: 2026-05-13 (derivation complete; gate-pass pending prerequisites)  
 **Notes**: Stage 6 QA-to-Red derivation package created per maturion-isms#1625 (PR #1626). Artifact path corrected from `05-qa-to-red/` to `06-qa-to-red/` to avoid conflict with Stage 5b LFV Package at `05-live-functional-verification/`. Stage 6 does NOT start implementation, appoint a builder, start PBFAG, or clear Build Authorization. Stage 7+ remains NOT_STARTED. Build Authorization remains NOT CLEARED.
