@@ -208,7 +208,16 @@ This is a KNOWLEDGE_GOVERNANCE governance wave (not a product module build wave)
 *(To be populated after handover assurance — IAA only)*
 
 **Expected reference**: `IAA-session-iaa-rca-hardening-1621-20260512-PASS`
-**Status**: PENDING — R1 REJECTION-PACKAGE issued; R2 REJECTION-PACKAGE issued; awaiting R3
+**Status**: FINAL PASS — R1/R2/R3 remediations verified at HEAD `0d0fe01e`
+
+### Final Assurance Entry — 2026-05-13 — IAA Handover Assurance Session R4
+
+- PR: #1622 — Harden IAA pre-build assurance and RCA-before-fix admin gap closure
+- IAA Session: session-iaa-rca-hardening-1621-R4-20260513
+- Merge gate parity: PASS (`merge-gate/verdict`, `governance/alignment`, `stop-and-fix/enforcement`)
+- Scope parity: PASS (`PR_NUMBER=1622 .github/scripts/validate-scope-to-diff.sh` → exact 16/16 match)
+- Local regression evidence: PASS (`rca-trigger-detector.test.sh` 11/11, `validate-product-delivery-gates.test.sh` 29/29)
+- PHASE_B_BLOCKING_TOKEN: `IAA-session-iaa-rca-hardening-1621-20260512-PASS`
 
 ---
 
