@@ -120,7 +120,7 @@
 | cs2_admin | Covered: PIT-RED-RLS-004 (scoped to own-org unless cross-org explicit) | RED_TEST_DEFINED |
 | org_admin | Covered: PIT-RED-RLS-003, PIT-RED-AUDIT-003, PIT-RED-QA-003 | RED_TEST_DEFINED |
 | project_leader | Covered: PIT-RED-RLS-001 (admin screen denied) | RED_TEST_DEFINED |
-| task_owner | Covered: PIT-RED-RLS-008 (milestone deletion denied), PIT-RED-EVIDENCE-010 (approval denied) | RED_TEST_DEFINED |
+| task_owner | Covered: PIT-RED-RLS-008 (task deletion denied), PIT-RED-EVIDENCE-010 (approval denied) | RED_TEST_DEFINED |
 | reviewer | Covered: PIT-RED-EVIDENCE-010 (write denied), PIT-RED-RLS-002 (milestone write denied) | RED_TEST_DEFINED |
 | viewer | Covered: PIT-RED-RLS-001, PIT-RED-RLS-002, PIT-RED-RLS-006, PIT-RED-REPORT-005, PIT-RED-AUDIT-005 | RED_TEST_DEFINED |
 | unauthenticated | Covered: PIT-RED-AUTH-011, PIT-RED-RLS-009 | RED_TEST_DEFINED |
