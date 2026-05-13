@@ -20,7 +20,7 @@
 | Edge Function deployment assumptions | Edge functions are assumed deployable targets for future stage validation (approved gateway pattern retained) | No function deployment performed in Stage 7 |
 | Storage bucket assumptions | Evidence/report buckets must enforce role-aware access controls and deny unauthorized direct reads | Policy validation planning only |
 | Environment variables | Names/owners must be explicitly tracked per environment before functional verification execution | Ownership documented in implementation stage; not created here |
-| Vercel deployment protection/bypass | Bypass/test-access strategy must be explicit before live LFV execution | Strategy required, not activated in Stage 7 |
+| Vercel deployment protection/bypass | Bypass/test-access strategy must be explicit before live LFV execution and must preserve security boundaries (scoped secret handling, least privilege, no public exposure) | Strategy required, not activated in Stage 7 |
 | GitHub Actions vs interactive agent runtime | CI secrets/runtime are distinct from interactive verification runtime; both paths require explicit identity tracing | Boundary documented for LFV controls |
 | SHA matching | Verification artifacts must record deployed URL + PR/head SHA and match expected commit | Mandatory evidence condition |
 | LFV workflow activation point | Activation of live LFV workflow is Stage 8+ authorised action only | Explicitly out of Stage 7 scope |
@@ -32,4 +32,3 @@
 - No runtime/deployment config creation
 - No secret installation
 - No functional pass declaration
-

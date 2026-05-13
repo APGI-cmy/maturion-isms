@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-13
-**Updated By**: pit-specialist (issue #1629 Stage 7 PBFAG docs-only package — 20260513)
+**Updated By**: pit-specialist (issue #1629 Stage 7 PBFAG docs-only package — 2026-05-13)
 > **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — STAGE 5b LFV PACKAGE CREATED — STAGE 6 QA-TO-RED IN PROGRESS — STAGE 7 PBFAG PACKAGE STARTED (GATE-PASS BLOCKED PENDING STAGE 5/6)  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -459,7 +459,14 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 7 PBFAG IN_PROGRESS — PBFAG_PACKAGE_STARTED (maturion-isms#1629; gate-pass blocked pending Stage 5/6 gate-pass); Stage 6 QA-to-Red IN_PROGRESS — RED_SUITE_DERIVATION_STARTED (maturion-isms#1625 / PR #1626); Stage 5 Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 5b LFV Package MERGED (maturion-isms#1623, PR #1624); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
+**Current Stage**:
+- Stage 7 PBFAG IN_PROGRESS — PBFAG_PACKAGE_STARTED (maturion-isms#1629; gate-pass blocked pending Stage 5/6 gate-pass)
+- Stage 6 QA-to-Red IN_PROGRESS — RED_SUITE_DERIVATION_STARTED (maturion-isms#1625 / PR #1626)
+- Stage 5 Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611)
+- Stage 5b LFV Package MERGED (maturion-isms#1623, PR #1624)
+- Stage 4 TRS CS2 APPROVED (maturion-isms#1604)
+- Stage 2 UX CS2 re-confirmed
+- Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
 **Overall Progress**: ~55% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass; Stage 5b LFV Package merged 2026-05-12; Stage 6 QA-to-Red derivation complete 2026-05-13 with gate-pass pending; Stage 7 PBFAG docs-only package started without gate-pass claim)  
 **Blockers**: Stage 6 gate-pass BLOCKED pending CS2 Stage 5 Architecture gate-pass (PR #1612). Stage 7 gate-pass BLOCKED pending Stage 5 and Stage 6 gate-pass prerequisites. Stage 5b LFV (PR #1624) is merged as input. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  

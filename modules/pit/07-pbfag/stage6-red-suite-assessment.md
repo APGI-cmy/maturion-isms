@@ -8,7 +8,7 @@ Allowed statuses: `PASS`, `PASS_WITH_NON_BLOCKING_NOTES`, `BLOCKING_GAP`, `NOT_A
 
 | Assessment Area | Required Coverage | Status | Evidence Source | Notes |
 |---|---|---|---|---|
-| FRS-to-RED | PIT-FR-001..PIT-FR-123 | PASS_WITH_NON_BLOCKING_NOTES | `modules/pit/06-qa-to-red/frs-to-red-traceability.md` | Mapping artifact exists; one known `NOT_TESTABLE` entry remains documented in Stage 6 package |
+| FRS-to-RED | PIT-FR-001..PIT-FR-123 | PASS_WITH_NON_BLOCKING_NOTES | `modules/pit/06-qa-to-red/frs-to-red-traceability.md` | Mapping artifact exists; one known `NOT_TESTABLE` entry (`PIT-FR-123`) remains documented in Stage 6 package |
 | TRS-to-RED | PIT-TR-001..PIT-TR-126 | PASS_WITH_NON_BLOCKING_NOTES | `modules/pit/06-qa-to-red/trs-to-red-traceability.md` | Mapping artifact exists; documented `NOT_TESTABLE` entries retained as declared |
 | Architecture-to-RED | 27 routes, 22 screens, Edge Functions, storage, RLS, reports, notifications, audit, QA dashboard, AIMC, timeline engine | PASS | `modules/pit/06-qa-to-red/architecture-to-red-traceability.md` | Required architecture domains represented in Stage 6 scope |
 | LFV-to-RED | 9 LFV artifacts + workflow design artifact | PASS | `modules/pit/06-qa-to-red/lfv-to-red-traceability.md` | Full LFV mapping artifact present |
@@ -25,4 +25,3 @@ Allowed statuses: `PASS`, `PASS_WITH_NON_BLOCKING_NOTES`, `BLOCKING_GAP`, `NOT_A
 ## Stage 7 Decision Impact
 
 Stage 6 assessment artifacts are sufficient for Stage 7 planning completeness, but **not sufficient to claim Stage 7 gate-pass** while prerequisite gate-pass items remain open.
-

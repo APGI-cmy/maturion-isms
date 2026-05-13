@@ -16,6 +16,8 @@ Define deployed-environment denied-path spot checks for protected PIT actions, i
 | viewer | viewer | PASS |
 | unauthenticated user | unauthenticated user | PASS |
 
+Mapping note: `project_manager`, `team_leader`, and `contributor` are currently represented in PIT artifacts via semantically equivalent role/action mappings (`project_leader`, `task_owner`, `reviewer`). This equivalence must be re-validated against the final implementation-time role matrix before any Stage 7 gate-pass claim.
+
 ## Protected Action Group Coverage Plan
 
 | Action Group | Minimum Denied Checks | Planned Deployed Checks |
@@ -42,4 +44,3 @@ Define deployed-environment denied-path spot checks for protected PIT actions, i
 ## Gate Note
 
 This plan defines coverage only. Execution evidence is required later; Stage 7 gate-pass remains blocked by prerequisites.
-
