@@ -1,6 +1,6 @@
 # IAA Wave Record — {wave} — {date}
 
-**Record Version**: 1.4.1
+**Record Version**: 1.5.0
 **Wave**: {wave}
 **Branch**: {branch}
 **Issue**: {issue_ref}
@@ -209,6 +209,18 @@ Required fix:
 Required proof before re-invocation:
 ```
 
+### 3.1e Pre-Build Traceability Matrix (mandatory for pre-build package/readiness claims)
+- PRE_BUILD_TRACEABILITY_MATRIX: {present / missing}
+- UPSTREAM_SOURCES_CHECKED: {list / none}
+- DOWNSTREAM_ARTIFACTS_CHECKED: {list / none}
+- ARCHITECTURE_COMPLETENESS_CLAUSES_CHECKED: {list / none — include QA Catalog Alignment where applicable}
+- COUNT_DRIFT_CHECKED: {PASS / FAIL — tracker/catalog/statistics consistency}
+- ROUTE_JOURNEY_MAPPING_CHECKED: {PASS / FAIL — journey mapping + route/deployment-surface mapping + role/negative-path mapping}
+- UNSUPPORTED_PASS_CLAIMS: {none / list each unsupported claim}
+- IAA_VERDICT: {PASS / REJECTED_BACK_TO_PRODUCER}
+
+Rule: for pre-build package/readiness assurance, PASS is prohibited when any matrix field above is missing/incomplete or when `UNSUPPORTED_PASS_CLAIMS` is non-empty.
+
 ### 3.2 Acceptance-Criteria Evidence Matrix
 
 > **MANDATORY before any PASS token (§Evidence-First Assurance Mandate Rule 1).**
@@ -285,7 +297,7 @@ Required proof before re-invocation:
 ---
 
 ## 5. Record Metadata
-- Record Schema Version: 1.4.1
+- Record Schema Version: 1.5.0
 - Created By: {agent_id}
 - Last Modified By: {agent_id}
 - Last Modified Date: {YYYY-MM-DD}
@@ -296,3 +308,4 @@ Required proof before re-invocation:
 - Amendment: v1.2.0 (2026-04-28) — Added §3.2 Acceptance-Criteria Evidence Matrix, §3.3 Build-Correctness Assessment, §3.4 Independent Risk Challenge; renumbered prior §3.2/3.3 to §3.5/3.6; updated Record Schema Version; authority: CS2 — maturion-isms#1492
 - Amendment: v1.4.0 (2026-05-10) — Added explicit product-build functional yes/no gate block (§3.1c) and mandatory rejection-package template (§3.1d) for governing issue #1596 (incident calibration PR #1590) functional-delivery assurance hardening.
 - Amendment: v1.4.1 (2026-05-11) — Added loading attestation proof block, enforcement proof shape, explicit no-current-head-drift fields, and explicit non-mergeable partial default wording per issue #1596 CS2 clarification.
+- Amendment: v1.5.0 (2026-05-14) — Added mandatory pre-build traceability matrix block (§3.1e) with explicit fields for source/downstream traceability, architecture/count/route-journey checks, unsupported PASS claim disclosure, and REJECTED_BACK_TO_PRODUCER posture for unsupported pre-build readiness claims per issue #1635 (includes regression coverage anchor for PR #1630 failure mode).

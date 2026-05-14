@@ -1,9 +1,9 @@
 # IAA Category Overlays
 
 **Agent**: independent-assurance-agent
-**Version**: 4.5.0
+**Version**: 4.6.0
 **Status**: ACTIVE
-**Last Updated**: 2026-05-12
+**Last Updated**: 2026-05-14
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -379,12 +379,31 @@ Applied when PR category is `PRE_BUILD_STAGE_MODEL` or `MANDATORY_CROSS_APP_COMP
 | OVL-PBG-015 | §7.2 — Runtime/Deployment Contract filed before first build wave | For any PR that begins the first build wave of a module: verify a Runtime/Deployment Contract artifact is present (deployment target, env vars, auth assumptions, schema prerequisites, health checks). | REJECTION-PACKAGE: "Runtime/Deployment Contract (§7.2) must be filed before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.2." |
 | OVL-PBG-016 | §7.3 — Golden Path Verification Pack defined before first build wave | For any PR that begins the first build wave of a module: verify a Golden Path Verification Pack is present (named golden paths, step-by-step descriptions, expected outcomes, pass/fail criteria, QA mapping). | REJECTION-PACKAGE: "Golden Path Verification Pack (§7.3) must be defined before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.3." |
 | OVL-PBG-017 | §7.4 — Deployment Execution Contract filed before first build wave | For any PR that begins the first build wave of a module: verify a Deployment Execution Contract artifact is present in the module's `_readiness/` folder (or equivalent documented location). The artifact must cover all mandatory items: workflow ownership per deployment surface (frontend, AI gateway, Edge Functions, DB migration, schema verification, live validation), runner access rules, approved migration execution mechanism, CI-safe/preview-safe/live-only execution boundaries, CS2/manual approval requirements, env variable validation. All mandatory items must be explicitly answered — blank or 'TBD' entries fail this check. | REJECTION-PACKAGE: "Deployment Execution Contract (§7.4) must be filed before the first build wave per PRE_BUILD_STAGE_MODEL_CANON.md §7.4. All mandatory items must be explicitly answered." |
+| OVL-PBG-018 | IAA_PRE_BUILD_TRACEABILITY-001 — independent source-to-package traceability matrix required before PASS | For any pre-build package/readiness PR: IAA must independently produce and verify a source-to-package traceability matrix before issuing PASS/readiness. Matrix must explicitly confirm all of: upstream sources reviewed, downstream artifacts reviewed, architecture completeness clauses reviewed (including QA Catalog Alignment where applicable), journey mapping complete, route/deployment-surface mapping complete, role/negative-path mapping complete, QA/test catalog identity plus uniqueness/collision check complete, count consistency across tracker/catalog/statistics complete, downstream stage path/numbering hygiene complete, unsupported PASS claims list generated (or `none`). | REJECTION-PACKAGE with explicit posture: `REJECTED_BACK_TO_PRODUCER` — "Unsupported pre-build PASS/readiness claims; independent IAA_PRE_BUILD_TRACEABILITY-001 matrix missing or incomplete." |
+| OVL-PBG-019 | Regression calibration coverage — PR #1630 failure mode | IAA must document matrix-backed regression coverage for the PR #1630 failure pattern set: missing §3.17 architecture completeness clause, count drift (144 vs 146), unmapped journeys (1–23), route/deployment-surface mismatch, stale downstream path numbering. Coverage must show each failure mode is either verified closed or actively blocking readiness. | If any listed failure mode is not independently covered in the matrix: REJECTION-PACKAGE with explicit posture `REJECTED_BACK_TO_PRODUCER`. |
 
 **Admin Check:**
 
 | Check ID | Check Name | Pass Condition |
 |----------|-----------|---------------|
-| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-017 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
+| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-019 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
+
+### Pre-Build Traceability Matrix Minimum Output (for OVL-PBG-018/019)
+
+IAA must include this exact evidence structure in the assurance artifact for pre-build package/readiness reviews:
+
+```
+PRE_BUILD_TRACEABILITY_MATRIX: present
+UPSTREAM_SOURCES_CHECKED: [list]
+DOWNSTREAM_ARTIFACTS_CHECKED: [list]
+ARCHITECTURE_COMPLETENESS_CLAUSES_CHECKED: [list; include QA Catalog Alignment when applicable]
+COUNT_DRIFT_CHECKED: [PASS/FAIL with tracker/catalog/statistics counts]
+ROUTE_JOURNEY_MAPPING_CHECKED: [PASS/FAIL with journey and route/deployment-surface mapping notes]
+UNSUPPORTED_PASS_CLAIMS: [none | list each unsupported claim]
+IAA_VERDICT: [PASS | REJECTED_BACK_TO_PRODUCER]
+```
+
+`IAA_VERDICT: PASS` is forbidden when `UNSUPPORTED_PASS_CLAIMS` is non-empty or when any required matrix line is missing.
 
 ---
 
@@ -562,6 +581,7 @@ STRICT_MERGE_POSTURE:
 | 4.3.0 | 2026-04-28 | GOVERNANCE_EVIDENCE overlay: OVL-GE-004 added — Acceptance-Criteria Coverage: IAA extracts governing-issue acceptance criteria from the issue itself and verifies each maps to a hard evidence artifact; agent claims are not evidence (A-039/ACR-22/ACR-24); evidence-type downgrade prohibited without CS2 waiver (A-040/ACR-23); gate_triggered: false must be independently verified from diff; output format updated to include OVL-GE-004 section; authority: CS2 — maturion-isms#1492. |
 | 4.4.0 | 2026-05-10 | Product-facing BUILD/T2 hardening (governing issue #1596; incident calibration PR #1590): BUILD_DELIVERABLE overlay now explicitly requires loading PRODUCT_BUILD_ASSURANCE_STANDARD.md before any verdict on product-fix/functional-delivery claims. |
 | 4.5.0 | 2026-05-12 | SIMPLIFIED_ADMIN_ASSURANCE overlay added (OVL-SAA-001 through OVL-SAA-008) — 8 admin/gate-control assurance checks for governance/admin PRs; explicit evidence-model selection rule added; STRICT_MERGE_POSTURE section added (OVL-SMP-001 through OVL-SMP-003) — universal strict merge posture; governing issue #1621. |
+| 4.6.0 | 2026-05-14 | PRE_BUILD_GATES overlay strengthened for issue #1635: added OVL-PBG-018 `IAA_PRE_BUILD_TRACEABILITY-001` (independent source-to-package traceability matrix required before pre-build PASS/readiness, explicit unsupported-claim rejection posture `REJECTED_BACK_TO_PRODUCER`), added OVL-PBG-019 regression calibration coverage for PR #1630 failure set (missing §3.17, 144/146 drift, unmapped 1–23 journeys, route mismatch, stale downstream numbering), and updated OVL-PBG-ADM-001 scope through OVL-PBG-019. |
 
 ---
 
