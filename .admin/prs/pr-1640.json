@@ -1,0 +1,34 @@
+{
+  "pr": 1640,
+  "issue": 13,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [
+    "apps/mmm/src/pages/OnboardingPage.tsx",
+    "apps/mmm/src/pages/FrameworkOriginPage.tsx",
+    "apps/mmm/src/index.css",
+    "supabase/functions/mmm-org-create/index.ts",
+    "supabase/migrations/20260514000001_mmm_onboarding_context.sql",
+    "modules/MMM/13-onboarding-wizard-prebuild/prebuild-package.md",
+    ".admin/prs/pr-1640.json",
+    ".agent-admin/scope-declarations/pr-1640.md",
+    ".agent-admin/assurance/iaa-wave-record-mmm-onboarding-wizard-20260514.md",
+    ".agent-workspace/foreman-v2/memory/session-mmm-onboarding-wizard-20260514.md",
+    ".functional-delivery/pr-1640.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "ui-builder",
+  "evidence_required": [
+    "B3 vitest suite (1137+ tests) passes: 0 new failures introduced",
+    "OnboardingPage.tsx replaced with 10-step wizard — mmm-org-create invoke, mutation.isError, role=alert, retry message anchors preserved",
+    "FrameworkOriginPage guard redirects to /onboarding when onboarding_complete is false",
+    "mmm-org-create Edge Function extended to accept context JSONB and set onboarding_complete",
+    "DB migration adds context JSONB + onboarding_complete BOOLEAN to mmm_organisations",
+    "IAA wave record .agent-admin/assurance/iaa-wave-record-mmm-onboarding-wizard-20260514.md committed with ## PRE-BRIEF and ## TOKEN"
+  ],
+  "merge_authority": "CS2"
+}
