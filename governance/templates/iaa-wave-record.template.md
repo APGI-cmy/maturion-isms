@@ -210,14 +210,14 @@ Required proof before re-invocation:
 ```
 
 ### 3.1e Pre-Build Traceability Matrix (mandatory for pre-build package/readiness claims)
-- PRE_BUILD_TRACEABILITY_MATRIX: {present / missing}
-- UPSTREAM_SOURCES_CHECKED: {list / none}
-- DOWNSTREAM_ARTIFACTS_CHECKED: {list / none}
-- ARCHITECTURE_COMPLETENESS_CLAUSES_CHECKED: {list / none — include QA Catalog Alignment where applicable}
-- COUNT_DRIFT_CHECKED: {PASS / FAIL — tracker/catalog/statistics consistency}
-- ROUTE_JOURNEY_MAPPING_CHECKED: {PASS / FAIL — journey mapping + route/deployment-surface mapping + role/negative-path mapping}
-- UNSUPPORTED_PASS_CLAIMS: {none / list each unsupported claim}
-- IAA_VERDICT: {PASS / REJECTED_BACK_TO_PRODUCER}
+PRE_BUILD_TRACEABILITY_MATRIX: {present / missing}
+UPSTREAM_SOURCES_CHECKED: {list / none}
+DOWNSTREAM_ARTIFACTS_CHECKED: {list / none}
+ARCHITECTURE_COMPLETENESS_CLAUSES_CHECKED: {list / none — include QA Catalog Alignment where applicable}
+COUNT_DRIFT_CHECKED: {PASS / FAIL — tracker/catalog/statistics consistency}
+ROUTE_JOURNEY_MAPPING_CHECKED: {PASS / FAIL — journey mapping + route/deployment-surface mapping + role/negative-path mapping}
+UNSUPPORTED_PASS_CLAIMS: {none / list each unsupported claim}
+IAA_VERDICT: {PASS / REJECTED_BACK_TO_PRODUCER}
 
 Rule: for pre-build package/readiness assurance, PASS is prohibited when any matrix field above is missing/incomplete or when `UNSUPPORTED_PASS_CLAIMS` is non-empty.
 
