@@ -568,7 +568,7 @@ jobs:
                   CHECKPOINT_REQUIRED_MARKER,
                   '## ⏸️ CHECKPOINT REQUIRED — HANDOVER NOT YET ACCEPTED',
                   '',
-                  `@copilot — PR #${prNumber} transitioned to \`ready_for_review\` (HEAD \`${headSha.slice(0, 12)}...\`) but no explicit handover/merge-ready claim has been posted yet and no current-head producer-side snapshot exists.`,
+                  `@copilot — PR #${prNumber} transitioned to \`ready_for_review\` (HEAD \`${headSha.slice(0, 12)}...\`) but no explicit handover/merge-ready claim has been posted yet${latestCurrentHeadCheckpointSuccessful ? ' and a current-head producer-side checkpoint result was already detected.' : ' and no current-head producer-side snapshot exists.'}`,
                   '',
                   '> **Classification**: `CHECKPOINT_REQUIRED` | `HANDOVER_NOT_ACCEPTED`',
                   '> This is a checkpoint advisory — the gate has not been triggered by an explicit handover/merge-ready claim. No hard failure is raised here.',
