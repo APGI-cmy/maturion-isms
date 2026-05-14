@@ -21,8 +21,15 @@ Stage 7 PBFAG pre-build readiness package for PIT module. Defines required pre-b
 
 ```
 .admin/prs/pr-1630.json
+.agent-admin/assurance/iaa-wave-record-pit-stage7-pbfag-20260513-20260513.md
 .agent-admin/scope-declarations/pr-1630.md
 .agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md
+.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-stage7-pbfag-20260513.md
+.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage7-pbfag-20260513.md
+.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage7-pbfag-20260513.md
+.agent-workspace/foreman-v2/memory/session-pit-stage7-pbfag-20260513.md
+.agent-workspace/independent-assurance-agent/memory/session-1278-20260514.md
+.agent-workspace/foreman-v2/parking-station/suggestions-log.md
 .agent-workspace/foreman-v2/personal/wave-current-tasks-pit-stage7-pbfag.md
 modules/pit/07-pbfag/pbfag-plan.md
 modules/pit/07-pbfag/pbfag-checklist.md
