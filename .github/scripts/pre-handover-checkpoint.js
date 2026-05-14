@@ -139,6 +139,24 @@ function yesNoNotRequired(flag, required) {
   return flag ? 'yes' : 'no';
 }
 
+function yesNoUnknown(flag) {
+  if (flag === true) return 'yes';
+  if (flag === false) return 'no';
+  return 'unknown';
+}
+
+function asBoolOrNull(value) {
+  const normalized = normalizeValue(value);
+  if (normalized === 'yes' || normalized === 'true') return true;
+  if (normalized === 'no' || normalized === 'false') return false;
+  return null;
+}
+
+function hasNonEmptyValue(value) {
+  const normalized = normalizeValue(value);
+  return normalized !== '' && !['none', 'n/a', 'na', 'not_applicable', 'null'].includes(normalized);
+}
+
 function commentBodyValue(value) {
   if (value === true) return 'yes';
   if (value === false) return 'no';
@@ -162,6 +180,7 @@ function isHandoverClaimComment(body) {
   if (isCheckpointTriggerComment(text) || isCheckpointResultComment(text)) return false;
   if (
     /RESULT:\s*STOP_AND_FIX/i.test(text) ||
+    /RESULT:\s*CS2_INTERVENTION_REQUIRED/i.test(text) ||
     /RESULT:\s*REJECTED_BACK_TO_PRODUCER/i.test(text) ||
     /HANDOVER_ALLOWED:\s*no/i.test(text) ||
     rejectionNoticePattern.test(text)
@@ -356,6 +375,31 @@ function collectCheckState(checkRuns, commitStatuses) {
   };
 }
 
+function detectMergeabilityFromGit(baseSha, headSha) {
+  if (!baseSha || !headSha) return null;
+  const mergeBase = git(['merge-base', baseSha, headSha]);
+  if (!mergeBase) return null;
+  try {
+    const output = cp.execFileSync('git', ['merge-tree', mergeBase, baseSha, headSha], { encoding: 'utf8' });
+    const hasConflict = /<<<<<<<|>>>>>>>|changed in both/i.test(output);
+    return !hasConflict;
+  } catch {
+    return null;
+  }
+}
+
+function detectBaseSyncedFromGit(baseSha, headSha) {
+  if (!baseSha || !headSha) return null;
+  try {
+    cp.execFileSync('git', ['merge-base', '--is-ancestor', baseSha, headSha], { stdio: 'ignore' });
+    return true;
+  } catch (error) {
+    if (typeof error?.status === 'number' && error.status === 1) return false;
+    console.warn(`[pre-handover-checkpoint] Unable to verify base-sync ancestry (${baseSha} -> ${headSha}): ${error?.message || 'unknown error'}`);
+    return null;
+  }
+}
+
 function readFunctionalEvidence(prNumber, prBody) {
   const bodyMatch = String(prBody || '').match(/Functional-Delivery-Artifact:\s*(\S+)/i);
   const candidates = [
@@ -378,10 +422,19 @@ function evaluateCheckpoint(input = {}) {
   const prNumber = Number(input.prNumber || process.env.PR_NUMBER || 0) || null;
   const headSha = String(input.headSha || process.env.HEAD_SHA || git(['rev-parse', 'HEAD']) || '').trim();
   const baseSha = String(input.baseSha || process.env.BASE_SHA || '').trim();
+  const baseBranch = String(input.baseBranch || process.env.BASE_BRANCH || '').trim();
   const prBody = String(input.prBody ?? process.env.PR_BODY ?? '');
   const prTitle = String(input.prTitle ?? process.env.PR_TITLE ?? '');
   const branch = String(input.branch || process.env.PR_BRANCH || git(['branch', '--show-current']) || '').trim();
   const trigger = String(input.trigger || process.env.CHECKPOINT_TRIGGER || '').trim() || 'PRE_HANDOVER_CHECKPOINT';
+  const explicitMergeConflictChecked = asBoolOrNull(input.mergeConflictChecked ?? process.env.CHECKPOINT_MERGE_CONFLICT_CHECKED);
+  const explicitMergeableWithBase = asBoolOrNull(input.mergeableWithBase ?? process.env.CHECKPOINT_MERGEABLE_WITH_BASE);
+  const explicitBaseSynced = asBoolOrNull(input.baseSyncedOrConflictsResolved ?? process.env.CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED);
+  const outOfSandboxOrGovernanceBlocker = String(
+    input.outOfSandboxOrGovernanceBlocker
+    ?? process.env.CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER
+    ?? ''
+  ).trim();
   const checkRuns = input.checkRuns || parseJsonEnv('CHECKPOINT_CHECK_RUNS_JSON', []);
   const commitStatuses = input.commitStatuses || parseJsonEnv('CHECKPOINT_COMMIT_STATUSES_JSON', []);
 
@@ -403,6 +456,20 @@ function evaluateCheckpoint(input = {}) {
 
   const checkpointTime = input.checkpointTime || process.env.CHECKPOINT_TIME || new Date().toISOString();
   const checks = collectCheckState(checkRuns, commitStatuses);
+  const localGatesRun = !checks.noChecksAtAll;
+  const localGatesPassing = localGatesRun && checks.failing.length === 0 && checks.pending.length === 0 && checks.missing.length === 0;
+  const currentHeadCiChecked = localGatesRun;
+  const detectedMergeableWithBase = detectMergeabilityFromGit(baseSha, headSha);
+  const detectedBaseSynced = detectBaseSyncedFromGit(baseSha, headSha);
+  const mergeConflictChecked = explicitMergeConflictChecked !== null
+    ? explicitMergeConflictChecked
+    : (explicitMergeableWithBase !== null || detectedMergeableWithBase !== null);
+  const mergeableWithBase = explicitMergeableWithBase !== null
+    ? explicitMergeableWithBase
+    : (detectedMergeableWithBase !== null ? detectedMergeableWithBase : false);
+  const baseSyncedOrConflictsResolved = explicitBaseSynced !== null
+    ? explicitBaseSynced
+    : (detectedBaseSynced !== null ? detectedBaseSynced : (mergeConflictChecked && mergeableWithBase));
 
   const proofFiles = listFilesRecursive(path.join(process.cwd(), '.agent-admin/prehandover'), (relPath) => /\/proof-.*\.md$/.test(`/${relPath}`));
   const foremanPrehandoverFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/foreman-v2/memory'), (relPath) => /\/PREHANDOVER-.*\.md$/.test(`/${relPath}`));
@@ -451,6 +518,11 @@ function evaluateCheckpoint(input = {}) {
   const functionalPassPositive = activeArtifactTexts.some((text) => /FUNCTIONAL_PASS:\s*yes\b/i.test(text));
   const functionalPassNegative = activeArtifactTexts.some((text) => /FUNCTIONAL_PASS:\s*no\b/i.test(text));
   const functionalPass = functionalPassPositive && !functionalPassNegative;
+  const ecapWaiverPresent = activeArtifactTexts.some((text) => /\becap_waiver_ref:\s*(?!none\b|n\/a\b|not_applicable\b)\S+/i.test(text));
+  const iaaWaiverPresent = activeArtifactTexts.some((text) => /\biaa_waiver_ref:\s*(?!none\b|n\/a\b|not_applicable\b)\S+/i.test(text));
+  const ecapSatisfiedOrValidlyWaived = !requiresEcap || (adminPresent && adminCurrent) || ecapWaiverPresent;
+  const iaaSatisfiedOrValidlyWaived = !requiresIaa || ((finalAssurancePresent && iaaArtifactCurrent && !tokenPending) || iaaWaiverPresent);
+  const hasOutOfSandboxOrGovernanceBlocker = hasNonEmptyValue(outOfSandboxOrGovernanceBlocker);
 
   const staleShaFound = adminStale || iaaArtifactStale || (functionalEvidencePresent && !functionalEvidenceCurrent) || (scopePresent && !scopeCountMatches);
   const reasons = [];
@@ -462,6 +534,9 @@ function evaluateCheckpoint(input = {}) {
   }
 
   if (!manifestPath) reasons.push('PR admin manifest missing.');
+  if (!mergeConflictChecked) reasons.push('Merge conflict check was not completed for current HEAD/base.');
+  if (mergeConflictChecked && !mergeableWithBase) reasons.push('PR is not mergeable with base (merge conflicts unresolved).');
+  if (mergeConflictChecked && !baseSyncedOrConflictsResolved) reasons.push('Base sync / conflict-resolution check failed.');
   if (checks.noChecksAtAll) reasons.push('No required checks were found for current HEAD.');
   if (checks.failing.length > 0) reasons.push(`Failing checks present: ${checks.failing.join(', ')}`);
   if (checks.pending.length > 0) reasons.push(`Pending checks present: ${checks.pending.join(', ')}`);
@@ -473,12 +548,12 @@ function evaluateCheckpoint(input = {}) {
     if (adminPresent && !adminCurrent) reasons.push('Admin Ceremony/ECAP artifact is stale for current HEAD.');
   }
 
-  if (requiresEcap) {
+  if (requiresEcap && !ecapSatisfiedOrValidlyWaived) {
     if (!adminPresent) reasons.push('ECAP artifact missing while ECAP is required.');
     if (adminPresent && !adminCurrent) reasons.push('ECAP current-head SHA match failed.');
   }
 
-  if (requiresIaa) {
+  if (requiresIaa && !iaaSatisfiedOrValidlyWaived) {
     if (!prebriefPresent) reasons.push('IAA pre-brief artifact missing.');
     if (!finalAssurancePresent) reasons.push('IAA final assurance artifact missing.');
     if (!tokenPresent) reasons.push('IAA token artifact missing.');
@@ -498,20 +573,33 @@ function evaluateCheckpoint(input = {}) {
   }
 
   if (activeArtifactsReportFailOrNo) reasons.push('An active artifact still reports FAIL or *_PASS/HANDOVER_ALLOWED: no.');
+  if (hasOutOfSandboxOrGovernanceBlocker) {
+    reasons.push(`I could not pass all gates because ${outOfSandboxOrGovernanceBlocker}. CS2 intervention needed.`);
+  }
   if (staleShaFound && !reasons.some((reason) => reason.toLowerCase().includes('stale'))) {
     reasons.push('One or more active artifacts are stale against current HEAD.');
   }
 
   const handoverAllowed = reasons.length === 0;
-  const result = handoverAllowed ? 'HANDOVER_ALLOWED' : 'STOP_AND_FIX';
+  const result = handoverAllowed
+    ? 'HANDOVER_ALLOWED'
+    : (hasOutOfSandboxOrGovernanceBlocker ? 'CS2_INTERVENTION_REQUIRED' : 'STOP_AND_FIX');
   const reason = handoverAllowed ? 'All current-head checkpoint requirements satisfied.' : reasons.join(' ');
 
   const fields = {
     PR: prNumber ? `#${prNumber}` : 'unknown',
     ISSUE: issueNumber ? `#${issueNumber}` : 'unknown',
     CURRENT_HEAD_SHA: headSha,
+    BASE_BRANCH: baseBranch || 'unknown',
+    BASE_SHA: baseSha || 'unknown',
+    MERGE_CONFLICT_CHECKED: mergeConflictChecked ? 'yes' : 'no',
+    MERGEABLE_WITH_BASE: mergeableWithBase ? 'yes' : 'no',
+    BASE_SYNCED_OR_CONFLICTS_RESOLVED: baseSyncedOrConflictsResolved ? 'yes' : 'no',
     CHECKPOINT_TRIGGER: trigger,
     CHECKPOINT_TIME: checkpointTime,
+    LOCAL_GATES_RUN: localGatesRun ? 'yes' : 'no',
+    LOCAL_GATES_PASSING: localGatesPassing ? 'yes' : 'no',
+    CURRENT_HEAD_CI_CHECKED: currentHeadCiChecked ? 'yes' : 'no',
     ADMIN_CEREMONY_REQUIRED: adminCeremonyRequired ? 'yes' : 'no',
     ADMIN_CEREMONY_INVOKED: yesNoNotRequired(adminInvoked, adminCeremonyRequired),
     ADMIN_CEREMONY_ARTIFACT_PRESENT: yesNoNotRequired(adminPresent, adminCeremonyRequired),
@@ -521,12 +609,14 @@ function evaluateCheckpoint(input = {}) {
     ECAP_ARTIFACT_PRESENT: yesNoNotRequired(adminPresent, requiresEcap),
     ECAP_ARTIFACT_CURRENT: yesNoNotRequired(adminCurrent, requiresEcap),
     ECAP_CURRENT_HEAD_SHA_MATCH: yesNoNotRequired(adminCurrent, requiresEcap),
+    ECAP_SATISFIED_OR_VALIDLY_WAIVED: yesNoUnknown(ecapSatisfiedOrValidlyWaived),
     IAA_REQUIRED: requiresIaa ? 'yes' : 'no',
     IAA_PREBRIEF_PRESENT: yesNoNotRequired(prebriefPresent, requiresIaa),
     IAA_FINAL_ASSURANCE_PRESENT: yesNoNotRequired(finalAssurancePresent, requiresIaa),
     IAA_TOKEN_PRESENT: yesNoNotRequired(tokenPresent, requiresIaa),
     IAA_TOKEN_PENDING: yesNoNotRequired(tokenPending, requiresIaa),
     IAA_ARTIFACT_CURRENT: yesNoNotRequired(iaaArtifactCurrent, requiresIaa),
+    IAA_SATISFIED_OR_VALIDLY_WAIVED: yesNoUnknown(iaaSatisfiedOrValidlyWaived),
     BUILDER_QA_REQUIRED: builderQaRequired ? 'yes' : 'no',
     BUILDER_QA_INVOKED: yesNoNotRequired(builderQaInvoked, builderQaRequired),
     BUILDER_QA_EVIDENCE_PRESENT: yesNoNotRequired(functionalEvidencePresent, builderQaRequired),
@@ -540,9 +630,11 @@ function evaluateCheckpoint(input = {}) {
     FAILING_CHECKS: checks.failing.length ? checks.failing.join(', ') : 'none',
     PENDING_CHECKS: checks.pending.length ? checks.pending.join(', ') : 'none',
     MISSING_CHECKS: checks.noChecksAtAll ? 'all' : (checks.missing.length ? checks.missing.join(', ') : 'none'),
+    STALE_CHECKS_OR_EVIDENCE: staleShaFound ? 'yes' : 'no',
     STALE_EVIDENCE_FOUND: staleShaFound ? 'yes' : 'no',
     ACTIVE_ARTIFACTS_REPORT_FAIL_OR_NO: activeArtifactsReportFailOrNo ? 'yes' : 'no',
     STALE_SHA_FOUND: staleShaFound ? 'yes' : 'no',
+    OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
     HANDOVER_ALLOWED: handoverAllowed ? 'yes' : 'no',
     RESULT: result,
     REASON: reason,
