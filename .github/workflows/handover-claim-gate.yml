@@ -493,13 +493,21 @@ jobs:
                 ];
                 let prFilenames = [];
                 try {
-                  const { data: prFiles } = await github.rest.pulls.listFiles({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    pull_number: prNumber,
-                    per_page: 100,
-                  });
-                  prFilenames = prFiles.map(f => f.filename);
+                  // Paginate to collect all changed files (GitHub API max 3000).
+                  let filePage = 1;
+                  let hasMoreFiles = true;
+                  while (hasMoreFiles) {
+                    const { data: prFiles } = await github.rest.pulls.listFiles({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      pull_number: prNumber,
+                      per_page: 100,
+                      page: filePage,
+                    });
+                    prFilenames.push(...prFiles.map(f => f.filename));
+                    hasMoreFiles = prFiles.length === 100;
+                    filePage += 1;
+                  }
                 } catch (e) {
                   console.log(`Could not fetch PR file list: ${e.message}`);
                 }
@@ -541,7 +549,7 @@ jobs:
                   `- ECAP_ARTIFACT_PRESENT: ${ecapArtifactPresent ? 'yes' : 'no'}`,
                   `- PREHANDOVER_PROOF_PRESENT: ${prehandoverProofPresent ? 'yes' : 'no'}`,
                   `- ECAP_BUNDLE_PRESENT: ${ecapBundlePresent ? 'yes' : 'no'}`,
-                  `- HANDOVER_ALLOWED: ${ecapEvidenceMissing ? 'no' : 'not_yet_determined'}`,
+                  `- HANDOVER_ALLOWED: ${ecapEvidenceMissing ? 'no' : (ecapRequiredForAdvisory ? 'yes' : 'not_yet_determined')}`,
                   `- RESULT: ${ecapEvidenceMissing ? 'STOP_AND_FIX' : 'CHECKPOINT_REQUIRED'}`,
                   ...(ecapEvidenceMissing ? [
                     '',

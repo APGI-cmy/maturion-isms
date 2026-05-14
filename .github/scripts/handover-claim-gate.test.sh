@@ -356,7 +356,7 @@ const result = {
   prehandoverProofPresent,
   ecapBundlePresent,
   ecapEvidenceMissing,
-  advisoryResult: ecapEvidenceMissing ? "STOP_AND_FIX" : (hasProtectedPaths ? "CHECKPOINT_REQUIRED" : "CHECKPOINT_REQUIRED"),
+  advisoryResult: ecapEvidenceMissing ? "STOP_AND_FIX" : "CHECKPOINT_REQUIRED",
 };
 process.stdout.write(JSON.stringify(result));
 '
