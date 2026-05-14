@@ -6,6 +6,7 @@
 **PR**: #1634
 **Issue**: maturion-isms#1631 — Post-merge assurance and hardening for MMM Phase 6 live workflow
 **IAA Session (PRE-BRIEF)**: session-216-prebrief-mmm-phase6-post-merge-assurance-20260513
+**IAA Session (FULL ASSURANCE)**: session-216-mmm-phase6-post-merge-assurance-full-20260513
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
@@ -142,7 +143,7 @@ The following artifacts MUST be committed to branch `copilot/post-merge-assuranc
 | EA-4 | `.agent-admin/scope-declarations/pr-1634.md` | Foreman | Per-PR scope declaration |
 | EA-5 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Foreman | Updated with this wave block; `ceremony_admin_appointed` declared |
 | EA-6 | `.agent-workspace/independent-assurance-agent/memory/session-216-prebrief-mmm-phase6-post-merge-assurance-20260513.md` | IAA | Session memory for this PRE-BRIEF session |
-| EA-7 | `.agent-workspace/independent-assurance-agent/memory/session-NNN-mmm-phase6-post-merge-assurance-full-20260513.md` | IAA | Written AFTER full assurance verdict (full review session) |
+| EA-7 | `.agent-workspace/independent-assurance-agent/memory/session-216-mmm-phase6-post-merge-assurance-full-20260513.md` | IAA | Written AFTER full assurance verdict (full review session) — COMMITTED |
 
 ---
 

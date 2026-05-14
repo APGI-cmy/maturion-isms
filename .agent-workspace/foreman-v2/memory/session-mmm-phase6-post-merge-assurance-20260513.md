@@ -9,6 +9,15 @@ wave: mmm-phase6-post-merge-assurance-20260513
 iaa_wave_record: .agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md
 prebrief_wave: mmm-phase6-post-merge-assurance-20260513
 prebrief_tasks_count: 7
+phase_1_preflight:
+  status: PREFLIGHT COMPLETE
+  agent_bootstrap_called: true
+  identity_declared: "foreman-v2-agent v6.2.0, class: foreman, lock: SELF-MOD-FM-001"
+  tier_2_loaded: true
+  canon_inventory_verified: true
+  fail_only_once_attested: true
+  unresolved_breaches: none
+  readiness_state: "STANDBY — awaiting/using CS2 authorization for wave execution"
 prior_sessions_reviewed:
   - session-wave20-atomic-write-back-20260318
   - session-wave19-orchestration-20260317

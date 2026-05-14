@@ -10,7 +10,7 @@ protected_path_touched: false
 ecap_required: false
 ecap_waiver_ref: "GOVERNANCE_AUDIT wave — post-merge assurance only; no product code changes; no agent contract file changes; no CI workflow changes; no canon changes; ceremony_admin_appointed: NONE per IAA pre-brief SB-5 declaration"
 final_state: COMPLETE
-files_changed: 7
+files_changed: 9
 merge_gate_parity: PASS
 iaa_audit_token: IAA-session-216-wave-mmm-phase6-post-merge-assurance-20260513-PASS
 ```
@@ -49,11 +49,13 @@ wave-current-tasks update. No product code. No schema changes. No CI workflow ch
 |---|---|---|---|
 | 1 | IAA wave record (pre-brief) | `.agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md` | COMMITTED (SHA: a4af8aa) |
 | 2 | IAA session memory (pre-brief) | `.agent-workspace/independent-assurance-agent/memory/session-216-prebrief-mmm-phase6-post-merge-assurance-20260513.md` | COMMITTED (SHA: a4af8aa) |
-| 3 | Assurance evidence record (15 fields) | `.agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md` | COMMITTED |
-| 4 | Scope declaration | `.agent-admin/scope-declarations/pr-1634.md` | COMMITTED |
-| 5 | Wave current tasks update | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | COMMITTED |
-| 6 | This PREHANDOVER proof | `.agent-admin/prehandover/proof-pr-1634-mmm-phase6-post-merge-assurance-20260513.md` | COMMITTED |
-| 7 | Session memory | `.agent-workspace/foreman-v2/memory/session-mmm-phase6-post-merge-assurance-20260513.md` | COMMITTED |
+| 3 | IAA session memory (full assurance) | `.agent-workspace/independent-assurance-agent/memory/session-216-mmm-phase6-post-merge-assurance-full-20260513.md` | COMMITTED |
+| 4 | PR admin manifest | `.admin/prs/pr-1634.json` | COMMITTED |
+| 5 | Assurance evidence record (15 fields) | `.agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md` | COMMITTED |
+| 6 | Scope declaration | `.agent-admin/scope-declarations/pr-1634.md` | COMMITTED |
+| 7 | Wave current tasks update | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | COMMITTED |
+| 8 | This PREHANDOVER proof | `.agent-admin/prehandover/proof-pr-1634-mmm-phase6-post-merge-assurance-20260513.md` | COMMITTED |
+| 9 | Session memory | `.agent-workspace/foreman-v2/memory/session-mmm-phase6-post-merge-assurance-20260513.md` | COMMITTED |
 
 ---
 
@@ -113,7 +115,7 @@ degraded-path usage explicitly recorded; hardening gaps documented for separate 
 - Zero test failures: N/A — governance/assurance-only wave
 - Zero skipped/incomplete tests: N/A
 - Zero deprecation warnings: N/A
-- Evidence artifacts present: All 7 deliverables committed ✅
+- Evidence artifacts present: All 9 deliverables committed ✅
 - Architecture compliance: N/A — no product code ✅
 - §4.3 Merge gate parity: PASS ✅
 
@@ -144,7 +146,7 @@ CANON_INVENTORY alignment: CONFIRMED — no change.
 | Agent / System | Change Scope Assessed | Impact Conclusion |
 |---|---|---|
 | Foreman workspace | wave-current-tasks.md update | NO IMPACT — governance planning document only |
-| IAA | Pre-brief invoked; session memory created | NO IMPACT — standard assurance ceremony |
+| IAA | Pre-brief + full-assurance session memory committed | NO IMPACT — standard assurance ceremony |
 | mat-specialist | MMM smoke test evidence consumed (read-only) | NO IMPACT — no product code changes; tests used as evidence source only |
 | MMM application (apps/mmm) | No changes made | NO IMPACT |
 | All other agents | No changes | NO IMPACT |
@@ -197,6 +199,8 @@ No stale content risk.
 Scope files changed in this PR:
 - `.agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md` — IAA pre-brief wave record
 - `.agent-workspace/independent-assurance-agent/memory/session-216-prebrief-mmm-phase6-post-merge-assurance-20260513.md` — IAA session memory
+- `.agent-workspace/independent-assurance-agent/memory/session-216-mmm-phase6-post-merge-assurance-full-20260513.md` — IAA full-assurance session memory
+- `.admin/prs/pr-1634.json` — PR admin manifest
 - `.agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md` — post-merge assurance record
 - `.agent-admin/scope-declarations/pr-1634.md` — scope declaration
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — wave tasks update
@@ -262,7 +266,7 @@ Pre-brief declared:
 - Ceremony admin: NOT REQUIRED (declare NONE)
 
 Full pre-brief text in: `.agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md`
-Full IAA session: `.agent-workspace/independent-assurance-agent/memory/session-216-prebrief-mmm-phase6-post-merge-assurance-20260513.md`
+Full IAA session: `.agent-workspace/independent-assurance-agent/memory/session-216-mmm-phase6-post-merge-assurance-full-20260513.md`
 
 ---
 

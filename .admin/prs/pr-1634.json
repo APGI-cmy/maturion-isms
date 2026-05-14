@@ -1,0 +1,30 @@
+{
+  "pr": 1634,
+  "issue": 1631,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1634.json",
+    ".agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md",
+    ".agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md",
+    ".agent-admin/prehandover/proof-pr-1634-mmm-phase6-post-merge-assurance-20260513.md",
+    ".agent-admin/scope-declarations/pr-1634.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/foreman-v2/memory/session-mmm-phase6-post-merge-assurance-20260513.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-216-prebrief-mmm-phase6-post-merge-assurance-20260513.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-216-mmm-phase6-post-merge-assurance-full-20260513.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "foreman-v2-agent",
+  "evidence_required": [
+    "IAA pre-brief and full assurance session memories are both committed for PR #1634",
+    "Per-PR scope declaration uses governing issue #1631 and lists all PR #1634 admin artifacts",
+    "PREHANDOVER proof and IAA wave record are aligned on token/reference paths",
+    "Foreman session memory includes explicit phase_1_preflight/PREFLIGHT COMPLETE evidence"
+  ],
+  "merge_authority": "CS2"
+}
