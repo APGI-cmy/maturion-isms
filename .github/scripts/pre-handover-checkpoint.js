@@ -395,6 +395,7 @@ function detectBaseSyncedFromGit(baseSha, headSha) {
     return true;
   } catch (error) {
     if (typeof error?.status === 'number' && error.status === 1) return false;
+    console.warn(`[pre-handover-checkpoint] Unable to verify base-sync ancestry (${baseSha} -> ${headSha}): ${error?.message || 'unknown error'}`);
     return null;
   }
 }
@@ -468,7 +469,7 @@ function evaluateCheckpoint(input = {}) {
     : (detectedMergeableWithBase !== null ? detectedMergeableWithBase : false);
   const baseSyncedOrConflictsResolved = explicitBaseSynced !== null
     ? explicitBaseSynced
-    : (detectedBaseSynced !== null ? detectedBaseSynced : false);
+    : (detectedBaseSynced !== null ? detectedBaseSynced : (mergeConflictChecked && mergeableWithBase));
 
   const proofFiles = listFilesRecursive(path.join(process.cwd(), '.agent-admin/prehandover'), (relPath) => /\/proof-.*\.md$/.test(`/${relPath}`));
   const foremanPrehandoverFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/foreman-v2/memory'), (relPath) => /\/PREHANDOVER-.*\.md$/.test(`/${relPath}`));
