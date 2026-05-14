@@ -527,6 +527,168 @@ run_corrective_comment_test \
   '[{"user":{"login":"producer-agent"},"created_at":"2026-01-01T11:00:00Z","body":"RESULT: CS2_INTERVENTION_REQUIRED"}]' \
   "true"
 
+# ── Injection compliance gate validation (§12 CS2 Injection Compliance) ──────
+# Mirrors the enforcement added to handover-claim-gate.yml for full-ceremony PRs.
+# Authority: governance/checklists/phase4-role-separation-operational-guidance.md §12
+#            maturion-isms#1648
+
+run_injection_compliance_test() {
+  local name="$1"
+  local is_product_fix="$2"
+  local comment_body="$3"
+  local expected_blocked="$4"  # "true" = should generate precondition failure, "false" = should pass
+  local actual
+
+  actual="$(
+    IS_PRODUCT_FIX="$is_product_fix" \
+    COMMENT_BODY="$comment_body" \
+    node - <<'JSEOF'
+const isProductFix = process.env.IS_PRODUCT_FIX === 'true';
+const commentBody = process.env.COMMENT_BODY || '';
+const preconditionFailures = [];
+
+const escapeRegex = (s) => {
+  const special = '\\\\^$*+?.()|{}[]';
+  return String(s).split('').map((ch) => (special.includes(ch) ? '\\' + ch : ch)).join('');
+};
+const readField = (text, fieldName) => {
+  const m = String(text || '').match(new RegExp('^\\s*(?:[-*]\\s+)?' + escapeRegex(fieldName) + ':\\s*(.+)\\s*$', 'im'));
+  return m ? m[1].trim() : '';
+};
+const isNonEmptySignal = (value) => {
+  const t = String(value || '').trim().toLowerCase();
+  return t !== '' && !['none', 'n/a', 'na', '0', '[]', '{}', 'not_applicable'].includes(t);
+};
+
+if (!isProductFix) {
+  const injectionComplianceResult = readField(commentBody, 'INJECTION_COMPLIANCE_RESULT');
+  const uncheckedRequiredItems = readField(commentBody, 'UNCHECKED_REQUIRED_ITEMS');
+  const unauthorizedDeviations = readField(commentBody, 'UNAUTHORIZED_DEVIATIONS');
+  if (!injectionComplianceResult) {
+    preconditionFailures.push('INJECTION_COMPLIANCE_RESULT field missing from snapshot.');
+  } else if (!/^COMPLIANT$/i.test(injectionComplianceResult.trim())) {
+    preconditionFailures.push('INJECTION_COMPLIANCE_RESULT (' + injectionComplianceResult + ') is not COMPLIANT.');
+  }
+  if (uncheckedRequiredItems && isNonEmptySignal(uncheckedRequiredItems)) {
+    preconditionFailures.push('UNCHECKED_REQUIRED_ITEMS (' + uncheckedRequiredItems + ') must be none before handover.');
+  }
+  if (unauthorizedDeviations && isNonEmptySignal(unauthorizedDeviations)) {
+    preconditionFailures.push('UNAUTHORIZED_DEVIATIONS (' + unauthorizedDeviations + ') must be none before handover.');
+  }
+}
+
+process.stdout.write(preconditionFailures.length > 0 ? 'true' : 'false');
+JSEOF
+  )"
+
+  if [[ "$actual" == "$expected_blocked" ]]; then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name (expected blocked=$expected_blocked got blocked=$actual)"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
+# 23. Full-ceremony PR with missing INJECTION_COMPLIANCE_RESULT → blocked.
+run_injection_compliance_test \
+  "23. full-ceremony PR missing INJECTION_COMPLIANCE_RESULT -> blocked" \
+  "false" \
+  "CURRENT_HEAD_SHA: abc123
+HANDOVER_ALLOWED: yes
+RESULT: HANDOVER_ALLOWED" \
+  "true"
+
+# 24. Full-ceremony PR with INJECTION_COMPLIANCE_RESULT: STOP_AND_FIX → blocked.
+run_injection_compliance_test \
+  "24. full-ceremony PR INJECTION_COMPLIANCE_RESULT=STOP_AND_FIX -> blocked" \
+  "false" \
+  "CURRENT_HEAD_SHA: abc123
+INJECTION_COMPLIANCE_RESULT: STOP_AND_FIX
+UNCHECKED_REQUIRED_ITEMS: validate affected workflows
+UNAUTHORIZED_DEVIATIONS: none
+HANDOVER_ALLOWED: yes
+RESULT: HANDOVER_ALLOWED" \
+  "true"
+
+# 25. Full-ceremony PR with INJECTION_COMPLIANCE_RESULT: CS2_INTERVENTION_REQUIRED → blocked.
+run_injection_compliance_test \
+  "25. full-ceremony PR INJECTION_COMPLIANCE_RESULT=CS2_INTERVENTION_REQUIRED -> blocked" \
+  "false" \
+  "CURRENT_HEAD_SHA: abc123
+INJECTION_COMPLIANCE_RESULT: CS2_INTERVENTION_REQUIRED
+UNCHECKED_REQUIRED_ITEMS: none
+UNAUTHORIZED_DEVIATIONS: none
+HANDOVER_ALLOWED: no
+RESULT: CS2_INTERVENTION_REQUIRED" \
+  "true"
+
+# 26. Full-ceremony PR with UNCHECKED_REQUIRED_ITEMS non-none → blocked even if COMPLIANT.
+run_injection_compliance_test \
+  "26. full-ceremony PR UNCHECKED_REQUIRED_ITEMS non-none -> blocked" \
+  "false" \
+  "CURRENT_HEAD_SHA: abc123
+INJECTION_COMPLIANCE_RESULT: COMPLIANT
+UNCHECKED_REQUIRED_ITEMS: validate deployment workflow runs
+UNAUTHORIZED_DEVIATIONS: none
+HANDOVER_ALLOWED: yes
+RESULT: HANDOVER_ALLOWED" \
+  "true"
+
+# 27. Full-ceremony PR with UNAUTHORIZED_DEVIATIONS non-none → blocked.
+run_injection_compliance_test \
+  "27. full-ceremony PR UNAUTHORIZED_DEVIATIONS non-none -> blocked" \
+  "false" \
+  "CURRENT_HEAD_SHA: abc123
+INJECTION_COMPLIANCE_RESULT: COMPLIANT
+UNCHECKED_REQUIRED_ITEMS: none
+UNAUTHORIZED_DEVIATIONS: skipped gate-changing-pr-rule validation
+HANDOVER_ALLOWED: yes
+RESULT: HANDOVER_ALLOWED" \
+  "true"
+
+# 28. Full-ceremony PR fully compliant → not blocked.
+run_injection_compliance_test \
+  "28. full-ceremony PR fully compliant INJECTION_COMPLIANCE_RESULT=COMPLIANT -> not blocked" \
+  "false" \
+  "CURRENT_HEAD_SHA: abc123
+INJECTION_COMPLIANCE_RESULT: COMPLIANT
+UNCHECKED_REQUIRED_ITEMS: none
+UNAUTHORIZED_DEVIATIONS: none
+CS2_WAIVERS: none
+HANDOVER_ALLOWED: yes
+RESULT: HANDOVER_ALLOWED" \
+  "false"
+
+# 29. Product-fix PR (isProductFix=true) skips injection compliance → not blocked regardless.
+run_injection_compliance_test \
+  "29. product-fix PR skips injection compliance check -> not blocked" \
+  "true" \
+  "CURRENT_HEAD_SHA: abc123
+HANDOVER_ALLOWED: yes
+RESULT: HANDOVER_ALLOWED" \
+  "false"
+
+# 30. PR #1647-calibration: checklist items unchecked + no injection compliance → blocked.
+# Regression for scenario where: checklist items remain unchecked, affected deployment
+# workflows are failing, and agent claims handover without INJECTION_COMPLIANCE_REPORT.
+run_injection_compliance_test \
+  "30. PR-1647-calibration: incomplete checklist + no injection compliance report -> blocked" \
+  "false" \
+  "ECAP_GATE_AND_ADMIN_REPORT
+CURRENT_HEAD_SHA: deadbeef1234
+MERGE_CONFLICT_CHECKED: yes
+MERGEABLE_WITH_BASE: yes
+BASE_SYNCED_OR_CONFLICTS_RESOLVED: yes
+FAILING_CHECKS: none
+PENDING_CHECKS: none
+MISSING_CHECKS: none
+ECAP_REQUIRED: yes
+IAA_REQUIRED: yes
+HANDOVER_ALLOWED: yes
+RESULT: HANDOVER_ALLOWED" \
+  "true"
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"

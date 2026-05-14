@@ -265,6 +265,54 @@ evidence_type_items:
 
 ---
 
+## Injection Compliance
+
+> **MANDATORY for full-ceremony PRs (ecap_required: YES) — HANDOVER BLOCKER** (§12 CS2 Injection Compliance — maturion-isms#1648):
+> Before claiming HANDOVER_ALLOWED: yes, the producing agent MUST extract and classify every CS2
+> injection, governing issue instruction, and PR checklist item as completed, blocked, or waived.
+> Silent omission is a failure. `INJECTION_COMPLIANCE_RESULT: COMPLIANT`, `UNCHECKED_REQUIRED_ITEMS: none`,
+> and `UNAUTHORIZED_DEVIATIONS: none` are required before any handover claim.
+>
+> If ecap_required: NO: state "N/A — product-fix PR, injection compliance advisory only" and the section is satisfied.
+>
+> This section is embedded in the PREHANDOVER proof and the ECAP_GATE_AND_ADMIN_REPORT comment.
+> It MUST NOT be created as a new standalone tracked artifact.
+
+```text
+INJECTION_COMPLIANCE_REPORT
+
+PR: [#NNN]
+CURRENT_HEAD_SHA: [exact SHA]
+INJECTION_SOURCE: [governing issue URL / CS2 comment URL / PR checklist]
+GOVERNING_ISSUE: [#NNN — link to the issue whose instructions/acceptance criteria apply]
+REQUIRED_INSTRUCTIONS_EXTRACTED:
+- instruction: [verbatim instruction text]
+  source: [issue body / CS2 comment URL / PR checklist item / Tier 2 guidance]
+  status: completed | blocked | waived
+  evidence: [file path, CI run URL, command output, or 'none']
+  blocker_or_waiver: [none / concrete blocker reason / CS2 waiver artifact path]
+
+PR_CHECKLIST_ITEMS:
+- item: [checklist item text]
+  status: completed | blocked | waived
+  evidence: [file path, CI run URL, or 'none']
+
+PRODUCER_SIDE_GATES_RUN:
+- gate/check/workflow: [gate or workflow name]
+  status: pass | fail | blocked | not_applicable
+  evidence: [CI run URL or local command output]
+
+UNCHECKED_REQUIRED_ITEMS: none | [list of silently omitted or unclassified items]
+UNAUTHORIZED_DEVIATIONS: none | [list of deviations from injected requirements without CS2 waiver]
+CS2_WAIVERS: none | [list of CS2-waived items with waiver artifact paths]
+RESULT: COMPLIANT | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
+HANDOVER_ALLOWED: yes/no
+```
+
+**Injection compliance status**: [ ] COMPLIANT — all items classified with evidence | [ ] STOP_AND_FIX — fixable failures remain | [ ] CS2_INTERVENTION_REQUIRED — out-of-authority blocker | [ ] N/A — product-fix PR
+
+---
+
 ## Ripple/Cross-Agent Assessment
 
 > **HFMC-01 MANDATORY — HANDOVER BLOCKER**: This section MUST be present and MUST contain
@@ -293,4 +341,4 @@ evidence_type_items:
 
 ---
 
-*Template Version: 1.8.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-22 | Amended: 2026-05-08 (v1.8.0) — Added manifest-era PR routing guidance (`.admin/pr.json` low-ceremony vs full-ceremony decision points) and updated scope declaration pointer to immutable per-PR path `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md`; legacy global `governance/scope-declaration.md` marked deprecated for per-PR authority; retains existing v1.7.0+ hardening controls | Amended: 2026-04-28 (v1.7.0) — Added `ecap_required`, `ecap_invoked`, `ecap_waiver_ref` fields to Gate Results YAML (§Mandatory ECAP Presence Gate; AAP-30 auto-fail if ecap_required YES with no ECAP and no CS2 waiver; ACR-27 trigger); added `## Protected-Path Classification` section (mandatory when ecap_required YES; lists protected-path files from actual diff, ECAP decision, and waiver reference; blocked if ecap_required YES + ecap_invoked NO + no waiver); maturion-isms#1493; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0 | Amended: 2026-04-28 (v1.6.0) — Added mandatory `## Acceptance-Criteria Matrix (Producer-Side)` section (ACR-22 / §Evidence-First Assurance Mandate Rule 1 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0 / maturion-isms#1492); maps every governing-issue acceptance criterion to hard evidence; absence is a producer-side defect blocked at Foreman QP and IAA final audit; evidence-type downgrade to STATIC_CODE for LIVE_RUNTIME criteria is an ACR-23 trigger; agent claims are not evidence (ACR-24) | Amended: 2026-04-27 (v1.5.0) — Added `scope_refreshed_post_final_edit` field to Gate Results YAML (§4.3g mandatory; BLOCKING if NO; AAP-28); strengthened `## Evidence Exactness Gate` section with `Timestamp (check run)` and `Scope refreshed after final edit` fields (§4.3g; AAP-29); added Foreman rejection criteria note (absent/placeholder/undated section is a handover BLOCKER); updated `When` instruction to require local run after final diff, not deferred to CI; added reference to `.github/scripts/refresh-scope-and-validate.sh` helper; wave gov-prehandover-exactness-hardening-20260427 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence-Type Mapping` section (mandatory for waves with CDV/deployment/operational items; Rules E-001/E-002/E-003; A-041; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; temporal integrity check T-001/A-040; governance hardening maturion-isms#1445); added `## Evidence Exactness Gate` section (mandatory pre-IAA check: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH via `.github/scripts/validate-governance-evidence-exactness.sh`; AAP-25/26/27; wave gov-evidence-exactness-hardening-20260422) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
+*Template Version: 1.9.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-22 | Amended: 2026-05-14 (v1.9.0) — Added mandatory `## Injection Compliance` section (§12 CS2 Injection Compliance / maturion-isms#1648): INJECTION_COMPLIANCE_REPORT block required for full-ceremony PRs before any HANDOVER_ALLOWED: yes claim; INJECTION_COMPLIANCE_RESULT, UNCHECKED_REQUIRED_ITEMS, UNAUTHORIZED_DEVIATIONS, CS2_WAIVERS fields; STOP_AND_FIX / CS2_INTERVENTION_REQUIRED / COMPLIANT outcomes; N/A path for product-fix PRs; handover-claim-gate enforces INJECTION_COMPLIANCE_RESULT for full-ceremony PRs | Amended: 2026-05-08 (v1.8.0) — Added manifest-era PR routing guidance (`.admin/pr.json` low-ceremony vs full-ceremony decision points) and updated scope declaration pointer to immutable per-PR path `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md`; legacy global `governance/scope-declaration.md` marked deprecated for per-PR authority; retains existing v1.7.0+ hardening controls | Amended: 2026-04-28 (v1.7.0) — Added `ecap_required`, `ecap_invoked`, `ecap_waiver_ref` fields to Gate Results YAML (§Mandatory ECAP Presence Gate; AAP-30 auto-fail if ecap_required YES with no ECAP and no CS2 waiver; ACR-27 trigger); added `## Protected-Path Classification` section (mandatory when ecap_required YES; lists protected-path files from actual diff, ECAP decision, and waiver reference; blocked if ecap_required YES + ecap_invoked NO + no waiver); maturion-isms#1493; INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0 | Amended: 2026-04-28 (v1.6.0) — Added mandatory `## Acceptance-Criteria Matrix (Producer-Side)` section (ACR-22 / §Evidence-First Assurance Mandate Rule 1 / INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.13.0 / maturion-isms#1492); maps every governing-issue acceptance criterion to hard evidence; absence is a producer-side defect blocked at Foreman QP and IAA final audit; evidence-type downgrade to STATIC_CODE for LIVE_RUNTIME criteria is an ACR-23 trigger; agent claims are not evidence (ACR-24) | Amended: 2026-04-27 (v1.5.0) — Added `scope_refreshed_post_final_edit` field to Gate Results YAML (§4.3g mandatory; BLOCKING if NO; AAP-28); strengthened `## Evidence Exactness Gate` section with `Timestamp (check run)` and `Scope refreshed after final edit` fields (§4.3g; AAP-29); added Foreman rejection criteria note (absent/placeholder/undated section is a handover BLOCKER); updated `When` instruction to require local run after final diff, not deferred to CI; added reference to `.github/scripts/refresh-scope-and-validate.sh` helper; wave gov-prehandover-exactness-hardening-20260427 | Amended: 2026-04-22 (v1.4.0) — Added `## Evidence-Type Mapping` section (mandatory for waves with CDV/deployment/operational items; Rules E-001/E-002/E-003; A-041; canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md; temporal integrity check T-001/A-040; governance hardening maturion-isms#1445); added `## Evidence Exactness Gate` section (mandatory pre-IAA check: PATH-MISMATCH, COUNT-MISMATCH, HASH-INCOMPLETE, VERSION-MISMATCH via `.github/scripts/validate-governance-evidence-exactness.sh`; AAP-25/26/27; wave gov-evidence-exactness-hardening-20260422) | Amended: 2026-04-21 (v1.3.0) — Added `## Authoritative Reference Table` section (mandatory, §4.3f Check M / AAP-23 / ACR-17); added `art_refresh_required` and `art_refresh_completed` fields to YAML ART Refresh section (AAP-24 / §4.3f Check N / R18); wave admin-ceremony-hardening-20260421 | Amended: 2026-04-20 (v1.2.0) — Added `active_bundle_iaa_coherence` field to IAA Assurance section (AAP-22 / ACR-16 / §4.3e Check L; maturion-isms#1422); this field confirms single-session/single-token coherence across the entire active final-state bundle before handover | Amended: 2026-04-19 (v1.1.0) — Added mandatory `## Ripple/Cross-Agent Assessment` section (HFMC-01 / AAP-20 / ACR-14) as structural non-optional section; YAML ripple-assessment-summary retained for machine-readable status*
