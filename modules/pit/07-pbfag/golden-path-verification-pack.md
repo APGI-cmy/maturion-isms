@@ -28,3 +28,32 @@
 | Permission-denied path | Non-authorized role session | viewer | Protected write/admin routes | Attempt denied action | No unauthorized write/read occurs | PermissionDenied/redirect rendered | PIT-RED-RLS-* | Role-denial LFV evidence | Screenshot + blocked response |
 | AIMC request via approved gateway only + accept/dismiss | AIMC feature enabled in scope | contributor | Contextual AIMC UI | Request suggestion -> accept/dismiss | Request routed via gateway endpoint only | Suggestion card + accept/dismiss outcomes | PIT-RED-AIMC-* | AIMC LFV evidence | HAR proving gateway-only call |
 
+## Stage 2 Journey 1–23 Coverage Mapping
+
+| Stage 2 Journey | Journey Label | Mapped Golden Path Item | Mapping Type | Consolidation / Coverage Note |
+|---|---|---|---|---|
+| 1 | Public Landing / Unauthenticated Entry | Login + session restore | Consolidated | Entry into auth boundary is validated in the same login/session flow family. |
+| 2 | Login | Login + session restore | Direct | Direct one-to-one mapping. |
+| 3 | Signup | Login + session restore | Consolidated | Auth onboarding entry point covered in auth/session flow family. |
+| 4 | Invitation Acceptance | Login + session restore | Consolidated | Invitation acceptance converges into authenticated session establishment. |
+| 5 | Forgot Password | Login + session restore | Consolidated | Password recovery path is part of auth/session restoration readiness. |
+| 6 | Reset Password | Login + session restore | Consolidated | Password reset completion rolls back into successful session establishment. |
+| 7 | Protected-Route Redirect (Unauthenticated) | Permission-denied path | Consolidated | Protected route enforcement and redirect behavior are validated in denied-path checks. |
+| 8 | Direct SPA Route Fallback | Login + session restore | Consolidated | Route fallback into app shell/auth handling covered in auth/session readiness. |
+| 9 | Access Denied (Authenticated, Insufficient Permission) | Permission-denied path | Direct | Direct one-to-one mapping. |
+| 10 | Onboarding / First-Use | Login + session restore | Consolidated | First-use onboarding is grouped under auth/session boundary validation for Stage 7 pack definition. |
+| 11 | Create Project | Project creation | Direct | Direct one-to-one mapping. |
+| 12 | Add Milestone | Milestone creation | Direct | Direct one-to-one mapping. |
+| 13 | Add Deliverable | Deliverable creation | Direct | Direct one-to-one mapping. |
+| 14 | Add Task / Action Item | Task creation + assignment | Direct | Direct one-to-one mapping. |
+| 15 | Assign Owner / Invite Team Member | Task creation + assignment | Consolidated | Assignment/invite ownership behavior grouped with task assignment flow. |
+| 16 | Evidence Submission | Evidence upload + review | Direct | Direct one-to-one mapping (submit half). |
+| 17 | Evidence Review and Approval | Evidence upload + review | Direct | Direct one-to-one mapping (review half). |
+| 18 | Timeline / Gantt View Interaction | Timeline drag/resize/denominator switch | Direct | Direct one-to-one mapping. |
+| 19 | Watchdog / Escalation Review | Notification generation + mark-as-read | Consolidated | Escalation visibility is represented via notification trigger/read cycle at Stage 7 planning level. |
+| 20 | Report Generation and Export | Report generation + download + history | Direct | Direct one-to-one mapping. |
+| 21 | Audit Log Review | Audit log entry creation + display | Direct | Direct one-to-one mapping. |
+| 22 | Admin / Settings Management | Organisation context selection | Consolidated | Admin/settings governance is represented via org-context and scoped data boundary controls. |
+| 23 | View and Manage My Work (Personal Task List) | Task creation + assignment | Consolidated | Personal task lifecycle is represented in task creation/assignment flow definition. |
+
+Coverage result: **All Stage 2 journeys 1–23 are explicitly mapped** to one or more Stage 7 Golden Path items for pre-build planning clarity.

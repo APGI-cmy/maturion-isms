@@ -278,7 +278,7 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 
 **Gate-Pass Blocker**: Stage 6 gate-pass requires Stage 5 Architecture CS2 gate-pass (PR #1612) before gate-pass can be claimed. Stage 5b LFV Package (PR #1624) is merged and available as input.
 
-**Stage 6 RED Suite Statistics**: 146 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
+**Stage 6 RED Suite Statistics**: 144 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
 
 **Completion Date**: 2026-05-13 (derivation complete; gate-pass pending prerequisites)  
 **Notes**: Stage 6 QA-to-Red derivation package created per maturion-isms#1625 (PR #1626). Artifact path corrected from `05-qa-to-red/` to `06-qa-to-red/` to avoid conflict with Stage 5b LFV Package at `05-live-functional-verification/`. Stage 6 does NOT start implementation, appoint a builder, or clear Build Authorization. Stage 7 now has docs-only package started in `modules/pit/07-pbfag/` with gate-pass blocked pending Stage 5/6 gate-pass. Stage 8+ remains NOT_STARTED. Build Authorization remains NOT CLEARED.
@@ -294,7 +294,7 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 - [x] `change-propagation-audit.md` — upstream-to-downstream propagation matrix
 - [x] `runtime-deployment-contract.md` — pre-build deployment/runtime boundary contract
 - [x] `golden-path-verification-pack.md` — required golden-path verification definitions
-- [x] `stage6-red-suite-assessment.md` — Stage 6 RED assessment coverage artifact
+- [x] `stage6-red-suite-assessment.md` — Stage 6 RED assessment coverage artifact (includes explicit §3.17 QA Catalog alignment decision)
 - [x] `lfv-readiness-assessment.md` — LFV anti-regression readiness assertions
 - [x] `route-render-verification-plan.md` — deployed plan for all 27 PIT routes
 - [x] `role-negative-path-verification-plan.md` — deployed denied-path spot-check plan
@@ -324,7 +324,7 @@ PBFAG must include all of the following verifications. Any FAIL is a PBFAG gate-
 
 ### Stage 8: Implementation Plan
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/07-implementation-plan/`  
+**Location**: `modules/pit/08-implementation-plan/`  
 **Key Artifacts**:
 - [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 
@@ -349,7 +349,7 @@ The implementation plan must satisfy all of the following. Any gap is a Stage 8 
 
 ### Stage 9: Builder Checklist
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/08-builder-checklist/`  
+**Location**: `modules/pit/09-builder-checklist/`  
 **Key Artifacts**:
 - [ ] Builder Checklist completed for each builder candidate
 
@@ -373,7 +373,7 @@ The builder checklist must verify that each builder candidate understands and ac
 
 ### Stage 10: IAA Pre-Brief
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/09-iaa-pre-brief/`  
+**Location**: `modules/pit/10-iaa-pre-brief/`  
 **Key Artifacts**:
 - [ ] IAA Pre-Brief invoked by Foreman with full context
 - [ ] IAA Pre-Brief artifact filed
@@ -399,7 +399,7 @@ The IAA Pre-Brief must include:
 
 ### Stage 11: Builder Appointment
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/10-builder-appointment/`  
+**Location**: `modules/pit/11-builder-appointment/`  
 **Key Artifacts**:
 - [ ] `builder-contract.md` — Explicit builder agent contract
 - [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
@@ -425,7 +425,7 @@ Builder appointment must NOT occur unless ALL of the following are satisfied:
 
 ### Stage 12: Build Execution & Evidence
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/11-build/`  
+**Location**: `modules/pit/12-build/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence (QA-to-Green per wave)
