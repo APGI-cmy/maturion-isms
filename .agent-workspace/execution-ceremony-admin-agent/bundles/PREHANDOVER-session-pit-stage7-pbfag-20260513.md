@@ -58,7 +58,7 @@ deployment_authorisation: NONE
 - Zero compiler/linter warnings: ✅ N/A — PASS (no code)
 - Stage advancement claims within authorised bounds: ✅ (Stage 7 set to IN_PROGRESS / PBFAG_PACKAGE_STARTED; gate-pass explicitly blocked pending Stage 5/6)
 - Build Authorization NOT CLEARED confirmed throughout all artifacts: ✅
-- No BLOCKING_GAP in Stage 6 RED assessment: ✅ (Stage 6 RED assessment artifact present; no blocking gap declared)
+- Stage 6 RED assessment has documented BLOCKING_GAP prerequisites (PBFAG-BLK-01/02) and Stage 7 gate-pass remains blocked accordingly: ✅
 - Scope constraints honoured: ✅
 
 **QP VERDICT: PASS**
@@ -143,9 +143,9 @@ All hard blockers from IAA pre-brief scope blocker table: **ABSENT from diff** �
 
 ```
 stage_1_app_description: CS2_APPROVED_AUTHORITATIVE (maturion-isms#1540, 2026-05-06)
-stage_2_ux_wiring_spec: FOREMAN_REVIEWED — CS2 approval pending
-stage_3_frs: DRAFT_HARDENED v0.2 — CS2 approval pending
-stage_4_trs: DRAFT_CREATED v0.2-draft — blocked pending Stage 2+3 CS2 approvals
+stage_2_ux_wiring_spec: CS2_APPROVED_RECONFIRMED — baseline locked for Stage 4/5 derivation
+stage_3_frs: DRAFT_HARDENED_CS2_RECONFIRMED — baseline locked for Stage 4/5 derivation
+stage_4_trs: CS2_APPROVED — TRS v0.2-draft approved/re-confirmed by CS2 (maturion-isms#1604)
 stage_5_architecture: RECONCILIATION_COMPLETE — gate-pass not yet issued
 stage_5b_lfv_package: CREATED
 stage_6_qa_to_red: IN_PROGRESS — derivation package created; RED suite not yet executed
@@ -163,31 +163,36 @@ stage_12_build_execution: NOT_STARTED
 
 ```
 scope_declaration_path: .agent-admin/scope-declarations/pr-1630.md
-scope_declaration_committed: YES — HEAD f8e77060
+scope_declaration_committed: YES — HEAD 92ced6bb
 scope_declaration_schema: v2.0.0
 wave_scope_declaration_path: .agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md
-wave_scope_declaration_committed: YES — HEAD f8e77060
+wave_scope_declaration_committed: YES — HEAD 92ced6bb
 ```
 
 **Files in wave-specific diff (wave pit-stage7-pbfag-20260513):**
 1. `.admin/prs/pr-1630.json` — PR admin manifest (NEW)
 2. `.agent-admin/assurance/iaa-wave-record-pit-stage7-pbfag-20260513-20260513.md` — IAA pre-brief wave record (NEW)
-3. `.agent-admin/scope-declarations/pr-1630.md` — Per-PR scope declaration (NEW; amended at f8e77060)
+3. `.agent-admin/scope-declarations/pr-1630.md` — Per-PR scope declaration (NEW; amended at 92ced6bb)
 4. `.agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md` — Wave scope declaration (NEW)
-5. `.agent-workspace/foreman-v2/personal/wave-current-tasks-pit-stage7-pbfag.md` — Wave task tracker (NEW)
-6. `modules/pit/07-pbfag/change-propagation-audit.md` — Stage 7 PBFAG artifact (NEW)
-7. `modules/pit/07-pbfag/golden-path-verification-pack.md` — Stage 7 PBFAG artifact (NEW)
-8. `modules/pit/07-pbfag/lfv-readiness-assessment.md` — Stage 7 PBFAG artifact (NEW)
-9. `modules/pit/07-pbfag/pbfag-checklist.md` — Stage 7 PBFAG artifact (NEW)
-10. `modules/pit/07-pbfag/pbfag-plan.md` — Stage 7 PBFAG artifact (NEW)
-11. `modules/pit/07-pbfag/role-negative-path-verification-plan.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
-12. `modules/pit/07-pbfag/route-render-verification-plan.md` — Stage 7 PBFAG artifact (NEW)
-13. `modules/pit/07-pbfag/runtime-deployment-contract.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
-14. `modules/pit/07-pbfag/stage6-red-suite-assessment.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
-15. `modules/pit/07-pbfag/stage7-gate-readiness-checklist.md` — Stage 7 PBFAG artifact (NEW)
-16. `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stage 7 path corrected to 07-pbfag; posture set to IN_PROGRESS (UPDATED)
+5. `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-stage7-pbfag-20260513.md` — ECAP bundle proof (NEW)
+6. `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage7-pbfag-20260513.md` — ECAP bundle session memory (NEW)
+7. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage7-pbfag-20260513.md` — Foreman accepted PREHANDOVER (NEW)
+8. `.agent-workspace/foreman-v2/memory/session-pit-stage7-pbfag-20260513.md` — Foreman accepted session memory (NEW)
+9. `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` — Parking station append (UPDATED)
+10. `.agent-workspace/foreman-v2/personal/wave-current-tasks-pit-stage7-pbfag.md` — Wave task tracker (NEW)
+11. `modules/pit/07-pbfag/change-propagation-audit.md` — Stage 7 PBFAG artifact (NEW)
+12. `modules/pit/07-pbfag/golden-path-verification-pack.md` — Stage 7 PBFAG artifact (NEW)
+13. `modules/pit/07-pbfag/lfv-readiness-assessment.md` — Stage 7 PBFAG artifact (NEW)
+14. `modules/pit/07-pbfag/pbfag-checklist.md` — Stage 7 PBFAG artifact (NEW)
+15. `modules/pit/07-pbfag/pbfag-plan.md` — Stage 7 PBFAG artifact (NEW)
+16. `modules/pit/07-pbfag/role-negative-path-verification-plan.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
+17. `modules/pit/07-pbfag/route-render-verification-plan.md` — Stage 7 PBFAG artifact (NEW)
+18. `modules/pit/07-pbfag/runtime-deployment-contract.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
+19. `modules/pit/07-pbfag/stage6-red-suite-assessment.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
+20. `modules/pit/07-pbfag/stage7-gate-readiness-checklist.md` — Stage 7 PBFAG artifact (NEW)
+21. `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stage 7 path corrected to 07-pbfag; posture set to IN_PROGRESS (UPDATED)
 
-**Wave-specific file count**: 16 files
+**Wave-specific file count**: 21 files
 
 ---
 
@@ -198,7 +203,7 @@ wave_scope_declaration_committed: YES — HEAD f8e77060
 | Contract Field | Declared Requirement | Verified State | Status |
 |---------------|---------------------|---------------|--------|
 | `required_admin_ceremony_artifacts` | PREHANDOVER proof + session memory committed before IAA invocation | Both ECAP bundle artifacts assembled and will be committed per Pre-IAA Commit Gate | ✅ |
-| `required_final_state_conditions` | Stage 7 PBFAG package committed; BUILD_PROGRESS_TRACKER updated; all governance evidence committed; no implementation scope entered | All 16 wave-scope files committed at HEAD f8e77060; non-scope confirmed absent | ✅ |
+| `required_final_state_conditions` | Stage 7 PBFAG package committed; BUILD_PROGRESS_TRACKER updated; all governance evidence committed; no implementation scope entered | All 21 in-scope files committed at HEAD 92ced6bb; non-scope confirmed absent | ✅ |
 | `required_cross_artifact_consistency_checks` | Issue, PR, wave, branch consistent across all artifacts | R01–R18 reconciliation performed — see ECAP Reconciliation Summary embedded below | ✅ |
 | `required_acknowledgements` | No BUILD_AUTHORIZATION claimed; no stage-gate-pass claimed for Stage 7; gate-pass explicitly blocked pending Stage 5/6 | BUILD_PROGRESS_TRACKER.md Stage 7 status = IN_PROGRESS / PBFAG_PACKAGE_STARTED / GATE_PASS_BLOCKED | ✅ |
 | `required_role_boundaries` | No builder appointed; no IAA invoked directly by ECAP | ECAP assembled bundle only; IAA invocation delegated to Foreman | ✅ |
@@ -210,13 +215,13 @@ wave_scope_declaration_committed: YES — HEAD f8e77060
 
 ## SCOPE_DECLARATION Ceremony
 
-Wave scope declaration filed at `.agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md` and per-PR scope declaration at `.agent-admin/scope-declarations/pr-1630.md`. Both committed at HEAD `f8e77060`. No stale SCOPE_DECLARATION.md pattern in use for this wave.
+Wave scope declaration filed at `.agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md` and per-PR scope declaration at `.agent-admin/scope-declarations/pr-1630.md`. Both committed at HEAD `92ced6bb`. No stale SCOPE_DECLARATION.md pattern in use for this wave.
 
 ---
 
 ## Pre-IAA Commit Gate (MANDATORY STOP — A-021)
 
-> ⛔ ECAP is assembling the bundle. Primary deliverables (items 1–16 above) are already committed at HEAD f8e77060. ECAP admin artifacts (PREHANDOVER proof + session memory) will be committed by ECAP before IAA invocation. This section reflects the post-ECAP commit state after ECAP bundle files are committed.
+> ⛔ ECAP is assembling the bundle. Primary deliverables (items 1–21 above) are already committed at HEAD 92ced6bb. ECAP admin artifacts (PREHANDOVER proof + session memory) will be committed by ECAP before IAA invocation. This section reflects the post-ECAP commit state after ECAP bundle files are committed.
 
 **Pre-commit `git status` output (at ECAP bundle assembly time — primary deliverables):**
 ```
@@ -228,7 +233,7 @@ nothing to commit, working tree clean
 
 **`git log --oneline -5` output (pre-ECAP admin commit — primary deliverables HEAD):**
 ```
-f8e77060 fix: remove backtick-quoted path from pr-1630 OUT_OF_SCOPE to fix evidence-exactness gate
+92ced6bb fix: remove backtick-quoted path from pr-1630 OUT_OF_SCOPE to fix evidence-exactness gate
 11d24607 docs: refine stage7 tracker and assessment clarity notes
 566474a8 (grafted) docs: add PIT stage 7 pbfag package and governance scope artifacts
 ```
@@ -273,9 +278,9 @@ Wave authorized under maturion-isms#1629 (Foreman: PIT Stage 7 PBFAG — pre-bui
 - [x] Zero skipped/todo/stub tests (N/A — governance-only wave)
 - [x] Zero deprecation warnings (N/A — governance-only wave)
 - [x] Zero compiler/linter warnings (N/A — governance-only wave)
-- [x] §4.3 Merge gate parity check: all required_checks match CI — PASS (confirmed by Foreman: all substantive gates GREEN on HEAD f8e77060)
+- [x] §4.3 Merge gate parity check: all required_checks match CI — PASS (confirmed by Foreman: all substantive gates GREEN on HEAD 92ced6bb)
 - [x] IAA audit token recorded: `IAA-session-pit-stage7-pbfag-20260513-PASS` (expected reference — Foreman to confirm token path after IAA invocation)
-- [x] No BLOCKING_GAP in Stage 6 RED assessment
+- [x] Stage 6 RED assessment BLOCKING_GAP prerequisites documented and Stage 7 remains blocked
 - [x] Stage 7 gate-pass NOT claimed — PBFAG_PACKAGE_STARTED only
 - [x] Build Authorization NOT CLEARED confirmed
 - [x] ECAP reconciliation summary embedded (see § ECAP Reconciliation Summary below)
@@ -339,8 +344,8 @@ CodeQL: SKIPPED — trivial documentation-only change (no source code modified).
 | Session memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage7-pbfag-20260513.md` | ✓ | ✓ (post-ECAP commit) | ✓ | ECAP-assembled |
 | Gate results (JSON) | N/A | N/A | N/A | N/A | Governance-only wave — gate results embedded in PREHANDOVER proof; no standalone JSON gate result required |
 | ECAP reconciliation summary | Embedded in this PREHANDOVER proof | ✓ | ✓ (post-ECAP commit) | ✓ | Embedded per established pattern |
-| Scope declaration | `.agent-admin/scope-declarations/pr-1630.md` + `.agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md` | ✓ | ✓ HEAD f8e77060 | ✓ | Both paths committed |
-| IAA pre-brief wave record | `.agent-admin/assurance/iaa-wave-record-pit-stage7-pbfag-20260513-20260513.md` | ✓ | ✓ HEAD f8e77060 | ✓ | PRE-BRIEF section populated |
+| Scope declaration | `.agent-admin/scope-declarations/pr-1630.md` + `.agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md` | ✓ | ✓ HEAD 92ced6bb | ✓ | Both paths committed |
+| IAA pre-brief wave record | `.agent-admin/assurance/iaa-wave-record-pit-stage7-pbfag-20260513-20260513.md` | ✓ | ✓ HEAD 92ced6bb | ✓ | PRE-BRIEF section populated |
 | IAA token file | Not yet — pending Foreman IAA invocation | N/A | N/A | N/A | Phase 4 — Foreman only |
 
 ---
@@ -355,16 +360,16 @@ CodeQL: SKIPPED — trivial documentation-only change (no source code modified).
 | R04 | PR number | #1630 | PREHANDOVER `pr` field, session memory, scope declarations, wave tasks | ✓ |
 | R05 | Wave identifier | `pit-stage7-pbfag-20260513` | PREHANDOVER wave field, session memory, wave record filename, wave current tasks filename | ✓ |
 | R06 | Branch name | `copilot/prepare-pit-stage-7-package` | `git branch --show-current` = confirmed; PREHANDOVER branch field, scope declaration | ✓ |
-| R07 | Changed file paths | 16 wave-scope files (items 1–16 in Scope Declaration section above) | Scope declaration `approved_artifact_paths`, PREHANDOVER artifact inventory | ✓ |
+| R07 | Changed file paths | 21 in-scope files (items 1–21 in Scope Declaration section above) | Scope declaration `approved_artifact_paths`, PREHANDOVER artifact inventory | ✓ |
 | R08 | PREHANDOVER ↔ session memory | Same job, wave, issue, PR, session, status | Session memory references same wave/issue/PR/session | ✓ |
 | R09 | PREHANDOVER ↔ token / IAA reference | Expected reference at bundle-assembly time | Token written by IAA post-invocation into wave record — ECAP did NOT write ## TOKEN | ✓ |
 | R10 | Tracker ↔ wave record | Wave current tasks: all 5 tasks DONE | IAA wave record PRE-BRIEF section populated; no contradictions | ✓ |
-| R11 | Scope declaration ↔ actual changed files | 16 wave-scope files | Scope declaration `approved_artifact_paths` lists 16 files; all confirmed committed at HEAD | ✓ |
+| R11 | Scope declaration ↔ actual changed files | 21 in-scope files | Scope declaration `approved_artifact_paths` lists 21 files; all confirmed committed at HEAD | ✓ |
 | R12 | Session memory ↔ committed artifact paths | Artifact paths in session memory | `git ls-files` confirms all wave-scope files present and committed | ✓ |
 | R13 | CANON_INVENTORY ↔ file hash / version | No canon files amended — N/A | CANON_INVENTORY unchanged; 203 canons at verified state | ✓ N/A |
 | R14 | Ripple registry ↔ PUBLIC_API changes | No PUBLIC_API files changed | ECAP ripple assessment: NO IMPACT | ✓ N/A |
 | R15 | Final-state status coherence | COMPLETE (bundle assembled; pre-IAA) | PREHANDOVER `final_state`, session memory final status: consistent | ✓ |
-| R16 | Artifact declared count ↔ actual count | 16 wave-scope files | Scope declaration count: 16 (matches `approved_artifact_paths`); PREHANDOVER inventory: 16 | ✓ |
+| R16 | Artifact declared count ↔ actual count | 21 in-scope files | Scope declaration count: 21 (matches `approved_artifact_paths`); PREHANDOVER inventory: 21 | ✓ |
 | R17 | IAA session reference | `IAA-session-pit-stage7-pbfag-20260513-PASS` (expected) | Token file pending — expected format matches IAA pre-brief session reference | ✓ |
 | R18 | ART renumber/rebase | No session number change, no date change, no wave rename, no PR renumber | No triggering event occurred; ART refresh not required | ✓ N/A |
 

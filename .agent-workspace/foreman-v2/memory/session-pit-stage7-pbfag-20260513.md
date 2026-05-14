@@ -56,7 +56,7 @@ unresolved_items_from_prior_sessions:
 | 5 | Phase 3.1 gate: Confirmed `.agent-admin/assurance/iaa-wave-record-pit-stage7-pbfag-20260513-20260513.md` exists with `## PRE-BRIEF` section populated ✅ | COMPLETE |
 | 6 | Phase 3.1 gate: Scope declaration at `.agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md` confirmed with `approved_artifact_paths[]` ✅ | COMPLETE |
 | 7 | Phase 3.1 gate: ECAP output paths pre-authorised in Foreman delegation brief as `expected_return_artifact_paths` (established pattern — scope-declaration path disambiguation) ✅ | COMPLETE |
-| 8 | Phase 3.2: Commit-state hygiene — `git status --porcelain` empty, `git diff --name-only` empty, HEAD f8e77060 visible, all 16 wave-scope files committed | COMPLETE |
+| 8 | Phase 3.2: Commit-state hygiene — `git status --porcelain` empty, `git diff --name-only` empty, HEAD 92ced6bb visible, all 21 in-scope files committed | COMPLETE |
 | 9 | Phase 3.3: PREHANDOVER proof assembled with all required sections: wave description, wave identity, build authorization, QP verdict, OPOJD gate, deployment surface enumeration (N/A justified), CANON_INVENTORY alignment, ripple assessment, non-scope verification, stage-readiness summary, scope declaration, wave-level ceremony contract verification, scope declaration ceremony, pre-IAA commit gate, environment parity, E2E wiring trace (N/A), CS2 authorization, checklist, IAA audit, security summary, embedded ECAP reconciliation summary | COMPLETE |
 | 10 | Phase 3.4: Session memory assembled (this file) | COMPLETE |
 | 11 | Phase 3.5: §4.3e Admin Ceremony Compliance Gate executed (see below) | COMPLETE |
@@ -151,7 +151,7 @@ unresolved_breaches:
 | AAP-04 | Ripple assessment absent or blank | `## Ripple/Cross-Agent Assessment` section present with 7-row impact table and downstream conclusion | PASS |
 | AAP-05 | CANON_INVENTORY hash mismatch or null | Phase 1 verified: 203 canons, 0 null hashes; no canon files amended this wave | PASS |
 | AAP-06 | ECAP committed primary deliverables | All 16 primary deliverables committed by Foreman/pit-specialist before ECAP appointment; ECAP committed only ECAP admin artifacts | PASS |
-| AAP-07 | Scope declaration file count mismatch | 16 wave-scope files declared in scope; 16 files in branch diff at wave scope level; count consistent | PASS |
+| AAP-07 | Scope declaration file count mismatch | 21 in-scope files declared in scope; 21 files in branch diff; count consistent | PASS |
 | AAP-08 | IAA token self-certification (ECAP wrote token) | ECAP has NOT written or modified `## TOKEN` section of wave record; expected reference annotated as such | PASS |
 | AAP-09 | Stale artifact from prior session included | No prior-session artifacts included; all artifacts are wave-pit-stage7-pbfag-20260513 specific | PASS |
 | AAP-15 | Gate inventory absent (gate_set_checked field missing) | Governance-only wave — gate set: OVL-PBG-001/002/006/008/009/014 (pre-build stage model), OVL-INJ-001, ADM-001/002/003; no code gates applicable; gate inventory declared in QP/OPOJD sections | PASS |
@@ -179,7 +179,7 @@ All sections of `governance/checklists/execution-ceremony-admin-checklist.md` co
 - 2.2 Session memory: ✓ Committed by ECAP (post-bundle assembly commit)
 - 2.3 Gate results (JSON): N/A
 - 2.4 ECAP reconciliation summary: ✓ Embedded and committed with PREHANDOVER
-- 2.5 Scope declaration: ✓ Committed at HEAD f8e77060
+- 2.5 Scope declaration: ✓ Committed at HEAD 92ced6bb
 
 **Section 3 — Status Normalization**:
 - 3.1 No `TODO` in PREHANDOVER: ✓
