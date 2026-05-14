@@ -52,10 +52,42 @@ jobs:
             core.setOutput('pr_number', String(prNumber));
             core.setOutput('head_sha', pr.head.sha);
             core.setOutput('base_sha', pr.base.sha);
+            core.setOutput('base_ref', pr.base.ref || '');
             core.setOutput('head_ref', pr.head.ref);
             core.setOutput('title', pr.title || '');
             core.setOutput('body', pr.body || '');
             core.setOutput('trigger', process.env.TRIGGER_BODY || '');
+            const mergeableState = String(pr.mergeable_state || '').toLowerCase();
+            let mergeConflictChecked = 'no';
+            let mergeableWithBase = 'no';
+            if (typeof pr.mergeable === 'boolean') {
+              mergeConflictChecked = 'yes';
+              mergeableWithBase = pr.mergeable ? 'yes' : 'no';
+            } else if (mergeableState) {
+              if (['clean', 'has_hooks', 'unstable'].includes(mergeableState)) {
+                mergeConflictChecked = 'yes';
+                mergeableWithBase = 'yes';
+              } else if (mergeableState === 'dirty') {
+                mergeConflictChecked = 'yes';
+                mergeableWithBase = 'no';
+              }
+            }
+            let baseSynced = 'no';
+            try {
+              const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                basehead: `${pr.base.sha}...${pr.head.sha}`,
+              });
+              if (['ahead', 'identical'].includes(String(comparison.status || '').toLowerCase())) {
+                baseSynced = 'yes';
+              }
+            } catch (error) {
+              core.info(`Unable to determine whether PR head contains base SHA: ${error.message}`);
+            }
+            core.setOutput('merge_conflict_checked', mergeConflictChecked);
+            core.setOutput('mergeable_with_base', mergeableWithBase);
+            core.setOutput('base_synced_or_conflicts_resolved', baseSynced);
 
       - name: Checkout trusted default branch utilities
         if: steps.trigger.outputs.matched == 'true'
@@ -186,8 +218,12 @@ jobs:
           PR_TITLE: ${{ steps.pr.outputs.title }}
           PR_BODY: ${{ steps.pr.outputs.body }}
           PR_BRANCH: ${{ steps.pr.outputs.head_ref }}
+          BASE_BRANCH: ${{ steps.pr.outputs.base_ref }}
           BASE_SHA: ${{ steps.pr.outputs.base_sha }}
           HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          CHECKPOINT_MERGE_CONFLICT_CHECKED: ${{ steps.pr.outputs.merge_conflict_checked }}
+          CHECKPOINT_MERGEABLE_WITH_BASE: ${{ steps.pr.outputs.mergeable_with_base }}
+          CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED: ${{ steps.pr.outputs.base_synced_or_conflicts_resolved }}
           CHECKPOINT_TRIGGER: ${{ steps.pr.outputs.trigger }}
           CHECKPOINT_TIME: ${{ github.event.comment.created_at }}
           CHECKPOINT_CHECK_RUNS_JSON: ${{ steps.inputs.outputs.check_runs_json }}

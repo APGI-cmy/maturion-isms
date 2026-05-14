@@ -34,14 +34,18 @@ opojd_compliance:       CONFIRMED            # CONFIRMED | VIOLATED (violated mu
 merge_gate_verdict:     PASS                 # PASS | FAIL
 pre_iaa_commit_state:   PASS                 # PASS | FAIL
 pre_handover_checkpoint_comment_ref: <comment-url> # mandatory deliberate checkpoint result comment for this HEAD
-pre_handover_checkpoint_result: HANDOVER_ALLOWED # HANDOVER_ALLOWED | STOP_AND_FIX
+pre_handover_checkpoint_result: HANDOVER_ALLOWED # HANDOVER_ALLOWED | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
 pre_handover_checkpoint_head_sha: <HEAD_SHA_AT_CHECKPOINT> # must match CURRENT_HEAD/POST_PUSH SHA used for handover
+merge_conflict_checked: YES                  # YES | NO — explicit pre-handover merge-conflict check completed
+mergeable_with_base:    YES                  # YES | NO — current HEAD mergeable with PR base branch
+base_synced_or_conflicts_resolved: YES       # YES | NO — base sync validated or conflicts resolved at current HEAD
 gate_snapshot_head_sha: <HEAD_SHA_AT_GATE_RUN>  # required: exact SHA used when gate results were collected
 post_push_head_sha:     <HEAD_SHA_AFTER_LAST_PUSH> # required: verify evidence freshness after final push
 scope_fresh_at_head_sha: YES                 # YES | NO — scope declaration reflects post_push_head_sha
 evidence_refresh_status: REFRESHED           # REFRESHED | STALE (STALE is BLOCKING)
 gate_run_ids:           [<run-id-1>, <run-id-2>] # CI run IDs used in this proof (or [] if local-only)
 failing_pending_missing_checks: none         # list check names still failing/pending/missing, or 'none'
+out_of_sandbox_or_governance_blocker: none   # none | <concrete reason requiring CS2/governance/external intervention>
 handover_allowed:       NO                   # YES | NO — BLOCKING: must be YES before any handover claim is posted.
                                              # Set YES only when: all required checks are green at gate_snapshot_head_sha,
                                              # gate_snapshot_head_sha matches post_push_head_sha, and no active artifact
@@ -99,6 +103,13 @@ ripple_notes:           none                 # detail if DEFERRED
 
 ## Improvement Suggestions
 suggestions:            NONE                 # NONE | see .agent-workspace/<agent>/parking-station/suggestions-log-<agent>.md
+
+# Producer-side readiness outcome
+# - HANDOVER_ALLOWED: all required checks are green/current + mergeability verified + required ceremonies satisfied/waived.
+# - STOP_AND_FIX: failing/pending/missing/stale/unrun or mergeability/base-sync issue fixable within sandbox/authority.
+# - CS2_INTERVENTION_REQUIRED: blocker requires governance authority, protected-file authority, missing secrets,
+#   external environment, or explicit CS2 decision. Include concrete reason in out_of_sandbox_or_governance_blocker.
+producer_side_result:   HANDOVER_ALLOWED      # HANDOVER_ALLOWED | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
 ```
 
 ---
