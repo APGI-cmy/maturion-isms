@@ -31,9 +31,7 @@ roles_invoked:
 mode_transitions:
   - STANDBY -> POLC-Orchestration
   - POLC-Orchestration -> Quality Professor
-agents_delegated_to:
-  - ui-builder (OnboardingPage.tsx 10-step wizard implementation)
-  - api-builder (mmm-org-create context extension + DB migration)
+agents_delegated_to: ui-builder, api-builder
 escalations_triggered: none
 separation_violations_detected: none
 fail_only_once_attested: true
