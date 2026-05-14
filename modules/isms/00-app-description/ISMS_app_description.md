@@ -291,4 +291,39 @@ This issue is a **single-file authority definition update** only.
 
 ## 18) Authority statement
 
-Downstream FRS, TRS, UX, Architecture, Implementation Plan, QA, and module-package alignment for ISMS top-level behavior must derive from this document unless and until it is formally superseded.
+Downstream FRS, TRS, UX, Architecture, Implementation Plan, QA, and module-package alignment for ISMS top-level behavior must derive from this document and the Stage 1 §AD-01–§AD-24 traceability mapping below unless and until this App Description is formally superseded.
+
+---
+
+## 19) Stage 1 mandatory AD-01–AD-24 traceability
+
+This top-level platform authority uses the numbered sections above as the primary narrative structure. The following matrix provides the mandatory Stage 1 mapping required for downstream traceability. Where a requirement is not owned at top-level platform authority, it is marked **N/A** with justification and delegated to downstream module App Descriptions and derived artefacts.
+
+| AD ID | Coverage status | Traceability / justification |
+|---|---|---|
+| §AD-01 | Addressed | Covered by the document title, status header, product identity, and canonical file metadata defining the app and its authority scope. |
+| §AD-02 | Addressed | Covered by the status header and top-level scope statements defining this as the ISMS platform authority. |
+| §AD-03 | Addressed | Covered by the product identity and purpose sections describing ISMS as the integrated platform front door. |
+| §AD-04 | Addressed | Covered by the scope and applies-to statements defining the landing/navigation layer and downstream module interface authority. |
+| §AD-05 | Addressed | Covered by the platform vision, user entry, module routing, and shared experience narrative in the main body. |
+| §AD-06 | Addressed | Covered by the sections describing intended users, cross-module actors, and top-level interaction responsibilities. |
+| §AD-07 | Addressed | Covered by the functional platform responsibilities, landing behavior, onboarding intent, and module access/routing descriptions. |
+| §AD-08 | Addressed | Covered by the boundary statements that distinguish top-level platform authority from MMM, PIT, Risk, Incident, RADAM, Skills, and implementation concerns. |
+| §AD-09 | Addressed | Covered by the integration and hub-and-spoke descriptions that explain relationships between the ISMS shell and downstream modules. |
+| §AD-10 | Addressed | Covered by the shared context/authentication/navigation principles described for the unified portal experience. |
+| §AD-11 | Addressed | Covered by the UX and user-flow intent already established for the ISMS landing layer and module-card navigation model. |
+| §AD-12 | Addressed | Covered by the shared AI/platform principles and cross-module orchestration statements in the existing narrative. |
+| §AD-13 | Addressed | Covered by the security principles and platform-level governance expectations referenced from source-aligned legacy architecture. |
+| §AD-14 | Addressed | Covered by the constraints and explicit exclusions section, including what this issue does not authorize or implement. |
+| §AD-15 | Addressed | Covered by the dependency and downstream derivation model: module packages, FRS/TRS/UX/Architecture, and shared platform contracts. |
+| §AD-16 | Addressed | Covered by the platform ownership/authority language and the statement that this file is the governing top-level App Description. |
+| §AD-17 | Addressed | Covered by Section 17 Source Alignment, which traces this authority to legacy and current source documents. |
+| §AD-18 | Addressed | Covered by Section 18 Authority statement, which defines downstream derivation obligations. |
+| §AD-19 | Addressed | This section itself provides the mandatory Stage 1 traceability mechanism required for governance validation. |
+| §AD-20 | N/A — top-level platform authority | Detailed module-specific functional decomposition belongs in downstream module App Descriptions and derived FRS/TRS artefacts, not in this cross-platform authority file. |
+| §AD-21 | N/A — top-level platform authority | Detailed technical solution design, build implementation, and deployment architecture are intentionally excluded here and must be specified in downstream architecture/TRS artefacts. |
+| §AD-22 | N/A — top-level platform authority | Detailed test design, verification procedures, and acceptance evidence belong in derived QA and implementation artefacts rather than this Stage 1 authority document. |
+| §AD-23 | Addressed | Covered by the explicit exclusions and downstream derivation rules that constrain how later artefacts may elaborate this platform authority. |
+| §AD-24 | Addressed | Covered by the canonical-file declaration, version/status metadata, source alignment, and this complete traceability matrix for governance gate verification. |
+
+**Top-level authority note:** Any downstream artefact claiming derivation from this App Description must preserve traceability back to the relevant AD rows above and must not contradict the scope, boundary, and authority constraints defined in this file.
