@@ -53,9 +53,11 @@ export default function FrameworkOriginPage() {
           }
         }
       } catch (err) {
-        // On error, allow access (degraded mode) rather than blocking indefinitely
-        console.error('[FrameworkOriginPage] onboarding check failed — allowing access in degraded mode:', err);
-        if (!cancelled) setOnboardingChecked(true);
+        // Fail closed if onboarding status cannot be verified
+        console.error('[FrameworkOriginPage] onboarding check failed — redirecting to onboarding:', err);
+        if (!cancelled) {
+          navigate('/onboarding', { replace: true });
+        }
       }
     }
     checkOnboarding();
