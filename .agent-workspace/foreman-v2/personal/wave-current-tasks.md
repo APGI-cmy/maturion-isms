@@ -18,7 +18,7 @@ appointment_timestamp: N/A
 |---|------|----------|--------|----------|
 | T-1 | Update wave-current-tasks.md for this wave | foreman-v2-agent | 🟢 DONE | This file |
 | T-2 | Create `.agent-admin/scope-declarations/pr-1634.md` | foreman-v2-agent | 🟢 DONE | .agent-admin/scope-declarations/pr-1634.md |
-| T-3 | Create assurance evidence record (15 required fields) | foreman-v2-agent | 🟢 DONE | .agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md |
+| T-3 | Create assurance evidence record (15 required fields, consolidated in wave record) | foreman-v2-agent | 🟢 DONE | .agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md |
 | T-4 | Create PREHANDOVER proof | foreman-v2-agent | 🟢 DONE | .agent-admin/prehandover/proof-pr-1634-mmm-phase6-post-merge-assurance-20260513.md |
 | T-5 | Invoke IAA final assurance | foreman-v2-agent | 🟡 PENDING | Session 216 is pre-brief evidence only; update when full-assurance session memory is committed |
 | T-6 | Record hardening gap: parse-job completion as separate follow-up issue | foreman-v2-agent | 🟡 PENDING | Pending final-assurance-backed evidence in committed artifacts |

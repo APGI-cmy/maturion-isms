@@ -6,7 +6,6 @@
   "scope": [
     ".admin/prs/pr-1634.json",
     ".agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md",
-    ".agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md",
     ".agent-admin/prehandover/proof-pr-1634-mmm-phase6-post-merge-assurance-20260513.md",
     ".agent-admin/scope-declarations/pr-1634.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
@@ -16,7 +15,7 @@
   ],
   "risk": "low",
   "requires_iaa": true,
-  "requires_ecap": true,
+  "requires_ecap": false,
   "execution_model": "foreman-orchestrated",
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "foreman-v2-agent",

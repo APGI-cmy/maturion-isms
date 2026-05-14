@@ -44,7 +44,7 @@ summary:
   - Confirmed merged commit SHA for PR #1590 (`867d12f1b8406447884403c4283d8b89b735c530`).
   - Collected production smoke evidence from workflow run `25810355481`.
   - Recorded Mode A/B/C results with explicit degraded-path annotation for Mode A/C parse timeout.
-  - Created and aligned governance artifacts: scope declaration, assurance record, PREHANDOVER proof, wave-current-tasks update.
+  - Created and aligned governance artifacts: scope declaration, consolidated assurance evidence in IAA wave record, PREHANDOVER proof, wave-current-tasks update.
 
 ## Suggestions for Improvement
 
