@@ -267,13 +267,13 @@ evidence_type_items:
 
 ## Injection Compliance
 
-> **MANDATORY for full-ceremony PRs (ecap_required: YES) — HANDOVER BLOCKER** (§12 CS2 Injection Compliance — maturion-isms#1648):
+> **MANDATORY for full-ceremony PRs (requires_ecap: true) — HANDOVER BLOCKER** (§12 CS2 Injection Compliance — maturion-isms#1648):
 > Before claiming HANDOVER_ALLOWED: yes, the producing agent MUST extract and classify every CS2
 > injection, governing issue instruction, and PR checklist item as completed, blocked, or waived.
 > Silent omission is a failure. `INJECTION_COMPLIANCE_RESULT: COMPLIANT`, `UNCHECKED_REQUIRED_ITEMS: none`,
 > and `UNAUTHORIZED_DEVIATIONS: none` are required before any handover claim.
 >
-> If ecap_required: NO: state "N/A — product-fix PR, injection compliance advisory only" and the section is satisfied.
+> If requires_ecap: false: state "N/A — product-fix PR, injection compliance advisory only" and the section is satisfied.
 >
 > This section is embedded in the PREHANDOVER proof and the ECAP_GATE_AND_ADMIN_REPORT comment.
 > It MUST NOT be created as a new standalone tracked artifact.

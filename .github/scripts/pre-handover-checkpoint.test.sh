@@ -543,6 +543,8 @@ run_injection_compliance_test() {
     IS_PRODUCT_FIX="$is_product_fix" \
     COMMENT_BODY="$comment_body" \
     node - <<'JSEOF'
+// Mirrors the injection compliance validation logic from handover-claim-gate.yml §12.
+// Authority: governance/checklists/phase4-role-separation-operational-guidance.md §12
 const isProductFix = process.env.IS_PRODUCT_FIX === 'true';
 const commentBody = process.env.COMMENT_BODY || '';
 const preconditionFailures = [];
