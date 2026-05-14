@@ -386,7 +386,8 @@ Applied when PR category is `PRE_BUILD_STAGE_MODEL` or `MANDATORY_CROSS_APP_COMP
 
 | Check ID | Check Name | Pass Condition |
 |----------|-----------|---------------|
-| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-019 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS. |
+| OVL-PBG-ADM-001 | PRE_BUILD_GATES overlay loaded | IAA must state that OVL-PBG-001 through OVL-PBG-019 have been applied when PR category includes PRE_BUILD_STAGE_MODEL or MANDATORY_CROSS_APP_COMPONENTS, and must not cite a truncated PRE_BUILD_GATES range in downstream reviewer guidance. |
+| OVL-PBG-ADM-002 | PRE_BUILD_GATES downstream sync complete | When the PRE_BUILD_GATES range is extended, the same range must be reflected in `iaa-trigger-table.md` (including the PRE_BUILD_STAGE_MODEL trigger row and classification decision flow), with the corresponding version/index registration update and scope/`FILES_CHANGED` update recorded in the same change set. |
 
 ### Pre-Build Traceability Matrix Minimum Output (for OVL-PBG-018/019)
 
