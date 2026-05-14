@@ -424,6 +424,18 @@ setup_out_of_sandbox_blocker() {
 }
 run_checkpoint_test "12. out-of-sandbox blocker -> CS2_INTERVENTION_REQUIRED" "CS2_INTERVENTION_REQUIRED" "no" "CS2 intervention needed" setup_out_of_sandbox_blocker
 
+setup_base_not_synced_without_explicit_signal() {
+  setup_green_checkpoint
+  TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED=""
+
+  git checkout -q main
+  echo "base advanced" >> README.md
+  git add README.md
+  git commit -q -m "advance base branch"
+  git checkout -q test-branch
+}
+run_checkpoint_test "12b. base behind current main -> STOP_AND_FIX when sync check is derived from git" "STOP_AND_FIX" "no" "Base sync / conflict-resolution check failed." setup_base_not_synced_without_explicit_signal
+
 run_virtual_file_test "13. virtual mode safeRead does not fall back to disk" safeRead '{}' ""
 run_virtual_file_test "14. virtual mode readJson does not fall back to disk" readJson '{}' "null"
 run_virtual_file_test "15. virtual file path provides readJson content" readJson '{".admin/pr.json":"{\"virtual\":\"present\"}"}' '{"virtual":"present"}'
@@ -440,7 +452,7 @@ run_claim_test "18c. /prepare-handover is excluded from handover-claim parsing" 
 # Mirrors the fixed logic in handover-claim-gate.yml:
 #   c.user?.login === producerLogin &&
 #   new Date(c.created_at) > blockedAt &&
-#   ( /HANDOVER_BLOCKED|STOP_AND_FIX/.test(c.body||'') || REJECTION_NOTICE_REGEX.test(c.body||'') )
+#   ( /HANDOVER_BLOCKED|STOP_AND_FIX|CS2_INTERVENTION_REQUIRED/.test(c.body||'') || REJECTION_NOTICE_REGEX.test(c.body||'') )
 # Without the parentheses the || escapes both &&-guards so any REJECTION_NOTICE
 # from any user at any time incorrectly satisfies the corrective-comment check.
 
@@ -466,7 +478,7 @@ const correctiveProducerComment = comments.some(c =>
   c.user?.login === producerLogin &&
   new Date(c.created_at) > blockedAt &&
   (
-    /HANDOVER_BLOCKED|STOP_AND_FIX/i.test(c.body || '') ||
+    /HANDOVER_BLOCKED|STOP_AND_FIX|CS2_INTERVENTION_REQUIRED/i.test(c.body || '') ||
     REJECTION_NOTICE_REGEX.test(c.body || '')
   )
 );
@@ -497,6 +509,22 @@ run_corrective_comment_test \
   "producer-agent" \
   "2026-01-01T10:00:00Z" \
   '[{"user":{"login":"producer-agent"},"created_at":"2026-01-01T11:00:00Z","body":"FOREMAN_REJECTION_NOTICE"}]' \
+  "true"
+
+# 21. Non-producer CS2_INTERVENTION_REQUIRED after prior HANDOVER_BLOCKED must NOT unlock.
+run_corrective_comment_test \
+  "21. non-producer CS2_INTERVENTION_REQUIRED after HANDOVER_BLOCKED does NOT unlock" \
+  "producer-agent" \
+  "2026-01-01T10:00:00Z" \
+  '[{"user":{"login":"other-user"},"created_at":"2026-01-01T11:00:00Z","body":"RESULT: CS2_INTERVENTION_REQUIRED"}]' \
+  "false"
+
+# 22. Producer CS2_INTERVENTION_REQUIRED after prior HANDOVER_BLOCKED MAY unlock next claim.
+run_corrective_comment_test \
+  "22. producer CS2_INTERVENTION_REQUIRED after HANDOVER_BLOCKED DOES unlock" \
+  "producer-agent" \
+  "2026-01-01T10:00:00Z" \
+  '[{"user":{"login":"producer-agent"},"created_at":"2026-01-01T11:00:00Z","body":"RESULT: CS2_INTERVENTION_REQUIRED"}]' \
   "true"
 
 echo ""

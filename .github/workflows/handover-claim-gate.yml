@@ -458,19 +458,19 @@ jobs:
               if (snapshotAllowsHandover === false && !claimUsesBlockedLanguage) {
                 preconditionFailures.push('HANDOVER_ALLOWED is no; handover claim must be STOP_AND_FIX, CS2_INTERVENTION_REQUIRED, REJECTION_NOTICE, or must not be posted. A snapshot with HANDOVER_ALLOWED: no is valid only as a HANDOVER_BLOCKED / STOP_AND_FIX / CS2_INTERVENTION_REQUIRED / REJECTION_NOTICE producer comment.');
               }
-              if (snapshotChecksRun === false && snapshotAllowsHandover === true) {
-                preconditionFailures.push('LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN is set to no while HANDOVER_ALLOWED is set to yes.');
+              if (snapshotChecksRun !== true && snapshotAllowsHandover === true) {
+                preconditionFailures.push('LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN must be yes while HANDOVER_ALLOWED is set to yes.');
               }
-              if (snapshotCurrentHeadCiChecked === false && snapshotAllowsHandover === true) {
-                preconditionFailures.push('CURRENT_HEAD_CI_CHECKED is set to no while HANDOVER_ALLOWED is set to yes.');
+              if (snapshotCurrentHeadCiChecked !== true && snapshotAllowsHandover === true) {
+                preconditionFailures.push('CURRENT_HEAD_CI_CHECKED must be yes while HANDOVER_ALLOWED is set to yes.');
               }
-              if (snapshotMergeConflictChecked === false && snapshotAllowsHandover === true) {
+              if (snapshotMergeConflictChecked !== true && snapshotAllowsHandover === true) {
                 preconditionFailures.push('MERGE_CONFLICT_CHECKED must be yes before HANDOVER_ALLOWED can be yes.');
               }
-              if (snapshotMergeableWithBase === false && snapshotAllowsHandover === true) {
+              if (snapshotMergeableWithBase !== true && snapshotAllowsHandover === true) {
                 preconditionFailures.push('MERGEABLE_WITH_BASE must be yes before HANDOVER_ALLOWED can be yes.');
               }
-              if (snapshotBaseSyncedOrConflictsResolved === false && snapshotAllowsHandover === true) {
+              if (snapshotBaseSyncedOrConflictsResolved !== true && snapshotAllowsHandover === true) {
                 preconditionFailures.push('BASE_SYNCED_OR_CONFLICTS_RESOLVED must be yes before HANDOVER_ALLOWED can be yes.');
               }
               if (snapshotAllowsHandover === true && !/^HANDOVER_ALLOWED$/i.test(snapshotResult)) {

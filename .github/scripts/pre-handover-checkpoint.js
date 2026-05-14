@@ -388,6 +388,17 @@ function detectMergeabilityFromGit(baseSha, headSha) {
   }
 }
 
+function detectBaseSyncedFromGit(baseSha, headSha) {
+  if (!baseSha || !headSha) return null;
+  try {
+    cp.execFileSync('git', ['merge-base', '--is-ancestor', baseSha, headSha], { stdio: 'ignore' });
+    return true;
+  } catch (error) {
+    if (typeof error?.status === 'number' && error.status === 1) return false;
+    return null;
+  }
+}
+
 function readFunctionalEvidence(prNumber, prBody) {
   const bodyMatch = String(prBody || '').match(/Functional-Delivery-Artifact:\s*(\S+)/i);
   const candidates = [
@@ -448,6 +459,7 @@ function evaluateCheckpoint(input = {}) {
   const localGatesPassing = localGatesRun && checks.failing.length === 0 && checks.pending.length === 0 && checks.missing.length === 0;
   const currentHeadCiChecked = localGatesRun;
   const detectedMergeableWithBase = detectMergeabilityFromGit(baseSha, headSha);
+  const detectedBaseSynced = detectBaseSyncedFromGit(baseSha, headSha);
   const mergeConflictChecked = explicitMergeConflictChecked !== null
     ? explicitMergeConflictChecked
     : (explicitMergeableWithBase !== null || detectedMergeableWithBase !== null);
@@ -456,7 +468,7 @@ function evaluateCheckpoint(input = {}) {
     : (detectedMergeableWithBase !== null ? detectedMergeableWithBase : false);
   const baseSyncedOrConflictsResolved = explicitBaseSynced !== null
     ? explicitBaseSynced
-    : (mergeConflictChecked && mergeableWithBase);
+    : (detectedBaseSynced !== null ? detectedBaseSynced : false);
 
   const proofFiles = listFilesRecursive(path.join(process.cwd(), '.agent-admin/prehandover'), (relPath) => /\/proof-.*\.md$/.test(`/${relPath}`));
   const foremanPrehandoverFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/foreman-v2/memory'), (relPath) => /\/PREHANDOVER-.*\.md$/.test(`/${relPath}`));
