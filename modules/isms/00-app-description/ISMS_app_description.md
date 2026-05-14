@@ -140,6 +140,17 @@ Get-to-know-you minimum context includes:
 | Skills and competency workflows | **Skills Development module** |
 | Data analytics and remote assurance operations | **Data/Remote Assurance module** |
 
+## 7.3 Explicit boundary statements
+
+- ISMS owns the top-level ecosystem landing/navigation context.
+- MMM owns maturity roadmap, maturity frameworks, domains, MPS, criteria, evidence-linked maturity scoring, and maturity dashboard behaviour.
+- PIT owns implementation execution, tasks, milestones, project progress, and implementation evidence return.
+- Risk Management owns risk identification/assessment registers and related risk workflows.
+- Incident & Intelligence owns incident intake, investigation signals, and intelligence/drift feeds.
+- Data Analytics & Remote Assurance owns analytics, assurance dashboards, system signal interpretation, and continuous assurance views.
+- Systems Integration / RADAM owns system connectors, data extraction, automation hooks, and cross-system checks.
+- Skills Development Portal owns learning, qualifications, micro-learning, competency tracking, certificates, and training evidence.
+
 ---
 
 ## 8) Module links (authoritative pointers)
