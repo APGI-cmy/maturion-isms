@@ -147,7 +147,7 @@ stage_2_ux_wiring_spec: CS2_APPROVED_RECONFIRMED — baseline locked for Stage 4
 stage_3_frs: DRAFT_HARDENED_CS2_RECONFIRMED — baseline locked for Stage 4/5 derivation
 stage_4_trs: CS2_APPROVED — TRS v0.2-draft approved/re-confirmed by CS2 (maturion-isms#1604)
 stage_5_architecture: RECONCILIATION_COMPLETE — gate-pass not yet issued
-stage_5b_lfv_package: CREATED
+stage_5b_lfv_package: MERGED_INPUT — PR #1624 merged
 stage_6_qa_to_red: IN_PROGRESS — derivation package created; RED suite not yet executed
 stage_7_pbfag: IN_PROGRESS — PBFAG_PACKAGE_STARTED; GATE_PASS_BLOCKED_PENDING_STAGE_5_AND_STAGE_6
 stage_8_implementation_plan: NOT_STARTED
