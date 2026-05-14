@@ -172,8 +172,16 @@ Evidence artifacts:  EA-1 through EA-7 (7 artifacts — EA-1 committed now)
 
 ## TOKEN
 
-*Section reserved. To be appended by IAA after full assurance verdict (Phase 4 Step 4.2b).*
-*Token writing is IAA-only (ECAP-001/ECAP-02). ECAP agent MUST NOT write tokens or verdicts.*
+Token appended after Phase 2–4 final assurance review.
+
+```yaml
+date_utc: 2026-05-14T06:00:00Z
+verdict: ASSURANCE-TOKEN
+PHASE_B_BLOCKING_TOKEN: IAA-session-216-wave-mmm-phase6-post-merge-assurance-20260513-PASS
+merge_gate_parity: PASS
+```
+
+All reviewed checks passed for this governance-assurance wave.
 
 ---
 
