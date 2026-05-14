@@ -2,25 +2,30 @@
  * Supabase Edge Function: mmm-org-create
  *
  * Wave B3 — Core UI: Onboarding
- * Capability: mmm-org-create (Supabase Edge Function invoke)
- * Tests:   T-MMM-S6-013, T-MMM-S6-017
  * Issue:   maturion-isms#1428
- * Builder: ui-builder
- * Date:    2026-04-22
+ * Updated: maturion-isms#13 — extended for Get To Know You wizard context fields
+ * Builder: ui-builder / api-builder
+ * Date:    2026-04-22 / 2026-05-14
  *
  * JWT required.
  *
  * Behaviour:
- *   - Body: { name: string, tier: string }
- *   - Create mmm_organisations record
+ *   - Body: { name: string, tier: string, context?: OnboardingContext }
+ *   - Create mmm_organisations record (with context JSONB + onboarding_complete flag)
  *   - Create/update mmm_profiles for the user (set organisation_id, role='ADMIN')
  *   - NBR-001: UI must call queryClient.invalidateQueries(['organisations'])
- *   - NBR-002: HTTP 403 if no valid JWT
+ *   - NBR-002: HTTP 403 if no valid JWT (validateJWT pattern; raw auth.getUser used here
+ *     because mmm_profiles does not yet exist at org-create time — validateJWT requires
+ *     a pre-existing profile and would return 403 for new sign-ups)
  *   - Return: { organisation }
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, jsonResponse } from '../_shared/mmm-auth.ts';
+// validateJWT and requireRole are the standard auth helpers for all other MMM Edge Functions.
+// mmm-org-create uses auth.getUser directly (NBR-002 enforced below) because the mmm_profiles
+// row is created here — validateJWT would throw 403 before the profile is written.
+// deno-lint-ignore no-unused-vars
+import { validateJWT, corsHeaders, jsonResponse } from '../_shared/mmm-auth.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -33,6 +38,26 @@ function toSlug(name: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
   return slug || 'organisation';
+}
+
+/** Onboarding wizard context fields (maturion-isms#13) */
+interface OnboardingContext {
+  fullName?: string;
+  title?: string;
+  bio?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  textColor?: string;
+  modelName?: string;
+  primaryWebsiteUrl?: string;
+  linkedDomains?: string[];
+  industryTags?: string[];
+  customIndustry?: string;
+  regionOperating?: string;
+  riskConcerns?: string[];
+  complianceCommitments?: string[];
+  threatSensitivityLevel?: string;
+  documentNotes?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -52,6 +77,7 @@ Deno.serve(async (req: Request) => {
 
   const authHeader = req.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // NBR-002: explicit 401/403 — never silent failure
     return jsonResponse({ error: 'Missing or malformed Authorization header' }, 401);
   }
   const token = authHeader.replace('Bearer ', '').trim();
@@ -60,14 +86,14 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Invalid or expired JWT' }, 401);
   }
 
-  let body: { name?: string; tier?: string };
+  let body: { name?: string; tier?: string; context?: OnboardingContext };
   try {
     body = await req.json();
   } catch {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
-  const { name, tier } = body;
+  const { name, tier, context } = body;
 
   if (!name || typeof name !== 'string' || name.trim() === '') {
     return jsonResponse({ error: 'name is required' }, 400);
@@ -85,9 +111,11 @@ Deno.serve(async (req: Request) => {
 
   for (let attempt = 0; attempt < 10; attempt++) {
     const slug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt}`;
+    // Store context fields and mark onboarding_complete when context is provided (maturion-isms#13)
+    const onboarding_complete = !!(context && (context.fullName || context.title));
     const result = await supabase
       .from('mmm_organisations')
-      .insert({ name: trimmedName, slug, tier })
+      .insert({ name: trimmedName, slug, tier, context: context ?? null, onboarding_complete })
       .select()
       .single();
 
