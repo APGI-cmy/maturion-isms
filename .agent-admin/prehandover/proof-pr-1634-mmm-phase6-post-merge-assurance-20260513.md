@@ -60,8 +60,9 @@ wave-current-tasks update. No product code. No schema changes. No CI workflow ch
 ## Assurance Evidence Summary
 
 Evidence extracted from GitHub Actions Run #33 (run_id: 25810355481, 2026-05-13T15:52:27Z).
-Run was triggered on branch `copilot/stop-and-fix-mmm-phase-6` (pre-merge, merged to main as
-commit 867d12f1b8406447884403c4283d8b89b735c530).
+Run was triggered on branch `copilot/stop-and-fix-mmm-phase-6` before merge and exercised the
+commit later merged to `main` as `867d12f1b8406447884403c4283d8b89b735c530`. This is pre-merge
+evidence for that commit and does not, by itself, demonstrate a post-merge `main` run.
 
 ```
 MERGED_COMMIT_SHA: 867d12f1b8406447884403c4283d8b89b735c530
