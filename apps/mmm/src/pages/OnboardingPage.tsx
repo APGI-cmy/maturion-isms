@@ -410,6 +410,7 @@ function StepReview({ data }: { data: WizardData }) {
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<WizardData>(initialData);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -441,8 +442,6 @@ export default function OnboardingPage() {
     setValidationError(null);
     setStep(s => Math.max(s - 1, 1));
   }
-
-  const [validationError, setValidationError] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: async () => {
