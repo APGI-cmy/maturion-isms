@@ -3,8 +3,8 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-13
-**Updated By**: foreman-v2-agent (issue #1625 Stage 6 QA-to-Red wave — pit-stage6-qa-to-red-20260513)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — STAGE 5b LFV PACKAGE CREATED — STAGE 6 QA-TO-RED IN PROGRESS — PENDING CS2 STAGE 5 REVIEW  
+**Updated By**: pit-specialist (issue #1629 Stage 7 PBFAG docs-only package — 2026-05-13)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 RECONCILIATION COMPLETE — STAGE 5b LFV PACKAGE CREATED — STAGE 6 QA-TO-RED IN PROGRESS — STAGE 7 PBFAG PACKAGE STARTED (GATE-PASS BLOCKED PENDING STAGE 5/6)  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -30,7 +30,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | NOT_STARTED |
 | — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
-| — | (new stage) | Stage 7 | PBFAG | NOT_STARTED |
+| — | (new stage) | Stage 7 | PBFAG | IN_PROGRESS — PBFAG_PACKAGE_STARTED (gate-pass blocked pending Stage 5/6 gate-pass) |
 | — | (new stage) | Stage 9 | Builder Checklist | NOT_STARTED |
 | — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
 
@@ -278,21 +278,27 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 
 **Gate-Pass Blocker**: Stage 6 gate-pass requires Stage 5 Architecture CS2 gate-pass (PR #1612) before gate-pass can be claimed. Stage 5b LFV Package (PR #1624) is merged and available as input.
 
-**Stage 6 RED Suite Statistics**: 146 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
+**Stage 6 RED Suite Statistics**: 144 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
 
 **Completion Date**: 2026-05-13 (derivation complete; gate-pass pending prerequisites)  
-**Notes**: Stage 6 QA-to-Red derivation package created per maturion-isms#1625 (PR #1626). Artifact path corrected from `05-qa-to-red/` to `06-qa-to-red/` to avoid conflict with Stage 5b LFV Package at `05-live-functional-verification/`. Stage 6 does NOT start implementation, appoint a builder, start PBFAG, or clear Build Authorization. Stage 7+ remains NOT_STARTED. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 6 QA-to-Red derivation package created per maturion-isms#1625 (PR #1626). Artifact path corrected from `05-qa-to-red/` to `06-qa-to-red/` to avoid conflict with Stage 5b LFV Package at `05-live-functional-verification/`. Stage 6 does NOT start implementation, appoint a builder, or clear Build Authorization. Stage 7 now has docs-only package started in `modules/pit/07-pbfag/` with gate-pass blocked pending Stage 5/6 gate-pass. Stage 8+ remains NOT_STARTED. Build Authorization remains NOT CLEARED.
 
 ---
 
 ### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/06-pbfag/`  
+**Status**: [x] IN_PROGRESS — PBFAG_PACKAGE_STARTED; GATE_PASS_BLOCKED_PENDING_STAGE_5_AND_STAGE_6  
+**Location**: `modules/pit/07-pbfag/`  
 **Key Artifacts**:
-- [ ] PBFAG checklist completed — all checks PASS
-- [ ] Change-Propagation Audit complete
-- [ ] Runtime/Deployment Contract filed (PIT-TR-098, PIT-TR-113)
-- [ ] Golden Path Verification Pack defined
+- [x] `pbfag-plan.md` — Stage 7 methodology, scope, prerequisites, non-goals
+- [x] `pbfag-checklist.md` — PBFAG checks with allowed-status declarations
+- [x] `change-propagation-audit.md` — upstream-to-downstream propagation matrix
+- [x] `runtime-deployment-contract.md` — pre-build deployment/runtime boundary contract
+- [x] `golden-path-verification-pack.md` — required golden-path verification definitions
+- [x] `stage6-red-suite-assessment.md` — Stage 6 RED assessment coverage artifact (includes explicit §3.17 QA Catalog alignment decision)
+- [x] `lfv-readiness-assessment.md` — LFV anti-regression readiness assertions
+- [x] `route-render-verification-plan.md` — deployed plan for all 27 PIT routes
+- [x] `role-negative-path-verification-plan.md` — deployed denied-path spot-check plan
+- [x] `stage7-gate-readiness-checklist.md` — prerequisite and boundary enforcement posture
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 7 gate-pass)**:
 
@@ -312,13 +318,13 @@ PBFAG must include all of the following verifications. Any FAIL is a PBFAG gate-
 - [ ] No build-authorisation leakage: confirm Build Authorization is NOT CLEARED unless CS2 has explicitly cleared it
 
 **Completion Date**: N/A  
-**Notes**: Not started. New hard gate in 12-stage model. PBFAG cannot commence until Stages 1–6 are gate-passed.
+**Notes**: Stage 7 documentation package started via maturion-isms#1629 under `modules/pit/07-pbfag/` (path corrected from legacy `06-pbfag` reference). This Stage 7 work is pre-build/readiness-only and does NOT start implementation, does NOT appoint a builder, does NOT start Stage 8, and does NOT clear Build Authorization. Stage 7 gate-pass remains blocked until Stage 5 Architecture and Stage 6 QA-to-Red are explicitly gate-passed (or CS2 exception is recorded).
 
 ---
 
 ### Stage 8: Implementation Plan
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/07-implementation-plan/`  
+**Location**: `modules/pit/08-implementation-plan/`  
 **Key Artifacts**:
 - [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 
@@ -343,7 +349,7 @@ The implementation plan must satisfy all of the following. Any gap is a Stage 8 
 
 ### Stage 9: Builder Checklist
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/08-builder-checklist/`  
+**Location**: `modules/pit/09-builder-checklist/`  
 **Key Artifacts**:
 - [ ] Builder Checklist completed for each builder candidate
 
@@ -367,7 +373,7 @@ The builder checklist must verify that each builder candidate understands and ac
 
 ### Stage 10: IAA Pre-Brief
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/09-iaa-pre-brief/`  
+**Location**: `modules/pit/10-iaa-pre-brief/`  
 **Key Artifacts**:
 - [ ] IAA Pre-Brief invoked by Foreman with full context
 - [ ] IAA Pre-Brief artifact filed
@@ -393,7 +399,7 @@ The IAA Pre-Brief must include:
 
 ### Stage 11: Builder Appointment
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/10-builder-appointment/`  
+**Location**: `modules/pit/11-builder-appointment/`  
 **Key Artifacts**:
 - [ ] `builder-contract.md` — Explicit builder agent contract
 - [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
@@ -419,7 +425,7 @@ Builder appointment must NOT occur unless ALL of the following are satisfied:
 
 ### Stage 12: Build Execution & Evidence
 **Status**: [ ] NOT_STARTED  
-**Location**: `modules/pit/11-build/`  
+**Location**: `modules/pit/12-build/`  
 **Key Artifacts**:
 - [ ] Implementation code in `apps/` or `packages/`
 - [ ] Test evidence (QA-to-Green per wave)
@@ -453,16 +459,24 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 6 QA-to-Red IN_PROGRESS — RED_SUITE_DERIVATION_STARTED (maturion-isms#1625 / PR #1626); Stage 5 Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611); Stage 5b LFV Package MERGED (maturion-isms#1623, PR #1624); Stage 4 TRS CS2 APPROVED (maturion-isms#1604); Stage 2 UX CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed  
+**Current Stage**:
+- Stage 7 PBFAG IN_PROGRESS — PBFAG_PACKAGE_STARTED (maturion-isms#1629; gate-pass blocked pending Stage 5/6 gate-pass)
+- Stage 6 QA-to-Red IN_PROGRESS — RED_SUITE_DERIVATION_STARTED (maturion-isms#1625 / PR #1626)
+- Stage 5 Architecture RECONCILIATION_COMPLETE — **READY_FOR_CS2_REVIEW** (maturion-isms#1611)
+- Stage 5b LFV Package MERGED (maturion-isms#1623, PR #1624)
+- Stage 4 TRS CS2 APPROVED (maturion-isms#1604)
+- Stage 2 UX CS2 re-confirmed
+- Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~50% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass; Stage 5b LFV Package created 2026-05-12; Stage 6 QA-to-Red RED derivation complete 2026-05-13 — 144 tests defined, 0 BLOCKING_GAP)  
-**Blockers**: Stage 6 gate-pass BLOCKED pending CS2 Stage 5 Architecture gate-pass (PR #1612). Stage 5b LFV (PR #1624) is merged. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
+**Overall Progress**: ~55% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture reconciliation complete — pending CS2 Stage 5 gate-pass; Stage 5b LFV Package merged 2026-05-12; Stage 6 QA-to-Red derivation complete 2026-05-13 with gate-pass pending; Stage 7 PBFAG docs-only package started without gate-pass claim)  
+**Blockers**: Stage 6 gate-pass BLOCKED pending CS2 Stage 5 Architecture gate-pass (PR #1612). Stage 7 gate-pass BLOCKED pending Stage 5 and Stage 6 gate-pass prerequisites. Stage 5b LFV (PR #1624) is merged as input. Build Authorization NOT CLEARED — implementation blocked until Stages 5–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
 1. CS2 review and gate-pass of Stage 5 Architecture package (maturion-isms#1611)
 2. Stage 5b LFV Package (maturion-isms#1623 / PR #1624) — MERGED
 3. Stage 6 gate-pass can be claimed once P-1 and P-2 are confirmed
-4. Complete Stages 7–11 before Build Authorization can be requested
-5. Stage 8 Implementation Plan must explicitly authorise activation of `pit-live-verification.yml`
+4. Complete Stage 7 pre-build assessment review and close Stage 5/6 gate-pass prerequisites before any Stage 7 gate-pass claim
+5. Keep Stage 8+ NOT_STARTED until Stage 7 gate-pass is achieved
+6. Stage 8 Implementation Plan must explicitly authorise activation of `pit-live-verification.yml`
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
@@ -486,6 +500,7 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 4 TRS: **CS2_APPROVED** (maturion-isms#1554 + maturion-isms#1575 + maturion-isms#1604) — v0.2-draft CS2 approved 2026-05-11 by @APGI-cmy
 - [x] Stage 5b LFV Package: **MERGED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; merged as Stage 6 input
 - [x] Stage 6 QA-to-Red: **IN_PROGRESS — QA_TO_RED_DERIVATION_STARTED** (maturion-isms#1625 / PR #1626) — 2026-05-13 — 144 RED tests defined; 0 BLOCKING_GAP; gate-pass pending Stage 5 Architecture CS2 approval
+- [x] Stage 7 PBFAG: **IN_PROGRESS — PBFAG_PACKAGE_STARTED** (maturion-isms#1629) — docs-only package created under `modules/pit/07-pbfag/`; gate-pass blocked pending Stage 5/6 gate-pass
 - [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (RECONCILIATION_COMPLETE_PENDING_CS2) → LFV Package (CREATED) → QA-to-Red (DERIVATION_COMPLETE_PENDING_PREREQUISITES)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
