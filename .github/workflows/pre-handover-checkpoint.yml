@@ -72,7 +72,19 @@ jobs:
                 mergeableWithBase = 'no';
               }
             }
-            const baseSynced = mergeConflictChecked === 'yes' && mergeableWithBase === 'yes' ? 'yes' : 'no';
+            let baseSynced = 'no';
+            try {
+              const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                basehead: `${pr.base.sha}...${pr.head.sha}`,
+              });
+              if (['ahead', 'identical'].includes(String(comparison.status || '').toLowerCase())) {
+                baseSynced = 'yes';
+              }
+            } catch (error) {
+              core.info(`Unable to determine whether PR head contains base SHA: ${error.message}`);
+            }
             core.setOutput('merge_conflict_checked', mergeConflictChecked);
             core.setOutput('mergeable_with_base', mergeableWithBase);
             core.setOutput('base_synced_or_conflicts_resolved', baseSynced);
