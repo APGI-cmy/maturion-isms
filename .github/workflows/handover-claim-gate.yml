@@ -28,8 +28,7 @@ name: Handover Claim Gate
 # Triggers:
 # - issue_comment: created — catches "handover", "merge-ready", "all gates pass",
 #   "ready to merge", "ready for review", "complete/completion" keywords posted in PR comments.
-# - pull_request_target: ready_for_review — fires when a draft is marked ready,
-#   which is the canonical "I am handing over" signal.
+# - pull_request_target: ready_for_review — fires when a PR transitions to ready_for_review.
 #
 # Behaviour:
 # - If the latest-head checks are all green: posts an acknowledgement.
@@ -42,6 +41,24 @@ name: Handover Claim Gate
 # - Product-fix PRs (manifest requires_iaa=false, requires_ecap=false)
 #   are NOT required to have PREHANDOVER/LUIEP ceremony artifacts — the gate only
 #   verifies that CI checks themselves are green.
+#
+# ready_for_review vs explicit handover claim distinction (Issue: maturion-isms#1637):
+# - A bare ready_for_review event (no explicit handover/merge-ready claim in PR comments)
+#   is classified as CHECKPOINT_REQUIRED | HANDOVER_NOT_ACCEPTED. The gate posts an
+#   advisory comment but does NOT call core.setFailed. This avoids noisy early failures
+#   when Copilot opens/marks a PR ready before checks complete or before a producer-side
+#   snapshot is available.
+# - If any existing PR comment contains explicit handover/merge-ready language (and is not
+#   a STOP_AND_FIX, CS2_INTERVENTION_REQUIRED, HANDOVER_BLOCKED, or REJECTION_NOTICE comment),
+#   the ready_for_review event is treated as an active handover gate trigger and the full
+#   strict check is enforced.
+# - STOP_AND_FIX and CS2_INTERVENTION_REQUIRED comments are never treated as handover claims.
+# - Classification labels used:
+#     CHECKPOINT_REQUIRED  — bare ready_for_review with no current-head snapshot yet
+#     HANDOVER_NOT_ACCEPTED — ready_for_review without explicit claim; advisory only
+#     STOP_AND_FIX         — agent can fix failing/missing/stale gates inside authority
+#     CS2_INTERVENTION_REQUIRED — out-of-authority/sandbox blocker requiring CS2 action
+#     HANDOVER_BLOCKED     — explicit handover/merge-ready claim made but requirements unmet
 #
 # Issue: maturion-isms#1542
 
@@ -303,6 +320,10 @@ jobs:
 
             const BLOCKED_MARKER = '<!-- handover-claim-gate-blocked -->';
             const OK_MARKER = '<!-- handover-claim-gate-ok -->';
+            // CHECKPOINT_REQUIRED_MARKER is intentionally separate from GATE_MARKERS so that
+            // the main gate idempotency (HANDOVER BLOCKED / ACKNOWLEDGED) does not update the
+            // advisory comment, and vice versa. The advisory can coexist with a BLOCKED comment.
+            const CHECKPOINT_REQUIRED_MARKER = '<!-- handover-checkpoint-required -->';
             const GATE_MARKERS = [BLOCKED_MARKER, OK_MARKER];
 
             // ── Load existing PR comments once (preconditions + idempotency) ─────
@@ -426,6 +447,89 @@ jobs:
             const hasIaaEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/iaa-final-assurance') && !pending.some((p) => p.name === 'preflight/iaa-final-assurance') && !missing.some((m) => m.name === 'preflight/iaa-final-assurance');
 
             if (!isIssueComment) {
+              // ready_for_review event: distinguish bare PR state transition from active handover claim.
+              //
+              // Check if any existing PR comment contains explicit handover/merge-ready language.
+              // Gate-bot comments (BLOCKED/OK/CHECKPOINT_REQUIRED markers), checkpoint trigger/result
+              // comments, and STOP_AND_FIX/CS2_INTERVENTION_REQUIRED/REJECTION_NOTICE comments are
+              // all excluded — they are not handover claims.
+              const existingExplicitHandoverClaim = existingComments.find((c) => {
+                const b = c.body || '';
+                // Exclude gate-bot comments (they are authoritative gate results, not producer claims)
+                if (GATE_MARKERS.some(m => b.includes(m))) return false;
+                if (b.includes(CHECKPOINT_REQUIRED_MARKER)) return false;
+                // Exclude checkpoint trigger/result comments
+                if (checkpointTriggerPattern.test(b.trim()) || checkpointResultPattern.test(b)) return false;
+                // Exclude STOP_AND_FIX / blocked status comments — not handover claims
+                if (/HANDOVER_BLOCKED|STOP_AND_FIX|CS2_INTERVENTION_REQUIRED/i.test(b)) return false;
+                if (REJECTION_NOTICE_REGEX.test(b)) return false;
+                // Match explicit handover/merge-ready claim language
+                return (
+                  /\bhandover\b/i.test(b) ||
+                  /merge.?ready|ready.to.merge/i.test(b) ||
+                  /all.gates.pass|merge.gate.released/i.test(b) ||
+                  /\bOPOJD\b/i.test(b) ||
+                  /\bPhase\s+4\b/i.test(b) ||
+                  /HANDOVER_ALLOWED\s*:\s*yes/i.test(b) ||
+                  /\b(?:work|implementation)\s+complete\b/i.test(b)
+                );
+              });
+
+              if (!existingExplicitHandoverClaim) {
+                // Bare ready_for_review with no explicit handover/merge-ready claim found.
+                // Classify as CHECKPOINT_REQUIRED | HANDOVER_NOT_ACCEPTED.
+                // Post an advisory comment and exit WITHOUT calling core.setFailed.
+                const checkpointRequiredBody = [
+                  CHECKPOINT_REQUIRED_MARKER,
+                  '## ⏸️ CHECKPOINT REQUIRED — HANDOVER NOT YET ACCEPTED',
+                  '',
+                  `@copilot — PR #${prNumber} transitioned to \`ready_for_review\` (HEAD \`${headSha.slice(0, 12)}...\`) but no explicit handover/merge-ready claim has been posted yet and no current-head producer-side snapshot exists.`,
+                  '',
+                  '> **Classification**: `CHECKPOINT_REQUIRED` | `HANDOVER_NOT_ACCEPTED`',
+                  '> This is a checkpoint advisory — the gate has not been triggered by an explicit handover/merge-ready claim. No hard failure is raised here.',
+                  '',
+                  '> Before posting a handover/merge-ready claim, the ECAP agent (execution-ceremony-admin-agent) must:',
+                  '> 1. Post `ECAP_PRE_HANDOVER_CHECKPOINT` or `PRE_HANDOVER_CHECKPOINT` as a PR comment to verify current-head CI state.',
+                  '> 2. Produce the `ECAP_GATE_AND_ADMIN_REPORT` snapshot block with all required fields populated.',
+                  '> 3. Set `HANDOVER_ALLOWED: yes` only when all required checks are green at the current HEAD SHA.',
+                  '> 4. Then post a formal handover/merge-ready claim comment — the gate will evaluate it at that point.',
+                  '',
+                  '> See `governance/checklists/phase4-role-separation-operational-guidance.md` §6 for the required snapshot format.',
+                  '',
+                  `**HEAD SHA observed**: \`${headSha}\``,
+                  '**Classification**: CHECKPOINT_REQUIRED | HANDOVER_NOT_ACCEPTED',
+                  '**Authority**: CS2 (Johan Ras / @APGI-cmy) | Issue: maturion-isms#1542',
+                ].join('\n');
+
+                // Idempotency: update existing advisory comment if present, else create new.
+                const existingAdvisory = existingComments
+                  .filter(c => c.body && c.body.includes(CHECKPOINT_REQUIRED_MARKER))
+                  .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+                if (existingAdvisory) {
+                  await github.rest.issues.updateComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: existingAdvisory.id,
+                    body: checkpointRequiredBody,
+                  });
+                  console.log(`Updated existing checkpoint advisory comment ${existingAdvisory.id}`);
+                } else {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body: checkpointRequiredBody,
+                  });
+                  console.log('Created checkpoint advisory comment');
+                }
+
+                console.log('CHECKPOINT_REQUIRED: bare ready_for_review with no explicit handover claim. Advisory posted. No hard failure.');
+                return;
+              }
+
+              // Existing explicit handover claim found — treat ready_for_review as an active
+              // handover gate trigger and enforce the full strict check.
               preconditionFailures.push('Handover trigger came from ready_for_review without required current-head snapshot comment. The ECAP agent (execution-ceremony-admin-agent) must post the ECAP_GATE_AND_ADMIN_REPORT snapshot block as a producer-side handover claim comment first.');
             } else {
               if (missingSnapshotFields.length > 0) {
