@@ -1,17 +1,20 @@
 # ISMS — Integrated Security Management System
-## Top-Level App Description (Platform Authority)
+## App Description Working Draft (Non-Canonical Module Artifact)
 
 ## Status Header
 
 | Field | Value |
 |---|---|
 | Product | ISMS — Integrated Security Management System |
-| Artifact Type | App Description (Top-Level Platform Authority) |
-| Status | Authoritative Draft for issue implementation |
+| Artifact Type | App Description (Working Draft / Module Support Artifact) |
+| Status | Non-canonical draft for issue implementation |
 | Version | v1.0.0 |
 | Scope | Top-level ISMS front door, shared platform context, and module routing authority |
 | Applies To | ISMS landing/navigation layer and all downstream module interface contracts |
-| Canonical File | `modules/isms/00-app-description/ISMS_app_description.md` |
+| Canonical File | `docs/governance/ISMS_APP_DESCRIPTION.md` |
+| Module-Stage Artifact | `modules/isms/00-app-description/app-description.md` |
+
+> **Authority note:** Canonical App Description authority for ISMS resides in `docs/governance/ISMS_APP_DESCRIPTION.md`. This file is a non-canonical working draft and must not be treated as the authoritative reference.
 
 ---
 
