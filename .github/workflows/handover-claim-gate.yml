@@ -530,7 +530,7 @@ jobs:
 
               // Existing explicit handover claim found — treat ready_for_review as an active
               // handover gate trigger and enforce the full strict check.
-              preconditionFailures.push('Handover trigger came from ready_for_review without required current-head snapshot comment. The ECAP agent (execution-ceremony-admin-agent) must post the ECAP_GATE_AND_ADMIN_REPORT snapshot block as a producer-side handover claim comment first.');
+              preconditionFailures.push('Handover trigger came from ready_for_review with an explicit handover/merge-ready claim in PR comments, but no ECAP_GATE_AND_ADMIN_REPORT snapshot block was present in the triggering event. Post a new handover claim comment that includes the full snapshot block (produced by the ECAP agent) to satisfy this precondition.');
             } else {
               if (missingSnapshotFields.length > 0) {
                 preconditionFailures.push(`Missing required snapshot field(s): ${missingSnapshotFields.join(', ')}. The snapshot must be produced by the ECAP agent (execution-ceremony-admin-agent) from the ECAP_GATE_AND_ADMIN_REPORT output — not copied from a prior gate-bot blocked comment.`);
