@@ -5,8 +5,8 @@
 **Date**: 2026-05-13
 **Branch**: copilot/post-merge-assurance-hardening
 **PR**: PR #1634
-**Issue**: maturion-isms#1633 — Post-merge assurance and hardening for MMM Phase 6 live workflow
-**CS2 Authorization**: Issue #1633 opened by @APGI-cmy; post-merge assurance mandate
+**Issue**: maturion-isms#1631 — Post-merge assurance and hardening for MMM Phase 6 live workflow
+**CS2 Authorization**: Issue #1631 opened by @APGI-cmy; post-merge assurance mandate
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md
 ceremony_admin_appointed: NONE — GOVERNANCE_AUDIT wave (post-merge assurance only; no product code; no ECAP)

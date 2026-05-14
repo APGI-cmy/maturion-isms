@@ -2,7 +2,7 @@
 
 ```yaml
 pr: 1634
-issue: 1633
+issue: 1631
 branch: copilot/post-merge-assurance-hardening
 date_utc: 2026-05-13T16:15:00Z
 wave_id: mmm-phase6-post-merge-assurance-20260513
@@ -24,7 +24,7 @@ iaa_audit_token: IAA-session-216-wave-mmm-phase6-post-merge-assurance-20260513-P
 | Wave | mmm-phase6-post-merge-assurance-20260513 |
 | Branch | copilot/post-merge-assurance-hardening |
 | PR | #1634 |
-| Issue | maturion-isms#1633 — Post-merge assurance and hardening for MMM Phase 6 live workflow |
+| Issue | maturion-isms#1631 — Post-merge assurance and hardening for MMM Phase 6 live workflow |
 | Author | Copilot (foreman-v2-agent v6.2.0) |
 
 ---
@@ -165,7 +165,7 @@ these are recorded as separate follow-up items, not handled in this wave:
 | HG-3 | `mmm-qiw-status POST ERR_ABORTED` on initial dashboard load | LOW | Monitor; separate issue if recurring |
 | HG-4 | `mmm_frameworks GET ERR_ABORTED` between mode transitions | LOW | Monitor; separate issue if recurring |
 
-**Note on HG-1**: `PARSE_JOB_COMPLETION_PROVEN: NO` is an explicit acceptance criterion per issue #1633.
+**Note on HG-1**: `PARSE_JOB_COMPLETION_PROVEN: NO` is an explicit acceptance criterion per issue #1631.
 The gap is formally recorded. No product code fix is in scope for this wave.
 
 ---
@@ -242,7 +242,7 @@ changes, or frontend data hook changes. Governance artifacts only.
 
 ## CS2 Authorization Evidence
 
-Issue #1633 ("Post-merge assurance and hardening for MMM Phase 6 live workflow") opened by
+Issue #1631 ("Post-merge assurance and hardening for MMM Phase 6 live workflow") opened by
 @APGI-cmy (CS2 / Johan Ras) on 2026-05-13. This agent is assigned. Authorization is valid
 per Phase 2 Step 2.1 (issue opened directly by CS2).
 

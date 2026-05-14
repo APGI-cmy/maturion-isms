@@ -4,7 +4,7 @@
 **Date**: 2026-05-13
 **Branch**: copilot/post-merge-assurance-hardening
 **PR**: #1634
-**Issue**: maturion-isms#1633 — Post-merge assurance and hardening for MMM Phase 6 live workflow
+**Issue**: maturion-isms#1631 — Post-merge assurance and hardening for MMM Phase 6 live workflow
 **IAA Session (PRE-BRIEF)**: session-216-prebrief-mmm-phase6-post-merge-assurance-20260513
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
@@ -120,7 +120,7 @@ The following items MUST be resolved before IAA full assurance review (Phase 2�
 
 | # | Blocker | Required Artifact/Action | Owner |
 |---|---------|--------------------------|-------|
-| SB-1 | `wave-current-tasks.md` NOT updated for wave `mmm-phase6-post-merge-assurance-20260513` | Add wave header block with session ID, branch, PR #1634, issue #1633, ceremony_admin_appointed declaration | Foreman |
+| SB-1 | `wave-current-tasks.md` NOT updated for wave `mmm-phase6-post-merge-assurance-20260513` | Add wave header block with session ID, branch, PR #1634, issue #1631, ceremony_admin_appointed declaration | Foreman |
 | SB-2 | No PREHANDOVER proof committed to branch | Create and commit `.agent-admin/prehandover/proof-pr-1634-mmm-phase6-post-merge-assurance-20260513.md` with `iaa_audit_token` pre-populated per A-029 (expected reference format) | Foreman |
 | SB-3 | No scope declaration for PR #1634 | Create and commit `.agent-admin/scope-declarations/pr-1634.md` | Foreman |
 | SB-4 | Assurance-record evidence fields not yet populated | Populate all 15 evidence fields in `.agent-admin/assurance/assurance-record-mmm-phase6-post-merge-20260513.md` — smoke test must be run and results recorded | Foreman / mat-specialist |

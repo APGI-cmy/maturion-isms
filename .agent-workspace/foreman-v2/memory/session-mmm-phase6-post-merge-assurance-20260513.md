@@ -4,7 +4,7 @@ date_utc: 2026-05-14T05:54:45Z
 agent: foreman-v2-agent
 branch: copilot/post-merge-assurance-hardening
 pr: 1634
-issue: 1633
+issue: 1631
 wave: mmm-phase6-post-merge-assurance-20260513
 iaa_wave_record: .agent-admin/assurance/iaa-wave-record-mmm-phase6-post-merge-assurance-20260513-20260513.md
 prebrief_wave: mmm-phase6-post-merge-assurance-20260513
