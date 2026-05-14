@@ -56,7 +56,7 @@ unresolved_items_from_prior_sessions:
 | 5 | Phase 3.1 gate: Confirmed `.agent-admin/assurance/iaa-wave-record-pit-stage7-pbfag-20260513-20260513.md` exists with `## PRE-BRIEF` section populated ✅ | COMPLETE |
 | 6 | Phase 3.1 gate: Scope declaration at `.agent-admin/scope-declarations/scope-declaration-wave-pit-stage7-pbfag.md` confirmed with `approved_artifact_paths[]` ✅ | COMPLETE |
 | 7 | Phase 3.1 gate: ECAP output paths pre-authorised in Foreman delegation brief as `expected_return_artifact_paths` (established pattern — scope-declaration path disambiguation) ✅ | COMPLETE |
-| 8 | Phase 3.2: Commit-state hygiene — `git status --porcelain` empty, `git diff --name-only` empty, HEAD 92ced6bb visible, all 21 in-scope files committed | COMPLETE |
+| 8 | Phase 3.2: Commit-state hygiene — `git status --porcelain` empty, `git diff --name-only` empty, HEAD 92ced6bb visible, all 22 in-scope files committed | COMPLETE |
 | 9 | Phase 3.3: PREHANDOVER proof assembled with all required sections: wave description, wave identity, build authorization, QP verdict, OPOJD gate, deployment surface enumeration (N/A justified), CANON_INVENTORY alignment, ripple assessment, non-scope verification, stage-readiness summary, scope declaration, wave-level ceremony contract verification, scope declaration ceremony, pre-IAA commit gate, environment parity, E2E wiring trace (N/A), CS2 authorization, checklist, IAA audit, security summary, embedded ECAP reconciliation summary | COMPLETE |
 | 10 | Phase 3.4: Session memory assembled (this file) | COMPLETE |
 | 11 | Phase 3.5: §4.3e Admin Ceremony Compliance Gate executed (see below) | COMPLETE |
