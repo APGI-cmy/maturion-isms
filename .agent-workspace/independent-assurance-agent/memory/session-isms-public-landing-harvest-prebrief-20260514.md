@@ -1,0 +1,6 @@
+- session_id: session-isms-public-landing-harvest-prebrief-20260514
+- pr_reviewed: #1646 — Harvest legacy ISMS pre-subscription landing and module marketing pages (PRE-BRIEF, not full assurance)
+- overlay_applied: PRE_BUILD_STAGE_MODEL + PRODUCT_BUILD_ASSURANCE (final assurance stage)
+- verdict: PRE-BRIEF COMPLETE — CLEAR TO PROCEED (not a full assurance verdict)
+- checks_run: Phase 0 pre-brief only — 0 assurance checks run; stage-readiness view produced; 0 scope blockers found
+- learning_note: No new patterns observed. ISMS module BUILD_PROGRESS_TRACKER was stale (2026-04-08 baseline, stages still showing NOT_STARTED despite wave artifacts committed). This is a recurring stale-tracker pattern — anti-regression obligation at final assurance must include BUILD_PROGRESS_TRACKER update verification.
