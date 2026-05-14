@@ -6,7 +6,7 @@
 | Date | 2026-05-13 |
 | Branch | copilot/prepare-pit-stage-7-package |
 | Issue | maturion-isms#1629 |
-| PR | Not yet created (Pre-Brief only) |
+| PR | #1630 |
 | IAA Session (Pre-Brief) | IAA-session-pit-stage7-pbfag-20260513-PREBRIEF |
 | Ceremony Admin Appointed | NOT DECLARED IN wave-current-tasks.md |
 
@@ -22,7 +22,16 @@ Anti-regression obligations: [NO — FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR-
 
 ## TOKEN
 
-Pre-Brief only — no assurance verdict issued.
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1630 — Define PIT Stage 7 PBFAG package and align tracker/governance posture without gate-pass leakage
+All 26 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-1278-20260514-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-1278-20260514-PASS
 
 ---
 
