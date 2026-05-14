@@ -21,11 +21,11 @@
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-// validateJWT and requireRole are the standard auth helpers for all other MMM Edge Functions.
-// mmm-org-create uses auth.getUser directly (NBR-002 enforced below) because the mmm_profiles
-// row is created here — validateJWT would throw 403 before the profile is written.
-// deno-lint-ignore no-unused-vars
-import { validateJWT, corsHeaders, jsonResponse } from '../_shared/mmm-auth.ts';
+// `validateJWT` and `requireRole` are the standard auth helpers for other MMM Edge Functions.
+// This function intentionally does not import or call `validateJWT`: mmm-org-create uses
+// auth.getUser directly (NBR-002 enforced below) because the mmm_profiles row is created
+// here, and `validateJWT` would throw 403 before the profile is written.
+import { corsHeaders, jsonResponse } from '../_shared/mmm-auth.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
