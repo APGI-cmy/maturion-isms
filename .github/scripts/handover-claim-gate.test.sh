@@ -318,6 +318,149 @@ run_gate_classification_test \
   "[]" \
   "NOT_HANDOVER_CLAIM"
 
+# ── Protected-path ECAP classification tests ─────────────────────────────────
+# These tests validate the inline protected-path detection logic that mirrors
+# the workflow's PROTECTED_PATH_PATTERNS and ECAP evidence detection.
+
+PROTECTED_PATH_JS='
+const PROTECTED_PATH_PATTERNS = [
+  /^governance\/templates\//,
+  /^governance\/checklists\//,
+  /^governance\/canon\//,
+  /^\.github\/agents\//,
+  /^governance\/CANON_INVENTORY\.json$/,
+];
+const prFilenames = JSON.parse(process.env.PR_FILES || "[]");
+const requiresEcap = process.env.REQUIRES_ECAP !== "false";
+
+const protectedFilesChanged = prFilenames.filter(f =>
+  PROTECTED_PATH_PATTERNS.some(p => p.test(f))
+);
+const hasProtectedPaths = protectedFilesChanged.length > 0;
+
+const prehandoverProofPresent = prFilenames.some(f =>
+  /^\.agent-admin\/prehandover\/proof-.*\.md$/.test(f) ||
+  /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.*\.md$/.test(f)
+);
+const ecapBundlePresent = prFilenames.some(f =>
+  /^\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/PREHANDOVER-.*\.md$/.test(f)
+);
+const ecapArtifactPresent = prehandoverProofPresent && ecapBundlePresent;
+const ecapRequiredForAdvisory = hasProtectedPaths || requiresEcap;
+const ecapEvidenceMissing = ecapRequiredForAdvisory && !ecapArtifactPresent;
+
+const result = {
+  hasProtectedPaths,
+  ecapRequiredForAdvisory,
+  ecapArtifactPresent,
+  prehandoverProofPresent,
+  ecapBundlePresent,
+  ecapEvidenceMissing,
+  advisoryResult: ecapEvidenceMissing ? "STOP_AND_FIX" : (hasProtectedPaths ? "CHECKPOINT_REQUIRED" : "CHECKPOINT_REQUIRED"),
+};
+process.stdout.write(JSON.stringify(result));
+'
+
+run_protected_path_test() {
+  local name="$1"
+  local pr_files_json="$2"
+  local requires_ecap="$3"
+  local expected_protected="$4"
+  local expected_ecap_required="$5"
+  local expected_evidence_missing="$6"
+  local expected_result="$7"
+
+  local output actual_protected actual_ecap_required actual_evidence_missing actual_result
+  output="$(
+    PR_FILES="$pr_files_json" \
+    REQUIRES_ECAP="$requires_ecap" \
+    node -e "$PROTECTED_PATH_JS"
+  )"
+
+  actual_protected="$(printf '%s' "$output" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>process.stdout.write(JSON.parse(d).hasProtectedPaths ? "yes" : "no"))')"
+  actual_ecap_required="$(printf '%s' "$output" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>process.stdout.write(JSON.parse(d).ecapRequiredForAdvisory ? "yes" : "no"))')"
+  actual_evidence_missing="$(printf '%s' "$output" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>process.stdout.write(JSON.parse(d).ecapEvidenceMissing ? "yes" : "no"))')"
+  actual_result="$(printf '%s' "$output" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>process.stdout.write(JSON.parse(d).advisoryResult))')"
+
+  if [[ "$actual_protected" == "$expected_protected" && \
+        "$actual_ecap_required" == "$expected_ecap_required" && \
+        "$actual_evidence_missing" == "$expected_evidence_missing" && \
+        "$actual_result" == "$expected_result" ]]; then
+    echo "✅ $name"
+    PASS=$((PASS + 1))
+  else
+    echo "❌ $name"
+    echo "   protected=$actual_protected (expected $expected_protected)"
+    echo "   ecap_required=$actual_ecap_required (expected $expected_ecap_required)"
+    echo "   evidence_missing=$actual_evidence_missing (expected $expected_evidence_missing)"
+    echo "   result=$actual_result (expected $expected_result)"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+echo ""
+echo "Scenario 6: Protected-path ECAP classification"
+
+run_protected_path_test \
+  "P1: governance/templates file, no ECAP evidence → STOP_AND_FIX" \
+  '["governance/templates/execution-ceremony-admin/PREHANDOVER.template.md", "README.md"]' \
+  "true" \
+  "yes" "yes" "yes" "STOP_AND_FIX"
+
+run_protected_path_test \
+  "P2: governance/checklists file, no ECAP evidence → STOP_AND_FIX" \
+  '["governance/checklists/phase4-role-separation-operational-guidance.md"]' \
+  "true" \
+  "yes" "yes" "yes" "STOP_AND_FIX"
+
+run_protected_path_test \
+  "P3: governance/canon file, no ECAP evidence → STOP_AND_FIX" \
+  '["governance/canon/LIVING_AGENT_SYSTEM.md"]' \
+  "true" \
+  "yes" "yes" "yes" "STOP_AND_FIX"
+
+run_protected_path_test \
+  "P4: .github/agents file, no ECAP evidence → STOP_AND_FIX" \
+  '[".github/agents/foreman-v2-agent.md"]' \
+  "true" \
+  "yes" "yes" "yes" "STOP_AND_FIX"
+
+run_protected_path_test \
+  "P5: governance/CANON_INVENTORY.json, no ECAP evidence → STOP_AND_FIX" \
+  '["governance/CANON_INVENTORY.json"]' \
+  "true" \
+  "yes" "yes" "yes" "STOP_AND_FIX"
+
+run_protected_path_test \
+  "P6: non-protected files, ECAP not required by manifest → no STOP_AND_FIX" \
+  '[".github/workflows/handover-claim-gate.yml", ".github/scripts/handover-claim-gate.test.sh"]' \
+  "false" \
+  "no" "no" "no" "CHECKPOINT_REQUIRED"
+
+run_protected_path_test \
+  "P7: protected path + proof present but no bundle → still evidence missing (both required)" \
+  '["governance/templates/foo.md", ".agent-admin/prehandover/proof-pr-9999-test.md"]' \
+  "true" \
+  "yes" "yes" "yes" "STOP_AND_FIX"
+
+run_protected_path_test \
+  "P8: protected path + both proof and bundle present → evidence present, CHECKPOINT_REQUIRED" \
+  '["governance/templates/foo.md", ".agent-admin/prehandover/proof-pr-9999-test.md", ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-9999-test.md"]' \
+  "true" \
+  "yes" "yes" "no" "CHECKPOINT_REQUIRED"
+
+run_protected_path_test \
+  "P9: no protected paths, ECAP not required, no evidence → no STOP_AND_FIX" \
+  '[".github/workflows/handover-claim-gate.yml"]' \
+  "false" \
+  "no" "no" "no" "CHECKPOINT_REQUIRED"
+
+run_protected_path_test \
+  "P10: foreman PREHANDOVER memory file counts as proof evidence" \
+  '["governance/canon/ECOSYSTEM_VOCABULARY.md", ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-058-wave9.1-20260514.md", ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-9999-test.md"]' \
+  "true" \
+  "yes" "yes" "no" "CHECKPOINT_REQUIRED"
+
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="
 
