@@ -15,7 +15,7 @@
     "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md"
   ],
   "risk": "medium",
-  "requires_iaa": false,
+  "requires_iaa": true,
   "requires_ecap": true,
   "execution_model": "copilot-direct",
   "orchestrating_agent": "foreman-v2-agent",
