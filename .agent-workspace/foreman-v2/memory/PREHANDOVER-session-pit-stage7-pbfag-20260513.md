@@ -190,9 +190,10 @@ wave_scope_declaration_committed: YES — HEAD 92ced6bb
 18. `modules/pit/07-pbfag/runtime-deployment-contract.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
 19. `modules/pit/07-pbfag/stage6-red-suite-assessment.md` — Stage 7 PBFAG artifact (NEW; amended at 11d24607)
 20. `modules/pit/07-pbfag/stage7-gate-readiness-checklist.md` — Stage 7 PBFAG artifact (NEW)
-21. `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stage 7 path corrected to 07-pbfag; posture set to IN_PROGRESS (UPDATED)
+21. `.agent-workspace/independent-assurance-agent/memory/session-1278-20260514.md` — Independent assurance session memory added to final PR scope (NEW)
+22. `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stage 7 path corrected to 07-pbfag; posture set to IN_PROGRESS (UPDATED)
 
-**Wave-specific file count**: 21 files
+**Wave-specific file count**: 22 files
 
 ---
 
