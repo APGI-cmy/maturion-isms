@@ -71,6 +71,7 @@ Deno.serve(async (req: Request) => {
   }
 
   // Create mmm_frameworks record (status='DRAFT', organisation_id from JWT)
+  // Note: mmm_frameworks does not have a created_by column in the current schema.
   const { data: framework, error: frameworkError } = await supabase
     .from('mmm_frameworks')
     .insert({
@@ -79,7 +80,6 @@ Deno.serve(async (req: Request) => {
       origin_mode: origin_mode ?? source_type,
       status: 'DRAFT',
       organisation_id: claims.orgId,
-      created_by: claims.userId,
     })
     .select()
     .single();
@@ -90,14 +90,14 @@ Deno.serve(async (req: Request) => {
   }
 
   // Log to mmm_audit_logs (action_type: 'FRAMEWORK_INIT')
+  // Note: mmm_audit_logs schema has: action_type, actor_id, target_entity_type,
+  // target_entity_id, before_state, after_state — no actor_type/organisation_id/metadata columns.
   await supabase.from('mmm_audit_logs').insert({
     action_type: 'FRAMEWORK_INIT',
     actor_id: claims.userId,
-    actor_type: 'USER',
     target_entity_type: 'FRAMEWORK',
     target_entity_id: framework.id,
-    organisation_id: claims.orgId,
-    metadata: { name: framework.name, source_type, origin_mode },
+    after_state: { name: framework.name, source_type, origin_mode },
   });
 
   // NBR-001: UI must invalidate ['frameworks'] query cache

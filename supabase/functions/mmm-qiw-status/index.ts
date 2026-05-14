@@ -42,23 +42,22 @@ Deno.serve(async (req: Request) => {
       supabase.from('mmm_parse_jobs').select('status', { count: 'exact', head: false }),
       supabase.from('mmm_assessments').select('status, created_at', { count: 'exact', head: false }).gte('created_at', sevenDaysAgo),
       supabase.from('mmm_evidence').select('id', { count: 'exact', head: false }).gte('created_at', sevenDaysAgo),
-      // T-MMM-S6-126: AI Interaction telemetry for the 5 metrics
+    // T-MMM-S6-126: AI Interaction telemetry for the 5 metrics
+      // mmm_ai_interactions schema: action_type, actor_id, context_type, target_entity_id,
+      // token_count, duration_ms, status, request_json, response_json, created_at
       supabase
         .from('mmm_ai_interactions')
-        .select('interaction_type, model_id, confidence, latency_ms, token_count, estimated_cost_usd, error_code, created_at')
+        .select('action_type, token_count, duration_ms, status, created_at')
         .gte('created_at', sevenDaysAgo),
     ]);
 
     const jobs: Array<{ status: string }> = jobsRes.data ?? [];
     const assessments: Array<{ status: string }> = assessRes.data ?? [];
     const aiInteractions: Array<{
-      interaction_type: string;
-      model_id: string | null;
-      confidence: number | null;
-      latency_ms: number | null;
+      action_type: string;
       token_count: number | null;
-      estimated_cost_usd: number | null;
-      error_code: string | null;
+      duration_ms: number | null;
+      status: string | null;
       created_at: string;
     }> = aiInteractionsRes.data ?? [];
 
@@ -72,14 +71,14 @@ Deno.serve(async (req: Request) => {
     const token_usage = {
       total: aiInteractions.reduce((sum, i) => sum + (i.token_count ?? 0), 0),
       by_operation_type: aiInteractions.reduce((acc, i) => {
-        acc[i.interaction_type] = (acc[i.interaction_type] ?? 0) + (i.token_count ?? 0);
+        acc[i.action_type] = (acc[i.action_type] ?? 0) + (i.token_count ?? 0);
         return acc;
       }, {} as Record<string, number>),
     };
 
-    // Metric 2: latency — average and p95 AI call latency (ms)
+    // Metric 2: latency — average and p95 AI call latency (ms) using duration_ms
     const latencyValues = aiInteractions
-      .map(i => i.latency_ms)
+      .map(i => i.duration_ms)
       .filter((v): v is number => typeof v === 'number' && v > 0)
       .sort((a, b) => a - b);
 
@@ -93,26 +92,19 @@ Deno.serve(async (req: Request) => {
       sample_count: latencyValues.length,
     };
 
-    // Metric 3: cost — estimated USD cost in 7-day window
+    // Metric 3: cost — not available in schema; return zero placeholder
     const cost = {
-      total_usd: parseFloat(
-        aiInteractions
-          .reduce((sum, i) => sum + (i.estimated_cost_usd ?? 0), 0)
-          .toFixed(4),
-      ),
-      by_model: aiInteractions.reduce((acc, i) => {
-        if (i.model_id) {
-          acc[i.model_id] = parseFloat(
-            ((acc[i.model_id] ?? 0) + (i.estimated_cost_usd ?? 0)).toFixed(4),
-          );
-        }
-        return acc;
-      }, {} as Record<string, number>),
+      total_usd: 0,
+      by_model: {} as Record<string, number>,
     };
 
     // Metric 4: error_rate — failed interactions / total in 7-day window
+    // Successful statuses: 'success' (generic) and 'completed' (used by mmm-ai-framework-generate/parse)
+    const SUCCESS_STATUSES = new Set(['success', 'completed']);
     const totalInteractions = aiInteractions.length;
-    const failedInteractions = aiInteractions.filter(i => i.error_code !== null).length;
+    const failedInteractions = aiInteractions.filter(
+      i => i.status !== null && !SUCCESS_STATUSES.has(i.status?.toLowerCase() ?? ''),
+    ).length;
 
     const error_rate = {
       rate: totalInteractions > 0 ? parseFloat((failedInteractions / totalInteractions).toFixed(4)) : 0,
@@ -120,11 +112,11 @@ Deno.serve(async (req: Request) => {
       total: totalInteractions,
     };
 
-    // Metric 5: interaction_volume — 7-day count per interaction type
+    // Metric 5: interaction_volume — 7-day count per action type
     const interaction_volume = {
       total: totalInteractions,
       by_type: aiInteractions.reduce((acc, i) => {
-        acc[i.interaction_type] = (acc[i.interaction_type] ?? 0) + 1;
+        acc[i.action_type] = (acc[i.action_type] ?? 0) + 1;
         return acc;
       }, {} as Record<string, number>),
     };

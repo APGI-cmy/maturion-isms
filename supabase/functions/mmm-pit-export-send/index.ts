@@ -208,7 +208,7 @@ Deno.serve(async (req: Request) => {
       const message = err instanceof Error ? err.message : String(err);
       recordFailure('PIT', message);
       console.error(`[mmm-pit-export-send] PIT call failed: ${message}`);
-      return jsonResponse({ error: 'PIT integration failed', detail: message }, 502);
+      return jsonResponse({ error: 'PIT integration failed' }, 502);
     }
   } else {
     // PIT_BASE_URL not configured — use acknowledged stub for graceful operation

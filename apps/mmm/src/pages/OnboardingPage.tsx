@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase, getEdgeInvokeHeaders } from '@/lib/supabase';
 export default function OnboardingPage() {
   const [name, setName] = useState(''); const [tier, setTier] = useState('STARTER');
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ export default function OnboardingPage() {
   const mutation = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.functions.invoke('mmm-org-create', {
+        headers: await getEdgeInvokeHeaders(),
         body: { name, tier },
       });
       if (error) throw new Error(error.message || 'Failed to create org');

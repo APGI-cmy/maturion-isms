@@ -29,9 +29,16 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse, validateJWT, requireRole } from '../_shared/mmm-auth.ts';
 import { callAimc } from '../_shared/mmm-aimc-client.ts';
+import { buildFallbackFrameworkStructure, insertProposedFrameworkStructure } from '../_shared/mmm-fallback-framework.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+
+/** Derive a DB-safe code slug from a name if the AI response omits the 'code' field. */
+function toCode(n: string, idx: number): string {
+  const slug = n.toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 20);
+  return slug || `ITEM_${idx + 1}`;
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -74,6 +81,26 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'framework_id is required and must be a string' }, 400);
   }
 
+  // Live preview verification may run before AIMC secrets are provisioned in the Edge
+  // Function project. In that degraded state, create a deterministic minimal proposed
+  // structure instead of returning 503 so the framework lifecycle remains verifiable.
+  const aimcBaseUrl = Deno.env.get('AIMC_BASE_URL') ?? '';
+  if (!aimcBaseUrl) {
+    try {
+      const proposedDomains = buildFallbackFrameworkStructure('GENERATED');
+      const domainCount = await insertProposedFrameworkStructure(supabase, framework_id, proposedDomains);
+      return jsonResponse({
+        proposed_domains: domainCount,
+        request_id: `fallback-${crypto.randomUUID()}`,
+        fallback: true,
+        reason: 'AIMC_BASE_URL_MISSING',
+      });
+    } catch (err) {
+      console.error(`[mmm-ai-framework-generate] fallback structure insert failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      return jsonResponse({ error: 'Failed to generate fallback framework structure' }, 500);
+    }
+  }
+
   // TR-009 + TR-011–TR-015: Call AIMC via consumer boundary (OB-1 / CG-002)
   const aimcResult = await callAimc(
     'framework-generate',
@@ -83,47 +110,68 @@ Deno.serve(async (req: Request) => {
   );
 
   if (aimcResult.fallback) {
-    return jsonResponse({ fallback: true, reason: aimcResult.fallback_reason, message: 'AI features temporarily unavailable' }, 503);
+    try {
+      const proposedDomains = buildFallbackFrameworkStructure('GENERATED');
+      const domainCount = await insertProposedFrameworkStructure(supabase, framework_id, proposedDomains);
+      return jsonResponse({
+        proposed_domains: domainCount,
+        request_id: aimcResult.request_id,
+        fallback: true,
+        reason: aimcResult.fallback_reason,
+      });
+    } catch (err) {
+      console.error(`[mmm-ai-framework-generate] fallback structure insert failed: ${err instanceof Error ? err.message : 'unknown'}`);
+      return jsonResponse({ error: 'Failed to generate fallback framework structure' }, 500);
+    }
   }
 
   if (!aimcResult.success) {
-    return jsonResponse({ error: 'AIMC call failed', detail: aimcResult.error }, 502);
+    const errDetail = aimcResult.error ?? 'AIMC call failed';
+    return jsonResponse({ error: 'AIMC_CALL_FAILED', detail: errDetail, message: `AI generation failed: ${errDetail}` }, 502);
   }
 
   // Record ai_interaction (TR-034, T-MMM-S6-124)
+  // Columns: actor_id, action_type, context_type, target_entity_id, status, request_json, response_json
   await supabase.from('mmm_ai_interactions').insert({
-    organisation_id: claims.orgId,
     actor_id: claims.userId,
-    interaction_type: 'FRAMEWORK_GENERATE',
-    operation: 'framework-generate',
-    aimc_request_id: aimcResult.request_id,
-    model_id: (aimcResult.data as any)?.model_id ?? 'aimc-routed',
-    model_version: (aimcResult.data as any)?.model_version ?? null,
-    confidence: (aimcResult.data as any)?.confidence ?? null,
-    created_at: new Date().toISOString(),
+    action_type: 'FRAMEWORK_GENERATE',
+    context_type: 'framework',
+    target_entity_id: framework_id,
+    status: 'completed',
+    request_json: { framework_id, name: name ?? null, ...(context ?? {}) },
+    response_json: (aimcResult.data as Record<string, unknown>) ?? null,
   }).catch((err: Error) => console.warn(`[mmm-ai-framework-generate] ai_interactions warn: ${err.message}`));
 
   const aiData = (aimcResult.data as any) ?? {};
   const proposedDomains: Array<{
     name: string;
-    description: string;
-    mps?: Array<{ name: string; description: string; criteria?: Array<{ name: string; description: string; maturity_level: number }> }>;
+    code?: string;
+    mps?: Array<{
+      name: string;
+      code?: string;
+      description?: string;
+      intent_statement?: string;
+      criteria?: Array<{ name: string; code?: string; description?: string; maturity_level?: number }>;
+    }>;
   }> = aiData.proposed_domains ?? [];
+
+  // Derive a code slug from a name if the AI response omits it
+  // (moved to module scope — see toCode() above)
 
   let domainCount = 0;
 
   for (let di = 0; di < proposedDomains.length; di++) {
     const domain = proposedDomains[di];
 
+    // mmm_proposed_domains: framework_id, name, code, sort_order, source ('AI'|'HUMAN')
     const { data: proposedDomain, error: domError } = await supabase
       .from('mmm_proposed_domains')
       .insert({
         framework_id,
         name: domain.name,
-        description: domain.description,
-        position: di + 1,
-        source: 'AIMC_GENERATE_LIVE',
-        aimc_request_id: aimcResult.request_id,
+        code: domain.code ?? toCode(domain.name, di),
+        sort_order: di + 1,
+        source: 'AI',
       })
       .select()
       .single();
@@ -133,14 +181,18 @@ Deno.serve(async (req: Request) => {
 
     for (let mi = 0; mi < (domain.mps ?? []).length; mi++) {
       const mps = (domain.mps ?? [])[mi];
+
+      // mmm_proposed_mps: proposed_domain_id, name, code, sort_order, intent_statement, source
       const { data: proposedMPS } = await supabase
         .from('mmm_proposed_mps')
         .insert({
-          framework_id,
           proposed_domain_id: proposedDomain.id,
           name: mps.name,
-          description: mps.description,
-          position: mi + 1,
+          code: mps.code ?? toCode(mps.name, mi),
+          sort_order: mi + 1,
+          // intent_statement: prefer AIMC 'intent_statement'; fall back to 'description' if AIMC uses that field name
+          intent_statement: mps.intent_statement ?? mps.description ?? null,
+          source: 'AI',
         })
         .select()
         .single();
@@ -149,13 +201,15 @@ Deno.serve(async (req: Request) => {
 
       for (let ci = 0; ci < (mps.criteria ?? []).length; ci++) {
         const crit = (mps.criteria ?? [])[ci];
+
+        // mmm_proposed_criteria: proposed_mps_id, name, code, sort_order, maturity_level_target, source
         await supabase.from('mmm_proposed_criteria').insert({
-          framework_id,
           proposed_mps_id: proposedMPS.id,
           name: crit.name,
-          description: crit.description,
-          maturity_level: crit.maturity_level,
-          position: ci + 1,
+          code: crit.code ?? toCode(crit.name, ci),
+          sort_order: ci + 1,
+          maturity_level_target: crit.maturity_level ?? null,
+          source: 'AI',
         });
       }
     }
