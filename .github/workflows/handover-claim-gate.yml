@@ -509,7 +509,11 @@ jobs:
                     filePage += 1;
                   }
                 } catch (e) {
-                  console.log(`Could not fetch PR file list: ${e.message}`);
+                  const message = `Could not fetch PR file list: ${e.message}. ` +
+                    'Protected-path and ECAP/PREHANDOVER evidence classification is unknown, ' +
+                    'so this workflow will not continue with file-list-based handover classification.';
+                  console.log(message);
+                  throw new Error(message);
                 }
 
                 const protectedFilesChanged = prFilenames.filter(f =>
