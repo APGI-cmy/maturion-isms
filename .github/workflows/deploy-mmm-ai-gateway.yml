@@ -250,7 +250,7 @@ jobs:
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 'lts/*'
       - name: Install pnpm
@@ -269,7 +269,7 @@ jobs:
         run: set -o pipefail && pnpm test | tee cwt-test-output.log
       - name: Upload CWT test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cwt-test-results-${{ github.sha }}
           path: cwt-test-output.log
