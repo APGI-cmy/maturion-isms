@@ -55,13 +55,23 @@ Deno.serve(async (req: Request) => {
     return response as Response;
   }
 
-  // Extract framework id from URL path
-  const url = new URL(req.url);
-  const pathParts = url.pathname.split('/');
-  const frameworkId = pathParts[pathParts.indexOf('frameworks') + 1] ?? pathParts[pathParts.length - 2];
+  // Extract framework id from request body (invoke path) or URL path (direct path)
+  let frameworkId: string | undefined;
+  try {
+    const body = await req.json().catch(() => ({}));
+    frameworkId = body?.framework_id;
+  } catch {
+    // body not JSON; fall through to URL extraction
+  }
+  if (!frameworkId) {
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split('/');
+    const idx = pathParts.indexOf('frameworks');
+    frameworkId = idx >= 0 ? pathParts[idx + 1] : undefined;
+  }
 
   if (!frameworkId || frameworkId === 'publish') {
-    return jsonResponse({ error: 'framework id is required in path' }, 400);
+    return jsonResponse({ error: 'framework_id is required in request body or URL path' }, 400);
   }
 
   // Fetch current framework state
@@ -85,12 +95,12 @@ Deno.serve(async (req: Request) => {
   const newVersion = (framework.version ?? 0) + 1;
 
   // Set status = 'PUBLISHED' and increment version
+  // mmm_frameworks schema: id, organisation_id, name, version, status, source_type, origin_mode, created_at, updated_at
   const { data: updatedFramework, error: updateError } = await supabase
     .from('mmm_frameworks')
     .update({
       status: 'PUBLISHED',
       version: newVersion,
-      published_at: new Date().toISOString(),
     })
     .eq('id', frameworkId)
     .select()
@@ -102,14 +112,13 @@ Deno.serve(async (req: Request) => {
   }
 
   // Log to mmm_audit_logs (action_type: 'FRAMEWORK_PUBLISH')
+  // Schema: action_type, actor_id, target_entity_type, target_entity_id, before_state, after_state, created_at
   await supabase.from('mmm_audit_logs').insert({
     action_type: 'FRAMEWORK_PUBLISH',
     actor_id: claims.userId,
-    actor_type: 'USER',
     target_entity_type: 'FRAMEWORK',
     target_entity_id: frameworkId,
-    organisation_id: claims.orgId,
-    metadata: { version: newVersion, framework_name: framework.name },
+    after_state: { version: newVersion, framework_name: framework.name },
   });
 
   // NBR-001: UI must invalidate ['frameworks'] and ['frameworks', id]

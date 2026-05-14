@@ -186,7 +186,8 @@ Responsibilities checklist:
 - no evidence artifact was added after scope declaration without scope update;
 - mandatory current-head gate snapshot produced and included in handover claim comment before any handover claim is posted;
 - HANDOVER_ALLOWED: yes set only when ALL required checks are green at the snapshot SHA and snapshot SHA matches current HEAD;
-- STOP_AND_FIX output issued if any required check is red, pending, or missing at snapshot time;
+- STOP_AND_FIX output issued if any required check is red, pending, missing, stale, unrun, or merge-conflict/base-sync checks fail at snapshot time;
+- CS2_INTERVENTION_REQUIRED output issued when blockers cannot be fixed within sandbox/authority (governance authority, protected-file authority, missing secrets, external environment, or explicit CS2 decision);
 - ADMIN_REJECTION_NOTICE issued when admin evidence is missing, stale, inconsistent, or current-head-invalid;
 - handover claim withheld if snapshot SHA does not match current branch HEAD.
 
@@ -197,7 +198,7 @@ Before posting any handover claim comment, ECAP MUST:
 1. Run the merge-gate snapshot against the current HEAD SHA.
 2. Populate all required snapshot fields from the `ECAP_GATE_AND_ADMIN_REPORT` output template in §6 (Required Tier 2 output template) of this document.
 3. Set `HANDOVER_ALLOWED: yes` ONLY when ALL required checks are green at the current HEAD SHA.
-4. If any required check is red, pending, missing, stale, or not run: set `HANDOVER_ALLOWED: no` and output `STOP_AND_FIX` or `ADMIN_REJECTION_NOTICE`.
+4. If any required check is red, pending, missing, stale, not run, or mergeability/base-sync is not verified: set `HANDOVER_ALLOWED: no` and output `STOP_AND_FIX` (fixable in-scope) or `CS2_INTERVENTION_REQUIRED` (out-of-authority/sandbox blockers) or `ADMIN_REJECTION_NOTICE`.
 5. Include the snapshot block in the handover claim comment — this is the required **producer-side handover format** validated by the `handover-claim-gate` CI.
 
 ECAP MUST NOT:
@@ -232,6 +233,13 @@ Required Tier 2 output template:
 ECAP_GATE_AND_ADMIN_REPORT
 
 CURRENT_HEAD_SHA: ...
+BASE_BRANCH: ...
+MERGE_CONFLICT_CHECKED: yes/no
+MERGEABLE_WITH_BASE: yes/no
+BASE_SYNCED_OR_CONFLICTS_RESOLVED: yes/no
+LOCAL_GATES_RUN: yes/no
+LOCAL_GATES_PASSING: yes/no
+CURRENT_HEAD_CI_CHECKED: yes/no
 LOCAL_OR_CURRENT_HEAD_CI_CHECKS_RUN: yes/no
 REQUIRED_CHECKS_TOTAL: N
 PASSING_CHECKS: N
@@ -244,15 +252,19 @@ FAILING_CHECKS: ...
 PENDING_CHECKS: ...
 MISSING_CHECKS: ...
 STALE_EVIDENCE_FOUND: yes/no
+STALE_CHECKS_OR_EVIDENCE: yes/no
 ECAP_REQUIRED: yes/no
 ECAP_ARTIFACT_PRESENT: yes/no/not_applicable
+ECAP_SATISFIED_OR_VALIDLY_WAIVED: yes/no
 IAA_REQUIRED: yes/no
 IAA_ARTIFACT_PRESENT: yes/no/not_applicable
+IAA_SATISFIED_OR_VALIDLY_WAIVED: yes/no
 STOP_AND_FIX_EVIDENCED: yes/no
+OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: none/<concrete blocker reason>
 STALE_SHA_RISK: low/medium/high
 ECAP_RISK_SCAN_COMPLETE: yes/no
 HANDOVER_ALLOWED: yes/no
-RESULT: HANDOVER_ALLOWED | STOP_AND_FIX | REJECTED_BACK_TO_PRODUCER
+RESULT: HANDOVER_ALLOWED | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED | REJECTED_BACK_TO_PRODUCER
 ADMIN_PACKAGE_SURVIVES_SCRUTINY: yes/no
 GATES_GREEN_AT_CURRENT_HEAD: yes/no
 GIT_BRANCH_VERIFIED: yes/no
@@ -266,7 +278,7 @@ POST_PUSH_EVIDENCE_REFRESH_REQUIRED: yes/no
 POST_PUSH_EVIDENCE_REFRESHED: yes/no/not_applicable
 PRE_HANDOVER_CHECKPOINT_TRIGGERED: yes/no
 PRE_HANDOVER_CHECKPOINT_HEAD_SHA: ...
-PRE_HANDOVER_CHECKPOINT_RESULT: HANDOVER_ALLOWED | STOP_AND_FIX
+PRE_HANDOVER_CHECKPOINT_RESULT: HANDOVER_ALLOWED | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
 PRE_HANDOVER_CHECKPOINT_COMMENT_REF: ...
 ```
 
@@ -308,6 +320,11 @@ Checkpoint-first requirement:
 - For product-facing PRs, Builder QA output is a **PRE_HANDOVER_CHECKPOINT_INPUT**.
 - Builder QA evidence must be current to HEAD before the checkpoint is triggered.
 - Builder QA must not use handover, merge-ready, or ready-for-review language as a substitute for the checkpoint result.
+
+Admin-loop breaker requirement:
+- Do not add another tracked proof/memory/scope artifact only to refresh evidence phrasing.
+- If closure can be achieved by non-mutating evidence (PR body evidence, comments, labels, check reruns, existing check status, or CS2 waiver), Builder QA must use that path.
+- If a tracked file must change, treat the PR as re-entering build mode and require a fresh checkpoint cycle.
 
 Responsibilities checklist:
 - user journeys;
@@ -375,6 +392,11 @@ Checkpoint-first requirement:
 - `iaa_audit_token: PENDING` or an absent current-head token is a deliberate checkpoint hard stop.
 - IAA artifacts must reference the same current HEAD SHA reviewed by the deliberate checkpoint before handover may proceed.
 - If evidence does not support the claimed verdict, IAA must issue `IAA_REJECTION_NOTICE` and route correction back to producer.
+
+Late-stage admin-loop detection requirement:
+- When final assurance is active and the remaining blocker is evidence phrasing, stale comment state, missing PR-body run reference, or rerunnable CI, IAA must reject proof-refresh churn.
+- IAA must require a non-mutating closure path first (PR body evidence update, comment, label, rerun, existing check result, or CS2 waiver).
+- IAA must not demand a newly committed PREHANDOVER/session/scope/wave-record artifact when a non-mutating closure path is available.
 
 ### 8.A Admin assurance quick scan
 
@@ -459,7 +481,8 @@ FULL_FUNCTIONAL_DELIVERY_REFUSAL_REASON: ...
 CHECKPOINT_INPUT_READY: yes/no
 CHECKPOINT_INPUT_HEAD_SHA: ...
 HANDOVER_ALLOWED: yes/no
-RESULT: HANDOVER_ALLOWED | REJECTED_BACK_TO_PRODUCER
+OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: none/<concrete blocker reason>
+RESULT: HANDOVER_ALLOWED | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED | REJECTED_BACK_TO_PRODUCER
 ```
 
 IAA must be able to say:
@@ -485,6 +508,12 @@ Checkpoint-first requirement:
 - Safety-net comments from watchdog workflows do not substitute for the deliberate checkpoint result.
 - If required checks/evidence are failing, pending, missing, stale, or not run, Foreman must reject producer output (`FOREMAN_REJECTION_NOTICE` or `STOP_AND_FIX`) and require rework before any handover language.
 - If an invoked agent returns inadequate work, Foreman must reject and route correction to that producer; do not convert failed substantive work into administrative summary.
+
+Admin-loop breaker requirement:
+- Before requesting final assurance / CS2 review, Foreman must run scope-to-diff parity, confirm tracked evidence artifacts are already in scope declarations, and confirm current-head required checks are green or explicitly pending.
+- After this freeze point, Foreman must not commit tracked admin/proof/scope/memory artifacts solely to refresh evidence.
+- Foreman must prefer non-mutating closure (PR body evidence, comments, labels, check reruns, existing check status, CS2 waiver).
+- Any tracked-file change after final assurance starts reopens build mode and voids finality unless the change fixes a substantive content defect.
 
 Responsibilities checklist:
 - assign the correct agent for each role;
@@ -537,7 +566,7 @@ ECAP_SNAPSHOT_HANDOVER_ALLOWED: yes/no
 MERGE_OR_HANDOVER_ALLOWED: yes/no
 PRE_HANDOVER_CHECKPOINT_PRESENT: yes/no
 PRE_HANDOVER_CHECKPOINT_HEAD_SHA: ...
-PRE_HANDOVER_CHECKPOINT_RESULT: HANDOVER_ALLOWED | STOP_AND_FIX
+PRE_HANDOVER_CHECKPOINT_RESULT: HANDOVER_ALLOWED | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
 GIT_BRANCH_VERIFIED: yes/no
 REMOTE_BRANCH_VERIFIED: yes/no
 PUSH_COMPLETED: yes/no
@@ -590,6 +619,7 @@ Foreman assignment matrix template (required columns):
 PRE_HANDOVER_CHECKPOINT_REQUIRED_BEFORE_HANDOVER: yes
 PRE_HANDOVER_CHECKPOINT_TRIGGER_COMMANDS: ECAP_PRE_HANDOVER_CHECKPOINT | PRE_HANDOVER_CHECKPOINT | /prepare-handover
 PRE_HANDOVER_CHECKPOINT_RESULT_REQUIRED: HANDOVER_ALLOWED: yes + RESULT: HANDOVER_ALLOWED
+PRE_HANDOVER_MERGE_CONFLICT_FIELDS_REQUIRED: MERGE_CONFLICT_CHECKED: yes + MERGEABLE_WITH_BASE: yes + BASE_SYNCED_OR_CONFLICTS_RESOLVED: yes
 ```
 
 ### Workflow classification quick map
@@ -643,6 +673,30 @@ Will this require another corrective PR before CS2 can use the promised workflow
 ```
 
 If yes, it is not full functional delivery.
+
+### ADMIN_LOOP_BREAKER-001 (cross-cutting, late-stage)
+
+```text
+After final assurance begins, agents must not commit or modify tracked admin/proof/memory/scope artifacts solely to refresh evidence.
+
+If the remaining blocker can be resolved by PR body evidence, rerunning checks, a non-mutating comment, a label, an existing check result, or CS2 waiver, the non-mutating path is mandatory.
+
+Any tracked file change after final assurance begins reopens build mode and voids current finality unless it fixes a substantive content defect.
+
+A tracked-file change whose only purpose is evidence refresh, proof refresh, scope-refresh-after-proof, or final-assurance-after-final-assurance is admin-loop continuation and must be rejected.
+```
+
+### Admin-loop documented validation scenario (non-mutating closure)
+
+Scenario:
+1. Final assurance has started.
+2. A new tracked artifact commit makes scope/proof references stale.
+3. Remaining blocker is evidence phrasing / missing run reference only.
+
+Expected behaviour:
+- Stop tracked-file churn.
+- Use non-mutating closure (PR body evidence update or comment with run reference at current head, check rerun if needed).
+- If a tracked file must change for substantive defect correction, explicitly re-enter build mode and re-run checkpoint/handover cycle.
 
 ### Final current-head verification must be non-mutating
 

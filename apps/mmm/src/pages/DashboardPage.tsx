@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase, getEdgeInvokeHeaders } from '@/lib/supabase';
 
 const STATUS_BADGE_CLASSES: Record<string, string> = {
   complete: 'dashboard-pipeline__badge--complete',
@@ -44,7 +44,9 @@ export default function DashboardPage() {
   const { data: dashboard, isLoading, isError, error } = useQuery({
     queryKey: ['dashboard'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('mmm-qiw-status');
+      const { data, error } = await supabase.functions.invoke('mmm-qiw-status', {
+        headers: await getEdgeInvokeHeaders(),
+      });
       const status = getInvokeStatus(error);
       if (status === 403) {
         const err = new Error('Permission denied') as Error & { status: number };

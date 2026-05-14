@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { supabase, getEdgeInvokeHeaders } from '@/lib/supabase';
 
 const ORIGIN_OPTIONS: { value: 'VERBATIM' | 'GENERATED' | 'HYBRID'; label: string; description: string }[] = [
   {
@@ -28,6 +28,7 @@ export default function FrameworkOriginPage() {
   const mutation = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
+        headers: await getEdgeInvokeHeaders(),
         body: { name: 'My Framework', source_type: mode, origin_mode: mode },
       });
       if (error) throw new Error(error.message || 'Failed to init framework');

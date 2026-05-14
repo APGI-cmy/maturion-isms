@@ -332,6 +332,36 @@ run_issue_test "Governing-Issue: #1617 (bare format) → match → PASS" 0 "setu
 # ============================================================
 # Cleanup
 # ============================================================
+setup_test_comment_id_not_issue() {
+  make_per_pr_scope_file "1234" "1521" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Addressing PR comment #4414916723 with merge conflict resolution notes only"
+
+run_issue_test "PR comment ID refs (e.g. #4414916723) are ignored as governing issues → PASS" 0 "setup_test_comment_id_not_issue"
+
+# ============================================================
+# TEST 10: Parenthesized "(PR #1590)" refs are ignored as governing issues
+# Regression for parser bug where leading "(" did not match the boundary
+# class, causing "(PR #1590)" to be treated as a governing issue.
+# ============================================================
+setup_test_parenthesized_pr_ref_not_issue() {
+  make_per_pr_scope_file "1234" "1521" "Test issue"
+  git add .agent-admin/
+  git commit -q -m "Add per-PR scope file"
+}
+
+export EXPECTED_ISSUE_NUMBER=""
+export PR_BODY="Live dashboard diagnosis workflow (PR #1590). Posts results on PR #1590."
+
+run_issue_test "Parenthesized '(PR #1590)' refs are ignored as governing issues → PASS" 0 "setup_test_parenthesized_pr_ref_not_issue"
+
+# ============================================================
+# Cleanup
+# ============================================================
 rm -rf "$TEST_DIR"
 unset PR_NUMBER PR_BODY EXPECTED_ISSUE_NUMBER
 
