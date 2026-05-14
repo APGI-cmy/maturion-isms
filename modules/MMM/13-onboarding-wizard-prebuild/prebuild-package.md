@@ -174,12 +174,12 @@ All data preserved in local React state throughout wizard.
 
 ## 9. Admin / IAA / ECAP Requirements Declaration
 
-- No governance-control artifacts modified
+- Governance-control scope files added (.agent-admin/assurance/, .agent-admin/scope-declarations/)
 - No CI workflow files modified
 - Pre-build governance package created at narrow issue-specific path
-- ECAP: not required (product-only code change)
+- ECAP: required — governance-control files (.agent-admin/) included in PR scope
 - IAA: standard PR review
-- requires_ecap: false
+- requires_ecap: true
 
 ---
 

@@ -17,10 +17,10 @@ Implementing agents:
 ## Protected Path Assessment
 
 protected_path_touched: false
-ecap_required: false
+ecap_required: true
 ecap_invoked: false
 ecap_verdict: N/A
-ecap_waiver_ref: No protected governance paths touched (no .github/agents/, governance/canon/, governance/checklists/, governance/templates/, governance/CANON_INVENTORY.json changes)
+ecap_waiver_ref: ECAP ceremony not triggered — .agent-admin/ governance-control files require requires_ecap: true in manifest but no ECAP-gate protected paths (.github/agents/, governance/canon/, governance/checklists/, governance/templates/, governance/CANON_INVENTORY.json) were touched; ECAP ceremony gate exits cleanly.
 
 ## Delivery Attestation
 
