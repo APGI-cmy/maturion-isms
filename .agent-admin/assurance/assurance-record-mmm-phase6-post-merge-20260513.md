@@ -36,10 +36,10 @@ ECAP_RESULT: N/A — governance-only wave; no ECAP ceremony required; ceremony_a
 | Evidence | Source |
 |----------|--------|
 | Dashboard diagnosis | Run #33: https://github.com/APGI-cmy/maturion-isms/actions/runs/25810355481 (job 75824631620) |
-| Mode A/B/C verification | Run #33: https://github.com/APGI-cmy/maturion-isms/actions/runs/25810355481 (job 75824974414) |
+| Pre-merge Mode A/B/C verification evidence | Run #33: https://github.com/APGI-cmy/maturion-isms/actions/runs/25810355481 (job 75824974414) — executed on a pre-merge branch/SHA; supporting evidence only, not proof of post-merge execution on `main` |
 | Merged commit SHA | `git log origin/main --oneline -1` → 867d12f1b8406447884403c4283d8b89b735c530 |
-| Workflow branch | copilot/stop-and-fix-mmm-phase-6 (pre-merge SHA: eff16f6c6c29c09433cdada1864950f32778fcc8) |
-| Workflow result | conclusion: success; FUNCTIONAL_PASS: yes |
+| Workflow branch | `copilot/stop-and-fix-mmm-phase-6` (pre-merge SHA: `eff16f6c6c29c09433cdada1864950f32778fcc8`) |
+| Workflow result | conclusion: success; FUNCTIONAL_PASS: yes; scope limited to pre-merge branch verification |
 
 ---
 
