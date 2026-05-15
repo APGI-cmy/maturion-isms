@@ -189,7 +189,12 @@ Responsibilities checklist:
 - STOP_AND_FIX output issued if any required check is red, pending, missing, stale, unrun, or merge-conflict/base-sync checks fail at snapshot time;
 - CS2_INTERVENTION_REQUIRED output issued when blockers cannot be fixed within sandbox/authority (governance authority, protected-file authority, missing secrets, external environment, or explicit CS2 decision);
 - ADMIN_REJECTION_NOTICE issued when admin evidence is missing, stale, inconsistent, or current-head-invalid;
-- handover claim withheld if snapshot SHA does not match current branch HEAD.
+- handover claim withheld if snapshot SHA does not match current branch HEAD;
+- CS2 injections, governing issue instructions, and PR checklist items extracted and classified as completed/blocked/waived before any HANDOVER_ALLOWED: yes claim;
+- INJECTION_COMPLIANCE_RESULT: COMPLIANT required in ECAP_GATE_AND_ADMIN_REPORT before claiming HANDOVER_ALLOWED: yes;
+- UNCHECKED_REQUIRED_ITEMS: none confirmed before handover;
+- UNAUTHORIZED_DEVIATIONS: none confirmed before handover;
+- affected producer-side gates run and passing before handover for the changed-file set (workflow/deployment PRs require affected workflow validation).
 
 ### Pre-handover mandatory snapshot enforcement
 
@@ -207,7 +212,9 @@ ECAP MUST NOT:
 - post a handover claim while any required check is red, pending, or missing;
 - set `handover_allowed: YES` in the PREHANDOVER proof while `iaa_audit_token` is PENDING or absent — the IAA token must be resolved and committed before `handover_allowed` may be YES (FAIL-ONLY-ONCE A-021);
 - post any handover claim comment while `iaa_audit_token` is PENDING or absent — Governance Watchdog gap3-prehandover-pending-token enforces this automatically.
-- soften a failing admin/gate state into a handover-ready summary; reject it back to the producer.
+- soften a failing admin/gate state into a handover-ready summary; reject it back to the producer;
+- claim `HANDOVER_ALLOWED: yes` without completing injection compliance — `INJECTION_COMPLIANCE_RESULT: COMPLIANT`, `UNCHECKED_REQUIRED_ITEMS: none`, and `UNAUTHORIZED_DEVIATIONS: none` are required before any HANDOVER_ALLOWED: yes claim;
+- omit or silently skip CS2 injection requirements, governing issue instructions, or PR checklist items — each must be classified as completed, blocked, or waived with evidence.
 
 The `handover-claim-gate` CI enforces this format as a hard precondition: a handover claim comment that lacks the required snapshot fields, presents a stale SHA, or sets `HANDOVER_ALLOWED: yes` while checks are not fully green will be rejected.
 
@@ -226,6 +233,9 @@ Required ECAP risk scan questions:
 11. Was the current-head gate snapshot produced and included in the handover claim comment before it was posted?
 12. Does HANDOVER_ALLOWED: yes reflect a genuinely fully-green snapshot at the current HEAD SHA — or is it assumed from a prior gate run?
 13. Is iaa_audit_token resolved (not PENDING or absent) in the PREHANDOVER proof before posting the handover claim? If PENDING, handover_allowed MUST remain NO.
+14. Have all CS2 injections, governing issue instructions, and PR checklist items been extracted and classified as completed, blocked, or waived?
+15. Is INJECTION_COMPLIANCE_RESULT: COMPLIANT confirmed? Are UNCHECKED_REQUIRED_ITEMS and UNAUTHORIZED_DEVIATIONS both none?
+16. For workflow/deployment PRs: have all affected workflow/gate runs been validated before claiming handover? If any affected workflow fails and the fix is within sandbox authority, was STOP_AND_FIX issued instead of a handover claim?
 ```
 
 Required Tier 2 output template:
@@ -280,6 +290,10 @@ PRE_HANDOVER_CHECKPOINT_TRIGGERED: yes/no
 PRE_HANDOVER_CHECKPOINT_HEAD_SHA: ...
 PRE_HANDOVER_CHECKPOINT_RESULT: HANDOVER_ALLOWED | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
 PRE_HANDOVER_CHECKPOINT_COMMENT_REF: ...
+INJECTION_COMPLIANCE_RESULT: COMPLIANT | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
+UNCHECKED_REQUIRED_ITEMS: none | <list of unchecked required instructions/checklist items>
+UNAUTHORIZED_DEVIATIONS: none | <list of unauthorized deviations from injected requirements>
+CS2_WAIVERS: none | <list of CS2-waived items>
 ```
 
 ### Final current-head verification must be non-mutating
@@ -530,7 +544,9 @@ Responsibilities checklist:
 - reject handover if ECAP gate snapshot is absent from the handover claim comment;
 - confirm HANDOVER_ALLOWED: yes is present in ECAP snapshot before accepting handover;
 - do not mark PR ready-for-review unless HANDOVER_ALLOWED: yes is confirmed in the ECAP snapshot;
-- verify iaa_audit_token is resolved (not PENDING or absent) in the PREHANDOVER proof before accepting handover — if PENDING, halt and route back to ECAP for IAA invocation.
+- verify iaa_audit_token is resolved (not PENDING or absent) in the PREHANDOVER proof before accepting handover — if PENDING, halt and route back to ECAP for IAA invocation;
+- verify INJECTION_COMPLIANCE_RESULT: COMPLIANT in the ECAP snapshot before accepting handover — if STOP_AND_FIX or CS2_INTERVENTION_REQUIRED, halt and route back to producer;
+- verify UNCHECKED_REQUIRED_ITEMS: none and UNAUTHORIZED_DEVIATIONS: none before accepting handover — any non-none value is a handover blocker.
 
 Required Foreman risk scan questions:
 ```text
@@ -547,6 +563,9 @@ Required Foreman risk scan questions:
 11. Does the ECAP gate snapshot exist in the handover claim comment and show HANDOVER_ALLOWED: yes?
 12. Is the snapshot SHA (CURRENT_HEAD_SHA in the ECAP snapshot) current — does it match the current HEAD at time of handover?
 13. Is iaa_audit_token resolved (not PENDING or absent) in the PREHANDOVER proof? If PENDING, this is an automatic merge gate failure (A-021) — halt and route to ECAP for IAA invocation.
+14. Is INJECTION_COMPLIANCE_RESULT: COMPLIANT in the ECAP snapshot? If not, this is a handover blocker — route STOP_AND_FIX or CS2_INTERVENTION_REQUIRED back to producer.
+15. Are UNCHECKED_REQUIRED_ITEMS and UNAUTHORIZED_DEVIATIONS both none? Any non-none value prevents handover.
+16. Were all affected producer-side gates run for the changed-file set? For workflow/deployment PRs, were affected workflow validations completed before handover was claimed?
 ```
 
 Required Tier 2 output template:
@@ -809,7 +828,150 @@ FINAL_CURRENT_HEAD_VERIFICATION_VALID: yes/no
 
 ---
 
-## 12) Required Tier 1 / Tier 3 follow-up assessment
+## 12) CS2 Injection Compliance (Tier 2 Obligation)
+
+**Issue Anchor**: maturion-isms#1648  
+**Scope**: Foreman / ECAP / pre-handover checkpoint  
+**Classification**: Tier 2 handover contract extension (not a new tracked proof artifact family)
+
+### Operating rule
+
+```text
+No agent may hand over unless every CS2 injection, governing issue instruction, and required PR
+checklist item is either:
+- completed with evidence;
+- blocked with CS2_INTERVENTION_REQUIRED; or
+- waived by CS2.
+
+Producer-side gates must run before handover. If any required gate fails and the fix is within the
+agent's authority/sandbox, the only valid result is:
+  RESULT: STOP_AND_FIX
+  HANDOVER_ALLOWED: no
+```
+
+### Instruction extraction rule
+
+Before producing the `INJECTION_COMPLIANCE_REPORT`, the producing agent MUST extract required
+instructions from all of the following sources:
+
+1. The governing issue body and acceptance criteria.
+2. Explicit CS2 comments/injections on the PR (by @APGI-cmy or equivalent authority).
+3. PR checklist items created by the agent.
+4. Repo/Tier 2 guidance triggered by the changed-file set.
+5. Current failed-gate comments that require corrective action.
+
+Each extracted item must be marked as `completed`, `blocked`, or `waived`. Silent omission is a failure.
+
+### Producer-side gate execution rule
+
+Before handover, the producer must run or inspect the gates/checks that are relevant to the
+changed-file set and available within its authority/sandbox.
+
+For workflow/deployment PRs this includes, at minimum:
+```text
+- affected workflow runs or equivalent validation;
+- changed gate/workflow tests where available;
+- gate-changing PR rule evidence;
+- deployment-impacting workflow validation;
+- current-head CI inspection;
+- mergeability/base-sync check;
+- protected-path/ECAP classification where applicable.
+```
+
+If an affected workflow/gate fails due to a fixable implementation problem, the producer must
+stop and fix before claiming handover.
+
+### STOP_AND_FIX rule
+
+If any required instruction, checklist item, or producer-side gate is incomplete/failing and
+fixable within authority/sandbox:
+```text
+RESULT: STOP_AND_FIX
+HANDOVER_ALLOWED: no
+```
+The agent must not claim handover, merge-ready, final-ready, or ready-for-CS2-merge in this state.
+
+### CS2_INTERVENTION_REQUIRED rule
+
+If an item cannot be completed because it requires governance authority, protected decision authority,
+unavailable secrets, external environment access, or CS2 judgment:
+```text
+RESULT: CS2_INTERVENTION_REQUIRED
+HANDOVER_ALLOWED: no
+```
+The report must state the specific blocker and the exact CS2/environment/governance action needed.
+
+### INJECTION_COMPLIANCE_REPORT format
+
+The producing agent MUST include this report in the `ECAP_GATE_AND_ADMIN_REPORT` handover claim
+comment and in the PREHANDOVER proof (see `## Injection Compliance` section of the PREHANDOVER
+template). It MUST NOT be created as a new standalone tracked artifact.
+
+```text
+INJECTION_COMPLIANCE_REPORT
+
+PR:
+CURRENT_HEAD_SHA:
+INJECTION_SOURCE:
+GOVERNING_ISSUE:
+REQUIRED_INSTRUCTIONS_EXTRACTED:
+- instruction:
+  source:
+  status: completed | blocked | waived
+  evidence:
+  blocker_or_waiver:
+
+PR_CHECKLIST_ITEMS:
+- item:
+  status: completed | blocked | waived
+  evidence:
+
+PRODUCER_SIDE_GATES_RUN:
+- gate/check/workflow:
+  status: pass | fail | blocked | not_applicable
+  evidence:
+
+UNCHECKED_REQUIRED_ITEMS: none | list
+UNAUTHORIZED_DEVIATIONS: none | list
+CS2_WAIVERS: none | list
+RESULT: COMPLIANT | STOP_AND_FIX | CS2_INTERVENTION_REQUIRED
+HANDOVER_ALLOWED: yes/no
+```
+
+### Handover gate enforcement
+
+The `handover-claim-gate` CI enforces the following for full-ceremony PRs (requires_ecap: true):
+
+| Condition | Gate action |
+|---|---|
+| `INJECTION_COMPLIANCE_RESULT` absent while claiming HANDOVER_ALLOWED: yes | BLOCK — injection compliance required |
+| `INJECTION_COMPLIANCE_RESULT != COMPLIANT` | BLOCK — fix compliance failures first |
+| `UNCHECKED_REQUIRED_ITEMS != none` | BLOCK — classify all required items |
+| `UNAUTHORIZED_DEVIATIONS != none` | BLOCK — resolve unauthorized deviations |
+| `RESULT: STOP_AND_FIX` in snapshot | Not treated as a handover claim |
+| `RESULT: CS2_INTERVENTION_REQUIRED` in snapshot | Not treated as a handover claim |
+
+### PR #1647 calibration scenario
+
+Use PR APGI-cmy/maturion-isms#1647 as a regression example. A compliant agent should not claim
+handover or review readiness while:
+- PR checklist items remain unchecked;
+- affected deployment/live-dashboard workflows are failing;
+- setup-node/pnpm ordering failure is unresolved;
+- gate-changing evidence is missing;
+- governing issue reference appears mismatched;
+- parallel validation has not been completed.
+
+Correct posture:
+```text
+RESULT: STOP_AND_FIX
+HANDOVER_ALLOWED: no
+```
+until all fixable issues are resolved and current-head gates are green.
+
+---
+
+## 13) Required Tier 1 / Tier 3 follow-up assessment
 
 Conclusion (required format): **Follow-up required, with proposed issue title, repository, and scope.**
 
@@ -824,4 +986,4 @@ Conclusion (required format): **Follow-up required, with proposed issue title, r
 
 ---
 
-*Version: 1.3.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565*
+*Version: 1.4.0 | Tier 2 operational guidance only | Compatible with and queued behind APGI-cmy/maturion-isms#1565 | Amended: 2026-05-14 (v1.4.0) — Added §12 CS2 Injection Compliance (maturion-isms#1648): injection compliance Tier 2 obligation, INJECTION_COMPLIANCE_REPORT format, STOP_AND_FIX/CS2_INTERVENTION_REQUIRED rules, PR #1647 calibration scenario; updated §6 ECAP responsibilities checklist and risk scan questions (items 14–16); updated ECAP_GATE_AND_ADMIN_REPORT template with injection compliance fields; updated §9 Foreman responsibilities checklist (items 14–15) and risk scan questions (items 14–16); §12 Tier 1/Tier 3 follow-up assessment renumbered to §13*
