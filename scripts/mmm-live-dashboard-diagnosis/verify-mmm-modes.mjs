@@ -44,6 +44,8 @@ const COMPILE_TIMEOUT = 60_000;
 const AI_GENERATION_TIMEOUT = 180_000; // 3 minutes — AIMC framework-generate can take up to 90s+retry
 const MISSING_PROFILE_ERROR = 'No profile found for authenticated user';
 const RESPONSE_LISTENER_FLUSH_DELAY = 500;
+const BOOTSTRAP_FULL_NAME = 'MMM CI Admin';
+const BOOTSTRAP_TITLE = 'CI Test Administrator';
 
 function required(name) {
   const v = process.env[name];
@@ -123,29 +125,84 @@ async function bootstrapOrganisationIfMissing(page, origin, bypassSecret) {
   await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
 
   const orgNameInput = page.locator('#org-name');
-  const onboardingVisible = await orgNameInput
+
+  // Try old 2-field UI first — #org-name directly visible on load
+  const oldUiVisible = await orgNameInput
+    .waitFor({ state: 'visible', timeout: 3_000 })
+    .then(() => true)
+    .catch(() => false);
+
+  if (oldUiVisible) {
+    const orgName = `MMM CI Org ${Date.now()}`;
+    await orgNameInput.fill(orgName);
+    const continueBtn = page.getByRole('button', { name: /^Continue$/ });
+    await continueBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+    await Promise.all([
+      page.waitForURL(/\/(framework-origin|dashboard|frameworks)/, { timeout: WAIT_TIMEOUT }).catch(() => null),
+      continueBtn.click(),
+    ]);
+    const createErr = await page.locator('[role="alert"]').first().innerText().catch(() => '');
+    if (createErr) {
+      throw new Error(`Onboarding bootstrap (old UI) failed: ${createErr.replace(/\s+/g, ' ').slice(0, 240)}`);
+    }
+    return true;
+  }
+
+  // New 10-step wizard — detect via wizard progress bar
+  const wizardProgress = page.locator('.wizard-progress');
+  const wizardVisible = await wizardProgress
     .waitFor({ state: 'visible', timeout: 10_000 })
     .then(() => true)
     .catch(() => false);
 
-  if (!onboardingVisible) {
+  if (!wizardVisible) {
     return false;
   }
 
-  const orgName = `MMM CI Org ${Date.now()}`;
-  await orgNameInput.fill(orgName);
-  const continueBtn = page.getByRole('button', { name: /^Continue$/ });
-  await continueBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+  console.log('[verify-modes][bootstrap] Detected new 10-step wizard — navigating steps');
+
+  const nextBtn = page.getByRole('button', { name: /^Next →$/ });
+
+  // Step 1: Welcome — click Next
+  await nextBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+  await nextBtn.click();
+  await page.waitForTimeout(500);
+
+  // Step 2: Your Information — fill required fields
+  await page.waitForTimeout(300);
+  await page.fill('#fullName', BOOTSTRAP_FULL_NAME);
+  await page.fill('#title', BOOTSTRAP_TITLE);
+  await nextBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+  await nextBtn.click();
+  await page.waitForTimeout(500);
+
+  // Step 3: Organisation Identity — fill org name (required)
+  await page.waitForTimeout(300);
+  await page.fill('#org-name', `MMM CI Org ${Date.now()}`);
+  await nextBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+  await nextBtn.click();
+
+  // Steps 4–9: optional fields — click Next each time
+  for (let step = 4; step <= 9; step++) {
+    await nextBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+    await nextBtn.click();
+    await page.waitForTimeout(300);
+  }
+
+  // Step 10: Review — click Complete Setup
+  const completeBtn = page.getByRole('button', { name: /Complete Setup/ });
+  await completeBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
   await Promise.all([
     page.waitForURL(/\/(framework-origin|dashboard|frameworks)/, { timeout: WAIT_TIMEOUT }).catch(() => null),
-    continueBtn.click(),
+    completeBtn.click(),
   ]);
 
   const createErr = await page.locator('[role="alert"]').first().innerText().catch(() => '');
   if (createErr) {
-    throw new Error(`Onboarding bootstrap failed: ${createErr.replace(/\s+/g, ' ').slice(0, 240)}`);
+    throw new Error(`Onboarding bootstrap (wizard) failed: ${createErr.replace(/\s+/g, ' ').slice(0, 240)}`);
   }
 
+  console.log('[verify-modes][bootstrap] Wizard completed successfully');
   return true;
 }
 
@@ -329,7 +386,11 @@ async function runMode(page, origin, mode, sampleFilePath) {
       ]);
 
       if (parseOutcome === 'complete') {
-        log('Parse job COMPLETE');
+        log('Parse job COMPLETE — reloading page to refresh compile availability');
+        const currentReviewUrl = page.url();
+        await page.goto(currentReviewUrl, { waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT });
+        await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
+        log('Review page reloaded after parse COMPLETE');
       } else if (parseOutcome === 'failed') {
         log('Parse job FAILED — proceeding to check compile availability');
       } else {
@@ -538,9 +599,18 @@ async function main() {
     }
   });
   page.on('requestfailed', (request) => {
-    console.error(
-      `[verify-modes][network-failed] ${request.method()} ${request.url()} — ${request.failure()?.errorText ?? 'unknown error'}`,
-    );
+    const errorText = request.failure()?.errorText ?? 'unknown error';
+    const url = request.url();
+    // Supabase net::ERR_ABORTED during navigation is transient noise — log as diagnostic, not error
+    if (errorText === 'net::ERR_ABORTED' && url.includes('.supabase.')) {
+      console.log(
+        `[verify-modes][network-aborted][diag] ${request.method()} ${url} — ${errorText} (transient, non-fatal)`,
+      );
+    } else {
+      console.error(
+        `[verify-modes][network-failed] ${request.method()} ${url} — ${errorText}`,
+      );
+    }
   });
   let observedMissingProfile403 = false;
   page.on('response', async (response) => {
