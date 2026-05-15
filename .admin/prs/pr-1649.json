@@ -1,0 +1,30 @@
+{
+  "pr": 1649,
+  "issue": 1648,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1649.json",
+    ".agent-admin/scope-declarations/pr-1649.md",
+    ".agent-admin/prehandover/proof-pr-1649-cs2-injection-compliance-20260514.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1649-cs2-injection-compliance-20260514.md",
+    ".agent-workspace/foreman-v2/knowledge/index.md",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/workflows/handover-claim-gate.yml",
+    "governance/checklists/phase4-role-separation-operational-guidance.md",
+    "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "copilot-direct",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "35 regression tests pass (pre-handover-checkpoint.test.sh: Passed 35 Failed 0)",
+    "gate-changing evidence: local test run output confirms new injection compliance tests 23-30 pass",
+    "ECAP proof and bundle committed for protected governance template/checklist path modification",
+    "Per-PR scope declaration matches all 9 changed files"
+  ],
+  "merge_authority": "CS2"
+}

@@ -2,8 +2,8 @@
 
 **Agent**: foreman-v2  
 **Contract Version**: 2.10.0  
-**Knowledge Version**: 2.10.0  
-**Last Updated**: 2026-05-08  
+**Knowledge Version**: 2.11.0  
+**Last Updated**: 2026-05-14  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -25,6 +25,31 @@ See `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` for the full t
 | `FM_QP_ENHANCED_QUICK_REFERENCE.md` | **Quality Professor Mode** — Quick reference for Builder Referral Protocol (QP-FAIL-001–009) and Progress Tracker Enforcement; Enhancement 3: Temporal and Evidence-Type Audit (A-040/A-041); Tier 3 canonical authority: `governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md` v1.0.0 | 1.1.0 |
 | `WAVE-CURRENT-TASKS-PROTOCOL.md` | Codifies `wave-current-tasks.md` creation and maintenance mandate; Re-Anchor Pulse integration; wave close steps now include Wave Reconciliation Checklist; Stage 10 ceremony contract integration (ACR-18–21) | 1.2.0 |
 | `wave-reconciliation-checklist.md` | **PHASE 4 — wave close** — Mandatory checklist: post-wave incident → NBR entry, liveness verification, evidence completeness, temporal and evidence-type audit; HANDOVER BLOCKER | 1.3.0 |
+
+---
+
+## §12 CS2 Injection Compliance (Tier 2 Obligation)
+
+**Canonical guidance**: `governance/checklists/phase4-role-separation-operational-guidance.md` §12  
+**Issue anchor**: maturion-isms#1648  
+**Enforcement**: `handover-claim-gate` CI gate (full-ceremony PRs)
+
+### Summary for Foreman
+
+Before accepting handover from any producer (ECAP, builder, any agent):
+
+1. Verify the ECAP_GATE_AND_ADMIN_REPORT in the handover claim comment contains:
+   - `INJECTION_COMPLIANCE_RESULT: COMPLIANT`
+   - `UNCHECKED_REQUIRED_ITEMS: none`
+   - `UNAUTHORIZED_DEVIATIONS: none`
+
+2. If `INJECTION_COMPLIANCE_RESULT` is `STOP_AND_FIX`: route rejection back to producer — do not accept handover.
+
+3. If `INJECTION_COMPLIANCE_RESULT` is `CS2_INTERVENTION_REQUIRED`: escalate to CS2 with the specific blocker reason.
+
+4. The `handover-claim-gate` CI gate enforces this automatically for full-ceremony PRs. Foreman must also apply this check manually during Quality Professor evaluation (PHASE 3 Step 3.5).
+
+5. `STOP_AND_FIX` and `CS2_INTERVENTION_REQUIRED` in the injection compliance report are never valid handover claims — they block the gate and must route to corrective action before re-attempt.
 
 ---
 
@@ -141,6 +166,7 @@ All verb classification and mode-switching decisions MUST reference `ECOSYSTEM_V
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.11.0 | 2026-05-14 | Added §12 CS2 Injection Compliance Tier 2 summary (maturion-isms#1648): INJECTION_COMPLIANCE_RESULT, UNCHECKED_REQUIRED_ITEMS, UNAUTHORIZED_DEVIATIONS enforcement summary for Foreman; updated knowledge version to 2.11.0. |
 | 2.9.0 | 2026-04-22 | WAVE-CURRENT-TASKS-PROTOCOL.md bumped to v1.2.0 — Stage 10 ceremony contract integration (ACR-18–21); prehandover-template.md bumped to v1.9.0 — `## Wave-Level Ceremony Contract Verification` mandatory section added (IAA_PRE_BRIEF_PROTOCOL.md v1.3.0 §Expected Wave-Level Admin Ceremony Contract). Wave: stage10-prebrief-hardening-20260422 (issue #1447). |
 | 2.8.0 | 2026-04-19 | Knowledge version header updated to 2.8.0 (Last Updated date aligned to 2026-04-19); prehandover-template.md Wave: cl6-wave3-knowledge-reingestion |
 | 2.7.0 | 2026-04-09 | prehandover-template.md bumped to v1.8.0 — `## Ripple/Cross-Agent Assessment` mandatory section added (HFMC-01 / NO-REPEAT-PREVENTABLE-001 systemic fix); Wave: cl6-wave3-knowledge-reingestion |

@@ -709,6 +709,28 @@ jobs:
               if (expectedIaaRequired && !hasIaaEvidenceByChecks) {
                 preconditionFailures.push('IAA precondition failed: preflight/iaa-final-assurance is not green for current HEAD.');
               }
+              // ── Injection compliance enforcement (§12 CS2 Injection Compliance) ──
+              // For full-ceremony PRs (requires_ecap=true), the ECAP_GATE_AND_ADMIN_REPORT snapshot
+              // MUST include injection compliance fields before claiming HANDOVER_ALLOWED: yes.
+              // Authority: governance/checklists/phase4-role-separation-operational-guidance.md §12
+              //            governance/templates/execution-ceremony-admin/PREHANDOVER.template.md §Injection Compliance
+              //            maturion-isms#1648
+              if (!isProductFix) {
+                const injectionComplianceResult = readField(commentBody, 'INJECTION_COMPLIANCE_RESULT');
+                const uncheckedRequiredItems = readField(commentBody, 'UNCHECKED_REQUIRED_ITEMS');
+                const unauthorizedDeviations = readField(commentBody, 'UNAUTHORIZED_DEVIATIONS');
+                if (!injectionComplianceResult) {
+                  preconditionFailures.push('INJECTION_COMPLIANCE_RESULT field missing from snapshot. Before claiming HANDOVER_ALLOWED: yes, producers must extract CS2 injections and PR checklist items and classify each as completed/blocked/waived. See governance/checklists/phase4-role-separation-operational-guidance.md §12.');
+                } else if (!/^COMPLIANT$/i.test(injectionComplianceResult.trim())) {
+                  preconditionFailures.push(`INJECTION_COMPLIANCE_RESULT (${injectionComplianceResult}) is not COMPLIANT. Fix or block all CS2 injections and PR checklist items before claiming handover. See §12 CS2 Injection Compliance.`);
+                }
+                if (uncheckedRequiredItems && isNonEmptySignal(uncheckedRequiredItems)) {
+                  preconditionFailures.push(`UNCHECKED_REQUIRED_ITEMS (${uncheckedRequiredItems}) must be none before handover. All required instructions must be classified as completed, blocked, or waived.`);
+                }
+                if (unauthorizedDeviations && isNonEmptySignal(unauthorizedDeviations)) {
+                  preconditionFailures.push(`UNAUTHORIZED_DEVIATIONS (${unauthorizedDeviations}) must be none before handover. Unauthorized deviations must be resolved or waived by CS2.`);
+                }
+              }
             }
 
             // ── Corrective-action requirement after prior HANDOVER BLOCKED ────────
@@ -775,6 +797,9 @@ jobs:
                 `- ECAP_ARTIFACT_PRESENT: ${requiresEcap ? (hasEcapEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                 `- IAA_REQUIRED: ${requiresIaa ? 'yes' : 'no'}`,
                 `- IAA_ARTIFACT_PRESENT: ${requiresIaa ? (hasIaaEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
+                `- INJECTION_COMPLIANCE_RESULT: ${isProductFix ? 'not_required' : (readField(commentBody, 'INJECTION_COMPLIANCE_RESULT') || 'missing')}`,
+                `- UNCHECKED_REQUIRED_ITEMS: ${isProductFix ? 'not_required' : (readField(commentBody, 'UNCHECKED_REQUIRED_ITEMS') || 'not_provided')}`,
+                `- UNAUTHORIZED_DEVIATIONS: ${isProductFix ? 'not_required' : (readField(commentBody, 'UNAUTHORIZED_DEVIATIONS') || 'not_provided')}`,
                  `- HANDOVER_ALLOWED: no`,
                  `- RESULT: STOP_AND_FIX`,
                  `- CHECKPOINT_REQUIRED: yes`,
@@ -799,7 +824,7 @@ jobs:
                 '',
                 isProductFix
                   ? `> ℹ️  This is a **product-fix PR** (\`type: ${prType}\`, \`requires_iaa: false\`, \`requires_ecap: false\`). No PREHANDOVER/IAA/ECAP ceremony is required — only CI must be green.`
-                  : '> ⚠️  This PR requires IAA/ECAP ceremony artifacts in addition to green CI.',
+                  : '> ⚠️  This PR requires IAA/ECAP ceremony artifacts in addition to green CI. ECAP_GATE_AND_ADMIN_REPORT must include `INJECTION_COMPLIANCE_RESULT: COMPLIANT`, `UNCHECKED_REQUIRED_ITEMS: none`, and `UNAUTHORIZED_DEVIATIONS: none` before claiming handover. See `governance/checklists/phase4-role-separation-operational-guidance.md` §12.',
                 '',
                 `**HEAD SHA verified**: \`${headSha}\``,
                 `**Passing checks**: ${passing.length}`,
@@ -822,6 +847,9 @@ jobs:
                 `- ECAP_ARTIFACT_PRESENT: ${requiresEcap ? (hasEcapEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
                 `- IAA_REQUIRED: ${requiresIaa ? 'yes' : 'no'}`,
                 `- IAA_ARTIFACT_PRESENT: ${requiresIaa ? (hasIaaEvidenceByChecks ? 'yes' : 'no') : 'not_applicable'}`,
+                `- INJECTION_COMPLIANCE_RESULT: ${isProductFix ? 'not_required' : (readField(commentBody, 'INJECTION_COMPLIANCE_RESULT') || 'COMPLIANT')}`,
+                `- UNCHECKED_REQUIRED_ITEMS: ${isProductFix ? 'not_required' : (readField(commentBody, 'UNCHECKED_REQUIRED_ITEMS') || 'none')}`,
+                `- UNAUTHORIZED_DEVIATIONS: ${isProductFix ? 'not_required' : (readField(commentBody, 'UNAUTHORIZED_DEVIATIONS') || 'none')}`,
                  '- HANDOVER_ALLOWED: yes',
                  '- RESULT: HANDOVER_ALLOWED',
                  '- CHECKPOINT_REQUIRED: yes',
@@ -871,7 +899,19 @@ jobs:
               console.log('Created new gate comment');
             }
 
-            if (isBlocked) {
+            // Only hard-fail (core.setFailed) for deliberate final handover claims.
+            // For pull_request_target: ready_for_review events the gate posts the
+            // advisory comment but does not block CI — required checks may not have
+            // run yet when the PR is first marked ready. Hard-block only when the
+            // producer explicitly posts a snapshot-based claim comment.
+            const finalHandoverClaim =
+              isIssueComment && (
+                /ECAP_GATE_AND_ADMIN_REPORT/i.test(commentBody) ||
+                /HANDOVER_ALLOWED:\s*yes/i.test(commentBody) ||
+                /\/claim-handover\b/i.test(commentBody)
+              );
+
+            if (isBlocked && finalHandoverClaim) {
               // Update/create gate comment first so the reason is visible,
               // then fail the workflow job to enforce the gate as a hard CI check.
               core.setFailed(
