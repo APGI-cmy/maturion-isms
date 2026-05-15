@@ -705,7 +705,19 @@ jobs:
               console.log('Created new gate comment');
             }
 
-            if (isBlocked) {
+            // Only hard-fail (core.setFailed) for deliberate final handover claims.
+            // For pull_request_target: ready_for_review events the gate posts the
+            // advisory comment but does not block CI — required checks may not have
+            // run yet when the PR is first marked ready. Hard-block only when the
+            // producer explicitly posts a snapshot-based claim comment.
+            const finalHandoverClaim =
+              isIssueComment && (
+                /ECAP_GATE_AND_ADMIN_REPORT/i.test(commentBody) ||
+                /HANDOVER_ALLOWED:\s*yes/i.test(commentBody) ||
+                /\/claim-handover\b/i.test(commentBody)
+              );
+
+            if (isBlocked && finalHandoverClaim) {
               // Update/create gate comment first so the reason is visible,
               // then fail the workflow job to enforce the gate as a hard CI check.
               core.setFailed(
