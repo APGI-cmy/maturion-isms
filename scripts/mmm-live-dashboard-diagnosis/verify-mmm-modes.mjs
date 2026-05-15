@@ -44,6 +44,8 @@ const COMPILE_TIMEOUT = 60_000;
 const AI_GENERATION_TIMEOUT = 180_000; // 3 minutes — AIMC framework-generate can take up to 90s+retry
 const MISSING_PROFILE_ERROR = 'No profile found for authenticated user';
 const RESPONSE_LISTENER_FLUSH_DELAY = 500;
+const BOOTSTRAP_FULL_NAME = 'MMM CI Admin';
+const BOOTSTRAP_TITLE = 'CI Test Administrator';
 
 function required(name) {
   const v = process.env[name];
@@ -168,8 +170,8 @@ async function bootstrapOrganisationIfMissing(page, origin, bypassSecret) {
 
   // Step 2: Your Information — fill required fields
   await page.waitForTimeout(300);
-  await page.fill('#fullName', 'MMM CI Admin');
-  await page.fill('#title', 'CI Test Administrator');
+  await page.fill('#fullName', BOOTSTRAP_FULL_NAME);
+  await page.fill('#title', BOOTSTRAP_TITLE);
   await nextBtn.waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
   await nextBtn.click();
   await page.waitForTimeout(500);

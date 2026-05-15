@@ -115,7 +115,8 @@ Deno.serve(async (req: Request) => {
 
   if (existingProfile?.organisation_id) {
     // Existing organisation — update context and mark onboarding complete
-    const onboarding_complete = !!(context && (context.fullName || context.title));
+    // Both fullName AND title are required by the wizard (step 2 validation) — require both
+    const onboarding_complete = !!(context?.fullName && context?.title);
     const { data: updatedOrg, error: updateError } = await supabase
       .from('mmm_organisations')
       .update({ context: context ?? null, onboarding_complete })
@@ -142,7 +143,8 @@ Deno.serve(async (req: Request) => {
   for (let attempt = 0; attempt < 10; attempt++) {
     const slug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt}`;
     // Store context fields and mark onboarding_complete when context is provided (maturion-isms#13)
-    const onboarding_complete = !!(context && (context.fullName || context.title));
+    // Both fullName AND title are required by the wizard (step 2 validation) — require both
+    const onboarding_complete = !!(context?.fullName && context?.title);
     const result = await supabase
       .from('mmm_organisations')
       .insert({ name: trimmedName, slug, tier, context: context ?? null, onboarding_complete })
