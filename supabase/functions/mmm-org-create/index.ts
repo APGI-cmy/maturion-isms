@@ -103,7 +103,37 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'tier is required' }, 400);
   }
 
-  // Create mmm_organisations record
+  // Check if user already has an organisation (maturion-isms#13 — existing-user safety)
+  // If they do, UPDATE the existing org with the new context + onboarding_complete rather than
+  // creating a second org and repointing the profile. This prevents orphaning existing org data
+  // when the migration sets onboarding_complete=false for all pre-existing organisations.
+  const { data: existingProfile } = await supabase
+    .from('mmm_profiles')
+    .select('organisation_id')
+    .eq('id', userData.user.id)
+    .maybeSingle();
+
+  if (existingProfile?.organisation_id) {
+    // Existing organisation — update context and mark onboarding complete
+    const onboarding_complete = !!(context && (context.fullName || context.title));
+    const { data: updatedOrg, error: updateError } = await supabase
+      .from('mmm_organisations')
+      .update({ context: context ?? null, onboarding_complete })
+      .eq('id', existingProfile.organisation_id)
+      .select()
+      .single();
+
+    if (updateError || !updatedOrg) {
+      console.error('[mmm-org-create] org update error:', updateError?.message);
+      return jsonResponse({ error: 'Failed to update organisation' }, 500);
+    }
+
+    console.log(`[mmm-org-create] updated existing org ${existingProfile.organisation_id} (onboarding_complete=${onboarding_complete})`);
+    // NBR-001: UI must call queryClient.invalidateQueries(['organisations'])
+    return jsonResponse({ organisation: updatedOrg }, 200);
+  }
+
+  // No existing organisation — create a new one
   const trimmedName = name.trim();
   const baseSlug = toSlug(trimmedName);
   let org: { id: string } | null = null;
