@@ -1,11 +1,9 @@
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 
 const NotFound = () => {
   const location = useLocation();
-
-  useEffect(() => {
-  }, [location.pathname]);
+  // location is available for future error reporting if needed
+  void location;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

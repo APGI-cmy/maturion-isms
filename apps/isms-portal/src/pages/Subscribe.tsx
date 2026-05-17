@@ -29,7 +29,8 @@ const Subscribe = () => {
       try {
         const parsedResults = JSON.parse(results);
         setAssessmentResult(parsedResults);
-      } catch (error) {
+      } catch {
+        // Ignore malformed assessment results from localStorage
       }
     }
   }, []);
