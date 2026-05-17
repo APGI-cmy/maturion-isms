@@ -1,0 +1,29 @@
+{
+  "pr": 1651,
+  "issue": 1651,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1651.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-market-comparison-hardening-20260517-20260517.md",
+    ".agent-admin/scope-declarations/pr-1651.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/foreman-v2/personal/scope-declaration-wave-pit-market-comparison-hardening-20260517.md",
+    "modules/pit/_readiness/pit-market-comparison-feature-inventory.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
+  "evidence_required": [
+    "IAA pre-brief wave record committed: .agent-admin/assurance/iaa-wave-record-pit-market-comparison-hardening-20260517-20260517.md",
+    "Canonical PIT market comparison feature inventory committed at modules/pit/_readiness/pit-market-comparison-feature-inventory.md",
+    "Classification includes feedback centre, costing/ROI, exports, compliance artifacts, mobile/offline, and LFV in-flight note",
+    "Build Authorization remains NOT CLEARED; Stage 6 remains blocked until Stage 5 gate-pass",
+    "No runtime source, DB migration, deployment config, workflow, or build execution changes",
+    "local command output: corepack pnpm run test (baseline env-gated failures unrelated to docs scope)"
+  ],
+  "merge_authority": "CS2"
+}
