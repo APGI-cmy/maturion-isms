@@ -9,6 +9,7 @@
 - `V1_CONFIRMED`
 - `V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED`
 - `V1_DESIGN_HARDENING_REQUIRED`
+- `V1_ARCHITECTURE_READY`
 - `FUTURE_VERSION`
 - `EXPLICITLY_OUT_OF_SCOPE`
 
@@ -21,6 +22,7 @@
 | STRAT-001 | Governance-first staged delivery model | Stage-gated PIT readiness chain and governance canon references | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Delivery posture exists in docs; runtime proof remains Stage 6+ evidence dependent. |
 | STRAT-002 | Audit-grade traceability posture | Reporting/audit trail requirements (`PIT-FR-080`, `PIT-FR-088`) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Capability intent is explicit; implementation quality cannot be overclaimed pre-build. |
 | STRAT-003 | Cross-role implementation visibility | Role-aware PIT workflow descriptions and reporting posture | V1_DESIGN_HARDENING_REQUIRED | Needs explicit end-to-end UX contract for market-comparison parity claims. |
+| STRAT-004 | Managed Work Container strategic evolution | `Maturion/strategy/managed-work-execution-platform-strategy.md` §§14–19 | V1_ARCHITECTURE_READY | PIT v1 remains the approved Project Implementation Tracker; architecture/data decisions should avoid blocking future managed-work-container expansion without expanding current v1 scope. |
 
 ## project hierarchy and planning
 
@@ -181,6 +183,8 @@
 
 ## traceability / hardening notes (explicit constraints)
 - This inventory remains conservative and does not promote legacy/reference-only artifacts (`Maturion/PIT/**`) to committed v1 scope.
+- Strategy alignment reference: `Maturion/strategy/managed-work-execution-platform-strategy.md` (future-facing product-family direction).
+- PIT v1 scope remains Project Implementation Tracker only; this inventory does not expand v1 to daily routines, KPI plans, domestic/personal use, travel itineraries, or the full 970-feature universe.
 - LFV is in-flight separately and is not claimable as complete until canonised/layered into PIT stages.
 - Stage 6 remains blocked until Stage 5 gate-pass.
 - Build Authorization remains **NOT CLEARED**.
