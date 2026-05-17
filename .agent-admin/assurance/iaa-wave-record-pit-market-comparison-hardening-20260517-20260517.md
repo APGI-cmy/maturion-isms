@@ -3,7 +3,7 @@
 **Wave**: pit-market-comparison-hardening-20260517  
 **Date**: 2026-05-17  
 **Branch**: copilot/harden-pit-market-comparison  
-**Issue**: (number unavailable in provided context)  
+**Issue**: #1651 — Foreman: Harden PIT market-comparison feature inventory and product-level differentiators  
 **Foreman request**: Harden PIT market-comparison feature inventory and product-level differentiators  
 **Mode**: PRE-BRIEF (PHASE 0 only)
 
