@@ -175,6 +175,9 @@ CLEAR TO PROCEED: YES — builder delegation to ui-builder may commence
 *To be populated after final assurance (T-13). IAA will append PHASE_B_BLOCKING_TOKEN here upon issuing ASSURANCE-TOKEN.*
 
 ```
+**PR**: #1646
+**Issue**: #1645
+**Reviewed SHA**: CURRENT_HEAD
 PHASE_B_BLOCKING_TOKEN: [PENDING — populated at final assurance]
 Token reference: IAA-session-NNN-isms-public-landing-harvest-20260514-PASS
 ```
