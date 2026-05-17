@@ -2,8 +2,8 @@
 
 ## Status
 - Module: PIT (Project Implementation Tracker)
-- Scope: Docs-only pre-build hardening (PR #1651)
-- Purpose: Canonical feature inventory with conservative v1 classification (no overclaim)
+- Scope: Docs-only pre-build remediation follow-up (PR #1651)
+- Purpose: Explicit capability-by-capability classification with conservative non-overclaim posture
 
 ## Classification Key
 - `V1_CONFIRMED`
@@ -14,71 +14,174 @@
 
 ---
 
-## Capability Group A — Feedback & Improvement Centre
+## strategic / platform-level differentiators
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| FIC-001 | Feedback captured as evidence item content | App Description evidence definitions include feedback records (`modules/pit/00-app-description/app-description.md` §2.1, Evidence wording) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Feedback can be stored as evidence, but not yet a dedicated centre workflow. |
-| FIC-002 | Dedicated PIT Feedback & Improvement Centre UI/workflow | No explicit Stage 1–5 route/FR/TR requirement for a named “Feedback & Improvement Centre” screen | V1_DESIGN_HARDENING_REQUIRED | Needs explicit Stage 2/3/4 wording before it can be treated as committed v1 scope. |
-| FIC-003 | Closed-loop conversion of feedback to tracked improvements | Partial via manual project/task creation + source-link patterns (`PIT-FR-031`, `PIT-FR-034`) | V1_DESIGN_HARDENING_REQUIRED | Conversion flow exists in pieces but no explicit end-to-end “feedback→improvement” contract. |
+| STRAT-001 | Governance-first staged delivery model | Stage-gated PIT readiness chain and governance canon references | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Delivery posture exists in docs; runtime proof remains Stage 6+ evidence dependent. |
+| STRAT-002 | Audit-grade traceability posture | Reporting/audit trail requirements (`PIT-FR-080`, `PIT-FR-088`) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Capability intent is explicit; implementation quality cannot be overclaimed pre-build. |
+| STRAT-003 | Cross-role implementation visibility | Role-aware PIT workflow descriptions and reporting posture | V1_DESIGN_HARDENING_REQUIRED | Needs explicit end-to-end UX contract for market-comparison parity claims. |
 
-## Capability Group B — Costing, Budget, ROI
-
-| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
-|---|---|---|---|---|
-| COST-001 | Project-level CAPEX/OPEX capture | `PIT-FR-035`, UX Step-4 cost fields, App Description cost value proposition | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Functional requirement is explicit; QA-to-Red validation still required pre-build. |
-| COST-002 | Task-level CAPEX/OPEX capture | `PIT-FR-053` optional task CAPEX/OPEX | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Captured at task form level; validate persistence and permissions in Stage 6 tests. |
-| COST-003 | CAPEX/OPEX summary reporting | `PIT-FR-080` + `PIT-FR-118` + `PIT-TR-068..072` reporting architecture | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Confirmed as report type; output quality/edge cases remain Stage 6+ validation work. |
-| COST-004 | Budget control (planned vs actual, threshold controls) | Partial via implementation indicators/progress + report scope; no explicit budget-control rule set | V1_DESIGN_HARDENING_REQUIRED | Needs explicit functional and technical controls (thresholds, alerts, approvals). |
-| COST-005 | ROI calculation engine (item-by-item ROI %) | Present in legacy vision (`Maturion/PIT/PIT_TRUE_NORTH_v1.0.md`), not explicit in current Stage 1–5 chain | FUTURE_VERSION | Keep as roadmap candidate; avoid v1 commitment until upstream artifacts add explicit requirements. |
-| COST-006 | Predictive CAPEX/OPEX forecasting | Explicitly listed in future evolution (`app-description.md` Optional Section E) | FUTURE_VERSION | Already marked future in canonical app-description chain. |
-
-## Capability Group C — Legacy Export/Report Catalogue (item-by-item)
+## project hierarchy and planning
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| EXP-001 | Project Status Report | `PIT-FR-080`, `PIT-FR-118`, architecture §14 | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Covered in v1 report types. |
-| EXP-002 | Portfolio Summary Report | `PIT-FR-080`, `PIT-TR-078` performance target | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Covered in v1 report types. |
-| EXP-003 | Task Completion Report | `PIT-FR-080` | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Covered in v1 report types. |
-| EXP-004 | Audit Trail Extract / CSV | `PIT-FR-088`, `PIT-TR-075`, architecture §15 | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Covered with role-gated export semantics. |
-| EXP-005 | CAPEX/OPEX Summary Report | `PIT-FR-080`, `PIT-FR-118`, architecture §14 | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Covered in v1 report set. |
-| EXP-006 | Legacy “Project Summary PDF” profile | Legacy list in `Maturion/PIT/Architecture/PIT_EXPORT_SPEC_v1.0.md` | V1_DESIGN_HARDENING_REQUIRED | Potentially overlaps Project Status Report; naming/content reconciliation still required. |
-| EXP-007 | Legacy Task List CSV export | Legacy export spec | V1_DESIGN_HARDENING_REQUIRED | CSV exists as output format, but dedicated “Task List CSV” product contract is not explicit in v1 FR naming. |
-| EXP-008 | Legacy Task List Excel export | Legacy export spec + v1 XLSX output format support (`PIT-FR-082`) | V1_DESIGN_HARDENING_REQUIRED | Format support exists; specific legacy artifact contract still not explicit. |
-| EXP-009 | Timeline/Gantt PDF export | Legacy export spec only | FUTURE_VERSION | Not explicitly in Stage 1–5 v1 report-type list. |
-| EXP-010 | Timeline/Gantt JSON export | Legacy export spec only | FUTURE_VERSION | Not explicitly in Stage 1–5 v1 report-type list. |
-| EXP-011 | Risk-Mitigation Feedback Report (PDF) | Legacy export spec only | FUTURE_VERSION | Not explicitly in Stage 1–5 v1 report-type list. |
-| EXP-012 | Control Implementation Pack (Excel+PDF) | Legacy export spec only | FUTURE_VERSION | Depends on explicit compliance package design not yet in PIT Stage 1–5 chain. |
-| EXP-013 | Evidence Bundle (ZIP) | Legacy export spec only | FUTURE_VERSION | Not explicitly defined in current PIT FRS/TRS/architecture. |
-| EXP-014 | AI Weekly Summary export | Legacy export spec only | FUTURE_VERSION | Current v1 supports AI summary inside report generation, not a standalone weekly export artifact. |
-| EXP-015 | Integration exports to other modules (JSON) | Legacy export spec + high-level integration architecture | V1_DESIGN_HARDENING_REQUIRED | Integration exists conceptually; export product contract needs explicit FR/TR wording. |
-| EXP-016 | Full Project Archive export (ZIP) | Legacy export spec only | FUTURE_VERSION | No explicit v1 requirement in current Stage 1–5 chain. |
+| PLAN-001 | Program/portfolio/project/task hierarchy | Project + task constructs in PIT FR/UX artifacts | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Core hierarchy appears in v1 scope; verify roll-up behaviour in Stage 6 tests. |
+| PLAN-002 | Milestone and dependency-aware planning | Partial planning semantics in workflow specs | V1_DESIGN_HARDENING_REQUIRED | Requires tighter FR/TR language for explicit dependency logic commitments. |
 
-## Capability Group D — Compliance Artifact Package & Standards Stance
+## timeline and scheduling engine
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| CMP-001 | `COMPLIANCE_SCOPE` artifact posture | Canon requires it (`governance/canon/COMPLIANCE_AND_STANDARDS_GOVERNANCE.md` §4); PIT module artifact not yet canonicalised in Stage 1–5 chain | V1_DESIGN_HARDENING_REQUIRED | Governance requirement exists; PIT-specific artifact package still needs explicit module-level filing plan. |
-| CMP-002 | `CONTROL_MAPPING` artifact posture | Canon §4/§5 requires control traceability | V1_DESIGN_HARDENING_REQUIRED | Require PIT-specific mapping artifact linkage to architecture + QA + evidence locations. |
-| CMP-003 | `EVIDENCE_CATALOG` artifact posture | Canon §4/§6 requires evidence cataloging | V1_DESIGN_HARDENING_REQUIRED | PIT has evidence concepts, but not yet a canonical PIT compliance catalog artifact package. |
-| CMP-004 | `AUDIT_REPORT` reproducibility posture | Canon §4 requires reproducible audit report; PIT has audit/export/report primitives | V1_DESIGN_HARDENING_REQUIRED | Runtime/report primitives exist, but canonical PIT compliance audit report artifact contract not yet explicit. |
-| CMP-005 | ISO 27001 stance | Standards baseline mandated in canon §3.1 | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Governance stance is confirmed; PIT control-level implementation proof must come through Stage 6+ traceability and evidence. |
-| CMP-006 | ISO 31000 stance | Standards baseline mandated in canon §3.2 | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Governance stance is confirmed; PIT risk-treatment evidence mapping still requires explicit PIT package hardening. |
-| CMP-007 | NIST CSF stance | Standards baseline mandated in canon §3.3 | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Governance stance is confirmed; PIT operational mapping and evidence packaging still require Stage 6+ validation outputs. |
+| TIME-001 | Timeline visualisation baseline | Workflow/UX references to schedule views | V1_DESIGN_HARDENING_REQUIRED | Present conceptually; hard feature contract still needs explicit Stage 1–5 wording. |
+| TIME-002 | Scheduling engine with critical-path quality | No explicit technical contract for critical-path engine in current chain | FUTURE_VERSION | Keep as roadmap until canonised into PIT staged artifacts. |
 
-## Capability Group E — Mobile / Offline / LFV Posture
+## implementation page / execution UI
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| MOB-001 | Responsive web layouts | UX retrofit verification confirms responsive expectations (`ux-workflow-wiring-spec.md` Section 12 table) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Responsive intent is explicit; execution remains test/evidence dependent in Stage 6+ and Stage 12 LFV. |
-| MOB-002 | Native mobile app | Explicitly out-of-scope in App Description §2.2 item 4 | EXPLICITLY_OUT_OF_SCOPE | Keep out of v1 claims unless approved change-control updates Stage 1+ chain. |
-| MOB-003 | Offline mode / offline sync | No explicit v1 contract in current Stage 1–5 chain | V1_DESIGN_HARDENING_REQUIRED | Needs explicit product/technical contract before being treated as near-term v1 commitment. |
-| MOB-004 | “Mobile auditor app” legacy concept | Legacy vision text (`Maturion/PIT/PIT_TRUE_NORTH_v1.0.md`) | FUTURE_VERSION | Legacy/reference-only source; not currently in approved v1 pre-build chain. |
-| LFV-001 | LFV governance package status | BUILD tracker Stage 5b present; explicit “FUNCTIONAL_PASS not claimable until live deployment evidence” | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | LFV package exists as pre-build evidence. No claim of completed live LFV or functional pass. |
+| EXEC-001 | Implementation execution workspace/page | PIT implementation workflow definitions (`PIT-FR-031`, `PIT-FR-034`) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Execution intent is in-scope; interaction fidelity requires Stage 6 validation. |
+| EXEC-002 | Action-oriented execution controls | Partial in UX flow descriptions | V1_DESIGN_HARDENING_REQUIRED | Needs explicit UI control contract to avoid overclaim. |
+
+## assignment, collaboration and invitation
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| COLLAB-001 | Task assignment and ownership | Task management semantics in PIT FR chain | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Assignment posture exists; verify permissioned assignment flows in Stage 6. |
+| COLLAB-002 | External invitation workflow | No explicit invitation lifecycle contract in Stage 1–5 PIT set | V1_DESIGN_HARDENING_REQUIRED | Must be hardened before claiming parity with invitation-centric tools. |
+
+## evidence management
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| EVD-001 | Evidence item capture and attachment posture | App Description evidence concepts + PIT workflow docs | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Evidence model exists; storage/validation proof requires later stages. |
+| EVD-002 | Evidence chain-of-custody completeness | Audit/export primitives present, full custody contract not explicit | V1_DESIGN_HARDENING_REQUIRED | Needs explicit immutable custody semantics for strong market claim. |
+
+## progress, status, RAG and roll-up
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| PROG-001 | Progress and status tracking | PIT progress/reporting requirements (`PIT-FR-080`, `PIT-FR-118`) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Confirmed intent; runtime calculation quality must be validated. |
+| PROG-002 | RAG status and hierarchical roll-up | Partial posture in reporting concepts | V1_DESIGN_HARDENING_REQUIRED | Requires explicit RAG thresholds/roll-up formulas for deterministic behaviour. |
+
+## dashboards and reporting
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| DASH-001 | Core dashboard/report surfaces | PIT report catalog baseline (`PIT-FR-080`) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Dashboard/reporting baseline exists; final quality claims deferred. |
+| DASH-002 | Executive drill-down reporting maturity | Partial architecture/reporting references | V1_DESIGN_HARDENING_REQUIRED | Needs explicit drill-down contract and acceptance metrics. |
+
+## watchdog and escalation
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| WDG-001 | Exception/watchdog detection | No explicit PIT watchdog engine specification in Stage 1–5 | FUTURE_VERSION | Keep deferred until watchdog semantics are canonised. |
+| WDG-002 | Escalation routing and SLA breach actions | Partial governance posture, PIT-specific workflow not explicit | V1_DESIGN_HARDENING_REQUIRED | Requires PIT-level escalation workflow contract. |
+
+## QA and live delivery discipline
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| QA-001 | QA-to-Red then Build-to-Green discipline | Maturion build philosophy and staged PIT readiness model | V1_CONFIRMED | Process requirement is explicit and active. |
+| QA-002 | Live validation / LFV completion claimability | LFV tracked separately; not yet canonised/layered into PIT stages as complete | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | LFV is in-flight separately and cannot be claimed complete until canonised/layered into PIT stage chain. |
+
+## AI and automation
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| AI-001 | AI-assisted summarisation in reporting context | Legacy/export references + report posture | V1_DESIGN_HARDENING_REQUIRED | Treat as partial until explicit v1 AI contract and safeguards are staged. |
+| AI-002 | Automation workflows (auto-routing/auto-remediation) | No explicit PIT v1 automation engine contract | FUTURE_VERSION | Defer until formal FR/TR inclusion. |
+
+## security, permissions and audit
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| SEC-001 | RBAC and permissioned access posture | Architecture + audit/export governance references | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Role gating intent exists; enforceability must be proven in validation evidence. |
+| SEC-002 | Full audit-trail extraction and review | `PIT-FR-088` and related export/reporting references | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Confirmed at requirement level; cannot claim production-grade completeness yet. |
+
+## auth, onboarding and notifications
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| AUTH-001 | Authentication posture (platform-level) | Platform governance and module integration posture | V1_DESIGN_HARDENING_REQUIRED | PIT-specific auth flow commitments should be made explicit to avoid inference overclaim. |
+| AUTH-002 | Onboarding flows and user notifications | No fully explicit PIT onboarding/notification contract in Stage 1–5 | FUTURE_VERSION | Keep deferred until formally specified. |
+
+## cross-module ISMS integration
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| XMOD-001 | Integration touchpoints to MAT/PIT ecosystem modules | High-level integration architecture references | V1_DESIGN_HARDENING_REQUIRED | Integration concept is present; interface contracts need explicit hardening. |
+| XMOD-002 | Structured callback/event interoperability | Legacy integration export ideas, no complete PIT v1 callback contract | FUTURE_VERSION | Defer parity claim until canonical payload contracts are staged. |
+
+## compliance and end-result qualities
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| COMP-001 | ISO 27001 / ISO 31000 / NIST CSF standards stance | Canonical governance requirements | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Standards posture is mandated; PIT implementation evidence still pending. |
+| COMP-002 | Reproducible compliance artifact package quality | Canon requires compliance artifacts; PIT packaging not fully canonised | V1_DESIGN_HARDENING_REQUIRED | Requires module-specific artifact package hardening for end-result assurance claims. |
+
+## future / deferred capabilities
+
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| FUT-001 | Advanced predictive planning and optimisation | Mentioned as future evolution themes | FUTURE_VERSION | Deferred until brought into approved PIT staged chain. |
+| FUT-002 | Native mobile-first PIT experience | Explicitly outside current v1 scope | EXPLICITLY_OUT_OF_SCOPE | No v1 claim without formal scope change. |
 
 ---
 
-## Traceability / Hardening Notes
-- This inventory is intentionally conservative and does not promote legacy/reference-only items (`Maturion/PIT/**`) to v1 committed scope.
-- No runtime/build/deployment/database/workflow changes are implied by this inventory.
-- Stage 6 remains prerequisite for validation artifacts; Stage 5 gate-pass and Build Authorization constraints remain unchanged.
+## costing classification (required explicit items)
+
+| Feature ID | Required costing item | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| COST-001 | project budget fields | `PIT-FR-035` cost fields and related UX step references | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Explicit at requirement level; runtime validation pending. |
+| COST-002 | planned cost | Present as planned/budget intent within PIT cost capture posture | V1_DESIGN_HARDENING_REQUIRED | Needs explicit data definition wording to avoid interpretation variance. |
+| COST-003 | actual cost | Partial via implementation progress/evidence posture | V1_DESIGN_HARDENING_REQUIRED | Actual-cost lifecycle not fully explicit in current Stage 1–5 chain. |
+| COST-004 | CAPEX/OPEX classification | `PIT-FR-035`, `PIT-FR-053` | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Explicitly captured but still validation-gated. |
+| COST-005 | cost variance | Report-level intent only; no explicit variance formula contract | V1_DESIGN_HARDENING_REQUIRED | Requires formal variance rules and thresholds. |
+| COST-006 | mitigation value | Legacy ROI/value intent references | FUTURE_VERSION | Not explicit in current canonical v1 PIT requirement set. |
+| COST-007 | ROI percentage | Legacy ROI concept (`PIT_TRUE_NORTH_v1.0.md`) | FUTURE_VERSION | Keep non-claimable for v1 until canonised in staged artifacts. |
+| COST-008 | cost-to-risk-reduction relationship | Conceptual relationship only; no formal PIT v1 equation/model | FUTURE_VERSION | Requires explicit methodology + acceptance tests. |
+| COST-009 | budget approval / override workflow | No explicit PIT v1 budget override control workflow | V1_DESIGN_HARDENING_REQUIRED | Must be added to FR/TR chain before claim. |
+| COST-010 | project cost reports | `PIT-FR-080`, `PIT-FR-118` reporting posture | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Reporting exists but output quality remains validation-gated. |
+| COST-011 | portfolio cost roll-up | Portfolio summary reporting intent (`PIT-FR-080`) | V1_DESIGN_HARDENING_REQUIRED | Explicit cost roll-up rules need hardening. |
+| COST-012 | predictive CAPEX/OPEX forecasting | Marked as future evolution in app description optional sections | FUTURE_VERSION | Explicitly deferred; not a current v1 claim. |
+
+## export classification (required explicit items)
+
+| Feature ID | Required export item | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| EXP-001 | Project Summary PDF | Legacy export spec naming; overlaps with status reporting concept | V1_DESIGN_HARDENING_REQUIRED | Needs explicit v1 artifact contract and naming reconciliation. |
+| EXP-002 | Task List CSV/Excel | CSV/Excel format support posture (`PIT-FR-082`) with legacy profile references | V1_DESIGN_HARDENING_REQUIRED | Format support exists; specific packaged output contract not fully explicit. |
+| EXP-003 | Timeline/Gantt PDF | Legacy export spec only | FUTURE_VERSION | Not explicit in staged v1 report set. |
+| EXP-004 | Timeline/Gantt JSON export | Legacy export spec only | FUTURE_VERSION | Not explicit in staged v1 report set. |
+| EXP-005 | Risk-Mitigation Feedback Report | Legacy export spec only | FUTURE_VERSION | Requires formal PIT requirement inclusion. |
+| EXP-006 | Control Implementation Pack | Legacy export spec only | FUTURE_VERSION | Depends on explicit compliance packaging design in PIT chain. |
+| EXP-007 | Evidence Bundle ZIP | Legacy export spec only | FUTURE_VERSION | Not presently in canonical PIT Stage 1–5 commitments. |
+| EXP-008 | AI Weekly Summary | Legacy export concept; no explicit PIT v1 weekly artifact contract | FUTURE_VERSION | Keep deferred until explicit canonisation. |
+| EXP-009 | Integration export/callback payloads | Integration concept references; callback payload contract not hardened | V1_DESIGN_HARDENING_REQUIRED | Needs explicit schema/versioning requirements. |
+| EXP-010 | Full Project Archive ZIP | Legacy export spec only | FUTURE_VERSION | Not explicit in current PIT v1 chain. |
+| EXP-011 | Audit export | `PIT-FR-088` audit trail extract posture | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Explicitly in scope at requirement level; still validation dependent. |
+| EXP-012 | Report history and permissions | Partial via role-gated reporting and audit posture | V1_DESIGN_HARDENING_REQUIRED | History retention/permission matrix needs explicit hardening. |
+
+## mobile/offline classification (required explicit items)
+
+| Feature ID | Required mobile/offline item | Current artifact coverage | Scope classification | Notes |
+|---|---|---|---|---|
+| MOB-001 | responsive web field evidence capture | Responsive UX intent + evidence model posture | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Confirmed as intent, pending execution proof. |
+| MOB-002 | camera/photo/video upload from mobile browser | Evidence attachment intent exists; mobile capture specifics not explicit | V1_DESIGN_HARDENING_REQUIRED | Must be explicitly specified/tested before parity claim. |
+| MOB-003 | native mobile app | App description scope boundary excludes native app | EXPLICITLY_OUT_OF_SCOPE | Not claimable in v1 baseline. |
+| MOB-004 | offline task execution | No explicit PIT v1 offline execution contract | FUTURE_VERSION | Defer until staged canon inclusion. |
+| MOB-005 | offline evidence capture | No explicit PIT v1 offline evidence contract | FUTURE_VERSION | Defer until staged canon inclusion. |
+| MOB-006 | background sync | No explicit PIT v1 background sync contract | FUTURE_VERSION | Defer until staged canon inclusion. |
+| MOB-007 | push notifications | No explicit PIT v1 notification subsystem contract | FUTURE_VERSION | Defer until staged canon inclusion. |
+| MOB-008 | GPS/location capture, if any | No explicit PIT v1 geolocation capture requirement | FUTURE_VERSION | No claim without explicit FR/TR requirements. |
+| MOB-009 | QR/barcode field proof, if any | No explicit PIT v1 QR/barcode requirement | FUTURE_VERSION | No claim without explicit FR/TR requirements. |
+
+---
+
+## traceability / hardening notes (explicit constraints)
+- This inventory remains conservative and does not promote legacy/reference-only artifacts (`Maturion/PIT/**`) to committed v1 scope.
+- LFV is in-flight separately and is not claimable as complete until canonised/layered into PIT stages.
+- Stage 6 remains blocked until Stage 5 gate-pass.
+- Build Authorization remains **NOT CLEARED**.
+- No runtime, DB, deployment, CI, or workflow changes are implied by this document update.
