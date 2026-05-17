@@ -5,9 +5,10 @@
 | Field | Value |
 |---|---|
 | Strategy Area | Maturion work execution / PIT evolution |
-| Current Working Name | Managed Work Execution Platform |
+| Strategic Product Family | Maturion Execution Intelligence |
+| Current Working Application Name | Maturion Work Execution Platform |
 | Originating Module | PIT — Project Implementation Tracker |
-| Status | Strategy Capture — pre-roadmap |
+| Status | Strategy Baseline — product-family north star / pre-roadmap |
 | Owner | CS2 / Johan Ras |
 | Date | 2026-05-17 |
 | Purpose | Capture the strategic evolution from a project implementation tracker into a broader work-execution, accountability, evidence, risk-control and situational-awareness platform |
@@ -39,13 +40,37 @@ Other examples include:
 - department work programmes;
 - recurring operational activities.
 
-The long-term product vision is a universal management and situational-awareness system that turns work into visible, accountable, measurable, evidence-backed, risk-rated and continuously improvable execution.
+The long-term product vision is a universal work-execution and situational-awareness platform that turns work into visible, accountable, measurable, evidence-backed, risk-rated and continuously improvable execution.
+
+In this strategy, **project management is the entry point**. **Organisational resilience is the destination**.
 
 ---
 
-## 2. Strategic Reframing
+## 2. Problem Statement
 
-### 2.1 From project tracking to work execution
+Most organisations do not fail only because they lack plans. They fail because work is fragmented across emails, meetings, spreadsheets, project tools, incident systems, risk registers, audit findings, personal notebooks, informal instructions and untracked conversations.
+
+This fragmentation creates blind spots:
+
+- no single view of what everyone is doing;
+- no reliable evidence that important work was actually done;
+- weak linkage between daily work, risk, controls and compliance;
+- delayed detection of overdue, unsupported or unassigned work;
+- unclear ownership and accountability;
+- poor learning from repeated failures;
+- weak escalation of stalled or high-risk work;
+- management decisions based on incomplete situational awareness;
+- opportunities for negligence, corruption, control bypass or silent non-performance to remain hidden.
+
+Traditional project-management tools solve part of the scheduling and collaboration problem, but they do not usually create an integrated accountability, evidence, control, risk and resilience environment.
+
+The strategic opportunity is to create a platform where all meaningful work is captured as managed execution, connected to the systems and controls that matter, and made visible through evidence-backed situational awareness.
+
+---
+
+## 3. Strategic Reframing
+
+### 3.1 From project tracking to work execution
 
 Traditional project management tools focus on projects, tasks, timelines, collaboration and reporting. PIT must satisfy that layer, but should not stop there.
 
@@ -55,7 +80,13 @@ The strategic reframing is:
 
 This means every important activity can be captured, classified, assigned, scheduled, evidenced, risk-rated, controlled, monitored, reported and improved.
 
-### 2.2 Project as one container type
+### 3.2 Work is the common object
+
+The platform treats **work** as the common object linking strategy, risk, controls, people, evidence, cost, time, quality, compliance and resilience.
+
+Projects, routines, KPI plans, incident actions, audit corrective actions, risk treatment plans, maintenance plans and travel itineraries are different expressions of the same underlying pattern: **managed work**.
+
+### 3.3 Project as one container type
 
 The system should introduce the concept of a **Managed Work Container**.
 
@@ -78,11 +109,11 @@ A Managed Work Container may be:
 | Travel Itinerary | Plan and execute a business trip |
 | Household Plan | Maintain a home, vehicle or family event |
 
-The term project may remain for familiarity, but the data model, UX and app descriptions should not be conceptually trapped by formal project-management definitions.
+The term project may remain for familiarity, especially in PIT v1, but the data model, UX and future app descriptions should not be conceptually trapped by formal project-management definitions.
 
 ---
 
-## 3. Core Thesis
+## 4. Core Thesis
 
 The product thesis is:
 
@@ -107,7 +138,7 @@ This creates a direct bridge between work execution, risk management, control as
 
 ---
 
-## 4. Anti-Corruption and Loss-Prevention Logic
+## 5. Anti-Corruption and Loss-Prevention Logic
 
 The system cannot make crime or corruption impossible by itself. However, when combined with automated data analytics, risk management, control design, evidence requirements, audit trails, watchdogs and escalation logic, it can materially reduce the opportunity for wrongdoing to remain hidden.
 
@@ -128,9 +159,32 @@ The anti-corruption and loss-prevention logic is:
 
 This shifts an organisation from informal trust and manual follow-up to evidence-backed accountability and continuous assurance.
 
+Strategic care must be taken not to overclaim. The product should be described as reducing opportunity, improving detection, strengthening deterrence, increasing traceability and accelerating resilience maturity — not as a standalone guarantee that wrongdoing can never occur.
+
 ---
 
-## 5. Product Positioning
+## 6. Scope Boundary: PIT v1 vs Product Family
+
+This strategy does **not** automatically expand the active PIT v1 build.
+
+PIT v1 remains the governed Project Implementation Tracker currently moving through the Maturion pre-build process. PIT v1 should remain focused enough to preserve one-time-build quality and functional delivery.
+
+The broader Managed Work Execution Platform is the strategic product family. PIT v1 is the first edition and proof point.
+
+Any movement from PIT v1 into broader work-container functionality must be routed through:
+
+1. feature classification;
+2. app description amendment or new app description;
+3. FRS/TRS/Architecture alignment;
+4. pre-build stage governance;
+5. CS2 approval;
+6. Live Functional Verification before final product acceptance.
+
+This boundary is non-negotiable. The strategy may define the destination, but it does not bypass the existing pre-build gates.
+
+---
+
+## 7. Product Positioning
 
 The eventual product should be positioned as more than project management.
 
@@ -151,13 +205,32 @@ Simpler version:
 
 > Turns all work into visible, accountable, measurable, evidence-backed execution.
 
+Category statement:
+
+> Project management is the visible doorway; managed work execution is the real category.
+
 ---
 
-## 6. Candidate Product Names
+## 8. Candidate Product Names
 
 The existing name, Project Implementation Tracker, is clear but too narrow for the broader strategy.
 
-### 6.1 Name options focused on execution
+### 8.1 Naming decision criteria
+
+A final name should be evaluated against the following criteria:
+
+- broad enough for projects, routines, KPIs, incidents, controls, domestic use and future product-family editions;
+- serious enough for enterprise, government, resilience, compliance and risk markets;
+- not too narrow around the word project;
+- not too technical for non-technical managers;
+- not too compliance-heavy for general work management;
+- suitable for a future domestic or personal edition;
+- easy to say and remember;
+- acronym does not create weak, confusing or awkward branding;
+- compatible with the Maturion brand;
+- domain, trademark and market-conflict checks still required before final adoption.
+
+### 8.2 Name options focused on execution
 
 | Name | Short Code | Notes |
 |---|---|---|
@@ -169,7 +242,7 @@ The existing name, Project Implementation Tracker, is clear but too narrow for t
 | Maturion Execution Hub | MEH | Good concept, weaker acronym |
 | Action Execution Platform | AEP | Clear but less distinctive |
 
-### 6.2 Name options focused on accountability and assurance
+### 8.3 Name options focused on accountability and assurance
 
 | Name | Short Code | Notes |
 |---|---|---|
@@ -180,7 +253,7 @@ The existing name, Project Implementation Tracker, is clear but too narrow for t
 | Work Assurance Platform | WAP | Conceptually good, weak acronym |
 | Execution Assurance Platform | EAP | Strong governance/resilience meaning |
 
-### 6.3 Name options focused on situational awareness
+### 8.4 Name options focused on situational awareness
 
 | Name | Short Code | Notes |
 |---|---|---|
@@ -191,7 +264,7 @@ The existing name, Project Implementation Tracker, is clear but too narrow for t
 | Activity Intelligence Platform | AIP | Captures the universal-activity idea |
 | Execution Intelligence Platform | EIP | Strong candidate |
 
-### 6.4 Name options focused on resilience
+### 8.5 Name options focused on resilience
 
 | Name | Short Code | Notes |
 |---|---|---|
@@ -201,35 +274,26 @@ The existing name, Project Implementation Tracker, is clear but too narrow for t
 | Organisational Resilience Engine | ORE | Strong, but may sound too broad |
 | Control-to-Execution Platform | C2E | Excellent for risk/control implementation |
 
-### 6.5 Recommended shortlist
+### 8.6 Recommended shortlist
 
 The strongest names are:
 
-1. **Maturion Work Execution Platform** — clear, broad and practical.
-2. **Maturion Execution Intelligence** — strongest premium positioning.
+1. **Maturion Execution Intelligence** — strongest product-family name; premium, broad and future-safe.
+2. **Maturion Work Execution Platform** — clearest enterprise application name.
 3. **Maturion Resilience Execution Platform** — strongest risk/resilience positioning.
-4. **Execution Intelligence Platform** — strong general product name.
-5. **Activity Intelligence Platform** — best if domestic/personal future version matters.
-6. **Control-to-Execution Platform** — best for ISMS/risk/control market positioning.
+4. **Maturion Activity Intelligence** — best if personal/domestic future version becomes important.
+5. **Maturion Control-to-Execution** — best for ISMS/risk/control market positioning.
 
-Recommended working name for now:
+Recommended working structure:
 
-> **Maturion Work Execution Platform**
-
-Recommended strategic product family name:
-
-> **Maturion Execution Intelligence**
-
-Possible structure:
-
-- **Maturion Execution Intelligence** — product family / strategy.
-- **Work Execution Platform** — enterprise app.
+- **Maturion Execution Intelligence** — strategic product family.
+- **Maturion Work Execution Platform** — enterprise app / platform name.
 - **PIT** — legacy/internal module name for the project implementation edition.
-- **Domestic/Personal Edition** — future downscaled app.
+- **Domestic / Personal Edition** — future downscaled product line.
 
 ---
 
-## 7. Product Family Concept
+## 9. Product Family Concept
 
 The strategy may evolve into a product family rather than a single app.
 
@@ -245,11 +309,32 @@ This allows the first governed build to remain focused while preserving the broa
 
 ---
 
-## 8. Core Capability Pillars
+## 10. Market Category Map
+
+The product-family strategy overlaps several market categories. Future market research should not compare only against traditional project-management tools.
+
+| Market Category | Example Competitor Type | Why It Matters |
+|---|---|---|
+| Project management | Microsoft Project, Primavera, Smartsheet | Timeline, milestones, dependencies, resources, baseline planning |
+| Work management | Asana, Monday, ClickUp, Planner | Everyday tasking, routines, collaboration, dashboards |
+| Enterprise portfolio management | PPM / EPM tools | Portfolio roll-up, resource allocation, executive visibility |
+| GRC / risk management | Risk registers, control platforms, compliance tools | Risk/control linkage, assurance, compliance evidence |
+| Incident and corrective action management | Incident/NCR/CAPA systems | Incident-to-action and corrective-action workflows |
+| Audit management | Audit finding and evidence systems | Audit trails, closure proof, evidence packages |
+| HR / performance management | KPI and performance systems | KPI plans, personal work goals, evidence-backed performance |
+| Field service / maintenance management | CMMS / field operations tools | Maintenance plans, field evidence, recurring operational work |
+| Personal productivity | Todo/list/calendar tools | Personal routines, travel planning, domestic version potential |
+| Business intelligence / analytics | BI and operational dashboards | Situational awareness, predictive analytics, anomaly detection |
+
+The market comparison should test whether existing tools can match the combined capability set: project execution, general work management, risk/control linkage, evidence-backed closure, compliance readiness, AI assistance, automated analytics and real situational awareness.
+
+---
+
+## 11. Core Capability Pillars
 
 The full platform should eventually cover the following capability pillars.
 
-### 8.1 Project-management purist layer
+### 11.1 Project-management purist layer
 
 - projects;
 - programmes;
@@ -266,7 +351,7 @@ The full platform should eventually cover the following capability pillars.
 - baselines;
 - change control.
 
-### 8.2 General work-management layer
+### 11.2 General work-management layer
 
 - daily routines;
 - recurring duties;
@@ -279,7 +364,7 @@ The full platform should eventually cover the following capability pillars.
 - informal activity containers;
 - operational streams.
 
-### 8.3 Accountability and evidence layer
+### 11.3 Accountability and evidence layer
 
 - owner assignment;
 - responsibility acceptance;
@@ -291,7 +376,7 @@ The full platform should eventually cover the following capability pillars.
 - escalation;
 - accountability dashboards.
 
-### 8.4 Risk, control and resilience layer
+### 11.4 Risk, control and resilience layer
 
 - risk rating per activity;
 - control assignment;
@@ -304,7 +389,7 @@ The full platform should eventually cover the following capability pillars.
 - loss-prevention dashboards;
 - resilience maturity progression.
 
-### 8.5 Intelligence and automation layer
+### 11.5 Intelligence and automation layer
 
 - AI task generation;
 - AI decomposition;
@@ -316,7 +401,7 @@ The full platform should eventually cover the following capability pillars.
 - anomaly detection;
 - automated data analytics integration.
 
-### 8.6 Situational awareness layer
+### 11.6 Situational awareness layer
 
 - individual workload visibility;
 - team visibility;
@@ -329,7 +414,7 @@ The full platform should eventually cover the following capability pillars.
 - executive dashboards;
 - maturity and resilience dashboards.
 
-### 8.7 Continuous improvement layer
+### 11.7 Continuous improvement layer
 
 - in-app feedback;
 - workflow pain-point reporting;
@@ -343,7 +428,7 @@ The full platform should eventually cover the following capability pillars.
 
 ---
 
-## 9. Strategic Roadmap
+## 12. Strategic Roadmap
 
 ### Phase 0 — Strategy capture
 
@@ -462,13 +547,14 @@ Constraint:
 
 ---
 
-## 10. App Description Roadmap
+## 13. App Description Roadmap
 
 After this strategy is approved, the app descriptions should be created or amended in this order:
 
 1. **PIT v1 App Description amendment / confirmation**
    - Keep current PIT focused on project implementation and ISMS execution.
    - Add the Managed Work Container concept only where it does not destabilise the approved PIT build.
+   - Preserve current Stage 1–5 approvals unless a material amendment requires CS2 re-approval.
 
 2. **Work Execution Platform App Description**
    - Generalise from projects to managed work containers.
@@ -485,7 +571,7 @@ After this strategy is approved, the app descriptions should be created or amend
 
 ---
 
-## 11. Pre-Build Process Alignment
+## 14. Pre-Build Process Alignment
 
 The pre-build process should eventually be aligned so this product family can be developed without losing governance control.
 
@@ -503,9 +589,23 @@ Required alignment work:
 
 ---
 
-## 12. Future Feature Classification Model
+## 15. Required Feature Classification Artifact
 
-The 970-feature universe should be classified into:
+The 970-feature universe should be classified in a separate strategy artifact before any app description is materially expanded.
+
+Recommended path:
+
+```text
+Maturion/strategy/managed-work-execution-platform-feature-classification.md
+```
+
+The classification artifact should include:
+
+```text
+Feature ID | Feature / Capability | Capability Pillar | Classification | Current PIT Coverage | Target Edition | Notes
+```
+
+Classification values:
 
 | Classification | Meaning |
 |---|---|
@@ -516,11 +616,71 @@ The 970-feature universe should be classified into:
 | FUTURE_PERSONAL | Domestic/personal edition candidate |
 | OUT_OF_SCOPE | Not intended for this product family |
 
-This classification should be used before any app description is expanded.
+Rules:
+
+- Do not classify all 970 features as v1.
+- Do not overclaim market-comparison readiness.
+- Treat PIT v1 as the first proof point, not the whole product family.
+- Any feature classified as V1_CORE must be traceable into the PIT App Description, FRS, TRS, Architecture and future QA-to-Red path.
+- Any feature classified as V1_ARCHITECTURE_READY must have enough architecture/data flexibility not to block later implementation.
 
 ---
 
-## 13. Strategic Guardrails
+## 16. Market Validation Stage
+
+The strategy must be tested against market reality before the product family is finalised.
+
+Future market research should compare against:
+
+- traditional project management tools;
+- work management tools;
+- enterprise portfolio management tools;
+- GRC and risk management platforms;
+- incident, NCR and corrective-action systems;
+- audit and compliance systems;
+- HR and performance management systems;
+- field-service and maintenance systems;
+- personal productivity tools;
+- BI and operational analytics platforms.
+
+The purpose is not only to prove uniqueness. It is also to identify where existing tools already solve parts of the problem well, where integration may be better than replacement, and where Maturion Execution Intelligence should be sharply differentiated.
+
+The comparison matrix should show:
+
+```text
+Feature / Capability | Market Tool A | Market Tool B | Market Tool C | PIT v1 | Future Maturion Execution Intelligence | Notes
+```
+
+---
+
+## 17. Governance and Approval Path
+
+This strategy is a north-star product strategy. It is not by itself an app description, FRS, TRS, architecture gate, build authorisation or implementation plan.
+
+Governance path:
+
+1. Strategy capture and CS2 direction.
+2. Feature classification artifact.
+3. Market validation and competitor comparison.
+4. Name/product-family decision.
+5. App-description roadmap confirmation.
+6. PIT v1 amendment only if necessary and safe.
+7. New app descriptions for expanded editions.
+8. Full pre-build stage execution per app/edition.
+9. Live Functional Verification before product acceptance.
+10. Build Authorization only when governed stages and gates are satisfied.
+
+Hard boundaries:
+
+- this strategy does not clear Build Authorization;
+- this strategy does not approve changes to the active PIT v1 scope;
+- this strategy does not bypass CS2 approval;
+- this strategy does not authorise runtime app code, DB migrations, deployment configuration or builder appointment;
+- this strategy does not classify future capabilities as committed v1 features.
+
+---
+
+## 18. Strategic Guardrails
 
 1. Do not weaken the current PIT one-time-build process by overloading v1.
 2. Do not overclaim future capabilities in market comparisons.
@@ -530,26 +690,33 @@ This classification should be used before any app description is expanded.
 6. Preserve CS2 authority over material scope changes.
 7. Preserve Live Functional Verification before final product acceptance.
 8. Use user feedback and continuous improvement as both a governance loop and product feature.
+9. Preserve compliance and auditability as design properties, not afterthoughts.
+10. Allow future domestic/personal use, but do not let it dilute enterprise-grade accountability.
+11. Prefer clear classification over uncontrolled scope expansion.
+12. Use market research to sharpen the roadmap, not to chase every competitor feature blindly.
 
 ---
 
-## 14. Recommended Immediate Next Steps
+## 19. Recommended Immediate Next Steps
 
 1. Review and approve this strategy direction.
 2. Decide on the product family name / working name.
-3. Update Issue `maturion-isms#1650` or create a follow-up issue to classify the 970-feature universe using the classification model above.
-4. Decide whether current PIT v1 should receive a narrow Managed Work Container terminology amendment or whether that belongs to v2.
-5. Complete PIT Stage 5 and proceed to Stage 6 without destabilising the current build.
-6. Perform external market research against Microsoft Project, Planner, Jira, Asana, Monday, ClickUp, Smartsheet, Primavera and similar tools.
-7. Build a comparison matrix with:
+3. Create the feature-classification artifact at:
+   `Maturion/strategy/managed-work-execution-platform-feature-classification.md`.
+4. Update Issue `maturion-isms#1650` or create a follow-up issue to classify the 970-feature universe using the classification model above.
+5. Decide whether current PIT v1 should receive a narrow Managed Work Container terminology amendment or whether that belongs to v2.
+6. Complete PIT Stage 5 and proceed to Stage 6 without destabilising the current build.
+7. Perform external market research against project-management, work-management, GRC, incident, audit, HR/performance, maintenance and personal-productivity tools.
+8. Build a comparison matrix with:
    - feature/capability on one axis;
    - market tools on the other axis;
    - PIT current v1 / future product-family classification shown separately.
-8. Create the next-generation app descriptions after market comparison and feature classification.
+9. Create the next-generation app descriptions after market comparison and feature classification.
+10. Build the product-family roadmap only after the strategy, classification and market comparison are complete.
 
 ---
 
-## 15. Strategic Conclusion
+## 20. Strategic Conclusion
 
 The current PIT build should be understood as the first governed implementation of a much larger product idea.
 
@@ -557,7 +724,7 @@ The larger product is not merely project management.
 
 It is a management execution platform for organisations that need to know what work is happening, who owns it, what risk it affects, what controls apply, what evidence proves completion, where delay or wrongdoing can hide, and how the organisation continuously improves toward resilience.
 
-In this strategy, project management is the entry point. Organisational resilience is the destination.
+In this strategy, project management is the entry point. Managed work execution is the category. Organisational resilience is the destination.
 
 ---
 
