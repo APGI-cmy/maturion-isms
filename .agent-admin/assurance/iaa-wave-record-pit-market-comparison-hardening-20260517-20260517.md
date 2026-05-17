@@ -52,7 +52,7 @@ Anti-regression obligations: [NO — FUNCTIONAL-BEHAVIOUR-REGISTRY.md (NBR-001..
 
 Status: PENDING — to be populated only after Phase 2–4 full assurance.
 
-PHASE_B_BLOCKING_TOKEN: [pending-iaa-full-assurance]
+PHASE_B_BLOCKING_TOKEN: IAA-session-NNN-pit-market-comparison-hardening-20260517-PASS
 
 ---
 
