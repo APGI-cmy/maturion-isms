@@ -182,6 +182,46 @@ PHASE_B_BLOCKING_TOKEN: [PENDING — populated at final assurance]
 Token reference: IAA-session-NNN-isms-public-landing-harvest-20260514-PASS
 ```
 
+### Loading attestation
+- PRODUCT_BUILD_ASSURANCE_STANDARD.md loaded: yes
+- BUILD_DELIVERABLE overlay loaded: yes
+- GOVERNANCE_EVIDENCE overlay loaded: yes
+
+### Product-build gate evaluation
+- USER_JOURNEY_COMPLETE: yes — all 13 public marketing and landing pages delivered; Index.tsx has 7 module discovery cards; FreeAssessment.tsx has 5-domain form; Subscribe/SubscribeCheckout are public; all /marketing/* routes public
+- ALL_CTAS_FUNCTIONAL: yes — all module card clicks route to /marketing/<module>; Free Assessment CTA routes to /free-assessment; legacy routes redirect to canonical /marketing/* paths
+- ALL_BACKEND_TARGETS_DEPLOYED_OR_PROVEN: n/a — all harvested pages are public/static with no backend API calls; no Supabase calls in any page
+- ALL_SUPABASE_WRITES_SCHEMA_ALIGNED: n/a — no Supabase writes in harvested pages
+- ASYNC_JOBS_VISIBLE_AND_ACTIONABLE: n/a — no async jobs in public marketing pages
+- SUCCESS_FAILURE_STATES_VISIBLE: yes — all pages render visible content; no authentication required
+- DASHBOARD_OR_STATE_REFLECTION_PROVEN: n/a — public-only pages; no authenticated state
+
+### Split verdict
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY
+CURRENT_HEAD_SHA: CURRENT_HEAD
+
+### IAA scope of review
+- `apps/isms-portal/src/pages/Index.tsx`: Harvested from legacy; 7 canonical module cards with correct /marketing/* routes; hero section; Free Assessment CTA; no console.log; no useToast on load; no ProtectedRoute
+- `apps/isms-portal/src/pages/FreeAssessment.tsx`: Harvested from legacy; PUBLIC route (no ProtectedRoute); 5-domain form; MMM tie indicated ("Powered by Maturity Roadmap module")
+- `apps/isms-portal/src/pages/Subscribe.tsx`: Harvested from legacy; PUBLIC route; subscription tier cards and pricing
+- `apps/isms-portal/src/pages/SubscribeCheckout.tsx`: Harvested from legacy; PUBLIC route; checkout form structure
+- `apps/isms-portal/src/pages/Journey.tsx`: Harvested from legacy; NOW PUBLIC (was ProtectedRoute in legacy)
+- `apps/isms-portal/src/pages/ModulesOverview.tsx`: Harvested from legacy; PUBLIC route
+- `apps/isms-portal/src/pages/NotFound.tsx`: Harvested from legacy; 404 page
+- `apps/isms-portal/src/pages/RiskManagementInfo.tsx`: Harvested from legacy; PUBLIC at /marketing/risk-management; no ProtectedRoute
+- `apps/isms-portal/src/pages/PITInfo.tsx`: Harvested from legacy; PUBLIC at /marketing/project-implementation; no ProtectedRoute
+- `apps/isms-portal/src/pages/DataAnalyticsInfo.tsx`: Harvested from legacy; PUBLIC at /marketing/data-analytics-assurance; no ProtectedRoute
+- `apps/isms-portal/src/pages/DataExtractionInfo.tsx`: Harvested from legacy; PUBLIC at /marketing/systems-integration; no ProtectedRoute
+- `apps/isms-portal/src/pages/SkillsDevelopmentInfo.tsx`: Harvested from legacy; PUBLIC at /marketing/skills-development; no ProtectedRoute
+- `apps/isms-portal/src/pages/IncidentManagementInfo.tsx`: Harvested from legacy; PUBLIC at /marketing/incident-intelligence; no ProtectedRoute
+- `apps/isms-portal/src/pages/MaturityRoadmapInfo.tsx`: NEW stub page; PUBLIC at /marketing/maturity-roadmap; no ProtectedRoute
+- `apps/isms-portal/src/App.tsx`: All public marketing routes without ProtectedRoute; legacy redirects; only /dashboard uses ProtectedRoute
+- `apps/isms-portal/src/lib/routes.ts`: All ROUTES constants including /marketing/* canonical routes
+- Build: tsc + vite build PASS | Tests: 66/66 PASS | No ProtectedRoute in pages ✅ | No console.log ✅ | No Supabase ✅
+
 ---
 
 ## REJECTION_HISTORY
