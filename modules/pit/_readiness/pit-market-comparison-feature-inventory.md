@@ -83,7 +83,7 @@
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
 | QA-001 | QA-to-Red then Build-to-Green discipline | Maturion build philosophy and staged PIT readiness model | V1_CONFIRMED | Process requirement is explicit and active. |
-| QA-002 | Live validation / LFV completion claimability | LFV tracked separately; not yet canonised/layered into PIT stages as complete | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | LFV is in-flight separately and cannot be claimed complete until canonised/layered into PIT stage chain. |
+| QA-002 | Live validation / LFV completion claimability | LFV tracked separately; not yet canonized/layered into PIT stages as complete | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | LFV is in-flight separately and cannot be claimed complete until canonized/layered into PIT stage chain. |
 
 ## AI and automation
 
@@ -111,7 +111,7 @@
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
 | XMOD-001 | Integration touchpoints to MAT/PIT ecosystem modules | High-level integration architecture references | V1_DESIGN_HARDENING_REQUIRED | Integration concept is present; interface contracts need explicit hardening. |
-| XMOD-002 | Structured callback/event interoperability | Legacy integration export ideas, no complete PIT v1 callback contract | FUTURE_VERSION | Defer parity claim until canonical payload contracts are staged. |
+| XMOD-002 | Structured callback/event interoperability | Legacy export and integration references in `Maturion/PIT/Architecture/PIT_EXPORT_SPEC_v1.0.md`, no complete PIT v1 callback contract | FUTURE_VERSION | Defer parity claim until canonical payload contracts are staged. |
 
 ## compliance and end-result qualities
 
@@ -181,7 +181,7 @@
 
 ## traceability / hardening notes (explicit constraints)
 - This inventory remains conservative and does not promote legacy/reference-only artifacts (`Maturion/PIT/**`) to committed v1 scope.
-- LFV is in-flight separately and is not claimable as complete until canonised/layered into PIT stages.
+- LFV is in-flight separately and is not claimable as complete until canonized/layered into PIT stages.
 - Stage 6 remains blocked until Stage 5 gate-pass.
 - Build Authorization remains **NOT CLEARED**.
 - No runtime, DB, deployment, CI, or workflow changes are implied by this document update.

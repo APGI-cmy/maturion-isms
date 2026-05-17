@@ -65,4 +65,5 @@ architecture_gate_pass: NONE
 qa_to_red_gate_pass: NONE
 pbfag_pass: NONE
 deployment_authorisation: NONE
+requires_ecap: true
 ```
