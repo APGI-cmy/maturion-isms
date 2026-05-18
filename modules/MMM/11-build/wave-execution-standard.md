@@ -9,7 +9,7 @@
 - **Artifact Type**: Wave Execution Standard (Stage 12 governance requirement)
 - **Status**: ACTIVE — Applies to all MMM build waves from Phase 3 onwards
 - **Version**: 1.1.0
-- **Date**: 2026-05-07
+- **Date**: 2026-05-18
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
 - **Produced By**: mat-specialist (delegated by foreman-v2-agent; wave mmm-phase3-retrofit-20260507)
 - **Issue**: maturion-isms#1564 (Phase 3 retrofit)
@@ -139,7 +139,7 @@ COMPLETE.**
 ### 1.8 Compile Handoff Evidence Pack (Scope-Specific: `/assessment/framework`)
 
 For any implementation wave that addresses compile handoff to `/assessment/framework`
-(including APGI-cmy/maturion-isms#1667), the Functional Delivery Evidence Pack MUST include:
+(governing issue: maturion-isms#1669; including APGI-cmy/maturion-isms#1667), the Functional Delivery Evidence Pack MUST include:
 
 | Evidence Item | Required | Format |
 |---|---|---|

@@ -1410,6 +1410,9 @@
 
 ## Domain 13: Compile Handoff Transitional Bridge — `/assessment/framework`
 
+**Governing Issue**: maturion-isms#1669  
+**Frozen implementation dependency**: APGI-cmy/maturion-isms#1667 remains blocked until this alignment package is accepted.
+
 *Sources: Compile handoff alignment issue (this wave), Stage 2 compile handoff contract, Architecture §A3.3a*
 
 ### T-MMM-S6-177 — Compile Success Must Render Visible Framework Workspace Content

@@ -137,8 +137,8 @@ all ten Foreman Questions mandated by the Stage 7 wave authorization.
 
 | Check | Result | Evidence |
 |-------|--------|---------|
-| QA-to-Red catalog artifact exists at declared path | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` v0.1.0 |
-| 176 tests (T-MMM-S6-001 through T-MMM-S6-176) present | **PASS** | qa-to-red-catalog.md summary table — 176 tests across 11 domains |
+| QA-to-Red catalog artifact exists at declared path | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` v0.3.0 |
+| 188 tests (T-MMM-S6-001 through T-MMM-S6-182 + FD-001–006) present | **PASS** | qa-to-red-catalog.md summary table — 188 tests across 13 domains |
 | 100% FR coverage (80/80 FRs) | **PASS** | `requirement-traceability.md` §1 |
 | 100% TR coverage (66/66 TRs) | **PASS** | `requirement-traceability.md` §2 |
 | 100% journey coverage (17/17 journeys J-01–J-17) | **PASS** | `journey-coverage.md` |
@@ -222,7 +222,7 @@ all ten Foreman Questions mandated by the Stage 7 wave authorization.
 |----------------------|--------|-------|
 | All pre-build stage artifacts (Stages 1–6) committed to repository | **PASS** | All files present under `modules/MMM/00-*` through `modules/MMM/05-*` |
 | All prior IAA ASSURANCE-TOKENs recorded | **PASS** | Stage 6 IAA token: IAA-session-mmm-stage6-qa-to-red-20260415-PASS |
-| Complete test catalog (176 RED tests) available as implementation contract | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` |
+| Complete test catalog (188 RED tests) available as implementation contract | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` |
 | Runtime/Deployment Contract filed (D3) | **PASS** | `modules/MMM/06-pbfag/runtime-deployment-contract.md` (this wave) |
 | Golden Path Verification Pack filed (D4) | **PASS** | `modules/MMM/06-pbfag/golden-path-verification-pack.md` (this wave) |
 | External Dependency Confirmation filed (D5) | **PASS** | `modules/MMM/06-pbfag/external-dependency-confirmation.md` (this wave) |
@@ -251,7 +251,7 @@ an unresolved open question, or an ambiguity that would force downstream rework:
 - Stage 3 FRS: 80 requirements, 100% traceability both upstream and downstream
 - Stage 4 TRS: 66 requirements, all decisions explicit (OQ-001 resolved)
 - Stage 5 Architecture: 22 sections, all TRs addressed, legacy artifacts retired
-- Stage 6 QA-to-Red: 176 tests, 100% FR/TR/Journey coverage, zero TBDs
+- Stage 6 QA-to-Red: 188 tests (including Domain 13 compile-handoff bridge coverage), 100% FR/TR/Journey coverage, zero TBDs
 
 **Verdict: Chain stable. No predictable rework.**
 
@@ -384,7 +384,7 @@ The following conditions are all met:
 6. No upstream ambiguity remains that would force implementation rework.
 7. All open questions from the harvest map are resolved.
 8. All three external integration boundaries (AIMC, PIT, KUC) are frozen.
-9. The full QA-to-Red suite (176 tests) is the established implementation contract.
+9. The full QA-to-Red suite (188 tests) is the established implementation contract.
 10. BUILD_PROGRESS_TRACKER.md is updated (D7) reflecting Stage 7 COMPLETE.
 
 **The module is genuinely ready to proceed to Stage 8 (Implementation Plan).**
@@ -463,6 +463,7 @@ checklist begins in future waves after this initial pack.
 ## Stage 7 Change-Propagation Addendum — `/assessment/framework` Compile Handoff
 
 **Date**: 2026-05-18  
+**Governing Issue**: maturion-isms#1669  
 **Scope**: Post-compile handoff from MMM framework generation/review flow  
 **Related implementation issue**: APGI-cmy/maturion-isms#1667 (frozen until this alignment is complete)
 
@@ -474,6 +475,13 @@ Manual functional verification confirmed compile success can navigate to:
 
 but destination render is blank. This is a **functional-delivery / pre-build alignment
 failure**, not a minor runtime-only defect.
+
+### Scope Clarification
+
+The existing `PBFAG VERDICT: PASS` in this file remains the historical verdict for the
+original Stage 7 scope (wave `mmm-stage7-pbfag-20260415`). This addendum records a new,
+separate RED finding for the newly surfaced transitional compile handoff scope under
+governing issue #1669.
 
 ### Governance Classification
 

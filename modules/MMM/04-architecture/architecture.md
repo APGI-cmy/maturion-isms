@@ -17,7 +17,7 @@
 | Stage | Artifact | Version | Status | Reference |
 |-------|----------|---------|--------|-----------|
 | Stage 1 | `modules/MMM/00-app-description/MMM_app_description.md` | v0.5.0 | CS2-Approved | maturion-isms#1298 (2026-04-08) |
-| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.1.0 | CS2-Approved | maturion-isms#1352 (2026-04-14) |
+| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.3.0 | Alignment addendum applied for compile handoff (governing issue #1669; CS2 review pending) | maturion-isms#1669 (2026-05-18) |
 | Stage 3 | `modules/MMM/02-frs/functional-requirements.md` | v0.1.0 | CS2-Approved | maturion-isms#1366 (2026-04-14) |
 | Stage 4 | `modules/MMM/03-trs/technical-requirements-specification.md` | v0.1.0 | CS2-Approved (carried forward per maturion-isms#1378) | maturion-isms#1378 (2026-04-14) |
 | Harvest Map | `modules/MMM/harvest-map/harvest-map.md` | v0.3.0 | Active | — |
@@ -196,7 +196,7 @@ call without a matching row in this table is in violation of ARCH-LAW-001.
 - No direct Supabase calls in page or feature components; all data access via
   TanStack Query hooks that call Edge Function or PostgREST endpoints.
 
-### A3.3 — Page / Route Structure (17 UX Journeys)
+### A3.3 — Page / Route Structure (17 UX Journeys + Transitional Handoff Route)
 
 | Journey | Route Path | Primary Component | Auth Required |
 |---------|-----------|-------------------|---------------|
@@ -208,7 +208,7 @@ call without a matching row in this table is in violation of ARCH-LAW-001.
 | J-06 | `/frameworks/:id/upload` | `VerbatimUploadFlow` | Yes |
 | J-07 | `/frameworks/:id/generate` | `NewCriteriaCreationFlow` | Yes |
 | J-08 | `/frameworks/:id/review` | `FrameworkReviewFlow` | Yes |
-| J-08x (transitional bridge) | `/assessment/framework?framework_id=:id` | `AssessmentFrameworkBridgePage` (mount boundary for legacy workspace) | Yes |
+| J-06 + J-07 post-compile handoff (transitional bridge) | `/assessment/framework?framework_id=:id` | `AssessmentFrameworkBridgePage` (mount boundary for legacy workspace) | Yes |
 | J-09 | `/frameworks/:id/publish` | `PublicationFlow` | Yes (ADMIN) |
 | J-10 | `/frameworks/:id/criteria/:criterionId` | `CriterionDrillDown` | Yes |
 | J-11 | `/audit/:sessionId` | `AuditWorkbench` | Yes |
