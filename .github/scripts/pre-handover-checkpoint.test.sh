@@ -40,10 +40,19 @@ run_checkpoint_test() {
   COMMIT_STATUSES_JSON='[]'
   TEST_HEAD_SHA_OVERRIDE=""
   TEST_CHANGED_FILES_JSON=""
+  TEST_PR_UPDATED_AT=""
+  TEST_PR_COMMENTS_JSON='[]'
+  TEST_PR_COMMENTS_PATH=""
+  TEST_CHECKPOINT_TRIGGER="/prepare-handover"
+  TEST_CHECKPOINT_INTAKE_ONLY=""
+  TEST_MARK_CURRENT_RUN_AS_INTAKE=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
   TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER=""
+  TEST_CHECK_RUNS_PATH=""
+  TEST_COMMIT_STATUSES_PATH=""
+  TEST_CHANGED_FILES_PATH=""
 
   "$setup_fn"
 
@@ -54,14 +63,22 @@ run_checkpoint_test() {
     PR_NUMBER=9999 \
     ISSUE_NUMBER=1583 \
     PR_BODY="$TEST_PR_BODY" \
+    PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
     PR_TITLE="Checkpoint hardening" \
     PR_BRANCH="copilot/test-checkpoint" \
-    CHECKPOINT_TRIGGER="/prepare-handover" \
+    CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
+    CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+    CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE="$TEST_MARK_CURRENT_RUN_AS_INTAKE" \
     BASE_SHA="$base_sha" \
     HEAD_SHA="$head_sha" \
+    CHECKPOINT_CHECK_RUNS_PATH="$TEST_CHECK_RUNS_PATH" \
     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
+    CHECKPOINT_COMMIT_STATUSES_PATH="$TEST_COMMIT_STATUSES_PATH" \
     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
     CHECKPOINT_CHANGED_FILES_JSON="${TEST_CHANGED_FILES_JSON:-}" \
+    CHECKPOINT_CHANGED_FILES_PATH="$TEST_CHANGED_FILES_PATH" \
+    CHECKPOINT_PR_COMMENTS_PATH="$TEST_PR_COMMENTS_PATH" \
+    CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
     CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
@@ -112,10 +129,19 @@ run_checkpoint_field_test() {
   COMMIT_STATUSES_JSON='[]'
   TEST_HEAD_SHA_OVERRIDE=""
   TEST_CHANGED_FILES_JSON=""
+  TEST_PR_UPDATED_AT=""
+  TEST_PR_COMMENTS_JSON='[]'
+  TEST_PR_COMMENTS_PATH=""
+  TEST_CHECKPOINT_TRIGGER="/prepare-handover"
+  TEST_CHECKPOINT_INTAKE_ONLY=""
+  TEST_MARK_CURRENT_RUN_AS_INTAKE=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
   TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER=""
+  TEST_CHECK_RUNS_PATH=""
+  TEST_COMMIT_STATUSES_PATH=""
+  TEST_CHANGED_FILES_PATH=""
 
   "$setup_fn"
 
@@ -126,14 +152,22 @@ run_checkpoint_field_test() {
     PR_NUMBER=9999 \
     ISSUE_NUMBER=1583 \
     PR_BODY="$TEST_PR_BODY" \
+    PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
     PR_TITLE="Checkpoint hardening" \
     PR_BRANCH="copilot/test-checkpoint" \
-    CHECKPOINT_TRIGGER="/prepare-handover" \
+    CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
+    CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+    CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE="$TEST_MARK_CURRENT_RUN_AS_INTAKE" \
     BASE_SHA="$base_sha" \
     HEAD_SHA="$head_sha" \
+    CHECKPOINT_CHECK_RUNS_PATH="$TEST_CHECK_RUNS_PATH" \
     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
+    CHECKPOINT_COMMIT_STATUSES_PATH="$TEST_COMMIT_STATUSES_PATH" \
     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
     CHECKPOINT_CHANGED_FILES_JSON="${TEST_CHANGED_FILES_JSON:-}" \
+    CHECKPOINT_CHANGED_FILES_PATH="$TEST_CHANGED_FILES_PATH" \
+    CHECKPOINT_PR_COMMENTS_PATH="$TEST_PR_COMMENTS_PATH" \
+    CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
     CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
@@ -209,6 +243,28 @@ EOF
   fi
 }
 
+run_failed_gate_signal_test() {
+  local name="$1"
+  local body="$2"
+  local expected="$3"
+  local actual
+
+  actual="$(BODY="$body" node - "$CHECKPOINT_SCRIPT" <<'EOF'
+const checkpoint = require(process.argv[2]);
+const body = process.env.BODY || '';
+process.stdout.write(checkpoint.isFailedGateSignalComment(body) ? 'true' : 'false');
+EOF
+)"
+
+  if [[ "$actual" == "$expected" ]]; then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name (expected $expected got $actual)"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
 run_virtual_file_test() {
   local name="$1"
   local mode="$2"
@@ -232,10 +288,9 @@ if (process.env.MODE === 'safeRead') {
   value = checkpoint.safeRead(path.join(process.env.WORKSPACE, '.admin/pr.json'));
 } else if (process.env.MODE === 'readJson') {
   value = checkpoint.readJson(path.join(process.env.WORKSPACE, '.admin/pr.json'));
-} else {
-  throw new Error(`Unknown MODE: ${process.env.MODE}`);
-}
-
+  } else {
+    throw new Error(`Unknown MODE: ${process.env.MODE}`);
+  }
 process.stdout.write(typeof value === 'string' ? value : JSON.stringify(value));
 EOF
 )"
@@ -245,6 +300,32 @@ EOF
     PASS_COUNT=$((PASS_COUNT + 1))
   else
     echo "❌ $name (expected $expected got $actual)"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
+run_invalid_json_fallback_test() {
+  local name="$1"
+  local actual
+
+  actual="$(node - "$CHECKPOINT_SCRIPT" <<'EOF'
+const checkpoint = require(process.argv[2]);
+process.env.CHECKPOINT_PR_COMMENTS_PATH = '';
+process.env.CHECKPOINT_PR_COMMENTS_JSON = 'not-json';
+try {
+  checkpoint.parseJsonInput('CHECKPOINT_PR_COMMENTS_PATH', 'CHECKPOINT_PR_COMMENTS_JSON', []);
+  process.stdout.write('no-error');
+} catch (error) {
+  process.stdout.write(error.message);
+}
+EOF
+)"
+
+  if [[ "$actual" == *"CHECKPOINT_PR_COMMENTS_JSON is not valid JSON"* ]]; then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name (unexpected output: $actual)"
     FAIL_COUNT=$((FAIL_COUNT + 1))
   fi
 }
@@ -306,6 +387,26 @@ seed_green_checks() {
     {"name":"preflight/product-delivery-gates","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/gate-changing-pr-rule","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"}
   ]'
+}
+
+setup_file_backed_checkpoint_inputs() {
+  mkdir -p checkpoint-inputs
+  printf '%s\n' "$CHECK_RUNS_JSON" > checkpoint-inputs/check-runs.json
+  printf '%s\n' "$COMMIT_STATUSES_JSON" > checkpoint-inputs/commit-statuses.json
+  printf '%s\n' "$TEST_PR_COMMENTS_JSON" > checkpoint-inputs/pr-comments.json
+  git diff --name-only main...HEAD > checkpoint-inputs/changed-files.jsonl
+  node -e '
+    const fs = require("fs");
+    const lines = fs.readFileSync("checkpoint-inputs/changed-files.jsonl", "utf8")
+      .split(/\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    fs.writeFileSync("checkpoint-inputs/changed-files.json", JSON.stringify(lines));
+  '
+  TEST_CHECK_RUNS_PATH="$PWD/checkpoint-inputs/check-runs.json"
+  TEST_COMMIT_STATUSES_PATH="$PWD/checkpoint-inputs/commit-statuses.json"
+  TEST_PR_COMMENTS_PATH="$PWD/checkpoint-inputs/pr-comments.json"
+  TEST_CHANGED_FILES_PATH="$PWD/checkpoint-inputs/changed-files.json"
 }
 
 seed_checkpoint_artifacts() {
@@ -615,6 +716,142 @@ run_checkpoint_field_test \
     {"field":"REASON","contains":"missing file(s): .github/scripts/handover-claim-gate.test.sh"}
   ]'
 
+setup_early_injection_control_classification() {
+  seed_manifest_and_scope
+  seed_green_checks
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  TEST_MARK_CURRENT_RUN_AS_INTAKE="true"
+  mkdir -p governance/canon
+  cat > governance/canon/TEST_RULE.md <<'EOF'
+Early governance change requiring ceremony.
+EOF
+  git add governance/canon/TEST_RULE.md
+  git commit -q -m "governance change"
+  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+}
+run_checkpoint_field_test \
+  "10d. early injection intake classifies ECAP/IAA before manual prompting" \
+  setup_early_injection_control_classification \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"INJECTION_INTAKE_STATUS","equals":"CURRENT"},
+    {"field":"INJECTION_STATE","equals":"current"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"PRODUCER_SIDE_GATES_REQUIRED","contains":"preflight/ecap-admin-ceremony"},
+    {"field":"PRODUCER_SIDE_GATES_REQUIRED","contains":"preflight/iaa-final-assurance"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"ECAP_GATE_AND_ADMIN_REPORT"},
+    {"field":"HANDOVER_ALLOWED","equals":"no"}
+  ]'
+
+setup_stale_intake_after_cs2_comment() {
+  setup_green_checkpoint
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+  TEST_PR_COMMENTS_JSON="$(cat <<EOF
+[
+  {
+    "body": "<!-- pre-handover-checkpoint -->\n## PRE_HANDOVER_CHECKPOINT_RESULT\nCURRENT_HEAD_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_AT: 2026-05-18T09:00:00Z\nINJECTION_STATE: current\nNEXT_REQUIRED_CONTROL: none\nHANDOVER_ALLOWED: yes\nRESULT: HANDOVER_ALLOWED",
+    "created_at": "2026-05-18T09:00:00Z",
+    "updated_at": "2026-05-18T09:00:00Z",
+    "user": {"login": "github-actions[bot]"}
+  },
+  {
+    "body": "CS2: update the control mapping before review.",
+    "created_at": "2026-05-18T10:00:00Z",
+    "updated_at": "2026-05-18T10:00:00Z",
+    "user": {"login": "APGI-cmy"}
+  }
+]
+EOF
+)"
+}
+run_checkpoint_field_test \
+  "10e. stale intake after later CS2 comment -> dirty STOP_AND_FIX" \
+  setup_stale_intake_after_cs2_comment \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"CS2_COMMENTS_DETECTED","equals":"yes"},
+    {"field":"LATEST_INJECTION_INTAKE_AFTER_LAST_CS2_COMMENT","equals":"no"},
+    {"field":"INJECTION_STATE","equals":"dirty"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"}
+  ]'
+
+setup_review_ready_before_ecap_iaa() {
+  seed_manifest_and_scope
+  seed_green_checks
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+  TEST_PR_BODY=$'## Status\n- [x] Scope declared\n\nReady for review once ceremony clears.'
+  TEST_PR_COMMENTS_JSON="$(cat <<EOF
+[
+  {
+    "body": "<!-- pre-handover-checkpoint -->\n## PRE_HANDOVER_CHECKPOINT_RESULT\nCURRENT_HEAD_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_AT: 2026-05-18T10:00:00Z\nINJECTION_STATE: current\nNEXT_REQUIRED_CONTROL: none\nHANDOVER_ALLOWED: no\nRESULT: INJECTION_INTAKE_CURRENT",
+    "created_at": "2026-05-18T10:00:00Z",
+    "updated_at": "2026-05-18T10:00:00Z",
+    "user": {"login": "github-actions[bot]"}
+  }
+]
+EOF
+)"
+}
+run_checkpoint_field_test \
+  "10f. review-ready language before ECAP/IAA invocation stays blocked" \
+  setup_review_ready_before_ecap_iaa \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"INJECTION_STATE","equals":"current"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"ECAP_GATE_AND_ADMIN_REPORT"},
+    {"field":"HANDOVER_ALLOWED","equals":"no"}
+  ]'
+
+setup_unchecked_checklist_without_claim() {
+  setup_green_checkpoint
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  TEST_MARK_CURRENT_RUN_AS_INTAKE="true"
+  TEST_PR_BODY=$'## Status\n- [ ] Informational checklist item still open\n\nStill in progress.'
+}
+run_checkpoint_field_test \
+  "10fa. unchecked checklist items do not block in-progress intake refresh" \
+  setup_unchecked_checklist_without_claim \
+  "INJECTION_INTAKE_CURRENT" \
+  "no" \
+  '[
+    {"field":"INJECTION_STATE","equals":"current"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"none"},
+    {"field":"HANDOVER_ALLOWED","equals":"no"}
+  ]'
+
+setup_file_backed_inputs_preferred() {
+  setup_green_checkpoint
+  setup_file_backed_checkpoint_inputs
+  TEST_PR_COMMENTS_JSON='not-json'
+  CHECK_RUNS_JSON='not-json'
+  COMMIT_STATUSES_JSON='not-json'
+}
+run_checkpoint_field_test \
+  "10g. file-backed checkpoint inputs are preferred over env JSON" \
+  setup_file_backed_inputs_preferred \
+  "HANDOVER_ALLOWED" \
+  "yes" \
+  '[
+    {"field":"INJECTION_INTAKE_STATUS","equals":"CURRENT"},
+    {"field":"HANDOVER_ALLOWED","equals":"yes"}
+  ]'
+
 setup_merge_conflict_not_resolved() {
   setup_green_checkpoint
   TEST_MERGE_CONFLICT_CHECKED="yes"
@@ -655,14 +892,17 @@ run_checkpoint_test "12b. base behind current main -> STOP_AND_FIX when sync che
 run_virtual_file_test "13. virtual mode safeRead does not fall back to disk" safeRead '{}' ""
 run_virtual_file_test "14. virtual mode readJson does not fall back to disk" readJson '{}' "null"
 run_virtual_file_test "15. virtual file path provides readJson content" readJson '{".admin/pr.json":"{\"virtual\":\"present\"}"}' '{"virtual":"present"}'
+run_invalid_json_fallback_test "15b. invalid env JSON without file path still fails explicitly"
 
-run_claim_test "16. handover language without checkpoint remains claim" claim "handover complete" true
+run_claim_test "16. handover-ready language without checkpoint remains claim" claim "handover-ready" true
 run_claim_test "17. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
 run_claim_test "17b. CS2_INTERVENTION_REQUIRED summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: CS2_INTERVENTION_REQUIRED\nOUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: missing required secret\nHANDOVER_ALLOWED: no' false
 run_claim_test "17c. REJECTION_NOTICE summary is not a handover claim" claim $'FOREMAN_REJECTION_NOTICE\nRESULT: REJECTED_BACK_TO_PRODUCER\nHANDOVER_ALLOWED: no' false
 run_claim_test "18. draft/status comment without handover language stays false" claim "status update only" false
+run_claim_test "18a. narrative handover topic without ready/claim posture stays false" claim "This PR updates handover gating behavior." false
 run_claim_test "18b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
 run_claim_test "18c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
+run_failed_gate_signal_test "18d. handover checkpoint-required advisory is not a failed-gate signal" $'<!-- handover-checkpoint-required -->\nRESULT: CHECKPOINT_REQUIRED\nHANDOVER_ALLOWED: no' false
 
 # ── Corrective producer comment predicate (operator-precedence regression) ──
 # Mirrors the fixed logic in handover-claim-gate.yml:

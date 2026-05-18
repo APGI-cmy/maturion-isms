@@ -19,6 +19,15 @@ const REQUIRED_CHECKS = [
 ];
 
 const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
+const HANDOVER_CHECKPOINT_REQUIRED_MARKER = '<!-- handover-checkpoint-required -->';
+const HANDOVER_GATE_BLOCKED_MARKER = '<!-- handover-claim-gate-blocked -->';
+const HANDOVER_GATE_OK_MARKER = '<!-- handover-claim-gate-ok -->';
+const AUTHORITATIVE_GATE_MARKERS = [
+  CHECKPOINT_MARKER,
+  HANDOVER_CHECKPOINT_REQUIRED_MARKER,
+  HANDOVER_GATE_BLOCKED_MARKER,
+  HANDOVER_GATE_OK_MARKER,
+];
 const VIRTUAL_FILES = (() => {
   const filePath = process.env.CHECKPOINT_REPO_FILES_PATH;
   if (filePath) {
@@ -78,13 +87,21 @@ function readJson(filePath) {
   }
 }
 
-function parseJsonEnv(name, fallback) {
-  const raw = process.env[name];
+function parseJsonInput(pathName, jsonName, fallback) {
+  const filePath = process.env[pathName];
+  if (filePath) {
+    try {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch (error) {
+      throw new Error(`${pathName} could not be read as JSON: ${error.message}`);
+    }
+  }
+  const raw = process.env[jsonName];
   if (!raw) return fallback;
   try {
     return JSON.parse(raw);
   } catch (error) {
-    throw new Error(`${name} is not valid JSON: ${error.message}`);
+    throw new Error(`${jsonName} is not valid JSON: ${error.message}`);
   }
 }
 
@@ -163,6 +180,28 @@ function commentBodyValue(value) {
   return String(value);
 }
 
+function parseIsoDate(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function latestIso(values) {
+  const latest = values
+    .map((value) => parseIsoDate(value))
+    .filter(Boolean)
+    .sort((left, right) => right.getTime() - left.getTime())[0];
+  return latest ? latest.toISOString() : '';
+}
+
+function isAfterOrSame(leftValue, rightValue) {
+  const left = parseIsoDate(leftValue);
+  const right = parseIsoDate(rightValue);
+  if (!right) return true;
+  if (!left) return false;
+  return left.getTime() >= right.getTime();
+}
+
 function isCheckpointTriggerComment(body) {
   const text = String(body || '').trim();
   return /^(?:ECAP_)?PRE_HANDOVER_CHECKPOINT(?:\b.*)?$/i.test(text) ||
@@ -186,17 +225,17 @@ function isHandoverClaimComment(body) {
     rejectionNoticePattern.test(text)
   ) return false;
   const claimPatterns = [
-    /\bhandover\b/i,
     /\bmerge-ready\b/i,
     /\bmerge ready\b/i,
     /\bready to merge\b/i,
     /\bready for review\b/i,
     /\bready-for-review\b/i,
+    /\bhandover-ready\b/i,
+    /\bhandover ready\b/i,
+    /\bhandover claim\b/i,
     /\bready for cs2\b/i,
     /\bwork complete\b/i,
     /\bimplementation complete\b/i,
-    /\bcomplete\b/i,
-    /\bcompletion\b/i,
     /\bfinal summary\b/i,
     /\bwave closure\b/i,
     /\ball checks pass\b/i,
@@ -205,6 +244,52 @@ function isHandoverClaimComment(body) {
     /\bcs2 approval\b/i,
   ];
   return claimPatterns.some((pattern) => pattern.test(text));
+}
+
+function hasExplicitReviewOrHandoverSignal(text) {
+  return [
+    /\bready[ -]?for[ -]?review\b/i,
+    /\breview-ready\b/i,
+    /\bmerge[ -]?ready\b/i,
+    /\bready to merge\b/i,
+    /\bhandover[ -]?ready\b/i,
+    /\bhandover claim\b/i,
+    /\bwork complete\b/i,
+    /\bimplementation complete\b/i,
+    /\ball checks pass\b/i,
+    /\ball gates pass\b/i,
+    /\bmerge gate released\b/i,
+    /HANDOVER_ALLOWED\s*:\s*yes/i,
+  ].some((pattern) => pattern.test(String(text || '')));
+}
+
+function isCs2Comment(comment) {
+  const login = normalizeValue(comment?.user?.login);
+  return login === 'apgi-cmy';
+}
+
+function isFailedGateSignalComment(body) {
+  const text = String(body || '');
+  if (!text.trim()) return false;
+  if (AUTHORITATIVE_GATE_MARKERS.some((marker) => text.includes(marker))) return false;
+  return /HANDOVER BLOCKED|HANDOVER_BLOCKED|CHECKPOINT REQUIRED|CHECKPOINT_REQUIRED|RESULT:\s*STOP_AND_FIX|RESULT:\s*CS2_INTERVENTION_REQUIRED|RESULT:\s*REJECTED_BACK_TO_PRODUCER|REJECTION_NOTICE|HANDOVER_ALLOWED:\s*no/i.test(text);
+}
+
+function parseChecklistItems(body) {
+  const items = [];
+  const regex = /^[ \t>*-]*-\s*\[([ xX])\]\s+(.+)$/gm;
+  let match;
+  while ((match = regex.exec(String(body || ''))) !== null) {
+    items.push({
+      checked: String(match[1] || '').toLowerCase() === 'x',
+      text: String(match[2] || '').trim(),
+    });
+  }
+  return {
+    all: items,
+    checked: items.filter((item) => item.checked),
+    unchecked: items.filter((item) => !item.checked),
+  };
 }
 
 function readSimpleField(text, label) {
@@ -261,6 +346,28 @@ function artifactCurrentness(text, headSha) {
     current: rawMatch,
     stale: !rawMatch,
   };
+}
+
+function readCommentTimestamp(comment) {
+  return latestIso([comment?.updated_at, comment?.created_at]);
+}
+
+function latestInjectionIntake(prComments) {
+  return (prComments || [])
+    .filter((comment) => comment?.body && comment.body.includes(CHECKPOINT_MARKER) && /PRE_HANDOVER_CHECKPOINT_RESULT/i.test(comment.body))
+    .map((comment) => ({
+      comment,
+      intakeAt: readCommentTimestamp(comment),
+      intakeSha: readSimpleField(comment.body, 'LATEST_INJECTION_INTAKE_SHA') ||
+        readSimpleField(comment.body, 'CURRENT_HEAD_SHA'),
+      injectionState: readSimpleField(comment.body, 'INJECTION_STATE'),
+      nextRequiredControl: readSimpleField(comment.body, 'NEXT_REQUIRED_CONTROL'),
+    }))
+    .sort((left, right) => {
+      const rightDate = parseIsoDate(right.intakeAt);
+      const leftDate = parseIsoDate(left.intakeAt);
+      return (rightDate?.getTime() || 0) - (leftDate?.getTime() || 0);
+    })[0] || null;
 }
 
 function resolveManifest(prNumber) {
@@ -548,11 +655,15 @@ function evaluateCheckpoint(input = {}) {
     ?? process.env.CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER
     ?? ''
   ).trim();
-  const checkRuns = input.checkRuns || parseJsonEnv('CHECKPOINT_CHECK_RUNS_JSON', []);
-  const commitStatuses = input.commitStatuses || parseJsonEnv('CHECKPOINT_COMMIT_STATUSES_JSON', []);
+  const prUpdatedAt = String(input.prUpdatedAt ?? process.env.PR_UPDATED_AT ?? '').trim();
+  const prComments = input.prComments || parseJsonInput('CHECKPOINT_PR_COMMENTS_PATH', 'CHECKPOINT_PR_COMMENTS_JSON', []);
+  const explicitMarkCurrentRunAsIntake = asBoolOrNull(input.markCurrentRunAsIntake ?? process.env.CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE) === true;
+  const intakeOnly = asBoolOrNull(input.intakeOnly ?? process.env.CHECKPOINT_INTAKE_ONLY) === true;
+  const checkRuns = input.checkRuns || parseJsonInput('CHECKPOINT_CHECK_RUNS_PATH', 'CHECKPOINT_CHECK_RUNS_JSON', []);
+  const commitStatuses = input.commitStatuses || parseJsonInput('CHECKPOINT_COMMIT_STATUSES_PATH', 'CHECKPOINT_COMMIT_STATUSES_JSON', []);
 
   const { path: manifestPath, manifest } = resolveManifest(prNumber);
-  const changedFiles = input.changedFiles || parseJsonEnv('CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
+  const changedFiles = input.changedFiles || parseJsonInput('CHECKPOINT_CHANGED_FILES_PATH', 'CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
   const protectedPathsTouched = changedFiles.some(isProtectedPath);
   const requiresIaa = manifest?.requires_iaa !== false;
   const requiresEcap = manifest?.requires_ecap !== false;
@@ -573,6 +684,39 @@ function evaluateCheckpoint(input = {}) {
     : [];
 
   const checkpointTime = input.checkpointTime || process.env.CHECKPOINT_TIME || new Date().toISOString();
+  const markCurrentRunAsIntake = explicitMarkCurrentRunAsIntake || isCheckpointTriggerComment(trigger);
+  const checklistItems = parseChecklistItems(prBody);
+  const reviewOrHandoverClaimed = hasExplicitReviewOrHandoverSignal(`${trigger}\n${prBody}`) || isHandoverClaimComment(trigger);
+  const cs2CommentTimes = prComments.filter(isCs2Comment).map(readCommentTimestamp);
+  const failedGateSignalTimes = prComments.filter((comment) => isFailedGateSignalComment(comment?.body)).map(readCommentTimestamp);
+  const priorIntake = latestInjectionIntake(prComments);
+  const latestCs2CommentAt = latestIso(cs2CommentTimes);
+  const latestFailedGateSignalAt = latestIso(failedGateSignalTimes);
+  const latestRelevantInstructionAt = latestIso([latestCs2CommentAt, prUpdatedAt, latestFailedGateSignalAt]);
+  const latestInjectionIntakeSha = markCurrentRunAsIntake
+    ? headSha
+    : String(priorIntake?.intakeSha || '').trim();
+  const latestInjectionIntakeAt = markCurrentRunAsIntake
+    ? checkpointTime
+    : String(priorIntake?.intakeAt || '').trim();
+  const latestInjectionIntakeAfterLastCs2Comment = isAfterOrSame(latestInjectionIntakeAt, latestCs2CommentAt);
+  const latestInjectionIntakeAfterLastPrBodyEdit = isAfterOrSame(latestInjectionIntakeAt, prUpdatedAt);
+  const latestInjectionIntakeAfterLastFailedGateSignal = isAfterOrSame(latestInjectionIntakeAt, latestFailedGateSignalAt);
+  const intakeHeadCurrent = headMatches(latestInjectionIntakeSha, headSha);
+  const injectionState = !latestInjectionIntakeAt
+    ? 'missing'
+    : (!intakeHeadCurrent
+      ? 'stale'
+      : (
+        latestInjectionIntakeAfterLastCs2Comment &&
+        latestInjectionIntakeAfterLastPrBodyEdit &&
+        latestInjectionIntakeAfterLastFailedGateSignal
+          ? 'current'
+          : 'dirty'
+      ));
+  const injectionIntakeStatus = injectionState === 'current'
+    ? 'CURRENT'
+    : (injectionState === 'missing' ? 'MISSING' : 'STALE');
   const checks = collectCheckState(checkRuns, commitStatuses);
   const affectedProductGatesRequired = computeAffectedProductGates({ journey, productDeliveryRequired, requiresIaa });
   const observedChecks = new Set(checks.observed || []);
@@ -657,6 +801,11 @@ function evaluateCheckpoint(input = {}) {
 
   const staleShaFound = adminStale || iaaArtifactStale || (functionalEvidencePresent && !functionalEvidenceCurrent) || (scopePresent && !scopeCountMatches);
   const reasons = [];
+  const producerSideGatesRequired = Array.from(new Set([
+    adminCeremonyRequired ? 'preflight/ecap-admin-ceremony' : '',
+    requiresIaa ? 'preflight/iaa-final-assurance' : '',
+    ...affectedProductGatesRequired,
+  ].filter(Boolean))).sort();
 
   const unresolvedGateRecords = [
     ...(checks.failingDetails || []),
@@ -819,6 +968,16 @@ function evaluateCheckpoint(input = {}) {
   if (sourceStringOnlyEvidence) {
     reasons.push('Route/handoff/compile/publish/upload/generate/context-handoff changes require behavioral gate/evidence signal. Source-string-only evidence is insufficient.');
   }
+  if (reviewOrHandoverClaimed && checklistItems.unchecked.length > 0) {
+    reasons.push(`Unchecked PR checklist items remain: ${checklistItems.unchecked.map((item) => item.text).join(', ')}`);
+  }
+  if (injectionState === 'missing') {
+    reasons.push('Injection intake missing for current PR state.');
+  } else if (injectionState === 'stale') {
+    reasons.push('Injection intake is stale for current HEAD.');
+  } else if (injectionState === 'dirty') {
+    reasons.push('Injection intake is dirty because newer relevant PR instructions/signals exist.');
+  }
 
   if (activeArtifactsReportFailOrNo) reasons.push('An active artifact still reports FAIL or *_PASS/HANDOVER_ALLOWED: no.');
   if (hasOutOfSandboxOrGovernanceBlocker) {
@@ -828,15 +987,36 @@ function evaluateCheckpoint(input = {}) {
     reasons.push('One or more active artifacts are stale against current HEAD.');
   }
 
-  const handoverAllowed = reasons.length === 0;
-  const result = handoverAllowed
+  let nextRequiredControl = 'none';
+  if (injectionState !== 'current') {
+    nextRequiredControl = 'REFRESH_INJECTION_INTAKE';
+  } else if (reviewOrHandoverClaimed && checklistItems.unchecked.length > 0) {
+    nextRequiredControl = 'RESOLVE_PR_CHECKLIST_ITEMS';
+  } else if (requiresEcap && !ecapSatisfiedOrValidlyWaived) {
+    nextRequiredControl = 'ECAP_GATE_AND_ADMIN_REPORT';
+  } else if (requiresIaa && !iaaSatisfiedOrValidlyWaived) {
+    nextRequiredControl = 'IAA_FINAL_ASSURANCE';
+  } else if (builderQaRequired && !builderQaInvoked) {
+    nextRequiredControl = 'BUILDER_QA_FUNCTIONAL_EVIDENCE';
+  } else if (!localGatesPassing) {
+    nextRequiredControl = 'CURRENT_HEAD_GATES_GREEN';
+  }
+
+  let handoverAllowed = reasons.length === 0;
+  let result = handoverAllowed
     ? 'HANDOVER_ALLOWED'
     : (hasOutOfSandboxOrGovernanceBlocker ? 'CS2_INTERVENTION_REQUIRED' : 'STOP_AND_FIX');
-  const reason = handoverAllowed ? 'All current-head checkpoint requirements satisfied.' : reasons.join(' ');
+  let reason = handoverAllowed ? 'All current-head checkpoint requirements satisfied.' : reasons.join(' ');
+  if (intakeOnly && handoverAllowed) {
+    handoverAllowed = false;
+    result = 'INJECTION_INTAKE_CURRENT';
+    reason = 'Injection intake refreshed for current PR state. Formal review/handover claim still required.';
+  }
 
   const fields = {
     PR: prNumber ? `#${prNumber}` : 'unknown',
     ISSUE: issueNumber ? `#${issueNumber}` : 'unknown',
+    GOVERNING_ISSUE: issueNumber ? `#${issueNumber}` : 'unknown',
     CURRENT_HEAD_SHA: headSha,
     BASE_BRANCH: baseBranch || 'unknown',
     BASE_SHA: baseSha || 'unknown',
@@ -848,6 +1028,10 @@ function evaluateCheckpoint(input = {}) {
     LOCAL_GATES_RUN: localGatesRun ? 'yes' : 'no',
     LOCAL_GATES_PASSING: localGatesPassing ? 'yes' : 'no',
     CURRENT_HEAD_CI_CHECKED: currentHeadCiChecked ? 'yes' : 'no',
+    INJECTION_INTAKE_STATUS: injectionIntakeStatus,
+    CS2_COMMENTS_DETECTED: cs2CommentTimes.length > 0 ? 'yes' : 'no',
+    PR_CHECKLIST_ITEMS_DETECTED: checklistItems.all.length > 0 ? 'yes' : 'no',
+    FAILED_GATE_COMMENTS_DETECTED: failedGateSignalTimes.length > 0 ? 'yes' : 'no',
     ADMIN_CEREMONY_REQUIRED: adminCeremonyRequired ? 'yes' : 'no',
     ADMIN_CEREMONY_INVOKED: yesNoNotRequired(adminInvoked, adminCeremonyRequired),
     ADMIN_CEREMONY_ARTIFACT_PRESENT: yesNoNotRequired(adminPresent, adminCeremonyRequired),
@@ -870,6 +1054,8 @@ function evaluateCheckpoint(input = {}) {
     BUILDER_QA_EVIDENCE_PRESENT: yesNoNotRequired(functionalEvidencePresent, builderQaRequired),
     PRODUCT_DELIVERY_REQUIRED: productDeliveryRequired ? 'yes' : 'no',
     PRODUCT_JOURNEY_CLASSIFICATION: journey.labels.length ? journey.labels.join(', ') : 'none',
+    PRODUCER_SIDE_GATES_REQUIRED: producerSideGatesRequired.length ? producerSideGatesRequired.join(', ') : 'none',
+    NEXT_REQUIRED_CONTROL: nextRequiredControl,
     AFFECTED_PRODUCT_GATES_REQUIRED: affectedProductGatesRequired.length ? affectedProductGatesRequired.join(', ') : 'none',
     FAILED_AFFECTED_GATES: failedAffectedGates.length ? failedAffectedGates.join(', ') : 'none',
     FUNCTIONAL_DELIVERY_EVIDENCE_PRESENT: yesNoNotRequired(functionalEvidencePresent, productDeliveryRequired),
@@ -885,6 +1071,13 @@ function evaluateCheckpoint(input = {}) {
     STALE_EVIDENCE_FOUND: staleShaFound ? 'yes' : 'no',
     ACTIVE_ARTIFACTS_REPORT_FAIL_OR_NO: activeArtifactsReportFailOrNo ? 'yes' : 'no',
     STALE_SHA_FOUND: staleShaFound ? 'yes' : 'no',
+    LATEST_INJECTION_INTAKE_SHA: latestInjectionIntakeSha || 'none',
+    LATEST_INJECTION_INTAKE_AT: latestInjectionIntakeAt || 'none',
+    LATEST_RELEVANT_INSTRUCTION_AT: latestRelevantInstructionAt || 'none',
+    LATEST_INJECTION_INTAKE_AFTER_LAST_CS2_COMMENT: latestInjectionIntakeAfterLastCs2Comment ? 'yes' : 'no',
+    LATEST_INJECTION_INTAKE_AFTER_LAST_PR_BODY_EDIT: latestInjectionIntakeAfterLastPrBodyEdit ? 'yes' : 'no',
+    LATEST_INJECTION_INTAKE_AFTER_LAST_FAILED_GATE_SIGNAL: latestInjectionIntakeAfterLastFailedGateSignal ? 'yes' : 'no',
+    INJECTION_STATE: injectionState,
     OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
     FAILED_GATE_LOG_CONSUMPTION: failedGateLogConsumption,
     QA_REJECTION_PACKAGE_REQUIRED: failedGateLogConsumptionRequired ? 'yes' : 'no',
@@ -988,6 +1181,9 @@ module.exports = {
   isCheckpointTriggerComment,
   isCheckpointResultComment,
   isHandoverClaimComment,
+  isFailedGateSignalComment,
+  hasExplicitReviewOrHandoverSignal,
+  parseJsonInput,
   readJson,
   safeRead,
 };

@@ -1,0 +1,25 @@
+{
+  "pr": 1666,
+  "issue": 1665,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1666.json",
+    ".agent-admin/scope-declarations/pr-1666.md",
+    ".agent-admin/assurance/iaa-wave-record-pr1666-qa-rejection-package-20260518.md",
+    ".agent-admin/prehandover/proof-pr-1666-qa-rejection-package-20260518.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1666-qa-rejection-package-20260518.md",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/workflows/handover-claim-gate.yml"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh",
+    "local command output: bash .github/scripts/handover-claim-gate.test.sh",
+    "actions/runs/current-head preflight evidence gate"
+  ],
+  "merge_authority": "CS2"
+}

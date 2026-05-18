@@ -6,7 +6,7 @@ name: Pre-Handover Checkpoint
 
 on:
   issue_comment:
-    types: [created]
+    types: [created, edited]
 
 permissions:
   contents: read
@@ -28,11 +28,26 @@ jobs:
           script: |
             const rawBody = context.payload.comment.body || '';
             const normalizedBody = rawBody.trim();
-            const matched =
+            const author = String(context.payload.comment.user?.login || '').toLowerCase();
+            const authorType = String(context.payload.comment.user?.type || '').toLowerCase();
+            const isEditedBotComment = context.payload.action === 'edited' && authorType === 'bot';
+            const authoritativeGateMarkers = [
+              '<!-- handover-checkpoint-required -->',
+              '<!-- handover-claim-gate-blocked -->',
+              '<!-- handover-claim-gate-ok -->',
+            ];
+            const hasAuthoritativeGateMarker = authoritativeGateMarkers.some((marker) => rawBody.includes(marker));
+            const isDeliberate =
               /^(?:ECAP_)?PRE_HANDOVER_CHECKPOINT(?:\b.*)?$/i.test(normalizedBody) ||
               /^\/prepare-handover(?:\b.*)?$/i.test(normalizedBody);
+            const isCheckpointResult = /<!-- pre-handover-checkpoint -->|PRE_HANDOVER_CHECKPOINT_RESULT/i.test(rawBody);
+            const isFailedGateSignal = !hasAuthoritativeGateMarker && /HANDOVER BLOCKED|HANDOVER_BLOCKED|CHECKPOINT REQUIRED|CHECKPOINT_REQUIRED|RESULT:\s*STOP_AND_FIX|RESULT:\s*CS2_INTERVENTION_REQUIRED|RESULT:\s*REJECTED_BACK_TO_PRODUCER|REJECTION_NOTICE|HANDOVER_ALLOWED:\s*no/i.test(rawBody);
+            const isReviewOrHandoverSignal = !hasAuthoritativeGateMarker && /\bmerge[ -]?ready\b|\bready to merge\b|\bready[ -]?for[ -]?review\b|\bhandover[ -]?ready\b|\bhandover claim\b|\bwork complete\b|\bimplementation complete\b|\bmerge gate released\b|HANDOVER_ALLOWED\s*:\s*yes/i.test(rawBody);
+            const isCs2Comment = author === 'apgi-cmy';
+            const matched = !isCheckpointResult && !isEditedBotComment && (isDeliberate || isCs2Comment || isFailedGateSignal || isReviewOrHandoverSignal);
             core.setOutput('matched', matched ? 'true' : 'false');
             core.setOutput('normalized_body', normalizedBody);
+            core.setOutput('intake_only', matched && !isDeliberate ? 'true' : 'false');
 
       - name: Resolve PR context
         id: pr
@@ -56,6 +71,7 @@ jobs:
             core.setOutput('head_ref', pr.head.ref);
             core.setOutput('title', pr.title || '');
             core.setOutput('body', pr.body || '');
+            core.setOutput('updated_at', pr.updated_at || '');
             core.setOutput('trigger', process.env.TRIGGER_BODY || '');
             const mergeableState = String(pr.mergeable_state || '').toLowerCase();
             let mergeConflictChecked = 'no';
@@ -129,6 +145,7 @@ jobs:
             const issueMatch = (context.payload.comment.body || '').match(/#(\d+)/);
             let issueNumber = issueMatch ? issueMatch[1] : '';
             const repoFiles = {};
+            const comments = [];
 
             const fetchFile = async (targetPath) => {
               try {
@@ -176,6 +193,20 @@ jobs:
               page += 1;
             }
 
+            page = 1;
+            while (true) {
+              const { data: pageComments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 100,
+                page,
+              });
+              comments.push(...pageComments);
+              if (pageComments.length < 100) break;
+              page += 1;
+            }
+
             if (!issueNumber) {
               const scopePath = `.agent-admin/scope-declarations/pr-${prNumber}.md`;
               await fetchFile(scopePath);
@@ -200,13 +231,23 @@ jobs:
             await fetchDirectory('.agent-workspace/foreman-v2/memory', /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.+\.md$/);
 
             fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
+            const writeJson = (name, value) => {
+              const targetPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-${name}.json`);
+              try {
+                fs.writeFileSync(targetPath, JSON.stringify(value));
+              } catch (error) {
+                throw new Error(`Failed to write ${name} checkpoint input to ${targetPath}: ${error.message}`);
+              }
+              return targetPath;
+            };
             const repoFilesPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-repo-files.json`);
             fs.writeFileSync(repoFilesPath, JSON.stringify(repoFiles));
 
-            core.setOutput('check_runs_json', JSON.stringify(checkRunsData.check_runs || []));
-            core.setOutput('commit_statuses_json', JSON.stringify(statusData.statuses || []));
+            core.setOutput('check_runs_path', writeJson('check-runs', checkRunsData.check_runs || []));
+            core.setOutput('commit_statuses_path', writeJson('commit-statuses', statusData.statuses || []));
+            core.setOutput('pr_comments_path', writeJson('comments', comments));
             core.setOutput('issue_number', issueNumber);
-            core.setOutput('changed_files_json', JSON.stringify(changedFiles));
+            core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
             core.setOutput('repo_files_path', repoFilesPath);
 
       - name: Evaluate pre-handover checkpoint
@@ -226,10 +267,13 @@ jobs:
           CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED: ${{ steps.pr.outputs.base_synced_or_conflicts_resolved }}
           CHECKPOINT_TRIGGER: ${{ steps.pr.outputs.trigger }}
           CHECKPOINT_TIME: ${{ github.event.comment.created_at }}
-          CHECKPOINT_CHECK_RUNS_JSON: ${{ steps.inputs.outputs.check_runs_json }}
-          CHECKPOINT_COMMIT_STATUSES_JSON: ${{ steps.inputs.outputs.commit_statuses_json }}
-          CHECKPOINT_CHANGED_FILES_JSON: ${{ steps.inputs.outputs.changed_files_json }}
+          CHECKPOINT_CHECK_RUNS_PATH: ${{ steps.inputs.outputs.check_runs_path }}
+          CHECKPOINT_COMMIT_STATUSES_PATH: ${{ steps.inputs.outputs.commit_statuses_path }}
+          CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
+          CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
+          CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE: "true"
+          CHECKPOINT_INTAKE_ONLY: ${{ steps.trigger.outputs.intake_only }}
         run: |
           RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
           echo "result_json<<EOF" >> "$GITHUB_OUTPUT"
