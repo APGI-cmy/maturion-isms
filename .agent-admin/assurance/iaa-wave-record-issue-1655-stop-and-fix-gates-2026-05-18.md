@@ -55,4 +55,4 @@ Anti-regression obligations: [YES — FUNCTIONAL-BEHAVIOUR-REGISTRY.md is in sco
 
 ## TOKEN
 
-Pending Phase 2–4 full assurance invocation.
+PHASE_B_BLOCKING_TOKEN: [pending-full-assurance-invocation]
