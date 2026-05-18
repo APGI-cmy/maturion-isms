@@ -32,7 +32,7 @@
 
 **FR Coverage**: 80/80 (100%)
 **TR Coverage**: 66/66 (all security/integration/quality TRs fully covered; all others by domain)
-**Journey Coverage**: 17/17 (J-01 through J-17)
+**Journey Coverage**: 17/17 (J-01 through J-17; compile-handoff transitional bridge coverage is tracked under J-06/J-07, not as a separate journey)
 
 ---
 
