@@ -35,7 +35,7 @@
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| TIME-001 | Timeline visualisation baseline | Workflow/UX references to schedule views | V1_DESIGN_HARDENING_REQUIRED | Present conceptually; hard feature contract still needs explicit Stage 1–5 wording. |
+| TIME-001 | Timeline visualisation baseline | Approved PIT app-description timeline requirements (visual creator, denominators, hover date, date-grid bars, drag/resize controls, progress overlay, filters, zoom-to-fit, no date drift) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Capability is explicitly required; delivery fidelity remains Stage 6 validation dependent. |
 | TIME-002 | Scheduling engine with critical-path quality | No explicit technical contract for critical-path engine in current chain | FUTURE_VERSION | Keep as roadmap until canonised into PIT staged artifacts. |
 
 ## implementation page / execution UI
@@ -50,7 +50,7 @@
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
 | COLLAB-001 | Task assignment and ownership | Task management semantics in PIT FR chain | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Assignment posture exists; verify permissioned assignment flows in Stage 6. |
-| COLLAB-002 | External invitation workflow | No explicit invitation lifecycle contract in Stage 1–5 PIT set | V1_DESIGN_HARDENING_REQUIRED | Must be hardened before claiming parity with invitation-centric tools. |
+| COLLAB-002 | External invitation workflow | Approved app-description invitation lifecycle (invite by name/email, signup/link-in, level-specific assignment, review, accept/edit/reject, reassignment, escalation, audit trail) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Invitation lifecycle is explicitly in scope; behavioural quality remains Stage 6 validation dependent. |
 
 ## evidence management
 
@@ -77,7 +77,7 @@
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| WDG-001 | Exception/watchdog detection | No explicit PIT watchdog engine specification in Stage 1–5 | FUTURE_VERSION | Keep deferred until watchdog semantics are canonised. |
+| WDG-001 | Exception/watchdog detection | App-description watchdog dashboard and watchdog-logic requirements (overdue/stalled/unsupported/unassigned/inconsistent work detection) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Detection categories are explicitly required; rule-calibration quality remains Stage 6 validation dependent. |
 | WDG-002 | Escalation routing and SLA breach actions | Partial governance posture, PIT-specific workflow not explicit | V1_DESIGN_HARDENING_REQUIRED | Requires PIT-level escalation workflow contract. |
 
 ## QA and live delivery discipline
@@ -91,7 +91,7 @@
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| AI-001 | AI-assisted summarisation in reporting context | Legacy/export references + report posture | V1_DESIGN_HARDENING_REQUIRED | Treat as partial until explicit v1 AI contract and safeguards are staged. |
+| AI-001 | AIMC-governed AI assistance across PIT workflows | Approved app-description AI assistance scope (planning suggestions, decomposition, wording, ambiguity checks, ownership/workload/schedule suggestions, evidence review aid, status/risk/watchdog/report summaries) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | AIMC-scoped assistance is explicitly in scope; safety/quality claims remain validation-gated. |
 | AI-002 | Automation workflows (auto-routing/auto-remediation) | No explicit PIT v1 automation engine contract | FUTURE_VERSION | Defer until formal FR/TR inclusion. |
 
 ## security, permissions and audit
@@ -106,14 +106,15 @@
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
 | AUTH-001 | Authentication posture (platform-level) | Platform governance and module integration posture | V1_DESIGN_HARDENING_REQUIRED | PIT-specific auth flow commitments should be made explicit to avoid inference overclaim. |
-| AUTH-002 | Onboarding flows and user notifications | No fully explicit PIT onboarding/notification contract in Stage 1–5 | FUTURE_VERSION | Keep deferred until formally specified. |
+| AUTH-002 | Onboarding and invitation-acceptance journeys | Tracker evidence and app-description auth/onboarding flow coverage including invitation acceptance and My Work entry paths | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Journeys are documented in approved artifacts; runtime behaviour remains Stage 6 validation dependent. |
+| AUTH-003 | Notification history and preferences posture | Tracker evidence for app-shell/root notification pattern and notification history (`/notifications`) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Notification history posture is documented; preference/behaviour fidelity remains Stage 6 validation dependent. |
 
 ## cross-module ISMS integration
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| XMOD-001 | Integration touchpoints to MAT/PIT ecosystem modules | High-level integration architecture references | V1_DESIGN_HARDENING_REQUIRED | Integration concept is present; interface contracts need explicit hardening. |
-| XMOD-002 | Structured callback/event interoperability | Legacy export and integration references in `Maturion/PIT/Architecture/PIT_EXPORT_SPEC_v1.0.md`, no complete PIT v1 callback contract | FUTURE_VERSION | Defer parity claim until canonical payload contracts are staged. |
+| XMOD-001 | Cross-module intake/feedback integration touchpoints | Approved PIT app-description integration posture for managed-work intake/feedback across ISMS modules | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Integration intent is explicitly documented; runtime interoperability remains Stage 6 validation dependent. |
+| XMOD-002 | Structured callback/event payload interoperability | Legacy export/integration references in `Maturion/PIT/Architecture/PIT_EXPORT_SPEC_v1.0.md`; callback payload schema/version contracts still partial | V1_DESIGN_HARDENING_REQUIRED | Keep as hardening-required until callback payload contract is fully canonicalised. |
 
 ## compliance and end-result qualities
 
