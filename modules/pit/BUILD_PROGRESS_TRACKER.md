@@ -150,7 +150,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 ---
 
 ### Stage 5: Architecture
-**Status**: [x] **RECONCILIATION_COMPLETE — READY_FOR_CS2_REVIEW** (maturion-isms#1611)
+**Status**: [x] **GATE_PASSED — ARCHITECTURE_RECONCILIATION_COMPLETE_AND_APPROVED** (maturion-isms#1611; CS2/Foreman gate-pass 2026-05-18)
 **Location**: `modules/pit/04-architecture/`  
 **Key Artifacts**:
 - [x] `architecture.md` — Stage 5 Architecture v1.0 — **REPLACED** legacy content; derived from approved Stages 1–4; all 27 routes and 22 screens mapped; all 126 TRS requirements reconciled (maturion-isms#1611)
