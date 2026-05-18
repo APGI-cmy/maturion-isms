@@ -294,6 +294,57 @@ function isProductPath(file) {
   return /\.(tsx|jsx|ts|js|py|go)$/.test(file) && /(^|\/)(src|app|api|pages?|components?|routes?)\//.test(file);
 }
 
+function classifyProductJourney(changedFiles, prTitle, prBody) {
+  const files = (changedFiles || []).map((file) => String(file || ''));
+  const combinedText = `${String(prTitle || '')}\n${String(prBody || '')}\n${files.join('\n')}`.toLowerCase();
+  const labels = new Set();
+
+  const hasRouteChange = files.some((file) => /(^|\/)(route|routes|router|navigation)\b/i.test(file)) || /\broute|router|navigation\b/.test(combinedText);
+  const hasHandoffChange = /\bhandoff\b/.test(combinedText);
+  const hasContextHandoffChange = /\bcontext[-_\s]?handoff\b/.test(combinedText);
+  const hasCompileChange = /\bcompile|frameworkreviewpage\b/.test(combinedText);
+  const hasPublishChange = /\bpublish|release\b/.test(combinedText);
+  const hasUploadChange = /\bupload|uploader|ingest\b/.test(combinedText);
+  const hasGenerateChange = /\bgenerate|generator\b/.test(combinedText);
+
+  if (hasRouteChange) labels.add('route-change');
+  if (hasHandoffChange) labels.add('handoff-change');
+  if (hasContextHandoffChange) labels.add('context-handoff-change');
+  if (hasCompileChange) labels.add('compile-change');
+  if (hasPublishChange) labels.add('publish-change');
+  if (hasUploadChange) labels.add('upload-change');
+  if (hasGenerateChange) labels.add('generate-change');
+
+  const mmmFrameworkCompileHandoff = files.some((file) =>
+    /^apps\/mmm\/.+frameworkreviewpage.+\.(tsx|jsx|ts|js)$/i.test(file)
+  ) && (hasCompileChange || hasHandoffChange || hasContextHandoffChange);
+
+  if (mmmFrameworkCompileHandoff) {
+    labels.add('mmm-frameworkreviewpage-compile-handoff');
+    labels.add('mmm-verify-mode-a-required');
+    labels.add('mmm-verify-mode-b-required');
+    labels.add('mmm-verify-mode-c-required');
+    labels.add('mmm-legacy-workspace-handoff-required');
+    labels.add('mmm-framework_id-preservation-required');
+  }
+
+  return {
+    labels: Array.from(labels).sort(),
+    mmmFrameworkCompileHandoff,
+  };
+}
+
+function computeAffectedProductGates({ journey, productDeliveryRequired, requiresIaa }) {
+  const required = new Set();
+  if (productDeliveryRequired || journey.labels.length > 0) required.add('preflight/product-delivery-gates');
+  if (requiresIaa && (productDeliveryRequired || journey.labels.length > 0)) required.add('preflight/iaa-final-assurance');
+  if (journey.mmmFrameworkCompileHandoff) {
+    required.add('MMM Live Dashboard Diagnosis / Verify Mode A/B/C');
+    required.add('preflight/mmm-pr-admin');
+  }
+  return Array.from(required).sort();
+}
+
 function prBodyClaimsProductDelivery(prBody) {
   const text = String(prBody || '');
   return [
@@ -371,6 +422,7 @@ function collectCheckState(checkRuns, commitStatuses) {
     failing: Array.from(new Set(failing)).sort(),
     pending: Array.from(new Set(pending)).sort(),
     missing,
+    observed: Array.from(observed).sort(),
     noChecksAtAll: observed.size === 0,
   };
 }
@@ -446,6 +498,7 @@ function evaluateCheckpoint(input = {}) {
   const adminCeremonyRequired = requiresEcap || protectedPathsTouched;
   const productDeliveryRequired = changedFiles.some(isProductPath) || prBodyClaimsProductDelivery(prBody);
   const builderQaRequired = productDeliveryRequired;
+  const journey = classifyProductJourney(changedFiles, prTitle, prBody);
 
   const scopePath = prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '';
   const scopeText = scopePath ? safeRead(path.join(process.cwd(), scopePath)) : '';
@@ -456,6 +509,19 @@ function evaluateCheckpoint(input = {}) {
 
   const checkpointTime = input.checkpointTime || process.env.CHECKPOINT_TIME || new Date().toISOString();
   const checks = collectCheckState(checkRuns, commitStatuses);
+  const affectedProductGatesRequired = computeAffectedProductGates({ journey, productDeliveryRequired, requiresIaa });
+  const observedChecks = new Set(checks.observed || []);
+  const failingChecks = new Set(checks.failing || []);
+  const pendingChecks = new Set(checks.pending || []);
+  const missingChecks = new Set(checks.missing || []);
+  const failedAffectedGates = affectedProductGatesRequired.filter((gate) => {
+    if (checks.noChecksAtAll) return true;
+    if (failingChecks.has(gate) || pendingChecks.has(gate) || missingChecks.has(gate)) return true;
+    if (!observedChecks.has(gate)) return true;
+    return false;
+  });
+  const passingAffectedGates = affectedProductGatesRequired.filter((gate) => (checks.passing || []).includes(gate));
+  const sourceStringOnlyEvidence = journey.labels.length > 0 && passingAffectedGates.length === 0;
   const localGatesRun = !checks.noChecksAtAll;
   const localGatesPassing = localGatesRun && checks.failing.length === 0 && checks.pending.length === 0 && checks.missing.length === 0;
   const currentHeadCiChecked = localGatesRun;
@@ -541,6 +607,7 @@ function evaluateCheckpoint(input = {}) {
   if (checks.failing.length > 0) reasons.push(`Failing checks present: ${checks.failing.join(', ')}`);
   if (checks.pending.length > 0) reasons.push(`Pending checks present: ${checks.pending.join(', ')}`);
   if (checks.missing.length > 0) reasons.push(`Missing checks present: ${checks.missing.join(', ')}`);
+  if (failedAffectedGates.length > 0) reasons.push(`Affected product journey gates are failing, pending, or missing: ${failedAffectedGates.join(', ')}`);
 
   if (adminCeremonyRequired) {
     if (!adminInvoked) reasons.push('Admin Ceremony/ECAP invocation evidence missing.');
@@ -570,6 +637,9 @@ function evaluateCheckpoint(input = {}) {
     if (!functionalEvidencePresent) reasons.push('Functional delivery evidence missing.');
     if (functionalEvidencePresent && !functionalEvidenceCurrent) reasons.push('Functional delivery evidence is stale for current HEAD.');
     if (!functionalPass) reasons.push('Functional PASS verdict not confirmed.');
+  }
+  if (sourceStringOnlyEvidence) {
+    reasons.push('Route/handoff/compile/publish/upload/generate/context-handoff changes require behavioral gate/evidence signal. Source-string-only evidence is insufficient.');
   }
 
   if (activeArtifactsReportFailOrNo) reasons.push('An active artifact still reports FAIL or *_PASS/HANDOVER_ALLOWED: no.');
@@ -621,6 +691,9 @@ function evaluateCheckpoint(input = {}) {
     BUILDER_QA_INVOKED: yesNoNotRequired(builderQaInvoked, builderQaRequired),
     BUILDER_QA_EVIDENCE_PRESENT: yesNoNotRequired(functionalEvidencePresent, builderQaRequired),
     PRODUCT_DELIVERY_REQUIRED: productDeliveryRequired ? 'yes' : 'no',
+    PRODUCT_JOURNEY_CLASSIFICATION: journey.labels.length ? journey.labels.join(', ') : 'none',
+    AFFECTED_PRODUCT_GATES_REQUIRED: affectedProductGatesRequired.length ? affectedProductGatesRequired.join(', ') : 'none',
+    FAILED_AFFECTED_GATES: failedAffectedGates.length ? failedAffectedGates.join(', ') : 'none',
     FUNCTIONAL_DELIVERY_EVIDENCE_PRESENT: yesNoNotRequired(functionalEvidencePresent, productDeliveryRequired),
     FUNCTIONAL_DELIVERY_EVIDENCE_CURRENT: yesNoNotRequired(functionalEvidenceCurrent, productDeliveryRequired),
     FUNCTIONAL_PASS: yesNoNotRequired(functionalPass, productDeliveryRequired),
@@ -637,6 +710,7 @@ function evaluateCheckpoint(input = {}) {
     OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
     HANDOVER_ALLOWED: handoverAllowed ? 'yes' : 'no',
     RESULT: result,
+    REQUIRED_ACTION: result,
     REASON: reason,
   };
 
