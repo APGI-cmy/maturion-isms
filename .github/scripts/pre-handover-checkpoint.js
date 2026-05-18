@@ -299,13 +299,13 @@ function classifyProductJourney(changedFiles, prTitle, prBody) {
   const combinedText = `${String(prTitle || '')}\n${String(prBody || '')}\n${files.join('\n')}`.toLowerCase();
   const labels = new Set();
 
-  const hasRouteChange = files.some((file) => /(^|\/)(route|routes|router|navigation)\b/i.test(file)) || /\broute|router|navigation\b/.test(combinedText);
+  const hasRouteChange = files.some((file) => /(^|\/)(route|routes|router|navigation)\b/i.test(file)) || /\b(?:route|router|navigation)\b/.test(combinedText);
   const hasHandoffChange = /\bhandoff\b/.test(combinedText);
   const hasContextHandoffChange = /\bcontext[-_\s]?handoff\b/.test(combinedText);
-  const hasCompileChange = /\bcompile|frameworkreviewpage\b/.test(combinedText);
-  const hasPublishChange = /\bpublish|release\b/.test(combinedText);
-  const hasUploadChange = /\bupload|uploader|ingest\b/.test(combinedText);
-  const hasGenerateChange = /\bgenerate|generator\b/.test(combinedText);
+  const hasCompileChange = /\b(?:compile|frameworkreviewpage)\b/.test(combinedText);
+  const hasPublishChange = /\b(?:publish|release)\b/.test(combinedText);
+  const hasUploadChange = /\b(?:upload|uploader|ingest)\b/.test(combinedText);
+  const hasGenerateChange = /\b(?:generate|generator)\b/.test(combinedText);
 
   if (hasRouteChange) labels.add('route-change');
   if (hasHandoffChange) labels.add('handoff-change');
