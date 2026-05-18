@@ -1,0 +1,24 @@
+{
+  "pr": 1664,
+  "issue": 1663,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1664.json",
+    ".agent-admin/scope-declarations/pr-1664.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "Tracker contradiction resolved: Stage 5 section header now matches gate-passed posture",
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1664.md and matches current diff",
+    "local command output: PR_NUMBER=1664 bash .github/scripts/validate-simple-pr-admin.sh",
+    "local command output: PR_NUMBER=1664 bash .github/scripts/validate-scope-to-diff.sh"
+  ],
+  "merge_authority": "CS2"
+}
