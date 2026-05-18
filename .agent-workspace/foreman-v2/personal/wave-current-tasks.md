@@ -1,13 +1,15 @@
 # Wave Current Tasks — foreman-v2-agent
 
-**Wave**: pit-market-comparison-hardening-20260517
-**Session ID**: session-pit-market-comparison-hardening-20260517
-**Date**: 2026-05-17
-**Branch**: copilot/harden-pit-market-comparison
-**CS2 Authorization**: CS2 direct assignment/instruction via issue + assignee (@APGI-cmy)
-**iaa_prebrief_path**: .agent-admin/assurance/iaa-wave-record-pit-market-comparison-hardening-20260517-20260517.md
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-market-comparison-hardening-20260517-20260517.md
-**ceremony_admin_appointed**: PENDING (required at Phase 4 handover; ECAP policy applies due to `.agent-admin/` scope)
+**Wave**: issue-1660-trigger-injection-intake-classification
+**Session ID**: session-issue-1660-trigger-injection-intake-classification-20260518
+**Date**: 2026-05-18
+**Branch**: copilot/trigger-injection-intake-classification
+**Issue**: #1660 — Trigger injection intake and ECAP/IAA classification before review or handover
+**PR**: #1661
+**CS2 Authorization**: Issue #1660 opened by CS2 (@APGI-cmy) and assigned to Copilot
+**iaa_prebrief_path**: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md
+**ceremony_admin_appointed**: PENDING (required at Phase 4 handover; ECAP expected for workflow/governance scope)
 
 ---
 
@@ -15,9 +17,11 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-market-comparis
 
 | # | Task | Builder | Status | PR / Evidence |
 |---|------|---------|--------|---------------|
-| 1 | Reconcile PIT required source artifacts and produce hardened market-comparison feature inventory with explicit scope classifications and non-overclaim notes | pit-specialist | 🟡 IN PROGRESS | PR #1651 (commits: c408c38, d2a15d8) |
+| 1 | Establish issue-1660 wave scope, manifest, and checkpoint evidence paths for PR #1661 | foreman-v2-agent | 🟢 DONE | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`, `.agent-admin/scope-declarations/pr-1661.md`, `.admin/prs/pr-1661.json` |
+| 2 | Implement early injection intake, freshness tracking, ECAP/IAA classification timing, review-ready blocking, and focused preflight coverage using existing checkpoint/workflow paths | qa-builder | 🟢 DONE | `.github/scripts/pre-handover-checkpoint.js`, `.github/workflows/pre-handover-checkpoint.yml`, `.github/workflows/preflight-evidence-gate.yml`, `.github/workflows/handover-claim-gate.yml` |
+| 3 | Add and verify regression coverage for stale intake, failed-gate dirtying, review-ready posture blocking, and PR #1653-style current-head enforcement | qa-builder | 🟢 DONE | `.github/scripts/pre-handover-checkpoint.test.sh` + relevant workflow validation |
 
-**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
+**Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received or governance setup complete) | ❌ BLOCKED
 
 ---
 
@@ -25,7 +29,7 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-market-comparis
 
 | PR # | Token | Date |
 |------|-------|------|
-| 1651 | PENDING | — |
+| 1661 | PENDING | — |
 
 ---
 

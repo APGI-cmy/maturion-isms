@@ -35,7 +35,7 @@ const isExplicitHandoverClaimComment = (body) => {
   if (/HANDOVER_BLOCKED|STOP_AND_FIX|CS2_INTERVENTION_REQUIRED/i.test(body)) return false;
   if (REJECTION_NOTICE_REGEX.test(body)) return false;
   return (
-    /\bhandover\b/i.test(body) ||
+    /\bhandover[ -]?ready\b|\bhandover claim\b/i.test(body) ||
     /merge.?ready|ready.to.merge/i.test(body) ||
     /all.gates.pass|merge.gate.released/i.test(body) ||
     /\bOPOJD\b/i.test(body) ||
@@ -190,17 +190,17 @@ echo ""
 echo "Scenario 3: Explicit handover comment, ECAP required but missing → gate would BLOCK"
 
 run_gate_classification_test \
-  "S3a: issue_comment 'handover complete' → EXPLICIT_CLAIM_DETECTED" \
+  "S3a: issue_comment 'handover-ready' → EXPLICIT_CLAIM_DETECTED" \
   "issue_comment" \
-  "handover complete — ECAP bundle committed, snapshot below" \
+  "handover-ready — ECAP bundle committed, snapshot below" \
   "[]" \
   "EXPLICIT_CLAIM_DETECTED"
 
 run_gate_classification_test \
-  "S3b: ready_for_review, existing 'handover' comment → HANDOVER_BLOCKED (gate enforces full check)" \
+  "S3b: ready_for_review, existing 'handover-ready' comment → HANDOVER_BLOCKED (gate enforces full check)" \
   "pull_request_target" \
   "" \
-  '[{"body":"handover complete — all checks green per local run"}]' \
+  '[{"body":"handover-ready — all checks green per local run"}]' \
   "HANDOVER_BLOCKED"
 
 run_gate_classification_test \
