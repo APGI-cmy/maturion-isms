@@ -36,15 +36,15 @@ Anti-regression obligations: [NO — FUNCTIONAL-BEHAVIOUR-REGISTRY.md (NBR-001..
 7. Ceremony-admin state declaration and ECAP references if appointed
 
 ### Scope blockers
-1. `wave-current-tasks.md` has no active entry for wave `pit-market-comparison-hardening-20260517`
-2. `ceremony_admin_appointed` is not declared for this wave (current active wave in tracker is unrelated)
+1. Historical blocker resolved: `wave-current-tasks.md` now has an active entry for wave `pit-market-comparison-hardening-20260517`
+2. `ceremony_admin_appointed` is now declared for this wave as `PENDING` (declaration present; named appointment still pending)
 3. No committed PREHANDOVER proof path is provided yet for this wave
-4. No committed per-PR/per-wave scope declaration path is provided yet
-5. PR number is unavailable in provided context (traceability gap for full-assurance invocation)
+4. Historical blocker resolved: committed per-PR/per-wave scope declaration artifacts now exist for this wave/PR
+5. Historical blocker resolved: PR number is available in current PR context for traceability
 
 ### Ceremony admin appointment check
-- `wave-current-tasks.md` active wave entry is `mmm-phase6-post-merge-assurance-20260513` with `ceremony_admin_appointed: NONE`
-- For this wave (`pit-market-comparison-hardening-20260517`): **NOT YET DECLARED**
+- `wave-current-tasks.md` includes an active entry for `pit-market-comparison-hardening-20260517`
+- For this wave (`pit-market-comparison-hardening-20260517`): `ceremony_admin_appointed: PENDING`
 
 ---
 
