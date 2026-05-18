@@ -68,9 +68,8 @@ export default function FrameworkReviewPage() {
       const legacyWorkspacePath = '/assessment/framework';
       const frameworkId = id ?? '';
       const frameworkQuery = frameworkId ? `?framework_id=${encodeURIComponent(frameworkId)}` : '';
-      // TODO(arch-roadmap-1658): Transitional bridge into legacy workspace.
-      // Follow architecture/modules/maturity/MMM_POST_LEGACY_HANDOFF_MIGRATION_ROADMAP_v0.1.md
-      // to replace window.location.assign with unified SPA routing/state continuity and governance-aware orchestration.
+      // TODO(governance-interop): Transitional bridge into legacy workspace.
+      // Replace window.location.assign with unified SPA routing/state continuity once governance-shell migration is complete.
       window.location.assign(`${normalizedBaseUrl}${legacyWorkspacePath}${frameworkQuery}`);
     },
   });
