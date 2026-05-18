@@ -223,14 +223,19 @@ jobs:
             await fetchDirectory('.agent-workspace/foreman-v2/memory', /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.+\.md$/);
 
             fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
+            const writeJson = (name, value) => {
+              const targetPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-${name}.json`);
+              fs.writeFileSync(targetPath, JSON.stringify(value));
+              return targetPath;
+            };
             const repoFilesPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-repo-files.json`);
             fs.writeFileSync(repoFilesPath, JSON.stringify(repoFiles));
 
-            core.setOutput('check_runs_json', JSON.stringify(checkRunsData.check_runs || []));
-            core.setOutput('commit_statuses_json', JSON.stringify(statusData.statuses || []));
-            core.setOutput('pr_comments_json', JSON.stringify(comments));
+            core.setOutput('check_runs_path', writeJson('check-runs', checkRunsData.check_runs || []));
+            core.setOutput('commit_statuses_path', writeJson('commit-statuses', statusData.statuses || []));
+            core.setOutput('pr_comments_path', writeJson('comments', comments));
             core.setOutput('issue_number', issueNumber);
-            core.setOutput('changed_files_json', JSON.stringify(changedFiles));
+            core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
             core.setOutput('repo_files_path', repoFilesPath);
 
       - name: Evaluate pre-handover checkpoint
@@ -250,10 +255,10 @@ jobs:
           CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED: ${{ steps.pr.outputs.base_synced_or_conflicts_resolved }}
           CHECKPOINT_TRIGGER: ${{ steps.pr.outputs.trigger }}
           CHECKPOINT_TIME: ${{ github.event.comment.created_at }}
-          CHECKPOINT_CHECK_RUNS_JSON: ${{ steps.inputs.outputs.check_runs_json }}
-          CHECKPOINT_COMMIT_STATUSES_JSON: ${{ steps.inputs.outputs.commit_statuses_json }}
-          CHECKPOINT_CHANGED_FILES_JSON: ${{ steps.inputs.outputs.changed_files_json }}
-          CHECKPOINT_PR_COMMENTS_JSON: ${{ steps.inputs.outputs.pr_comments_json }}
+          CHECKPOINT_CHECK_RUNS_PATH: ${{ steps.inputs.outputs.check_runs_path }}
+          CHECKPOINT_COMMIT_STATUSES_PATH: ${{ steps.inputs.outputs.commit_statuses_path }}
+          CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
+          CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
           CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE: "true"
           CHECKPOINT_INTAKE_ONLY: ${{ steps.trigger.outputs.intake_only }}

@@ -209,8 +209,12 @@ jobs:
       - name: Collect injection-intake inputs
         id: injection_inputs
         uses: actions/github-script@v7
+        env:
+          CHECKPOINT_INPUT_DIR: ${{ runner.temp }}/preflight-injection-intake
         with:
           script: |
+            const fs = require('fs');
+            const path = require('path');
             const prNumber = context.payload.pull_request.number;
             const headSha = context.payload.pull_request.head.sha;
             const comments = [];
@@ -256,10 +260,17 @@ jobs:
               ref: headSha,
             });
 
-            core.setOutput('pr_comments_json', JSON.stringify(comments));
-            core.setOutput('changed_files_json', JSON.stringify(changedFiles));
-            core.setOutput('check_runs_json', JSON.stringify(checkRunsData.check_runs || []));
-            core.setOutput('commit_statuses_json', JSON.stringify(statusData.statuses || []));
+            fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
+            const writeJson = (name, value) => {
+              const targetPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-${name}.json`);
+              fs.writeFileSync(targetPath, JSON.stringify(value));
+              return targetPath;
+            };
+
+            core.setOutput('pr_comments_path', writeJson('comments', comments));
+            core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
+            core.setOutput('check_runs_path', writeJson('check-runs', checkRunsData.check_runs || []));
+            core.setOutput('commit_statuses_path', writeJson('commit-statuses', statusData.statuses || []));
             core.setOutput('pr_body_updated_at', context.payload.action === 'edited' ? (context.payload.pull_request.updated_at || '') : '');
 
       - name: Evaluate injection-intake freshness
@@ -274,10 +285,10 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           CHECKPOINT_TRIGGER: PREFLIGHT_INJECTION_INTAKE
-          CHECKPOINT_CHECK_RUNS_JSON: ${{ steps.injection_inputs.outputs.check_runs_json }}
-          CHECKPOINT_COMMIT_STATUSES_JSON: ${{ steps.injection_inputs.outputs.commit_statuses_json }}
-          CHECKPOINT_CHANGED_FILES_JSON: ${{ steps.injection_inputs.outputs.changed_files_json }}
-          CHECKPOINT_PR_COMMENTS_JSON: ${{ steps.injection_inputs.outputs.pr_comments_json }}
+          CHECKPOINT_CHECK_RUNS_PATH: ${{ steps.injection_inputs.outputs.check_runs_path }}
+          CHECKPOINT_COMMIT_STATUSES_PATH: ${{ steps.injection_inputs.outputs.commit_statuses_path }}
+          CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.injection_inputs.outputs.changed_files_path }}
+          CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.injection_inputs.outputs.pr_comments_path }}
         run: |
           RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
           echo "result_json<<EOF" >> "$GITHUB_OUTPUT"

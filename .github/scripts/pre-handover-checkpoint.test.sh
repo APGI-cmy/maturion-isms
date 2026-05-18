@@ -41,12 +41,16 @@ run_checkpoint_test() {
   TEST_HEAD_SHA_OVERRIDE=""
   TEST_PR_UPDATED_AT=""
   TEST_PR_COMMENTS_JSON='[]'
+  TEST_PR_COMMENTS_PATH=""
   TEST_CHECKPOINT_TRIGGER="/prepare-handover"
   TEST_CHECKPOINT_INTAKE_ONLY=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
   TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER=""
+  TEST_CHECK_RUNS_PATH=""
+  TEST_COMMIT_STATUSES_PATH=""
+  TEST_CHANGED_FILES_PATH=""
 
   "$setup_fn"
 
@@ -56,20 +60,24 @@ run_checkpoint_test() {
   output="$(
     PR_NUMBER=9999 \
     ISSUE_NUMBER=1583 \
-     PR_BODY="$TEST_PR_BODY" \
-     PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
-     PR_TITLE="Checkpoint hardening" \
-     PR_BRANCH="copilot/test-checkpoint" \
-     CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
-     CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
-     BASE_SHA="$base_sha" \
-     HEAD_SHA="$head_sha" \
-     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
-     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
-     CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
-     CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
-     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
-     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
+    PR_BODY="$TEST_PR_BODY" \
+    PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
+    PR_TITLE="Checkpoint hardening" \
+    PR_BRANCH="copilot/test-checkpoint" \
+    CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
+    CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+    BASE_SHA="$base_sha" \
+    HEAD_SHA="$head_sha" \
+    CHECKPOINT_CHECK_RUNS_PATH="$TEST_CHECK_RUNS_PATH" \
+    CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
+    CHECKPOINT_COMMIT_STATUSES_PATH="$TEST_COMMIT_STATUSES_PATH" \
+    CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+    CHECKPOINT_CHANGED_FILES_PATH="$TEST_CHANGED_FILES_PATH" \
+    CHECKPOINT_PR_COMMENTS_PATH="$TEST_PR_COMMENTS_PATH" \
+    CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
+    CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
+    CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
+    CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
     CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
     node "$CHECKPOINT_SCRIPT"
   )"
@@ -118,12 +126,16 @@ run_checkpoint_field_test() {
   TEST_HEAD_SHA_OVERRIDE=""
   TEST_PR_UPDATED_AT=""
   TEST_PR_COMMENTS_JSON='[]'
+  TEST_PR_COMMENTS_PATH=""
   TEST_CHECKPOINT_TRIGGER="/prepare-handover"
   TEST_CHECKPOINT_INTAKE_ONLY=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
   TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER=""
+  TEST_CHECK_RUNS_PATH=""
+  TEST_COMMIT_STATUSES_PATH=""
+  TEST_CHANGED_FILES_PATH=""
 
   "$setup_fn"
 
@@ -133,20 +145,24 @@ run_checkpoint_field_test() {
   output="$(
     PR_NUMBER=9999 \
     ISSUE_NUMBER=1583 \
-     PR_BODY="$TEST_PR_BODY" \
-     PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
-     PR_TITLE="Checkpoint hardening" \
-     PR_BRANCH="copilot/test-checkpoint" \
-     CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
-     CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
-     BASE_SHA="$base_sha" \
-     HEAD_SHA="$head_sha" \
-     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
-     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
-     CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
-     CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
-     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
-     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
+    PR_BODY="$TEST_PR_BODY" \
+    PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
+    PR_TITLE="Checkpoint hardening" \
+    PR_BRANCH="copilot/test-checkpoint" \
+    CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
+    CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+    BASE_SHA="$base_sha" \
+    HEAD_SHA="$head_sha" \
+    CHECKPOINT_CHECK_RUNS_PATH="$TEST_CHECK_RUNS_PATH" \
+    CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
+    CHECKPOINT_COMMIT_STATUSES_PATH="$TEST_COMMIT_STATUSES_PATH" \
+    CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+    CHECKPOINT_CHANGED_FILES_PATH="$TEST_CHANGED_FILES_PATH" \
+    CHECKPOINT_PR_COMMENTS_PATH="$TEST_PR_COMMENTS_PATH" \
+    CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
+    CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
+    CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
+    CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
     CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
     node "$CHECKPOINT_SCRIPT"
   )"
@@ -316,6 +332,26 @@ seed_green_checks() {
     {"name":"preflight/product-delivery-gates","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/gate-changing-pr-rule","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"}
   ]'
+}
+
+setup_file_backed_checkpoint_inputs() {
+  mkdir -p checkpoint-inputs
+  printf '%s\n' "$CHECK_RUNS_JSON" > checkpoint-inputs/check-runs.json
+  printf '%s\n' "$COMMIT_STATUSES_JSON" > checkpoint-inputs/commit-statuses.json
+  printf '%s\n' "$TEST_PR_COMMENTS_JSON" > checkpoint-inputs/pr-comments.json
+  git diff --name-only main...HEAD > checkpoint-inputs/changed-files.jsonl
+  node -e '
+    const fs = require("fs");
+    const lines = fs.readFileSync("checkpoint-inputs/changed-files.jsonl", "utf8")
+      .split(/\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    fs.writeFileSync("checkpoint-inputs/changed-files.json", JSON.stringify(lines));
+  '
+  TEST_CHECK_RUNS_PATH="$PWD/checkpoint-inputs/check-runs.json"
+  TEST_COMMIT_STATUSES_PATH="$PWD/checkpoint-inputs/commit-statuses.json"
+  TEST_PR_COMMENTS_PATH="$PWD/checkpoint-inputs/pr-comments.json"
+  TEST_CHANGED_FILES_PATH="$PWD/checkpoint-inputs/changed-files.json"
 }
 
 seed_checkpoint_artifacts() {
@@ -656,6 +692,23 @@ run_checkpoint_field_test \
     {"field":"IAA_REQUIRED","equals":"yes"},
     {"field":"NEXT_REQUIRED_CONTROL","equals":"ECAP_GATE_AND_ADMIN_REPORT"},
     {"field":"HANDOVER_ALLOWED","equals":"no"}
+  ]'
+
+setup_file_backed_inputs_preferred() {
+  setup_green_checkpoint
+  setup_file_backed_checkpoint_inputs
+  TEST_PR_COMMENTS_JSON='not-json'
+  CHECK_RUNS_JSON='not-json'
+  COMMIT_STATUSES_JSON='not-json'
+}
+run_checkpoint_field_test \
+  "10f. file-backed checkpoint inputs are preferred over env JSON" \
+  setup_file_backed_inputs_preferred \
+  "HANDOVER_ALLOWED" \
+  "yes" \
+  '[
+    {"field":"INJECTION_INTAKE_STATUS","equals":"CURRENT"},
+    {"field":"HANDOVER_ALLOWED","equals":"yes"}
   ]'
 
 setup_merge_conflict_not_resolved() {

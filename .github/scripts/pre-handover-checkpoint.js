@@ -78,13 +78,21 @@ function readJson(filePath) {
   }
 }
 
-function parseJsonEnv(name, fallback) {
-  const raw = process.env[name];
+function parseJsonInput(pathName, jsonName, fallback) {
+  const filePath = process.env[pathName];
+  if (filePath) {
+    try {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch (error) {
+      throw new Error(`${pathName} could not be read as JSON: ${error.message}`);
+    }
+  }
+  const raw = process.env[jsonName];
   if (!raw) return fallback;
   try {
     return JSON.parse(raw);
   } catch (error) {
-    throw new Error(`${name} is not valid JSON: ${error.message}`);
+    throw new Error(`${jsonName} is not valid JSON: ${error.message}`);
   }
 }
 
@@ -561,14 +569,14 @@ function evaluateCheckpoint(input = {}) {
     ?? ''
   ).trim();
   const prUpdatedAt = String(input.prUpdatedAt ?? process.env.PR_UPDATED_AT ?? '').trim();
-  const prComments = input.prComments || parseJsonEnv('CHECKPOINT_PR_COMMENTS_JSON', []);
+  const prComments = input.prComments || parseJsonInput('CHECKPOINT_PR_COMMENTS_PATH', 'CHECKPOINT_PR_COMMENTS_JSON', []);
   const explicitMarkCurrentRunAsIntake = asBoolOrNull(input.markCurrentRunAsIntake ?? process.env.CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE) === true;
   const intakeOnly = asBoolOrNull(input.intakeOnly ?? process.env.CHECKPOINT_INTAKE_ONLY) === true;
-  const checkRuns = input.checkRuns || parseJsonEnv('CHECKPOINT_CHECK_RUNS_JSON', []);
-  const commitStatuses = input.commitStatuses || parseJsonEnv('CHECKPOINT_COMMIT_STATUSES_JSON', []);
+  const checkRuns = input.checkRuns || parseJsonInput('CHECKPOINT_CHECK_RUNS_PATH', 'CHECKPOINT_CHECK_RUNS_JSON', []);
+  const commitStatuses = input.commitStatuses || parseJsonInput('CHECKPOINT_COMMIT_STATUSES_PATH', 'CHECKPOINT_COMMIT_STATUSES_JSON', []);
 
   const { path: manifestPath, manifest } = resolveManifest(prNumber);
-  const changedFiles = input.changedFiles || parseJsonEnv('CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
+  const changedFiles = input.changedFiles || parseJsonInput('CHECKPOINT_CHANGED_FILES_PATH', 'CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
   const protectedPathsTouched = changedFiles.some(isProtectedPath);
   const requiresIaa = manifest?.requires_iaa !== false;
   const requiresEcap = manifest?.requires_ecap !== false;
@@ -901,6 +909,7 @@ module.exports = {
   isCheckpointTriggerComment,
   isCheckpointResultComment,
   isHandoverClaimComment,
+  parseJsonInput,
   readJson,
   safeRead,
 };
