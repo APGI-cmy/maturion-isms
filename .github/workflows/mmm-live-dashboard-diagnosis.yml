@@ -98,6 +98,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
 
       - name: Verify required secrets
         run: |
@@ -236,6 +237,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
 
       - name: Resolve Vercel PR preview URL
         # For pull_request events, find the Vercel Preview deployment for this exact SHA
