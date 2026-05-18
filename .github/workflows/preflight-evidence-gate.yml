@@ -14,7 +14,7 @@ on:
   # Changed back to pull_request so the workflow runs from the PR head branch (not main),
   # ensuring regex fixes and other in-PR workflow changes are exercised by CI.
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -26,6 +26,9 @@ jobs:
   preflight-evidence-check:
     name: "preflight/phase-1-evidence"
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -193,6 +196,155 @@ jobs:
             exit 1
           fi
 
+  injection-intake-current:
+    name: "preflight/injection-intake-current"
+    runs-on: ubuntu-latest
+    if: >-
+      startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot'
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Collect injection-intake inputs
+        id: injection_inputs
+        uses: actions/github-script@v7
+        env:
+          CHECKPOINT_INPUT_DIR: ${{ runner.temp }}/preflight-injection-intake
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const prNumber = context.payload.pull_request.number;
+            const headSha = context.payload.pull_request.head.sha;
+            const comments = [];
+            const changedFiles = [];
+
+            let page = 1;
+            while (true) {
+              const { data: pageComments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 100,
+                page,
+              });
+              comments.push(...pageComments);
+              if (pageComments.length < 100) break;
+              page += 1;
+            }
+
+            page = 1;
+            while (true) {
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                per_page: 100,
+                page,
+              });
+              changedFiles.push(...files.map((file) => file.filename));
+              if (files.length < 100) break;
+              page += 1;
+            }
+
+            const { data: checkRunsData } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha,
+              per_page: 100,
+            });
+            const { data: statusData } = await github.rest.repos.getCombinedStatusForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha,
+            });
+
+            fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
+            const writeJson = (name, value) => {
+              const targetPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-${name}.json`);
+              try {
+                fs.writeFileSync(targetPath, JSON.stringify(value));
+              } catch (error) {
+                throw new Error(`Failed to write ${name} checkpoint input to ${targetPath}: ${error.message}`);
+              }
+              return targetPath;
+            };
+
+            core.setOutput('pr_comments_path', writeJson('comments', comments));
+            core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
+            core.setOutput('check_runs_path', writeJson('check-runs', checkRunsData.check_runs || []));
+            core.setOutput('commit_statuses_path', writeJson('commit-statuses', statusData.statuses || []));
+            core.setOutput('pr_body_updated_at', context.payload.pull_request.updated_at || '');
+
+      - name: Evaluate injection-intake freshness
+        id: injection_eval
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_UPDATED_AT: ${{ steps.injection_inputs.outputs.pr_body_updated_at }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          CHECKPOINT_TRIGGER: PREFLIGHT_INJECTION_INTAKE
+          CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE: "true"
+          CHECKPOINT_CHECK_RUNS_PATH: ${{ steps.injection_inputs.outputs.check_runs_path }}
+          CHECKPOINT_COMMIT_STATUSES_PATH: ${{ steps.injection_inputs.outputs.commit_statuses_path }}
+          CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.injection_inputs.outputs.changed_files_path }}
+          CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.injection_inputs.outputs.pr_comments_path }}
+        run: |
+          RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
+          echo "result_json<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$RESULT_JSON" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$RESULT_JSON"
+
+      - name: Enforce injection-intake currentness
+        env:
+          RESULT_JSON: ${{ steps.injection_eval.outputs.result_json }}
+          PR_ACTION: ${{ github.event.action }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          node - <<'EOF'
+          const data = JSON.parse(process.env.RESULT_JSON || '{}');
+          const fields = data.fields || {};
+          const action = String(process.env.PR_ACTION || '');
+          const prBody = String(process.env.PR_BODY || '');
+          const readySignal = action === 'ready_for_review' || /\bready[ -]?for[ -]?review\b|\breview-ready\b|\bmerge[ -]?ready\b|\bready to merge\b|\bhandover[ -]?ready\b|\bhandover claim\b|HANDOVER_ALLOWED\s*:\s*yes/i.test(prBody);
+          const injectionState = String(fields.INJECTION_STATE || '').toLowerCase();
+          const nextRequiredControl = String(fields.NEXT_REQUIRED_CONTROL || 'none');
+          const staleInstructionWithoutLaterIntake =
+            String(fields.LATEST_INJECTION_INTAKE_AFTER_LAST_CS2_COMMENT || 'yes').toLowerCase() === 'no' ||
+            String(fields.LATEST_INJECTION_INTAKE_AFTER_LAST_FAILED_GATE_SIGNAL || 'yes').toLowerCase() === 'no' ||
+            (action === 'edited' && String(fields.LATEST_INJECTION_INTAKE_AFTER_LAST_PR_BODY_EDIT || 'yes').toLowerCase() === 'no');
+          const blockers = [];
+
+          if (staleInstructionWithoutLaterIntake) {
+            blockers.push('A newer relevant instruction signal exists without a later/current injection intake.');
+          }
+          if (readySignal && (injectionState === 'missing' || injectionState === 'stale' || injectionState === 'dirty')) {
+            blockers.push(`Review-ready posture is blocked while injection state is ${fields.INJECTION_STATE}.`);
+          }
+          if (readySignal && !/^none$/i.test(nextRequiredControl)) {
+            blockers.push(`Review-ready posture is blocked until NEXT_REQUIRED_CONTROL is cleared (current: ${nextRequiredControl}).`);
+          }
+
+          if (blockers.length > 0) {
+            console.error('❌ preflight/injection-intake-current');
+            for (const blocker of blockers) console.error(`- ${blocker}`);
+            process.exit(1);
+          }
+
+          console.log('✅ preflight/injection-intake-current');
+          console.log(`INJECTION_STATE=${fields.INJECTION_STATE || 'unknown'}`);
+          console.log(`NEXT_REQUIRED_CONTROL=${nextRequiredControl}`);
+          EOF
+
 
   iaa-prebrief-check:
     name: "preflight/iaa-prebrief-existence"
@@ -201,8 +353,10 @@ jobs:
     # Only enforce for Copilot/foreman PRs: branches starting with 'copilot/'
     # or PRs authored by the Copilot bot
     if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
+      (github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)) &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
 
     steps:
       - name: Checkout PR head branch
@@ -355,8 +509,10 @@ jobs:
 
     # Only enforce for Copilot/foreman PRs
     if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
+      (github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)) &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
 
     steps:
       - name: Checkout PR head branch
@@ -463,8 +619,10 @@ jobs:
 
     # Enforce on Copilot/foreman PRs — the same scope as other ceremony checks
     if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
+      (github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)) &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
 
     steps:
       - name: Checkout PR head branch
@@ -660,6 +818,9 @@ jobs:
   evidence-exactness-check:
     name: "preflight/evidence-exactness"
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -682,6 +843,9 @@ jobs:
   rca-invocation-evidence-gate:
     name: "preflight/rca-invocation-evidence"
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
     steps:
       - name: Detect active RCA_REQUIRED marker
         id: rca_marker
@@ -739,8 +903,10 @@ jobs:
 
     # Only enforce for Copilot/foreman PRs
     if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
+      (github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)) &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
 
     steps:
       - name: Checkout PR head branch
@@ -773,8 +939,10 @@ jobs:
 
     # Only enforce for Copilot/foreman PRs
     if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
+      (github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)) &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
 
     steps:
       - name: Checkout PR head branch
@@ -803,6 +971,9 @@ jobs:
   scope-declaration-parity:
     name: "preflight/scope-declaration-parity"
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
 
     steps:
       - name: Checkout PR head branch
@@ -833,6 +1004,9 @@ jobs:
   mmm-pr-admin-check:
     name: "preflight/mmm-pr-admin"
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
     steps:
       - name: Checkout PR head branch
         uses: actions/checkout@v5
@@ -863,6 +1037,9 @@ jobs:
   affected-control-classifier:
     name: "preflight/affected-control-classifier"
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
     steps:
       - name: Checkout PR head branch
         uses: actions/checkout@v5
@@ -887,6 +1064,9 @@ jobs:
   product-delivery-gates:
     name: "preflight/product-delivery-gates"
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
     steps:
       - name: Checkout PR head branch
         uses: actions/checkout@v5
@@ -939,8 +1119,10 @@ jobs:
 
     # Only enforce for Copilot/foreman PRs
     if: >-
-      startsWith(github.head_ref, 'copilot/') ||
-      github.event.pull_request.user.login == 'Copilot'
+      (github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)) &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
 
     steps:
       - name: Checkout PR head branch
