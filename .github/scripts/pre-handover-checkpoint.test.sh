@@ -44,6 +44,7 @@ run_checkpoint_test() {
   TEST_PR_COMMENTS_PATH=""
   TEST_CHECKPOINT_TRIGGER="/prepare-handover"
   TEST_CHECKPOINT_INTAKE_ONLY=""
+  TEST_MARK_CURRENT_RUN_AS_INTAKE=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
@@ -66,6 +67,7 @@ run_checkpoint_test() {
     PR_BRANCH="copilot/test-checkpoint" \
     CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
     CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+    CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE="$TEST_MARK_CURRENT_RUN_AS_INTAKE" \
     BASE_SHA="$base_sha" \
     HEAD_SHA="$head_sha" \
     CHECKPOINT_CHECK_RUNS_PATH="$TEST_CHECK_RUNS_PATH" \
@@ -129,6 +131,7 @@ run_checkpoint_field_test() {
   TEST_PR_COMMENTS_PATH=""
   TEST_CHECKPOINT_TRIGGER="/prepare-handover"
   TEST_CHECKPOINT_INTAKE_ONLY=""
+  TEST_MARK_CURRENT_RUN_AS_INTAKE=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
@@ -151,6 +154,7 @@ run_checkpoint_field_test() {
     PR_BRANCH="copilot/test-checkpoint" \
     CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
     CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+    CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE="$TEST_MARK_CURRENT_RUN_AS_INTAKE" \
     BASE_SHA="$base_sha" \
     HEAD_SHA="$head_sha" \
     CHECKPOINT_CHECK_RUNS_PATH="$TEST_CHECK_RUNS_PATH" \
@@ -223,6 +227,28 @@ const value =
     ? checkpoint.isCheckpointTriggerComment(body)
     : checkpoint.isHandoverClaimComment(body);
 process.stdout.write(value ? 'true' : 'false');
+EOF
+)"
+
+  if [[ "$actual" == "$expected" ]]; then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name (expected $expected got $actual)"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
+run_failed_gate_signal_test() {
+  local name="$1"
+  local body="$2"
+  local expected="$3"
+  local actual
+
+  actual="$(BODY="$body" node - "$CHECKPOINT_SCRIPT" <<'EOF'
+const checkpoint = require(process.argv[2]);
+const body = process.env.BODY || '';
+process.stdout.write(checkpoint.isFailedGateSignalComment(body) ? 'true' : 'false');
 EOF
 )"
 
@@ -625,6 +651,7 @@ setup_early_injection_control_classification() {
   seed_green_checks
   TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
   TEST_CHECKPOINT_INTAKE_ONLY="true"
+  TEST_MARK_CURRENT_RUN_AS_INTAKE="true"
   mkdir -p governance/canon
   cat > governance/canon/TEST_RULE.md <<'EOF'
 Early governance change requiring ceremony.
@@ -639,12 +666,13 @@ run_checkpoint_field_test \
   "STOP_AND_FIX" \
   "no" \
   '[
-    {"field":"INJECTION_INTAKE_STATUS","equals":"MISSING"},
+    {"field":"INJECTION_INTAKE_STATUS","equals":"CURRENT"},
+    {"field":"INJECTION_STATE","equals":"current"},
     {"field":"ECAP_REQUIRED","equals":"yes"},
     {"field":"IAA_REQUIRED","equals":"yes"},
     {"field":"PRODUCER_SIDE_GATES_REQUIRED","contains":"preflight/ecap-admin-ceremony"},
     {"field":"PRODUCER_SIDE_GATES_REQUIRED","contains":"preflight/iaa-final-assurance"},
-    {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"ECAP_GATE_AND_ADMIN_REPORT"},
     {"field":"HANDOVER_ALLOWED","equals":"no"}
   ]'
 
@@ -719,6 +747,24 @@ run_checkpoint_field_test \
     {"field":"HANDOVER_ALLOWED","equals":"no"}
   ]'
 
+setup_unchecked_checklist_without_claim() {
+  setup_green_checkpoint
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  TEST_MARK_CURRENT_RUN_AS_INTAKE="true"
+  TEST_PR_BODY=$'## Status\n- [ ] Informational checklist item still open\n\nStill in progress.'
+}
+run_checkpoint_field_test \
+  "10ea. unchecked checklist items do not block in-progress intake refresh" \
+  setup_unchecked_checklist_without_claim \
+  "INJECTION_INTAKE_CURRENT" \
+  "no" \
+  '[
+    {"field":"INJECTION_STATE","equals":"current"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"none"},
+    {"field":"HANDOVER_ALLOWED","equals":"no"}
+  ]'
+
 setup_file_backed_inputs_preferred() {
   setup_green_checkpoint
   setup_file_backed_checkpoint_inputs
@@ -767,13 +813,15 @@ run_virtual_file_test "14. virtual mode readJson does not fall back to disk" rea
 run_virtual_file_test "15. virtual file path provides readJson content" readJson '{".admin/pr.json":"{\"virtual\":\"present\"}"}' '{"virtual":"present"}'
 run_invalid_json_fallback_test "15b. invalid env JSON without file path still fails explicitly"
 
-run_claim_test "16. handover language without checkpoint remains claim" claim "handover complete" true
+run_claim_test "16. handover-ready language without checkpoint remains claim" claim "handover-ready" true
 run_claim_test "17. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
 run_claim_test "17b. CS2_INTERVENTION_REQUIRED summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: CS2_INTERVENTION_REQUIRED\nOUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: missing required secret\nHANDOVER_ALLOWED: no' false
 run_claim_test "17c. REJECTION_NOTICE summary is not a handover claim" claim $'FOREMAN_REJECTION_NOTICE\nRESULT: REJECTED_BACK_TO_PRODUCER\nHANDOVER_ALLOWED: no' false
 run_claim_test "18. draft/status comment without handover language stays false" claim "status update only" false
+run_claim_test "18a. narrative handover topic without ready/claim posture stays false" claim "This PR updates handover gating behavior." false
 run_claim_test "18b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
 run_claim_test "18c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
+run_failed_gate_signal_test "18d. handover checkpoint-required advisory is not a failed-gate signal" $'<!-- handover-checkpoint-required -->\nRESULT: CHECKPOINT_REQUIRED\nHANDOVER_ALLOWED: no' false
 
 # ── Corrective producer comment predicate (operator-precedence regression) ──
 # Mirrors the fixed logic in handover-claim-gate.yml:

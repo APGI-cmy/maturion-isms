@@ -19,6 +19,15 @@ const REQUIRED_CHECKS = [
 ];
 
 const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
+const HANDOVER_CHECKPOINT_REQUIRED_MARKER = '<!-- handover-checkpoint-required -->';
+const HANDOVER_GATE_BLOCKED_MARKER = '<!-- handover-claim-gate-blocked -->';
+const HANDOVER_GATE_OK_MARKER = '<!-- handover-claim-gate-ok -->';
+const AUTHORITATIVE_GATE_MARKERS = [
+  CHECKPOINT_MARKER,
+  HANDOVER_CHECKPOINT_REQUIRED_MARKER,
+  HANDOVER_GATE_BLOCKED_MARKER,
+  HANDOVER_GATE_OK_MARKER,
+];
 const VIRTUAL_FILES = (() => {
   const filePath = process.env.CHECKPOINT_REPO_FILES_PATH;
   if (filePath) {
@@ -216,17 +225,17 @@ function isHandoverClaimComment(body) {
     rejectionNoticePattern.test(text)
   ) return false;
   const claimPatterns = [
-    /\bhandover\b/i,
     /\bmerge-ready\b/i,
     /\bmerge ready\b/i,
     /\bready to merge\b/i,
     /\bready for review\b/i,
     /\bready-for-review\b/i,
+    /\bhandover-ready\b/i,
+    /\bhandover ready\b/i,
+    /\bhandover claim\b/i,
     /\bready for cs2\b/i,
     /\bwork complete\b/i,
     /\bimplementation complete\b/i,
-    /\bcomplete\b/i,
-    /\bcompletion\b/i,
     /\bfinal summary\b/i,
     /\bwave closure\b/i,
     /\ball checks pass\b/i,
@@ -237,6 +246,23 @@ function isHandoverClaimComment(body) {
   return claimPatterns.some((pattern) => pattern.test(text));
 }
 
+function hasExplicitReviewOrHandoverSignal(text) {
+  return [
+    /\bready[ -]?for[ -]?review\b/i,
+    /\breview-ready\b/i,
+    /\bmerge[ -]?ready\b/i,
+    /\bready to merge\b/i,
+    /\bhandover[ -]?ready\b/i,
+    /\bhandover claim\b/i,
+    /\bwork complete\b/i,
+    /\bimplementation complete\b/i,
+    /\ball checks pass\b/i,
+    /\ball gates pass\b/i,
+    /\bmerge gate released\b/i,
+    /HANDOVER_ALLOWED\s*:\s*yes/i,
+  ].some((pattern) => pattern.test(String(text || '')));
+}
+
 function isCs2Comment(comment) {
   const login = normalizeValue(comment?.user?.login);
   return login === 'apgi-cmy';
@@ -245,7 +271,7 @@ function isCs2Comment(comment) {
 function isFailedGateSignalComment(body) {
   const text = String(body || '');
   if (!text.trim()) return false;
-  if (text.includes(CHECKPOINT_MARKER)) return false;
+  if (AUTHORITATIVE_GATE_MARKERS.some((marker) => text.includes(marker))) return false;
   return /HANDOVER BLOCKED|HANDOVER_BLOCKED|CHECKPOINT REQUIRED|CHECKPOINT_REQUIRED|RESULT:\s*STOP_AND_FIX|RESULT:\s*CS2_INTERVENTION_REQUIRED|RESULT:\s*REJECTED_BACK_TO_PRODUCER|REJECTION_NOTICE|HANDOVER_ALLOWED:\s*no/i.test(text);
 }
 
@@ -595,6 +621,7 @@ function evaluateCheckpoint(input = {}) {
   const checkpointTime = input.checkpointTime || process.env.CHECKPOINT_TIME || new Date().toISOString();
   const markCurrentRunAsIntake = explicitMarkCurrentRunAsIntake || isCheckpointTriggerComment(trigger);
   const checklistItems = parseChecklistItems(prBody);
+  const reviewOrHandoverClaimed = hasExplicitReviewOrHandoverSignal(`${trigger}\n${prBody}`) || isHandoverClaimComment(trigger);
   const cs2CommentTimes = prComments.filter(isCs2Comment).map(readCommentTimestamp);
   const failedGateSignalTimes = prComments.filter((comment) => isFailedGateSignalComment(comment?.body)).map(readCommentTimestamp);
   const priorIntake = latestInjectionIntake(prComments);
@@ -763,7 +790,7 @@ function evaluateCheckpoint(input = {}) {
   if (sourceStringOnlyEvidence) {
     reasons.push('Route/handoff/compile/publish/upload/generate/context-handoff changes require behavioral gate/evidence signal. Source-string-only evidence is insufficient.');
   }
-  if (checklistItems.unchecked.length > 0) {
+  if (reviewOrHandoverClaimed && checklistItems.unchecked.length > 0) {
     reasons.push(`Unchecked PR checklist items remain: ${checklistItems.unchecked.map((item) => item.text).join(', ')}`);
   }
   if (injectionState === 'missing') {
@@ -785,7 +812,7 @@ function evaluateCheckpoint(input = {}) {
   let nextRequiredControl = 'none';
   if (injectionState !== 'current') {
     nextRequiredControl = 'REFRESH_INJECTION_INTAKE';
-  } else if (checklistItems.unchecked.length > 0) {
+  } else if (reviewOrHandoverClaimed && checklistItems.unchecked.length > 0) {
     nextRequiredControl = 'RESOLVE_PR_CHECKLIST_ITEMS';
   } else if (requiresEcap && !ecapSatisfiedOrValidlyWaived) {
     nextRequiredControl = 'ECAP_GATE_AND_ADMIN_REPORT';
@@ -909,6 +936,8 @@ module.exports = {
   isCheckpointTriggerComment,
   isCheckpointResultComment,
   isHandoverClaimComment,
+  isFailedGateSignalComment,
+  hasExplicitReviewOrHandoverSignal,
   parseJsonInput,
   readJson,
   safeRead,

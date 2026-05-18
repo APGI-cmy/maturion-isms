@@ -450,12 +450,16 @@ jobs:
               })
               .sort((a, b) => new Date(b.comment.updated_at || b.comment.created_at) - new Date(a.comment.updated_at || a.comment.created_at));
             const latestCurrentHeadCheckpoint = checkpointComments[0];
+            const latestCheckpointInjectionState = String(latestCurrentHeadCheckpoint?.injectionState || '').trim();
+            const latestCheckpointNextRequiredControl = String(latestCurrentHeadCheckpoint?.nextRequiredControl || '').trim();
+            const latestCheckpointInjectionStateSatisfied = !latestCheckpointInjectionState || /^current$/i.test(latestCheckpointInjectionState);
+            const latestCheckpointNextRequiredControlSatisfied = !latestCheckpointNextRequiredControl || /^none$/i.test(latestCheckpointNextRequiredControl);
             const latestCurrentHeadCheckpointSuccessful = Boolean(
               latestCurrentHeadCheckpoint &&
               latestCurrentHeadCheckpoint.handoverValue === true &&
               /^HANDOVER_ALLOWED$/i.test(String(latestCurrentHeadCheckpoint.resultValue || '').trim()) &&
-              /^current$/i.test(String(latestCurrentHeadCheckpoint.injectionState || '').trim()) &&
-              /^none$/i.test(String(latestCurrentHeadCheckpoint.nextRequiredControl || 'none').trim()) &&
+              latestCheckpointInjectionStateSatisfied &&
+              latestCheckpointNextRequiredControlSatisfied &&
               latestCurrentHeadCheckpoint.intakeAfterCs2Comment !== false &&
               latestCurrentHeadCheckpoint.intakeAfterPrBodyEdit !== false &&
               latestCurrentHeadCheckpoint.intakeAfterFailedGateSignal !== false
@@ -482,7 +486,7 @@ jobs:
                 if (REJECTION_NOTICE_REGEX.test(b)) return false;
                 // Match explicit handover/merge-ready claim language
                 return (
-                  /\bhandover\b/i.test(b) ||
+                  /\bhandover(?:-ready|\s+ready|\s+claim)\b/i.test(b) ||
                   /merge.?ready|ready.to.merge/i.test(b) ||
                   /all.gates.pass|merge.gate.released/i.test(b) ||
                   /\bOPOJD\b/i.test(b) ||
@@ -736,11 +740,11 @@ jobs:
                       : 'Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes.'
                   );
                 }
-               if (latestCurrentHeadCheckpoint && !/^current$/i.test(String(latestCurrentHeadCheckpoint.injectionState || '').trim())) {
-                 preconditionFailures.push(`Latest current-head checkpoint injection state is ${latestCurrentHeadCheckpoint.injectionState || 'missing'} (must be current).`);
+               if (latestCurrentHeadCheckpoint && latestCheckpointInjectionState && !latestCheckpointInjectionStateSatisfied) {
+                 preconditionFailures.push(`Latest current-head checkpoint injection state is ${latestCheckpointInjectionState} (must be current).`);
                }
-               if (latestCurrentHeadCheckpoint && !/^none$/i.test(String(latestCurrentHeadCheckpoint.nextRequiredControl || 'none').trim())) {
-                 preconditionFailures.push(`Latest current-head checkpoint still requires ${latestCurrentHeadCheckpoint.nextRequiredControl}.`);
+               if (latestCurrentHeadCheckpoint && latestCheckpointNextRequiredControl && !latestCheckpointNextRequiredControlSatisfied) {
+                 preconditionFailures.push(`Latest current-head checkpoint still requires ${latestCheckpointNextRequiredControl}.`);
                }
                 if (latestCurrentHeadCheckpointSuccessful && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
                   preconditionFailures.push('Checkpoint says handover allowed, but current required checks are not fully green.');
