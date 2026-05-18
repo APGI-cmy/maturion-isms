@@ -167,7 +167,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] `_legacy/` — Legacy pre-canonical content preserved as reference only
 - [x] Architecture formally reconciled against all upstream approved artifacts (see reconciliation checklist)
 - [x] All TRS requirements (PIT-TR-001 to PIT-TR-126) traceable to architecture components (see trs-to-architecture-traceability.md — 126/126 COVERED)
-- [x] Architecture approved by CS2/Foreman — STAGE 5 GATE-PASSED (2026-05-18 review authority: @APGI-cmy + foreman-v2-agent)
+- [x] Architecture approved by CS2/Foreman — RECONCILIATION_COMPLETE — READY_FOR_CS2_REVIEW (2026-05-18 review authority: @APGI-cmy + foreman-v2-agent)
 
 **Stage 5 Reconciliation Requirements (added in retrofit wave maturion-isms#1575)**:
 
