@@ -147,8 +147,11 @@ if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ] && [ -n "$ACTIVE_PREBRIEF_PATH" ] &&
     PREBRIEF_LAST_TS="$(git log -1 --format='%ct' -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
     [ -z "$PREBRIEF_FIRST_ADD_TS" ] && PREBRIEF_FIRST_ADD_TS="$PREBRIEF_LAST_TS"
 
-    IMPL_OR_BUILD_FILES="$(while IFS= read -r f; do [ -n "$f" ] && is_impl_or_build_file "$f" && echo "$f"; done <<< "$CHANGED_FILES")"
-    FIRST_IMPL_TS="$(git log --reverse --format='%ct' "$BASE_SHA..$HEAD_SHA" -- $IMPL_OR_BUILD_FILES 2>/dev/null | head -1 || true)"
+    mapfile -t IMPL_OR_BUILD_FILES < <(while IFS= read -r f; do [ -n "$f" ] && is_impl_or_build_file "$f" && echo "$f"; done <<< "$CHANGED_FILES")
+    FIRST_IMPL_TS=""
+    if [ "${#IMPL_OR_BUILD_FILES[@]}" -gt 0 ]; then
+      FIRST_IMPL_TS="$(git log --reverse --format='%ct' "$BASE_SHA..$HEAD_SHA" -- "${IMPL_OR_BUILD_FILES[@]}" 2>/dev/null | head -1 || true)"
+    fi
 
     if [ -n "$PREBRIEF_FIRST_ADD_TS" ] && [ -n "$FIRST_IMPL_TS" ] && [ "$PREBRIEF_FIRST_ADD_TS" -gt "$FIRST_IMPL_TS" ]; then
       fail "Active pre-flight brief appears to be committed after implementation/build changes began"
