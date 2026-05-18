@@ -158,6 +158,24 @@ add_valid_iaa_token() {
   # Capture current HEAD as the "reviewed" SHA (parent of the token commit)
   local REVIEWED_SHA
   REVIEWED_SHA=$(git rev-parse HEAD 2>/dev/null || echo "HEAD")
+  cat > .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md << EOF
+IAA_PREFLIGHT_BRIEF
+PR: #${pr_num}
+ISSUE: #${issue_num}
+WAVE: wave-test
+CURRENT_HEAD_SHA: ${REVIEWED_SHA}
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+FOREMAN_OBJECTIVE: test
+EXPECTED_QA_SCOPE:
+- modules/mat/src/test.ts
+EXPECTED_FAILURE_MODES:
+- stale evidence
+FOREMAN_INSTRUCTIONS:
+- include scope in delegation
+IAA_WILL_QA:
+- iaa final assurance fields
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+EOF
   cat > .agent-admin/assurance/iaa-token-session-test-wave-test-20260428.md << EOF
 # IAA Assurance Token
 
@@ -169,6 +187,11 @@ PHASE_B_BLOCKING_TOKEN: ${blocking_token}
 **PR**: #${pr_num}
 **Issue**: maturion-isms#${issue_num}
 **Reviewed SHA**: ${REVIEWED_SHA}
+PREFLIGHT_BRIEF_REVIEWED: yes
+PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md
+PREFLIGHT_EXPECTATIONS_MET: yes
+UNMET_PREFLIGHT_EXPECTATIONS: none
+FINAL_IAA_RESULT: PASS
 EOF
   git add .
   git commit -q -m "Add IAA token"
@@ -418,6 +441,25 @@ EOF
   git commit -q -m "Add token with wrong reviewed SHA"
 }
 run_test "AC-D-WRONGSHA: Token reviewed SHA not in PR ancestry" 1 "$IAA_GATE_SCRIPT" "setup_ac_wrongsha"
+
+# AC-D-NOPREFLIGHT: Final IAA token missing preflight cross-reference fields
+setup_ac_nopreflightxref() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-token-session-nopreflight-wave-20260428.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-nopreflight-wave-20260428-PASS
+
+**Token**: IAA-session-nopreflight-wave-20260428-PASS
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: CURRENT_HEAD
+EOF
+  git add .
+  git commit -q -m "Add token without preflight cross-reference fields"
+}
+run_test "AC-D-NOPREFLIGHT: Token missing preflight cross-reference fields" 1 "$IAA_GATE_SCRIPT" "setup_ac_nopreflightxref"
 
 # AC-WR-NOPR: Wave record ## TOKEN section missing PR/issue/SHA fields
 setup_ac_wr_nopr() {
