@@ -17,6 +17,9 @@ const REQUIRED_CHECKS = [
   'preflight/product-delivery-gates',
   'preflight/gate-changing-pr-rule',
 ];
+const REJECTION_PACKAGE_EXCLUDED_GATES = new Set([
+  'preflight/injection-intake-current',
+]);
 
 const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
 const HANDOVER_CHECKPOINT_REQUIRED_MARKER = '<!-- handover-checkpoint-required -->';
@@ -314,6 +317,7 @@ function headMatches(candidate, headSha) {
   const value = normalizeValue(String(candidate || '').replace(/[`]/g, ''));
   const head = normalizeValue(headSha);
   if (!value || !head) return false;
+  if (value === 'current_head' || value === 'current-head') return true;
   if (!/^[0-9a-f]{7,40}$/.test(value)) return false;
   return head === value || head.startsWith(value) || value.startsWith(head);
 }
@@ -759,12 +763,16 @@ function evaluateCheckpoint(input = {}) {
 
   const assuranceDir = path.join(process.cwd(), '.agent-admin/assurance');
   const prebriefStandalone = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-prebrief-.*\.md$/.test(relPath));
+  const preflightBriefFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-preflight-brief-.*\.md$/.test(relPath));
   const waveRecords = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-wave-record-.*\.md$/.test(relPath));
   const tokenFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-token-.*\.md$/.test(relPath));
   const prebriefWaveRecords = waveRecords.filter((relPath) => /## PRE-BRIEF/i.test(safeRead(path.join(process.cwd(), relPath))) && !/superseded/i.test(safeRead(path.join(process.cwd(), relPath))));
   const tokenWaveRecords = waveRecords.filter((relPath) => /## TOKEN/i.test(safeRead(path.join(process.cwd(), relPath))));
   const prebriefFiles = pickBestArtifacts([...prebriefStandalone, ...prebriefWaveRecords], { prNumber, issueNumber, branch, headSha });
+  const preflightBriefArtifacts = pickBestArtifacts(preflightBriefFiles, { prNumber, issueNumber, branch, headSha });
   const assuranceArtifacts = pickBestArtifacts([...tokenFiles, ...tokenWaveRecords], { prNumber, issueNumber, branch, headSha });
+  const preflightBriefPresent = preflightBriefArtifacts.length > 0;
+  const preflightBriefCurrent = preflightBriefArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const prebriefPresent = prebriefFiles.length > 0;
   const finalAssurancePresent = assuranceArtifacts.length > 0;
   const tokenPresent = assuranceArtifacts.length > 0;
@@ -806,11 +814,14 @@ function evaluateCheckpoint(input = {}) {
     requiresIaa ? 'preflight/iaa-final-assurance' : '',
     ...affectedProductGatesRequired,
   ].filter(Boolean))).sort();
+  const unresolvedCheckFailures = (checks.failingDetails || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
+  const unresolvedCheckPending = (checks.pendingDetails || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
+  const unresolvedCheckMissing = (checks.missingDetails || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
 
   const unresolvedGateRecords = [
-    ...(checks.failingDetails || []),
-    ...(checks.pendingDetails || []),
-    ...(checks.missingDetails || []),
+    ...unresolvedCheckFailures,
+    ...unresolvedCheckPending,
+    ...unresolvedCheckMissing,
     ...failedAffectedGates.map((gate) => ({
       gate,
       status: 'failed_affected_gate',
@@ -948,6 +959,8 @@ function evaluateCheckpoint(input = {}) {
   }
 
   if (requiresIaa && !iaaSatisfiedOrValidlyWaived) {
+    if (reviewOrHandoverClaimed && !preflightBriefPresent) reasons.push('IAA pre-flight brief artifact missing.');
+    if (reviewOrHandoverClaimed && preflightBriefPresent && !preflightBriefCurrent) reasons.push('IAA pre-flight brief artifact is stale for current HEAD.');
     if (!prebriefPresent) reasons.push('IAA pre-brief artifact missing.');
     if (!finalAssurancePresent) reasons.push('IAA final assurance artifact missing.');
     if (!tokenPresent) reasons.push('IAA token artifact missing.');
@@ -992,6 +1005,13 @@ function evaluateCheckpoint(input = {}) {
     nextRequiredControl = 'REFRESH_INJECTION_INTAKE';
   } else if (reviewOrHandoverClaimed && checklistItems.unchecked.length > 0) {
     nextRequiredControl = 'RESOLVE_PR_CHECKLIST_ITEMS';
+  } else if (
+    reviewOrHandoverClaimed &&
+    requiresIaa &&
+    ecapSatisfiedOrValidlyWaived &&
+    (!preflightBriefPresent || !preflightBriefCurrent)
+  ) {
+    nextRequiredControl = 'IAA_PREFLIGHT_BRIEFING';
   } else if (requiresEcap && !ecapSatisfiedOrValidlyWaived) {
     nextRequiredControl = 'ECAP_GATE_AND_ADMIN_REPORT';
   } else if (requiresIaa && !iaaSatisfiedOrValidlyWaived) {
@@ -1043,6 +1063,8 @@ function evaluateCheckpoint(input = {}) {
     ECAP_CURRENT_HEAD_SHA_MATCH: yesNoNotRequired(adminCurrent, requiresEcap),
     ECAP_SATISFIED_OR_VALIDLY_WAIVED: yesNoUnknown(ecapSatisfiedOrValidlyWaived),
     IAA_REQUIRED: requiresIaa ? 'yes' : 'no',
+    IAA_PREFLIGHT_BRIEF_PRESENT: yesNoNotRequired(preflightBriefPresent, requiresIaa),
+    IAA_PREFLIGHT_BRIEF_CURRENT: yesNoNotRequired(preflightBriefCurrent, requiresIaa),
     IAA_PREBRIEF_PRESENT: yesNoNotRequired(prebriefPresent, requiresIaa),
     IAA_FINAL_ASSURANCE_PRESENT: yesNoNotRequired(finalAssurancePresent, requiresIaa),
     IAA_TOKEN_PRESENT: yesNoNotRequired(tokenPresent, requiresIaa),
@@ -1087,6 +1109,7 @@ function evaluateCheckpoint(input = {}) {
     QA_REJECTION_PACKAGE_OUT_OF_AUTHORITY_ITEMS: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
     QA_REJECTION_PACKAGE_RESULT: qaRejectionPackageResult,
     QA_REJECTION_PACKAGE_HANDOVER_ALLOWED: qaRejectionPackageHandoverAllowed,
+    QA_REJECTION_PACKAGE_STATUS: rejectionItems.length === 0 ? 'closed' : 'open',
     HANDOVER_ALLOWED: handoverAllowed ? 'yes' : 'no',
     RESULT: result,
     REQUIRED_ACTION: result,
@@ -1127,10 +1150,11 @@ function evaluateCheckpoint(input = {}) {
     `RESULT: ${qaRejectionPackageResult}`,
     `HANDOVER_ALLOWED: ${qaRejectionPackageHandoverAllowed}`,
   ];
-  const qaRejectionPackageClosureLines = [
+  const qaRejectionPackageStatusLines = [
     '',
-    'QA_REJECTION_PACKAGE_CLOSURE',
+    'QA_REJECTION_PACKAGE_STATUS',
     `CURRENT_HEAD_SHA: ${headSha}`,
+    `STATUS: ${rejectionItems.length === 0 ? 'closed' : 'open'}`,
     'REJECTION_ITEMS:',
     ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
       `- gate: ${item.gate}`,
@@ -1157,7 +1181,7 @@ function evaluateCheckpoint(input = {}) {
     ...fieldLines,
     ...failedGateConsumptionLines,
     ...qaRejectionPackageLines,
-    ...qaRejectionPackageClosureLines,
+    ...qaRejectionPackageStatusLines,
   ].join('\n');
 
   return {

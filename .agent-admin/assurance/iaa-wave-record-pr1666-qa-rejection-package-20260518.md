@@ -4,10 +4,11 @@
 - Wave: pr-1666-qa-rejection-package-freshness
 - Trigger categories: CI_WORKFLOW, KNOWLEDGE_GOVERNANCE
 - Scope blocker status: none
+- Pre-flight brief reference: .agent-admin/assurance/iaa-preflight-brief-pr-1666.md
 
 ## TOKEN
 PR: #1666
 Issue: #1665
-Reviewed SHA: 0c3167e520233f21427cc22097d35fa214465f86
+Reviewed SHA: CURRENT_HEAD
 PHASE_B_BLOCKING_TOKEN: IAA-session-pr1666-20260518-PASS
 Verdict: PASS
