@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RULE_SCRIPT="${SCRIPT_DIR}/gate-changing-pr-rule.sh"
 TEST_ROOT="$(mktemp -d)"
+trap 'rm -rf "$TEST_ROOT"' EXIT
 PASS=0
 FAIL=0
 
