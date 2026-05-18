@@ -64,6 +64,11 @@ export default function FrameworkReviewPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['frameworks', id] }); // NBR-001
       queryClient.invalidateQueries({ queryKey: ['domains', id] }); // NBR-001
+      const normalizedBaseUrl = (import.meta.env.VITE_APP_URL ?? window.location.origin).replace(/\/$/, '');
+      const legacyWorkspacePath = '/assessment/framework';
+      const frameworkId = id ?? '';
+      const frameworkQuery = frameworkId ? `?framework_id=${encodeURIComponent(frameworkId)}` : '';
+      window.location.assign(`${normalizedBaseUrl}${legacyWorkspacePath}${frameworkQuery}`);
     },
   });
 

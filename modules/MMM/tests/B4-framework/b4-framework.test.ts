@@ -229,6 +229,12 @@ describe("T-MMM-S6-035: FrameworkReviewPage invalidates ['frameworks', id] on co
     const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
     expect(src).toContain("queryKey: ['domains', id]");
   });
+  it('routes compile success to legacy framework workspace', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
+    expect(src).toContain('/assessment/framework');
+    expect(src).toContain('window.location.assign');
+    expect(src).toContain('framework_id=');
+  });
 });
 
 // ─── T-MMM-S6-036: FrameworkReviewPage invalidates ['frameworks'] on publish ─
