@@ -167,7 +167,7 @@ Stage 2 carry-forward requirements). Draft files deleted. Authoritative canonica
 - [x] `_legacy/` — Legacy pre-canonical content preserved as reference only
 - [x] Architecture formally reconciled against all upstream approved artifacts (see reconciliation checklist)
 - [x] All TRS requirements (PIT-TR-001 to PIT-TR-126) traceable to architecture components (see trs-to-architecture-traceability.md — 126/126 COVERED)
-- [x] Architecture approved by CS2/Foreman — RECONCILIATION_COMPLETE — READY_FOR_CS2_REVIEW (2026-05-18 review authority: @APGI-cmy + foreman-v2-agent)
+- [x] Architecture approved by CS2/Foreman — RECONCILIATION_COMPLETE — GATE_PASSED (2026-05-18 review authority: @APGI-cmy + foreman-v2-agent)
 
 **Stage 5 Reconciliation Requirements (added in retrofit wave maturion-isms#1575)**:
 
@@ -228,7 +228,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 > **No implementation, builder appointment, or handover is authorised by this issue.**  
 > Build Authorization remains NOT CLEARED. Stage 6 is gate-passed and Stage 7 assessment is pending.
 
-**Completion Date**: 2026-05-12 (LFV package created; pending CS2 Stage 5 review)
+**Completion Date**: 2026-05-12 (LFV package created; Stage 5 review now gate-passed 2026-05-18)
 **Notes**: PIT LFV Package created per maturion-isms#1623 (PR #1624). All 9 markdown artifacts + 1 workflow design artifact produced. Content is PIT-specific (not generic template text). Covers all 27 PIT routes, all 7 roles, all 10 Edge Functions, both storage buckets, Supabase Realtime, and AIMC Gateway pattern. Workflow design artifact stored in `modules/pit/05-live-functional-verification/` — NOT in `.github/workflows/` (active installation deferred to Stage 8).
 
 ---
