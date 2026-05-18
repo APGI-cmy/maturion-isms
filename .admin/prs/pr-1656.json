@@ -1,0 +1,23 @@
+{
+  "pr": 1656,
+  "issue": 1655,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1656.json",
+    ".agent-admin/assurance/iaa-wave-record-issue-1655-stop-and-fix-gates-2026-05-18.md",
+    ".agent-admin/scope-declarations/pr-1656.md",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/workflows/handover-claim-gate.yml"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh && bash .github/scripts/handover-claim-gate.test.sh",
+    "local command output: PR_NUMBER=1656 .github/scripts/validate-simple-pr-admin.sh",
+    "actions/runs/26027376538 gate-changing-pr-rule failure analyzed and corrected with manifest evidence"
+  ],
+  "merge_authority": "CS2"
+}
