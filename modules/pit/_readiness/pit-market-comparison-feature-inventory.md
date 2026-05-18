@@ -133,7 +133,7 @@
 
 ## costing classification (required explicit items)
 
-| Feature ID | Required costing item | Current artifact coverage | Scope classification | Notes |
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
 | COST-001 | project budget fields | `PIT-FR-035` cost fields and related UX step references | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Explicit at requirement level; runtime validation pending. |
 | COST-002 | planned cost | Present as planned/budget intent within PIT cost capture posture | V1_DESIGN_HARDENING_REQUIRED | Needs explicit data definition wording to avoid interpretation variance. |
@@ -150,7 +150,7 @@
 
 ## export classification (required explicit items)
 
-| Feature ID | Required export item | Current artifact coverage | Scope classification | Notes |
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
 | EXP-001 | Project Summary PDF | Legacy export spec naming; overlaps with status reporting concept | V1_DESIGN_HARDENING_REQUIRED | Needs explicit v1 artifact contract and naming reconciliation. |
 | EXP-002 | Task List CSV/Excel | CSV/Excel format support posture (`PIT-FR-082`) with legacy profile references | V1_DESIGN_HARDENING_REQUIRED | Format support exists; specific packaged output contract not fully explicit. |
@@ -167,7 +167,7 @@
 
 ## mobile/offline classification (required explicit items)
 
-| Feature ID | Required mobile/offline item | Current artifact coverage | Scope classification | Notes |
+| Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
 | MOB-001 | responsive web field evidence capture | Responsive UX intent + evidence model posture | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | Confirmed as intent, pending execution proof. |
 | MOB-002 | camera/photo/video upload from mobile browser | Evidence attachment intent exists; mobile capture specifics not explicit | V1_DESIGN_HARDENING_REQUIRED | Must be explicitly specified/tested before parity claim. |
