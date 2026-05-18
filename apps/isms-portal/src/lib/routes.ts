@@ -1,0 +1,27 @@
+export const ROUTES = {
+  HOME: '/',
+  MODULES: '/modules',
+  FREE_ASSESSMENT: '/free-assessment',
+  SUBSCRIBE: '/subscribe',
+  SUBSCRIBE_CHECKOUT: '/subscribe/checkout',
+  JOURNEY: '/journey',
+  AUTH: '/auth',
+  DASHBOARD: '/dashboard',
+  ASSESSMENT: '/assessment',
+  MATURITY_SETUP: '/maturity/setup',
+  // Marketing routes (canonical)
+  MARKETING_MATURITY_ROADMAP: '/marketing/maturity-roadmap',
+  MARKETING_RISK_MANAGEMENT: '/marketing/risk-management',
+  MARKETING_PROJECT_IMPLEMENTATION: '/marketing/project-implementation',
+  MARKETING_DATA_ANALYTICS: '/marketing/data-analytics-assurance',
+  MARKETING_SYSTEMS_INTEGRATION: '/marketing/systems-integration',
+  MARKETING_SKILLS_DEVELOPMENT: '/marketing/skills-development',
+  MARKETING_INCIDENT_INTELLIGENCE: '/marketing/incident-intelligence',
+  // Legacy routes (kept for backward compat redirects)
+  RISK_MANAGEMENT_INFO: '/risk-management-info',
+  PIT_INFO: '/pit-info',
+  DATA_ANALYTICS_INFO: '/data-analytics-info',
+  SKILLS_DEVELOPMENT_INFO: '/skills-development-info',
+  INCIDENT_MANAGEMENT_INFO: '/incident-management-info',
+  DATA_EXTRACTION_INFO: '/data-extraction-info',
+} as const;

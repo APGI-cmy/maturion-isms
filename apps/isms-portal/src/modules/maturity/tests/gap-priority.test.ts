@@ -20,8 +20,6 @@ import {
   computeCriticalityModifier,
   computeLinkedRisksModifier,
   computeRegulatoryRelevanceModifier,
-  computeTimeExposedModifier,
-  computeExistingTasksModifier,
   mapPriorityLevel,
   computeGapPriority,
   type GapPriorityInput,
