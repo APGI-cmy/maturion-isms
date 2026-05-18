@@ -8,7 +8,7 @@
 | Product | ISMS — Integrated Security Management System |
 | Artifact Type | App Description (Working Draft / Module Support Artifact) |
 | Status | Non-canonical draft for issue implementation |
-| Version | v1.0.0 |
+| Version | v1.1.0 |
 | Scope | Top-level ISMS front door, shared platform context, and module routing authority |
 | Applies To | ISMS landing/navigation layer and all downstream module interface contracts |
 | Canonical File | `docs/governance/ISMS_APP_DESCRIPTION.md` |
@@ -263,9 +263,154 @@ To align MMM with this ISMS top-level authority, MMM downstream updates should:
 
 ---
 
-## 16) Non-goals for this issue
+## 16) Legacy Pre-Subscription Harvest Authority
 
-This issue does **not** implement:
+> **Authority for issue #1645 and all future ISMS public-landing/marketing harvest waves.**
+
+### 16.1 Approved legacy harvest sources
+
+The following legacy source files (located in `apps/maturion-maturity-legacy/src/`) are **approved harvest sources** for the ISMS public landing and module marketing pages:
+
+| Legacy File | Harvest Classification | Target in isms-portal |
+|---|---|---|
+| `src/pages/Index.tsx` | **HARVEST** — primary ISMS public landing harvest source | `apps/isms-portal/src/pages/Index.tsx` |
+| `src/pages/FreeAssessment.tsx` | **HARVEST** — public free-assessment tied to MMM/Maturity Roadmap | `apps/isms-portal/src/pages/FreeAssessment.tsx` |
+| `src/pages/Subscribe.tsx` | **HARVEST** — subscription page, pricing, module selection | `apps/isms-portal/src/pages/Subscribe.tsx` |
+| `src/pages/SubscribeCheckout.tsx` | **HARVEST** — checkout flow | `apps/isms-portal/src/pages/SubscribeCheckout.tsx` |
+| `src/pages/RiskManagementInfo.tsx` | **HARVEST** — Risk Management module marketing/explanation page | `apps/isms-portal/src/pages/RiskManagementInfo.tsx` |
+| `src/pages/PITInfo.tsx` | **HARVEST** — PIT module marketing/explanation page | `apps/isms-portal/src/pages/PITInfo.tsx` |
+| `src/pages/DataAnalyticsInfo.tsx` | **HARVEST** — Data Analytics & Remote Assurance marketing page | `apps/isms-portal/src/pages/DataAnalyticsInfo.tsx` |
+| `src/pages/DataExtractionInfo.tsx` | **HARVEST** — Systems Integration / RADAM marketing page | `apps/isms-portal/src/pages/DataExtractionInfo.tsx` |
+| `src/pages/SkillsDevelopmentInfo.tsx` | **HARVEST** — Skills Development Portal marketing page | `apps/isms-portal/src/pages/SkillsDevelopmentInfo.tsx` |
+| `src/pages/IncidentManagementInfo.tsx` | **HARVEST** — Incident & Intelligence Hub marketing page | `apps/isms-portal/src/pages/IncidentManagementInfo.tsx` |
+| `src/pages/Journey.tsx` | **HARVEST + ADAPT** — ISMS journey/domain discovery page | `apps/isms-portal/src/pages/Journey.tsx` |
+| `src/pages/ModulesOverview.tsx` | **HARVEST + ADAPT** — module overview supporting page | `apps/isms-portal/src/pages/ModulesOverview.tsx` |
+| `src/pages/MaturitySetup.tsx` | **DEFER** — post-subscription maturity setup; belongs in MMM workspace, not public landing | N/A for this wave |
+| `src/App.tsx` | **ADAPT** — routing structure harvested; route protection decisions MUST be corrected | `apps/isms-portal/src/App.tsx` |
+| `src/lib/routes.ts` | **HARVEST + ADAPT** — route constants; new canonical route names apply | `apps/isms-portal/src/lib/routes.ts` |
+
+### 16.2 Primary ISMS public landing harvest source
+
+`src/pages/Index.tsx` is the **primary ISMS public landing harvest source**.
+
+It already contains:
+- Hero section with "Your Complete Audit & Improvement Journey" narrative
+- Start Free Assessment CTA
+- Feature promise cards (15-Minute Start, Expert Guidance, Complete Transparency)
+- Integrated ISMS Journey section (six operational excellence domains)
+- Module/tool discovery cards (Maturity Development Journey, Risk, Action Mgmt, Analytics, Surveillance, Skills Accelerator)
+- Professional enablement card
+- Operational excellence domain cards
+- Footer CTA
+
+This content must be **modernised** into the isms-portal app structure:
+- Rename journey/module card references to current canonical module names
+- Update navigation to point to correct ISMS routes (not legacy routes)
+- Remove debug console.log statements
+- Remove legacy useToast on page load
+- Keep all structural sections, visual hierarchy, and UX concepts
+
+### 16.3 Module info pages as marketing/explanation harvest sources
+
+The following pages serve as **marketing/explanation harvest sources** for their respective modules. They must be harvested, kept public/unauthenticated, and renamed to current canonical names:
+
+| Legacy Name | Current Canonical Name | Route |
+|---|---|---|
+| RiskManagementInfo | Risk Management module marketing | `/marketing/risk-management` |
+| PITInfo | Project Implementation Tracker marketing | `/marketing/project-implementation` |
+| DataAnalyticsInfo | Data Analytics & Remote Assurance marketing | `/marketing/data-analytics-assurance` |
+| DataExtractionInfo | Systems Integration / RADAM marketing | `/marketing/systems-integration` |
+| SkillsDevelopmentInfo | Skills Development Portal marketing | `/marketing/skills-development` |
+| IncidentManagementInfo | Incident & Intelligence Hub marketing | `/marketing/incident-intelligence` |
+
+Each marketing page structure: Badge + Icon header, Features list, Benefits cards, CTA to subscribe.
+
+### 16.4 Public/unauthenticated route authority
+
+**Marketing routes must remain unauthenticated.** No ProtectedRoute wrapper for any of the following:
+
+| Route | Public Status | Note |
+|---|---|---|
+| `/` | PUBLIC | ISMS main landing page |
+| `/modules` | PUBLIC | Module overview/discovery |
+| `/journey` | PUBLIC | ISMS journey and domain discovery |
+| `/free-assessment` | PUBLIC | Free assessment tied to MMM/Maturity Roadmap |
+| `/subscribe` | PUBLIC | Subscription/pricing page |
+| `/subscribe/checkout` | PUBLIC | Checkout flow |
+| `/marketing/maturity-roadmap` | PUBLIC | MMM/Maturity Roadmap module marketing |
+| `/marketing/risk-management` | PUBLIC | Risk Management module marketing |
+| `/marketing/project-implementation` | PUBLIC | PIT module marketing |
+| `/marketing/data-analytics-assurance` | PUBLIC | Data Analytics & Remote Assurance marketing |
+| `/marketing/systems-integration` | PUBLIC | Systems Integration / RADAM marketing |
+| `/marketing/skills-development` | PUBLIC | Skills Development Portal marketing |
+| `/marketing/incident-intelligence` | PUBLIC | Incident & Intelligence Hub marketing |
+| `/auth` | PUBLIC | Authentication entry |
+| `/accept-invitation` | PUBLIC | Invitation acceptance |
+
+**Private (authenticated) routes** remain in ProtectedRoute as before (e.g., `/dashboard`, `/assessment`, `/maturity/setup`, `/team`, etc.).
+
+### 16.5 Route protection correction mandate
+
+> ⚠️ **DO NOT blindly copy legacy route protection from `App.tsx`.**
+
+In the legacy `apps/maturion-maturity-legacy/src/App.tsx`, the following routes are incorrectly wrapped in `ProtectedRoute`:
+
+```text
+/journey
+/free-assessment
+/risk-management-info
+/pit-info
+/data-analytics-info
+/skills-development-info
+/incident-management-info
+/data-extraction-info
+```
+
+These are **public marketing routes** in the new ISMS authority model. They must be **public and unauthenticated** in the isms-portal `App.tsx`.
+
+Harvest the UI/content/layout concepts from the legacy pages; **correct the routing boundaries**.
+
+### 16.6 Harvest, adapt, defer, discard classification
+
+| Classification | Definition | Examples |
+|---|---|---|
+| **HARVEST** | Copy directly with minimal changes; adapt naming/imports | Index.tsx hero sections, module marketing page structures |
+| **HARVEST + ADAPT** | Copy content but modernise: rename, reroute, update imports | Journey.tsx, ModulesOverview.tsx, routes.ts |
+| **DEFER** | Not included in this wave; scheduled for subsequent module-specific wave | MaturitySetup.tsx (MMM workspace), backend integrations |
+| **DISCARD** | Legacy pattern that must NOT be carried forward | ProtectedRoute wrapping of marketing pages, console.log spam, legacy toast on page load |
+
+### 16.7 ISMS→module→subscribe→get-to-know-you sequence preservation
+
+The canonical user journey sequence must be preserved:
+
+```text
+ISMS Public Landing (/)
+  → Module Discovery Card click
+    → Module Marketing/Explanation Page (/marketing/<module>)
+      → Subscribe CTA
+        → Subscription/Package Selection (/subscribe)
+          → Checkout (/subscribe/checkout)
+            → Account Creation (/auth)
+              → Get-To-Know-You profile (/onboarding or MMM first-run)
+                → Module Workspace entry
+```
+
+This sequence is **sacred** and must not be broken in this or any subsequent wave.
+
+### 16.8 MMM module identity statement
+
+> **MMM remains the Maturity Roadmap module page. MMM is NOT the ISMS landing page.**
+
+- The ISMS landing page (`/`) is the **top-level platform front door**.
+- MMM (`/marketing/maturity-roadmap` for public; `/maturity/setup` for private) is the **Maturity Roadmap module** within ISMS.
+- The Free Assessment at `/free-assessment` is tied to MMM/Maturity Roadmap (it assesses maturity domains).
+- MMM's own module card on the ISMS landing page must clearly link to the MMM/Maturity Roadmap module, not replace the ISMS landing experience.
+
+---
+
+## 17) Non-goals for the original app-description issue (#1637)
+
+The original issue (#1637) did **not** implement:
 
 - UI implementation,
 - MMM code changes,
@@ -273,7 +418,7 @@ This issue does **not** implement:
 - Risk/Incident/RADAM/Skills code changes,
 - workflow/database/deployment implementation.
 
-This issue is a **single-file authority definition update** only.
+Issue #1637 was a **single-file authority definition update** only.
 
 ---
 
