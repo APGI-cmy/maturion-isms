@@ -39,6 +39,10 @@ run_checkpoint_test() {
   CHECK_RUNS_JSON='[]'
   COMMIT_STATUSES_JSON='[]'
   TEST_HEAD_SHA_OVERRIDE=""
+  TEST_PR_UPDATED_AT=""
+  TEST_PR_COMMENTS_JSON='[]'
+  TEST_CHECKPOINT_TRIGGER="/prepare-handover"
+  TEST_CHECKPOINT_INTAKE_ONLY=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
@@ -52,17 +56,20 @@ run_checkpoint_test() {
   output="$(
     PR_NUMBER=9999 \
     ISSUE_NUMBER=1583 \
-    PR_BODY="$TEST_PR_BODY" \
-    PR_TITLE="Checkpoint hardening" \
-    PR_BRANCH="copilot/test-checkpoint" \
-    CHECKPOINT_TRIGGER="/prepare-handover" \
-    BASE_SHA="$base_sha" \
-    HEAD_SHA="$head_sha" \
-    CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
-    CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
-    CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
-    CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
-    CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
+     PR_BODY="$TEST_PR_BODY" \
+     PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
+     PR_TITLE="Checkpoint hardening" \
+     PR_BRANCH="copilot/test-checkpoint" \
+     CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
+     CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+     BASE_SHA="$base_sha" \
+     HEAD_SHA="$head_sha" \
+     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
+     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+     CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
+     CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
+     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
+     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
     CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
     node "$CHECKPOINT_SCRIPT"
   )"
@@ -109,6 +116,10 @@ run_checkpoint_field_test() {
   CHECK_RUNS_JSON='[]'
   COMMIT_STATUSES_JSON='[]'
   TEST_HEAD_SHA_OVERRIDE=""
+  TEST_PR_UPDATED_AT=""
+  TEST_PR_COMMENTS_JSON='[]'
+  TEST_CHECKPOINT_TRIGGER="/prepare-handover"
+  TEST_CHECKPOINT_INTAKE_ONLY=""
   TEST_MERGE_CONFLICT_CHECKED="yes"
   TEST_MERGEABLE_WITH_BASE="yes"
   TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
@@ -122,17 +133,20 @@ run_checkpoint_field_test() {
   output="$(
     PR_NUMBER=9999 \
     ISSUE_NUMBER=1583 \
-    PR_BODY="$TEST_PR_BODY" \
-    PR_TITLE="Checkpoint hardening" \
-    PR_BRANCH="copilot/test-checkpoint" \
-    CHECKPOINT_TRIGGER="/prepare-handover" \
-    BASE_SHA="$base_sha" \
-    HEAD_SHA="$head_sha" \
-    CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
-    CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
-    CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
-    CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
-    CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
+     PR_BODY="$TEST_PR_BODY" \
+     PR_UPDATED_AT="$TEST_PR_UPDATED_AT" \
+     PR_TITLE="Checkpoint hardening" \
+     PR_BRANCH="copilot/test-checkpoint" \
+     CHECKPOINT_TRIGGER="$TEST_CHECKPOINT_TRIGGER" \
+     CHECKPOINT_INTAKE_ONLY="$TEST_CHECKPOINT_INTAKE_ONLY" \
+     BASE_SHA="$base_sha" \
+     HEAD_SHA="$head_sha" \
+     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
+     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+     CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
+     CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
+     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
+     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
     CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
     node "$CHECKPOINT_SCRIPT"
   )"
@@ -542,7 +556,106 @@ run_checkpoint_field_test \
     {"field":"AFFECTED_PRODUCT_GATES_REQUIRED","contains":"preflight/product-delivery-gates"},
     {"field":"AFFECTED_PRODUCT_GATES_REQUIRED","contains":"preflight/iaa-final-assurance"},
     {"field":"FAILED_AFFECTED_GATES","contains":"MMM Live Dashboard Diagnosis / Verify Mode A/B/C"},
-    {"field":"REQUIRED_ACTION","equals":"STOP_AND_FIX"}
+     {"field":"REQUIRED_ACTION","equals":"STOP_AND_FIX"}
+   ]'
+
+setup_early_injection_control_classification() {
+  seed_manifest_and_scope
+  seed_green_checks
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  mkdir -p governance/canon
+  cat > governance/canon/TEST_RULE.md <<'EOF'
+Early governance change requiring ceremony.
+EOF
+  git add governance/canon/TEST_RULE.md
+  git commit -q -m "governance change"
+  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+}
+run_checkpoint_field_test \
+  "10c. early injection intake classifies ECAP/IAA before manual prompting" \
+  setup_early_injection_control_classification \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"INJECTION_INTAKE_STATUS","equals":"MISSING"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"PRODUCER_SIDE_GATES_REQUIRED","contains":"preflight/ecap-admin-ceremony"},
+    {"field":"PRODUCER_SIDE_GATES_REQUIRED","contains":"preflight/iaa-final-assurance"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"},
+    {"field":"HANDOVER_ALLOWED","equals":"no"}
+  ]'
+
+setup_stale_intake_after_cs2_comment() {
+  setup_green_checkpoint
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+  TEST_PR_COMMENTS_JSON="$(cat <<EOF
+[
+  {
+    "body": "<!-- pre-handover-checkpoint -->\n## PRE_HANDOVER_CHECKPOINT_RESULT\nCURRENT_HEAD_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_AT: 2026-05-18T09:00:00Z\nINJECTION_STATE: current\nNEXT_REQUIRED_CONTROL: none\nHANDOVER_ALLOWED: yes\nRESULT: HANDOVER_ALLOWED",
+    "created_at": "2026-05-18T09:00:00Z",
+    "updated_at": "2026-05-18T09:00:00Z",
+    "user": {"login": "github-actions[bot]"}
+  },
+  {
+    "body": "CS2: update the control mapping before review.",
+    "created_at": "2026-05-18T10:00:00Z",
+    "updated_at": "2026-05-18T10:00:00Z",
+    "user": {"login": "APGI-cmy"}
+  }
+]
+EOF
+)"
+}
+run_checkpoint_field_test \
+  "10d. stale intake after later CS2 comment -> dirty STOP_AND_FIX" \
+  setup_stale_intake_after_cs2_comment \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"CS2_COMMENTS_DETECTED","equals":"yes"},
+    {"field":"LATEST_INJECTION_INTAKE_AFTER_LAST_CS2_COMMENT","equals":"no"},
+    {"field":"INJECTION_STATE","equals":"dirty"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"}
+  ]'
+
+setup_review_ready_before_ecap_iaa() {
+  seed_manifest_and_scope
+  seed_green_checks
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+  TEST_PR_BODY=$'## Status\n- [x] Scope declared\n\nReady for review once ceremony clears.'
+  TEST_PR_COMMENTS_JSON="$(cat <<EOF
+[
+  {
+    "body": "<!-- pre-handover-checkpoint -->\n## PRE_HANDOVER_CHECKPOINT_RESULT\nCURRENT_HEAD_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_AT: 2026-05-18T10:00:00Z\nINJECTION_STATE: current\nNEXT_REQUIRED_CONTROL: none\nHANDOVER_ALLOWED: no\nRESULT: INJECTION_INTAKE_CURRENT",
+    "created_at": "2026-05-18T10:00:00Z",
+    "updated_at": "2026-05-18T10:00:00Z",
+    "user": {"login": "github-actions[bot]"}
+  }
+]
+EOF
+)"
+}
+run_checkpoint_field_test \
+  "10e. review-ready language before ECAP/IAA invocation stays blocked" \
+  setup_review_ready_before_ecap_iaa \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"INJECTION_STATE","equals":"current"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"ECAP_GATE_AND_ADMIN_REPORT"},
+    {"field":"HANDOVER_ALLOWED","equals":"no"}
   ]'
 
 setup_merge_conflict_not_resolved() {

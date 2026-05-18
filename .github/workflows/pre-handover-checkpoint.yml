@@ -6,7 +6,7 @@ name: Pre-Handover Checkpoint
 
 on:
   issue_comment:
-    types: [created]
+    types: [created, edited]
 
 permissions:
   contents: read
@@ -28,11 +28,18 @@ jobs:
           script: |
             const rawBody = context.payload.comment.body || '';
             const normalizedBody = rawBody.trim();
-            const matched =
+            const author = String(context.payload.comment.user?.login || '').toLowerCase();
+            const isDeliberate =
               /^(?:ECAP_)?PRE_HANDOVER_CHECKPOINT(?:\b.*)?$/i.test(normalizedBody) ||
               /^\/prepare-handover(?:\b.*)?$/i.test(normalizedBody);
+            const isCheckpointResult = /<!-- pre-handover-checkpoint -->|PRE_HANDOVER_CHECKPOINT_RESULT/i.test(rawBody);
+            const isFailedGateSignal = /HANDOVER BLOCKED|HANDOVER_BLOCKED|CHECKPOINT REQUIRED|CHECKPOINT_REQUIRED|RESULT:\s*STOP_AND_FIX|RESULT:\s*CS2_INTERVENTION_REQUIRED|RESULT:\s*REJECTED_BACK_TO_PRODUCER|REJECTION_NOTICE|HANDOVER_ALLOWED:\s*no/i.test(rawBody);
+            const isReviewOrHandoverSignal = /\bhandover\b|merge.?ready|ready.to.merge|ready.for.review|work complete|implementation complete|merge gate released/i.test(rawBody);
+            const isCs2Comment = author === 'apgi-cmy';
+            const matched = !isCheckpointResult && (isDeliberate || isCs2Comment || isFailedGateSignal || isReviewOrHandoverSignal);
             core.setOutput('matched', matched ? 'true' : 'false');
             core.setOutput('normalized_body', normalizedBody);
+            core.setOutput('intake_only', matched && !isDeliberate ? 'true' : 'false');
 
       - name: Resolve PR context
         id: pr
@@ -53,10 +60,11 @@ jobs:
             core.setOutput('head_sha', pr.head.sha);
             core.setOutput('base_sha', pr.base.sha);
             core.setOutput('base_ref', pr.base.ref || '');
-            core.setOutput('head_ref', pr.head.ref);
-            core.setOutput('title', pr.title || '');
-            core.setOutput('body', pr.body || '');
-            core.setOutput('trigger', process.env.TRIGGER_BODY || '');
+             core.setOutput('head_ref', pr.head.ref);
+             core.setOutput('title', pr.title || '');
+             core.setOutput('body', pr.body || '');
+             core.setOutput('updated_at', pr.updated_at || '');
+             core.setOutput('trigger', process.env.TRIGGER_BODY || '');
             const mergeableState = String(pr.mergeable_state || '').toLowerCase();
             let mergeConflictChecked = 'no';
             let mergeableWithBase = 'no';
@@ -129,6 +137,7 @@ jobs:
             const issueMatch = (context.payload.comment.body || '').match(/#(\d+)/);
             let issueNumber = issueMatch ? issueMatch[1] : '';
             const repoFiles = {};
+            const comments = [];
 
             const fetchFile = async (targetPath) => {
               try {
@@ -176,6 +185,20 @@ jobs:
               page += 1;
             }
 
+            page = 1;
+            while (true) {
+              const { data: pageComments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 100,
+                page,
+              });
+              comments.push(...pageComments);
+              if (pageComments.length < 100) break;
+              page += 1;
+            }
+
             if (!issueNumber) {
               const scopePath = `.agent-admin/scope-declarations/pr-${prNumber}.md`;
               await fetchFile(scopePath);
@@ -205,6 +228,7 @@ jobs:
 
             core.setOutput('check_runs_json', JSON.stringify(checkRunsData.check_runs || []));
             core.setOutput('commit_statuses_json', JSON.stringify(statusData.statuses || []));
+            core.setOutput('pr_comments_json', JSON.stringify(comments));
             core.setOutput('issue_number', issueNumber);
             core.setOutput('changed_files_json', JSON.stringify(changedFiles));
             core.setOutput('repo_files_path', repoFilesPath);
@@ -229,7 +253,10 @@ jobs:
           CHECKPOINT_CHECK_RUNS_JSON: ${{ steps.inputs.outputs.check_runs_json }}
           CHECKPOINT_COMMIT_STATUSES_JSON: ${{ steps.inputs.outputs.commit_statuses_json }}
           CHECKPOINT_CHANGED_FILES_JSON: ${{ steps.inputs.outputs.changed_files_json }}
+          CHECKPOINT_PR_COMMENTS_JSON: ${{ steps.inputs.outputs.pr_comments_json }}
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
+          CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE: "true"
+          CHECKPOINT_INTAKE_ONLY: ${{ steps.trigger.outputs.intake_only }}
         run: |
           RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
           echo "result_json<<EOF" >> "$GITHUB_OUTPUT"

@@ -64,7 +64,7 @@ name: Handover Claim Gate
 
 on:
   issue_comment:
-    types: [created]
+    types: [created, edited]
   pull_request_target:
     types: [ready_for_review]
 
@@ -436,6 +436,11 @@ jobs:
                   handoverValue,
                   resultValue,
                   reasonValue: readField(comment.body, 'REASON'),
+                  injectionState: readField(comment.body, 'INJECTION_STATE'),
+                  nextRequiredControl: readField(comment.body, 'NEXT_REQUIRED_CONTROL'),
+                  intakeAfterCs2Comment: asBoolYesNo(readField(comment.body, 'LATEST_INJECTION_INTAKE_AFTER_LAST_CS2_COMMENT')),
+                  intakeAfterPrBodyEdit: asBoolYesNo(readField(comment.body, 'LATEST_INJECTION_INTAKE_AFTER_LAST_PR_BODY_EDIT')),
+                  intakeAfterFailedGateSignal: asBoolYesNo(readField(comment.body, 'LATEST_INJECTION_INTAKE_AFTER_LAST_FAILED_GATE_SIGNAL')),
                 };
               })
               .filter(({ checkpointHead }) => {
@@ -448,7 +453,12 @@ jobs:
             const latestCurrentHeadCheckpointSuccessful = Boolean(
               latestCurrentHeadCheckpoint &&
               latestCurrentHeadCheckpoint.handoverValue === true &&
-              /^HANDOVER_ALLOWED$/i.test(String(latestCurrentHeadCheckpoint.resultValue || '').trim())
+              /^HANDOVER_ALLOWED$/i.test(String(latestCurrentHeadCheckpoint.resultValue || '').trim()) &&
+              /^current$/i.test(String(latestCurrentHeadCheckpoint.injectionState || '').trim()) &&
+              /^none$/i.test(String(latestCurrentHeadCheckpoint.nextRequiredControl || 'none').trim()) &&
+              latestCurrentHeadCheckpoint.intakeAfterCs2Comment !== false &&
+              latestCurrentHeadCheckpoint.intakeAfterPrBodyEdit !== false &&
+              latestCurrentHeadCheckpoint.intakeAfterFailedGateSignal !== false
             );
             const hasEcapEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/ecap-admin-ceremony') && !pending.some((p) => p.name === 'preflight/ecap-admin-ceremony') && !missing.some((m) => m.name === 'preflight/ecap-admin-ceremony');
             const hasIaaEvidenceByChecks = !noChecksAtAll && !failing.some((f) => f.name === 'preflight/iaa-final-assurance') && !pending.some((p) => p.name === 'preflight/iaa-final-assurance') && !missing.some((m) => m.name === 'preflight/iaa-final-assurance');
@@ -719,16 +729,22 @@ jobs:
                 preconditionFailures.push('IAA is required but IAA_ARTIFACT_PRESENT is not yes.');
               }
                if (!latestCurrentHeadCheckpointSuccessful) {
-                 const latestCheckpointReason = latestCurrentHeadCheckpoint?.reasonValue;
-                 preconditionFailures.push(
-                   latestCheckpointReason
-                     ? `Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes. Latest checkpoint says: ${latestCheckpointReason}`
-                     : 'Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes.'
-                 );
+                  const latestCheckpointReason = latestCurrentHeadCheckpoint?.reasonValue;
+                  preconditionFailures.push(
+                    latestCheckpointReason
+                      ? `Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes. Latest checkpoint says: ${latestCheckpointReason}`
+                      : 'Missing current-head PRE_HANDOVER_CHECKPOINT_RESULT with HANDOVER_ALLOWED: yes.'
+                  );
+                }
+               if (latestCurrentHeadCheckpoint && !/^current$/i.test(String(latestCurrentHeadCheckpoint.injectionState || '').trim())) {
+                 preconditionFailures.push(`Latest current-head checkpoint injection state is ${latestCurrentHeadCheckpoint.injectionState || 'missing'} (must be current).`);
                }
-               if (latestCurrentHeadCheckpointSuccessful && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
-                 preconditionFailures.push('Checkpoint says handover allowed, but current required checks are not fully green.');
+               if (latestCurrentHeadCheckpoint && !/^none$/i.test(String(latestCurrentHeadCheckpoint.nextRequiredControl || 'none').trim())) {
+                 preconditionFailures.push(`Latest current-head checkpoint still requires ${latestCurrentHeadCheckpoint.nextRequiredControl}.`);
                }
+                if (latestCurrentHeadCheckpointSuccessful && (failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll)) {
+                  preconditionFailures.push('Checkpoint says handover allowed, but current required checks are not fully green.');
+                }
               if (expectedEcapRequired && !hasEcapEvidenceByChecks) {
                 preconditionFailures.push('ECAP precondition failed: preflight/ecap-admin-ceremony is not green for current HEAD.');
               }

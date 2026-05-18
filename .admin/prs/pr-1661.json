@@ -7,7 +7,12 @@
     ".admin/prs/pr-1661.json",
     ".agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md",
     ".agent-admin/scope-declarations/pr-1661.md",
-    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/workflows/pre-handover-checkpoint.yml",
+    ".github/workflows/handover-claim-gate.yml",
+    ".github/workflows/preflight-evidence-gate.yml"
   ],
   "risk": "medium",
   "requires_iaa": true,
@@ -20,6 +25,7 @@
     "Per-PR scope declaration committed at .agent-admin/scope-declarations/pr-1661.md",
     "Wave current tasks updated for issue-1660 in .agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     "Injection intake classifies ECAP_REQUIRED, IAA_REQUIRED, producer-side gates, and next required control before review/handover posture",
+    "Existing pre-handover checkpoint workflow refreshes injection intake for relevant PR comment create/edit signals",
     "Review-ready/handover-ready posture blocks stale or missing intake/current-head inspection evidence",
     "Focused preflight job verifies latest intake freshness against PR/body/comment/failed-gate signals",
     "Regression coverage added for PR #1653-style early-control flow and stale-intake blocking",
