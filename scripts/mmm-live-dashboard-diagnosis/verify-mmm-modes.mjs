@@ -449,7 +449,7 @@ async function runMode(page, origin, mode, sampleFilePath) {
     // Wait for compile success, compile error, or redirect handoff into legacy workspace
     const compileSuccess = page.getByText(/✓ Framework compiled\. Status moved to REVIEW\./);
     const compileError = page.locator('[role="alert"]').filter({ hasText: /✗ Compile failed/ });
-    const legacyWorkspaceRedirectOutcome = page.waitForURL(/\/assessment\/framework(\?|$)/, {
+    const legacyHandoffOutcome = page.waitForURL(/\/assessment\/framework(\?|$)/, {
       timeout: COMPILE_TIMEOUT,
     }).then(() => 'legacy-handoff').catch(() => null);
 
@@ -462,13 +462,18 @@ async function runMode(page, origin, mode, sampleFilePath) {
         .waitFor({ state: 'visible', timeout: COMPILE_TIMEOUT })
         .then(() => 'error')
         .catch(() => null),
-      legacyWorkspaceRedirectOutcome,
+      legacyHandoffOutcome,
     ]);
 
     if (compileOutcome === 'success') {
       compileResult = 'PASS';
       log('Compile: PASS — ✓ Framework compiled. Status moved to REVIEW.');
     } else if (compileOutcome === 'legacy-handoff') {
+      if (!frameworkId) {
+        compileResult = 'FAIL — frameworkId missing before legacy handoff validation';
+        log(`Compile: ${compileResult}`);
+        throw new Error(compileResult);
+      }
       const handoffUrl = page.url();
       const handoff = new URL(handoffUrl);
       const handoffFrameworkId = handoff.searchParams.get('framework_id');
@@ -477,7 +482,7 @@ async function runMode(page, origin, mode, sampleFilePath) {
         log(`Compile: ${compileResult}`);
         throw new Error(compileResult);
       }
-      if (frameworkId && handoffFrameworkId !== frameworkId) {
+      if (handoffFrameworkId !== frameworkId) {
         compileResult = `FAIL — legacy handoff framework_id mismatch (expected ${frameworkId}, got ${handoffFrameworkId})`;
         log(`Compile: ${compileResult}`);
         throw new Error(compileResult);

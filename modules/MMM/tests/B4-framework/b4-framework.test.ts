@@ -141,8 +141,8 @@ describe('T-MMM-S6-029: FrameworkReviewPage.tsx has compile and publish buttons'
   });
   it('calls compile and publish API endpoints', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
-    expect(src).toContain("supabase.functions.invoke('mmm-framework-compile'");
-    expect(src).toContain("supabase.functions.invoke('mmm-framework-publish'");
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-compile',");
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-publish',");
   });
 });
 
