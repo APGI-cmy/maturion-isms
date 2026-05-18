@@ -225,7 +225,11 @@ jobs:
             fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
             const writeJson = (name, value) => {
               const targetPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-${name}.json`);
-              fs.writeFileSync(targetPath, JSON.stringify(value));
+              try {
+                fs.writeFileSync(targetPath, JSON.stringify(value));
+              } catch (error) {
+                throw new Error(`Failed to write ${name} checkpoint input to ${targetPath}: ${error.message}`);
+              }
               return targetPath;
             };
             const repoFilesPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-repo-files.json`);

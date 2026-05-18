@@ -258,10 +258,9 @@ if (process.env.MODE === 'safeRead') {
   value = checkpoint.safeRead(path.join(process.env.WORKSPACE, '.admin/pr.json'));
 } else if (process.env.MODE === 'readJson') {
   value = checkpoint.readJson(path.join(process.env.WORKSPACE, '.admin/pr.json'));
-} else {
-  throw new Error(`Unknown MODE: ${process.env.MODE}`);
-}
-
+  } else {
+    throw new Error(`Unknown MODE: ${process.env.MODE}`);
+  }
 process.stdout.write(typeof value === 'string' ? value : JSON.stringify(value));
 EOF
 )"
@@ -271,6 +270,32 @@ EOF
     PASS_COUNT=$((PASS_COUNT + 1))
   else
     echo "❌ $name (expected $expected got $actual)"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
+run_invalid_json_fallback_test() {
+  local name="$1"
+  local actual
+
+  actual="$(node - "$CHECKPOINT_SCRIPT" <<'EOF'
+const checkpoint = require(process.argv[2]);
+process.env.CHECKPOINT_PR_COMMENTS_PATH = '';
+process.env.CHECKPOINT_PR_COMMENTS_JSON = 'not-json';
+try {
+  checkpoint.parseJsonInput('CHECKPOINT_PR_COMMENTS_PATH', 'CHECKPOINT_PR_COMMENTS_JSON', []);
+  process.stdout.write('no-error');
+} catch (error) {
+  process.stdout.write(error.message);
+}
+EOF
+)"
+
+  if [[ "$actual" == *"CHECKPOINT_PR_COMMENTS_JSON is not valid JSON"* ]]; then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name (unexpected output: $actual)"
     FAIL_COUNT=$((FAIL_COUNT + 1))
   fi
 }
@@ -740,6 +765,7 @@ run_checkpoint_test "12b. base behind current main -> STOP_AND_FIX when sync che
 run_virtual_file_test "13. virtual mode safeRead does not fall back to disk" safeRead '{}' ""
 run_virtual_file_test "14. virtual mode readJson does not fall back to disk" readJson '{}' "null"
 run_virtual_file_test "15. virtual file path provides readJson content" readJson '{".admin/pr.json":"{\"virtual\":\"present\"}"}' '{"virtual":"present"}'
+run_invalid_json_fallback_test "15b. invalid env JSON without file path still fails explicitly"
 
 run_claim_test "16. handover language without checkpoint remains claim" claim "handover complete" true
 run_claim_test "17. STOP_AND_FIX summary is not a handover claim" claim $'PRE_HANDOVER_CHECKPOINT_RESULT\nRESULT: STOP_AND_FIX\nHANDOVER_ALLOWED: no' false
