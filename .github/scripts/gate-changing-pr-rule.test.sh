@@ -87,14 +87,22 @@ setup_operational_with_claim_missing_evidence() {
 }
 
 setup_strict_logic_change_no_evidence() {
-  echo "echo changed" >> .github/scripts/sample.sh
-  git add .github/scripts/sample.sh
-  git commit -q -m "script logic change"
+  cat > .github/scripts/pre-handover-checkpoint.sh <<'EOF'
+#!/usr/bin/env bash
+echo "checkpoint"
+EOF
+  git add .github/scripts/pre-handover-checkpoint.sh
+  git commit -q -m "strict script gate logic change"
 }
 
 setup_pure_action_upgrade_with_evidence() {
   setup_operational_no_claim
   PR_COMMENTS_OVERRIDE=$'ACTIONS_DEPRECATION_GATE_RUN_ID: 123456789\nACTIONS_DEPRECATION_GATE_URL: https://github.com/APGI-cmy/maturion-isms/actions/runs/123456789\nAFFECTED_WORKFLOW_RUNS_GREEN_ON_HEAD: yes\nNO_BANNED_ACTION_VERSIONS_REMAIN: yes'
+}
+
+setup_operational_with_comment_run_evidence() {
+  setup_operational_no_claim
+  PR_COMMENTS_OVERRIDE=$'Validated affected workflow on HEAD 82edcaa6252205ab2556c34cc849f2688e394537\nhttps://github.com/APGI-cmy/maturion-isms/actions/runs/26022786232'
 }
 
 echo "=== Gate-Changing PR Rule Regression ==="
@@ -121,6 +129,12 @@ run_case \
   0 \
   "PURE_ACTION_VERSION_BUMP_SHORTCUT: PASS" \
   setup_pure_action_upgrade_with_evidence
+
+run_case \
+  "operational workflow change + concrete PR comment run evidence => pass" \
+  0 \
+  "Concrete gate evidence found" \
+  setup_operational_with_comment_run_evidence
 
 echo ""
 echo "Passed: $PASS"

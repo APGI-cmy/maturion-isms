@@ -56,8 +56,34 @@ echo "Gate-changing files detected:"
 echo "$GATE_FILES" | while read -r f; do echo "  - $f"; done
 echo ""
 
-STRICT_FILES="$(echo "$GATE_FILES" | grep -E '^\.github/scripts/' || true)"
-OP_FILES="$(echo "$GATE_FILES" | grep -E '^\.github/workflows/' || true)"
+classify_strict_file() {
+  local file="$1"
+  case "$file" in
+    .github/workflows/preflight*.yml|\
+    .github/workflows/handover-claim-gate.yml|\
+    .github/workflows/*gate*.yml|\
+    .github/scripts/*gate*|\
+    .github/scripts/pre-handover-checkpoint*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+STRICT_FILES=""
+OP_FILES=""
+while IFS= read -r changed_file; do
+  [ -z "$changed_file" ] && continue
+  if classify_strict_file "$changed_file"; then
+    STRICT_FILES="${STRICT_FILES}${changed_file}"$'\n'
+  else
+    OP_FILES="${OP_FILES}${changed_file}"$'\n'
+  fi
+done <<< "$GATE_FILES"
+STRICT_FILES="$(printf '%s' "$STRICT_FILES" | sed '/^$/d' || true)"
+OP_FILES="$(printf '%s' "$OP_FILES" | sed '/^$/d' || true)"
 
 if [ -n "$STRICT_FILES" ]; then
   echo "STRICT_GATE_LOGIC_CHANGE files:"
@@ -94,7 +120,10 @@ fi
 
 EVIDENCE_SOURCE_TEXT="$(printf '%s\n%s\n' "${PR_BODY:-}" "${PR_COMMENTS:-}")"
 CONCRETE_EVIDENCE=false
-if echo "$EVIDENCE_SOURCE_TEXT" | grep -qiE 'actions/runs/[0-9]{6,}|run id:[[:space:]]*[0-9]{6,}|run id[[:space:]]+[0-9]{6,}'; then
+if echo "$EVIDENCE_SOURCE_TEXT" | grep -qiE 'actions/runs/[0-9]{6,}|run id:[[:space:]]*[0-9]{6,}|run id[[:space:]]+[0-9]{6,}|workflow[[:space:]]+[^[:cntrl:]\n]+:[[:space:]]*success[[:space:]]+on[[:space:]]+head[[:space:]]+[0-9a-f]{7,40}|validated[[:space:]]+affected[[:space:]]+workflow[[:space:]]+on[[:space:]]+head[[:space:]]+[0-9a-f]{7,40}'; then
+  CONCRETE_EVIDENCE=true
+fi
+if echo "$EVIDENCE_SOURCE_TEXT" | grep -qiE 'local command output:[[:space:]]*[[:graph:]]'; then
   CONCRETE_EVIDENCE=true
 fi
 
@@ -105,7 +134,7 @@ elif [ -f ".admin/pr.json" ]; then
   GATE_MANIFEST=".admin/pr.json"
 fi
 if [ -n "$GATE_MANIFEST" ] && command -v python3 >/dev/null 2>&1; then
-  MANIFEST_EVIDENCE="$(python3 -c "import json,sys,re;m=json.load(open('${GATE_MANIFEST}'));ev='\\n'.join(m.get('evidence_required',[]));print('FOUND' if re.search(r'actions/runs/[0-9]{6,}|run id:?\\s*[0-9]{6,}', ev, re.I) else 'NONE')" 2>/dev/null || echo "NONE")"
+  MANIFEST_EVIDENCE="$(python3 -c "import json,sys,re;m=json.load(open('${GATE_MANIFEST}'));ev='\\n'.join(m.get('evidence_required',[]));print('FOUND' if re.search(r'actions/runs/[0-9]{6,}|run id:?\\s*[0-9]{6,}|local command output:\\s*\\S|workflow\\s+[^\\n]+:\\s*success\\s+on\\s+head\\s+[0-9a-f]{7,40}|validated\\s+affected\\s+workflow\\s+on\\s+head\\s+[0-9a-f]{7,40}', ev, re.I) else 'NONE')" 2>/dev/null || echo "NONE")"
   if [ "$MANIFEST_EVIDENCE" = "FOUND" ]; then
     CONCRETE_EVIDENCE=true
   fi

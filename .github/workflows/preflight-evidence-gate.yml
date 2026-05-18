@@ -928,10 +928,10 @@ jobs:
   # ============================================================================
   # Gate-changing PR rule (maturion-isms#1542)
   # Any PR touching .github/workflows/** or .github/scripts/** must include
-  # evidence in the PR body or .admin/pr.json evidence_required field that
-  # the changed gate/script was tested against the current PR context.
-  # Evidence can be: run IDs, local command output with PR_BODY/PR_NUMBER/
-  # expected issue injected, or an explicit CS2 waiver.
+  # concrete validation evidence from PR body/admin manifest/comments before
+  # handover. STRICT gate-logic changes fail closed when evidence is missing;
+  # operational workflow changes emit CHECKPOINT_REQUIRED advisory unless
+  # explicit handover/merge-ready language is claimed without evidence.
   # ============================================================================
   gate-changing-pr-rule:
     name: "preflight/gate-changing-pr-rule"
