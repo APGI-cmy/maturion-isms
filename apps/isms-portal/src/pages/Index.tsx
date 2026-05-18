@@ -230,12 +230,15 @@ const Index: React.FC = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl font-bold tracking-tight mb-6">
-            Your Complete Audit &amp; Improvement Journey
+          <p className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">
+            Maturion ISMS
+          </p>
+          <h1 className="text-5xl font-bold tracking-tight mb-4">
+            Integrated Security Management System
           </h1>
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-            See exactly what you&#39;re signing up for. Complete transparency from free assessment
-            to operational excellence. No hidden steps, no surprises.
+            One platform to assess, govern, and continuously improve your organisation&apos;s
+            security posture — from free maturity assessment to full operational excellence.
           </p>
 
           <div className="space-y-3">
