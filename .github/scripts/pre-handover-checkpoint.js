@@ -317,9 +317,15 @@ function headMatches(candidate, headSha) {
   const value = normalizeValue(String(candidate || '').replace(/[`]/g, ''));
   const head = normalizeValue(headSha);
   if (!value || !head) return false;
+  // "current_head"/"current-head" token is a canonical runtime-substituted marker used by governance artifacts.
+  // Treat it as current-head aligned to avoid stale-by-construction self-reference loops.
   if (value === 'current_head' || value === 'current-head') return true;
   if (!/^[0-9a-f]{7,40}$/.test(value)) return false;
   return head === value || head.startsWith(value) || value.startsWith(head);
+}
+
+function removeExcludedGates(records) {
+  return (records || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
 }
 
 function artifactCurrentness(text, headSha) {
@@ -814,9 +820,9 @@ function evaluateCheckpoint(input = {}) {
     requiresIaa ? 'preflight/iaa-final-assurance' : '',
     ...affectedProductGatesRequired,
   ].filter(Boolean))).sort();
-  const unresolvedCheckFailures = (checks.failingDetails || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
-  const unresolvedCheckPending = (checks.pendingDetails || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
-  const unresolvedCheckMissing = (checks.missingDetails || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
+  const unresolvedCheckFailures = removeExcludedGates(checks.failingDetails);
+  const unresolvedCheckPending = removeExcludedGates(checks.pendingDetails);
+  const unresolvedCheckMissing = removeExcludedGates(checks.missingDetails);
 
   const unresolvedGateRecords = [
     ...unresolvedCheckFailures,
@@ -959,8 +965,10 @@ function evaluateCheckpoint(input = {}) {
   }
 
   if (requiresIaa && !iaaSatisfiedOrValidlyWaived) {
-    if (reviewOrHandoverClaimed && !preflightBriefPresent) reasons.push('IAA pre-flight brief artifact missing.');
-    if (reviewOrHandoverClaimed && preflightBriefPresent && !preflightBriefCurrent) reasons.push('IAA pre-flight brief artifact is stale for current HEAD.');
+    if (reviewOrHandoverClaimed) {
+      if (!preflightBriefPresent) reasons.push('IAA pre-flight brief artifact missing.');
+      else if (!preflightBriefCurrent) reasons.push('IAA pre-flight brief artifact is stale for current HEAD.');
+    }
     if (!prebriefPresent) reasons.push('IAA pre-brief artifact missing.');
     if (!finalAssurancePresent) reasons.push('IAA final assurance artifact missing.');
     if (!tokenPresent) reasons.push('IAA token artifact missing.');
