@@ -88,10 +88,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.7
+          run_install: false
+
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
 
       - name: Verify required secrets
         run: |
@@ -146,7 +153,7 @@ jobs:
 
       - name: Upload diagnosis artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mmm-live-dashboard-diagnosis
           path: diagnosis-artifacts/
@@ -220,10 +227,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.7
+          run_install: false
+
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
 
       - name: Resolve Vercel PR preview URL
         # For pull_request events, find the Vercel Preview deployment for this exact SHA
@@ -369,7 +383,7 @@ jobs:
 
       - name: Upload verification artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mmm-mode-verification
           path: verify-artifacts/
