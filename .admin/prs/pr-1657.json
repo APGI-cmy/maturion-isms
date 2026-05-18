@@ -1,0 +1,23 @@
+{
+  "pr": 1657,
+  "issue": 1654,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1657.json",
+    ".agent-admin/scope-declarations/pr-1657.md",
+    ".github/scripts/gate-changing-pr-rule.sh",
+    ".github/scripts/gate-changing-pr-rule.test.sh",
+    ".github/workflows/preflight-evidence-gate.yml"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "local command output: bash .github/scripts/gate-changing-pr-rule.test.sh",
+    "current HEAD SHA: 405b362029ea4125d726895edc8d704a42a12028",
+    "actions/runs/26029388293 preflight rerun with strict gate-changing validation",
+    "strict gate-logic evidence validated: .github/scripts/gate-changing-pr-rule.sh and .github/workflows/preflight-evidence-gate.yml"
+  ],
+  "merge_authority": "CS2"
+}
