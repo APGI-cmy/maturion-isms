@@ -68,6 +68,8 @@ export default function FrameworkReviewPage() {
       const legacyWorkspacePath = '/assessment/framework';
       const frameworkId = id ?? '';
       const frameworkQuery = frameworkId ? `?framework_id=${encodeURIComponent(frameworkId)}` : '';
+      // TODO(governance-interop): Transitional bridge into legacy workspace.
+      // Replace window.location.assign with unified SPA routing/state continuity once governance-shell migration is complete.
       window.location.assign(`${normalizedBaseUrl}${legacyWorkspacePath}${frameworkQuery}`);
     },
   });
