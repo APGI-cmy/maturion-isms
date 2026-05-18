@@ -497,7 +497,7 @@ async function runMode(page, origin, mode, sampleFilePath) {
       const workspaceEl = page.locator('[data-testid="handoff-workspace"]');
       const workspaceVisible = await workspaceEl.isVisible().catch(() => false);
       if (!workspaceVisible) {
-        compileResult = `FAIL — legacy handoff URL reached but workspace not visible at (${handoffUrl})`;
+        compileResult = `FAIL — legacy handoff URL reached but workspace [data-testid="handoff-workspace"] not visible at (${handoffUrl})`;
         log(`Compile: ${compileResult}`);
         throw new Error(compileResult);
       }

@@ -2,6 +2,13 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
+interface Domain {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+}
+
 function AppNav() {
   return (
     <header className="app-shell__header">
@@ -44,7 +51,7 @@ export default function AssessmentFrameworkHandoffPage() {
         .select('id, name, code, status')
         .eq('framework_id', frameworkId!)
         .order('code');
-      return data ?? [];
+      return (data ?? []) as Domain[];
     },
     enabled: !!frameworkId && !!framework,
   });
@@ -116,7 +123,7 @@ export default function AssessmentFrameworkHandoffPage() {
               <p className="page-header__subtitle">Framework Workspace</p>
             </div>
             <span
-              className={`framework-item__badge framework-item__badge--${framework.status?.toLowerCase() ?? 'unknown'}`}
+              className={`handoff-framework-badge handoff-framework-badge--${framework.status?.toLowerCase() ?? 'unknown'}`}
               data-testid="handoff-framework-status"
             >
               {framework.status ?? 'Unknown'}
@@ -129,9 +136,9 @@ export default function AssessmentFrameworkHandoffPage() {
             data-testid="handoff-domains"
           >
             <h2>Domains</h2>
-            {domains && (domains as any[]).length > 0 ? (
+            {domains && domains.length > 0 ? (
               <ul className="handoff-domain-list">
-                {(domains as any[]).map((d) => (
+                {domains.map((d) => (
                   <li key={d.id} className="handoff-domain-item">
                     <span className="handoff-domain-item__code">{d.code}</span>
                     <span className="handoff-domain-item__name">{d.name}</span>
