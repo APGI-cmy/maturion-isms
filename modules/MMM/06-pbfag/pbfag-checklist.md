@@ -467,6 +467,13 @@ checklist begins in future waves after this initial pack.
 **Scope**: Post-compile handoff from MMM framework generation/review flow  
 **Related implementation issue**: APGI-cmy/maturion-isms#1667 (frozen until this alignment is complete)
 
+### Stage 6 Stability Alignment
+
+This addendum updates the Stage 6 stability baseline referenced by this checklist. The
+current catalog state is **188 tests across 13 domains**. Any earlier Stage 6 wording that
+still references **176 tests across 11 domains** is superseded by this updated baseline for
+the purposes of Stage 6 evidence and Stage 7 change-propagation review.
+
 ### Finding
 
 Manual functional verification confirmed compile success can navigate to:
