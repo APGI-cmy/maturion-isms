@@ -443,7 +443,7 @@ The compiled framework passes through a three-tier approval workflow before publ
 Per App Description §21.2, all approval actions are audit-trailed:
 approve, reject, suggest alternative, unlock, resubmit, override, final sign-off.
 
-### Post-Compile Handoff — Framework Configuration Workspace (Transitional Bridge)
+### Post-Compile Handoff — Framework Configuration Workspace (Transitional Bridge Within J-06/J-07)
 
 **Governing Issue**: maturion-isms#1669  
 **Frozen implementation dependency**: APGI-cmy/maturion-isms#1667 remains blocked until this alignment package is accepted.
@@ -453,9 +453,16 @@ framework configuration workspace at:
 
 `/assessment/framework?framework_id=<framework-id>`
 
+This handoff remains part of the existing Mode A J-06 and Mode B J-07 journeys; it is
+a continuation step within those journeys and not a separately numbered journey.
+
 This handoff is declared as a **transitional bridge architecture**, not the canonical
 long-term MMM route shape. The long-term canonical destination remains a MMM-native
 workspace route and will be defined in a later architecture revision wave.
+
+Until a formal journey-map revision is approved, downstream architecture artifacts must
+reference this destination under J-06/J-07 coverage rather than introducing a new
+journey label for the same compile handoff.
 
 | Handoff Case | Route Destination | Expected Visible State | Failure Contract |
 |---|---|---|---|
