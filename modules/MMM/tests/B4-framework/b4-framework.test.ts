@@ -141,8 +141,8 @@ describe('T-MMM-S6-029: FrameworkReviewPage.tsx has compile and publish buttons'
   });
   it('calls compile and publish API endpoints', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
-    expect(src).toContain('/compile');
-    expect(src).toContain('/publish');
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-compile'");
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-publish'");
   });
 });
 
@@ -467,13 +467,14 @@ describe('T-MMM-S6-049: FrameworkUploadPage calls correct capabilities per mode'
     expect(src).toContain('framework_id: frameworkId');
     expect(src).toContain("body: { name: 'New Framework', mode, framework_id: frameworkId }");
   });
-  it('Mode C calls mmm-ai-framework-generate with hybrid payload', () => {
+  it('Mode C uploads hybrid source with framework context payload', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
     expect(src).toContain("mode==='C'");
     expect(src).toContain("const frameworkId = await initFramework('Hybrid Framework', 'HYBRID');");
-    expect(src).toContain('hybrid: true');
+    expect(src).toContain("supabase.functions.invoke('mmm-upload-framework-source',");
+    expect(src).toContain("formData.append('source_type', 'HYBRID');");
     expect(src).toContain('framework_id: frameworkId');
-    expect(src).toContain("body: { name: 'Hybrid Framework', hybrid: true, mode, framework_id: frameworkId }");
+    expect(src).toContain("metadata', JSON.stringify({ source_type: 'HYBRID', mode, framework_id: frameworkId })");
   });
   it('renders visible failure state without unwired-backend placeholder copy', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkUploadPage.tsx');
