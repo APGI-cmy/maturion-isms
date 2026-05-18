@@ -6,6 +6,7 @@
 **Branch**: copilot/harden-pit-market-comparison
 **CS2 Authorization**: CS2 direct assignment/instruction via issue + assignee (@APGI-cmy)
 **iaa_prebrief_path**: .agent-admin/assurance/iaa-wave-record-pit-market-comparison-hardening-20260517-20260517.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-market-comparison-hardening-20260517-20260517.md
 **ceremony_admin_appointed**: PENDING (required at Phase 4 handover; ECAP policy applies due `.agent-admin/` scope)
 
 ---
