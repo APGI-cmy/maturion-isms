@@ -1,9 +1,9 @@
 # GitHub Actions Upgrade Policy
 
-**Authority**: Issue #1463 — Actions deprecation detection gate
+**Authority**: Issue #1463 — Actions deprecation detection gate; Issue #1648 — Node 24 posture refresh
 **Applies to**: All `.github/workflows/` and `.github/actions/` files in the `maturion-isms` repository
 **Owner**: Foreman / CS2 (APGI-cmy)
-**Last Updated**: 2026-04-23
+**Last Updated**: 2026-05-14
 
 ---
 
@@ -38,7 +38,7 @@ steps:
   - name: Setup workspace
     uses: ./.github/actions/setup
     with:
-      node-version: '20'   # optional, default: '20'
+      node-version: '24'   # optional, default: '24'
       fetch-depth: '1'     # optional, default: '1'
 ```
 
@@ -48,12 +48,12 @@ steps:
 
 | Action | Minimum Approved Version | Notes |
 |--------|--------------------------|-------|
-| `actions/checkout` | `@v4` | v1, v2, v3 are banned |
-| `actions/setup-node` | `@v4` | v1, v2, v3 are banned |
-| `actions/upload-artifact` | `@v4` | v1, v2, v3 are banned |
-| `actions/download-artifact` | `@v4` | v1, v2, v3 are banned |
-| `actions/cache` | `@v4` | v1, v2, v3 are banned |
-| `pnpm/action-setup` | `@v3` | v1, v2 are banned; v3 and v4 are approved |
+| `actions/checkout` | `@v5` | v1–v4 are banned (v4 uses Node.js 20 runtime) |
+| `actions/setup-node` | `@v5` | v1–v4 are banned (v4 uses Node.js 20 runtime) |
+| `actions/upload-artifact` | `@v5` | v1–v4 are banned (v4 uses Node.js 20 runtime) |
+| `actions/download-artifact` | `@v5` | v1–v4 are banned (v4 uses Node.js 20 runtime) |
+| `actions/cache` | `@v5` | v1–v4 are banned (v4 uses Node.js 20 runtime) |
+| `pnpm/action-setup` | `@v4` | v1, v2, v3 are banned; v4 is approved |
 | `actions/github-script` | `@v7` | current standard |
 | `actions/setup-python` | `@v5` | current standard |
 | `github/codeql-action/*` | `@v3` | current latest — do not flag |
@@ -91,7 +91,8 @@ The gate triggers on:
 ```bash
 BANNED_VERSIONS=(
   # existing entries …
-  "actions/some-action@v2"   # ← add new entry here
+  "actions/checkout@v4"    # ← add new entry here
+  "actions/setup-node@v4"  # ← Node.js 20 runtime — ban once v5 is adopted repo-wide
 )
 ```
 
@@ -122,9 +123,13 @@ Updates are grouped to reduce PR noise:
 
 | Group | Scope | Update Types |
 |-------|-------|--------------|
-| `actions-core` | `actions/*` | minor, patch |
+| `actions-core` | `actions/*` | **major**, minor, patch |
 | `pnpm-actions` | `pnpm/*` | minor, patch |
 | `peter-evans-actions` | `peter-evans/*` | minor, patch |
+
+> **Note (Issue #1648)**: The `actions-core` group was updated to include `major` updates so that
+> Node.js 24-compatible major-version bumps (e.g., `setup-node@v4→v5`) are captured by Dependabot
+> grouping rather than creating ungrouped PRs that compete for the open-pull-requests-limit.
 
 ### 4.3 Review Process
 
@@ -136,12 +141,12 @@ All Dependabot PRs for `github-actions` must be reviewed by `APGI-cmy` (default 
 
 The following updates **may be auto-merged** (subject to CI passing) without manual review:
 
-- Patch-level updates (`@v4.0.x → @v4.0.y`) for any already-approved action
-- Minor-level updates within the same major version (`@v4.0 → @v4.1`) for actions in the approved list (§2.2)
+- Patch-level updates (`@v5.0.x → @v5.0.y`) for any already-approved action
+- Minor-level updates within the same major version (`@v5.0 → @v5.1`) for actions in the approved list (§2.2)
 
 The following updates **require manual review** before merge:
 
-- Any major-version bump (`@v4 → @v5`) — must update the approved versions table in this document and the deprecation gate's `BANNED_VERSIONS` list
+- Any major-version bump (`@v5 → @v6`) — must update the approved versions table in this document and the deprecation gate's `BANNED_VERSIONS` list
 - Any action not currently in the approved list
 - Any update to `github/codeql-action/*` (security toolchain — requires explicit review)
 
@@ -149,13 +154,30 @@ The following updates **require manual review** before merge:
 
 ## 5. Node Runtime Standard
 
-All GitHub Actions workflows in this repository must use **Node.js 20** as the minimum runtime.
+All GitHub Actions workflows in this repository must use **Node.js 24** as the minimum runtime.
 
-- Do NOT use `node12`, `node16`, or any deprecated runner runtime in composite actions
-- All composite actions must use `runs.using: "composite"` — NOT `node16` or `docker`
-- When calling `actions/setup-node`, always specify `node-version: '20'` or higher
+- Do NOT use `node12`, `node16`, `node20`, or any deprecated runner runtime in composite actions
+- All composite actions must use `runs.using: "composite"` — NOT `node20`, `node16` or `docker`
+- When calling `actions/setup-node`, always specify `node-version: '24'` or higher
+- GitHub will remove Node.js 20 from hosted runners on 16 September 2026; Node.js 24 is the
+  replacement runtime for all GitHub-hosted action runners (effective 2 June 2026)
 
 This ensures consistency with Vercel deployment targets and avoids Actions runner deprecation warnings.
+
+### 5.1 Deprecation Timeline
+
+| Date | Event |
+|------|-------|
+| 2026-06-02 | GitHub Actions runners switch default to Node.js 24 |
+| 2026-09-16 | Node.js 20 removed from GitHub-hosted runners — workflows using Node.js 20 actions will fail |
+
+### 5.2 Dependabot Update Failure Diagnosis (Issue #1648)
+
+The Dependabot `github_actions in /` update job was failing because:
+- The `open-pull-requests-limit: 5` setting was blocking additional GitHub Actions update PRs once 5 were already open.
+- Major-version bumps (e.g., v4→v5) create separate PRs outside the grouping rules (which only cover minor/patch updates), further competing for the PR limit.
+
+**Resolution**: The `open-pull-requests-limit` has been raised to `10` to unblock major-version update PRs from being silently starved. The grouping config now also covers major updates for the core `actions-core` group.
 
 ---
 

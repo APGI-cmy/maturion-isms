@@ -91,7 +91,7 @@ jobs:
 
       - name: Checkout trusted default branch utilities
         if: steps.trigger.outputs.matched == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: refs/heads/${{ github.event.repository.default_branch }}
           persist-credentials: false
