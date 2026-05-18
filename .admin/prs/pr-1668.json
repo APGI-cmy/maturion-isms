@@ -1,0 +1,28 @@
+{
+  "pr": 1668,
+  "issue": 1667,
+  "type": "product-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1668.json",
+    ".agent-admin/scope-declarations/pr-1668.md",
+    ".functional-delivery/pr-1668.md",
+    "apps/mmm/src/App.tsx",
+    "apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx",
+    "modules/MMM/tests/B4-framework/b4-framework.test.ts",
+    "scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs"
+  ],
+  "risk": "low",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "execution_model": "copilot-direct",
+  "implementing_agent": "copilot",
+  "evidence_required": [
+    "AssessmentFrameworkHandoffPage.tsx created at apps/mmm/src/pages/",
+    "/assessment/framework route registered in apps/mmm/src/App.tsx wrapped in ProtectedRoute",
+    "B4 framework tests T-MMM-S6-051 and T-MMM-S6-052 added to modules/MMM/tests/B4-framework/b4-framework.test.ts",
+    "verify-mmm-modes.mjs updated to assert visible workspace content after legacy-handoff",
+    "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh -> Passed: 44, Failed: 0"
+  ],
+  "merge_authority": "CS2"
+}

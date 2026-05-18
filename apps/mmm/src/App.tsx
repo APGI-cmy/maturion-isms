@@ -26,6 +26,7 @@ import FindingsPage from '@/pages/FindingsPage';
 import ReportPage from '@/pages/ReportPage';
 import DashboardPage from '@/pages/DashboardPage';
 import PitExportPage from '@/pages/PitExportPage';
+import AssessmentFrameworkHandoffPage from '@/pages/AssessmentFrameworkHandoffPage';
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="/reports/:assessmentId" element={<ProtectedRoute><ReportPage /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
             <Route path="/pit-export/:id" element={<ProtectedRoute><PitExportPage /></ProtectedRoute>} />
+            <Route path="/assessment/framework" element={<ProtectedRoute><AssessmentFrameworkHandoffPage /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </ErrorBoundary>

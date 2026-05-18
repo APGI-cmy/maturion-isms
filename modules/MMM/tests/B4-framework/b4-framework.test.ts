@@ -499,3 +499,60 @@ describe('T-MMM-S6-050: mmm-framework-compile returns compiled counts', () => {
     expect(src).toContain('compiled_criteria');
   });
 });
+
+// ─── T-MMM-S6-051: AssessmentFrameworkHandoffPage.tsx exists ─────────────────
+describe('T-MMM-S6-051: AssessmentFrameworkHandoffPage.tsx exists', () => {
+  it('file exists', () => {
+    expect(fileExists('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx')).toBe(true);
+  });
+  it('reads framework_id from query string', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('useSearchParams');
+    expect(src).toContain("searchParams.get('framework_id')");
+  });
+  it('shows error state when framework_id is missing', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="handoff-missing-framework-id"');
+    expect(src).toContain('No framework ID provided');
+  });
+  it('shows error state when framework is not found', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="handoff-framework-not-found"');
+    expect(src).toContain('Framework not found');
+  });
+  it('renders visible workspace container', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="handoff-workspace"');
+    expect(src).toContain('data-testid="handoff-framework-name"');
+  });
+  it('renders domains section', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="handoff-domains"');
+  });
+  it('queries mmm_frameworks for the resolved framework', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain("from('mmm_frameworks')");
+  });
+  it('queries mmm_domains for the framework domains', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain("from('mmm_domains')");
+  });
+});
+
+// ─── T-MMM-S6-052: App.tsx registers /assessment/framework route ─────────────
+describe('T-MMM-S6-052: App.tsx registers /assessment/framework route', () => {
+  it('has /assessment/framework route', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('"/assessment/framework"');
+  });
+  it('route is wrapped in ProtectedRoute', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    const routeIdx = src.indexOf('"/assessment/framework"');
+    const surroundingCtx = src.slice(Math.max(0, routeIdx - 50), routeIdx + 200);
+    expect(surroundingCtx).toContain('ProtectedRoute');
+  });
+  it('route uses AssessmentFrameworkHandoffPage', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('AssessmentFrameworkHandoffPage');
+  });
+});
