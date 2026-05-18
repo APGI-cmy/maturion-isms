@@ -9,7 +9,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: UX Workflow & Wiring Spec (Stage 2)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.2.0 (POLC-Orchestration mode)
+- **Version**: 0.3.0 (POLC-Orchestration mode)
 - **Issue**: maturion-isms#1352
 - **Upstream Authority**: `MMM_app_description.md` v0.5.0 (CS2-approved)
 - **Inputs Used**:
@@ -442,6 +442,28 @@ The compiled framework passes through a three-tier approval workflow before publ
 ### Audit Trail
 Per App Description §21.2, all approval actions are audit-trailed:
 approve, reject, suggest alternative, unlock, resubmit, override, final sign-off.
+
+### Post-Compile Handoff — Framework Configuration Workspace (Transitional Bridge)
+
+The compile CTA in both Mode A (J-06) and Mode B (J-07) must hand off to a visible
+framework configuration workspace at:
+
+`/assessment/framework?framework_id=<framework-id>`
+
+This handoff is declared as a **transitional bridge architecture**, not the canonical
+long-term MMM route shape. The long-term canonical destination remains a MMM-native
+workspace route and will be defined in a later architecture revision wave.
+
+| Handoff Case | Route Destination | Expected Visible State | Failure Contract |
+|---|---|---|---|
+| Compile success | `/assessment/framework?framework_id=<valid-id>` | Visible framework configuration workspace (not blank) with loaded framework context | If workspace render fails, show blocking error state with retry/back action |
+| Missing context | `/assessment/framework` (no `framework_id`) | User-facing error panel explaining required framework context | No blank render allowed; no silent failure |
+| Invalid context | `/assessment/framework?framework_id=<invalid-or-unresolvable-id>` | User-facing error panel stating framework could not be resolved | No blank render allowed; include recovery action (back to review/recompile) |
+
+**Relationship to compiled framework**:
+- Compile operation creates/updates canonical framework hierarchy records.
+- Handoff route consumes `framework_id` as active workspace context.
+- Workspace must reflect the compiled framework represented by that `framework_id`.
 
 **Harvest Map Ref**: RR-04
 **App Description Ref**: §21
@@ -1346,6 +1368,7 @@ to Stage 3.
 | Create Organisation | Complete org onboarding | POST /api/organisations/create | `mmm-org-create` | `organisations` | Org record created; framework origin screen shown | Validation error; org not created |
 | Upload Framework Source | Upload existing framework document | POST /api/upload/framework-source | `mmm-upload-framework-source` + parse/chunk pipeline | `document_uploads`, `framework_source_chunks` | Upload accepted; parse/chunk queued | Upload rejected; error toast |
 | Generate Framework (AI) | AI generates framework from org context | POST /api/frameworks/generate | `mmm-ai-framework-generate` | `frameworks`, `domains`, `criteria` | Framework skeleton created; review screen shown | AI error; no framework created |
+| Compile Framework | Compile reviewed Mode A/B output into active workspace | POST /api/frameworks/{id}/compile → navigate `/assessment/framework?framework_id={id}` | `mmm-framework-compile-handoff` (transitional bridge) | `frameworks`, `domains`, `mps`, `criteria`, `level_descriptors` | Framework Configuration Workspace renders with visible content for compiled `framework_id` | Missing/invalid `framework_id` or unresolved framework shows visible user error state (never blank) |
 | Approve Framework | Approve framework for activation | POST /api/frameworks/{id}/approve | `mmm-framework-approve` | `frameworks.status` | Framework status → approved | Approval rejected; status unchanged |
 | Publish Framework | Make framework live | POST /api/frameworks/{id}/publish | `mmm-publish-framework` | `published_frameworks` | Framework published; dashboard activated | Publishing error; framework remains draft |
 | Attach Evidence | Link evidence artifact to criterion | POST /api/criteria/{id}/evidence | `mmm-evidence-create` | `evidence` | Evidence record created; criterion updated | Evidence rejected; error shown |
@@ -1363,6 +1386,7 @@ denied.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3.0 | 2026-05-18 | Added explicit post-compile handoff declaration for `/assessment/framework?framework_id=...`, including transitional bridge boundary, visible success state, and missing/invalid `framework_id` failure contracts |
 | 0.1.0 | 2026-04-13 | Initial Stage 2 UX Workflow & Wiring Spec — 17 user journeys, complete wiring, boundary definitions, open questions carried forward |
 
 ---

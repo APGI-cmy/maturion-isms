@@ -8,9 +8,9 @@
 
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: PBFAG Checklist (Stage 7)
-- **Status**: COMPLETE
-- **Version**: 0.1.0
-- **Date**: 2026-04-15
+- **Status**: COMPLETE + CHANGE-PROPAGATION ADDENDUM (compile handoff RED finding)
+- **Version**: 0.2.0
+- **Date**: 2026-05-18
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
 - **Produced By**: mat-specialist (delegated by foreman-v2-agent)
 - **Issue**: maturion-isms#1387 (MMM Stage 7 PBFAG wave-start authorization)
@@ -460,6 +460,41 @@ checklist begins in future waves after this initial pack.
 
 ---
 
+## Stage 7 Change-Propagation Addendum — `/assessment/framework` Compile Handoff
+
+**Date**: 2026-05-18  
+**Scope**: Post-compile handoff from MMM framework generation/review flow  
+**Related implementation issue**: APGI-cmy/maturion-isms#1667 (frozen until this alignment is complete)
+
+### Finding
+
+Manual functional verification confirmed compile success can navigate to:
+
+`/assessment/framework?framework_id=<framework-id>`
+
+but destination render is blank. This is a **functional-delivery / pre-build alignment
+failure**, not a minor runtime-only defect.
+
+### Governance Classification
+
+```
+RESULT: RED
+BUILD_TO_GREEN_ALLOWED: no, until pre-build artifacts and RED tests are aligned
+```
+
+### Required Change Propagation Outcome
+
+1. Stage 2 must explicitly declare compile → framework configuration workspace handoff,
+   including success and missing/invalid context failure contracts.
+2. Stage 5 must declare route/component/capability ownership for `/assessment/framework`
+   transitional boundary and typed integration client obligation.
+3. Stage 6 must include RED tests that assert visible workspace render and missing/invalid
+   `framework_id` error states (URL-only proof is insufficient).
+4. Implementation issue APGI-cmy/maturion-isms#1667 remains **frozen/blocked** until all
+   three artifact updates above are complete and reviewed.
+
+---
+
 ## Part F — PBFAG Summary Table
 
 | Gate Section | Verdict |
@@ -484,6 +519,7 @@ checklist begins in future waves after this initial pack.
 | E FQ-8 Stage 8 Readiness | ✅ READY |
 | E FQ-9 Residual Defects | ✅ NONE |
 | **E FQ-10 PBFAG Verdict** | **✅ PASS** |
+| Compile handoff addendum (`/assessment/framework`) | 🔴 RED — ALIGNMENT REQUIRED |
 
 ---
 

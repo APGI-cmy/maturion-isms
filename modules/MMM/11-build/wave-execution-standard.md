@@ -8,7 +8,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: Wave Execution Standard (Stage 12 governance requirement)
 - **Status**: ACTIVE — Applies to all MMM build waves from Phase 3 onwards
-- **Version**: 1.0.0
+- **Version**: 1.1.0
 - **Date**: 2026-05-07
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
 - **Produced By**: mat-specialist (delegated by foreman-v2-agent; wave mmm-phase3-retrofit-20260507)
@@ -136,6 +136,22 @@ Builder: ____________________  Date: ____________________
 **A wave is not eligible for IAA final assurance until the VERDICT is marked FUNCTIONALLY
 COMPLETE.**
 
+### 1.8 Compile Handoff Evidence Pack (Scope-Specific: `/assessment/framework`)
+
+For any implementation wave that addresses compile handoff to `/assessment/framework`
+(including APGI-cmy/maturion-isms#1667), the Functional Delivery Evidence Pack MUST include:
+
+| Evidence Item | Required | Format |
+|---|---|---|
+| Preview URL proving compile handoff route render | ✅ MANDATORY | URL + timestamp + referenced framework_id |
+| Screenshot: compile success destination visible workspace state | ✅ MANDATORY | Labelled image showing non-blank workspace |
+| Screenshot: missing `framework_id` error state | ✅ MANDATORY | Labelled image with user-facing error message |
+| Screenshot: invalid/unresolvable `framework_id` error state | ✅ MANDATORY | Labelled image with user-facing error message |
+| Mode A/B/C handoff verification evidence | ✅ MANDATORY | Test output and journey-step evidence showing visible workspace post-compile |
+| Explicit compile handoff functional verdict | ✅ MANDATORY | PASS/FAIL statement for "URL + visible workspace render" |
+
+URL-only redirect proof is explicitly insufficient for this scope.
+
 ---
 
 ## 2. Handover Sequence
@@ -170,4 +186,5 @@ maturion-isms#1553 (Phase 0 — temporary build freeze).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.0 | 2026-05-18 | Added scope-specific compile handoff evidence requirements for `/assessment/framework`, including preview URL, success/error screenshots, Mode A/B/C verification, and explicit functional verdict |
 | 1.0.0 | 2026-05-07 | Initial Wave Execution Standard — created per Phase 3 retrofit (maturion-isms#1564) |
