@@ -486,7 +486,7 @@ jobs:
                 if (REJECTION_NOTICE_REGEX.test(b)) return false;
                 // Match explicit handover/merge-ready claim language
                 return (
-                  /\bhandover(?:-ready|\s+ready|\s+claim)\b/i.test(b) ||
+                  /\bhandover[ -]?ready\b|\bhandover claim\b/i.test(b) ||
                   /merge.?ready|ready.to.merge/i.test(b) ||
                   /all.gates.pass|merge.gate.released/i.test(b) ||
                   /\bOPOJD\b/i.test(b) ||

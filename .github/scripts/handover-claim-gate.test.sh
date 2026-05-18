@@ -35,7 +35,7 @@ const isExplicitHandoverClaimComment = (body) => {
   if (/HANDOVER_BLOCKED|STOP_AND_FIX|CS2_INTERVENTION_REQUIRED/i.test(body)) return false;
   if (REJECTION_NOTICE_REGEX.test(body)) return false;
   return (
-    /\bhandover(?:-ready|\s+ready|\s+claim)\b/i.test(body) ||
+    /\bhandover[ -]?ready\b|\bhandover claim\b/i.test(body) ||
     /merge.?ready|ready.to.merge/i.test(body) ||
     /all.gates.pass|merge.gate.released/i.test(body) ||
     /\bOPOJD\b/i.test(body) ||
