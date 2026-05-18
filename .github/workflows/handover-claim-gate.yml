@@ -268,7 +268,7 @@ jobs:
                     conclusion: run.conclusion,
                     url: run.html_url,
                     run_id: run.id || '',
-                    job_id: run.id || '',
+                    job_id: '',
                     started_at: run.started_at || '',
                     completed_at: run.completed_at || '',
                   });
@@ -280,7 +280,7 @@ jobs:
                   status: run.status,
                   url: run.html_url,
                   run_id: run.id || '',
-                  job_id: run.id || '',
+                  job_id: '',
                   started_at: run.started_at || '',
                   completed_at: run.completed_at || '',
                 });
@@ -464,7 +464,10 @@ jobs:
             const snapshotQaPackageOutOfAuthority = String(readField(commentBody, 'QA_REJECTION_PACKAGE_OUT_OF_AUTHORITY_ITEMS') || '').trim();
             const unresolvedCurrentHeadGates = failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll;
             const failedGateRunTimes = [...failing, ...pending]
-              .map((entry) => new Date(entry.completed_at || entry.started_at || 0).getTime())
+              .map((entry) => {
+                const timestamp = entry.completed_at || entry.started_at;
+                return timestamp ? new Date(timestamp).getTime() : Number.NaN;
+              })
               .filter((value) => Number.isFinite(value) && value > 0);
             const latestFailedGateRunTime = failedGateRunTimes.length > 0 ? Math.max(...failedGateRunTimes) : 0;
             const qaPackageUpdatedAtMs = snapshotQaPackageUpdatedAt ? new Date(snapshotQaPackageUpdatedAt).getTime() : Number.NaN;

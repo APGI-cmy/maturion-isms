@@ -417,7 +417,7 @@ function collectCheckState(checkRuns, commitStatuses) {
           status: run.status || 'completed',
           conclusion: run.conclusion || 'failure',
           runId: run.id || '',
-          jobId: run.id || '',
+          jobId: '',
           updatedAt: run.completed_at || run.started_at || '',
         });
       }
@@ -428,7 +428,7 @@ function collectCheckState(checkRuns, commitStatuses) {
         status: run.status || 'pending',
         conclusion: '',
         runId: run.id || '',
-        jobId: run.id || '',
+        jobId: '',
         updatedAt: run.started_at || run.completed_at || '',
       });
     }
@@ -568,7 +568,7 @@ function evaluateCheckpoint(input = {}) {
   const scopePresent = Boolean(scopeText);
   const scopeCountMatches = scopePresent && scopeCount === changedFiles.length;
   const scopeDeclaredFiles = parseScopeDeclaredFiles(scopeText);
-  const scopeExtraFiles = scopeDeclaredFiles.length > 0
+  const scopeUndeclaredFiles = scopeDeclaredFiles.length > 0
     ? changedFiles.filter((file) => !scopeDeclaredFiles.includes(file))
     : [];
 
@@ -686,14 +686,14 @@ function evaluateCheckpoint(input = {}) {
       && scopePresent
       && !scopeCountMatches
     ) {
-      const firstMissing = scopeExtraFiles[0] || 'unable-to-resolve-missing-file';
+      const firstUndeclaredFile = scopeUndeclaredFiles[0] || 'unable-to-resolve-missing-file';
       return {
         ...record,
         gate,
-        firstConcreteRejection: `Scope declaration mismatch: declared FILES_CHANGED=${scopeCount || 0}, actual diff=${changedFiles.length}; missing scope entry ${firstMissing}.`,
+        firstConcreteRejection: `Scope declaration mismatch: declared FILES_CHANGED=${scopeCount || 0}, actual diff=${changedFiles.length}; missing scope entry ${firstUndeclaredFile}.`,
         rejectionType: 'SCOPE_DECLARATION_MISMATCH',
-        requiredAction: scopeExtraFiles.length > 0
-          ? `Update scope/manifest to include missing file(s): ${scopeExtraFiles.join(', ')} or revert unintended file changes, then rerun preflight.`
+        requiredAction: scopeUndeclaredFiles.length > 0
+          ? `Update scope/manifest to include missing file(s): ${scopeUndeclaredFiles.join(', ')} or revert unintended file changes, then rerun preflight.`
           : `Update scope declaration to match current diff count (${changedFiles.length}) or revert unintended file changes, then rerun preflight.`,
       };
     }
@@ -770,8 +770,8 @@ function evaluateCheckpoint(input = {}) {
   if (!scopePresent && (requiresIaa || requiresEcap || productDeliveryRequired)) {
     reasons.push('Per-PR scope declaration missing.');
   } else if (scopePresent && !scopeCountMatches) {
-    if (scopeExtraFiles.length > 0) {
-      reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}); missing file(s): ${scopeExtraFiles.join(', ')}.`);
+    if (scopeUndeclaredFiles.length > 0) {
+      reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}); missing file(s): ${scopeUndeclaredFiles.join(', ')}.`);
     } else {
       reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}).`);
     }
@@ -947,7 +947,12 @@ function evaluateCheckpoint(input = {}) {
       `  status: ${hasOutOfSandboxOrGovernanceBlocker ? 'escalated' : 'unresolved'}`,
     ])),
     'RERUN_GATES:',
-    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.map((item) => `- gate: ${item.gate}\n  status: pending\n  run_id_or_evidence: pending\n  current_head_match: yes`)),
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      '  status: pending',
+      '  run_id_or_evidence: pending',
+      '  current_head_match: yes',
+    ])),
     `REMAINING_REJECTIONS: ${unresolvedRejections}`,
     `RESULT: ${qaRejectionPackageResult}`,
     `HANDOVER_ALLOWED: ${qaRejectionPackageHandoverAllowed}`,
