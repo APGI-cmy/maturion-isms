@@ -6,7 +6,7 @@ interface Domain {
   id: string;
   code: string;
   name: string;
-  status: string;
+  sort_order: number;
 }
 
 function AppNav() {
@@ -43,14 +43,15 @@ export default function AssessmentFrameworkHandoffPage() {
     enabled: !!frameworkId,
   });
 
-  const { data: domains } = useQuery({
+  const { data: domains, isLoading: domainsLoading, isError: domainsError } = useQuery({
     queryKey: ['framework-handoff-domains', frameworkId],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('mmm_domains')
-        .select('id, name, code, status')
+        .select('id, name, code, sort_order')
         .eq('framework_id', frameworkId!)
-        .order('code');
+        .order('sort_order');
+      if (error) throw new Error(error.message);
       return (data ?? []) as Domain[];
     },
     enabled: !!frameworkId && !!framework,
@@ -136,13 +137,16 @@ export default function AssessmentFrameworkHandoffPage() {
             data-testid="handoff-domains"
           >
             <h2>Domains</h2>
-            {domains && domains.length > 0 ? (
+            {domainsLoading ? (
+              <p className="handoff-domains-loading">Loading domains…</p>
+            ) : domainsError ? (
+              <p className="handoff-domains-error">Could not load domains.</p>
+            ) : domains && domains.length > 0 ? (
               <ul className="handoff-domain-list">
                 {domains.map((d) => (
                   <li key={d.id} className="handoff-domain-item">
                     <span className="handoff-domain-item__code">{d.code}</span>
                     <span className="handoff-domain-item__name">{d.name}</span>
-                    <span className="handoff-domain-item__status">{d.status}</span>
                   </li>
                 ))}
               </ul>

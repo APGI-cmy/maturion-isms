@@ -6,6 +6,8 @@
   "scope": [
     ".admin/prs/pr-1668.json",
     ".agent-admin/scope-declarations/pr-1668.md",
+    ".agent-admin/evidence/polc-exception-pr-1668.md",
+    ".agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ONCE.md",
     ".functional-delivery/pr-1668.md",
     "apps/mmm/src/App.tsx",
     "apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx",

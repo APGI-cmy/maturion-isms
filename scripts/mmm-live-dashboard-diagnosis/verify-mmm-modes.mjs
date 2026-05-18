@@ -493,9 +493,11 @@ async function runMode(page, origin, mode, sampleFilePath) {
       log(`Publish: ${publishResult}`);
 
       // Assert visible workspace content — not just URL handoff
-      await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
       const workspaceEl = page.locator('[data-testid="handoff-workspace"]');
-      const workspaceVisible = await workspaceEl.isVisible().catch(() => false);
+      const workspaceVisible = await workspaceEl
+        .waitFor({ state: 'visible', timeout: WAIT_TIMEOUT })
+        .then(() => true)
+        .catch(() => false);
       if (!workspaceVisible) {
         compileResult = `FAIL — legacy handoff URL reached but workspace [data-testid="handoff-workspace"] not visible at (${handoffUrl})`;
         log(`Compile: ${compileResult}`);
