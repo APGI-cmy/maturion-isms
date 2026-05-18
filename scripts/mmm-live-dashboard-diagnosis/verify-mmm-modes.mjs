@@ -5,9 +5,9 @@
  * Runs the full MMM framework lifecycle for each mode against the live
  * Vercel preview deployment:
  *
- *   Mode B: AI generate → review page → compile → publish
- *   Mode A: Upload document → parse COMPLETE → review page → compile → publish
- *   Mode C: Hybrid upload → parse COMPLETE → review page → compile → publish
+ *   Mode B: AI generate → review page → compile → legacy workspace handoff
+ *   Mode A: Upload document → parse COMPLETE → review page → compile → legacy workspace handoff
+ *   Mode C: Hybrid upload → parse COMPLETE → review page → compile → legacy workspace handoff
  *   Dashboard: Verify dashboard reflects completed frameworks
  *
  * Required environment variables:
@@ -446,9 +446,12 @@ async function runMode(page, origin, mode, sampleFilePath) {
     log('Clicking Compile…');
     await compileBtn.click();
 
-    // Wait for compile success or error
+    // Wait for compile success, compile error, or redirect handoff into legacy workspace
     const compileSuccess = page.getByText(/✓ Framework compiled\. Status moved to REVIEW\./);
     const compileError = page.locator('[role="alert"]').filter({ hasText: /✗ Compile failed/ });
+    const legacyHandoffOutcome = page.waitForURL(/\/assessment\/framework(\?|$)/, {
+      timeout: COMPILE_TIMEOUT,
+    }).then(() => 'legacy-handoff').catch(() => null);
 
     const compileOutcome = await Promise.race([
       compileSuccess
@@ -459,11 +462,36 @@ async function runMode(page, origin, mode, sampleFilePath) {
         .waitFor({ state: 'visible', timeout: COMPILE_TIMEOUT })
         .then(() => 'error')
         .catch(() => null),
+      legacyHandoffOutcome,
     ]);
 
     if (compileOutcome === 'success') {
       compileResult = 'PASS';
       log('Compile: PASS — ✓ Framework compiled. Status moved to REVIEW.');
+    } else if (compileOutcome === 'legacy-handoff') {
+      if (!frameworkId) {
+        compileResult = 'FAIL — frameworkId missing before legacy handoff validation';
+        log(`Compile: ${compileResult}`);
+        throw new Error(compileResult);
+      }
+      const handoffUrl = page.url();
+      const handoff = new URL(handoffUrl);
+      const handoffFrameworkId = handoff.searchParams.get('framework_id');
+      if (!handoffFrameworkId) {
+        compileResult = `FAIL — legacy handoff missing framework_id (${handoffUrl})`;
+        log(`Compile: ${compileResult}`);
+        throw new Error(compileResult);
+      }
+      if (handoffFrameworkId !== frameworkId) {
+        compileResult = `FAIL — legacy handoff framework_id mismatch (expected ${frameworkId}, got ${handoffFrameworkId})`;
+        log(`Compile: ${compileResult}`);
+        throw new Error(compileResult);
+      }
+      compileResult = `PASS — legacy handoff (${handoffUrl})`;
+      publishResult = 'SKIPPED — compile now hands off to legacy workspace';
+      log(`Compile: ${compileResult}`);
+      log(`Publish: ${publishResult}`);
+      return { success: true, frameworkId, compileResult, publishResult, details };
     } else if (compileOutcome === 'error') {
       const errMsg = await compileError.innerText().catch(() => '');
       compileResult = `FAIL — ${errMsg}`;

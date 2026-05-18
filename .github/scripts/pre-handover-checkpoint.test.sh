@@ -82,6 +82,101 @@ run_checkpoint_test() {
   fi
 }
 
+run_checkpoint_field_test() {
+  local name="$1"
+  local setup_fn="$2"
+  local expected_result="$3"
+  local expected_handover="$4"
+  local expected_field_checks_json="$5"
+
+  local ws
+  ws="$(mktemp -d -p "$TEST_DIR")"
+  cd "$ws"
+
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test User"
+  mkdir -p .admin/prs .agent-admin/assurance .agent-admin/prehandover \
+           .agent-workspace/execution-ceremony-admin-agent/bundles \
+           .agent-workspace/foreman-v2/memory .agent-admin/scope-declarations
+  echo "init" > README.md
+  git add .
+  git commit -q -m "init"
+  git branch -M main
+  git checkout -q -b test-branch
+
+  TEST_PR_BODY=""
+  CHECK_RUNS_JSON='[]'
+  COMMIT_STATUSES_JSON='[]'
+  TEST_HEAD_SHA_OVERRIDE=""
+  TEST_MERGE_CONFLICT_CHECKED="yes"
+  TEST_MERGEABLE_WITH_BASE="yes"
+  TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="yes"
+  TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER=""
+
+  "$setup_fn"
+
+  local base_sha head_sha output
+  base_sha="$(git rev-parse main)"
+  head_sha="${TEST_HEAD_SHA_OVERRIDE:-$(git rev-parse HEAD)}"
+  output="$(
+    PR_NUMBER=9999 \
+    ISSUE_NUMBER=1583 \
+    PR_BODY="$TEST_PR_BODY" \
+    PR_TITLE="Checkpoint hardening" \
+    PR_BRANCH="copilot/test-checkpoint" \
+    CHECKPOINT_TRIGGER="/prepare-handover" \
+    BASE_SHA="$base_sha" \
+    HEAD_SHA="$head_sha" \
+    CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
+    CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+    CHECKPOINT_MERGE_CONFLICT_CHECKED="$TEST_MERGE_CONFLICT_CHECKED" \
+    CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
+    CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
+    CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
+    node "$CHECKPOINT_SCRIPT"
+  )"
+
+  if OUTPUT="$output" EXPECTED_RESULT="$expected_result" EXPECTED_HANDOVER="$expected_handover" FIELD_CHECKS="$expected_field_checks_json" node - <<'EOF'
+const output = JSON.parse(process.env.OUTPUT || '{}');
+const fields = output.fields || {};
+const expectedResult = process.env.EXPECTED_RESULT || '';
+const expectedHandover = process.env.EXPECTED_HANDOVER || '';
+const checks = JSON.parse(process.env.FIELD_CHECKS || '[]');
+let ok = true;
+
+if (fields.RESULT !== expectedResult) {
+  console.error(`result mismatch: expected ${expectedResult} got ${fields.RESULT}`);
+  ok = false;
+}
+if (fields.HANDOVER_ALLOWED !== expectedHandover) {
+  console.error(`handover mismatch: expected ${expectedHandover} got ${fields.HANDOVER_ALLOWED}`);
+  ok = false;
+}
+
+for (const check of checks) {
+  const actual = String(fields[check.field] || '');
+  if (check.equals !== undefined && actual !== String(check.equals)) {
+    console.error(`${check.field} mismatch: expected ${check.equals} got ${actual}`);
+    ok = false;
+  }
+  if (check.contains && !actual.includes(check.contains)) {
+    console.error(`${check.field} missing substring: ${check.contains}; actual=${actual}`);
+    ok = false;
+  }
+}
+
+process.exit(ok ? 0 : 1);
+EOF
+  then
+    echo "✅ $name"
+    PASS_COUNT=$((PASS_COUNT + 1))
+  else
+    echo "❌ $name"
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+  fi
+}
+
 run_claim_test() {
   local name="$1"
   local mode="$2"
@@ -410,6 +505,46 @@ EOF
 }
 run_checkpoint_test "10. product-facing FUNCTIONAL_PASS no -> STOP_AND_FIX" "STOP_AND_FIX" "no" "Functional PASS verdict not confirmed." setup_product_functional_fail
 
+setup_mmm_compile_handoff_missing_verify_gate() {
+  setup_green_checkpoint
+  mkdir -p apps/mmm/src/pages
+  mkdir -p .functional-delivery
+  cat > apps/mmm/src/pages/FrameworkReviewPage.compile-handoff.tsx <<'EOF'
+export const FrameworkReviewPage = () => <div>compile handoff with framework_id + legacy workspace</div>;
+EOF
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  cat > .functional-delivery/pr-9999.md <<EOF
+PR: #9999
+Issue: #1583
+Current head SHA reviewed: ${head_sha}
+Builder QA functional report reference: qa-report
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  git add apps/mmm/src/pages/FrameworkReviewPage.compile-handoff.tsx .functional-delivery/pr-9999.md
+  git commit -q -m "mmm framework compile handoff update"
+  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+}
+run_checkpoint_field_test \
+  "10b. PR-1653-style MMM compile handoff missing verify gate -> STOP_AND_FIX and explicit journey fields" \
+  setup_mmm_compile_handoff_missing_verify_gate \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"PRODUCT_JOURNEY_CLASSIFICATION","contains":"mmm-frameworkreviewpage-compile-handoff"},
+    {"field":"PRODUCT_JOURNEY_CLASSIFICATION","contains":"mmm-verify-mode-a-required"},
+    {"field":"PRODUCT_JOURNEY_CLASSIFICATION","contains":"mmm-verify-mode-b-required"},
+    {"field":"PRODUCT_JOURNEY_CLASSIFICATION","contains":"mmm-verify-mode-c-required"},
+    {"field":"PRODUCT_JOURNEY_CLASSIFICATION","contains":"mmm-legacy-workspace-handoff-required"},
+    {"field":"PRODUCT_JOURNEY_CLASSIFICATION","contains":"mmm-framework_id-preservation-required"},
+    {"field":"AFFECTED_PRODUCT_GATES_REQUIRED","contains":"MMM Live Dashboard Diagnosis / Verify Mode A/B/C"},
+    {"field":"AFFECTED_PRODUCT_GATES_REQUIRED","contains":"preflight/product-delivery-gates"},
+    {"field":"AFFECTED_PRODUCT_GATES_REQUIRED","contains":"preflight/iaa-final-assurance"},
+    {"field":"FAILED_AFFECTED_GATES","contains":"MMM Live Dashboard Diagnosis / Verify Mode A/B/C"},
+    {"field":"REQUIRED_ACTION","equals":"STOP_AND_FIX"}
+  ]'
+
 setup_merge_conflict_not_resolved() {
   setup_green_checkpoint
   TEST_MERGE_CONFLICT_CHECKED="yes"
@@ -534,18 +669,15 @@ run_corrective_comment_test \
 
 run_injection_compliance_test() {
   local name="$1"
-  local is_product_fix="$2"
-  local comment_body="$3"
-  local expected_blocked="$4"  # "true" = should generate precondition failure, "false" = should pass
+  local comment_body="$2"
+  local expected_blocked="$3"  # "true" = should generate precondition failure, "false" = should pass
   local actual
 
   actual="$(
-    IS_PRODUCT_FIX="$is_product_fix" \
     COMMENT_BODY="$comment_body" \
     node - <<'JSEOF'
 // Mirrors the injection compliance validation logic from handover-claim-gate.yml §12.
 // Authority: governance/checklists/phase4-role-separation-operational-guidance.md §12
-const isProductFix = process.env.IS_PRODUCT_FIX === 'true';
 const commentBody = process.env.COMMENT_BODY || '';
 const preconditionFailures = [];
 
@@ -562,21 +694,23 @@ const isNonEmptySignal = (value) => {
   return t !== '' && !['none', 'n/a', 'na', '0', '[]', '{}', 'not_applicable'].includes(t);
 };
 
-if (!isProductFix) {
-  const injectionComplianceResult = readField(commentBody, 'INJECTION_COMPLIANCE_RESULT');
-  const uncheckedRequiredItems = readField(commentBody, 'UNCHECKED_REQUIRED_ITEMS');
-  const unauthorizedDeviations = readField(commentBody, 'UNAUTHORIZED_DEVIATIONS');
-  if (!injectionComplianceResult) {
-    preconditionFailures.push('INJECTION_COMPLIANCE_RESULT field missing from snapshot.');
-  } else if (!/^COMPLIANT$/i.test(injectionComplianceResult.trim())) {
-    preconditionFailures.push('INJECTION_COMPLIANCE_RESULT (' + injectionComplianceResult + ') is not COMPLIANT.');
-  }
-  if (uncheckedRequiredItems && isNonEmptySignal(uncheckedRequiredItems)) {
-    preconditionFailures.push('UNCHECKED_REQUIRED_ITEMS (' + uncheckedRequiredItems + ') must be none before handover.');
-  }
-  if (unauthorizedDeviations && isNonEmptySignal(unauthorizedDeviations)) {
-    preconditionFailures.push('UNAUTHORIZED_DEVIATIONS (' + unauthorizedDeviations + ') must be none before handover.');
-  }
+const injectionComplianceResult = readField(commentBody, 'INJECTION_COMPLIANCE_RESULT');
+const uncheckedRequiredItems = readField(commentBody, 'UNCHECKED_REQUIRED_ITEMS');
+const unauthorizedDeviations = readField(commentBody, 'UNAUTHORIZED_DEVIATIONS');
+if (!injectionComplianceResult) {
+  preconditionFailures.push('INJECTION_COMPLIANCE_RESULT field missing from snapshot.');
+} else if (!/^COMPLIANT$/i.test(injectionComplianceResult.trim())) {
+  preconditionFailures.push('INJECTION_COMPLIANCE_RESULT (' + injectionComplianceResult + ') is not COMPLIANT.');
+}
+if (!uncheckedRequiredItems) {
+  preconditionFailures.push('UNCHECKED_REQUIRED_ITEMS field missing from snapshot.');
+} else if (isNonEmptySignal(uncheckedRequiredItems)) {
+  preconditionFailures.push('UNCHECKED_REQUIRED_ITEMS (' + uncheckedRequiredItems + ') must be none before handover.');
+}
+if (!unauthorizedDeviations) {
+  preconditionFailures.push('UNAUTHORIZED_DEVIATIONS field missing from snapshot.');
+} else if (isNonEmptySignal(unauthorizedDeviations)) {
+  preconditionFailures.push('UNAUTHORIZED_DEVIATIONS (' + unauthorizedDeviations + ') must be none before handover.');
 }
 
 process.stdout.write(preconditionFailures.length > 0 ? 'true' : 'false');
@@ -595,7 +729,6 @@ JSEOF
 # 23. Full-ceremony PR with missing INJECTION_COMPLIANCE_RESULT → blocked.
 run_injection_compliance_test \
   "23. full-ceremony PR missing INJECTION_COMPLIANCE_RESULT -> blocked" \
-  "false" \
   "CURRENT_HEAD_SHA: abc123
 HANDOVER_ALLOWED: yes
 RESULT: HANDOVER_ALLOWED" \
@@ -604,7 +737,6 @@ RESULT: HANDOVER_ALLOWED" \
 # 24. Full-ceremony PR with INJECTION_COMPLIANCE_RESULT: STOP_AND_FIX → blocked.
 run_injection_compliance_test \
   "24. full-ceremony PR INJECTION_COMPLIANCE_RESULT=STOP_AND_FIX -> blocked" \
-  "false" \
   "CURRENT_HEAD_SHA: abc123
 INJECTION_COMPLIANCE_RESULT: STOP_AND_FIX
 UNCHECKED_REQUIRED_ITEMS: validate affected workflows
@@ -616,7 +748,6 @@ RESULT: HANDOVER_ALLOWED" \
 # 25. Full-ceremony PR with INJECTION_COMPLIANCE_RESULT: CS2_INTERVENTION_REQUIRED → blocked.
 run_injection_compliance_test \
   "25. full-ceremony PR INJECTION_COMPLIANCE_RESULT=CS2_INTERVENTION_REQUIRED -> blocked" \
-  "false" \
   "CURRENT_HEAD_SHA: abc123
 INJECTION_COMPLIANCE_RESULT: CS2_INTERVENTION_REQUIRED
 UNCHECKED_REQUIRED_ITEMS: none
@@ -628,7 +759,6 @@ RESULT: CS2_INTERVENTION_REQUIRED" \
 # 26. Full-ceremony PR with UNCHECKED_REQUIRED_ITEMS non-none → blocked even if COMPLIANT.
 run_injection_compliance_test \
   "26. full-ceremony PR UNCHECKED_REQUIRED_ITEMS non-none -> blocked" \
-  "false" \
   "CURRENT_HEAD_SHA: abc123
 INJECTION_COMPLIANCE_RESULT: COMPLIANT
 UNCHECKED_REQUIRED_ITEMS: validate deployment workflow runs
@@ -640,7 +770,6 @@ RESULT: HANDOVER_ALLOWED" \
 # 27. Full-ceremony PR with UNAUTHORIZED_DEVIATIONS non-none → blocked.
 run_injection_compliance_test \
   "27. full-ceremony PR UNAUTHORIZED_DEVIATIONS non-none -> blocked" \
-  "false" \
   "CURRENT_HEAD_SHA: abc123
 INJECTION_COMPLIANCE_RESULT: COMPLIANT
 UNCHECKED_REQUIRED_ITEMS: none
@@ -652,7 +781,6 @@ RESULT: HANDOVER_ALLOWED" \
 # 28. Full-ceremony PR fully compliant → not blocked.
 run_injection_compliance_test \
   "28. full-ceremony PR fully compliant INJECTION_COMPLIANCE_RESULT=COMPLIANT -> not blocked" \
-  "false" \
   "CURRENT_HEAD_SHA: abc123
 INJECTION_COMPLIANCE_RESULT: COMPLIANT
 UNCHECKED_REQUIRED_ITEMS: none
@@ -662,21 +790,20 @@ HANDOVER_ALLOWED: yes
 RESULT: HANDOVER_ALLOWED" \
   "false"
 
-# 29. Product-fix PR (isProductFix=true) skips injection compliance → not blocked regardless.
+# 29. Missing UNCHECKED_REQUIRED_ITEMS / UNAUTHORIZED_DEVIATIONS remains blocked even with COMPLIANT.
 run_injection_compliance_test \
-  "29. product-fix PR skips injection compliance check -> not blocked" \
-  "true" \
+  "29. COMPLIANT without UNCHECKED_REQUIRED_ITEMS/UNAUTHORIZED_DEVIATIONS -> blocked" \
   "CURRENT_HEAD_SHA: abc123
+INJECTION_COMPLIANCE_RESULT: COMPLIANT
 HANDOVER_ALLOWED: yes
 RESULT: HANDOVER_ALLOWED" \
-  "false"
+  "true"
 
 # 30. PR #1647-calibration: checklist items unchecked + no injection compliance → blocked.
 # Regression for scenario where: checklist items remain unchecked, affected deployment
 # workflows are failing, and agent claims handover without INJECTION_COMPLIANCE_REPORT.
 run_injection_compliance_test \
   "30. PR-1647-calibration: incomplete checklist + no injection compliance report -> blocked" \
-  "false" \
   "ECAP_GATE_AND_ADMIN_REPORT
 CURRENT_HEAD_SHA: deadbeef1234
 MERGE_CONFLICT_CHECKED: yes
