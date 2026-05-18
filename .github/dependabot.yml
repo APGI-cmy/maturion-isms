@@ -1,5 +1,8 @@
 # Dependabot configuration for Maturion ISMS
 # Authority: Issue #1463 — Actions deprecation detection gate
+# Updated: Issue #1648 — Node 24 posture refresh; increased open-pull-requests-limit
+#   and added major update tracking so Node.js 24-compatible major versions are
+#   not silently starved by the PR limit or grouping rules.
 # Monitors GitHub Actions ecosystem for version updates on a weekly schedule.
 
 version: 2
@@ -12,7 +15,7 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Africa/Johannesburg"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
     reviewers:
       - "APGI-cmy"
     labels:
@@ -21,11 +24,12 @@ updates:
     commit-message:
       prefix: "chore(actions)"
     groups:
-      # Group all actions/* updates together for batch review
+      # Group all actions/* updates together for batch review (minor, patch, and major)
       actions-core:
         patterns:
           - "actions/*"
         update-types:
+          - "major"
           - "minor"
           - "patch"
       # Group pnpm action updates
