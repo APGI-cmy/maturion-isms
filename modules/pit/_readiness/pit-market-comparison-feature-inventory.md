@@ -91,7 +91,7 @@
 
 | Feature ID | Feature / Capability | Current artifact coverage | Scope classification | Notes |
 |---|---|---|---|---|
-| AI-001 | AIMC-governed AI assistance across PIT workflows | Approved app-description AI assistance scope (planning suggestions, decomposition, wording, ambiguity checks, ownership/workload/schedule suggestions, evidence review aid, status/risk/watchdog/report summaries) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | AIMC-scoped assistance is explicitly in scope; safety/quality claims remain validation-gated. |
+| AI-001 | AIMC (AI Management & Compliance)-governed AI assistance across PIT workflows | Approved app-description AI assistance scope (planning suggestions, decomposition, wording, ambiguity checks, ownership/workload/schedule suggestions, evidence review aid, status/risk/watchdog/report summaries) | V1_CONFIRMED_WITH_STAGE6_VALIDATION_REQUIRED | AIMC-scoped assistance is explicitly in scope; safety/quality claims remain validation-gated. |
 | AI-002 | Automation workflows (auto-routing/auto-remediation) | No explicit PIT v1 automation engine contract | FUTURE_VERSION | Defer until formal FR/TR inclusion. |
 
 ## security, permissions and audit
