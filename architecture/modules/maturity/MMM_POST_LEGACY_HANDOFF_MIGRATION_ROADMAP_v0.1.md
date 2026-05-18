@@ -7,7 +7,7 @@
 
 - Current user journey: `Wizard -> Review Framework -> Hard Redirect -> Legacy Workspace`
 - Current handoff implementation in `apps/mmm/src/pages/FrameworkReviewPage.tsx`:
-  - `window.location.assign(${normalizedBaseUrl}${legacyWorkspacePath}${frameworkQuery})`
+  - `window.location.assign(`${normalizedBaseUrl}${legacyWorkspacePath}${frameworkQuery}`)`
 - Transitional target route: `/assessment/framework?framework_id=<id>`
 
 ## 2) Migration workstreams (future)
