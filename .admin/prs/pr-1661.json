@@ -10,6 +10,7 @@
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     ".github/scripts/pre-handover-checkpoint.js",
     ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/scripts/handover-claim-gate.test.sh",
     ".github/workflows/pre-handover-checkpoint.yml",
     ".github/workflows/handover-claim-gate.yml",
     ".github/workflows/preflight-evidence-gate.yml"
@@ -28,6 +29,7 @@
     "Existing pre-handover checkpoint workflow refreshes injection intake for relevant PR comment create/edit signals",
     "Review-ready/handover-ready posture blocks stale or missing intake/current-head inspection evidence",
     "Focused preflight job verifies latest intake freshness against PR/body/comment/failed-gate signals",
+    "handover-claim gate regression test updated to cover legacy checkpoint compatibility for issue #1660 scope",
     "Regression coverage added for PR #1653-style early-control flow and stale-intake blocking",
     "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh"
   ],
