@@ -533,15 +533,19 @@ BUILD_TO_GREEN_ALLOWED: no, until pre-build artifacts and RED tests are aligned
 
 ## Part G — Next Stage Authorization
 
-Having passed all PBFAG gate conditions, Stage 8 (Implementation Plan) is **authorized
-to begin** subject to:
+The original Stage 7 PBFAG authorization remains historical for the original
+`mmm-stage7-pbfag-20260415` scope only.
 
-1. CS2 formal approval of Stage 7 PBFAG artifacts (this wave).
-2. Foreman adding `ceremony_admin_appointed: true` to wave-current-tasks before PREHANDOVER.
-3. IAA ASSURANCE-TOKEN for this wave (mmm-stage7-pbfag-20260415) issued before Stage 8
-   wave-start.
+For the newly surfaced `/assessment/framework` compile-handoff scope governed by
+maturion-isms#1669, build-to-green implementation is **not authorized** while the
+compile-handoff addendum remains RED.
 
-**Stage 8 may not begin until Stage 7 IAA ASSURANCE-TOKEN is confirmed.**
+Issue APGI-cmy/maturion-isms#1667 remains frozen/blocked until:
+
+1. this alignment package is reviewed and accepted;
+2. Stage 2/5/6/7/12 alignment is merged;
+3. the new RED tests are treated as the implementation contract; and
+4. CS2 authorizes the follow-on build-to-green wave.
 
 ---
 
