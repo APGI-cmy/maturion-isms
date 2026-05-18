@@ -5,7 +5,6 @@ import {
   computeMpsScore,
   computeDomainScore,
   computeOrganizationMaturity,
-  getMaturityLevel
 } from "../lib/scoring";
 
 const thresholds = [
