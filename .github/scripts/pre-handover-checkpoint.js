@@ -213,6 +213,18 @@ function readSimpleField(text, label) {
   return match ? match[1].trim() : '';
 }
 
+function parseScopeDeclaredFiles(scopeText) {
+  const lines = String(scopeText || '').split('\n');
+  return lines
+    .map((line) => {
+      const strictMatch = line.match(/^\s*-\s+`([^`]+)`\s+[-—]\s+/);
+      if (strictMatch) return strictMatch[1].trim();
+      const looseMatch = line.match(/^\s*-\s+`([^`]+)`/);
+      return looseMatch ? looseMatch[1].trim() : '';
+    })
+    .filter(Boolean);
+}
+
 function headMatches(candidate, headSha) {
   const value = normalizeValue(String(candidate || '').replace(/[`]/g, ''));
   const head = normalizeValue(headSha);
@@ -392,21 +404,59 @@ function collectCheckState(checkRuns, commitStatuses) {
   const passing = [];
   const failing = [];
   const pending = [];
+  const failingDetails = [];
+  const pendingDetails = [];
   for (const [name, run] of latestByName.entries()) {
     if (run.status === 'completed') {
       if (['success', 'skipped', 'neutral'].includes(run.conclusion)) {
         passing.push(name);
       } else {
         failing.push(name);
+        failingDetails.push({
+          gate: name,
+          status: run.status || 'completed',
+          conclusion: run.conclusion || 'failure',
+          runId: run.id || '',
+          jobId: run.id || '',
+          updatedAt: run.completed_at || run.started_at || '',
+        });
       }
     } else {
       pending.push(name);
+      pendingDetails.push({
+        gate: name,
+        status: run.status || 'pending',
+        conclusion: '',
+        runId: run.id || '',
+        jobId: run.id || '',
+        updatedAt: run.started_at || run.completed_at || '',
+      });
     }
   }
 
   for (const status of commitStatuses || []) {
-    if (status.state === 'failure' || status.state === 'error') failing.push(status.context);
-    if (status.state === 'pending') pending.push(status.context);
+    if (status.state === 'failure' || status.state === 'error') {
+      failing.push(status.context);
+      failingDetails.push({
+        gate: status.context,
+        status: status.state,
+        conclusion: status.state,
+        runId: '',
+        jobId: '',
+        updatedAt: status.updated_at || status.created_at || '',
+      });
+    }
+    if (status.state === 'pending') {
+      pending.push(status.context);
+      pendingDetails.push({
+        gate: status.context,
+        status: status.state,
+        conclusion: status.state,
+        runId: '',
+        jobId: '',
+        updatedAt: status.updated_at || status.created_at || '',
+      });
+    }
     if (status.state === 'success') passing.push(status.context);
   }
 
@@ -416,12 +466,23 @@ function collectCheckState(checkRuns, commitStatuses) {
   ]);
 
   const missing = REQUIRED_CHECKS.filter((name) => !observed.has(name));
+  const missingDetails = missing.map((name) => ({
+    gate: name,
+    status: 'missing',
+    conclusion: 'missing',
+    runId: '',
+    jobId: '',
+    updatedAt: '',
+  }));
   return {
     total: REQUIRED_CHECKS.length,
     passing: Array.from(new Set(passing)).sort(),
     failing: Array.from(new Set(failing)).sort(),
     pending: Array.from(new Set(pending)).sort(),
     missing,
+    failingDetails,
+    pendingDetails,
+    missingDetails,
     observed: Array.from(observed).sort(),
     noChecksAtAll: observed.size === 0,
   };
@@ -506,6 +567,10 @@ function evaluateCheckpoint(input = {}) {
   const scopeCount = Number(readSimpleField(scopeText, 'FILES_CHANGED') || 0) || null;
   const scopePresent = Boolean(scopeText);
   const scopeCountMatches = scopePresent && scopeCount === changedFiles.length;
+  const scopeDeclaredFiles = parseScopeDeclaredFiles(scopeText);
+  const scopeExtraFiles = scopeDeclaredFiles.length > 0
+    ? changedFiles.filter((file) => !scopeDeclaredFiles.includes(file))
+    : [];
 
   const checkpointTime = input.checkpointTime || process.env.CHECKPOINT_TIME || new Date().toISOString();
   const checks = collectCheckState(checkRuns, commitStatuses);
@@ -593,10 +658,123 @@ function evaluateCheckpoint(input = {}) {
   const staleShaFound = adminStale || iaaArtifactStale || (functionalEvidencePresent && !functionalEvidenceCurrent) || (scopePresent && !scopeCountMatches);
   const reasons = [];
 
+  const unresolvedGateRecords = [
+    ...(checks.failingDetails || []),
+    ...(checks.pendingDetails || []),
+    ...(checks.missingDetails || []),
+    ...failedAffectedGates.map((gate) => ({
+      gate,
+      status: 'failed_affected_gate',
+      conclusion: 'not_green',
+      runId: '',
+      jobId: '',
+      updatedAt: checkpointTime,
+    })),
+    ...(hasOutOfSandboxOrGovernanceBlocker ? [{
+      gate: 'out-of-sandbox-or-governance-blocker',
+      status: 'out_of_authority',
+      conclusion: 'blocked',
+      runId: '',
+      jobId: '',
+      updatedAt: checkpointTime,
+    }] : []),
+  ];
+  const rejectionItems = unresolvedGateRecords.map((record) => {
+    const gate = record.gate || 'unknown';
+    if (
+      (gate === 'preflight/scope-declaration-parity' || gate === 'preflight/evidence-exactness')
+      && scopePresent
+      && !scopeCountMatches
+    ) {
+      const firstMissing = scopeExtraFiles[0] || 'unable-to-resolve-missing-file';
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Scope declaration mismatch: declared FILES_CHANGED=${scopeCount || 0}, actual diff=${changedFiles.length}; missing scope entry ${firstMissing}.`,
+        rejectionType: 'SCOPE_DECLARATION_MISMATCH',
+        requiredAction: scopeExtraFiles.length > 0
+          ? `Update scope/manifest to include missing file(s): ${scopeExtraFiles.join(', ')} or revert unintended file changes, then rerun preflight.`
+          : `Update scope declaration to match current diff count (${changedFiles.length}) or revert unintended file changes, then rerun preflight.`,
+      };
+    }
+    if (gate === 'preflight/product-delivery-gates') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: 'Product-delivery gate failed for current HEAD; required product journey validation is not green.',
+        rejectionType: 'PRODUCT_DELIVERY_GATE_FAILURE',
+        requiredAction: 'Implement product fix for the failing journey evidence and rerun preflight/product-delivery-gates.',
+      };
+    }
+    if (record.status === 'missing') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Required gate ${gate} is missing for current HEAD.`,
+        rejectionType: 'MISSING_REQUIRED_GATE',
+        requiredAction: `Run the missing gate ${gate} on current HEAD and consume its output before handover posture.`,
+      };
+    }
+    if (record.status === 'pending') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Required gate ${gate} is pending for current HEAD.`,
+        rejectionType: 'PENDING_REQUIRED_GATE',
+        requiredAction: `Wait for ${gate} to complete and consume the resulting gate output before handover posture.`,
+      };
+    }
+    if (record.status === 'failed_affected_gate') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Affected product journey gate ${gate} is not green for current HEAD.`,
+        rejectionType: 'FAILED_AFFECTED_PRODUCT_GATE',
+        requiredAction: `Fix the failing product journey for ${gate} and rerun affected delivery gates before handover posture.`,
+      };
+    }
+    if (record.status === 'out_of_authority') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Out-of-authority blocker reported: ${outOfSandboxOrGovernanceBlocker}.`,
+        rejectionType: 'OUT_OF_AUTHORITY_BLOCKER',
+        requiredAction: `Escalate to CS2: ${outOfSandboxOrGovernanceBlocker}.`,
+      };
+    }
+    return {
+      ...record,
+      gate,
+      firstConcreteRejection: `Gate ${gate} reported ${record.conclusion || 'failure'} on current HEAD.`,
+      rejectionType: 'FAILED_REQUIRED_GATE',
+      requiredAction: `Inspect ${gate} logs, implement corrective action, and rerun the gate before any handover claim.`,
+    };
+  });
+  const failedGateLogConsumptionRequired = rejectionItems.length > 0;
+  const failedGateLogConsumption = failedGateLogConsumptionRequired ? 'no' : 'not_required';
+  const unresolvedRejections = rejectionItems.length > 0
+    ? rejectionItems.map((item) => item.gate).join(', ')
+    : 'none';
+  const qaRejectionPackageResult = rejectionItems.length === 0
+    ? 'HANDOVER_ALLOWED'
+    : (hasOutOfSandboxOrGovernanceBlocker ? 'CS2_INTERVENTION_REQUIRED' : 'STOP_AND_FIX');
+  const qaRejectionPackageHandoverAllowed = rejectionItems.length === 0 ? 'yes' : 'no';
+  const latestFailedGateAt = rejectionItems
+    .map((item) => new Date(item.updatedAt || 0).getTime())
+    .filter((value) => Number.isFinite(value) && value > 0)
+    .sort((left, right) => right - left)[0];
+  const qaPackageUpdatedAt = latestFailedGateAt
+    ? new Date(Math.max(latestFailedGateAt, new Date(checkpointTime).getTime() || 0)).toISOString()
+    : checkpointTime;
+
   if (!scopePresent && (requiresIaa || requiresEcap || productDeliveryRequired)) {
     reasons.push('Per-PR scope declaration missing.');
   } else if (scopePresent && !scopeCountMatches) {
-    reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}).`);
+    if (scopeExtraFiles.length > 0) {
+      reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}); missing file(s): ${scopeExtraFiles.join(', ')}.`);
+    } else {
+      reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}).`);
+    }
   }
 
   if (!manifestPath) reasons.push('PR admin manifest missing.');
@@ -708,6 +886,14 @@ function evaluateCheckpoint(input = {}) {
     ACTIVE_ARTIFACTS_REPORT_FAIL_OR_NO: activeArtifactsReportFailOrNo ? 'yes' : 'no',
     STALE_SHA_FOUND: staleShaFound ? 'yes' : 'no',
     OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
+    FAILED_GATE_LOG_CONSUMPTION: failedGateLogConsumption,
+    QA_REJECTION_PACKAGE_REQUIRED: failedGateLogConsumptionRequired ? 'yes' : 'no',
+    QA_REJECTION_PACKAGE_CURRENT_HEAD_SHA: headSha,
+    QA_REJECTION_PACKAGE_UPDATED_AT: qaPackageUpdatedAt,
+    QA_REJECTION_PACKAGE_UNRESOLVED_REJECTIONS: unresolvedRejections,
+    QA_REJECTION_PACKAGE_OUT_OF_AUTHORITY_ITEMS: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
+    QA_REJECTION_PACKAGE_RESULT: qaRejectionPackageResult,
+    QA_REJECTION_PACKAGE_HANDOVER_ALLOWED: qaRejectionPackageHandoverAllowed,
     HANDOVER_ALLOWED: handoverAllowed ? 'yes' : 'no',
     RESULT: result,
     REQUIRED_ACTION: result,
@@ -715,11 +901,65 @@ function evaluateCheckpoint(input = {}) {
   };
 
   const fieldLines = Object.entries(fields).map(([key, value]) => `${key}: ${commentBodyValue(value)}`);
+  const failedGateConsumptionLines = [
+    '',
+    'FAILED_GATE_LOG_CONSUMPTION',
+    `CURRENT_HEAD_SHA: ${headSha}`,
+    'FAILED_GATES:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      `  run_id: ${item.runId || 'unknown'}`,
+      `  job_id: ${item.jobId || 'unknown'}`,
+      `  job_log_inspected: no`,
+      `  first_concrete_rejection: ${item.firstConcreteRejection}`,
+      `  rejection_type: ${item.rejectionType}`,
+      `  required_action: ${item.requiredAction}`,
+    ])),
+  ];
+  const qaRejectionPackageLines = [
+    '',
+    'QA_REJECTION_PACKAGE',
+    `CURRENT_HEAD_SHA: ${headSha}`,
+    'FAILED_GATES:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      `  concrete_rejection: ${item.firstConcreteRejection}`,
+      `  rejection_type: ${item.rejectionType}`,
+      `  required_action: ${item.requiredAction}`,
+      `  within_agent_authority: ${hasOutOfSandboxOrGovernanceBlocker ? 'no' : 'yes'}`,
+      `  planned_resolution: ${hasOutOfSandboxOrGovernanceBlocker ? `Escalate blocker: ${outOfSandboxOrGovernanceBlocker}` : item.requiredAction}`,
+    ])),
+    `UNRESOLVED_REJECTIONS: ${unresolvedRejections}`,
+    `OUT_OF_AUTHORITY_ITEMS: ${hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none'}`,
+    `RESULT: ${qaRejectionPackageResult}`,
+    `HANDOVER_ALLOWED: ${qaRejectionPackageHandoverAllowed}`,
+  ];
+  const qaRejectionPackageClosureLines = [
+    '',
+    'QA_REJECTION_PACKAGE_CLOSURE',
+    `CURRENT_HEAD_SHA: ${headSha}`,
+    'REJECTION_ITEMS:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      `  rejection: ${item.firstConcreteRejection}`,
+      `  action_taken: ${hasOutOfSandboxOrGovernanceBlocker ? `Escalated to CS2 (${outOfSandboxOrGovernanceBlocker})` : 'Pending remediation and gate rerun'}`,
+      `  evidence: ${item.runId || item.jobId ? `run_id=${item.runId || 'unknown'} job_id=${item.jobId || 'unknown'}` : 'not_available'}`,
+      `  status: ${hasOutOfSandboxOrGovernanceBlocker ? 'escalated' : 'unresolved'}`,
+    ])),
+    'RERUN_GATES:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.map((item) => `- gate: ${item.gate}\n  status: pending\n  run_id_or_evidence: pending\n  current_head_match: yes`)),
+    `REMAINING_REJECTIONS: ${unresolvedRejections}`,
+    `RESULT: ${qaRejectionPackageResult}`,
+    `HANDOVER_ALLOWED: ${qaRejectionPackageHandoverAllowed}`,
+  ];
   const body = [
     CHECKPOINT_MARKER,
     '## PRE_HANDOVER_CHECKPOINT_RESULT',
     '',
     ...fieldLines,
+    ...failedGateConsumptionLines,
+    ...qaRejectionPackageLines,
+    ...qaRejectionPackageClosureLines,
   ].join('\n');
 
   return {

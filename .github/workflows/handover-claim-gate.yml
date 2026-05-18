@@ -263,11 +263,27 @@ jobs:
                 if (run.conclusion === 'success' || run.conclusion === 'skipped' || run.conclusion === 'neutral') {
                   passing.push(name);
                 } else {
-                  failing.push({ name, conclusion: run.conclusion, url: run.html_url });
+                  failing.push({
+                    name,
+                    conclusion: run.conclusion,
+                    url: run.html_url,
+                    run_id: run.id || '',
+                    job_id: run.id || '',
+                    started_at: run.started_at || '',
+                    completed_at: run.completed_at || '',
+                  });
                 }
               } else {
                 // in_progress, queued, waiting
-                pending.push({ name, status: run.status, url: run.html_url });
+                pending.push({
+                  name,
+                  status: run.status,
+                  url: run.html_url,
+                  run_id: run.id || '',
+                  job_id: run.id || '',
+                  started_at: run.started_at || '',
+                  completed_at: run.completed_at || '',
+                });
               }
             }
 
@@ -275,13 +291,29 @@ jobs:
             if (statusData.state === 'failure' || statusData.state === 'error') {
               for (const s of statusData.statuses) {
                 if (s.state === 'failure' || s.state === 'error') {
-                  failing.push({ name: s.context, conclusion: s.state, url: s.target_url });
+                  failing.push({
+                    name: s.context,
+                    conclusion: s.state,
+                    url: s.target_url,
+                    run_id: '',
+                    job_id: '',
+                    started_at: s.created_at || '',
+                    completed_at: s.updated_at || '',
+                  });
                 }
               }
             } else if (statusData.state === 'pending') {
               for (const s of statusData.statuses) {
                 if (s.state === 'pending') {
-                  pending.push({ name: s.context, status: 'pending', url: s.target_url });
+                  pending.push({
+                    name: s.context,
+                    status: 'pending',
+                    url: s.target_url,
+                    run_id: '',
+                    job_id: '',
+                    started_at: s.created_at || '',
+                    completed_at: s.updated_at || '',
+                  });
                 }
               }
             }
@@ -423,6 +455,19 @@ jobs:
             const snapshotIaaArtifactPresent = asBoolYesNo(snapshot.IAA_ARTIFACT_PRESENT);
             const snapshotFailedAffectedGates = String(snapshot.FAILED_AFFECTED_GATES || '').trim();
             const snapshotRequiredAction = String(snapshot.REQUIRED_ACTION || '').trim();
+            const snapshotFailedGateLogConsumption = String(readField(commentBody, 'FAILED_GATE_LOG_CONSUMPTION') || '').trim();
+            const snapshotQaPackageHeadSha = String(readField(commentBody, 'QA_REJECTION_PACKAGE_CURRENT_HEAD_SHA') || '').replace(/[`]/g, '').trim();
+            const snapshotQaPackageUpdatedAt = String(readField(commentBody, 'QA_REJECTION_PACKAGE_UPDATED_AT') || '').trim();
+            const snapshotQaPackageResult = String(readField(commentBody, 'QA_REJECTION_PACKAGE_RESULT') || '').trim();
+            const snapshotQaPackageHandoverAllowed = asBoolYesNo(readField(commentBody, 'QA_REJECTION_PACKAGE_HANDOVER_ALLOWED'));
+            const snapshotQaPackageUnresolved = String(readField(commentBody, 'QA_REJECTION_PACKAGE_UNRESOLVED_REJECTIONS') || '').trim();
+            const snapshotQaPackageOutOfAuthority = String(readField(commentBody, 'QA_REJECTION_PACKAGE_OUT_OF_AUTHORITY_ITEMS') || '').trim();
+            const unresolvedCurrentHeadGates = failing.length > 0 || pending.length > 0 || missing.length > 0 || noChecksAtAll;
+            const failedGateRunTimes = [...failing, ...pending]
+              .map((entry) => new Date(entry.completed_at || entry.started_at || 0).getTime())
+              .filter((value) => Number.isFinite(value) && value > 0);
+            const latestFailedGateRunTime = failedGateRunTimes.length > 0 ? Math.max(...failedGateRunTimes) : 0;
+            const qaPackageUpdatedAtMs = snapshotQaPackageUpdatedAt ? new Date(snapshotQaPackageUpdatedAt).getTime() : Number.NaN;
 
             const checkpointComments = existingComments
               .filter(c => c.body && c.body.includes(CHECKPOINT_MARKER))
@@ -758,6 +803,61 @@ jobs:
                 preconditionFailures.push('UNAUTHORIZED_DEVIATIONS field missing from snapshot. It must be explicitly set to none when no unauthorized deviations exist.');
               } else if (isNonEmptySignal(unauthorizedDeviations)) {
                 preconditionFailures.push(`UNAUTHORIZED_DEVIATIONS (${unauthorizedDeviations}) must be none before handover. Unauthorized deviations must be resolved or waived by CS2.`);
+              }
+              // ── Failed-gate log consumption + QA rejection package enforcement ───
+              // If current-head gates are unresolved, claims are limited to STOP_AND_FIX /
+              // CS2_INTERVENTION_REQUIRED posture and must include explicit rejection package metadata.
+              // Authority: maturion-isms#1661
+              if (unresolvedCurrentHeadGates) {
+                const unresolvedSnapshotValues = [
+                  String(snapshot.FAILING_CHECKS || '').trim(),
+                  String(snapshot.PENDING_CHECKS || '').trim(),
+                  String(snapshot.MISSING_CHECKS || '').trim(),
+                ].join(' ');
+                if (!snapshotFailedGateLogConsumption) {
+                  preconditionFailures.push('FAILED_GATE_LOG_CONSUMPTION field missing while current-head gates are unresolved. Consume failing gate logs before any handover/review-ready posture.');
+                } else if (!/^yes$/i.test(snapshotFailedGateLogConsumption)) {
+                  const logUnavailable = String(readField(commentBody, 'LOG_UNAVAILABLE') || '').trim();
+                  const logUnavailableReason = String(readField(commentBody, 'REASON') || '').trim();
+                  const logUnavailableNextAction = String(readField(commentBody, 'NEXT_ACTION') || '').trim();
+                  const hasLogUnavailableBundle = /^yes$/i.test(logUnavailable) && Boolean(logUnavailableReason) && Boolean(logUnavailableNextAction);
+                  if (!hasLogUnavailableBundle) {
+                    preconditionFailures.push('FAILED_GATE_LOG_CONSUMPTION must be yes for each failed gate, or provide LOG_UNAVAILABLE: yes with REASON and NEXT_ACTION.');
+                  }
+                }
+                if (!snapshotQaPackageResult) {
+                  preconditionFailures.push('QA_REJECTION_PACKAGE_RESULT field missing while current-head gates are unresolved.');
+                } else if (!/^(STOP_AND_FIX|CS2_INTERVENTION_REQUIRED)$/i.test(snapshotQaPackageResult)) {
+                  preconditionFailures.push(`QA_REJECTION_PACKAGE_RESULT (${snapshotQaPackageResult}) must be STOP_AND_FIX or CS2_INTERVENTION_REQUIRED while gates remain unresolved.`);
+                }
+                if (snapshotQaPackageHandoverAllowed !== false) {
+                  preconditionFailures.push('QA_REJECTION_PACKAGE_HANDOVER_ALLOWED must be no while gates remain unresolved.');
+                }
+                if (!snapshotQaPackageUnresolved || /^none$/i.test(snapshotQaPackageUnresolved)) {
+                  preconditionFailures.push(`QA_REJECTION_PACKAGE_UNRESOLVED_REJECTIONS must list unresolved gates while failures remain (${unresolvedSnapshotValues || 'none'}).`);
+                }
+                if (!snapshotQaPackageHeadSha) {
+                  preconditionFailures.push('QA_REJECTION_PACKAGE_CURRENT_HEAD_SHA missing while current-head gates are unresolved.');
+                } else {
+                  const normalizedPackageHead = snapshotQaPackageHeadSha.toLowerCase();
+                  const normalizedHead = headSha.toLowerCase();
+                  const headsMatch = normalizedPackageHead === normalizedHead ||
+                    normalizedHead.startsWith(normalizedPackageHead) ||
+                    normalizedPackageHead.startsWith(normalizedHead);
+                  if (!headsMatch) {
+                    preconditionFailures.push(`QA rejection package is stale relative to current head. QA_REJECTION_PACKAGE_CURRENT_HEAD_SHA=${snapshotQaPackageHeadSha}, HEAD=${headSha}.`);
+                  }
+                }
+                if (latestFailedGateRunTime > 0) {
+                  if (!snapshotQaPackageUpdatedAt || Number.isNaN(qaPackageUpdatedAtMs)) {
+                    preconditionFailures.push('QA_REJECTION_PACKAGE_UPDATED_AT missing or invalid while current-head failed gate runs exist.');
+                  } else if (qaPackageUpdatedAtMs < latestFailedGateRunTime) {
+                    preconditionFailures.push('QA rejection package is stale relative to newest current-head failed gate run.');
+                  }
+                }
+                if (/^CS2_INTERVENTION_REQUIRED$/i.test(snapshotQaPackageResult) && !isNonEmptySignal(snapshotQaPackageOutOfAuthority)) {
+                  preconditionFailures.push('QA_REJECTION_PACKAGE_RESULT is CS2_INTERVENTION_REQUIRED but QA_REJECTION_PACKAGE_OUT_OF_AUTHORITY_ITEMS is missing.');
+                }
               }
             }
 
