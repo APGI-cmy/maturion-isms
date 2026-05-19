@@ -139,7 +139,7 @@ COMPLETE.**
 ### 1.8 Compile Handoff Evidence Pack (Scope-Specific: `/assessment/framework`)
 
 For any implementation wave that addresses compile handoff to `/assessment/framework`
-(governing issue: maturion-isms#1669; including APGI-cmy/maturion-isms#1667), the Functional Delivery Evidence Pack MUST include:
+(governing issue: maturion-isms#1681; build-to-green dependency: APGI-cmy/maturion-isms#1682), the Functional Delivery Evidence Pack MUST include:
 
 | Evidence Item | Required | Format |
 |---|---|---|
@@ -151,6 +151,7 @@ For any implementation wave that addresses compile handoff to `/assessment/frame
 | Explicit compile handoff functional verdict | ✅ MANDATORY | PASS/FAIL statement for "URL + visible workspace render" |
 
 URL-only redirect proof is explicitly insufficient for this scope.
+Historical context: #1669/#1667 covered the earlier blank-page route-mount alignment and implementation. This scope governs the later #1681 RED finding (visible-but-incomplete workspace rendering), with #1682 as the blocked build-to-green implementation dependency.
 
 ### 1.9 Compile Handoff Evidence Pack (Future Scope-Specific: Canonical 5-Domain Workspace)
 

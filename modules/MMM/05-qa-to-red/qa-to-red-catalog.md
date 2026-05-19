@@ -1410,8 +1410,9 @@
 
 ## Domain 13: Compile Handoff Transitional Bridge — `/assessment/framework`
 
-**Governing Issue**: maturion-isms#1669  
-**Frozen implementation dependency**: APGI-cmy/maturion-isms#1667 remains blocked until this alignment package is accepted.
+**Governing Issue**: maturion-isms#1681  
+**Frozen implementation dependency**: APGI-cmy/maturion-isms#1682 remains blocked until this alignment package is accepted and merged to main.
+**Historical context**: #1669/#1667 covered the earlier blank-page route-mount alignment and implementation. This domain governs the later #1681 RED finding: visible-but-incomplete workspace rendering.
 
 *Sources: Compile handoff alignment issue (this wave), Stage 2 compile handoff contract, Architecture §A3.3a*
 

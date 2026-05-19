@@ -445,8 +445,9 @@ approve, reject, suggest alternative, unlock, resubmit, override, final sign-off
 
 ### Post-Compile Handoff — Framework Configuration Workspace (Transitional Bridge Within J-06/J-07)
 
-**Governing Issue**: maturion-isms#1669  
-**Frozen implementation dependency**: APGI-cmy/maturion-isms#1667 remains blocked until this alignment package is accepted.
+**Governing Issue**: maturion-isms#1681  
+**Frozen implementation dependency**: APGI-cmy/maturion-isms#1682 remains blocked until this alignment package is accepted and merged to main.
+**Historical context**: #1669/#1667 covered the earlier blank-page route-mount alignment and implementation. This section governs the later #1681 RED finding (visible-but-incomplete workspace rendering).
 
 The compile CTA in both Mode A (J-06) and Mode B (J-07) must hand off to a visible
 framework configuration workspace at:

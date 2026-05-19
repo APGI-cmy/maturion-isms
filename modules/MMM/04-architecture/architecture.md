@@ -17,7 +17,7 @@
 | Stage | Artifact | Version | Status | Reference |
 |-------|----------|---------|--------|-----------|
 | Stage 1 | `modules/MMM/00-app-description/MMM_app_description.md` | v0.5.0 | CS2-Approved | maturion-isms#1298 (2026-04-08) |
-| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.4.0 | Alignment addendum applied for compile handoff (governing issue #1669; CS2 review pending) | maturion-isms#1669 (2026-05-19) |
+| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.4.0 | Alignment addendum applied for compile handoff (governing issue #1681; CS2 review pending) | maturion-isms#1681 (2026-05-19) |
 | Stage 3 | `modules/MMM/02-frs/functional-requirements.md` | v0.1.0 | CS2-Approved | maturion-isms#1366 (2026-04-14) |
 | Stage 4 | `modules/MMM/03-trs/technical-requirements-specification.md` | v0.1.0 | CS2-Approved (carried forward per maturion-isms#1378) | maturion-isms#1378 (2026-04-14) |
 | Harvest Map | `modules/MMM/harvest-map/harvest-map.md` | v0.3.0 | Active | — |
