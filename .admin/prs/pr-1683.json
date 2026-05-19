@@ -10,7 +10,6 @@
     ".agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     "apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx",
-    "apps/mmm/src/lib/useFrameworkHandoffContext.ts",
     "apps/mmm/src/pages/DomainWorkspacePage.tsx",
     "apps/mmm/src/App.tsx",
     "modules/MMM/tests/B4-framework/b4-framework.test.ts",
