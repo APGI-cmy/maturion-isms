@@ -509,6 +509,21 @@ function pickBestArtifacts(files, context) {
   return scored;
 }
 
+function matchesArtifactContext(text, context) {
+  const artifactText = String(text || '');
+  if (context.prNumber && new RegExp(`#${context.prNumber}\\b`).test(artifactText)) return true;
+  if (context.issueNumber && new RegExp(`#${context.issueNumber}\\b`).test(artifactText)) return true;
+  if (context.branch && artifactText.includes(context.branch)) return true;
+  return false;
+}
+
+function contextScopedArtifacts(artifacts, context) {
+  if (!artifacts || artifacts.length === 0) return [];
+  const scoped = artifacts.filter((artifact) => matchesArtifactContext(artifact.text, context));
+  if (scoped.length > 0) return scoped;
+  return artifacts;
+}
+
 function collectCheckState(checkRuns, commitStatuses) {
   const latestByName = new Map();
   for (const run of checkRuns || []) {
@@ -785,8 +800,8 @@ function evaluateCheckpoint(input = {}) {
   const iaaArtifactCurrent = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const iaaArtifactStale = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
   const tokenPending = [
-    ...adminArtifacts,
-    ...assuranceArtifacts,
+    ...contextScopedArtifacts(adminArtifacts, { prNumber, branch }),
+    ...contextScopedArtifacts(assuranceArtifacts, { prNumber, issueNumber, branch }),
   ].some((artifact) => /iaa_audit_token:\s*PENDING|PHASE_B_BLOCKING_TOKEN:\s*PENDING/i.test(artifact.text));
 
   const functionalEvidence = readFunctionalEvidence(prNumber, prBody);
