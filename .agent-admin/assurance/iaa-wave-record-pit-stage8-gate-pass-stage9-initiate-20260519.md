@@ -135,9 +135,25 @@ The producing agent(s) must deliver ALL of the following before IAA handover inv
 
 ## REJECTION_HISTORY
 
-*(Populated if rejection packages are issued — Phase 4)*
+### REJECTION-001 — 2026-05-19
 
-*(none)*
+**Token**: IAA-session-pit-s8gp-s9init-20260519-REJECT-001
+**Session**: session-iaa-pit-s8gp-s9init-20260519
+**Checks run**: 44 | Pass: 40 | Fail: 4
+**Wave**: pit-stage8-gate-pass-stage9-initiate-20260519
+**Branch at review**: copilot/review-gate-pass-stage-8 | HEAD: 9766c14
+
+**Failures:**
+
+| ID | ACR/Check | Finding Summary | Fix |
+|----|-----------|-----------------|-----|
+| F-001 | ACR-03 AUTO-REJECT | IAA wave record **Branch** field: `copilot/pit-stage8-gate-pass-stage9-initiate` (incorrect). Actual branch: `copilot/review-gate-pass-stage-8` | Update wave record **Branch** line to `copilot/review-gate-pass-stage-8` |
+| F-002/F-003 | ACR-04 + ACR-07 | Scope declaration: 9 approved_artifact_paths. Diff: 12 files. 3 undeclared: (1) `.agent-workspace/execution-ceremony-admin-agent/bundles/session-issue-1683-stage8-gate-pass-stage9-initiate-20260519.md` (2) `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage8-gate-pass-stage9-initiate-20260519.md` (3) `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Add all 3 to scope declaration; update PREHANDOVER bundle completeness table + R07/R11/R16 rows |
+| F-004 | ACR-12 + CORE-021 | wave-current-tasks.md Wave Completion Gate: (a) `[x] Stage 9/10/11/12 remain NOT_STARTED` — false; Stage 9 ACTIVE—INITIATED; contradicts Tasks 4+5 🟢 DONE in same file; (b) stale item `Preflight parity gates remediated for PR #1678` carryover from prior wave | Correct (a) to accurate Stage 9 INITIATED assertion; remove or replace (b) |
+
+**Substantive work status**: CLEAN — all 22 acceptance criteria PASS, all 9 guardrails PASS, Stage 9 checklist structurally complete. Ceremony fixes only required before re-invocation.
+**Re-invocation required**: YES — Foreman must resolve all 4 failures, commit corrections, and re-invoke IAA.
+**Merge authority**: CS2 ONLY
 
 ---
 
