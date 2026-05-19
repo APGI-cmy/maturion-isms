@@ -7,6 +7,7 @@ const cp = require('child_process');
 const REQUIRED_CHECKS = [
   'preflight/phase-1-evidence',
   'preflight/iaa-prebrief-existence',
+  'preflight/identity-binding',
   'preflight/iaa-token-self-certification',
   'preflight/hfmc-ripple-presence',
   'preflight/evidence-exactness',
@@ -311,6 +312,21 @@ function parseScopeDeclaredFiles(scopeText) {
       return looseMatch ? looseMatch[1].trim() : '';
     })
     .filter(Boolean);
+}
+
+function collectPrBindings(text) {
+  const source = String(text || '');
+  const values = [];
+  const patterns = [
+    /\bPR:\s*#?(\d+)\b/gi,
+    /\bPR_NUMBER:\s*(\d+)\b/gi,
+    /\bpr-(\d+)\.(?:json|md)\b/gi,
+  ];
+  for (const pattern of patterns) {
+    let match;
+    while ((match = pattern.exec(source)) !== null) values.push(Number(match[1]));
+  }
+  return values.filter((value) => Number.isFinite(value));
 }
 
 function headMatches(candidate, headSha) {
@@ -701,6 +717,8 @@ function evaluateCheckpoint(input = {}) {
 
   const scopePath = prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '';
   const scopeText = scopePath ? safeRead(path.join(process.cwd(), scopePath)) : '';
+  const waveTasksPath = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
+  const waveTasksText = safeRead(path.join(process.cwd(), waveTasksPath));
   const issueNumber = resolveIssueNumber(input.issueNumber || process.env.ISSUE_NUMBER, prBody, scopeText, manifest);
   const scopeCount = Number(readSimpleField(scopeText, 'FILES_CHANGED') || 0) || null;
   const scopePresent = Boolean(scopeText);
@@ -831,6 +849,41 @@ function evaluateCheckpoint(input = {}) {
   const ecapSatisfiedOrValidlyWaived = !requiresEcap || (adminPresent && adminCurrent) || ecapWaiverPresent;
   const iaaSatisfiedOrValidlyWaived = !requiresIaa || ((finalAssurancePresent && iaaArtifactCurrent && !tokenPending) || iaaWaiverPresent);
   const hasOutOfSandboxOrGovernanceBlocker = hasNonEmptyValue(outOfSandboxOrGovernanceBlocker);
+
+  const identityArtifacts = [];
+  if (manifestPath && manifest) identityArtifacts.push({ path: manifestPath, text: JSON.stringify(manifest) });
+  if (scopePresent) identityArtifacts.push({ path: scopePath, text: scopeText });
+  if (waveTasksText) identityArtifacts.push({ path: waveTasksPath, text: waveTasksText });
+  identityArtifacts.push(...adminArtifacts.map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
+  identityArtifacts.push(...assuranceArtifacts.map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
+  const identityMismatchFindings = [];
+  if (prNumber) {
+    if (manifest && Number.isInteger(manifest.pr) && manifest.pr !== prNumber) {
+      identityMismatchFindings.push(`${manifestPath} declares pr=${manifest.pr}, expected ${prNumber}`);
+    }
+    if (scopePresent) {
+      const scopePr = Number(readSimpleField(scopeText, 'PR_NUMBER') || 0) || null;
+      if (scopePr && scopePr !== prNumber) {
+        identityMismatchFindings.push(`${scopePath} declares PR_NUMBER=${scopePr}, expected ${prNumber}`);
+      }
+    }
+    for (const artifact of identityArtifacts) {
+      const bindings = collectPrBindings(artifact.text);
+      const wrong = Array.from(new Set(bindings.filter((value) => value !== prNumber)));
+      if (wrong.length > 0) {
+        identityMismatchFindings.push(`${artifact.path} contains non-active PR reference(s): ${wrong.map((value) => `#${value}`).join(', ')}`);
+      }
+    }
+  }
+  const scopeBranch = scopePresent ? readSimpleField(scopeText, 'BRANCH') : '';
+  if (scopeBranch && branch && scopeBranch !== branch) {
+    identityMismatchFindings.push(`${scopePath} declares BRANCH=${scopeBranch}, expected ${branch}`);
+  }
+  const waveBranch = waveTasksText ? readSimpleField(waveTasksText, 'Branch') : '';
+  if (waveBranch && branch && waveBranch !== branch) {
+    identityMismatchFindings.push(`${waveTasksPath} declares Branch=${waveBranch}, expected ${branch}`);
+  }
+  const activeIdentityBindingPass = identityMismatchFindings.length === 0;
 
   const staleShaFound = adminStale || iaaArtifactStale || (functionalEvidencePresent && !functionalEvidenceCurrent) || (scopePresent && !scopeCountMatches);
   const reasons = [];
@@ -963,6 +1016,9 @@ function evaluateCheckpoint(input = {}) {
   }
 
   if (!manifestPath) reasons.push('PR admin manifest missing.');
+  if (!activeIdentityBindingPass) {
+    reasons.push(`Active PR identity binding mismatch detected: ${identityMismatchFindings.join(' | ')}`);
+  }
   if (!mergeConflictChecked) reasons.push('Merge conflict check was not completed for current HEAD/base.');
   if (mergeConflictChecked && !mergeableWithBase) reasons.push('PR is not mergeable with base (merge conflicts unresolved).');
   if (mergeConflictChecked && !baseSyncedOrConflictsResolved) reasons.push('Base sync / conflict-resolution check failed.');
@@ -1148,6 +1204,8 @@ function evaluateCheckpoint(input = {}) {
     QA_REJECTION_PACKAGE_RESULT: qaRejectionPackageResult,
     QA_REJECTION_PACKAGE_HANDOVER_ALLOWED: qaRejectionPackageHandoverAllowed,
     QA_REJECTION_PACKAGE_STATUS: rejectionItems.length === 0 ? 'closed' : 'open',
+    ACTIVE_PR_IDENTITY_BINDING: activeIdentityBindingPass ? 'PASS' : 'FAIL',
+    ACTIVE_PR_IDENTITY_BINDING_FINDINGS: identityMismatchFindings.length ? identityMismatchFindings.join(' | ') : 'none',
     HANDOVER_ALLOWED: handoverAllowed ? 'yes' : 'no',
     RESULT: result,
     REQUIRED_ACTION: result,

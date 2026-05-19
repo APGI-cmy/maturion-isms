@@ -25,6 +25,14 @@ issue:                  <GitHub issue number>
 pr:                     <GitHub PR number or "not yet created">
 wave:                   <wave identifier>
 
+## Active PR Identity (GitHub Context Source of Truth)
+active_pr_number:       <PR_NUMBER_FROM_GITHUB_CONTEXT>
+active_issue_number:    <ISSUE_NUMBER_FROM_GITHUB_CONTEXT_OR_PR_BODY>
+active_branch:          <BRANCH_FROM_GITHUB_CONTEXT>
+active_head_sha:        <HEAD_SHA_FROM_GITHUB_CONTEXT>
+active_base_sha:        <BASE_SHA_FROM_GITHUB_CONTEXT>
+active_identity_source: github.pull_request.event_payload
+
 ## Delivery State
 final_state:            COMPLETE             # COMPLETE | BLOCKED (blocked must not be submitted)
 active_trackers_normalized: YES          # YES when all active control artifacts (wave-current-tasks.md, BUILD_PROGRESS_TRACKER current-wave entries, active readiness trackers) show post-assurance state — see AAP-21 / ACR-15 / A-039

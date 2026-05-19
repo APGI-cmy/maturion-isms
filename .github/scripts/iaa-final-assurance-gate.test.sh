@@ -195,6 +195,16 @@ PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-
 PREFLIGHT_EXPECTATIONS_MET: yes
 UNMET_PREFLIGHT_EXPECTATIONS: none
 FINAL_IAA_RESULT: PASS
+IAA_IDENTITY_BINDING_VERDICT
+ACTUAL_PR: #${pr_num}
+ACTIVE_PREFLIGHT_PR: #${pr_num}
+ADMIN_MANIFEST_PR: #${pr_num}
+SCOPE_DECLARATION_PR: #${pr_num}
+ECAP_BUNDLE_PR: #${pr_num}
+IAA_TOKEN_PR: #${pr_num}
+BRANCH: test-branch
+HEAD_SHA: CURRENT_HEAD
+ALL_MATCH: yes
 EOF
   git add .
   git commit -q -m "Add IAA token"
@@ -228,6 +238,17 @@ ecap_invoked: ${ecap_invoked}
 ceremony_admin_appointed: ${ecap_invoked}
 ecap_verdict: ${ecap_verdict}
 ${waiver_ref:+ecap_waiver_ref: ${waiver_ref}}
+ECAP_IDENTITY_BINDING_CHECK
+ACTUAL_PR: #9999
+ADMIN_MANIFEST_PR: #9999
+SCOPE_DECLARATION_PR: #9999
+PREHANDOVER_PR: #9999
+IAA_TOKEN_PR: #9999
+WAVE_CURRENT_TASKS_PR: #9999
+BRANCH: test-branch
+HEAD_SHA: CURRENT_HEAD
+ALL_MATCH: yes
+RESULT: PASS
 
 ## Ripple/Cross-Agent Assessment
 | Agent | Impact | Conclusion |

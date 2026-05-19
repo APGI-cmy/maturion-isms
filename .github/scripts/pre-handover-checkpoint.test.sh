@@ -377,6 +377,7 @@ seed_green_checks() {
   CHECK_RUNS_JSON='[
     {"name":"preflight/phase-1-evidence","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/iaa-prebrief-existence","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
+    {"name":"preflight/identity-binding","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/iaa-token-self-certification","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/hfmc-ripple-presence","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/evidence-exactness","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
@@ -695,6 +696,7 @@ EOF
     {"name":"preflight/product-delivery-gates","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/phase-1-evidence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/iaa-prebrief-existence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/identity-binding","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/iaa-token-self-certification","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/hfmc-ripple-presence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/iaa-final-assurance","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
