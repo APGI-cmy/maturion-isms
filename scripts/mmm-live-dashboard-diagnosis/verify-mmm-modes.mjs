@@ -491,6 +491,21 @@ async function runMode(page, origin, mode, sampleFilePath) {
       publishResult = 'SKIPPED — compile now hands off to legacy workspace';
       log(`Compile: ${compileResult}`);
       log(`Publish: ${publishResult}`);
+
+      // Assert visible workspace content — not just URL handoff
+      const workspaceEl = page.locator('[data-testid="handoff-workspace"]');
+      const workspaceVisible = await workspaceEl
+        .waitFor({ state: 'visible', timeout: WAIT_TIMEOUT })
+        .then(() => true)
+        .catch(() => false);
+      if (!workspaceVisible) {
+        compileResult = `FAIL — legacy handoff URL reached but workspace [data-testid="handoff-workspace"] not visible at (${handoffUrl})`;
+        log(`Compile: ${compileResult}`);
+        throw new Error(compileResult);
+      }
+      compileResult = `PASS — legacy handoff with visible workspace (${handoffUrl})`;
+      log(`Compile: ${compileResult}`);
+
       return { success: true, frameworkId, compileResult, publishResult, details };
     } else if (compileOutcome === 'error') {
       const errMsg = await compileError.innerText().catch(() => '');

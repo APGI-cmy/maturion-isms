@@ -39,6 +39,7 @@ run_checkpoint_test() {
   CHECK_RUNS_JSON='[]'
   COMMIT_STATUSES_JSON='[]'
   TEST_HEAD_SHA_OVERRIDE=""
+  TEST_CHANGED_FILES_JSON=""
   TEST_PR_UPDATED_AT=""
   TEST_PR_COMMENTS_JSON='[]'
   TEST_PR_COMMENTS_PATH=""
@@ -74,6 +75,7 @@ run_checkpoint_test() {
     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
     CHECKPOINT_COMMIT_STATUSES_PATH="$TEST_COMMIT_STATUSES_PATH" \
     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+    CHECKPOINT_CHANGED_FILES_JSON="${TEST_CHANGED_FILES_JSON:-}" \
     CHECKPOINT_CHANGED_FILES_PATH="$TEST_CHANGED_FILES_PATH" \
     CHECKPOINT_PR_COMMENTS_PATH="$TEST_PR_COMMENTS_PATH" \
     CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
@@ -126,6 +128,7 @@ run_checkpoint_field_test() {
   CHECK_RUNS_JSON='[]'
   COMMIT_STATUSES_JSON='[]'
   TEST_HEAD_SHA_OVERRIDE=""
+  TEST_CHANGED_FILES_JSON=""
   TEST_PR_UPDATED_AT=""
   TEST_PR_COMMENTS_JSON='[]'
   TEST_PR_COMMENTS_PATH=""
@@ -161,6 +164,7 @@ run_checkpoint_field_test() {
     CHECKPOINT_CHECK_RUNS_JSON="$CHECK_RUNS_JSON" \
     CHECKPOINT_COMMIT_STATUSES_PATH="$TEST_COMMIT_STATUSES_PATH" \
     CHECKPOINT_COMMIT_STATUSES_JSON="$COMMIT_STATUSES_JSON" \
+    CHECKPOINT_CHANGED_FILES_JSON="${TEST_CHANGED_FILES_JSON:-}" \
     CHECKPOINT_CHANGED_FILES_PATH="$TEST_CHANGED_FILES_PATH" \
     CHECKPOINT_PR_COMMENTS_PATH="$TEST_PR_COMMENTS_PATH" \
     CHECKPOINT_PR_COMMENTS_JSON="$TEST_PR_COMMENTS_JSON" \
@@ -643,8 +647,74 @@ run_checkpoint_field_test \
     {"field":"AFFECTED_PRODUCT_GATES_REQUIRED","contains":"preflight/product-delivery-gates"},
     {"field":"AFFECTED_PRODUCT_GATES_REQUIRED","contains":"preflight/iaa-final-assurance"},
     {"field":"FAILED_AFFECTED_GATES","contains":"MMM Live Dashboard Diagnosis / Verify Mode A/B/C"},
-     {"field":"REQUIRED_ACTION","equals":"STOP_AND_FIX"}
-   ]'
+    {"field":"REQUIRED_ACTION","equals":"STOP_AND_FIX"},
+    {"field":"FAILED_GATE_LOG_CONSUMPTION","equals":"no"},
+    {"field":"QA_REJECTION_PACKAGE_RESULT","equals":"STOP_AND_FIX"},
+    {"field":"QA_REJECTION_PACKAGE_HANDOVER_ALLOWED","equals":"no"},
+    {"field":"QA_REJECTION_PACKAGE_UNRESOLVED_REJECTIONS","contains":"MMM Live Dashboard Diagnosis / Verify Mode A/B/C"}
+  ]'
+
+setup_pr1661_scope_mismatch_regression() {
+  setup_green_checkpoint
+  TEST_CHANGED_FILES_JSON='[
+    ".admin/prs/pr-9999.json",
+    ".agent-admin/scope-declarations/pr-9999.md",
+    ".agent-admin/assurance/iaa-wave-record-test.md",
+    ".agent-admin/prehandover/proof-test.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md",
+    ".functional-delivery/pr-9999.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-test.md",
+    "apps/mmm/src/pages/FrameworkReviewPage.compile-handoff.tsx",
+    ".github/workflows/handover-claim-gate.yml",
+    ".github/scripts/handover-claim-gate.test.sh"
+  ]'
+  cat > .agent-admin/scope-declarations/pr-9999.md <<'EOF'
+# Scope Declaration — PR #9999
+PR_NUMBER: 9999
+ISSUE: #1583
+FILES_CHANGED: 9
+- `.admin/prs/pr-9999.json` - manifest
+- `.agent-admin/scope-declarations/pr-9999.md` - scope
+- `.agent-admin/assurance/iaa-wave-record-test.md` - assurance
+- `.agent-admin/prehandover/proof-test.md` - prehandover proof
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md` - ecap bundle
+- `.functional-delivery/pr-9999.md` - product delivery
+- `.agent-workspace/foreman-v2/memory/PREHANDOVER-test.md` - foreman memory
+- `apps/mmm/src/pages/FrameworkReviewPage.compile-handoff.tsx` - mmm compile handoff
+- `.github/workflows/handover-claim-gate.yml` - workflow
+EOF
+  mkdir -p .functional-delivery
+  cat > .functional-delivery/pr-9999.md <<'EOF'
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+Builder QA functional report reference: qa-report
+EOF
+  CHECK_RUNS_JSON='[
+    {"name":"preflight/evidence-exactness","status":"completed","conclusion":"failure","id":99001,"started_at":"2026-05-18T10:00:00Z","completed_at":"2026-05-18T10:01:00Z"},
+    {"name":"preflight/mmm-pr-admin","status":"completed","conclusion":"failure","id":99002,"started_at":"2026-05-18T10:00:30Z","completed_at":"2026-05-18T10:01:30Z"},
+    {"name":"preflight/product-delivery-gates","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/phase-1-evidence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/iaa-prebrief-existence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/iaa-token-self-certification","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/hfmc-ripple-presence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/iaa-final-assurance","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/ecap-admin-ceremony","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/scope-declaration-parity","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/gate-changing-pr-rule","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"}
+  ]'
+}
+run_checkpoint_field_test \
+  "10c. PR-1661 style mismatch surfaces missing 10th file in QA rejection package" \
+  setup_pr1661_scope_mismatch_regression \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"FAILED_GATE_LOG_CONSUMPTION","equals":"no"},
+    {"field":"QA_REJECTION_PACKAGE_RESULT","equals":"STOP_AND_FIX"},
+    {"field":"QA_REJECTION_PACKAGE_HANDOVER_ALLOWED","equals":"no"},
+    {"field":"QA_REJECTION_PACKAGE_UNRESOLVED_REJECTIONS","contains":"preflight/evidence-exactness"},
+    {"field":"REASON","contains":"missing file(s): .github/scripts/handover-claim-gate.test.sh"}
+  ]'
 
 setup_early_injection_control_classification() {
   seed_manifest_and_scope
@@ -661,7 +731,7 @@ EOF
   TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
 }
 run_checkpoint_field_test \
-  "10c. early injection intake classifies ECAP/IAA before manual prompting" \
+  "10d. early injection intake classifies ECAP/IAA before manual prompting" \
   setup_early_injection_control_classification \
   "STOP_AND_FIX" \
   "no" \
@@ -702,7 +772,7 @@ EOF
 )"
 }
 run_checkpoint_field_test \
-  "10d. stale intake after later CS2 comment -> dirty STOP_AND_FIX" \
+  "10e. stale intake after later CS2 comment -> dirty STOP_AND_FIX" \
   setup_stale_intake_after_cs2_comment \
   "STOP_AND_FIX" \
   "no" \
@@ -710,7 +780,38 @@ run_checkpoint_field_test \
     {"field":"CS2_COMMENTS_DETECTED","equals":"yes"},
     {"field":"LATEST_INJECTION_INTAKE_AFTER_LAST_CS2_COMMENT","equals":"no"},
     {"field":"INJECTION_STATE","equals":"dirty"},
-    {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"}
+     {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"}
+   ]'
+
+setup_post_failure_package_status() {
+  setup_green_checkpoint
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+  TEST_PR_COMMENTS_JSON="$(cat <<EOF
+[
+  {
+    "body": "HANDOVER BLOCKED\\nRESULT: STOP_AND_FIX\\nQA_REJECTION_PACKAGE_STATUS: unresolved",
+    "created_at": "2026-05-18T08:00:00Z",
+    "updated_at": "2026-05-18T08:00:00Z",
+    "user": {"login": "github-actions[bot]"}
+  }
+]
+EOF
+)"
+}
+run_checkpoint_field_test \
+  "10da. unresolved failed-gate signal emits post-failure status (not closure)" \
+  setup_post_failure_package_status \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"FAILED_GATE_COMMENTS_DETECTED","equals":"yes"},
+    {"field":"POST_FAILURE_HANDLING_PACKAGE","equals":"POST_FAILURE_REJECTION_PACKAGE"},
+    {"field":"POST_FAILURE_REJECTION_PACKAGE_STATE","equals":"QA_REJECTION_PACKAGE_STATUS"},
+    {"field":"QA_REJECTION_PACKAGE_CLOSURE_ALLOWED","equals":"no"}
   ]'
 
 setup_review_ready_before_ecap_iaa() {
@@ -735,7 +836,7 @@ EOF
 )"
 }
 run_checkpoint_field_test \
-  "10e. review-ready language before ECAP/IAA invocation stays blocked" \
+  "10f. review-ready language before ECAP/IAA invocation stays blocked" \
   setup_review_ready_before_ecap_iaa \
   "STOP_AND_FIX" \
   "no" \
@@ -755,7 +856,7 @@ setup_unchecked_checklist_without_claim() {
   TEST_PR_BODY=$'## Status\n- [ ] Informational checklist item still open\n\nStill in progress.'
 }
 run_checkpoint_field_test \
-  "10ea. unchecked checklist items do not block in-progress intake refresh" \
+  "10fa. unchecked checklist items do not block in-progress intake refresh" \
   setup_unchecked_checklist_without_claim \
   "INJECTION_INTAKE_CURRENT" \
   "no" \
@@ -773,7 +874,7 @@ setup_file_backed_inputs_preferred() {
   COMMIT_STATUSES_JSON='not-json'
 }
 run_checkpoint_field_test \
-  "10f. file-backed checkpoint inputs are preferred over env JSON" \
+  "10g. file-backed checkpoint inputs are preferred over env JSON" \
   setup_file_backed_inputs_preferred \
   "HANDOVER_ALLOWED" \
   "yes" \
@@ -795,6 +896,17 @@ setup_out_of_sandbox_blocker() {
   TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="preflight/phase-1-evidence depends on protected-file change requiring CS2 authority"
 }
 run_checkpoint_test "12. out-of-sandbox blocker -> CS2_INTERVENTION_REQUIRED" "CS2_INTERVENTION_REQUIRED" "no" "CS2 intervention needed" setup_out_of_sandbox_blocker
+run_checkpoint_field_test \
+  "12a. out-of-sandbox blocker emits QA rejection package escalation fields" \
+  setup_out_of_sandbox_blocker \
+  "CS2_INTERVENTION_REQUIRED" \
+  "no" \
+  '[
+    {"field":"FAILED_GATE_LOG_CONSUMPTION","equals":"no"},
+    {"field":"QA_REJECTION_PACKAGE_RESULT","equals":"CS2_INTERVENTION_REQUIRED"},
+    {"field":"QA_REJECTION_PACKAGE_HANDOVER_ALLOWED","equals":"no"},
+    {"field":"QA_REJECTION_PACKAGE_OUT_OF_AUTHORITY_ITEMS","contains":"preflight/phase-1-evidence depends on protected-file change requiring CS2 authority"}
+  ]'
 
 setup_base_not_synced_without_explicit_signal() {
   setup_green_checkpoint

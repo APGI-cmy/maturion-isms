@@ -3,7 +3,7 @@
 **Agent**: foreman-v2-agent  
 **Authority**: CS2  
 **Governance Ref**: maturion-foreman-governance#1195, maturion-isms#496  
-**Version**: 4.6.0  
+**Version**: 4.7.0  
 **Created**: 2026-02-24  
 **Updated**: 2026-04-27  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
@@ -874,6 +874,43 @@ The foreman recorded `PHASE_A_ADVISORY` in session memory without actually calli
 **Learning**: A session time limit is NOT a valid exemption from Phase 4. When a session is terminated before Phase 4 is complete, the NEXT session MUST treat completing Phase 4 as its FIRST and ONLY task before doing anything else. Furthermore: SCOPE_DECLARATION.md bullet format MUST use hyphen (`-`), not em-dash (`—`), as the separator. QP evaluation must include a validate-scope-to-diff.sh dry-run check before declaring QP PASS.
 
 **S-039 (new)**: SCOPE_DECLARATION format standardisation — the validate-scope-to-diff.sh script requires `- \`path\` - description` (hyphen separator). QP evaluation template must include a bullet-format verification step: run `grep -c '^\s*-\s+\`[^\`]*\`\s+-\s+' SCOPE_DECLARATION.md` and verify count > 0 before QP PASS. Prevents silent empty-parse failure.
+
+---
+
+### INC-POLC-COPILOT-DIRECT-PR1668-001 — POLC Orchestration Failure: Implementation Without Builder Delegation Evidence (PR #1668, 2026-05-18)
+
+**Date**: 2026-05-18
+**Severity**: MODERATE
+**Status**: REMEDIATED — POLC exception explicitly classified as `copilot-direct`; incident recorded; learning loop activated; gate resolution path documented (CS2 to add `copilot-builder-role` label).
+**Source**: CS2 follow-up comment on PR #1668 (2026-05-18): "POLC Boundary Validation / builder-involvement-check: failure; POLC Boundary Validation / foreman-implementation-check: failure."
+**INCIDENT_TYPE**: POLC_ORCHESTRATION_FAILURE
+**PR**: #1668
+**CURRENT_HEAD_SHA**: c4bc53287d96c9c51c6bd63886e426c12fb92293
+**FAILED_GATES**:
+- POLC Boundary Validation / builder-involvement-check
+- POLC Boundary Validation / foreman-implementation-check
+
+**What happened**: PR #1668 (fix: mount `/assessment/framework` route in MMM router) changed production implementation files (`apps/mmm/src/App.tsx`, `apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx`) without committing Foreman session memory with `agents_delegated_to:` populated, and without an IAA pre-brief artifact. The POLC boundary gate detected the implementation files, could not classify a governed role (UNRESOLVED — no Foreman session memory or PREHANDOVER proof in the diff), and failed both `foreman-implementation-check` and `builder-involvement-check`.
+
+**Root cause**: PR #1668 was executed as `copilot-direct` (declared in `.admin/prs/pr-1668.json` as `"execution_model": "copilot-direct"`). This is the Copilot coding agent responding directly to a GitHub issue assignment, NOT a Foreman-orchestrated session. The PR was not accompanied by the `copilot-builder-role` label that formally declares the builder-governed role to the POLC gate, nor was Foreman session memory committed to establish the governed role dimension.
+
+**Expected behaviour**: Either (a) for a Foreman-orchestrated wave: Foreman session memory with `agents_delegated_to:` populated must be committed alongside the implementation files, OR (b) for a copilot-direct execution (non-Foreman): the `copilot-builder-role` label must be added to the PR to declare BUILDER governed role to the POLC gate. The distinction between Foreman-orchestrated and copilot-direct must be explicitly classified at PR open time.
+
+**Corrective action** (COMPLETE):
+1. [x] CS2 follow-up comment acknowledged (2026-05-18).
+2. [x] POLC exception classified: `copilot-direct` execution declared in `.admin/prs/pr-1668.json` and confirmed in `.agent-admin/evidence/polc-exception-pr-1668.md`.
+3. [x] Gate resolution path documented: CS2 to add `copilot-builder-role` label to PR #1668 to formally resolve POLC gate in builder-governed mode.
+4. [x] FAIL-ONLY-ONCE entry registered (this entry, v4.7.0).
+
+**Learning**: Running product QA is not sufficient. Product implementation must also satisfy POLC role-separation and orchestration evidence. For `copilot-direct` PRs, the `copilot-builder-role` label MUST be added at PR open time to declare the builder-governed role. Without the label, the POLC gate will classify the PR as UNRESOLVED and fail. The `execution_model` field in `.admin/prs/pr-<N>.json` documents the intent but does NOT influence any CI gate — only the `copilot-builder-role` label or `CS sign-off: approved` label provides a machine-readable POLC exception to the gate.
+
+**Prevention rule**: For all future `copilot-direct` implementation PRs:
+1. Determine at PR open time whether the execution model is `copilot-direct` or Foreman-orchestrated.
+2. For `copilot-direct`: ensure the `copilot-builder-role` label is added to the PR before implementation commits are pushed.
+3. For Foreman-orchestrated: commit session memory with `agents_delegated_to:` populated and IAA pre-brief artifact before any implementation file changes.
+4. Never rely on `.admin/prs/pr-<N>.json` `execution_model` field alone — it is documentation only, not a CI-gate bypass.
+
+**Repeat failure check**: No prior incident with identical pattern in this registry. POLC direct-implementation violations have been recorded (INC-AUTHFIX-IMPL-001, INC-LDCS-PREBRIEF-IMPL-001, etc.) but those involved Foreman-direct implementation. This is the first incident of `copilot-direct` execution model missing the `copilot-builder-role` label.
 
 ---
 
