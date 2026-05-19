@@ -4,7 +4,7 @@
 
 Qualifying tasks: [PR #1685 identity-binding hardening refresh for active head SHA `dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28`, including ECAP + IAA evidence rebinding and full Preflight Evidence Gate re-validation]
 Applicable overlay: [CI_WORKFLOW]
-Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY mandatory niggle checks apply to BUILD/AAWP_MAT PRs; this wave is governance/workflow assurance only]
+Anti-regression obligations: [no — FUNCTIONAL-BEHAVIOUR-REGISTRY mandatory behavioural checks apply to BUILD/AAWP_MAT PRs; this wave is governance/workflow assurance only]
 Ceremony-admin appointed: [YES — execution-ceremony-admin-agent]
 
 IAA_PREFLIGHT_BRIEF
