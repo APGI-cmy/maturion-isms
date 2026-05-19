@@ -54,7 +54,8 @@ References:
    - Changing denominator/preset must keep bar/date alignment proportional and reversible.
 
 13. **Large-project performance target**
-   - For representative large-project fixtures, initial timeline render target: ≤500ms with virtualization enabled.
+   - Required representative fixture for this target: minimum 500 tasks, 4-level hierarchy (project/milestone/deliverable/task), and 24-month date range.
+   - For that fixture, initial timeline render target: ≤500ms with virtualization enabled.
 
 14. **Visual-regression fixture set**
    - Maintain fixed fixtures for: baseline timeline, zoom state, dense hierarchy, long-range horizontal scroll, dependency lines.

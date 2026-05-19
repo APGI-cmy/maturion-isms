@@ -18,6 +18,7 @@
 - Enumerated RED test rows from catalog table entries: **147**.
 - Stage 8 allocation baseline currently cites **144** tests. The catalog currently enumerates **147** table rows (3-row delta).
 - **Blocking data gap to resolve before build execution**: reconcile catalog declared totals vs enumerated rows (currently +3).
+- Currently identified delta rows beyond the 144 baseline allocation snapshot: `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`.
 - Test-name metadata in source is scenario-level (route/domain + action), not implementation test function names; this is recorded as a metadata gap to close before execution.
 
 ## Allocation Compliance Checks
