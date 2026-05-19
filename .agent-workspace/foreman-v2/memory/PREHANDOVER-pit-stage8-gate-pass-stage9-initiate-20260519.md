@@ -5,7 +5,7 @@
 **Agent Version**: foreman-v2-agent v6.2.0 (contract v2.5.0) | execution-ceremony-admin-agent v1.0.0 (assembled)
 **Triggering Issue**: maturion-isms#1679 — Foreman: Gate-pass PIT Stage 8, then initiate Stage 9 Builder Checklist
 **Branch**: copilot/review-gate-pass-stage-8
-**PR: #1680
+**PR**: #1680
 **Assembled By**: execution-ceremony-admin-agent v1.0.0 (ECAP-001 §5.2 appointment 2026-05-19T11:02:23Z)
 
 ---
@@ -439,7 +439,7 @@ No code changes in this wave. CodeQL security scan not applicable to governance-
 ### ECAP Reconciliation Summary — pit-stage8-gate-pass-stage9-initiate-20260519
 
 **Issue**: #1679
-**PR: #1680
+**PR**: #1680
 **Wave**: pit-stage8-gate-pass-stage9-initiate-20260519
 **Branch**: copilot/review-gate-pass-stage-8
 **ECAP Session**: ecap-session-issue-1683-pit-stage8-gate-pass-stage9-initiate-20260519
