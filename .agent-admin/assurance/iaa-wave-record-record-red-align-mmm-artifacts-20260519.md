@@ -41,6 +41,12 @@ FOREMAN_INSTRUCTIONS:
 - Preserve explicit build-to-green block until this alignment PR merges to `main`.
 - Require follow-up build implementation to run under its own RED-to-GREEN contract.
 
+IAA_WILL_QA:
+- Verify the new RED is explicitly recorded as distinct from the prior blank-page resolution and matches the current `/assessment/framework` behavior described in this wave.
+- QA that the canonical 5-domain framework configuration workspace contract is reflected consistently across the listed MMM Stage 2/4/5/6/11 artifacts and tracker files.
+- Confirm the admin scope declaration, PR metadata, and wave task pointers remain aligned to this wave record and the actual documentation-only diff.
+- Check that the wave introduces no runtime/application/database drift and remains within the declared docs/governance-only scope.
+
 RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ---
