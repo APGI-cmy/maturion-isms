@@ -111,6 +111,8 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ### Stage-Readiness View — PIT Module (as of 2026-05-19)
 
+> **Directory numbering note**: PIT module directories are numbered by order of creation, not by stage number (e.g., Stage 2 → `01-ux-workflow-wiring-spec/`, Stage 3 → `02-frs/`). Stage numbers reflect logical sequence; directory prefixes reflect filesystem creation order.
+
 | Stage | Name | Status | Evidence Artifact | Notes |
 |-------|------|--------|-------------------|-------|
 | Stage 1 | App Description | ✅ COMPLETE | `modules/pit/00-app-description/` | Gate-passed |
