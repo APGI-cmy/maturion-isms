@@ -6,23 +6,23 @@
 **Branch**: copilot/build-to-green-runtime-fix
 **ECAP Session**: ecap-session-build-to-green-5domain-workspace-20260519
 **Foreman Session**: session-build-to-green-5domain-workspace-20260519
-**Final IAA Session Reference**: IAA-session-build-to-green-5domain-workspace-20260519-PASS *(expected reference — pending Phase 4)*
-**Final Token Reference**: `.agent-admin/assurance/iaa-token-session-build-to-green-5domain-workspace-20260519-20260519.md` *(pending Phase 4)*
+**Final IAA Session Reference**: IAA-session-build-to-green-5domain-workspace-20260519-PASS
+**Final Token Reference**: `.agent-admin/assurance/iaa-token-session-build-to-green-5domain-workspace-20260519-20260519.md`
 **Date**: 2026-05-19
 
 ---
 
 ## C1. Final-State Declaration
 
-**Final State**: `BUNDLE-COMPLETE — IAA PENDING`
-*(Bundle is fully assembled and returned to Foreman. IAA invocation pending Phase 4.
-This summary is a valid pre-IAA bundle handback record. Final state will be COMPLETE after IAA ASSURANCE-TOKEN received.)*
+**Final State**: `COMPLETE — IAA PASS`
+*(Bundle is fully assembled and includes completed IAA assurance. Final IAA result recorded as PASS,
+and this summary reflects the final completed assurance state for the bundle.)*
 
 | Dimension | Status |
 |---|---|
 | Substantive readiness | ACCEPTED by Foreman (QP PASS + §4.3 parity PASS declared) |
 | Administrative readiness | ACCEPTED (this summary) |
-| IAA assurance verdict | PENDING — Phase 4 Foreman authority |
+| IAA assurance verdict | PASS — final IAA assurance recorded |
 | Ripple status | NOT-APPLICABLE (UI-only changes, no PUBLIC_API canon files modified) |
 | Admin-compliance result | PASS |
 
