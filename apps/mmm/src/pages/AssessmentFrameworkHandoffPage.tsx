@@ -40,7 +40,7 @@ function DomainCard({ canonicalName, domain, index, frameworkId }: DomainCardPro
     <div
       className="domain-card"
       data-testid="domain-card"
-      data-testid-index={`domain-card-${index}`}
+      data-index={index}
     >
       <div className="domain-card__header">
         <h3 className="domain-card__title">{canonicalName}</h3>
@@ -150,7 +150,7 @@ export default function AssessmentFrameworkHandoffPage() {
   }
 
   // Build canonical slot array: 5 slots backed by DB domains sorted by sort_order
-  const sortedDomains = domains ? [...domains].sort((a, b) => a.sort_order - b.sort_order) : [];
+  const sortedDomains = domains ? domains.slice().sort((a, b) => a.sort_order - b.sort_order) : [];
   const canonicalSlots = CANONICAL_DOMAIN_NAMES.map((name, i) => ({
     canonicalName: name,
     domain: sortedDomains[i] as FrameworkHandoffDomain | undefined,
