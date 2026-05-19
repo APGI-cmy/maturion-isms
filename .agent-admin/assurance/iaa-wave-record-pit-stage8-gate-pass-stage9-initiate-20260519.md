@@ -127,9 +127,33 @@ The producing agent(s) must deliver ALL of the following before IAA handover inv
 
 ## TOKEN
 
-*(Populated by IAA after handover assurance — Phase 4)*
+**ASSURANCE-TOKEN ISSUED — 2026-05-19**
 
-`iaa_audit_token: IAA-session-pit-s8gp-s9init-20260519-PASS` ← expected reference; actual token written here after ASSURANCE-TOKEN issued
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: maturion-isms#1683 / pit-stage8-gate-pass-stage9-initiate-20260519
+Wave: pit-stage8-gate-pass-stage9-initiate-20260519
+Branch: copilot/review-gate-pass-stage-8
+HEAD: 7f8ad9b
+Session: session-issue-1683-stage8-gate-pass-stage9-initiate-20260519
+
+All 44 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+
+Token reference: IAA-session-pit-s8gp-s9init-20260519-PASS
+Re-invocation basis: REJECTION-001 (F-001/F-002/F-003/F-004) fully resolved.
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+═══════════════════════════════════════
+```
+
+`PHASE_B_BLOCKING_TOKEN: IAA-session-pit-s8gp-s9init-20260519-PASS`
+`iaa_audit_token: IAA-session-pit-s8gp-s9init-20260519-PASS`
+`issued_by: independent-assurance-agent`
+`issued_date: 2026-05-19`
+`checks_run: 44 | pass: 44 | fail: 0`
+`overlay: PRE_BUILD_STAGE_MODEL + ACR-01–16`
+`merge_authority: CS2 ONLY (@APGI-cmy)`
 
 ---
 

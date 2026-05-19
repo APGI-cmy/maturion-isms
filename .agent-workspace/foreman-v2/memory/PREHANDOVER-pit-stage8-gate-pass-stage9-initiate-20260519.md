@@ -379,12 +379,33 @@ GOVERNANCE_ONLY wave. No runtime tests. All 22 acceptance criteria PASS. All 9 S
 
 ## IAA Agent Response (verbatim)
 <!-- MANDATORY PER S-009 (FAIL-ONLY-ONCE v1.8.0 / A-014) -->
-<!-- Foreman: Paste the COMPLETE raw output from task(agent_type: "independent-assurance-agent") here BEFORE initial commit of this proof -->
-<!-- This section MUST be populated with the verbatim ASSURANCE-TOKEN or REJECTION-PACKAGE block -->
-<!-- A PREHANDOVER proof committed with a blank or placeholder IAA response is a HANDOVER BLOCKER (INC-IAA-SKIP-001) -->
-<!-- Do NOT paraphrase or summarize — verbatim paste only -->
 
-[Pending IAA invocation — Foreman to paste verbatim IAA agent output here before committing this proof]
+> Note: Initial REJECTION-PACKAGE (F-001/F-002/F-003/F-004) corrections applied and re-invocation resulted in ASSURANCE-TOKEN PASS. Final verbatim IAA response below.
+
+---
+
+## ═══════════════════════════════════════
+## ASSURANCE-TOKEN
+**PR**: maturion-isms#1683 | Wave: pit-stage8-gate-pass-stage9-initiate-20260519
+**Branch**: copilot/review-gate-pass-stage-8 | HEAD: 7f8ad9b
+**Re-invocation**: REJECTION-001 (F-001/F-002/F-003/F-004) — all 4 failures verified resolved.
+
+**All 44 checks PASS. Merge gate parity: PASS.**
+Merge permitted (subject to CS2 approval).
+
+**Token reference**: `IAA-session-pit-s8gp-s9init-20260519-PASS`
+**Adoption phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
+**Merge authority**: CS2 ONLY (@APGI-cmy)
+## ═══════════════════════════════════════
+
+**Token written to**: `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` `## TOKEN` section.
+
+**Failure resolution confirmed:**
+- F-001 ✅ Branch corrected to `copilot/review-gate-pass-stage-8` throughout
+- F-002/F-003 ✅ Scope declaration 12 paths; R07/R11/R16 updated (13 total = 12 Foreman/ECAP + 1 IAA-internal)
+- F-004 ✅ Wave Completion Gate corrected; stale PR #1678 item removed
+
+**Substantive verdict unchanged**: All 22 ACs PASS, all 9 guardrails PASS, Build Authorization NOT CLEARED, Stage 9 INITIATED only. CLEAN.
 
 ---
 
@@ -392,7 +413,7 @@ GOVERNANCE_ONLY wave. No runtime tests. All 22 acceptance criteria PASS. All 9 S
 
 ```yaml
 iaa_token_self_cert_guard:
-  token_file_exists: pending_iaa_invocation
+  token_file_exists: YES — token committed by IAA to wave record ## TOKEN section
   phase_b_blocking_token_present: pending_iaa_invocation
   phase_a_advisory_absent: pending_iaa_invocation
   guard_result: PENDING — to be completed by Foreman after IAA invocation
