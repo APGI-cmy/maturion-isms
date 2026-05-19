@@ -15,7 +15,7 @@ EXPECTED_QA_SCOPE:
 - .admin/prs/pr-1666.json
 - .agent-admin/scope-declarations/pr-1666.md
 - .agent-admin/assurance/iaa-wave-record-pr1666-qa-rejection-package-20260518.md
-- .agent-admin/assurance/iaa-preflight-brief-pr-1666.md
+- .agent-admin/assurance/iaa-prebrief-pr1666.md
 - .agent-admin/prehandover/proof-pr-1666-qa-rejection-package-20260518.md
 - .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1666-qa-rejection-package-20260518.md
 
