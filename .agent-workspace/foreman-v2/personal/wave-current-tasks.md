@@ -15,11 +15,11 @@ IAA_PREFLIGHT_BRIEF_REVIEWED: yes
 IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-prebrief-pr1676.md
 IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-19T09:49:07Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
-BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
+BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: not_required
 
 ---
 
-## Outstanding Tasks (STOP_AND_FIX)
+## Outstanding Tasks
 
 | # | Task | Owner | Status | Evidence |
 |---|------|-------|--------|----------|
