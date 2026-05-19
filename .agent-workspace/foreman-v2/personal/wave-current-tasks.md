@@ -16,6 +16,7 @@ IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-prebrief-pr1683.md
 IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-19T11:30:00Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 
 ---
 
@@ -24,14 +25,14 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 | # | Task | Owner | Status | Evidence |
 |---|------|-------|--------|----------|
 | 1 | IAA Pre-Brief invocation | foreman-v2-agent | 🟢 DONE | `.agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md` |
-| 2 | Create scope declaration for PR #1683 | foreman-v2-agent | 🟡 IN PROGRESS | `.agent-admin/scope-declarations/pr-1683.md` |
-| 3 | Delegate 5-domain workspace implementation to ui-builder | foreman-v2-agent | 🟡 IN PROGRESS | ui-builder task delegation |
-| 4 | B4 RED tests for 5-domain workspace added and green | ui-builder | 🔴 PENDING | `modules/MMM/tests/B4-framework/b4-framework.test.ts` |
-| 5 | AssessmentFrameworkHandoffPage.tsx updated to 5 canonical domain cards | ui-builder | 🔴 PENDING | `apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx` |
-| 6 | DomainWorkspacePage.tsx created | ui-builder | 🔴 PENDING | `apps/mmm/src/pages/DomainWorkspacePage.tsx` |
-| 7 | App.tsx domain route registered | ui-builder | 🔴 PENDING | `apps/mmm/src/App.tsx` |
-| 8 | verify-mmm-modes.mjs updated for 5-card assertion | ui-builder | 🔴 PENDING | `scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs` |
-| 9 | BUILD_PROGRESS_TRACKER.md RED finding recorded | ui-builder | 🔴 PENDING | `modules/MMM/BUILD_PROGRESS_TRACKER.md` |
+| 2 | Create scope declaration for PR #1683 | foreman-v2-agent | 🟢 DONE | `.agent-admin/scope-declarations/pr-1683.md` |
+| 3 | Delegate 5-domain workspace implementation to ui-builder | foreman-v2-agent | 🟢 DONE | ui-builder delegation complete — 145/145 B4 tests GREEN |
+| 4 | B4 RED tests for 5-domain workspace added and green | ui-builder | 🟢 DONE | `modules/MMM/tests/B4-framework/b4-framework.test.ts` — 145/145 GREEN |
+| 5 | AssessmentFrameworkHandoffPage.tsx updated to 5 canonical domain cards | ui-builder | 🟢 DONE | `apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx` |
+| 6 | DomainWorkspacePage.tsx created | ui-builder | 🟢 DONE | `apps/mmm/src/pages/DomainWorkspacePage.tsx` |
+| 7 | App.tsx domain route registered | ui-builder | 🟢 DONE | `apps/mmm/src/App.tsx` |
+| 8 | verify-mmm-modes.mjs updated for 5-card assertion | ui-builder | 🟢 DONE | `scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs` |
+| 9 | BUILD_PROGRESS_TRACKER.md RED finding recorded | ui-builder | 🟢 DONE | `modules/MMM/BUILD_PROGRESS_TRACKER.md` |
 
 ---
 
@@ -39,9 +40,9 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 
 - [x] Active preflight artifact is PR #1683 aligned
 - [x] IAA Pre-Brief invoked and wave record committed
-- [ ] Scope declaration created for PR #1683
-- [ ] ui-builder delegation complete
-- [ ] All B4 tests GREEN (115 existing + new T-MMM-S6-183+ tests)
-- [ ] QP PASS
-- [ ] §4.3 merge gate parity PASS
-- [ ] IAA final assurance PASS
+- [x] Scope declaration created for PR #1683
+- [x] ui-builder delegation complete
+- [x] All B4 tests GREEN (145/145 — 119 existing + 26 new T-MMM-S6-183 through T-MMM-S6-189)
+- [x] QP PASS
+- [x] §4.3 merge gate parity PASS
+- [x] IAA final assurance PASS — PHASE_B_BLOCKING_TOKEN: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
