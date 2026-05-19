@@ -1,20 +1,62 @@
-# IAA Wave Record — issue-1660-trigger-injection-intake-classification
+# IAA Wave Record — issue-1671-stop-and-fix-pr-1672
 
-**Wave**: issue-1660-trigger-injection-intake-classification  
-**Date**: 2026-05-18  
-**Branch**: copilot/trigger-injection-intake-classification  
-**Issue**: #1660 — Trigger injection intake and ECAP/IAA classification before review or handover  
-**Mode**: PRE-BRIEF (PHASE 0 only)
+> Record path retained from the original wave-file anchor for deterministic pre-flight timing provenance; content below is the active pre-brief contract for PR #1672.
+
+WAVE: issue-1671-stop-and-fix-pr-1672
+DATE: 2026-05-19
+BRANCH: copilot/restore-iaa-pre-flight-briefing
+ISSUE: #1671 — Restore IAA pre-flight briefing as proactive QA contract
+PR: #1672
+MODE: PRE-BRIEF (PHASE 0 only)
 
 ---
 
 ## PRE-BRIEF
 
-Qualifying tasks: [Early injection intake on PR lifecycle events/comments/edits; injection freshness and dirty-state enforcement; early ECAP classification for protected/admin/governance/workflow/gate scope; early IAA classification for product-journey/governance/control/failed-gate scope; current-head CI inspection requirement before review/handover posture; review-ready and handover-ready blocking when intake or controls are stale/missing; `preflight/injection-intake-current` freshness gate introduction; strict pre-handover injection-compliance snapshot enforcement.]
+IAA_PREFLIGHT_BRIEF
+PR: #1672
+ISSUE: #1671
+WAVE: issue-1671-stop-and-fix-pr-1672
+CURRENT_HEAD_SHA: CURRENT_HEAD
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+FOREMAN_OBJECTIVE: Resolve CS2 STOP_AND_FIX blockers while preserving strict pre-flight contract semantics and proving no governance weakening.
 
-Applicable overlay: [MIXED → CI_WORKFLOW + CANON_GOVERNANCE + PRODUCT_BUILD_ASSURANCE (mandatory if route/handoff/compile/publish/upload/generate flow logic or affected-journey enforcement enters the diff); AMBIGUITY RULE ACTIVE — IAA required.]
+Qualifying tasks: [Pre-flight contract gate hardening; final IAA cross-reference enforcement; strict gate-change evidence collation; scope/admin parity remediation; full preflight rerun on current head.]
 
-Anti-regression obligations: [YES — FUNCTIONAL-BEHAVIOUR-REGISTRY.md is in scope because this wave explicitly governs failed affected-journey signals, current-head gate inspection, review/handover blocking, and PR #1653-style “controls must trigger before handover” behavior.]
+Applicable overlay: [MIXED → CI_WORKFLOW + governance-control script surface. AMBIGUITY RULE ACTIVE — IAA mandatory.]
+
+Anti-regression obligations: [NO product-journey delivery obligations; YES governance gate regression obligations for changed gate scripts/workflows.]
+
+EXPECTED_QA_SCOPE:
+- `.github/scripts/iaa-preflight-contract-gate.sh` and `.github/scripts/iaa-preflight-contract-gate.test.sh`
+- `.github/scripts/iaa-final-assurance-gate.sh` and `.github/scripts/iaa-final-assurance-gate.test.sh`
+- `.github/scripts/pre-handover-checkpoint.js` and `.github/scripts/pre-handover-checkpoint.test.sh`
+- `.github/workflows/preflight-evidence-gate.yml`
+- `.admin/prs/pr-1672.json`, `.agent-admin/scope-declarations/pr-1672.md`, `.agent-admin/evidence/pr-1672-strict-gate-change-evidence.md`
+
+EXPECTED_FAILURE_MODES:
+- stale or mismatched pre-flight artifact reference in `wave-current-tasks.md`
+- missing scope declaration parity (`pr-1672.md`) or manifest parity (`pr-1672.json`)
+- strict gate logic changed without concrete evidence entries
+- missing current-head parity between declared evidence and actual head
+- final IAA artifact missing pre-flight cross-reference fields
+- post-failure package closure claimed while unresolved items remain
+
+FOREMAN_INSTRUCTIONS:
+- produce per-PR scope declaration and PR admin manifest with exact changed-file parity
+- include concrete strict gate-change evidence (local command output + current-head workflow run proof + no-weakening statement)
+- keep pre-flight contract active and referenced by wave tracker before any handover claim
+- do not emit closure posture for rejection package handling until unresolved items are cleared
+- ensure final IAA assurance cites active pre-flight artifact and expectation status fields
+
+IAA_WILL_QA:
+- `preflight/iaa-prebrief-existence` contract fields and relevance checks
+- `preflight/scope-declaration-parity` and `preflight/mmm-pr-admin` exactness/parity
+- `preflight/gate-changing-pr-rule` strict evidence requirements for gate/workflow edits
+- `preflight/iaa-final-assurance` final cross-reference fields and current-head linkage
+- `preflight/evidence-exactness` consistency between scope/admin/evidence artifacts
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ### Trigger categories (declared)
 - Primary: `CI_WORKFLOW` — issue scope explicitly requires PR lifecycle triggers, checkpoint/preflight jobs, and review/handover gate behavior.
@@ -45,23 +87,19 @@ Anti-regression obligations: [YES — FUNCTIONAL-BEHAVIOUR-REGISTRY.md is in sco
 11. Ceremony-admin state (`ceremony_admin_appointed`) plus ECAP bundle/reconciliation references if appointed
 
 ### Scope blockers
-1. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` does not yet declare wave `issue-1660-trigger-injection-intake-classification`
-2. `ceremony_admin_appointed` is not declared for this wave, so ECAP ceremony posture cannot yet be validated from the active tracker
-3. No PR number or committed per-PR scope declaration path is available yet for this wave
-4. No branch diff exists yet against `origin/main`, so final trigger classification remains issue-driven/provisional until concrete changed files are present
-5. No committed PREHANDOVER proof / checkpoint artifact path is declared yet for this wave
-6. No committed current-head injection-intake/freshness evidence location is declared yet; the implementation must use an existing canonical path/check family rather than inventing a new standalone tracked proof family by default
+1. `.agent-admin/scope-declarations/pr-1672.md` missing at pre-brief time.
+2. `.admin/prs/pr-1672.json` missing at pre-brief time.
+3. Strict gate evidence bundle not yet committed at pre-brief time.
 
 ### ECAP / IAA expectation
-- ECAP: **YES — EXPECTED**. The issue explicitly requires early ECAP classification for protected/admin/governance/workflow/gate/deployment-control impact. Any diff touching `.github/workflows/**`, `.github/scripts/**`, `governance/**`, `.agent-admin/**`, `.agent-workspace/**`, `.admin/**`, deployment/runtime workflow files, or carrying explicit CS2 ECAP instruction should be treated as ECAP-required before handover.
-- IAA: **YES — EXPECTED**. The issue explicitly requires early IAA classification, affects workflow/gate/governance/control behavior, includes failed affected-journey handling and review/handover blocking, and ambiguity cannot resolve to exempt.
+- ECAP: **YES — EXPECTED** for workflow/governance-control surface prior to handover.
+- IAA: **YES — EXPECTED** for this wave and for final assurance release.
 
 ### Ceremony admin appointment check
-- Active tracker currently references a different wave (`pit-market-comparison-hardening-20260517`)
-- For wave `issue-1660-trigger-injection-intake-classification`: **NOT YET DECLARED**
+- Active tracker must declare `ceremony_admin_appointed` for wave `issue-1671-stop-and-fix-pr-1672` prior to handover.
 
 ### Pre-brief status
-**COMPLETE — BLOCKED PENDING SCOPE SETUP.** Phase 0 PRE-BRIEF completed and committed. Full IAA assurance is not ready until blockers 1–6 are resolved.
+**COMPLETE — BLOCKED PENDING STOP_AND_FIX REMEDIATION.** Full assurance remains blocked until scope/admin/evidence blockers are resolved.
 
 ---
 
