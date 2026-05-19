@@ -21,6 +21,11 @@ export default function DomainWorkspacePage() {
   const [searchParams] = useSearchParams();
   const frameworkId = searchParams.get('framework_id');
 
+  // Prefer the canonical domain label passed as a query param.
+  // This ensures the workspace always shows "Process Integrity" etc.,
+  // never an internal slug or placeholder identifier.
+  const domainLabel = searchParams.get('domain_name') ?? domainId ?? '';
+
   const backPath = frameworkId
     ? `/assessment/framework?framework_id=${frameworkId}`
     : '/assessment/framework';
@@ -33,8 +38,7 @@ export default function DomainWorkspacePage() {
           <div className="page-header">
             <div>
               <h1 className="page-header__title" data-testid="domain-workspace-title">
-                Domain Workspace
-                {domainId ? `: ${domainId}` : ''}
+                {domainLabel || 'Domain Workspace'}
               </h1>
               <p className="page-header__subtitle">Configure this domain's content</p>
             </div>

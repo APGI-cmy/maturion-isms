@@ -807,3 +807,41 @@ describe('T-MMM-S6-188: Domain cards declare mini-dashboard placeholder slots', 
     expect(src).toContain('data-testid="domain-compile-status"');
   });
 });
+
+// ─── T-MMM-S6-189: Canonical domain label preserved into domain workspace ──────
+describe('T-MMM-S6-189: Domain card click-through preserves canonical domain label (not placeholder ID)', () => {
+  it('AssessmentFrameworkHandoffPage passes domain_name query param in click-through path', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    // The click-through URL must include domain_name so the workspace can display it.
+    expect(src).toContain('domain_name');
+    expect(src).toContain('encodeURIComponent(canonicalName)');
+  });
+  it('AssessmentFrameworkHandoffPage uses canonical slug (not placeholder-N) as route key', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    // Route key is derived from canonicalName, never from a placeholder-N pattern.
+    expect(src).toContain('canonicalNameToSlug');
+    expect(src).not.toContain('placeholder-${index}');
+    expect(src).not.toContain('placeholder-${i}');
+  });
+  it('DomainWorkspacePage reads domain_name from useSearchParams', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('domain_name');
+    expect(src).toContain('searchParams.get');
+  });
+  it('DomainWorkspacePage displays domainLabel (from domain_name param), not raw domainId', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    // domainLabel should be the primary display variable; raw domainId must not be
+    // appended directly to the title string.
+    expect(src).toContain('domainLabel');
+    // The old `: ${domainId}` pattern that exposed placeholder IDs must not exist.
+    expect(src).not.toContain('`: ${domainId}`');
+    expect(src).not.toContain('`Domain Workspace: ${domainId}`');
+    expect(src).not.toContain(': ${domainId}');
+  });
+  it('DomainWorkspacePage canonical label falls back gracefully when domain_name is absent', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    // Must have a fallback chain: domain_name param ?? domainId ?? ''
+    expect(src).toContain('domain_name');
+    expect(src).toContain('??');
+  });
+});

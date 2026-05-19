@@ -9,6 +9,16 @@ const CANONICAL_DOMAIN_NAMES: string[] = [
   'Proof It Works',
 ];
 
+/**
+ * Converts a canonical domain name to a URL-safe slug.
+ * e.g. "Process Integrity" → "process-integrity"
+ * This slug is used as the route key so the URL remains stable and
+ * human-readable regardless of whether a DB domain record exists.
+ */
+function canonicalNameToSlug(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
+
 function AppNav() {
   return (
     <header className="app-shell__header">
@@ -33,8 +43,16 @@ interface DomainCardProps {
 }
 
 function DomainCard({ canonicalName, domain, index, frameworkId }: DomainCardProps) {
-  const domainId = domain?.id ?? `placeholder-${index}`;
-  const domainPath = `/assessment/framework/domain/${domainId}?framework_id=${frameworkId}`;
+  // Route by canonical slug so the URL is always stable and human-readable.
+  // The actual DB domain ID (if present) is passed as source_domain_id for
+  // future backend use, but it is never used as the primary route key.
+  const domainSlug = canonicalNameToSlug(canonicalName);
+  const sourceDomainParam = domain?.id ? `&source_domain_id=${encodeURIComponent(domain.id)}` : '';
+  const domainPath =
+    `/assessment/framework/domain/${domainSlug}` +
+    `?framework_id=${encodeURIComponent(frameworkId)}` +
+    `&domain_name=${encodeURIComponent(canonicalName)}` +
+    sourceDomainParam;
 
   return (
     <div
