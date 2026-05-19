@@ -19,11 +19,10 @@
 | Stage 4 TRS v0.2 incl. PIT-TR-116..126 | Deployment contract, negative-path expectations, RED assessment | PASS_WITH_NON_BLOCKING_NOTES | `modules/pit/06-qa-to-red/trs-to-red-traceability.md`; `modules/pit/07-pbfag/runtime-deployment-contract.md` | PASS |
 | Stage 5 Architecture package | Route/screen/domain coverage expectations for Stage 7 checks | PASS | `modules/pit/06-qa-to-red/architecture-to-red-traceability.md`; `modules/pit/07-pbfag/stage6-red-suite-assessment.md` | PASS |
 | Stage 5b LFV package | LFV readiness assertions; required evidence contract | PASS | `modules/pit/05-live-functional-verification/`; `modules/pit/07-pbfag/lfv-readiness-assessment.md` | PASS |
-| Stage 6 QA-to-Red suite | Stage 7 readiness baseline and guardrail enforcement | PASS_WITH_NON_BLOCKING_NOTES | `modules/pit/06-qa-to-red/`; `modules/pit/07-pbfag/pbfag-checklist.md` | BLOCKING_GAP (Stage 6 gate-pass pending) |
+| Stage 6 QA-to-Red suite | Stage 7 readiness baseline and guardrail enforcement | PASS | `modules/pit/06-qa-to-red/`; `modules/pit/07-pbfag/pbfag-checklist.md` | PASS |
 
 ## Propagation Findings
 
 - No missing upstream source category identified for Stage 7 planning scope.
-- Stage 7 package is fully propagation-aware but cannot claim gate-pass while Stage 5/6 gate-pass is pending.
+- Stage 7 package is fully propagation-aware and gate-passable in pre-build scope now that Stage 5/6 gate-pass prerequisites are satisfied.
 - No Stage 8/build-authorisation leakage detected in this audit scope.
-

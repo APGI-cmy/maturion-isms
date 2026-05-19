@@ -504,16 +504,19 @@ jobs:
             # Permitted patterns per GOVERNANCE_ARTIFACT_TAXONOMY.md §21.3:
             # 1. iaa-wave-record-{wave}-{date}.md (consolidated wave record)
             # 2. iaa-prebrief-{slug}.md (legacy pre-brief — transition period)
-            # 3. iaa-token-session-{NNN}-{wave}-{date}.md (standalone IAA token)
-            # 4. INVALIDATED-{artifact-name}.md (invalidation marker)
-            # 5. PREHANDOVER-*.md (legacy PREHANDOVER — transition period)
-            # 6. assurance-token-*.md (legacy token format — transition period)
-            # 7. iaa-rejection-*.md / rejection-package-*.md (legacy — transition period)
+            # 3. iaa-preflight-brief-{slug}.md (IAA pre-flight briefing)
+            # 4. iaa-token-session-{NNN}-{wave}-{date}.md (standalone IAA token)
+            # 5. INVALIDATED-{artifact-name}.md (invalidation marker)
+            # 6. PREHANDOVER-*.md (legacy PREHANDOVER — transition period)
+            # 7. assurance-token-*.md (legacy token format — transition period)
+            # 8. iaa-rejection-*.md / rejection-package-*.md (legacy — transition period)
 
             if echo "$basename" | grep -qE '^iaa-wave-record-.*\.md$'; then
               echo "  ✅ $basename — matches: IAA Wave Record (consolidated)"
             elif echo "$basename" | grep -qE '^iaa-prebrief-.*\.md$'; then
               echo "  ✅ $basename — matches: IAA Pre-Brief (legacy/transition)"
+            elif echo "$basename" | grep -qE '^iaa-preflight-brief-.*\.md$'; then
+              echo "  ✅ $basename — matches: IAA Pre-Flight Briefing"
             elif echo "$basename" | grep -qE '^iaa-token-.*\.md$'; then
               echo "  ✅ $basename — matches: IAA Token (standalone)"
             elif echo "$basename" | grep -qE '^INVALIDATED-.*\.md$'; then
