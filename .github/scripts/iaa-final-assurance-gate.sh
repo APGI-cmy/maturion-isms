@@ -359,6 +359,61 @@ while IFS= read -r token_file; do
     echo "  ✅ Reviewed SHA present: ${TOKEN_REVIEWED_SHA:0:12} (HEAD_SHA not set — skipping ancestry check)"
   fi
 
+  # Check G: Final IAA must cross-reference active pre-flight brief contract.
+  PREFLIGHT_REVIEWED=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?(PREFLIGHT_BRIEF_REVIEWED|IAA_PREFLIGHT_BRIEF_REVIEWED):[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+  PREFLIGHT_PATH=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?(PREFLIGHT_BRIEF_PATH|IAA_PREFLIGHT_BRIEF_PATH):[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+  PREFLIGHT_EXPECTATIONS_MET=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?PREFLIGHT_EXPECTATIONS_MET:[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+  UNMET_PREFLIGHT_EXPECTATIONS=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?UNMET_PREFLIGHT_EXPECTATIONS:[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+  FINAL_IAA_RESULT=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?FINAL_IAA_RESULT:[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+
+  if ! echo "$PREFLIGHT_REVIEWED" | grep -qi "^yes$"; then
+    echo "  ❌ PREFLIGHT_BRIEF_REVIEWED must be yes in final IAA artifact [IAA-FINAL-GATE-011]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_REVIEWED is missing or not yes"
+    FILE_VALID=false
+    FAIL=true
+  fi
+  if [ -z "$PREFLIGHT_PATH" ] || [ ! -f "$PREFLIGHT_PATH" ] || [[ "$PREFLIGHT_PATH" == *"/archive/"* ]]; then
+    echo "  ❌ PREFLIGHT_BRIEF_PATH missing/invalid/non-active in final IAA artifact [IAA-FINAL-GATE-012]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH missing/invalid/non-active"
+    FILE_VALID=false
+    FAIL=true
+  elif [[ ! "$PREFLIGHT_PATH" =~ ^\.agent-admin/assurance/iaa-(prebrief|wave-record)- ]]; then
+    echo "  ❌ PREFLIGHT_BRIEF_PATH must reference .agent-admin/assurance/iaa-prebrief-* or iaa-wave-record-* [IAA-FINAL-GATE-012]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH not in allowed assurance location"
+    FILE_VALID=false
+    FAIL=true
+  elif grep -Eq '^[[:space:]]*SUPERSEDED:[[:space:]]*yes[[:space:]]*$' "$PREFLIGHT_PATH" 2>/dev/null; then
+    echo "  ❌ PREFLIGHT_BRIEF_PATH references a superseded pre-flight brief [IAA-FINAL-GATE-012]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH references superseded brief"
+    FILE_VALID=false
+    FAIL=true
+  fi
+  if ! echo "$PREFLIGHT_EXPECTATIONS_MET" | grep -qiE "^(yes|no)$"; then
+    echo "  ❌ PREFLIGHT_EXPECTATIONS_MET must be yes or no [IAA-FINAL-GATE-013]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_EXPECTATIONS_MET missing or invalid"
+    FILE_VALID=false
+    FAIL=true
+  fi
+  if [ -z "$FINAL_IAA_RESULT" ]; then
+    echo "  ❌ FINAL_IAA_RESULT missing [IAA-FINAL-GATE-014]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: FINAL_IAA_RESULT missing"
+    FILE_VALID=false
+    FAIL=true
+  fi
+  if echo "$PREFLIGHT_EXPECTATIONS_MET" | grep -qi "^no$"; then
+    if [ -z "$UNMET_PREFLIGHT_EXPECTATIONS" ] || echo "$UNMET_PREFLIGHT_EXPECTATIONS" | grep -qiE "^(none|n/a)$"; then
+      echo "  ❌ UNMET_PREFLIGHT_EXPECTATIONS must be populated when PREFLIGHT_EXPECTATIONS_MET=no [IAA-FINAL-GATE-015]"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_EXPECTATIONS_MET=no but UNMET_PREFLIGHT_EXPECTATIONS not populated"
+      FILE_VALID=false
+      FAIL=true
+    fi
+  fi
+
   if [ "$FILE_VALID" = true ]; then
     VALID_TOKEN_FOUND=true
     echo "  ✅ Token file VALID: $token_file"
@@ -458,6 +513,52 @@ while IFS= read -r wave_file; do
       fi
     else
       echo "  ✅ Wave record reviewed SHA: ${WR_REVIEWED_SHA:0:12} (ancestry check skipped — HEAD_SHA not set)"
+    fi
+
+    if [ "$WR_FILE_VALID" = true ]; then
+      WR_PREFLIGHT_REVIEWED=$(awk '/^## TOKEN/{found=1} found && /(PREFLIGHT_BRIEF_REVIEWED|IAA_PREFLIGHT_BRIEF_REVIEWED):/{print; exit}' \
+        "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      WR_PREFLIGHT_PATH=$(awk '/^## TOKEN/{found=1} found && /(PREFLIGHT_BRIEF_PATH|IAA_PREFLIGHT_BRIEF_PATH):/{print; exit}' \
+        "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      WR_PREFLIGHT_EXPECTATIONS_MET=$(awk '/^## TOKEN/{found=1} found && /PREFLIGHT_EXPECTATIONS_MET:/{print; exit}' \
+        "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      WR_FINAL_IAA_RESULT=$(awk '/^## TOKEN/{found=1} found && /FINAL_IAA_RESULT:/{print; exit}' \
+        "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      WR_UNMET_PREFLIGHT_EXPECTATIONS=$(awk '/^## TOKEN/{found=1} found && /UNMET_PREFLIGHT_EXPECTATIONS:/{print; exit}' \
+        "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+
+      if ! echo "$WR_PREFLIGHT_REVIEWED" | grep -qi "^yes$"; then
+        echo "  ❌ Wave record ## TOKEN must include PREFLIGHT_BRIEF_REVIEWED: yes [IAA-FINAL-GATE-011]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: PREFLIGHT_BRIEF_REVIEWED missing/invalid in ## TOKEN"
+      fi
+      if [ -z "$WR_PREFLIGHT_PATH" ] || [ ! -f "$WR_PREFLIGHT_PATH" ] || [[ "$WR_PREFLIGHT_PATH" == *"/archive/"* ]]; then
+        echo "  ❌ Wave record ## TOKEN PREFLIGHT_BRIEF_PATH missing/invalid/non-active [IAA-FINAL-GATE-012]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: PREFLIGHT_BRIEF_PATH missing/invalid/non-active in ## TOKEN"
+      fi
+      if ! echo "$WR_PREFLIGHT_EXPECTATIONS_MET" | grep -qiE "^(yes|no)$"; then
+        echo "  ❌ Wave record ## TOKEN PREFLIGHT_EXPECTATIONS_MET must be yes or no [IAA-FINAL-GATE-013]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: PREFLIGHT_EXPECTATIONS_MET missing/invalid in ## TOKEN"
+      fi
+      if [ -z "$WR_FINAL_IAA_RESULT" ]; then
+        echo "  ❌ Wave record ## TOKEN FINAL_IAA_RESULT missing [IAA-FINAL-GATE-014]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: FINAL_IAA_RESULT missing in ## TOKEN"
+      fi
+      if echo "$WR_PREFLIGHT_EXPECTATIONS_MET" | grep -qi "^no$"; then
+        if [ -z "$WR_UNMET_PREFLIGHT_EXPECTATIONS" ] || echo "$WR_UNMET_PREFLIGHT_EXPECTATIONS" | grep -qiE "^(none|n/a)$"; then
+          echo "  ❌ Wave record ## TOKEN must include UNMET_PREFLIGHT_EXPECTATIONS when PREFLIGHT_EXPECTATIONS_MET=no [IAA-FINAL-GATE-015]"
+          WR_FILE_VALID=false
+          FAIL=true
+          FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: PREFLIGHT_EXPECTATIONS_MET=no without UNMET_PREFLIGHT_EXPECTATIONS in ## TOKEN"
+        fi
+      fi
     fi
 
     if [ "$WR_FILE_VALID" = true ]; then

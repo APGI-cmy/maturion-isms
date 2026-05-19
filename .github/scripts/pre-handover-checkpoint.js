@@ -1060,6 +1060,14 @@ function evaluateCheckpoint(input = {}) {
     reason = 'Injection intake refreshed for current PR state. Formal review/handover claim still required.';
   }
 
+  const hasFailedGateSignal = failedGateSignalTimes.length > 0;
+  const unresolvedPostFailureItems = hasFailedGateSignal && !handoverAllowed;
+  const postFailurePackageType = hasFailedGateSignal ? 'POST_FAILURE_REJECTION_PACKAGE' : 'not_required';
+  const postFailurePackageState = !hasFailedGateSignal
+    ? 'not_required'
+    : (unresolvedPostFailureItems ? 'QA_REJECTION_PACKAGE_STATUS' : 'QA_REJECTION_PACKAGE_CLOSURE');
+  const qaRejectionPackageClosureAllowed = postFailurePackageState === 'QA_REJECTION_PACKAGE_CLOSURE' ? 'yes' : 'no';
+
   const fields = {
     PR: prNumber ? `#${prNumber}` : 'unknown',
     ISSUE: issueNumber ? `#${issueNumber}` : 'unknown',
@@ -1079,6 +1087,9 @@ function evaluateCheckpoint(input = {}) {
     CS2_COMMENTS_DETECTED: cs2CommentTimes.length > 0 ? 'yes' : 'no',
     PR_CHECKLIST_ITEMS_DETECTED: checklistItems.all.length > 0 ? 'yes' : 'no',
     FAILED_GATE_COMMENTS_DETECTED: failedGateSignalTimes.length > 0 ? 'yes' : 'no',
+    POST_FAILURE_HANDLING_PACKAGE: postFailurePackageType,
+    POST_FAILURE_REJECTION_PACKAGE_STATE: postFailurePackageState,
+    QA_REJECTION_PACKAGE_CLOSURE_ALLOWED: qaRejectionPackageClosureAllowed,
     ADMIN_CEREMONY_REQUIRED: adminCeremonyRequired ? 'yes' : 'no',
     ADMIN_CEREMONY_INVOKED: yesNoNotRequired(adminInvoked, adminCeremonyRequired),
     ADMIN_CEREMONY_ARTIFACT_PRESENT: yesNoNotRequired(adminPresent, adminCeremonyRequired),
