@@ -8,7 +8,10 @@
     ".agent-admin/assurance/iaa-prebrief-pr1676.md",
     ".agent-admin/assurance/iaa-preflight-brief-pr-1676.md",
     ".agent-admin/assurance/iaa-token-pr-1676-foreman-contract-hardening-20260519.md",
+    ".agent-admin/prehandover/proof-pr-1676-foreman-contract-hardening-20260519.md",
     ".agent-admin/scope-declarations/pr-1676.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1676-foreman-contract-hardening-20260519.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     ".github/agents/foreman-v2-agent.md"
   ],
   "risk": "high",
@@ -20,6 +23,8 @@
   "evidence_required": [
     "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1676.md",
     "IAA pre-brief artifact present at .agent-admin/assurance/iaa-prebrief-pr1676.md",
+    "PREHANDOVER ECAP proof present at .agent-admin/prehandover/proof-pr-1676-foreman-contract-hardening-20260519.md",
+    "ECAP bundle artifact present at .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1676-foreman-contract-hardening-20260519.md",
     "IAA preflight brief artifact present at .agent-admin/assurance/iaa-preflight-brief-pr-1676.md",
     "IAA final assurance token present at .agent-admin/assurance/iaa-token-pr-1676-foreman-contract-hardening-20260519.md"
   ],
