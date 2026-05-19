@@ -1,0 +1,38 @@
+{
+  "pr": 1672,
+  "issue": 1671,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1672.json",
+    ".agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md",
+    ".agent-admin/assurance/iaa-wave-record-issue-1671-stop-and-fix-pr-1672-2026-05-19.md",
+    ".agent-admin/evidence/pr-1672-strict-gate-change-evidence.md",
+    ".agent-admin/scope-declarations/pr-1672.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".github/scripts/iaa-final-assurance-gate.sh",
+    ".github/scripts/iaa-final-assurance-gate.test.sh",
+    ".github/scripts/iaa-preflight-contract-gate.sh",
+    ".github/scripts/iaa-preflight-contract-gate.test.sh",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/workflows/preflight-evidence-gate.yml"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1672.md with exact changed-file parity",
+    "Strict gate-change evidence bundle committed at .agent-admin/evidence/pr-1672-strict-gate-change-evidence.md",
+    "No-weakening statement recorded for strict gate logic updates in PR #1672 evidence bundle",
+    "local command output: bash .github/scripts/iaa-preflight-contract-gate.test.sh",
+    "local command output: bash .github/scripts/iaa-final-assurance-gate.test.sh",
+    "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh",
+    "workflow preflight evidence gate: success on head PLACEHOLDER_HEAD_SHA",
+    "actions/runs/PLACEHOLDER_RUN_ID"
+  ],
+  "merge_authority": "CS2"
+}
