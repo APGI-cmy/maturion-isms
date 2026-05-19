@@ -283,5 +283,35 @@ PRE_BRIEF_SHA: to be populated on commit
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING
+PHASE_B_BLOCKING_TOKEN: PENDING — REJECTION-PACKAGE issued; token withheld pending fix and re-invocation
+
+---
+
+## REJECTION_HISTORY
+
+### Entry 1 — 2026-05-19
+
+**IAA Session**: IAA-session-pit-stage9-gate-pass-stage10-initiate-20260519-REJECTED-20260519
+**Date**: 2026-05-19
+**PR**: #1689
+**Wave**: pit-stage9-gate-pass-stage10-initiate-20260519
+
+**Finding**: ACR-03 AUTO-REJECT — Issue number inconsistency in ceremony artifact.
+`wave-current-tasks.md` contains stale `#1681` (MMM — unrelated module) references in:
+- Task 1 description: `"issue #1681 checklist items"` (should be `#1687`)
+- Wave Completion Gate row 1: `"(maturion-isms#1681)"` (should be `#1687`)
+- Wave Completion Gate row 2: `"(maturion-isms#1681)"` (should be `#1687`)
+Pre-brief FM-03 explicitly flagged this and instructed Foreman to resolve before IAA invocation. Not resolved at final assurance time.
+
+**Fix required**:
+1. Update `wave-current-tasks.md` Task 1 description: `#1681` → `#1687`
+2. Update Wave Completion Gate row 1: `(maturion-isms#1681)` → `(maturion-isms#1687)`
+3. Update Wave Completion Gate row 2: `(maturion-isms#1681)` → `(maturion-isms#1687)`
+4. Commit fix, confirm git status clean, re-invoke IAA final assurance.
+
+**Classification**: Ceremony → Systemic (recurring copy-paste from prior wave; prior wave task descriptions carried into new wave-current-tasks.md without issue number update)
+**Prevention**: wave-current-tasks.md template hardening — add explicit `governing_issue:` metadata field separate from task description text to prevent stale carry-forward.
+
+**HANDOVER_ALLOWED**: no
+**RESULT**: REJECTED_BACK_TO_PRODUCER
 
