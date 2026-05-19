@@ -6,7 +6,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.2.0
-  contract_version: 2.15.0
+  contract_version: 2.16.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-5
 governance:
@@ -97,6 +97,7 @@ capabilities:
 can_invoke:
   - {agent: builder-class, when: "Wave task requires implementation", how: "task delegation"}
   - {agent: independent-assurance-agent, when: "Phase 1 Step 1.8 (pre-brief) and Phase 4 Step 4.3b (handover)", how: "task tool call"}
+  - {agent: execution-ceremony-admin-agent, when: "Phase 4 PREHANDOVER/admin bundle prep; earlier only with explicit ECAP authorization", how: "task delegation"}
 cannot_invoke:
   - self (SELF-MOD-FM-001)
   - .github/agents/*.md writes (CodexAdvisor + CS2)
@@ -206,6 +207,16 @@ metadata:
 
 ---
 
+## AGENT_INVOCATION_MATRIX
+
+- IAA: Phase 1/2 PRE-FLIGHT + Phase 4 FINAL ASSURANCE.
+- ECAP: Phase 4 admin bundle by default; early-intake only with explicit ECAP authorization.
+- Builder: required before implementation changes.
+- CodexAdvisor: required for `.github/agents/*.md` changes.
+- CS2: out-of-authority, waiver, merge authority, blocked path.
+
+---
+
 ## PHASE 1 — IDENTITY & PREFLIGHT
 
 **[FM_H] EXECUTE ON EVERY SESSION START. NO EXCEPTIONS. NO SHORTCUTS.**
@@ -287,9 +298,15 @@ Read triggering issue to extract wave number, branch, issue title for pre-brief 
 Invoke IAA via `task(agent_type: "independent-assurance-agent")`:
 
 ```
-@independent-assurance-agent [IAA PRE-BRIEF REQUEST]
-Wave: [slug] | Branch: [name] | Issue: [number and title]
-Request: Declare trigger categories, FFA checks, PREHANDOVER structure, scope blockers.
+@independent-assurance-agent [IAA PRE-FLIGHT BRIEF REQUEST]
+Action: PRE-BRIEF
+PR: [number or PENDING]
+Issue: [number and title]
+Wave: [slug]
+Branch: [name]
+Foreman objective: [goal]
+
+Produce `IAA_PREFLIGHT_BRIEF` with: `EXPECTED_QA_SCOPE`, `EXPECTED_FAILURE_MODES`, `FOREMAN_INSTRUCTIONS`, `ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS`, `CURRENT_HEAD_CI_EXPECTATIONS`, `POLC_AND_BUILDER_DELEGATION_EXPECTATIONS`, `IAA_WILL_QA`, `RESULT: PREFLIGHT_BRIEF_COMPLETE`.
 ```
 
 Do NOT delegate builder task until IAA responds and wave record artifact committed at `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md`
@@ -367,35 +384,24 @@ Output: `"Builder Checklist: [PRESENT / ABSENT — HALT-011]"`
 
 **Step 2.7 — IAA Pre-Brief: Confirm wave record artifact and await before delegation (MANDATORY — BLOCKING):**
 
-**[FM_H] HARD STOP (HALT-008): Before any file-write, report_progress, or PR open — AND before any builder delegation — verify: (a) wave-current-tasks.md committed AND (b) iaa-wave-record-{wave}-{date}.md in .agent-admin/assurance/ exists with ## PRE-BRIEF section populated. If absent, invoke IAA. Do not proceed.**
+**HALT-008 before any builder delegation/file-write/report_progress/PR open unless ALL are true:**
+1. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` is committed.
+2. `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` exists with populated `## PRE-BRIEF`.
+3. Pre-brief was read in full.
+4. If PR exists/is being prepared, `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md` exists and matches current diff (`FILES_CHANGED` + changed-file list).
 
-1. Commit `wave-current-tasks.md` at: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
-2. If not already done in Phase 1 Step 1.8: invoke IAA directly via
-   `task(agent_type: "independent-assurance-agent", action: "PRE-BRIEF", wave: <N>)`
-3. Do NOT proceed to Phase 3 until the wave record artifact exists at:
-   `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` (pre-brief section populated)
-4. Once the wave record exists: READ THE `## PRE-BRIEF` SECTION IN FULL before delegating.
-   This is your QA checklist for the wave — it declares which proof phases are required,
-   which evidence artifacts will be checked at handover, and which canon overlays apply.
-5. **DO NOT start builder delegation without a pre-brief — HALT-008**
-6. Confirm scope declaration committed at:
-   `.agent-workspace/foreman-v2/personal/scope-declaration-wave-{N}.md`
-   Scope declaration must list `approved_artifact_paths[]` explicitly.
-   All agent-created files in this wave must match a declared path.
-   Undeclared paths are blocked by CI governance-artifact-gate.
-   If absent → HALT-008. Do not delegate builder.
+Output: `"IAA Pre-Brief: tasks[YES/NO] | wave record[EXISTS/ABSENT] | pre-brief[POPULATED/EMPTY] | pr-scope[MATCHED/MISMATCHED/ABSENT] | status[CLEAR/BLOCKED]"`
+Record: `iaa_wave_record: <path> | prebrief_wave: <N> | prebrief_tasks_count: <N>`
 
-Output:
+**Step 2.8 — Admin/Scope Bootstrap (MANDATORY — BLOCKING):**
 
-> "IAA Pre-Brief check:
->   wave-current-tasks.md committed: [YES / NO]
->   Wave record: `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` [EXISTS / ABSENT — HALT-008]
->   Pre-Brief section populated: [YES / NO]
->   Scope declaration: [COMMITTED / ABSENT — HALT-008]
->   Pre-Brief qualifying tasks: [list tasks IAA flagged for assurance]
->   Status: [CLEAR TO PROCEED TO PHASE 3 / BLOCKED — HALT-008]"
+If PR work has started, PR exists, or governance/workflow/control files are touched:
+1. Ensure `.admin/prs/pr-<PR_NUMBER>.json` and `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md` exist.
+2. Refresh both artifacts whenever changed-file set changes.
+3. HALT if admin/scope evidence is missing, stale, or mismatched to current diff.
+4. Invoke `execution-ceremony-admin-agent` only for Phase 4 admin bundle prep unless ECAP authorizes early-intake.
 
-Record in session memory: `iaa_wave_record: <path> | prebrief_wave: <N> | prebrief_tasks_count: <N>`
+Output: `"Boot: [CURRENT/STALE/MISSING] | ECAP: [PHASE4/EARLY_AUTH] | status: [CLEAR/BLOCKED]"`
 
 ---
 
@@ -433,6 +439,10 @@ If orchestration verb → `[MODE:POLC_ORCHESTRATION]`:
 3. Delegate with: Pre-Brief path, Builder Checklist, Impl. Plan ref, evidence requirements.
 4. Record in session memory: agent, task, timestamp, expected artifacts.
 5. **Parallel**: each wave independently satisfies all pre-build gates.
+
+Before implementation/build-related file changes, record:
+`agents_delegated_to`, `preflight_brief_path`, `implementation_plan_path`, `builder_checklist_path`.
+If implementation files change without this evidence: `RESULT: STOP_AND_FIX`, `HANDOVER_ALLOWED: no`, `REQUIRED_ACTION: invoke/record builder delegation or obtain explicit CS2 direct-execution waiver`.
 
 **Step 3.4 — Monitor builder:**
 
@@ -474,6 +484,8 @@ Output: `"QP: Tests[✅/❌] | Skipped[✅/❌] | Debt[✅/❌] | Artifacts[✅/
 4. **Record**: Populate `gate_set_checked: [gate names]` and confirm all per-gate states are GREEN in PREHANDOVER proof. Gate state is GREEN only when CI has confirmed it — never assumed.
 5. **RCA obligation**: A failing gate reaching handover is a process escape requiring RCA and a FAIL-ONLY-ONCE entry.
 6. **Language lock**: While any required check is non-GREEN, forbid `ready-for-review`, `complete`, `merge-ready`, or `handover` claims.
+7. **Failed-gate consumption loop**: for any non-GREEN gate, inspect logs, capture first rejection reason, and produce `QA_REJECTION_PACKAGE` (or `POST_FAILURE_REJECTION_PACKAGE`).
+8. Route by fault class: ECAP (admin/scope/evidence), builder (product/code/test), IAA (assurance/preflight), CS2 (out-of-authority/policy updates); invoke responsible agent, block until rejection closes, and do not claim `HANDOVER_ALLOWED: yes` until affected gates rerun GREEN.
 
 Document `merge_gate_parity: PASS` in PREHANDOVER proof only when ALL gates are GREEN.
 
@@ -583,7 +595,7 @@ If OPOJD: FAIL or §4.3 merge gate parity: FAIL or IAA STOP-AND-FIX:
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.15.0 | **Last Updated**: 2026-05-06
+**Version**: 6.2.0 | **Contract**: 2.16.0 | **Last Updated**: 2026-05-19
 **Tier 2 Knowledge**: `.agent-workspace/foreman-v2/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **Self-Modification Lock**: SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL — CANNOT BE OVERRIDDEN

@@ -30,7 +30,7 @@ WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 | 4 | Create Stage 9 builder-checklist.md covering all 8 Stage 9 guardrails and 5 mandatory sections | foreman-v2-agent | 🟢 DONE | `modules/pit/09-builder-checklist/builder-checklist.md` |
 | 5 | Advance Stage 9 status to ACTIVE — INITIATED in BUILD_PROGRESS_TRACKER.md | foreman-v2-agent | 🟢 DONE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
 | 6 | Create PR admin JSON and scope declaration for PR #1683 | foreman-v2-agent | 🟢 DONE | `.admin/prs/pr-1683.json`, `.agent-admin/scope-declarations/pr-1683.md` |
-| 7 | IAA Final Assurance invocation and token ceremony | foreman-v2-agent | 🔲 PENDING | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` |
+| 7 | IAA Final Assurance invocation and token ceremony | foreman-v2-agent | 🟢 DONE | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` |
 
 ---
 
