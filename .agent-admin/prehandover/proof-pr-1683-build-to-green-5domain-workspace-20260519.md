@@ -83,7 +83,7 @@ No CANON_INVENTORY amendment is required for this wave.
 | Agent / System | Impact Assessment | Conclusion |
 |---|---|---|
 | ui-builder | Produced all 6 functional deliverables: 5-domain card page, DomainWorkspacePage, App route, B4 tests, verify script, tracker update | NO DOWNSTREAM RIPPLE — all changes internal to MMM module UI layer |
-| independent-assurance-agent | Pre-Brief complete; wave record `## PRE-BRIEF` section populated; token section pending Phase 4 | IAA Phase 4 pending — no ripple from ECAP ceremony prep |
+| independent-assurance-agent | Pre-Brief complete; wave record `## PRE-BRIEF` and `## TOKEN` sections populated; PHASE_B_BLOCKING_TOKEN issued | IAA Phase 4 complete — PASS |
 | schema-builder | No schema changes in scope (mmm_domains, mmm_frameworks tables untouched) | NO IMPACT |
 | api-builder | No API endpoint or Edge Function changes in scope | NO IMPACT |
 | Vercel (deploy-mmm-vercel) | UI component additions will be included in next Vercel build bundle | EXPECTED — normal UI-change build cycle; no deployment gate triggered in this PR |
@@ -124,7 +124,7 @@ framework workspace. No schema, API, governance canon, or cross-module impacts d
 
 | Contract Field | Declared Requirement | Verified State | Status |
 |---|---|---|---|
-| All 9 declared deliverables present in PR diff | IAA_WILL_QA: BD-001 | 11 files in diff; all 9 substantive deliverables confirmed present | ✅ |
+| All 9 declared deliverables present in PR diff | IAA_WILL_QA: BD-001 | 17 files in diff; all 9 substantive deliverables confirmed present | ✅ |
 | Anti-regression: T-MMM-S6-179 'Back to Frameworks' preserved | FOREMAN_INSTRUCTIONS | Builder preserved text in error block recovery link per QP PASS confirmation | ✅ |
 | 115 existing B4 tests still GREEN | IAA_WILL_QA: BD-011 | 140/140 GREEN (115 existing + 25 new) | ✅ |
 | No stubs/TODOs in domain card or DomainWorkspacePage render paths | IAA_WILL_QA: BD-002 | QP PASS confirms zero stubs — all render paths have implemented DOM elements | ✅ |
@@ -265,7 +265,7 @@ Authority: CS2 (Johan Ras / @APGI-cmy).
 - [x] Zero deprecation warnings
 - [x] Zero compiler/linter warnings (refactor commit `1cfa605` resolves code review feedback)
 - [x] §4.3 Merge gate parity check: all required_checks match CI — PASS
-- [x] IAA audit token recorded: `IAA-session-build-to-green-5domain-workspace-20260519-PASS`
+- [x] IAA audit token recorded: `IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS`
 - [x] `gate_set_checked` field populated (AAP-15 satisfied)
 - [x] No stale provisional gate wording (AAP-16 satisfied)
 - [x] No contradictory gate assertions (merge_gate_parity: PASS consistent throughout bundle)
@@ -276,10 +276,10 @@ Authority: CS2 (Johan Ras / @APGI-cmy).
 
 ## IAA Audit
 
-`iaa_audit_token: IAA-session-build-to-green-5domain-workspace-20260519-PASS`
+`iaa_audit_token: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS`
 
-*(Expected reference pre-populated at bundle assembly time per A-028/A-029. Actual token
-is written by IAA into `.agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md` — `## TOKEN` section — after Phase 4 IAA invocation by Foreman. ECAP does NOT write the token.)*
+*(Phase 4 IAA invocation complete. Token issued by independent-assurance-agent and recorded in
+`.agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md` — `## TOKEN` section.)*
 
 `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md`
 
@@ -287,17 +287,21 @@ is written by IAA into `.agent-admin/assurance/iaa-wave-record-build-to-green-5d
 
 ## IAA Agent Response (verbatim)
 
-> ⚠️ **PHASE 4 — FOREMAN AUTHORITY ONLY. ECAP DOES NOT INVOKE IAA.**
->
-> IAA invocation has NOT yet occurred at bundle assembly time. This section is to be
-> populated verbatim by Foreman after invoking IAA in Phase 4. Foreman must paste the
-> complete raw ASSURANCE-TOKEN or REJECTION-PACKAGE block here — verbatim, no
-> paraphrase — before the initial commit of this proof per §4.3b immutability requirement.
->
-> A PREHANDOVER proof with a blank IAA response section is a HANDOVER BLOCKER.
-> Foreman: do not attempt merge until this section is populated.
+Phase 4 IAA invocation complete. Verbatim ASSURANCE-TOKEN issued by independent-assurance-agent:
 
-[IAA agent output to be pasted verbatim by Foreman after Phase 4 IAA invocation]
+```
+═══════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1683 — Build 5-domain framework configuration workspace
+Wave: build-to-green-5domain-workspace-20260519
+All checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
+Issued: 2026-05-19
+Issuing agent: independent-assurance-agent
+═══════════════════════════════════════════════════════════
+```
 
 ---
 
@@ -305,14 +309,11 @@ is written by IAA into `.agent-admin/assurance/iaa-wave-record-build-to-green-5d
 
 ```
 iaa_token_self_cert_guard:
-  token_file_exists: PENDING — not yet created; pending Phase 4 IAA invocation by Foreman
-  phase_b_blocking_token_present: PENDING
-  phase_a_advisory_absent: PENDING
-  guard_result: PENDING — Foreman must complete after receiving IAA token
+  token_file_exists: yes — .agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md
+  phase_b_blocking_token_present: yes — PHASE_B_BLOCKING_TOKEN: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
+  phase_a_advisory_absent: yes
+  guard_result: PASS
 ```
-
-Expected token file path after IAA invocation:
-`.agent-admin/assurance/iaa-token-session-build-to-green-5domain-workspace-20260519-20260519.md`
 
 ---
 

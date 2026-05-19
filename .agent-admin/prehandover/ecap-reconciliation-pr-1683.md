@@ -6,7 +6,7 @@
 **Branch**: copilot/build-to-green-runtime-fix
 **ECAP Session**: ecap-session-build-to-green-5domain-workspace-20260519
 **Foreman Session**: session-build-to-green-5domain-workspace-20260519
-**Final IAA Session Reference**: IAA-session-build-to-green-5domain-workspace-20260519-PASS
+**Final IAA Session Reference**: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
 **Final Token Reference**: `.agent-admin/assurance/iaa-token-session-build-to-green-5domain-workspace-20260519-20260519.md`
 **Date**: 2026-05-19
 
@@ -36,9 +36,9 @@ and this summary reflects the final completed assurance state for the bundle.)*
 | Session memory | `.agent-workspace/foreman-v2/memory/session-build-to-green-5domain-workspace-20260519.md` | ✓ | ✓ (ECAP bundle commit) | ✓ | Created this session |
 | ECAP reconciliation summary (this file) | `.agent-admin/prehandover/ecap-reconciliation-pr-1683.md` | ✓ | ✓ (ECAP bundle commit) | ✓ | Created this session |
 | Scope declaration | `.agent-admin/scope-declarations/pr-1683.md` | ✓ | ✓ | ✓ | Per-PR immutable format |
-| IAA wave record (PRE-BRIEF) | `.agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md` | ✓ | ✓ (`d14a35c`) | ✓ | PRE-BRIEF section populated; TOKEN section pending Phase 4 |
+| IAA wave record (PRE-BRIEF + TOKEN) | `.agent-admin/assurance/iaa-wave-record-build-to-green-5domain-workspace-20260519-20260519.md` | ✓ | ✓ (`d14a35c`) | ✓ | PRE-BRIEF and TOKEN sections populated; PHASE_B_BLOCKING_TOKEN issued |
 | IAA pre-brief | `.agent-admin/assurance/iaa-prebrief-pr1683.md` | ✓ | ✓ (`df30b98`) | ✓ | PREFLIGHT_BRIEF_COMPLETE status |
-| IAA token file | `.agent-admin/assurance/iaa-token-session-build-to-green-5domain-workspace-20260519-20260519.md` | N/A | N/A | N/A | Pending Phase 4 IAA invocation by Foreman |
+| IAA token file | `.agent-admin/assurance/iaa-token-session-build-to-green-5domain-workspace-20260519-20260519.md` | N/A | N/A | N/A | Token recorded in wave record TOKEN section; standalone token file not mandated for this wave class |
 | Gate results (JSON) | `.agent-admin/gates/` | N/A | N/A | N/A | Gate JSON not mandated for this wave class |
 
 ---
@@ -48,22 +48,22 @@ and this summary reflects the final completed assurance state for the bundle.)*
 | Row | Consistency Dimension | Source Value | Verified Against | Match |
 |---|---|---|---|---|
 | R01 | Session reference | `session-build-to-green-5domain-workspace-20260519` (PREHANDOVER) | Session memory filename, wave record session reference | ✓ |
-| R02 | IAA token reference | `IAA-session-build-to-green-5domain-workspace-20260519-PASS` (PREHANDOVER `iaa_audit_token`) | Wave record `## TOKEN` section (pending IAA) | ✓ (expected reference pre-populated) |
+| R02 | IAA token reference | `IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS` (PREHANDOVER `iaa_audit_token`) | Wave record `## TOKEN` section — PHASE_B_BLOCKING_TOKEN issued | ✓ |
 | R03 | Issue number | #1682 (GitHub issue) | PREHANDOVER `issue` field, session memory, scope declaration, wave record | ✓ |
 | R04 | PR number | #1683 (GitHub PR) | PREHANDOVER `pr` field, session memory, scope declaration, wave record, pr-1683.json | ✓ |
 | R05 | Wave identifier | `build-to-green-5domain-workspace-20260519` (wave-current-tasks.md `Wave:` field) | PREHANDOVER `wave` field, session memory, wave record filename, all bundle artifact names | ✓ |
 | R06 | Branch name | `copilot/build-to-green-runtime-fix` (`git branch --show-current`) | PREHANDOVER `branch` field, scope declaration `BRANCH:` field | ✓ |
-| R07 | Changed file paths | 11 files (`git diff --name-only origin/main...HEAD`) | Scope declaration `FILES_CHANGED: 11` and file list, PREHANDOVER bundle completeness table | ✓ |
+| R07 | Changed file paths | 17 files (`git diff --name-only origin/main...HEAD`) | Scope declaration `FILES_CHANGED: 17` and file list, PREHANDOVER bundle completeness table | ✓ |
 | R08 | PREHANDOVER ↔ session memory | PREHANDOVER fields (session, wave, issue, PR, status) | Session memory all header fields | ✓ |
-| R09 | PREHANDOVER ↔ token / IAA reference | `iaa_audit_token` pre-populated; `iaa_wave_record_path` set | IAA wave record path exists and PRE-BRIEF populated | ✓ (token pending IAA) |
+| R09 | PREHANDOVER ↔ token / IAA reference | `iaa_audit_token` set to Phase B token; `iaa_wave_record_path` set | IAA wave record path exists, PRE-BRIEF populated, TOKEN section complete | ✓ |
 | R10 | Tracker ↔ wave record | wave-current-tasks.md `Wave: build-to-green-5domain-workspace-20260519` | Wave record `Wave ID:` field matches | ✓ |
-| R11 | Scope declaration ↔ actual changed files | `FILES_CHANGED: 11` in scope declaration | `git diff --name-only origin/main...HEAD` = 11 files | ✓ |
+| R11 | Scope declaration ↔ actual changed files | `FILES_CHANGED: 17` in scope declaration | `git diff --name-only origin/main...HEAD` = 17 files | ✓ |
 | R12 | Session memory ↔ committed artifact paths | Artifact paths listed in session memory C2 | `git ls-files` for each committed path | ✓ (confirmed by HEAD commit state) |
 | R13 | CANON_INVENTORY ↔ file hash | No canon files modified in this PR | No CANON_INVENTORY amendment required | ✓ N/A |
 | R14 | Ripple registry ↔ PUBLIC_API changes | No PUBLIC_API files changed in this PR (UI-only, no canon changes) | Ripple block C4 below | ✓ NOT-APPLICABLE |
 | R15 | Final-state status coherence | BUNDLE-COMPLETE / PASS in all artifacts | PREHANDOVER `final_state`, session memory, this summary | ✓ |
-| R16 | Artifact declared count ↔ actual count | 11 files declared in scope declaration | 11 files in `git diff` | ✓ |
-| R17 | IAA session reference (assurance round) | `IAA-session-build-to-green-5domain-workspace-20260519-PASS` | PREHANDOVER `iaa_audit_token` field, session memory IAA section | ✓ (pre-populated; actual reference pending IAA) |
+| R16 | Artifact declared count ↔ actual count | 17 files declared in scope declaration | 17 files in `git diff` | ✓ |
+| R17 | IAA session reference (assurance round) | `IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS` | PREHANDOVER `iaa_audit_token` field, session memory IAA section | ✓ |
 | R18 | Renumber/rebase/conflict-resolution refresh | No triggering events: no session number change, no wave rename, no PR renumber, no branch rename | No ART refresh required | ✓ N/A — no triggering event |
 
 ---
@@ -94,7 +94,7 @@ No PUBLIC_API files changed in this PR. Ripple obligation: NOT-APPLICABLE.
 | substantive_readiness | ACCEPTED — declared by Foreman (QP PASS + §4.3 parity PASS) |
 | administrative_readiness | ACCEPTED — confirmed by ECAP bundle (this summary) |
 | QP admin-compliance check completed | yes |
-| IAA invocation authorized | yes — pending Foreman Phase 4 action |
+| IAA invocation authorized | yes — Phase 4 complete; PHASE_B_BLOCKING_TOKEN issued |
 | Rejection reason (if REJECTED) | N/A |
 | Foreman Session | session-build-to-green-5domain-workspace-20260519 |
 | Checkpoint Date | 2026-05-19 |
