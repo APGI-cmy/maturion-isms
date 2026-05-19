@@ -780,7 +780,38 @@ run_checkpoint_field_test \
     {"field":"CS2_COMMENTS_DETECTED","equals":"yes"},
     {"field":"LATEST_INJECTION_INTAKE_AFTER_LAST_CS2_COMMENT","equals":"no"},
     {"field":"INJECTION_STATE","equals":"dirty"},
-    {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"}
+     {"field":"NEXT_REQUIRED_CONTROL","equals":"REFRESH_INJECTION_INTAKE"}
+   ]'
+
+setup_post_failure_package_status() {
+  setup_green_checkpoint
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+  TEST_PR_COMMENTS_JSON="$(cat <<EOF
+[
+  {
+    "body": "HANDOVER BLOCKED\\nRESULT: STOP_AND_FIX\\nQA_REJECTION_PACKAGE_STATUS: unresolved",
+    "created_at": "2026-05-18T08:00:00Z",
+    "updated_at": "2026-05-18T08:00:00Z",
+    "user": {"login": "github-actions[bot]"}
+  }
+]
+EOF
+)"
+}
+run_checkpoint_field_test \
+  "10da. unresolved failed-gate signal emits post-failure status (not closure)" \
+  setup_post_failure_package_status \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"FAILED_GATE_COMMENTS_DETECTED","equals":"yes"},
+    {"field":"POST_FAILURE_HANDLING_PACKAGE","equals":"POST_FAILURE_REJECTION_PACKAGE"},
+    {"field":"POST_FAILURE_REJECTION_PACKAGE_STATE","equals":"QA_REJECTION_PACKAGE_STATUS"},
+    {"field":"QA_REJECTION_PACKAGE_CLOSURE_ALLOWED","equals":"no"}
   ]'
 
 setup_review_ready_before_ecap_iaa() {
