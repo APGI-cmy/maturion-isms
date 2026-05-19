@@ -8,12 +8,12 @@
 | Stage | Stage 9 — Builder Checklist |
 | Version | v1.0 |
 | Status | ACTIVE — INITIATED |
-| Initiating Issue | maturion-isms#1683 |
+| Initiating Issue | maturion-isms#1679 |
 | Prerequisite Gate | Stage 8 GATE_PASSED (stage8-gate-pass-review.md — 2026-05-19) |
 | Build Authorization | **NOT CLEARED** |
 | Builder Appointment | **NOT APPOINTED** (Stage 11 only) |
 | Date | 2026-05-19 |
-| Authority | foreman-v2-agent (POLC Supervisor; CS2-authorized via maturion-isms#1683) |
+| Authority | foreman-v2-agent (POLC Supervisor; CS2-authorized via maturion-isms#1679) |
 
 > **Purpose**: This checklist ensures any future builder candidate reads and acknowledges the full governed PIT scope **before** appointment. Completion of this checklist does **not** appoint a builder, does **not** clear Build Authorization, and does **not** start build execution. Builder appointment occurs at Stage 11 only, after Stages 9 and 10 are gate-passed and CS2 explicitly clears Build Authorization.
 
@@ -188,7 +188,7 @@ The following 8 guardrail items correspond to the Stage 9 Functional-Delivery Gu
 | 5.7 | No direct AIMC provider calls acknowledged: builder acknowledges the no-direct-provider-call rule (PIT-TR-083) | [ ] Pending builder acknowledgement |
 | 5.8 | No build without Stage 11 appointment and Build Authorization: builder acknowledges Build Authorization is NOT CLEARED unless explicitly cleared by CS2 | [ ] Pending builder acknowledgement |
 
-> **Note**: These guardrail checkboxes will be ticked as part of the Stage 9 gate-pass review (a future wave). They are listed here unchecked per issue #1683 requirements: Stage 9 is only initiated in this wave; a full Stage 9 gate-pass review is a separate future activity.
+> **Note**: These guardrail checkboxes will be ticked as part of the Stage 9 gate-pass review (a future wave). They are listed here unchecked per issue #1679 requirements: Stage 9 is only initiated in this wave; a full Stage 9 gate-pass review is a separate future activity.
 
 ---
 
@@ -232,5 +232,5 @@ The following 8 guardrail items correspond to the Stage 9 Functional-Delivery Gu
 
 **Filed by**: foreman-v2-agent
 **Filing date**: 2026-05-19
-**Governing issue**: maturion-isms#1683
+**Governing issue**: maturion-isms#1679
 **Build Authorization**: NOT CLEARED

@@ -9,7 +9,7 @@
 | Review Type | Stage 8 Gate-Pass Review |
 | Review Authority | foreman-v2-agent (POLC Supervisor) |
 | Review Date | 2026-05-19 |
-| Governing Issue | maturion-isms#1683 |
+| Governing Issue | maturion-isms#1679 |
 | Artifact Under Review | `modules/pit/08-implementation-plan/implementation-plan.md` |
 | Prerequisite Gate | Stages 1–7 all gate-passed (confirmed in `modules/pit/BUILD_PROGRESS_TRACKER.md`) |
 | Build Authorization | **NOT CLEARED** (unchanged) |
@@ -19,9 +19,9 @@
 
 ---
 
-## Checklist Review — Issue #1683 Acceptance Criteria
+## Checklist Review — Issue #1679 Acceptance Criteria
 
-The following 22 checks are required per maturion-isms#1683. Each maps to verifiable evidence in `implementation-plan.md`.
+The following 22 checks are required per maturion-isms#1679. Each maps to verifiable evidence in `implementation-plan.md`.
 
 ### Authority Chain and Scope
 
@@ -94,7 +94,7 @@ The following 9 guardrail items from `BUILD_PROGRESS_TRACKER.md` Stage 8 are ver
 
 ## Gate-Pass Decision
 
-**All 22 issue #1683 check items: PASS**
+**All 22 issue #1679 check items: PASS**
 **All 9 Stage 8 Functional-Delivery Guardrails: PASS**
 
 **VERDICT: GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED**
@@ -108,8 +108,8 @@ This gate-pass decision explicitly confirms:
 - Stage 8 gate-pass does **not** claim tests are GREEN.
 - Stage 8 gate-pass does **not** claim FUNCTIONAL_PASS.
 - Build Authorization remains **NOT CLEARED**.
-- Stage 9 may now be initiated as a separate step in the same wave (maturion-isms#1683).
+- Stage 9 may now be initiated as a separate step in the same wave (maturion-isms#1679).
 
-**Review Authority**: foreman-v2-agent (POLC Supervisor, CS2-authorized via maturion-isms#1683)
+**Review Authority**: foreman-v2-agent (POLC Supervisor, CS2-authorized via maturion-isms#1679)
 **Review Date**: 2026-05-19
-**Governing Issue**: maturion-isms#1683
+**Governing Issue**: maturion-isms#1679

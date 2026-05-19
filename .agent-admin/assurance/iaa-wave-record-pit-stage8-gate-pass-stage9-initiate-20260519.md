@@ -3,14 +3,54 @@
 **Wave ID**: pit-stage8-gate-pass-stage9-initiate-20260519
 **Date**: 2026-05-19
 **Branch**: copilot/review-gate-pass-stage-8
-**Issue**: maturion-isms#1683
-**PR**: #1683 (pending — not yet opened)
+**Issue**: maturion-isms#1679
+**PR**: #1680
 **IAA Version**: 6.2.0 / Contract 2.10.0
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 **STOP-AND-FIX**: ACTIVE
 
 ---
+
+IAA_PREFLIGHT_BRIEF
+PR: #1680
+ISSUE: #1679
+WAVE: pit-stage8-gate-pass-stage9-initiate-20260519
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+CURRENT_HEAD_SHA: CURRENT_HEAD
+
+EXPECTED_QA_SCOPE:
+- `modules/pit/BUILD_PROGRESS_TRACKER.md`
+- `modules/pit/08-implementation-plan/stage8-gate-pass-review.md`
+- `modules/pit/09-builder-checklist/builder-checklist.md`
+- `.admin/prs/pr-1680.json`
+- `.agent-admin/scope-declarations/pr-1680.md`
+- `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md`
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage8-gate-pass-stage9-initiate-20260519.md`
+
+EXPECTED_FAILURE_MODES:
+- Active pre-flight artifact not PR-matched to #1680
+- Wave current tasks preflight pointer mismatch
+- Admin manifests keyed to wrong PR/issue numbers
+- Missing PREHANDOVER ECAP evidence
+- IAA token claims PASS without coherent current-head ceremony evidence
+
+FOREMAN_INSTRUCTIONS:
+- Keep `iaa_prebrief_path` and `IAA_PREFLIGHT_BRIEF_PATH` synchronized to this file.
+- Keep per-PR scope/admin artifacts parity-locked to current diff (pr=1680, issue=1679).
+- Ensure ECAP evidence exists before claiming IAA PASS.
+- Do not declare handover-ready while any required current-head gate is non-GREEN.
+
+IAA_WILL_QA:
+- Active preflight brief structure, PR binding (#1680), and current-head relevance.
+- Wave task pointer coherence for preflight consumption.
+- Scope/admin artifact parity-lock (pr-1680.json, scope-declarations/pr-1680.md).
+- Build Authorization remains NOT CLEARED throughout all artifacts.
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
+---
+
 
 ## PRE-BRIEF
 
@@ -54,7 +94,7 @@
 
 | Rule | Obligation | Applicable? |
 |------|-----------|-------------|
-| A-039 (Acceptance-Criteria Matrix) | IAA must extract governing-issue acceptance criteria from issue #1683 and verify each maps to a hard evidence artifact. Agent claims are not evidence. | YES — IAA at handover will verify each acceptance criterion from issue #1683 independently |
+| A-039 (Acceptance-Criteria Matrix) | IAA must extract governing-issue acceptance criteria from issue #1679 and verify each maps to a hard evidence artifact. Agent claims are not evidence. | YES — IAA at handover will verify each acceptance criterion from issue #1679 independently |
 | A-040 (Evidence-Type Downgrade Prohibition) | LIVE_RUNTIME/LIVE_E2E evidence items cannot be downgraded without CS2 waiver. | YES — Stage 8 guardrail evidence must not be downgraded |
 | A-041 (Diff-First Classification) | IAA must independently compute changed files from diff before accepting producing agent's classification. | YES — at handover |
 | A-042 (Independent Risk Challenge) | IAA must independently challenge risks before issuing PASS token. | YES — at handover |
@@ -132,7 +172,7 @@ The producing agent(s) must deliver ALL of the following before IAA handover inv
 ```
 ═══════════════════════════════════════
 ASSURANCE-TOKEN
-PR: maturion-isms#1683 / pit-stage8-gate-pass-stage9-initiate-20260519
+PR: #1680 (maturion-isms; issue maturion-isms#1679) / pit-stage8-gate-pass-stage9-initiate-20260519
 Wave: pit-stage8-gate-pass-stage9-initiate-20260519
 Branch: copilot/review-gate-pass-stage-8
 HEAD: 7f8ad9b

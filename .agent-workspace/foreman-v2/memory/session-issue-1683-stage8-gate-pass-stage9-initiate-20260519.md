@@ -5,7 +5,7 @@
 **Session**: session-issue-1683-stage8-gate-pass-stage9-initiate-20260519
 **Foreman Session**: session-issue-1683-stage8-gate-pass-stage9-initiate-20260519
 **Wave / Job**: pit-stage8-gate-pass-stage9-initiate-20260519 — PIT Stage 8 gate-pass + Stage 9 Builder Checklist initiation
-**Issue**: maturion-isms#1683 — Foreman: Gate-pass PIT Stage 8, then initiate Stage 9 Builder Checklist
+**Issue**: maturion-isms#1679 — Foreman: Gate-pass PIT Stage 8, then initiate Stage 9 Builder Checklist
 **PR**: to be assigned by CS2
 **Branch**: copilot/review-gate-pass-stage-8
 **ECAP Appointment Timestamp**: 2026-05-19T11:02:23Z
@@ -75,7 +75,7 @@ unresolved_items_from_prior_sessions:
 | 5 | Phase 2.1 Wave scope confirmation from Foreman appointment brief | COMPLETE |
 | 6 | Phase 2.2 HALT-004 gate: all 4 fields confirmed (ceremony_admin_appointed: true, timestamp, assigned_scope, expected_return_artifact_paths) | COMPLETE — HALT-004 CLEARED |
 | 7 | Phase 2.3 Three-role split boundaries confirmed: Foreman accepted substantive readiness; ECAP scope = bundle preparation only; IAA invocation = Foreman-only Phase 4 | COMPLETE |
-| 8 | Phase 3.1 Evidence collection: read IAA wave record (PRE-BRIEF confirmed), scope declaration (approved_artifact_paths confirmed), wave-current-tasks.md, stage8-gate-pass-review.md, builder-checklist.md, BUILD_PROGRESS_TRACKER.md, pr-1683.json, anti-patterns checklist (AAPs), reconciliation matrix (R01–R18), ECAP checklist, reconciliation summary template, prior session bundles | COMPLETE |
+| 8 | Phase 3.1 Evidence collection: read IAA wave record (PRE-BRIEF confirmed), scope declaration (approved_artifact_paths confirmed), wave-current-tasks.md, stage8-gate-pass-review.md, builder-checklist.md, BUILD_PROGRESS_TRACKER.md, pr-1680.json, anti-patterns checklist (AAPs), reconciliation matrix (R01–R18), ECAP checklist, reconciliation summary template, prior session bundles | COMPLETE |
 | 9 | Phase 3.1 gate: IAA wave record exists with ## PRE-BRIEF section populated; scope declaration confirmed; PREHANDOVER bundle path in approved_artifact_paths; session memory bundle path authorized via appointment brief (established pattern) | COMPLETE |
 | 10 | Phase 3.1 gate-evidence coherence check: gate_set_checked field to be populated explicitly; no stale "verify gates pass" wording; no contradictory gate assertions; workflow references current to branch | COMPLETE |
 | 11 | Phase 3.2 Commit-state hygiene: git status --porcelain empty; git diff --name-only empty; all 7 evidence files confirmed committed at HEAD dd7459c; git show HEAD shows 6 files in latest commit + 1 in a9567ab | COMPLETE |
@@ -157,7 +157,7 @@ fail_only_once_registry_path: .agent-workspace/foreman-v2/knowledge/FAIL-ONLY-ON
 
 anti_regression_attested:
   A-039_acceptance_criteria_matrix: true
-  # All 22 issue #1683 acceptance criteria mapped to hard evidence artifacts in stage8-gate-pass-review.md.
+  # All 22 issue #1679 acceptance criteria mapped to hard evidence artifacts in stage8-gate-pass-review.md.
   # Agent claims not accepted as evidence — each criterion maps to verifiable section/content in implementation-plan.md.
 
   A-040_evidence_type_downgrade_prohibition: true

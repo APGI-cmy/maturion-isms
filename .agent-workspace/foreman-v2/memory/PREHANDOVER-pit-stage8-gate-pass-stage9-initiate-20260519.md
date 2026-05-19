@@ -3,9 +3,9 @@
 **Session ID**: session-issue-1683-stage8-gate-pass-stage9-initiate-20260519
 **Date**: 2026-05-19
 **Agent Version**: foreman-v2-agent v6.2.0 (contract v2.5.0) | execution-ceremony-admin-agent v1.0.0 (assembled)
-**Triggering Issue**: maturion-isms#1683 — Foreman: Gate-pass PIT Stage 8, then initiate Stage 9 Builder Checklist
+**Triggering Issue**: maturion-isms#1679 — Foreman: Gate-pass PIT Stage 8, then initiate Stage 9 Builder Checklist
 **Branch**: copilot/review-gate-pass-stage-8
-**PR**: to be assigned by CS2
+**PR: #1680
 **Assembled By**: execution-ceremony-admin-agent v1.0.0 (ECAP-001 §5.2 appointment 2026-05-19T11:02:23Z)
 
 ---
@@ -14,7 +14,7 @@
 
 GOVERNANCE_ONLY pre-build documentation wave for PIT (Project Implementation Tracker). Two tasks:
 
-1. **Stage 8 Gate-Pass**: Review `modules/pit/08-implementation-plan/implementation-plan.md` against all 22 issue #1683 acceptance criteria and all 9 Functional-Delivery Guardrails. All 22 criteria PASS. All 9 guardrails PASS. Stage 8 status advanced to `GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED`. Evidence artifact `stage8-gate-pass-review.md` filed.
+1. **Stage 8 Gate-Pass**: Review `modules/pit/08-implementation-plan/implementation-plan.md` against all 22 issue #1679 acceptance criteria and all 9 Functional-Delivery Guardrails. All 22 criteria PASS. All 9 guardrails PASS. Stage 8 status advanced to `GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED`. Evidence artifact `stage8-gate-pass-review.md` filed.
 
 2. **Stage 9 Initiation**: Create `modules/pit/09-builder-checklist/builder-checklist.md` (5 mandatory sections, 8 Stage 9 tracker guardrails all present, all unchecked per requirement — Stage 9 is only *initiated*, not gate-passed). `BUILD_PROGRESS_TRACKER.md` Stage 9 status advanced to `ACTIVE — INITIATED`.
 
@@ -30,8 +30,8 @@ GOVERNANCE_ONLY pre-build documentation wave for PIT (Project Implementation Tra
 wave_id: pit-stage8-gate-pass-stage9-initiate-20260519
 session_id: session-issue-1683-stage8-gate-pass-stage9-initiate-20260519
 branch: copilot/review-gate-pass-stage-8
-pr_number: to_be_assigned_by_CS2
-issue: maturion-isms#1683
+pr_number: 1680
+issue: maturion-isms#1679
 pr_type: GOVERNANCE_ONLY — documentation-only; no code, no schema, no CI changes
 ecap_appointment_timestamp: 2026-05-19T11:02:23Z
 ```
@@ -69,7 +69,7 @@ deployment_authorisation: NONE
 - Architecture followed (GOVERNANCE_ONLY — PRE_BUILD_STAGE_MODEL_CANON.md v1.1.0 respected; no premature stage advancement; no unlawful gate-pass claimed; Stage 9 correctly set to INITIATED only): ✅
 - Zero deprecation warnings: ✅ N/A — PASS (no code)
 - Zero compiler/linter warnings: ✅ N/A — PASS (no code)
-- All 22 issue #1683 acceptance criteria PASS per stage8-gate-pass-review.md: ✅
+- All 22 issue #1679 acceptance criteria PASS per stage8-gate-pass-review.md: ✅
 - All 9 Stage 8 Functional-Delivery Guardrails PASS per stage8-gate-pass-review.md: ✅
 - Stage 9 builder-checklist.md contains all 5 mandatory sections and all 8 Stage 9 tracker guardrails (unchecked per requirement): ✅
 - Stage 10, 11, 12 remain NOT_STARTED: ✅
@@ -128,9 +128,9 @@ Changed files checked against CANON_INVENTORY `layer_down_status`:
 
 | Changed File | In CANON_INVENTORY? | layer_down_status | Ripple Required? |
 |-------------|--------------------|--------------------|-----------------|
-| `.admin/prs/pr-1683.json` | No | N/A | No |
+| `.admin/prs/pr-1680.json` | No | N/A | No |
 | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` | No | N/A | No |
-| `.agent-admin/scope-declarations/pr-1683.md` | No | N/A | No |
+| `.agent-admin/scope-declarations/pr-1680.md` | No | N/A | No |
 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | No | N/A | No |
 | `modules/pit/08-implementation-plan/stage8-gate-pass-review.md` | No | N/A | No |
 | `modules/pit/09-builder-checklist/builder-checklist.md` | No | N/A | No |
@@ -178,7 +178,7 @@ The following are confirmed NOT present in this wave's diff:
 | Stage 10, 11, or 12 initiation | ✅ Absent |
 
 **protected_path_touched**: no — no protected governance canon paths (governance/canon/*.md) modified in this wave.
-**ecap_required**: YES per `pr-1683.json` (`"requires_ecap": true`). ECAP appointment basis: standard governance-ceremony requirement per PR admin manifest. Appointment NOT triggered by protected-path rule (AAP-30); no protected paths changed. Governance ceremony appointment made proactively by Foreman.
+**ecap_required**: YES per `pr-1680.json` (`"requires_ecap": true`). ECAP appointment basis: standard governance-ceremony requirement per PR admin manifest. Appointment NOT triggered by protected-path rule (AAP-30); no protected paths changed. Governance ceremony appointment made proactively by Foreman.
 
 ---
 
@@ -209,8 +209,8 @@ The following are confirmed NOT present in this wave's diff:
 | 2 | BUILD_PROGRESS_TRACKER.md (Stage 8 guardrails + status update) | `modules/pit/BUILD_PROGRESS_TRACKER.md` | ✅ Committed (dd7459c) |
 | 3 | Stage 9 Builder Checklist | `modules/pit/09-builder-checklist/builder-checklist.md` | ✅ Committed (dd7459c) |
 | 4 | Wave Current Tasks (updated to new wave) | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ Committed (dd7459c) |
-| 5 | Scope Declaration | `.agent-admin/scope-declarations/pr-1683.md` | ✅ Committed (dd7459c) |
-| 6 | PR Admin JSON | `.admin/prs/pr-1683.json` | ✅ Committed (dd7459c) |
+| 5 | Scope Declaration | `.agent-admin/scope-declarations/pr-1680.md` | ✅ Committed (dd7459c) |
+| 6 | PR Admin JSON | `.admin/prs/pr-1680.json` | ✅ Committed (dd7459c) |
 | 7 | IAA Wave Record (Pre-Brief) | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` | ✅ Committed (a9567ab) |
 | 8 | PREHANDOVER Proof (this file) | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage8-gate-pass-stage9-initiate-20260519.md` | ✅ Assembled by ECAP — to be committed by Foreman |
 | 9 | Session Memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-issue-1683-stage8-gate-pass-stage9-initiate-20260519.md` | ✅ Assembled by ECAP — to be committed by Foreman |
@@ -230,8 +230,8 @@ The following are confirmed NOT present in this wave's diff:
 | PREHANDOVER proof | Required (CERT-001); must include `iaa_audit_token:` pre-populated | This file; `iaa_audit_token` pre-populated per A-029 architecture | ✅ |
 | Session memory | Required (CERT-002); must include fail_only_once_attested declaration | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-issue-1683-stage8-gate-pass-stage9-initiate-20260519.md` assembled; fail_only_once_attested: true | ✅ |
 | FAIL-ONLY-ONCE attestation | Required (CERT-003); A-039, A-040, A-041, A-042 must be attested | Attested in session memory; v4.7.0 | ✅ |
-| Scope declaration | Required; FILES_CHANGED count must match actual diff | `.agent-admin/scope-declarations/pr-1683.md` committed; 13 files in diff (12 Foreman/ECAP + 1 IAA-internal), 12 in approved_artifact_paths | ✅ |
-| PR admin | Required | `.admin/prs/pr-1683.json` committed (dd7459c) | ✅ |
+| Scope declaration | Required; FILES_CHANGED count must match actual diff | `.agent-admin/scope-declarations/pr-1680.md` committed; 13 files in diff (12 Foreman/ECAP + 1 IAA-internal), 12 in approved_artifact_paths | ✅ |
+| PR admin | Required | `.admin/prs/pr-1680.json` committed (dd7459c) | ✅ |
 | IAA wave record (pre-brief) | Present (this file is the record) | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` committed (a9567ab) with `## PRE-BRIEF` populated | ✅ |
 | Stage 8 gate-pass evidence | Strongly recommended; CERT requirement | `modules/pit/08-implementation-plan/stage8-gate-pass-review.md` committed — all 22 criteria + 9 guardrails documented | ✅ |
 | BUILD_PROGRESS_TRACKER.md updated | Required; Stage 8 guardrails ticked; Stage 8 → gate-passed; Stage 9 → INITIATED; Build Authorization NOT CLEARED | All conditions confirmed in committed file (dd7459c) | ✅ |
@@ -257,14 +257,14 @@ The following are confirmed NOT present in this wave's diff:
 
 ## SCOPE_DECLARATION Ceremony
 
-> A-029: Scope declaration at `.agent-admin/scope-declarations/pr-1683.md` (per-PR model — established pattern).
+> A-029: Scope declaration at `.agent-admin/scope-declarations/pr-1680.md` (per-PR model — established pattern).
 > Note: `governance/scope-declaration.md` is the legacy global scope declaration. This wave uses the per-PR model established for the PIT governance chain.
 
 **Diff-confirmed files in this wave** (`git diff --name-only origin/main...HEAD`):
 
-- `.admin/prs/pr-1683.json` — PR admin JSON
+- `.admin/prs/pr-1680.json` — PR admin JSON
 - `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` — IAA pre-brief wave record
-- `.agent-admin/scope-declarations/pr-1683.md` — Per-PR scope declaration
+- `.agent-admin/scope-declarations/pr-1680.md` — Per-PR scope declaration
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — Wave current tasks update
 - `modules/pit/08-implementation-plan/stage8-gate-pass-review.md` — Stage 8 gate-pass evidence
 - `modules/pit/09-builder-checklist/builder-checklist.md` — Stage 9 Builder Checklist
@@ -294,7 +294,7 @@ Branch: `copilot/review-gate-pass-stage-8` — up to date with `origin/copilot/r
 
 **`git log --oneline -5` at ECAP bundle assembly time:**
 ```
-dd7459c feat: Stage 8 gate-pass + Stage 9 initiation for PIT (maturion-isms#1683)
+dd7459c feat: Stage 8 gate-pass + Stage 9 initiation for PIT (maturion-isms#1679)
 a9567ab docs(iaa): pre-brief wave record for pit-stage8-gate-pass-stage9-initiate-20260519
 9f6ae99 Initial plan
 d520d10 (grafted, origin/main) Initiate PIT Stage 8 planning posture and file full functional-slice implementation plan (#1678)
@@ -337,7 +337,7 @@ Not applicable. Justification: This PR contains zero schema migrations, zero API
 
 ## CS2 Authorization Evidence
 
-Issue maturion-isms#1683 opened by CS2 (@APGI-cmy) and assigned to Copilot. Issue constitutes wave-start CS2 authorization for Stage 8 gate-pass review and Stage 9 builder checklist initiation. Confirmed in `wave-current-tasks.md`: `CS2 Authorization: Issue #1683 opened by CS2 (@APGI-cmy) and assigned to Copilot`.
+Issue maturion-isms#1679 opened by CS2 (@APGI-cmy) and assigned to Copilot. Issue constitutes wave-start CS2 authorization for Stage 8 gate-pass review and Stage 9 builder checklist initiation. Confirmed in `wave-current-tasks.md`: `CS2 Authorization: Issue #1679 opened by CS2 (@APGI-cmy) and assigned to Copilot`.
 
 ---
 
@@ -347,7 +347,7 @@ Issue maturion-isms#1683 opened by CS2 (@APGI-cmy) and assigned to Copilot. Issu
 - [x] Zero skipped/todo/stub tests (N/A)
 - [x] Zero deprecation warnings (N/A)
 - [x] Zero compiler/linter warnings (N/A)
-- [x] All 22 issue #1683 acceptance criteria: PASS (per stage8-gate-pass-review.md)
+- [x] All 22 issue #1679 acceptance criteria: PASS (per stage8-gate-pass-review.md)
 - [x] All 9 Stage 8 Functional-Delivery Guardrails: PASS (per stage8-gate-pass-review.md)
 - [x] Stage 9 builder-checklist.md: 5 sections present, 8 guardrails present (unchecked per requirement)
 - [x] Stage 10/11/12: NOT_STARTED confirmed
@@ -386,7 +386,7 @@ GOVERNANCE_ONLY wave. No runtime tests. All 22 acceptance criteria PASS. All 9 S
 
 ## ═══════════════════════════════════════
 ## ASSURANCE-TOKEN
-**PR**: maturion-isms#1683 | Wave: pit-stage8-gate-pass-stage9-initiate-20260519
+**PR**: maturion-isms#1679 | Wave: pit-stage8-gate-pass-stage9-initiate-20260519
 **Branch**: copilot/review-gate-pass-stage-8 | HEAD: 7f8ad9b
 **Re-invocation**: REJECTION-001 (F-001/F-002/F-003/F-004) — all 4 failures verified resolved.
 
@@ -438,8 +438,8 @@ No code changes in this wave. CodeQL security scan not applicable to governance-
 
 ### ECAP Reconciliation Summary — pit-stage8-gate-pass-stage9-initiate-20260519
 
-**Issue**: #1683
-**PR**: to be assigned by CS2
+**Issue**: #1679
+**PR: #1680
 **Wave**: pit-stage8-gate-pass-stage9-initiate-20260519
 **Branch**: copilot/review-gate-pass-stage-8
 **ECAP Session**: ecap-session-issue-1683-pit-stage8-gate-pass-stage9-initiate-20260519
@@ -468,8 +468,8 @@ No code changes in this wave. CodeQL security scan not applicable to governance-
 | BUILD_PROGRESS_TRACKER.md | `modules/pit/BUILD_PROGRESS_TRACKER.md` | ✓ | ✓ (dd7459c) | ✓ | Stage 8 GATE_PASSED; Stage 9 INITIATED |
 | Builder Checklist | `modules/pit/09-builder-checklist/builder-checklist.md` | ✓ | ✓ (dd7459c) | ✓ | 5 sections; 8 guardrails unchecked |
 | Wave current tasks | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✓ | ✓ (dd7459c) | ✓ | Wave `pit-stage8-gate-pass-stage9-initiate-20260519` |
-| Scope declaration | `.agent-admin/scope-declarations/pr-1683.md` | ✓ | ✓ (dd7459c) | ✓ | 9 approved paths |
-| PR admin JSON | `.admin/prs/pr-1683.json` | ✓ | ✓ (dd7459c) | ✓ | requires_ecap: true |
+| Scope declaration | `.agent-admin/scope-declarations/pr-1680.md` | ✓ | ✓ (dd7459c) | ✓ | 9 approved paths |
+| PR admin JSON | `.admin/prs/pr-1680.json` | ✓ | ✓ (dd7459c) | ✓ | requires_ecap: true |
 | IAA wave record (pre-brief) | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` | ✓ | ✓ (a9567ab) | ✓ | PRE-BRIEF section populated |
 | PREHANDOVER proof | `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage8-gate-pass-stage9-initiate-20260519.md` | ✓ | pending Foreman commit | ✓ | Assembled by ECAP |
 | Session memory | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-issue-1683-stage8-gate-pass-stage9-initiate-20260519.md` | ✓ | pending Foreman commit | ✓ | Assembled by ECAP |
@@ -482,12 +482,12 @@ No code changes in this wave. CodeQL security scan not applicable to governance-
 |-----|-----------|-------------|-----------------|-------|
 | R01 | Session ID | `session-issue-1683-stage8-gate-pass-stage9-initiate-20260519` (PREHANDOVER) | Session memory filename, wave record reference | ✓ |
 | R02 | IAA token reference | `IAA-session-pit-s8gp-s9init-20260519-PASS` (expected; wave record ## TOKEN) | PREHANDOVER `iaa_audit_token`, session memory IAA section | ✓ |
-| R03 | Issue number | #1683 | PREHANDOVER `issue`, session memory issue ref, scope declaration, wave record, PR admin JSON | ✓ |
+| R03 | Issue number | #1679 | PREHANDOVER `issue`, session memory issue ref, scope declaration, wave record, PR admin JSON | ✓ |
 | R04 | PR number | to-be-assigned by CS2 | All artifacts consistently note PR number as pending CS2 assignment | ✓ |
 | R05 | Wave identifier | `pit-stage8-gate-pass-stage9-initiate-20260519` | PREHANDOVER `wave_id`, session memory wave ref, wave record filename, wave-current-tasks.md | ✓ |
 | R06 | Branch name | `copilot/review-gate-pass-stage-8` (confirmed `git branch --show-current`) | PREHANDOVER `branch`, scope declaration, wave-current-tasks.md | ✓ |
 | R07 | Changed file paths | `git diff --name-only origin/main...HEAD` = 13 files (12 Foreman/ECAP + 1 IAA-internal) | Scope declaration approved_artifact_paths (12 paths — includes all ceremony files); PREHANDOVER bundle completeness table | ✓ |
-| R08 | PREHANDOVER ↔ session memory | PREHANDOVER (primary) | Session memory: same issue #1683, wave, branch, session ID, status | ✓ |
+| R08 | PREHANDOVER ↔ session memory | PREHANDOVER (primary) | Session memory: same issue #1679, wave, branch, session ID, status | ✓ |
 | R09 | PREHANDOVER ↔ token / IAA reference | PREHANDOVER `iaa_audit_token` | Wave record ## TOKEN expected reference; session memory IAA section | ✓ |
 | R10 | Tracker ↔ wave record | wave-current-tasks.md Wave field | Wave record wave ID, session memory wave ref | ✓ |
 | R11 | Scope declaration ↔ actual changed files | `git diff` = 13 files (12 Foreman/ECAP + 1 IAA-internal) | Scope declaration approved_artifact_paths lists 12 paths (all Foreman/ECAP files; IAA-internal session memory excluded from Foreman scope) | ✓ |
@@ -520,7 +520,7 @@ No code changes in this wave. CodeQL security scan not applicable to governance-
 - AAP-01 (PENDING/in-progress wording): Scanned — `## IAA Agent Response (verbatim)` placeholder is correct pre-IAA state; `iaa_audit_token` pre-populated (not PENDING); no status field contains PENDING where PASS is required. ✅ PASS
 - AAP-02 (Mixed version labels): No version strings in conflict. ✅ PASS
 - AAP-03 (Stale artifact path references): All 7 diff file paths exist as committed files (`git ls-files` would confirm). ECAP bundle paths pending commit. ✅ PASS
-- AAP-04 (Stale scope declaration): Scope declaration at `.agent-admin/scope-declarations/pr-1683.md`; diff = 7 files; approved_artifact_paths = 9 (includes 2 ECAP pending). No count mismatch in scope declaration. ✅ PASS
+- AAP-04 (Stale scope declaration): Scope declaration at `.agent-admin/scope-declarations/pr-1680.md`; diff = 7 files; approved_artifact_paths = 9 (includes 2 ECAP pending). No count mismatch in scope declaration. ✅ PASS
 - AAP-05 (Stale hash): No file hashes declared in PREHANDOVER proof. N/A. ✅ PASS
 - AAP-06 (Session ID mismatch): Expected token reference format consistent throughout. No token file yet (pre-IAA). ✅ PASS
 - AAP-07 (Declared count mismatch): No artifact counts declared; bundle completeness table shows individual paths not counts. ✅ PASS
