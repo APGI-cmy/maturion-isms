@@ -42,7 +42,7 @@ WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 - [x] IAA Pre-Brief invoked and wave record committed
 - [x] Scope declaration created for PR #1683
 - [x] ui-builder delegation complete
-- [x] All B4 tests GREEN (145/145 — 119 existing + 26 new T-MMM-S6-183 through T-MMM-S6-189)
+- [x] All B4 tests GREEN (140/140 — realigned to #1688 catalog T-MMM-S6-177 through T-MMM-S6-184)
 - [x] QP PASS
 - [x] §4.3 merge gate parity PASS
 - [x] IAA final assurance PASS — PHASE_B_BLOCKING_TOKEN: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS

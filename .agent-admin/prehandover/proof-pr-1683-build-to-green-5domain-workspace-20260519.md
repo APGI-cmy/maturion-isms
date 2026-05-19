@@ -16,7 +16,7 @@ It replaces the raw harvested domain list on `AssessmentFrameworkHandoffPage.tsx
 canonical domain cards (Leadership and Governance, Process Integrity, People and Culture,
 Protection, Proof It Works), adds a new transitional `DomainWorkspacePage.tsx` for
 click-through domain navigation, registers the `/assessment/framework/domain/:domainId`
-route in `App.tsx`, adds new B4 RED→GREEN tests (T-MMM-S6-183 through T-MMM-S6-188),
+route in `App.tsx`, adds new B4 RED→GREEN tests realigned to #1688 catalog (T-MMM-S6-177 through T-MMM-S6-184),
 and updates the live-mode verification script for 5-card assertion specificity.
 
 **Builders involved**: `ui-builder` — responsible for all 6 functional deliverables:
@@ -28,7 +28,7 @@ B4 framework tests, verify-mmm-modes.mjs, BUILD_PROGRESS_TRACKER.md.
 ## QP Verdict
 
 **QP EVALUATION — ui-builder | Wave build-to-green-5domain-workspace-20260519:**
-- 100% GREEN tests: ✅ (140/140 B4 framework tests GREEN — 115 existing + 25 new T-MMM-S6-183 through T-MMM-S6-188)
+- 100% GREEN tests: ✅ (140/140 B4 framework tests GREEN — realigned to #1688 catalog T-MMM-S6-177 through T-MMM-S6-184)
 - Zero skipped/todo/stub tests: ✅
 - Zero test debt: ✅
 - Evidence artifacts present: ✅
@@ -101,7 +101,7 @@ framework workspace. No schema, API, governance canon, or cross-module impacts d
 | 1 | AssessmentFrameworkHandoffPage.tsx (5 domain cards) | `apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx` | ✅ Committed (`3fe1611` + `1cfa605`) |
 | 2 | DomainWorkspacePage.tsx (new transitional workspace) | `apps/mmm/src/pages/DomainWorkspacePage.tsx` | ✅ Committed (`3fe1611`) |
 | 3 | App.tsx (domain route registration with ProtectedRoute) | `apps/mmm/src/App.tsx` | ✅ Committed (`3fe1611`) |
-| 4 | B4 framework tests (T-MMM-S6-183 through T-MMM-S6-188) | `modules/MMM/tests/B4-framework/b4-framework.test.ts` | ✅ Committed (`3fe1611`) |
+| 4 | B4 framework tests (T-MMM-S6-177 through T-MMM-S6-184 — #1688 catalog aligned) | `modules/MMM/tests/B4-framework/b4-framework.test.ts` | ✅ Committed (`3fe1611`) |
 | 5 | verify-mmm-modes.mjs (5-card assertion) | `scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs` | ✅ Committed (`3fe1611`) |
 | 6 | BUILD_PROGRESS_TRACKER.md (RED finding recorded) | `modules/MMM/BUILD_PROGRESS_TRACKER.md` | ✅ Committed (`3fe1611`) |
 | 7 | wave-current-tasks.md (updated to this wave) | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ Committed (`d14a35c`) |
@@ -148,7 +148,7 @@ Scope written:
 - `apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx` — 5 canonical domain cards replacing raw domain list
 - `apps/mmm/src/pages/DomainWorkspacePage.tsx` — new transitional domain workspace page
 - `apps/mmm/src/App.tsx` — domain workspace route registration
-- `modules/MMM/tests/B4-framework/b4-framework.test.ts` — new T-MMM-S6-183+ RED→GREEN tests
+- `modules/MMM/tests/B4-framework/b4-framework.test.ts` — B4 domain workspace tests realigned to #1688 catalog (T-MMM-S6-177–T-MMM-S6-184)
 - `scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs` — 5-card workspace assertion update
 - `modules/MMM/BUILD_PROGRESS_TRACKER.md` — RED finding record
 - `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — wave identifier update
