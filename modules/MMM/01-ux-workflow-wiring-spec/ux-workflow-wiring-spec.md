@@ -9,7 +9,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: UX Workflow & Wiring Spec (Stage 2)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.3.0 (POLC-Orchestration mode)
+- **Version**: 0.4.0 (POLC-Orchestration mode)
 - **Issue**: maturion-isms#1352
 - **Upstream Authority**: `MMM_app_description.md` v0.5.0 (CS2-approved)
 - **Inputs Used**:
@@ -445,8 +445,9 @@ approve, reject, suggest alternative, unlock, resubmit, override, final sign-off
 
 ### Post-Compile Handoff — Framework Configuration Workspace (Transitional Bridge Within J-06/J-07)
 
-**Governing Issue**: maturion-isms#1669  
-**Frozen implementation dependency**: APGI-cmy/maturion-isms#1667 remains blocked until this alignment package is accepted.
+**Governing Issue**: maturion-isms#1681  
+**Frozen implementation dependency**: APGI-cmy/maturion-isms#1682 remains blocked until this alignment package is accepted and merged to main.
+**Historical context**: #1669/#1667 covered the earlier blank-page route-mount alignment and implementation. This section governs the later #1681 RED finding (visible-but-incomplete workspace rendering).
 
 The compile CTA in both Mode A (J-06) and Mode B (J-07) must hand off to a visible
 framework configuration workspace at:
@@ -466,7 +467,7 @@ journey label for the same compile handoff.
 
 | Handoff Case | Route Destination | Expected Visible State | Failure Contract |
 |---|---|---|---|
-| Compile success | `/assessment/framework?framework_id=<valid-id>` | Visible framework configuration workspace (not blank) with loaded framework context | If workspace render fails, show blocking error state with retry/back action |
+| Compile success | `/assessment/framework?framework_id=<valid-id>` | Canonical 5-domain framework configuration workspace (Leadership and Governance, Process Integrity, People and Culture, Protection, Proof It Works) with loaded framework context | If canonical 5-card workspace does not render, show blocking error state with retry/back action |
 | Missing context | `/assessment/framework` (no `framework_id`) | User-facing error panel explaining required framework context | No blank render allowed; no silent failure |
 | Invalid context | `/assessment/framework?framework_id=<invalid-or-unresolvable-id>` | User-facing error panel stating framework could not be resolved | No blank render allowed; include recovery action (back to review/recompile) |
 
@@ -474,6 +475,26 @@ journey label for the same compile handoff.
 - Compile operation creates/updates canonical framework hierarchy records.
 - Handoff route consumes `framework_id` as active workspace context.
 - Workspace must reflect the compiled framework represented by that `framework_id`.
+- Raw harvested-domain-only list rendering is a failing state and is insufficient for handoff success.
+
+**Domain-card workspace contract (required visible structure)**:
+- Five canonical domain cards must render as first-class workspace containers.
+- Each card must expose mini-dashboard structure (live metric or approved placeholder contract) for:
+  - MPS count
+  - Criteria count
+  - Maturity level
+  - Evidence completion %
+  - Approval/governance status
+  - Compile status
+- Each domain card must support click-through to a domain workspace view bound to the same
+  `framework_id`.
+- Domain workspace downstream actions must be available by contract:
+  Compile MPSs, Compile intent statements, Compile criteria.
+
+**Contextual navigation contract**:
+- Domain-card click-through navigation must preserve current framework and domain context.
+- Navigation must avoid unhelpful loops that only return users to the generic frameworks list;
+  contextual back-navigation must return users to the active framework workspace context.
 
 **Harvest Map Ref**: RR-04
 **App Description Ref**: §21
@@ -1396,6 +1417,7 @@ denied.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4.0 | 2026-05-19 | Tightened compile handoff contract for `/assessment/framework?framework_id=...` to require canonical 5-domain card workspace, mini-dashboard placeholders/metrics, domain click-through/actions, and contextual navigation; declared raw harvested-domain-only list as failing state |
 | 0.3.0 | 2026-05-18 | Added explicit post-compile handoff declaration for `/assessment/framework?framework_id=...`, including transitional bridge boundary, visible success state, and missing/invalid `framework_id` failure contracts |
 | 0.1.0 | 2026-04-13 | Initial Stage 2 UX Workflow & Wiring Spec — 17 user journeys, complete wiring, boundary definitions, open questions carried forward |
 
