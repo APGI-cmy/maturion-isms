@@ -8,9 +8,9 @@
 
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: PBFAG Checklist (Stage 7)
-- **Status**: COMPLETE
-- **Version**: 0.1.0
-- **Date**: 2026-04-15
+- **Status**: COMPLETE + CHANGE-PROPAGATION ADDENDUM (compile handoff RED finding)
+- **Version**: 0.2.0
+- **Date**: 2026-05-18
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
 - **Produced By**: mat-specialist (delegated by foreman-v2-agent)
 - **Issue**: maturion-isms#1387 (MMM Stage 7 PBFAG wave-start authorization)
@@ -137,8 +137,8 @@ all ten Foreman Questions mandated by the Stage 7 wave authorization.
 
 | Check | Result | Evidence |
 |-------|--------|---------|
-| QA-to-Red catalog artifact exists at declared path | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` v0.1.0 |
-| 176 tests (T-MMM-S6-001 through T-MMM-S6-176) present | **PASS** | qa-to-red-catalog.md summary table — 176 tests across 11 domains |
+| QA-to-Red catalog artifact exists at declared path | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` v0.3.0 |
+| 188 tests (T-MMM-S6-001 through T-MMM-S6-182 + FD-001–006) present | **PASS** | qa-to-red-catalog.md summary table — 188 tests across 13 domains |
 | 100% FR coverage (80/80 FRs) | **PASS** | `requirement-traceability.md` §1 |
 | 100% TR coverage (66/66 TRs) | **PASS** | `requirement-traceability.md` §2 |
 | 100% journey coverage (17/17 journeys J-01–J-17) | **PASS** | `journey-coverage.md` |
@@ -222,7 +222,7 @@ all ten Foreman Questions mandated by the Stage 7 wave authorization.
 |----------------------|--------|-------|
 | All pre-build stage artifacts (Stages 1–6) committed to repository | **PASS** | All files present under `modules/MMM/00-*` through `modules/MMM/05-*` |
 | All prior IAA ASSURANCE-TOKENs recorded | **PASS** | Stage 6 IAA token: IAA-session-mmm-stage6-qa-to-red-20260415-PASS |
-| Complete test catalog (176 RED tests) available as implementation contract | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` |
+| Complete test catalog (188 RED tests) available as implementation contract | **PASS** | `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` |
 | Runtime/Deployment Contract filed (D3) | **PASS** | `modules/MMM/06-pbfag/runtime-deployment-contract.md` (this wave) |
 | Golden Path Verification Pack filed (D4) | **PASS** | `modules/MMM/06-pbfag/golden-path-verification-pack.md` (this wave) |
 | External Dependency Confirmation filed (D5) | **PASS** | `modules/MMM/06-pbfag/external-dependency-confirmation.md` (this wave) |
@@ -251,7 +251,7 @@ an unresolved open question, or an ambiguity that would force downstream rework:
 - Stage 3 FRS: 80 requirements, 100% traceability both upstream and downstream
 - Stage 4 TRS: 66 requirements, all decisions explicit (OQ-001 resolved)
 - Stage 5 Architecture: 22 sections, all TRs addressed, legacy artifacts retired
-- Stage 6 QA-to-Red: 176 tests, 100% FR/TR/Journey coverage, zero TBDs
+- Stage 6 QA-to-Red: 188 tests (including Domain 13 compile-handoff bridge coverage), 100% FR/TR/Journey coverage, zero TBDs
 
 **Verdict: Chain stable. No predictable rework.**
 
@@ -384,7 +384,7 @@ The following conditions are all met:
 6. No upstream ambiguity remains that would force implementation rework.
 7. All open questions from the harvest map are resolved.
 8. All three external integration boundaries (AIMC, PIT, KUC) are frozen.
-9. The full QA-to-Red suite (176 tests) is the established implementation contract.
+9. The full QA-to-Red suite (188 tests) is the established implementation contract.
 10. BUILD_PROGRESS_TRACKER.md is updated (D7) reflecting Stage 7 COMPLETE.
 
 **The module is genuinely ready to proceed to Stage 8 (Implementation Plan).**
@@ -460,6 +460,56 @@ checklist begins in future waves after this initial pack.
 
 ---
 
+## Stage 7 Change-Propagation Addendum — `/assessment/framework` Compile Handoff
+
+**Date**: 2026-05-18  
+**Governing Issue**: maturion-isms#1669  
+**Scope**: Post-compile handoff from MMM framework generation/review flow  
+**Related implementation issue**: APGI-cmy/maturion-isms#1667 (frozen until this alignment is complete)
+
+### Stage 6 Stability Alignment
+
+This addendum updates the Stage 6 stability baseline referenced by this checklist. The
+current catalog state is **188 tests across 13 domains**. Any earlier Stage 6 wording that
+still references **176 tests across 11 domains** is superseded by this updated baseline for
+the purposes of Stage 6 evidence and Stage 7 change-propagation review.
+
+### Finding
+
+Manual functional verification confirmed compile success can navigate to:
+
+`/assessment/framework?framework_id=<framework-id>`
+
+but destination render is blank. This is a **functional-delivery / pre-build alignment
+failure**, not a minor runtime-only defect.
+
+### Scope Clarification
+
+The existing `PBFAG VERDICT: PASS` in this file remains the historical verdict for the
+original Stage 7 scope (wave `mmm-stage7-pbfag-20260415`). This addendum records a new,
+separate RED finding for the newly surfaced transitional compile handoff scope under
+governing issue #1669.
+
+### Governance Classification
+
+```
+RESULT: RED
+BUILD_TO_GREEN_ALLOWED: no, until pre-build artifacts and RED tests are aligned
+```
+
+### Required Change Propagation Outcome
+
+1. Stage 2 must explicitly declare compile → framework configuration workspace handoff,
+   including success and missing/invalid context failure contracts.
+2. Stage 5 must declare route/component/capability ownership for `/assessment/framework`
+   transitional boundary and typed integration client obligation.
+3. Stage 6 must include RED tests that assert visible workspace render and missing/invalid
+   `framework_id` error states (URL-only proof is insufficient).
+4. Implementation issue APGI-cmy/maturion-isms#1667 remains **frozen/blocked** until all
+   three artifact updates above are complete and reviewed.
+
+---
+
 ## Part F — PBFAG Summary Table
 
 | Gate Section | Verdict |
@@ -484,20 +534,25 @@ checklist begins in future waves after this initial pack.
 | E FQ-8 Stage 8 Readiness | ✅ READY |
 | E FQ-9 Residual Defects | ✅ NONE |
 | **E FQ-10 PBFAG Verdict** | **✅ PASS** |
+| Compile handoff addendum (`/assessment/framework`) | 🔴 RED — ALIGNMENT REQUIRED |
 
 ---
 
 ## Part G — Next Stage Authorization
 
-Having passed all PBFAG gate conditions, Stage 8 (Implementation Plan) is **authorized
-to begin** subject to:
+The original Stage 7 PBFAG authorization remains historical for the original
+`mmm-stage7-pbfag-20260415` scope only.
 
-1. CS2 formal approval of Stage 7 PBFAG artifacts (this wave).
-2. Foreman adding `ceremony_admin_appointed: true` to wave-current-tasks before PREHANDOVER.
-3. IAA ASSURANCE-TOKEN for this wave (mmm-stage7-pbfag-20260415) issued before Stage 8
-   wave-start.
+For the newly surfaced `/assessment/framework` compile-handoff scope governed by
+maturion-isms#1669, build-to-green implementation is **not authorized** while the
+compile-handoff addendum remains RED.
 
-**Stage 8 may not begin until Stage 7 IAA ASSURANCE-TOKEN is confirmed.**
+Issue APGI-cmy/maturion-isms#1667 remains frozen/blocked until:
+
+1. this alignment package is reviewed and accepted;
+2. Stage 2/5/6/7/12 alignment is merged;
+3. the new RED tests are treated as the implementation contract; and
+4. CS2 authorizes the follow-on build-to-green wave.
 
 ---
 
