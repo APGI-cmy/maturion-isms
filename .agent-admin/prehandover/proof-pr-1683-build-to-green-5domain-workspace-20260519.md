@@ -141,7 +141,7 @@ framework workspace. No schema, API, governance canon, or cross-module impacts d
 ## SCOPE_DECLARATION Ceremony
 
 Per-PR immutable scope declaration committed at `.agent-admin/scope-declarations/pr-1683.md`.
-Content matches current file set: 11 files declared = 11 files in
+Content matches current file set: 17 files declared = 17 files in
 `git diff --name-only origin/main...HEAD`.
 
 Scope written:
