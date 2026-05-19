@@ -140,7 +140,6 @@ if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ] && [ -n "$ACTIVE_PREBRIEF_PATH" ] &&
   if ! CHANGED_FILES="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" 2>/dev/null)"; then
     if ! CHANGED_FILES="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" 2>/dev/null)"; then
       fail "Cannot compute changed files for BASE_SHA=${BASE_SHA:0:12} HEAD_SHA=${HEAD_SHA:0:12}"
-      CHANGED_FILES=""
     fi
   fi
   HAS_IMPL_OR_BUILD=false

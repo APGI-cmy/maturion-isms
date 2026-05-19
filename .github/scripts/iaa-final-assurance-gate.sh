@@ -387,7 +387,7 @@ while IFS= read -r token_file; do
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH not in allowed assurance location"
     FILE_VALID=false
     FAIL=true
-  elif grep -qi "SUPERSEDED" "$PREFLIGHT_PATH" 2>/dev/null; then
+  elif grep -Eq '^[[:space:]]*SUPERSEDED:[[:space:]]*yes([[:space:]]*)$' "$PREFLIGHT_PATH" 2>/dev/null; then
     echo "  ❌ PREFLIGHT_BRIEF_PATH references a superseded pre-flight brief [IAA-FINAL-GATE-012]"
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH references superseded brief"
     FILE_VALID=false
