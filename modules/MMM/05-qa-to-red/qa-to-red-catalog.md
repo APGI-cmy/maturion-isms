@@ -2,7 +2,7 @@
 
 **Module**: MMM — Maturity Model Management
 **Artifact**: QA-to-Red Catalog (Stage 6)
-**Version**: 0.3.0
+**Version**: 0.4.0
 **Wave**: mmm-stage6-qa-to-red-20260415
 **Issue**: maturion-isms#1384
 **Produced By**: qa-builder (delegated by foreman-v2-agent v6.2.0)
@@ -27,8 +27,8 @@
 | D10 | Cross-Cutting — Infrastructure & Quality Gates | T-MMM-S6-153–164 | 12 |
 | D11 | Product Identity & Governance | T-MMM-S6-165–176 | 12 |
 | D12 | Full Functional Delivery Gate (CTA/API Verification) | T-MMM-S6-FD-001–006 | 6 |
-| D13 | Compile Handoff Transitional Bridge — `/assessment/framework` | T-MMM-S6-177–182 | 6 |
-| **TOTAL** | | **T-MMM-S6-001–182 + FD-001–006** | **188** |
+| D13 | Compile Handoff Transitional Bridge — `/assessment/framework` | T-MMM-S6-177–184 | 8 |
+| **TOTAL** | | **T-MMM-S6-001–184 + FD-001–006** | **190** |
 
 **FR Coverage**: 80/80 (100%)
 **TR Coverage**: 66/66 (all security/integration/quality TRs fully covered; all others by domain)
@@ -1415,45 +1415,66 @@
 
 *Sources: Compile handoff alignment issue (this wave), Stage 2 compile handoff contract, Architecture §A3.3a*
 
-### T-MMM-S6-177 — Compile Success Must Render Visible Framework Workspace Content
+### T-MMM-S6-177 — Compile Success Renders Canonical Five Domain Cards
 
 - **Source**: Compile handoff alignment / Stage 2 post-compile handoff contract
 - **Layer**: E2E
 - **Description**: After `POST /api/frameworks/:id/compile` succeeds, navigation to
-  `/assessment/framework?framework_id=:id` must render visible framework workspace content.
-- **RED Condition**: URL updates but destination route renders blank or placeholder-only shell.
-- **Acceptance Criteria**: Test asserts visible workspace markers (framework title/tree/config panel)
-  are rendered within timeout after compile success redirect.
+  `/assessment/framework?framework_id=:id` must render the canonical five domain cards.
+- **RED Condition**: Any of the five canonical domain cards is absent.
+- **Acceptance Criteria**: Framework workspace shows cards for Leadership and Governance, Process
+  Integrity, People and Culture, Protection, and Proof It Works.
 
-### T-MMM-S6-178 — Direct Valid `/assessment/framework?framework_id=<valid-id>` Load Renders Workspace
+### T-MMM-S6-178 — Raw Harvested-Domain-Only List Is a Failing Workspace State
 
 - **Source**: Stage 2 route destination declaration
 - **Layer**: E2E
-- **Description**: Direct navigation to `/assessment/framework?framework_id=<valid-id>` renders
-  visible framework configuration workspace for that framework.
-- **RED Condition**: Route loads blank page, unresolved spinner, or generic empty shell.
-- **Acceptance Criteria**: With fixture framework present, direct load shows visible workspace content
-  and active framework context tied to supplied `framework_id`.
+- **Description**: Workspace render is invalid when the page only shows raw harvested domain items
+  (for example `D001 Uploaded Governance Domain`) without canonical domain cards.
+- **RED Condition**: Raw harvested-domain-only list is treated as successful workspace render.
+- **Acceptance Criteria**: Test fails when only harvested-domain rows are present and canonical
+  domain-card containers are absent.
 
-### T-MMM-S6-179 — Missing `framework_id` Shows User-Facing Error State
+### T-MMM-S6-179 — All Five Canonical Domain Labels Are Present
 
-- **Source**: Stage 2 missing-context failure contract / Architecture §A3.3a
+- **Source**: Stage 2 canonical domain contract / Architecture §A3.3a
 - **Layer**: E2E
-- **Description**: Navigation to `/assessment/framework` without `framework_id` must show a visible
-  user-facing error state explaining required context.
-- **RED Condition**: Blank route, silent failure, or console-only error.
-- **Acceptance Criteria**: Route renders explicit error message and recovery action (e.g. back to review).
+- **Description**: Canonical domain card labels must render exactly as declared.
+- **RED Condition**: Any label missing, renamed, or replaced by harvested-only naming.
+- **Acceptance Criteria**: UI assertions confirm all five canonical labels are visible.
 
-### T-MMM-S6-180 — Invalid/Unresolvable `framework_id` Shows User-Facing Error State
+### T-MMM-S6-180 — Each Domain Card Exposes Mini-Dashboard Structure
 
-- **Source**: Stage 2 invalid-context failure contract / Architecture §A3.3a
+- **Source**: Stage 2 mini-dashboard contract / Architecture §A3.3a
 - **Layer**: E2E
-- **Description**: `/assessment/framework?framework_id=<invalid-or-unresolvable-id>` must display
-  a visible error state indicating the framework cannot be resolved.
-- **RED Condition**: Blank route, infinite loading state, or uncaught runtime exception.
-- **Acceptance Criteria**: Error state appears with recovery option and no blank render.
+- **Description**: Each canonical domain card must expose metric/placeholder slots for MPS count,
+  criteria count, maturity level, evidence completion %, approval/governance status, and compile
+  status.
+- **RED Condition**: Card renders without mini-dashboard structure or approved placeholder contract.
+- **Acceptance Criteria**: Every card includes all required mini-dashboard fields (value or approved
+  placeholder marker).
 
-### T-MMM-S6-181 — Compile Handoff Preserves `framework_id` as Active Workspace Context
+### T-MMM-S6-181 — Domain Card Click-Through Contract Exists
+
+- **Source**: Stage 2 domain workspace interaction contract / Architecture §A3.3a
+- **Layer**: Integration/E2E
+- **Description**: Each domain card must provide click-through into a domain workspace action surface.
+- **RED Condition**: Cards are static/non-interactive or click action has no route/action contract.
+- **Acceptance Criteria**: Click-through exists per card and exposes downstream actions:
+  Compile MPSs, Compile intent statements, Compile criteria.
+
+### T-MMM-S6-182 — Contextual Navigation Avoids Generic Framework-List Loop
+
+- **Source**: Stage 2 contextual navigation contract / Architecture §A3.3a
+- **Layer**: E2E
+- **Description**: Domain workspace navigation must preserve context and avoid unhelpful "Back to
+  Frameworks" loops that break compile-handoff continuity.
+- **RED Condition**: Primary back-navigation routes user to generic frameworks list without contextual
+  return path to active `/assessment/framework?framework_id=:id`.
+- **Acceptance Criteria**: Contextual back-navigation returns to active framework configuration
+  workspace context.
+
+### T-MMM-S6-183 — Compile Handoff Preserves `framework_id` Workspace Context
 
 - **Source**: Stage 2 relationship contract (compile output ↔ workspace context)
 - **Layer**: Integration/E2E
@@ -1463,17 +1484,18 @@
 - **Acceptance Criteria**: Assert route query, active workspace state, and loaded framework identity
   all equal compiled framework ID.
 
-### T-MMM-S6-182 — Mode A/B/C Compile Handoff Verifies Visible Workspace Content
+### T-MMM-S6-184 — Missing/Invalid `framework_id` Error States Remain Intact
 
-- **Source**: Governance requirement for Mode A/B/C visible handoff verification
+- **Source**: Stage 2 context failure contract / Architecture §A3.3a
 - **Layer**: E2E
-- **Description**: For compile flows initiated from Mode A and Mode B, and from any approved Mode C
-  transitional flow, post-compile handoff must prove visible workspace render (not URL-only proof).
-- **RED Condition**: Any mode can compile but lands on blank `/assessment/framework` destination.
-- **Acceptance Criteria**: Per-mode test evidence confirms compile success plus visible workspace content
-  on handoff destination.
+- **Description**: Missing `framework_id` and invalid/unresolvable `framework_id` routes must continue
+  to show explicit user-facing error states.
+- **RED Condition**: Missing/invalid context falls through to blank page, spinner, or silent failure.
+- **Acceptance Criteria**: `/assessment/framework` and
+  `/assessment/framework?framework_id=<invalid-or-unresolvable-id>` each render distinct visible error
+  states with recovery action.
 
 ---
 
 *End of MMM Stage 6 — QA-to-Red Catalog*
-*Total: 188 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys + compile handoff bridge covered*
+*Total: 190 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys + compile handoff bridge covered*

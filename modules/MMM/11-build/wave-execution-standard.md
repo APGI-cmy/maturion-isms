@@ -8,8 +8,8 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: Wave Execution Standard (Stage 12 governance requirement)
 - **Status**: ACTIVE — Applies to all MMM build waves from Phase 3 onwards
-- **Version**: 1.1.0
-- **Date**: 2026-05-18
+- **Version**: 1.2.0
+- **Date**: 2026-05-19
 - **Owner**: CS2 (Johan Ras / @APGI-cmy)
 - **Produced By**: mat-specialist (delegated by foreman-v2-agent; wave mmm-phase3-retrofit-20260507)
 - **Issue**: maturion-isms#1564 (Phase 3 retrofit)
@@ -152,6 +152,20 @@ For any implementation wave that addresses compile handoff to `/assessment/frame
 
 URL-only redirect proof is explicitly insufficient for this scope.
 
+### 1.9 Compile Handoff Evidence Pack (Future Scope-Specific: Canonical 5-Domain Workspace)
+
+For the follow-up implementation PR that delivers canonical domain-card workspace behavior at
+`/assessment/framework`, the Functional Delivery Evidence Pack MUST additionally include:
+
+| Evidence Item | Required | Format |
+|---|---|---|
+| Evidence of all five canonical domain cards visible | ✅ MANDATORY | Labelled screenshot/video with all five card titles visible |
+| Successful compile handoff to canonical 5-card workspace | ✅ MANDATORY | Journey evidence from compile action through rendered workspace |
+| Domain-card click-through evidence | ✅ MANDATORY | At least one card click-through showing domain workspace/action surface |
+| Contextual navigation evidence | ✅ MANDATORY | Evidence that contextual return preserves active framework context (no generic list loop) |
+| Missing/invalid `framework_id` regression evidence | ✅ MANDATORY | Test/screenshots confirming both error states remain intact |
+| Mode A/B/C visible workspace evidence (if applicable in wave scope) | ✅ MANDATORY | Per-mode verification artifacts proving visible canonical workspace |
+
 ---
 
 ## 2. Handover Sequence
@@ -161,7 +175,7 @@ No wave may proceed to handover without completing the following in order:
 1. Builder completes all FFD Affirmations (Stage 9 Builder Checklist — FFD Section)
 2. QA confirms Domain 12 tests pass for wave scope
 3. Integration confirms CTA/API matrix complete for wave scope
-4. Builder populates the Functional Delivery Evidence Pack (all 7 sections above)
+4. Builder populates the Functional Delivery Evidence Pack (all required sections above)
 5. Builder marks FUNCTIONAL DELIVERY VERDICT as FUNCTIONALLY COMPLETE
 6. Foreman Quality Professor review
 7. Stage 11 Wave Role Assignment Matrix — all 5 roles confirmed
@@ -186,5 +200,6 @@ maturion-isms#1553 (Phase 0 — temporary build freeze).
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.2.0 | 2026-05-19 | Added forward build evidence requirements for canonical 5-domain workspace scope (five cards, compile handoff, click-through/navigation, framework_id regressions, Mode A/B/C visibility evidence) |
 | 1.1.0 | 2026-05-18 | Added scope-specific compile handoff evidence requirements for `/assessment/framework`, including preview URL, success/error screenshots, Mode A/B/C verification, and explicit functional verdict |
 | 1.0.0 | 2026-05-07 | Initial Wave Execution Standard — created per Phase 3 retrofit (maturion-isms#1564) |
