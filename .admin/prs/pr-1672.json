@@ -31,8 +31,8 @@
     "local command output: bash .github/scripts/iaa-preflight-contract-gate.test.sh",
     "local command output: bash .github/scripts/iaa-final-assurance-gate.test.sh",
     "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh",
-    "workflow preflight evidence gate: success on head PLACEHOLDER_HEAD_SHA",
-    "actions/runs/PLACEHOLDER_RUN_ID"
+    "workflow preflight evidence gate: success on head 9044c08902a8fdc01f62ded6bd40293764c9cc27",
+    "actions/runs/26081938649"
   ],
   "merge_authority": "CS2"
 }

@@ -44,5 +44,5 @@ No governance weakening was introduced. All changes increase strictness and trac
 ## Current-head preflight evidence
 
 - Preflight Evidence Gate workflow rerun required on current HEAD after STOP_AND_FIX remediations.
-- Actions run URL: `PENDING_AFTER_PUSH`
-- Head SHA validated: `PENDING_AFTER_PUSH`
+- Actions run URL: `https://github.com/APGI-cmy/maturion-isms/actions/runs/26081938649`
+- Head SHA validated: `9044c08902a8fdc01f62ded6bd40293764c9cc27`
