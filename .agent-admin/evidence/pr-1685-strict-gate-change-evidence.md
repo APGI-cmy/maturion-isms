@@ -50,5 +50,11 @@ No governance weakening was introduced. The change set tightens enforcement by f
 
 ## Current-head full Preflight evidence
 
-- workflow Preflight Evidence Gate: success on head `61462c0eaa957393b9348da11ab9e8c7ed86a6b8`
-- Actions run URL: `https://github.com/APGI-cmy/maturion-isms/actions/runs/26101519125`
+- workflow Preflight Evidence Gate: full execution on head `dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28` where required jobs executed:
+  - `preflight/identity-binding` (success)
+  - `preflight/ecap-admin-ceremony` (success)
+  - `preflight/gate-changing-pr-rule` (success)
+  - `preflight/iaa-final-assurance` (success)
+  - `preflight/scope-declaration-parity` (success)
+  - `preflight/evidence-exactness` (success)
+- Actions run URL: `https://github.com/APGI-cmy/maturion-isms/actions/runs/26102136492`

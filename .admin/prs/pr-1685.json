@@ -9,6 +9,7 @@
   "scope": [
     ".admin/prs/pr-1685.json",
     ".agent-admin/assurance/iaa-wave-record-wave-identity-binding-hardening-1684-r2-20260519.md",
+    ".agent-admin/assurance/iaa-wave-record-identity-binding-hardening-1685-r3-20260519.md",
     ".agent-admin/evidence/pr-1685-strict-gate-change-evidence.md",
     ".agent-admin/prehandover/proof-pr-1685-identity-binding-hardening-20260519.md",
     ".agent-admin/scope-declarations/pr-1685.md",
@@ -41,7 +42,7 @@
     "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1685.md",
     "local command output: bash .github/scripts/identity-binding-gate.test.sh -> Passed: 6, Failed: 0",
     "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh -> Passed: 47, Failed: 0",
-    "workflow Preflight Evidence Gate: success on head 61462c0eaa957393b9348da11ab9e8c7ed86a6b8 (https://github.com/APGI-cmy/maturion-isms/actions/runs/26101519125)"
+    "workflow Preflight Evidence Gate: full execution run on head dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28 with required identity/ECAP/IAA jobs executed (https://github.com/APGI-cmy/maturion-isms/actions/runs/26102136492)"
   ],
   "merge_authority": "CS2"
 }

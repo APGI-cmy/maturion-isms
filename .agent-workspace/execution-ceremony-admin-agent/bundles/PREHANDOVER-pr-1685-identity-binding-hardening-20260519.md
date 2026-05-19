@@ -1,6 +1,6 @@
 # ECAP Bundle — PREHANDOVER PR #1685
 
-CURRENT_HEAD_SHA: 61462c0eaa957393b9348da11ab9e8c7ed86a6b8
+CURRENT_HEAD_SHA: dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28
 ecap_session: ecap-pr-1685-20260519
 ecap_verdict: PASS
 administrative_readiness: ACCEPTED

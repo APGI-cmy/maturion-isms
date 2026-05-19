@@ -5,7 +5,7 @@ pr: 1685
 issue: 1684
 branch: copilot/harden-active-pr-identity-binding
 date_utc: 2026-05-19T13:55:00Z
-current_head_sha: 61462c0eaa957393b9348da11ab9e8c7ed86a6b8
+current_head_sha: dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28
 protected_path_touched: true
 ecap_required: true
 ecap_invoked: true
@@ -25,7 +25,7 @@ PREHANDOVER_PR: #1685
 IAA_TOKEN_PR: #1685
 WAVE_CURRENT_TASKS_PR: #1685
 BRANCH: copilot/harden-active-pr-identity-binding
-HEAD_SHA: 61462c0eaa957393b9348da11ab9e8c7ed86a6b8
+HEAD_SHA: dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28
 ALL_MATCH: yes
 RESULT: PASS
 
