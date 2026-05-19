@@ -65,7 +65,7 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 | 2 | BUILD_PROGRESS_TRACKER.md update: Stage 8 guardrails ticked, status updated (ACTIVE→gate-passed), Stage 9 status updated (NOT_STARTED→INITIATED) | PRE_BUILD_STAGE_MODEL | YES — MANDATORY (primary trigger: `modules/*/BUILD_PROGRESS_TRACKER.md`) |
 | 3 | Stage 9 initiation: create `modules/pit/09-builder-checklist/builder-checklist.md` — new pre-build stage artifact defining builder candidate obligations | PRE_BUILD_STAGE_MODEL | YES — MANDATORY |
 | 4 | Optional: `modules/pit/08-implementation-plan/stage8-gate-pass-review.md` — Stage 8 gate-pass evidence artifact | PRE_BUILD_STAGE_MODEL | YES — if created, extends the PRE_BUILD_STAGE_MODEL scope |
-| 5 | Admin ceremony artifacts: `.agent-admin/scope-declarations/pr-1683.md`, `.admin/prs/pr-1683.json`, foreman session memory, wave-current-tasks.md update, PREHANDOVER bundle | GOVERNANCE_AUDIT (retrospective) / admin | Ceremony artifact existence verified at handover only |
+| 5 | Admin ceremony artifacts: `.agent-admin/scope-declarations/pr-1680.md`, `.admin/prs/pr-1680.json`, foreman session memory, wave-current-tasks.md update, PREHANDOVER bundle | GOVERNANCE_AUDIT (retrospective) / admin | Ceremony artifact existence verified at handover only |
 
 **All tasks qualify. No tasks are EXEMPT.**
 
@@ -114,12 +114,12 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 | Stage | Name | Status | Evidence Artifact | Notes |
 |-------|------|--------|-------------------|-------|
 | Stage 1 | App Description | ✅ COMPLETE | `modules/pit/00-app-description/` | Gate-passed |
-| Stage 2 | UX Workflow & Wiring Spec | ✅ COMPLETE | `modules/pit/02-ux-workflow/` | v0.2-draft, UX-GAP-001/002 resolved (PR #1594) |
-| Stage 3 | FRS | ✅ COMPLETE | `modules/pit/01-frs/` | v0.2-hardened, 123 requirements, CS2 re-confirmed |
+| Stage 2 | UX Workflow & Wiring Spec | ✅ COMPLETE | `modules/pit/01-ux-workflow-wiring-spec/` | v0.2-draft, UX-GAP-001/002 resolved (PR #1594) |
+| Stage 3 | FRS | ✅ COMPLETE | `modules/pit/02-frs/` | v0.2-hardened, 123 requirements, CS2 re-confirmed |
 | Stage 4 | TRS | ✅ COMPLETE | `modules/pit/03-trs/` | v0.2-draft, PIT-TR-001–126, CS2 re-confirmed |
 | Stage 5 | Architecture | ✅ COMPLETE | `modules/pit/04-architecture/` | Gate-passed CS2/Foreman, no BLOCKING_GAP rows |
-| Stage 6 | QA-to-Red | ✅ COMPLETE | `modules/pit/06-qa-to-red/` | Gate-passed, 144 RED tests |
-| Stage 7 | PBFAG | ✅ COMPLETE | `modules/pit/07-pbfag/` | Gate-passed 2026-05-19 (PR #1674) |
+| Stage 6 | QA-to-Red | ✅ COMPLETE | `modules/pit/05-qa-to-red/` | Gate-passed, 144 RED tests |
+| Stage 7 | PBFAG | ✅ COMPLETE | `modules/pit/06-pbfag/` | Gate-passed 2026-05-19 (PR #1674) |
 | Stage 8 | Implementation Plan | 🔄 ACTIVE — THIS WAVE (gate-pass in progress) | `modules/pit/08-implementation-plan/implementation-plan.md` | 9 guardrails pending verification; gate-pass is Task 1 of this wave |
 | Stage 9 | Builder Checklist | 🔄 INITIATION — THIS WAVE | `modules/pit/09-builder-checklist/builder-checklist.md` (to be created) | NOT_STARTED → INITIATED in this wave |
 | Stage 10 | IAA Pre-Brief | ❌ NOT_STARTED | N/A | Blocked pending Stage 9 completion |
@@ -138,11 +138,11 @@ The producing agent(s) must deliver ALL of the following before IAA handover inv
 
 | Artifact | Path | Required? | Notes |
 |----------|------|-----------|-------|
-| PREHANDOVER proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage8-gate-pass-stage9-initiate.md` OR ECAP bundle equivalent | MANDATORY (CERT-001) | Must include `iaa_audit_token:` field pre-populated with expected reference (A-029 architecture) |
+| PREHANDOVER proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-pit-stage8-gate-pass-stage9-initiate-20260519.md` OR ECAP bundle equivalent | MANDATORY (CERT-001) | Must include `iaa_audit_token:` field pre-populated with expected reference (A-029 architecture) |
 | Session memory | `.agent-workspace/foreman-v2/memory/session-NNN-YYYYMMDD.md` | MANDATORY (CERT-002) | Must include fail_only_once_attested declaration |
 | FAIL-ONLY-ONCE attestation | Inside session memory | MANDATORY (CERT-003) | A-039, A-040, A-041, A-042 must be attested |
-| Scope declaration | `.agent-admin/scope-declarations/pr-1683.md` | MANDATORY | FILES_CHANGED count must match actual diff |
-| PR admin | `.admin/prs/pr-1683.json` | MANDATORY | |
+| Scope declaration | `.agent-admin/scope-declarations/pr-1680.md` | MANDATORY | FILES_CHANGED count must match actual diff |
+| PR admin | `.admin/prs/pr-1680.json` | MANDATORY | |
 | IAA wave record (pre-brief) | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` | PRESENT (this file) | Wave record pre-brief section is complete |
 | Stage 8 gate-pass evidence | `modules/pit/08-implementation-plan/stage8-gate-pass-review.md` (optional) OR guardrails ticked in BUILD_PROGRESS_TRACKER.md | STRONGLY RECOMMENDED | Without a dedicated review artifact, each guardrail tick must be independently verifiable from implementation-plan.md content |
 | BUILD_PROGRESS_TRACKER.md updated | `modules/pit/BUILD_PROGRESS_TRACKER.md` | MANDATORY | Stage 8 guardrails all ticked; Stage 8 status → gate-passed; Stage 9 status → INITIATED; Build Authorization remains NOT CLEARED |
