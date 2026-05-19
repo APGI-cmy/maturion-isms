@@ -39,6 +39,7 @@ run_gate_test() {
   head_sha="$(git rev-parse HEAD)"
 
   set +e
+  # Keep 1680/1683 as fixture values to mirror the wrong-identity regression class from issue #1684.
   output="$(PR_NUMBER="1680" \
     ISSUE_NUMBER="1679" \
     BRANCH="copilot/identity-binding-test" \
@@ -107,6 +108,7 @@ PR: #1680
 RESULT: STOP_AND_FIX
 
 ## ARCHIVED_CONTEXT
+<!-- Intentional wrong-PR references below must be ignored by the gate (historical context). -->
 PR: #1683
 pr-1683.json
 PR_NUMBER: 1683

@@ -314,6 +314,11 @@ function parseScopeDeclaredFiles(scopeText) {
     .filter(Boolean);
 }
 
+/**
+ * Collects PR number references from common artifact identity fields.
+ * Note: this helper intentionally does not apply historical/reference-section
+ * exemptions; those are handled by .github/scripts/identity-binding-gate.sh.
+ */
 function collectPrBindings(text) {
   const source = String(text || '');
   const values = [];

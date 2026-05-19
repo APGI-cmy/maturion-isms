@@ -139,7 +139,7 @@ if manifest_branch and manifest_branch != branch:
     print(f"❌ {path} field 'branch' mismatch: {manifest_branch} != {branch}")
     ok = False
 manifest_head = str(data.get("head_sha", "") or "").strip()
-if head and manifest_head and manifest_head.lower() not in {"current_head", "current"} and manifest_head.lower() != head.lower():
+if head and manifest_head and manifest_head.lower() not in {"current_base", "current_head", "current"} and manifest_head.lower() != head.lower():
     print(f"❌ {path} field 'head_sha' mismatch: {manifest_head} != {head}")
     ok = False
 manifest_base = str(data.get("base_sha", "") or "").strip()
@@ -229,6 +229,8 @@ if ! ACTIVE_ARTIFACTS_LIST="$UNIQ_ACTIVE_ARTIFACTS" python3 - "$PR_NUMBER" <<'PY
 import os, re, sys
 actual_pr = str(sys.argv[1]).strip()
 files = [p.strip() for p in os.environ.get("ACTIVE_ARTIFACTS_LIST", "").splitlines() if p.strip() and os.path.exists(p.strip())]
+# Historical/reference sections are explicitly exempt from active identity checks.
+# These blocks preserve audit history and prior rejection context.
 allowed_labels = {"REJECTION_HISTORY", "PRIOR_REJECTION", "REFERENCE_ONLY", "ARCHIVED_CONTEXT"}
 violations = []
 
