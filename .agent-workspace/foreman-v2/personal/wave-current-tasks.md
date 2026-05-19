@@ -11,6 +11,8 @@ iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-inj
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md
 ceremony_admin_appointed: PENDING
 
+NOTE_ACTIVE_PREFLIGHT_PATH_BASIS: Carry-forward active path anchor retained for deterministic pre-flight timing provenance; content inside the referenced artifact is updated for issue-1671 / PR-1672.
+
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
 IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md
 IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-19T07:00:00Z

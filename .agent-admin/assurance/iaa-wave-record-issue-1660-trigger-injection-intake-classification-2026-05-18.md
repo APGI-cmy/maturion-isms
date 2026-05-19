@@ -1,5 +1,7 @@
 # IAA Wave Record — issue-1671-stop-and-fix-pr-1672
 
+> Record path retained from the original wave-file anchor for deterministic pre-flight timing provenance; content below is the active pre-brief contract for PR #1672.
+
 WAVE: issue-1671-stop-and-fix-pr-1672
 DATE: 2026-05-19
 BRANCH: copilot/restore-iaa-pre-flight-briefing
