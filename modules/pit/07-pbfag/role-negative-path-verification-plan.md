@@ -43,4 +43,4 @@ Mapping note: `project_manager`, `team_leader`, and `contributor` are currently 
 
 ## Gate Note
 
-This plan defines coverage only. Execution evidence is required later; Stage 7 gate-pass remains blocked by prerequisites.
+This plan defines coverage only. Execution evidence is required later; Stage 7 gate-pass is already recorded for pre-build package/evidence-contract scope only.

@@ -13,7 +13,7 @@
 
 ## Stage 7 Purpose
 
-Define and assess pre-build functional readiness using Stage 1–6 and Stage 5b outputs, without claiming CODE_PASS, FUNCTIONAL_PASS, or Stage 7 gate-pass.
+Define and assess pre-build functional readiness using Stage 1–6 and Stage 5b outputs, while keeping the recorded Stage 7 gate-pass strictly package/evidence-contract scoped and without claiming CODE_PASS or FUNCTIONAL_PASS.
 
 ## Mandatory Inputs
 

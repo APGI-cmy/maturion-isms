@@ -7,7 +7,7 @@
 | Stage 7 Status | GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED |
 | Stage 7 Gate-Pass | PASS (pre-build readiness package) |
 | Block Reason | None |
-| Stage 8 Start | NOT_STARTED — MAY INITIATE AFTER EXPLICIT AUTHORIZATION |
+| Stage 8 Start | NOT_STARTED — MAY INITIATE AFTER EXPLICIT CS2/FOREMAN AUTHORIZATION |
 | Build Authorization | NOT CLEARED |
 
 ## Readiness Checklist
