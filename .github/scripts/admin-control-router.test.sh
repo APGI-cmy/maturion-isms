@@ -76,7 +76,7 @@ run_case() {
   git branch -M main
   git checkout -q -b feature
 
-  local PR_NUMBER=1685
+  local PR_NUMBER=9001
   local HEAD_REF="feature"
   local BASE_REF="main"
   local PR_TITLE="Router test"

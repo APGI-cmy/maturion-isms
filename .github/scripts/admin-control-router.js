@@ -64,7 +64,9 @@ function classifyChangedFiles(changedFiles) {
       continue;
     }
 
-    if (/^(apps\/|modules\/|packages\/|supabase\/|api\/|src\/)/.test(file) || /\.(ts|tsx|js|jsx|py|go|sql|java|rb|rs)$/i.test(file)) {
+    const isInProductDirectory = /^(apps\/|modules\/|packages\/|supabase\/|api\/|src\/)/.test(file);
+    const hasProductFileExtension = /\.(ts|tsx|js|jsx|py|go|sql|java|rb|rs)$/i.test(file);
+    if (isInProductDirectory || hasProductFileExtension) {
       hasProductChange = true;
       continue;
     }
@@ -130,7 +132,7 @@ function readIdentityBundle() {
   return null;
 }
 
-function issueBlockingReason(code, details) {
+function createBlockingReason(code, details) {
   const messages = {
     NONE: 'All required controls satisfied for current identity and phase.',
     IDENTITY_BINDING: details || 'Active identity bundle mismatches current GitHub PR context.',
@@ -244,8 +246,8 @@ function main() {
   }
 
   const blocking = nextRequiredControl === 'NONE'
-    ? issueBlockingReason('NONE')
-    : issueBlockingReason(
+    ? createBlockingReason('NONE')
+    : createBlockingReason(
       nextRequiredControl,
       identityMismatch ? `Identity mismatch: ${identityMismatchReasons.join('; ')}` : undefined,
     );

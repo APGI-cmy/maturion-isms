@@ -947,7 +947,6 @@ jobs:
           PR_DRAFT: ${{ github.event.pull_request.draft }}
           CONTROL_STATE_OUTPUT_PATH: .agent-admin/control-state/pr-${{ github.event.pull_request.number }}.json
         run: |
-          chmod +x .github/scripts/admin-control-router.js
           node .github/scripts/admin-control-router.js
 
       - name: Upload control-state artifact
