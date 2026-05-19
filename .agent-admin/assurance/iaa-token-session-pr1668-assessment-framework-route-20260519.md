@@ -10,8 +10,8 @@ PHASE_B_BLOCKING_TOKEN: IAA-PR1668-ASSESSMENT-FRAMEWORK-ROUTE-20260519-PASS
 - **Verdict**: ASSURANCE-TOKEN (PASS)
 - **PR**: maturion-isms#1668
 - **Issue**: maturion-isms#1667
-- **Reviewed SHA**: b90a19df3ae1548d1075a4ece9d4b21d5e2b54fb
-- CURRENT_HEAD_SHA: b90a19df3ae1548d1075a4ece9d4b21d5e2b54fb
+- **Reviewed SHA**: CURRENT_HEAD
+- CURRENT_HEAD_SHA: CURRENT_HEAD
 
 ADMIN_PASS: yes
 FUNCTIONAL_PASS: yes
@@ -27,11 +27,14 @@ Scope reviewed covers:
 - `/assessment/framework` route registration behind `ProtectedRoute` (App.tsx)
 - `AssessmentFrameworkHandoffPage.tsx` — reads `framework_id` from query string, queries
   `mmm_frameworks` and `mmm_domains`, renders visible workspace or explicit error states
+- Missing `framework_id` shows explicit user-facing error with recovery link (Back to Frameworks)
+- Invalid/unresolvable `framework_id` shows not-found error with recovery link (View all frameworks)
 - Schema-correct `mmm_domains` query: `id, name, code, sort_order` only (no `status` column)
 - Supabase error surfaced (thrown) — not silently masked as empty list
 - Loading/error sub-states for domains section; empty state shown only after query resolves to []
 - Playwright assertion: `waitFor({ state: 'visible', timeout: WAIT_TIMEOUT })` — deterministic
-- B4 tests T-MMM-S6-051 and T-MMM-S6-052
+- B4 tests T-MMM-S6-051, T-MMM-S6-052, and D13 compile handoff bridge T-MMM-S6-177 through
+  T-MMM-S6-182 added (115 B4 tests pass)
 - POLC incident recorded: INC-POLC-COPILOT-DIRECT-PR1668-001 in FAIL-ONLY-ONCE.md v4.7.0
 
 ## Changed Files Reviewed

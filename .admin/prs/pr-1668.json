@@ -23,10 +23,11 @@
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "ui-builder",
   "evidence_required": [
-    "AssessmentFrameworkHandoffPage.tsx created at apps/mmm/src/pages/",
+    "AssessmentFrameworkHandoffPage.tsx created at apps/mmm/src/pages/ — renders visible workspace or explicit error states; no blank page",
     "/assessment/framework route registered in apps/mmm/src/App.tsx wrapped in ProtectedRoute",
-    "B4 framework tests T-MMM-S6-051 and T-MMM-S6-052 added to modules/MMM/tests/B4-framework/b4-framework.test.ts",
-    "verify-mmm-modes.mjs updated to assert visible workspace content after legacy-handoff",
+    "B4 framework tests T-MMM-S6-051, T-MMM-S6-052, and D13 compile handoff bridge T-MMM-S6-177 through T-MMM-S6-182 added to modules/MMM/tests/B4-framework/b4-framework.test.ts — 115 tests pass",
+    "verify-mmm-modes.mjs updated to assert visible workspace content (waitFor visible) after legacy-handoff — not URL-only",
+    "Missing framework_id shows explicit user-facing error with recovery link; invalid/unresolvable framework_id shows not-found error with recovery link",
     "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh -> Passed: 44, Failed: 0"
   ],
   "merge_authority": "CS2"

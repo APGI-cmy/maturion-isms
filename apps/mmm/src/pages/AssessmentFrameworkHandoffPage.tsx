@@ -68,7 +68,8 @@ export default function AssessmentFrameworkHandoffPage() {
               role="alert"
               data-testid="handoff-missing-framework-id"
             >
-              No framework ID provided. Please navigate from the framework compile workflow.
+              No framework ID provided. Please navigate from the framework compile workflow.{' '}
+              <Link to="/frameworks">Back to Frameworks</Link>
             </div>
           </div>
         </main>
