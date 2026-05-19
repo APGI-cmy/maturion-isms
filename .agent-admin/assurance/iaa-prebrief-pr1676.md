@@ -13,7 +13,6 @@ EXPECTED_QA_SCOPE:
 - `.agent-admin/scope-declarations/pr-1676.md`
 - `.agent-admin/prehandover/proof-pr-1676-foreman-contract-hardening-20260519.md`
 - `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1676-foreman-contract-hardening-20260519.md`
-- `.agent-admin/assurance/iaa-prebrief-pr1676.md`
 - `.agent-admin/assurance/iaa-preflight-brief-pr-1676.md`
 - `.agent-admin/assurance/iaa-token-pr-1676-foreman-contract-hardening-20260519.md`
 
