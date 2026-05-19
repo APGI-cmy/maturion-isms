@@ -1,0 +1,34 @@
+{
+  "pr": 1670,
+  "issue": 1669,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1670.json",
+    ".agent-admin/assurance/iaa-token-pr-1670-mmm-compile-handoff-alignment-20260518.md",
+    ".agent-admin/prehandover/proof-pr-1670-mmm-compile-handoff-alignment-20260518.md",
+    ".agent-admin/scope-declarations/pr-1670.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1670-mmm-compile-handoff-alignment-20260518.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/session-pr-1670-mmm-compile-handoff-alignment-20260518.md",
+    "modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md",
+    "modules/MMM/04-architecture/architecture.md",
+    "modules/MMM/05-qa-to-red/qa-to-red-catalog.md",
+    "modules/MMM/06-pbfag/pbfag-checklist.md",
+    "modules/MMM/11-build/wave-execution-standard.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "Governing issue #1669 explicitly referenced in Stage 2/7/12 compile-handoff addendum sections",
+    "Issue #1667 explicitly referenced as frozen/blocked until alignment acceptance",
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1670.md",
+    "ECAP/Admin ceremony artifact refreshed for PR #1670 at .agent-admin/prehandover/proof-pr-1670-mmm-compile-handoff-alignment-20260518.md",
+    "IAA final assurance token refreshed for PR #1670 at .agent-admin/assurance/iaa-token-pr-1670-mmm-compile-handoff-alignment-20260518.md",
+    "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh"
+  ],
+  "merge_authority": "CS2"
+}
