@@ -2,7 +2,7 @@
 
 **Module**: MMM — Maturity Model Management
 **Artifact**: QA-to-Red Catalog (Stage 6)
-**Version**: 0.2.0
+**Version**: 0.3.0
 **Wave**: mmm-stage6-qa-to-red-20260415
 **Issue**: maturion-isms#1384
 **Produced By**: qa-builder (delegated by foreman-v2-agent v6.2.0)
@@ -27,11 +27,12 @@
 | D10 | Cross-Cutting — Infrastructure & Quality Gates | T-MMM-S6-153–164 | 12 |
 | D11 | Product Identity & Governance | T-MMM-S6-165–176 | 12 |
 | D12 | Full Functional Delivery Gate (CTA/API Verification) | T-MMM-S6-FD-001–006 | 6 |
-| **TOTAL** | | **T-MMM-S6-001–176 + FD-001–006** | **182** |
+| D13 | Compile Handoff Transitional Bridge — `/assessment/framework` | T-MMM-S6-177–182 | 6 |
+| **TOTAL** | | **T-MMM-S6-001–182 + FD-001–006** | **188** |
 
 **FR Coverage**: 80/80 (100%)
 **TR Coverage**: 66/66 (all security/integration/quality TRs fully covered; all others by domain)
-**Journey Coverage**: 17/17 (J-01 through J-17)
+**Journey Coverage**: 17/17 (J-01 through J-17; compile-handoff transitional bridge coverage is tracked under J-06/J-07, not as a separate journey)
 
 ---
 
@@ -1407,5 +1408,72 @@
 
 ---
 
+## Domain 13: Compile Handoff Transitional Bridge — `/assessment/framework`
+
+**Governing Issue**: maturion-isms#1669  
+**Frozen implementation dependency**: APGI-cmy/maturion-isms#1667 remains blocked until this alignment package is accepted.
+
+*Sources: Compile handoff alignment issue (this wave), Stage 2 compile handoff contract, Architecture §A3.3a*
+
+### T-MMM-S6-177 — Compile Success Must Render Visible Framework Workspace Content
+
+- **Source**: Compile handoff alignment / Stage 2 post-compile handoff contract
+- **Layer**: E2E
+- **Description**: After `POST /api/frameworks/:id/compile` succeeds, navigation to
+  `/assessment/framework?framework_id=:id` must render visible framework workspace content.
+- **RED Condition**: URL updates but destination route renders blank or placeholder-only shell.
+- **Acceptance Criteria**: Test asserts visible workspace markers (framework title/tree/config panel)
+  are rendered within timeout after compile success redirect.
+
+### T-MMM-S6-178 — Direct Valid `/assessment/framework?framework_id=<valid-id>` Load Renders Workspace
+
+- **Source**: Stage 2 route destination declaration
+- **Layer**: E2E
+- **Description**: Direct navigation to `/assessment/framework?framework_id=<valid-id>` renders
+  visible framework configuration workspace for that framework.
+- **RED Condition**: Route loads blank page, unresolved spinner, or generic empty shell.
+- **Acceptance Criteria**: With fixture framework present, direct load shows visible workspace content
+  and active framework context tied to supplied `framework_id`.
+
+### T-MMM-S6-179 — Missing `framework_id` Shows User-Facing Error State
+
+- **Source**: Stage 2 missing-context failure contract / Architecture §A3.3a
+- **Layer**: E2E
+- **Description**: Navigation to `/assessment/framework` without `framework_id` must show a visible
+  user-facing error state explaining required context.
+- **RED Condition**: Blank route, silent failure, or console-only error.
+- **Acceptance Criteria**: Route renders explicit error message and recovery action (e.g. back to review).
+
+### T-MMM-S6-180 — Invalid/Unresolvable `framework_id` Shows User-Facing Error State
+
+- **Source**: Stage 2 invalid-context failure contract / Architecture §A3.3a
+- **Layer**: E2E
+- **Description**: `/assessment/framework?framework_id=<invalid-or-unresolvable-id>` must display
+  a visible error state indicating the framework cannot be resolved.
+- **RED Condition**: Blank route, infinite loading state, or uncaught runtime exception.
+- **Acceptance Criteria**: Error state appears with recovery option and no blank render.
+
+### T-MMM-S6-181 — Compile Handoff Preserves `framework_id` as Active Workspace Context
+
+- **Source**: Stage 2 relationship contract (compile output ↔ workspace context)
+- **Layer**: Integration/E2E
+- **Description**: Compile handoff must preserve compiled `framework_id` into active workspace context
+  (route query + workspace state/store).
+- **RED Condition**: Redirect loses `framework_id`, workspace loads different framework, or context null.
+- **Acceptance Criteria**: Assert route query, active workspace state, and loaded framework identity
+  all equal compiled framework ID.
+
+### T-MMM-S6-182 — Mode A/B/C Compile Handoff Verifies Visible Workspace Content
+
+- **Source**: Governance requirement for Mode A/B/C visible handoff verification
+- **Layer**: E2E
+- **Description**: For compile flows initiated from Mode A and Mode B, and from any approved Mode C
+  transitional flow, post-compile handoff must prove visible workspace render (not URL-only proof).
+- **RED Condition**: Any mode can compile but lands on blank `/assessment/framework` destination.
+- **Acceptance Criteria**: Per-mode test evidence confirms compile success plus visible workspace content
+  on handoff destination.
+
+---
+
 *End of MMM Stage 6 — QA-to-Red Catalog*
-*Total: 182 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys covered*
+*Total: 188 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys + compile handoff bridge covered*

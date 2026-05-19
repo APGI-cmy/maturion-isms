@@ -9,7 +9,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: Architecture (Stage 5)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.2.0
+- **Version**: 0.3.0
 - **Wave**: mmm-stage5-architecture-20260414
 
 ### Upstream Authority References
@@ -17,7 +17,7 @@
 | Stage | Artifact | Version | Status | Reference |
 |-------|----------|---------|--------|-----------|
 | Stage 1 | `modules/MMM/00-app-description/MMM_app_description.md` | v0.5.0 | CS2-Approved | maturion-isms#1298 (2026-04-08) |
-| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.1.0 | CS2-Approved | maturion-isms#1352 (2026-04-14) |
+| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.3.0 | Alignment addendum applied for compile handoff (governing issue #1669; CS2 review pending) | maturion-isms#1669 (2026-05-18) |
 | Stage 3 | `modules/MMM/02-frs/functional-requirements.md` | v0.1.0 | CS2-Approved | maturion-isms#1366 (2026-04-14) |
 | Stage 4 | `modules/MMM/03-trs/technical-requirements-specification.md` | v0.1.0 | CS2-Approved (carried forward per maturion-isms#1378) | maturion-isms#1378 (2026-04-14) |
 | Harvest Map | `modules/MMM/harvest-map/harvest-map.md` | v0.3.0 | Active | — |
@@ -139,6 +139,7 @@ before build is authorized.
 | Framework init | `mmm-framework-init` | `/api/frameworks/init` | `frameworks`, `domains`, `mps`, `criteria`, `level_descriptors` |
 | Mode A upload | `mmm-upload-framework-source` + parse/chunk | `/api/upload/framework-source`, `/api/frameworks/parse` | `document_uploads`, `framework_source_chunks` |
 | Mode B generate | `mmm-ai-framework-generate` | `/api/frameworks/generate` | `frameworks`, `domains`, `criteria` (AI-populated) |
+| Compile handoff workspace (transitional) | `mmm-framework-compile-handoff` | `POST /api/frameworks/{id}/compile` + `/assessment/framework?framework_id={id}` | `frameworks`, `domains`, `mps`, `criteria`, `level_descriptors` |
 | Dashboard | `mmm-qiw-status` | `/api/dashboard/status` | `maturity_scores`, `published_frameworks` |
 | Evidence | `mmm-evidence-create` | `/api/criteria/{id}/evidence` | `evidence`, `evidence_metadata` |
 | Approval | `mmm-framework-approve` | `/api/frameworks/{id}/approve` | `approval_requests`, `frameworks.status` |
@@ -195,7 +196,7 @@ call without a matching row in this table is in violation of ARCH-LAW-001.
 - No direct Supabase calls in page or feature components; all data access via
   TanStack Query hooks that call Edge Function or PostgREST endpoints.
 
-### A3.3 — Page / Route Structure (17 UX Journeys)
+### A3.3 — Page / Route Structure (17 UX Journeys + Transitional Handoff Route)
 
 | Journey | Route Path | Primary Component | Auth Required |
 |---------|-----------|-------------------|---------------|
@@ -207,6 +208,7 @@ call without a matching row in this table is in violation of ARCH-LAW-001.
 | J-06 | `/frameworks/:id/upload` | `VerbatimUploadFlow` | Yes |
 | J-07 | `/frameworks/:id/generate` | `NewCriteriaCreationFlow` | Yes |
 | J-08 | `/frameworks/:id/review` | `FrameworkReviewFlow` | Yes |
+| J-06 + J-07 post-compile handoff (transitional bridge) | `/assessment/framework?framework_id=:id` | `AssessmentFrameworkBridgePage` (mount boundary for legacy workspace) | Yes |
 | J-09 | `/frameworks/:id/publish` | `PublicationFlow` | Yes (ADMIN) |
 | J-10 | `/frameworks/:id/criteria/:criterionId` | `CriterionDrillDown` | Yes |
 | J-11 | `/audit/:sessionId` | `AuditWorkbench` | Yes |
@@ -223,6 +225,30 @@ call without a matching row in this table is in violation of ARCH-LAW-001.
 - `<RequireRole role="ADMIN">` — returns 403 view for insufficient role (TR-036)
 - `<RequireOrg>` — redirects to `/onboarding` if organisation record missing
 - Admin routes (`/admin/*`) — ADMIN-only guard; ASSESSOR/VIEWER receive 403 (TR-066)
+
+### A3.3a — `/assessment/framework` Transitional Boundary Contract
+
+The `/assessment/framework` destination is declared as a **transitional bridge route**
+for compile handoff. It is not yet the canonical long-term MMM route shape.
+
+**Route / component ownership**:
+- MMM app shell owns route registration, auth/org guards, and boundary error handling.
+- `AssessmentFrameworkBridgePage` owns handoff orchestration and context validation.
+- Legacy `AssessmentFramework` workspace (if mounted) remains inside the bridge boundary
+  and does not own MMM shell routing.
+
+**Active context contract**:
+- Required context: `framework_id` query parameter.
+- Bridge route MUST reject missing `framework_id` with a visible user-facing error state.
+- Bridge route MUST reject invalid/unresolvable `framework_id` with a visible user-facing
+  error state and recovery action.
+- Blank render is explicitly prohibited for all handoff outcomes.
+
+**Integration contract expectation**:
+- Any data load performed by the bridge route MUST use the typed MMM integration client
+  (ARCH-LAW-001), not direct `fetch()` in UI components.
+- Compile handoff remains blocked from build-to-green until Stage 6 RED tests for visible
+  workspace render and context failures are in place.
 
 ### A3.4 — State Management (Zustand)
 
@@ -1628,8 +1654,8 @@ architecture revision wave:**
 
 **Module**: MMM — Maturity Model Management  
 **Stage**: 5 — Architecture  
-**Version**: 0.1.0  
-**Date**: 2026-04-14  
+**Version**: 0.3.0  
+**Date**: 2026-05-18  
 **Status**: DRAFT — For CS2 review and approval  
 **Produced By**: mat-specialist (POLC-Orchestration mode, delegated by foreman-v2-agent v6.2.0)  
 **Issue**: maturion-isms#1378  
