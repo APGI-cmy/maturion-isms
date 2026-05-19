@@ -506,6 +506,19 @@ async function runMode(page, origin, mode, sampleFilePath) {
       compileResult = `PASS — legacy handoff with visible workspace (${handoffUrl})`;
       log(`Compile: ${compileResult}`);
 
+      // Assert 5-card domain content — workspace must render domain cards not raw list
+      const domainCardEl = page.locator('[data-testid="domain-card"]').first();
+      const domainCardVisible = await domainCardEl
+        .waitFor({ state: 'visible', timeout: WAIT_TIMEOUT })
+        .then(() => true)
+        .catch(() => false);
+      if (!domainCardVisible) {
+        compileResult = `FAIL — workspace visible but domain-card elements not found; expected 5-card domain workspace at (${handoffUrl})`;
+        log(`Compile: ${compileResult}`);
+        throw new Error(compileResult);
+      }
+      compileResult = `PASS — legacy handoff with visible workspace and domain cards (${handoffUrl})`;
+
       return { success: true, frameworkId, compileResult, publishResult, details };
     } else if (compileOutcome === 'error') {
       const errMsg = await compileError.innerText().catch(() => '');

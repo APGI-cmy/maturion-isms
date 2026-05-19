@@ -670,3 +670,140 @@ describe('T-MMM-S6-182: Mode A/B/C compile handoff verifies visible workspace co
     expect(src).toContain('AssessmentFrameworkHandoffPage');
   });
 });
+
+// ─── T-MMM-S6-183: Five canonical domain cards render in workspace ────────────
+describe('T-MMM-S6-183: AssessmentFrameworkHandoffPage renders five canonical domain cards', () => {
+  it('contains all five canonical domain names', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('Leadership and Governance');
+    expect(src).toContain('Process Integrity');
+    expect(src).toContain('People and Culture');
+    expect(src).toContain('Protection');
+    expect(src).toContain('Proof It Works');
+  });
+  it('domain cards use data-testid="domain-card"', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="domain-card"');
+  });
+  it('canonical domain names are declared in an ordered array of 5', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('CANONICAL_DOMAIN_NAMES');
+  });
+});
+
+// ─── T-MMM-S6-184: Domain card click-through navigation contract ──────────────
+describe('T-MMM-S6-184: Domain card has click-through link to domain workspace', () => {
+  it('domain card contains link to /assessment/framework/domain/', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('/assessment/framework/domain/');
+  });
+  it('domain card click-through uses domainId in path', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('domainId');
+  });
+});
+
+// ─── T-MMM-S6-185: Domain workspace page exists as transitional route ─────────
+describe('T-MMM-S6-185: DomainWorkspacePage.tsx exists with required content', () => {
+  it('DomainWorkspacePage.tsx file exists', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toBeTruthy();
+  });
+  it('DomainWorkspacePage has data-testid="domain-workspace"', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('data-testid="domain-workspace"');
+  });
+  it('DomainWorkspacePage has data-testid="domain-workspace-title"', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('data-testid="domain-workspace-title"');
+  });
+  it('DomainWorkspacePage has data-testid="domain-workspace-actions"', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('data-testid="domain-workspace-actions"');
+  });
+  it('DomainWorkspacePage renders visible user-facing content (not a blank page)', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('Domain Workspace');
+    expect(src).toContain('Back to Framework Workspace');
+  });
+  it('DomainWorkspacePage declares the three next operational actions', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('Compile MPSs');
+    expect(src).toContain('Compile intent statements');
+    expect(src).toContain('Compile criteria');
+  });
+  it('DomainWorkspacePage reads domainId from useParams', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('useParams');
+    expect(src).toContain('domainId');
+  });
+  it('DomainWorkspacePage reads framework_id from useSearchParams', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('useSearchParams');
+    expect(src).toContain('framework_id');
+  });
+});
+
+// ─── T-MMM-S6-186: Domain workspace route registered in App.tsx ───────────────
+describe('T-MMM-S6-186: App.tsx registers /assessment/framework/domain/:domainId route', () => {
+  it('App.tsx contains the domain workspace route path', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('/assessment/framework/domain/');
+  });
+  it('App.tsx imports DomainWorkspacePage', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('DomainWorkspacePage');
+  });
+  it('domain workspace route is behind ProtectedRoute', () => {
+    const src = readFile('apps/mmm/src/App.tsx');
+    expect(src).toContain('ProtectedRoute');
+    // The route and ProtectedRoute both appear in App.tsx
+    expect(src).toContain('/assessment/framework/domain/');
+  });
+});
+
+// ─── T-MMM-S6-187: Workspace navigation uses Back to Review Framework ──────────
+describe('T-MMM-S6-187: Workspace-level back-navigation uses "Back to Review Framework"', () => {
+  it('AssessmentFrameworkHandoffPage contains "Back to Review Framework"', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('Back to Review Framework');
+  });
+  it('"Back to Frameworks" text is preserved in missing-framework-id error block', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('Back to Frameworks');
+    expect(src).toContain('data-testid="handoff-missing-framework-id"');
+  });
+  it('both navigation strings coexist in the file', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('Back to Frameworks');
+    expect(src).toContain('Back to Review Framework');
+  });
+});
+
+// ─── T-MMM-S6-188: Mini-dashboard placeholder slots declared ──────────────────
+describe('T-MMM-S6-188: Domain cards declare mini-dashboard placeholder slots', () => {
+  it('domain-mps-count slot exists', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="domain-mps-count"');
+  });
+  it('domain-criteria-count slot exists', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="domain-criteria-count"');
+  });
+  it('domain-maturity-level slot exists', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="domain-maturity-level"');
+  });
+  it('domain-evidence-completion slot exists', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="domain-evidence-completion"');
+  });
+  it('domain-approval-status slot exists', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="domain-approval-status"');
+  });
+  it('domain-compile-status slot exists', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('data-testid="domain-compile-status"');
+  });
+});
