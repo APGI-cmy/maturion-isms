@@ -6,7 +6,7 @@ Date: 2026-05-19
 Branch: copilot/stage-9-gate-pass-checklist
 Issue: #1687 — Foreman: Gate-pass PIT Stage 9 Builder Checklist, then initiate Stage 10 IAA Pre-Brief
 PR: #1689
-CS2 Authorization: Issue #1681 opened by CS2 (@APGI-cmy) and assigned to Copilot
+CS2 Authorization: Issue #1687 opened by CS2 (@APGI-cmy) and assigned to Copilot
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage9-gate-pass-stage10-initiate-20260519.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage9-gate-pass-stage10-initiate-20260519.md
 ceremony_admin_appointed: PENDING (governance-only wave; handover-phase appointment only)
