@@ -328,7 +328,7 @@ PBFAG must include all of the following verifications. Any FAIL is a PBFAG gate-
 **Location**: `modules/pit/08-implementation-plan/`  
 **Key Artifacts**:
 - [x] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
-- [x] `stage8-gate-pass-review.md` — Stage 8 gate-pass evidence: all 22 issue #1683 checklist items verified PASS; all 9 Functional-Delivery Guardrails verified PASS
+- [x] `stage8-gate-pass-review.md` — Stage 8 gate-pass evidence: all 22 issue #1679 checklist items verified PASS; all 9 Functional-Delivery Guardrails verified PASS
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 8 gate-pass)**:
 

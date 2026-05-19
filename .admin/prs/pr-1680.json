@@ -3,11 +3,9 @@
   "issue": 1679,
   "type": "governance-change",
   "owner": "Copilot",
+  "scope_notes": "session-issue-1683-* files retain the '1683' name because they are ECAP-assembled ceremony artifacts whose session IDs encode the original session identifier. Session IDs are immutable audit identifiers; the issue number in the filename reflects the tentative issue number at session-assembly time. File content has been corrected to reference issue #1679.",
   "scope": [
-    ".admin/prs/pr-1683.json",
-    ".admin/prs/pr-1680.json",
     ".agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md",
-    ".agent-admin/scope-declarations/pr-1683.md",
     ".agent-admin/scope-declarations/pr-1680.md",
     ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pit-stage8-gate-pass-stage9-initiate-20260519.md",
     ".agent-workspace/execution-ceremony-admin-agent/bundles/session-issue-1683-stage8-gate-pass-stage9-initiate-20260519.md",
