@@ -1,0 +1,27 @@
+{
+  "pr": 1676,
+  "issue": 1675,
+  "type": "agent-contract-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1676.json",
+    ".agent-admin/assurance/iaa-prebrief-pr1676.md",
+    ".agent-admin/assurance/iaa-preflight-brief-pr-1676.md",
+    ".agent-admin/assurance/iaa-token-pr-1676-foreman-contract-hardening-20260519.md",
+    ".agent-admin/scope-declarations/pr-1676.md",
+    ".github/agents/foreman-v2-agent.md"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1676.md",
+    "IAA pre-brief artifact present at .agent-admin/assurance/iaa-prebrief-pr1676.md",
+    "IAA preflight brief artifact present at .agent-admin/assurance/iaa-preflight-brief-pr-1676.md",
+    "IAA final assurance token present at .agent-admin/assurance/iaa-token-pr-1676-foreman-contract-hardening-20260519.md"
+  ],
+  "merge_authority": "CS2"
+}
