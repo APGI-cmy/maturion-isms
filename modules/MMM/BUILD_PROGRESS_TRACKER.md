@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-05-07  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
+**Last Updated**: 2026-05-19  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -897,6 +897,39 @@ standard. All 12 stages (Stage 1 through Stage 12) were updated in one atomic wa
 
 No existing stage completion statuses changed. This retrofit adds governance guardrails only.
 Governed by PR #1565. Produced by: mat-specialist (delegated by foreman-v2-agent).
+
+---
+
+## Compile Handoff Alignment — NEW RED Finding (2026-05-19, PR #1688)
+
+Manual verification confirms `/assessment/framework?framework_id=<id>` now renders a visible page,
+but the rendered state is still a raw harvested-domain list (for example:
+`D001 Uploaded Governance Domain`) rather than the canonical five-domain framework configuration
+workspace.
+
+**This is a NEW RED condition and is explicitly distinct from the prior blank-page RED.**
+
+- Prior RED (blank page at handoff destination) was resolved by PR #1668.
+- New RED: visible-but-incomplete workspace rendering.
+
+**Expected success state (required for build-to-green):**
+- Exactly five canonical domain cards:
+  - Leadership and Governance
+  - Process Integrity
+  - People and Culture
+  - Protection
+  - Proof It Works
+- Each card must expose mini-dashboard structure (or approved placeholders) for:
+  MPS count, criteria count, maturity level, evidence completion %, approval/governance status,
+  and compile status.
+- Each card must support click-through into its domain workspace actions:
+  Compile MPSs, Compile intent statements, Compile criteria.
+
+**Build authorization impact:**
+- Build-to-green implementation for domain-card workspace scope remains blocked until this
+  alignment PR (#1688) merges to `main`.
+- Follow-up implementation remains a dependent build-to-green issue and must not be advanced
+  in this alignment-only PR.
 
 ---
 
