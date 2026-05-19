@@ -67,7 +67,26 @@ Anti-regression obligations:
 
 ## TOKEN
 
-*To be populated by IAA after Phase 3 assurance at PR handover.*
+**ASSURANCE-TOKEN — PHASE_B_BLOCKING**
+
+```
+═══════════════════════════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1683 — Build 5-domain framework configuration workspace
+Wave: build-to-green-5domain-workspace-20260519
+All checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
+Issued: 2026-05-19
+Issuing agent: independent-assurance-agent
+═══════════════════════════════════════════════════════════
+```
+
+**Checks run**: 12 substance checks — 12 PASS, 0 FAIL
+**Overlay**: PRODUCT_BUILD_ASSURANCE (BD-000–BD-024)
+**Anti-regression**: T-MMM-S6-179 PASS — "Back to Frameworks" confirmed preserved
+**Test evidence**: 140/140 B4 tests GREEN (vitest run confirmed)
 
 ---
 
