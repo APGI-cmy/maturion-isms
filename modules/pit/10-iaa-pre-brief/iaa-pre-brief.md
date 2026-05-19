@@ -79,6 +79,7 @@ The following Stage 1–9 artifacts are submitted for IAA review. All paths are 
 | Dashboard State Reflection Gate | `modules/pit/05-live-functional-verification/07_DASHBOARD_STATE_REFLECTION_GATE.md` | ✅ Filed |
 | Handover Evidence Requirements | `modules/pit/05-live-functional-verification/08_HANDOVER_EVIDENCE_REQUIREMENTS.md` | ✅ Filed |
 | CS2 UI Acceptance Checklist | `modules/pit/05-live-functional-verification/09_CS2_UI_ACCEPTANCE_CHECKLIST.md` | ✅ Filed |
+| LFV Automation Workflow Design | `modules/pit/05-live-functional-verification/pit-live-verification-workflow.yml` | ✅ Filed (Design Artifact) |
 
 ### 1.7 Stage 6 — QA-to-Red (11 artifacts)
 

@@ -12,6 +12,55 @@
 
 ---
 
+IAA_PREFLIGHT_BRIEF
+PR: #1689
+ISSUE: #1687
+WAVE: pit-stage9-gate-pass-stage10-initiate-20260519
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+CURRENT_HEAD_SHA: CURRENT_HEAD
+
+EXPECTED_QA_SCOPE:
+- modules/pit/BUILD_PROGRESS_TRACKER.md
+- modules/pit/09-builder-checklist/stage9-gate-pass-review.md
+- modules/pit/10-iaa-pre-brief/iaa-pre-brief.md
+- .admin/prs/pr-1689.json
+- .agent-admin/scope-declarations/pr-1689.md
+- .agent-admin/assurance/iaa-wave-record-pit-stage9-gate-pass-stage10-initiate-20260519.md
+- .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-pit-stage9-gate-pass-stage10-initiate-20260519.md
+- .agent-workspace/execution-ceremony-admin-agent/bundles/session-pit-stage9-gate-pass-stage10-initiate-20260519.md
+- .agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage9-gate-pass-stage10-initiate-20260519.md
+- .agent-workspace/foreman-v2/memory/session-pit-stage9-gate-pass-stage10-initiate-20260519.md
+- .agent-workspace/foreman-v2/parking-station/suggestions-log.md
+- .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+
+EXPECTED_FAILURE_MODES:
+- Stage 9 gate-pass not evidenced before Stage 10 initiated (OVL-PBG-008, OVL-PBG-013)
+- Issue number inconsistency across admin artifacts (A-026, A-028)
+- Scope declaration file count mismatch vs actual diff (A-026)
+- PREHANDOVER iaa_audit_token set to PENDING instead of pr-reference format (A-029)
+- IAA pre-brief claims IAA acceptance (prohibited — OVL-PBG-004)
+- Build Authorization cleared prematurely (Stage 9 non-goals clause)
+- Builder appointment implied before Stage 11 (POLC breach)
+
+FOREMAN_INSTRUCTIONS:
+- Ensure all 12 changed files are listed in scope declaration and pr-1689.json scope array.
+- Confirm PREHANDOVER iaa_audit_token uses pr-reference format (not PENDING).
+- Do not claim IAA acceptance in Stage 10 pre-brief.
+- Stage 11 and Stage 12 must remain NOT_STARTED in all artifacts.
+- Build Authorization must remain NOT CLEARED in all artifacts.
+- All artifacts must be committed and pushed before IAA final invocation (A-021).
+
+IAA_WILL_QA:
+- Active preflight brief structure, PR binding (#1689), and current-head relevance.
+- Stage 9 gate-pass evidence present before Stage 10 initiated (OVL-PBG-008, OVL-PBG-013).
+- Scope declaration matches diff exactly — all 12 files declared (A-026, A-028).
+- Build Authorization remains NOT CLEARED throughout all artifacts.
+- No builder appointment, implementation start, or FUNCTIONAL_PASS claim in any artifact.
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
+---
+
 ## PRE-BRIEF
 
 **Triggered by**: CS2 / @APGI-cmy via Foreman PRE-BRIEF request — Phase 0 IAA contract
@@ -116,7 +165,7 @@ Ranked by likelihood, these are the patterns IAA will specifically examine:
 | FM-08 | PREHANDOVER proof missing or incomplete ceremony | Foreman delivers without PREHANDOVER proof | A-015 |
 | FM-09 | Scope declaration doesn't match actual diff | Files committed but not declared, or declared but not committed | A-021, A-026 |
 | FM-10 | Future-dated completion claims in stage9-gate-pass-review.md | Review artifact written with future date or prospective language presented as past | A-036 |
-| FM-11 | `iaa_audit_token` in PREHANDOVER set to `PENDING` instead of pr-reference format | Old pattern (superseded by A-029) | A-029 |
+| FM-11 | `iaa_audit_token` in PREHANDOVER set to `PENDING` instead of pr-reference format | Old pattern (replaced by A-029) | A-029 |
 | FM-12 | Stage 10 pre-brief missing required sections (< 7 of 7 from issue requirements) | Incomplete pre-brief: missing known-delivery-risks, IAA challenge questions, etc. | OVL-PBG-004, PRE_BRIEF_ASSURANCE overlay (OVL-INJ-ADM-003) |
 | FM-13 | Stage 11 or Stage 12 status altered | Scope creep — should remain NOT_STARTED | Hard boundary per issue |
 | FM-14 | Duplicate directory artifacts (`08-builder-checklist/` alongside `09-builder-checklist/`) cause path confusion | Legacy migration artefact | OVL-PBG-009 advisory |
