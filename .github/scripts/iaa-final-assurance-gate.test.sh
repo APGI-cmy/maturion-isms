@@ -26,6 +26,7 @@
 #   AC-D-NOSHA    Token missing **Reviewed SHA**: field                             → exit 1
 #   AC-D-WRONGSHA Token reviewed SHA not in PR head ancestry                        → exit 1
 #   AC-D-SUPERSEDED-PREFLIGHT Token preflight path references superseded brief      → exit 1
+#   AC-D-SUPERSEDED-PREFLIGHT-INDENTED Token preflight path references superseded brief (indented field) → exit 1
 #   AC-D-BADPREFLIGHTPATH Token preflight path outside allowed assurance naming      → exit 1
 #   AC-WR-NOPR    Wave record ## TOKEN missing PR/issue fields                      → exit 1
 #   AC-ECAP-NOBUNDLE PREHANDOVER ecap_invoked=true but no ECAP bundle committed     → exit 1
@@ -472,6 +473,16 @@ setup_ac_superseded_preflight() {
   git commit -q -m "Mark referenced preflight brief superseded"
 }
 run_test "AC-D-SUPERSEDED-PREFLIGHT: Token preflight path references superseded brief" 1 "$IAA_GATE_SCRIPT" "setup_ac_superseded_preflight"
+
+# AC-D-SUPERSEDED-PREFLIGHT-INDENTED: Token references preflight brief with indented SUPERSEDED field
+setup_ac_superseded_preflight_indented() {
+  add_impl_file
+  add_valid_iaa_token
+  echo "  SUPERSEDED: yes" >> .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md
+  git add .
+  git commit -q -m "Mark referenced preflight brief superseded with indented field"
+}
+run_test "AC-D-SUPERSEDED-PREFLIGHT-INDENTED: Token preflight path references superseded brief (indented field)" 1 "$IAA_GATE_SCRIPT" "setup_ac_superseded_preflight_indented"
 
 # AC-D-BADPREFLIGHTPATH: Token references preflight path outside allowed assurance naming
 setup_ac_bad_preflight_path() {
