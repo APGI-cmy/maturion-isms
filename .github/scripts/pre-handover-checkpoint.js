@@ -17,6 +17,9 @@ const REQUIRED_CHECKS = [
   'preflight/product-delivery-gates',
   'preflight/gate-changing-pr-rule',
 ];
+const REJECTION_PACKAGE_EXCLUDED_GATES = new Set([
+  'preflight/injection-intake-current',
+]);
 
 const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
 const HANDOVER_CHECKPOINT_REQUIRED_MARKER = '<!-- handover-checkpoint-required -->';
@@ -298,12 +301,31 @@ function readSimpleField(text, label) {
   return match ? match[1].trim() : '';
 }
 
+function parseScopeDeclaredFiles(scopeText) {
+  const lines = String(scopeText || '').split('\n');
+  return lines
+    .map((line) => {
+      const strictMatch = line.match(/^\s*-\s+`([^`]+)`\s+[-—]\s+/);
+      if (strictMatch) return strictMatch[1].trim();
+      const looseMatch = line.match(/^\s*-\s+`([^`]+)`/);
+      return looseMatch ? looseMatch[1].trim() : '';
+    })
+    .filter(Boolean);
+}
+
 function headMatches(candidate, headSha) {
   const value = normalizeValue(String(candidate || '').replace(/[`]/g, ''));
   const head = normalizeValue(headSha);
   if (!value || !head) return false;
+  // "current_head"/"current-head" token is a canonical runtime-substituted marker used by governance artifacts.
+  // Treat it as current-head aligned to avoid stale-by-construction self-reference loops.
+  if (value === 'current_head' || value === 'current-head') return true;
   if (!/^[0-9a-f]{7,40}$/.test(value)) return false;
   return head === value || head.startsWith(value) || value.startsWith(head);
+}
+
+function removeExcludedGates(records) {
+  return (records || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
 }
 
 function artifactCurrentness(text, headSha) {
@@ -487,6 +509,23 @@ function pickBestArtifacts(files, context) {
   return scored;
 }
 
+function matchesArtifactContext(text, context) {
+  const artifactText = String(text || '');
+  if (context.prNumber && new RegExp(`#${context.prNumber}\\b`).test(artifactText)) return true;
+  if (context.issueNumber && new RegExp(`#${context.issueNumber}\\b`).test(artifactText)) return true;
+  if (context.branch && artifactText.includes(context.branch)) return true;
+  return false;
+}
+
+function contextScopedArtifacts(artifacts, context) {
+  if (!artifacts || artifacts.length === 0) return [];
+  const scoped = artifacts.filter((artifact) => matchesArtifactContext(artifact.text, context));
+  if (scoped.length > 0) return scoped;
+  // If no explicit PR/issue/branch context is present, fall back to all
+  // artifacts so legacy pending-token evidence is still honored.
+  return artifacts;
+}
+
 function collectCheckState(checkRuns, commitStatuses) {
   const latestByName = new Map();
   for (const run of checkRuns || []) {
@@ -499,21 +538,59 @@ function collectCheckState(checkRuns, commitStatuses) {
   const passing = [];
   const failing = [];
   const pending = [];
+  const failingDetails = [];
+  const pendingDetails = [];
   for (const [name, run] of latestByName.entries()) {
     if (run.status === 'completed') {
       if (['success', 'skipped', 'neutral'].includes(run.conclusion)) {
         passing.push(name);
       } else {
         failing.push(name);
+        failingDetails.push({
+          gate: name,
+          status: run.status || 'completed',
+          conclusion: run.conclusion || 'failure',
+          runId: run.id || '',
+          jobId: '',
+          updatedAt: run.completed_at || run.started_at || '',
+        });
       }
     } else {
       pending.push(name);
+      pendingDetails.push({
+        gate: name,
+        status: run.status || 'pending',
+        conclusion: '',
+        runId: run.id || '',
+        jobId: '',
+        updatedAt: run.started_at || run.completed_at || '',
+      });
     }
   }
 
   for (const status of commitStatuses || []) {
-    if (status.state === 'failure' || status.state === 'error') failing.push(status.context);
-    if (status.state === 'pending') pending.push(status.context);
+    if (status.state === 'failure' || status.state === 'error') {
+      failing.push(status.context);
+      failingDetails.push({
+        gate: status.context,
+        status: status.state,
+        conclusion: status.state,
+        runId: '',
+        jobId: '',
+        updatedAt: status.updated_at || status.created_at || '',
+      });
+    }
+    if (status.state === 'pending') {
+      pending.push(status.context);
+      pendingDetails.push({
+        gate: status.context,
+        status: status.state,
+        conclusion: status.state,
+        runId: '',
+        jobId: '',
+        updatedAt: status.updated_at || status.created_at || '',
+      });
+    }
     if (status.state === 'success') passing.push(status.context);
   }
 
@@ -523,12 +600,23 @@ function collectCheckState(checkRuns, commitStatuses) {
   ]);
 
   const missing = REQUIRED_CHECKS.filter((name) => !observed.has(name));
+  const missingDetails = missing.map((name) => ({
+    gate: name,
+    status: 'missing',
+    conclusion: 'missing',
+    runId: '',
+    jobId: '',
+    updatedAt: '',
+  }));
   return {
     total: REQUIRED_CHECKS.length,
     passing: Array.from(new Set(passing)).sort(),
     failing: Array.from(new Set(failing)).sort(),
     pending: Array.from(new Set(pending)).sort(),
     missing,
+    failingDetails,
+    pendingDetails,
+    missingDetails,
     observed: Array.from(observed).sort(),
     noChecksAtAll: observed.size === 0,
   };
@@ -617,6 +705,10 @@ function evaluateCheckpoint(input = {}) {
   const scopeCount = Number(readSimpleField(scopeText, 'FILES_CHANGED') || 0) || null;
   const scopePresent = Boolean(scopeText);
   const scopeCountMatches = scopePresent && scopeCount === changedFiles.length;
+  const scopeDeclaredFiles = parseScopeDeclaredFiles(scopeText);
+  const scopeUndeclaredFiles = scopeDeclaredFiles.length > 0
+    ? changedFiles.filter((file) => !scopeDeclaredFiles.includes(file))
+    : [];
 
   const checkpointTime = input.checkpointTime || process.env.CHECKPOINT_TIME || new Date().toISOString();
   const markCurrentRunAsIntake = explicitMarkCurrentRunAsIntake || isCheckpointTriggerComment(trigger);
@@ -694,20 +786,26 @@ function evaluateCheckpoint(input = {}) {
 
   const assuranceDir = path.join(process.cwd(), '.agent-admin/assurance');
   const prebriefStandalone = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-prebrief-.*\.md$/.test(relPath));
+  const preflightBriefFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-preflight-brief-.*\.md$/.test(relPath));
   const waveRecords = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-wave-record-.*\.md$/.test(relPath));
   const tokenFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-token-.*\.md$/.test(relPath));
   const prebriefWaveRecords = waveRecords.filter((relPath) => /## PRE-BRIEF/i.test(safeRead(path.join(process.cwd(), relPath))) && !/superseded/i.test(safeRead(path.join(process.cwd(), relPath))));
   const tokenWaveRecords = waveRecords.filter((relPath) => /## TOKEN/i.test(safeRead(path.join(process.cwd(), relPath))));
   const prebriefFiles = pickBestArtifacts([...prebriefStandalone, ...prebriefWaveRecords], { prNumber, issueNumber, branch, headSha });
+  const preflightBriefArtifacts = pickBestArtifacts(preflightBriefFiles, { prNumber, issueNumber, branch, headSha });
   const assuranceArtifacts = pickBestArtifacts([...tokenFiles, ...tokenWaveRecords], { prNumber, issueNumber, branch, headSha });
+  const preflightBriefPresent = preflightBriefArtifacts.length > 0;
+  const preflightBriefCurrent = preflightBriefArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const prebriefPresent = prebriefFiles.length > 0;
   const finalAssurancePresent = assuranceArtifacts.length > 0;
   const tokenPresent = assuranceArtifacts.length > 0;
   const iaaArtifactCurrent = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const iaaArtifactStale = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
   const tokenPending = [
-    ...adminArtifacts,
-    ...assuranceArtifacts,
+    // Admin artifacts intentionally ignore issueNumber matching because issues are
+    // reused across rounds and can pull unrelated historical ceremony files.
+    ...contextScopedArtifacts(adminArtifacts, { prNumber, branch }),
+    ...contextScopedArtifacts(assuranceArtifacts, { prNumber, issueNumber, branch }),
   ].some((artifact) => /iaa_audit_token:\s*PENDING|PHASE_B_BLOCKING_TOKEN:\s*PENDING/i.test(artifact.text));
 
   const functionalEvidence = readFunctionalEvidence(prNumber, prBody);
@@ -741,11 +839,127 @@ function evaluateCheckpoint(input = {}) {
     requiresIaa ? 'preflight/iaa-final-assurance' : '',
     ...affectedProductGatesRequired,
   ].filter(Boolean))).sort();
+  const unresolvedCheckFailures = removeExcludedGates(checks.failingDetails);
+  const unresolvedCheckPending = removeExcludedGates(checks.pendingDetails);
+  const unresolvedCheckMissing = removeExcludedGates(checks.missingDetails);
+
+  const unresolvedGateRecords = [
+    ...unresolvedCheckFailures,
+    ...unresolvedCheckPending,
+    ...unresolvedCheckMissing,
+    ...failedAffectedGates.map((gate) => ({
+      gate,
+      status: 'failed_affected_gate',
+      conclusion: 'not_green',
+      runId: '',
+      jobId: '',
+      updatedAt: checkpointTime,
+    })),
+    ...(hasOutOfSandboxOrGovernanceBlocker ? [{
+      gate: 'out-of-sandbox-or-governance-blocker',
+      status: 'out_of_authority',
+      conclusion: 'blocked',
+      runId: '',
+      jobId: '',
+      updatedAt: checkpointTime,
+    }] : []),
+  ];
+  const rejectionItems = unresolvedGateRecords.map((record) => {
+    const gate = record.gate || 'unknown';
+    if (
+      (gate === 'preflight/scope-declaration-parity' || gate === 'preflight/evidence-exactness')
+      && scopePresent
+      && !scopeCountMatches
+    ) {
+      const firstUndeclaredFile = scopeUndeclaredFiles[0] || 'unable-to-resolve-missing-file';
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Scope declaration mismatch: declared FILES_CHANGED=${scopeCount || 0}, actual diff=${changedFiles.length}; missing scope entry ${firstUndeclaredFile}.`,
+        rejectionType: 'SCOPE_DECLARATION_MISMATCH',
+        requiredAction: scopeUndeclaredFiles.length > 0
+          ? `Update scope/manifest to include missing file(s): ${scopeUndeclaredFiles.join(', ')} or revert unintended file changes, then rerun preflight.`
+          : `Update scope declaration to match current diff count (${changedFiles.length}) or revert unintended file changes, then rerun preflight.`,
+      };
+    }
+    if (gate === 'preflight/product-delivery-gates') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: 'Product-delivery gate failed for current HEAD; required product journey validation is not green.',
+        rejectionType: 'PRODUCT_DELIVERY_GATE_FAILURE',
+        requiredAction: 'Implement product fix for the failing journey evidence and rerun preflight/product-delivery-gates.',
+      };
+    }
+    if (record.status === 'missing') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Required gate ${gate} is missing for current HEAD.`,
+        rejectionType: 'MISSING_REQUIRED_GATE',
+        requiredAction: `Run the missing gate ${gate} on current HEAD and consume its output before handover posture.`,
+      };
+    }
+    if (record.status === 'pending') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Required gate ${gate} is pending for current HEAD.`,
+        rejectionType: 'PENDING_REQUIRED_GATE',
+        requiredAction: `Wait for ${gate} to complete and consume the resulting gate output before handover posture.`,
+      };
+    }
+    if (record.status === 'failed_affected_gate') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Affected product journey gate ${gate} is not green for current HEAD.`,
+        rejectionType: 'FAILED_AFFECTED_PRODUCT_GATE',
+        requiredAction: `Fix the failing product journey for ${gate} and rerun affected delivery gates before handover posture.`,
+      };
+    }
+    if (record.status === 'out_of_authority') {
+      return {
+        ...record,
+        gate,
+        firstConcreteRejection: `Out-of-authority blocker reported: ${outOfSandboxOrGovernanceBlocker}.`,
+        rejectionType: 'OUT_OF_AUTHORITY_BLOCKER',
+        requiredAction: `Escalate to CS2: ${outOfSandboxOrGovernanceBlocker}.`,
+      };
+    }
+    return {
+      ...record,
+      gate,
+      firstConcreteRejection: `Gate ${gate} reported ${record.conclusion || 'failure'} on current HEAD.`,
+      rejectionType: 'FAILED_REQUIRED_GATE',
+      requiredAction: `Inspect ${gate} logs, implement corrective action, and rerun the gate before any handover claim.`,
+    };
+  });
+  const failedGateLogConsumptionRequired = rejectionItems.length > 0;
+  const failedGateLogConsumption = failedGateLogConsumptionRequired ? 'no' : 'not_required';
+  const unresolvedRejections = rejectionItems.length > 0
+    ? rejectionItems.map((item) => item.gate).join(', ')
+    : 'none';
+  const qaRejectionPackageResult = rejectionItems.length === 0
+    ? 'HANDOVER_ALLOWED'
+    : (hasOutOfSandboxOrGovernanceBlocker ? 'CS2_INTERVENTION_REQUIRED' : 'STOP_AND_FIX');
+  const qaRejectionPackageHandoverAllowed = rejectionItems.length === 0 ? 'yes' : 'no';
+  const latestFailedGateAt = rejectionItems
+    .map((item) => new Date(item.updatedAt || 0).getTime())
+    .filter((value) => Number.isFinite(value) && value > 0)
+    .sort((left, right) => right - left)[0];
+  const qaPackageUpdatedAt = latestFailedGateAt
+    ? new Date(Math.max(latestFailedGateAt, new Date(checkpointTime).getTime() || 0)).toISOString()
+    : checkpointTime;
 
   if (!scopePresent && (requiresIaa || requiresEcap || productDeliveryRequired)) {
     reasons.push('Per-PR scope declaration missing.');
   } else if (scopePresent && !scopeCountMatches) {
-    reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}).`);
+    if (scopeUndeclaredFiles.length > 0) {
+      reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}); missing file(s): ${scopeUndeclaredFiles.join(', ')}.`);
+    } else {
+      reasons.push(`Scope declaration FILES_CHANGED (${scopeCount}) does not match current diff (${changedFiles.length}).`);
+    }
   }
 
   if (!manifestPath) reasons.push('PR admin manifest missing.');
@@ -770,6 +984,10 @@ function evaluateCheckpoint(input = {}) {
   }
 
   if (requiresIaa && !iaaSatisfiedOrValidlyWaived) {
+    if (reviewOrHandoverClaimed) {
+      if (!preflightBriefPresent) reasons.push('IAA pre-flight brief artifact missing.');
+      else if (!preflightBriefCurrent) reasons.push('IAA pre-flight brief artifact is stale for current HEAD.');
+    }
     if (!prebriefPresent) reasons.push('IAA pre-brief artifact missing.');
     if (!finalAssurancePresent) reasons.push('IAA final assurance artifact missing.');
     if (!tokenPresent) reasons.push('IAA token artifact missing.');
@@ -814,6 +1032,13 @@ function evaluateCheckpoint(input = {}) {
     nextRequiredControl = 'REFRESH_INJECTION_INTAKE';
   } else if (reviewOrHandoverClaimed && checklistItems.unchecked.length > 0) {
     nextRequiredControl = 'RESOLVE_PR_CHECKLIST_ITEMS';
+  } else if (
+    reviewOrHandoverClaimed &&
+    requiresIaa &&
+    ecapSatisfiedOrValidlyWaived &&
+    (!preflightBriefPresent || !preflightBriefCurrent)
+  ) {
+    nextRequiredControl = 'IAA_PREFLIGHT_BRIEFING';
   } else if (requiresEcap && !ecapSatisfiedOrValidlyWaived) {
     nextRequiredControl = 'ECAP_GATE_AND_ADMIN_REPORT';
   } else if (requiresIaa && !iaaSatisfiedOrValidlyWaived) {
@@ -865,6 +1090,8 @@ function evaluateCheckpoint(input = {}) {
     ECAP_CURRENT_HEAD_SHA_MATCH: yesNoNotRequired(adminCurrent, requiresEcap),
     ECAP_SATISFIED_OR_VALIDLY_WAIVED: yesNoUnknown(ecapSatisfiedOrValidlyWaived),
     IAA_REQUIRED: requiresIaa ? 'yes' : 'no',
+    IAA_PREFLIGHT_BRIEF_PRESENT: yesNoNotRequired(preflightBriefPresent, requiresIaa),
+    IAA_PREFLIGHT_BRIEF_CURRENT: yesNoNotRequired(preflightBriefCurrent, requiresIaa),
     IAA_PREBRIEF_PRESENT: yesNoNotRequired(prebriefPresent, requiresIaa),
     IAA_FINAL_ASSURANCE_PRESENT: yesNoNotRequired(finalAssurancePresent, requiresIaa),
     IAA_TOKEN_PRESENT: yesNoNotRequired(tokenPresent, requiresIaa),
@@ -901,6 +1128,15 @@ function evaluateCheckpoint(input = {}) {
     LATEST_INJECTION_INTAKE_AFTER_LAST_FAILED_GATE_SIGNAL: latestInjectionIntakeAfterLastFailedGateSignal ? 'yes' : 'no',
     INJECTION_STATE: injectionState,
     OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
+    FAILED_GATE_LOG_CONSUMPTION: failedGateLogConsumption,
+    QA_REJECTION_PACKAGE_REQUIRED: failedGateLogConsumptionRequired ? 'yes' : 'no',
+    QA_REJECTION_PACKAGE_CURRENT_HEAD_SHA: headSha,
+    QA_REJECTION_PACKAGE_UPDATED_AT: qaPackageUpdatedAt,
+    QA_REJECTION_PACKAGE_UNRESOLVED_REJECTIONS: unresolvedRejections,
+    QA_REJECTION_PACKAGE_OUT_OF_AUTHORITY_ITEMS: hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none',
+    QA_REJECTION_PACKAGE_RESULT: qaRejectionPackageResult,
+    QA_REJECTION_PACKAGE_HANDOVER_ALLOWED: qaRejectionPackageHandoverAllowed,
+    QA_REJECTION_PACKAGE_STATUS: rejectionItems.length === 0 ? 'closed' : 'open',
     HANDOVER_ALLOWED: handoverAllowed ? 'yes' : 'no',
     RESULT: result,
     REQUIRED_ACTION: result,
@@ -908,11 +1144,71 @@ function evaluateCheckpoint(input = {}) {
   };
 
   const fieldLines = Object.entries(fields).map(([key, value]) => `${key}: ${commentBodyValue(value)}`);
+  const failedGateConsumptionLines = [
+    '',
+    'FAILED_GATE_LOG_CONSUMPTION',
+    `CURRENT_HEAD_SHA: ${headSha}`,
+    'FAILED_GATES:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      `  run_id: ${item.runId || 'unknown'}`,
+      `  job_id: ${item.jobId || 'unknown'}`,
+      `  job_log_inspected: no`,
+      `  first_concrete_rejection: ${item.firstConcreteRejection}`,
+      `  rejection_type: ${item.rejectionType}`,
+      `  required_action: ${item.requiredAction}`,
+    ])),
+  ];
+  const qaRejectionPackageLines = [
+    '',
+    'QA_REJECTION_PACKAGE',
+    `CURRENT_HEAD_SHA: ${headSha}`,
+    'FAILED_GATES:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      `  concrete_rejection: ${item.firstConcreteRejection}`,
+      `  rejection_type: ${item.rejectionType}`,
+      `  required_action: ${item.requiredAction}`,
+      `  within_agent_authority: ${hasOutOfSandboxOrGovernanceBlocker ? 'no' : 'yes'}`,
+      `  planned_resolution: ${hasOutOfSandboxOrGovernanceBlocker ? `Escalate blocker: ${outOfSandboxOrGovernanceBlocker}` : item.requiredAction}`,
+    ])),
+    `UNRESOLVED_REJECTIONS: ${unresolvedRejections}`,
+    `OUT_OF_AUTHORITY_ITEMS: ${hasOutOfSandboxOrGovernanceBlocker ? outOfSandboxOrGovernanceBlocker : 'none'}`,
+    `RESULT: ${qaRejectionPackageResult}`,
+    `HANDOVER_ALLOWED: ${qaRejectionPackageHandoverAllowed}`,
+  ];
+  const qaRejectionPackageStatusLines = [
+    '',
+    'QA_REJECTION_PACKAGE_STATUS',
+    `CURRENT_HEAD_SHA: ${headSha}`,
+    `STATUS: ${rejectionItems.length === 0 ? 'closed' : 'open'}`,
+    'REJECTION_ITEMS:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      `  rejection: ${item.firstConcreteRejection}`,
+      `  action_taken: ${hasOutOfSandboxOrGovernanceBlocker ? `Escalated to CS2 (${outOfSandboxOrGovernanceBlocker})` : 'Pending remediation and gate rerun'}`,
+      `  evidence: ${item.runId || item.jobId ? `run_id=${item.runId || 'unknown'} job_id=${item.jobId || 'unknown'}` : 'not_available'}`,
+      `  status: ${hasOutOfSandboxOrGovernanceBlocker ? 'escalated' : 'unresolved'}`,
+    ])),
+    'RERUN_GATES:',
+    ...(rejectionItems.length === 0 ? ['- none'] : rejectionItems.flatMap((item) => [
+      `- gate: ${item.gate}`,
+      '  status: pending',
+      '  run_id_or_evidence: pending',
+      '  current_head_match: yes',
+    ])),
+    `REMAINING_REJECTIONS: ${unresolvedRejections}`,
+    `RESULT: ${qaRejectionPackageResult}`,
+    `HANDOVER_ALLOWED: ${qaRejectionPackageHandoverAllowed}`,
+  ];
   const body = [
     CHECKPOINT_MARKER,
     '## PRE_HANDOVER_CHECKPOINT_RESULT',
     '',
     ...fieldLines,
+    ...failedGateConsumptionLines,
+    ...qaRejectionPackageLines,
+    ...qaRejectionPackageStatusLines,
   ].join('\n');
 
   return {
