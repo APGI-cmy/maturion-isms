@@ -3,8 +3,8 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-19
-**Updated By**: foreman-v2-agent (Stage 7 PBFAG gate assessment and decision — 2026-05-19)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE)  
+**Updated By**: foreman-v2-agent (Stage 8 initiation + implementation-plan filing posture — 2026-05-19)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 ACTIVE (IMPLEMENTATION PLAN INITIATED)  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -25,7 +25,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | Stage 1 | FRS | Stage 3 | FRS | DRAFT_HARDENED v0.2 (pending CS2 approval) |
 | Stage 1.5 | TRS | Stage 4 | TRS | DRAFT_CREATED |
 | Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
-| Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
+| Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | ACTIVE — INITIATED (maturion-isms#1677) |
 | Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | NOT_STARTED |
@@ -324,10 +324,10 @@ PBFAG must include all of the following verifications. Any FAIL is a PBFAG gate-
 ---
 
 ### Stage 8: Implementation Plan
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] ACTIVE — INITIATED (maturion-isms#1677; planning stage only)  
 **Location**: `modules/pit/08-implementation-plan/`  
 **Key Artifacts**:
-- [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
+- [x] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 8 gate-pass)**:
 
@@ -343,8 +343,8 @@ The implementation plan must satisfy all of the following. Any gap is a Stage 8 
 - [ ] Rollback expectations documented: what is the rollback plan if a wave fails
 - [ ] Handover expectations documented: what evidence must be filed at the end of each wave
 
-**Completion Date**: N/A  
-**Notes**: Folder exists but not yet populated. Mapped from old Stage 3. Stage 7 gate-pass means Stage 8 may now be initiated only when explicitly authorized.
+**Completion Date**: N/A (initiated 2026-05-19)  
+**Notes**: Stage 8 initiated under explicit authorization in maturion-isms#1677 after confirming PR #1674 merged and Stage 7 gate-pass is present on `main`. Stage 8 remains implementation planning only: no build execution start, no builder appointment, no Stage 9/10/11/12 start, no FUNCTIONAL_PASS claim, and Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -461,6 +461,7 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 ## Current Stage Summary
 
 **Current Stage**:
+- Stage 8 Implementation Plan **ACTIVE — INITIATED** (maturion-isms#1677; planning-only scope, no build start)
 - Stage 7 PBFAG **GATE_PASSED** — PBFAG_COMPLETE_AND_APPROVED (2026-05-19; pre-build package assessment only)
 - Stage 6 QA-to-Red **GATE_PASSED** — RED suite reviewed and gate-passed by CS2/Foreman (2026-05-18)
 - Stage 5 Architecture **GATE_PASSED** — CS2/Foreman gate-pass recorded (2026-05-18; maturion-isms#1611 package reviewed)
@@ -472,9 +473,9 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 **Overall Progress**: ~66% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture gate-passed 2026-05-18; Stage 5b LFV Package merged 2026-05-12; Stage 6 QA-to-Red gate-passed 2026-05-18; Stage 7 PBFAG gate-passed 2026-05-19 in pre-build scope)  
 **Blockers**: Build Authorization NOT CLEARED — implementation blocked until Stages 8–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
-1. Keep Stage 8 Implementation Plan as NOT_STARTED until explicit authorization to begin
-2. Start Stage 8 only under explicit CS2/Foreman authorization
-3. Stage 8 Implementation Plan must explicitly authorise activation of `pit-live-verification.yml`
+1. Complete and maintain Stage 8 implementation plan wave definitions and acceptance evidence (maturion-isms#1677)
+2. Keep Stage 9, Stage 10, Stage 11, and Stage 12 as NOT_STARTED until separately authorised
+3. Preserve Build Authorization as NOT CLEARED until downstream gates explicitly clear it
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
