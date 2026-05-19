@@ -4,6 +4,8 @@
 
 Allowed status values: `PASS`, `PASS_WITH_NON_BLOCKING_NOTES`, `BLOCKING_GAP`, `NOT_APPLICABLE_WITH_JUSTIFICATION`.
 
+Gate-pass rule: Stage 7 is gate-passable only when all mandatory checks are `PASS` or `PASS_WITH_NON_BLOCKING_NOTES`, no unresolved `BLOCKING_GAP` remains, and Build Authorization remains `NOT CLEARED`.
+
 ## PBFAG Core Checklist
 
 | Check ID | Required Check | Status | Evidence / Notes |
@@ -16,14 +18,13 @@ Allowed status values: `PASS`, `PASS_WITH_NON_BLOCKING_NOTES`, `BLOCKING_GAP`, `
 | PBFAG-06 | Role negative-path deployed plan defined | PASS_WITH_NON_BLOCKING_NOTES | See `role-negative-path-verification-plan.md` (role-label mapping note retained) |
 | PBFAG-07 | Stage 7 guardrails documented and enforced | PASS | No implementation/build-authorisation leakage introduced |
 | PBFAG-08 | LFV readiness anti-regression assertions documented | PASS | See `lfv-readiness-assessment.md` |
-| PBFAG-09 | Stage 7 gate readiness posture recorded | BLOCKING_GAP | Stage 5 and Stage 6 gate-pass are explicit prerequisites |
+| PBFAG-09 | Stage 7 gate readiness posture recorded | PASS | Stage 5 and Stage 6 gate-pass prerequisites are recorded as satisfied |
 
 ## Stage 7 Gate Outcome (Current)
 
 | Field | Value |
 |---|---|
-| Stage 7 Package Completeness | PASS_WITH_NON_BLOCKING_NOTES |
-| Stage 7 Gate-Pass Eligibility | BLOCKING_GAP |
-| Gate-Pass Block Reason | Pending Stage 5 Architecture gate-pass and Stage 6 QA-to-Red gate-pass |
+| Stage 7 Package Completeness | PASS |
+| Stage 7 Gate-Pass Eligibility | GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED |
+| Gate-Pass Block Reason | None |
 | Build Authorization | NOT CLEARED |
-

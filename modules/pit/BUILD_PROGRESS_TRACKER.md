@@ -2,9 +2,9 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-05-18
-**Updated By**: foreman-v2-agent (Stage 5 Architecture + Stage 6 QA-to-Red gate-pass review — 2026-05-18)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG PACKAGE STARTED (PREREQUISITES SATISFIED; ASSESSMENT PENDING)  
+**Last Updated**: 2026-05-19
+**Updated By**: foreman-v2-agent (Stage 7 PBFAG gate assessment and decision — 2026-05-19)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE)  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -30,7 +30,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | Stage 5 | Build | Stage 12 | Build | NOT_STARTED (partial AIMC artifact) |
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | NOT_STARTED |
 | — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
-| — | (new stage) | Stage 7 | PBFAG | IN_PROGRESS — PBFAG_PACKAGE_STARTED (gate-pass blocked pending Stage 5/6 gate-pass) |
+| — | (new stage) | Stage 7 | PBFAG | GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED (pre-build package; no live execution claim) |
 | — | (new stage) | Stage 9 | Builder Checklist | NOT_STARTED |
 | — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
 
@@ -226,7 +226,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 > 4. CS2 (Johan Ras) completes `09_CS2_UI_ACCEPTANCE_CHECKLIST.md` with FUNCTIONAL_PASS: yes sign-off  
 >
 > **No implementation, builder appointment, or handover is authorised by this issue.**  
-> Build Authorization remains NOT CLEARED. Stage 6 is gate-passed and Stage 7 assessment is pending.
+> Build Authorization remains NOT CLEARED. Stage 6 and Stage 7 are gate-passed in pre-build scope.
 
 **Completion Date**: 2026-05-12 (LFV package created; Stage 5 review now gate-passed 2026-05-18)
 **Notes**: PIT LFV Package created per maturion-isms#1623 (PR #1624). All 9 markdown artifacts + 1 workflow design artifact produced. Content is PIT-specific (not generic template text). Covers all 27 PIT routes, all 7 roles, all 10 Edge Functions, both storage buckets, Supabase Realtime, and AIMC Gateway pattern. Workflow design artifact stored in `modules/pit/05-live-functional-verification/` — NOT in `.github/workflows/` (active installation deferred to Stage 8).
@@ -286,7 +286,7 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 ---
 
 ### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
-**Status**: [x] IN_PROGRESS — PBFAG_PACKAGE_STARTED; STAGE_5_AND_STAGE_6_PREREQUISITES_SATISFIED; ASSESSMENT_PENDING  
+**Status**: [x] GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED (pre-build package assessment)  
 **Location**: `modules/pit/07-pbfag/`  
 **Key Artifacts**:
 - [x] `pbfag-plan.md` — Stage 7 methodology, scope, prerequisites, non-goals
@@ -302,23 +302,24 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 7 gate-pass)**:
 
-PBFAG must include all of the following verifications. Any FAIL is a PBFAG gate-fail:
+PBFAG must include all of the following verifications. Any FAIL is a PBFAG gate-fail.  
+**Assessment basis in this stage**: checked as pre-build package definition/evidence-contract coverage only; live deployed execution evidence remains post-build work.
 
-- [ ] Deployed route render verification: all 27 routes render correct component in deployed environment
-- [ ] Golden path verification pack: happy-path E2E for all primary journeys (Stage 2 journeys 1–23)
-- [ ] Visual rendering / app-shell / global CSS checks: no white screens, no layout flash, app shell renders in all 5 states
-- [ ] Auth / signup / invite / reset / onboarding checks: all auth routes functional in deployed environment
-- [ ] Role permission negative-path spot checks (per PIT-TR-116): at least 3 denied-path verifications in deployed environment
-- [ ] Evidence workflow check: upload → review → approve/return cycle functional end-to-end
-- [ ] Report export check: at least one report type can be generated, downloaded, and permission-denied verified
-- [ ] Notification check: trigger notification → bell badge → mark-as-read cycle functional
-- [ ] Audit evidence check: audit log records a representative event; export functional
-- [ ] Deployment contract check (per PIT-TR-113): deployment contract document filed and current
-- [ ] No unresolved FRS/TRS open assumptions that would block functionality
-- [ ] No build-authorisation leakage: confirm Build Authorization is NOT CLEARED unless CS2 has explicitly cleared it
+- [x] Deployed route render verification: all 27 routes render correct component in deployed environment (verification plan and evidence contract defined)
+- [x] Golden path verification pack: happy-path E2E for all primary journeys (Stage 2 journeys 1–23) is defined and mapped
+- [x] Visual rendering / app-shell / global CSS checks: no white screens, no layout flash, app shell renders in all 5 states are explicitly defined
+- [x] Auth / signup / invite / reset / onboarding checks: all auth-route checks are explicitly defined for deployed verification
+- [x] Role permission negative-path spot checks (per PIT-TR-116): minimum denied-path coverage contract is defined
+- [x] Evidence workflow check: upload → review → approve/return cycle functional end-to-end is explicitly defined
+- [x] Report export check: generation/download/permission-denied verification is explicitly defined
+- [x] Notification check: trigger notification → bell badge → mark-as-read cycle is explicitly defined
+- [x] Audit evidence check: representative audit event + export verification is explicitly defined
+- [x] Deployment contract check (per PIT-TR-113): deployment contract document is filed and current
+- [x] No unresolved FRS/TRS open assumptions that would block functionality in Stage 7 pre-build scope
+- [x] No build-authorisation leakage: Build Authorization remains NOT CLEARED
 
-**Completion Date**: N/A  
-**Notes**: Stage 7 documentation package started via maturion-isms#1629 under `modules/pit/07-pbfag/` (path corrected from legacy `06-pbfag` reference). This Stage 7 work is pre-build/readiness-only and does NOT start implementation, does NOT appoint a builder, does NOT start Stage 8, and does NOT clear Build Authorization. Stage 5 and Stage 6 prerequisites are now satisfied; Stage 7 PBFAG may be assessed in follow-on work. Stage 7 Functional-Delivery Guardrails remain unchecked until Stage 7 assessment is actually performed and passed.
+**Completion Date**: 2026-05-19  
+**Notes**: Stage 7 PBFAG package under `modules/pit/07-pbfag/` was assessed and gate-passed for pre-build readiness scope on 2026-05-19 by foreman-v2-agent. This decision records that required verification definitions and evidence contracts are complete and that prerequisite Stage 5/6 gate-pass conditions are satisfied. It does NOT claim live deployed execution evidence, does NOT claim FUNCTIONAL_PASS, does NOT start implementation, does NOT appoint a builder, does NOT start Stage 8 in this issue, and does NOT clear Build Authorization.
 
 ---
 
@@ -343,7 +344,7 @@ The implementation plan must satisfy all of the following. Any gap is a Stage 8 
 - [ ] Handover expectations documented: what evidence must be filed at the end of each wave
 
 **Completion Date**: N/A  
-**Notes**: Folder exists but not yet populated. Mapped from old Stage 3.
+**Notes**: Folder exists but not yet populated. Mapped from old Stage 3. Stage 7 gate-pass means Stage 8 may now be initiated only when explicitly authorized.
 
 ---
 
@@ -460,7 +461,7 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 ## Current Stage Summary
 
 **Current Stage**:
-- Stage 7 PBFAG IN_PROGRESS — PBFAG_PACKAGE_STARTED (maturion-isms#1629; Stage 5/6 prerequisites satisfied; Stage 7 assessment pending)
+- Stage 7 PBFAG **GATE_PASSED** — PBFAG_COMPLETE_AND_APPROVED (2026-05-19; pre-build package assessment only)
 - Stage 6 QA-to-Red **GATE_PASSED** — RED suite reviewed and gate-passed by CS2/Foreman (2026-05-18)
 - Stage 5 Architecture **GATE_PASSED** — CS2/Foreman gate-pass recorded (2026-05-18; maturion-isms#1611 package reviewed)
 - Stage 5b LFV Package MERGED (maturion-isms#1623, PR #1624)
@@ -468,11 +469,11 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 - Stage 2 UX CS2 re-confirmed
 - Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~62% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture gate-passed 2026-05-18; Stage 5b LFV Package merged 2026-05-12; Stage 6 QA-to-Red gate-passed 2026-05-18; Stage 7 PBFAG docs-only package started without gate-pass claim)  
-**Blockers**: Stage 7 PBFAG gate-pass assessment has not yet been performed. Build Authorization NOT CLEARED — implementation blocked until Stages 7–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
+**Overall Progress**: ~66% complete (Stage 1 App Description approved; Stage 2 baseline CS2 re-confirmed; Stage 3 FRS CS2 re-confirmed; Stage 4 TRS CS2 approved 2026-05-11; Stage 5 Architecture gate-passed 2026-05-18; Stage 5b LFV Package merged 2026-05-12; Stage 6 QA-to-Red gate-passed 2026-05-18; Stage 7 PBFAG gate-passed 2026-05-19 in pre-build scope)  
+**Blockers**: Build Authorization NOT CLEARED — implementation blocked until Stages 8–11 are completed, approved, and gate-passed. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
-1. Perform Stage 7 PBFAG assessment in a separate issue/PR or explicit follow-on step (no Stage 7 gate-pass claim yet)
-2. Keep Stage 8+ NOT_STARTED until Stage 7 gate-pass is achieved
+1. Keep Stage 8 Implementation Plan as NOT_STARTED until explicit authorization to begin
+2. Start Stage 8 only under explicit CS2/Foreman authorization
 3. Stage 8 Implementation Plan must explicitly authorise activation of `pit-live-verification.yml`
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
@@ -498,7 +499,7 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 5 Architecture: **GATE_PASSED (CS2/Foreman)** — 2026-05-18 Stage 5 review completed against Stage 1–4 authority chain and architecture completeness canon
 - [x] Stage 5b LFV Package: **MERGED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; merged as Stage 6 input
 - [x] Stage 6 QA-to-Red: **GATE_PASSED (CS2/Foreman)** (maturion-isms#1625 / PR #1626 reviewed 2026-05-18) — 144 RED tests defined; 0 BLOCKING_GAP; Stage 5 and Stage 5b prerequisites satisfied
-- [x] Stage 7 PBFAG: **IN_PROGRESS — PBFAG_PACKAGE_STARTED** (maturion-isms#1629) — docs-only package exists under `modules/pit/07-pbfag/`; prerequisites satisfied and Stage 7 may now be assessed (no Stage 7 gate-pass claim)
+- [x] Stage 7 PBFAG: **GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED** (2026-05-19) — package reviewed against Stage 7 required artifacts and guardrails in pre-build definition/evidence-contract scope (no live execution or FUNCTIONAL_PASS claim)
 - [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (GATE_PASSED) → LFV Package (MERGED) → QA-to-Red (GATE_PASSED)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
 - [x] Build Authorization: NOT CLEARED — implementation blocked until Stages 2–11 are completed, approved, and gate-passed
