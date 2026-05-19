@@ -1,0 +1,31 @@
+{
+  "pr": 1678,
+  "issue": 1677,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1678.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage8-implementation-plan-20260519.md",
+    ".agent-admin/scope-declarations/pr-1678.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/08-implementation-plan/implementation-plan.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "PR #1674 merged to main before Stage 8 initiation",
+    "BUILD_PROGRESS_TRACKER updated first to mark Stage 8 ACTIVE — INITIATED and reference issue #1677",
+    "Stage 8 implementation plan filed at modules/pit/08-implementation-plan/implementation-plan.md",
+    "All 27 routes and Stage 6 RED suite allocation (declared 144 tests) mapped to functional-slice waves",
+    "Stage 9/10/11/12 remain NOT_STARTED and Build Authorization remains NOT CLEARED",
+    "No runtime/source code, DB migration, deployment config, active workflow installation, builder appointment, Stage 9+ start, or FUNCTIONAL_PASS claim",
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1678.md",
+    "IAA pre-flight artifact is current-head relevant and PR-matched for #1678"
+  ],
+  "merge_authority": "CS2"
+}
