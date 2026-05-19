@@ -9,9 +9,10 @@ PR: #1672
 CS2 Authorization: Issue #1671 opened by CS2 (@APGI-cmy) and assigned to Copilot
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md
-ceremony_admin_appointed: PENDING
+ceremony_admin_appointed: execution-ceremony-admin-agent
 
 NOTE_ACTIVE_PREFLIGHT_PATH_BASIS: Carry-forward active path anchor retained for deterministic pre-flight timing provenance; content inside the referenced artifact is updated for issue-1671 / PR-1672.
+PREFLIGHT_PATH_ANCHOR_INTENTIONAL: yes — retained issue-1660 filename is intentional; file content is the authority for issue-1671 / PR-1672.
 
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
 IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-issue-1660-trigger-injection-intake-classification-2026-05-18.md
@@ -25,16 +26,16 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 
 | # | Task | Owner | Status | Evidence |
 |---|------|-------|--------|----------|
-| 1 | Add per-PR scope declaration for PR #1672 with exact diff parity | foreman-v2-agent | 🔴 PENDING | `.agent-admin/scope-declarations/pr-1672.md` |
-| 2 | Add PR admin manifest for PR #1672 with strict gate evidence references | foreman-v2-agent | 🔴 PENDING | `.admin/prs/pr-1672.json` |
-| 3 | Add strict gate logic change evidence bundle (before/after behavior, impacted gates, no-weakening statement, local regression output, current-head preflight proof) | foreman-v2-agent | 🔴 PENDING | `.agent-admin/evidence/pr-1672-strict-gate-change-evidence.md` |
-| 4 | Re-run required regressions and full preflight evidence gate on current HEAD | foreman-v2-agent | 🔴 PENDING | local command outputs + GitHub Actions run URL |
+| 1 | Add per-PR scope declaration for PR #1672 with exact diff parity | foreman-v2-agent | 🟢 DONE | `.agent-admin/scope-declarations/pr-1672.md` |
+| 2 | Add PR admin manifest for PR #1672 with strict gate evidence references | foreman-v2-agent | 🟢 DONE | `.admin/prs/pr-1672.json` |
+| 3 | Add strict gate logic change evidence bundle (before/after behavior, impacted gates, no-weakening statement, local regression output, current-head preflight proof) | foreman-v2-agent | 🟢 DONE | `.agent-admin/evidence/pr-1672-strict-gate-change-evidence.md` |
+| 4 | Re-run required regressions and full preflight evidence gate on current HEAD | foreman-v2-agent | 🟢 DONE | `https://github.com/APGI-cmy/maturion-isms/actions/runs/26087697991` (success, head `8dd1c3d6eb1d09cff78652b3d395b1335264fd0b`) |
 
 ---
 
 ## Wave Completion Gate
 
-- [ ] All STOP_AND_FIX tasks above show 🟢 DONE
-- [ ] Required local regressions are GREEN
-- [ ] Full `Preflight Evidence Gate` workflow run on current HEAD is GREEN
-- [ ] Session memory and PREHANDOVER evidence updated before merge-ready claim
+- [x] All STOP_AND_FIX tasks above show 🟢 DONE
+- [x] Required local regressions are GREEN
+- [x] Full `Preflight Evidence Gate` workflow run on current HEAD is GREEN
+- [x] Session memory and PREHANDOVER evidence updated before merge-ready claim

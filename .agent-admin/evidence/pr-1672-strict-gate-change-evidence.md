@@ -38,11 +38,12 @@ No governance weakening was introduced. All changes increase strictness and trac
 ## Local regression evidence
 
 - local command output: `bash .github/scripts/iaa-preflight-contract-gate.test.sh` → Passed: 15, Failed: 0
-- local command output: `bash .github/scripts/iaa-final-assurance-gate.test.sh` → Passed: 29, Failed: 0
+- local command output: `bash .github/scripts/iaa-final-assurance-gate.test.sh` → Passed: 32, Failed: 0
 - local command output: `bash .github/scripts/pre-handover-checkpoint.test.sh` → Passed: 45, Failed: 0
 
 ## Current-head preflight evidence
 
-- Preflight Evidence Gate workflow rerun required on current HEAD after STOP_AND_FIX remediations.
-- Actions run URL: `https://github.com/APGI-cmy/maturion-isms/actions/runs/26081938649`
-- Head SHA validated: `9044c08902a8fdc01f62ded6bd40293764c9cc27`
+- Preflight Evidence Gate workflow rerun completed and passing after STOP_AND_FIX remediations.
+- Actions run URL: `https://github.com/APGI-cmy/maturion-isms/actions/runs/26087697991`
+- Head SHA validated: `8dd1c3d6eb1d09cff78652b3d395b1335264fd0b`
+- PREFLIGHT_PATH_ANCHOR_INTENTIONAL: yes — retained issue-1660 filename in `iaa_prebrief_path` is intentional for deterministic path anchoring; content in that file is the authority for PR #1672 / Issue #1671.
