@@ -1,13 +1,5 @@
 import { useSearchParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-
-interface Domain {
-  id: string;
-  code: string;
-  name: string;
-  sort_order: number;
-}
+import { useFrameworkHandoffContext } from '@/lib/useFrameworkHandoffContext';
 
 function AppNav() {
   return (
@@ -29,33 +21,8 @@ export default function AssessmentFrameworkHandoffPage() {
   const [searchParams] = useSearchParams();
   const frameworkId = searchParams.get('framework_id');
 
-  const { data: framework, isLoading, isError } = useQuery({
-    queryKey: ['framework-handoff', frameworkId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('mmm_frameworks')
-        .select('*')
-        .eq('id', frameworkId!)
-        .single();
-      if (error) throw new Error(error.message);
-      return data;
-    },
-    enabled: !!frameworkId,
-  });
-
-  const { data: domains, isLoading: domainsLoading, isError: domainsError } = useQuery({
-    queryKey: ['framework-handoff-domains', frameworkId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('mmm_domains')
-        .select('id, name, code, sort_order')
-        .eq('framework_id', frameworkId!)
-        .order('sort_order');
-      if (error) throw new Error(error.message);
-      return (data ?? []) as Domain[];
-    },
-    enabled: !!frameworkId && !!framework,
-  });
+  const { framework, isLoading, isError, domains, domainsLoading, domainsError } =
+    useFrameworkHandoffContext(frameworkId);
 
   if (!frameworkId) {
     return (

@@ -530,11 +530,11 @@ describe('T-MMM-S6-051: AssessmentFrameworkHandoffPage.tsx exists', () => {
     expect(src).toContain('data-testid="handoff-domains"');
   });
   it('queries mmm_frameworks for the resolved framework', () => {
-    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    const src = readFile('apps/mmm/src/lib/useFrameworkHandoffContext.ts');
     expect(src).toContain("from('mmm_frameworks')");
   });
   it('queries mmm_domains for the framework domains', () => {
-    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    const src = readFile('apps/mmm/src/lib/useFrameworkHandoffContext.ts');
     expect(src).toContain("from('mmm_domains')");
   });
 });
@@ -586,9 +586,9 @@ describe('T-MMM-S6-178: Direct valid /assessment/framework?framework_id=<valid-i
     expect(src).toContain("searchParams.get('framework_id')");
   });
   it('page queries mmm_frameworks using the resolved id', () => {
-    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
-    expect(src).toContain("from('mmm_frameworks')");
-    expect(src).toContain('.select(');
+    const hookSrc = readFile('apps/mmm/src/lib/useFrameworkHandoffContext.ts');
+    expect(hookSrc).toContain("from('mmm_frameworks')");
+    expect(hookSrc).toContain('.select(');
   });
   it('page renders workspace when framework resolves', () => {
     const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
@@ -641,9 +641,9 @@ describe('T-MMM-S6-181: Compile handoff preserves framework_id as active workspa
     expect(src).toContain("searchParams.get('framework_id')");
   });
   it('framework query uses the extracted framework_id as filter', () => {
-    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
-    expect(src).toContain('.eq(');
-    expect(src).toContain('frameworkId');
+    const hookSrc = readFile('apps/mmm/src/lib/useFrameworkHandoffContext.ts');
+    expect(hookSrc).toContain('.eq(');
+    expect(hookSrc).toContain('frameworkId');
   });
   it('FrameworkReviewPage compile handler passes framework_id to handoff URL', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
