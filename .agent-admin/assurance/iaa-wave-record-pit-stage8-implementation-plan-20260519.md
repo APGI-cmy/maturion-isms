@@ -14,6 +14,7 @@
 **Invocation**: PRE-BRIEF (Phase 0 only)  
 **Prerequisite check**: PR #1674 merged to `main` — CONFIRMED  
 **ceremony_admin_appointed**: PENDING (no wave-specific `wave-current-tasks.md` for this wave found on branch)
+**Remediation path**: For this Stage 8 planning wave, keep `ceremony_admin_appointed` pending until Phase 4 handover readiness. Resolve by appointing `execution-ceremony-admin-agent` at handover gate per Foreman contract once substantive wave deliverables are complete.
 
 ### Canonical Pre-Brief Output
 
@@ -49,4 +50,3 @@ Anti-regression obligations: NO — FUNCTIONAL-BEHAVIOUR-REGISTRY checks are man
 1. No wave-specific `.agent-workspace/foreman-v2/personal/wave-current-tasks*` artifact found for `pit-stage8-implementation-plan` on this branch.
 2. `ceremony_admin_appointed` is unresolved (PENDING) for this wave context.
 3. `modules/pit/08-implementation-plan/` artifact set is not yet present on this branch (expected for producer wave implementation).
-

@@ -23,7 +23,8 @@
     "All 27 routes and Stage 6 RED suite allocation (declared 144 tests) mapped to functional-slice waves",
     "Stage 9–12 remain NOT_STARTED and Build Authorization remains NOT CLEARED",
     "No runtime/source code, migrations, deployment config, active workflow installation, builder appointment, or FUNCTIONAL_PASS claim",
-    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1677.md"
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1677.md",
+    "ECAP (execution-ceremony-admin-agent) remains a handover-phase requirement and is not invoked during Stage 8 planning initiation"
   ],
   "merge_authority": "CS2"
 }

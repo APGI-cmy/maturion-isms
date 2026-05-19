@@ -14,6 +14,7 @@
 | Builder Appointment | **NOT APPOINTED** |
 | Date | 2026-05-19 |
 | Authority Chain | Stage 1–7 approved/gate-passed artifacts listed in `modules/pit/BUILD_PROGRESS_TRACKER.md` |
+| Prerequisite Verification Evidence | PR #1674 merged to `main` at 2026-05-19T09:08:17Z (GitHub PR record) and `modules/pit/BUILD_PROGRESS_TRACKER.md` on `main` shows Stage 7 gate-passed, Stage 8 NOT_STARTED, Build Authorization NOT CLEARED before this wave |
 
 > **Boundary lock**: This Stage 8 artifact is planning-only. It does **not** start implementation/build execution, does **not** appoint a builder, does **not** clear Build Authorization, does **not** claim tests are GREEN, does **not** claim live deployed proof, and does **not** start Stages 9–12.
 
@@ -235,6 +236,7 @@ Five-state enforcement for primary pages remains mandatory per Stage 2/6 matrice
 ## 5) RED-to-GREEN allocation (Stage 6 RED suite)
 
 Authoritative baseline: `modules/pit/06-qa-to-red/red-test-suite-catalog.md` (declared total: **144 RED tests**).
+Baseline reference snapshot: catalog `Version v1.0`, `Date 2026-05-13`, `Issue maturion-isms#1625` (as recorded in the catalog status header).
 
 | RED category | Declared count | Allocated wave |
 |---|---:|---|
@@ -257,6 +259,7 @@ Authoritative baseline: `modules/pit/06-qa-to-red/red-test-suite-catalog.md` (de
 - Stage 6 catalog uses P1–P4 (no explicit P0 rows).
 - All P1 tests are allocated in the wave matrix above.
 - No skipped/todo tests are allowed as completion evidence for any wave.
+- At implementation-wave start, re-run a catalog parity check to confirm the RED catalog still reports 144 tests and no unallocated P1 rows before claiming wave entry.
 
 ---
 
@@ -311,4 +314,3 @@ Each build wave handover must include, at minimum:
 - runtime smoke evidence;
 - rollback validation result;
 - explicit statement of remaining RED tests and downstream dependencies.
-
