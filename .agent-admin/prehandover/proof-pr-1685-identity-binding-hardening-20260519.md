@@ -1,0 +1,37 @@
+# PREHANDOVER Proof — PR #1685 | Identity-Binding Hardening | 2026-05-19
+
+```yaml
+pr: 1685
+issue: 1684
+branch: copilot/harden-active-pr-identity-binding
+date_utc: 2026-05-19T13:55:00Z
+current_head_sha: 61462c0eaa957393b9348da11ab9e8c7ed86a6b8
+protected_path_touched: true
+ecap_required: true
+ecap_invoked: true
+ceremony_admin_appointed: execution-ceremony-admin-agent
+ecap_verdict: PASS
+ecap_waiver_ref: N/A
+iaa_required: true
+iaa_audit_token: .agent-admin/assurance/iaa-wave-record-wave-identity-binding-hardening-1684-r2-20260519.md
+final_state: COMPLETE
+```
+
+ECAP_IDENTITY_BINDING_CHECK
+ACTUAL_PR: #1685
+ADMIN_MANIFEST_PR: #1685
+SCOPE_DECLARATION_PR: #1685
+PREHANDOVER_PR: #1685
+IAA_TOKEN_PR: #1685
+WAVE_CURRENT_TASKS_PR: #1685
+BRANCH: copilot/harden-active-pr-identity-binding
+HEAD_SHA: 61462c0eaa957393b9348da11ab9e8c7ed86a6b8
+ALL_MATCH: yes
+RESULT: PASS
+
+## ECAP evidence artifacts committed in this PR
+
+- PREHANDOVER proof: `.agent-admin/prehandover/proof-pr-1685-identity-binding-hardening-20260519.md`
+- ECAP bundle: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1685-identity-binding-hardening-20260519.md`
+
+ADMIN_PASS: yes
