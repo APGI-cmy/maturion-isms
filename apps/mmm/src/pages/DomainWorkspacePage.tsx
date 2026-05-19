@@ -28,7 +28,7 @@ export default function DomainWorkspacePage() {
 
   const backPath = frameworkId
     ? `/assessment/framework?framework_id=${frameworkId}`
-    : '/assessment/framework';
+    : '/frameworks';
 
   return (
     <div className="app-shell">
