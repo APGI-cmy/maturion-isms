@@ -43,7 +43,7 @@
 
 ## Agent Delegation
 
-**agents_delegated_to**: none — administrator class. ECAP does not delegate to builder agents.
+agents_delegated_to: ui-builder (delegated by foreman-v2-agent — 5-domain workspace build wave build-to-green-5domain-workspace-20260519)
 Builder agent (`ui-builder`) was delegated by Foreman before this session. ECAP received
 completed build deliverables; QP PASS and §4.3 parity PASS were declared by Foreman before
 ECAP appointment.
