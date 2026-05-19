@@ -1,7 +1,7 @@
 # Wave Current Tasks — foreman-v2-agent
 
 Wave: pit-stage9-gate-pass-stage10-initiate-20260519
-Session ID: session-issue-1681-pit-stage9-gate-pass-stage10-initiate-20260519
+Session ID: session-pit-stage9-gate-pass-stage10-initiate-20260519
 Date: 2026-05-19
 Branch: copilot/stage-9-gate-pass-checklist
 Issue: #1687 — Foreman: Gate-pass PIT Stage 9 Builder Checklist, then initiate Stage 10 IAA Pre-Brief

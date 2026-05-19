@@ -1,0 +1,36 @@
+{
+  "pr": 1689,
+  "issue": 1687,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope_notes": "Governance/docs-only wave. Stage 9 gate-pass review and Stage 10 IAA Pre-Brief initiation for PIT module. No runtime code, DB migrations, deployment config, active workflows, or builder appointment artifacts.",
+  "scope": [
+    ".agent-admin/assurance/iaa-wave-record-pit-stage9-gate-pass-stage10-initiate-20260519.md",
+    ".agent-admin/scope-declarations/pr-1689.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage9-gate-pass-stage10-initiate-20260519.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage9-gate-pass-stage10-initiate-20260519.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/09-builder-checklist/stage9-gate-pass-review.md",
+    "modules/pit/10-iaa-pre-brief/iaa-pre-brief.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "Stage 9 gate-pass review completed and all 8 Functional-Delivery Guardrails ticked in BUILD_PROGRESS_TRACKER.md",
+    "Stage 9 status advanced to GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED",
+    "Stage 10 IAA Pre-Brief document filed at modules/pit/10-iaa-pre-brief/iaa-pre-brief.md with all 7 required sections",
+    "Stage 10 status updated to ACTIVE — INITIATED in BUILD_PROGRESS_TRACKER.md",
+    "Stage 11 and Stage 12 remain NOT_STARTED",
+    "Build Authorization remains NOT CLEARED",
+    "No runtime/source code, DB migration, deployment config, active workflow installation, builder appointment, or FUNCTIONAL_PASS claim",
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1689.md",
+    "IAA pre-flight artifact is current-head relevant and PR-matched for #1689"
+  ],
+  "merge_authority": "CS2"
+}
