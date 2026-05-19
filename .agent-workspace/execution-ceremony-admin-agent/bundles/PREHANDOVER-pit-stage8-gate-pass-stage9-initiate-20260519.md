@@ -230,7 +230,7 @@ The following are confirmed NOT present in this wave's diff:
 | PREHANDOVER proof | Required (CERT-001); must include `iaa_audit_token:` pre-populated | This file; `iaa_audit_token` pre-populated per A-029 architecture | ✅ |
 | Session memory | Required (CERT-002); must include fail_only_once_attested declaration | `.agent-workspace/execution-ceremony-admin-agent/bundles/session-issue-1683-stage8-gate-pass-stage9-initiate-20260519.md` assembled; fail_only_once_attested: true | ✅ |
 | FAIL-ONLY-ONCE attestation | Required (CERT-003); A-039, A-040, A-041, A-042 must be attested | Attested in session memory; v4.7.0 | ✅ |
-| Scope declaration | Required; FILES_CHANGED count must match actual diff | `.agent-admin/scope-declarations/pr-1683.md` committed; 7 files in diff, 9 in approved_artifact_paths (includes ceremony files) | ✅ |
+| Scope declaration | Required; FILES_CHANGED count must match actual diff | `.agent-admin/scope-declarations/pr-1683.md` committed; 13 files in diff (12 Foreman/ECAP + 1 IAA-internal), 12 in approved_artifact_paths | ✅ |
 | PR admin | Required | `.admin/prs/pr-1683.json` committed (dd7459c) | ✅ |
 | IAA wave record (pre-brief) | Present (this file is the record) | `.agent-admin/assurance/iaa-wave-record-pit-stage8-gate-pass-stage9-initiate-20260519.md` committed (a9567ab) with `## PRE-BRIEF` populated | ✅ |
 | Stage 8 gate-pass evidence | Strongly recommended; CERT requirement | `modules/pit/08-implementation-plan/stage8-gate-pass-review.md` committed — all 22 criteria + 9 guardrails documented | ✅ |
@@ -465,16 +465,16 @@ No code changes in this wave. CodeQL security scan not applicable to governance-
 | R04 | PR number | to-be-assigned by CS2 | All artifacts consistently note PR number as pending CS2 assignment | ✓ |
 | R05 | Wave identifier | `pit-stage8-gate-pass-stage9-initiate-20260519` | PREHANDOVER `wave_id`, session memory wave ref, wave record filename, wave-current-tasks.md | ✓ |
 | R06 | Branch name | `copilot/review-gate-pass-stage-8` (confirmed `git branch --show-current`) | PREHANDOVER `branch`, scope declaration, wave-current-tasks.md | ✓ |
-| R07 | Changed file paths | `git diff --name-only origin/main...HEAD` = 7 files | Scope declaration approved_artifact_paths (9 paths — includes ceremony files); PREHANDOVER bundle completeness table | ✓ |
+| R07 | Changed file paths | `git diff --name-only origin/main...HEAD` = 13 files (12 Foreman/ECAP + 1 IAA-internal) | Scope declaration approved_artifact_paths (12 paths — includes all ceremony files); PREHANDOVER bundle completeness table | ✓ |
 | R08 | PREHANDOVER ↔ session memory | PREHANDOVER (primary) | Session memory: same issue #1683, wave, branch, session ID, status | ✓ |
 | R09 | PREHANDOVER ↔ token / IAA reference | PREHANDOVER `iaa_audit_token` | Wave record ## TOKEN expected reference; session memory IAA section | ✓ |
 | R10 | Tracker ↔ wave record | wave-current-tasks.md Wave field | Wave record wave ID, session memory wave ref | ✓ |
-| R11 | Scope declaration ↔ actual changed files | `git diff` = 7 files | Scope declaration approved_artifact_paths lists 9 paths (7 committed + 2 ECAP bundle files pending commit) | ✓ |
+| R11 | Scope declaration ↔ actual changed files | `git diff` = 13 files (12 Foreman/ECAP + 1 IAA-internal) | Scope declaration approved_artifact_paths lists 12 paths (all Foreman/ECAP files; IAA-internal session memory excluded from Foreman scope) | ✓ |
 | R12 | Session memory ↔ committed artifact paths | `git ls-files` (committed files) | Session memory artifacts table: all 7 committed paths valid | ✓ |
 | R13 | CANON_INVENTORY ↔ file hash/version | N/A — no canon files amended | No entries to reconcile | ✓ N/A |
 | R14 | Ripple registry ↔ PUBLIC_API changes | 0 PUBLIC_API files in diff | ECAP reconciliation C4 ripple block: NOT-APPLICABLE | ✓ |
 | R15 | Final-state status coherence | Substantive: COMPLETE; IAA: PENDING (pre-invocation state) | PREHANDOVER `final_state: COMPLETE` (substantive); session memory final status aligned; wave record task 7 PENDING = correct pre-IAA state | ✓ |
-| R16 | Artifact declared count ↔ actual count | 7 files in diff | PREHANDOVER bundle completeness lists 9 artifacts (7 committed + 2 ECAP pending) — no count mismatch in declared counts | ✓ |
+| R16 | Artifact declared count ↔ actual count | 13 files in diff (12 Foreman/ECAP + 1 IAA-internal) | Scope declaration approved_artifact_paths lists 12 paths (all Foreman/ECAP files; IAA-internal session memory is not Foreman scope); no count mismatch in declared counts | ✓ |
 | R17 | IAA session reference | `IAA-session-pit-s8gp-s9init-20260519-PASS` (expected) | PREHANDOVER `iaa_audit_token` consistent | ✓ |
 | R18 | Renumber/rebase refresh | No renumber events — single wave, no PR number change, no session renumber | ART: no `art_refresh_required` triggered; all truth anchors stable | ✓ |
 

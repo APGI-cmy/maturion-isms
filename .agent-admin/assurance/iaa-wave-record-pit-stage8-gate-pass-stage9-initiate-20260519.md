@@ -2,7 +2,7 @@
 
 **Wave ID**: pit-stage8-gate-pass-stage9-initiate-20260519
 **Date**: 2026-05-19
-**Branch**: copilot/pit-stage8-gate-pass-stage9-initiate
+**Branch**: copilot/review-gate-pass-stage-8
 **Issue**: maturion-isms#1683
 **PR**: #1683 (pending — not yet opened)
 **IAA Version**: 6.2.0 / Contract 2.10.0

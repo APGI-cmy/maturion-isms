@@ -36,7 +36,6 @@ WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 
 ## Wave Completion Gate
 
-- [x] Stage 8 remains planning-only
-- [x] Stage 9/10/11/12 remain NOT_STARTED
+- [x] Stage 8 GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED (maturion-isms#1683)
+- [x] Stage 9 INITIATED — ACTIVE (maturion-isms#1683); Stages 10, 11, 12 remain NOT_STARTED
 - [x] Build Authorization remains NOT CLEARED
-- [x] Preflight parity gates remediated for PR #1678
