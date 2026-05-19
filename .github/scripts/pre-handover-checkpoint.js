@@ -521,6 +521,8 @@ function contextScopedArtifacts(artifacts, context) {
   if (!artifacts || artifacts.length === 0) return [];
   const scoped = artifacts.filter((artifact) => matchesArtifactContext(artifact.text, context));
   if (scoped.length > 0) return scoped;
+  // If no explicit PR/issue/branch context is present, fall back to all
+  // artifacts so legacy pending-token evidence is still honored.
   return artifacts;
 }
 
@@ -800,6 +802,8 @@ function evaluateCheckpoint(input = {}) {
   const iaaArtifactCurrent = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const iaaArtifactStale = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
   const tokenPending = [
+    // Admin artifacts intentionally ignore issueNumber matching because issues are
+    // reused across rounds and can pull unrelated historical ceremony files.
     ...contextScopedArtifacts(adminArtifacts, { prNumber, branch }),
     ...contextScopedArtifacts(assuranceArtifacts, { prNumber, issueNumber, branch }),
   ].some((artifact) => /iaa_audit_token:\s*PENDING|PHASE_B_BLOCKING_TOKEN:\s*PENDING/i.test(artifact.text));
