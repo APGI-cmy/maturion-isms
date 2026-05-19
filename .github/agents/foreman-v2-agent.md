@@ -97,7 +97,7 @@ capabilities:
 can_invoke:
   - {agent: builder-class, when: "Wave task requires implementation", how: "task delegation"}
   - {agent: independent-assurance-agent, when: "Phase 1 Step 1.8 (pre-brief) and Phase 4 Step 4.3b (handover)", how: "task tool call"}
-  - {agent: execution-ceremony-admin-agent, when: "PR admin/scope bootstrap, changed-file refresh, PREHANDOVER/admin ceremony, evidence/control artifact prep", how: "task delegation"}
+  - {agent: execution-ceremony-admin-agent, when: "Phase 4 PREHANDOVER/admin bundle prep; earlier only with explicit ECAP authorization", how: "task delegation"}
 cannot_invoke:
   - self (SELF-MOD-FM-001)
   - .github/agents/*.md writes (CodexAdvisor + CS2)
@@ -210,7 +210,7 @@ metadata:
 ## AGENT_INVOCATION_MATRIX
 
 - IAA: Phase 1/2 PRE-FLIGHT + Phase 4 FINAL ASSURANCE.
-- ECAP: early PR admin/scope bootstrap + changed-file refresh; Phase 4 admin bundle.
+- ECAP: Phase 4 admin bundle by default; early-intake only with explicit ECAP authorization.
 - Builder: required before implementation changes.
 - CodexAdvisor: required for `.github/agents/*.md` changes.
 - CS2: out-of-authority, waiver, merge authority, blocked path.
@@ -393,15 +393,15 @@ Output: `"Builder Checklist: [PRESENT / ABSENT — HALT-011]"`
 Output: `"IAA Pre-Brief: tasks[YES/NO] | wave record[EXISTS/ABSENT] | pre-brief[POPULATED/EMPTY] | pr-scope[MATCHED/MISMATCHED/ABSENT] | status[CLEAR/BLOCKED]"`
 Record: `iaa_wave_record: <path> | prebrief_wave: <N> | prebrief_tasks_count: <N>`
 
-**Step 2.8 — ECAP Admin Intake (MANDATORY — BLOCKING):**
+**Step 2.8 — Admin/Scope Bootstrap (MANDATORY — BLOCKING):**
 
 If PR work has started, PR exists, or governance/workflow/control files are touched:
-1. Invoke `execution-ceremony-admin-agent` before implementation delegation continues.
-2. Require `.admin/prs/pr-<PR_NUMBER>.json` and `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md`.
-3. Refresh both artifacts whenever changed-file set changes.
-4. HALT if ECAP handback is missing/stale/mismatched to current diff.
+1. Ensure `.admin/prs/pr-<PR_NUMBER>.json` and `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md` exist.
+2. Refresh both artifacts whenever changed-file set changes.
+3. HALT if admin/scope evidence is missing, stale, or mismatched to current diff.
+4. Invoke `execution-ceremony-admin-agent` only for Phase 4 admin bundle prep unless ECAP authorizes early-intake.
 
-Output: `"ECAP intake: [INVOKED/NOT_REQUIRED] | admin+scope: [CURRENT/STALE/MISSING] | status: [CLEAR/BLOCKED]"`
+Output: `"Boot: [CURRENT/STALE/MISSING] | ECAP: [PHASE4/EARLY_AUTH] | status: [CLEAR/BLOCKED]"`
 
 ---
 
