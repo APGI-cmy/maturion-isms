@@ -339,3 +339,15 @@ represented from Stage 1 (App Description) through Stage 12 (Build Execution). Z
 Zero ambiguity introduced. The addition strengthens the chain without contradicting any
 existing requirement.
 
+---
+
+## Change-Propagation Note — Compile Handoff Workspace Alignment (2026-05-19, PR #1688)
+
+- **Historical scope resolution**: blank-page RED at `/assessment/framework` was resolved by PR #1668.
+- **New RED scope**: workspace now renders visibly but only as harvested-domain list content; this is
+  a visible-but-incomplete state and is not equivalent to canonical framework configuration workspace completion.
+- **Build scope posture**: this domain-card workspace scope remains blocked from build-to-green until
+  this alignment wave merges to `main`.
+- **PBFAG status interpretation**: prior PBFAG PASS remains historical and valid for the original scope only.
+- **Contract requirement**: domain-card workspace completion requires its own RED contract and its own
+  follow-up build-to-green implementation wave evidence.

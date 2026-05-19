@@ -9,7 +9,7 @@
 - **Module**: MMM — Maturity Model Management
 - **Artifact Type**: Architecture (Stage 5)
 - **Status**: DRAFT — For CS2 review and approval
-- **Version**: 0.3.0
+- **Version**: 0.4.0
 - **Wave**: mmm-stage5-architecture-20260414
 
 ### Upstream Authority References
@@ -17,7 +17,7 @@
 | Stage | Artifact | Version | Status | Reference |
 |-------|----------|---------|--------|-----------|
 | Stage 1 | `modules/MMM/00-app-description/MMM_app_description.md` | v0.5.0 | CS2-Approved | maturion-isms#1298 (2026-04-08) |
-| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.3.0 | Alignment addendum applied for compile handoff (governing issue #1669; CS2 review pending) | maturion-isms#1669 (2026-05-18) |
+| Stage 2 | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | v0.4.0 | Alignment addendum applied for compile handoff (governing issue #1681; CS2 review pending) | maturion-isms#1681 (2026-05-19) |
 | Stage 3 | `modules/MMM/02-frs/functional-requirements.md` | v0.1.0 | CS2-Approved | maturion-isms#1366 (2026-04-14) |
 | Stage 4 | `modules/MMM/03-trs/technical-requirements-specification.md` | v0.1.0 | CS2-Approved (carried forward per maturion-isms#1378) | maturion-isms#1378 (2026-04-14) |
 | Harvest Map | `modules/MMM/harvest-map/harvest-map.md` | v0.3.0 | Active | — |
@@ -243,12 +243,31 @@ for compile handoff. It is not yet the canonical long-term MMM route shape.
 - Bridge route MUST reject invalid/unresolvable `framework_id` with a visible user-facing
   error state and recovery action.
 - Blank render is explicitly prohibited for all handoff outcomes.
+- Raw harvested-domain-only list render is explicitly NOT a valid success state.
+
+**Framework Configuration Workspace boundary contract**:
+- `/assessment/framework?framework_id=:id` MUST render canonical domain containers as five cards:
+  Leadership and Governance, Process Integrity, People and Culture, Protection, Proof It Works.
+- Harvested/uploaded domain records MUST be mapped into these canonical containers; raw harvested
+  labels may appear as source metadata, but not as the primary workspace shape.
+- Each domain card MUST expose mini-dashboard structure (metric or approved placeholder) for:
+  MPS count, criteria count, maturity level, evidence completion %, approval/governance status,
+  compile status.
 
 **Integration contract expectation**:
 - Any data load performed by the bridge route MUST use the typed MMM integration client
   (ARCH-LAW-001), not direct `fetch()` in UI components.
 - Compile handoff remains blocked from build-to-green until Stage 6 RED tests for visible
   workspace render and context failures are in place.
+- Route/component boundary remains strict: page-level route boundary handles context and error
+  states; domain-card feature components render workspace interactions; all reads/writes use typed
+  MMM data-access adapters (no direct UI-bound fetch contracts).
+
+**Domain-card click-through and navigation contract**:
+- Each canonical domain card MUST provide click-through into a domain workspace route/view scoped
+  to `framework_id` + canonical domain identity.
+- Domain workspace routes must preserve framework context and support contextual return to the
+  active framework workspace (not loop users to generic framework list by default).
 
 ### A3.4 — State Management (Zustand)
 
@@ -1654,8 +1673,8 @@ architecture revision wave:**
 
 **Module**: MMM — Maturity Model Management  
 **Stage**: 5 — Architecture  
-**Version**: 0.3.0  
-**Date**: 2026-05-18  
+**Version**: 0.4.0  
+**Date**: 2026-05-19  
 **Status**: DRAFT — For CS2 review and approval  
 **Produced By**: mat-specialist (POLC-Orchestration mode, delegated by foreman-v2-agent v6.2.0)  
 **Issue**: maturion-isms#1378  
