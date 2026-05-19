@@ -382,6 +382,16 @@ while IFS= read -r token_file; do
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH missing/invalid/non-active"
     FILE_VALID=false
     FAIL=true
+  elif [[ ! "$PREFLIGHT_PATH" =~ ^\.agent-admin/assurance/iaa-(prebrief|wave-record)- ]]; then
+    echo "  ❌ PREFLIGHT_BRIEF_PATH must reference .agent-admin/assurance/iaa-prebrief-* or iaa-wave-record-* [IAA-FINAL-GATE-012]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH not in allowed assurance location"
+    FILE_VALID=false
+    FAIL=true
+  elif grep -qi "SUPERSEDED" "$PREFLIGHT_PATH" 2>/dev/null; then
+    echo "  ❌ PREFLIGHT_BRIEF_PATH references a superseded pre-flight brief [IAA-FINAL-GATE-012]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: PREFLIGHT_BRIEF_PATH references superseded brief"
+    FILE_VALID=false
+    FAIL=true
   fi
   if ! echo "$PREFLIGHT_EXPECTATIONS_MET" | grep -qiE "^(yes|no)$"; then
     echo "  ❌ PREFLIGHT_EXPECTATIONS_MET must be yes or no [IAA-FINAL-GATE-013]"

@@ -19,6 +19,8 @@ run_gate_test() {
 
   local ws
   ws="$(mktemp -d -p "$TEST_DIR")"
+  local output_file
+  output_file="$(mktemp -p "$ws" iaa-preflight-gate-out.XXXXXX.txt)"
   cd "$ws"
 
   git init -q
@@ -43,7 +45,7 @@ run_gate_test() {
   PR_NUMBER="1672" \
   BASE_SHA="$base_sha" \
   HEAD_SHA="$head_sha" \
-  bash "$GATE_SCRIPT" >/tmp/iaa-preflight-gate-out.txt 2>&1
+  bash "$GATE_SCRIPT" >"$output_file" 2>&1
   local exit_code=$?
   set -e
 
@@ -52,7 +54,8 @@ run_gate_test() {
     PASS_COUNT=$((PASS_COUNT + 1))
   else
     echo "❌ $name (expected $expected_exit got $exit_code)"
-    cat /tmp/iaa-preflight-gate-out.txt
+    echo "Output file: $output_file"
+    cat "$output_file"
     FAIL_COUNT=$((FAIL_COUNT + 1))
   fi
 }

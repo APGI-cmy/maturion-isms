@@ -25,6 +25,8 @@
 #   AC-D-NOISSUE  Token missing **Issue**: field                                    → exit 1
 #   AC-D-NOSHA    Token missing **Reviewed SHA**: field                             → exit 1
 #   AC-D-WRONGSHA Token reviewed SHA not in PR head ancestry                        → exit 1
+#   AC-D-SUPERSEDED-PREFLIGHT Token preflight path references superseded brief      → exit 1
+#   AC-D-BADPREFLIGHTPATH Token preflight path outside allowed assurance naming      → exit 1
 #   AC-WR-NOPR    Wave record ## TOKEN missing PR/issue fields                      → exit 1
 #   AC-ECAP-NOBUNDLE PREHANDOVER ecap_invoked=true but no ECAP bundle committed     → exit 1
 #   AC-ECAP-NVAL  ecap_required=N/A rejected on protected-path PR                  → exit 1
@@ -460,6 +462,32 @@ EOF
   git commit -q -m "Add token without preflight cross-reference fields"
 }
 run_test "AC-D-NOPREFLIGHT: Token missing preflight cross-reference fields" 1 "$IAA_GATE_SCRIPT" "setup_ac_nopreflightxref"
+
+# AC-D-SUPERSEDED-PREFLIGHT: Token references preflight brief marked SUPERSEDED
+setup_ac_superseded_preflight() {
+  add_impl_file
+  add_valid_iaa_token
+  echo "SUPERSEDED: yes" >> .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md
+  git add .
+  git commit -q -m "Mark referenced preflight brief superseded"
+}
+run_test "AC-D-SUPERSEDED-PREFLIGHT: Token preflight path references superseded brief" 1 "$IAA_GATE_SCRIPT" "setup_ac_superseded_preflight"
+
+# AC-D-BADPREFLIGHTPATH: Token references preflight path outside allowed assurance naming
+setup_ac_bad_preflight_path() {
+  add_impl_file
+  add_valid_iaa_token
+  mkdir -p docs
+  cat > docs/preflight.md << 'EOF'
+IAA_PREFLIGHT_BRIEF
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+EOF
+  sed -i 's|^PREFLIGHT_BRIEF_PATH: .*|PREFLIGHT_BRIEF_PATH: docs/preflight.md|' \
+    .agent-admin/assurance/iaa-token-session-test-wave-test-20260428.md
+  git add .
+  git commit -q -m "Point token at disallowed preflight path"
+}
+run_test "AC-D-BADPREFLIGHTPATH: Token preflight path outside allowed assurance naming" 1 "$IAA_GATE_SCRIPT" "setup_ac_bad_preflight_path"
 
 # AC-WR-NOPR: Wave record ## TOKEN section missing PR/issue/SHA fields
 setup_ac_wr_nopr() {

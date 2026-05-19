@@ -28,6 +28,15 @@ field_value() {
   grep -E "^${key}[[:space:]]*:" "$file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//'
 }
 
+field_equals() {
+  local key="$1"
+  local expected="$2"
+  local file="$3"
+  local actual
+  actual="$(field_value "$key" "$file")"
+  [ "$actual" = "$expected" ]
+}
+
 section_items_count() {
   local section="$1"
   local file="$2"
@@ -105,12 +114,16 @@ if [ -n "$ACTIVE_PREBRIEF_PATH" ] && [ -f "$ACTIVE_PREBRIEF_PATH" ]; then
     grep -Eq "^CURRENT_HEAD_SHA:[[:space:]]*(${HEAD_SHA}|${HEAD_SHA:0:12}|CURRENT_HEAD)([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief CURRENT_HEAD_SHA is not current-head relevant"
   fi
   grep -Eq "^WAVE:[[:space:]]*[^[:space:]].*$" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief WAVE field is missing/empty"
-  grep -Eq "^WAVE_TASKS_PATH:[[:space:]]*${WAVE_TASKS_PATH}$" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief WAVE_TASKS_PATH does not match active wave-current-tasks path"
+  if ! field_equals "WAVE_TASKS_PATH" "$WAVE_TASKS_PATH" "$ACTIVE_PREBRIEF_PATH"; then
+    fail "Pre-flight brief WAVE_TASKS_PATH does not match active wave-current-tasks path"
+  fi
 
   # Foreman pre-flight consumption evidence (wave-current-tasks)
   if [ -f "$WAVE_TASKS_PATH" ]; then
     grep -Eq "^IAA_PREFLIGHT_BRIEF_REVIEWED:[[:space:]]*yes$" "$WAVE_TASKS_PATH" || fail "wave-current-tasks.md must declare IAA_PREFLIGHT_BRIEF_REVIEWED: yes"
-    grep -Eq "^IAA_PREFLIGHT_BRIEF_PATH:[[:space:]]*${ACTIVE_PREBRIEF_PATH}$" "$WAVE_TASKS_PATH" || fail "wave-current-tasks.md IAA_PREFLIGHT_BRIEF_PATH must match active pre-flight artifact"
+    if ! field_equals "IAA_PREFLIGHT_BRIEF_PATH" "$ACTIVE_PREBRIEF_PATH" "$WAVE_TASKS_PATH"; then
+      fail "wave-current-tasks.md IAA_PREFLIGHT_BRIEF_PATH must match active pre-flight artifact"
+    fi
     PREFLIGHT_SHA_OR_TS="$(field_value "IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP" "$WAVE_TASKS_PATH")"
     if [ -z "$PREFLIGHT_SHA_OR_TS" ] || [[ "$PREFLIGHT_SHA_OR_TS" =~ ^(PENDING|TBD|N/A)$ ]]; then
       fail "wave-current-tasks.md must provide IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP"
@@ -124,7 +137,12 @@ fi
 
 # Pre-flight before implementation/build changes (where determinable)
 if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ] && [ -n "$ACTIVE_PREBRIEF_PATH" ] && [ -f "$ACTIVE_PREBRIEF_PATH" ]; then
-  CHANGED_FILES="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" 2>/dev/null || true)"
+  if ! CHANGED_FILES="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" 2>/dev/null)"; then
+    if ! CHANGED_FILES="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" 2>/dev/null)"; then
+      fail "Cannot compute changed files for BASE_SHA=${BASE_SHA:0:12} HEAD_SHA=${HEAD_SHA:0:12}"
+      CHANGED_FILES=""
+    fi
+  fi
   HAS_IMPL_OR_BUILD=false
   while IFS= read -r f; do
     [ -z "$f" ] && continue
@@ -143,9 +161,9 @@ if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ] && [ -n "$ACTIVE_PREBRIEF_PATH" ] &&
       fail "wave-current-tasks.md is required to evaluate builder delegation pre-flight scope"
     fi
 
-    PREBRIEF_FIRST_ADD_TS="$(git log --diff-filter=A --format='%ct' HEAD -- "$ACTIVE_PREBRIEF_PATH" | head -1 || true)"
-    PREBRIEF_LAST_TS="$(git log -1 --format='%ct' -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
-    [ -z "$PREBRIEF_FIRST_ADD_TS" ] && PREBRIEF_FIRST_ADD_TS="$PREBRIEF_LAST_TS"
+    PREBRIEF_FIRST_TOUCH_IN_RANGE_TS="$(git log --reverse --format='%ct' "$BASE_SHA..$HEAD_SHA" -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null | head -1 || true)"
+    PREBRIEF_LAST_BEFORE_RANGE_TS="$(git log -1 --format='%ct' "$BASE_SHA" -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
+    [ -z "$PREBRIEF_FIRST_TOUCH_IN_RANGE_TS" ] && PREBRIEF_FIRST_TOUCH_IN_RANGE_TS="$PREBRIEF_LAST_BEFORE_RANGE_TS"
 
     mapfile -t IMPL_OR_BUILD_FILES < <(while IFS= read -r f; do [ -n "$f" ] && is_impl_or_build_file "$f" && echo "$f"; done <<< "$CHANGED_FILES")
     FIRST_IMPL_TS=""
@@ -153,7 +171,7 @@ if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ] && [ -n "$ACTIVE_PREBRIEF_PATH" ] &&
       FIRST_IMPL_TS="$(git log --reverse --format='%ct' "$BASE_SHA..$HEAD_SHA" -- "${IMPL_OR_BUILD_FILES[@]}" 2>/dev/null | head -1 || true)"
     fi
 
-    if [ -n "$PREBRIEF_FIRST_ADD_TS" ] && [ -n "$FIRST_IMPL_TS" ] && [ "$PREBRIEF_FIRST_ADD_TS" -gt "$FIRST_IMPL_TS" ]; then
+    if [ -n "$PREBRIEF_FIRST_TOUCH_IN_RANGE_TS" ] && [ -n "$FIRST_IMPL_TS" ] && [ "$PREBRIEF_FIRST_TOUCH_IN_RANGE_TS" -gt "$FIRST_IMPL_TS" ]; then
       fail "Active pre-flight brief appears to be committed after implementation/build changes began"
     fi
   fi
