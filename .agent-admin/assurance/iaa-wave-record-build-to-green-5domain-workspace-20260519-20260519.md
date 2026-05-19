@@ -67,39 +67,7 @@ Anti-regression obligations:
 
 ## TOKEN
 
-**ASSURANCE-TOKEN — PHASE_B_BLOCKING**
-
-```
-═══════════════════════════════════════════════════════════
-ASSURANCE-TOKEN
-PR: #1683 — Build 5-domain framework configuration workspace
-Wave: build-to-green-5domain-workspace-20260519
-All checks PASS. Merge gate parity: PASS.
-Merge permitted (subject to CS2 approval).
-Token reference: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
-PHASE_B_BLOCKING_TOKEN: IAA-session-build-to-green-5domain-workspace-20260519-20260519-PASS
-Issued: 2026-05-19
-Issuing agent: independent-assurance-agent
-═══════════════════════════════════════════════════════════
-```
-
-**Checks run**: 12 substance checks — 12 PASS, 0 FAIL
-**Overlay**: PRODUCT_BUILD_ASSURANCE (BD-000–BD-024)
-**Anti-regression**: T-MMM-S6-179 PASS — "Back to Frameworks" confirmed preserved
-**Test evidence**: 140/140 B4 tests GREEN (vitest run confirmed)
-
-**PR**: #1683
-**Issue**: #1682
-**Reviewed SHA**: 24363aa1c8612ec000719e8445dc634ff3295d5e
-
-PREFLIGHT_BRIEF_REVIEWED: yes
-IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-prebrief-pr1683.md
-PREFLIGHT_EXPECTATIONS_MET: yes
-FINAL_IAA_RESULT: PASS
-ADMIN_PASS: yes
-FUNCTIONAL_PASS: yes
-FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY
-CURRENT_HEAD_SHA: CURRENT_HEAD
+*To be populated by IAA after Phase 3 assurance at PR handover.*
 
 ---
 

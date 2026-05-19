@@ -903,7 +903,3 @@ Governed by PR #1565. Produced by: mat-specialist (delegated by foreman-v2-agent
 **Template Version**: 1.0.0 (12-stage model per PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0)  
 **Template Authority**: `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md`  
 **Last Template Update**: 2026-04-06
-
----
-
-**Build-to-Green Wave (2026-05-19, maturion-isms#1682)**: Wave `build-to-green-5domain-workspace-20260519` implemented the Framework Configuration Workspace evolution. `AssessmentFrameworkHandoffPage` evolved from temporary raw-domain list to a 5-domain canonical dashboard with mini-dashboard placeholder slots per canonical domain. `DomainWorkspacePage` added as transitional domain workspace. Route `/assessment/framework/domain/:domainId` registered. B4 tests T-MMM-S6-183 through T-MMM-S6-188 added (RED→GREEN). `verify-mmm-modes.mjs` updated for 5-card workspace assertion.

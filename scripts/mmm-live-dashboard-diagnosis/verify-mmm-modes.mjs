@@ -506,42 +506,6 @@ async function runMode(page, origin, mode, sampleFilePath) {
       compileResult = `PASS — legacy handoff with visible workspace (${handoffUrl})`;
       log(`Compile: ${compileResult}`);
 
-      // Assert 5-card domain content — workspace must render domain cards not raw list
-      const domainCards = page.locator('[data-testid="domain-card"]');
-      const domainCardsReady = await page
-        .waitForFunction(
-          () =>
-            document.querySelectorAll('[data-testid="domain-card"]').length >= 5,
-          { timeout: WAIT_TIMEOUT },
-        )
-        .then(() => true)
-        .catch(() => false);
-      if (!domainCardsReady) {
-        const observedDomainCardCount = await domainCards.count();
-        compileResult = `FAIL — workspace visible but found ${observedDomainCardCount} domain-card element(s); expected 5-card domain workspace at (${handoffUrl})`;
-        log(`Compile: ${compileResult}`);
-        throw new Error(compileResult);
-      }
-      const domainCardCount = await domainCards.count();
-      if (domainCardCount !== 5) {
-        compileResult = `FAIL — workspace rendered ${domainCardCount} domain-card element(s); expected exactly 5 at (${handoffUrl})`;
-        log(`Compile: ${compileResult}`);
-        throw new Error(compileResult);
-      }
-      for (let i = 0; i < domainCardCount; i += 1) {
-        const domainCardVisible = await domainCards
-          .nth(i)
-          .waitFor({ state: 'visible', timeout: WAIT_TIMEOUT })
-          .then(() => true)
-          .catch(() => false);
-        if (!domainCardVisible) {
-          compileResult = `FAIL — workspace rendered 5 domain-card elements, but card ${i + 1} was not visible at (${handoffUrl})`;
-          log(`Compile: ${compileResult}`);
-          throw new Error(compileResult);
-        }
-      }
-      compileResult = `PASS — legacy handoff with visible workspace and 5 visible domain cards (${handoffUrl})`;
-
       return { success: true, frameworkId, compileResult, publishResult, details };
     } else if (compileOutcome === 'error') {
       const errMsg = await compileError.innerText().catch(() => '');

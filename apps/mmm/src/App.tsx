@@ -27,7 +27,6 @@ import ReportPage from '@/pages/ReportPage';
 import DashboardPage from '@/pages/DashboardPage';
 import PitExportPage from '@/pages/PitExportPage';
 import AssessmentFrameworkHandoffPage from '@/pages/AssessmentFrameworkHandoffPage';
-import DomainWorkspacePage from '@/pages/DomainWorkspacePage';
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -55,7 +54,6 @@ export default function App() {
             <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
             <Route path="/pit-export/:id" element={<ProtectedRoute><PitExportPage /></ProtectedRoute>} />
             <Route path="/assessment/framework" element={<ProtectedRoute><AssessmentFrameworkHandoffPage /></ProtectedRoute>} />
-            <Route path="/assessment/framework/domain/:domainId" element={<ProtectedRoute><DomainWorkspacePage /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </ErrorBoundary>
