@@ -99,7 +99,8 @@ jobs:
               const assuranceFiles = Array.isArray(assuranceContents)
                 ? assuranceContents.filter(
                     (f) => f.type === 'file' &&
-                           f.name.endsWith('.md')
+                           f.name.endsWith('.md') &&
+                           (f.name.startsWith('iaa-prebrief-') || f.name.startsWith('iaa-wave-record-'))
                   )
                 : [];
               const prebriefFiles = assuranceFiles.filter((f) => f.name.startsWith('iaa-prebrief-'));
@@ -542,7 +543,6 @@ jobs:
               );
             } catch (e) {
               core.warning(`Unable to query existing invocation comments (non-blocking): ${e.message}`);
-              return;
             }
             if (alreadyPosted) {
               core.notice('IAA Pre-Brief invocation comment already present on this PR — skipping duplicate.');
