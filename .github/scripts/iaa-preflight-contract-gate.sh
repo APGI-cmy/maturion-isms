@@ -80,6 +80,29 @@ PY
   fi
 fi
 
+if [ "$NEXT_REQUIRED_ACTION" = "BLOCKED" ]; then
+  fail "Active-state resolver reported BLOCKED (contradictory active PR identity/state)."
+fi
+
+if [ "$NEXT_REQUIRED_ACTION" = "BOOTSTRAP_REQUIRED" ]; then
+  BOOTSTRAP_GAPS=()
+  if [ ! -f "$WAVE_TASKS_PATH" ]; then
+    BOOTSTRAP_GAPS+=("missing wave tasks: $WAVE_TASKS_PATH")
+  fi
+  if [ -z "$RESOLVED_PREBRIEF_PATH" ] || [ ! -f "$RESOLVED_PREBRIEF_PATH" ]; then
+    BOOTSTRAP_GAPS+=("missing active preflight artifact: ${RESOLVED_PREBRIEF_PATH:-<unset>}")
+  fi
+
+  if [ "${#BOOTSTRAP_GAPS[@]}" -gt 0 ]; then
+    echo "⚠️  NEXT_ACTION=BOOTSTRAP_REQUIRED"
+    for gap in "${BOOTSTRAP_GAPS[@]}"; do
+      echo "   - $gap"
+    done
+    echo "✅ PASS — IAA Pre-Flight Contract Gate (non-cascading bootstrap state)"
+    exit 0
+  fi
+fi
+
 if [ ! -f "$WAVE_TASKS_PATH" ]; then
   fail "Missing wave-current-tasks.md: $WAVE_TASKS_PATH"
 fi

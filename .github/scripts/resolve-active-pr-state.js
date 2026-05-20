@@ -51,11 +51,21 @@ function parseSimpleField(text, key) {
   return match ? match[1].trim() : '';
 }
 
-function parseWaveTasksPathCandidate(prNumber) {
+function legacyWaveTasksMatchesContext(legacyPath, prNumber, branch) {
+  if (!fileExists(legacyPath)) return false;
+  const text = fs.readFileSync(legacyPath, 'utf8');
+  const legacyPr = parseSimpleField(text, 'PR').replace(/^#/, '');
+  const legacyBranch = parseSimpleField(text, 'Branch');
+  if (!prNumber || !branch) return false;
+  if (!legacyPr || !legacyBranch) return false;
+  return String(legacyPr) === String(prNumber) && legacyBranch === branch;
+}
+
+function parseWaveTasksPathCandidate(prNumber, branch) {
   const prScoped = prNumber ? `.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md` : '';
   const legacy = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
   if (prScoped && fileExists(prScoped)) return prScoped;
-  if (fileExists(legacy)) return legacy;
+  if (legacyWaveTasksMatchesContext(legacy, prNumber, branch)) return legacy;
   return prScoped || legacy;
 }
 
@@ -163,7 +173,7 @@ function resolveState() {
   const manifestPath = prNumber ? `.admin/prs/pr-${prNumber}.json` : '.admin/pr.json';
   const scopePath = prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '';
   const activeStatePath = prNumber ? `.agent-admin/prs/pr-${prNumber}/active-state.json` : '.agent-admin/prs/pr-unknown/active-state.json';
-  const waveTasksPath = parseWaveTasksPathCandidate(prNumber);
+  const waveTasksPath = parseWaveTasksPathCandidate(prNumber, branch);
 
   const manifest = fileExists(manifestPath) ? readJson(manifestPath) : null;
   const scopeText = scopePath && fileExists(scopePath) ? fs.readFileSync(scopePath, 'utf8') : '';

@@ -24,6 +24,7 @@ run_case() {
   local name="$1"
   local expected_action="$2"
   local setup_fn="$3"
+  local expected_wave_path="${4:-}"
 
   local ws
   ws="$(mktemp -d -p "$TEST_DIR")"
@@ -49,7 +50,9 @@ run_case() {
 
   local actual
   actual="$(json_get "$out" next_required_action)"
-  if [[ "$actual" == "$expected_action" ]]; then
+  local actual_wave
+  actual_wave="$(json_get "$out" wave_tasks_path)"
+  if [[ "$actual" == "$expected_action" ]] && { [[ -z "$expected_wave_path" ]] || [[ "$actual_wave" == "$expected_wave_path" ]]; }; then
     echo "✅ $name"
     PASS=$((PASS+1))
   else
@@ -63,7 +66,13 @@ run_case() {
 
 setup_bootstrap_required() {
   echo "change" > docs.md
+  mkdir -p .agent-workspace/foreman-v2/personal
+  cat > .agent-workspace/foreman-v2/personal/wave-current-tasks.md <<'WAVE'
+PR: #1685
+Branch: copilot/another-branch
+WAVE
   git add docs.md
+  git add .agent-workspace/foreman-v2/personal/wave-current-tasks.md
   git commit -q -m "docs"
 }
 
@@ -127,7 +136,7 @@ WAVE
   git commit -q -m "admin only"
 }
 
-run_case "bootstrap missing artifacts" "BOOTSTRAP_REQUIRED" setup_bootstrap_required
+run_case "bootstrap missing artifacts (mismatched legacy wave ignored)" "BOOTSTRAP_REQUIRED" setup_bootstrap_required ".agent-admin/prs/pr-9001/wave-current-tasks.md"
 run_case "identity contradictions block" "BLOCKED" setup_blocked_mismatch
 run_case "substantive delta needs evidence" "EVIDENCE_REQUIRED" setup_evidence_required
 run_case "admin-only delta with bootstrap+evidence passes" "PASS" setup_pass_admin_only

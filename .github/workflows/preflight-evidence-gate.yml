@@ -298,7 +298,8 @@ jobs:
           CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.injection_inputs.outputs.changed_files_path }}
           CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.injection_inputs.outputs.pr_comments_path }}
         run: |
-          RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
+          ACTIVE_STATE_JSON="$(PR_NUMBER="${PR_NUMBER}" BRANCH="${PR_BRANCH}" BASE_SHA="${BASE_SHA}" HEAD_SHA="${HEAD_SHA}" node .github/scripts/resolve-active-pr-state.js)"
+          RESULT_JSON="$(ACTIVE_STATE_JSON="$ACTIVE_STATE_JSON" node .github/scripts/pre-handover-checkpoint.js)"
           echo "result_json<<EOF" >> "$GITHUB_OUTPUT"
           echo "$RESULT_JSON" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
@@ -350,8 +351,7 @@ jobs:
     name: "preflight/active-state"
     runs-on: ubuntu-latest
     if: >-
-      github.event_name == 'workflow_dispatch' ||
-      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)
+      github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
     steps:
       - name: Checkout PR head branch
         uses: actions/checkout@v5

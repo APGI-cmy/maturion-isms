@@ -110,6 +110,22 @@ function parseJsonInput(pathName, jsonName, fallback) {
   }
 }
 
+function loadActiveState(input = {}) {
+  if (input.activeState && typeof input.activeState === 'object') return input.activeState;
+  const raw = input.activeStateJson || process.env.ACTIVE_STATE_JSON || '';
+  if (raw) {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+  const candidate = input.activeStatePath || process.env.ACTIVE_STATE_PATH || '';
+  if (!candidate) return null;
+  const absolute = path.isAbsolute(candidate) ? candidate : path.join(process.cwd(), candidate);
+  return readJson(absolute);
+}
+
 function git(args) {
   try {
     return cp.execFileSync('git', args, { encoding: 'utf8' }).trim();
@@ -402,12 +418,14 @@ function latestInjectionIntake(prComments) {
     })[0] || null;
 }
 
-function resolveManifest(prNumber) {
+function resolveManifest(prNumber, preferredPath = '') {
   const candidates = [];
+  if (preferredPath) candidates.push(preferredPath);
   if (prNumber) candidates.push(`.admin/prs/pr-${prNumber}.json`);
   candidates.push('.admin/pr.json');
   for (const candidate of candidates) {
-    const manifest = readJson(path.join(process.cwd(), candidate));
+    const absolutePath = path.isAbsolute(candidate) ? candidate : path.join(process.cwd(), candidate);
+    const manifest = readJson(absolutePath);
     if (manifest) {
       return { path: candidate, manifest };
     }
@@ -688,13 +706,14 @@ function readFunctionalEvidence(prNumber, prBody) {
 }
 
 function evaluateCheckpoint(input = {}) {
-  const prNumber = Number(input.prNumber || process.env.PR_NUMBER || 0) || null;
-  const headSha = String(input.headSha || process.env.HEAD_SHA || git(['rev-parse', 'HEAD']) || '').trim();
-  const baseSha = String(input.baseSha || process.env.BASE_SHA || '').trim();
+  const activeState = loadActiveState(input) || {};
+  const prNumber = Number(input.prNumber || process.env.PR_NUMBER || activeState.pr || 0) || null;
+  const headSha = String(input.headSha || process.env.HEAD_SHA || activeState.runtime_head_sha || git(['rev-parse', 'HEAD']) || '').trim();
+  const baseSha = String(input.baseSha || process.env.BASE_SHA || activeState.base_sha || '').trim();
   const baseBranch = String(input.baseBranch || process.env.BASE_BRANCH || '').trim();
   const prBody = String(input.prBody ?? process.env.PR_BODY ?? '');
   const prTitle = String(input.prTitle ?? process.env.PR_TITLE ?? '');
-  const branch = String(input.branch || process.env.PR_BRANCH || git(['branch', '--show-current']) || '').trim();
+  const branch = String(input.branch || process.env.PR_BRANCH || activeState.branch || git(['branch', '--show-current']) || '').trim();
   const trigger = String(input.trigger || process.env.CHECKPOINT_TRIGGER || '').trim() || 'PRE_HANDOVER_CHECKPOINT';
   const explicitMergeConflictChecked = asBoolOrNull(input.mergeConflictChecked ?? process.env.CHECKPOINT_MERGE_CONFLICT_CHECKED);
   const explicitMergeableWithBase = asBoolOrNull(input.mergeableWithBase ?? process.env.CHECKPOINT_MERGEABLE_WITH_BASE);
@@ -711,7 +730,7 @@ function evaluateCheckpoint(input = {}) {
   const checkRuns = input.checkRuns || parseJsonInput('CHECKPOINT_CHECK_RUNS_PATH', 'CHECKPOINT_CHECK_RUNS_JSON', []);
   const commitStatuses = input.commitStatuses || parseJsonInput('CHECKPOINT_COMMIT_STATUSES_PATH', 'CHECKPOINT_COMMIT_STATUSES_JSON', []);
 
-  const { path: manifestPath, manifest } = resolveManifest(prNumber);
+  const { path: manifestPath, manifest } = resolveManifest(prNumber, String(activeState.manifest_path || '').trim());
   const changedFiles = input.changedFiles || parseJsonInput('CHECKPOINT_CHANGED_FILES_PATH', 'CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
   const protectedPathsTouched = changedFiles.some(isProtectedPath);
   const requiresIaa = manifest?.requires_iaa !== false;
@@ -721,9 +740,9 @@ function evaluateCheckpoint(input = {}) {
   const builderQaRequired = productDeliveryRequired;
   const journey = classifyProductJourney(changedFiles, prTitle, prBody);
 
-  const scopePath = prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '';
+  const scopePath = String(activeState.scope_path || '').trim() || (prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '');
   const scopeText = scopePath ? safeRead(path.join(process.cwd(), scopePath)) : '';
-  const waveTasksPath = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
+  const waveTasksPath = String(activeState.wave_tasks_path || '').trim() || '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
   const waveTasksText = safeRead(path.join(process.cwd(), waveTasksPath));
   const issueNumber = resolveIssueNumber(input.issueNumber || process.env.ISSUE_NUMBER, prBody, scopeText, manifest);
   const scopeCount = Number(readSimpleField(scopeText, 'FILES_CHANGED') || 0) || null;
