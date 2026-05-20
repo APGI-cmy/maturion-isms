@@ -47,7 +47,7 @@ FOREMAN_INSTRUCTIONS:
 - Bump iaa-pre-brief.md version to v1.1 and add repair amendment row to Status Header
 - Expand Section 1.9 to list all 8 Stage 8 hardening artifacts with paths and status
 - Add IAA Challenge 7.8 declaring 144-vs-147 RED test reconciliation as pre-build blocker with REJECTION-PACKAGE trigger
-- Create stage9-post-stage8-hardening-reconfirmation.md confirming Stage 9 gate-pass remains valid; record delta as pre-execution builder obligation; do NOT reclassify Stage 9
+- Create stage9-post-stage8-hardening-reconfirmation.md confirming Stage 9 gate-pass remains valid; record delta as pre-appointment reconciliation obligation blocking Stage 11 appointment; do NOT reclassify Stage 9
 - Update BUILD_PROGRESS_TRACKER.md Stage 9 Key Artifacts and Stage 8/Stage 10 notes to record repair
 - Ensure FILES_CHANGED count matches actual diff count exactly
 - Stage 11 and Stage 12 must remain NOT_STARTED in all artifacts
@@ -117,8 +117,11 @@ Action `PRE-BRIEF` confirmed. Phase 1–4 assurance NOT executed. Generating pre
 | 5 | `.admin/prs/pr-1695.json` | Admin/housekeeping (bundled) |
 | 6 | `.agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md` | GOVERNANCE_AUDIT — wave record (retrospective) |
 | 7 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Foreman workspace update (bundled with wave) |
+| 8 | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage10-prebrief-repair-20260520.md` | Ceremony artifact — PREHANDOVER proof (bundled with wave) |
+| 9 | `.agent-workspace/foreman-v2/memory/session-pit-stage10-prebrief-repair-20260520.md` | Ceremony artifact — session memory (bundled with wave) |
+| 10 | `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Ceremony artifact — parking station update (bundled with wave) |
 
-**Qualifying tasks**: ALL 7 files qualify — dominant category is **PRE_BUILD_STAGE_MODEL**.
+**Qualifying tasks**: ALL 10 files qualify — dominant category is **PRE_BUILD_STAGE_MODEL**.
 No AGENT_CONTRACT, CANON_GOVERNANCE, CI_WORKFLOW, or KNOWLEDGE_GOVERNANCE triggers present.
 AMBIGUITY RULE: Not invoked — classification is clear.
 
@@ -151,17 +154,20 @@ IAA_ADOPTION_PHASE: PHASE_B_BLOCKING
 
 #### EXPECTED_QA_SCOPE
 
-IAA will inspect the following 7 files at final assurance invocation:
+IAA will inspect the following 10 files at final assurance invocation. Files 1–7 are substantive governance artifacts where IAA will verify content; files 8–10 are bundled ceremony artifacts where IAA will verify presence and PR/issue binding:
 
 | # | File | What IAA Will Verify |
 |---|------|---------------------|
-| 1 | `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md` | Version bumped to v1.1; Section 1.9 lists all 8 Stage 8 hardening artifacts now present in `modules/pit/08-implementation-plan/`; 144-vs-147 RED test reconciliation declared as pre-build blocker with REJECTION-PACKAGE trigger; no overclaim of IAA acceptance or Build Authorization clearance; repair amendment noted in status header |
-| 2 | `modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md` | File exists and is substantive (not a stub/placeholder); explicitly confirms Stage 9 gate-pass remains valid after Stage 8 hardening; explicitly records the 144→147 RED test delta as a pre-build reconciliation obligation for the builder (not a Stage 9 re-gate requirement); cross-references wave-to-red-test-manifest.md |
+| 1 | `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md` | Version bumped to v1.1; Section 1.9 lists all 8 Stage 8 hardening artifacts now present in `modules/pit/08-implementation-plan/`; 144-vs-147 RED test reconciliation declared as pre-build blocker with REJECTION-PACKAGE trigger blocking Stage 11 appointment; no overclaim of IAA acceptance or Build Authorization clearance; repair amendment noted in status header |
+| 2 | `modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md` | File exists and is substantive (not a stub/placeholder); explicitly confirms Stage 9 gate-pass remains valid after Stage 8 hardening; explicitly records the 144→147 RED test delta as a pre-execution reconciliation obligation that blocks Stage 11 builder appointment; cross-references wave-to-red-test-manifest.md |
 | 3 | `modules/pit/BUILD_PROGRESS_TRACKER.md` | Repair entry present citing issue #1694 and PR #1695; Stage 8 hardening addendum artifacts listed in Stage 8 section; Stage 10 status remains ACTIVE — INITIATED (repair does not complete Stage 10); all stage gate-pass statuses unchanged |
-| 4 | `.agent-admin/scope-declarations/pr-1695.md` | All 7 files in scope declared; issue #1694 and PR #1695 cited; file count matches actual diff |
-| 5 | `.admin/prs/pr-1695.json` | PR metadata consistent with issue #1694, branch `copilot/repair-pit-stage-10-pre-brief`, all 7 scope files listed |
-| 6 | `.agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md` | This file — pre-brief section present and committed |
+| 4 | `.agent-admin/scope-declarations/pr-1695.md` | All 10 files in scope declared; issue #1694 and PR #1695 cited; file count matches actual diff |
+| 5 | `.admin/prs/pr-1695.json` | PR metadata consistent with issue #1694, branch `copilot/repair-pit-stage-10-pre-brief`, all 10 scope files listed |
+| 6 | `.agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md` | This file — pre-brief section present and committed; Step 0.2 and EXPECTED_QA_SCOPE declare all 10 PR diff files consistently |
 | 7 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | Wave ID updated to `pit-stage10-prebrief-repair-20260520`; issue #1694 and PR #1695 referenced; all repair tasks listed with correct statuses |
+| 8 | `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage10-prebrief-repair-20260520.md` | Present; references PR #1695 and issue #1694; PREHANDOVER ceremony complete |
+| 9 | `.agent-workspace/foreman-v2/memory/session-pit-stage10-prebrief-repair-20260520.md` | Present; references PR #1695 and issue #1694 |
+| 10 | `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` | Present; parking station entry updated for this wave |
 
 **Additional mandatory file inspection (existing on branch — not modified but verified as correct):**
 - `modules/pit/08-implementation-plan/wave-to-red-test-manifest.md` — confirm 144-vs-147 delta language matches what is declared as a blocker in the repaired pre-brief
@@ -220,7 +226,7 @@ The following are the most likely failure modes at final assurance, ranked by pr
 2. **Create `modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md`:**
    - This document MUST be substantive — not a stub or placeholder
    - It MUST confirm: Stage 9 gate-pass (issued 2026-05-19, issue #1687, PR #1689) **remains valid** after Stage 8 hardening artifacts (PR #1693) were merged
-   - It MUST record: The Stage 9 builder checklist's reference to "144 tests" (Sections 3.1, 3.2, 3.3) is acknowledged; the 144→147 delta is a **pre-execution reconciliation obligation for the builder** at the start of W8.1 — it is NOT a Stage 9 gate-pass failure
+   - It MUST record: The Stage 9 builder checklist's reference to "144 tests" (Sections 3.1, 3.2, 3.3) is acknowledged; the 144→147 delta is a **pre-appointment reconciliation obligation** blocking Stage 11 builder appointment — it is NOT a Stage 9 gate-pass failure
    - It MUST cross-reference: `modules/pit/08-implementation-plan/wave-to-red-test-manifest.md` (the source of the 147 enumeration) and `modules/pit/08-implementation-plan/builder-execution-responsibility-model.md`
    - It MUST NOT: reclassify Stage 9 as requiring re-gate-pass, introduce new acceptance criteria, advance Stage 10 status, or clear Build Authorization
    - Recommended structure: Status Header → Reconfirmation Context → Stage 9 Gate-Pass Validity Confirmation → Hardening Addendum Scope → 144-vs-147 Reconciliation Obligation → Boundary Statement (what this does NOT do)
@@ -369,7 +375,7 @@ IAA_WILL_QA:
 
   4. stage9-post-stage8-hardening-reconfirmation.md exists and is substantive:
      - Confirms Stage 9 gate-pass remains valid
-     - Records 144→147 delta as pre-execution reconciliation obligation
+     - Records 144→147 delta as pre-appointment reconciliation obligation blocking Stage 11 appointment
      - Cross-references wave-to-red-test-manifest.md
      - Does NOT reclassify Stage 9 as requiring re-gate-pass
      [CORE-020, OVL-PBG-013]
@@ -378,7 +384,7 @@ IAA_WILL_QA:
      Stage 8 hardening artifacts listed; Stage 10 status = ACTIVE — INITIATED
      (not COMPLETE) [CORE-020, FAIL-ONLY-ONCE A-026]
 
-  6. All 7 files declared in pr-1695.md scope declaration and pr-1695.json
+  6. All 10 files declared in pr-1695.md scope declaration and pr-1695.json
      scope array — no file count mismatch [FAIL-ONLY-ONCE A-026, A-028]
 
   7. wave-current-tasks.md updated to wave ID pit-stage10-prebrief-repair-20260520;
@@ -402,7 +408,7 @@ IAA_WILL_QA:
 
 ```
 RESULT: PREFLIGHT_BRIEF_COMPLETE
-QUALIFYING_TASKS: 7 files across all repair tasks
+QUALIFYING_TASKS: 10 files across all repair tasks
 APPLICABLE_OVERLAY: PRE_BUILD_GATES (OVL-PBG-001–OVL-PBG-019)
 ANTI_REGRESSION_OBLIGATIONS: YES (OVL-PBG-019, FAIL-ONLY-ONCE A-026, A-028, A-029)
 CEREMONY_ADMIN: NOT REQUIRED (governance-only wave)

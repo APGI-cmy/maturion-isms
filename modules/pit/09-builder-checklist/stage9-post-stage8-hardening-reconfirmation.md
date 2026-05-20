@@ -48,7 +48,7 @@ The following checklist confirms whether the Stage 9 Builder Checklist (`modules
 
 - [x] **Builder Checklist still covers the exact RED-test manifest and RED-count reconciliation blocker.**
 
-  The builder-checklist.md requires acknowledgement of the RED test suite (Section 4, Stage 6 obligations) and references the QA-to-Red catalog. The Stage 8 hardening artifact `wave-to-red-test-manifest.md` is an addendum that provides wave-level test allocation — it does not supersede the Stage 6 catalog. **However**: the wave-to-red-test-manifest.md identifies a **144-vs-147 catalog count delta** (3 rows: `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`). This delta is NOT a Stage 9 blocker — it is a pre-execution builder obligation that must be resolved before a builder begins wave execution (Stage 12). Stage 9 gate-pass is confirmed valid; the delta is recorded here as a pre-execution reconciliation obligation carried forward to Stage 10 (IAA Challenge §7.8) and to the builder at Stage 11 appointment. **VERDICT: SUFFICIENT** — Stage 9 checklist obligation for RED tests remains valid; delta is pre-execution builder obligation at W8.1 start, not a Stage 9 gate-pass re-trigger.
+  The builder-checklist.md requires acknowledgement of the RED test suite (Section 4, Stage 6 obligations) and references the QA-to-Red catalog. The Stage 8 hardening artifact `wave-to-red-test-manifest.md` is an addendum that provides wave-level test allocation — it does not supersede the Stage 6 catalog. **However**: the wave-to-red-test-manifest.md identifies a **144-vs-147 catalog count delta** (3 rows: `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`). This delta is NOT a Stage 9 blocker — it is a pre-appointment reconciliation obligation that must be resolved before Stage 11 builder appointment. Stage 9 gate-pass is confirmed valid; the delta is recorded here as a pre-appointment reconciliation obligation carried forward to Stage 10 (IAA Challenge §7.8) and requiring resolution before a builder can be appointed at Stage 11. **VERDICT: SUFFICIENT** — Stage 9 checklist obligation for RED tests remains valid; delta blocks Stage 11 appointment, not Stage 9 gate-pass re-trigger.
 
 - [x] **Builder Checklist still covers route/screen/five-state matrix obligations.**
 
@@ -86,9 +86,9 @@ The Stage 9 gate-pass record (`modules/pit/09-builder-checklist/stage9-gate-pass
 
 ---
 
-## 4. Pre-Execution Builder Obligation: 144-vs-147 RED Test Count Reconciliation
+## 4. Pre-Appointment Reconciliation Obligation: 144-vs-147 RED Test Count Reconciliation
 
-> This obligation is recorded here for traceability but is **not** a Stage 9 gate-pass blocker. It is a pre-execution reconciliation requirement that must be resolved before a builder begins Stage 12 wave execution.
+> This obligation is recorded here for traceability but is **not** a Stage 9 gate-pass blocker. It is a pre-appointment reconciliation requirement that must be resolved before Stage 11 builder appointment — it is not a Stage 9 re-gate-pass trigger.
 
 The `wave-to-red-test-manifest.md` (Stage 8 hardening artifact) records the following:
 
@@ -96,12 +96,12 @@ The `wave-to-red-test-manifest.md` (Stage 8 hardening artifact) records the foll
 - **Current catalog enumeration**: 147 table rows
 - **Delta rows**: `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`
 
-**Builder obligation at W8.1 start**: Before beginning any Stage 12 build wave, the builder (when appointed at Stage 11) must present a reconciliation decision to Foreman and CS2:
+**Builder obligation before Stage 11 appointment**: Before receiving a Stage 11 builder appointment, the builder candidate must present a reconciliation decision to Foreman and CS2:
 
 - Option A: Retire or reclassify the 3 delta rows to confirm the 144 declared baseline remains correct — requires CS2 approval and update to Stage 6/Stage 8 evidence chain.
 - Option B: Update the allocation baseline from 144 to 147, acknowledging the 3 additional tests as in-scope — requires CS2 approval and update to Stage 6/Stage 8 evidence chain.
 
-This reconciliation is an **IAA Challenge** (see `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md` §7.8) and is declared as a **pre-build blocker** for Stage 12 wave execution. It does NOT block Stage 10 or Stage 11.
+This reconciliation is an **IAA Challenge** (see `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md` §7.8) and is declared as a **pre-build blocker** — it blocks Stage 11 builder appointment. The reconciliation decision must be presented to Foreman and CS2 before a builder can be appointed at Stage 11. Stage 10 (IAA Pre-Brief, currently ACTIVE — INITIATED) is not blocked by this delta.
 
 ---
 

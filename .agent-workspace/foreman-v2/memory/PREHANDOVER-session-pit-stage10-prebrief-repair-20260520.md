@@ -16,7 +16,7 @@ GOVERNANCE_ONLY repair wave for PIT (Project Implementation Tracker). Four prima
 
 1. **Stage 10 IAA Pre-Brief Repair (v1.1)**: Updated `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md` — bumped version to v1.1; expanded Section 1.9 to include all 8 Stage 8 hardening artifacts added by PR #1693; added IAA Challenge §7.8 declaring the 144-vs-147 RED test catalog count delta as an explicit pre-build blocker with REJECTION-PACKAGE trigger before Stage 11 builder appointment.
 
-2. **Stage 9 Post-Hardening Reconfirmation**: Created `modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md` — confirms Stage 9 gate-pass remains valid after Stage 8 hardening artifacts were added; records 144→147 delta as pre-execution builder obligation; does NOT reclassify Stage 9 or initiate new gate-pass ceremony.
+2. **Stage 9 Post-Hardening Reconfirmation**: Created `modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md` — confirms Stage 9 gate-pass remains valid after Stage 8 hardening artifacts were added; records 144→147 delta as a pre-appointment reconciliation obligation that blocks Stage 11 builder appointment; does NOT reclassify Stage 9 or initiate new gate-pass ceremony.
 
 3. **BUILD_PROGRESS_TRACKER.md Repair**: Added `stage9-post-stage8-hardening-reconfirmation.md` to Stage 9 Key Artifacts; updated Stage 9 and Stage 10 notes; fixed stale Stage 9 governance compliance entry (was ACTIVE-INITIATED, now correctly GATE_PASSED); updated Current Stage Summary; updated Last Updated/Updated By.
 
