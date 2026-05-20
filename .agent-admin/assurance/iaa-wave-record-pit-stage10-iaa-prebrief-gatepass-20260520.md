@@ -29,7 +29,7 @@ Anti-regression obligations: [yes — FAIL-ONLY-ONCE A-003 ambiguity mandatory i
 
 ---
 
-## IAA_PREFLIGHT_BRIEF
+IAA_PREFLIGHT_BRIEF
 
 PR: 1701
 ISSUE: #1698
