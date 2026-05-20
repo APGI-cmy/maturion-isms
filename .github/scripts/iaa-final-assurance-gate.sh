@@ -370,6 +370,10 @@ while IFS= read -r token_file; do
     "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
   FINAL_IAA_RESULT=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?FINAL_IAA_RESULT:[[:space:]]*' \
     "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+  IDENTITY_VERDICT_MARKER=$(grep -iE '^[[:space:]]*IAA_IDENTITY_BINDING_VERDICT([[:space:]]*|:)' \
+    "$token_file" 2>/dev/null | head -1 || true)
+  IDENTITY_ALL_MATCH=$(grep -iE '^[[:space:]]*(-[[:space:]]*)?ALL_MATCH:[[:space:]]*' \
+    "$token_file" 2>/dev/null | head -1 | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
 
   if ! echo "$PREFLIGHT_REVIEWED" | grep -qi "^yes$"; then
     echo "  ❌ PREFLIGHT_BRIEF_REVIEWED must be yes in final IAA artifact [IAA-FINAL-GATE-011]"
@@ -402,6 +406,18 @@ while IFS= read -r token_file; do
   if [ -z "$FINAL_IAA_RESULT" ]; then
     echo "  ❌ FINAL_IAA_RESULT missing [IAA-FINAL-GATE-014]"
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: FINAL_IAA_RESULT missing"
+    FILE_VALID=false
+    FAIL=true
+  fi
+  if [ -z "$IDENTITY_VERDICT_MARKER" ]; then
+    echo "  ❌ IAA_IDENTITY_BINDING_VERDICT section missing [IAA-FINAL-GATE-016]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: IAA_IDENTITY_BINDING_VERDICT section missing"
+    FILE_VALID=false
+    FAIL=true
+  fi
+  if ! echo "$IDENTITY_ALL_MATCH" | grep -qi "^yes$"; then
+    echo "  ❌ IAA identity binding ALL_MATCH must be yes [IAA-FINAL-GATE-017]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: identity binding ALL_MATCH is not yes"
     FILE_VALID=false
     FAIL=true
   fi
@@ -526,6 +542,10 @@ while IFS= read -r wave_file; do
         "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
       WR_UNMET_PREFLIGHT_EXPECTATIONS=$(awk '/^## TOKEN/{found=1} found && /UNMET_PREFLIGHT_EXPECTATIONS:/{print; exit}' \
         "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      WR_IDENTITY_VERDICT=$(awk '/^## TOKEN/{found=1} found && /^IAA_IDENTITY_BINDING_VERDICT([[:space:]]*|:)/{print; exit}' \
+        "$wave_file" 2>/dev/null || true)
+      WR_IDENTITY_ALL_MATCH=$(awk '/^## TOKEN/{found=1} found && /ALL_MATCH:/{print; exit}' \
+        "$wave_file" 2>/dev/null | sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
 
       if ! echo "$WR_PREFLIGHT_REVIEWED" | grep -qi "^yes$"; then
         echo "  ❌ Wave record ## TOKEN must include PREFLIGHT_BRIEF_REVIEWED: yes [IAA-FINAL-GATE-011]"
@@ -550,6 +570,18 @@ while IFS= read -r wave_file; do
         WR_FILE_VALID=false
         FAIL=true
         FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: FINAL_IAA_RESULT missing in ## TOKEN"
+      fi
+      if [ -z "$WR_IDENTITY_VERDICT" ]; then
+        echo "  ❌ Wave record ## TOKEN missing IAA_IDENTITY_BINDING_VERDICT [IAA-FINAL-GATE-016]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: IAA_IDENTITY_BINDING_VERDICT missing in ## TOKEN"
+      fi
+      if ! echo "$WR_IDENTITY_ALL_MATCH" | grep -qi "^yes$"; then
+        echo "  ❌ Wave record ## TOKEN identity ALL_MATCH must be yes [IAA-FINAL-GATE-017]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: identity ALL_MATCH is not yes in ## TOKEN"
       fi
       if echo "$WR_PREFLIGHT_EXPECTATIONS_MET" | grep -qi "^no$"; then
         if [ -z "$WR_UNMET_PREFLIGHT_EXPECTATIONS" ] || echo "$WR_UNMET_PREFLIGHT_EXPECTATIONS" | grep -qiE "^(none|n/a)$"; then

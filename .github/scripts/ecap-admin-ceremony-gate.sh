@@ -333,6 +333,18 @@ else
     # ── Case B: ecap_invoked true + ecap_verdict PASS — ALSO requires ECAP bundle ─
     if echo "$ECAP_INV_VALUE" | grep -qiE "^true$|^yes$|^YES$" || \
        echo "$CEREMONY_VALUE" | grep -qiE "^true$|^yes$|^execution-ceremony"; then
+      IDENTITY_CHECK_MARKER=$(grep -iE "^[[:space:]]*ECAP_IDENTITY_BINDING_CHECK([[:space:]]*|:)" "$proof_file" 2>/dev/null | head -1 || true)
+      IDENTITY_ALL_MATCH=$(grep -iE "^[[:space:]]*ALL_MATCH:[[:space:]]*" "$proof_file" 2>/dev/null | head -1 | \
+        sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      if [ -z "$IDENTITY_CHECK_MARKER" ]; then
+        echo "  ❌ Missing ECAP_IDENTITY_BINDING_CHECK block [ECAP-GATE-006]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP_IDENTITY_BINDING_CHECK block missing"
+        FAIL=true
+      elif ! echo "$IDENTITY_ALL_MATCH" | grep -qiE "^yes$"; then
+        echo "  ❌ ECAP identity binding ALL_MATCH must be yes [ECAP-GATE-007]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP identity binding ALL_MATCH is not yes"
+        FAIL=true
+      fi
       if echo "$ECAP_VERD_VALUE" | grep -qiE "^PASS$|^pass$|^PASS_WITH_CS2_WAIVER$"; then
         # PREHANDOVER claims ECAP invoked and passed, but a real ECAP bundle artifact
         # must also be committed — PREHANDOVER fields alone are not ceremony evidence.

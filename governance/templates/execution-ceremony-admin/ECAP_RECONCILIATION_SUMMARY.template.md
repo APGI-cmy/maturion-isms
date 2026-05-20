@@ -98,4 +98,27 @@
 
 ---
 
+## C6. ECAP Identity Binding Check (MANDATORY)
+
+```yaml
+ECAP_IDENTITY_BINDING_CHECK
+ACTUAL_PR: #<active-pr-from-github-context>
+ADMIN_MANIFEST_PR: #<value-from-.admin/prs/pr-<PR>.json>
+SCOPE_DECLARATION_PR: #<value-from-.agent-admin/scope-declarations/pr-<PR>.md>
+PREHANDOVER_PR: #<value-from-active-prehandover-proof>
+IAA_TOKEN_PR: #<value-from-active-iaa-token-or-wave-record-token>
+WAVE_CURRENT_TASKS_PR: #<value-from-wave-current-tasks.md>
+BRANCH: <active-branch-from-github-context>
+HEAD_SHA: <active-head-sha-from-github-context>
+ALL_MATCH: yes|no
+RESULT: PASS|STOP_AND_FIX
+```
+
+If `ALL_MATCH: no`, set:
+- `RESULT: STOP_AND_FIX`
+- `HANDOVER_ALLOWED: no`
+- `RESPONSIBLE_PATH: ECAP admin/scope identity refresh`
+
+---
+
 *Template Version: 1.0.0 | Authority: ECAP-001 v1.1.0 | Effective: 2026-04-17*
