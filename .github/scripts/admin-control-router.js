@@ -174,8 +174,7 @@ function main() {
   const jobClass = [...classes.jobClass];
   if (isDraftWip) jobClass.push('draft-wip');
 
-  const productOnlySimple = classes.hasProductChange
-    && !classes.hasGovernanceChange
+  const productOnlySimple = !classes.hasGovernanceChange
     && !classes.hasProtectedPath
     && !classes.hasGateChange
     && !classes.hasAgentContractChange;
@@ -189,6 +188,7 @@ function main() {
   const requiredControls = ['IDENTITY_BINDING'];
   if (requiresIaaPreflight) requiredControls.push('IAA_PREFLIGHT');
   if (requiresEcap) requiredControls.push('ECAP_PROTECTED_PATH_CEREMONY');
+  if (requiresEcap) requiredControls.push('FOREMAN_ADMIN_READINESS');
   if (requiresStrictGateEvidence) requiredControls.push('STRICT_GATE_CHANGE_EVIDENCE');
   if (requiresAgentContractAuth) requiredControls.push('CODEXADVISOR_CS2_AUTHORIZATION');
   if (requiresIaaFinalAssurance) requiredControls.push('IAA_FINAL_ASSURANCE');

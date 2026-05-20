@@ -170,6 +170,7 @@ assert_protected_governance() {
   [[ "$(json_has_list_item "$file" job_class governance-change)" == "yes" ]] || return 1
   [[ "$(json_has_list_item "$file" job_class protected-path)" == "yes" ]] || return 1
   [[ "$(json_has_list_item "$file" required_controls ECAP_PROTECTED_PATH_CEREMONY)" == "yes" ]] || return 1
+  [[ "$(json_has_list_item "$file" required_controls FOREMAN_ADMIN_READINESS)" == "yes" ]] || return 1
   [[ "$(json_get "$file" next_required_control)" == "ECAP_PROTECTED_PATH_CEREMONY" ]] || return 1
 }
 
@@ -247,8 +248,23 @@ assert_wrong_identity_bundle() {
   [[ "$(json_get "$file" handover_allowed)" == "false" ]] || return 1
 }
 
+setup_docs_only() {
+  mkdir -p docs
+  echo "# doc" > docs/README.md
+  git add docs/README.md
+  git commit -q -m "docs change"
+  CURRENT_HEAD_GATES_PASSED="true"
+}
+assert_docs_only() {
+  local file="$1"
+  [[ "$(json_get "$file" next_required_control)" == "NONE" ]] || return 1
+  [[ "$(json_get "$file" handover_allowed)" == "true" ]] || return 1
+  [[ "$(json_has_list_item "$file" required_controls IAA_PREFLIGHT)" == "no" ]] || return 1
+}
+
 echo "=== Admin Control Router Regression ==="
 run_case "product-only simple PR" setup_product_only assert_product_only
+run_case "docs-only simple PR" setup_docs_only assert_docs_only
 run_case "protected governance template PR" setup_protected_governance assert_protected_governance
 run_case "gate-changing PR" setup_gate_change assert_gate_change
 run_case "agent-contract PR" setup_agent_contract assert_agent_contract
