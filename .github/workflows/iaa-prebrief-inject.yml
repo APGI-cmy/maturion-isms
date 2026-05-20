@@ -125,9 +125,8 @@ jobs:
                   const lower = fc.toLowerCase();
                   const hasBriefSection = lower.includes('iaa_preflight_brief');
                   const hasCompleteResult = lower.includes('result: preflight_brief_complete');
-                  const hasPrBinding = prNumber > 0
-                    ? new RegExp(`\\bPR:\\s*#?${prNumber}\\b`, 'i').test(fc)
-                    : /\bPR:\s*#?\d+\b/i.test(fc);
+                  const hasPrBinding = prNumber > 0 &&
+                    new RegExp(`\\bPR:\\s*#?${prNumber}\\b`, 'i').test(fc);
                   const notSuperseded = !lower.includes('superseded');
                   if (hasBriefSection && hasCompleteResult && hasPrBinding && notSuperseded) {
                     prebriefExists = true;
@@ -542,7 +541,7 @@ jobs:
                 (c) => c.body && c.body.includes(INVOCATION_MARKER)
               );
             } catch (e) {
-              core.warning(`Unable to query existing invocation comments (non-blocking): ${e.message}`);
+              core.warning(`Unable to query existing invocation comments (non-blocking): ${e?.message || String(e)}`);
             }
             if (alreadyPosted) {
               core.notice('IAA Pre-Brief invocation comment already present on this PR — skipping duplicate.');
@@ -590,7 +589,7 @@ jobs:
                 body,
               });
             } catch (e) {
-              core.warning(`Unable to post IAA Pre-Brief invocation comment (non-blocking): ${e.message}`);
+              core.warning(`Unable to post IAA Pre-Brief invocation comment (non-blocking): ${e?.message || String(e)}`);
             }
 
   # ── T+10min Safety Net ────────────────────────────────────────────────────
