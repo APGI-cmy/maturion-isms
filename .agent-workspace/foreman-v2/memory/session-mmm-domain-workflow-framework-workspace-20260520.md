@@ -27,7 +27,7 @@ iaa_prebrief_artifact: .agent-admin/assurance/iaa-wave-record-mmm-domain-workflo
 prebrief_wave: mmm-domain-workflow-framework-workspace
 prebrief_tasks_count: 7
 current_head_sha: 3068f77b6c3699219bd563fec8c0aa50bd7cf1ac
-current_head_sha_context: historical closure snapshot for final readiness review before docs-only admin follow-ups
+current_head_sha_context: historical closure snapshot for final readiness review before documentation-only admin follow-ups
 agents_delegated_to:
   - agent: qa-builder
     task: Define and verify RED / behaviour coverage for the legacy MMM DomainAuditBuilder adaptation in PR #1700.

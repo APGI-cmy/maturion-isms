@@ -104,7 +104,7 @@ WAVE: mmm-domain-workflow-framework-workspace
 BRANCH: copilot/wire-existing-mmm-domain-workflow
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/memory/session-mmm-domain-workflow-framework-workspace-20260520.md
 CURRENT_HEAD_SHA: 3068f77b6c3699219bd563fec8c0aa50bd7cf1ac
-CURRENT_HEAD_SHA_CONTEXT: historical closure snapshot for the final review handoff point before docs-only readiness updates
+CURRENT_HEAD_SHA_CONTEXT: historical closure snapshot for the final review handoff point before documentation-only readiness updates
 PHASE_0_FREEZE_STATUS: LIFTED (PR #1688 merged 2026-05-19)
 
 EXPECTED_QA_SCOPE:
