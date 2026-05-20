@@ -12,7 +12,7 @@ EXPECTED_QA_SCOPE:
 - `apps/mmm/src/lib/useFrameworkHandoffContext.ts` — extended domain data access
 - `apps/mmm/src/pages/DomainWorkspacePage.tsx` — new transitional domain workspace page
 - `apps/mmm/src/App.tsx` — domain workspace route registration
-- `modules/MMM/tests/B4-framework/b4-framework.test.ts` — new T-MMM-S6-183+ RED→GREEN tests
+- `modules/MMM/tests/B4-framework/b4-framework.test.ts` — RED→GREEN implementation tests aligned to T-MMM-S6-177 through T-MMM-S6-184
 - `scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs` — 5-card workspace assertion update
 - `modules/MMM/BUILD_PROGRESS_TRACKER.md` — RED finding record
 

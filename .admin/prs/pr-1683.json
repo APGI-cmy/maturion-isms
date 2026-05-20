@@ -32,7 +32,7 @@
     "AssessmentFrameworkHandoffPage.tsx updated to render 5 canonical domain cards (Leadership and Governance, Process Integrity, People and Culture, Protection, Proof It Works)",
     "DomainWorkspacePage.tsx created as transitional domain workspace with visible content",
     "/assessment/framework/domain/:domainId route registered in App.tsx wrapped in ProtectedRoute",
-    "B4 framework tests T-MMM-S6-183+ added to modules/MMM/tests/B4-framework/b4-framework.test.ts — 115 existing + new tests all pass",
+    "B4 framework tests aligned to T-MMM-S6-177 through T-MMM-S6-184 from #1688 in modules/MMM/tests/B4-framework/b4-framework.test.ts — suite passes GREEN",
     "verify-mmm-modes.mjs updated to assert visible 5-card workspace content",
     "modules/MMM/BUILD_PROGRESS_TRACKER.md updated with RED finding and wave state"
   ],

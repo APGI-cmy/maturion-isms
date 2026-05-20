@@ -25,7 +25,7 @@ Qualifying tasks:
   2. Implement DomainWorkspacePage.tsx (new transitional route for domain click-through)
   3. Register /assessment/framework/domain/:domainId route in App.tsx
   4. Update useFrameworkHandoffContext.ts to support 5-domain mini-dashboard metadata
-  5. Add new B4 RED→GREEN tests (new T-MMM-S6-183+ range) for 5-domain workspace
+  5. Add B4 RED→GREEN implementation tests aligned to T-MMM-S6-177 through T-MMM-S6-184 for 5-domain workspace
   6. Update scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs for 5-card assertion
   7. Update modules/MMM/BUILD_PROGRESS_TRACKER.md to record RED finding and wave state
   8. Create .agent-admin/scope-declarations/pr-1683.md
