@@ -67,7 +67,14 @@ agents_delegated_to:
 2. Previous head `537e34d97dc5f5efd1815e91e87da7a18159ba07` also failed `POLC Boundary Validation/builder-involvement-check` because no PR-changed session memory exposed `agents_delegated_to:` evidence for the delegated builders.
 3. Active PR artifacts were stale on identity at the previous head: `.admin/prs/pr-1700.json` still had `"issue": null`, while active scope and wave artifacts still said `Issue: PENDING`.
 4. This session corrected those blockers on historical head `7b78404d6f93f0a206840cb06ecbd1ac511c377d`, where `POLC Boundary Validation` run `26165161659` completed GREEN.
-5. Current-head closure refresh at `3068f77b6c3699219bd563fec8c0aa50bd7cf1ac` confirms latest core gates remain GREEN (`Preflight Evidence Gate` 26172567816, `POLC Boundary Validation` 26172460984, `Stub Detection Check` 26172460847, `Routing Governance Check` 26172460985, `CodeQL` 26172460983, `Deploy MMM Frontend to Vercel` 26172460670), while `MMM Live Dashboard Diagnosis` run `26172460899` was still pending at snapshot time.
+5. Current-head closure refresh at `3068f77b6c3699219bd563fec8c0aa50bd7cf1ac` confirmed:
+   - `Preflight Evidence Gate` run `26172567816` GREEN
+   - `POLC Boundary Validation` run `26172460984` GREEN
+   - `Stub Detection Check` run `26172460847` GREEN
+   - `Routing Governance Check` run `26172460985` GREEN
+   - `CodeQL` run `26172460983` GREEN
+   - `Deploy MMM Frontend to Vercel` run `26172460670` GREEN
+   - `MMM Live Dashboard Diagnosis` run `26172460899` was still pending at snapshot time
 
 ---
 
