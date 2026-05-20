@@ -3,10 +3,10 @@
 **Wave ID**: mmm-domain-workflow-framework-workspace
 **Date**: 2026-05-20
 **Branch**: copilot/wire-existing-mmm-domain-workflow
-**PR**: PENDING
+**PR**: #1700
 **Issue**: PENDING — Wire existing MMM domain workflow into framework workspace
 **Authority**: CS2 (@APGI-cmy)
-**Mode**: PRE-BRIEF
+**Mode**: PRE-BRIEF (AMENDED 2026-05-20 — CS2 legacy-target clarification)
 **ceremony_admin_appointed**: PENDING
 **Phase 0 Build Freeze Status**: LIFTED — PR #1688 merged 2026-05-19T15:08:45Z (alignment artifacts confirmed; follow-up implementation now authorized)
 
@@ -19,13 +19,45 @@
 
 ---
 
+### AMENDMENT — CS2 Clarification (2026-05-20)
+
+**Authority**: CS2 (@APGI-cmy)
+**Action**: PRE-BRIEF-AMEND
+**Trigger**: CS2 clarification received via Foreman that PR #1700 must explicitly target the legacy MMM components. The domain route `/assessment/framework/domain/:domainId` must use `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx` as the primary legacy source target for reuse/adaptation. Generic data-rendering approaches that bypass the legacy workflow intent are **not acceptable** and will trigger REJECTION-PACKAGE.
+
+**Authoritative legacy reuse/adaptation targets**:
+```
+apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx       ← PRIMARY (domain-level page)
+apps/maturion-maturity-legacy/src/pages/AssessmentFramework.tsx
+apps/maturion-maturity-legacy/src/components/assessment/MPSSelectionModal.tsx
+apps/maturion-maturity-legacy/src/components/assessment/IntentCreator.tsx
+apps/maturion-maturity-legacy/src/components/assessment/CriteriaManagement.tsx
+apps/maturion-maturity-legacy/src/components/assessment/AIGeneratedCriteriaCards.tsx
+apps/maturion-maturity-legacy/src/components/ai/EnhancedCriteriaGenerator.tsx
+apps/maturion-maturity-legacy/src/hooks/useDomainAuditBuilder.ts     ← PRIMARY hook
+apps/maturion-maturity-legacy/src/hooks/useMPSManagement.ts
+apps/maturion-maturity-legacy/src/hooks/useAIMPSGeneration.ts
+apps/maturion-maturity-legacy/src/hooks/useIntentGeneration.ts
+apps/maturion-maturity-legacy/src/hooks/useDeferredCriteria.ts
+apps/maturion-maturity-legacy/src/hooks/useStepStatusManagement.ts
+```
+
+**Scope impact**: This amendment sharpens — not broadens — the wave scope. The implementation approach is now required to be legacy-source-rooted rather than greenfield. QA scope, failure modes, and foreman instructions have been updated accordingly below.
+
+---
+
 ### Step 0.2 Output (Canonical)
 
 ```
 Qualifying tasks:
-  1. Wire DomainWorkspacePage (/assessment/framework/domain/:domainId) with existing
-     MMM domain workflow data — actionable MPS list, intent statements, and criteria steps
-     from mmm_maturity_process_steps + mmm_criteria tables.
+  1. Wire DomainWorkspacePage (/assessment/framework/domain/:domainId) by reusing/adapting
+     the legacy MMM domain workflow. `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx`
+     is the PRIMARY legacy source for the domain-level page; `useDomainAuditBuilder.ts` is the
+     primary legacy hook. Builder MUST study and adapt these legacy sources rather than writing
+     a generic data-fetching implementation. The legacy component/hook list in the CS2 amendment
+     above is authoritative for reuse/adaptation scope. The delivered page must surface actionable
+     MPS list, intent statements, and criteria steps from mmm_maturity_process_steps + mmm_criteria
+     tables, using the legacy workflow patterns as the structural guide.
   2. Preserve the five-domain page (AssessmentFrameworkHandoffPage) — five canonical domain cards
      must remain intact and tests T-MMM-S6-183 through T-MMM-S6-188 must stay GREEN.
   3. Restore contextually-aware back navigation: DomainWorkspacePage → framework workspace
@@ -67,7 +99,7 @@ Anti-regression obligations: YES
 
 ### IAA_PREFLIGHT_BRIEF
 
-**PR**: PENDING
+**PR**: #1700
 **Issue**: PENDING — Wire existing MMM domain workflow into framework workspace
 **Wave**: mmm-domain-workflow-framework-workspace
 **Branch**: copilot/wire-existing-mmm-domain-workflow
@@ -80,6 +112,23 @@ Anti-regression obligations: YES
 #### EXPECTED_QA_SCOPE
 
 Files IAA will audit at handover:
+
+**Legacy source targets (primary — CS2 amendment 2026-05-20)**
+- `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx` — PRIMARY: DomainWorkspacePage must be a reuse/adaptation of this legacy page, not a generic replacement. IAA will read this file and compare structural intent with what was delivered.
+- `apps/maturion-maturity-legacy/src/hooks/useDomainAuditBuilder.ts` — PRIMARY hook: data-fetching and orchestration logic must trace back to this legacy hook's patterns.
+- `apps/maturion-maturity-legacy/src/pages/AssessmentFramework.tsx` — secondary reference for assessment entry-point patterns.
+- `apps/maturion-maturity-legacy/src/components/assessment/MPSSelectionModal.tsx`
+- `apps/maturion-maturity-legacy/src/components/assessment/IntentCreator.tsx`
+- `apps/maturion-maturity-legacy/src/components/assessment/CriteriaManagement.tsx`
+- `apps/maturion-maturity-legacy/src/components/assessment/AIGeneratedCriteriaCards.tsx`
+- `apps/maturion-maturity-legacy/src/components/ai/EnhancedCriteriaGenerator.tsx`
+- `apps/maturion-maturity-legacy/src/hooks/useMPSManagement.ts`
+- `apps/maturion-maturity-legacy/src/hooks/useAIMPSGeneration.ts`
+- `apps/maturion-maturity-legacy/src/hooks/useIntentGeneration.ts`
+- `apps/maturion-maturity-legacy/src/hooks/useDeferredCriteria.ts`
+- `apps/maturion-maturity-legacy/src/hooks/useStepStatusManagement.ts`
+
+**IAA legacy-reuse verification**: For each major structural decision in the new `DomainWorkspacePage` and associated hooks, the PREHANDOVER proof or code comments must be traceable to a corresponding legacy component or hook (reused, adapted, or explicitly noted as intentionally diverged with justification). "We wrote it from scratch" is NOT an acceptable handover posture for this wave.
 
 **Product code (primary)**
 - `apps/mmm/src/pages/DomainWorkspacePage.tsx` — wiring from placeholder to live MPS + intent + criteria data
@@ -137,19 +186,24 @@ IAA has identified the following risk patterns that prior MMM waves have tripped
 
 10. **PRODUCT_BUILD_ASSURANCE_STANDARD.md evidence pack incomplete**: Prior waves (A-043) have failed by delivering patch-level correctness without full workflow correctness. Risk: builder delivers DomainWorkspacePage with MPS list rendered but does not prove the actionable path (click through MPS → see intent statement and criteria steps). IAA will require the full promised user journey to be evidenced, not just component rendering.
 
+11. **[CS2 AMENDMENT — CRITICAL] Generic/synthetic replacement of legacy workflow intent**: CS2 has clarified that the implementation must be a reuse/adaptation of `DomainAuditBuilder.tsx` and the authoritative legacy hook/component list — not a greenfield generic data-rendering page. Risk: builder writes `DomainWorkspacePage` as a simple MPS list render (e.g., `supabase.from(...).select().then(render list)`) without incorporating the domain audit builder workflow pattern (MPS selection → intent statement → criteria step management state machine). This is the highest-priority failure mode for this wave. **IAA will compare the delivered implementation directly against the legacy source targets to verify genuine reuse/adaptation rather than functional substitution.** A delivered page that renders MPS data generically without reflecting the DomainAuditBuilder.tsx workflow structure = REJECTION-PACKAGE.
+
+12. **[CS2 AMENDMENT] Legacy hook pattern abandoned without justification**: The legacy hooks (useDomainAuditBuilder, useMPSManagement, useIntentGeneration, useDeferredCriteria, useStepStatusManagement) encode the domain audit state machine. Risk: builder creates all-new hooks that ignore the legacy state management pattern, resulting in a behaviorally hollow implementation. IAA requires the PREHANDOVER proof to explicitly map each delivered hook to its legacy counterpart (adapted from / reused / intentionally diverged with stated reason). Silent divergence = REJECTION-PACKAGE.
+
 ---
 
 #### FOREMAN_INSTRUCTIONS
 
 1. **Confirm Phase 0 freeze lifted**: Record in wave-current-tasks.md that the Phase 0 Temporary Build Freeze (§574) is lifted upon PR #1688 merge (confirmed: merged 2026-05-19T15:08:45Z). This wave is the first authorized implementation wave post-freeze-lift.
 
-2. **Builder assignment**: ui-builder is the appointed builder for B3-B6 UI scope (per Stage 11 builder-contract.md). This wave's scope (DomainWorkspacePage wiring, frontend-only) falls within ui-builder's appointment. Foreman must explicitly confirm ui-builder delegation in the issue and wave-current-tasks.md. No new builder appointment ceremony required; existing appointment covers this scope.
+2. **Builder assignment**: ui-builder is the appointed builder for B3-B6 UI scope (per Stage 11 builder-contract.md). This wave's scope (DomainWorkspacePage wiring, frontend-only) falls within ui-builder's appointment. **[CS2 AMENDMENT] Foreman must explicitly pass the authoritative legacy source list to ui-builder in the delegation instruction.** The delegation message must name `DomainAuditBuilder.tsx` as the primary target and list the 13 legacy files. The delegation MUST NOT frame this as "build a domain workflow page" — it must frame it as "adapt the existing DomainAuditBuilder.tsx workflow into DomainWorkspacePage." No new builder appointment ceremony required; existing appointment covers this scope.
 
-3. **Scope boundary enforcement**: This wave is FRONTEND UI WIRING ONLY:
-   - `apps/mmm/src/pages/DomainWorkspacePage.tsx` (primary change)
-   - New data hooks/queries if needed
+3. **[CS2 AMENDMENT] Scope boundary enforcement — legacy-targeted**: This wave is FRONTEND UI WIRING ONLY, and specifically legacy-adaptation-targeted:
+   - `apps/mmm/src/pages/DomainWorkspacePage.tsx` (primary change — must adapt from `DomainAuditBuilder.tsx`)
+   - New data hooks/queries if needed (must adapt from legacy hooks listed above)
    - Tests
    - `modules/MMM/BUILD_PROGRESS_TRACKER.md` (tracker update)
+   The primary legacy source is `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx`. The builder must read and adapt this file. Foreman must confirm the builder has read the legacy source before beginning implementation.
    NO schema migrations, NO new Edge Functions, NO API route changes are authorized in this wave. Any backend changes trigger a separate wave with api-builder delegation.
 
 4. **Backend data source**: The existing Supabase client pattern (`supabase.from('mmm_maturity_process_steps').select(...)`) is the authorized data source for this wave. The mmm_maturity_process_steps table (with intent_statement column) and mmm_criteria table are the canonical sources per Stage 5 Architecture §A5. Edge Function delegation is NOT required for this read-only wiring.
@@ -252,6 +306,7 @@ At handover invocation, IAA will independently verify all of the following:
 3. Schema contract: SELECT statement on mmm_maturity_process_steps must cover `name`, `code`, `intent_statement`, `sort_order`; SELECT on mmm_criteria must cover `name`, `code`, `sort_order`, `mps_id` (or equivalent join). IAA will check the actual query against the Stage 5 schema table.
 4. Async/pending state visibility: Loading state and error state for the data fetch must be present. If data is loading or fetch fails, user must see a loading indicator or error message — not blank content.
 5. T-MMM-S6-051 gap note: Builder must declare whether this wave satisfies, partially satisfies, or defers T-MMM-S6-051.
+6. **[CS2 AMENDMENT] Legacy-reuse traceability**: IAA will open `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx` and compare its structural workflow (MPS selection → intent management → criteria step management) against the delivered `DomainWorkspacePage`. The PREHANDOVER proof must contain a legacy-reuse map: for each major structural element in the delivered page/hooks, state which legacy file it was adapted from, reused from, or why it intentionally diverges. Missing legacy-reuse map = REJECTION-PACKAGE.
 
 **Anti-regression checks**
 6. Five-domain page: AssessmentFrameworkHandoffPage renders exactly five canonical domain cards. T-MMM-S6-183 through T-MMM-S6-188 are GREEN in CI.
@@ -275,9 +330,11 @@ At handover invocation, IAA will independently verify all of the following:
 
 ---
 
-#### RESULT: PREFLIGHT_BRIEF_COMPLETE
+#### RESULT: PREFLIGHT_BRIEF_COMPLETE (AMENDED)
 
-Pre-brief generated. Qualifying task count: **7**. Applicable overlay: PRODUCT_BUILD_ASSURANCE (primary) + PRE_BUILD_STAGE_MODEL (secondary) + GOVERNANCE_EVIDENCE. Anti-regression: YES (NBR-001, NBR-003, T-MMM-S6-183–188, T-MMM-S6-051 gap note). Phase 0 freeze: LIFTED (PR #1688 merged 2026-05-19). Build wave is authorized to proceed.
+Pre-brief generated and amended. Qualifying task count: **7** (unchanged). Applicable overlay: PRODUCT_BUILD_ASSURANCE (primary) + PRE_BUILD_STAGE_MODEL (secondary) + GOVERNANCE_EVIDENCE. Anti-regression: YES (NBR-001, NBR-003, T-MMM-S6-183–188, T-MMM-S6-051 gap note). Phase 0 freeze: LIFTED (PR #1688 merged 2026-05-19). Build wave is authorized to proceed.
+
+**CS2 Amendment applied 2026-05-20**: `DomainAuditBuilder.tsx` is the authoritative primary legacy source for DomainWorkspacePage. The 13 legacy files listed in the AMENDMENT section are the authoritative reuse/adaptation targets. Generic data-rendering implementations that bypass legacy workflow intent will trigger REJECTION-PACKAGE (Failure Mode #11/#12). Foreman instructions have been updated to require legacy-targeted delegation to ui-builder.
 
 ---
 
