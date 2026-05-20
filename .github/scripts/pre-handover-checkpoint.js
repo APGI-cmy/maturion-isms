@@ -383,8 +383,14 @@ function removeExcludedGates(records) {
 }
 
 function artifactCurrentness(text, headSha, substantiveHeadSha) {
+  const runtimeIdentityLabels = new Set([
+    'CURRENT_HEAD_SHA',
+    'RUNTIME_HEAD_SHA',
+  ]);
+  const evidenceSubjectLabels = /reviewed sha|review sha|head sha|commit sha|evidence_subject_sha|substantive_head_sha/i;
   const fields = [
     'CURRENT_HEAD_SHA',
+    'RUNTIME_HEAD_SHA',
     'gate_snapshot_head_sha',
     'post_push_head_sha',
     'Current head SHA reviewed',
@@ -404,10 +410,15 @@ function artifactCurrentness(text, headSha, substantiveHeadSha) {
   if (fields.length > 0) {
     const matches = fields.every(({ label, value }) => {
       const normalized = normalizeValue(String(value || '').replace(/[`]/g, ''));
-      if (SYMBOLIC_RUNTIME_HEAD_MARKERS.has(normalized)) return true;
+      const runtimeIdentityField = runtimeIdentityLabels.has(String(label || '').toUpperCase());
+      if (SYMBOLIC_RUNTIME_HEAD_MARKERS.has(normalized)) {
+        if (runtimeIdentityField) return true;
+        evidenceStale = true;
+        return false;
+      }
       if (!SHA_HEX_REGEX.test(normalized)) return false;
 
-      if (/reviewed sha|review sha|head sha|commit sha|evidence_subject_sha|substantive_head_sha/i.test(label)) {
+      if (evidenceSubjectLabels.test(label)) {
         if (!evidenceSubjectSha) evidenceSubjectSha = normalized;
         const match = shaMatches(normalized, substantiveHeadSha || headSha);
         if (!match) evidenceStale = true;

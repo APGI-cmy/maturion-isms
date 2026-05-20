@@ -617,6 +617,19 @@ setup_substantive_change_after_evidence() {
 }
 run_checkpoint_test "8b. substantive change after evidence makes artifact stale" "STOP_AND_FIX" "no" "stale for current HEAD" setup_substantive_change_after_evidence
 
+setup_symbolic_reviewed_sha_then_substantive_change() {
+  setup_admin_only_delta_after_evidence
+  sed -i 's/^\*\*Reviewed SHA\*\*: .*/**Reviewed SHA**: CURRENT_HEAD/' .agent-admin/assurance/iaa-wave-record-test.md
+  git add .agent-admin/assurance/iaa-wave-record-test.md
+  git commit -q -m "Set symbolic reviewed sha in assurance artifact"
+  mkdir -p .github/scripts
+  echo "#!/bin/bash" > .github/scripts/symbolic-reviewed-followup.sh
+  git add .github/scripts/symbolic-reviewed-followup.sh
+  git commit -q -m "Later substantive script change after symbolic reviewed sha"
+  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+}
+run_checkpoint_test "8c. symbolic reviewed SHA with later substantive change fails" "STOP_AND_FIX" "no" "stale for current HEAD" setup_symbolic_reviewed_sha_then_substantive_change
+
 setup_product_missing_evidence() {
   seed_manifest_and_scope
   seed_green_checks

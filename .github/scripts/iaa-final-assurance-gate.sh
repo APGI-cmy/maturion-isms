@@ -404,10 +404,11 @@ while IFS= read -r token_file; do
     FILE_VALID=false
     FAIL=true
   elif is_symbolic_runtime_head_marker "$TOKEN_REVIEWED_SHA"; then
-    echo "  ✅ Reviewed SHA: approved symbolic runtime-head marker ($TOKEN_REVIEWED_SHA)"
-    LAST_EVIDENCE_SUBJECT_SHA="$TOKEN_REVIEWED_SHA"
-    ADMIN_ONLY_DELTA_AFTER_EVIDENCE=$([ -n "$SUBSTANTIVE_HEAD_SHA" ] && [ -n "$HEAD_SHA" ] && ! sha_matches "$SUBSTANTIVE_HEAD_SHA" "$HEAD_SHA" && echo "true" || echo "false")
-    EVIDENCE_STALE="false"
+    echo "  ❌ Token reviewed SHA must be a literal substantive SHA (symbolic runtime marker not allowed here) [IAA-FINAL-GATE-009]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA uses symbolic runtime marker (${TOKEN_REVIEWED_SHA}); literal substantive SHA required"
+    FILE_VALID=false
+    FAIL=true
+    EVIDENCE_STALE="true"
   elif [ -n "$HEAD_SHA" ]; then
     LAST_EVIDENCE_SUBJECT_SHA="$TOKEN_REVIEWED_SHA"
     if sha_matches "$TOKEN_REVIEWED_SHA" "$SUBSTANTIVE_HEAD_SHA"; then
@@ -589,10 +590,11 @@ while IFS= read -r wave_file; do
       FAIL=true
       FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **Reviewed SHA**: field in ## TOKEN section"
     elif is_symbolic_runtime_head_marker "$WR_REVIEWED_SHA"; then
-      echo "  ✅ Wave record reviewed SHA: approved symbolic runtime-head marker"
-      LAST_EVIDENCE_SUBJECT_SHA="$WR_REVIEWED_SHA"
-      ADMIN_ONLY_DELTA_AFTER_EVIDENCE=$([ -n "$SUBSTANTIVE_HEAD_SHA" ] && [ -n "$HEAD_SHA" ] && ! sha_matches "$SUBSTANTIVE_HEAD_SHA" "$HEAD_SHA" && echo "true" || echo "false")
-      EVIDENCE_STALE="false"
+      echo "  ❌ Wave record reviewed SHA must be a literal substantive SHA (symbolic runtime marker not allowed here) [IAA-FINAL-GATE-009]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA uses symbolic runtime marker (${WR_REVIEWED_SHA}); literal substantive SHA required"
+      EVIDENCE_STALE="true"
     elif [ -n "$HEAD_SHA" ]; then
       LAST_EVIDENCE_SUBJECT_SHA="$WR_REVIEWED_SHA"
       if sha_matches "$WR_REVIEWED_SHA" "$SUBSTANTIVE_HEAD_SHA"; then

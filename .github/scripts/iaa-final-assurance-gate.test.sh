@@ -399,6 +399,31 @@ setup_ac9c_substantive_after_evidence_fail() {
 }
 run_test "AC-9c: Substantive change after evidence makes reviewed SHA stale" 1 "$IAA_GATE_SCRIPT" "setup_ac9c_substantive_after_evidence_fail"
 
+# AC-9d: Symbolic reviewed SHA is invalid for final evidence subject, especially after later substantive changes.
+setup_ac9d_symbolic_reviewed_sha_then_substantive_change_fail() {
+  add_impl_file
+  add_valid_iaa_token "9999" "1503"
+  sed -i 's/^\*\*Reviewed SHA\*\*: .*/**Reviewed SHA**: CURRENT_HEAD/' \
+    .agent-admin/assurance/iaa-token-session-test-wave-test-20260428.md
+  sed -i 's/^\*\*Reviewed SHA\*\*: .*/**Reviewed SHA**: CURRENT_HEAD/' \
+    .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md
+  git add .
+  git commit -q -m "Set symbolic reviewed sha in token and wave record"
+  mkdir -p .github/workflows
+  cat > .github/workflows/symbolic-reviewed-followup.yml << 'EOF'
+name: symbolic-reviewed-followup
+on: [pull_request]
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "substantive governance runtime follow-up"
+EOF
+  git add .
+  git commit -q -m "Later substantive workflow change after symbolic reviewed sha"
+}
+run_test "AC-9d: Symbolic reviewed SHA plus later substantive change -> FAIL" 1 "$IAA_GATE_SCRIPT" "setup_ac9d_symbolic_reviewed_sha_then_substantive_change_fail"
+
 # AC-11: PENDING PHASE_B_BLOCKING_TOKEN
 setup_ac11() {
   add_impl_file
