@@ -300,4 +300,9 @@
 | Non-Functional Requirements (NFR) | 8 | 5 | 3 | 0 | 0 |
 | **TOTAL** | **147** | **73** | **57** | **16** | **1** |
 
+Reconciliation traceability for the +3 baseline rows:
+- `PIT-RED-ROUTE-029` contributes to Route category **P1**.
+- `PIT-RED-TIMELINE-012` contributes to Timeline category **P2**.
+- `PIT-RED-TIMELINE-011` contributes to Timeline category **P3**.
+
 **147 RED tests defined.** All tests are in RED state (failing before implementation).
