@@ -10,6 +10,44 @@ BRANCH="${BRANCH:-${PR_BRANCH:-}}"
 HEAD_SHA="${HEAD_SHA:-}"
 BASE_SHA="${BASE_SHA:-}"
 WAVE_TASKS_PATH="${WAVE_TASKS_PATH:-.agent-workspace/foreman-v2/personal/wave-current-tasks.md}"
+ACTIVE_STATE_PATH="${ACTIVE_STATE_PATH:-}"
+NEXT_REQUIRED_ACTION="${NEXT_REQUIRED_ACTION:-}"
+
+if [ -z "$ACTIVE_STATE_PATH" ] || [ -z "$NEXT_REQUIRED_ACTION" ]; then
+  RESOLVER_JSON="$(node .github/scripts/resolve-active-pr-state.js 2>/dev/null || true)"
+  if [ -n "$RESOLVER_JSON" ]; then
+    ACTIVE_STATE_PATH="${ACTIVE_STATE_PATH:-.agent-admin/prs/pr-${PR_NUMBER:-unknown}/active-state.json}"
+    mkdir -p "$(dirname "$ACTIVE_STATE_PATH")" 2>/dev/null || true
+    echo "$RESOLVER_JSON" > "$ACTIVE_STATE_PATH"
+    if command -v python3 >/dev/null 2>&1; then
+      export ACTIVE_STATE_PATH
+      RESOLVED_VALUES="$(python3 - <<'PY'
+import json,os
+p=os.environ.get("ACTIVE_STATE_PATH","")
+state=json.load(open(p,"r",encoding="utf-8")) if p and os.path.exists(p) else {}
+print(state.get("pr",""))
+print(state.get("branch",""))
+print(state.get("runtime_head_sha",""))
+print(state.get("base_sha",""))
+print(state.get("wave_tasks_path",""))
+print(state.get("iaa_artifact_path",""))
+print(state.get("manifest_path",""))
+print(state.get("scope_path",""))
+print(state.get("next_required_action",""))
+PY
+)"
+      PR_NUMBER="$(echo "$RESOLVED_VALUES" | sed -n '1p')"
+      BRANCH="$(echo "$RESOLVED_VALUES" | sed -n '2p')"
+      HEAD_SHA="$(echo "$RESOLVED_VALUES" | sed -n '3p')"
+      BASE_SHA="$(echo "$RESOLVED_VALUES" | sed -n '4p')"
+      WAVE_TASKS_PATH="$(echo "$RESOLVED_VALUES" | sed -n '5p')"
+      ACTIVE_PREBRIEF_PATH="$(echo "$RESOLVED_VALUES" | sed -n '6p')"
+      ADMIN_PATH="$(echo "$RESOLVED_VALUES" | sed -n '7p')"
+      SCOPE_PATH="$(echo "$RESOLVED_VALUES" | sed -n '8p')"
+      NEXT_REQUIRED_ACTION="$(echo "$RESOLVED_VALUES" | sed -n '9p')"
+    fi
+  fi
+fi
 
 if [ -z "$PR_NUMBER" ] && [ -n "${GITHUB_EVENT_PATH:-}" ] && [ -f "${GITHUB_EVENT_PATH}" ]; then
   PR_NUMBER="$(python3 - <<'PY'
@@ -108,8 +146,14 @@ if [ -z "$BRANCH" ]; then
   fail "BRANCH is required from GitHub PR context."
 fi
 
-ADMIN_PATH=".admin/prs/pr-${PR_NUMBER}.json"
-SCOPE_PATH=".agent-admin/scope-declarations/pr-${PR_NUMBER}.md"
+ADMIN_PATH="${ADMIN_PATH:-.admin/prs/pr-${PR_NUMBER}.json}"
+SCOPE_PATH="${SCOPE_PATH:-.agent-admin/scope-declarations/pr-${PR_NUMBER}.md}"
+
+if [ "$NEXT_REQUIRED_ACTION" = "BOOTSTRAP_REQUIRED" ]; then
+  echo "⚠️  BOOTSTRAP_REQUIRED — missing PR bootstrap artifacts for active state."
+  echo "   Missing bootstrap is routed as next-action state, not hard identity failure."
+  exit 0
+fi
 
 if [ ! -f "$ADMIN_PATH" ]; then
   fail "Missing per-PR admin manifest: $ADMIN_PATH"
@@ -160,7 +204,7 @@ if [ -f "$SCOPE_PATH" ]; then
   grep -Eq "^BRANCH:[[:space:]]*${BRANCH}[[:space:]]*$" "$SCOPE_PATH" || fail "${SCOPE_PATH} BRANCH does not match active branch ${BRANCH}"
 fi
 
-ACTIVE_PREBRIEF_PATH=""
+ACTIVE_PREBRIEF_PATH="${ACTIVE_PREBRIEF_PATH:-}"
 if [ -f "$WAVE_TASKS_PATH" ]; then
   grep -Eq "^PR:[[:space:]]*#?${PR_NUMBER}[[:space:]]*$" "$WAVE_TASKS_PATH" || fail "${WAVE_TASKS_PATH} must contain PR: #${PR_NUMBER}"
   grep -Eq "^Branch:[[:space:]]*${BRANCH}[[:space:]]*$" "$WAVE_TASKS_PATH" || fail "${WAVE_TASKS_PATH} must contain Branch: ${BRANCH}"
@@ -200,24 +244,9 @@ if [ -n "$CHANGED_FILES" ]; then
   done <<< "$CHANGED_FILES"
 fi
 
-declare -a ACTIVE_ARTIFACTS=("$ADMIN_PATH" "$SCOPE_PATH" "$WAVE_TASKS_PATH")
+declare -a ACTIVE_ARTIFACTS=("$ADMIN_PATH" "$SCOPE_PATH" "$WAVE_TASKS_PATH" "$ACTIVE_STATE_PATH")
 if [ -n "$ACTIVE_PREBRIEF_PATH" ]; then
   ACTIVE_ARTIFACTS+=("$ACTIVE_PREBRIEF_PATH")
-fi
-
-if [ -n "$CHANGED_FILES" ]; then
-  while IFS= read -r f; do
-    [ -z "$f" ] && continue
-    case "$f" in
-      .agent-admin/assurance/iaa-token-*.md|\
-      .agent-admin/assurance/iaa-wave-record-*.md|\
-      .agent-admin/prehandover/proof-*.md|\
-      .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-*.md|\
-      .agent-workspace/foreman-v2/memory/PREHANDOVER-*.md)
-        ACTIVE_ARTIFACTS+=("$f")
-        ;;
-    esac
-  done <<< "$CHANGED_FILES"
 fi
 
 UNIQ_ACTIVE_ARTIFACTS="$(printf "%s\n" "${ACTIVE_ARTIFACTS[@]}" | awk 'NF && !seen[$0]++')"

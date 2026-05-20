@@ -298,7 +298,8 @@ jobs:
           CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.injection_inputs.outputs.changed_files_path }}
           CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.injection_inputs.outputs.pr_comments_path }}
         run: |
-          RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
+          ACTIVE_STATE_JSON="$(PR_NUMBER="${PR_NUMBER}" BRANCH="${PR_BRANCH}" BASE_SHA="${BASE_SHA}" HEAD_SHA="${HEAD_SHA}" node .github/scripts/resolve-active-pr-state.js)"
+          RESULT_JSON="$(ACTIVE_STATE_JSON="$ACTIVE_STATE_JSON" node .github/scripts/pre-handover-checkpoint.js)"
           echo "result_json<<EOF" >> "$GITHUB_OUTPUT"
           echo "$RESULT_JSON" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
@@ -345,6 +346,34 @@ jobs:
           console.log(`NEXT_REQUIRED_CONTROL=${nextRequiredControl}`);
           EOF
 
+
+  active-state:
+    name: "preflight/active-state"
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Resolve active PR state
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          ACTIVE_STATE_OUTPUT_PATH: .agent-admin/prs/pr-${{ github.event.pull_request.number }}/active-state.json
+        run: |
+          node .github/scripts/resolve-active-pr-state.js
+
+      - name: Upload active-state artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: active-state-pr-${{ github.event.pull_request.number }}
+          path: .agent-admin/prs/pr-${{ github.event.pull_request.number }}/active-state.json
 
   iaa-prebrief-check:
     name: "preflight/iaa-prebrief-existence"

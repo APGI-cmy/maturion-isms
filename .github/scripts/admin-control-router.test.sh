@@ -66,16 +66,6 @@ run_case() {
   ws="$(mktemp -d -p "$TEST_ROOT")"
   pushd "$ws" >/dev/null
 
-  git init -q
-  git config user.email "test@example.com"
-  git config user.name "Test User"
-  mkdir -p apps/mmm/src governance/templates .github/workflows .github/agents .agent-admin/control-state
-  echo "base" > README.md
-  git add README.md
-  git commit -q -m "base"
-  git branch -M main
-  git checkout -q -b feature
-
   local PR_NUMBER=9001
   local HEAD_REF="feature"
   local BASE_REF="main"
@@ -90,6 +80,37 @@ run_case() {
   local IAA_FINAL_ASSURANCE_ISSUED="false"
   local CODEXADVISOR_CS2_AUTHORIZATION_COMPLETE="false"
   local ACTIVE_IDENTITY_BUNDLE_JSON=""
+  local ACTIVE_STATE_JSON=""
+
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test User"
+  mkdir -p apps/mmm/src governance/templates .github/workflows .github/agents .agent-admin/control-state \
+         .admin/prs .agent-admin/scope-declarations ".agent-admin/prs/pr-${PR_NUMBER}"
+  echo "base" > README.md
+  cat > ".admin/prs/pr-${PR_NUMBER}.json" <<JSON
+{"pr":${PR_NUMBER},"issue":1684,"branch":"${HEAD_REF}","head_sha":"CURRENT_HEAD","base_sha":"CURRENT_BASE"}
+JSON
+  cat > ".agent-admin/scope-declarations/pr-${PR_NUMBER}.md" <<SCOPE
+PR_NUMBER: ${PR_NUMBER}
+ISSUE: #1684
+BRANCH: ${HEAD_REF}
+OWNER: Copilot
+DATE_UTC: 2026-05-20T00:00:00Z
+FILES_CHANGED: 1
+OUT_OF_SCOPE:
+- none
+SCOPE
+  cat > ".agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md" <<WAVE
+PR: #${PR_NUMBER}
+Branch: ${HEAD_REF}
+WAVE_TASKS_PATH: .agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md
+WAVE
+  git add README.md
+  git add .admin/prs ".agent-admin/scope-declarations/pr-${PR_NUMBER}.md" ".agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md"
+  git commit -q -m "base"
+  git branch -M main
+  git checkout -q -b feature
 
   "$setup_fn"
 
@@ -117,6 +138,7 @@ run_case() {
     IAA_FINAL_ASSURANCE_ISSUED="$IAA_FINAL_ASSURANCE_ISSUED" \
     CODEXADVISOR_CS2_AUTHORIZATION_COMPLETE="$CODEXADVISOR_CS2_AUTHORIZATION_COMPLETE" \
     ACTIVE_IDENTITY_BUNDLE_JSON="$ACTIVE_IDENTITY_BUNDLE_JSON" \
+    ACTIVE_STATE_JSON="$ACTIVE_STATE_JSON" \
     CONTROL_STATE_OUTPUT_PATH="$state_path" \
     node "$ROUTER_SCRIPT" 2>&1
   )"
@@ -262,6 +284,36 @@ assert_docs_only() {
   [[ "$(json_has_list_item "$file" required_controls IAA_PREFLIGHT)" == "no" ]] || return 1
 }
 
+setup_resolver_bootstrap_required() {
+  mkdir -p apps/mmm/src
+  echo "export const bootstrap = true;" > apps/mmm/src/bootstrap.ts
+  git add apps/mmm/src/bootstrap.ts
+  git commit -q -m "product change"
+  # Inject resolver state that says BOOTSTRAP_REQUIRED
+  ACTIVE_STATE_JSON='{"pr":9001,"branch":"feature","next_required_action":"BOOTSTRAP_REQUIRED","delta_type":"SUBSTANTIVE_DELTA","changed_files":[]}'
+}
+assert_resolver_bootstrap_required() {
+  local file="$1"
+  [[ "$(json_get "$file" next_required_control)" == "BOOTSTRAP_REQUIRED" ]] || return 1
+  [[ "$(json_has_list_item "$file" required_controls BOOTSTRAP_REQUIRED)" == "yes" ]] || return 1
+  [[ "$(json_get "$file" handover_allowed)" == "false" ]] || return 1
+}
+
+setup_resolver_evidence_stale() {
+  mkdir -p apps/mmm/src
+  echo "export const stale = true;" > apps/mmm/src/stale.ts
+  git add apps/mmm/src/stale.ts
+  git commit -q -m "product change"
+  # Inject resolver state that says EVIDENCE_STALE
+  ACTIVE_STATE_JSON='{"pr":9001,"branch":"feature","next_required_action":"EVIDENCE_STALE","delta_type":"SUBSTANTIVE_DELTA","changed_files":[]}'
+}
+assert_resolver_evidence_stale() {
+  local file="$1"
+  [[ "$(json_get "$file" next_required_control)" == "EVIDENCE_STALE" ]] || return 1
+  [[ "$(json_has_list_item "$file" required_controls EVIDENCE_STALE)" == "yes" ]] || return 1
+  [[ "$(json_get "$file" handover_allowed)" == "false" ]] || return 1
+}
+
 echo "=== Admin Control Router Regression ==="
 run_case "product-only simple PR" setup_product_only assert_product_only
 run_case "docs-only simple PR" setup_docs_only assert_docs_only
@@ -271,6 +323,8 @@ run_case "agent-contract PR" setup_agent_contract assert_agent_contract
 run_case "mixed product + governance PR" setup_mixed assert_mixed
 run_case "draft/WIP PR" setup_draft assert_draft
 run_case "wrong active identity bundle" setup_wrong_identity_bundle assert_wrong_identity_bundle
+run_case "resolver BOOTSTRAP_REQUIRED in required_controls" setup_resolver_bootstrap_required assert_resolver_bootstrap_required
+run_case "resolver EVIDENCE_STALE in required_controls" setup_resolver_evidence_stale assert_resolver_evidence_stale
 
 echo ""
 echo "Passed: $PASS"

@@ -16,6 +16,8 @@ run_gate_test() {
   local name="$1"
   local expected_exit="$2"
   local setup_fn="$3"
+  local use_resolver="${4:-no}"
+  local expected_output_substring="${5:-}"
 
   local ws
   ws="$(mktemp -d -p "$TEST_DIR")"
@@ -40,18 +42,35 @@ run_gate_test() {
   head_sha="$(git rev-parse HEAD)"
 
   set +e
-  WAVE_TASKS_PATH=".agent-workspace/foreman-v2/personal/wave-current-tasks.md" \
-  ASSURANCE_DIR=".agent-admin/assurance" \
-  PR_NUMBER="1672" \
-  BASE_SHA="$base_sha" \
-  HEAD_SHA="$head_sha" \
-  bash "$GATE_SCRIPT" >"$output_file" 2>&1
+  if [ "$use_resolver" = "yes" ]; then
+    WAVE_TASKS_PATH=".agent-workspace/foreman-v2/personal/wave-current-tasks.md" \
+    ASSURANCE_DIR=".agent-admin/assurance" \
+    PR_NUMBER="1672" \
+    BASE_SHA="$base_sha" \
+    HEAD_SHA="$head_sha" \
+    bash "$GATE_SCRIPT" >"$output_file" 2>&1
+  else
+    WAVE_TASKS_PATH=".agent-workspace/foreman-v2/personal/wave-current-tasks.md" \
+    ASSURANCE_DIR=".agent-admin/assurance" \
+    PR_NUMBER="1672" \
+    BASE_SHA="$base_sha" \
+    HEAD_SHA="$head_sha" \
+    NEXT_REQUIRED_ACTION="PASS" \
+    bash "$GATE_SCRIPT" >"$output_file" 2>&1
+  fi
   local exit_code=$?
   set -e
 
   if [ "$exit_code" -eq "$expected_exit" ]; then
-    echo "✅ $name"
-    PASS_COUNT=$((PASS_COUNT + 1))
+    if [ -n "$expected_output_substring" ] && ! grep -q "$expected_output_substring" "$output_file"; then
+      echo "❌ $name (missing output marker: $expected_output_substring)"
+      echo "Output file: $output_file"
+      cat "$output_file"
+      FAIL_COUNT=$((FAIL_COUNT + 1))
+    else
+      echo "✅ $name"
+      PASS_COUNT=$((PASS_COUNT + 1))
+    fi
   else
     echo "❌ $name (expected $expected_exit got $exit_code)"
     echo "Output file: $output_file"
@@ -265,6 +284,19 @@ setup_non_impl_not_required_ok() {
   git commit -q -m "non implementation docs change"
 }
 
+setup_bootstrap_required_non_cascading() {
+  mkdir -p .github/scripts .agent-workspace/foreman-v2/personal
+  cp "$SCRIPT_DIR/resolve-active-pr-state.js" .github/scripts/resolve-active-pr-state.js
+  cat > .agent-workspace/foreman-v2/personal/wave-current-tasks.md <<'EOF'
+PR: #1685
+Branch: copilot/legacy-branch
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-legacy.md
+EOF
+  echo "docs" > docs.md
+  git add .
+  git commit -q -m "legacy global wave file for another pr"
+}
+
 run_gate_test "1. missing pre-brief artifact -> FAIL" 1 "setup_missing_prebrief"
 run_gate_test "2. pre-brief missing EXPECTED_QA_SCOPE -> FAIL" 1 "setup_prebrief_missing_scope"
 run_gate_test "3. pre-brief empty EXPECTED_QA_SCOPE section -> FAIL" 1 "setup_prebrief_empty_scope_section"
@@ -280,6 +312,7 @@ run_gate_test "12. .github/workflows/* change with not_required delegation -> FA
 run_gate_test "13. .github/scripts/* change with not_required delegation -> FAIL" 1 "setup_impl_script_not_required"
 run_gate_test "14. non-implementation docs change with not_required delegation -> PASS" 0 "setup_non_impl_not_required_ok"
 run_gate_test "15. valid pre-flight contract -> PASS" 0 "setup_valid_contract"
+run_gate_test "16. missing PR-scoped wave/prebrief -> BOOTSTRAP_REQUIRED non-cascading PASS" 0 "setup_bootstrap_required_non_cascading" "yes" "NEXT_ACTION=BOOTSTRAP_REQUIRED"
 
 echo ""
 echo "Passed: $PASS_COUNT"
