@@ -376,6 +376,7 @@ EOF
 seed_green_checks() {
   CHECK_RUNS_JSON='[
     {"name":"preflight/phase-1-evidence","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
+    {"name":"preflight/admin-control-router","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/iaa-prebrief-existence","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/identity-binding","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
     {"name":"preflight/iaa-token-self-certification","status":"completed","conclusion":"success","started_at":"2026-05-08T10:00:00Z"},
@@ -695,6 +696,7 @@ EOF
     {"name":"preflight/mmm-pr-admin","status":"completed","conclusion":"failure","id":99002,"started_at":"2026-05-18T10:00:30Z","completed_at":"2026-05-18T10:01:30Z"},
     {"name":"preflight/product-delivery-gates","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/phase-1-evidence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
+    {"name":"preflight/admin-control-router","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/iaa-prebrief-existence","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/identity-binding","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
     {"name":"preflight/iaa-token-self-certification","status":"completed","conclusion":"success","started_at":"2026-05-18T10:00:00Z"},
