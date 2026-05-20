@@ -940,3 +940,44 @@ workspace.
 ---
 
 **Build-to-Green Wave (2026-05-19, maturion-isms#1682)**: Wave `build-to-green-5domain-workspace-20260519` implemented the Framework Configuration Workspace evolution. `AssessmentFrameworkHandoffPage` evolved from temporary raw-domain list to a 5-domain canonical dashboard with mini-dashboard placeholder slots per canonical domain. `DomainWorkspacePage` added as transitional domain workspace. Route `/assessment/framework/domain/:domainId` registered. B4 tests T-MMM-S6-183 through T-MMM-S6-188 added (RED→GREEN). `verify-mmm-modes.mjs` updated for 5-card workspace assertion.
+
+---
+
+**Legacy DomainAuditBuilder Wiring Wave (2026-05-20, PR #1700, branch: copilot/wire-existing-mmm-domain-workflow)**
+
+Wired the existing MMM domain route `/assessment/framework/domain/:domainId` to an explicit
+DomainAuditBuilder-pattern workflow, adapting the legacy `maturion-maturity-legacy` source
+structure for the current MMM app and adding data-backed reads from canonical MMM tables.
+
+**Deliverables**:
+- `apps/mmm/src/hooks/useDomainAuditBuilder.ts` — current-app hook adaptation (legacy: `apps/maturion-maturity-legacy/src/hooks/useDomainAuditBuilder.ts`); owns three-step metadata/dispatch and reads `mmm_domains`, `mmm_maturity_process_steps`, and `mmm_criteria` with graceful canonical-route setup-state fallback when no compiled domain row exists.
+- `apps/mmm/src/components/assessment/DomainAuditBuilder.tsx` — orchestration component (legacy: `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx`); renders ordered steps with live MPS/intent/criteria counts, data previews, loading/error states, and intentional setup-state UX for unresolved canonical-card routes.
+- `apps/mmm/src/components/assessment/MPSSelectionModal.tsx` — current-app adaptation (legacy: `apps/maturion-maturity-legacy/src/components/assessment/MPSSelectionModal.tsx`) now rendering code/name/sort-order/intent linkage rows from loaded `mmm_maturity_process_steps`.
+- `apps/mmm/src/components/assessment/IntentCreator.tsx` — current-app adaptation (legacy: `apps/maturion-maturity-legacy/src/components/assessment/IntentCreator.tsx`) now rendering `intent_statement` values from loaded MPS rows.
+- `apps/mmm/src/components/assessment/CriteriaManagement.tsx` — current-app adaptation (legacy: `apps/maturion-maturity-legacy/src/components/assessment/CriteriaManagement.tsx`) now grouping loaded `mmm_criteria` rows by MPS.
+- `apps/mmm/src/pages/DomainWorkspacePage.tsx` — thin wrapper preserving context: delegates to `<DomainAuditBuilder>` with `framework_id`, `domain_name`, and `source_domain_id` route context plus back navigation to `/assessment/framework?framework_id=:id`.
+- `modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx` — behavior-based B4 coverage for sourced and canonical routes, data rendering, loading/error states, and back navigation.
+- `vitest.mmm-b4.config.ts`, `package.json`, `pnpm-lock.yaml` — B4 test harness updates for jsdom + runtime behavior tests.
+
+**Tests turned GREEN** (were RED at HEAD):
+- T-MMM-S6-185: MMM app has explicit DomainAuditBuilder component (3 assertions)
+- T-MMM-S6-186: DomainWorkspacePage delegates to DomainAuditBuilder (3 assertions)
+- T-MMM-S6-187: useDomainAuditBuilder hook exists and is used (3 assertions)
+- T-MMM-S6-188: Adaptation points for MPSSelectionModal, IntentCreator, CriteriaManagement (6 assertions)
+- T-MMM-S6-189: Legacy three-step model preserved — Create MPSs / Create Intent / Create Criteria (6 assertions)
+- T-MMM-S6-190: Domain workflow renders real MMM data (7 assertions; includes canonical-card no-source setup-state path)
+
+**Full suite result**: 168/168 PASS (`vitest run --config vitest.mmm-b4.config.ts`)
+
+**Deferred scope declaration (explicit)**:
+- This PR currently delivers a **read/inspect workflow adaptation** for Domain → MPS → Intent → Criteria data already present in MMM canonical tables.
+- Legacy AI generation wiring (`useAIMPSGeneration`, `useIntentGeneration`, `AIGeneratedCriteriaCards`, `EnhancedCriteriaGenerator`, plus accept/refine/approval mutation paths) is **deferred** to a follow-up implementation wave and is not claimed as delivered here.
+
+**Traceability** (current-app → legacy source):
+- `hooks/useDomainAuditBuilder.ts` ← `apps/maturion-maturity-legacy/src/hooks/useDomainAuditBuilder.ts`
+- `components/assessment/DomainAuditBuilder.tsx` ← `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx`
+- `components/assessment/MPSSelectionModal.tsx` ← `apps/maturion-maturity-legacy/src/components/assessment/MPSSelectionModal.tsx`
+- `components/assessment/IntentCreator.tsx` ← `apps/maturion-maturity-legacy/src/components/assessment/IntentCreator.tsx`
+- `components/assessment/CriteriaManagement.tsx` ← `apps/maturion-maturity-legacy/src/components/assessment/CriteriaManagement.tsx`
+
+**Last Updated**: 2026-05-20 (amended current-head behavior/evidence alignment)

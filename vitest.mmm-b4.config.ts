@@ -11,12 +11,27 @@
  *   node_modules/.bin/vitest run --config vitest.mmm-b4.config.ts
  */
 import { defineConfig } from 'vitest/config';
+import path from 'node:path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'apps/mmm/src'),
+      react: path.resolve(__dirname, 'apps/mmm/node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'apps/mmm/node_modules/react-dom'),
+      'react-router-dom': path.resolve(__dirname, 'apps/mmm/node_modules/react-router-dom'),
+      '@tanstack/react-query': path.resolve(
+        __dirname,
+        'apps/mmm/node_modules/@tanstack/react-query',
+      ),
+    },
+  },
   test: {
     include: [
       'modules/MMM/tests/B4-framework/**/*.test.ts',
+      'modules/MMM/tests/B4-framework/**/*.test.tsx',
     ],
+    environment: 'jsdom',
     globals: true,
     reporters: ['verbose'],
   },
