@@ -49,6 +49,11 @@ export function DomainAuditBuilder({
     mpsRows,
     criteriaRows,
     criteriaByMps,
+    isCanonicalSetupRequired,
+    setupMessage,
+    acceptGeneratedMPSRows,
+    approveGeneratedIntent,
+    acceptGeneratedCriteria,
     isLoading,
     errorMessage,
     isMPSModalOpen,
@@ -97,6 +102,12 @@ export function DomainAuditBuilder({
           data-testid="domain-audit-error"
         >
           {errorMessage}
+        </div>
+      ) : null}
+
+      {isCanonicalSetupRequired && setupMessage ? (
+        <div className="alert" role="status" data-testid="domain-audit-setup-state">
+          {setupMessage}
         </div>
       ) : null}
 
@@ -149,6 +160,7 @@ export function DomainAuditBuilder({
         mpsRows={mpsRows}
         isLoading={isLoading}
         errorMessage={errorMessage}
+        onAcceptGeneratedMPSs={acceptGeneratedMPSRows}
         onClose={() => setIsMPSModalOpen(false)}
       />
       <IntentCreator
@@ -158,6 +170,7 @@ export function DomainAuditBuilder({
         mpsRows={mpsRows}
         isLoading={isLoading}
         errorMessage={errorMessage}
+        onApproveGeneratedIntent={approveGeneratedIntent}
         onClose={() => setIsIntentCreatorOpen(false)}
       />
       <CriteriaManagement
@@ -168,6 +181,7 @@ export function DomainAuditBuilder({
         criteriaByMps={criteriaByMps}
         isLoading={isLoading}
         errorMessage={errorMessage}
+        onAcceptGeneratedCriteria={acceptGeneratedCriteria}
         onClose={() => setIsCriteriaManagementOpen(false)}
       />
     </div>

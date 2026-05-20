@@ -6,6 +6,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import DomainWorkspacePage from '../../../../apps/mmm/src/pages/DomainWorkspacePage';
 
 type Scenario = {
+  domainRows: Array<{
+    id: string;
+    name: string;
+    code: string;
+    sort_order: number;
+    framework_id: string;
+  }>;
   mpsRows: Array<{
     id: string;
     domain_id: string;
@@ -28,6 +35,7 @@ type Scenario = {
 const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
   const calls: Array<Record<string, unknown>> = [];
   let scenario: Scenario = {
+    domainRows: [],
     mpsRows: [],
     criteriaRows: [],
     pendingTable: null,
@@ -67,7 +75,7 @@ const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
 
         if (table === 'mmm_domains' && column === 'framework_id') {
           return {
-            order: () => queryResult(table, []),
+            order: () => queryResult(table, scenario.domainRows),
           };
         }
 
@@ -94,10 +102,60 @@ const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
     })),
   }));
 
+  const invoke = vi.fn(async (...args: unknown[]) => {
+    const options = (args.length > 1 ? args[1] : args[0]) as { body?: Record<string, unknown> } | undefined;
+    const context = String(options?.body?.context ?? '');
+
+    if (context === 'MPS generation') {
+      return {
+        data: {
+          response: JSON.stringify([
+            {
+              code: 'AI-001',
+              name: 'AI generated ownership',
+              intent_statement: 'Define accountabilities for generated controls.',
+            },
+            {
+              code: 'AI-002',
+              name: 'AI generated review',
+              intent_statement: 'Set evidence review cadence for generated controls.',
+            },
+          ]),
+        },
+        error: null,
+      };
+    }
+
+    if (context === 'Intent generation') {
+      return {
+        data: {
+          response:
+            'AI-generated intent statement for this MPS, pending reviewer approval.',
+        },
+        error: null,
+      };
+    }
+
+    if (context === 'Criteria generation') {
+      return {
+        data: {
+          response: JSON.stringify([
+            { statement: 'A documented generated criterion exists for this MPS.' },
+            { statement: 'A tracked generated evidence review record exists for this MPS.' },
+          ]),
+        },
+        error: null,
+      };
+    }
+
+    return { data: {}, error: null };
+  });
+
   return {
-    mockSupabase: { from },
+    mockSupabase: { from, functions: { invoke } },
     configureScenario(next: Partial<Scenario>) {
       scenario = {
+        domainRows: [],
         mpsRows: [],
         criteriaRows: [],
         pendingTable: null,
@@ -182,9 +240,20 @@ const baseCriteriaRows: Scenario['criteriaRows'] = [
   },
 ];
 
+const canonicalDomainRows: Scenario['domainRows'] = [
+  {
+    id: 'domain-canonical',
+    name: 'Leadership and Governance',
+    code: 'leadership-governance',
+    sort_order: 1,
+    framework_id: 'framework-1',
+  },
+];
+
 describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   beforeEach(() => {
     configureScenario({
+      domainRows: canonicalDomainRows,
       mpsRows: baseMpsRows,
       criteriaRows: baseCriteriaRows,
     });
@@ -226,6 +295,72 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(within(list).getByText(/Workflow Ownership/)).toBeTruthy();
     expect(within(list).getByText(/Sort order: 1/)).toBeTruthy();
     expect(within(list).getByText(/Establish process ownership and approval accountability/)).toBeTruthy();
+  });
+
+  it('a canonical card route without source_domain_id shows intentional setup state and preserves back-navigation', async () => {
+    configureScenario({
+      domainRows: [],
+      mpsRows: [],
+      criteriaRows: [],
+    });
+
+    renderDomainWorkspace(
+      '/assessment/framework/domain/leadership-governance?framework_id=framework-1&domain_name=Leadership%20and%20Governance',
+    );
+
+    expect((await screen.findByTestId('domain-audit-setup-state')).textContent).toContain(
+      'No mapped MMM domain row exists for this canonical card yet.',
+    );
+    expect(screen.queryByTestId('domain-audit-error')).toBeNull();
+    expect(
+      screen.getByRole('link', { name: 'Back to Framework Workspace' }).getAttribute('href'),
+    ).toBe('/assessment/framework?framework_id=framework-1');
+  });
+
+  it('a canonical card route without source_domain_id resolves via framework_id + domain_name and loads rows', async () => {
+    const canonicalMpsRows: Scenario['mpsRows'] = [
+      {
+        id: 'canonical-mps-1',
+        domain_id: 'domain-canonical',
+        name: 'Governance oversight',
+        code: 'LG-001',
+        sort_order: 1,
+        intent_statement: 'Maintain governance accountability.',
+      },
+    ];
+    const canonicalCriteriaRows: Scenario['criteriaRows'] = [
+      {
+        id: 'canonical-criterion-1',
+        mps_id: 'canonical-mps-1',
+        name: 'Oversight evidence maintained',
+        code: 'LG-001-C001',
+        sort_order: 1,
+      },
+    ];
+
+    configureScenario({
+      domainRows: canonicalDomainRows,
+      mpsRows: canonicalMpsRows,
+      criteriaRows: canonicalCriteriaRows,
+    });
+
+    renderDomainWorkspace(
+      '/assessment/framework/domain/leadership-governance?framework_id=framework-1&domain_name=Leadership%20and%20Governance',
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('domain-audit-mps-count').textContent).toContain('1 MPS');
+    });
+
+    expect(
+      supabaseCalls.some(
+        (call) =>
+          call.table === 'mmm_maturity_process_steps' &&
+          call.operator === 'eq' &&
+          call.column === 'domain_id' &&
+          call.value === 'domain-canonical',
+      ),
+    ).toBe(true);
   });
 
   it('renders intent statements from mmm_maturity_process_steps intent_statement values', async () => {
@@ -285,5 +420,30 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect((await screen.findByTestId('mps-selection-error')).textContent).toContain(
       'Failed to load mmm_maturity_process_steps',
     );
+  });
+
+  it('wires generation and acceptance flow for MPS, intent, and criteria in the domain workspace', async () => {
+    renderDomainWorkspace();
+
+    fireEvent.click(await screen.findByTestId('step-action-mps'));
+    fireEvent.click(await screen.findByTestId('generate-mps-action'));
+    expect(await screen.findByTestId('generated-mps-list')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('accept-generated-mps'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('domain-audit-mps-count').textContent).toContain('4 MPS');
+    });
+
+    fireEvent.click(screen.getByTestId('step-action-intent'));
+    fireEvent.click(await screen.findByTestId('generate-intent-mps-1'));
+    fireEvent.click(await screen.findByTestId('approve-intent-mps-1'));
+    expect(screen.getAllByText(/AI-generated intent statement/).length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-criteria-mps-1'));
+    fireEvent.click(await screen.findByTestId('accept-generated-criteria-mps-1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('domain-audit-criteria-count').textContent).toContain('5 criteria');
+    });
   });
 });

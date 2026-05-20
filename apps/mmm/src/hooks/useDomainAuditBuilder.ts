@@ -38,6 +38,16 @@ export interface DomainAuditCriterionRow {
   sort_order: number;
 }
 
+export interface GeneratedMpsDraft {
+  code: string;
+  name: string;
+  intent_statement?: string;
+}
+
+export interface GeneratedCriteriaDraft {
+  statement: string;
+}
+
 export interface StepMeta {
   id: AuditStep;
   title: string;
@@ -86,6 +96,11 @@ export interface UseDomainAuditBuilderReturn {
   mpsRows: DomainAuditMpsRow[];
   criteriaRows: DomainAuditCriterionRow[];
   criteriaByMps: Record<string, DomainAuditCriterionRow[]>;
+  isCanonicalSetupRequired: boolean;
+  setupMessage: string | null;
+  acceptGeneratedMPSRows: (drafts: GeneratedMpsDraft[]) => void;
+  approveGeneratedIntent: (mpsId: string, intent: string) => void;
+  acceptGeneratedCriteria: (mpsId: string, drafts: GeneratedCriteriaDraft[]) => void;
   isLoading: boolean;
   errorMessage: string | null;
 }
@@ -97,12 +112,15 @@ export function useDomainAuditBuilder({
   sourceDomainId,
 }: UseDomainAuditBuilderOptions): UseDomainAuditBuilderReturn {
   const [activeStep, setActiveStep] = useState<AuditStep | null>(null);
+  const [acceptedGeneratedMps, setAcceptedGeneratedMps] = useState<GeneratedMpsDraft[]>([]);
+  const [approvedGeneratedIntents, setApprovedGeneratedIntents] = useState<Record<string, string>>({});
+  const [acceptedGeneratedCriteria, setAcceptedGeneratedCriteria] = useState<Record<string, GeneratedCriteriaDraft[]>>({});
 
   const {
     data: domain,
     isLoading: isDomainLoading,
     error: domainError,
-  } = useQuery<DomainAuditDomain>({
+  } = useQuery<DomainAuditDomain | null>({
     queryKey: ['domain-audit-domain', domainId, frameworkId, domainName, sourceDomainId],
     queryFn: async () => {
       if (sourceDomainId) {
@@ -140,7 +158,7 @@ export function useDomainAuditBuilder({
       });
 
       if (!matchedDomain) {
-        throw new Error('Could not resolve a MMM domain record for the routed domain context.');
+        return null;
       }
 
       return matchedDomain as DomainAuditDomain;
@@ -201,26 +219,66 @@ export function useDomainAuditBuilder({
     retry: false,
   });
 
-  const criteriaByMps = useMemo<Record<string, DomainAuditCriterionRow[]>>(() => {
-    return criteriaRows.reduce<Record<string, DomainAuditCriterionRow[]>>((grouped, criterion) => {
+  const generatedMpsRows = useMemo<DomainAuditMpsRow[]>(() => {
+    if (!domain?.id) {
+      return [];
+    }
+
+    return acceptedGeneratedMps.map((draft, index) => ({
+      id: `generated-mps-${domain.id}-${index + 1}`,
+      domain_id: domain.id,
+      code: draft.code,
+      name: draft.name,
+      sort_order: mpsRows.length + index + 1,
+      intent_statement: draft.intent_statement ?? null,
+    }));
+  }, [acceptedGeneratedMps, domain?.id, mpsRows.length]);
+
+  const mergedMpsRows = useMemo<DomainAuditMpsRow[]>(() => {
+    const byId = new Map<string, DomainAuditMpsRow>();
+    [...mpsRows, ...generatedMpsRows].forEach((row) => {
+      byId.set(row.id, {
+        ...row,
+        intent_statement: approvedGeneratedIntents[row.id] ?? row.intent_statement,
+      });
+    });
+    return Array.from(byId.values()).sort((a, b) => a.sort_order - b.sort_order);
+  }, [generatedMpsRows, mpsRows, approvedGeneratedIntents]);
+
+  const mergedCriteriaRows = useMemo<DomainAuditCriterionRow[]>(() => {
+    const generatedRows = Object.entries(acceptedGeneratedCriteria).flatMap(([mpsId, drafts], mpsIndex) =>
+      drafts.map((draft, index) => ({
+        id: `generated-criterion-${mpsId}-${mpsIndex + 1}-${index + 1}`,
+        mps_id: mpsId,
+        code: `GEN-${mpsIndex + 1}-${index + 1}`,
+        name: draft.statement,
+        sort_order: index + 1,
+      })),
+    );
+
+    return [...criteriaRows, ...generatedRows];
+  }, [acceptedGeneratedCriteria, criteriaRows]);
+
+  const mergedCriteriaByMps = useMemo<Record<string, DomainAuditCriterionRow[]>>(() => {
+    return mergedCriteriaRows.reduce<Record<string, DomainAuditCriterionRow[]>>((grouped, criterion) => {
       grouped[criterion.mps_id] = [...(grouped[criterion.mps_id] ?? []), criterion];
       return grouped;
     }, {});
-  }, [criteriaRows]);
+  }, [mergedCriteriaRows]);
 
   const steps = useMemo<StepMeta[]>(() => {
-    const intentRows = mpsRows.filter((row) => Boolean(row.intent_statement?.trim()));
+    const intentRows = mergedMpsRows.filter((row) => Boolean(row.intent_statement?.trim()));
 
     return BASE_AUDIT_STEPS.map((step) => {
       if (step.id === 'mps') {
         return {
           ...step,
-          count: mpsRows.length,
+          count: mergedMpsRows.length,
           summary:
-            mpsRows.length > 0
-              ? `${mpsRows.length} MPS rows loaded from MMM current data source.`
+            mergedMpsRows.length > 0
+              ? `${mergedMpsRows.length} MPS rows loaded from MMM current data source.`
               : 'No MPS rows loaded for this routed domain yet.',
-          previewItems: mpsRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
+          previewItems: mergedMpsRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
         };
       }
 
@@ -240,17 +298,21 @@ export function useDomainAuditBuilder({
 
       return {
         ...step,
-        count: criteriaRows.length,
+        count: mergedCriteriaRows.length,
         summary:
-          criteriaRows.length > 0
-            ? `${criteriaRows.length} criteria rows grouped under ${mpsRows.length} MPS entries.`
+          mergedCriteriaRows.length > 0
+            ? `${mergedCriteriaRows.length} criteria rows grouped under ${mergedMpsRows.length} MPS entries.`
             : 'No criteria rows are currently stored for this domain.',
-        previewItems: criteriaRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
+        previewItems: mergedCriteriaRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
       };
     });
-  }, [criteriaRows, mpsRows]);
+  }, [mergedCriteriaRows, mergedMpsRows]);
 
   const isLoading = isDomainLoading || isMpsLoading || isCriteriaLoading;
+  const isCanonicalSetupRequired = Boolean(domainId) && !sourceDomainId && !isDomainLoading && !domain;
+  const setupMessage = isCanonicalSetupRequired
+    ? 'No mapped MMM domain row exists for this canonical card yet. Create the domain mapping or start generation in this workspace.'
+    : null;
   const errorMessage =
     (domainError as Error | null)?.message ??
     (mpsError as Error | null)?.message ??
@@ -273,6 +335,26 @@ export function useDomainAuditBuilder({
     setActiveStep(step);
   };
 
+  const acceptGeneratedMPSRows = (drafts: GeneratedMpsDraft[]) => {
+    if (drafts.length === 0) return;
+    setAcceptedGeneratedMps(drafts);
+  };
+
+  const approveGeneratedIntent = (mpsId: string, intent: string) => {
+    setApprovedGeneratedIntents((current) => ({
+      ...current,
+      [mpsId]: intent.trim(),
+    }));
+  };
+
+  const acceptGeneratedCriteria = (mpsId: string, drafts: GeneratedCriteriaDraft[]) => {
+    if (drafts.length === 0) return;
+    setAcceptedGeneratedCriteria((current) => ({
+      ...current,
+      [mpsId]: drafts,
+    }));
+  };
+
   return {
     activeStep,
     isMPSModalOpen: activeStep === 'mps',
@@ -284,9 +366,14 @@ export function useDomainAuditBuilder({
     handleStepClick,
     steps,
     domain: domain ?? null,
-    mpsRows,
-    criteriaRows,
-    criteriaByMps,
+    mpsRows: mergedMpsRows,
+    criteriaRows: mergedCriteriaRows,
+    criteriaByMps: mergedCriteriaByMps,
+    isCanonicalSetupRequired,
+    setupMessage,
+    acceptGeneratedMPSRows,
+    approveGeneratedIntent,
+    acceptGeneratedCriteria,
     isLoading,
     errorMessage,
   };

@@ -7,6 +7,8 @@
  */
 import React from 'react';
 import type { DomainAuditMpsRow } from '../../hooks/useDomainAuditBuilder';
+import type { GeneratedMpsDraft } from '../../hooks/useDomainAuditBuilder';
+import { useAIMPSGeneration } from '../../hooks/useAIMPSGeneration';
 
 export interface MPSSelectionModalProps {
   /** The domain currently being built. */
@@ -23,6 +25,8 @@ export interface MPSSelectionModalProps {
   errorMessage: string | null;
   /** Callback to close/cancel the modal. */
   onClose: () => void;
+  /** Accept AI-generated MPS draft rows into this workspace session. */
+  onAcceptGeneratedMPSs: (drafts: GeneratedMpsDraft[]) => void;
 }
 
 /**
@@ -37,7 +41,11 @@ export function MPSSelectionModal({
   isLoading,
   errorMessage,
   onClose,
+  onAcceptGeneratedMPSs,
 }: MPSSelectionModalProps) {
+  const { generatedMPSs, isLoading: isGeneratingMps, error: generationError, generateMPSsForDomain } =
+    useAIMPSGeneration();
+
   if (!open) return null;
 
   return (
@@ -88,8 +96,44 @@ export function MPSSelectionModal({
                   </div>
                 </li>
               ))}
-            </ol>
-          )}
+              </ol>
+            )}
+          <div className="modal-actions">
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => void generateMPSsForDomain(domainName)}
+              disabled={isGeneratingMps}
+              data-testid="generate-mps-action"
+            >
+              {isGeneratingMps ? 'Generating MPSs…' : 'Generate MPSs'}
+            </button>
+            {generationError ? (
+              <p role="status" data-testid="mps-generation-error">
+                {generationError}
+              </p>
+            ) : null}
+            {generatedMPSs.length > 0 ? (
+              <div data-testid="generated-mps-list">
+                <p>Generated MPS drafts</p>
+                <ol className="modal-list">
+                  {generatedMPSs.map((draft) => (
+                    <li key={`${draft.code}-${draft.name}`} className="modal-list__item">
+                      <strong>{draft.code}</strong> — {draft.name}
+                    </li>
+                  ))}
+                </ol>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => onAcceptGeneratedMPSs(generatedMPSs)}
+                  data-testid="accept-generated-mps"
+                >
+                  Accept Generated MPSs
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-outline" onClick={onClose}>

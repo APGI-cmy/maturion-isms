@@ -7,9 +7,12 @@
  */
 import React from 'react';
 import type {
+  GeneratedCriteriaDraft,
   DomainAuditCriterionRow,
   DomainAuditMpsRow,
 } from '../../hooks/useDomainAuditBuilder';
+import { AIGeneratedCriteriaCards } from './AIGeneratedCriteriaCards';
+import { EnhancedCriteriaGenerator } from './EnhancedCriteriaGenerator';
 
 export interface CriteriaManagementProps {
   /** The domain currently being built. */
@@ -28,6 +31,8 @@ export interface CriteriaManagementProps {
   errorMessage: string | null;
   /** Callback to close/cancel. */
   onClose: () => void;
+  /** Accept generated criteria drafts for an MPS in this workspace. */
+  onAcceptGeneratedCriteria: (mpsId: string, drafts: GeneratedCriteriaDraft[]) => void;
 }
 
 /**
@@ -43,6 +48,7 @@ export function CriteriaManagement({
   isLoading,
   errorMessage,
   onClose,
+  onAcceptGeneratedCriteria,
 }: CriteriaManagementProps) {
   if (!open) return null;
 
@@ -111,6 +117,18 @@ export function CriteriaManagement({
                         ))}
                       </ol>
                     )}
+                    <AIGeneratedCriteriaCards
+                      mpsId={mps.id}
+                      mpsLabel={`${mps.code} — ${mps.name}`}
+                      onAccept={(drafts) => onAcceptGeneratedCriteria(mps.id, drafts)}
+                    />
+                    <EnhancedCriteriaGenerator
+                      domainId={domainId}
+                      mpsId={mps.id}
+                      onCriteriaGenerated={(criterion) =>
+                        onAcceptGeneratedCriteria(mps.id, [{ statement: criterion }])
+                      }
+                    />
                   </section>
                 );
               })}

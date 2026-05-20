@@ -7,6 +7,7 @@
  */
 import React from 'react';
 import type { DomainAuditMpsRow } from '../../hooks/useDomainAuditBuilder';
+import { useIntentGeneration } from '../../hooks/useIntentGeneration';
 
 export interface IntentCreatorProps {
   /** The domain currently being built. */
@@ -23,6 +24,8 @@ export interface IntentCreatorProps {
   errorMessage: string | null;
   /** Callback to close/cancel. */
   onClose: () => void;
+  /** Approve generated intent for a given MPS row. */
+  onApproveGeneratedIntent: (mpsId: string, intent: string) => void;
 }
 
 /**
@@ -37,7 +40,20 @@ export function IntentCreator({
   isLoading,
   errorMessage,
   onClose,
+  onApproveGeneratedIntent,
 }: IntentCreatorProps) {
+  const { generateIntent, isLoading: isGeneratingIntent, error: generationError } = useIntentGeneration();
+  const [generatedByMps, setGeneratedByMps] = React.useState<Record<string, string>>({});
+
+  const generateForMps = async (mps: DomainAuditMpsRow) => {
+    const prompt = `Generate an intent statement for ${mps.code} - ${mps.name} in ${domainName}.`;
+    const generated = await generateIntent(prompt);
+    setGeneratedByMps((current) => ({
+      ...current,
+      [mps.id]: generated,
+    }));
+  };
+
   if (!open) return null;
 
   return (
@@ -82,14 +98,41 @@ export function IntentCreator({
                     <strong>{mps.code}</strong> — {mps.name}
                   </div>
                   <div>
-                    {mps.intent_statement?.trim()
-                      ? mps.intent_statement
-                      : 'No intent statement stored for this MPS yet.'}
+                    <p>
+                      {generatedByMps[mps.id] ??
+                        (mps.intent_statement?.trim()
+                          ? mps.intent_statement
+                          : 'No intent statement stored for this MPS yet.')}
+                    </p>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={() => void generateForMps(mps)}
+                      disabled={isGeneratingIntent}
+                      data-testid={`generate-intent-${mps.id}`}
+                    >
+                      {isGeneratingIntent ? 'Generating intent…' : 'Generate Intent'}
+                    </button>
+                    {generatedByMps[mps.id] ? (
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => onApproveGeneratedIntent(mps.id, generatedByMps[mps.id])}
+                        data-testid={`approve-intent-${mps.id}`}
+                      >
+                        Approve Intent
+                      </button>
+                    ) : null}
                   </div>
                 </li>
               ))}
             </ol>
           )}
+          {generationError ? (
+            <p role="status" data-testid="intent-generation-error">
+              {generationError}
+            </p>
+          ) : null}
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-outline" onClick={onClose}>

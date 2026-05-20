@@ -909,3 +909,30 @@ describe('T-MMM-S6-189: Legacy step model preserved — Create MPSs / Create Int
     expect(src).toContain('handleStepClick');
   });
 });
+
+describe('T-MMM-S6-191: Legacy generation hooks/components are wired in MMM adaptation', () => {
+  it('MMM app provides useAIMPSGeneration hook adaptation', () => {
+    expect(fileExists('apps/mmm/src/hooks/useAIMPSGeneration.ts')).toBe(true);
+  });
+  it('MMM app provides useIntentGeneration hook adaptation', () => {
+    expect(fileExists('apps/mmm/src/hooks/useIntentGeneration.ts')).toBe(true);
+  });
+  it('MPSSelectionModal imports useAIMPSGeneration and exposes generate action', () => {
+    const src = readFile('apps/mmm/src/components/assessment/MPSSelectionModal.tsx');
+    expect(src).toContain('useAIMPSGeneration');
+    expect(src).toContain('Generate MPSs');
+    expect(src).toContain('Accept Generated MPSs');
+  });
+  it('IntentCreator imports useIntentGeneration and exposes approve path', () => {
+    const src = readFile('apps/mmm/src/components/assessment/IntentCreator.tsx');
+    expect(src).toContain('useIntentGeneration');
+    expect(src).toContain('Generate Intent');
+    expect(src).toContain('Approve Intent');
+  });
+  it('CriteriaManagement wires AIGeneratedCriteriaCards and EnhancedCriteriaGenerator with accept flow', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('AIGeneratedCriteriaCards');
+    expect(src).toContain('EnhancedCriteriaGenerator');
+    expect(src).toContain('onAcceptGeneratedCriteria');
+  });
+});
