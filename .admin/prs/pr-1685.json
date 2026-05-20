@@ -21,6 +21,7 @@
     ".github/scripts/identity-binding-gate.test.sh",
     ".github/scripts/pre-handover-checkpoint.js",
     ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/workflows/iaa-prebrief-inject.yml",
     ".github/workflows/preflight-evidence-gate.yml",
     "governance/templates/execution-ceremony-admin/ECAP_RECONCILIATION_SUMMARY.template.md",
     "governance/templates/execution-ceremony-admin/PREHANDOVER.template.md",

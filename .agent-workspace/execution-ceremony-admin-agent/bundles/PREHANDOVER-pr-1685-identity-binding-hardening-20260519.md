@@ -4,6 +4,7 @@ CURRENT_HEAD_SHA: dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28
 ecap_session: ecap-pr-1685-20260519
 ecap_verdict: PASS
 administrative_readiness: ACCEPTED
+iaa_audit_token: .agent-admin/assurance/iaa-wave-record-wave-identity-binding-hardening-1684-r2-20260519.md
 
 ## ECAP Evidence Summary
 
