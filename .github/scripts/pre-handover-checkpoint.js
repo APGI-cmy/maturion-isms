@@ -387,7 +387,7 @@ function artifactCurrentness(text, headSha, substantiveHeadSha) {
     'CURRENT_HEAD_SHA',
     'RUNTIME_HEAD_SHA',
   ]);
-  const evidenceSubjectLabels = /reviewed sha|review sha|head sha|commit sha|evidence_subject_sha|substantive_head_sha/i;
+  const evidenceSubjectLabelPattern = /reviewed sha|review sha|head sha|commit sha|evidence_subject_sha|substantive_head_sha/i;
   const fields = [
     'CURRENT_HEAD_SHA',
     'RUNTIME_HEAD_SHA',
@@ -410,15 +410,15 @@ function artifactCurrentness(text, headSha, substantiveHeadSha) {
   if (fields.length > 0) {
     const matches = fields.every(({ label, value }) => {
       const normalized = normalizeValue(String(value || '').replace(/[`]/g, ''));
-      const runtimeIdentityField = runtimeIdentityLabels.has(String(label || '').toUpperCase());
+      const isRuntimeIdentityField = runtimeIdentityLabels.has(String(label || '').toUpperCase());
       if (SYMBOLIC_RUNTIME_HEAD_MARKERS.has(normalized)) {
-        if (runtimeIdentityField) return true;
+        if (isRuntimeIdentityField) return true;
         evidenceStale = true;
         return false;
       }
       if (!SHA_HEX_REGEX.test(normalized)) return false;
 
-      if (evidenceSubjectLabels.test(label)) {
+      if (evidenceSubjectLabelPattern.test(label)) {
         if (!evidenceSubjectSha) evidenceSubjectSha = normalized;
         const match = shaMatches(normalized, substantiveHeadSha || headSha);
         if (!match) evidenceStale = true;
