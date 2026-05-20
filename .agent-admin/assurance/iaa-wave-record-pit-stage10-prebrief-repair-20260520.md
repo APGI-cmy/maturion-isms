@@ -239,12 +239,12 @@ The following are the most likely failure modes at final assurance, ranked by pr
    - All other stage statuses MUST remain unchanged
 
 4. **Create `.agent-admin/scope-declarations/pr-1695.md`:**
-   - List all 7 changed files in the scope array
+   - List all 10 changed files in the scope array
    - Issue: #1694; PR: #1695; Branch: `copilot/repair-pit-stage-10-pre-brief`
    - Include wave-current-tasks.md and this wave record in the declared file list
 
 5. **Create `.admin/prs/pr-1695.json`:**
-   - PR metadata: number 1695, issue 1694, branch `copilot/repair-pit-stage-10-pre-brief`, all 7 scope files listed
+   - PR metadata: number 1695, issue 1694, branch `copilot/repair-pit-stage-10-pre-brief`, all 10 scope files listed
    - Status: OPEN; type: governance-only
 
 6. **Update `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`:**
@@ -308,7 +308,7 @@ RISK_FLAGS: none — pure documentation repair
 ```
 POLC_CLASSIFICATION: Foreman governance-only repair — POLC permits Foreman to make
   documentation corrections without builder delegation per POLC boundary rules.
-BUILDER_DELEGATION: NONE — Foreman owns all 7 file changes in this PR
+BUILDER_DELEGATION: NONE — Foreman owns all 10 file changes in this PR
 BUILD_AUTHORIZATION: NOT CLEARED — unchanged; repair wave has no authority to clear
 BUILDER_APPOINTMENT: NOT APPOINTED — Stage 11 remains NOT_STARTED
 IMPLEMENTATION_START: NO — no build execution in this wave
