@@ -1,0 +1,33 @@
+{
+  "pr": 1692,
+  "issue": 1684,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope": [
+    ".github/scripts/admin-control-router.js",
+    ".github/scripts/admin-control-router.test.sh",
+    ".github/workflows/preflight-evidence-gate.yml",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/workflows/handover-claim-gate.yml",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-admin/assurance/iaa-wave-record-admin-control-router-20260520.md",
+    ".admin/prs/pr-1692.json",
+    ".agent-admin/scope-declarations/pr-1692.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "local command output: bash .github/scripts/admin-control-router.test.sh — Passed: 7, Failed: 0",
+    "local command output: bash .github/scripts/pre-handover-checkpoint.test.sh — Passed: 47, Failed: 0",
+    "local command output: bash .github/scripts/gate-changing-pr-rule.test.sh — Passed: 5, Failed: 0",
+    "Actions deprecation gate compliance: .github/workflows/preflight-evidence-gate.yml uses actions/upload-artifact@v5",
+    "IAA preflight artifact and wave-current-tasks both reference PR #1692 and matching active prebrief path",
+    "Per-PR scope declaration present and FILES_CHANGED matches origin/main...HEAD diff"
+  ],
+  "merge_authority": "CS2"
+}

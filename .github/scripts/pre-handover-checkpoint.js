@@ -6,6 +6,7 @@ const cp = require('child_process');
 
 const REQUIRED_CHECKS = [
   'preflight/phase-1-evidence',
+  'preflight/admin-control-router',
   'preflight/iaa-prebrief-existence',
   'preflight/iaa-token-self-certification',
   'preflight/hfmc-ripple-presence',
