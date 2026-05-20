@@ -9,7 +9,8 @@
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **STOP-AND-FIX**: ACTIVE  
-**Current HEAD SHA (pre-brief time)**: a7776467e855c0c13829b60e788583ae16f5c4c8
+**Current HEAD SHA (pre-brief time)**: a7776467e855c0c13829b60e788583ae16f5c4c8  
+**Current HEAD SHA (PR review/update)**: e334d8f6a21e2f4eafc7dbb852132cf202a35a00
 
 ---
 
@@ -18,7 +19,7 @@ PR: #1705
 ISSUE: #1704
 WAVE: pit-stage11-builder-appointment-readiness-hardening
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: a7776467e855c0c13829b60e788583ae16f5c4c8
+CURRENT_HEAD_SHA: e334d8f6a21e2f4eafc7dbb852132cf202a35a00
 
 EXPECTED_QA_SCOPE:
 - `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md`
