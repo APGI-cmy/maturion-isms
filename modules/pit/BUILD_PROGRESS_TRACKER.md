@@ -418,8 +418,13 @@ The IAA Pre-Brief must include:
 **Status**: [ ] NOT_STARTED  
 **Location**: `modules/pit/11-builder-appointment/`  
 **Key Artifacts**:
-- [ ] `builder-contract.md` — Explicit builder agent contract
-- [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
+- [x] `builder-readiness-proof-pack.md` — Stage 11 pre-appointment proof requirements (concrete evidence tables/plans; readiness only)
+- [x] `red-baseline-reconciliation-decision.md` — 144-vs-147 reconciliation decision gate (Stage 11 blocker until CS2 sign-off)
+- [x] `stage8-hardening-acknowledgement.md` — per-artifact acknowledgement + execution-use + proof requirements for all 8 hardened Stage 8 artifacts
+- [x] `wave-definition-of-ready-template.md` — pre-Stage-12 wave DoR template (does not start Stage 12)
+- [x] `timeline-engine-readiness-gate.md` — timeline high-risk control readiness gate (no implementation claim)
+- [x] `stage11-appointment-preconditions.md` — mandatory appointment preconditions checklist (appointment ≠ Stage 12 execution)
+- [ ] Formal appointment issued by Foreman after all Stage 11 preconditions are satisfied
 - [ ] Appointment recorded in module tracker
 - [ ] Builder appointed by FM
 
@@ -436,7 +441,7 @@ Builder appointment must NOT occur unless ALL of the following are satisfied:
 - [ ] Build Authorization has been explicitly cleared by CS2 (confirmation recorded in this tracker)
 
 **Completion Date**: N/A  
-**Notes**: Folder exists but not yet populated. Mapped from old Stage 4.
+**Notes**: Folder now contains Stage 11 readiness-hardening templates/proof requirements only (PR #1705 scope). Stage 11 remains NOT_STARTED. Stage 12 remains NOT_STARTED. Build Authorization remains NOT CLEARED. RED baseline reconciliation blocker remains unresolved (144 baseline vs 147 catalog rows; delta rows `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`) and blocks builder appointment until CS2-recorded decision.
 
 ---
 
