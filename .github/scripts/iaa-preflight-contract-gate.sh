@@ -9,6 +9,8 @@ ASSURANCE_DIR="${ASSURANCE_DIR:-.agent-admin/assurance}"
 PR_NUMBER="${PR_NUMBER:-}"
 BASE_SHA="${BASE_SHA:-}"
 HEAD_SHA="${HEAD_SHA:-}"
+NEXT_REQUIRED_ACTION="${NEXT_REQUIRED_ACTION:-}"
+RESOLVED_PREBRIEF_PATH="${RESOLVED_PREBRIEF_PATH:-}"
 FAIL=false
 
 fail() {
@@ -61,24 +63,66 @@ echo "Wave tasks : $WAVE_TASKS_PATH"
 echo "Assurance  : $ASSURANCE_DIR"
 echo ""
 
+if [ -z "$NEXT_REQUIRED_ACTION" ] || [ -z "$RESOLVED_PREBRIEF_PATH" ]; then
+  RESOLVER_JSON="$(node .github/scripts/resolve-active-pr-state.js 2>/dev/null || true)"
+  if [ -n "$RESOLVER_JSON" ] && command -v python3 >/dev/null 2>&1; then
+    RESOLVED_VALUES="$(RESOLVER_JSON="$RESOLVER_JSON" python3 - <<'PY'
+import json,os
+state=json.loads(os.environ.get("RESOLVER_JSON","{}"))
+print(state.get("wave_tasks_path",""))
+print(state.get("iaa_artifact_path",""))
+print(state.get("next_required_action",""))
+PY
+)"
+    WAVE_TASKS_PATH="$(echo "$RESOLVED_VALUES" | sed -n '1p')"
+    RESOLVED_PREBRIEF_PATH="$(echo "$RESOLVED_VALUES" | sed -n '2p')"
+    NEXT_REQUIRED_ACTION="${NEXT_REQUIRED_ACTION:-$(echo "$RESOLVED_VALUES" | sed -n '3p')}"
+  fi
+fi
+
+if [ "$NEXT_REQUIRED_ACTION" = "BLOCKED" ]; then
+  fail "Active-state resolver reported BLOCKED (contradictory active PR identity/state)."
+fi
+
+if [ "$NEXT_REQUIRED_ACTION" = "BOOTSTRAP_REQUIRED" ]; then
+  BOOTSTRAP_GAPS=()
+  if [ ! -f "$WAVE_TASKS_PATH" ]; then
+    BOOTSTRAP_GAPS+=("missing wave tasks: $WAVE_TASKS_PATH")
+  fi
+  if [ -z "$RESOLVED_PREBRIEF_PATH" ] || [ ! -f "$RESOLVED_PREBRIEF_PATH" ]; then
+    BOOTSTRAP_GAPS+=("missing active preflight artifact: ${RESOLVED_PREBRIEF_PATH:-<unset>}")
+  fi
+
+  if [ "${#BOOTSTRAP_GAPS[@]}" -gt 0 ]; then
+    echo "⚠️  NEXT_ACTION=BOOTSTRAP_REQUIRED"
+    for gap in "${BOOTSTRAP_GAPS[@]}"; do
+      echo "   - $gap"
+    done
+    echo "✅ PASS — IAA Pre-Flight Contract Gate (non-cascading bootstrap state)"
+    exit 0
+  fi
+fi
+
 if [ ! -f "$WAVE_TASKS_PATH" ]; then
   fail "Missing wave-current-tasks.md: $WAVE_TASKS_PATH"
 fi
 
-ACTIVE_PREBRIEF_PATH=""
+ACTIVE_PREBRIEF_PATH="${RESOLVED_PREBRIEF_PATH:-}"
 if [ -f "$WAVE_TASKS_PATH" ]; then
-  PREBRIEF_FIELD=$(grep -E "^(iaa_prebrief_path|iaa_wave_record_path):" "$WAVE_TASKS_PATH" | head -1 || true)
-  if [ -z "$PREBRIEF_FIELD" ]; then
-    fail "Neither iaa_prebrief_path nor iaa_wave_record_path is declared in wave-current-tasks.md"
-  else
-    ACTIVE_PREBRIEF_PATH=$(echo "$PREBRIEF_FIELD" | sed -E 's/^[^:]+:[[:space:]]*//')
-    if [ -z "$ACTIVE_PREBRIEF_PATH" ] || [[ "$ACTIVE_PREBRIEF_PATH" =~ ^PENDING$ ]]; then
-      fail "Active pre-flight path is empty or PENDING in wave-current-tasks.md"
-    elif [ ! -f "$ACTIVE_PREBRIEF_PATH" ]; then
-      fail "Active pre-flight path does not exist: $ACTIVE_PREBRIEF_PATH"
-    elif [[ "$ACTIVE_PREBRIEF_PATH" == *"/archive/"* ]]; then
-      fail "Active pre-flight path points to archived evidence: $ACTIVE_PREBRIEF_PATH"
+  if [ -z "$ACTIVE_PREBRIEF_PATH" ]; then
+    PREBRIEF_FIELD=$(grep -E "^(iaa_prebrief_path|iaa_wave_record_path):" "$WAVE_TASKS_PATH" | head -1 || true)
+    if [ -n "$PREBRIEF_FIELD" ]; then
+      ACTIVE_PREBRIEF_PATH=$(echo "$PREBRIEF_FIELD" | sed -E 's/^[^:]+:[[:space:]]*//')
     fi
+  fi
+  if [ -z "$ACTIVE_PREBRIEF_PATH" ]; then
+    fail "Neither active-state resolver nor wave-current-tasks declares active pre-flight path"
+  elif [[ "$ACTIVE_PREBRIEF_PATH" =~ ^PENDING$ ]]; then
+    fail "Active pre-flight path is empty or PENDING in wave-current-tasks.md"
+  elif [ ! -f "$ACTIVE_PREBRIEF_PATH" ]; then
+    fail "Active pre-flight path does not exist: $ACTIVE_PREBRIEF_PATH"
+  elif [[ "$ACTIVE_PREBRIEF_PATH" == *"/archive/"* ]]; then
+    fail "Active pre-flight path points to archived evidence: $ACTIVE_PREBRIEF_PATH"
   fi
 fi
 

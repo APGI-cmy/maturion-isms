@@ -11,7 +11,7 @@ type Scenario = {
     name: string;
     code: string;
     sort_order: number;
-    framework_id: string;
+    framework_id?: string;
   }>;
   mpsRows: Array<{
     id: string;
@@ -253,7 +253,7 @@ const canonicalDomainRows: Scenario['domainRows'] = [
 describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   beforeEach(() => {
     configureScenario({
-      domainRows: canonicalDomainRows,
+      domainRows: [],
       mpsRows: baseMpsRows,
       criteriaRows: baseCriteriaRows,
     });
@@ -388,6 +388,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
   it('shows loading feedback while MMM data is still in flight', async () => {
     configureScenario({
+      domainRows: [],
       mpsRows: [],
       criteriaRows: [],
       pendingTable: 'mmm_maturity_process_steps',
@@ -405,6 +406,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
   it('shows error feedback when MMM data loading fails', async () => {
     configureScenario({
+      domainRows: [],
       mpsRows: [],
       criteriaRows: [],
       failTable: 'mmm_maturity_process_steps',
@@ -445,5 +447,26 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     await waitFor(() => {
       expect(screen.getByTestId('domain-audit-criteria-count').textContent).toContain('5 criteria');
     });
+  });
+
+  it('shows an intentional setup state for canonical routes without source_domain_id when no domain row exists', async () => {
+    configureScenario({
+      domainRows: [],
+      mpsRows: [],
+      criteriaRows: [],
+    });
+
+    renderDomainWorkspace(
+      '/assessment/framework/domain/protection?framework_id=framework-1&domain_name=Protection',
+    );
+
+    expect((await screen.findByTestId('domain-workspace-title')).textContent).toContain('Protection');
+    expect((await screen.findByTestId('domain-audit-setup-state')).textContent).toMatch(
+      /No mapped MMM domain row exists/,
+    );
+    expect(screen.queryByTestId('domain-audit-error')).toBeNull();
+    expect(
+      screen.getByRole('link', { name: 'Back to Framework Workspace' }).getAttribute('href'),
+    ).toBe('/assessment/framework?framework_id=framework-1');
   });
 });
