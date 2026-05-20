@@ -21,7 +21,7 @@ This artifact is readiness-only and makes no implementation-success claim.
 ## Required evidence table
 | Timeline control | Proposed strategy | Determinism/precision rule | Test/verification method | Evidence artifact |
 |---|---|---|---|---|
-| Timezone/date normalization | `TBD` | `TBD` | `TBD` | `TBD` |
+| Timezone/date-normalisation | `TBD` | `TBD` | `TBD` | `TBD` |
 | Date-to-pixel mapping | `TBD` | `TBD` | `TBD` | `TBD` |
 | Denominator strategy (Y/Q/M/W/D) | `TBD` | `TBD` | `TBD` | `TBD` |
 | Hover exact-date behavior | `TBD` | `TBD` | `TBD` | `TBD` |
