@@ -20,6 +20,8 @@
 #   AC-9          Valid IAA token with correct PR, issue, SHA                       → exit 0
 #   AC-10         Protected-path PR with valid ECAP bundle + PREHANDOVER            → exit 0
 #   AC-10b        Protected-path PR with ECAP bundle + valid IAA token              → exit 0
+#   AC-10c        ECAP reviewed SHA + admin-only delta remains valid                 → exit 0
+#   AC-10d        ECAP reviewed SHA + later substantive runtime change is stale      → exit 1
 #   AC-11         PENDING PHASE_B_BLOCKING_TOKEN                                    → exit 1
 #   AC-D-NOPR     Token missing **PR**: field                                       → exit 1
 #   AC-D-NOISSUE  Token missing **Issue**: field                                    → exit 1
@@ -236,6 +238,7 @@ add_prehandover_proof_with_ecap() {
   local ecap_invoked="${1:-true}"
   local ecap_verdict="${2:-PASS}"
   local waiver_ref="${3:-}"
+  local evidence_subject_sha="${4:-$(git rev-parse HEAD)}"
   cat > .agent-admin/prehandover/proof-test-wave-20260428.md << EOF
 # PREHANDOVER PROOF — test-wave-20260428
 
@@ -253,7 +256,10 @@ PREHANDOVER_PR: #9999
 IAA_TOKEN_PR: #9999
 WAVE_CURRENT_TASKS_PR: #9999
 BRANCH: test-branch
-HEAD_SHA: CURRENT_HEAD
+CURRENT_HEAD_SHA: CURRENT_HEAD
+RUNTIME_HEAD_SHA: GITHUB_PR_HEAD_SHA
+EVIDENCE_SUBJECT_SHA: ${evidence_subject_sha}
+HEAD_SHA: ${evidence_subject_sha}
 ALL_MATCH: yes
 RESULT: PASS
 
@@ -676,6 +682,36 @@ setup_ac10b() {
   add_valid_iaa_token "9999" "1503"
 }
 run_test "AC-10b: Protected-path PR with ECAP bundle + valid IAA token" 0 "$ECAP_GATE_SCRIPT" "setup_ac10b"
+
+# AC-10c: ECAP reviewed at commit A remains valid after admin-only evidence commit B.
+setup_ac10c_admin_only_delta_pass() {
+  add_governance_file
+  local reviewed_sha
+  reviewed_sha="$(git rev-parse HEAD)"
+  add_prehandover_proof_with_ecap "true" "PASS" "" "$reviewed_sha"
+  add_ecap_bundle "9999"
+  echo "admin-only touch" > .agent-admin/assurance/admin-only-after-ecap.md
+  git add .agent-admin/assurance/admin-only-after-ecap.md
+  git commit -q -m "Admin-only evidence commit after ECAP review"
+}
+run_test "AC-10c: ECAP admin-only delta after evidence remains valid" 0 "$ECAP_GATE_SCRIPT" "setup_ac10c_admin_only_delta_pass"
+
+# AC-10d: ECAP reviewed at commit A becomes stale after later substantive runtime control change.
+setup_ac10d_substantive_delta_fail() {
+  add_governance_file
+  local reviewed_sha
+  reviewed_sha="$(git rev-parse HEAD)"
+  add_prehandover_proof_with_ecap "true" "PASS" "" "$reviewed_sha"
+  add_ecap_bundle "9999"
+  mkdir -p .github/scripts
+  cat > .github/scripts/ecap-substantive-followup.sh << 'EOF'
+#!/bin/bash
+echo "substantive follow-up"
+EOF
+  git add .github/scripts/ecap-substantive-followup.sh
+  git commit -q -m "Substantive runtime control change after ECAP review"
+}
+run_test "AC-10d: ECAP substantive runtime change after evidence -> FAIL" 1 "$ECAP_GATE_SCRIPT" "setup_ac10d_substantive_delta_fail"
 
 # AC-ECAP-NVAL: ecap_required: N/A is rejected (anti-self-certification)
 setup_ac_nval() {

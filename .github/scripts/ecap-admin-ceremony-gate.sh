@@ -24,6 +24,72 @@ PR_LABELS="${PR_LABELS:-}"
 ASSURANCE_DIR=".agent-admin/assurance"
 PREHANDOVER_DIR=".agent-admin/prehandover"
 
+is_admin_only_path() {
+  local file="$1"
+  [[ "$file" =~ ^\.admin/ ]] || \
+  [[ "$file" =~ ^\.agent-admin/ ]] || \
+  [[ "$file" =~ ^\.agent-workspace/.*/bundles/ ]] || \
+  [[ "$file" =~ ^\.agent-workspace/.*/memory/(PREHANDOVER-|session-).+\.md$ ]]
+}
+
+is_substantive_path() {
+  local file="$1"
+  [[ "$file" =~ ^\.github/agents/.*\.md$ ]] && return 0
+  [[ "$file" =~ ^\.github/scripts/ ]] && return 0
+  [[ "$file" =~ ^\.github/workflows/ ]] && return 0
+  [[ "$file" =~ ^governance/canon/ ]] && return 0
+  [[ "$file" =~ ^governance/checklists/ ]] && return 0
+  [[ "$file" =~ ^governance/templates/ ]] && return 0
+  [[ "$file" == "governance/CANON_INVENTORY.json" ]] && return 0
+  [[ "$file" =~ ^(modules|apps|packages)/[^/]+/src/ ]] && return 0
+  [[ "$file" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] && return 0
+  [[ "$file" =~ ^supabase/functions/ ]] && return 0
+  [[ "$file" =~ ^supabase/migrations/ ]] && return 0
+  is_admin_only_path "$file" && return 1
+  return 1
+}
+
+resolve_substantive_head_sha() {
+  local base_sha="$1"
+  local head_sha="$2"
+  local commit changed_files file
+
+  while IFS= read -r commit; do
+    [ -z "$commit" ] && continue
+    changed_files="$(git diff-tree --no-commit-id --name-only -r "$commit" 2>/dev/null || true)"
+    while IFS= read -r file; do
+      [ -z "$file" ] && continue
+      if is_substantive_path "$file"; then
+        echo "$commit"
+        return 0
+      fi
+    done <<< "$changed_files"
+  done < <(git rev-list "${base_sha}..${head_sha}" 2>/dev/null || true)
+
+  echo "$head_sha"
+}
+
+is_symbolic_runtime_head_marker() {
+  local value
+  value="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
+  [[ "$value" == "ACTIVE_HEAD_RESOLVED_BY_GATE" || "$value" == "CURRENT_HEAD" || "$value" == "GITHUB_PR_HEAD_SHA" || "$value" == "CURRENT" || "$value" == "HEAD" ]]
+}
+
+is_literal_commit_sha() {
+  local value="$1"
+  [[ "$value" =~ ^[0-9a-fA-F]{7,40}$ ]] || return 1
+  git rev-parse --verify "${value}^{commit}" >/dev/null 2>&1
+}
+
+sha_matches() {
+  local a="$1"
+  local b="$2"
+  [[ -z "$a" || -z "$b" ]] && return 1
+  is_literal_commit_sha "$a" || return 1
+  is_literal_commit_sha "$b" || return 1
+  [[ "$a" == "$b" || "$a" == "${b:0:${#a}}" || "$b" == "${a:0:${#b}}" ]]
+}
+
 # ----------------------------------------------------------------
 # CS2 sign-off bypass
 # ----------------------------------------------------------------
@@ -187,6 +253,11 @@ echo "Protected path categories:"
 [ "$CANON_INVENTORY_CHANGED" = true ]  && echo "  [CANON-INVENTORY]  governance/CANON_INVENTORY.json — canon inventory"
 echo ""
 
+SUBSTANTIVE_HEAD_SHA="$(resolve_substantive_head_sha "$BASE_SHA" "${HEAD_SHA:-HEAD}")"
+echo "Runtime head SHA    : ${HEAD_SHA:0:12}"
+echo "Substantive head SHA: ${SUBSTANTIVE_HEAD_SHA:0:12}"
+echo ""
+
 # ----------------------------------------------------------------
 # Step 2: Locate ECAP evidence artifacts introduced by this PR
 # ----------------------------------------------------------------
@@ -336,6 +407,18 @@ else
       IDENTITY_CHECK_MARKER=$(grep -iE "^[[:space:]]*ECAP_IDENTITY_BINDING_CHECK([[:space:]]*|:)" "$proof_file" 2>/dev/null | head -1 || true)
       IDENTITY_ALL_MATCH=$(grep -iE "^[[:space:]]*ALL_MATCH:[[:space:]]*" "$proof_file" 2>/dev/null | head -1 | \
         sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      IDENTITY_RUNTIME_SHA=$(grep -iE "^[[:space:]]*(CURRENT_HEAD_SHA|RUNTIME_HEAD_SHA):[[:space:]]*" "$proof_file" 2>/dev/null | head -1 | \
+        sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      IDENTITY_EVIDENCE_SHA=$(grep -iE "^[[:space:]]*EVIDENCE_SUBJECT_SHA:[[:space:]]*" "$proof_file" 2>/dev/null | head -1 | \
+        sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      if [ -z "$IDENTITY_EVIDENCE_SHA" ]; then
+        IDENTITY_EVIDENCE_SHA=$(grep -iE "^[[:space:]]*(-[[:space:]]*)?\\*\\*(Reviewed SHA|Review SHA|HEAD SHA|Commit SHA)\\*\\*:[[:space:]]*" "$proof_file" 2>/dev/null | head -1 | \
+          sed -E 's/.*\\*\\*[^*]*\\*\\*:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      fi
+      if [ -z "$IDENTITY_EVIDENCE_SHA" ]; then
+        IDENTITY_EVIDENCE_SHA=$(grep -iE "^[[:space:]]*(HEAD_SHA|COMMIT_SHA):[[:space:]]*" "$proof_file" 2>/dev/null | head -1 | \
+          sed -E 's/^[^:]+:[[:space:]]*//;s/[[:space:]]*$//' || true)
+      fi
       if [ -z "$IDENTITY_CHECK_MARKER" ]; then
         echo "  ❌ Missing ECAP_IDENTITY_BINDING_CHECK block [ECAP-GATE-006]"
         FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP_IDENTITY_BINDING_CHECK block missing"
@@ -343,6 +426,42 @@ else
       elif ! echo "$IDENTITY_ALL_MATCH" | grep -qiE "^yes$"; then
         echo "  ❌ ECAP identity binding ALL_MATCH must be yes [ECAP-GATE-007]"
         FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP identity binding ALL_MATCH is not yes"
+        FAIL=true
+      elif [ -n "$IDENTITY_RUNTIME_SHA" ]; then
+        if is_symbolic_runtime_head_marker "$IDENTITY_RUNTIME_SHA"; then
+          :
+        elif ! is_literal_commit_sha "$IDENTITY_RUNTIME_SHA"; then
+          echo "  ❌ ECAP runtime identity SHA is invalid (must be symbolic marker or literal commit SHA) [ECAP-GATE-008]"
+          FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: runtime identity SHA (${IDENTITY_RUNTIME_SHA}) is neither approved symbolic marker nor literal commit SHA"
+          FAIL=true
+        elif ! sha_matches "$IDENTITY_RUNTIME_SHA" "$HEAD_SHA"; then
+          echo "  ❌ ECAP runtime identity SHA does not match current runtime head [ECAP-GATE-008]"
+          FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: runtime identity SHA ${IDENTITY_RUNTIME_SHA:0:12} does not match runtime HEAD ${HEAD_SHA:0:12}"
+          FAIL=true
+        fi
+      fi
+
+      if [ -z "$IDENTITY_EVIDENCE_SHA" ]; then
+        echo "  ❌ ECAP evidence subject SHA missing (literal substantive SHA required) [ECAP-GATE-009]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: missing ECAP evidence subject SHA (EVIDENCE_SUBJECT_SHA/Reviewed SHA/HEAD SHA/Commit SHA)"
+        FAIL=true
+      elif is_symbolic_runtime_head_marker "$IDENTITY_EVIDENCE_SHA"; then
+        echo "  ❌ ECAP evidence subject SHA cannot be a symbolic runtime marker [ECAP-GATE-009]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP evidence subject SHA uses symbolic marker (${IDENTITY_EVIDENCE_SHA}); literal substantive SHA required"
+        FAIL=true
+      elif ! is_literal_commit_sha "$IDENTITY_EVIDENCE_SHA"; then
+        echo "  ❌ ECAP evidence subject SHA is not a valid commit SHA [ECAP-GATE-009]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP evidence subject SHA (${IDENTITY_EVIDENCE_SHA}) is not a valid commit SHA"
+        FAIL=true
+      elif sha_matches "$IDENTITY_EVIDENCE_SHA" "$SUBSTANTIVE_HEAD_SHA"; then
+        :
+      elif git merge-base --is-ancestor "$IDENTITY_EVIDENCE_SHA" "$SUBSTANTIVE_HEAD_SHA" 2>/dev/null; then
+        echo "  ❌ ECAP evidence subject SHA is stale (substantive changes occurred after review) [ECAP-GATE-009]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP evidence subject SHA ${IDENTITY_EVIDENCE_SHA:0:12} is older than substantive head ${SUBSTANTIVE_HEAD_SHA:0:12}"
+        FAIL=true
+      else
+        echo "  ❌ ECAP evidence subject SHA does not match substantive head [ECAP-GATE-009]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${proof_file}: ECAP evidence subject SHA ${IDENTITY_EVIDENCE_SHA:0:12} does not match substantive head ${SUBSTANTIVE_HEAD_SHA:0:12}"
         FAIL=true
       fi
       if echo "$ECAP_VERD_VALUE" | grep -qiE "^PASS$|^pass$|^PASS_WITH_CS2_WAIVER$"; then
