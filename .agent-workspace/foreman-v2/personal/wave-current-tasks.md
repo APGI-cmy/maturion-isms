@@ -1,19 +1,19 @@
 # Wave Current Tasks — foreman-v2-agent
 
-Wave: record-red-align-mmm-artifacts
-Session ID: session-pr-1688-record-red-align-mmm-artifacts-20260519
-Date: 2026-05-19
-Branch: copilot/record-red-align-mmm-artifacts
-Issue: Record RED and align MMM pre-build artifacts for 5-domain framework configuration workspace
-PR: #1688
-CS2 Authorization: Delegated by foreman-v2-agent under CS2-governed documentation alignment scope
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-record-red-align-mmm-artifacts-20260519.md
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-record-red-align-mmm-artifacts-20260519.md
-ceremony_admin_appointed: PENDING (governance-only wave; handover-phase appointment only)
+Wave: admin-control-router
+Session ID: session-pr-1692-admin-control-router-20260520
+Date: 2026-05-20
+Branch: copilot/add-admin-control-router
+Issue: #1684 — Add admin-control router to sequence governance routines and alert agents before handover
+PR: #1692
+CS2 Authorization: Delegated by foreman-v2-agent under CS2-governed governance hardening scope
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-admin-control-router-20260520.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-admin-control-router-20260520.md
+ceremony_admin_appointed: PENDING
 
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
-IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-record-red-align-mmm-artifacts-20260519.md
-IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-19T00:00:00Z
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-admin-control-router-20260520.md
+IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-20T06:39:42Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: no
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
@@ -24,16 +24,17 @@ WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 
 | # | Task | Owner | Status | Evidence |
 |---|------|-------|--------|----------|
-| 1 | Record NEW RED: visible-but-incomplete `/assessment/framework` workspace (distinct from resolved blank-page issue) | foreman-v2-agent delegate | 🟢 DONE | `modules/MMM/BUILD_PROGRESS_TRACKER.md` |
-| 2 | Align Stage 2/5/6 artifacts to canonical 5-domain workspace contract + RED expectations | foreman-v2-agent delegate | 🟢 DONE | `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md`, `modules/MMM/04-architecture/architecture.md`, `modules/MMM/05-qa-to-red/qa-to-red-catalog.md` |
-| 3 | Record Stage 7 propagation note for new RED scope vs historical PBFAG PASS | foreman-v2-agent delegate | 🟢 DONE | `modules/MMM/06-pbfag/change-propagation-audit.md` |
-| 4 | Add Stage 12 future build evidence requirements for domain-card workspace implementation PR | foreman-v2-agent delegate | 🟢 DONE | `modules/MMM/11-build/wave-execution-standard.md` |
-| 5 | Align preflight/governance admin artifacts for PR #1688 | foreman-v2-agent delegate | 🟢 DONE | `.agent-admin/assurance/iaa-wave-record-record-red-align-mmm-artifacts-20260519.md`, `.admin/prs/pr-1688.json`, `.agent-admin/scope-declarations/pr-1688.md` |
+| 1 | Add deterministic PR-context + diff-based admin-control router script output | foreman-v2-agent delegate | 🟢 DONE | `.github/scripts/admin-control-router.js` |
+| 2 | Add regression coverage for product/protected/gate/agent-contract/mixed/draft/identity-mismatch scenarios | foreman-v2-agent delegate | 🟢 DONE | `.github/scripts/admin-control-router.test.sh` |
+| 3 | Integrate router into preflight workflow as `preflight/admin-control-router` and artifact output | foreman-v2-agent delegate | 🟢 DONE | `.github/workflows/preflight-evidence-gate.yml` |
+| 4 | Ensure handover/checkpoint required checks include `preflight/admin-control-router` | foreman-v2-agent delegate | 🟢 DONE | `.github/scripts/pre-handover-checkpoint.js`, `.github/workflows/handover-claim-gate.yml` |
+| 5 | Align PR-1692 admin/scope/preflight artifacts and strict gate-change evidence references | foreman-v2-agent delegate | 🟡 IN_PROGRESS | `.admin/prs/pr-1692.json`, `.agent-admin/scope-declarations/pr-1692.md`, `.agent-admin/assurance/iaa-wave-record-admin-control-router-20260520.md` |
 
 ---
 
 ## Wave Completion Gate
 
-- [x] Documentation/governance-only scope maintained
-- [x] No runtime/source code changes (`apps/mmm/src/**`, DB, routes, supabase functions) in this wave
-- [x] Build-to-green implementation for domain-card workspace remains blocked pending post-merge follow-up issue
+- [x] Governance/script/workflow scope declared
+- [x] Router classified as orchestration/alert layer (no gate weakening)
+- [x] Existing enforcement gates retained as authoritative
+- [x] Current wave tracks pre-brief consumption linkage for PR #1692

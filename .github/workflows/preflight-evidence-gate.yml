@@ -950,7 +950,7 @@ jobs:
           node .github/scripts/admin-control-router.js
 
       - name: Upload control-state artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: admin-control-state-pr-${{ github.event.pull_request.number }}
           path: .agent-admin/control-state/pr-${{ github.event.pull_request.number }}.json
