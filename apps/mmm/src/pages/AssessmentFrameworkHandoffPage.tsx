@@ -1,5 +1,23 @@
 import { useSearchParams, Link } from 'react-router-dom';
-import { useFrameworkHandoffContext } from '@/lib/useFrameworkHandoffContext';
+import { useFrameworkHandoffContext, FrameworkHandoffDomain } from '@/lib/useFrameworkHandoffContext';
+
+const CANONICAL_DOMAIN_NAMES: string[] = [
+  'Leadership and Governance',
+  'Process Integrity',
+  'People and Culture',
+  'Protection',
+  'Proof It Works',
+];
+
+/**
+ * Converts a canonical domain name to a URL-safe slug.
+ * e.g. "Process Integrity" → "process-integrity"
+ * This slug is used as the route key so the URL remains stable and
+ * human-readable regardless of whether a DB domain record exists.
+ */
+function canonicalNameToSlug(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
 
 function AppNav() {
   return (
@@ -14,6 +32,76 @@ function AppNav() {
         </nav>
       </div>
     </header>
+  );
+}
+
+interface DomainCardProps {
+  canonicalName: string;
+  domain: FrameworkHandoffDomain | undefined;
+  index: number;
+  frameworkId: string;
+}
+
+function DomainCard({ canonicalName, domain, index, frameworkId }: DomainCardProps) {
+  // Route by canonical slug so the URL is always stable and human-readable.
+  // The actual DB domain ID (if present) is passed as source_domain_id for
+  // future backend use, but it is never used as the primary route key.
+  const domainSlug = canonicalNameToSlug(canonicalName);
+  const sourceDomainParam = domain?.id ? `&source_domain_id=${encodeURIComponent(domain.id)}` : '';
+  const domainPath =
+    `/assessment/framework/domain/${domainSlug}` +
+    `?framework_id=${encodeURIComponent(frameworkId)}` +
+    `&domain_name=${encodeURIComponent(canonicalName)}` +
+    sourceDomainParam;
+
+  return (
+    <div
+      className="domain-card"
+      data-testid="domain-card"
+      data-index={index}
+    >
+      <div className="domain-card__header">
+        <h3 className="domain-card__title">{canonicalName}</h3>
+        {domain ? (
+          <span className="domain-card__code">{domain.code}</span>
+        ) : (
+          <span className="domain-card__placeholder-badge">Pending</span>
+        )}
+      </div>
+
+      <div className="domain-card__mini-dashboard">
+        <div className="domain-card__stat">
+          <span className="domain-card__stat-label">MPS Count</span>
+          <span className="domain-card__stat-value" data-testid="domain-mps-count">—</span>
+        </div>
+        <div className="domain-card__stat">
+          <span className="domain-card__stat-label">Criteria Count</span>
+          <span className="domain-card__stat-value" data-testid="domain-criteria-count">—</span>
+        </div>
+        <div className="domain-card__stat">
+          <span className="domain-card__stat-label">Maturity Level</span>
+          <span className="domain-card__stat-value" data-testid="domain-maturity-level">—</span>
+        </div>
+        <div className="domain-card__stat">
+          <span className="domain-card__stat-label">Evidence Upload</span>
+          <span className="domain-card__stat-value" data-testid="domain-evidence-completion">—</span>
+        </div>
+        <div className="domain-card__stat">
+          <span className="domain-card__stat-label">Approval Status</span>
+          <span className="domain-card__stat-value" data-testid="domain-approval-status">—</span>
+        </div>
+        <div className="domain-card__stat">
+          <span className="domain-card__stat-label">Compile Status</span>
+          <span className="domain-card__stat-value" data-testid="domain-compile-status">—</span>
+        </div>
+      </div>
+
+      <div className="domain-card__footer">
+        <Link className="domain-card__cta btn btn-primary" to={domainPath}>
+          Open Domain Workspace
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -79,6 +167,14 @@ export default function AssessmentFrameworkHandoffPage() {
     );
   }
 
+  // Build canonical slot array: 5 slots backed by DB domains sorted by sort_order
+  const sortedDomains = domains ? domains.slice().sort((a, b) => a.sort_order - b.sort_order) : [];
+  const canonicalSlots = CANONICAL_DOMAIN_NAMES.map((name, i) => ({
+    canonicalName: name,
+    domain: sortedDomains[i] as FrameworkHandoffDomain | undefined,
+    index: i + 1,
+  }));
+
   return (
     <div className="app-shell">
       <AppNav />
@@ -109,23 +205,28 @@ export default function AssessmentFrameworkHandoffPage() {
               <p className="handoff-domains-loading">Loading domains…</p>
             ) : domainsError ? (
               <p className="handoff-domains-error">Could not load domains.</p>
-            ) : domains && domains.length > 0 ? (
-              <ul className="handoff-domain-list">
-                {domains.map((d) => (
-                  <li key={d.id} className="handoff-domain-item">
-                    <span className="handoff-domain-item__code">{d.code}</span>
-                    <span className="handoff-domain-item__name">{d.name}</span>
-                  </li>
-                ))}
-              </ul>
             ) : (
-              <p className="handoff-domains-empty">No domains configured yet.</p>
+              <div className="handoff-domain-cards">
+                {canonicalSlots.map((slot) => (
+                  <DomainCard
+                    key={slot.index}
+                    canonicalName={slot.canonicalName}
+                    domain={slot.domain}
+                    index={slot.index}
+                    frameworkId={frameworkId}
+                  />
+                ))}
+              </div>
             )}
           </section>
 
           <div className="handoff-actions">
-            <Link className="btn btn-outline" to="/frameworks" data-testid="handoff-back-link">
-              Back to Frameworks
+            <Link
+              className="btn btn-outline"
+              to={`/frameworks/${frameworkId}/review`}
+              data-testid="handoff-back-link"
+            >
+              Back to Review Framework
             </Link>
           </div>
         </div>
