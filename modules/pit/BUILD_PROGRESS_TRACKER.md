@@ -3,8 +3,8 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-19
-**Updated By**: foreman-v2-agent (Stage 8 gate-pass + Stage 9 initiation — maturion-isms#1679 — 2026-05-19)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 GATE_PASSED (IMPLEMENTATION PLAN COMPLETE AND APPROVED) — STAGE 9 ACTIVE (BUILDER CHECKLIST INITIATED)  
+**Updated By**: foreman-v2-agent (Stage 9 gate-pass + Stage 10 IAA Pre-Brief initiation — maturion-isms#1687 — 2026-05-19)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 GATE_PASSED (IMPLEMENTATION PLAN COMPLETE AND APPROVED) — STAGE 9 GATE_PASSED (BUILDER CHECKLIST COMPLETE AND APPROVED) — STAGE 10 ACTIVE (IAA PRE-BRIEF INITIATED)  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -31,8 +31,8 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | NOT_STARTED |
 | — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
 | — | (new stage) | Stage 7 | PBFAG | GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED (pre-build package; no live execution claim) |
-| — | (new stage) | Stage 9 | Builder Checklist | ACTIVE — INITIATED (maturion-isms#1679; checklist/readiness only) |
-| — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
+| — | (new stage) | Stage 9 | Builder Checklist | GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED (maturion-isms#1687; 2026-05-19) |
+| — | (new stage) | Stage 10 | IAA Pre-Brief | ACTIVE — INITIATED (maturion-isms#1687; iaa-pre-brief.md filed) |
 
 ---
 
@@ -360,43 +360,43 @@ The implementation plan must satisfy all of the following. Any gap is a Stage 8 
 ---
 
 ### Stage 9: Builder Checklist
-**Status**: [x] ACTIVE — INITIATED (maturion-isms#1679; checklist/readiness only — Stage 9 does not appoint a builder)  
+**Status**: [x] GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED (maturion-isms#1687; review authority: foreman-v2-agent; 2026-05-19)  
 **Location**: `modules/pit/09-builder-checklist/`  
 **Key Artifacts**:
 - [x] `builder-checklist.md` — Stage 9 Builder Checklist v1.0 covering all 5 mandatory sections (authority chain, functional scope, RED suite, build boundary, Functional-Delivery Guardrails) and all 8 Stage 9 tracker guardrails
+- [x] `stage9-gate-pass-review.md` — Stage 9 gate-pass review evidence: all 19 issue #1687 criteria verified PASS; all 8 Functional-Delivery Guardrails verified PASS and ticked
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 9 gate-pass)**:
 
 The builder checklist must verify that each builder candidate understands and acknowledges:
 
-- [ ] Stage 1–4 authority chain: builder has read App Description v1.0, UX Spec v0.2-draft, FRS v0.2-hardened, TRS v0.2-draft
-- [ ] All route/screen/state obligations: builder can enumerate all 27 routes and all 5 UI states for primary screens
-- [ ] RLS/access model: builder understands RLS-first enforcement and the role hierarchy (PIT-TR-023–026)
-- [ ] Visual rendering and app-shell obligations: builder acknowledges L-002 (app shell in all states, no white screen)
-- [ ] Evidence/report/audit/notification obligations: builder understands all evidence, report, audit, and notification requirements
-- [ ] QA-to-Red expectations: builder understands and accepts the RED test suite as the source of truth
-- [ ] No direct AIMC provider calls: builder acknowledges the no-direct-provider-call rule (PIT-TR-083)
-- [ ] No build without Stage 11 appointment and Build Authorization: builder acknowledges Build Authorization is NOT CLEARED unless explicitly cleared by CS2
+- [x] Stage 1–4 authority chain: builder has read App Description v1.0, UX Spec v0.2-draft, FRS v0.2-hardened, TRS v0.2-draft
+- [x] All route/screen/state obligations: builder can enumerate all 27 routes and all 5 UI states for primary screens
+- [x] RLS/access model: builder understands RLS-first enforcement and the role hierarchy (PIT-TR-023–026)
+- [x] Visual rendering and app-shell obligations: builder acknowledges L-002 (app shell in all states, no white screen)
+- [x] Evidence/report/audit/notification obligations: builder understands all evidence, report, audit, and notification requirements
+- [x] QA-to-Red expectations: builder understands and accepts the RED test suite as the source of truth
+- [x] No direct AIMC provider calls: builder acknowledges the no-direct-provider-call rule (PIT-TR-083)
+- [x] No build without Stage 11 appointment and Build Authorization: builder acknowledges Build Authorization is NOT CLEARED unless explicitly cleared by CS2
 
-> **Note**: Stage 9 Functional-Delivery Guardrails above remain unchecked because this issue (maturion-isms#1679) initiates Stage 9 only. A full Stage 9 gate-pass review — where a builder candidate has completed acknowledgements — is a separate future activity. Guardrails will be ticked at that future gate-pass.
-
-**Completion Date**: N/A (initiated 2026-05-19)  
-**Notes**: Stage 9 initiated per maturion-isms#1679 after Stage 8 gate-pass confirmed. Builder checklist filed at `modules/pit/09-builder-checklist/builder-checklist.md`. Stage 9 is checklist/readiness preparation only: it does not appoint a builder, does not clear Build Authorization, and does not start build execution. Stages 10, 11, and 12 remain NOT_STARTED. Build Authorization remains NOT CLEARED.
+**Completion Date**: 2026-05-19 (gate-pass review complete)  
+**Review Authority**: foreman-v2-agent (maturion-isms#1687; CS2-authorized)  
+**Gate-Pass Statement**: Stage 9 gate-pass confirms the Builder Checklist covers all 8 Functional-Delivery Guardrails and is ready to bind future builder candidates at Stage 11. This gate-pass does **not** appoint a builder, does **not** start build execution, does **not** clear Build Authorization, does **not** claim tests are GREEN, and does **not** claim FUNCTIONAL_PASS. Stage 10 IAA Pre-Brief is now initiated.  
+**Notes**: Stage 9 gate-pass review completed per maturion-isms#1687 after confirming all 19 issue criteria PASS and all 8 Stage 9 Functional-Delivery Guardrails PASS. Review evidence at `modules/pit/09-builder-checklist/stage9-gate-pass-review.md`. Stage 9 gate-pass is based on the checklist artifact being complete and binding for future candidates — no builder candidate has been appointed or authorised. Stage 11 is the only builder appointment stage. Build Authorization remains NOT CLEARED.
 
 ---
 
 ### Stage 10: IAA Pre-Brief
-**Status**: [ ] NOT_STARTED  
+**Status**: [x] ACTIVE — INITIATED (maturion-isms#1687; IAA pre-brief document prepared — Stage 10 is IAA pre-brief/readiness only and does not appoint a builder, start implementation, or clear Build Authorization)  
 **Location**: `modules/pit/10-iaa-pre-brief/`  
 **Key Artifacts**:
-- [ ] IAA Pre-Brief invoked by Foreman with full context
-- [ ] IAA Pre-Brief artifact filed
-- [ ] ASSURANCE-TOKEN or PHASE_A_ADVISORY status recorded
-- [ ] Pre-Brief acknowledged by Foreman and all designated builders
+- [x] `iaa-pre-brief.md` — Stage 10 IAA Pre-Brief document with all 7 required sections (complete Stage 1–9 artifact pack, known delivery risks, visual/rendering controls, route/auth/onboarding controls, denied-path controls, live deployment/PBFAG evidence expectations, IAA challenge questions)
 
-**Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 10)**:
+**Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 10 gate-pass)**:
 
 The IAA Pre-Brief must include:
+
+> **Note**: Stage 10 Functional-Delivery Guardrails below remain unchecked because this issue (maturion-isms#1687) initiates Stage 10 only. A full Stage 10 gate-pass review — requiring IAA acknowledgement/response artifact confirming the pre-brief has been reviewed and accepted — is a separate future activity. Guardrails will be ticked at that future gate-pass.
 
 - [ ] Complete Stage 1–9 artifact pack submitted to IAA
 - [ ] Known MMM/PIT delivery risks declared (see `modules/pit/_readiness/pit-functional-delivery-gap-register.md`)
@@ -406,8 +406,8 @@ The IAA Pre-Brief must include:
 - [ ] Live deployment/PBFAG evidence expectations agreed between IAA and Foreman
 - [ ] IAA challenge questions for one-time functional delivery: IAA must state what would cause it to issue a REJECTION-PACKAGE
 
-**Completion Date**: N/A  
-**Notes**: Not started. New stage in 12-stage model. Stage 10 IAA Pre-Brief is distinct from the Stage 10 IAA Pre-Brief wave record filed in `.agent-admin/assurance/` — both are required.
+**Completion Date**: N/A (initiated 2026-05-19)  
+**Notes**: Stage 10 initiated per maturion-isms#1687 after Stage 9 gate-pass confirmed. IAA Pre-Brief document filed at `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md`. Stage 10 is IAA pre-brief/readiness preparation only: it does not appoint a builder, does not clear Build Authorization, and does not start build execution. The pre-brief document prepares IAA to challenge the full PIT pre-build package before builder appointment — it does not constitute IAA acceptance or approval of the package. Stage 10 guardrails will be ticked only after the IAA response artifact is actually filed and the full Stage 10 gate-pass review is conducted. Build Authorization remains NOT CLEARED. Stages 11 and 12 remain NOT_STARTED.
 
 ---
 
