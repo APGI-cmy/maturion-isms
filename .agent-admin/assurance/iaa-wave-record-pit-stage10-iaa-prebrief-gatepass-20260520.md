@@ -9,7 +9,7 @@
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **STOP-AND-FIX**: ACTIVE  
-**Current HEAD SHA (pre-brief time)**: d90728e3fc4758f3dd2a82c584ecbf6ad5e741f7
+**Current HEAD SHA (pre-brief time)**: d90728e3fc4758f3dd2a82c584ecbf6ad5e741f7 (`git rev-parse HEAD` at pre-brief generation)
 
 ---
 
@@ -58,7 +58,7 @@ ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS:
 - ECAP_EXPECTED_ARTIFACTS: none
 
 CURRENT_HEAD_CI_EXPECTATIONS:
-- Branch head (`d90728e3fc4758f3dd2a82c584ecbf6ad5e741f7`) expected to remain governance/documentation scoped for this pre-brief wave
+- Branch head (same SHA recorded in header from `git rev-parse HEAD` at pre-brief generation) expected to remain governance/documentation scoped for this pre-brief wave
 - No build-start indicators should appear in artifacts
 - Any CI gates triggered by governance/docs checks are expected PASS
 
