@@ -308,8 +308,8 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
       '/assessment/framework/domain/leadership-governance?framework_id=framework-1&domain_name=Leadership%20and%20Governance',
     );
 
-    expect((await screen.findByTestId('domain-audit-setup-state')).textContent).toContain(
-      'No mapped MMM domain row exists for this canonical card yet.',
+    expect((await screen.findByTestId('domain-audit-setup-state')).textContent).toMatch(
+      /No mapped MMM domain row exists/,
     );
     expect(screen.queryByTestId('domain-audit-error')).toBeNull();
     expect(

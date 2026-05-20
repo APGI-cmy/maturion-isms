@@ -158,6 +158,14 @@ export function useDomainAuditBuilder({
       });
 
       if (!matchedDomain) {
+        console.warn(
+          '[useDomainAuditBuilder] Could not resolve canonical domain mapping',
+          JSON.stringify({
+            frameworkId,
+            domainName: domainName ?? null,
+            domainId,
+          }),
+        );
         return null;
       }
 
@@ -246,11 +254,11 @@ export function useDomainAuditBuilder({
   }, [generatedMpsRows, mpsRows, approvedGeneratedIntents]);
 
   const mergedCriteriaRows = useMemo<DomainAuditCriterionRow[]>(() => {
-    const generatedRows = Object.entries(acceptedGeneratedCriteria).flatMap(([mpsId, drafts], mpsIndex) =>
+    const generatedRows = Object.entries(acceptedGeneratedCriteria).flatMap(([mpsId, drafts]) =>
       drafts.map((draft, index) => ({
-        id: `generated-criterion-${mpsId}-${mpsIndex + 1}-${index + 1}`,
+        id: `generated-criterion-${mpsId}-${index + 1}`,
         mps_id: mpsId,
-        code: `GEN-${mpsIndex + 1}-${index + 1}`,
+        code: `GEN-${mpsId}-${index + 1}`,
         name: draft.statement,
         sort_order: index + 1,
       })),

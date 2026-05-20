@@ -30,7 +30,7 @@ export function useAIMPSGeneration() {
 
       const normalized = parsed
         .filter((row) => row.code && row.name)
-        .slice(0, 5)
+        .slice(0, 3)
         .map((row, index) => ({
           code: row.code ?? `GEN-${index + 1}`,
           name: row.name ?? `Generated MPS ${index + 1}`,
@@ -59,4 +59,3 @@ export function useAIMPSGeneration() {
 
   return { generatedMPSs, isLoading, error, generateMPSsForDomain };
 }
-
