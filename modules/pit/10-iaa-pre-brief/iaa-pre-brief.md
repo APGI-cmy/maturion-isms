@@ -115,7 +115,9 @@ The following Stage 1–9 artifacts are submitted for IAA review. All paths are 
 
 ### 1.9 Stage 8 — Implementation Plan (hardened package)
 
-> **v1.1 note**: This section has been expanded by issue #1694 / PR #1695 to list the full Stage 8 hardened package. The Stage 8 gate-pass (maturion-isms#1679) remains intact. IAA is reviewing the hardened Stage 8 package, not only the original implementation plan.
+> **v1.1 note**: This section has been expanded by issue #1694 / PR #1695 to list the full Stage 8 hardened package.
+> The Stage 8 gate-pass (maturion-isms#1679) remains intact. IAA is reviewing the hardened Stage 8 package, not only the original implementation plan, including all 8 hardening artifacts added after Stage 8 gate-pass (10 artifacts total in this table: 2 baseline + 8 hardening).
+> **Blocker continuity**: The package remains subject to the RED reconciliation blocker until resolved: declared 144 baseline vs 147 catalog rows (`PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`) per §7.8.
 
 | Artifact | Path | Status |
 |----------|------|--------|
@@ -143,7 +145,7 @@ The following Stage 1–9 artifacts are submitted for IAA review. All paths are 
 |----------|------|--------|
 | Functional Delivery Gap Register | `modules/pit/_readiness/pit-functional-delivery-gap-register.md` | ✅ All gaps RESOLVED |
 | Build Process Improvement Register | `modules/pit/_readiness/pit-build-process-improvement-register.md` | ✅ Filed |
-| Build Progress Tracker | `modules/pit/BUILD_PROGRESS_TRACKER.md` | ✅ Current — Stage 9 GATE_PASSED, Stage 10 ACTIVE |
+| Build Progress Tracker | `modules/pit/BUILD_PROGRESS_TRACKER.md` | ✅ Current — Stage 9 GATE_PASSED, Stage 10 GATE_PASSED (readiness-only) |
 
 ---
 

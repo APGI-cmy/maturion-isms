@@ -3,8 +3,8 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-20
-**Updated By**: foreman-v2-agent (Stage 10 pre-brief repair + Stage 9 reconfirmation after Stage 8 hardening — maturion-isms#1694 / PR #1695 — 2026-05-20)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 GATE_PASSED (IMPLEMENTATION PLAN COMPLETE AND APPROVED) — STAGE 9 GATE_PASSED (BUILDER CHECKLIST COMPLETE AND APPROVED) — STAGE 10 ACTIVE (IAA PRE-BRIEF INITIATED)  
+**Updated By**: pit-specialist (Stage 10 gate-pass docs-only update — maturion-isms#1698 / PR #1701; Stage 10 initiation authority originated in #1687 — 2026-05-20)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 GATE_PASSED (IMPLEMENTATION PLAN COMPLETE AND APPROVED) — STAGE 9 GATE_PASSED (BUILDER CHECKLIST COMPLETE AND APPROVED) — STAGE 10 GATE_PASSED (IAA PRE-BRIEF ACCEPTED; READINESS ONLY; BUILD AUTH NOT CLEARED)  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -32,7 +32,7 @@ per wave `align-12stage-prebuild-20260406` (2026-04-06).
 | — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
 | — | (new stage) | Stage 7 | PBFAG | GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED (pre-build package; no live execution claim) |
 | — | (new stage) | Stage 9 | Builder Checklist | GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED (maturion-isms#1687; 2026-05-19) |
-| — | (new stage) | Stage 10 | IAA Pre-Brief | ACTIVE — INITIATED (maturion-isms#1687; iaa-pre-brief.md filed) |
+| — | (new stage) | Stage 10 | IAA Pre-Brief | GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED (readiness-only; blocker carried forward) |
 
 ---
 
@@ -388,27 +388,29 @@ The builder checklist must verify that each builder candidate understands and ac
 ---
 
 ### Stage 10: IAA Pre-Brief
-**Status**: [x] ACTIVE — INITIATED (maturion-isms#1687; IAA pre-brief document prepared — Stage 10 is IAA pre-brief/readiness only and does not appoint a builder, start implementation, or clear Build Authorization)  
+**Status**: [x] GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED (Stage 10 pre-brief/readiness only; conditional blocker carry-forward; no builder appointment; no build start; Build Authorization NOT CLEARED)  
 **Location**: `modules/pit/10-iaa-pre-brief/`  
 **Key Artifacts**:
 - [x] `iaa-pre-brief.md` — Stage 10 IAA Pre-Brief document v1.1 with all 7 required sections (complete Stage 1–9 artifact pack, known delivery risks, visual/rendering controls, route/auth/onboarding controls, denied-path controls, live deployment/PBFAG evidence expectations, IAA challenge questions); **v1.1 repair** (maturion-isms#1694 / PR #1695 — 2026-05-20): Section 1.9 expanded to include full hardened Stage 8 package (10 artifacts); IAA Challenge §7.8 added for 144-vs-147 RED test reconciliation pre-build blocker
+- [x] `iaa-response.md` — Stage 10 IAA response artifact filed; pre-brief accepted for readiness-only scope with explicit conditions/blockers and non-overclaim posture
+- [x] `stage10-gate-pass-review.md` — Stage 10 guardrail verification + additional Stage 10 integrity checks (no builder appointment, no build start, Stage 11/12 NOT_STARTED, Build Authorization NOT CLEARED)
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 10 gate-pass)**:
 
 The IAA Pre-Brief must include:
 
-> **Note**: Stage 10 Functional-Delivery Guardrails below remain unchecked because this issue (maturion-isms#1687) initiates Stage 10 only. A full Stage 10 gate-pass review — requiring IAA acknowledgement/response artifact confirming the pre-brief has been reviewed and accepted — is a separate future activity. Guardrails will be ticked at that future gate-pass.
+- [x] Complete Stage 1–9 artifact pack submitted to IAA
+- [x] Known MMM/PIT delivery risks declared (see `modules/pit/_readiness/pit-functional-delivery-gap-register.md`)
+- [x] Visual/rendering risk controls declared: how will app shell completeness and white-screen prevention be verified?
+- [x] Route/auth/onboarding risk controls declared: how will all 27 routes be verified in deployed environment?
+- [x] Denied-path risk controls declared: how will negative-path failures be detected before handover?
+- [x] Live deployment/PBFAG evidence expectations agreed between IAA and Foreman
+- [x] IAA challenge questions for one-time functional delivery: IAA must state what would cause it to issue a REJECTION-PACKAGE
 
-- [ ] Complete Stage 1–9 artifact pack submitted to IAA
-- [ ] Known MMM/PIT delivery risks declared (see `modules/pit/_readiness/pit-functional-delivery-gap-register.md`)
-- [ ] Visual/rendering risk controls declared: how will app shell completeness and white-screen prevention be verified?
-- [ ] Route/auth/onboarding risk controls declared: how will all 27 routes be verified in deployed environment?
-- [ ] Denied-path risk controls declared: how will negative-path failures be detected before handover?
-- [ ] Live deployment/PBFAG evidence expectations agreed between IAA and Foreman
-- [ ] IAA challenge questions for one-time functional delivery: IAA must state what would cause it to issue a REJECTION-PACKAGE
+**Completion Date**: 2026-05-20  
+**Notes**: Stage 10 gate-pass review is now filed at `modules/pit/10-iaa-pre-brief/stage10-gate-pass-review.md` with IAA response at `modules/pit/10-iaa-pre-brief/iaa-response.md`. Stage 10 remains strictly pre-brief/readiness scope. The full hardened Stage 8 package (including all 8 hardening artifacts) was reviewed and the RED reconciliation blocker remains active and explicit: 144 vs 147 with rows `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`. Stage 11 and Stage 12 remain NOT_STARTED. Build Authorization remains NOT CLEARED.
 
-**Completion Date**: N/A (initiated 2026-05-19; pre-brief repaired 2026-05-20)  
-**Notes**: Stage 10 initiated per maturion-isms#1687 after Stage 9 gate-pass confirmed. IAA Pre-Brief document filed at `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md`. Stage 10 is IAA pre-brief/readiness preparation only: it does not appoint a builder, does not clear Build Authorization, and does not start build execution. The pre-brief document prepares IAA to challenge the full PIT pre-build package before builder appointment — it does not constitute IAA acceptance or approval of the package. Stage 10 guardrails will be ticked only after the IAA response artifact is actually filed and the full Stage 10 gate-pass review is conducted. Build Authorization remains NOT CLEARED. Stages 11 and 12 remain NOT_STARTED. **Pre-brief repaired 2026-05-20** (maturion-isms#1694 / PR #1695): Section 1.9 expanded to include all 8 Stage 8 hardening artifacts added by PR #1693; IAA Challenge §7.8 added declaring 144-vs-147 RED test reconciliation as an explicit pre-build blocker requiring CS2 decision before Stage 11 builder appointment.
+> **Non-overclaim**: Stage 10 gate-pass does **not** appoint a builder, does **not** start build execution, does **not** clear Build Authorization, does **not** claim tests are GREEN, does **not** claim live deployment proof exists, and does **not** claim FUNCTIONAL_PASS.
 
 ---
 
@@ -475,7 +477,7 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 ## Current Stage Summary
 
 **Current Stage**:
-- Stage 10 IAA Pre-Brief **ACTIVE — INITIATED** (maturion-isms#1687; pre-brief repaired maturion-isms#1694 — 2026-05-20); pre-brief only — does not appoint a builder or clear Build Authorization
+- Stage 10 IAA Pre-Brief **GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED** (2026-05-20; readiness-only gate; blocker integrity preserved via `iaa-response.md` + `stage10-gate-pass-review.md`)
 - Stage 9 Builder Checklist **GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED** (maturion-isms#1687; review 2026-05-19; reconfirmed 2026-05-20 per stage9-post-stage8-hardening-reconfirmation.md)
 - Stage 8 Implementation Plan **GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED** (maturion-isms#1679; review 2026-05-19; all 9 Functional-Delivery Guardrails verified PASS; builder-executable hardening addendum artifacts filed under `modules/pit/08-implementation-plan/` via PR #1693)
 - Stage 7 PBFAG **GATE_PASSED** — PBFAG_COMPLETE_AND_APPROVED (2026-05-19; pre-build package assessment only)
@@ -486,14 +488,13 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 - Stage 2 UX CS2 re-confirmed
 - Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~80% complete (Stages 1–9 complete/gate-passed; Stage 10 initiated/pre-brief repaired)  
+**Overall Progress**: ~83% complete (Stages 1–10 complete/gate-passed in pre-build scope; Stage 11/12 not started)  
 **Blockers**: Build Authorization NOT CLEARED — implementation blocked until Stages 9–11 are completed, approved, and gate-passed. 144-vs-147 RED test count reconciliation must be resolved before Stage 11 builder appointment (see IAA Challenge §7.8 in `iaa-pre-brief.md`). FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
-1. IAA responds to the Stage 10 pre-brief (v1.1 repaired) and issues PRE-BRIEF acknowledgement or raises further challenges
-2. Complete Stage 10 gate-pass review when IAA response artifact is filed (separate future wave)
-3. Resolve 144-vs-147 RED test catalog count reconciliation (CS2 decision required — retire 3 rows or update baseline to 147)
-4. Keep Stage 11 and Stage 12 as NOT_STARTED until separately authorised
-5. Preserve Build Authorization as NOT CLEARED until downstream gates explicitly clear it
+1. Resolve 144-vs-147 RED test catalog count reconciliation (CS2 decision required — retire 3 rows or update baseline to 147)
+2. Keep Stage 11 and Stage 12 as NOT_STARTED until separately authorised
+3. Preserve Build Authorization as NOT CLEARED until downstream gates explicitly clear it
+4. Initiate Stage 11 only via separate issue/wave after blocker closure and explicit downstream authority
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
