@@ -1,0 +1,33 @@
+{
+  "pr": 1701,
+  "issue": 1698,
+  "issue_title": "Foreman: Gate-pass PIT Stage 10 IAA Pre-Brief, then prepare Stage 11 readiness boundary",
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope_notes": "Stage 10 gate-pass docs wave only. Captures IAA pre-brief and Stage 10 documentation posture while preserving strict readiness boundaries for future Stage 11 preparation. No runtime code, migrations, deployment/workflow changes, Stage 11 appointment, Stage 12 execution, or Build Authorization clearance.",
+  "scope": [
+    ".admin/prs/pr-1701.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage10-iaa-prebrief-gatepass-20260520.md",
+    ".agent-admin/scope-declarations/pr-1701.md",
+    "modules/pit/10-iaa-pre-brief/iaa-pre-brief.md",
+    "modules/pit/10-iaa-pre-brief/iaa-response.md",
+    "modules/pit/10-iaa-pre-brief/stage10-gate-pass-review.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": false,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "Stage 10 IAA pre-brief docs are present and coherent across iaa-pre-brief.md, iaa-response.md, and stage10-gate-pass-review.md",
+    "PIT tracker remains aligned to Stage 10 gate-pass documentation wave only",
+    "Stage 11 remains NOT_STARTED and appointment/execution out of scope",
+    "Stage 12 remains NOT_STARTED and out of scope",
+    "Build Authorization remains NOT CLEARED",
+    "No runtime/source code, DB migration, deployment config, active workflow changes, or CI behavior changes",
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1701.md"
+  ],
+  "merge_authority": "CS2"
+}
