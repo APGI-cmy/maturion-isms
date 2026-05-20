@@ -1,0 +1,39 @@
+{
+  "pr": 1700,
+  "issue": null,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope_notes": "Foreman-orchestrated MMM product-fix wave to replace the transitional DomainWorkspacePage placeholder with live domain workflow wiring for MPS, intent statements, and criteria while preserving the existing five-domain framework workspace. Current PR diff also contains inherited PIT governance artifacts from the branch baseline and the current MMM IAA wave record; scope evidence will be refreshed after builder handback to exact diff parity.",
+  "scope": [
+    ".admin/prs/pr-1695.json",
+    ".admin/prs/pr-1700.json",
+    ".agent-admin/assurance/iaa-wave-record-mmm-domain-workflow-framework-workspace-20260520.md",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md",
+    ".agent-admin/scope-declarations/pr-1695.md",
+    ".agent-admin/scope-declarations/pr-1700.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage10-prebrief-repair-20260520.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage10-prebrief-repair-20260520.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md",
+    "modules/pit/10-iaa-pre-brief/iaa-pre-brief.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "qa-builder (RED QA) + ui-builder (runtime wiring)",
+  "evidence_required": [
+    "Stage 2 / 5 / 6 authorization chain cited before runtime changes",
+    "IAA wave record current-head relevant for PR #1700",
+    "RED QA defined before UI builder runtime implementation",
+    "DomainWorkspacePage renders actionable MPS, intent statement, and criteria workflow content",
+    "AssessmentFrameworkHandoffPage five-domain workspace remains intact",
+    "Back navigation returns to /assessment/framework?framework_id=:id",
+    "BUILD_PROGRESS_TRACKER.md records the manual finding and freeze-lift context",
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1700.md"
+  ],
+  "merge_authority": "CS2"
+}
