@@ -28,6 +28,26 @@ function git(args) {
   }
 }
 
+function resolveActiveState() {
+  if (process.env.ACTIVE_STATE_JSON) {
+    try {
+      return JSON.parse(process.env.ACTIVE_STATE_JSON);
+    } catch {
+      // ignore
+    }
+  }
+  if (process.env.ACTIVE_STATE_PATH) {
+    const fromPath = readJsonFile(process.env.ACTIVE_STATE_PATH);
+    if (fromPath) return fromPath;
+  }
+  try {
+    const raw = cp.execFileSync('node', ['.github/scripts/resolve-active-pr-state.js'], { encoding: 'utf8' }).trim();
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 function dedupe(values) {
   return [...new Set(values.filter(Boolean))];
 }
@@ -144,6 +164,10 @@ function createBlockingReason(code, details) {
     FOREMAN_ADMIN_READINESS: 'Foreman admin-readiness acceptance is required after ECAP ceremony.',
     IAA_FINAL_ASSURANCE: 'IAA final assurance is required before handover/merge posture.',
     CURRENT_HEAD_GATE_PARITY: 'Current-head required checks must be green before handover/merge posture.',
+    BOOTSTRAP_REQUIRED: 'Per-PR bootstrap artifacts (manifest/scope/wave-task) are required.',
+    EVIDENCE_REQUIRED: 'Evidence artifact required for current PR delta type.',
+    EVIDENCE_STALE: 'Evidence exists but is stale relative to current substantive/gate delta.',
+    BLOCKED: details || 'Active-state contradictions block progression.',
   };
 
   return {
@@ -153,13 +177,14 @@ function createBlockingReason(code, details) {
 }
 
 function main() {
+  const activeState = resolveActiveState();
   const eventPayload = process.env.GITHUB_EVENT_PATH ? readJsonFile(process.env.GITHUB_EVENT_PATH) : null;
   const prContext = eventPayload && eventPayload.pull_request ? eventPayload.pull_request : null;
 
-  const prNumber = Number(process.env.PR_NUMBER || prContext?.number || 0) || null;
-  const headSha = process.env.HEAD_SHA || prContext?.head?.sha || git(['rev-parse', 'HEAD']) || 'unknown';
-  const baseSha = process.env.BASE_SHA || prContext?.base?.sha || '';
-  const branch = process.env.HEAD_REF || prContext?.head?.ref || git(['branch', '--show-current']) || 'unknown';
+  const prNumber = Number(process.env.PR_NUMBER || activeState?.pr || prContext?.number || 0) || null;
+  const headSha = process.env.HEAD_SHA || activeState?.runtime_head_sha || prContext?.head?.sha || git(['rev-parse', 'HEAD']) || 'unknown';
+  const baseSha = process.env.BASE_SHA || activeState?.base_sha || prContext?.base?.sha || '';
+  const branch = process.env.HEAD_REF || activeState?.branch || prContext?.head?.ref || git(['branch', '--show-current']) || 'unknown';
   const baseBranch = process.env.BASE_REF || prContext?.base?.ref || 'unknown';
   const prBody = process.env.PR_BODY || prContext?.body || '';
   const prTitle = process.env.PR_TITLE || prContext?.title || '';
@@ -169,7 +194,9 @@ function main() {
   const isWip = /\bWIP\b/i.test(prTitle) || /\bWIP\b/i.test(prBody);
   const isDraftWip = isDraft || isWip;
 
-  const changedFiles = getChangedFiles(baseSha);
+  const changedFiles = Array.isArray(activeState?.changed_files) && activeState.changed_files.length > 0
+    ? dedupe(activeState.changed_files.map((v) => String(v || '').trim()).filter(Boolean))
+    : getChangedFiles(baseSha);
   const classes = classifyChangedFiles(changedFiles);
   const jobClass = [...classes.jobClass];
   if (isDraftWip) jobClass.push('draft-wip');
@@ -224,25 +251,47 @@ function main() {
   const iaaFinalIssued = normalizeBool(process.env.IAA_FINAL_ASSURANCE_ISSUED, false);
   const currentHeadGatesPassed = normalizeBool(process.env.CURRENT_HEAD_GATES_PASSED, false);
 
+  const resolverAction = String(activeState?.next_required_action || '').trim();
+  let nextRequiredAction = resolverAction || 'PASS';
   let nextRequiredControl = 'NONE';
-  if (identityMismatch) {
+
+  if (resolverAction === 'BLOCKED') {
     nextRequiredControl = 'IDENTITY_BINDING';
+  } else if (resolverAction === 'BOOTSTRAP_REQUIRED') {
+    nextRequiredControl = 'BOOTSTRAP_REQUIRED';
+  } else if (resolverAction === 'EVIDENCE_REQUIRED') {
+    nextRequiredControl = 'EVIDENCE_REQUIRED';
+  } else if (resolverAction === 'EVIDENCE_STALE') {
+    nextRequiredControl = 'EVIDENCE_STALE';
+  } else if (identityMismatch) {
+    nextRequiredControl = 'IDENTITY_BINDING';
+    nextRequiredAction = 'BLOCKED';
   } else if (isDraftWip) {
     nextRequiredControl = 'DRAFT_WIP_PHASE_NOT_COMPLETE';
+    nextRequiredAction = 'BLOCKED';
   } else if (requiresAgentContractAuth && !codexAuthComplete) {
     nextRequiredControl = 'CODEXADVISOR_CS2_AUTHORIZATION';
+    nextRequiredAction = 'EVIDENCE_REQUIRED';
   } else if (requiresIaaPreflight && !iaaPreflightComplete) {
     nextRequiredControl = 'IAA_PREFLIGHT';
+    nextRequiredAction = 'EVIDENCE_REQUIRED';
   } else if (requiresStrictGateEvidence && !strictGateEvidenceComplete) {
     nextRequiredControl = 'STRICT_GATE_CHANGE_EVIDENCE';
+    nextRequiredAction = 'EVIDENCE_REQUIRED';
   } else if (requiresEcap && !ecapComplete) {
     nextRequiredControl = 'ECAP_PROTECTED_PATH_CEREMONY';
+    nextRequiredAction = 'EVIDENCE_REQUIRED';
   } else if (requiresEcap && !foremanAdminAccepted) {
     nextRequiredControl = 'FOREMAN_ADMIN_READINESS';
+    nextRequiredAction = 'EVIDENCE_REQUIRED';
   } else if (requiresIaaFinalAssurance && !iaaFinalIssued) {
     nextRequiredControl = 'IAA_FINAL_ASSURANCE';
+    nextRequiredAction = 'EVIDENCE_REQUIRED';
   } else if (!currentHeadGatesPassed) {
     nextRequiredControl = 'CURRENT_HEAD_GATE_PARITY';
+    nextRequiredAction = 'BLOCKED';
+  } else {
+    nextRequiredAction = 'PASS';
   }
 
   const blocking = nextRequiredControl === 'NONE'
@@ -252,7 +301,7 @@ function main() {
       identityMismatch ? `Identity mismatch: ${identityMismatchReasons.join('; ')}` : undefined,
     );
 
-  const handoverAllowed = nextRequiredControl === 'NONE';
+  const handoverAllowed = nextRequiredAction === 'PASS' && nextRequiredControl === 'NONE';
   const readyForReviewAllowed = handoverAllowed && !isDraftWip;
   const mergeAllowed = handoverAllowed && currentHeadGatesPassed && !isDraftWip;
 
@@ -268,8 +317,9 @@ function main() {
     },
     job_class: dedupe(jobClass),
     required_controls: dedupe(requiredControls),
-    next_required_control: nextRequiredControl,
-    handover_allowed: handoverAllowed,
+      next_required_control: nextRequiredControl,
+      next_required_action: nextRequiredAction,
+      handover_allowed: handoverAllowed,
     ready_for_review_allowed: readyForReviewAllowed,
     merge_allowed: mergeAllowed,
     blocking_reason: blocking.code,
@@ -279,6 +329,8 @@ function main() {
       changed_files: changedFiles,
       identity_mismatch: identityMismatch,
       identity_mismatch_reasons: identityMismatchReasons,
+      active_state_path: activeState?.active_state_path || null,
+      active_state_delta_type: activeState?.delta_type || null,
       flags: {
         product_only_simple: productOnlySimple,
         requires_iaa_preflight: requiresIaaPreflight,
@@ -303,6 +355,7 @@ function main() {
     const bool = (v) => (v ? 'true' : 'false');
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `control_state_path=${outputPath}\n`);
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `next_required_control=${nextRequiredControl}\n`);
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `next_required_action=${nextRequiredAction}\n`);
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `handover_allowed=${bool(handoverAllowed)}\n`);
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `ready_for_review_allowed=${bool(readyForReviewAllowed)}\n`);
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `merge_allowed=${bool(mergeAllowed)}\n`);

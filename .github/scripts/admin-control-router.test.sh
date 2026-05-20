@@ -66,16 +66,6 @@ run_case() {
   ws="$(mktemp -d -p "$TEST_ROOT")"
   pushd "$ws" >/dev/null
 
-  git init -q
-  git config user.email "test@example.com"
-  git config user.name "Test User"
-  mkdir -p apps/mmm/src governance/templates .github/workflows .github/agents .agent-admin/control-state
-  echo "base" > README.md
-  git add README.md
-  git commit -q -m "base"
-  git branch -M main
-  git checkout -q -b feature
-
   local PR_NUMBER=9001
   local HEAD_REF="feature"
   local BASE_REF="main"
@@ -90,6 +80,36 @@ run_case() {
   local IAA_FINAL_ASSURANCE_ISSUED="false"
   local CODEXADVISOR_CS2_AUTHORIZATION_COMPLETE="false"
   local ACTIVE_IDENTITY_BUNDLE_JSON=""
+
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test User"
+  mkdir -p apps/mmm/src governance/templates .github/workflows .github/agents .agent-admin/control-state \
+         .admin/prs .agent-admin/scope-declarations ".agent-admin/prs/pr-${PR_NUMBER}"
+  echo "base" > README.md
+  cat > ".admin/prs/pr-${PR_NUMBER}.json" <<JSON
+{"pr":${PR_NUMBER},"issue":1684,"branch":"${HEAD_REF}","head_sha":"CURRENT_HEAD","base_sha":"CURRENT_BASE"}
+JSON
+  cat > ".agent-admin/scope-declarations/pr-${PR_NUMBER}.md" <<SCOPE
+PR_NUMBER: ${PR_NUMBER}
+ISSUE: #1684
+BRANCH: ${HEAD_REF}
+OWNER: Copilot
+DATE_UTC: 2026-05-20T00:00:00Z
+FILES_CHANGED: 1
+OUT_OF_SCOPE:
+- none
+SCOPE
+  cat > ".agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md" <<WAVE
+PR: #${PR_NUMBER}
+Branch: ${HEAD_REF}
+WAVE_TASKS_PATH: .agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md
+WAVE
+  git add README.md
+  git add .admin/prs ".agent-admin/scope-declarations/pr-${PR_NUMBER}.md" ".agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md"
+  git commit -q -m "base"
+  git branch -M main
+  git checkout -q -b feature
 
   "$setup_fn"
 
