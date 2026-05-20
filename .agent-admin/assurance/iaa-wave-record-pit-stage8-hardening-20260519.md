@@ -5,10 +5,21 @@ PR: 1693
 ISSUE: 1691
 WAVE: pit-stage8-hardening
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: 3bd410a8c1784b5f455fb39a3c8d8a96d9bc38b5
-EXPECTED_QA_SCOPE: Governance/docs-only Stage 8 hardening package QA; no runtime code/migrations/deployment/workflows; verify Stage 8 artifact completeness and tracker consistency.
-EXPECTED_FAILURE_MODES: Missing mandatory Stage 8 hardening artifacts; hidden scope creep into implementation/deployment/workflow files; tracker drift; stage-boundary breach implying Stage 10/11/12 start.
-FOREMAN_INSTRUCTIONS: Keep wave as Stage 8 hardening only; do not appoint builders; do not start build execution; preserve Build Authorization NOT CLEARED and Stage 10/11/12 NOT_STARTED.
+CURRENT_HEAD_SHA: 5dd117ce95f9731fef2f62d480e0cc90f0052cf1
+EXPECTED_QA_SCOPE:
+- Governance/docs-only Stage 8 hardening package QA.
+- Verify no runtime code, migrations, deployment config, or active workflow installation changes.
+- Verify Stage 8 hardening artifacts and tracker posture consistency.
+EXPECTED_FAILURE_MODES:
+- Missing mandatory Stage 8 hardening artifacts.
+- Hidden scope creep into implementation/deployment/workflow paths.
+- Tracker drift against Stage 8/9/10/11/12 posture requirements.
+- Stage-boundary breach implying Stage 10/11/12 start or Build Authorization clearance.
+FOREMAN_INSTRUCTIONS:
+- Keep this wave Stage 8 hardening only.
+- Do not appoint builders or start build execution.
+- Preserve Stage 10/11/12 as NOT_STARTED.
+- Preserve Build Authorization as NOT CLEARED.
 ECAP_REQUIRED: conditional
 ECAP_EXPECTED_ARTIFACTS: ECAP reconciliation summary and ceremony bundle only if ECAP is appointed in handover phase.
 CURRENT_HEAD_CI_EXPECTATIONS: Docs/governance-only change set should not require runtime build/deploy modifications; required governance and merge gates must remain green.
