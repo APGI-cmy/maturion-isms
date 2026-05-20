@@ -39,6 +39,7 @@ const SYMBOLIC_RUNTIME_HEAD_MARKERS = new Set([
   'active_head_resolved_by_gate',
   'github_pr_head_sha',
 ]);
+const SHA_HEX_REGEX = /^[0-9a-f]{7,40}$/;
 const VIRTUAL_FILES = (() => {
   const filePath = process.env.CHECKPOINT_REPO_FILES_PATH;
   if (filePath) {
@@ -346,14 +347,14 @@ function headMatches(candidate, headSha) {
   const head = normalizeValue(headSha);
   if (!value || !head) return false;
   if (SYMBOLIC_RUNTIME_HEAD_MARKERS.has(value)) return true;
-  if (!/^[0-9a-f]{7,40}$/.test(value)) return false;
+  if (!SHA_HEX_REGEX.test(value)) return false;
   return head === value || head.startsWith(value) || value.startsWith(head);
 }
 
 function shaMatches(candidate, target) {
   const a = normalizeValue(candidate);
   const b = normalizeValue(target);
-  if (!a || !b || !/^[0-9a-f]{7,40}$/.test(a) || !/^[0-9a-f]{7,40}$/.test(b)) return false;
+  if (!a || !b || !SHA_HEX_REGEX.test(a) || !SHA_HEX_REGEX.test(b)) return false;
   return a === b || a.startsWith(b) || b.startsWith(a);
 }
 
@@ -374,7 +375,6 @@ function isSubstantivePath(filePath) {
   if (/^(modules|apps|packages)\/[^/]+\/tests?\//.test(rel)) return true;
   if (/^supabase\/functions\//.test(rel)) return true;
   if (/^supabase\/migrations\//.test(rel)) return true;
-  if (isAdminOnlyPath(rel)) return false;
   return false;
 }
 
@@ -405,7 +405,7 @@ function artifactCurrentness(text, headSha, substantiveHeadSha) {
     const matches = fields.every(({ label, value }) => {
       const normalized = normalizeValue(String(value || '').replace(/[`]/g, ''));
       if (SYMBOLIC_RUNTIME_HEAD_MARKERS.has(normalized)) return true;
-      if (!/^[0-9a-f]{7,40}$/.test(normalized)) return false;
+      if (!SHA_HEX_REGEX.test(normalized)) return false;
 
       if (/reviewed sha|review sha|head sha|commit sha|evidence_subject_sha|substantive_head_sha/i.test(label)) {
         if (!evidenceSubjectSha) evidenceSubjectSha = normalized;

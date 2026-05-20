@@ -56,7 +56,7 @@ is_substantive_path() {
 sha_matches() {
   local a="$1"
   local b="$2"
-  [ -z "$a" ] || [ -z "$b" ] && return 1
+  [[ -z "$a" || -z "$b" ]] && return 1
   [[ "$a" == "$b" || "$a" == ${b:0:${#a}} || "$b" == ${a:0:${#b}} ]]
 }
 
