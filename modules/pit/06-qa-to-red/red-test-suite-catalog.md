@@ -285,11 +285,11 @@
 
 | Category | Test Count | P1 Tests | P2 Tests | P3 Tests | P4 Tests |
 |---|---|---|---|---|---|
-| Route/Screen Rendering (ROUTE) | 28 | 11 | 14 | 3 | 0 |
+| Route/Screen Rendering (ROUTE) | 29 | 12 | 14 | 3 | 0 |
 | Auth/Onboarding (AUTH) | 15 | 5 | 8 | 2 | 0 |
 | Role/RLS Negative Paths (RLS) | 13 | 10 | 2 | 1 | 0 |
 | Project Hierarchy/Lifecycle (PROJECT) | 16 | 7 | 7 | 2 | 0 |
-| Timeline Engine (TIMELINE) | 10 | 2 | 6 | 2 | 0 |
+| Timeline Engine (TIMELINE) | 12 | 2 | 7 | 3 | 0 |
 | Evidence Workflow (EVIDENCE) | 10 | 6 | 3 | 1 | 0 |
 | Notifications (NOTIFICATION) | 7 | 2 | 4 | 1 | 0 |
 | Reports (REPORT) | 8 | 3 | 4 | 1 | 0 |
@@ -298,6 +298,6 @@
 | AIMC AI Touchpoints (AIMC) | 7 | 3 | 3 | 1 | 0 |
 | Live Functional Verification (LFV) | 10 | 10 | 0 | 0 | 0 |
 | Non-Functional Requirements (NFR) | 8 | 5 | 3 | 0 | 0 |
-| **TOTAL** | **144** | **72** | **56** | **15** | **1** |
+| **TOTAL** | **147** | **73** | **57** | **16** | **1** |
 
-**144 RED tests defined.** All tests are in RED state (failing before implementation).
+**147 RED tests defined.** All tests are in RED state (failing before implementation).

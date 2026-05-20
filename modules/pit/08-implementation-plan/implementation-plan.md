@@ -235,7 +235,7 @@ Five-state enforcement for primary pages remains mandatory per Stage 2/6 matrice
 
 ## 5) RED-to-GREEN allocation (Stage 6 RED suite)
 
-Authoritative baseline: `modules/pit/06-qa-to-red/red-test-suite-catalog.md` (declared total: **144 RED tests**).
+Authoritative baseline: `modules/pit/06-qa-to-red/red-test-suite-catalog.md` (declared total: **147 RED tests**).
 Baseline reference snapshot: catalog `Version v1.0`, `Date 2026-05-13`, `Issue maturion-isms#1625` (as recorded in the catalog status header).
 
 | RED category | Declared count | Allocated wave |
@@ -253,13 +253,13 @@ Baseline reference snapshot: catalog `Version v1.0`, `Date 2026-05-13`, `Issue m
 | AIMC | 7 | W8.9 |
 | LFV | 10 | W8.10 |
 | NFR | 8 | W8.10 |
-| **TOTAL** | **144** | **Allocated** |
+| **TOTAL** | **147** | **Allocated** |
 
 ### P0/P1 assurance
 - Stage 6 catalog uses P1–P4 (no explicit P0 rows).
 - All P1 tests are allocated in the wave matrix above.
 - No skipped/todo tests are allowed as completion evidence for any wave.
-- At implementation-wave start, re-run a catalog parity check to confirm the RED catalog still reports 144 tests and no unallocated P1 rows before claiming wave entry.
+- At implementation-wave start, re-run a catalog parity check to confirm the RED catalog still reports 147 tests and no unallocated P1 rows before claiming wave entry.
 
 ---
 

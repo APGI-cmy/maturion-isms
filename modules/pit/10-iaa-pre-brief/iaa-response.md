@@ -25,7 +25,7 @@ IAA reviewed denied-path controls and rejection conditions for missing or weak n
 IAA reviewed that Stage 7 PBFAG is pre-build evidence-definition only and does not claim live deployed execution proof.
 
 ## RED-test count reconciliation challenge item
-IAA confirms the reconciliation blocker remains OPEN: baseline 144 vs catalog 147, with delta rows `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`. This is a pre-appointment blocker for Stage 11.
+IAA records the reconciliation blocker as RESOLVED by CS2 decision path Option B: baseline updated to 147 with explicit inclusion of `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`.
 
 ## IAA challenge questions and responses
 IAA reviewed the Stage 10 challenge set and found it sufficient for pre-brief readiness, subject to explicit blocker carry-forward and non-overclaim controls.
@@ -34,12 +34,12 @@ IAA reviewed the Stage 10 challenge set and found it sufficient for pre-brief re
 **Decision**: PRE-BRIEF ACCEPTED (Stage 10 readiness only, conditional).
 
 ## Conditions or blockers, if any
-1. 144-vs-147 RED reconciliation must be formally resolved and CS2-recorded before Stage 11 builder appointment.  
+1. Stage 11 builder appointment remains a separate downstream gate and is still required before Stage 12.  
 2. No builder appointment may occur in Stage 10 artifacts.  
 3. Build Authorization remains **NOT CLEARED**.
 
 ## Stage 11 readiness recommendation
-Stage 11 remains **NOT_STARTED** until reconciliation condition (above) is closed and separately authorised.
+Stage 11 remains **NOT_STARTED** and may proceed only via a separate Stage 11 appointment issue/wave under normal gate controls.
 
 ## Non-overclaim statement
 This response does **not** appoint a builder, does **not** start build execution, does **not** start Stage 12, does **not** clear Build Authorization, does **not** claim tests are GREEN, does **not** claim live deployed proof exists, and does **not** claim FUNCTIONAL_PASS.

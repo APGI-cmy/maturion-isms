@@ -20,7 +20,7 @@ Stage 11 builder appointment cannot proceed unless **all** items below are true.
 | Preconditions group | Evidence/reference |
 |---|---|
 | Stage and IAA gate status | `TBD` |
-| RED reconciliation closure | `TBD` |
+| RED reconciliation closure | `modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md` (CS2 Option B recorded, 2026-05-20) |
 | Stage 8 hardening acknowledgement | `TBD` |
 | Route/screen/state map | `TBD` |
 | Timeline strategy | `TBD` |
