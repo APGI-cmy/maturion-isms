@@ -132,6 +132,23 @@
 - Date: {YYYY-MM-DD}
 - PHASE_B_BLOCKING_TOKEN: {token_ref — reference to the blocking token written by IAA to `.agent-admin/assurance/iaa-token-*`. This field links the wave record to the standalone token file that IAA creates as its formal execution-verdict artifact. The token suffix must align with `IAA_EXECUTION_VERDICT` (PASS/REJECTED/BLOCKED_*), not with functional-delivery `VERDICT`.}
 
+### 3.1x IAA Identity Binding Verdict (MANDATORY)
+
+```yaml
+IAA_IDENTITY_BINDING_VERDICT
+ACTUAL_PR: #<active-pr-from-github-context>
+ACTIVE_PREFLIGHT_PR: #<from-active-preflight-artifact>
+ADMIN_MANIFEST_PR: #<from-.admin/prs/pr-<PR>.json>
+SCOPE_DECLARATION_PR: #<from-.agent-admin/scope-declarations/pr-<PR>.md>
+ECAP_BUNDLE_PR: #<from-active-ecap/prehandover-bundle>
+IAA_TOKEN_PR: #<from-token-or-wave-record-token-section>
+BRANCH: <active-branch-from-github-context>
+HEAD_SHA: <active-head-sha-from-github-context>
+ALL_MATCH: yes|no
+```
+
+`ALL_MATCH: no` is a hard rejection condition. IAA must not issue PASS when identity binding is not exact.
+
 ### 3.1a Mandatory ECAP Presence Gate
 
 > **EXECUTE FIRST — before any ACR check or checklist evaluation (§Mandatory ECAP Presence Gate, INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.14.0).**

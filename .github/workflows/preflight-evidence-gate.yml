@@ -391,6 +391,33 @@ jobs:
 
           bash .github/scripts/iaa-preflight-contract-gate.sh
 
+  identity-binding-check:
+    name: "preflight/identity-binding"
+    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+      !contains(fromJSON('["edited","ready_for_review"]'), github.event.action)) &&
+      (startsWith(github.head_ref, 'copilot/') ||
+      github.event.pull_request.user.login == 'Copilot')
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Active PR identity binding gate
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          chmod +x .github/scripts/identity-binding-gate.sh
+          .github/scripts/identity-binding-gate.sh
+
   iaa-token-self-cert-check:
     name: "preflight/iaa-token-self-certification"
     runs-on: ubuntu-latest
