@@ -1,30 +1,18 @@
 # Wave Current Tasks — foreman-v2-agent
 
-Wave: pit-stage10-prebrief-repair-20260520
-Session ID: session-pit-stage10-prebrief-repair-20260520
-Date: 2026-05-20
-Branch: copilot/repair-pit-stage-10-pre-brief
-Issue: #1694 — Foreman: Repair PIT Stage 10 pre-brief after Stage 8 hardening merge
-PR: #1695
-CS2 Authorization: Issue #1694 opened by CS2 (@APGI-cmy) and assigned to Copilot
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md
-ceremony_admin_appointed: PENDING (governance-only wave; handover-phase appointment only)
+Wave: wave-identity-binding-hardening-1684-r2
+Session ID: session-pr1685-identity-binding-hardening-20260519
+Date: 2026-05-19
+Branch: copilot/harden-active-pr-identity-binding
+Issue: #1684 — Harden active PR identity binding across Foreman, ECAP, IAA, and Preflight gates
+PR: #1685
+CS2 Authorization: Issue #1684 opened by CS2 (@APGI-cmy) and assigned to Copilot
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-wave-identity-binding-hardening-1684-r2-20260519.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-wave-identity-binding-hardening-1684-r2-20260519.md
+ceremony_admin_appointed: execution-ceremony-admin-agent
 
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
-IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md
-IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-20T07:20:27Z
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-wave-identity-binding-hardening-1684-r2-20260519.md
+IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-19T13:13:18Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: no
-WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-
----
-
-## Outstanding Tasks
-
-| # | Task | Owner | Status | Evidence |
-|---|------|-------|--------|----------|
-| 1 | Update Stage 10 IAA Pre-Brief (Section 1.9 + challenge §7.8 for 144-vs-147) | foreman-v2-agent | 🟢 DONE | `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md` v1.1 |
-| 2 | Create Stage 9 post-Stage-8-hardening reconfirmation document | foreman-v2-agent | 🟢 DONE | `modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md` |
-| 3 | Update BUILD_PROGRESS_TRACKER.md repair notes | foreman-v2-agent | 🟢 DONE | `modules/pit/BUILD_PROGRESS_TRACKER.md` |
-| 4 | Create governance artifacts (wave record, scope declaration, PR admin, PREHANDOVER) | foreman-v2-agent | 🟢 DONE | All governance files committed |
