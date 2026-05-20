@@ -136,10 +136,30 @@ WAVE
   git commit -q -m "admin only"
 }
 
+setup_legacy_manifest_fallback() {
+  # Only legacy .admin/pr.json exists; no PR-scoped manifest; should not trigger BOOTSTRAP_REQUIRED
+  mkdir -p .admin .agent-admin/scope-declarations .agent-admin/prs/pr-9001
+  cat > .admin/pr.json <<'JSON'
+{"pr": 9001, "branch": "feature"}
+JSON
+  cat > .agent-admin/scope-declarations/pr-9001.md <<'SCOPE'
+PR_NUMBER: 9001
+BRANCH: feature
+SCOPE
+  cat > .agent-admin/prs/pr-9001/wave-current-tasks.md <<'WAVE'
+PR: #9001
+Branch: feature
+WAVE
+  echo "note" > .agent-admin/note.md
+  git add .
+  git commit -q -m "admin only with legacy manifest"
+}
+
 run_case "bootstrap missing artifacts (mismatched legacy wave ignored)" "BOOTSTRAP_REQUIRED" setup_bootstrap_required ".agent-admin/prs/pr-9001/wave-current-tasks.md"
 run_case "identity contradictions block" "BLOCKED" setup_blocked_mismatch
 run_case "substantive delta needs evidence" "EVIDENCE_REQUIRED" setup_evidence_required
 run_case "admin-only delta with bootstrap+evidence passes" "PASS" setup_pass_admin_only
+run_case "legacy manifest fallback avoids spurious BOOTSTRAP_REQUIRED" "PASS" setup_legacy_manifest_fallback
 
 echo ""
 echo "Passed: $PASS"

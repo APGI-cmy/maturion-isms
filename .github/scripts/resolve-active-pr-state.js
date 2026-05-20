@@ -97,6 +97,27 @@ function getChangedFiles(baseSha, runtimeHeadSha) {
   return [...new Set(diff.split('\n').map((line) => line.trim()).filter(Boolean))];
 }
 
+function isGateChangePath(file) {
+  return (
+    /^\.github\/(workflows|scripts)\//.test(file)
+    || /^governance\/templates\//.test(file)
+    || /^governance\/checklists\//.test(file)
+    || file === 'governance/CANON_INVENTORY.json'
+  );
+}
+
+function isSubstantivePath(file) {
+  return (
+    /^(apps|modules|packages|api)\//.test(file)
+    || /^supabase\/(functions|migrations)\//.test(file)
+    || /\.(ts|tsx|js|jsx|py|go|java|rb|rs|sql)$/i.test(file)
+  );
+}
+
+function isEvidenceRelevantPath(file) {
+  return isGateChangePath(file) || isSubstantivePath(file);
+}
+
 function classifyDelta(changedFiles) {
   const isAdminOnlyPath = (file) => (
     /^\.admin\//.test(file)
@@ -108,19 +129,6 @@ function classifyDelta(changedFiles) {
     || /^README/i.test(file)
     || /^CHANGELOG/i.test(file)
     || /(^|\/)PREHANDOVER-.*\.md$/i.test(file)
-  );
-
-  const isGateChangePath = (file) => (
-    /^\.github\/(workflows|scripts)\//.test(file)
-    || /^governance\/templates\//.test(file)
-    || /^governance\/checklists\//.test(file)
-    || file === 'governance/CANON_INVENTORY.json'
-  );
-
-  const isSubstantivePath = (file) => (
-    /^(apps|modules|packages|api)\//.test(file)
-    || /^supabase\/(functions|migrations)\//.test(file)
-    || /\.(ts|tsx|js|jsx|py|go|java|rb|rs|sql)$/i.test(file)
   );
 
   const hasGateChange = changedFiles.some(isGateChangePath);
@@ -170,7 +178,11 @@ function resolveState() {
   const context = parsePrContext();
   const { prNumber, branch, runtimeHeadSha, baseSha } = context;
 
-  const manifestPath = prNumber ? `.admin/prs/pr-${prNumber}.json` : '.admin/pr.json';
+  const legacyManifestPath = '.admin/pr.json';
+  const manifestPrimary = prNumber ? `.admin/prs/pr-${prNumber}.json` : legacyManifestPath;
+  const manifestPath = (prNumber && !fileExists(manifestPrimary) && fileExists(legacyManifestPath))
+    ? legacyManifestPath
+    : manifestPrimary;
   const scopePath = prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '';
   const activeStatePath = prNumber ? `.agent-admin/prs/pr-${prNumber}/active-state.json` : '.agent-admin/prs/pr-unknown/active-state.json';
   const waveTasksPath = parseWaveTasksPathCandidate(prNumber, branch);
@@ -216,7 +228,11 @@ function resolveState() {
   const evidenceMissing = requiresEvidence && (!iaaArtifactPath || !fileExists(iaaArtifactPath));
 
   const evidenceEpoch = iaaArtifactPath ? lastCommitEpochForPath(iaaArtifactPath) : null;
-  const changedEpoch = firstCommitEpochForPaths(baseSha, changedFiles);
+  const evidenceRelevantFiles = changedFiles.filter(isEvidenceRelevantPath);
+  const changedEpoch = firstCommitEpochForPaths(
+    baseSha,
+    evidenceRelevantFiles.length > 0 ? evidenceRelevantFiles : changedFiles,
+  );
   const evidenceStale = Boolean(requiresEvidence && evidenceEpoch && changedEpoch && evidenceEpoch < changedEpoch);
 
   let nextRequiredAction = 'PASS';

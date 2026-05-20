@@ -259,10 +259,13 @@ function main() {
     nextRequiredControl = 'IDENTITY_BINDING';
   } else if (resolverAction === 'BOOTSTRAP_REQUIRED') {
     nextRequiredControl = 'BOOTSTRAP_REQUIRED';
+    requiredControls.push('BOOTSTRAP_REQUIRED');
   } else if (resolverAction === 'EVIDENCE_REQUIRED') {
     nextRequiredControl = 'EVIDENCE_REQUIRED';
+    requiredControls.push('EVIDENCE_REQUIRED');
   } else if (resolverAction === 'EVIDENCE_STALE') {
     nextRequiredControl = 'EVIDENCE_STALE';
+    requiredControls.push('EVIDENCE_STALE');
   } else if (identityMismatch) {
     nextRequiredControl = 'IDENTITY_BINDING';
     nextRequiredAction = 'BLOCKED';
