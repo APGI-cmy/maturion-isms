@@ -6,7 +6,7 @@
 |---|---|
 | Module | PIT (Project Implementation Tracker) |
 | Stage | Stage 10 — IAA Pre-Brief |
-| Version | v1.0 |
+| Version | v1.1 |
 | Status | **ACTIVE — INITIATED** |
 | Initiating Issue | maturion-isms#1687 |
 | Prerequisite Gate | Stage 9 GATE_PASSED (stage9-gate-pass-review.md — 2026-05-19) |
@@ -14,6 +14,7 @@
 | Builder Appointment | **NOT APPOINTED** (Stage 11 only) |
 | Date | 2026-05-19 |
 | Authority | foreman-v2-agent (POLC Supervisor; CS2-authorized via maturion-isms#1687) |
+| Repair Amendment | v1.1 — Stage 8 hardening artifacts added to §1.9; 144-vs-147 RED test reconciliation pre-build blocker declared as IAA Challenge §7.8 (issue #1694, PR #1695, 2026-05-20) |
 
 > **Purpose**: This pre-brief prepares the Independent Assurance Agent (IAA) to challenge the full PIT pre-build package before builder appointment. It declares the complete Stage 1–9 artifact pack, known delivery risks, risk controls, and evidence expectations. It does **not** constitute IAA acceptance or approval of the package — IAA must independently review the package and issue its response artifact before Stage 10 can be gate-passed.
 
@@ -25,7 +26,7 @@
 
 ## 1. Complete Stage 1–9 Artifact Pack
 
-The following Stage 1–9 artifacts are submitted for IAA review. All paths are canonical and current as of 2026-05-19.
+The following Stage 1–9 artifacts are submitted for IAA review. All paths are canonical and current as of 2026-05-20 (v1.1 repair: Stage 8 hardening artifacts added per issue #1694 / PR #1695). IAA is reviewing the **hardened Stage 8 package**, which includes the original implementation plan plus the Stage 8 builder-executable hardening artifacts added by PR #1693.
 
 ### 1.1 Stage 1 — App Description
 
@@ -112,12 +113,22 @@ The following Stage 1–9 artifacts are submitted for IAA review. All paths are 
 | Role-Negative Path Verification Plan | `modules/pit/07-pbfag/role-negative-path-verification-plan.md` | ✅ Filed |
 | Stage 7 Gate Readiness Checklist | `modules/pit/07-pbfag/stage7-gate-readiness-checklist.md` | ✅ Filed |
 
-### 1.9 Stage 8 — Implementation Plan
+### 1.9 Stage 8 — Implementation Plan (hardened package)
+
+> **v1.1 note**: This section has been expanded by issue #1694 / PR #1695 to list the full Stage 8 hardened package. The Stage 8 gate-pass (maturion-isms#1679) remains intact. IAA is reviewing the hardened Stage 8 package, not only the original implementation plan.
 
 | Artifact | Path | Status |
 |----------|------|--------|
 | Implementation Plan | `modules/pit/08-implementation-plan/implementation-plan.md` | ✅ GATE_PASSED |
 | Stage 8 Gate-Pass Review | `modules/pit/08-implementation-plan/stage8-gate-pass-review.md` | ✅ Filed |
+| Wave-to-RED-Test Manifest ⚠️ | `modules/pit/08-implementation-plan/wave-to-red-test-manifest.md` | ✅ Filed — **CONTAINS PRE-BUILD BLOCKER: 144-vs-147 delta (see §7.8)** |
+| Wave Data-API Contract Matrix | `modules/pit/08-implementation-plan/wave-data-api-contract-matrix.md` | ✅ Filed |
+| Route-Screen-State Acceptance Matrix | `modules/pit/08-implementation-plan/route-screen-state-acceptance-matrix.md` | ✅ Filed |
+| Timeline Engine Builder Contract | `modules/pit/08-implementation-plan/timeline-engine-builder-contract.md` | ✅ Filed |
+| Implementation Dependency Graph | `modules/pit/08-implementation-plan/implementation-dependency-graph.md` | ✅ Filed |
+| Wave Definition-of-Done Template | `modules/pit/08-implementation-plan/wave-definition-of-done-template.md` | ✅ Filed |
+| Builder Execution Responsibility Model | `modules/pit/08-implementation-plan/builder-execution-responsibility-model.md` | ✅ Filed |
+| Build Authorization Clearance Path | `modules/pit/08-implementation-plan/build-authorization-clearance-path.md` | ✅ Filed |
 
 ### 1.10 Stage 9 — Builder Checklist
 
@@ -419,6 +430,16 @@ The following explicit IAA challenge questions are posed for Stage 10 review. IA
 
 **IAA REJECTION-PACKAGE trigger**: MMM lesson L-001 (L1/L2/L3 closure model) not reflected in wave acceptance criteria; L-005 (runtime/UI behaviour tests) not covering deployed-environment verification; L-007 (operational closure requires live evidence) not binding for each wave; progress roll-up not tested per L-001/PIT-FR-114.
 
+### 7.8 RED Test Catalog Count Reconciliation (Pre-Build Blocker — v1.1 addition)
+
+> **Added by repair amendment v1.1 — issue #1694, PR #1695, 2026-05-20**
+
+**Question**: The Stage 8 `wave-to-red-test-manifest.md` explicitly identifies a 3-row delta between the Stage 8 declared allocation baseline (144 tests) and the currently enumerated catalog rows (147 rows). The delta rows identified are: `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`. Has this delta been formally reconciled before Stage 11 builder appointment? The Stage 6 gate-pass review cited 144 RED tests defined. The catalog table enumeration identifies 147 rows. This discrepancy must be resolved before a builder can receive a definitive allocation baseline.
+
+**Pre-build blocker status**: This is a **blocking data gap** — it must be resolved before Stage 11 builder appointment proceeds. The reconciliation decision is: (a) retire or reclassify the 3 delta rows to confirm the 144 declared baseline remains correct, OR (b) obtain CS2 approval to update the allocation baseline from 144 to 147. Either path requires an explicit CS2 decision and a corresponding update to the Stage 6 and Stage 8 gate-pass evidence chain.
+
+**IAA REJECTION-PACKAGE trigger**: Stage 11 builder appointment proceeds while the 144-vs-147 catalog count delta remains unresolved and undocumented. Any wave that begins build execution without a confirmed RED test allocation count is building against an undefined acceptance baseline, which is a POLC violation (CORE-021 — missing acceptance criterion at build start).
+
 ---
 
 ## Appendix: Stage-Readiness View (Stages 1–12)
@@ -433,9 +454,9 @@ The following explicit IAA challenge questions are posed for Stage 10 review. IA
 | 5b | LFV Package | MERGED | Foreman/CS2 |
 | 6 | QA-to-Red | GATE_PASSED | CS2/Foreman (2026-05-18) |
 | 7 | PBFAG | GATE_PASSED | Foreman (2026-05-19) |
-| 8 | Implementation Plan | GATE_PASSED | Foreman (2026-05-19; maturion-isms#1679) |
-| 9 | Builder Checklist | GATE_PASSED | Foreman (2026-05-19; maturion-isms#1687) |
-| 10 | IAA Pre-Brief | **ACTIVE — INITIATED** | Foreman (2026-05-19; maturion-isms#1687) |
+| 8 | Implementation Plan | GATE_PASSED + hardening addendum | Foreman (2026-05-19; maturion-isms#1679 + PR #1693 hardening) |
+| 9 | Builder Checklist | GATE_PASSED | Foreman (2026-05-19; maturion-isms#1687; reconfirmed 2026-05-20 per stage9-post-stage8-hardening-reconfirmation.md) |
+| 10 | IAA Pre-Brief | **ACTIVE — INITIATED** (pre-brief repaired v1.1 — 2026-05-20) | Foreman (2026-05-19 initiation; 2026-05-20 repair — issue #1694, PR #1695) |
 | 11 | Builder Appointment | NOT_STARTED | Requires Stages 1–10 GATE_PASSED + CS2 Build Authorization clearance |
 | 12 | Build Execution | NOT_STARTED | Requires Stage 11 builder appointment |
 
@@ -444,8 +465,8 @@ The following explicit IAA challenge questions are posed for Stage 10 review. IA
 ---
 
 **Filed by**: foreman-v2-agent
-**Filing date**: 2026-05-19
-**Governing issue**: maturion-isms#1687
+**Filing date**: 2026-05-19 (original) | 2026-05-20 (v1.1 repair — issue #1694, PR #1695)
+**Governing issue**: maturion-isms#1687 (initiation) | maturion-isms#1694 (repair)
 **Stage 10 Status**: ACTIVE — INITIATED
 **Acknowledgement posture**: This pre-brief is Foreman's initiation document. IAA must separately review and issue a response artifact before Stage 10 guardrails can be ticked or gate-pass declared. This document does **not** claim IAA has accepted, approved, or reviewed the package.
 **Build Authorization**: NOT CLEARED

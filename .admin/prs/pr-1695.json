@@ -1,0 +1,38 @@
+{
+  "pr": 1695,
+  "issue": 1694,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope_notes": "Governance/docs-only repair wave. Repairs Stage 10 IAA Pre-Brief after Stage 8 hardening artifacts added by PR #1693. Adds Stage 8 hardening artifacts to Section 1.9 of iaa-pre-brief.md; declares 144-vs-147 RED test reconciliation as IAA Challenge/pre-build blocker; creates Stage 9 reconfirmation document. No runtime code, DB migrations, deployment config, active workflows, or builder appointment artifacts.",
+  "scope": [
+    ".admin/prs/pr-1695.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md",
+    ".agent-admin/scope-declarations/pr-1695.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage10-prebrief-repair-20260520.md",
+    ".agent-workspace/foreman-v2/memory/session-pit-stage10-prebrief-repair-20260520.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md",
+    "modules/pit/10-iaa-pre-brief/iaa-pre-brief.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": false,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-swe-agent",
+  "evidence_required": [
+    "iaa-pre-brief.md bumped to v1.1 with Stage 8 hardening artifacts in Section 1.9",
+    "144-vs-147 RED test reconciliation declared as IAA Challenge §7.8 with REJECTION-PACKAGE trigger",
+    "stage9-post-stage8-hardening-reconfirmation.md created confirming Stage 9 gate-pass remains valid",
+    "BUILD_PROGRESS_TRACKER.md updated with repair notes and Stage 9 reconfirmation artifact reference",
+    "Stage 10 status remains ACTIVE — INITIATED (not COMPLETE)",
+    "Stage 11 and Stage 12 remain NOT_STARTED",
+    "Build Authorization remains NOT CLEARED",
+    "No runtime/source code, DB migration, deployment config, active workflow installation, builder appointment, or FUNCTIONAL_PASS claim",
+    "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1695.md",
+    "IAA pre-flight artifact is current-head relevant and PR-matched for #1695"
+  ],
+  "merge_authority": "CS2"
+}

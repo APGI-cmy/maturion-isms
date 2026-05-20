@@ -13,6 +13,63 @@
 
 ---
 
+IAA_PREFLIGHT_BRIEF
+PR: #1695
+ISSUE: #1694
+WAVE: pit-stage10-prebrief-repair-20260520
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+CURRENT_HEAD_SHA: CURRENT_HEAD
+
+EXPECTED_QA_SCOPE:
+- modules/pit/10-iaa-pre-brief/iaa-pre-brief.md
+- modules/pit/09-builder-checklist/stage9-post-stage8-hardening-reconfirmation.md
+- modules/pit/BUILD_PROGRESS_TRACKER.md
+- .agent-admin/scope-declarations/pr-1695.md
+- .admin/prs/pr-1695.json
+- .agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repair-20260520.md
+- .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+- .agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage10-prebrief-repair-20260520.md
+- .agent-workspace/foreman-v2/memory/session-pit-stage10-prebrief-repair-20260520.md
+- .agent-workspace/foreman-v2/parking-station/suggestions-log.md
+
+EXPECTED_FAILURE_MODES:
+- Section 1.9 of iaa-pre-brief.md does not include all 8 Stage 8 hardening artifacts (OVL-PBG-008, CORE-020)
+- 144-vs-147 RED test reconciliation challenge absent from pre-brief (OVL-PBG-019)
+- stage9-post-stage8-hardening-reconfirmation.md is a stub or absent (CORE-020, OVL-PBG-013)
+- Stage 9 reconfirmation overclaims and triggers a re-gate-pass (CORE-021)
+- BUILD_PROGRESS_TRACKER.md missing issue #1694 / PR #1695 citation (FAIL-ONLY-ONCE A-026, A-028)
+- Scope declaration file count mismatch vs actual diff (FAIL-ONLY-ONCE A-026, ACR-04)
+- iaa-pre-brief.md version not bumped (CORE-020)
+- Build Authorization cleared in any artifact (non-goals boundary)
+- Stage 10 advanced to COMPLETE in tracker (OVL-PBG-008)
+
+FOREMAN_INSTRUCTIONS:
+- Bump iaa-pre-brief.md version to v1.1 and add repair amendment row to Status Header
+- Expand Section 1.9 to list all 8 Stage 8 hardening artifacts with paths and status
+- Add IAA Challenge 7.8 declaring 144-vs-147 RED test reconciliation as pre-build blocker with REJECTION-PACKAGE trigger
+- Create stage9-post-stage8-hardening-reconfirmation.md confirming Stage 9 gate-pass remains valid; record delta as pre-execution builder obligation; do NOT reclassify Stage 9
+- Update BUILD_PROGRESS_TRACKER.md Stage 9 Key Artifacts and Stage 8/Stage 10 notes to record repair
+- Ensure FILES_CHANGED count matches actual diff count exactly
+- Stage 11 and Stage 12 must remain NOT_STARTED in all artifacts
+- Build Authorization must remain NOT CLEARED in all artifacts
+- All artifacts must be committed before IAA final invocation
+
+IAA_WILL_QA:
+- Section 1.9 lists all 8 Stage 8 hardening artifacts (OVL-PBG-008, CORE-020)
+- iaa-pre-brief.md version bumped to v1.1 with repair amendment note (CORE-020)
+- 144-vs-147 reconciliation challenge declared as IAA Challenge with REJECTION-PACKAGE trigger (OVL-PBG-019)
+- stage9-post-stage8-hardening-reconfirmation.md is substantive; confirms gate-pass validity; records delta as builder obligation (CORE-020, OVL-PBG-013)
+- BUILD_PROGRESS_TRACKER.md repair entry cites issue #1694 / PR #1695; Stage 10 remains ACTIVE — INITIATED (CORE-020, A-026)
+- All 10 files declared in pr-1695.md and pr-1695.json; no count mismatch (A-026, A-028, ACR-04)
+- wave-current-tasks.md updated to repair wave; issue #1694 / PR #1695 (A-026)
+- Build Authorization NOT CLEARED in all artifacts (non-goals boundary)
+- Stage 11 NOT_STARTED in all artifacts (non-goals boundary)
+- No builder appointment, implementation start, or FUNCTIONAL_PASS claim (POLC boundary)
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
+---
+
 ## PRE-BRIEF
 
 **Triggered by**: CS2 / @APGI-cmy via Foreman PRE-BRIEF request — Phase 0 IAA contract
@@ -83,7 +140,7 @@ WAVE: pit-stage10-prebrief-repair-20260520
 PR: #1695
 ISSUE: #1694
 BRANCH: copilot/repair-pit-stage-10-pre-brief
-CURRENT_HEAD_SHA: abd2875a1ad673e913988941dce4e01f46aabe0b
+CURRENT_HEAD_SHA: CURRENT_HEAD
 CATEGORY: PRE_BUILD_STAGE_MODEL
 OVERLAY: PRE_BUILD_GATES (OVL-PBG-001–OVL-PBG-019)
 CEREMONY_ADMIN_REQUIRED: NO (governance-only wave)
@@ -221,7 +278,7 @@ FOREMAN_CEREMONY_ARTIFACTS_EXPECTED:
 #### CURRENT_HEAD_CI_EXPECTATIONS
 
 ```
-CURRENT_HEAD_SHA: abd2875a1ad673e913988941dce4e01f46aabe0b
+CURRENT_HEAD_SHA: CURRENT_HEAD
 BRANCH: copilot/repair-pit-stage-10-pre-brief
 CI_TYPE: Documentation/governance-only PR
 EXPECTED_CHANGES: .md files only — no .ts/.tsx/.sql/.json schema changes
@@ -358,7 +415,7 @@ PRE_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-pit-stage10-prebrief-repa
 
 ## TOKEN
 
-*(Populated at final assurance invocation — after PR #1695 deliverables are committed)*
+PHASE_B_BLOCKING_TOKEN: PENDING — awaiting IAA final assurance after all artifacts committed and CI GREEN
 
 ---
 
