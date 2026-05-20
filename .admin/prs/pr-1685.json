@@ -9,7 +9,6 @@
   "scope": [
     ".admin/prs/pr-1685.json",
     ".agent-admin/assurance/iaa-wave-record-wave-identity-binding-hardening-1684-r2-20260519.md",
-    ".agent-admin/assurance/iaa-wave-record-identity-binding-hardening-1685-r3-20260519.md",
     ".agent-admin/evidence/pr-1685-strict-gate-change-evidence.md",
     ".agent-admin/prehandover/proof-pr-1685-identity-binding-hardening-20260519.md",
     ".agent-admin/scope-declarations/pr-1685.md",

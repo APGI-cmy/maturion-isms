@@ -49,3 +49,11 @@ IAA_TOKEN_PR: #1685
 BRANCH: copilot/harden-active-pr-identity-binding
 HEAD_SHA: dc2a4e5bf39ba0dc04b4eb502d4943bb829e8a28
 ALL_MATCH: yes
+
+## R3_CONSOLIDATION_NOTES
+CONSOLIDATED_FROM: .agent-admin/assurance/iaa-wave-record-identity-binding-hardening-1685-r3-20260519.md
+CURRENT_HEAD_IDENTITY_BINDING_MODEL:
+- Layer 1 (committed artifact identity): PR/issue/branch/artifact paths/verdict parity
+- Layer 2 (runtime current-head identity): resolved by gate from GitHub PR head SHA
+SYMBOLIC_HEAD_MARKER: ACTIVE_HEAD_RESOLVED_BY_GATE
+STATUS: CONSOLIDATED_SINGLE_WAVE_RECORD_FOR_PR_1685
