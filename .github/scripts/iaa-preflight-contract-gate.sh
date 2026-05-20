@@ -174,10 +174,14 @@ if [ -n "$ACTIVE_PREBRIEF_PATH" ] && [ -f "$ACTIVE_PREBRIEF_PATH" ]; then
           # Impl files present. Compare author timestamps (rebase-safe: %at survives rebase).
           _pb_at="$(git log -1 --format='%at' "${BASE_SHA}..${HEAD_SHA}" -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
           [ -z "$_pb_at" ] && _pb_at="$(git log -1 --format='%at' HEAD -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
-          mapfile -t _pb_impl_files < <(while IFS= read -r _pb_f; do
-            [ -n "$_pb_f" ] && is_impl_or_build_file "$_pb_f" && echo "$_pb_f"
-          done <<< "$_pb_delta_files")
-          _pb_last_impl_at="$(git log --format='%at' "${BASE_SHA}..${HEAD_SHA}" -- "${_pb_impl_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+          _pb_impl_files=()
+          while IFS= read -r _pb_f; do
+            [ -n "$_pb_f" ] && is_impl_or_build_file "$_pb_f" && _pb_impl_files+=("$_pb_f")
+          done <<< "$_pb_delta_files"
+          _pb_last_impl_at=""
+          if [ "${#_pb_impl_files[@]}" -gt 0 ]; then
+            _pb_last_impl_at="$(git log --format='%at' "${BASE_SHA}..${HEAD_SHA}" -- "${_pb_impl_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+          fi
           if [ -n "$_pb_at" ] && [ -n "$_pb_last_impl_at" ] && [ "$_pb_at" -ge "$_pb_last_impl_at" ]; then
             # Prebrief authored at/after last impl commit — evidence is current (rebase-safe).
             _pb_sha_stale=false
