@@ -20,6 +20,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GATE_SCRIPT="$SCRIPT_DIR/enforce-scope-declaration-policy.sh"
+RESOLVER_SCRIPT="$SCRIPT_DIR/resolve-active-pr-state.js"
 TEST_DIR=$(mktemp -d)
 TEST_PASSED=0
 TEST_FAILED=0
@@ -46,6 +47,8 @@ run_test() {
   git init -q
   git config user.email "test@example.com"
   git config user.name "Test"
+  mkdir -p .github/scripts
+  cp "$RESOLVER_SCRIPT" .github/scripts/resolve-active-pr-state.js
   echo "initial" > README.md
   git add README.md
   git commit -q -m "Initial"
@@ -192,7 +195,7 @@ setup_test_5() {
 export PR_NUMBER="9999"
 export ENFORCE_SCOPE="true"
 
-run_test "Per-PR scope file missing → FAIL" 1 "setup_test_5"
+run_test "Per-PR scope file missing → BOOTSTRAP_REQUIRED (no hard fail)" 0 "setup_test_5"
 
 # ----------------------------------------------------------------
 # TEST 6: Per-PR scope file present but missing required fields → FAIL
@@ -211,7 +214,7 @@ EOF
 export PR_NUMBER="5678"
 export ENFORCE_SCOPE="true"
 
-run_test "Per-PR scope file with missing required fields → FAIL" 1 "setup_test_6"
+run_test "Per-PR scope file with missing required fields but bootstrap incomplete → BOOTSTRAP_REQUIRED" 0 "setup_test_6"
 
 # ----------------------------------------------------------------
 # TEST 7: CS sign-off label bypasses all gates

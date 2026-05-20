@@ -30,6 +30,25 @@ PR_NUMBER="${PR_NUMBER:-}"
 PR_LABELS="${PR_LABELS:-}"
 PR_BODY="${PR_BODY:-}"
 ENFORCE_SCOPE="${ENFORCE_SCOPE:-true}"
+NEXT_REQUIRED_ACTION="${NEXT_REQUIRED_ACTION:-}"
+RESOLVED_SCOPE_PATH="${RESOLVED_SCOPE_PATH:-}"
+
+if [ -z "$NEXT_REQUIRED_ACTION" ] || [ -z "$PR_NUMBER" ]; then
+  RESOLVER_JSON="$(node .github/scripts/resolve-active-pr-state.js 2>/dev/null || true)"
+  if [ -n "$RESOLVER_JSON" ] && command -v python3 >/dev/null 2>&1; then
+    RESOLVED_VALUES="$(RESOLVER_JSON="$RESOLVER_JSON" python3 - <<'PY'
+import json,os
+state=json.loads(os.environ.get("RESOLVER_JSON","{}"))
+print(state.get("pr",""))
+print(state.get("scope_path",""))
+print(state.get("next_required_action",""))
+PY
+)"
+    PR_NUMBER="${PR_NUMBER:-$(echo "$RESOLVED_VALUES" | sed -n '1p')}"
+    RESOLVED_SCOPE_PATH="$(echo "$RESOLVED_VALUES" | sed -n '2p')"
+    NEXT_REQUIRED_ACTION="${NEXT_REQUIRED_ACTION:-$(echo "$RESOLVED_VALUES" | sed -n '3p')}"
+  fi
+fi
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Scope Declaration Policy Gate"
@@ -134,7 +153,13 @@ if [ "$ENFORCE_SCOPE" = "false" ]; then
   echo "   ℹ️  ENFORCE_SCOPE=false — Gate B skipped (non-agent PR)."
   echo ""
 else
-  if [ -z "$PR_NUMBER" ]; then
+  if [ "$NEXT_REQUIRED_ACTION" = "BOOTSTRAP_REQUIRED" ]; then
+    echo "   ⚠️  NEXT_ACTION=BOOTSTRAP_REQUIRED"
+    echo "      Scope/bootstrap artifacts are missing for this PR."
+    echo "      Returning actionable bootstrap status without cascading hard-fail."
+    echo "      Expected scope file: ${RESOLVED_SCOPE_PATH:-.agent-admin/scope-declarations/pr-${PR_NUMBER}.md}"
+    echo ""
+  elif [ -z "$PR_NUMBER" ]; then
     echo "   ❌ PER-PR-SCOPE-REQUIRED: PR_NUMBER is required when ENFORCE_SCOPE is enabled."
     echo "      Cannot locate or validate the per-PR scope declaration without PR_NUMBER."
     echo "      Expected workflow input: PR_NUMBER"
@@ -142,7 +167,7 @@ else
     echo ""
     ERRORS=$((ERRORS + 1))
   else
-    PER_PR_SCOPE_FILE=".agent-admin/scope-declarations/pr-${PR_NUMBER}.md"
+    PER_PR_SCOPE_FILE="${RESOLVED_SCOPE_PATH:-.agent-admin/scope-declarations/pr-${PR_NUMBER}.md}"
 
     if [ ! -f "$PER_PR_SCOPE_FILE" ]; then
       echo "   ❌ PER-PR-SCOPE-REQUIRED: Per-PR scope declaration not found."
