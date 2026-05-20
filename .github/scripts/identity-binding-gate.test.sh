@@ -5,6 +5,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GATE_SCRIPT="${SCRIPT_DIR}/identity-binding-gate.sh"
+RESOLVER_SCRIPT="${SCRIPT_DIR}/resolve-active-pr-state.js"
 TEST_DIR="$(mktemp -d)"
 PASS_COUNT=0
 FAIL_COUNT=0
@@ -25,7 +26,9 @@ run_gate_test() {
   git config user.email "test@example.com"
   git config user.name "Test User"
   mkdir -p .admin/prs .agent-admin/scope-declarations .agent-admin/assurance .agent-admin/prehandover \
-           .agent-workspace/foreman-v2/personal .agent-workspace/execution-ceremony-admin-agent/bundles
+           .agent-workspace/foreman-v2/personal .agent-workspace/execution-ceremony-admin-agent/bundles \
+           .github/scripts
+  cp "$RESOLVER_SCRIPT" .github/scripts/resolve-active-pr-state.js
   echo "init" > README.md
   git add .
   git commit -q -m "init"
@@ -170,10 +173,10 @@ EOF
 }
 
 run_gate_test "1. matching active identity -> PASS" 0 setup_pass_matching
-run_gate_test "2. missing per-PR manifest -> FAIL" 1 setup_fail_missing_manifest
+run_gate_test "2. missing per-PR manifest -> BOOTSTRAP_REQUIRED (pass with action)" 0 setup_fail_missing_manifest
 run_gate_test "3. scope PR mismatch -> FAIL" 1 setup_fail_scope_pr_mismatch
 run_gate_test "4. wave-current-tasks branch mismatch -> FAIL" 1 setup_fail_wave_branch_mismatch
-run_gate_test "5. regression actual #1680 vs artifact #1683 -> FAIL" 1 setup_fail_wrong_active_references_1683
+run_gate_test "5. historical unrelated PR artifact ignored unless selected -> PASS" 0 setup_fail_wrong_active_references_1683
 run_gate_test "6. wrong refs inside REFERENCE_ONLY section are allowed -> PASS" 0 setup_pass_reference_only_allowed
 
 echo ""
