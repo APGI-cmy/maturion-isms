@@ -329,6 +329,14 @@ PBFAG must include all of the following verifications. Any FAIL is a PBFAG gate-
 **Key Artifacts**:
 - [x] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
 - [x] `stage8-gate-pass-review.md` — Stage 8 gate-pass evidence: all 22 issue #1679 checklist items verified PASS; all 9 Functional-Delivery Guardrails verified PASS
+- [x] `wave-to-red-test-manifest.md` — Stage 8 hardening manifest with exact test-level allocation and blocker recording for catalog-count drift reconciliation
+- [x] `wave-data-api-contract-matrix.md` — per-wave data/API/audit/notification execution contract matrix
+- [x] `route-screen-state-acceptance-matrix.md` — route/screen/five-state acceptance matrix covering all 27 routes with Stage 2 22-screen reconciliation note
+- [x] `timeline-engine-builder-contract.md` — W8.6 timeline/date-grid algorithm and evidence contract
+- [x] `implementation-dependency-graph.md` — required wave sequencing dependencies
+- [x] `wave-definition-of-done-template.md` — per-wave completion template
+- [x] `builder-execution-responsibility-model.md` — role/sign-off authority model for future build waves
+- [x] `build-authorization-clearance-path.md` — positive clearance path definition (authorization remains NOT CLEARED)
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 8 gate-pass)**:
 
@@ -347,7 +355,7 @@ The implementation plan must satisfy all of the following. Any gap is a Stage 8 
 **Completion Date**: 2026-05-19  
 **Review Authority**: foreman-v2-agent (maturion-isms#1679; CS2-authorized)  
 **Gate-Pass Statement**: Stage 8 gate-pass confirms the implementation plan satisfies all Functional-Delivery Guardrails. This gate-pass does **not** start build execution, does **not** appoint a builder, does **not** clear Build Authorization, does **not** claim tests are GREEN, and does **not** claim FUNCTIONAL_PASS. Stage 9 is now initiated.  
-**Notes**: Stage 8 gate-pass review completed per maturion-isms#1679 after confirming all 22 issue checklist items PASS and all 9 Stage 8 Functional-Delivery Guardrails PASS. Review evidence at `modules/pit/08-implementation-plan/stage8-gate-pass-review.md`. Stage 8 derives from gate-passed Stages 1–7. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 8 gate-pass review completed per maturion-isms#1679 after confirming all 22 issue checklist items PASS and all 9 Stage 8 Functional-Delivery Guardrails PASS. Review evidence at `modules/pit/08-implementation-plan/stage8-gate-pass-review.md`. Stage 8 derives from gate-passed Stages 1–7. Stage 8 was later hardened with builder-executable supporting artifacts in `modules/pit/08-implementation-plan/` (this issue) without reopening/reversing Stage 8 gate-pass and without starting Stages 10/11/12. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -467,7 +475,7 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 
 **Current Stage**:
 - Stage 9 Builder Checklist **ACTIVE — INITIATED** (maturion-isms#1679; checklist/readiness only — does not appoint a builder)
-- Stage 8 Implementation Plan **GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED** (maturion-isms#1679; review 2026-05-19; all 9 Functional-Delivery Guardrails verified PASS)
+- Stage 8 Implementation Plan **GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED** (maturion-isms#1679; review 2026-05-19; all 9 Functional-Delivery Guardrails verified PASS; builder-executable hardening addendum artifacts filed under `modules/pit/08-implementation-plan/`)
 - Stage 7 PBFAG **GATE_PASSED** — PBFAG_COMPLETE_AND_APPROVED (2026-05-19; pre-build package assessment only)
 - Stage 6 QA-to-Red **GATE_PASSED** — RED suite reviewed and gate-passed by CS2/Foreman (2026-05-18)
 - Stage 5 Architecture **GATE_PASSED** — CS2/Foreman gate-pass recorded (2026-05-18; maturion-isms#1611 package reviewed)
