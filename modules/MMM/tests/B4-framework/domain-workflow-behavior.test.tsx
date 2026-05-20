@@ -6,6 +6,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import DomainWorkspacePage from '../../../../apps/mmm/src/pages/DomainWorkspacePage';
 
 type Scenario = {
+  domainRows: Array<{
+    id: string;
+    name: string;
+    code: string;
+    sort_order: number;
+    framework_id?: string;
+  }>;
   mpsRows: Array<{
     id: string;
     domain_id: string;
@@ -28,6 +35,7 @@ type Scenario = {
 const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
   const calls: Array<Record<string, unknown>> = [];
   let scenario: Scenario = {
+    domainRows: [],
     mpsRows: [],
     criteriaRows: [],
     pendingTable: null,
@@ -67,7 +75,7 @@ const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
 
         if (table === 'mmm_domains' && column === 'framework_id') {
           return {
-            order: () => queryResult(table, []),
+            order: () => queryResult(table, scenario.domainRows),
           };
         }
 
@@ -185,6 +193,7 @@ const baseCriteriaRows: Scenario['criteriaRows'] = [
 describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   beforeEach(() => {
     configureScenario({
+      domainRows: [],
       mpsRows: baseMpsRows,
       criteriaRows: baseCriteriaRows,
     });
@@ -253,6 +262,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
   it('shows loading feedback while MMM data is still in flight', async () => {
     configureScenario({
+      domainRows: [],
       mpsRows: [],
       criteriaRows: [],
       pendingTable: 'mmm_maturity_process_steps',
@@ -270,6 +280,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
   it('shows error feedback when MMM data loading fails', async () => {
     configureScenario({
+      domainRows: [],
       mpsRows: [],
       criteriaRows: [],
       failTable: 'mmm_maturity_process_steps',
@@ -285,5 +296,26 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect((await screen.findByTestId('mps-selection-error')).textContent).toContain(
       'Failed to load mmm_maturity_process_steps',
     );
+  });
+
+  it('shows an intentional setup state for canonical routes without source_domain_id when no domain row exists', async () => {
+    configureScenario({
+      domainRows: [],
+      mpsRows: [],
+      criteriaRows: [],
+    });
+
+    renderDomainWorkspace(
+      '/assessment/framework/domain/protection?framework_id=framework-1&domain_name=Protection',
+    );
+
+    expect((await screen.findByTestId('domain-workspace-title')).textContent).toContain('Protection');
+    expect((await screen.findByTestId('domain-audit-setup-state')).textContent).toContain(
+      'No compiled domain record exists for this canonical route yet.',
+    );
+    expect(screen.queryByTestId('domain-audit-error')).toBeNull();
+    expect(
+      screen.getByRole('link', { name: 'Back to Framework Workspace' }).getAttribute('href'),
+    ).toBe('/assessment/framework?framework_id=framework-1');
   });
 });

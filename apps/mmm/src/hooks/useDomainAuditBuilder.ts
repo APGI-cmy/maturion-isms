@@ -102,7 +102,7 @@ export function useDomainAuditBuilder({
     data: domain,
     isLoading: isDomainLoading,
     error: domainError,
-  } = useQuery<DomainAuditDomain>({
+  } = useQuery<DomainAuditDomain | null>({
     queryKey: ['domain-audit-domain', domainId, frameworkId, domainName, sourceDomainId],
     queryFn: async () => {
       if (sourceDomainId) {
@@ -140,7 +140,7 @@ export function useDomainAuditBuilder({
       });
 
       if (!matchedDomain) {
-        throw new Error('Could not resolve a MMM domain record for the routed domain context.');
+        return null;
       }
 
       return matchedDomain as DomainAuditDomain;

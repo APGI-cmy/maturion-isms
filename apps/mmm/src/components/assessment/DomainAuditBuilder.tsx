@@ -100,6 +100,13 @@ export function DomainAuditBuilder({
         </div>
       ) : null}
 
+      {!isLoading && !errorMessage && !domain ? (
+        <div className="alert domain-audit-builder__status" data-testid="domain-audit-setup-state">
+          No compiled domain record exists for this canonical route yet. Start from the framework workspace
+          compile flow, or compile this domain before opening its workflow.
+        </div>
+      ) : null}
+
       {/* Three-step workflow (legacy order preserved) */}
       <ol className="domain-audit-builder__steps" aria-label="Domain audit workflow steps">
         {steps.map((step) => (
