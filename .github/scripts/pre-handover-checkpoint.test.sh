@@ -411,6 +411,37 @@ setup_file_backed_checkpoint_inputs() {
   TEST_CHANGED_FILES_PATH="$PWD/checkpoint-inputs/changed-files.json"
 }
 
+refresh_scope_and_changed_files_inputs() {
+  local changed_files_json files_changed_count head_sha
+  changed_files_json="$(
+    git diff --name-only main...HEAD | node -e '
+      const fs = require("fs");
+      const files = fs.readFileSync(0, "utf8")
+        .split(/\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+      process.stdout.write(JSON.stringify(files));
+    '
+  )"
+  TEST_CHANGED_FILES_JSON="$changed_files_json"
+  files_changed_count="$(printf '%s' "$changed_files_json" | node -e '
+    const fs = require("fs");
+    const files = JSON.parse(fs.readFileSync(0, "utf8") || "[]");
+    process.stdout.write(String(files.length));
+  ')"
+  head_sha="$(git rev-parse HEAD)"
+  cat > .agent-admin/scope-declarations/pr-9999.md <<EOF
+# Scope Declaration — PR #9999
+PR_NUMBER: 9999
+ISSUE: #1583
+FILES_CHANGED: ${files_changed_count}
+CURRENT_HEAD_SHA: ${head_sha}
+EOF
+  git add .agent-admin/scope-declarations/pr-9999.md
+  git commit -q -m "refresh scope to current diff"
+  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+}
+
 seed_checkpoint_artifacts() {
   local head_sha
   head_sha="$(git rev-parse HEAD)"
@@ -567,13 +598,12 @@ run_checkpoint_test "8. mixed explicit SHA fields require all current -> STOP_AN
 setup_admin_only_delta_after_evidence() {
   seed_manifest_and_scope
   seed_green_checks
-  mkdir -p modules/mat/src
-  echo "export const x = 1;" > modules/mat/src/test.ts
-  git add modules/mat/src/test.ts
-  git commit -q -m "substantive commit A"
+  mkdir -p .github/scripts
+  echo "#!/bin/bash" > .github/scripts/substantive-initial.sh
+  git add .github/scripts/substantive-initial.sh
+  git commit -q -m "substantive governance runtime commit A"
   local reviewed_sha
   reviewed_sha="$(git rev-parse HEAD)"
-  TEST_CHANGED_FILES_JSON='[".admin/prs/pr-9999.json",".agent-admin/scope-declarations/pr-9999.md",".agent-admin/assurance/iaa-wave-record-test.md",".agent-admin/prehandover/proof-test.md",".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md"]'
   cat > .agent-admin/assurance/iaa-wave-record-test.md <<EOF
 ## PRE-BRIEF
 ## TOKEN
@@ -603,7 +633,7 @@ EOF
   echo "admin-only" > .agent-admin/assurance/admin-only-touch.md
   git add .agent-admin/assurance/admin-only-touch.md
   git commit -q -m "admin-only commit B"
-  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+  refresh_scope_and_changed_files_inputs
 }
 run_checkpoint_test "8a. admin-only delta after evidence keeps artifacts current" "HANDOVER_ALLOWED" "yes" "All current-head checkpoint requirements satisfied." setup_admin_only_delta_after_evidence
 
@@ -613,7 +643,7 @@ setup_substantive_change_after_evidence() {
   echo "#!/bin/bash" > .github/scripts/substantive-change.sh
   git add .github/scripts/substantive-change.sh
   git commit -q -m "substantive governance runtime change C"
-  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+  refresh_scope_and_changed_files_inputs
 }
 run_checkpoint_test "8b. substantive change after evidence makes artifact stale" "STOP_AND_FIX" "no" "stale for current HEAD" setup_substantive_change_after_evidence
 
@@ -626,7 +656,7 @@ setup_symbolic_reviewed_sha_then_substantive_change() {
   echo "#!/bin/bash" > .github/scripts/symbolic-reviewed-followup.sh
   git add .github/scripts/symbolic-reviewed-followup.sh
   git commit -q -m "Later substantive script change after symbolic reviewed sha"
-  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+  refresh_scope_and_changed_files_inputs
 }
 run_checkpoint_test "8c. symbolic reviewed SHA with later substantive change fails" "STOP_AND_FIX" "no" "stale for current HEAD" setup_symbolic_reviewed_sha_then_substantive_change
 

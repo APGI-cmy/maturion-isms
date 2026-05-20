@@ -368,6 +368,7 @@ function isAdminOnlyPath(filePath) {
 
 function isSubstantivePath(filePath) {
   const rel = toPosix(filePath);
+  if (isAdminOnlyPath(rel)) return false;
   if (/^\.github\/scripts\//.test(rel)) return true;
   if (/^\.github\/workflows\//.test(rel)) return true;
   if (/^governance\/templates\//.test(rel)) return true;
@@ -503,7 +504,9 @@ function computeChangedFiles(baseSha) {
 
 function resolveSubstantiveHeadSha(baseSha, headSha) {
   const headRef = headSha || git(['rev-parse', 'HEAD']);
-  const revSpec = baseSha ? `${baseSha}..${headRef || 'HEAD'}` : (headRef || 'HEAD');
+  if (!headRef) return '';
+  if (!baseSha) return headRef;
+  const revSpec = `${baseSha}..${headRef}`;
   const commits = git(['rev-list', revSpec]).split('\n').map((value) => value.trim()).filter(Boolean);
   for (const commit of commits) {
     const files = git(['diff-tree', '--no-commit-id', '--name-only', '-r', commit])

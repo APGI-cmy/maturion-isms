@@ -15,7 +15,7 @@
 #   AC-6c         CI workflow change — ECAP not required                            → exit 0
 #   AC-7          Protected-path PR with CS2 waiver (ecap_waiver_ref populated)     → exit 0
 #   AC-8          Non-implementation documentation-only PR                          → exit 0
-#   AC-8-CI       CI script/workflow only PR — IAA not required                     → exit 0
+#   AC-8-CI       CI script/workflow only PR — IAA required                          → exit 1
 #   AC-8b         Non-protected documentation-only PR — ECAP not required           → exit 0
 #   AC-9          Valid IAA token with correct PR, issue, SHA                       → exit 0
 #   AC-10         Protected-path PR with valid ECAP bundle + PREHANDOVER            → exit 0
@@ -363,7 +363,7 @@ setup_ac8() {
 }
 run_test "AC-8: Documentation-only PR — IAA not required" 0 "$IAA_GATE_SCRIPT" "setup_ac8"
 
-# AC-8-CI: CI script/workflow only PR — IAA not required (governance tooling)
+# AC-8-CI: CI script/workflow only PR — IAA required (runtime governance control)
 setup_ac8_ci() {
   add_ci_workflow_file
   mkdir -p .github/scripts
@@ -371,7 +371,7 @@ setup_ac8_ci() {
   git add .
   git commit -q -m "Add CI gate scripts"
 }
-run_test "AC-8-CI: CI script/workflow only PR — IAA not required" 0 "$IAA_GATE_SCRIPT" "setup_ac8_ci"
+run_test "AC-8-CI: CI script/workflow only PR — IAA required" 1 "$IAA_GATE_SCRIPT" "setup_ac8_ci"
 
 # AC-9: Valid IAA token with correct PR and issue reference
 setup_ac9() {

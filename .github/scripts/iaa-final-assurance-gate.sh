@@ -57,7 +57,10 @@ sha_matches() {
   local a="$1"
   local b="$2"
   [[ -z "$a" || -z "$b" ]] && return 1
-  [[ "$a" == "$b" || "$a" == ${b:0:${#a}} || "$b" == ${a:0:${#b}} ]]
+  [[ ! "$a" =~ ^[0-9a-fA-F]{7,40}$ || ! "$b" =~ ^[0-9a-fA-F]{7,40}$ ]] && return 1
+  git rev-parse --verify "${a}^{commit}" >/dev/null 2>&1 || return 1
+  git rev-parse --verify "${b}^{commit}" >/dev/null 2>&1 || return 1
+  [[ "$a" == "$b" || "$a" == "${b:0:${#a}}" || "$b" == "${a:0:${#b}}" ]]
 }
 
 is_symbolic_runtime_head_marker() {
@@ -199,8 +202,8 @@ while IFS= read -r file; do
     continue
   fi
 
-  # CI/governance tooling — scripts, workflows, agent contracts
-  if [[ "$file" =~ ^\.github/ ]]; then
+  # .github docs/metadata remain supervision-only, but runtime scripts/workflows are substantive.
+  if [[ "$file" =~ ^\.github/ ]] && [[ ! "$file" =~ ^\.github/(scripts|workflows)/ ]]; then
     DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
     continue
   fi
