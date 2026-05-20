@@ -34,7 +34,7 @@ function dedupe(values) {
 
 function parseIssueNumber(text) {
   const source = String(text || '');
-  const match = source.match(/(?:fixes|closes|resolves|issue)\s*#(\d+)/i);
+  const match = source.match(/(?:fixes|closes|resolves|addresses|issue|authorization)\b(?:\s+maturion-isms)?\s*[:,-]?\s*#(\d+)/i);
   return match ? Number(match[1]) : null;
 }
 
