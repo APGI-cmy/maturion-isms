@@ -102,26 +102,26 @@ PR: #1700
 ISSUE: #1699 — Connect legacy MMM DomainAuditBuilder workflow into framework workspace
 WAVE: mmm-domain-workflow-framework-workspace
 BRANCH: copilot/wire-existing-mmm-domain-workflow
-WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: 7b78404d6f93f0a206840cb06ecbd1ac511c377d
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/memory/session-mmm-domain-workflow-framework-workspace-20260520.md
+CURRENT_HEAD_SHA: e6970cba362267d4e9fe249d98908fefa6360182
 PHASE_0_FREEZE_STATUS: LIFTED (PR #1688 merged 2026-05-19)
 
 EXPECTED_QA_SCOPE:
-- Product scope: `apps/mmm/src/pages/DomainWorkspacePage.tsx`, `apps/mmm/src/components/assessment/{DomainAuditBuilder,MPSSelectionModal,IntentCreator,CriteriaManagement}.tsx`, `apps/mmm/src/hooks/useDomainAuditBuilder.ts`, `modules/MMM/tests/B4-framework/b4-framework.test.ts`.
-- Governance scope: `.admin/prs/pr-1700.json`, `.agent-admin/scope-declarations/pr-1700.md`, `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`, `.agent-workspace/foreman-v2/memory/session-mmm-domain-workflow-framework-workspace-20260520.md`, `.agent-admin/assurance/iaa-wave-record-mmm-domain-workflow-framework-workspace-20260520.md`, `modules/MMM/BUILD_PROGRESS_TRACKER.md`.
+- Product scope: `apps/mmm/src/pages/DomainWorkspacePage.tsx`, `apps/mmm/src/components/assessment/{DomainAuditBuilder,MPSSelectionModal,IntentCreator,CriteriaManagement}.tsx`, `apps/mmm/src/hooks/useDomainAuditBuilder.ts`, `modules/MMM/tests/B4-framework/b4-framework.test.ts`, `modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx`.
+- Governance scope: `.admin/prs/pr-1700.json`, `.agent-admin/scope-declarations/pr-1700.md`, `.agent-workspace/foreman-v2/memory/session-mmm-domain-workflow-framework-workspace-20260520.md`, `.agent-admin/assurance/iaa-wave-record-mmm-domain-workflow-framework-workspace-20260520.md`, `modules/MMM/BUILD_PROGRESS_TRACKER.md`.
 - Behavioural scope: legacy-rooted adaptation from `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx` and `apps/maturion-maturity-legacy/src/hooks/useDomainAuditBuilder.ts`; five-domain anti-regression; back-navigation preservation; current-head CI/gate coherence.
 
 EXPECTED_FAILURE_MODES:
 - POLC unresolved-role failure if the current diff contains implementation files without PR-changed Foreman session-memory evidence establishing a governed FOREMAN role.
 - Builder-involvement failure if no PR-changed session memory or PREHANDOVER artifact proves explicit builder delegation with preflight scope.
 - Identity-binding failure if active artifacts continue to show `issue: null` / `Issue: PENDING` instead of Issue `#1699`.
-- Stale-current-head failure if active governance artifacts reference an earlier branch head instead of current head `7b78404d6f93f0a206840cb06ecbd1ac511c377d`.
+- Stale-current-head failure if active governance artifacts reference an earlier branch head instead of current head `e6970cba362267d4e9fe249d98908fefa6360182`.
 - Execution-model drift if the PR is reframed as a builder-shortcut wave instead of the declared foreman-orchestrated model.
 - Product-proof failure if legacy workflow delivery is claimed without legacy-traceability, five-domain regression proof, back-navigation proof, and behavioural tests.
 
 FOREMAN_INSTRUCTIONS:
 - Keep the execution model foreman-orchestrated; do not switch to `copilot-builder-role` shortcut framing unless the model is intentionally changed everywhere.
-- Refresh active governance artifacts to bind exactly to PR `#1700`, Issue `#1699`, branch `copilot/wire-existing-mmm-domain-workflow`, and current head `7b78404d6f93f0a206840cb06ecbd1ac511c377d`.
+- Refresh active governance artifacts to bind exactly to PR `#1700`, Issue `#1699`, branch `copilot/wire-existing-mmm-domain-workflow`, and current head `e6970cba362267d4e9fe249d98908fefa6360182`.
 - Add explicit builder delegation evidence for `ui-builder` and `qa-builder` covering the legacy-target requirement and preflight scope.
 - Ensure current-head governance evidence resolves POLC governed-role and builder-delegation expectations without relying on runtime Copilot identity.
 - Continue legacy MMM workflow implementation only after current-head governance coherence is restored.
@@ -131,8 +131,12 @@ ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS:
 - ECAP_EXPECTED_ARTIFACTS: builder PREHANDOVER proof, builder session memory, functional evidence pack, refreshed PR admin JSON, refreshed per-PR scope declaration, updated `BUILD_PROGRESS_TRACKER.md`, and any ECAP reconciliation summary required at closure.
 
 CURRENT_HEAD_CI_EXPECTATIONS:
-- Current head `7b78404d6f93f0a206840cb06ecbd1ac511c377d`: `POLC Boundary Validation` run `26165161659` completed GREEN, including `foreman-implementation-check` and `builder-involvement-check`.
-- Current-head positives already observed in review: `IAA Pre-Brief Gate`, `Preflight Evidence Gate`, product regression/build checks, and CodeQL were green.
+- Current head `e6970cba362267d4e9fe249d98908fefa6360182`: `Preflight Evidence Gate` run `26170759987` completed GREEN.
+- Current head `e6970cba362267d4e9fe249d98908fefa6360182`: `POLC Boundary Validation` run `26170378696` completed GREEN.
+- Current head `e6970cba362267d4e9fe249d98908fefa6360182`: `Stub Detection Check` run `26170378619` completed GREEN.
+- Current head `e6970cba362267d4e9fe249d98908fefa6360182`: `Routing Governance Check` run `26170378689` completed GREEN.
+- Current head `e6970cba362267d4e9fe249d98908fefa6360182`: `CodeQL` run `26170378669` completed GREEN.
+- Current head `e6970cba362267d4e9fe249d98908fefa6360182`: `Deploy MMM Frontend to Vercel` run `26170378821` completed GREEN.
 - Current expectation: keep PR/Issue identity binding and builder-delegation evidence coherent as additional product changes land on top of this current head.
 
 POLC_AND_BUILDER_DELEGATION_EXPECTATIONS:
@@ -143,7 +147,7 @@ POLC_AND_BUILDER_DELEGATION_EXPECTATIONS:
 - Delegation framing must remain legacy-targeted: adapt the existing legacy `DomainAuditBuilder.tsx` workflow into the current MMM route.
 
 IAA_WILL_QA:
-- Exact PR `#1700` / Issue `#1699` / SHA `7b78404d6f93f0a206840cb06ecbd1ac511c377d` identity coherence across active artifacts.
+- Exact PR `#1700` / Issue `#1699` / SHA `e6970cba362267d4e9fe249d98908fefa6360182` identity coherence across active artifacts.
 - Foreman-orchestrated POLC evidence and explicit builder delegation evidence.
 - Legacy-reuse traceability from legacy `DomainAuditBuilder` / `useDomainAuditBuilder` into current MMM files.
 - Five-domain regression, contextual back navigation, test sufficiency, tracker update quality, scope-declaration parity, and current-head product-evidence integrity.
