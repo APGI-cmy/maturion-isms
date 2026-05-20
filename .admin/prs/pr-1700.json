@@ -45,7 +45,7 @@
     "Back navigation returns to /assessment/framework?framework_id=:id for both source_domain_id and canonical card routes",
     "Canonical card routes without source_domain_id resolve by framework_id + canonical domain_name or show intentional setup state",
     "B4 MMM framework suite passes GREEN with behavior assertions (175/175)",
-    "Current-head evidence SHA: e176d161b27f41dd45017e5bf4afda31df10c980 (to be refreshed on next push)",
+    "Current-head evidence SHA: 97f3d457d48bb344c3c8170129c4ed5e1452ecab",
     "Deferred scope note: generation acceptance paths are session-scoped UI state; persistence wiring to durable MMM tables remains a follow-up wave",
     "BUILD_PROGRESS_TRACKER.md records the legacy-targeted manual finding and freeze-lift context",
     "Per-PR scope declaration present at .agent-admin/scope-declarations/pr-1700.md"
