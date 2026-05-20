@@ -1,4 +1,5 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom';
+import { DomainAuditBuilder } from '../components/assessment/DomainAuditBuilder';
 
 function AppNav() {
   return (
@@ -20,6 +21,7 @@ export default function DomainWorkspacePage() {
   const { domainId } = useParams<{ domainId: string }>();
   const [searchParams] = useSearchParams();
   const frameworkId = searchParams.get('framework_id');
+  const sourceDomainId = searchParams.get('source_domain_id');
 
   // Prefer the canonical domain label passed as a query param.
   // This ensures the workspace always shows "Process Integrity" etc.,
@@ -29,6 +31,30 @@ export default function DomainWorkspacePage() {
   const backPath = frameworkId
     ? `/assessment/framework?framework_id=${frameworkId}`
     : '/frameworks';
+
+  if (!domainId) {
+    return (
+      <div className="app-shell">
+        <AppNav />
+        <main className="domain-workspace-page" data-testid="domain-workspace">
+          <div className="container">
+            <div
+              className="alert alert-error"
+              role="alert"
+              data-testid="domain-workspace-missing-domain-id"
+            >
+              No domain ID provided. Please re-open the domain workspace from the framework handoff page.
+            </div>
+            <div className="domain-workspace__navigation">
+              <Link className="btn btn-outline" to={backPath}>
+                Back to Framework Workspace
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell">
@@ -44,30 +70,17 @@ export default function DomainWorkspacePage() {
             </div>
           </div>
 
-          <section
-            className="domain-workspace__actions"
-            aria-label="Domain next actions"
-            data-testid="domain-workspace-actions"
-          >
-            <h2>Next Operational Actions</h2>
-            <p className="domain-workspace__actions-intro">
-              The following layers are the declared next operational steps for this domain:
-            </p>
-            <ul className="domain-workspace__action-list">
-              <li className="domain-workspace__action-item">
-                <strong>Compile MPSs</strong>
-                <span className="domain-workspace__action-tag">Declared next operational layer</span>
-              </li>
-              <li className="domain-workspace__action-item">
-                <strong>Compile intent statements</strong>
-                <span className="domain-workspace__action-tag">Declared next operational layer</span>
-              </li>
-              <li className="domain-workspace__action-item">
-                <strong>Compile criteria</strong>
-                <span className="domain-workspace__action-tag">Declared next operational layer</span>
-              </li>
-            </ul>
-          </section>
+          {/*
+            Domain workflow layers (legacy action labels preserved for traceability):
+            Compile MPSs | Compile intent statements | Compile criteria
+          */}
+          {/* Delegate to current-app DomainAuditBuilder adaptation (legacy workflow) */}
+          <DomainAuditBuilder
+            domainId={domainId}
+            frameworkId={frameworkId}
+            domainName={domainLabel}
+            sourceDomainId={sourceDomainId}
+          />
 
           <div className="domain-workspace__navigation">
             <Link className="btn btn-outline" to={backPath}>

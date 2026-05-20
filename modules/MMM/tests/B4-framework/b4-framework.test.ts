@@ -788,3 +788,124 @@ describe('T-MMM-S6-184: Missing/invalid framework_id error states remain intact'
     expect(src).toContain('data-testid="handoff-workspace"');
   });
 });
+
+// ─── T-MMM-S6-185: MMM app has an explicit DomainAuditBuilder component ──────
+// RED: forces ui-builder to introduce a DomainAuditBuilder-named component
+// in the current MMM app, not just a generic DomainWorkspacePage-only solution.
+describe('T-MMM-S6-185: MMM app has an explicit DomainAuditBuilder component', () => {
+  it('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx')).toBe(true);
+  });
+  it('DomainAuditBuilder component is named DomainAuditBuilder (default or named export)', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    // Component must be declared/exported by name — not just mentioned in a comment or import.
+    expect(src).toMatch(/export (default |const |function )DomainAuditBuilder/);
+  });
+  it('DomainAuditBuilder accepts a domainId prop (legacy parity)', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('domainId');
+  });
+});
+
+// ─── T-MMM-S6-186: DomainWorkspacePage delegates to DomainAuditBuilder ───────
+// RED: forces DomainWorkspacePage to be a thin delegation shell, not the
+// entire domain workflow implementation.
+describe('T-MMM-S6-186: DomainWorkspacePage delegates to DomainAuditBuilder component', () => {
+  it('DomainWorkspacePage imports DomainAuditBuilder', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('DomainAuditBuilder');
+  });
+  it('DomainWorkspacePage renders <DomainAuditBuilder', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    expect(src).toContain('<DomainAuditBuilder');
+  });
+  it('DomainWorkspacePage passes domainId down to DomainAuditBuilder', () => {
+    const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
+    // Must forward domainId as an explicit prop on <DomainAuditBuilder.
+    expect(src).toMatch(/<DomainAuditBuilder[^>]*domainId/);
+  });
+});
+
+// ─── T-MMM-S6-187: MMM app useDomainAuditBuilder hook exists and is used ─────
+// RED: forces ui-builder to introduce a current-app hook mirroring the
+// legacy useDomainAuditBuilder contract.
+describe('T-MMM-S6-187: MMM app useDomainAuditBuilder hook exists and is used', () => {
+  it('apps/mmm/src/hooks/useDomainAuditBuilder.ts exists', () => {
+    expect(fileExists('apps/mmm/src/hooks/useDomainAuditBuilder.ts')).toBe(true);
+  });
+  it('hook exports useDomainAuditBuilder', () => {
+    const src = readFile('apps/mmm/src/hooks/useDomainAuditBuilder.ts');
+    expect(src).toContain('useDomainAuditBuilder');
+  });
+  it('DomainAuditBuilder component imports useDomainAuditBuilder from the mmm hooks path', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('useDomainAuditBuilder');
+  });
+});
+
+// ─── T-MMM-S6-188: MMM app has explicit adaptation points for MPSSelectionModal,
+//     IntentCreator and CriteriaManagement ──────────────────────────────────────
+// RED: forces the structural presence of the three modal components that the
+// legacy DomainAuditBuilder workflow depends on.
+describe('T-MMM-S6-188: MMM app adaptation points for legacy modal components', () => {
+  it('apps/mmm/src/components/assessment/MPSSelectionModal.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/components/assessment/MPSSelectionModal.tsx')).toBe(true);
+  });
+  it('apps/mmm/src/components/assessment/IntentCreator.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/components/assessment/IntentCreator.tsx')).toBe(true);
+  });
+  it('apps/mmm/src/components/assessment/CriteriaManagement.tsx exists', () => {
+    expect(fileExists('apps/mmm/src/components/assessment/CriteriaManagement.tsx')).toBe(true);
+  });
+  it('DomainAuditBuilder component imports MPSSelectionModal', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('MPSSelectionModal');
+  });
+  it('DomainAuditBuilder component imports IntentCreator', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('IntentCreator');
+  });
+  it('DomainAuditBuilder component imports CriteriaManagement', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('CriteriaManagement');
+  });
+});
+
+// ─── T-MMM-S6-189: Legacy three-step model is preserved in MMM app ───────────
+// RED: forces the current app DomainAuditBuilder to declare the three
+// ordered steps from the legacy workflow, not a generic action list.
+describe('T-MMM-S6-189: Legacy step model preserved — Create MPSs / Create Intent / Create Criteria', () => {
+  it('DomainAuditBuilder contains step title "Create MPSs"', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('Create MPSs');
+  });
+  it('DomainAuditBuilder contains step title "Create Intent"', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('Create Intent');
+  });
+  it('DomainAuditBuilder contains step title "Create Criteria"', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    expect(src).toContain('Create Criteria');
+  });
+  it('step "Create MPSs" appears before "Create Intent" in source order', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    // Search for quoted/templated step titles as they appear in JSX/object literals.
+    const mpssIdx = src.search(/'Create MPSs'|"Create MPSs"|`Create MPSs`/);
+    const intentIdx = src.search(/'Create Intent'|"Create Intent"|`Create Intent`/);
+    expect(mpssIdx).toBeGreaterThan(-1);
+    expect(intentIdx).toBeGreaterThan(-1);
+    expect(mpssIdx).toBeLessThan(intentIdx);
+  });
+  it('step "Create Intent" appears before "Create Criteria" in source order', () => {
+    const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
+    const intentIdx = src.search(/'Create Intent'|"Create Intent"|`Create Intent`/);
+    const criteriaIdx = src.search(/'Create Criteria'|"Create Criteria"|`Create Criteria`/);
+    expect(intentIdx).toBeGreaterThan(-1);
+    expect(criteriaIdx).toBeGreaterThan(-1);
+    expect(intentIdx).toBeLessThan(criteriaIdx);
+  });
+  it('useDomainAuditBuilder hook exposes handleStepClick (step dispatch contract)', () => {
+    const src = readFile('apps/mmm/src/hooks/useDomainAuditBuilder.ts');
+    expect(src).toContain('handleStepClick');
+  });
+});
