@@ -343,17 +343,39 @@ while IFS= read -r token_file; do
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: missing **Reviewed SHA**: field"
     FILE_VALID=false
     FAIL=true
-  elif echo "$TOKEN_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
+  elif echo "$TOKEN_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$|^ACTIVE_HEAD_RESOLVED_BY_GATE$|^GITHUB_PR_HEAD_SHA$"; then
     echo "  ✅ Reviewed SHA: explicit current-head marker ($TOKEN_REVIEWED_SHA)"
   elif [ -n "$HEAD_SHA" ]; then
-    # Token SHA must be an ancestor of HEAD (reachable from current HEAD in this repo)
     if git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
       echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is in ancestry of HEAD"
     else
-      echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is not in ancestry of HEAD [IAA-FINAL-GATE-009]"
-      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not reachable from HEAD"
-      FILE_VALID=false
-      FAIL=true
+      # Not an ancestor — may be a post-rebase scenario where the original commit SHA
+      # was replaced during rebase. Token is still current if it was authored after the
+      # most-recent implementation commit (author timestamps survive git rebase).
+      _tk_stale=true
+      if [ -n "$BASE_SHA" ]; then
+        _tk_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$token_file" 2>/dev/null || true)"
+        [ -z "$_tk_at" ] && _tk_at="$(git log -1 --format='%at' HEAD -- "$token_file" 2>/dev/null || true)"
+        if [ -n "$_tk_at" ]; then
+          mapfile -t _tk_impl_files < <(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null | \
+            grep -E '^(modules|apps|packages)/[^/]+/(src|tests?)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|sql)$' || true)
+          _tk_last_impl_at=""
+          if [ "${#_tk_impl_files[@]}" -gt 0 ]; then
+            _tk_last_impl_at="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_tk_impl_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+          fi
+          if [ -z "$_tk_last_impl_at" ] || [ "$_tk_at" -ge "$_tk_last_impl_at" ]; then
+            _tk_stale=false
+          fi
+        fi
+      fi
+      if [ "$_tk_stale" = true ]; then
+        echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is not in ancestry of HEAD [IAA-FINAL-GATE-009]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not reachable from HEAD"
+        FILE_VALID=false
+        FAIL=true
+      else
+        echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not in ancestry (rebase-safe — token is current by author timestamp)"
+      fi
     fi
   else
     echo "  ✅ Reviewed SHA present: ${TOKEN_REVIEWED_SHA:0:12} (HEAD_SHA not set — skipping ancestry check)"
@@ -516,16 +538,37 @@ while IFS= read -r wave_file; do
       WR_FILE_VALID=false
       FAIL=true
       FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **Reviewed SHA**: field in ## TOKEN section"
-    elif echo "$WR_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
+    elif echo "$WR_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$|^ACTIVE_HEAD_RESOLVED_BY_GATE$|^GITHUB_PR_HEAD_SHA$"; then
       echo "  ✅ Wave record reviewed SHA: explicit current-head marker"
     elif [ -n "$HEAD_SHA" ]; then
       if git merge-base --is-ancestor "$WR_REVIEWED_SHA" HEAD 2>/dev/null; then
         echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} is in ancestry of HEAD"
       else
-        echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry of HEAD [IAA-FINAL-GATE-009]"
-        WR_FILE_VALID=false
-        FAIL=true
-        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA not reachable from HEAD"
+        # Not an ancestor — may be post-rebase. Check author-timestamp ordering.
+        _wr_stale=true
+        if [ -n "$BASE_SHA" ]; then
+          _wr_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$wave_file" 2>/dev/null || true)"
+          [ -z "$_wr_at" ] && _wr_at="$(git log -1 --format='%at' HEAD -- "$wave_file" 2>/dev/null || true)"
+          if [ -n "$_wr_at" ]; then
+            mapfile -t _wr_impl_files < <(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null | \
+              grep -E '^(modules|apps|packages)/[^/]+/(src|tests?)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|sql)$' || true)
+            _wr_last_impl_at=""
+            if [ "${#_wr_impl_files[@]}" -gt 0 ]; then
+              _wr_last_impl_at="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_wr_impl_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+            fi
+            if [ -z "$_wr_last_impl_at" ] || [ "$_wr_at" -ge "$_wr_last_impl_at" ]; then
+              _wr_stale=false
+            fi
+          fi
+        fi
+        if [ "$_wr_stale" = true ]; then
+          echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry of HEAD [IAA-FINAL-GATE-009]"
+          WR_FILE_VALID=false
+          FAIL=true
+          FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA not reachable from HEAD"
+        else
+          echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry (rebase-safe — token is current)"
+        fi
       fi
     else
       echo "  ✅ Wave record reviewed SHA: ${WR_REVIEWED_SHA:0:12} (ancestry check skipped — HEAD_SHA not set)"

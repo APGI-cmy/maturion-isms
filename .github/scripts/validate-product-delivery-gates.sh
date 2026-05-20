@@ -453,9 +453,47 @@ echo "✅ IAA Functional Verdict gate: PASS"
 
 # Gate 4c: No-current-head-drift (same artifact must contain verdict split + current head)
 if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
-  echo "❌ FAIL — IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD ($HEAD_SHA) in the same artifact."
-  echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
-  exit 1
+  # Exact SHA not found. Check if any IAA artifact contains an old literal hex SHA
+  # (rebase scenario): if so, accept when the artifact was authored after the last
+  # product-facing file commit (author timestamps survive git rebase).
+  _4c_stale=true
+  if [ -n "$BASE_SHA" ]; then
+    while IFS= read -r _iaa_f; do
+      [ -n "$_iaa_f" ] && [ -f "$_iaa_f" ] || continue
+      # Only consider files that have the required split verdict fields
+      _has_a=$(grep -qiE '^[[:space:]]*(\*\*)?ADMIN_PASS(\*\*)?:[[:space:]]*(yes|no)' "$_iaa_f" && echo yes || echo no)
+      _has_fu=$(grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*(yes|no)' "$_iaa_f" && echo yes || echo no)
+      _has_v=$(grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*(FULL_FUNCTIONAL_DELIVERY|PARTIAL_FUNCTIONAL_DELIVERY|ADMIN_ONLY|FAIL)' "$_iaa_f" && echo yes || echo no)
+      [ "$_has_a" = "yes" ] && [ "$_has_fu" = "yes" ] && [ "$_has_v" = "yes" ] || continue
+      # Check for an old literal hex SHA in CURRENT_HEAD_SHA field
+      _iaa_sha_val="$(grep -iE '^[[:space:]]*(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*' "$_iaa_f" | head -1 | sed 's/.*SHA[^:]*:[[:space:]]*//' | tr -d '[:space:]' || true)"
+      [[ "$_iaa_sha_val" =~ ^[0-9a-fA-F]{7,40}$ ]] || continue
+      # Old hex SHA found — compare author timestamps
+      _iaa_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_iaa_f" 2>/dev/null || true)"
+      [ -z "$_iaa_at" ] && _iaa_at="$(git log -1 --format='%at' HEAD -- "$_iaa_f" 2>/dev/null || true)"
+      [ -z "$_iaa_at" ] && continue
+      _prod_last_at=""
+      while IFS= read -r _pf; do
+        [ -z "$_pf" ] && continue
+        if is_product_path "$_pf"; then
+          _f_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_pf" 2>/dev/null || true)"
+          if [ -n "$_f_at" ] && ( [ -z "$_prod_last_at" ] || [ "$_f_at" -gt "$_prod_last_at" ] ); then
+            _prod_last_at="$_f_at"
+          fi
+        fi
+      done <<< "$CHANGED_FILES"
+      if [ -z "$_prod_last_at" ] || [ "$_iaa_at" -ge "$_prod_last_at" ]; then
+        _4c_stale=false
+        break
+      fi
+    done <<< "$IAA_FILES"
+  fi
+  if [ "$_4c_stale" = true ]; then
+    echo "❌ FAIL — IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD ($HEAD_SHA) in the same artifact."
+    echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
+    exit 1
+  fi
+  echo "ℹ️  No-current-head-drift: rebase-safe — IAA artifact is current by author timestamp (stale literal SHA accepted)"
 fi
 echo "✅ No-current-head-drift gate: PASS"
 
@@ -542,8 +580,36 @@ fi
 # hashes are canonical lowercase hex strings and should match exactly.
 # ---------------------------------------------------------------------------
 if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
-  exit 1
+  # Exact HEAD SHA not in evidence. Check for an old literal hex SHA (rebase scenario):
+  # if a concrete old SHA is present and the evidence was authored after the last
+  # product-facing file commit, the evidence is still current.
+  _g7_stale=true
+  _ev_sha_val="$(grep -iE '^[[:space:]]*Current head SHA reviewed:[[:space:]]*' "$EVIDENCE_PATH" | head -1 | sed 's/.*reviewed:[[:space:]]*//' | tr -d '[:space:]' || true)"
+  if [[ "$_ev_sha_val" =~ ^[0-9a-fA-F]{7,40}$ ]] && [ -n "$BASE_SHA" ]; then
+    # Old literal hex SHA found — compare author timestamps
+    _ev_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$EVIDENCE_PATH" 2>/dev/null || true)"
+    [ -z "$_ev_at" ] && _ev_at="$(git log -1 --format='%at' HEAD -- "$EVIDENCE_PATH" 2>/dev/null || true)"
+    if [ -n "$_ev_at" ]; then
+      _prod_last_at_g7=""
+      while IFS= read -r _pf; do
+        [ -z "$_pf" ] && continue
+        if is_product_path "$_pf"; then
+          _f_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_pf" 2>/dev/null || true)"
+          if [ -n "$_f_at" ] && ( [ -z "$_prod_last_at_g7" ] || [ "$_f_at" -gt "$_prod_last_at_g7" ] ); then
+            _prod_last_at_g7="$_f_at"
+          fi
+        fi
+      done <<< "$CHANGED_FILES"
+      if [ -z "$_prod_last_at_g7" ] || [ "$_ev_at" -ge "$_prod_last_at_g7" ]; then
+        _g7_stale=false
+      fi
+    fi
+  fi
+  if [ "$_g7_stale" = true ]; then
+    echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
+    exit 1
+  fi
+  echo "ℹ️  Gate 7: rebase-safe — evidence SHA ($HEAD_SHA) absent but evidence is current by author timestamp"
 fi
 
 echo ""

@@ -899,6 +899,120 @@ EOF
 }
 run_test "T10 governance-only PR with narrative 'product fix' and no formal claim -> PASS" 0 t10_governance_pr_narrative_product_fix_no_formal_claim
 
+# ─── Rebase-aware evidence gate regression tests ─────────────────────────────
+# These tests verify that producer-side gates do not fail solely because runtime
+# HEAD changed (rebase) when the PR payload did not substantively change.
+
+# Helper: seed evidence with a literal old SHA (simulates pre-rebase artifact)
+seed_old_sha_evidence() {
+  local old_sha="$1"
+  cat > .functional-delivery/pr-9999.md << EOF
+PR: #9999
+Issue: #1573
+Current head SHA reviewed: ${old_sha}
+PROMISED_USER_JOURNEY: user creates org -> creates framework -> uploads/generates source -> review/compile/publish states visible
+ENTRY_POINT: /onboarding
+FINAL_EXPECTED_STATE: framework review state visible with compile/publish actions wired
+USER_CAN_COMPLETE_JOURNEY: yes
+Product/user journey: MMM create framework flow
+User journey tested: yes
+CTA_MAP: present
+CTA/API map: present
+BACKEND_CAPABILITY_MAP: present
+Backend target proof: present
+SCHEMA_CONTRACT_CHECK: present
+CROSS_FUNCTION_COMPATIBILITY_CHECK: present
+ASYNC_JOB_CHECK: present
+VISIBLE_STATE_CHECK: present
+DEPLOYED_PREVIEW_CHECK: present
+DASHBOARD_OR_STATE_REFLECTION_CHECK: present
+Screenshots or recording: present
+Preview/live URL: https://example.invalid
+Pass/fail result: pass
+KNOWN_PARTIALS: none
+Known partials: none
+CS2_PARTIAL_ACCEPTANCE: not_applicable
+Known limitations: none
+Partial scope accepted by CS2: not_applicable
+Builder QA functional report reference: modules/MMM/05-qa-to-red/qa-to-red-catalog.md
+ECAP/admin-gate report reference: .agent-admin/prehandover/proof-9999.md
+IAA final assurance reference: .agent-admin/assurance/iaa-token-session-9999.md
+| CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
+|---|---|---|---|---|---|---|---|
+| Create framework | start setup | /framework/create | /api/frameworks/init | frameworks | framework created | error shown | test T-1 |
+mmm-framework-init
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+FUNCTIONAL_PASS: yes
+ADMIN_PASS: yes
+EOF
+}
+
+# Helper: seed IAA token with a literal old SHA (simulates pre-rebase artifact)
+seed_old_sha_iaa() {
+  local old_sha="$1"
+  cat > .agent-admin/assurance/iaa-token-session-9999.md << EOF
+PHASE_B_BLOCKING_TOKEN: IAA-session-9999-PASS
+CURRENT_HEAD_SHA: ${old_sha}
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+}
+
+# T_rebase1: Product evidence exists with old SHA (head A), PR rebased to head B with
+# no product payload change — evidence and IAA both committed at same time as product
+# files, admin-only rebase commit advances HEAD => PASS
+t_rebase1_product_evidence_survives_admin_rebase() {
+  seed_product_change_with_cta
+  local old_sha
+  old_sha="$(git rev-parse HEAD 2>/dev/null || echo "HEAD")"
+  # Seed evidence/IAA with the literal SHA at time of product change
+  seed_old_sha_evidence "$old_sha"
+  seed_old_sha_iaa "$old_sha"
+  git add .
+  GIT_AUTHOR_DATE="2020-06-01T10:00:00 +0000" GIT_COMMITTER_DATE="2020-06-01T10:00:00 +0000" \
+    git commit -q -m "product change + evidence at SHA_A (T0)"
+  # Admin-only rebase simulation: add a governance file to advance HEAD
+  mkdir -p governance/notes
+  echo "# admin note" > governance/notes/rebase-sim.md
+  GIT_AUTHOR_DATE="2020-06-01T10:00:01 +0000" GIT_COMMITTER_DATE="2020-06-01T10:00:01 +0000" \
+    git add . && GIT_AUTHOR_DATE="2020-06-01T10:00:01 +0000" GIT_COMMITTER_DATE="2020-06-01T10:00:01 +0000" \
+    git commit -q -m "admin-only rebase simulation (T1 > T0)"
+  # Skip SHA injection so evidence retains the literal old SHA
+  touch .skip-head-sha-rewrite
+}
+run_test "T_rebase1 product delivery evidence survives admin-only rebase (old SHA, no new product change) -> PASS" 0 t_rebase1_product_evidence_survives_admin_rebase
+
+# T_rebase2: Product-facing files changed AFTER evidence was produced with old SHA => FAIL
+t_rebase2_product_change_after_evidence_fails() {
+  seed_product_change_with_cta
+  local old_sha
+  old_sha="deadbeef0000000000000000000000000000aa01"
+  seed_old_sha_evidence "$old_sha"
+  seed_old_sha_iaa "$old_sha"
+  GIT_AUTHOR_DATE="2020-06-01T10:00:00 +0000" GIT_COMMITTER_DATE="2020-06-01T10:00:00 +0000" \
+    git add . && GIT_AUTHOR_DATE="2020-06-01T10:00:00 +0000" GIT_COMMITTER_DATE="2020-06-01T10:00:00 +0000" \
+    git commit -q -m "evidence committed at T0"
+  # New product-facing file added AFTER evidence (impl after evidence => stale)
+  cat >> apps/mmm/src/Page.tsx << 'EOF'
+export const Widget = () => <div>widget</div>;
+EOF
+  GIT_AUTHOR_DATE="2020-06-02T10:00:00 +0000" GIT_COMMITTER_DATE="2020-06-02T10:00:00 +0000" \
+    git add . && GIT_AUTHOR_DATE="2020-06-02T10:00:00 +0000" GIT_COMMITTER_DATE="2020-06-02T10:00:00 +0000" \
+    git commit -q -m "new product file after evidence (T1 > T0)"
+  touch .skip-head-sha-rewrite
+}
+run_test "T_rebase2 product-facing files changed after evidence was produced => FAIL" 1 t_rebase2_product_change_after_evidence_fails
+
+# T_rebase3: No .functional-delivery/pr-<PR>.md at all => FAIL (missing evidence still hard-fails)
+t_rebase3_no_evidence_file_still_fails() {
+  seed_product_change_with_cta
+  seed_valid_iaa
+  git add .
+  git commit -q -m "product change but no functional delivery evidence"
+}
+run_test "T_rebase3 missing functional evidence remains a hard failure -> FAIL" 1 t_rebase3_no_evidence_file_still_fails
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"
