@@ -20,8 +20,8 @@
     "apps/mmm/src/hooks/useIntentGeneration.ts",
     "apps/mmm/src/pages/DomainWorkspacePage.tsx",
     "modules/MMM/BUILD_PROGRESS_TRACKER.md",
-    "modules/MMM/tests/B4-framework/b4-framework.test.ts"
-    ,"modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx",
+    "modules/MMM/tests/B4-framework/b4-framework.test.ts",
+    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx",
     "package.json",
     "pnpm-lock.yaml",
     "vitest.mmm-b4.config.ts"
