@@ -94,7 +94,7 @@ if [ -f "$WAVE_TASKS_PATH" ]; then
   fi
   if [ -z "$ACTIVE_PREBRIEF_PATH" ]; then
     fail "Neither active-state resolver nor wave-current-tasks declares active pre-flight path"
-  elif [ -z "$ACTIVE_PREBRIEF_PATH" ] || [[ "$ACTIVE_PREBRIEF_PATH" =~ ^PENDING$ ]]; then
+  elif [[ "$ACTIVE_PREBRIEF_PATH" =~ ^PENDING$ ]]; then
     fail "Active pre-flight path is empty or PENDING in wave-current-tasks.md"
   elif [ ! -f "$ACTIVE_PREBRIEF_PATH" ]; then
     fail "Active pre-flight path does not exist: $ACTIVE_PREBRIEF_PATH"

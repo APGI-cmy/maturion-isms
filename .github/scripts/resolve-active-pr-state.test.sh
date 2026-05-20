@@ -14,7 +14,8 @@ json_get() {
   local key="$2"
   python3 - "$file" "$key" <<'PY'
 import json,sys
-obj=json.load(open(sys.argv[1]))
+with open(sys.argv[1], "r", encoding="utf-8") as fh:
+    obj=json.load(fh)
 print(obj.get(sys.argv[2], ""))
 PY
 }
@@ -78,6 +79,7 @@ SCOPE
   cat > .agent-admin/prs/pr-9001/wave-current-tasks.md <<'WAVE'
 PR: #9001
 Branch: feature
+WAVE_TASKS_PATH: .agent-admin/prs/pr-9001/wave-current-tasks.md
 WAVE
   git add .
   git commit -q -m "mismatch"

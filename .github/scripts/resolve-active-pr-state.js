@@ -93,8 +93,11 @@ function classifyDelta(changedFiles) {
     || /^\.agent-admin\//.test(file)
     || /^\.agent-workspace\//.test(file)
     || /^\.functional-delivery\//.test(file)
+    || /^governance\//.test(file)
+    || /^docs\//.test(file)
+    || /^README/i.test(file)
+    || /^CHANGELOG/i.test(file)
     || /(^|\/)PREHANDOVER-.*\.md$/i.test(file)
-    || /\.md$/i.test(file)
   );
 
   const isGateChangePath = (file) => (
@@ -183,7 +186,10 @@ function resolveState() {
   const changedFiles = getChangedFiles(baseSha, runtimeHeadSha);
   const delta = classifyDelta(changedFiles);
 
-  const bootstrapRequired = !fileExists(manifestPath) || !scopePath || !fileExists(scopePath) || !fileExists(waveTasksPath);
+  const manifestMissing = prNumber ? !fileExists(manifestPath) : false;
+  const scopeMissing = prNumber ? !scopePath || !fileExists(scopePath) : false;
+  const waveMissing = waveTasksPath ? !fileExists(waveTasksPath) : false;
+  const bootstrapRequired = manifestMissing || scopeMissing || waveMissing;
 
   const manifestPr = Number(manifest?.pr || 0) || null;
   const manifestBranch = normalize(manifest?.branch);
