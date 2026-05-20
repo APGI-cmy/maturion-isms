@@ -11,6 +11,7 @@
 **STOP-AND-FIX**: ACTIVE  
 **Current HEAD SHA (pre-brief time)**: d90728e3fc4758f3dd2a82c584ecbf6ad5e741f7 (`git rev-parse HEAD` at pre-brief generation)
 **Current HEAD SHA (gate-pass alignment update)**: 33ceb0b079b40922ea4371be4357f54db7c5643f
+**Current HEAD SHA (latest review/update)**: 90e0da9dbea9df98238f34eb65a5c7c0482ad787
 
 ---
 
@@ -34,7 +35,7 @@ PR: 1701
 ISSUE: #1698
 WAVE: pit-stage10-iaa-prebrief-gatepass
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: 33ceb0b079b40922ea4371be4357f54db7c5643f
+CURRENT_HEAD_SHA: 90e0da9dbea9df98238f34eb65a5c7c0482ad787
 
 EXPECTED_QA_SCOPE:
 - `modules/pit/10-iaa-pre-brief/iaa-pre-brief.md` (Stage 10 pre-brief substance and blocker declarations)
@@ -66,7 +67,8 @@ ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS:
 
 CURRENT_HEAD_CI_EXPECTATIONS:
 - Pre-brief baseline SHA: `d90728e3fc4758f3dd2a82c584ecbf6ad5e741f7` (historical context)
-- Current PR head SHA: `33ceb0b079b40922ea4371be4357f54db7c5643f` (gate-pass alignment state)
+- Prior gate-pass alignment SHA: `33ceb0b079b40922ea4371be4357f54db7c5643f`
+- Current PR head SHA: `90e0da9dbea9df98238f34eb65a5c7c0482ad787` (latest review/update state)
 - No build-start indicators should appear in artifacts
 - Any CI gates triggered by governance/docs checks are expected PASS
 
