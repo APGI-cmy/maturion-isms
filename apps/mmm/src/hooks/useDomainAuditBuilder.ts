@@ -156,10 +156,14 @@ export function useDomainAuditBuilder({
   } = useQuery<DomainAuditMpsRow[]>({
     queryKey: ['domain-audit-mps', domain?.id],
     queryFn: async () => {
+      if (!domain?.id) {
+        throw new Error('Resolved MMM domain context is required before loading MPS rows.');
+      }
+
       const { data, error } = await supabase
         .from('mmm_maturity_process_steps')
         .select('id, domain_id, name, code, sort_order, intent_statement')
-        .eq('domain_id', domain!.id)
+        .eq('domain_id', domain.id)
         .order('sort_order');
 
       if (error) {
@@ -204,12 +208,9 @@ export function useDomainAuditBuilder({
     }, {});
   }, [criteriaRows]);
 
-  const intentRows = useMemo(
-    () => mpsRows.filter((row) => Boolean(row.intent_statement?.trim())),
-    [mpsRows],
-  );
-
   const steps = useMemo<StepMeta[]>(() => {
+    const intentRows = mpsRows.filter((row) => Boolean(row.intent_statement?.trim()));
+
     return BASE_AUDIT_STEPS.map((step) => {
       if (step.id === 'mps') {
         return {
@@ -247,7 +248,7 @@ export function useDomainAuditBuilder({
         previewItems: criteriaRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
       };
     });
-  }, [criteriaRows, intentRows, mpsRows]);
+  }, [criteriaRows, mpsRows]);
 
   const isLoading = isDomainLoading || isMpsLoading || isCriteriaLoading;
   const errorMessage =

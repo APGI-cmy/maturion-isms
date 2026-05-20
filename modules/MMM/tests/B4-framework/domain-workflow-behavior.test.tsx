@@ -36,6 +36,8 @@ const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
 
   const queryResult = (table: string, rows: unknown[]) => {
     if (scenario.pendingTable === table) {
+      // Intentionally never resolve: this keeps the query in-flight so the
+      // loading state remains visible for assertion.
       return new Promise<never>(() => undefined);
     }
 
