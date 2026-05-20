@@ -21,6 +21,7 @@ export default function DomainWorkspacePage() {
   const { domainId } = useParams<{ domainId: string }>();
   const [searchParams] = useSearchParams();
   const frameworkId = searchParams.get('framework_id');
+  const sourceDomainId = searchParams.get('source_domain_id');
 
   // Prefer the canonical domain label passed as a query param.
   // This ensures the workspace always shows "Process Integrity" etc.,
@@ -30,6 +31,30 @@ export default function DomainWorkspacePage() {
   const backPath = frameworkId
     ? `/assessment/framework?framework_id=${frameworkId}`
     : '/frameworks';
+
+  if (!domainId) {
+    return (
+      <div className="app-shell">
+        <AppNav />
+        <main className="domain-workspace-page" data-testid="domain-workspace">
+          <div className="container">
+            <div
+              className="alert alert-error"
+              role="alert"
+              data-testid="domain-workspace-missing-domain-id"
+            >
+              No domain ID provided. Please re-open the domain workspace from the framework handoff page.
+            </div>
+            <div className="domain-workspace__navigation">
+              <Link className="btn btn-outline" to={backPath}>
+                Back to Framework Workspace
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell">
@@ -50,7 +75,12 @@ export default function DomainWorkspacePage() {
             Compile MPSs | Compile intent statements | Compile criteria
           */}
           {/* Delegate to current-app DomainAuditBuilder adaptation (legacy workflow) */}
-          <DomainAuditBuilder domainId={domainId ?? ''} />
+          <DomainAuditBuilder
+            domainId={domainId}
+            frameworkId={frameworkId}
+            domainName={domainLabel}
+            sourceDomainId={sourceDomainId}
+          />
 
           <div className="domain-workspace__navigation">
             <Link className="btn btn-outline" to={backPath}>

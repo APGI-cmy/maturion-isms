@@ -6,12 +6,26 @@
  * Adapted for the MMM current app without legacy Supabase dependencies.
  */
 import React from 'react';
+import type {
+  DomainAuditCriterionRow,
+  DomainAuditMpsRow,
+} from '../../hooks/useDomainAuditBuilder';
 
 export interface CriteriaManagementProps {
   /** The domain currently being built. */
   domainId: string;
+  /** Human-readable domain label. */
+  domainName: string;
   /** Whether the panel is visible. */
   open: boolean;
+  /** Loaded MPS rows for the active domain. */
+  mpsRows: DomainAuditMpsRow[];
+  /** Criteria rows grouped by MPS id. */
+  criteriaByMps: Record<string, DomainAuditCriterionRow[]>;
+  /** Whether MPS/criteria rows are still loading. */
+  isLoading: boolean;
+  /** Visible error state for failed domain workflow reads. */
+  errorMessage: string | null;
   /** Callback to close/cancel. */
   onClose: () => void;
 }
@@ -20,7 +34,16 @@ export interface CriteriaManagementProps {
  * Current-app adaptation of CriteriaManagement.
  * Provides the criteria-definition surface scoped to a domain and its MPSs.
  */
-export function CriteriaManagement({ domainId, open, onClose }: CriteriaManagementProps) {
+export function CriteriaManagement({
+  domainId,
+  domainName,
+  open,
+  mpsRows,
+  criteriaByMps,
+  isLoading,
+  errorMessage,
+  onClose,
+}: CriteriaManagementProps) {
   if (!open) return null;
 
   return (
@@ -45,12 +68,54 @@ export function CriteriaManagement({ domainId, open, onClose }: CriteriaManageme
         </div>
         <div className="modal-body">
           <p className="modal-domain-context">
-            Domain: <strong>{domainId}</strong>
+            Domain: <strong>{domainName}</strong> <span>({domainId})</span>
           </p>
-          <p>
-            Define criteria for each MPS in this domain.
-            Criteria are the measurable evidence points used to assess maturity.
-          </p>
+          {isLoading ? (
+            <p data-testid="criteria-management-loading">Loading criteria data…</p>
+          ) : errorMessage ? (
+            <div role="alert" data-testid="criteria-management-error">
+              {errorMessage}
+            </div>
+          ) : mpsRows.length === 0 ? (
+            <p data-testid="criteria-management-empty">
+              No MPS rows are currently available for criteria grouping.
+            </p>
+          ) : (
+            <div className="criteria-groups" data-testid="criteria-groups">
+              {mpsRows.map((mps) => {
+                const criteriaRows = criteriaByMps[mps.id] ?? [];
+                return (
+                  <section key={mps.id} className="criteria-group" data-testid="criteria-group">
+                    <h3>
+                      {mps.code} — {mps.name}
+                    </h3>
+                    <p>
+                      Intent:{' '}
+                      {mps.intent_statement?.trim()
+                        ? mps.intent_statement
+                        : 'No intent statement stored for this MPS yet.'}
+                    </p>
+                    {criteriaRows.length === 0 ? (
+                      <p>No criteria rows are currently stored for this MPS.</p>
+                    ) : (
+                      <ol className="modal-list">
+                        {criteriaRows.map((criterion) => (
+                          <li
+                            key={criterion.id}
+                            className="modal-list__item"
+                            data-testid="criteria-row"
+                          >
+                            <strong>{criterion.code}</strong> — {criterion.name} (sort order:{' '}
+                            {criterion.sort_order})
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
+          )}
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-outline" onClick={onClose}>
