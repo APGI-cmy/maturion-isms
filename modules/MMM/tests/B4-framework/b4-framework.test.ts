@@ -798,9 +798,8 @@ describe('T-MMM-S6-185: MMM app has an explicit DomainAuditBuilder component', (
   });
   it('DomainAuditBuilder component is named DomainAuditBuilder (default or named export)', () => {
     const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
-    // Component must be identifiable by name — either as a function/const declaration
-    // or as a default export named DomainAuditBuilder.
-    expect(src).toMatch(/DomainAuditBuilder/);
+    // Component must be declared/exported by name — not just mentioned in a comment or import.
+    expect(src).toMatch(/export (default |const |function )DomainAuditBuilder/);
   });
   it('DomainAuditBuilder accepts a domainId prop (legacy parity)', () => {
     const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
@@ -822,9 +821,8 @@ describe('T-MMM-S6-186: DomainWorkspacePage delegates to DomainAuditBuilder comp
   });
   it('DomainWorkspacePage passes domainId down to DomainAuditBuilder', () => {
     const src = readFile('apps/mmm/src/pages/DomainWorkspacePage.tsx');
-    // Must forward domainId so the legacy step model can consume it.
-    expect(src).toContain('domainId');
-    expect(src).toContain('<DomainAuditBuilder');
+    // Must forward domainId as an explicit prop on <DomainAuditBuilder.
+    expect(src).toMatch(/<DomainAuditBuilder[^>]*domainId/);
   });
 });
 
@@ -891,16 +889,17 @@ describe('T-MMM-S6-189: Legacy step model preserved — Create MPSs / Create Int
   });
   it('step "Create MPSs" appears before "Create Intent" in source order', () => {
     const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
-    const mpssIdx = src.indexOf('Create MPSs');
-    const intentIdx = src.indexOf('Create Intent');
+    // Search for quoted/templated step titles as they appear in JSX/object literals.
+    const mpssIdx = src.search(/'Create MPSs'|"Create MPSs"|`Create MPSs`/);
+    const intentIdx = src.search(/'Create Intent'|"Create Intent"|`Create Intent`/);
     expect(mpssIdx).toBeGreaterThan(-1);
     expect(intentIdx).toBeGreaterThan(-1);
     expect(mpssIdx).toBeLessThan(intentIdx);
   });
   it('step "Create Intent" appears before "Create Criteria" in source order', () => {
     const src = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
-    const intentIdx = src.indexOf('Create Intent');
-    const criteriaIdx = src.indexOf('Create Criteria');
+    const intentIdx = src.search(/'Create Intent'|"Create Intent"|`Create Intent`/);
+    const criteriaIdx = src.search(/'Create Criteria'|"Create Criteria"|`Create Criteria`/);
     expect(intentIdx).toBeGreaterThan(-1);
     expect(criteriaIdx).toBeGreaterThan(-1);
     expect(intentIdx).toBeLessThan(criteriaIdx);
