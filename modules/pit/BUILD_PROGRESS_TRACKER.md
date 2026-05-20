@@ -3,7 +3,7 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-20
-**Updated By**: pit-specialist (Stage 10 IAA pre-brief/readiness gate-pass docs-only update — maturion-isms#1687 Stage 10 initiation authority; this update records follow-on gate-pass artifacts — 2026-05-20)
+**Updated By**: pit-specialist (Stage 10 gate-pass docs-only update — maturion-isms#1698 / PR #1701; Stage 10 initiation authority originated in #1687 — 2026-05-20)
 > **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 GATE_PASSED (IMPLEMENTATION PLAN COMPLETE AND APPROVED) — STAGE 9 GATE_PASSED (BUILDER CHECKLIST COMPLETE AND APPROVED) — STAGE 10 GATE_PASSED (IAA PRE-BRIEF ACCEPTED; READINESS ONLY; BUILD AUTH NOT CLEARED)  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
