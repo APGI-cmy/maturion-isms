@@ -111,7 +111,7 @@ if [ -n "$ACTIVE_PREBRIEF_PATH" ] && [ -f "$ACTIVE_PREBRIEF_PATH" ]; then
     grep -Eq "^PR:[[:space:]]*(#)?${PR_NUMBER}([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief PR field does not match PR #${PR_NUMBER}"
   fi
   if [ -n "$HEAD_SHA" ]; then
-    grep -Eq "^CURRENT_HEAD_SHA:[[:space:]]*(${HEAD_SHA}|${HEAD_SHA:0:12}|CURRENT_HEAD)([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief CURRENT_HEAD_SHA is not current-head relevant"
+    grep -Eq "^CURRENT_HEAD_SHA:[[:space:]]*(${HEAD_SHA}|${HEAD_SHA:0:12}|CURRENT_HEAD|ACTIVE_HEAD_RESOLVED_BY_GATE|GITHUB_PR_HEAD_SHA)([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief CURRENT_HEAD_SHA is not current-head relevant"
   fi
   grep -Eq "^WAVE:[[:space:]]*[^[:space:]].*$" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief WAVE field is missing/empty"
   if ! field_equals "WAVE_TASKS_PATH" "$WAVE_TASKS_PATH" "$ACTIVE_PREBRIEF_PATH"; then

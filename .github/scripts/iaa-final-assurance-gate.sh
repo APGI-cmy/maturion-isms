@@ -26,6 +26,66 @@ PR_BODY="${PR_BODY:-}"
 EXPECTED_ISSUE_NUMBER="${EXPECTED_ISSUE_NUMBER:-}"
 ASSURANCE_DIR=".agent-admin/assurance"
 
+is_admin_only_path() {
+  local file="$1"
+  [[ "$file" =~ ^\.admin/ ]] || \
+  [[ "$file" =~ ^\.agent-admin/ ]] || \
+  [[ "$file" =~ ^\.agent-workspace/.*/bundles/ ]] || \
+  [[ "$file" =~ ^\.agent-workspace/.*/memory/(PREHANDOVER-|session-).+\.md$ ]]
+}
+
+is_substantive_path() {
+  local file="$1"
+  # Explicitly substantive governance/runtime controls
+  [[ "$file" =~ ^\.github/scripts/ ]] && return 0
+  [[ "$file" =~ ^\.github/workflows/ ]] && return 0
+  [[ "$file" =~ ^governance/templates/ ]] && return 0
+
+  # Product/runtime implementation paths
+  [[ "$file" =~ ^(modules|apps|packages)/[^/]+/src/ ]] && return 0
+  [[ "$file" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] && return 0
+  [[ "$file" =~ ^supabase/functions/ ]] && return 0
+  [[ "$file" =~ ^supabase/migrations/ ]] && return 0
+
+  # Admin-only paths are never substantive
+  is_admin_only_path "$file" && return 1
+
+  return 1
+}
+
+sha_matches() {
+  local a="$1"
+  local b="$2"
+  [ -z "$a" ] || [ -z "$b" ] && return 1
+  [[ "$a" == "$b" || "$a" == ${b:0:${#a}} || "$b" == ${a:0:${#b}} ]]
+}
+
+is_symbolic_runtime_head_marker() {
+  local value
+  value="$(echo "$1" | tr '[:lower:]' '[:upper:]')"
+  [[ "$value" == "ACTIVE_HEAD_RESOLVED_BY_GATE" || "$value" == "CURRENT_HEAD" || "$value" == "GITHUB_PR_HEAD_SHA" || "$value" == "CURRENT" || "$value" == "HEAD" ]]
+}
+
+resolve_substantive_head_sha() {
+  local base_sha="$1"
+  local head_sha="$2"
+  local commit changed_files file
+
+  while IFS= read -r commit; do
+    [ -z "$commit" ] && continue
+    changed_files="$(git diff-tree --no-commit-id --name-only -r "$commit" 2>/dev/null || true)"
+    while IFS= read -r file; do
+      [ -z "$file" ] && continue
+      if is_substantive_path "$file"; then
+        echo "$commit"
+        return 0
+      fi
+    done <<< "$changed_files"
+  done < <(git rev-list "${base_sha}..${head_sha}" 2>/dev/null || true)
+
+  echo "$head_sha"
+}
+
 # ----------------------------------------------------------------
 # CS2 sign-off bypass
 # ----------------------------------------------------------------
@@ -106,8 +166,8 @@ if [ -z "$CHANGED_FILES" ]; then
   exit 0
 fi
 
-IMPLEMENTATION_CHANGED=false
-IMPL_FILE_LIST=""
+SUBSTANTIVE_CHANGED=false
+SUBSTANTIVE_FILE_LIST=""
 DOCS_ONLY_FILES=""
 ALL_DOCS_ONLY=true
 
@@ -152,18 +212,10 @@ while IFS= read -r file; do
     continue
   fi
 
-  # ── Production source code — triggers IAA gate ───────────────────────────
-  # Only trigger for application source code (same scope as POLC gate):
-  #   modules/.*/src/**  |  apps/.*/src/**  |  packages/.*/src/**
-  #   supabase/functions/**  |  test/spec files in those directories
-  if [[ "$file" =~ ^(modules|apps|packages)/[^/]+/src/ ]] || \
-     [[ "$file" =~ ^(modules|apps|packages)/[^/]+/tests?/ ]] || \
-     [[ "$file" =~ ^supabase/functions/ ]] || \
-     [[ "$file" =~ ^supabase/migrations/ ]] || \
-     [[ "$file" =~ \.(ts|tsx|js|jsx|py|sql)$ ]]; then
+  if is_substantive_path "$file"; then
     ALL_DOCS_ONLY=false
-    IMPLEMENTATION_CHANGED=true
-    IMPL_FILE_LIST="${IMPL_FILE_LIST}\n  - ${file}"
+    SUBSTANTIVE_CHANGED=true
+    SUBSTANTIVE_FILE_LIST="${SUBSTANTIVE_FILE_LIST}\n  - ${file}"
   else
     # Everything else (config files, other non-source assets) — supervision
     DOCS_ONLY_FILES="${DOCS_ONLY_FILES}\n  - ${file}"
@@ -171,7 +223,7 @@ while IFS= read -r file; do
 
 done <<< "$CHANGED_FILES"
 
-if [ "$ALL_DOCS_ONLY" = true ] || [ "$IMPLEMENTATION_CHANGED" = false ]; then
+if [ "$ALL_DOCS_ONLY" = true ] || [ "$SUBSTANTIVE_CHANGED" = false ]; then
   echo "ℹ️  PR contains only documentation/supervision changes — IAA final assurance not required."
   if [ -n "$DOCS_ONLY_FILES" ]; then
     echo "   Documentation/supervision files:"
@@ -180,10 +232,15 @@ if [ "$ALL_DOCS_ONLY" = true ] || [ "$IMPLEMENTATION_CHANGED" = false ]; then
   exit 0
 fi
 
-echo "Implementation/substantive files changed:"
-echo -e "$IMPL_FILE_LIST"
+echo "Substantive files changed:"
+echo -e "$SUBSTANTIVE_FILE_LIST"
 echo ""
 echo "IAA final assurance gate: REQUIRED"
+echo ""
+
+SUBSTANTIVE_HEAD_SHA="$(resolve_substantive_head_sha "$BASE_SHA" "${HEAD_SHA:-HEAD}")"
+echo "Runtime head SHA    : ${HEAD_SHA:0:12}"
+echo "Substantive head SHA: ${SUBSTANTIVE_HEAD_SHA:0:12}"
 echo ""
 
 # ----------------------------------------------------------------
@@ -203,6 +260,9 @@ WAVE_RECORD_FILES_IN_PR=$(git diff "${BASE_SHA}...HEAD" --name-only --diff-filte
 VALID_TOKEN_FOUND=false
 FAIL=false
 FAIL_REASONS=""
+LAST_EVIDENCE_SUBJECT_SHA=""
+ADMIN_ONLY_DELTA_AFTER_EVIDENCE="false"
+EVIDENCE_STALE="false"
 
 # ── Parse expected issue number from PR body if not supplied directly ────────
 if [ -z "$EXPECTED_ISSUE_NUMBER" ] && [ -n "$PR_BODY" ]; then
@@ -343,20 +403,32 @@ while IFS= read -r token_file; do
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: missing **Reviewed SHA**: field"
     FILE_VALID=false
     FAIL=true
-  elif echo "$TOKEN_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
-    echo "  ✅ Reviewed SHA: explicit current-head marker ($TOKEN_REVIEWED_SHA)"
+  elif is_symbolic_runtime_head_marker "$TOKEN_REVIEWED_SHA"; then
+    echo "  ✅ Reviewed SHA: approved symbolic runtime-head marker ($TOKEN_REVIEWED_SHA)"
+    LAST_EVIDENCE_SUBJECT_SHA="$TOKEN_REVIEWED_SHA"
+    ADMIN_ONLY_DELTA_AFTER_EVIDENCE=$([ -n "$SUBSTANTIVE_HEAD_SHA" ] && [ -n "$HEAD_SHA" ] && ! sha_matches "$SUBSTANTIVE_HEAD_SHA" "$HEAD_SHA" && echo "true" || echo "false")
+    EVIDENCE_STALE="false"
   elif [ -n "$HEAD_SHA" ]; then
-    # Token SHA must be an ancestor of HEAD (reachable from current HEAD in this repo)
-    if git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
-      echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is in ancestry of HEAD"
-    else
-      echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is not in ancestry of HEAD [IAA-FINAL-GATE-009]"
-      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not reachable from HEAD"
+    LAST_EVIDENCE_SUBJECT_SHA="$TOKEN_REVIEWED_SHA"
+    if sha_matches "$TOKEN_REVIEWED_SHA" "$SUBSTANTIVE_HEAD_SHA"; then
+      echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} matches substantive head"
+      ADMIN_ONLY_DELTA_AFTER_EVIDENCE=$([ -n "$SUBSTANTIVE_HEAD_SHA" ] && [ -n "$HEAD_SHA" ] && ! sha_matches "$SUBSTANTIVE_HEAD_SHA" "$HEAD_SHA" && echo "true" || echo "false")
+      EVIDENCE_STALE="false"
+    elif git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" "$SUBSTANTIVE_HEAD_SHA" 2>/dev/null; then
+      echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is stale (substantive changes occurred after this review) [IAA-FINAL-GATE-009]"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is older than substantive head ${SUBSTANTIVE_HEAD_SHA:0:12}"
       FILE_VALID=false
       FAIL=true
+      EVIDENCE_STALE="true"
+    else
+      echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} does not match substantive head ${SUBSTANTIVE_HEAD_SHA:0:12} [IAA-FINAL-GATE-009]"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} does not match substantive head ${SUBSTANTIVE_HEAD_SHA:0:12}"
+      FILE_VALID=false
+      FAIL=true
+      EVIDENCE_STALE="true"
     fi
   else
-    echo "  ✅ Reviewed SHA present: ${TOKEN_REVIEWED_SHA:0:12} (HEAD_SHA not set — skipping ancestry check)"
+    echo "  ✅ Reviewed SHA present: ${TOKEN_REVIEWED_SHA:0:12} (HEAD_SHA not set — skipping substantive-head check)"
   fi
 
   # Check G: Final IAA must cross-reference active pre-flight brief contract.
@@ -516,16 +588,29 @@ while IFS= read -r wave_file; do
       WR_FILE_VALID=false
       FAIL=true
       FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **Reviewed SHA**: field in ## TOKEN section"
-    elif echo "$WR_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
-      echo "  ✅ Wave record reviewed SHA: explicit current-head marker"
+    elif is_symbolic_runtime_head_marker "$WR_REVIEWED_SHA"; then
+      echo "  ✅ Wave record reviewed SHA: approved symbolic runtime-head marker"
+      LAST_EVIDENCE_SUBJECT_SHA="$WR_REVIEWED_SHA"
+      ADMIN_ONLY_DELTA_AFTER_EVIDENCE=$([ -n "$SUBSTANTIVE_HEAD_SHA" ] && [ -n "$HEAD_SHA" ] && ! sha_matches "$SUBSTANTIVE_HEAD_SHA" "$HEAD_SHA" && echo "true" || echo "false")
+      EVIDENCE_STALE="false"
     elif [ -n "$HEAD_SHA" ]; then
-      if git merge-base --is-ancestor "$WR_REVIEWED_SHA" HEAD 2>/dev/null; then
-        echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} is in ancestry of HEAD"
-      else
-        echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry of HEAD [IAA-FINAL-GATE-009]"
+      LAST_EVIDENCE_SUBJECT_SHA="$WR_REVIEWED_SHA"
+      if sha_matches "$WR_REVIEWED_SHA" "$SUBSTANTIVE_HEAD_SHA"; then
+        echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} matches substantive head"
+        ADMIN_ONLY_DELTA_AFTER_EVIDENCE=$([ -n "$SUBSTANTIVE_HEAD_SHA" ] && [ -n "$HEAD_SHA" ] && ! sha_matches "$SUBSTANTIVE_HEAD_SHA" "$HEAD_SHA" && echo "true" || echo "false")
+        EVIDENCE_STALE="false"
+      elif git merge-base --is-ancestor "$WR_REVIEWED_SHA" "$SUBSTANTIVE_HEAD_SHA" 2>/dev/null; then
+        echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} is stale (substantive changes occurred after this review) [IAA-FINAL-GATE-009]"
         WR_FILE_VALID=false
         FAIL=true
-        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA not reachable from HEAD"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA ${WR_REVIEWED_SHA:0:12} is older than substantive head ${SUBSTANTIVE_HEAD_SHA:0:12}"
+        EVIDENCE_STALE="true"
+      else
+        echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} does not match substantive head ${SUBSTANTIVE_HEAD_SHA:0:12} [IAA-FINAL-GATE-009]"
+        WR_FILE_VALID=false
+        FAIL=true
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA ${WR_REVIEWED_SHA:0:12} does not match substantive head ${SUBSTANTIVE_HEAD_SHA:0:12}"
+        EVIDENCE_STALE="true"
       fi
     else
       echo "  ✅ Wave record reviewed SHA: ${WR_REVIEWED_SHA:0:12} (ancestry check skipped — HEAD_SHA not set)"
@@ -601,6 +686,22 @@ while IFS= read -r wave_file; do
   fi
 
 done <<< "$WAVE_RECORD_FILES_IN_PR"
+
+if [ -z "$LAST_EVIDENCE_SUBJECT_SHA" ]; then
+  LAST_EVIDENCE_SUBJECT_SHA="none"
+fi
+
+echo ""
+echo "admin_only_delta_result:"
+cat <<EOF
+{
+  "runtime_head_sha": "${HEAD_SHA}",
+  "substantive_head_sha": "${SUBSTANTIVE_HEAD_SHA}",
+  "evidence_subject_sha": "${LAST_EVIDENCE_SUBJECT_SHA}",
+  "admin_only_delta_after_evidence": ${ADMIN_ONLY_DELTA_AFTER_EVIDENCE},
+  "evidence_stale": ${EVIDENCE_STALE}
+}
+EOF
 
 # ----------------------------------------------------------------
 # Step 3: Verdict

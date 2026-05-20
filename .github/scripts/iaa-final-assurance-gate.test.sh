@@ -154,6 +154,13 @@ EOF
   git commit -q -m "Add CI workflow"
 }
 
+add_admin_only_evidence_file() {
+  mkdir -p .agent-admin/assurance
+  echo "admin-only evidence touch" > .agent-admin/assurance/admin-only-note.md
+  git add .
+  git commit -q -m "Add admin-only evidence file"
+}
+
 add_valid_iaa_token() {
   local pr_num="${1:-9999}"
   local issue_num="${2:-1503}"
@@ -372,6 +379,25 @@ setup_ac9() {
   add_valid_iaa_token "9999" "1503"
 }
 run_test "AC-9: Valid IAA token with correct PR and issue" 0 "$IAA_GATE_SCRIPT" "setup_ac9"
+
+# AC-9b: Reviewed SHA stays valid when head moves by admin-only commits.
+setup_ac9b_admin_only_delta_pass() {
+  add_impl_file
+  add_valid_iaa_token "9999" "1503"
+  add_admin_only_evidence_file
+}
+run_test "AC-9b: Admin-only delta after evidence does not stale IAA review" 0 "$IAA_GATE_SCRIPT" "setup_ac9b_admin_only_delta_pass"
+
+# AC-9c: Reviewed SHA becomes stale when substantive governance-runtime files change.
+setup_ac9c_substantive_after_evidence_fail() {
+  add_impl_file
+  add_valid_iaa_token "9999" "1503"
+  mkdir -p .github/scripts
+  echo "#!/bin/bash" > .github/scripts/substantive-change.sh
+  git add .
+  git commit -q -m "Substantive runtime gate script change after evidence"
+}
+run_test "AC-9c: Substantive change after evidence makes reviewed SHA stale" 1 "$IAA_GATE_SCRIPT" "setup_ac9c_substantive_after_evidence_fail"
 
 # AC-11: PENDING PHASE_B_BLOCKING_TOKEN
 setup_ac11() {

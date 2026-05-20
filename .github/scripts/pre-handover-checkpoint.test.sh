@@ -564,6 +564,59 @@ EOF
 }
 run_checkpoint_test "8. mixed explicit SHA fields require all current -> STOP_AND_FIX" "STOP_AND_FIX" "no" "stale against current HEAD" setup_mixed_ecap_sha
 
+setup_admin_only_delta_after_evidence() {
+  seed_manifest_and_scope
+  seed_green_checks
+  mkdir -p modules/mat/src
+  echo "export const x = 1;" > modules/mat/src/test.ts
+  git add modules/mat/src/test.ts
+  git commit -q -m "substantive commit A"
+  local reviewed_sha
+  reviewed_sha="$(git rev-parse HEAD)"
+  TEST_CHANGED_FILES_JSON='[".admin/prs/pr-9999.json",".agent-admin/scope-declarations/pr-9999.md",".agent-admin/assurance/iaa-wave-record-test.md",".agent-admin/prehandover/proof-test.md",".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md"]'
+  cat > .agent-admin/assurance/iaa-wave-record-test.md <<EOF
+## PRE-BRIEF
+## TOKEN
+**PR**: #9999
+**Issue**: maturion-isms#1583
+**Reviewed SHA**: ${reviewed_sha}
+PHASE_B_BLOCKING_TOKEN: IAA-session-test-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  cat > .agent-admin/prehandover/proof-test.md <<EOF
+gate_snapshot_head_sha: ${reviewed_sha}
+post_push_head_sha: ${reviewed_sha}
+ecap_invoked: yes
+admin_ceremony_compliance: PASS
+iaa_audit_token: .agent-admin/assurance/iaa-wave-record-test.md
+EOF
+  mkdir -p .agent-workspace/execution-ceremony-admin-agent/bundles
+  cat > .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md <<EOF
+CURRENT_HEAD_SHA: ${reviewed_sha}
+ecap_session: ecap-session-test
+ecap_verdict: PASS
+EOF
+  git add .agent-admin/assurance/iaa-wave-record-test.md .agent-admin/prehandover/proof-test.md .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md
+  git commit -q -m "commit evidence at reviewed sha"
+  echo "admin-only" > .agent-admin/assurance/admin-only-touch.md
+  git add .agent-admin/assurance/admin-only-touch.md
+  git commit -q -m "admin-only commit B"
+  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+}
+run_checkpoint_test "8a. admin-only delta after evidence keeps artifacts current" "HANDOVER_ALLOWED" "yes" "All current-head checkpoint requirements satisfied." setup_admin_only_delta_after_evidence
+
+setup_substantive_change_after_evidence() {
+  setup_admin_only_delta_after_evidence
+  mkdir -p .github/scripts
+  echo "#!/bin/bash" > .github/scripts/substantive-change.sh
+  git add .github/scripts/substantive-change.sh
+  git commit -q -m "substantive governance runtime change C"
+  TEST_HEAD_SHA_OVERRIDE="$(git rev-parse HEAD)"
+}
+run_checkpoint_test "8b. substantive change after evidence makes artifact stale" "STOP_AND_FIX" "no" "stale for current HEAD" setup_substantive_change_after_evidence
+
 setup_product_missing_evidence() {
   seed_manifest_and_scope
   seed_green_checks

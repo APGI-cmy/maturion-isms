@@ -33,6 +33,12 @@ const AUTHORITATIVE_GATE_MARKERS = [
   HANDOVER_GATE_BLOCKED_MARKER,
   HANDOVER_GATE_OK_MARKER,
 ];
+const SYMBOLIC_RUNTIME_HEAD_MARKERS = new Set([
+  'current_head',
+  'current-head',
+  'active_head_resolved_by_gate',
+  'github_pr_head_sha',
+]);
 const VIRTUAL_FILES = (() => {
   const filePath = process.env.CHECKPOINT_REPO_FILES_PATH;
   if (filePath) {
@@ -339,19 +345,45 @@ function headMatches(candidate, headSha) {
   const value = normalizeValue(String(candidate || '').replace(/[`]/g, ''));
   const head = normalizeValue(headSha);
   if (!value || !head) return false;
-  // "current_head"/"current-head" token is a canonical runtime-substituted marker used by governance artifacts.
-  // Treat it as current-head aligned to avoid stale-by-construction self-reference loops.
-  if (value === 'current_head' || value === 'current-head') return true;
+  if (SYMBOLIC_RUNTIME_HEAD_MARKERS.has(value)) return true;
   if (!/^[0-9a-f]{7,40}$/.test(value)) return false;
   return head === value || head.startsWith(value) || value.startsWith(head);
+}
+
+function shaMatches(candidate, target) {
+  const a = normalizeValue(candidate);
+  const b = normalizeValue(target);
+  if (!a || !b || !/^[0-9a-f]{7,40}$/.test(a) || !/^[0-9a-f]{7,40}$/.test(b)) return false;
+  return a === b || a.startsWith(b) || b.startsWith(a);
+}
+
+function isAdminOnlyPath(filePath) {
+  const rel = toPosix(filePath);
+  return /^\.admin\//.test(rel) ||
+    /^\.agent-admin\//.test(rel) ||
+    /^\.agent-workspace\/[^/]+\/bundles\//.test(rel) ||
+    /^\.agent-workspace\/[^/]+\/memory\/(PREHANDOVER-|session-).+\.md$/.test(rel);
+}
+
+function isSubstantivePath(filePath) {
+  const rel = toPosix(filePath);
+  if (/^\.github\/scripts\//.test(rel)) return true;
+  if (/^\.github\/workflows\//.test(rel)) return true;
+  if (/^governance\/templates\//.test(rel)) return true;
+  if (/^(modules|apps|packages)\/[^/]+\/src\//.test(rel)) return true;
+  if (/^(modules|apps|packages)\/[^/]+\/tests?\//.test(rel)) return true;
+  if (/^supabase\/functions\//.test(rel)) return true;
+  if (/^supabase\/migrations\//.test(rel)) return true;
+  if (isAdminOnlyPath(rel)) return false;
+  return false;
 }
 
 function removeExcludedGates(records) {
   return (records || []).filter((record) => !REJECTION_PACKAGE_EXCLUDED_GATES.has(record.gate));
 }
 
-function artifactCurrentness(text, headSha) {
-  const fieldValues = [
+function artifactCurrentness(text, headSha, substantiveHeadSha) {
+  const fields = [
     'CURRENT_HEAD_SHA',
     'gate_snapshot_head_sha',
     'post_push_head_sha',
@@ -359,24 +391,53 @@ function artifactCurrentness(text, headSha) {
     'Reviewed SHA',
     'HEAD SHA',
     'Commit SHA',
+    'EVIDENCE_SUBJECT_SHA',
+    'SUBSTANTIVE_HEAD_SHA',
   ]
-    .map((label) => readSimpleField(text, label))
-    .filter(Boolean);
+    .map((label) => ({ label, value: readSimpleField(text, label) }))
+    .filter((entry) => entry.value);
 
-  if (fieldValues.length > 0) {
-    // Explicit SHA fields are authoritative: every declared SHA must match the current head
-    // so one refreshed field cannot mask another stale field in the same artifact.
-    const matches = fieldValues.every((value) => headMatches(value, headSha));
+  const adminOnlyDeltaAfterEvidence = Boolean(headSha && substantiveHeadSha && !shaMatches(headSha, substantiveHeadSha));
+  let evidenceSubjectSha = '';
+  let evidenceStale = false;
+
+  if (fields.length > 0) {
+    const matches = fields.every(({ label, value }) => {
+      const normalized = normalizeValue(String(value || '').replace(/[`]/g, ''));
+      if (SYMBOLIC_RUNTIME_HEAD_MARKERS.has(normalized)) return true;
+      if (!/^[0-9a-f]{7,40}$/.test(normalized)) return false;
+
+      if (/reviewed sha|review sha|head sha|commit sha|evidence_subject_sha|substantive_head_sha/i.test(label)) {
+        if (!evidenceSubjectSha) evidenceSubjectSha = normalized;
+        const match = shaMatches(normalized, substantiveHeadSha || headSha);
+        if (!match) evidenceStale = true;
+        return match;
+      }
+
+      // Runtime fields may reference either active runtime head or substantive reviewed head.
+      return shaMatches(normalized, headSha) || shaMatches(normalized, substantiveHeadSha);
+    });
+
     return {
       current: matches,
       stale: !matches,
+      evidenceSubjectSha,
+      adminOnlyDeltaAfterEvidence,
+      evidenceStale,
     };
   }
 
-  const rawMatch = normalizeValue(text).includes(normalizeValue(headSha));
+  const raw = normalizeValue(text);
+  const rawMatch = Boolean(
+    (headSha && raw.includes(normalizeValue(headSha))) ||
+    (substantiveHeadSha && raw.includes(normalizeValue(substantiveHeadSha)))
+  );
   return {
     current: rawMatch,
     stale: !rawMatch,
+    evidenceSubjectSha: '',
+    adminOnlyDeltaAfterEvidence,
+    evidenceStale: !rawMatch,
   };
 }
 
@@ -427,6 +488,20 @@ function computeChangedFiles(baseSha) {
   }
   const fallback = git(['diff', '--name-only', 'HEAD~1...HEAD']);
   return fallback ? fallback.split('\n').map((file) => file.trim()).filter(Boolean) : [];
+}
+
+function resolveSubstantiveHeadSha(baseSha, headSha) {
+  const headRef = headSha || git(['rev-parse', 'HEAD']);
+  const revSpec = baseSha ? `${baseSha}..${headRef || 'HEAD'}` : (headRef || 'HEAD');
+  const commits = git(['rev-list', revSpec]).split('\n').map((value) => value.trim()).filter(Boolean);
+  for (const commit of commits) {
+    const files = git(['diff-tree', '--no-commit-id', '--name-only', '-r', commit])
+      .split('\n')
+      .map((value) => value.trim())
+      .filter(Boolean);
+    if (files.some(isSubstantivePath)) return commit;
+  }
+  return headRef || '';
 }
 
 function isProtectedPath(file) {
@@ -524,7 +599,7 @@ function pickBestArtifacts(files, context) {
     if (context.prNumber && new RegExp(`#${context.prNumber}\\b`).test(text)) score += 4;
     if (context.issueNumber && new RegExp(`#${context.issueNumber}\\b`).test(text)) score += 3;
     if (context.branch && text.includes(context.branch)) score += 3;
-    if (context.headSha && artifactCurrentness(text, context.headSha).current) score += 5;
+    if (context.headSha && artifactCurrentness(text, context.headSha, context.substantiveHeadSha || context.headSha).current) score += 5;
     return { relPath, text, score };
   });
   scored.sort((left, right) => right.score - left.score || left.relPath.localeCompare(right.relPath));
@@ -713,6 +788,7 @@ function evaluateCheckpoint(input = {}) {
 
   const { path: manifestPath, manifest } = resolveManifest(prNumber);
   const changedFiles = input.changedFiles || parseJsonInput('CHECKPOINT_CHANGED_FILES_PATH', 'CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
+  const substantiveHeadSha = resolveSubstantiveHeadSha(baseSha, headSha);
   const protectedPathsTouched = changedFiles.some(isProtectedPath);
   const requiresIaa = manifest?.requires_iaa !== false;
   const requiresEcap = manifest?.requires_ecap !== false;
@@ -801,12 +877,12 @@ function evaluateCheckpoint(input = {}) {
   const foremanPrehandoverFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/foreman-v2/memory'), (relPath) => /\/PREHANDOVER-.*\.md$/.test(`/${relPath}`));
   const ecapBundleFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/execution-ceremony-admin-agent/bundles'), (relPath) => /(PREHANDOVER-|session-).+\.md$/.test(path.basename(relPath)));
   const adminArtifacts = pickBestArtifacts([...proofFiles, ...foremanPrehandoverFiles, ...ecapBundleFiles], {
-    prNumber, issueNumber, branch, headSha,
+    prNumber, issueNumber, branch, headSha, substantiveHeadSha,
   });
   const adminPresent = adminArtifacts.length > 0;
   const adminInvoked = adminArtifacts.some((artifact) => /ecap_invoked:\s*(yes|true)|admin_ceremony_compliance:\s*PASS|ecap_verdict:\s*PASS/i.test(artifact.text));
-  const adminCurrent = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
-  const adminStale = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
+  const adminCurrent = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha, substantiveHeadSha).current);
+  const adminStale = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha, substantiveHeadSha).stale);
 
   const assuranceDir = path.join(process.cwd(), '.agent-admin/assurance');
   const prebriefStandalone = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-prebrief-.*\.md$/.test(relPath));
@@ -815,16 +891,20 @@ function evaluateCheckpoint(input = {}) {
   const tokenFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-token-.*\.md$/.test(relPath));
   const prebriefWaveRecords = waveRecords.filter((relPath) => /## PRE-BRIEF/i.test(safeRead(path.join(process.cwd(), relPath))) && !/superseded/i.test(safeRead(path.join(process.cwd(), relPath))));
   const tokenWaveRecords = waveRecords.filter((relPath) => /## TOKEN/i.test(safeRead(path.join(process.cwd(), relPath))));
-  const prebriefFiles = pickBestArtifacts([...prebriefStandalone, ...prebriefWaveRecords], { prNumber, issueNumber, branch, headSha });
-  const preflightBriefArtifacts = pickBestArtifacts(preflightBriefFiles, { prNumber, issueNumber, branch, headSha });
-  const assuranceArtifacts = pickBestArtifacts([...tokenFiles, ...tokenWaveRecords], { prNumber, issueNumber, branch, headSha });
+  const prebriefFiles = pickBestArtifacts([...prebriefStandalone, ...prebriefWaveRecords], { prNumber, issueNumber, branch, headSha, substantiveHeadSha });
+  const preflightBriefArtifacts = pickBestArtifacts(preflightBriefFiles, { prNumber, issueNumber, branch, headSha, substantiveHeadSha });
+  const assuranceArtifacts = pickBestArtifacts([...tokenFiles, ...tokenWaveRecords], { prNumber, issueNumber, branch, headSha, substantiveHeadSha });
   const preflightBriefPresent = preflightBriefArtifacts.length > 0;
-  const preflightBriefCurrent = preflightBriefArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
+  const preflightBriefCurrent = preflightBriefArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha, substantiveHeadSha).current);
   const prebriefPresent = prebriefFiles.length > 0;
   const finalAssurancePresent = assuranceArtifacts.length > 0;
   const tokenPresent = assuranceArtifacts.length > 0;
-  const iaaArtifactCurrent = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
-  const iaaArtifactStale = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
+  const assuranceCurrentness = assuranceArtifacts.map((artifact) => artifactCurrentness(artifact.text, headSha, substantiveHeadSha));
+  const iaaArtifactCurrent = assuranceCurrentness.some((state) => state.current);
+  const iaaArtifactStale = assuranceCurrentness.some((state) => state.stale);
+  const evidenceSubjectSha = assuranceCurrentness.map((state) => state.evidenceSubjectSha).find(Boolean) || '';
+  const adminOnlyDeltaAfterEvidence = Boolean(headSha && substantiveHeadSha && !shaMatches(headSha, substantiveHeadSha));
+  const evidenceStale = assuranceCurrentness.some((state) => state.evidenceStale);
   const tokenPending = [
     // Admin artifacts intentionally ignore issueNumber matching because issues are
     // reused across rounds and can pull unrelated historical ceremony files.
@@ -834,7 +914,7 @@ function evaluateCheckpoint(input = {}) {
 
   const functionalEvidence = readFunctionalEvidence(prNumber, prBody);
   const functionalEvidencePresent = Boolean(functionalEvidence.text);
-  const functionalEvidenceCurrent = functionalEvidencePresent && artifactCurrentness(functionalEvidence.text, headSha).current;
+  const functionalEvidenceCurrent = functionalEvidencePresent && artifactCurrentness(functionalEvidence.text, headSha, substantiveHeadSha).current;
   const builderQaRef = readSimpleField(functionalEvidence.text, 'Builder QA functional report reference');
   const builderQaInvoked = Boolean(builderQaRef) && !/^(none|n\/a|not_applicable|pending)$/i.test(builderQaRef);
 
@@ -1135,6 +1215,11 @@ function evaluateCheckpoint(input = {}) {
     ISSUE: issueNumber ? `#${issueNumber}` : 'unknown',
     GOVERNING_ISSUE: issueNumber ? `#${issueNumber}` : 'unknown',
     CURRENT_HEAD_SHA: headSha,
+    RUNTIME_HEAD_SHA: headSha,
+    SUBSTANTIVE_HEAD_SHA: substantiveHeadSha || 'unknown',
+    EVIDENCE_SUBJECT_SHA: evidenceSubjectSha || 'none',
+    ADMIN_ONLY_DELTA_AFTER_EVIDENCE: adminOnlyDeltaAfterEvidence ? 'true' : 'false',
+    EVIDENCE_STALE: evidenceStale ? 'true' : 'false',
     BASE_BRANCH: baseBranch || 'unknown',
     BASE_SHA: baseSha || 'unknown',
     MERGE_CONFLICT_CHECKED: mergeConflictChecked ? 'yes' : 'no',
@@ -1289,6 +1374,13 @@ function evaluateCheckpoint(input = {}) {
   return {
     fields,
     body,
+    admin_only_delta_result: {
+      runtime_head_sha: headSha || '',
+      substantive_head_sha: substantiveHeadSha || '',
+      evidence_subject_sha: evidenceSubjectSha || '',
+      admin_only_delta_after_evidence: adminOnlyDeltaAfterEvidence,
+      evidence_stale: evidenceStale,
+    },
     helper: {
       checkpointMarker: CHECKPOINT_MARKER,
       manifestPath,

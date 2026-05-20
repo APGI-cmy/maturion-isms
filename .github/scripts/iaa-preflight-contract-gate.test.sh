@@ -214,6 +214,16 @@ setup_valid_contract() {
   git commit -q -m "valid preflight contract"
 }
 
+setup_valid_contract_symbolic_head_marker() {
+  mkdir -p .agent-admin/assurance
+  write_valid_prebrief ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
+  sed -i 's/CURRENT_HEAD_SHA: CURRENT_HEAD/CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE/' \
+    .agent-admin/assurance/iaa-wave-record-wave-20260518.md
+  write_valid_wave_tasks ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
+  git add .
+  git commit -q -m "valid preflight contract with symbolic runtime marker"
+}
+
 setup_rejection_package_without_preflight() {
   cat > .agent-workspace/foreman-v2/personal/wave-current-tasks.md <<'EOF'
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-missing.md
@@ -280,6 +290,7 @@ run_gate_test "12. .github/workflows/* change with not_required delegation -> FA
 run_gate_test "13. .github/scripts/* change with not_required delegation -> FAIL" 1 "setup_impl_script_not_required"
 run_gate_test "14. non-implementation docs change with not_required delegation -> PASS" 0 "setup_non_impl_not_required_ok"
 run_gate_test "15. valid pre-flight contract -> PASS" 0 "setup_valid_contract"
+run_gate_test "16. valid pre-flight contract with ACTIVE_HEAD_RESOLVED_BY_GATE marker -> PASS" 0 "setup_valid_contract_symbolic_head_marker"
 
 echo ""
 echo "Passed: $PASS_COUNT"
