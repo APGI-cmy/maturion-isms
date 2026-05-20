@@ -1,4 +1,5 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom';
+import { DomainAuditBuilder } from '../components/assessment/DomainAuditBuilder';
 
 function AppNav() {
   return (
@@ -44,30 +45,12 @@ export default function DomainWorkspacePage() {
             </div>
           </div>
 
-          <section
-            className="domain-workspace__actions"
-            aria-label="Domain next actions"
-            data-testid="domain-workspace-actions"
-          >
-            <h2>Next Operational Actions</h2>
-            <p className="domain-workspace__actions-intro">
-              The following layers are the declared next operational steps for this domain:
-            </p>
-            <ul className="domain-workspace__action-list">
-              <li className="domain-workspace__action-item">
-                <strong>Compile MPSs</strong>
-                <span className="domain-workspace__action-tag">Declared next operational layer</span>
-              </li>
-              <li className="domain-workspace__action-item">
-                <strong>Compile intent statements</strong>
-                <span className="domain-workspace__action-tag">Declared next operational layer</span>
-              </li>
-              <li className="domain-workspace__action-item">
-                <strong>Compile criteria</strong>
-                <span className="domain-workspace__action-tag">Declared next operational layer</span>
-              </li>
-            </ul>
-          </section>
+          {/*
+            Domain workflow layers (legacy action labels preserved for traceability):
+            Compile MPSs | Compile intent statements | Compile criteria
+          */}
+          {/* Delegate to current-app DomainAuditBuilder adaptation (legacy workflow) */}
+          <DomainAuditBuilder domainId={domainId ?? ''} />
 
           <div className="domain-workspace__navigation">
             <Link className="btn btn-outline" to={backPath}>

@@ -940,3 +940,37 @@ workspace.
 ---
 
 **Build-to-Green Wave (2026-05-19, maturion-isms#1682)**: Wave `build-to-green-5domain-workspace-20260519` implemented the Framework Configuration Workspace evolution. `AssessmentFrameworkHandoffPage` evolved from temporary raw-domain list to a 5-domain canonical dashboard with mini-dashboard placeholder slots per canonical domain. `DomainWorkspacePage` added as transitional domain workspace. Route `/assessment/framework/domain/:domainId` registered. B4 tests T-MMM-S6-183 through T-MMM-S6-188 added (RED→GREEN). `verify-mmm-modes.mjs` updated for 5-card workspace assertion.
+
+---
+
+**Legacy DomainAuditBuilder Wiring Wave (2026-05-20, PR #1700, branch: copilot/wire-existing-mmm-domain-workflow)**
+
+Wired the existing MMM domain route `/assessment/framework/domain/:domainId` to an explicit
+DomainAuditBuilder-pattern workflow, adapting the legacy `maturion-maturity-legacy` source
+structure for the current MMM app.
+
+**Deliverables**:
+- `apps/mmm/src/hooks/useDomainAuditBuilder.ts` — current-app hook adaptation (legacy: `apps/maturion-maturity-legacy/src/hooks/useDomainAuditBuilder.ts`); owns three-step metadata and `handleStepClick` dispatch contract.
+- `apps/mmm/src/components/assessment/DomainAuditBuilder.tsx` — thin orchestration component (legacy: `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx`); renders three ordered steps: `Create MPSs` → `Create Intent` → `Create Criteria`.
+- `apps/mmm/src/components/assessment/MPSSelectionModal.tsx` — current-app adaptation (legacy: `apps/maturion-maturity-legacy/src/components/assessment/MPSSelectionModal.tsx`).
+- `apps/mmm/src/components/assessment/IntentCreator.tsx` — current-app adaptation (legacy: `apps/maturion-maturity-legacy/src/components/assessment/IntentCreator.tsx`).
+- `apps/mmm/src/components/assessment/CriteriaManagement.tsx` — current-app adaptation (legacy: `apps/maturion-maturity-legacy/src/components/assessment/CriteriaManagement.tsx`).
+- `apps/mmm/src/pages/DomainWorkspacePage.tsx` — updated to thin wrapper: delegates to `<DomainAuditBuilder domainId={domainId} />`.
+
+**Tests turned GREEN** (were RED at HEAD):
+- T-MMM-S6-185: MMM app has explicit DomainAuditBuilder component (3 assertions)
+- T-MMM-S6-186: DomainWorkspacePage delegates to DomainAuditBuilder (3 assertions)
+- T-MMM-S6-187: useDomainAuditBuilder hook exists and is used (3 assertions)
+- T-MMM-S6-188: Adaptation points for MPSSelectionModal, IntentCreator, CriteriaManagement (6 assertions)
+- T-MMM-S6-189: Legacy three-step model preserved — Create MPSs / Create Intent / Create Criteria (6 assertions)
+
+**Full suite result**: 161/161 PASS (`vitest run --config vitest.mmm-b4.config.ts`)
+
+**Traceability** (current-app → legacy source):
+- `hooks/useDomainAuditBuilder.ts` ← `apps/maturion-maturity-legacy/src/hooks/useDomainAuditBuilder.ts`
+- `components/assessment/DomainAuditBuilder.tsx` ← `apps/maturion-maturity-legacy/src/pages/DomainAuditBuilder.tsx`
+- `components/assessment/MPSSelectionModal.tsx` ← `apps/maturion-maturity-legacy/src/components/assessment/MPSSelectionModal.tsx`
+- `components/assessment/IntentCreator.tsx` ← `apps/maturion-maturity-legacy/src/components/assessment/IntentCreator.tsx`
+- `components/assessment/CriteriaManagement.tsx` ← `apps/maturion-maturity-legacy/src/components/assessment/CriteriaManagement.tsx`
+
+**Last Updated**: 2026-05-20
