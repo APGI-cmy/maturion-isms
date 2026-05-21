@@ -36,6 +36,7 @@ RESULT: PASS
 - `.github/scripts/pre-handover-checkpoint.js`
 - `.github/workflows/iaa-prebrief-inject.yml`
 - `.github/scripts/classify-pr-delta.sh`
+- `.github/scripts/iaa-preflight-contract-gate.sh`
 - `.github/scripts/iaa-final-assurance-gate.test.sh`
 - `.github/scripts/pre-handover-checkpoint.test.sh`
 - `.github/scripts/validate-product-delivery-gates.test.sh`
@@ -47,6 +48,8 @@ RESULT: PASS
 - After: active PR/branch resolution is enforced and gate checks consume PR-scoped task/assurance artifacts.
 - Before: strict protected-path ECAP evidence linkage was incomplete for this PR thread.
 - After: ECAP proof and bundle artifacts are present, PR-bound, and explicitly wave-record linked.
+- Before: `iaa-preflight-contract-gate.sh` defaulted to the legacy wave-tasks path unconditionally, even when a PR-scoped file existed.
+- After: gate initializes `WAVE_TASKS_PATH` with the PR-scoped path when `PR_NUMBER` is set and the file exists, before falling back to the legacy path — consistent with the resolver-first model.
 
 ### No-weakening statement
 No governance gate has been weakened; changes harden identity binding, PR-scoped artifact selection, and ceremony evidence enforcement.

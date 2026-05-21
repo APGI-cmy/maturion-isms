@@ -33,6 +33,7 @@ RESULT: PASS
 - `.github/scripts/pre-handover-checkpoint.js`
 - `.github/workflows/iaa-prebrief-inject.yml`
 - `.github/scripts/classify-pr-delta.sh`
+- `.github/scripts/iaa-preflight-contract-gate.sh`
 - `.github/scripts/iaa-final-assurance-gate.test.sh`
 - `.github/scripts/pre-handover-checkpoint.test.sh`
 - `.github/scripts/validate-product-delivery-gates.test.sh`
@@ -44,6 +45,8 @@ RESULT: PASS
 - After: resolver-first active PR state is used for gate decisions and prebrief routing.
 - Before: ECAP protected-path evidence was missing for this active PR.
 - After: ECAP proof + bundle artifacts exist and are identity-bound to PR #1717 / branch / HEAD.
+- Before: `iaa-preflight-contract-gate.sh` defaulted to the legacy wave-tasks path unconditionally, even when a PR-scoped file existed.
+- After: gate initializes `WAVE_TASKS_PATH` with the PR-scoped path (`.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md`) when `PR_NUMBER` is set and the file exists, before falling back to the legacy path — consistent with the resolver-first model.
 
 ### No-weakening statement
 Gate behavior is tightened only; no existing assurance gate was relaxed or bypassed.

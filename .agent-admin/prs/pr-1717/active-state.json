@@ -1,7 +1,7 @@
 {
   "pr": 1717,
   "branch": "copilot/tune-governance-preflight",
-  "runtime_head_sha": "7b27f15225dadcc0501cc1b0904613e642809db9",
+  "runtime_head_sha": "9a3998a8dfe64addf9858f6366ff703d26904896",
   "base_sha": "e73d4f4fba53ce7e4c1531f377d9dcb6594f3189",
   "manifest_path": ".admin/prs/pr-1717.json",
   "scope_path": ".agent-admin/scope-declarations/pr-1717.md",
@@ -29,6 +29,7 @@
     ".github/scripts/classify-pr-delta.sh",
     ".github/scripts/iaa-final-assurance-gate.sh",
     ".github/scripts/iaa-final-assurance-gate.test.sh",
+    ".github/scripts/iaa-preflight-contract-gate.sh",
     ".github/scripts/pre-handover-checkpoint.js",
     ".github/scripts/pre-handover-checkpoint.test.sh",
     ".github/scripts/validate-product-delivery-gates.sh",

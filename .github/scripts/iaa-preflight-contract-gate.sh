@@ -4,7 +4,12 @@
 
 set -euo pipefail
 
-WAVE_TASKS_PATH="${WAVE_TASKS_PATH:-.agent-workspace/foreman-v2/personal/wave-current-tasks.md}"
+# Prefer PR-scoped wave-tasks path before legacy fallback (resolver-first model)
+_DEFAULT_WAVE_TASKS=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+if [ -z "${WAVE_TASKS_PATH:-}" ] && [ -n "${PR_NUMBER:-}" ] && [ -f ".agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md" ]; then
+  _DEFAULT_WAVE_TASKS=".agent-admin/prs/pr-${PR_NUMBER}/wave-current-tasks.md"
+fi
+WAVE_TASKS_PATH="${WAVE_TASKS_PATH:-$_DEFAULT_WAVE_TASKS}"
 ASSURANCE_DIR="${ASSURANCE_DIR:-.agent-admin/assurance}"
 PR_NUMBER="${PR_NUMBER:-}"
 BASE_SHA="${BASE_SHA:-}"
