@@ -10,6 +10,24 @@
 
 ---
 
+IAA_PREFLIGHT_BRIEF
+PR: #1711
+ISSUE: #1710
+WAVE: mmm-ai-generation-wiring-20260520
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
+EXPECTED_QA_SCOPE:
+  - Validate the declared PR scope against actual changed files for PR #1711.
+EXPECTED_FAILURE_MODES:
+  - Active preflight contract fields missing or malformed in the wave record.
+FOREMAN_INSTRUCTIONS:
+  - Delegate only within the frozen wave scope and preserve explicit YES/NO ceremony state.
+IAA_WILL_QA:
+  - Verify preflight contract compliance, scope parity, and required assurance artifacts.
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
+---
+
 ## PRE-BRIEF
 
 **Produced by**: independent-assurance-agent
