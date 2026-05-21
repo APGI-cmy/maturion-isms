@@ -14,13 +14,13 @@
 This report captures the full discovery findings for the ISMS Public Landing harvest. The ISMS portal (`apps/isms-portal`) is the **top-level platform entry point** — it owns all user-facing public pages, marketing content, and the pre-subscription funnel. MMM (Maturion Maturity Module) and PIT (Project Implementation Tracking) are downstream modules that ISMS hands off to _after_ onboarding.
 
 **Harvest Status at time of discovery:**
-- ✅ 7 of 8 marketing info pages have been harvested from legacy into `isms-portal` (with route canonicalisation applied)
+- ✅ All 7 required marketing info pages are present in `isms-portal` (6 harvested from legacy + 1 newly created, with route canonicalisation applied)
 - ✅ Legacy redirect shims are in place in `isms-portal/src/App.tsx`
 - ✅ `MaturityRoadmapInfo.tsx` is newly created — no legacy equivalent
 - ⚠️ Auth boundary bug in legacy has been **correctly NOT carried forward** — portal has all marketing pages as fully public
 - ❌ Onboarding route (`/onboarding`) is missing from `isms-portal`
 - ❌ MMM handoff route/contract is undefined
-- ❌ PIT placeholder route is missing from `isms-portal`
+- ❌ `PIT_ENTRY` constant (`/pit`) not yet reserved in `routes.ts` — public PIT marketing stub (`/marketing/project-implementation`) is already present
 - ❌ Dashboard is a stub (inline JSX placeholder, no real component)
 - ❌ `MATURITY_SETUP` constant exists in `routes.ts` but has no wired route in `App.tsx`
 
@@ -136,7 +136,7 @@ The portal `ROUTES` object contains:
 **Notable absences:**
 - ❌ `ONBOARDING` — no `/onboarding` route constant
 - ❌ `MMM_HANDOFF` — no handoff route constant or target URL
-- ❌ `PIT_PLACEHOLDER` — no `/marketing/pit-overview` or `/pit` placeholder constant
+- ❌ `PIT_ENTRY` — no `/pit` placeholder constant for future authenticated PIT entry (public marketing stub `/marketing/project-implementation` is already wired)
 - ❌ `MATURITY_SETUP` is defined but **not wired** as a Route in `App.tsx`
 
 ---
@@ -163,7 +163,7 @@ The portal `ROUTES` object contains:
 | `/maturity/setup` | ProtectedRoute | *(constant defined, not wired)* | — | `/maturity/setup` | ProtectedRoute | ❌ Missing | Add Route + Dashboard.tsx or redirect to MMM |
 | *(no legacy equivalent)* | n/a | *(missing)* | — | `/onboarding` | Public or ProtectedRoute | ❌ Missing | Onboarding route required post-subscribe |
 | *(no legacy equivalent)* | n/a | *(missing)* | — | `/mmm` or `/maturity` | ProtectedRoute | ❌ Missing | MMM handoff target post-onboarding |
-| *(no legacy equivalent)* | n/a | *(missing)* | — | `/marketing/pit-overview` | Public | ❌ Missing | PIT placeholder until PIT entry finalised |
+| *(no legacy equivalent)* | n/a | *(missing)* | — | `/pit` (reserved) | ProtectedRoute | ❌ Missing | `PIT_ENTRY: '/pit'` constant not yet in `routes.ts`; public marketing stub `/marketing/project-implementation` is done |
 | `/accept-invitation` | Public | *(missing)* | — | `/accept-invitation` | Public | ❌ Missing | InvitationAcceptance.tsx not harvested |
 
 ---
@@ -193,7 +193,7 @@ The portal `ROUTES` object contains:
 | "Begin assessment" (free assessment) | `FreeAssessment.tsx` | `/assessment` | No | ISMS/MMM boundary | ⚠️ Partial — `/assessment` not wired in portal App.tsx |
 | Sign up / account creation | `Subscribe.tsx` / `SubscribeCheckout.tsx` | `/auth` → `/onboarding` | Becomes required | ISMS | ❌ Missing — no onboarding route |
 | Onboarding completion | `(future) Onboarding.tsx` | `/maturity/setup` or MMM handoff URL | Yes | ISMS → MMM | ❌ Missing — MMM handoff contract undefined |
-| PIT card / interest | `Index.tsx` or `ModulesOverview.tsx` | `/marketing/pit-overview` (placeholder) | No | ISMS (placeholder) | ❌ Missing — PIT placeholder route absent |
+| PIT card / interest | `Index.tsx` or `ModulesOverview.tsx` | `/marketing/project-implementation` | No | ISMS | ✅ Wired (marketing stub) — `PIT_ENTRY: '/pit'` constant still needed for future authenticated PIT entry |
 | Dashboard access (post-login) | `(future) Dashboard.tsx` | `/dashboard` | Yes | ISMS/MMM | ⚠️ Stub only — no real Dashboard.tsx component |
 
 ---
@@ -257,7 +257,7 @@ The `PITInfo.tsx` page (both legacy and portal) is a **"Coming Soon" marketing p
 
 | Decision | Options | Status | Recommendation |
 |---|---|---|---|
-| PIT entry point route | `/marketing/project-implementation` (current), `/pit`, `/marketing/pit-overview` | OPEN | Retain `/marketing/project-implementation` as the marketing stub; add `/pit` as the future live entry point constant |
+| PIT entry point route | `/marketing/project-implementation` (current — public marketing stub ✅ Done), `/pit` (future authenticated entry) | OPEN | Retain `/marketing/project-implementation` as the public marketing stub; add `PIT_ENTRY: '/pit'` as the reserved constant for the future authenticated PIT entry |
 | PIT app ownership | Separate app (`apps/pit-portal`), sub-route in ISMS, sub-route in MMM | OPEN | Separate app; ISMS holds placeholder only |
 | PIT marketing stub content | `PITInfo.tsx` at `/marketing/project-implementation` | ✅ Done | No change needed |
 | PIT CTA post-interest | "Notify me" / waitlist vs. "Coming Soon" badge | OPEN | Add `PIT_PLACEHOLDER` constant, wire "Notify Me" CTA to email capture or waitlist |
@@ -333,8 +333,7 @@ The following 12 stages represent the ordered pre-build tasks required to bring 
 
 **Action:** Decide and implement one of:
 - (a) Wire `/assessment` as a redirect to MMM's entry point (if MMM is a separate deployment)
-- (b) Wire `/assessment` as an ISMS-owned stub page that transitions to MMM
-- (c) Change `FreeAssessment.tsx` to navigate directly to `/subscribe` (if the "free assessment" is purely a marketing lead, not an actual interactive tool in ISMS)
+- (b) Wire `/assessment` as an ISMS-owned bridge page that transitions to the MMM free-assessment execution route
 
 **Files affected:** `apps/isms-portal/src/App.tsx`, `apps/isms-portal/src/pages/FreeAssessment.tsx`
 
@@ -479,7 +478,7 @@ The following 12 stages represent the ordered pre-build tasks required to bring 
 
 **Action:**
 1. Create `apps/isms-portal/src/__tests__/public-routes.test.tsx` (or equivalent in the project's test structure)
-2. Cover: GET `/`, `/auth`, `/free-assessment`, `/subscribe`, `/subscribe/checkout`, `/journey`, `/modules`, all 7 `/marketing/*` routes, all 6 legacy redirect routes (assert 301/302), `*` → 404
+2. Cover: GET `/`, `/auth`, `/free-assessment`, `/subscribe`, `/subscribe/checkout`, `/journey`, `/modules`, all 7 `/marketing/*` routes, all 6 legacy redirect routes (assert client-side navigation to canonical marketing route via React Router `<Navigate>`), `*` → 404
 3. Assert: no ProtectedRoute wrappers on any public route, correct component renders, correct page titles
 
 **Files affected:** new test file
