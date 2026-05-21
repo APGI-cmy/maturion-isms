@@ -155,7 +155,47 @@ if [ -n "$ACTIVE_PREBRIEF_PATH" ] && [ -f "$ACTIVE_PREBRIEF_PATH" ]; then
     grep -Eq "^PR:[[:space:]]*(#)?${PR_NUMBER}([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief PR field does not match PR #${PR_NUMBER}"
   fi
   if [ -n "$HEAD_SHA" ]; then
-    grep -Eq "^CURRENT_HEAD_SHA:[[:space:]]*(${HEAD_SHA}|${HEAD_SHA:0:12}|CURRENT_HEAD)([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief CURRENT_HEAD_SHA is not current-head relevant"
+    if ! grep -Eq "^CURRENT_HEAD_SHA:[[:space:]]*(${HEAD_SHA}|${HEAD_SHA:0:12}|CURRENT_HEAD|ACTIVE_HEAD_RESOLVED_BY_GATE|GITHUB_PR_HEAD_SHA)([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH"; then
+      # Rebase fallback only applies to values that are literal 40-character hex SHAs.
+      # Non-hex or malformed values are rejected immediately — no timing bypass allowed.
+      _pb_head_sha_val="$(grep -E '^CURRENT_HEAD_SHA:[[:space:]]*' "$ACTIVE_PREBRIEF_PATH" | head -1 | sed 's/^CURRENT_HEAD_SHA:[[:space:]]*//' | tr -d '[:space:]' || true)"
+      if ! [[ "$_pb_head_sha_val" =~ ^[0-9a-fA-F]{40}$ ]]; then
+        fail "Pre-flight brief CURRENT_HEAD_SHA is not current-head relevant"
+      fi
+      # Literal stale SHA — accept if only rebase/admin-only head movement occurred:
+      # no implementation/build files changed, OR the prebrief was authored after the
+      # most-recent implementation commit (author timestamps survive git rebase).
+      _pb_sha_stale=true
+      if [ -n "$BASE_SHA" ]; then
+        _pb_delta_files="$(git diff --name-only "${BASE_SHA}...${HEAD_SHA}" 2>/dev/null || git diff --name-only "${BASE_SHA}" "${HEAD_SHA}" 2>/dev/null || true)"
+        _pb_has_impl=false
+        while IFS= read -r _pb_f; do
+          [ -z "$_pb_f" ] && continue
+          if is_impl_or_build_file "$_pb_f"; then _pb_has_impl=true; break; fi
+        done <<< "$_pb_delta_files"
+        if [ "$_pb_has_impl" = false ]; then
+          # Admin/rebase-only delta — no impl files changed; SHA freshness not required.
+          _pb_sha_stale=false
+        else
+          # Impl files present. Compare author timestamps (rebase-safe: %at survives rebase).
+          _pb_at="$(git log -1 --format='%at' "${BASE_SHA}..${HEAD_SHA}" -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
+          [ -z "$_pb_at" ] && _pb_at="$(git log -1 --format='%at' HEAD -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
+          _pb_impl_files=()
+          while IFS= read -r _pb_f; do
+            [ -n "$_pb_f" ] && is_impl_or_build_file "$_pb_f" && _pb_impl_files+=("$_pb_f")
+          done <<< "$_pb_delta_files"
+          _pb_last_impl_at=""
+          if [ "${#_pb_impl_files[@]}" -gt 0 ]; then
+            _pb_last_impl_at="$(git log --format='%at' "${BASE_SHA}..${HEAD_SHA}" -- "${_pb_impl_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+          fi
+          if [ -n "$_pb_at" ] && [ -n "$_pb_last_impl_at" ] && [ "$_pb_at" -ge "$_pb_last_impl_at" ]; then
+            # Prebrief authored at/after last impl commit — evidence is current (rebase-safe).
+            _pb_sha_stale=false
+          fi
+        fi
+      fi
+      [ "$_pb_sha_stale" = true ] && fail "Pre-flight brief CURRENT_HEAD_SHA is not current-head relevant"
+    fi
   fi
   grep -Eq "^WAVE:[[:space:]]*[^[:space:]].*$" "$ACTIVE_PREBRIEF_PATH" || fail "Pre-flight brief WAVE field is missing/empty"
   if ! field_equals "WAVE_TASKS_PATH" "$WAVE_TASKS_PATH" "$ACTIVE_PREBRIEF_PATH"; then

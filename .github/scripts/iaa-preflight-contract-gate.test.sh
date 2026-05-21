@@ -191,6 +191,8 @@ EOF
 }
 
 setup_prebrief_stale_head() {
+  # Admin-only delta (only assurance + wave-tasks files changed, no impl/build files).
+  # With the rebase-aware gate, stale SHA is accepted when no impl files changed.
   mkdir -p .agent-admin/assurance
   cat > .agent-admin/assurance/iaa-wave-record-wave-20260518.md <<'EOF'
 IAA_PREFLIGHT_BRIEF
@@ -212,6 +214,104 @@ EOF
   write_valid_wave_tasks ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
   git add .
   git commit -q -m "prebrief stale head sha"
+}
+
+# Setup: stale SHA, but impl file committed AFTER prebrief's last update (prebrief is outdated) -> FAIL
+setup_prebrief_stale_head_impl_after() {
+  mkdir -p .agent-admin/assurance modules/mat/src
+  # Step 1: Prebrief established first (satisfies "prebrief before impl" governance ordering)
+  cat > .agent-admin/assurance/iaa-wave-record-wave-20260518.md <<'EOF'
+IAA_PREFLIGHT_BRIEF
+PR: #1672
+ISSUE: #1671
+WAVE: wave-iaa-preflight-contract
+CURRENT_HEAD_SHA: deadbeef00000000000000000000000000000001
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+EXPECTED_QA_SCOPE:
+- modules/mat/src/flag.ts
+EXPECTED_FAILURE_MODES:
+- stale evidence
+FOREMAN_INSTRUCTIONS:
+- include scope in delegation
+IAA_WILL_QA:
+- preflight/iaa-prebrief-existence contract checks
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+EOF
+  write_valid_wave_tasks ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
+  git add .
+  GIT_AUTHOR_DATE="2020-01-01T08:00:00 +0000" GIT_COMMITTER_DATE="2020-01-01T08:00:00 +0000" \
+    git commit -q -m "prebrief established first (T0)"
+  # Step 2: Impl file committed AFTER prebrief — prebrief is NOT updated afterwards (stale)
+  echo "export const x = 1;" > modules/mat/src/flag.ts
+  git add .
+  GIT_AUTHOR_DATE="2020-01-02T10:00:00 +0000" GIT_COMMITTER_DATE="2020-01-02T10:00:00 +0000" \
+    git commit -q -m "impl file added after prebrief, prebrief not updated (T1 > T0)"
+  # prebrief_last_touch_at (T0) < last_impl_at (T1) → stale → FAIL
+}
+
+# Setup: stale SHA, IAA reviewed prebrief AFTER impl (prebrief covers the impl work) -> PASS
+setup_prebrief_stale_head_prebrief_after_impl() {
+  mkdir -p .agent-admin/assurance modules/mat/src
+  # Step 1: Prebrief established first (satisfies "prebrief before impl" governance ordering)
+  cat > .agent-admin/assurance/iaa-wave-record-wave-20260518.md <<'EOF'
+IAA_PREFLIGHT_BRIEF
+PR: #1672
+ISSUE: #1671
+WAVE: wave-iaa-preflight-contract
+CURRENT_HEAD_SHA: deadbeef00000000000000000000000000000001
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+EXPECTED_QA_SCOPE:
+- modules/mat/src/flag.ts
+EXPECTED_FAILURE_MODES:
+- stale evidence
+FOREMAN_INSTRUCTIONS:
+- include scope in delegation
+IAA_WILL_QA:
+- preflight/iaa-prebrief-existence contract checks
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+EOF
+  write_valid_wave_tasks ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
+  git add .
+  GIT_AUTHOR_DATE="2020-01-01T08:00:00 +0000" GIT_COMMITTER_DATE="2020-01-01T08:00:00 +0000" \
+    git commit -q -m "prebrief established first (T0)"
+  # Step 2: Impl committed after prebrief
+  echo "export const x = 1;" > modules/mat/src/flag.ts
+  git add .
+  GIT_AUTHOR_DATE="2020-01-01T10:00:00 +0000" GIT_COMMITTER_DATE="2020-01-01T10:00:00 +0000" \
+    git commit -q -m "impl file (T1)"
+  # Step 3: IAA reviews impl and updates prebrief (last touch at T2 > T1, stale SHA retained)
+  # The stale SHA simulates a post-rebase scenario where IAA re-confirmed but HEAD moved again.
+  echo "# IAA confirmed review" >> .agent-admin/assurance/iaa-wave-record-wave-20260518.md
+  git add .
+  GIT_AUTHOR_DATE="2020-01-01T12:00:00 +0000" GIT_COMMITTER_DATE="2020-01-01T12:00:00 +0000" \
+    git commit -q -m "IAA review update after impl (T2 > T1) — rebase-safe"
+  # prebrief_last_touch_at (T2) >= last_impl_at (T1) → PASS my freshness check
+  # prebrief_first_touch (T0) < first_impl (T1) → PASS existing "prebrief before impl" check
+}
+
+# Setup: symbolic ACTIVE_HEAD_RESOLVED_BY_GATE marker -> PASS
+setup_prebrief_symbolic_active_head_marker() {
+  mkdir -p .agent-admin/assurance
+  cat > .agent-admin/assurance/iaa-wave-record-wave-20260518.md <<'EOF'
+IAA_PREFLIGHT_BRIEF
+PR: #1672
+ISSUE: #1671
+WAVE: wave-iaa-preflight-contract
+CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+EXPECTED_QA_SCOPE:
+- .github/workflows/preflight-evidence-gate.yml
+EXPECTED_FAILURE_MODES:
+- stale evidence
+FOREMAN_INSTRUCTIONS:
+- include pre-flight scope in builder delegation
+IAA_WILL_QA:
+- preflight/iaa-prebrief-existence contract checks
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+EOF
+  write_valid_wave_tasks ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
+  git add .
+  git commit -q -m "prebrief using ACTIVE_HEAD_RESOLVED_BY_GATE symbolic marker"
 }
 
 setup_missing_consumption_fields() {
@@ -301,7 +401,10 @@ run_gate_test "1. missing pre-brief artifact -> FAIL" 1 "setup_missing_prebrief"
 run_gate_test "2. pre-brief missing EXPECTED_QA_SCOPE -> FAIL" 1 "setup_prebrief_missing_scope"
 run_gate_test "3. pre-brief empty EXPECTED_QA_SCOPE section -> FAIL" 1 "setup_prebrief_empty_scope_section"
 run_gate_test "4. section boundary does not borrow bullets from next section -> FAIL" 1 "setup_prebrief_section_boundary_scope_missing"
-run_gate_test "5. pre-brief stale CURRENT_HEAD_SHA -> FAIL" 1 "setup_prebrief_stale_head"
+run_gate_test "5. pre-brief stale SHA, admin-only delta (rebase-safe) -> PASS" 0 "setup_prebrief_stale_head"
+run_gate_test "5a. pre-brief stale SHA, impl committed AFTER prebrief -> FAIL" 1 "setup_prebrief_stale_head_impl_after"
+run_gate_test "5b. pre-brief stale SHA, prebrief committed AFTER impl (rebase-safe) -> PASS" 0 "setup_prebrief_stale_head_prebrief_after_impl"
+run_gate_test "5c. pre-brief ACTIVE_HEAD_RESOLVED_BY_GATE symbolic marker -> PASS" 0 "setup_prebrief_symbolic_active_head_marker"
 run_gate_test "6. missing foreman consumption fields -> FAIL" 1 "setup_missing_consumption_fields"
 run_gate_test "7. rejection package exists but no pre-flight contract -> FAIL" 1 "setup_rejection_package_without_preflight"
 run_gate_test "8. modules/* change with not_required delegation -> FAIL" 1 "setup_impl_modules_not_required"
