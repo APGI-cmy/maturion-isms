@@ -25,6 +25,7 @@
 - **Upstream Authority (Stage 3)**: `modules/MMM/02-frs/functional-requirements.md` v0.1.0 — 80 FRs
 - **Upstream Authority (Stage 2)**: `modules/MMM/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` v0.1.0 — 17 journeys
 - **Upstream Authority (Stage 1)**: `modules/MMM/00-app-description/MMM_app_description.md` v0.5.0
+- **Related addendum (2026-05-21)**: `modules/MMM/07-implementation-plan/upload-architecture-alignment-plan.md`
 
 > **Governance Note**: This document supersedes the partial predecessor artifact
 > `concurrent-prebuild-and-legacy-plan.md` (filed 2026-04-08, a concurrent programme
