@@ -148,4 +148,4 @@ A missing dependency is not permission to rebuild. It is permission only to repl
 
 Do not redesign. Do not approximate. Do not replace with a thin shell. Harvest first; adapt only for compatibility.
 
-Implementation issue #1724 MUST NOT be started or reviewed for approval until this RED recovery artifact has merged to main.
+Implementation issue [#1724](https://github.com/APGI-cmy/maturion-isms/issues/1724) MUST NOT be started or reviewed for approval until this RED recovery artifact has merged to main.

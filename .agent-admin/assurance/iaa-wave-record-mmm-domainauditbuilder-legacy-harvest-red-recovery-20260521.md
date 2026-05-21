@@ -22,7 +22,7 @@ CURRENT_HEAD_CONTEXT:
 - historical_prebrief_sha: 7e1a6660cd80c7dcb9794a426feff23b651a2430
 - reviewed_head_at_cs2_change_request: bbdb92143cae66739b48ba71f12a88064f2efafc
 - closure_policy: current-head closure tracked via GITHUB_PR_HEAD_SHA to prevent stale SHA-only loops
-- closure_policy_resolution: GITHUB_PR_HEAD_SHA is resolved at gate/runtime to the active PR head SHA accepted by .github/scripts/iaa-preflight-contract-gate.sh
+- closure_policy_resolution: GITHUB_PR_HEAD_SHA is resolved during CI preflight gate execution to the active PR head SHA (accepted token in .github/scripts/iaa-preflight-contract-gate.sh)
 - closure_policy_intent: this keeps reviewed historical SHAs explicit while avoiding repeated manual CURRENT_HEAD_SHA rewrites on each non-substantive governance update
 
 EXPECTED_QA_SCOPE:
