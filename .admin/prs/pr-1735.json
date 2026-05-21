@@ -1,0 +1,25 @@
+{
+  "pr": 1735,
+  "issue": 1718,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "branch": "copilot/make-producer-stop-guidance-explicit",
+  "scope": [
+    ".agent-admin/assurance/iaa-wave-record-make-producer-stop-guidance-explicit-20260521.md",
+    ".agent-admin/scope-declarations/pr-1735.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-make-producer-stop-guidance-explicit-20260521.md",
+    ".github/scripts/producer-next-action-guidance.js",
+    ".github/scripts/producer-next-action-guidance.test.sh",
+    ".github/workflows/preflight-evidence-gate.yml",
+    ".github/workflows/producer-next-action-guidance.yml"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "copilot-direct",
+  "evidence_required": [
+    "workflow Preflight Evidence Gate: success on head b819aa34c2c68e4cdfe9a1ddd6bca3e4fc7df2f4 — actions/runs/26231847057",
+    "local command output: bash .github/scripts/producer-next-action-guidance.test.sh — Passed 17, Failed 0 on head b819aa34"
+  ],
+  "merge_authority": "CS2"
+}

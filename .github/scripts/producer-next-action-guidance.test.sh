@@ -79,13 +79,18 @@ run_case \
   "1"
 
 run_case \
-  "5. blocked guidance render includes next required control" \
-  "$(printf '%s' "$blocked_render" | grep -c 'NEXT_REQUIRED_CONTROL: CURRENT_HEAD_GATES_GREEN' || true)" \
+  "5. blocked guidance render starts with explicit STOP title" \
+  "$(printf '%s' "$blocked_render" | grep -c '^# 🛑 STOP — DO NOT CONTINUE TO HANDOVER' || true)" \
   "1"
 
 run_case \
-  "6. blocked guidance render reminds producer to run /prepare-handover" \
-  "$(printf '%s' "$blocked_render" | grep -c '/prepare-handover' || true)" \
+  "6. blocked guidance render includes mandatory STOP machine-readable lines" \
+  "$(printf '%s' "$blocked_render" | grep -Ec 'STOP_AND_FIX: yes|HANDOVER_ALLOWED: no|FINAL_SUMMARY_ALLOWED: no|READY_FOR_REVIEW_ALLOWED: no|NEXT_REQUIRED_CONTROL: CURRENT_HEAD_GATES_GREEN' || true)" \
+  "5"
+
+run_case \
+  "7. blocked guidance render reminds producer not to regenerate unrelated evidence" \
+  "$(printf '%s' "$blocked_render" | grep -c 'Do not regenerate unrelated evidence' || true)" \
   "1"
 
 clean_render="$(node - "$GUIDANCE_SCRIPT" <<'EOF'
@@ -107,35 +112,79 @@ EOF
 )"
 
 run_case \
-  "7. clean guidance render flips final summary posture to yes" \
+  "8. clean guidance render flips final summary posture to yes" \
   "$(printf '%s' "$clean_render" | grep -c 'FINAL_SUMMARY_ALLOWED: yes' || true)" \
   "1"
 
 run_case \
-  "8. clean guidance render flips handover posture to yes" \
+  "9. clean guidance render flips handover posture to yes" \
   "$(printf '%s' "$clean_render" | grep -c 'HANDOVER_CLAIM_ALLOWED: yes' || true)" \
   "1"
 
+amber_render="$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+process.stdout.write(guidance.renderGuidanceComment({
+  prNumber: 1719,
+  headSha: 'abcdef1234567890',
+  fields: {
+    HANDOVER_ALLOWED: 'no',
+    NEXT_REQUIRED_CONTROL: 'CURRENT_HEAD_GATES_GREEN',
+    INJECTION_STATE: 'current',
+    FAILING_CHECKS: 'none',
+    PENDING_CHECKS: 'preflight/evidence-exactness',
+    MISSING_CHECKS: 'none',
+    RESULT: 'PENDING',
+    REASON: 'Waiting for preflight/evidence-exactness',
+  },
+}));
+EOF
+)"
+
+run_case \
+  "10. pending checks render AMBER state" \
+  "$(printf '%s' "$amber_render" | grep -c '^# 🟠 AMBER — guidance pending / waiting' || true)" \
+  "1"
+
+gray_render="$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+process.stdout.write(guidance.renderGuidanceComment({
+  prNumber: 1719,
+  headSha: 'abcdef1234567890',
+  fields: {
+    RESULT: 'ADVISORY_UNAVAILABLE',
+    ADVISORY_UNAVAILABLE: 'github_api_rate_limited',
+    INFRASTRUCTURE_RERUN_NEEDED: 'yes',
+    PR_DEFECT_INFERRED: 'no',
+  },
+}));
+EOF
+)"
+
+run_case \
+  "11. rate-limit unavailable renders GRAY advisory classification lines" \
+  "$(printf '%s' "$gray_render" | grep -Ec '^# ⚪ ADVISORY UNAVAILABLE — GITHUB API RATE LIMIT|ADVISORY_UNAVAILABLE: github_api_rate_limited|INFRASTRUCTURE_RERUN_NEEDED: yes|PR_DEFECT_INFERRED: no' || true)" \
+  "4"
+
 # ── Advisory-only regression tests (issue requirements) ──────────────────────
 
-# 9. HANDOVER_ALLOWED: no → renders "action still required" title
+# 12. HANDOVER_ALLOWED: no + STOP_AND_FIX result renders explicit stop title
 run_case \
-  "9. HANDOVER_ALLOWED: no renders advisory title 'action still required'" \
+  "12. HANDOVER_ALLOWED: no + STOP_AND_FIX renders stop title" \
   "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
 const guidance = require(process.argv[2]);
 const out = guidance.renderGuidanceComment({
   prNumber: 1733,
   headSha: 'aabbccdd1234',
-  fields: { HANDOVER_ALLOWED: 'no', NEXT_REQUIRED_CONTROL: 'CURRENT_HEAD_GATES_GREEN' },
+  fields: { HANDOVER_ALLOWED: 'no', NEXT_REQUIRED_CONTROL: 'CURRENT_HEAD_GATES_GREEN', RESULT: 'STOP_AND_FIX' },
 });
-process.stdout.write(out.includes('action still required') ? 'true' : 'false');
+process.stdout.write(out.includes('🛑 STOP — DO NOT CONTINUE TO HANDOVER') ? 'true' : 'false');
 EOF
 )" \
   "true"
 
-# 10. pending checks → summarizeChecks shows "pending: ..." in advisory comment
+# 13. pending checks → summarizeChecks shows "pending: ..." in advisory comment
 run_case \
-  "10. pending checks render advisory guidance (summarizeChecks includes 'pending')" \
+  "13. pending checks render advisory guidance (summarizeChecks includes 'pending')" \
   "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
 const guidance = require(process.argv[2]);
 const summary = guidance.summarizeChecks({
@@ -148,9 +197,9 @@ EOF
 )" \
   "true"
 
-# 11. missing checks → summarizeChecks shows "missing: ..." in advisory comment
+# 14. missing checks → summarizeChecks shows "missing: ..." in advisory comment
 run_case \
-  "11. missing checks render advisory guidance (summarizeChecks includes 'missing')" \
+  "14. missing checks render advisory guidance (summarizeChecks includes 'missing')" \
   "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
 const guidance = require(process.argv[2]);
 const summary = guidance.summarizeChecks({
@@ -163,9 +212,9 @@ EOF
 )" \
   "true"
 
-# 12. NEXT_REQUIRED_CONTROL != none → guidance includes the action sentence
+# 15. NEXT_REQUIRED_CONTROL != none → guidance includes the action sentence
 run_case \
-  "12. NEXT_REQUIRED_CONTROL != none renders guidance sentence in comment" \
+  "15. NEXT_REQUIRED_CONTROL != none renders guidance sentence in comment" \
   "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
 const guidance = require(process.argv[2]);
 const out = guidance.renderGuidanceComment({
@@ -187,18 +236,18 @@ EOF
 )" \
   "true"
 
-# 13. Invalid checkpoint JSON → pre-handover-checkpoint.js exits non-zero (internal error fails workflow)
+# 16. Invalid checkpoint JSON → pre-handover-checkpoint.js exits non-zero (internal error fails workflow)
 invalid_json_file="$(mktemp)"
 printf 'this is not valid json\n' > "$invalid_json_file"
 invalid_exit=0
 CHECKPOINT_REPO_FILES_PATH="$invalid_json_file" node "$CHECKPOINT_SCRIPT" > /dev/null 2>&1 || invalid_exit=$?
 rm -f "$invalid_json_file"
 run_case \
-  "13. invalid checkpoint JSON causes pre-handover-checkpoint to exit non-zero" \
+  "16. invalid checkpoint JSON causes pre-handover-checkpoint to exit non-zero" \
   "$invalid_exit" \
   "1"
 
-# 14. Resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL
+# 17. Resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL
 #     from historical artifacts of other PRs present in the virtual file snapshot.
 repo_files_temp="$(mktemp)"
 node -e "
@@ -228,7 +277,7 @@ resolver_binding="$(
 rm -f "$repo_files_temp"
 
 run_case \
-  "14. resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL from historical artifacts" \
+  "17. resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL from historical artifacts" \
   "$resolver_binding" \
   "PASS"
 
