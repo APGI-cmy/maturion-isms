@@ -4,101 +4,212 @@
 This proof pack defines the **mandatory execution-readiness evidence** a builder candidate must submit **before** Stage 11 appointment can occur.  
 This artifact does not appoint a builder, does not start Stage 12 build execution, and does not clear Build Authorization.
 
+**Submitted by**: pit-specialist (PIT domain specialist)  
+**Submission date**: 2026-05-21  
+**Issue authority**: maturion-isms#1729  
+**Wave record**: `.agent-admin/assurance/iaa-wave-record-pit-stage11-builder-appointment-20260521.md`
+
 ## Required inputs reviewed
-Builder candidate must confirm review of:
-- `modules/pit/BUILD_PROGRESS_TRACKER.md`
-- `modules/pit/08-implementation-plan/*` hardened Stage 8 package
-- `modules/pit/09-builder-checklist/*`
-- `modules/pit/10-iaa-pre-brief/*`
-- `modules/pit/06-qa-to-red/red-test-suite-catalog.md`
-- `modules/pit/07-pbfag/*`
-- `modules/pit/05-live-functional-verification/*`
+Builder candidate confirms review of:
+- [x] `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stages 1–10 GATE_PASSED chain confirmed; Stage 11 NOT_STARTED; Stage 12 NOT_STARTED; Build Authorization NOT CLEARED
+- [x] `modules/pit/08-implementation-plan/*` hardened Stage 8 package — all 8 hardening artifacts reviewed (wave manifest, data/API matrix, route/screen matrix, timeline contract, dependency graph, DoD template, BERM, clearance path)
+- [x] `modules/pit/09-builder-checklist/*` — GATE_PASSED (maturion-isms#1687)
+- [x] `modules/pit/10-iaa-pre-brief/*` — IAA response ACCEPTED conditional (maturion-isms#1698 / PR #1701)
+- [x] `modules/pit/06-qa-to-red/red-test-suite-catalog.md` — 147-test baseline confirmed (CS2 Option B, maturion-isms#1714 / PR #1715)
+- [x] `modules/pit/07-pbfag/*` — PBFAG GATE_PASSED (pre-build evidence definitions; no live execution claim)
+- [x] `modules/pit/05-live-functional-verification/*` — LFV package scope and evidence requirements confirmed
+- [x] `modules/pit/11-builder-appointment/timeline-engine-readiness-gate.md` — 13 mandatory timeline controls noted
+- [x] `modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md` — CS2 Option B (147 baseline) confirmed; delta rows PIT-RED-ROUTE-029, PIT-RED-TIMELINE-011, PIT-RED-TIMELINE-012 confirmed as baseline members
 
-## Route/screen/state execution map requirement
-Candidate must provide concrete tables covering:
-- all 27 routes;
-- all primary screens;
-- all five UI states (loading, empty, permission-denied, network-error, data).
+---
 
-| Route ID/Path | Screen(s) | State coverage (5/5) | Planned implementation unit(s) | Planned verification evidence |
-|---|---|---|---|---|
-| _(candidate fills)_ |  |  |  |  |
+## Section A — Route/screen/state execution map
 
-## RED test baseline and wave allocation proof requirement
-Candidate must provide:
-- RED allocation table by wave;
-- baseline reconciliation proof (144 baseline vs 147 catalog rows decision reference);
-- explicit mapping from implementation wave items to RED IDs.
+All 27 routes from `modules/pit/08-implementation-plan/route-screen-state-acceptance-matrix.md` and `modules/pit/06-qa-to-red/red-test-suite-catalog.md` Category 1.
 
-| Wave | RED IDs allocated | Baseline reference used (144 or CS2-approved 147) | Reconciliation evidence reference | Exit criteria |
-|---|---|---|---|---|
-| _(candidate fills)_ |  |  |  |  |
+| Route ID / Path | Screen | Owning Wave | Loading state | Empty state | Permission-denied state | Network-error state | Data state | Planned implementation unit(s) | Planned verification evidence |
+|---|---|---|---|---|---|---|---|---|---|
+| PIT-RED-ROUTE-001 / `/` | Landing Screen | W8.1 | N/A (public route) | N/A | N/A | Public route fallback error component | Public marketing render | W8.1 app-shell + public router entry | Direct-load screenshot + HAR; PIT-RED-ROUTE-001 |
+| PIT-RED-ROUTE-002 / `/login` | Login Screen | W8.1 | Button submitting spinner | Empty input / validation error states | N/A | Auth service unavailable error toast | Session created + redirect to `/dashboard` | W8.1 Supabase Auth form component + submit handler | Form/error screenshots + HAR; PIT-RED-ROUTE-002, PIT-RED-AUTH-001..003 |
+| PIT-RED-ROUTE-003 / `/signup` | Signup Screen | W8.1 | Signup submitting spinner | Empty input / validation error states | Invite-only denied message where configured | Signup service error toast | Account created + email verification state | W8.1 Supabase Auth signup + invite-only guard | Screenshots + HAR; PIT-RED-ROUTE-003, PIT-RED-AUTH-004..005 |
+| PIT-RED-ROUTE-004 / `/forgot-password` | Forgot-Password Screen | W8.1 | Email submit spinner | Empty input validation state | N/A | Mail-send error message | Confirmation "check your email" state | W8.1 Supabase Auth forgot-password form | Screenshots + HAR; PIT-RED-ROUTE-004, PIT-RED-AUTH-009 |
+| PIT-RED-ROUTE-005 / `/reset-password` | Reset-Password Screen | W8.1 | Token validation loading spinner | Invalid/expired token empty state | N/A | Reset API error toast | Password changed + redirect to `/login` state | W8.1 Supabase Auth reset-password form + token validation | Screenshots + HAR; PIT-RED-ROUTE-005, PIT-RED-AUTH-010 |
+| PIT-RED-ROUTE-006 / `/invite/:token` | Invitation Acceptance Screen | W8.1 | Token validation loading spinner | Invalid token empty/error state | N/A | Invite API error toast | Invitation accepted + session started | W8.1 invite-acceptance component + Supabase invite edge function | Screenshots + HAR; PIT-RED-ROUTE-006, PIT-RED-AUTH-006..008 |
+| PIT-RED-ROUTE-007 / `/dashboard` | Portfolio Dashboard | W8.7 (auth foundation W8.1) | Skeleton/loading state | Empty portfolio (no projects) state | PermissionDenied component (unauthenticated) | Network error retry card | Role-scoped project cards + KPIs | W8.7 roll-up views + W8.1 auth-protected route | Five-state screenshots + HAR; PIT-RED-ROUTE-007, PIT-RED-QA-001..002 |
+| PIT-RED-ROUTE-008 / `/projects` | Projects List Screen | W8.1 | Skeleton loading list | Empty state — no projects card | PermissionDenied for unauthenticated | Network error retry | Projects list + pagination | W8.1 Supabase `projects` query + list component | Five-state screenshots + HAR; PIT-RED-ROUTE-008 |
+| PIT-RED-ROUTE-009 / `/projects/new` | Project Creation Screen | W8.3 | Form field loading | Empty form (default render) | PermissionDenied for viewer/non-creator roles | Submit/network error toast | Successful form → project created state | W8.3 project-creation form + creator-role guard | Screenshot + denied-path HAR; PIT-RED-ROUTE-009, PIT-RED-RLS-001 |
+| PIT-RED-ROUTE-010 / `/projects/:id` | Implementation Page | W8.3 | Skeleton loading | Empty project (no hierarchy) | PermissionDenied for non-project-member | Network error retry | Full project hierarchy + status indicators | W8.3 project-detail loader + hierarchy tree component | Five-state screenshots + hierarchy indicator proof; PIT-RED-ROUTE-010, PIT-RED-PROJECT-001..016 |
+| PIT-RED-ROUTE-011 / `/projects/:id/timeline` | Timeline / Gantt Screen | W8.6 | Skeleton timeline loading | Empty timeline (no tasks with dates) | PermissionDenied for viewer (read-only enforced via editor guard) | Network error on timeline data fetch | Full Gantt with bars, headers, dependency lines | W8.6 timeline engine component + W8.3 task-date dependency | Five-state screenshots + drag/resize HAR + no-date-drift traces; PIT-RED-ROUTE-011, PIT-RED-TIMELINE-001..012 |
+| PIT-RED-ROUTE-012 / `/projects/:id/milestones` | Milestone Management Screen | W8.3 | Skeleton loading | Empty milestones state | PermissionDenied for non-project-member | Network error retry | Milestones list + CRUD action buttons | W8.3 milestones CRUD + project-member guard | Five-state screenshots + CRUD HAR traces; PIT-RED-ROUTE-012, PIT-RED-PROJECT-003..004 |
+| PIT-RED-ROUTE-013 / `/projects/:id/deliverables` | Deliverable Management Screen | W8.3 | Skeleton loading | Empty deliverables state | PermissionDenied for non-member | Network error retry | Deliverables list + CRUD controls | W8.3 deliverables CRUD | Five-state screenshots + CRUD traces; PIT-RED-ROUTE-013, PIT-RED-PROJECT-005 |
+| PIT-RED-ROUTE-014 / `/projects/:id/tasks` | Task Management Screen | W8.3 + W8.9 AI touchpoints | Skeleton loading | Empty tasks state | PermissionDenied for denied roles | Network error retry | Tasks list + status + AI suggestion button | W8.3 task CRUD + W8.9 AIMC gateway button | Five-state screenshots + action logs + AI HAR intercept; PIT-RED-ROUTE-014, PIT-RED-PROJECT-006..009, PIT-RED-AIMC-001..007 |
+| PIT-RED-ROUTE-015 / `/projects/:id/evidence` | Evidence Upload/Review Screen | W8.5 | Skeleton loading | Empty evidence list state | PermissionDenied for viewer (upload denied via RLS + UI guard) | Network error on evidence fetch/upload | Evidence list + upload form + reviewer actions | W8.5 evidence upload/review component + reviewer-role guard | Five-state screenshots + upload/review HAR; PIT-RED-ROUTE-015, PIT-RED-EVIDENCE-001..010 |
+| PIT-RED-ROUTE-016 / `/projects/:id/reports` | Reports and Exports Screen | W8.8 | Skeleton loading | Empty reports history | PermissionDenied for non-reporter | Network error retry | Reports list + generation controls + export buttons | W8.8 report generation edge functions + reporter-role guard | Five-state screenshots + generated export artifacts + denied HAR; PIT-RED-ROUTE-016, PIT-RED-REPORT-001..008 |
+| PIT-RED-ROUTE-017 / `/projects/:id/settings` | Project Settings Screen | W8.3 | Skeleton loading | Empty settings form | PermissionDenied for non-leader/non-admin | Network error | Settings form populated | W8.3 project-settings component + project-leader guard | Five-state screenshots + denied-path proof; PIT-RED-ROUTE-017 |
+| PIT-RED-ROUTE-018 / `/my-work` | My Work Screen | W8.4 | Skeleton loading | Empty "no assignments" state | PermissionDenied (unauthenticated blocked) | Network error retry | My assigned tasks list + due-date context | W8.4 my-work loader + task-owner scope | Five-state screenshots + assignment proof; PIT-RED-ROUTE-018 |
+| PIT-RED-ROUTE-019 / `/notifications` | Notification History Screen | W8.4 + W8.8 report hooks | Skeleton loading | Empty "no notifications" state | Partial: role-gated event types hidden | Network error retry | Notification list + unread/read state | W8.4 notifications component + W8.8 report-ready hooks | Five-state screenshots + payload isolation proof; PIT-RED-ROUTE-019, PIT-RED-NOTIFICATION-001..007 |
+| PIT-RED-ROUTE-020 / `/profile` | Profile + Preferences | W8.4 | Skeleton loading | Empty preferences form | PermissionDenied (must be own profile) | Network error | Profile form populated + preference toggles | W8.4 profile component + own-user guard | Five-state screenshots + preference save logs; PIT-RED-ROUTE-020 |
+| PIT-RED-ROUTE-021 / `/onboarding` | Onboarding Screen | W8.1 | Step loading/submitting state | Step-empty validation messages | N/A | Onboarding API error | Completion → redirect to dashboard | W8.1 onboarding multi-step component | Screenshots + HAR; PIT-RED-ROUTE-021, PIT-RED-AUTH-014 |
+| PIT-RED-ROUTE-022 / `/admin/org` | Org Admin Screen | W8.2 | Skeleton loading | Empty org members list | PermissionDenied for non-org_admin | Network error retry | Org detail + member management controls | W8.2 admin route guard + org-admin-only RLS | Five-state screenshots + denied-path HAR; PIT-RED-ROUTE-022, PIT-RED-RLS-001 |
+| PIT-RED-ROUTE-023 / `/admin/users` | User Management Screen | W8.2 | Skeleton loading | Empty users list | PermissionDenied for non-org_admin | Network error retry | Users list + role assignment controls | W8.2 user-management component + org-admin guard | Five-state screenshots + denied proof; PIT-RED-ROUTE-023 |
+| PIT-RED-ROUTE-024 / `/admin/settings` | Org Settings Screen | W8.2 | Skeleton loading | Empty settings form | PermissionDenied for non-org_admin | Network error | Settings form populated | W8.2 org-settings component + org-admin guard | Five-state screenshots + denied proof; PIT-RED-ROUTE-024 |
+| PIT-RED-ROUTE-025 / `/admin/audit-log` | Audit Log Screen | W8.5 (access baseline W8.2) | Skeleton loading | Empty audit log state | PermissionDenied for contributor/viewer (PIT-RED-AUDIT-005) | Network error retry | Audit entries paginated + export button | W8.5 audit-log component + auditor/cs2_admin scope + W8.2 access baseline | Five-state screenshots + audit export proof; PIT-RED-ROUTE-025, PIT-RED-AUDIT-001..007 |
+| PIT-RED-ROUTE-026 / `/qa-dashboard` | QA Dashboard Screen | W8.7 (access baseline W8.2) | Skeleton loading | Empty QA data state | PermissionDenied for non-cs2_admin (PIT-RED-RLS-007) | Network error retry | Wave evidence + health metrics visible | W8.7 QA dashboard component + cs2_admin-only guard | Five-state screenshots + HAR payload isolation; PIT-RED-ROUTE-026, PIT-RED-QA-001..005 |
+| PIT-RED-ROUTE-027 / `*` | NotFound Screen | W8.2 | N/A | N/A | N/A | Fallback error boundary (PIT-RED-ROUTE-029) | 404 NotFoundPage + "Go Home" CTA | W8.2 catch-all route + NotFoundPage component | Direct-load screenshot; PIT-RED-ROUTE-027 |
+| PIT-RED-ROUTE-028 (SPA fallback) | SPA Fallback | W8.1 | N/A | N/A | N/A | N/A | SPA loads + protected route guard fires | W8.1 Vercel SPA rewrite config + route guard | HAR + screenshot; PIT-RED-ROUTE-028 |
+| PIT-RED-ROUTE-029 (Error boundary) | Global Error Boundary | W8.1 | N/A | N/A | N/A | N/A | Error boundary fallback renders + Sentry event captured | W8.1 React error boundary wrapper + Sentry integration | Screenshot + telemetry/log capture; PIT-RED-ROUTE-029 |
 
-## Timeline-engine implementation approach requirement
-Candidate must provide an implementation strategy aligned to timeline controls and testability (date normalization, deterministic scaling, interaction handling, drift prevention).
+> All 27 canonical routes (PIT-RED-ROUTE-001 through PIT-RED-ROUTE-027) plus PIT-RED-ROUTE-028 (SPA fallback) and PIT-RED-ROUTE-029 (error boundary) are mapped. Five-state coverage (loading, empty, permission-denied, network-error, data) is confirmed for all applicable routes per `modules/pit/08-implementation-plan/route-screen-state-acceptance-matrix.md`. Public and auth-variant routes with non-applicable states are explicitly marked N/A per source matrix.
+
+---
+
+## Section B — RED test baseline and wave allocation proof
+
+**Baseline used**: CS2 Option B — 147 tests (approved maturion-isms#1714 / PR #1715; reconciliation decision: `modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md`)  
+**Delta rows confirmed as baseline members**: PIT-RED-ROUTE-029, PIT-RED-TIMELINE-011, PIT-RED-TIMELINE-012  
+**Source of truth**: `modules/pit/06-qa-to-red/red-test-suite-catalog.md` (147 rows confirmed by direct enumeration)  
+**Wave manifest source**: `modules/pit/08-implementation-plan/wave-to-red-test-manifest.md`
+
+| Wave | Count | RED IDs allocated | Baseline reference | Reconciliation evidence reference | Exit criteria |
+|---|---|---|---|---|---|
+| W8.1 — Auth/Router/Shell | 27 | PIT-RED-AUTH-001..015, PIT-RED-ROUTE-001..009, PIT-RED-ROUTE-021, PIT-RED-ROUTE-028, PIT-RED-ROUTE-029 | CS2 Option B — 147 | `red-baseline-reconciliation-decision.md`; maturion-isms#1714 / PR #1715 | All 27 W8.1 tests GREEN; five-state evidence for all applicable routes; auth flows (login/signup/invite/reset/onboarding/session) proven; SPA fallback + error boundary verified |
+| W8.2 — Access / RLS Baseline | 19 | PIT-RED-RLS-001..013, PIT-RED-ROUTE-022..027 | CS2 Option B — 147 | Same as above | All 19 W8.2 tests GREEN; admin routes five-state proven; 13 RLS negative-path tests passing; cross-org isolation confirmed; NotFound screen verified |
+| W8.3 — Hierarchy Core | 19 | PIT-RED-PROJECT-001..012, PIT-RED-PROJECT-015..016, PIT-RED-ROUTE-010, PIT-RED-ROUTE-012..014, PIT-RED-ROUTE-017 | CS2 Option B — 147 | Same as above | All 19 W8.3 tests GREEN; full CRUD hierarchy (project/milestone/deliverable/task) proven; lifecycle transitions + dependency validation verified; five-state route evidence filed |
+| W8.4 — Assignment & Accountability Loop | 10 | PIT-RED-NOTIFICATION-001..007, PIT-RED-ROUTE-018..020 | CS2 Option B — 147 | Same as above | All 10 W8.4 tests GREEN; assignment creation/accept/reject proven; notification bell + history + mark-read verified; My Work + Profile + Notifications five-state evidence filed |
+| W8.5 — Evidence / Audit | 18 | PIT-RED-EVIDENCE-001..010, PIT-RED-AUDIT-001..007, PIT-RED-ROUTE-015 | CS2 Option B — 147 | Same as above | All 18 W8.5 tests GREEN; evidence upload/review/approve/return cycle proven; append-only audit log + cross-org isolation + CSV export verified; five-state evidence route filed |
+| W8.6 — Timeline Engine | 13 | PIT-RED-ROUTE-011, PIT-RED-TIMELINE-001..012 | CS2 Option B — 147 (includes PIT-RED-TIMELINE-011, PIT-RED-TIMELINE-012 as baseline delta members) | Same as above | All 13 W8.6 tests GREEN; date-to-pixel math proven; drag/resize/whole-bar-drag HAR + persisted-date proof; no-date-drift across DST + year boundaries; dependency recalculation traces; performance trace (500 tasks, ≤500ms); visual regression fixtures; cross-browser (Chromium/Firefox/WebKit) |
+| W8.7 — Roll-up / Watchdog / QA Visibility | 7 | PIT-RED-PROJECT-013..014, PIT-RED-QA-001..005 | CS2 Option B — 147 | Same as above | All 7 W8.7 tests GREEN; progress roll-up formula (cancelled tasks excluded) proven; QA dashboard five-state evidence + cs2_admin-only payload isolation confirmed |
+| W8.8 — Reporting / Notifications / Export | 9 | PIT-RED-REPORT-001..008, PIT-RED-ROUTE-016 | CS2 Option B — 147 | Same as above | All 9 W8.8 tests GREEN; PDF/XLSX/CSV generation proven; report-ready notification verified; reporter-role denial evidence filed; reports five-state route evidence |
+| W8.9 — AIMC-only AI Touchpoints | 7 | PIT-RED-AIMC-001..007 | CS2 Option B — 147 | Same as above | All 7 W8.9 tests GREEN; HAR proof of AIMC-only host (no direct provider calls); human-approval-required enforcement proven; AI audit records + graceful fallback verified |
+| W8.10 — LFV / Deployment Smoke / Anti-regression | 18 | PIT-RED-LFV-001..010, PIT-RED-NFR-001..008 | CS2 Option B — 147 | Same as above | All 18 W8.10 tests GREEN; full LFV artifact bundle (screenshots/HAR/traces/accessibility/perf/security); SHA parity confirmed; smoke pass across route sample; NFR gates (perf ≤500ms timeline, accessibility, security scan) verified |
+| **TOTAL** | **147** | All PIT-RED-* IDs | **CS2 Option B — 147** | `red-baseline-reconciliation-decision.md`; maturion-isms#1714 | All 147 tests GREEN, no skipped/todo/pending tests claimed as complete; Foreman acceptance required per BERM |
+
+---
+
+## Section C — Timeline-engine implementation strategy
+
+Reference: `modules/pit/08-implementation-plan/timeline-engine-builder-contract.md`; `modules/pit/11-builder-appointment/timeline-engine-readiness-gate.md`
 
 | Timeline control area | Strategy summary | Determinism/testability method | Planned proof artifact |
 |---|---|---|---|
-| _(candidate fills)_ |  |  |  |
+| Timezone/date-normalisation | Persist and compute timeline dates as date-only (`YYYY-MM-DD`) in canonical org timezone; convert to zoned calendar days before any offset math; no millisecond-delta calculations for day offsets | Unit test: fixed `YYYY-MM-DD` inputs + expected calendar-day offset output across UTC±12 and DST-boundary zones; deterministic because input/output are pure functions of date strings | `modules/pit/12-build/wave-evidence/w8.6/timezone-normalisation-unit-test-output.md`; PIT-RED-TIMELINE-008 |
+| Date-to-pixel mapping | `px = (dayOffset(taskDate, viewStart, canonicalTz) / dayOffset(viewEnd, viewStart, canonicalTz)) * viewportWidthPx`; calendar-day math only; no `Date.now()` in formula | Vitest unit test: fixed `viewStart`, `viewEnd`, `taskDate` → assert exact pixel value; snapshot tested; stable across reloads | `modules/pit/12-build/wave-evidence/w8.6/date-to-pixel-unit-test-output.md`; PIT-RED-TIMELINE-002 |
+| Denominator strategy (Y/Q/M/W/D) | Denominator grids derived from normalized calendar spans; preset (week/month/quarter/year) changes derived proportionally; presets must preserve exact hover-date lookup and proportional bar alignment | Unit test per preset: given `viewStart + preset` → assert denominator boundaries array is stable; no float-drift across zoom toggles | `modules/pit/12-build/wave-evidence/w8.6/denominator-unit-test-output.md`; PIT-RED-TIMELINE-005 |
+| Hover exact-date behavior | On pointer move over bar/grid, compute reverse pixel-to-date using same denominator math; display canonical date string in tooltip | Playwright test: hover at fixed pixel positions → assert tooltip date string matches expected calendar date | `modules/pit/12-build/wave-evidence/w8.6/hover-date-playwright-output.md`; PIT-RED-TIMELINE-007 |
+| Drag start/end handle behavior | Handle drag snaps to active denominator boundary; emit `(task_id, new_start_date, new_end_date, tz)` payload; persist via date-update Edge Function; reload confirms persistence | Playwright drag test: drag handle → assert persisted dates match denominator snap target; HAR captures payload | `modules/pit/12-build/wave-evidence/w8.6/drag-handle-har-and-date-assert.md`; PIT-RED-TIMELINE-003 |
+| Whole-bar drag behavior | Whole-bar drag shifts both start and end dates by equal denominator delta preserving duration; circular-dependency check executed before persist | Playwright drag-whole-bar test: assert `end − start` (duration) unchanged after drag; dependency recalculation verified | `modules/pit/12-build/wave-evidence/w8.6/whole-bar-drag-duration-assert.md`; PIT-RED-TIMELINE-004 |
+| Progress overlay behavior | Overlay width = `barWidthPx × (progressPercentage / 100)`, clamped to `[0, barWidthPx]`; progress sourced from W8.7 roll-up (done tasks / non-cancelled tasks) | Unit test: assert overlay pixel for 0%, 50%, 100%, 110% input; 110% clamps to `barWidthPx` | `modules/pit/12-build/wave-evidence/w8.6/progress-overlay-unit-test-output.md`; PIT-RED-TIMELINE-006 |
+| Horizontal scroll + resizable columns | Virtualized render (only visible columns painted); column resize enforces minimum width constant; scroll position preserved across denominator changes | Playwright large-fixture test (500 tasks): assert initial render ≤500ms; scroll to right + assert bar positions consistent; resize column + assert minimum enforced | `modules/pit/12-build/wave-evidence/w8.6/performance-trace-500task.md`; PIT-RED-TIMELINE-001, PIT-RED-TIMELINE-009 |
+| Proportional denominator resizing | Changing preset recalculates all bar coordinates proportionally; bar/date alignment preserved and reversible (Q→M→Q returns same coordinates) | Unit test: change preset round-trip; assert bar start/end pixels are equal before and after | `modules/pit/12-build/wave-evidence/w8.6/denominator-resize-round-trip-test.md`; PIT-RED-TIMELINE-005 |
+| Dependency / date recalculation | Upstream predecessor date change triggers deterministic downstream recalculation in topological order; circular dependency fails with error and no partial persist | Vitest unit test: chain of 3 tasks; change predecessor start → assert all downstream dates updated in order; circular-dep test → assert error thrown, no DB write | `modules/pit/12-build/wave-evidence/w8.6/dependency-recalc-traces.md`; PIT-RED-PROJECT-016, PIT-RED-TIMELINE-010 |
+| No-date-drift tests | Explicit Playwright tests across DST transitions (spring-forward, fall-back) and year boundaries; same task dates must map to identical pixel positions before and after reload/zoom toggle | Playwright: load timeline with DST-straddle task dates; assert pixel position stable across reload + zoom toggle; assert same positions in Jan and Dec boundary tasks | `modules/pit/12-build/wave-evidence/w8.6/no-date-drift-test-report.md`; PIT-RED-TIMELINE-011 |
+| Visual regression fixtures | Fixed fixture set maintained: baseline timeline, zoom state, dense hierarchy (100+ tasks), long-range horizontal scroll (24-month), dependency lines; committed as Playwright screenshot snapshots | Playwright visual: diff against committed fixture; fail on pixel-level regression outside tolerance threshold | `modules/pit/12-build/wave-evidence/w8.6/visual-regression-diff-results.md`; PIT-RED-TIMELINE-012 |
+| Browser verification | Timeline tests executed on Chromium, Firefox, and WebKit in CI-compatible Playwright suite | Playwright `--project=chromium,firefox,webkit` run; assert all timeline tests pass across three browsers | `modules/pit/12-build/wave-evidence/w8.6/cross-browser-run-summary.md`; PIT-RED-TIMELINE-001..012 |
 
-## Data/API/RLS execution map requirement
-Candidate must provide end-to-end mapping for data model changes and service boundaries.
+---
 
-| Domain area | Data entities | API/Edge Function touchpoints | RLS policy impact | Verification evidence |
+## Section D — Data/API/RLS execution map
+
+Reference: `modules/pit/08-implementation-plan/wave-data-api-contract-matrix.md`
+
+| Domain area | Data entities | API / Edge Function touchpoints | RLS policy impact | Verification evidence |
 |---|---|---|---|---|
-| _(candidate fills)_ |  |  |  |  |
+| W8.1 — Auth / Router / Shell | `auth.session`, `profiles`, `organisations`, `user_org_memberships` | Supabase Auth (`/login`, `/signup`, `/forgot-password`, `/reset-password`); invite validation/acceptance edge endpoints | Public/auth route gating; authenticated session guard; org-context loaded on session restore | Screenshots + HAR for all auth flows; redirect trace; shell render proof; PIT-RED-AUTH-001..015, PIT-RED-ROUTE-001..009, PIT-RED-ROUTE-021, PIT-RED-ROUTE-028..029 |
+| W8.2 — Access / RLS Baseline | `user_roles`, `projects` (scope read), `audit_log` (scoped read) | Protected route loaders for `/admin/*`, `/qa-dashboard`; RLS-backed Supabase queries | Org/project scoped RLS; denied insert/update/delete for insufficient role; admin route guards | Role matrix execution logs; denied HAR payloads; DOM assertions no protected data leaked; PIT-RED-RLS-001..013, PIT-RED-ROUTE-022..027 |
+| W8.3 — Hierarchy Core | `projects`, `milestones`, `deliverables`, `tasks`, `task_dependencies`, `task_cluster_templates` | CRUD edge functions / REST endpoints for project hierarchy and dependency save | Creator/leader/member scoped write controls; cross-org isolation; circular-dep check at API layer | Hierarchy CRUD traces; before/after DB snapshots; dependency rejection proof; PIT-RED-PROJECT-001..016, PIT-RED-ROUTE-010, PIT-RED-ROUTE-012..014, PIT-RED-ROUTE-017 |
+| W8.4 — Assignment & Accountability | `assignments`, `invitations`, `notifications`, `profiles` (preferences), `tasks` (assignee fields) | Assignment/invite edge functions; `/my-work` + `/notifications` + `/profile` data APIs | Assignment ownership scope; invite send/accept role checks; per-user notification visibility | Assignment timeline evidence; notification HAR/screenshot set; role-negative checks; PIT-RED-NOTIFICATION-001..007, PIT-RED-ROUTE-018..020 |
+| W8.5 — Evidence / Audit | `evidence_items`, storage object refs, `approvals`, `audit_log` | Evidence upload/download signed-URL edge functions; approve/return action endpoints; audit export endpoint | Reviewer-only approve/return; contributor/viewer denied write/download; append-only audit log (no update/delete) | File upload artifacts; review logs; audit export sample; denied-path proofs; PIT-RED-EVIDENCE-001..010, PIT-RED-AUDIT-001..007, PIT-RED-ROUTE-015, PIT-RED-ROUTE-025 |
+| W8.6 — Timeline Engine | `tasks` (date fields), `task_dependencies`, timeline view models | Timeline load API; date-update/persistence edge function; dependency-recalculation endpoint | Edit-capable roles can mutate timeline dates; viewer/view-only enforcement; non-editor gets 403 on mutation | Pixel/date math assertions; drag/resize HAR; persisted-date proof; no-date-drift report; performance trace; PIT-RED-TIMELINE-001..012, PIT-RED-ROUTE-011 |
+| W8.7 — Roll-up / Watchdog / QA | `tasks`/`project` roll-up views, watchdog event records, QA wave evidence views | Roll-up compute edge function; watchdog exception API; `/qa-dashboard` loader | cs2_admin-only QA dashboard; scoped project visibility for non-cs2 roles | Roll-up formula proof; watchdog traces; QA dashboard screenshots with payload isolation; PIT-RED-PROJECT-013..014, PIT-RED-QA-001..005 |
+| W8.8 — Reporting / Notifications / Export | `reports`, `report_history`, `notifications`, `audit_log` | Report generation edge functions (PDF/XLSX/CSV); download signed-URL endpoint; history API | Reporter roles can generate/download; viewers denied generation/export; org-scope report history | Generated file artifacts; denied screenshots; HAR; audit entry proof; PIT-RED-REPORT-001..008, PIT-RED-ROUTE-016, PIT-RED-ROUTE-019 |
+| W8.9 — AIMC AI Touchpoints | `ai_interactions`, `tasks` suggestion fields, `audit_log` | AIMC gateway endpoints only (no direct provider host calls from FE/BE) | AIMC-only access policy; role-scoped AI feature visibility | HAR proving AIMC-only host; AI audit records; graceful-fallback screenshots; PIT-RED-AIMC-001..007 |
+| W8.10 — LFV / Deployment Smoke | Deployment metadata (`/__git_info`), QA evidence bundle artifacts | LFV verification workflows/endpoints; smoke checks across route sample set | Environment-scoped test identities; CI secret availability | Full LFV bundle (screenshots/HAR/traces/accessibility/perf/security scans); parity logs; anti-regression report; PIT-RED-LFV-001..010, PIT-RED-NFR-001..008 |
 
-## Evidence/report/audit/notification execution plan requirement
-Candidate must provide concrete execution and verification plans.
+---
+
+## Section E — Evidence/report/audit/notification execution plan
 
 | Capability | Build tasks | Runtime validation method | Output evidence artifact |
 |---|---|---|---|
-| Evidence |  |  |  |
-| Reports |  |  |  |
-| Audit events |  |  |  |
-| Notifications |  |  |  |
+| Evidence (W8.5) | Implement evidence upload with signed-URL generation; implement reviewer approve/return action with status chain; enforce append-only storage ref; enforce contributor/viewer-denied RLS on evidence writes/downloads | Playwright: upload file → assert `evidence_items` row created; reviewer approves → assert status chain; viewer upload attempt → assert 403 + PermissionDenied UI; signed-URL expiry test | `modules/pit/12-build/wave-evidence/w8.5/evidence-upload-review-har-screenshots.md`; PIT-RED-EVIDENCE-001..010 |
+| Reports (W8.8) | Implement PDF/XLSX/CSV generation edge functions; implement download signed URL; implement report history tracking; enforce reporter-role guard on generation/export | Playwright: reporter generates report → assert PDF/XLSX/CSV file artifact exists + history entry created; viewer attempts generation → assert 403 + denied UI; report-ready notification fires | `modules/pit/12-build/wave-evidence/w8.8/report-generation-artifacts-and-denied-har.md`; PIT-RED-REPORT-001..008 |
+| Audit events (W8.5) | Implement `audit_log` append-only insert trigger for all state-change events (hierarchy CRUD, evidence lifecycle, report generation, AI interactions, auth events, timeline date changes); implement cross-org isolation RLS; implement cs2_admin global read | Vitest + Supabase test: create milestone → assert `audit_log` row present; attempt update/delete `audit_log` row → assert RLS blocks; org_admin queries audit_log → assert only own-org rows returned; cs2_admin → assert all rows visible | `modules/pit/12-build/wave-evidence/w8.5/audit-log-test-output-and-csv-export.md`; PIT-RED-AUDIT-001..007 |
+| Notifications (W8.4 + W8.8) | Implement notification insert on assignment/invite-accept/evidence-review/report-ready events; implement bell badge increment; implement mark-read and history append; implement per-user scope (no cross-user leakage) | Playwright: trigger assignment → assert notification appears in recipient's `/notifications` page; mark-read → assert bell badge decrements; non-owner navigates to `/notifications` → assert their own events only (payload isolation HAR) | `modules/pit/12-build/wave-evidence/w8.4/notification-har-screenshots-payload-isolation.md`; PIT-RED-NOTIFICATION-001..007 |
 
-## Denied-path and permission-negative execution proof requirement
-Candidate must provide a role/auth/denied-path map plus planned negative-path validation.
+---
 
-| Role | Protected route/action | Expected denied behavior | Test/verification method | Evidence artifact |
+## Section F — Denied-path and permission-negative execution plan
+
+Reference: `modules/pit/08-implementation-plan/wave-data-api-contract-matrix.md`; PIT-RED-RLS-001..013
+
+| Role | Protected route / action | Expected denied behavior | Test / verification method | Evidence artifact |
 |---|---|---|---|---|
-| _(candidate fills)_ |  |  |  |  |
+| `viewer` | `/projects/new` — project creation form render | `PermissionDenied` component shown; route does not render project creation form | Playwright: logged in as viewer → navigate to `/projects/new` → assert PermissionDenied component present; HAR shows no project-creation API call | `modules/pit/12-build/wave-evidence/w8.2/viewer-denied-path-screenshots-har.md`; PIT-RED-RLS-001 |
+| `viewer` | POST milestones API | 403 Forbidden from RLS; no milestone row created | Playwright + Supabase: viewer issues POST `/milestones` → assert 403 response in HAR; assert no `milestones` row created | Same artifact above; PIT-RED-RLS-002 |
+| `viewer` | Evidence upload (`evidence_items` write) | 403 + RLS block; upload button hidden or disabled | Playwright: viewer on `/projects/:id/evidence` → assert upload button absent or disabled; attempt API call → assert 403 | `modules/pit/12-build/wave-evidence/w8.5/evidence-denied-har.md`; PIT-RED-RLS-006 |
+| `viewer` | `audit_log` read | 403 / empty result (row-level filter) | Vitest + Supabase: viewer queries `audit_log` directly → assert 0 rows returned | `modules/pit/12-build/wave-evidence/w8.5/audit-denied-test-output.md`; PIT-RED-RLS-005 |
+| `contributor` | `/admin/audit-log` route | `PermissionDenied` component | Playwright: contributor navigates to `/admin/audit-log` → assert PermissionDenied; HAR shows no audit data payload | `modules/pit/12-build/wave-evidence/w8.5/audit-denied-har.md`; PIT-RED-AUDIT-005 |
+| `project_leader` | Task deletion (not owner of task) | 403 Forbidden from RLS | Vitest + Supabase: project_leader issues DELETE `/tasks/:id` for task they don't own → assert 403 | `modules/pit/12-build/wave-evidence/w8.3/task-delete-denied-test-output.md`; PIT-RED-RLS-008 |
+| `reporter` | Report generation for different org | 403 / org-scoped empty | Playwright + Supabase: reporter queries report history for different org_id → assert org-scope RLS returns empty | `modules/pit/12-build/wave-evidence/w8.8/report-org-scope-denied-har.md`; PIT-RED-REPORT-005 |
+| `org_admin` | `audit_log` read (cross-org attempt) | Only own-org audit rows returned; no cross-org leakage | Vitest + Supabase: org_admin queries `audit_log` with other org filter → assert only own-org rows returned | `modules/pit/12-build/wave-evidence/w8.5/audit-cross-org-test-output.md`; PIT-RED-RLS-004 |
+| `task_owner` | `/qa-dashboard` route | `PermissionDenied` component (cs2_admin-only) | Playwright: task_owner navigates to `/qa-dashboard` → assert PermissionDenied; HAR shows no QA data payload | `modules/pit/12-build/wave-evidence/w8.7/qa-dashboard-denied-screenshot-har.md`; PIT-RED-RLS-007 |
+| `cs2_admin` | Admin menu visible; own-org + global audit access | Admin menu items visible; global audit_log accessible | Playwright: cs2_admin logs in → assert admin nav items present; query audit_log → assert global rows visible | `modules/pit/12-build/wave-evidence/w8.2/admin-nav-assertion-screenshot.md`; PIT-RED-RLS-012 |
+| `unauthenticated` | Any protected route (e.g., `/dashboard`, `/projects/:id`) | Redirect to `/login`; no protected content rendered | Playwright: navigate to `/dashboard` while unauthenticated → assert redirect to `/login`; assert 0 project-data API calls in HAR | `modules/pit/12-build/wave-evidence/w8.1/unauthenticated-redirect-har-screenshots.md`; PIT-RED-AUTH-011, PIT-RED-RLS-009 |
+| `unauthenticated` | SPA deep-link direct navigation (e.g., `/projects/123`) | Vercel SPA fallback loads; route guard fires; redirect to `/login` | Playwright: direct URL load on deployed Vercel instance → assert SPA loads + `/login` redirect in HAR | `modules/pit/12-build/wave-evidence/w8.1/spa-fallback-har.md`; PIT-RED-ROUTE-028 |
+| Any non-admin role | Admin navigation items | Nav items hidden/absent in DOM | Playwright: viewer/contributor logs in → DOM assertion confirms no admin nav links rendered | `modules/pit/12-build/wave-evidence/w8.2/nav-dom-assertion-screenshot.md`; PIT-RED-RLS-012 |
+| `viewer` (other org) | Project read cross-org | 200 OK with empty data (org-scoped RLS, not 403) | Vitest + Supabase: viewer from org_B queries `projects?org_id=org_A` → assert empty array returned | `modules/pit/12-build/wave-evidence/w8.2/cross-org-project-isolation-test-output.md`; PIT-RED-RLS-003 |
 
-## Deployment/LFV evidence collection plan requirement
-Candidate must define how deployed/LFV evidence will be collected once Stage 12 is authorized.
+---
 
-| LFV/deployed evidence category | Capture method | Environment/source | Artifact destination |
+## Section G — Deployment/LFV evidence collection plan
+
+To be executed after CS2 grants Build Authorization clearance and Stage 12 commences. Reference: `modules/pit/05-live-functional-verification/`; PIT-RED-LFV-001..010; PIT-RED-NFR-001..008.
+
+| LFV/deployed evidence category | Capture method | Environment / source | Artifact destination |
 |---|---|---|---|
-| _(candidate fills)_ |  |  |  |
+| Route smoke — all 27 routes render | Playwright E2E smoke suite across all routes; execute on Vercel preview/production deployment; assert no 404/blank/500 | Vercel preview deployment (auto-deploy from PR branch) + Vercel production post-merge | `modules/pit/12-build/wave-evidence/w8.10/route-smoke-screenshots/` |
+| Auth flow verification (login/signup/invite/reset/onboarding) | Playwright HAR capture + screenshot at each auth flow step; verify session JWT, redirect target, and session restoration | Vercel preview deployment with Supabase staging environment | `modules/pit/12-build/wave-evidence/w8.10/auth-flow-har-screenshots/` |
+| Deployment SHA parity (`/__git_info`) | HTTP GET `/__git_info` on deployed URL; assert SHA matches expected PR HEAD commit SHA | Vercel preview deployment endpoint | `modules/pit/12-build/wave-evidence/w8.10/sha-parity-log.md` |
+| Permission / RLS negative-path smoke | Playwright role-matrix smoke run: key denied-path assertions per Section F for viewer, unauthenticated, task_owner against `/qa-dashboard` | Vercel preview with Supabase test identities per role | `modules/pit/12-build/wave-evidence/w8.10/permission-negative-smoke-har/` |
+| Evidence workflow smoke | Playwright: upload evidence file; reviewer approves; download signed URL; assert audit log entry | Vercel preview + Supabase staging storage | `modules/pit/12-build/wave-evidence/w8.10/evidence-workflow-smoke-artifacts/` |
+| Timeline render performance trace | Playwright performance trace: load 500-task fixture; assert initial render ≤500ms; capture Performance API entry | Vercel preview with seeded 500-task test project | `modules/pit/12-build/wave-evidence/w8.10/timeline-performance-trace.md` (maps to PIT-RED-NFR-001) |
+| Accessibility scan | Playwright axe-core integration run across all primary routes; capture violation report | Vercel preview deployment | `modules/pit/12-build/wave-evidence/w8.10/accessibility-scan-report.md` (maps to PIT-RED-NFR-004..005) |
+| Security header / CSP scan | OWASP ZAP or equivalent automated scan against deployed URL; assert no high/critical findings; verify CSP headers present | Vercel preview deployment | `modules/pit/12-build/wave-evidence/w8.10/security-scan-report.md` (maps to PIT-RED-NFR-008) |
+| Report generation artifacts (PDF/XLSX/CSV) | Playwright: trigger report generation as reporter role; assert file download completes; capture file metadata | Vercel preview + Supabase staging Edge Functions | `modules/pit/12-build/wave-evidence/w8.10/report-generation-smoke-files/` |
+| AIMC-only host verification | Playwright HAR intercept: trigger AI suggestion; assert all network calls go to AIMC gateway host only (no direct LLM provider host in HAR) | Vercel preview + AIMC gateway staging | `modules/pit/12-build/wave-evidence/w8.10/aimc-host-har.md` (maps to PIT-RED-AIMC-001..002) |
+| Full LFV artifact bundle assembly | Collect all above artifacts; assemble LFV pack per `modules/pit/05-live-functional-verification/` template; Foreman review before wave W8.10 closure | All Vercel/Supabase staging sources | `modules/pit/12-build/wave-evidence/w8.10/lfv-artifact-bundle-index.md` |
 
-## Risk register and top failure-mode prevention plan
-Candidate must submit top 10 build failure modes with mitigations.
+---
+
+## Section H — Top 10 build failure modes
 
 | # | Failure mode | Trigger signal | Preventive control | Contingency/rollback |
 |---|---|---|---|---|
-| 1 | _(candidate fills)_ |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
-| 6 |  |  |  |  |
-| 7 |  |  |  |  |
-| 8 |  |  |  |  |
-| 9 |  |  |  |  |
-| 10 |  |  |  |  |
+| 1 | **Timeline date drift across DST/year boundaries** — Gantt bar pixel positions shift after timezone transition or year-boundary reload, causing incorrect date display and no-date-drift test failures | PIT-RED-TIMELINE-011 fails; visual regression diff shows bar position shift after DST-straddle reload | Implement `YYYY-MM-DD`-only canonical-tz date math (no millisecond deltas); unit-test all DST transition cases before Playwright integration; freeze `canonicalTz` per org in `organisations` table | Revert date-math utility to previous snapshot; fix DST handling in isolation with dedicated unit-test harness before re-integrating into timeline component |
+| 2 | **RLS tenant isolation breach** — org_A viewer can read org_B project or audit data via direct Supabase query, causing PIT-RED-RLS-003 or PIT-RED-RLS-004 to fail | Vitest + Supabase cross-org query returns non-empty result for foreign org_id | Write RLS policies before implementing any data-fetch component; run PIT-RED-RLS-003/004 as first gate after each table's RLS policy creation; use Supabase Row Level Security test harness with explicit `anon`/`authenticated` role switching | Disable affected Supabase table from application read until RLS policy is corrected and all PIT-RED-RLS tests pass; do not merge wave until cross-org tests confirmed clean |
+| 3 | **Supabase Edge Function deployment failure** — report generation or invite-acceptance edge function fails to deploy or throws runtime error in staging, blocking W8.8 / W8.1 wave closure | Supabase CLI `deploy` returns non-zero exit code; Playwright smoke shows report generation returning 500 instead of file artifact | Test all edge functions locally with `supabase functions serve` before deploying to staging; write unit test for edge function handler inputs/outputs before deployment; include edge function deploy step in W8.x wave pre-closure checklist | Roll back edge function to previous deployed version via Supabase dashboard; restore prior evidence state; re-attempt deployment after fixing function | 
+| 4 | **Circular dependency data corruption** — W8.3 circular-dependency detection fails silently, allowing task_A → task_B → task_A to persist, corrupting dependency recalculation in W8.6 | PIT-RED-PROJECT-016 (circular dep unit test) fails; timeline recalculation enters infinite loop or throws unhandled exception | Implement circular-dependency detection algorithm (DFS cycle check) in the task-dependency save edge function before any W8.3 dependency-link UI is built; enforce rejection at API layer with explicit error response | Purge corrupt `task_dependencies` rows via DB rollback script; re-run PIT-RED-PROJECT-016 to confirm detection is active before re-opening the dependency-link UI |
+| 5 | **AIMC direct-provider call bypass** — AI suggestion request goes directly to LLM provider host instead of AIMC gateway, violating PIT-RED-AIMC-002 and constitutional constraint | Playwright HAR intercept on `/projects/:id/tasks` AI suggestion click shows call to `api.openai.com` or equivalent provider host instead of AIMC gateway host | Hard-code AIMC gateway URL in environment variable; enforce URL allowlist in FE fetch wrapper; run HAR intercept test (PIT-RED-AIMC-002) as first gate after any AI touchpoint implementation | Remove AI suggestion feature flag until AIMC gateway URL is corrected; do not merge W8.9 until PIT-RED-AIMC-001/002 pass with AIMC-only host confirmed in HAR |
+| 6 | **Evidence append-only audit log violation** — An `UPDATE` or `DELETE` operation on `audit_log` succeeds (bypassing RLS), violating PIT-RED-AUDIT-002 | PIT-RED-AUDIT-002 Vitest test (attempt update/delete audit entry) returns 200 or rows-affected > 0 instead of RLS block | Implement `audit_log` table with no-update/no-delete RLS policy as absolute first task in W8.5 before any audit-event insertion code; test with `service_role` and `authenticated` to confirm both blocked | Drop and recreate `audit_log` RLS policies if bypass is confirmed; freeze audit_log writes behind a dedicated edge function that only accepts INSERT (never UPDATE/DELETE) |
+| 7 | **Timeline column/header/body alignment desync after denominator change** — After switching from Week to Month preset, bar start pixels no longer align with column header boundaries | PIT-RED-TIMELINE-005 fails; visual regression diff shows header and body misaligned at any non-Week preset | Derive column header boundaries and bar pixel coordinates from the same single denominator-calculation function (single source of truth); snapshot-test header + body coordinate arrays together for each preset in Vitest | Revert denominator preset UI to single working preset; debug calculation divergence in isolation using unit-test snapshots; freeze alignment before re-enabling preset switcher |
+| 8 | **Protected admin route data leak via nav injection** — Admin nav items (e.g., "Org Admin", "QA Dashboard") remain visible in DOM for viewer/contributor roles, leaking route existence and causing PIT-RED-RLS-012 failure | Playwright DOM assertion for viewer session shows `.admin-nav-link` or equivalent selector present in rendered HTML | Implement role-conditional nav rendering at app-shell level in W8.2; run PIT-RED-RLS-012 immediately after nav component build; include DOM-level assertion (not just visual) in CI | Remove admin nav items from component tree entirely (conditional render, not CSS hide); do not merge W8.2 until DOM assertion confirms admin links absent for viewer |
+| 9 | **Report cross-org leakage** — reporter for org_A can retrieve report history or download report artifacts for org_B, causing PIT-RED-REPORT-005 / org-scope RLS failure | Supabase query for report history with `org_id=org_B` returns rows for org_A reporter; HAR shows 200 with foreign org content | Apply org-scoped RLS on `reports` and `report_history` tables before report generation edge function is wired up; unit test cross-org isolation immediately after RLS creation | Roll back report-history RLS policy; block report download/history feature until cross-org test confirms isolation; do not advance to W8.8 wave closure |
+| 10 | **LFV SHA parity mismatch** — Deployed Vercel build SHA does not match expected PR HEAD SHA, causing PIT-RED-LFV-001 parity check to fail and blocking W8.10 closure | `/__git_info` endpoint returns SHA differing from current PR HEAD; Vercel deployment log shows stale build | Configure Vercel to always redeploy on commit push; assert SHA parity immediately after each Vercel deploy completes before running any E2E evidence collection; include SHA in every LFV artifact filename | Trigger manual Vercel redeploy; wait for new SHA; re-run SHA parity check before re-running any E2E smoke collection; do not file any LFV artifacts until parity is confirmed |
+
+---
 
 ## Builder readiness decision checklist
-- [ ] All required tables/plans above are fully populated with concrete, auditable detail.
-- [ ] 27-route and primary-screen/five-state coverage is complete.
-- [ ] Role/auth/denied-path coverage is complete.
-- [ ] Data/API/RLS/Edge Function map is complete.
-- [ ] RED allocation plus reconciliation proof is complete.
-- [ ] Timeline strategy is complete.
-- [ ] Evidence/report/audit/notification plan is complete.
-- [ ] LFV/deployed evidence plan is complete.
-- [ ] Top 10 failure modes + mitigations are complete.
-- [ ] Stage 11 preconditions and CS2 Build Authorization constraints are satisfied.
+- [x] All required tables/plans above are fully populated with concrete, auditable detail.
+- [x] 27-route and primary-screen/five-state coverage is complete.
+- [x] Role/auth/denied-path coverage is complete.
+- [x] Data/API/RLS/Edge Function map is complete.
+- [x] RED allocation plus reconciliation proof is complete.
+- [x] Timeline strategy is complete.
+- [x] Evidence/report/audit/notification plan is complete.
+- [x] LFV/deployed evidence plan is complete.
+- [x] Top 10 failure modes + mitigations are complete.
+- [x] Stage 11 preconditions and CS2 Build Authorization constraints are satisfied.
 
 ## Non-overclaim statement
-Completion of this proof pack is a readiness requirement only. It is not a builder appointment, not Stage 12 execution, not Build Authorization clearance, not GREEN evidence, not live-deployed proof, and not `FUNCTIONAL_PASS`.
+Completion of this proof pack is a readiness requirement only. It is not a builder appointment, not Stage 12 execution, not Build Authorization clearance, not GREEN evidence, not live-deployed proof, and not `FUNCTIONAL_PASS`.  
+Stage 12 status: **NOT_STARTED**. Build Authorization: **NOT CLEARED**.
