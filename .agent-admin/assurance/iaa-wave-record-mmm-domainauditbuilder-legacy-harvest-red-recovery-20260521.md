@@ -2,20 +2,26 @@
 
 **Wave ID**: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521
 **Date**: 2026-05-21
-**PR**: PENDING
-**Issue**: PENDING — RED recovery: classify MMM DomainAuditBuilder as legacy harvest and record PR1700/PR1711 parity failure
+**PR**: #1723
+**Issue**: #1722 — RED recovery: classify MMM DomainAuditBuilder as legacy harvest and record PR1700/PR1711 parity failure
 **Branch**: copilot/red-recovery-legacy-harvest-fix
 **Producing Agent (expected)**: governance-liaison-isms-agent (delegated by foreman-v2-agent)
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
+**CS2 Authorization**: Issue #1722 opened by CS2 / @APGI-cmy, with CS2 clarification comment applied
 
 ---
 
 IAA_PREFLIGHT_BRIEF
-PR: PENDING
-ISSUE: PENDING
+PR: #1723
+ISSUE: #1722
 WAVE: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: 7e1a6660cd80c7dcb9794a426feff23b651a2430
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
+
+CURRENT_HEAD_CONTEXT:
+- historical_prebrief_sha: 7e1a6660cd80c7dcb9794a426feff23b651a2430
+- reviewed_head_at_cs2_change_request: bbdb92143cae66739b48ba71f12a88064f2efafc
+- closure_policy: current-head closure tracked via GITHUB_PR_HEAD_SHA to prevent stale SHA-only loops
 
 EXPECTED_QA_SCOPE:
 - `modules/MMM/BUILD_PROGRESS_TRACKER.md` must explicitly record PR1700/PR1711 as parity failure (not restoration completion)
