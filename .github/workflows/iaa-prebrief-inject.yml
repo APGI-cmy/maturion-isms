@@ -5,8 +5,8 @@ on:
     branches-ignore:
       - main
     paths:
-      - '.agent-admin/prs/pr-*/wave-current-tasks*.md'
-      - '.agent-workspace/foreman*/personal/wave-current-tasks*.md'
+      - '.agent-admin/prs/pr-*/wave-current-tasks.md'
+      - '.agent-workspace/foreman*/personal/wave-current-tasks.md'
   pull_request_target:
     types: [opened, ready_for_review]
   issue_comment:
@@ -197,6 +197,9 @@ jobs:
           PR_TASK_FILES=(.agent-admin/prs/pr-*/wave-current-tasks.md)
           shopt -u nullglob
           if [ "${#PR_TASK_FILES[@]}" -gt 0 ]; then
+            if [ "${#PR_TASK_FILES[@]}" -gt 1 ]; then
+              echo "::warning::Multiple PR-scoped wave-current-tasks files found; using ${PR_TASK_FILES[0]}"
+            fi
             TASKS_FILE="${PR_TASK_FILES[0]}"
           elif [ -f ".agent-workspace/foreman-v2/personal/wave-current-tasks.md" ]; then
             TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
@@ -659,6 +662,9 @@ jobs:
           PR_TASK_FILES=(.agent-admin/prs/pr-*/wave-current-tasks.md)
           shopt -u nullglob
           if [ "${#PR_TASK_FILES[@]}" -gt 0 ]; then
+            if [ "${#PR_TASK_FILES[@]}" -gt 1 ]; then
+              echo "::warning::Multiple PR-scoped wave-current-tasks files found; using ${PR_TASK_FILES[0]}"
+            fi
             TASKS_FILE="${PR_TASK_FILES[0]}"
           elif [ -f ".agent-workspace/foreman-v2/personal/wave-current-tasks.md" ]; then
             TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
