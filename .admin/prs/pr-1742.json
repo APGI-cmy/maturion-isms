@@ -1,0 +1,28 @@
+{
+  "pr": 1742,
+  "issue": 1742,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "branch": "copilot/add-post-handover-auto-remediation",
+  "scope": [
+    ".agent-admin/assurance/iaa-wave-record-pr1742-post-handover-auto-remediation-20260521.md",
+    ".agent-admin/prehandover/proof-pr-1742-post-handover-auto-remediation-20260521.md",
+    ".agent-admin/prs/pr-1742/active-state.json",
+    ".agent-admin/prs/pr-1742/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1742.md",
+    ".github/scripts/post-handover-auto-remediation.js",
+    ".github/scripts/post-handover-auto-remediation.test.sh",
+    ".github/workflows/post-handover-auto-remediation.yml"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "copilot-direct",
+  "evidence_required": [
+    "local: bash .github/scripts/post-handover-auto-remediation.test.sh",
+    "local: bash .github/scripts/producer-next-action-guidance.test.sh",
+    "local: bash .github/scripts/handover-claim-gate.test.sh",
+    "local: bash .github/scripts/pre-handover-checkpoint.test.sh"
+  ],
+  "merge_authority": "CS2"
+}
