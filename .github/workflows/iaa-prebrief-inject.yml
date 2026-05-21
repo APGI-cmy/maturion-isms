@@ -5,6 +5,7 @@ on:
     branches-ignore:
       - main
     paths:
+      - '.agent-admin/prs/pr-*/wave-current-tasks*.md'
       - '.agent-workspace/foreman*/personal/wave-current-tasks*.md'
   pull_request_target:
     types: [opened, ready_for_review]
@@ -191,7 +192,15 @@ jobs:
         id: wave_tasks
         if: github.event_name == 'push'
         run: |
-          TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+          TASKS_FILE=""
+          shopt -s nullglob
+          PR_TASK_FILES=(.agent-admin/prs/pr-*/wave-current-tasks.md)
+          shopt -u nullglob
+          if [ "${#PR_TASK_FILES[@]}" -gt 0 ]; then
+            TASKS_FILE="${PR_TASK_FILES[0]}"
+          elif [ -f ".agent-workspace/foreman-v2/personal/wave-current-tasks.md" ]; then
+            TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+          fi
           if [ -f "$TASKS_FILE" ]; then
             SNIPPET=$(head -c 1500 "$TASKS_FILE" | sed "s/\`/'/g")
             # Normalize wave number — strip "Wave " prefix, capture just the number/slug
@@ -322,8 +331,18 @@ jobs:
               const fs = require('fs');
               let issueNumber = null;
 
-              const tasksFile = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
-              if (fs.existsSync(tasksFile)) {
+              const prTaskCandidates = fs.existsSync('.agent-admin/prs')
+                ? fs.readdirSync('.agent-admin/prs', { withFileTypes: true })
+                    .filter((entry) => entry.isDirectory() && /^pr-\d+$/.test(entry.name))
+                    .map((entry) => `.agent-admin/prs/${entry.name}/wave-current-tasks.md`)
+                    .filter((p) => fs.existsSync(p))
+                : [];
+              const taskCandidates = [
+                ...prTaskCandidates,
+                '.agent-workspace/foreman-v2/personal/wave-current-tasks.md',
+              ];
+              const tasksFile = taskCandidates.find((p) => fs.existsSync(p));
+              if (tasksFile) {
                 const fileContent = fs.readFileSync(tasksFile, 'utf8');
                 const issueMatch = fileContent.match(/\*\*Issue\*\*:\s*#?(\d+)/i);
                 if (issueMatch) {
@@ -635,7 +654,15 @@ jobs:
       - name: Read wave number from wave-current-tasks.md
         id: wave_info
         run: |
-          TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+          TASKS_FILE=""
+          shopt -s nullglob
+          PR_TASK_FILES=(.agent-admin/prs/pr-*/wave-current-tasks.md)
+          shopt -u nullglob
+          if [ "${#PR_TASK_FILES[@]}" -gt 0 ]; then
+            TASKS_FILE="${PR_TASK_FILES[0]}"
+          elif [ -f ".agent-workspace/foreman-v2/personal/wave-current-tasks.md" ]; then
+            TASKS_FILE=".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+          fi
           if [ -f "$TASKS_FILE" ]; then
             RAW_WAVE_LINE=$(grep -m1 -oP '(?<=\*\*Wave\*\*:\s).*' "$TASKS_FILE" || true)
             if [ -n "$RAW_WAVE_LINE" ]; then
@@ -758,8 +785,18 @@ jobs:
             const fs = require('fs');
             let issueNumber = null;
 
-            const tasksFile = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
-            if (fs.existsSync(tasksFile)) {
+            const prTaskCandidates = fs.existsSync('.agent-admin/prs')
+              ? fs.readdirSync('.agent-admin/prs', { withFileTypes: true })
+                  .filter((entry) => entry.isDirectory() && /^pr-\d+$/.test(entry.name))
+                  .map((entry) => `.agent-admin/prs/${entry.name}/wave-current-tasks.md`)
+                  .filter((p) => fs.existsSync(p))
+              : [];
+            const taskCandidates = [
+              ...prTaskCandidates,
+              '.agent-workspace/foreman-v2/personal/wave-current-tasks.md',
+            ];
+            const tasksFile = taskCandidates.find((p) => fs.existsSync(p));
+            if (tasksFile) {
               const fileContent = fs.readFileSync(tasksFile, 'utf8');
               const issueMatch = fileContent.match(/\*\*Issue\*\*:\s*#?(\d+)/i);
               if (issueMatch) {
