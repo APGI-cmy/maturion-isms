@@ -1,34 +1,41 @@
 # Wave Current Tasks — foreman-v2-agent
 
-Wave: inject-next-action-guidance
-Session ID: session-pr1719-inject-next-action-guidance-20260521
+Wave: isms-landing-discovery-report
+Session ID: session-issue-1727-isms-landing-discovery-20260521
 Date: 2026-05-21
-Branch: copilot/inject-next-action-guidance
-Issue: #1718 — Inject producer next-action guidance on every Copilot PR push before handover
-PR: #1719
-CS2 Authorization: PR comment 4506335006 from @APGI-cmy on 2026-05-21 requests action to convert this into a real implementation PR or close it as blocked/no-op
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md
-implementation_plan_path: .agent-workspace/foreman-v2/personal/implementation-plan-inject-next-action-guidance-20260521.md
-builder_checklist_path: .agent-workspace/foreman-v2/personal/builder-checklist-inject-next-action-guidance-20260521.md
+Branch: copilot/create-isms-public-landing-report
+Issue: #1727 — ISMS Public Landing Harvest Discovery Report
+PR: #1728
+CS2 Authorization: Issue #1727 opened by APGI-cmy (CS2) and assigns Copilot. Valid wave-start authorization per Phase 2 Step 2.1.
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md
+implementation_plan_path: N/A — documentation-only wave
+builder_checklist_path: N/A — documentation-only wave
 ceremony_admin_appointed: PENDING
 
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
-IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md
-IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T08:42:47Z
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md
+IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: aaae02a783929691829f06007888a0a37a44ebee
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 
 ## Wave objective
 
-- Convert PR #1719 from blocked no-op posture into a real implementation PR for issue #1718.
-- Add early, non-blocking producer next-action guidance on trusted PR lifecycle signals.
-- Preserve the existing hard handover gate and require `/prepare-handover` before final summary or handover claims.
+Create an ISMS Public Landing Harvest Discovery Report per issue #1727.
+This is a documentation-only wave — no production code changes.
+Deliverable: A Markdown discovery report committed under modules/isms/discovery-report/
+
+## Wave type
+
+DOCUMENTATION_DISCOVERY — governance-only/docs-only diff; no production code or tests.
+Per iaa-final-assurance-gate.sh, IAA final assurance is N/A for docs-only diffs.
 
 ## Active task sequence
 
-1. ✅ Re-run Foreman preflight, CI review, and IAA pre-brief for PR #1719.
-2. ✅ Bootstrap PR #1719 governance artifacts and active wave binding.
-3. ✅ Delegate builder implementation for trusted metadata-only injector workflow, aligned trigger phrase centralization, and regression coverage.
-4. ⏳ Review builder handback in Quality Professor mode and refresh scope/admin evidence to current diff.
-5. ⏳ Complete ECAP / IAA handover bundle only after current-head gates are GREEN.
+1. ✅ Phase 1 PREFLIGHT complete (identity, Tier 2, CANON, session memory, FAIL-ONLY-ONCE, merge gates)
+2. ✅ Governance admin artifacts created (pr-1728.json, scope declaration pr-1728.md, wave-current-tasks.md)
+3. ✅ IAA Pre-Brief invoked — wave record at .agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md — EXEMPT (docs-only)
+4. ⏳ Delegate discovery report creation to mat-specialist
+5. ⏳ Quality Professor review of discovery report
+6. ⏳ Create session memory and minimal PREHANDOVER proof (docs-only)
+7. ⏳ Commit and push all artifacts
