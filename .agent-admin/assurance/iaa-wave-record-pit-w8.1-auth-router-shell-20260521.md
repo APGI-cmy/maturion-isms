@@ -18,7 +18,7 @@ Qualifying tasks: [Start PIT Stage 12 build execution for W8.1 Auth/Router/Shell
 Applicable overlay: [PRE_BUILD_STAGE_MODEL → PRE_BUILD_GATES (primary); PRODUCT_BUILD_ASSURANCE / BUILD_DELIVERABLE controls expected once runtime/UI/API delivery begins.]  
 Anti-regression obligations: [yes — apply FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-001..NBR-005 and preserve Stage 12 gate discipline: no implicit authorization, no silent runtime regressions.]
 
-**ceremony_admin_appointed**: PENDING (not yet declared for this wave in active wave-current-tasks context)
+**ceremony_admin_appointed**: NOT_REQUIRED
 
 ---
 
