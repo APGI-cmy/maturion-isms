@@ -1,0 +1,22 @@
+{
+  "pr_number": 1731,
+  "title": "Harvest legacy DomainAuditBuilder with behaviour parity",
+  "branch": "copilot/harvest-domain-audit-builder-again",
+  "issue": "#1726",
+  "wave": "mmm-dab-harvest-implementation-20260521",
+  "type": "implementation",
+  "requires_ecap": true,
+  "foreman_session": "session-mmm-dab-harvest-implementation-20260521",
+  "iaa_wave_record": ".agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md",
+  "created_at": "2026-05-21",
+  "status": "active",
+  "builder_agent": "ui-builder",
+  "FILES_CHANGED": [
+    "apps/mmm/src/components/assessment/DomainAuditBuilder.tsx",
+    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx",
+    ".agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".admin/prs/pr-1731.json",
+    ".agent-admin/scope-declarations/pr-1731.md"
+  ]
+}

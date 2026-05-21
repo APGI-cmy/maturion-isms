@@ -1,34 +1,38 @@
 # Wave Current Tasks — foreman-v2-agent
 
-Wave: inject-next-action-guidance
-Session ID: session-pr1719-inject-next-action-guidance-20260521
+Wave: mmm-dab-harvest-implementation-20260521
+Session ID: session-mmm-dab-harvest-implementation-20260521
 Date: 2026-05-21
-Branch: copilot/inject-next-action-guidance
-Issue: #1718 — Inject producer next-action guidance on every Copilot PR push before handover
-PR: #1719
-CS2 Authorization: PR comment 4506335006 from @APGI-cmy on 2026-05-21 requests action to convert this into a real implementation PR or close it as blocked/no-op
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md
-implementation_plan_path: .agent-workspace/foreman-v2/personal/implementation-plan-inject-next-action-guidance-20260521.md
-builder_checklist_path: .agent-workspace/foreman-v2/personal/builder-checklist-inject-next-action-guidance-20260521.md
+Branch: copilot/harvest-domain-audit-builder-again
+Issue: #1726 — Harvest legacy DomainAuditBuilder/MPS/Intent/Criteria generation components with behaviour parity
+PR: #1731
+CS2 Authorization: Issue #1726 opened by CS2 / @APGI-cmy on 2026-05-21; issue #1722 (dependency) closed by CS2 on 2026-05-21
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
+implementation_plan_path: modules/MMM/07-implementation-plan/domainauditbuilder-legacy-harvest-recovery.md
+builder_checklist_path: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 ceremony_admin_appointed: PENDING
 
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
-IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md
-IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T08:42:47Z
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
+IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T12:50:00Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 
 ## Wave objective
 
-- Convert PR #1719 from blocked no-op posture into a real implementation PR for issue #1718.
-- Add early, non-blocking producer next-action guidance on trusted PR lifecycle signals.
-- Preserve the existing hard handover gate and require `/prepare-handover` before final summary or handover claims.
+Deliver legacy-derived card-based DomainAuditBuilder (ol/li → div/card grid) with behaviour-parity tests proving:
+- Three generation step cards render (not ordered list)
+- Generated MPS items show intent AND rationale (not title-only)
+- All 195 existing tests continue to pass
 
 ## Active task sequence
 
-1. ✅ Re-run Foreman preflight, CI review, and IAA pre-brief for PR #1719.
-2. ✅ Bootstrap PR #1719 governance artifacts and active wave binding.
-3. ✅ Delegate builder implementation for trusted metadata-only injector workflow, aligned trigger phrase centralization, and regression coverage.
-4. ⏳ Review builder handback in Quality Professor mode and refresh scope/admin evidence to current diff.
-5. ⏳ Complete ECAP / IAA handover bundle only after current-head gates are GREEN.
+1. ✅ Phase 1 preflight — identity, Tier 2, CANON, FAIL-ONLY-ONCE, merge gate checks
+2. ✅ Create IAA wave record: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
+3. ✅ Update wave-current-tasks.md for current wave
+4. ⏳ IAA pre-brief invocation (Phase 1 exit gate)
+5. ⏳ Phase 2 alignment (CS2 auth confirmed, pre-build stages verified)
+6. ⏳ Delegate to ui-builder: DomainAuditBuilder card layout + parity tests
+7. ⏳ Quality Professor review of builder deliverable
+8. ⏳ ECAP / PREHANDOVER / IAA final assurance

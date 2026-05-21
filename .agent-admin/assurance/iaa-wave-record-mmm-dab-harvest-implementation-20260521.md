@@ -285,3 +285,32 @@ Anti-regression obligations: NO — NBR-001–005 not triggered by this wave's s
 ECAP: NOT APPOINTED — ACR-01–16 checks deferred unless appointment made before final IAA invocation
 Pre-brief artifact committed to: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md ## PRE-BRIEF
 ```
+
+---
+
+## PRE-BRIEF (IAA Response)
+
+**Produced by**: independent-assurance-agent (Phase 0)
+**Date**: 2026-05-21
+**Status**: COMPLETE
+
+Qualifying tasks: 4
+Applicable overlay: PRODUCT_BUILD_ASSURANCE (primary) + AAWP_MAT (co-trigger)
+Anti-regression obligations: NO — NBR-001–005 not triggered
+ECAP: NOT APPOINTED — ACR-01–16 deferred
+
+Structural change confirmed required:
+- `ol` → `div`, `li` → `div`
+- `data-testid="domain-audit-step-card"` on each of 3 step cards
+- T-MMM-S6-AI-005 new test: `getAllByTestId('domain-audit-step-card')` → 3 elements
+- T-MMM-S6-AI-001 strengthened: assert intent + rationale text visible
+- ≥197 pass, 0 fail, 0 skip
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
+## TOKEN
+
+PHASE_B_BLOCKING_TOKEN: PENDING
+PR: #1731
+Issue: #1726
+Reviewed SHA: PENDING
