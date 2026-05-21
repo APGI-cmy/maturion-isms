@@ -52,8 +52,8 @@ FOREMAN_INSTRUCTIONS:
 - Tracker update must record appointment posture and explicit NOT CLEARED build authorization
 
 ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS:
-- ECAP_REQUIRED: NO (docs/governance-only appointment wave)
-- ECAP_EXPECTED_ARTIFACTS: none unless protected governance paths expand
+- ECAP_REQUIRED: YES (governance-control files changed: .admin/prs/pr-1730.json, .agent-admin/scope-declarations/pr-1730.md, .agent-admin/assurance/iaa-wave-record-pit-stage11-builder-appointment-20260521.md, .agent-workspace/foreman-v2/personal/wave-current-tasks.md — corrected post-token at commit 022ff1b)
+- ECAP_EXPECTED_ARTIFACTS: `.admin/prs/pr-1730.json`, `.agent-admin/scope-declarations/pr-1730.md`, `.agent-admin/assurance/iaa-wave-record-pit-stage11-builder-appointment-20260521.md`
 
 CURRENT_HEAD_CI_EXPECTATIONS:
 - Preflight evidence/admin parity gates must see active wave-record + wave-current-tasks binding for PR #1730
@@ -224,11 +224,12 @@ FM-012: RED baseline acknowledgement uses 144 only, rolling back CS2 Option B (1
 ### ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS
 
 ```
-ECAP_REQUIRED: NO
-ECAP_EXPECTED_ARTIFACTS: none
-CEREMONY_ADMIN_APPOINTED: NOT_REQUIRED
-Rationale: Docs/governance-only appointment wave. No protected governance paths beyond BUILD_PROGRESS_TRACKER.md
-  advancement and module/11-builder-appointment/ artifacts.
+ECAP_REQUIRED: YES (corrected post-token at commit 022ff1b — governance-control files changed)
+ECAP_EXPECTED_ARTIFACTS: `.admin/prs/pr-1730.json`, `.agent-admin/scope-declarations/pr-1730.md`, `.agent-admin/assurance/iaa-wave-record-pit-stage11-builder-appointment-20260521.md`
+CEREMONY_ADMIN_APPOINTED: NOT_REQUIRED (governance-change admin posture satisfied by PR manifest and wave record; no separate ECAP ceremony artifact required beyond the governance-control files already committed)
+Rationale: PR changes governance-control files (.agent-admin/, .admin/prs/, .agent-workspace/ paths).
+  requires_ecap: true set in .admin/prs/pr-1730.json at commit 022ff1b after IAA token issued at 49e32f2.
+  Post-token alignment — see POST-TOKEN-ALIGNMENT section in ## TOKEN.
 ```
 
 ### CURRENT_HEAD_CI_EXPECTATIONS
@@ -300,8 +301,8 @@ PRE_BRIEF_STATUS: IAA-AUTHORED AND COMMITTED
 FINAL_ASSURANCE_REQUIRED: YES — invoke IAA after all artifacts are committed and pushed
 APPLICABLE_TRIGGER: PRE_BUILD_STAGE_MODEL
 APPLICABLE_OVERLAYS_AT_FINAL: PRE_BUILD_GATES + SIMPLIFIED_ADMIN_ASSURANCE + STRICT_MERGE_POSTURE
-CEREMONY_ADMIN_REQUIRED: NO
-ECAP_REQUIRED: NO
+CEREMONY_ADMIN_REQUIRED: NOT_REQUIRED (governance-change admin posture satisfied by PR manifest and wave record)
+ECAP_REQUIRED: YES — corrected post-token (commit 022ff1b; governance-control files changed)
 STAGE_12_BOUNDARY: NOT_STARTED — must remain
 BUILD_AUTH_BOUNDARY: NOT CLEARED — must remain
 APPOINTED_BUILDER: pit-specialist (to be formally confirmed in stage11-builder-appointment.md)
@@ -326,6 +327,24 @@ OVERLAYS_APPLIED: PRE_BUILD_GATES (OVL-PBG-001–019+ADM-001) + SIMPLIFIED_ADMIN
 RE_INVOCATION: R1 (REJECTION-PACKAGE) → R2 (ASSURANCE-TOKEN) — both R1 ceremony failures resolved at HEAD 49e32f2
 IAA_SESSION: session-pit-stage11-builder-appointment-20260521-R2
 TOKEN_WRITTEN_BY: independent-assurance-agent (IAA-only per ECAP-001/NO-STANDALONE-TOKEN-001)
+
+### POST-TOKEN-ALIGNMENT
+
+```
+ALIGNMENT_TYPE: ECAP_POSTURE_CORRECTION
+COMMIT: 022ff1b (post-token admin manifest fix)
+TOKEN_HEAD_AT_ISSUE: 49e32f26f4b6ec6053d7afaec200f4238199815f
+CHANGE: requires_ecap corrected from false → true in .admin/prs/pr-1730.json
+REASON: PR changes governance-control files (.agent-admin/, .admin/prs/, .agent-workspace/ paths);
+  validate-simple-pr-admin CHECK 8 requires_ecap: true when governance-control files are in git diff.
+  This was missed at token-issuance time (IAA-MISS-ECAP-001).
+ECAP_REISSUANCE_REQUIRED: NO — the ECAP posture correction is a PR manifest metadata fix only.
+  The IAA 25/25 checks at 49e32f2 remain valid; no implementation/runtime scope changed.
+  The mmm-pr-admin gate passes with requires_ecap: true in the manifest.
+  This wave record ECAP_REQUIRED fields updated to YES to align with manifest posture.
+WAVE_RECORD_FIELDS_UPDATED: ECAP_REQUIRED (initial brief), ECAP_REQUIRED (PRE-BRIEF section),
+  ECAP_REQUIRED (RESULT section) — all corrected from NO → YES at commit following 022ff1b.
+```
 
 ---
 
