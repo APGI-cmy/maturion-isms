@@ -1,0 +1,38 @@
+{
+  "pr": 1717,
+  "issue": 1718,
+  "issue_title": "Tune governance preflight after resolver/rebase hardening",
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope_notes": "Governance preflight tuning: canonical delta classification, resolver-selected artifact precedence, and PR-scoped prebrief workflow alignment with strict controls unchanged.",
+  "scope": [
+    ".admin/prs/pr-1717.json",
+    ".agent-admin/assurance/iaa-wave-record-pr1717-stop-and-fix-ecap-gate-evidence-20260521.md",
+    ".agent-admin/prehandover/proof-pr-1717-stop-and-fix-ecap-gate-evidence-20260521.md",
+    ".agent-admin/prs/pr-1717/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1717.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1717-stop-and-fix-ecap-gate-evidence-20260521.md",
+    ".agent-workspace/foreman-v2/knowledge/WAVE-CURRENT-TASKS-PROTOCOL.md",
+    ".github/scripts/classify-pr-delta.sh",
+    ".github/scripts/iaa-final-assurance-gate.sh",
+    ".github/scripts/iaa-final-assurance-gate.test.sh",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/scripts/validate-product-delivery-gates.sh",
+    ".github/scripts/validate-product-delivery-gates.test.sh",
+    ".github/workflows/iaa-prebrief-inject.yml",
+    "governance/templates/iaa-wave-record.template.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "execution-ceremony-admin-agent",
+  "evidence_required": [
+    "ECAP prehandover proof and bundle committed for PR #1717",
+    "Strict gate-change evidence recorded with before/after and no-weakening statement",
+    "Affected governance gate regression suites executed and passing"
+  ],
+  "merge_authority": "CS2"
+}
