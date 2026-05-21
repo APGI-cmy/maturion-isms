@@ -239,7 +239,7 @@ Before Stage 5 Architecture can be gate-passed, it must be formally reconciled a
 > **Path Note**: Stage 5b LFV Package occupies `modules/pit/05-live-functional-verification/`. Stage 6 QA-to-Red is correctly located at `modules/pit/06-qa-to-red/` to avoid path conflict.  
 **Key Artifacts**:
 - [x] `qa-to-red-plan.md` — Stage 6 methodology, scope, sources, gates, non-goals
-- [x] `red-test-suite-catalog.md` — 144 RED tests across 13 categories (PIT-RED-ROUTE, AUTH, RLS, PROJECT, TIMELINE, EVIDENCE, NOTIFICATION, REPORT, AUDIT, QA, AIMC, LFV, NFR)
+- [x] `red-test-suite-catalog.md` — 147 RED tests across 13 categories (PIT-RED-ROUTE, AUTH, RLS, PROJECT, TIMELINE, EVIDENCE, NOTIFICATION, REPORT, AUDIT, QA, AIMC, LFV, NFR)
 - [x] `frs-to-red-traceability.md` — PIT-FR-001 through PIT-FR-123 all mapped (122 RED_TEST_DEFINED, 1 NOT_TESTABLE)
 - [x] `trs-to-red-traceability.md` — PIT-TR-001 through PIT-TR-126 all mapped (124 RED_TEST_DEFINED, 2 NOT_TESTABLE)
 - [x] `architecture-to-red-traceability.md` — 27 routes, 22 screens, all architecture domains covered
@@ -278,10 +278,10 @@ Stage 6 must derive RED tests for each of the following categories. Gaps in any 
 
 **Gate-Pass Prerequisites**: Stage 5 Architecture gate-pass and Stage 5b LFV package prerequisites are satisfied. Stage 7 PBFAG may now be assessed in a separate review step. No Stage 7 gate-pass is claimed in this issue.
 
-**Stage 6 RED Suite Statistics**: 144 tests defined; 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
+**Stage 6 RED Suite Statistics**: 147 tests defined (CS2 Option B reconciliation baseline); 0 BLOCKING_GAP; FRS coverage 122/123 (1 NOT_TESTABLE: PIT-FR-123); TRS coverage 124/126 (2 NOT_TESTABLE: PIT-TR-115, PIT-TR-126)
 
 **Completion Date**: 2026-05-18 (Stage 6 gate-pass review complete)  
-**Notes**: Stage 6 QA-to-Red review completed after Stage 5 gate-pass confirmation. Verified 144 RED tests, FRS/TRS traceability coverage, architecture-to-RED and LFV-to-RED mappings, route/screen/state matrix, role denied-path matrix, timeline RED tests, live-functional RED gates, and Stage 6 Functional-Delivery Guardrails derivation. No unresolved Stage 6 `BLOCKING_GAP` entries remain. Stage 6 does NOT start implementation, appoint a builder, install active workflows, clear Build Authorization, or claim FUNCTIONAL_PASS. Stage 7 may now be assessed separately. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 6 QA-to-Red review completed after Stage 5 gate-pass confirmation. Baseline has been reconciled to 147 RED tests under CS2 Option B (issue #1714 / PR #1715), explicitly including `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, and `PIT-RED-TIMELINE-012`. FRS/TRS traceability coverage, architecture-to-RED and LFV-to-RED mappings, route/screen/state matrix, role denied-path matrix, timeline RED tests, live-functional RED gates, and Stage 6 Functional-Delivery Guardrails derivation remain intact. No unresolved Stage 6 `BLOCKING_GAP` entries remain. Stage 6 does NOT start implementation, appoint a builder, install active workflows, clear Build Authorization, or claim FUNCTIONAL_PASS. Stage 7 may now be assessed separately. Build Authorization remains NOT CLEARED.
 
 ---
 
@@ -365,7 +365,7 @@ The implementation plan must satisfy all of the following. Any gap is a Stage 8 
 **Key Artifacts**:
 - [x] `builder-checklist.md` — Stage 9 Builder Checklist v1.0 covering all 5 mandatory sections (authority chain, functional scope, RED suite, build boundary, Functional-Delivery Guardrails) and all 8 Stage 9 tracker guardrails
 - [x] `stage9-gate-pass-review.md` — Stage 9 gate-pass review evidence: all 19 issue #1687 criteria verified PASS; all 8 Functional-Delivery Guardrails verified PASS and ticked
-- [x] `stage9-post-stage8-hardening-reconfirmation.md` — Stage 9 reconfirmation after Stage 8 hardening (PR #1693): confirms Stage 9 gate-pass remains valid; records 144-vs-147 RED test delta as a pre-appointment reconciliation obligation blocking Stage 11 builder appointment; does NOT reclassify Stage 9 (maturion-isms#1694 / PR #1695 — 2026-05-20)
+- [x] `stage9-post-stage8-hardening-reconfirmation.md` — Stage 9 reconfirmation after Stage 8 hardening (PR #1693): confirms Stage 9 gate-pass remains valid; records 144-vs-147 RED test delta history and its downstream reconciliation obligation; does NOT reclassify Stage 9 (maturion-isms#1694 / PR #1695 — 2026-05-20)
 
 **Functional-Delivery Guardrails (added maturion-isms#1575 — MANDATORY for Stage 9 gate-pass)**:
 
@@ -383,7 +383,7 @@ The builder checklist must verify that each builder candidate understands and ac
 **Completion Date**: 2026-05-19 (gate-pass review complete)  
 **Review Authority**: foreman-v2-agent (maturion-isms#1687; CS2-authorized)  
 **Gate-Pass Statement**: Stage 9 gate-pass confirms the Builder Checklist covers all 8 Functional-Delivery Guardrails and is ready to bind future builder candidates at Stage 11. This gate-pass does **not** appoint a builder, does **not** start build execution, does **not** clear Build Authorization, does **not** claim tests are GREEN, and does **not** claim FUNCTIONAL_PASS. Stage 10 IAA Pre-Brief is now initiated.  
-**Notes**: Stage 9 gate-pass review completed per maturion-isms#1687 after confirming all 19 issue criteria PASS and all 8 Stage 9 Functional-Delivery Guardrails PASS. Review evidence at `modules/pit/09-builder-checklist/stage9-gate-pass-review.md`. Stage 9 gate-pass is based on the checklist artifact being complete and binding for future candidates — no builder candidate has been appointed or authorised. Stage 11 is the only builder appointment stage. Build Authorization remains NOT CLEARED. After Stage 8 hardening artifacts were added by PR #1693, Stage 9 was reconfirmed valid in `stage9-post-stage8-hardening-reconfirmation.md` (maturion-isms#1694 / PR #1695 — 2026-05-20): the Stage 9 checklist remains sufficient; the 144-vs-147 RED test delta blocks Stage 11 builder appointment and requires CS2-approved reconciliation before a builder can be appointed — it is not a Stage 9 re-gate-pass trigger.
+**Notes**: Stage 9 gate-pass review completed per maturion-isms#1687 after confirming all 19 issue criteria PASS and all 8 Stage 9 Functional-Delivery Guardrails PASS. Review evidence at `modules/pit/09-builder-checklist/stage9-gate-pass-review.md`. Stage 9 gate-pass is based on the checklist artifact being complete and binding for future candidates — no builder candidate has been appointed or authorised. Stage 11 is the only builder appointment stage. Build Authorization remains NOT CLEARED. After Stage 8 hardening artifacts were added by PR #1693, Stage 9 was reconfirmed valid in `stage9-post-stage8-hardening-reconfirmation.md` (maturion-isms#1694 / PR #1695 — 2026-05-20). The historical 144-vs-147 delta has now been reconciled by CS2 Option B (issue #1714 / PR #1715), so this delta no longer blocks Stage 11 appointment readiness.
 
 ---
 
@@ -408,7 +408,7 @@ The IAA Pre-Brief must include:
 - [x] IAA challenge questions for one-time functional delivery: IAA must state what would cause it to issue a REJECTION-PACKAGE
 
 **Completion Date**: 2026-05-20  
-**Notes**: Stage 10 gate-pass review is now filed at `modules/pit/10-iaa-pre-brief/stage10-gate-pass-review.md` with IAA response at `modules/pit/10-iaa-pre-brief/iaa-response.md`. Stage 10 remains strictly pre-brief/readiness scope. The full hardened Stage 8 package (including all 8 hardening artifacts) was reviewed and the RED reconciliation blocker remains active and explicit: 144 vs 147 with rows `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`. Stage 11 and Stage 12 remain NOT_STARTED. Build Authorization remains NOT CLEARED.
+**Notes**: Stage 10 gate-pass review is now filed at `modules/pit/10-iaa-pre-brief/stage10-gate-pass-review.md` with IAA response at `modules/pit/10-iaa-pre-brief/iaa-response.md`. Stage 10 remains strictly pre-brief/readiness scope. The full hardened Stage 8 package (including all 8 hardening artifacts) was reviewed and the RED reconciliation blocker has been closed by CS2 Option B (baseline now 147) with explicit accounting of `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, and `PIT-RED-TIMELINE-012`. Stage 11 and Stage 12 remain NOT_STARTED. Build Authorization remains NOT CLEARED.
 
 > **Non-overclaim**: Stage 10 gate-pass does **not** appoint a builder, does **not** start build execution, does **not** clear Build Authorization, does **not** claim tests are GREEN, does **not** claim live deployment proof exists, and does **not** claim FUNCTIONAL_PASS.
 
@@ -419,7 +419,7 @@ The IAA Pre-Brief must include:
 **Location**: `modules/pit/11-builder-appointment/`  
 **Key Artifacts**:
 - [x] `builder-readiness-proof-pack.md` — Stage 11 pre-appointment proof requirements (concrete evidence tables/plans; readiness only)
-- [x] `red-baseline-reconciliation-decision.md` — 144-vs-147 reconciliation decision gate (Stage 11 blocker until CS2 sign-off)
+- [x] `red-baseline-reconciliation-decision.md` — 144-vs-147 reconciliation decision record (CS2 Option B sign-off filed; baseline set to 147)
 - [x] `stage8-hardening-acknowledgement.md` — per-artifact acknowledgement + execution-use + proof requirements for all 8 hardened Stage 8 artifacts
 - [x] `wave-definition-of-ready-template.md` — pre-Stage-12 wave DoR template (does not start Stage 12)
 - [x] `timeline-engine-readiness-gate.md` — timeline high-risk control readiness gate (no implementation claim)
@@ -441,7 +441,7 @@ Builder appointment must NOT occur unless ALL of the following are satisfied:
 - [ ] Build Authorization has been explicitly cleared by CS2 (confirmation recorded in this tracker)
 
 **Completion Date**: N/A  
-**Notes**: Folder now contains Stage 11 readiness-hardening templates/proof requirements only (PR #1705 scope). Stage 11 remains NOT_STARTED. Stage 12 remains NOT_STARTED. Build Authorization remains NOT CLEARED. RED baseline reconciliation blocker remains unresolved (144 baseline vs 147 catalog rows; delta rows `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`) and blocks builder appointment until CS2-recorded decision.
+**Notes**: Folder now contains Stage 11 readiness-hardening templates/proof requirements only (PR #1705 scope). Stage 11 remains NOT_STARTED. Stage 12 remains NOT_STARTED. Build Authorization remains NOT CLEARED. RED baseline reconciliation decision is now recorded by CS2 as Option B: baseline updated to 147 with explicit accounting of `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, and `PIT-RED-TIMELINE-012` (issue #1714 / PR #1715).
 
 ---
 
@@ -494,12 +494,12 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 - Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
 **Overall Progress**: ~83% complete (Stages 1–10 complete/gate-passed in pre-build scope; Stage 11/12 not started)  
-**Blockers**: Build Authorization NOT CLEARED — implementation blocked until Stages 9–11 are completed, approved, and gate-passed. 144-vs-147 RED test count reconciliation must be resolved before Stage 11 builder appointment (see IAA Challenge §7.8 in `iaa-pre-brief.md`). FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
+**Blockers**: Build Authorization NOT CLEARED — implementation blocked until Stages 9–11 are completed, approved, and gate-passed. RED baseline reconciliation is resolved under CS2 Option B with baseline set to 147 (issue #1714 / PR #1715). FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
-1. Resolve 144-vs-147 RED test catalog count reconciliation (CS2 decision required — retire 3 rows or update baseline to 147)
+1. Carry forward reconciled RED baseline at 147 (CS2 Option B recorded; delta rows accounted for)
 2. Keep Stage 11 and Stage 12 as NOT_STARTED until separately authorised
 3. Preserve Build Authorization as NOT CLEARED until downstream gates explicitly clear it
-4. Initiate Stage 11 only via separate issue/wave after blocker closure and explicit downstream authority
+4. Initiate Stage 11 only via separate issue/wave with explicit downstream authority
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
@@ -523,7 +523,7 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 4 TRS: **CS2_APPROVED** (maturion-isms#1554 + maturion-isms#1575 + maturion-isms#1604) — v0.2-draft CS2 approved 2026-05-11 by @APGI-cmy
 - [x] Stage 5 Architecture: **GATE_PASSED (CS2/Foreman)** — 2026-05-18 Stage 5 review completed against Stage 1–4 authority chain and architecture completeness canon
 - [x] Stage 5b LFV Package: **MERGED** (maturion-isms#1623 / PR #1624) — 2026-05-12 — all 10 artifacts PIT-specific; merged as Stage 6 input
-- [x] Stage 6 QA-to-Red: **GATE_PASSED (CS2/Foreman)** (maturion-isms#1625 / PR #1626 reviewed 2026-05-18) — 144 RED tests defined; 0 BLOCKING_GAP; Stage 5 and Stage 5b prerequisites satisfied
+- [x] Stage 6 QA-to-Red: **GATE_PASSED (CS2/Foreman)** (maturion-isms#1625 / PR #1626 reviewed 2026-05-18; reconciliation amendment issue #1714 / PR #1715) — 147 RED tests baseline; 0 BLOCKING_GAP; Stage 5 and Stage 5b prerequisites satisfied
 - [x] Stage 7 PBFAG: **GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED** (2026-05-19) — package reviewed against Stage 7 required artifacts and guardrails in pre-build definition/evidence-contract scope (no live execution or FUNCTIONAL_PASS claim)
 - [x] Stage 8 Implementation Plan: **GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED** (maturion-isms#1679; 2026-05-19) — all 22 issue checklist items PASS; all 9 Functional-Delivery Guardrails PASS; review authority: foreman-v2-agent; review evidence: `modules/pit/08-implementation-plan/stage8-gate-pass-review.md`
 - [x] Stage 9 Builder Checklist: **GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED** (maturion-isms#1687; review authority: foreman-v2-agent; 2026-05-19) — `builder-checklist.md` and `stage9-gate-pass-review.md` filed; all 19 criteria PASS; all 8 Functional-Delivery Guardrails PASS; reconfirmed valid after Stage 8 hardening (maturion-isms#1694 / PR #1695 — 2026-05-20 — see `stage9-post-stage8-hardening-reconfirmation.md`)

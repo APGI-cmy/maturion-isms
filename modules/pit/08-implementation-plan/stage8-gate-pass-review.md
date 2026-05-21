@@ -60,7 +60,7 @@ The following 22 checks are required per maturion-isms#1679. Each maps to verifi
 | # | Check | Result | Evidence Location |
 |---|-------|--------|------------------|
 | 18 | All 27 PIT routes are allocated to waves | ✅ PASS | `implementation-plan.md` §4 — route allocation table lists all 27 routes (including `*` 404) each with completing wave(s). Count: 27 route entries confirmed. |
-| 19 | All 144 RED tests are allocated to waves or justified | ✅ PASS | `implementation-plan.md` §5 — 13-category table sums to 144 total; every category allocated to a wave. P0/P1 assurance sub-section confirms all P1 tests allocated. |
+| 19 | All 147 RED tests are allocated to waves or justified | ✅ PASS | `implementation-plan.md` §5 — 13-category table sums to 147 total after CS2 baseline reconciliation closure; every category allocated to a wave. P0/P1 assurance sub-section confirms all P1 tests allocated. |
 | 20 | No P0/P1 RED test is unallocated | ✅ PASS | `implementation-plan.md` §5 P0/P1 assurance — "Stage 6 catalog uses P1–P4 (no explicit P0 rows). All P1 tests are allocated in the wave matrix above." |
 
 ### High-Risk and Design Obligations

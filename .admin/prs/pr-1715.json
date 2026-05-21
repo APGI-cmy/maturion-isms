@@ -1,0 +1,38 @@
+{
+  "pr": 1715,
+  "issue": 1714,
+  "issue_title": "CS2: Resolve PIT RED baseline reconciliation before Stage 11 builder appointment",
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope_notes": "Docs/governance-only CS2 reconciliation decision wave. Records Option B baseline resolution (147) and updates impacted Stage 6/8/10/11 evidence-chain artifacts without appointing a builder, starting Stage 12, clearing Build Authorization, or asserting GREEN/live/FUNCTIONAL_PASS outcomes.",
+  "scope": [
+    ".admin/prs/pr-1715.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage11-red-baseline-reconciliation-20260520.md",
+    ".agent-admin/scope-declarations/pr-1715.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/06-qa-to-red/red-test-suite-catalog.md",
+    "modules/pit/08-implementation-plan/implementation-plan.md",
+    "modules/pit/08-implementation-plan/stage8-gate-pass-review.md",
+    "modules/pit/08-implementation-plan/wave-to-red-test-manifest.md",
+    "modules/pit/10-iaa-pre-brief/iaa-response.md",
+    "modules/pit/10-iaa-pre-brief/stage10-gate-pass-review.md",
+    "modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md",
+    "modules/pit/11-builder-appointment/stage11-appointment-preconditions.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
+  "evidence_required": [
+    "CS2 decision path recorded as Option B with baseline updated to 147",
+    "Delta rows PIT-RED-ROUTE-029, PIT-RED-TIMELINE-011, PIT-RED-TIMELINE-012 explicitly accounted for",
+    "Stage 6/8/10/11 evidence chain reflects resolved reconciliation posture",
+    "Stage 11 remains NOT_STARTED and Stage 12 remains NOT_STARTED",
+    "Build Authorization remains NOT CLEARED",
+    "No runtime/source/test/migration/deployment/workflow changes"
+  ],
+  "merge_authority": "CS2"
+}
