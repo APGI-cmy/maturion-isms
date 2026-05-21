@@ -9,14 +9,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { DomainAuditMpsRow } from '../../hooks/useDomainAuditBuilder';
-import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
-
-interface GeneratedMPSItem {
-  number: number;
-  title: string;
-  intent: string;
-  rationale: string;
-}
+import { supabase } from '../../lib/supabase';
+import {
+  useAIMPSGeneration,
+  type GeneratedMpsDraft as GeneratedMPSItem,
+} from '../../hooks/useAIMPSGeneration';
 
 interface EditedMPSItem {
   title: string;
@@ -54,6 +51,7 @@ export function MPSSelectionModal({
   onClose,
 }: MPSSelectionModalProps) {
   const queryClient = useQueryClient();
+  const { generateMPSsForDomain, isLoading: isGeneratingFromHook } = useAIMPSGeneration();
 
   const [generatedMPS, setGeneratedMPS] = useState<GeneratedMPSItem[]>([]);
   const [selectedMPSNumbers, setSelectedMPSNumbers] = useState<Set<number>>(new Set());
@@ -114,28 +112,7 @@ export function MPSSelectionModal({
     setGenerationError(null);
     setSaveError(null);
     try {
-      let headers: Record<string, string>;
-      try {
-        headers = await getEdgeInvokeHeaders();
-      } catch {
-        throw new Error('Please log in to use AI generation features.');
-      }
-      const prompt =
-        `Generate 5 Maturity Practice Statements (MPSs) for the "${domainName}" domain in a maturity assessment framework.\n` +
-        `Each MPS should describe a specific expectation. Return a JSON array with this structure:\n` +
-        `[{"number": 1, "title": "...", "intent": "...", "rationale": "..."}]\n` +
-        `Return only the JSON array, no additional text.`;
-      const { data, error } = await supabase.functions.invoke('mmm-ai-chat', {
-        body: { message: prompt },
-        headers,
-      });
-      if (error) throw new Error((error as { message?: string }).message ?? 'AI generation failed');
-      let parsed: GeneratedMPSItem[];
-      try {
-        parsed = JSON.parse((data as { reply: string }).reply) as GeneratedMPSItem[];
-      } catch {
-        throw new Error('Failed to parse AI response. Please try again.');
-      }
+      const parsed = await generateMPSsForDomain(domainName);
       setGeneratedMPS(parsed);
       setSelectedMPSNumbers(new Set(parsed.map((item) => item.number)));
     } catch (err: unknown) {
@@ -244,7 +221,7 @@ export function MPSSelectionModal({
 
           {/* AI generation controls */}
           <div className="modal-ai-controls">
-            {isGenerating ? (
+            {isGenerating || isGeneratingFromHook ? (
               <p data-testid="mps-generation-loading">Generating MPSs…</p>
             ) : generatedMPS.length === 0 ? (
               <button
@@ -418,4 +395,3 @@ export function MPSSelectionModal({
 }
 
 export default MPSSelectionModal;
-

@@ -9,7 +9,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { DomainAuditMpsRow } from '../../hooks/useDomainAuditBuilder';
-import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
+import { useIntentGeneration } from '../../hooks/useIntentGeneration';
 
 interface PerMpsIntentState {
   isGenerating: boolean;
@@ -49,6 +50,7 @@ export function IntentCreator({
   onClose,
 }: IntentCreatorProps) {
   const queryClient = useQueryClient();
+  const { generateIntent } = useIntentGeneration();
   const [mpsIntentStates, setMpsIntentStates] = useState<Record<string, PerMpsIntentState>>({});
 
   const resetAllStates = useCallback(() => {
@@ -108,22 +110,11 @@ export function IntentCreator({
       [mps.id]: { isGenerating: true, generatedIntent: null, editedIntent: '', error: null },
     }));
     try {
-      let headers: Record<string, string>;
-      try {
-        headers = await getEdgeInvokeHeaders();
-      } catch {
-        throw new Error('Please log in to use AI generation features.');
-      }
-      const prompt =
-        `Write a concise intent statement for Maturity Practice Statement "${mps.code} — ${mps.name}" in the "${domainName}" domain.\n` +
-        `The intent statement should describe the purpose and objective of this MPS in one or two sentences.\n` +
-        `Return only the intent statement text, no additional formatting.`;
-      const { data, error } = await supabase.functions.invoke('mmm-ai-chat', {
-        body: { message: prompt },
-        headers,
+      const reply = await generateIntent({
+        domainName,
+        mpsCode: mps.code,
+        mpsName: mps.name,
       });
-      if (error) throw new Error((error as { message?: string }).message ?? 'AI generation failed');
-      const reply = (data as { reply: string }).reply?.trim() ?? '';
       setMpsIntentStates((prev) => ({
         ...prev,
         [mps.id]: { isGenerating: false, generatedIntent: reply, editedIntent: reply, error: null },
@@ -284,4 +275,3 @@ export function IntentCreator({
 }
 
 export default IntentCreator;
-

@@ -13,6 +13,8 @@ import type {
   DomainAuditMpsRow,
 } from '../../hooks/useDomainAuditBuilder';
 import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
+import { AIGeneratedCriteriaCards } from './AIGeneratedCriteriaCards';
+import { EnhancedCriteriaGenerator } from './EnhancedCriteriaGenerator';
 
 interface GeneratedCriterionItem {
   code: string;
@@ -23,6 +25,7 @@ interface PerMpsCriteriaState {
   isGenerating: boolean;
   generatedCriteria: GeneratedCriterionItem[];
   acceptedCodes: Set<string>;
+  refinePrompt: string;
   error: string | null;
 }
 
@@ -111,16 +114,23 @@ export function CriteriaManagement({
     onError: (err: Error, { mpsId }) => {
       // NBR-005: surface save errors to user
       setMpsCriteriaStates((prev) => {
-        const current = prev[mpsId] ?? { isGenerating: false, generatedCriteria: [], acceptedCodes: new Set(), error: null };
+        const current = prev[mpsId] ?? { isGenerating: false, generatedCriteria: [], acceptedCodes: new Set(), refinePrompt: '', error: null };
         return { ...prev, [mpsId]: { ...current, error: err.message } };
       });
     },
   });
 
   const handleGenerate = async (mps: DomainAuditMpsRow) => {
+    const refinePrompt = mpsCriteriaStates[mps.id]?.refinePrompt?.trim() ?? '';
     setMpsCriteriaStates((prev) => ({
       ...prev,
-      [mps.id]: { isGenerating: true, generatedCriteria: [], acceptedCodes: new Set(), error: null },
+      [mps.id]: {
+        isGenerating: true,
+        generatedCriteria: [],
+        acceptedCodes: new Set(),
+        refinePrompt,
+        error: null,
+      },
     }));
     try {
       let headers: Record<string, string>;
@@ -132,6 +142,7 @@ export function CriteriaManagement({
       const prompt =
         `Generate 3-5 audit criteria for Maturity Practice Statement "${mps.code} — ${mps.name}"` +
         ` (intent: "${mps.intent_statement ?? 'not set'}") in the "${domainName}" domain.\n` +
+        (refinePrompt ? `Additional refinement context: ${refinePrompt}\n` : '') +
         `Each criterion should be specific, measurable, and auditable.\n` +
         `Return a JSON array: [{"code": "${mps.code}-C001", "statement": "..."}]\n` +
         `Return only the JSON array.`;
@@ -152,6 +163,7 @@ export function CriteriaManagement({
           isGenerating: false,
           generatedCriteria: parsed,
           acceptedCodes: new Set(parsed.map((c) => c.code)),
+          refinePrompt,
           error: null,
         },
       }));
@@ -163,6 +175,7 @@ export function CriteriaManagement({
           isGenerating: false,
           generatedCriteria: [],
           acceptedCodes: new Set(),
+          refinePrompt,
           error: err instanceof Error ? err.message : 'AI generation failed. Please try again.',
         },
       }));
@@ -189,6 +202,25 @@ export function CriteriaManagement({
         [mpsId]: {
           ...current,
           acceptedCodes: new Set(current.generatedCriteria.map((c) => c.code)),
+        },
+      };
+    });
+  };
+
+  const handleRefinePromptChange = (mpsId: string, prompt: string) => {
+    setMpsCriteriaStates((prev) => {
+      const current = prev[mpsId] ?? {
+        isGenerating: false,
+        generatedCriteria: [],
+        acceptedCodes: new Set(),
+        refinePrompt: '',
+        error: null,
+      };
+      return {
+        ...prev,
+        [mpsId]: {
+          ...current,
+          refinePrompt: prompt,
         },
       };
     });
@@ -270,49 +302,19 @@ export function CriteriaManagement({
                       <p data-testid={`criteria-generation-loading-${mps.id}`}>
                         Generating criteria for {mps.code}…
                       </p>
-                    ) : state?.generatedCriteria && state.generatedCriteria.length > 0 ? (
-                      <div data-testid={`generated-criteria-list-${mps.id}`}>
-                        <button
-                          type="button"
-                          className="btn btn-outline"
-                          data-testid={`accept-all-criteria-btn-${mps.id}`}
-                          onClick={() => handleAcceptAll(mps.id)}
-                        >
-                          Accept All
-                        </button>
-                        <ol className="modal-list">
-                          {state.generatedCriteria.map((criterion) => (
-                            <li
-                              key={criterion.code}
-                              className="modal-list__item"
-                              data-testid="generated-criterion-item"
-                            >
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  checked={state.acceptedCodes.has(criterion.code)}
-                                  onChange={() => handleToggleCriterion(mps.id, criterion.code)}
-                                  data-testid={`criterion-select-${criterion.code}`}
-                                  aria-label={`Select criterion ${criterion.code}`}
-                                />
-                                <strong> {criterion.code}</strong> — {criterion.statement}
-                              </label>
-                            </li>
-                          ))}
-                        </ol>
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          data-testid={`save-criteria-btn-${mps.id}`}
-                          onClick={() => handleSave(mps)}
-                          disabled={saveMutation.isPending || state.acceptedCodes.size === 0}
-                        >
-                          {saveMutation.isPending ? 'Saving…' : 'Save accepted criteria'}
-                        </button>
-                      </div>
-                    ) : (
-                      <div>
-                        {criteriaRows.length === 0 ? (
+                     ) : state?.generatedCriteria && state.generatedCriteria.length > 0 ? (
+                       <AIGeneratedCriteriaCards
+                         mpsId={mps.id}
+                         criteria={state.generatedCriteria}
+                         acceptedCodes={state.acceptedCodes}
+                         isSaving={saveMutation.isPending}
+                         onToggleCriterion={(code) => handleToggleCriterion(mps.id, code)}
+                         onAcceptAll={() => handleAcceptAll(mps.id)}
+                         onSaveAccepted={() => handleSave(mps)}
+                       />
+                     ) : (
+                       <div>
+                         {criteriaRows.length === 0 ? (
                           <p>No criteria rows are currently stored for this MPS.</p>
                         ) : (
                           <ol className="modal-list">
@@ -328,16 +330,15 @@ export function CriteriaManagement({
                             ))}
                           </ol>
                         )}
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          data-testid={`generate-criteria-btn-${mps.id}`}
-                          onClick={() => handleGenerate(mps)}
-                        >
-                          Generate criteria
-                        </button>
-                      </div>
-                    )}
+                         <EnhancedCriteriaGenerator
+                           mpsId={mps.id}
+                           refinePrompt={state?.refinePrompt ?? ''}
+                           isGenerating={Boolean(state?.isGenerating)}
+                           onRefinePromptChange={(value) => handleRefinePromptChange(mps.id, value)}
+                           onGenerate={() => handleGenerate(mps)}
+                         />
+                       </div>
+                     )}
                   </section>
                 );
               })}
@@ -355,4 +356,3 @@ export function CriteriaManagement({
 }
 
 export default CriteriaManagement;
-
