@@ -7,6 +7,7 @@
   "scope": [
     ".admin/prs/pr-1728.json",
     ".agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md",
+    ".agent-admin/prs/pr-1728/active-state.json",
     ".agent-admin/prs/pr-1728/wave-current-tasks.md",
     ".agent-admin/scope-declarations/pr-1728.md",
     ".agent-workspace/foreman-v2/memory/session-issue-1727-isms-landing-discovery-20260521.md",
