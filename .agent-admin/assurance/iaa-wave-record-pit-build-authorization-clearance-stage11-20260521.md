@@ -3,19 +3,19 @@
 **Wave ID**: pit-build-authorization-clearance-stage11  
 **Date**: 2026-05-21  
 **Branch**: copilot/cs2-clear-pit-build-authorization  
-**Issue**: PENDING — CS2: Clear PIT Build Authorization after Stage 11 builder appointment  
-**PR**: PENDING  
-**Current HEAD SHA (pre-brief time)**: 58c7f2ac4b20b496c2690401cf400b087501be3c  
+**Issue**: #1737 — CS2: Clear PIT Build Authorization after Stage 11 builder appointment  
+**PR**: #1738  
+**Current HEAD SHA (pre-brief time)**: GITHUB_PR_HEAD_SHA  
 **ceremony_admin_appointed (from wave-current-tasks.md)**: NOT_REQUIRED
 
 ---
 
 IAA_PREFLIGHT_BRIEF
-PR: PENDING
-ISSUE: PENDING - CS2: Clear PIT Build Authorization after Stage 11 builder appointment
+PR: 1738
+ISSUE: 1737 - CS2: Clear PIT Build Authorization after Stage 11 builder appointment
 WAVE: pit-build-authorization-clearance-stage11
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: 58c7f2ac4b20b496c2690401cf400b087501be3c
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
 
 EXPECTED_QA_SCOPE:
 - `modules/pit/BUILD_PROGRESS_TRACKER.md` governance-only update that explicitly records **CS2 Build Authorization CLEARED** after Stage 11 appointment
