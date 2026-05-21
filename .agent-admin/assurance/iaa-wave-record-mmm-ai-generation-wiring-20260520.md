@@ -15,7 +15,7 @@ PR: #1711
 ISSUE: #1710
 WAVE: mmm-ai-generation-wiring-20260520
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: CURRENT_HEAD
+CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
 
 EXPECTED_QA_SCOPE:
 - `apps/mmm/src/components/assessment/MPSSelectionModal.tsx` — AI generate/accept/edit/save lifecycle
