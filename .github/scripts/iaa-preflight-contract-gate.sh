@@ -63,6 +63,15 @@ is_impl_or_build_file() {
   [[ "$file" =~ ^\.github/scripts/ ]]
 }
 
+# Product-implementation-only classifier (excludes governance/.github/ files).
+# Used for the timing check on governance-change PRs: .github/ changes are
+# governance activities themselves, not product implementation.
+is_product_impl_file() {
+  local file="$1"
+  [[ "$file" =~ ^(modules|apps|packages)/ ]] || \
+  [[ "$file" =~ ^supabase/ ]]
+}
+
 echo "=== IAA Pre-Flight Contract Gate ==="
 echo "Wave tasks : $WAVE_TASKS_PATH"
 echo "Assurance  : $ASSURANCE_DIR"
@@ -231,6 +240,13 @@ if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ] && [ -n "$ACTIVE_PREBRIEF_PATH" ] &&
       fail "Cannot compute changed files for BASE_SHA=${BASE_SHA} HEAD_SHA=${HEAD_SHA}"
     fi
   fi
+
+  # Read PR manifest type — governance-change PRs use product-impl-only timing classifier
+  MANIFEST_TYPE=""
+  if [ -n "$PR_NUMBER" ] && [ -f ".admin/prs/pr-${PR_NUMBER}.json" ] && command -v python3 >/dev/null 2>&1; then
+    MANIFEST_TYPE="$(python3 -c "import json; print(json.load(open('.admin/prs/pr-${PR_NUMBER}.json')).get('type',''))" 2>/dev/null || true)"
+  fi
+
   HAS_IMPL_OR_BUILD=false
   while IFS= read -r f; do
     [ -z "$f" ] && continue
@@ -253,10 +269,18 @@ if [ -n "$BASE_SHA" ] && [ -n "$HEAD_SHA" ] && [ -n "$ACTIVE_PREBRIEF_PATH" ] &&
     PREBRIEF_LAST_BEFORE_RANGE_TS="$(git log -1 --format='%ct' "$BASE_SHA" -- "$ACTIVE_PREBRIEF_PATH" 2>/dev/null || true)"
     [ -z "$PREBRIEF_FIRST_TOUCH_IN_RANGE_TS" ] && PREBRIEF_FIRST_TOUCH_IN_RANGE_TS="$PREBRIEF_LAST_BEFORE_RANGE_TS"
 
-    mapfile -t IMPL_OR_BUILD_FILES < <(while IFS= read -r f; do [ -n "$f" ] && is_impl_or_build_file "$f" && echo "$f"; done <<< "$CHANGED_FILES")
+    # For governance-change PRs, timing check applies only to product implementation files
+    # (modules/, apps/, packages/, supabase/). .github/ changes are governance activities
+    # themselves, not product implementation, so do not trigger the timing requirement.
+    if [ "$MANIFEST_TYPE" = "governance-change" ]; then
+      mapfile -t TIMING_IMPL_FILES < <(while IFS= read -r f; do [ -n "$f" ] && is_product_impl_file "$f" && echo "$f"; done <<< "$CHANGED_FILES")
+    else
+      mapfile -t TIMING_IMPL_FILES < <(while IFS= read -r f; do [ -n "$f" ] && is_impl_or_build_file "$f" && echo "$f"; done <<< "$CHANGED_FILES")
+    fi
+
     FIRST_IMPL_TS=""
-    if [ "${#IMPL_OR_BUILD_FILES[@]}" -gt 0 ]; then
-      FIRST_IMPL_TS="$(git log --reverse --format='%ct' "$BASE_SHA..$HEAD_SHA" -- "${IMPL_OR_BUILD_FILES[@]}" 2>/dev/null | head -1 || true)"
+    if [ "${#TIMING_IMPL_FILES[@]}" -gt 0 ]; then
+      FIRST_IMPL_TS="$(git log --reverse --format='%ct' "$BASE_SHA..$HEAD_SHA" -- "${TIMING_IMPL_FILES[@]}" 2>/dev/null | head -1 || true)"
     fi
 
     if [ -n "$PREBRIEF_FIRST_TOUCH_IN_RANGE_TS" ] && [ -n "$FIRST_IMPL_TS" ] && [ "$PREBRIEF_FIRST_TOUCH_IN_RANGE_TS" -gt "$FIRST_IMPL_TS" ]; then

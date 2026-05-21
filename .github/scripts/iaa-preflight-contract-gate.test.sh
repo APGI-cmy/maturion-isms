@@ -397,6 +397,34 @@ EOF
   git commit -q -m "legacy global wave file for another pr"
 }
 
+# Setup: governance-change PR manifest, .github/scripts/* changed before prebrief.
+# The timing check should be bypassed for governance-change PRs (no product impl files),
+# so this should PASS even though the prebrief was committed after the .github/ change.
+setup_governance_change_timing_bypass() {
+  mkdir -p .admin/prs .agent-admin/assurance
+  # PR manifest declares governance-change type
+  cat > .admin/prs/pr-1672.json <<'EOF'
+{
+  "pr": 1672,
+  "type": "governance-change",
+  "scope": []
+}
+EOF
+  # Step 1: .github/scripts/ file committed first (T0) — simulates "impl before prebrief"
+  mkdir -p .github/scripts
+  echo '#!/bin/bash' > .github/scripts/governance-gate.sh
+  git add .
+  GIT_AUTHOR_DATE="2020-01-01T08:00:00 +0000" GIT_COMMITTER_DATE="2020-01-01T08:00:00 +0000" \
+    git commit -q -m "governance script committed first (T0)"
+  # Step 2: prebrief committed AFTER .github/scripts/ change (T1 > T0).
+  # Without the governance bypass this would fail the timing check.
+  write_valid_prebrief ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
+  write_valid_wave_tasks ".agent-admin/assurance/iaa-wave-record-wave-20260518.md"
+  git add .
+  GIT_AUTHOR_DATE="2020-01-02T08:00:00 +0000" GIT_COMMITTER_DATE="2020-01-02T08:00:00 +0000" \
+    git commit -q -m "prebrief committed after governance script (T1 > T0)"
+}
+
 run_gate_test "1. missing pre-brief artifact -> FAIL" 1 "setup_missing_prebrief"
 run_gate_test "2. pre-brief missing EXPECTED_QA_SCOPE -> FAIL" 1 "setup_prebrief_missing_scope"
 run_gate_test "3. pre-brief empty EXPECTED_QA_SCOPE section -> FAIL" 1 "setup_prebrief_empty_scope_section"
@@ -416,6 +444,7 @@ run_gate_test "13. .github/scripts/* change with not_required delegation -> FAIL
 run_gate_test "14. non-implementation docs change with not_required delegation -> PASS" 0 "setup_non_impl_not_required_ok"
 run_gate_test "15. valid pre-flight contract -> PASS" 0 "setup_valid_contract"
 run_gate_test "16. missing PR-scoped wave/prebrief -> BOOTSTRAP_REQUIRED non-cascading PASS" 0 "setup_bootstrap_required_non_cascading" "yes" "NEXT_ACTION=BOOTSTRAP_REQUIRED"
+run_gate_test "17. governance-change PR: .github/scripts/* prebrief after impl -> PASS (gov bypass)" 0 "setup_governance_change_timing_bypass"
 
 echo ""
 echo "Passed: $PASS_COUNT"

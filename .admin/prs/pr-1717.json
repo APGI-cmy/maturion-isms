@@ -18,6 +18,7 @@
     ".github/scripts/iaa-final-assurance-gate.sh",
     ".github/scripts/iaa-final-assurance-gate.test.sh",
     ".github/scripts/iaa-preflight-contract-gate.sh",
+    ".github/scripts/iaa-preflight-contract-gate.test.sh",
     ".github/scripts/pre-handover-checkpoint.js",
     ".github/scripts/pre-handover-checkpoint.test.sh",
     ".github/scripts/validate-product-delivery-gates.sh",

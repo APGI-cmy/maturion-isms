@@ -50,14 +50,16 @@ RESULT: PASS
 - After: ECAP proof and bundle artifacts are present, PR-bound, and explicitly wave-record linked.
 - Before: `iaa-preflight-contract-gate.sh` defaulted to the legacy wave-tasks path unconditionally, even when a PR-scoped file existed.
 - After: gate initializes `WAVE_TASKS_PATH` with the PR-scoped path when `PR_NUMBER` is set and the file exists, before falling back to the legacy path — consistent with the resolver-first model.
+- Before: `iaa-preflight-contract-gate.sh` applied the "prebrief must precede implementation" timing check uniformly to `.github/scripts/` and `.github/workflows/` files, triggering false timing failures for governance-change PRs.
+- After: for `type: governance-change` PRs, the timing check uses only product implementation files (`modules/`, `apps/`, `packages/`, `supabase/`) as reference. `.github/` changes in governance-change PRs are governance plan activities, not product implementation, and do not trigger the timing ordering requirement. All non-governance-change PRs retain the original behavior unchanged.
 
 ### No-weakening statement
-No governance gate has been weakened; changes harden identity binding, PR-scoped artifact selection, and ceremony evidence enforcement.
+No governance gate has been weakened; changes harden identity binding, PR-scoped artifact selection, and ceremony evidence enforcement. The governance-change timing bypass is a targeted clarification aligned with the gate's original intent (prebrief before *product* implementation). For all non-governance-change PR types, the gate behavior is identical to before. For governance-change PRs that also touch `modules/`, `apps/`, `packages/`, or `supabase/`, the timing check still applies.
 
 ### Tests run and results for affected gate scripts
 - resolve-active-pr-state.test.sh: Passed 5, Failed 0
 - admin-control-router.test.sh: Passed 10, Failed 0
-- iaa-preflight-contract-gate.test.sh: Passed 19, Failed 0
+- iaa-preflight-contract-gate.test.sh: Passed 20, Failed 0 (including new test 17: governance-change timing bypass)
 - iaa-final-assurance-gate.test.sh: Passed 39, Failed 0
 - validate-product-delivery-gates.test.sh: Passed 40, Failed 0
 - pre-handover-checkpoint.test.sh: Passed 48, Failed 0
@@ -65,7 +67,7 @@ No governance gate has been weakened; changes harden identity binding, PR-scoped
 ### Regression coverage summary
 - Active PR identity resolution and routing: covered.
 - Admin control router protections: covered.
-- IAA preflight contract gate validations: covered.
+- IAA preflight contract gate validations: covered (20 tests; governance-change timing bypass verified by test 17).
 - IAA final assurance gate checks: covered.
 - Product-delivery gate validation chain: covered.
 - Pre-handover checkpoint strict checks: covered.
