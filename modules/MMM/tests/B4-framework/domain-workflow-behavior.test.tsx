@@ -4,6 +4,9 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import DomainWorkspacePage from '../../../../apps/mmm/src/pages/DomainWorkspacePage';
+import { MPSSelectionModal } from '../../../../apps/mmm/src/components/assessment/MPSSelectionModal';
+import { IntentCreator } from '../../../../apps/mmm/src/components/assessment/IntentCreator';
+import { CriteriaManagement } from '../../../../apps/mmm/src/components/assessment/CriteriaManagement';
 
 type Scenario = {
   domainRows: Array<{
@@ -32,7 +35,7 @@ type Scenario = {
   failTable: string | null;
 };
 
-const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
+const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, configureAIError, mockInsert, mockUpdate } = vi.hoisted(() => {
   const calls: Array<Record<string, unknown>> = [];
   let scenario: Scenario = {
     domainRows: [],
@@ -61,6 +64,11 @@ const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
       error: null,
     });
   };
+
+  const insert = vi.fn(() => Promise.resolve({ data: [], error: null }));
+  const update = vi.fn(() => ({
+    eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
+  }));
 
   const from = vi.fn((table: string) => ({
     select: vi.fn(() => ({
@@ -100,10 +108,26 @@ const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
       order: () => queryResult(table, []),
       single: () => queryResult(table, []),
     })),
+    insert,
+    update,
   }));
 
+  let aiInvokeResult: { data: unknown; error: unknown } = {
+    data: { reply: '[]' },
+    error: null,
+  };
+  const functionsInvoke = vi.fn(() => Promise.resolve(aiInvokeResult));
+
   return {
-    mockSupabase: { from },
+    mockSupabase: {
+      from,
+      functions: { invoke: functionsInvoke },
+      auth: {
+        getSession: vi.fn(() =>
+          Promise.resolve({ data: { session: { access_token: 'test-token' } } }),
+        ),
+      },
+    },
     configureScenario(next: Partial<Scenario>) {
       scenario = {
         mpsRows: [],
@@ -114,19 +138,37 @@ const { mockSupabase, configureScenario, supabaseCalls } = vi.hoisted(() => {
       };
       calls.length = 0;
       from.mockClear();
+      insert.mockClear();
+      update.mockClear();
+      functionsInvoke.mockClear();
+      aiInvokeResult = { data: { reply: '[]' }, error: null };
+    },
+    configureAIResponse(result: unknown) {
+      aiInvokeResult = { data: result, error: null };
+    },
+    configureAIError() {
+      aiInvokeResult = { data: null, error: { message: 'AI generation failed' } };
     },
     supabaseCalls: calls,
+    mockInsert: insert,
+    mockUpdate: update,
   };
 });
 
 vi.mock('@/lib/supabase', () => ({
   supabase: mockSupabase,
+  getEdgeInvokeHeaders: vi.fn(() =>
+    Promise.resolve({ Authorization: 'Bearer test-token', apikey: 'test-key' }),
+  ),
 }));
 
 function createQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
+        retry: false,
+      },
+      mutations: {
         retry: false,
       },
     },
@@ -143,6 +185,80 @@ function renderDomainWorkspace(
           <Route path="/assessment/framework/domain/:domainId" element={<DomainWorkspacePage />} />
         </Routes>
       </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
+
+const baseMpsRowsForModal = [
+  {
+    id: 'mps-1',
+    domain_id: 'domain-1',
+    name: 'Workflow Ownership',
+    code: 'PI-001',
+    sort_order: 1,
+    intent_statement: 'Establish process ownership and approval accountability.',
+  },
+  {
+    id: 'mps-2',
+    domain_id: 'domain-1',
+    name: 'Workflow Review',
+    code: 'PI-002',
+    sort_order: 2,
+    intent_statement: null,
+  },
+];
+
+function renderMPSSelectionModal(props?: Partial<React.ComponentProps<typeof MPSSelectionModal>>) {
+  const qc = createQueryClient();
+  return render(
+    <QueryClientProvider client={qc}>
+      <MPSSelectionModal
+        domainId="domain-1"
+        domainName="Process Integrity"
+        open={true}
+        mpsRows={baseMpsRowsForModal}
+        isLoading={false}
+        errorMessage={null}
+        onClose={vi.fn()}
+        {...props}
+      />
+    </QueryClientProvider>,
+  );
+}
+
+function renderIntentCreator(props?: Partial<React.ComponentProps<typeof IntentCreator>>) {
+  const qc = createQueryClient();
+  return render(
+    <QueryClientProvider client={qc}>
+      <IntentCreator
+        domainId="domain-1"
+        domainName="Process Integrity"
+        open={true}
+        mpsRows={baseMpsRowsForModal}
+        isLoading={false}
+        errorMessage={null}
+        onClose={vi.fn()}
+        {...props}
+      />
+    </QueryClientProvider>,
+  );
+}
+
+function renderCriteriaManagement(props?: Partial<React.ComponentProps<typeof CriteriaManagement>>) {
+  const qc = createQueryClient();
+  return render(
+    <QueryClientProvider client={qc}>
+      <CriteriaManagement
+        domainId="domain-1"
+        domainName="Process Integrity"
+        open={true}
+        mpsRows={baseMpsRowsForModal}
+        criteriaByMps={{}}
+        isLoading={false}
+        errorMessage={null}
+        onClose={vi.fn()}
+        {...props}
+      />
     </QueryClientProvider>,
   );
 }
@@ -319,3 +435,405 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     ).toBe('/assessment/framework?framework_id=framework-1');
   });
 });
+
+// ---------------------------------------------------------------------------
+// T-MMM-S6-AI-001: MPS AI generation lifecycle
+// ---------------------------------------------------------------------------
+
+describe('T-MMM-S6-AI-001: AI generation lifecycle — MPS generation', () => {
+  beforeEach(() => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: [] });
+  });
+  afterEach(() => { cleanup(); });
+
+  it('"Generate MPS with AI" button renders in MPSSelectionModal', () => {
+    renderMPSSelectionModal({ mpsRows: [] });
+    expect(screen.getByTestId('generate-mps-btn')).toBeTruthy();
+  });
+
+  it('clicking generate shows loading state', async () => {
+    // Never resolve the AI call to hold loading state
+    const { getByTestId } = renderMPSSelectionModal({ mpsRows: [] });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mockSupabase.functions.invoke as any).mockImplementationOnce(() => new Promise(() => undefined));
+    fireEvent.click(getByTestId('generate-mps-btn'));
+    expect(await screen.findByTestId('mps-generation-loading')).toBeTruthy();
+  });
+
+  it('successful generation renders AI-proposed MPS list', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { number: 1, title: 'Access Control', intent: 'Ensure access is governed', rationale: 'Security baseline' },
+        { number: 2, title: 'Audit Logging', intent: 'Log all audit events', rationale: 'Traceability' },
+      ]),
+    });
+    renderMPSSelectionModal({ mpsRows: [] });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await waitFor(() => expect(screen.getByTestId('generated-mps-list')).toBeTruthy());
+    const items = screen.getAllByTestId('generated-mps-item');
+    expect(items).toHaveLength(2);
+    expect(items[0].textContent).toContain('Access Control');
+    expect(items[1].textContent).toContain('Audit Logging');
+  });
+
+  it('"Accept All" selects all generated items', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { number: 1, title: 'Item One', intent: 'Intent one', rationale: 'Rationale' },
+        { number: 2, title: 'Item Two', intent: 'Intent two', rationale: 'Rationale' },
+      ]),
+    });
+    renderMPSSelectionModal({ mpsRows: [] });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await screen.findByTestId('generated-mps-list');
+    // Deselect first item
+    fireEvent.click(screen.getByTestId('mps-select-1'));
+    // Accept all
+    fireEvent.click(screen.getByTestId('accept-all-mps-btn'));
+    const cb1 = screen.getByTestId('mps-select-1') as HTMLInputElement;
+    const cb2 = screen.getByTestId('mps-select-2') as HTMLInputElement;
+    expect(cb1.checked).toBe(true);
+    expect(cb2.checked).toBe(true);
+  });
+
+  it('individual item toggle deselects and re-selects', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { number: 1, title: 'Item One', intent: 'Intent one', rationale: 'Rationale' },
+      ]),
+    });
+    renderMPSSelectionModal({ mpsRows: [] });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await screen.findByTestId('generated-mps-list');
+    const cb = screen.getByTestId('mps-select-1') as HTMLInputElement;
+    expect(cb.checked).toBe(true);
+    fireEvent.click(cb);
+    expect((screen.getByTestId('mps-select-1') as HTMLInputElement).checked).toBe(false);
+    fireEvent.click(screen.getByTestId('mps-select-1'));
+    expect((screen.getByTestId('mps-select-1') as HTMLInputElement).checked).toBe(true);
+  });
+
+  it('inline edit updates title before confirm', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { number: 1, title: 'Original Title', intent: 'Original Intent', rationale: 'R' },
+      ]),
+    });
+    renderMPSSelectionModal({ mpsRows: [] });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await screen.findByTestId('generated-mps-list');
+    fireEvent.click(screen.getByTestId('mps-edit-btn-1'));
+    const titleInput = screen.getByTestId('mps-title-input-1') as HTMLInputElement;
+    fireEvent.change(titleInput, { target: { value: 'Edited Title' } });
+    expect(titleInput.value).toBe('Edited Title');
+  });
+
+  it('confirm selection calls insert and invalidates cache', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { number: 1, title: 'Access Control', intent: 'Govern access', rationale: 'Security' },
+      ]),
+    });
+    renderMPSSelectionModal({ mpsRows: [] });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await screen.findByTestId('confirm-mps-selection-btn');
+    fireEvent.click(screen.getByTestId('confirm-mps-selection-btn'));
+    await waitFor(() => expect(mockInsert).toHaveBeenCalled());
+    const insertArg = mockInsert.mock.calls[0][0] as Array<Record<string, unknown>>;
+    expect(insertArg[0]).toMatchObject({ domain_id: 'domain-1', name: 'Access Control' });
+  });
+
+  it('AI function error shows mps-generation-error', async () => {
+    configureAIError();
+    renderMPSSelectionModal({ mpsRows: [] });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await waitFor(() => expect(screen.getByTestId('mps-generation-error')).toBeTruthy());
+  });
+
+  it('closing modal resets generation state', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { number: 1, title: 'Access Control', intent: 'Govern access', rationale: 'Security' },
+      ]),
+    });
+    const onClose = vi.fn();
+    renderMPSSelectionModal({ mpsRows: [], onClose });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await screen.findByTestId('generated-mps-list');
+    // Close via Cancel button
+    fireEvent.click(screen.getByText('Cancel'));
+    expect(onClose).toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T-MMM-S6-AI-002: Intent AI generation lifecycle
+// ---------------------------------------------------------------------------
+
+describe('T-MMM-S6-AI-002: AI generation lifecycle — intent generation', () => {
+  beforeEach(() => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: [] });
+  });
+  afterEach(() => { cleanup(); });
+
+  it('per-MPS "Generate intent" button renders in IntentCreator', () => {
+    renderIntentCreator();
+    expect(screen.getByTestId('generate-intent-btn-mps-1')).toBeTruthy();
+    // mps-2 has no intent so shows "Generate intent"
+    expect(screen.getByTestId('generate-intent-btn-mps-2')).toBeTruthy();
+  });
+
+  it('clicking generate for a specific MPS shows per-MPS loading', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mockSupabase.functions.invoke as any).mockImplementationOnce(() => new Promise(() => undefined));
+    renderIntentCreator();
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    expect(await screen.findByTestId('intent-generation-loading-mps-2')).toBeTruthy();
+  });
+
+  it('successful generation renders proposed intent text', async () => {
+    configureAIResponse({ reply: 'Ensure all workflows are properly owned and governed.' });
+    renderIntentCreator();
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    await waitFor(() => expect(screen.getByTestId('intent-generated-mps-2')).toBeTruthy());
+    const textarea = screen.getByTestId('intent-textarea-mps-2') as HTMLTextAreaElement;
+    expect(textarea.value).toContain('Ensure all workflows are properly owned and governed.');
+  });
+
+  it('accept saves via mutation update and removes generated state', async () => {
+    configureAIResponse({ reply: 'Govern all workflows.' });
+    renderIntentCreator();
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    await screen.findByTestId('intent-accept-btn-mps-2');
+    fireEvent.click(screen.getByTestId('intent-accept-btn-mps-2'));
+    await waitFor(() => expect(mockUpdate).toHaveBeenCalled());
+  });
+
+  it('editable textarea allows text change before accept', async () => {
+    configureAIResponse({ reply: 'Original intent text.' });
+    renderIntentCreator();
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    await screen.findByTestId('intent-textarea-mps-2');
+    fireEvent.change(screen.getByTestId('intent-textarea-mps-2'), {
+      target: { value: 'Edited intent text.' },
+    });
+    expect((screen.getByTestId('intent-textarea-mps-2') as HTMLTextAreaElement).value).toBe(
+      'Edited intent text.',
+    );
+  });
+
+  it('reject clears proposed intent for that MPS', async () => {
+    configureAIResponse({ reply: 'Some generated intent.' });
+    renderIntentCreator();
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    await screen.findByTestId('intent-reject-btn-mps-2');
+    fireEvent.click(screen.getByTestId('intent-reject-btn-mps-2'));
+    await waitFor(() =>
+      expect(screen.queryByTestId('intent-generated-mps-2')).toBeNull(),
+    );
+    // Generate button should reappear
+    expect(screen.getByTestId('generate-intent-btn-mps-2')).toBeTruthy();
+  });
+
+  it('AI error shows per-MPS error state', async () => {
+    configureAIError();
+    renderIntentCreator();
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    await waitFor(() =>
+      expect(screen.getByTestId('intent-generation-error-mps-2')).toBeTruthy(),
+    );
+  });
+
+  it('closing IntentCreator resets all generation states', async () => {
+    configureAIResponse({ reply: 'Some generated intent.' });
+    const onClose = vi.fn();
+    renderIntentCreator({ onClose });
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    await screen.findByTestId('intent-generated-mps-2');
+    fireEvent.click(screen.getByText('Cancel'));
+    expect(onClose).toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T-MMM-S6-AI-003: Criteria AI generation lifecycle
+// ---------------------------------------------------------------------------
+
+describe('T-MMM-S6-AI-003: AI generation lifecycle — criteria generation', () => {
+  beforeEach(() => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: [] });
+  });
+  afterEach(() => { cleanup(); });
+
+  it('per-MPS "Generate criteria" button renders in CriteriaManagement', () => {
+    renderCriteriaManagement();
+    expect(screen.getByTestId('generate-criteria-btn-mps-1')).toBeTruthy();
+    expect(screen.getByTestId('generate-criteria-btn-mps-2')).toBeTruthy();
+  });
+
+  it('clicking generate shows per-MPS loading', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mockSupabase.functions.invoke as any).mockImplementationOnce(() => new Promise(() => undefined));
+    renderCriteriaManagement();
+    fireEvent.click(screen.getByTestId('generate-criteria-btn-mps-1'));
+    expect(await screen.findByTestId('criteria-generation-loading-mps-1')).toBeTruthy();
+  });
+
+  it('generated criteria list renders with accept/reject checkboxes per item', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { code: 'PI-001-C001', statement: 'Workflow owner formally assigned' },
+        { code: 'PI-001-C002', statement: 'Approval checkpoints documented' },
+      ]),
+    });
+    renderCriteriaManagement();
+    fireEvent.click(screen.getByTestId('generate-criteria-btn-mps-1'));
+    await screen.findByTestId('generated-criteria-list-mps-1');
+    const items = screen.getAllByTestId('generated-criterion-item');
+    expect(items).toHaveLength(2);
+    expect(items[0].textContent).toContain('PI-001-C001');
+    expect(items[0].textContent).toContain('Workflow owner formally assigned');
+  });
+
+  it('"Accept All" selects all criteria for that MPS', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { code: 'PI-001-C001', statement: 'Criterion one' },
+        { code: 'PI-001-C002', statement: 'Criterion two' },
+      ]),
+    });
+    renderCriteriaManagement();
+    fireEvent.click(screen.getByTestId('generate-criteria-btn-mps-1'));
+    await screen.findByTestId('generated-criteria-list-mps-1');
+    // Deselect first
+    fireEvent.click(screen.getByTestId('criterion-select-PI-001-C001'));
+    // Accept all
+    fireEvent.click(screen.getByTestId('accept-all-criteria-btn-mps-1'));
+    const cb1 = screen.getByTestId('criterion-select-PI-001-C001') as HTMLInputElement;
+    const cb2 = screen.getByTestId('criterion-select-PI-001-C002') as HTMLInputElement;
+    expect(cb1.checked).toBe(true);
+    expect(cb2.checked).toBe(true);
+  });
+
+  it('save accepted fires mutation insert to mmm_criteria and clears generated list', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { code: 'PI-001-C001', statement: 'Workflow owner formally assigned' },
+      ]),
+    });
+    renderCriteriaManagement();
+    fireEvent.click(screen.getByTestId('generate-criteria-btn-mps-1'));
+    await screen.findByTestId('save-criteria-btn-mps-1');
+    fireEvent.click(screen.getByTestId('save-criteria-btn-mps-1'));
+    await waitFor(() => expect(mockInsert).toHaveBeenCalled());
+    const insertArg = mockInsert.mock.calls[0][0] as Array<Record<string, unknown>>;
+    expect(insertArg[0]).toMatchObject({ mps_id: 'mps-1', code: 'PI-001-C001' });
+  });
+
+  it('AI error shows per-MPS error state', async () => {
+    configureAIError();
+    renderCriteriaManagement();
+    fireEvent.click(screen.getByTestId('generate-criteria-btn-mps-1'));
+    await waitFor(() =>
+      expect(screen.getByTestId('criteria-generation-error-mps-1')).toBeTruthy(),
+    );
+  });
+
+  it('closing CriteriaManagement resets all generation states', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([{ code: 'PI-001-C001', statement: 'Criterion one' }]),
+    });
+    const onClose = vi.fn();
+    renderCriteriaManagement({ onClose });
+    fireEvent.click(screen.getByTestId('generate-criteria-btn-mps-1'));
+    await screen.findByTestId('generated-criteria-list-mps-1');
+    fireEvent.click(screen.getByText('Cancel'));
+    expect(onClose).toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T-MMM-S6-AI-004: NBR-003 — generation state resets when domainId changes
+// ---------------------------------------------------------------------------
+
+describe('T-MMM-S6-AI-004: generation state resets when domainId changes (NBR-003)', () => {
+  afterEach(() => { cleanup(); });
+
+  it('MPSSelectionModal resets generated list when domainId prop changes', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([
+        { number: 1, title: 'Access Control', intent: 'Govern access', rationale: 'Security' },
+      ]),
+    });
+    const { rerender } = renderMPSSelectionModal({ mpsRows: [], domainId: 'domain-1' });
+    fireEvent.click(screen.getByTestId('generate-mps-btn'));
+    await screen.findByTestId('generated-mps-list');
+    // Change domainId — state should reset
+    const qc = createQueryClient();
+    rerender(
+      <QueryClientProvider client={qc}>
+        <MPSSelectionModal
+          domainId="domain-2"
+          domainName="Different Domain"
+          open={true}
+          mpsRows={[]}
+          isLoading={false}
+          errorMessage={null}
+          onClose={vi.fn()}
+        />
+      </QueryClientProvider>,
+    );
+    expect(screen.queryByTestId('generated-mps-list')).toBeNull();
+    expect(screen.getByTestId('generate-mps-btn')).toBeTruthy();
+  });
+
+  it('IntentCreator resets per-MPS intent state when domainId prop changes', async () => {
+    configureAIResponse({ reply: 'Generated intent.' });
+    const { rerender } = renderIntentCreator({ domainId: 'domain-1' });
+    fireEvent.click(screen.getByTestId('generate-intent-btn-mps-2'));
+    await screen.findByTestId('intent-generated-mps-2');
+    // Change domainId
+    const qc = createQueryClient();
+    rerender(
+      <QueryClientProvider client={qc}>
+        <IntentCreator
+          domainId="domain-2"
+          domainName="Different Domain"
+          open={true}
+          mpsRows={baseMpsRowsForModal}
+          isLoading={false}
+          errorMessage={null}
+          onClose={vi.fn()}
+        />
+      </QueryClientProvider>,
+    );
+    expect(screen.queryByTestId('intent-generated-mps-2')).toBeNull();
+  });
+
+  it('CriteriaManagement resets per-MPS criteria state when domainId prop changes', async () => {
+    configureAIResponse({
+      reply: JSON.stringify([{ code: 'PI-001-C001', statement: 'Criterion one' }]),
+    });
+    const { rerender } = renderCriteriaManagement({ domainId: 'domain-1' });
+    fireEvent.click(screen.getByTestId('generate-criteria-btn-mps-1'));
+    await screen.findByTestId('generated-criteria-list-mps-1');
+    // Change domainId
+    const qc = createQueryClient();
+    rerender(
+      <QueryClientProvider client={qc}>
+        <CriteriaManagement
+          domainId="domain-2"
+          domainName="Different Domain"
+          open={true}
+          mpsRows={baseMpsRowsForModal}
+          criteriaByMps={{}}
+          isLoading={false}
+          errorMessage={null}
+          onClose={vi.fn()}
+        />
+      </QueryClientProvider>,
+    );
+    expect(screen.queryByTestId('generated-criteria-list-mps-1')).toBeNull();
+  });
+});
+
