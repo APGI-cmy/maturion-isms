@@ -71,3 +71,12 @@ No governance gate has been weakened; changes harden identity binding, PR-scoped
 
 This artifact documents STOP_AND_FIX remediation evidence for PR #1717.  
 It does **not** declare merge-ready or handover-ready state.
+
+## Ripple/Cross-Agent Assessment
+
+| Agent / System | Change Scope Assessed | Impact Conclusion |
+|---|---|---|
+| foreman-v2 / governance gates | PR-scoped wave-task routing in iaa-prebrief-inject push + safety-net; resolver-first active artifact selection in pre-handover checkpoint; ECAP ceremony evidence for protected template path | LOW IMPACT — automation routing hardened to prefer PR-scoped artifacts; no gate authority weakened; ECAP/admin ceremony evidence correctly bound to PR #1717 |
+| execution-ceremony-admin-agent | ECAP bundle + prehandover proof for PR #1717 protected-path governance change | IN SCOPE — ceremony admin artifacts produced and identity-bound to active PR/branch/HEAD |
+
+**Downstream ripple conclusion**: LOW IMPACT — governance automation behavior tightened; no product/runtime feature behavior changed; ECAP ceremony correctly recorded for protected-path governance template change.

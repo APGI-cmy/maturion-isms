@@ -1,7 +1,7 @@
 {
   "pr": 1717,
   "branch": "copilot/tune-governance-preflight",
-  "runtime_head_sha": "72e7a8a35860f3bc358cadd0809b8144485927d7",
+  "runtime_head_sha": "7b27f15225dadcc0501cc1b0904613e642809db9",
   "base_sha": "e73d4f4fba53ce7e4c1531f377d9dcb6594f3189",
   "manifest_path": ".admin/prs/pr-1717.json",
   "scope_path": ".agent-admin/scope-declarations/pr-1717.md",
@@ -21,6 +21,7 @@
     ".admin/prs/pr-1717.json",
     ".agent-admin/assurance/iaa-wave-record-pr1717-stop-and-fix-ecap-gate-evidence-20260521.md",
     ".agent-admin/prehandover/proof-pr-1717-stop-and-fix-ecap-gate-evidence-20260521.md",
+    ".agent-admin/prs/pr-1717/active-state.json",
     ".agent-admin/prs/pr-1717/wave-current-tasks.md",
     ".agent-admin/scope-declarations/pr-1717.md",
     ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1717-stop-and-fix-ecap-gate-evidence-20260521.md",
