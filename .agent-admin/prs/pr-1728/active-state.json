@@ -1,8 +1,8 @@
 {
   "pr": 1728,
   "branch": "copilot/create-isms-public-landing-report",
-  "runtime_head_sha": "b06e8ec0e6770a4088ffeb3c13283559b4d62b82",
-  "base_sha": "",
+  "runtime_head_sha": "c57c141afb1e819624922c79398c98a0c4a7683d",
+  "base_sha": "6f29d9eb185bca80fb382b0df1e8daffcb8a18e4",
   "manifest_path": ".admin/prs/pr-1728.json",
   "scope_path": ".agent-admin/scope-declarations/pr-1728.md",
   "active_state_path": ".agent-admin/prs/pr-1728/active-state.json",
@@ -13,12 +13,18 @@
   "rebase_only_delta": false,
   "admin_only_delta": false,
   "substantive_delta_after_evidence": false,
-  "gate_change_delta": true,
+  "gate_change_delta": false,
   "next_required_action": "PASS",
-  "delta_type": "GATE_CHANGE_DELTA",
+  "delta_type": "DOCS_ONLY_DELTA",
   "contradictions": [],
   "changed_files": [
-    ".github/scripts/producer-next-action-guidance.test.sh",
-    ".github/workflows/producer-next-action-guidance.yml"
+    ".admin/prs/pr-1728.json",
+    ".agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md",
+    ".agent-admin/prs/pr-1728/active-state.json",
+    ".agent-admin/prs/pr-1728/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1728.md",
+    ".agent-workspace/foreman-v2/memory/session-issue-1727-isms-landing-discovery-20260521.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/isms/discovery-report/isms-public-landing-harvest-discovery-report.md"
   ]
 }
