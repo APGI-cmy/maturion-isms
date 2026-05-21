@@ -16,7 +16,7 @@ PR: #1731
 ISSUE: #1726
 WAVE: mmm-dab-harvest-implementation-20260521
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
+CURRENT_HEAD_SHA: 40878e864a4e6ce3ffdaec1a845770fccc928e62
 
 CURRENT_HEAD_CONTEXT:
 - predecessor_wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 (PR #1723, merged)
@@ -311,15 +311,33 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 ## TOKEN
 
 PHASE_B_BLOCKING_TOKEN: IAA-session-1280-mmm-dab-harvest-implementation-20260521-2026-05-21-PASS
-PR: #1731
-Issue: #1726
-Reviewed SHA: 40878e8
+**PR**: #1731
+**Issue**: #1726
+**Reviewed SHA**: 40878e864a4e6ce3ffdaec1a845770fccc928e62
 Session: session-1280-mmm-dab-harvest-re-invocation-20260521
 Date: 2026-05-21
 Checks: 16 total — 16 PASS, 0 FAIL
 Verdict: ASSURANCE-TOKEN (PASS) — FULL_FUNCTIONAL_DELIVERY
 Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
 Merge authority: CS2 ONLY
+PREFLIGHT_BRIEF_REVIEWED: yes
+PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
+PREFLIGHT_EXPECTATIONS_MET: yes
+UNMET_PREFLIGHT_EXPECTATIONS: none
+FINAL_IAA_RESULT: PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY
+CURRENT_HEAD_SHA: 40878e864a4e6ce3ffdaec1a845770fccc928e62
+
+IAA_IDENTITY_BINDING_VERDICT
+ACTUAL_PR: #1731
+ACTIVE_PREFLIGHT_PR: #1731
+ADMIN_MANIFEST_PR: #1731
+SCOPE_DECLARATION_PR: #1731
+BRANCH: copilot/harvest-domain-audit-builder-again
+HEAD_SHA: 40878e864a4e6ce3ffdaec1a845770fccc928e62
+ALL_MATCH: yes
 
 ## REJECTION_HISTORY
 
