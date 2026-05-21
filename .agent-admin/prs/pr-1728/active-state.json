@@ -1,7 +1,7 @@
 {
   "pr": 1728,
   "branch": "copilot/create-isms-public-landing-report",
-  "runtime_head_sha": "caab983b638582b95f06ac1a46ec794b29aedb47",
+  "runtime_head_sha": "0887cb7554e9aee37c6ab872d10836ca35752181",
   "base_sha": "6f29d9eb185bca80fb382b0df1e8daffcb8a18e4",
   "manifest_path": ".admin/prs/pr-1728.json",
   "scope_path": ".agent-admin/scope-declarations/pr-1728.md",
