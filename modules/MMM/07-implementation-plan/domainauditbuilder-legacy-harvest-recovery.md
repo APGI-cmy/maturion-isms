@@ -31,8 +31,27 @@ but failed legacy behavioural parity for DomainAuditBuilder.
 
 ## 2) Required Classification — DomainAuditBuilder Recovery Scope
 
+### Controlling principle
+
+```txt
+Everything after the Get to Know You / framework generation wizard handoff must be classified as LEGACY HARVEST unless explicitly proven not to exist in the legacy source.
+```
+
+This is not a redesign issue and not a rebuild issue. The implementation wave is copy/extract/adapt/wire, not recreate.
+
 ### HARVEST — must be extracted/adapted from legacy source
 
+- page reached after Get to Know You / framework generation / compile handoff
+- page containing the five domain cards
+- five domain-card UI and wiring, including mini-dashboard/status/counts/metrics where present in legacy
+- domain-card navigation into selected domain workspace
+- selected-domain workspace page containing the three creation actions/cards (MPS / Intent / Criteria)
+- underlying MPS generation capability, including generated-card output
+- underlying intent-generation capability
+- underlying criteria-generation capability
+- edit / accept / reject / accept-all / save lifecycle where present in legacy
+- AI loading / error / response / persistence behaviours where present in legacy
+- knowledge-domain / document-ingestion dependency needed for AI generation to receive correct Subject Knowledge Domain and Framework/Context Domain inputs
 - legacy `DomainAuditBuilder` page/workflow
 - legacy MPS generation card/component behaviour
 - legacy MPS generated-card layout
@@ -54,6 +73,10 @@ but failed legacy behavioural parity for DomainAuditBuilder.
 - replacement of missing legacy dependencies such as shadcn/lucide with current MMM primitives
 - current-app query invalidation and persistence integration
 - tests and governance evidence
+
+### BUILD ONLY IF MISSING
+
+- Any item not found in the legacy source archive may be built only after documenting search evidence and obtaining CS2 approval.
 
 ---
 
@@ -107,6 +130,15 @@ The following legacy files are the required source-of-truth harvest set:
 ---
 
 ## 5) Hard Instruction for Next Implementation PR (Non-Negotiable)
+
+```txt
+The implementation stream must not build a new post-wizard MMM workflow from scratch.
+The legacy post-wizard flow is the source of truth.
+The correct action is to copy/extract the legacy components, preserve behaviour and wiring, and adapt only the minimum required compatibility boundaries for the current MMM app.
+
+Any deviation from legacy must be documented as:
+Legacy behaviour -> harvested/adapted current component -> reason for deviation.
+```
 
 No implementation PR may claim legacy restoration unless it proves behaviour parity against the legacy source files.
 

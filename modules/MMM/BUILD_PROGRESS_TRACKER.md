@@ -1000,3 +1000,5 @@ but failed legacy behavioural parity for DomainAuditBuilder.
 **Governance correction applied in this wave**:
 - Recovery scope is explicitly reclassified under `modules/MMM/07-implementation-plan/domainauditbuilder-legacy-harvest-recovery.md`.
 - Follow-up implementation issue linked: #1724 — "Harvest legacy DomainAuditBuilder/MPS/Intent/Criteria generation components with behaviour parity".
+- CS2 clarification locked in: everything post wizard/compile handoff (five-domain cards, domain navigation, selected-domain workspace, three creation cards, generation lifecycles, and knowledge/document context dependency) is classified as LEGACY HARVEST unless proven missing in legacy source.
+- #1724 remains blocked until this broader harvest classification is treated as controlling pre-build scope.
