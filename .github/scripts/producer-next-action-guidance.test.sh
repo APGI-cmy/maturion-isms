@@ -188,29 +188,29 @@ EOF
   "true"
 
 # 13. Invalid checkpoint JSON → pre-handover-checkpoint.js exits non-zero (internal error fails workflow)
-_invalid_json_file="$(mktemp)"
-printf 'this is not valid json\n' > "$_invalid_json_file"
-_invalid_exit=0
-CHECKPOINT_REPO_FILES_PATH="$_invalid_json_file" node "$CHECKPOINT_SCRIPT" > /dev/null 2>&1 || _invalid_exit=$?
-rm -f "$_invalid_json_file"
+invalid_json_file="$(mktemp)"
+printf 'this is not valid json\n' > "$invalid_json_file"
+invalid_exit=0
+CHECKPOINT_REPO_FILES_PATH="$invalid_json_file" node "$CHECKPOINT_SCRIPT" > /dev/null 2>&1 || invalid_exit=$?
+rm -f "$invalid_json_file"
 run_case \
   "13. invalid checkpoint JSON causes pre-handover-checkpoint to exit non-zero" \
-  "$_invalid_exit" \
+  "$invalid_exit" \
   "1"
 
 # 14. Resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL
 #     from historical artifacts of other PRs present in the virtual file snapshot.
-_repo_files_temp="$(mktemp)"
+repo_files_temp="$(mktemp)"
 node -e "
 process.stdout.write(JSON.stringify({
   '.agent-admin/prehandover/proof-pr-1733-current.md': 'PR: #1733\nHANDOVER_ALLOWED: yes\n',
   '.agent-admin/prehandover/proof-pr-1111-old.md':     'PR: #1111\nHANDOVER_ALLOWED: yes\n',
   '.agent-admin/prehandover/proof-pr-2222-old.md':     'PR: #2222\nHANDOVER_ALLOWED: yes\n',
 }));
-" > "$_repo_files_temp"
+" > "$repo_files_temp"
 
-_resolver_binding="$(
-  CHECKPOINT_REPO_FILES_PATH="$_repo_files_temp" \
+resolver_binding="$(
+  CHECKPOINT_REPO_FILES_PATH="$repo_files_temp" \
   ACTIVE_STATE_JSON='{"ecap_artifact_path":".agent-admin/prehandover/proof-pr-1733-current.md"}' \
   PR_NUMBER=1733 \
   HEAD_SHA=abc123def456 \
@@ -225,11 +225,11 @@ _resolver_binding="$(
     });
   "
 )"
-rm -f "$_repo_files_temp"
+rm -f "$repo_files_temp"
 
 run_case \
   "14. resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL from historical artifacts" \
-  "$_resolver_binding" \
+  "$resolver_binding" \
   "PASS"
 
 echo ""

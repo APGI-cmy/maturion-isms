@@ -227,8 +227,9 @@ jobs:
             let activeState = null;
             try {
               activeState = activeStateText ? JSON.parse(activeStateText) : null;
-            } catch (_e) {
-              // Active-state parse failure is non-fatal in advisory mode.
+            } catch (error) {
+              // Active-state parse failure is non-fatal in advisory mode; fall back to broad discovery.
+              core.info(`Active-state JSON for PR #${prNumber} could not be parsed (${error.message}). Using legacy fallback discovery.`);
             }
 
             const resolverSelectedPaths = [
