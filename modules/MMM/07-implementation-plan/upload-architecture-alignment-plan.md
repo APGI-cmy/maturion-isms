@@ -1,7 +1,7 @@
 # MMM Upload Architecture Alignment Plan (Knowledge Plane Separation)
 
 **Date**: 2026-05-21  
-**Issue**: Align upload architecture with Subject Knowledge Domain and Framework / Context Domain strategy  
+**Issue**: #1720 — Align upload architecture with Subject Knowledge Domain and Framework / Context Domain strategy  
 **Strategy anchor**: `Maturion/strategy/Maturion_knowledge_domains_and_runtime_agent_orchestration_strategy.md` (MKD-RAO-001)
 
 ---
@@ -40,6 +40,8 @@ These functions are framework lifecycle functions (create/generate/parse-init) a
 | `apps/maturion-maturity-legacy/supabase/functions/process-ai-document/index.ts` | Legacy ai_documents processing pipeline | Context/subject processing backend (must be plane-scoped) |
 | `apps/maturion-maturity-legacy/supabase/functions/process-document-v2/index.ts` | Enhanced legacy processing pipeline | Context/subject processing backend (must be plane-scoped) |
 | `packages/ai-centre/supabase/functions/process-document-v2/index.ts` | Pipeline 2 writes to `ai_knowledge` with strict scope constraints | Subject knowledge ingestion target pattern |
+
+Legacy asset paths in this table are architecture targets based on prior discovery. The implementation wave must re-verify each file against the uploaded legacy source archive before claiming harvest/parity.
 
 ---
 
@@ -97,4 +99,3 @@ These functions are framework lifecycle functions (create/generate/parse-init) a
 **Wave 1 choice**: **Create a role-aware Upload landing page** that routes explicitly to Framework Source / Subject Knowledge / Context / Evidence uploads, while preserving existing `/frameworks/upload` as Framework Source Upload.
 
 No production wiring from legacy upload centre should be merged until this routing and storage-plane contract is in place.
-

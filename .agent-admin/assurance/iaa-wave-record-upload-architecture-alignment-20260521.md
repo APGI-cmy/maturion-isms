@@ -2,8 +2,8 @@
 
 **Wave ID**: upload-architecture-alignment-20260521  
 **Date**: 2026-05-21  
-**PR**: PENDING  
-**Issue**: PENDING — Align upload architecture with Subject Knowledge Domain and Framework / Context Domain strategy  
+**PR**: #1721  
+**Issue**: #1720 — Align upload architecture with Subject Knowledge Domain and Framework / Context Domain strategy  
 **Branch**: copilot/align-upload-architecture  
 **Producing Agent (expected)**: foreman-v2-agent  
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
@@ -11,11 +11,11 @@
 ---
 
 IAA_PREFLIGHT_BRIEF
-PR: PENDING
-ISSUE: PENDING
+PR: #1721
+ISSUE: #1720
 WAVE: upload-architecture-alignment-20260521
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: cbbf059e648cffa7f46bbe886f6843c398935e83
+CURRENT_HEAD_SHA: ec49efb48c3cb26d79980d8cbddaa298f06f46b7
 
 EXPECTED_QA_SCOPE:
 - Upload architecture audit for current MMM routes/components/functions
@@ -42,6 +42,9 @@ IAA_WILL_QA:
 - Presence of explicit first-wave decision and no premature production wiring
 
 RESULT: PREFLIGHT_BRIEF_COMPLETE
+FINAL_REVIEW_CONTEXT:
+- Reviewed under PR #1721 / Issue #1720.
+- `CURRENT_HEAD_SHA` is the CS2-reviewed head for this architecture alignment pass (ec49efb48c3cb26d79980d8cbddaa298f06f46b7).
 
 ---
 
