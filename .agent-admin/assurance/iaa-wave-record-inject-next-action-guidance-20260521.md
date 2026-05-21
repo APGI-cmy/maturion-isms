@@ -15,8 +15,8 @@ IAA_PREFLIGHT_BRIEF
 PR: #1719
 ISSUE: #1718
 WAVE: inject-next-action-guidance
-WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: 5c6aa516471251185a7a80b95b3d116f04ab8de6
+WAVE_TASKS_PATH: .agent-admin/prs/pr-1719/wave-current-tasks.md
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
 
 EXPECTED_QA_SCOPE:
 - `.github/workflows/preflight-evidence-gate.yml`

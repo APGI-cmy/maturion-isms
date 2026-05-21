@@ -259,9 +259,8 @@ jobs:
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
         run: |
           RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
-          echo "result_json<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$RESULT_JSON" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          RESULT_JSON_B64="$(printf '%s' "$RESULT_JSON" | base64 -w 0)"
+          echo "result_json_b64=$RESULT_JSON_B64" >> "$GITHUB_OUTPUT"
           printf '%s\n' "$RESULT_JSON"
 
       - name: Upsert sticky producer guidance comment
@@ -270,13 +269,13 @@ jobs:
         env:
           PR_NUMBER: ${{ steps.context.outputs.pr_number }}
           HEAD_SHA: ${{ steps.context.outputs.head_sha }}
-          RESULT_JSON: ${{ steps.evaluate.outputs.result_json }}
+          RESULT_JSON_B64: ${{ steps.evaluate.outputs.result_json_b64 }}
         with:
           script: |
             const { STICKY_MARKER, renderGuidanceComment } = require('./.github/scripts/producer-next-action-guidance.js');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA || '';
-            const result = JSON.parse(process.env.RESULT_JSON || '{}');
+            const result = JSON.parse(Buffer.from(process.env.RESULT_JSON_B64 || '', 'base64').toString('utf8') || '{}');
             const body = renderGuidanceComment({
               prNumber,
               headSha,
