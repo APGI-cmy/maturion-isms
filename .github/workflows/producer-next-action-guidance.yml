@@ -140,6 +140,7 @@ jobs:
             const comments = [];
 
             const fetchFile = async (targetPath) => {
+              if (advisoryUnavailable) return;
               try {
                 const { data } = await github.rest.repos.getContent({
                   owner: context.repo.owner,
@@ -165,6 +166,7 @@ jobs:
             };
 
             const fetchDirectory = async (targetPath, includePattern) => {
+              if (advisoryUnavailable) return;
               try {
                 const { data } = await github.rest.repos.getContent({
                   owner: context.repo.owner,
@@ -348,9 +350,7 @@ jobs:
         run: |
           RESULT_FILE="${{ runner.temp }}/producer-guidance-result-${{ steps.context.outputs.pr_number }}.json"
           if [ "${ADVISORY_UNAVAILABLE:-none}" = "github_api_rate_limited" ]; then
-            cat > "$RESULT_FILE" <<'JSON'
-          {"fields":{"RESULT":"ADVISORY_UNAVAILABLE","ADVISORY_UNAVAILABLE":"github_api_rate_limited","INFRASTRUCTURE_RERUN_NEEDED":"yes","PR_DEFECT_INFERRED":"no","HANDOVER_ALLOWED":"no","NEXT_REQUIRED_CONTROL":"CURRENT_HEAD_GATES_GREEN","REASON":"GitHub API rate limit prevented advisory state refresh. Re-run needed."}}
-          JSON
+            printf '%s\n' '{"fields":{"RESULT":"ADVISORY_UNAVAILABLE","ADVISORY_UNAVAILABLE":"github_api_rate_limited","INFRASTRUCTURE_RERUN_NEEDED":"yes","PR_DEFECT_INFERRED":"no","HANDOVER_ALLOWED":"no","NEXT_REQUIRED_CONTROL":"CURRENT_HEAD_GATES_GREEN","REASON":"GitHub API rate limit prevented advisory state refresh. Re-run needed."}}' > "$RESULT_FILE"
             echo "ADVISORY_UNAVAILABLE: github_api_rate_limited"
             echo "INFRASTRUCTURE_RERUN_NEEDED: yes"
             echo "PR_DEFECT_INFERRED: no"

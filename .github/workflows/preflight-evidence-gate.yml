@@ -832,7 +832,7 @@ jobs:
               core.setOutput('advisory_unavailable', 'github_api_rate_limited');
             }
 
-      - name: RCA marker advisory unavailable due rate limit — pass with infra rerun classification
+      - name: RCA marker advisory unavailable due to rate limit — pass with infra rerun classification
         if: steps.rca_marker.outputs.advisory_unavailable == 'github_api_rate_limited'
         run: |
           echo "⚪ ADVISORY_UNAVAILABLE: github_api_rate_limited"
