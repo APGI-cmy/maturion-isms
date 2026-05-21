@@ -173,7 +173,7 @@ ALL_MATCH: yes|no
 > If verdict is REJECTED — ACR-27: **STOP. Do not complete §3.2 through §3.6. Issue REJECTION-PACKAGE now.**
 
 ### 3.1b Split Verdict Evidence Pack (when applicable)
-- CURRENT_HEAD_SHA: {sha used for final IAA review}
+- CURRENT_HEAD_SHA: {runtime head marker or resolved SHA used for final IAA review}
 - NO_CURRENT_HEAD_DRIFT: {yes / no}
 - HEAD_DRIFT_ACTION: {N/A / RE-RUN_REQUIRED}
 - ADMIN_GATE_EVIDENCE_FRESH_AT_HEAD: {yes / no}
@@ -185,6 +185,12 @@ ALL_MATCH: yes|no
 - PARTIAL_SCOPE_CS2_ACCEPTANCE: {yes / no / N/A}
 - CALIBRATION_REFERENCE: {APGI-cmy/maturion-isms#1553 (OC-009) when PARTIAL_FUNCTIONAL_DELIVERY is issued or UI_SHELL_ONLY classification evidence is referenced}
 - APPLICABILITY: {REQUIRED for product-facing T2 PRs / N/A for non-product-facing PRs with classification rationale}
+
+Runtime-head marker rule:
+- Runtime head fields (for example `CURRENT_HEAD_SHA`) may use symbolic markers:
+  `CURRENT_HEAD`, `ACTIVE_HEAD_RESOLVED_BY_GATE`, `GITHUB_PR_HEAD_SHA`.
+- Final assurance evidence subject (`**Reviewed SHA**` inside `## TOKEN`) MUST be a canonical literal 40-character git SHA.
+- Do not regenerate evidence solely to chase rebase-only or admin-only head movement when substantive/gate content is unchanged.
 
 #### Loading attestation proof (product-facing BUILD/T2 mandatory)
 - product-facing BUILD/T2 PR detected: {yes / no}
