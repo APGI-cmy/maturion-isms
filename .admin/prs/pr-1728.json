@@ -1,7 +1,7 @@
 {
   "pr": 1728,
   "issue": 1727,
-  "type": "documentation",
+  "type": "governance-change",
   "owner": "Copilot",
   "branch": "copilot/create-isms-public-landing-report",
   "scope": [
@@ -14,8 +14,8 @@
     "modules/isms/discovery-report/isms-public-landing-harvest-discovery-report.md"
   ],
   "risk": "low",
-  "requires_iaa": false,
-  "requires_ecap": false,
+  "requires_iaa": true,
+  "requires_ecap": true,
   "execution_model": "foreman-orchestrated",
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "mat-specialist",
