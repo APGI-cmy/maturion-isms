@@ -798,22 +798,51 @@ jobs:
           script: |
             const marker = '<!-- rca-required-marker -->';
             const prNumber = context.payload.pull_request.number;
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              per_page: 100,
-            });
-            const activeMarker = comments.find((comment) =>
-              comment.body &&
-              comment.body.includes(marker) &&
-              /RCA_REQUIRED:\s*yes/i.test(comment.body)
-            );
-            core.setOutput('required', activeMarker ? 'yes' : 'no');
-            core.setOutput('marker_url', activeMarker ? activeMarker.html_url : '');
+            const isRateLimitError = (error) => {
+              const status = Number(error?.status || error?.response?.status || 0);
+              const message = String(error?.message || error?.response?.data?.message || '').toLowerCase();
+              const remaining = String(error?.response?.headers?.['x-ratelimit-remaining'] || '');
+              return (status === 403 || status === 429) && (
+                message.includes('rate limit') ||
+                remaining === '0'
+              );
+            };
+            try {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 100,
+              });
+              const activeMarker = comments.find((comment) =>
+                comment.body &&
+                comment.body.includes(marker) &&
+                /RCA_REQUIRED:\s*yes/i.test(comment.body)
+              );
+              core.setOutput('required', activeMarker ? 'yes' : 'no');
+              core.setOutput('marker_url', activeMarker ? activeMarker.html_url : '');
+              core.setOutput('advisory_unavailable', 'none');
+            } catch (error) {
+              if (!isRateLimitError(error)) throw error;
+              core.warning('ADVISORY_UNAVAILABLE: github_api_rate_limited');
+              core.warning('INFRASTRUCTURE_RERUN_NEEDED: yes');
+              core.warning('PR_DEFECT_INFERRED: no');
+              core.setOutput('required', 'unknown');
+              core.setOutput('marker_url', '');
+              core.setOutput('advisory_unavailable', 'github_api_rate_limited');
+            }
+
+      - name: RCA marker advisory unavailable due to rate limit — pass with infra rerun classification
+        if: steps.rca_marker.outputs.advisory_unavailable == 'github_api_rate_limited'
+        run: |
+          echo "⚪ ADVISORY_UNAVAILABLE: github_api_rate_limited"
+          echo "INFRASTRUCTURE_RERUN_NEEDED: yes"
+          echo "PR_DEFECT_INFERRED: no"
+          echo "RCA marker comments could not be listed due to GitHub API rate limit."
+          echo "Not inferring missing RCA evidence from unavailable comment data."
 
       - name: RCA not required — pass safely
-        if: steps.rca_marker.outputs.required != 'yes'
+        if: steps.rca_marker.outputs.required != 'yes' && steps.rca_marker.outputs.advisory_unavailable != 'github_api_rate_limited'
         run: |
           echo "✅ PASS — RCA_REQUIRED marker is not active for this PR."
           echo "No PR-head RCA enforcement script/artifact checkout is required."
