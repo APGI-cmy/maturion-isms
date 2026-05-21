@@ -5,7 +5,7 @@
 **Branch**: copilot/cs2-clear-pit-build-authorization  
 **Issue**: #1737 — CS2: Clear PIT Build Authorization after Stage 11 builder appointment  
 **PR**: #1738  
-**Current HEAD SHA (pre-brief time)**: GITHUB_PR_HEAD_SHA  
+**Current HEAD SHA (pre-brief time)**: 58c7f2ac4b20b496c2690401cf400b087501be3c  
 **ceremony_admin_appointed (from wave-current-tasks.md)**: NOT_REQUIRED
 
 ---
@@ -15,7 +15,7 @@ PR: 1738
 ISSUE: 1737 - CS2: Clear PIT Build Authorization after Stage 11 builder appointment
 WAVE: pit-build-authorization-clearance-stage11
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
+CURRENT_HEAD_SHA: 58c7f2ac4b20b496c2690401cf400b087501be3c
 
 EXPECTED_QA_SCOPE:
 - `modules/pit/BUILD_PROGRESS_TRACKER.md` governance-only update that explicitly records **CS2 Build Authorization CLEARED** after Stage 11 appointment
@@ -39,7 +39,7 @@ FOREMAN_INSTRUCTIONS:
 
 ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS:
 - ECAP_REQUIRED: YES (governance state artifact update)
-- ECAP_EXPECTED_ARTIFACTS: `modules/pit/BUILD_PROGRESS_TRACKER.md`, `.agent-admin/assurance/iaa-wave-record-pit-build-authorization-clearance-stage11-20260521.md`
+- ECAP_EXPECTED_ARTIFACTS: `modules/pit/BUILD_PROGRESS_TRACKER.md`, `.agent-admin/assurance/iaa-wave-record-pit-build-authorization-clearance-stage11-20260521.md`, `.admin/prs/pr-1738.json`, `.agent-admin/scope-declarations/pr-1738.md`, `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
 
 CURRENT_HEAD_CI_EXPECTATIONS:
 - Governance/preflight/admin parity gates should validate this as governance-only state transition evidence
