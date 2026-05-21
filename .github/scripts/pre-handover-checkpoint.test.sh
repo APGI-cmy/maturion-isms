@@ -53,6 +53,8 @@ run_checkpoint_test() {
   TEST_CHECK_RUNS_PATH=""
   TEST_COMMIT_STATUSES_PATH=""
   TEST_CHANGED_FILES_PATH=""
+  TEST_ACTIVE_STATE_JSON=""
+  TEST_ACTIVE_STATE_PATH=""
 
   "$setup_fn"
 
@@ -83,6 +85,8 @@ run_checkpoint_test() {
     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
     CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
+    ACTIVE_STATE_JSON="$TEST_ACTIVE_STATE_JSON" \
+    ACTIVE_STATE_PATH="$TEST_ACTIVE_STATE_PATH" \
     node "$CHECKPOINT_SCRIPT"
   )"
 
@@ -142,6 +146,8 @@ run_checkpoint_field_test() {
   TEST_CHECK_RUNS_PATH=""
   TEST_COMMIT_STATUSES_PATH=""
   TEST_CHANGED_FILES_PATH=""
+  TEST_ACTIVE_STATE_JSON=""
+  TEST_ACTIVE_STATE_PATH=""
 
   "$setup_fn"
 
@@ -172,6 +178,8 @@ run_checkpoint_field_test() {
     CHECKPOINT_MERGEABLE_WITH_BASE="$TEST_MERGEABLE_WITH_BASE" \
     CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED="$TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED" \
     CHECKPOINT_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER="$TEST_OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER" \
+    ACTIVE_STATE_JSON="$TEST_ACTIVE_STATE_JSON" \
+    ACTIVE_STATE_PATH="$TEST_ACTIVE_STATE_PATH" \
     node "$CHECKPOINT_SCRIPT"
   )"
 
@@ -885,6 +893,100 @@ run_checkpoint_field_test \
   '[
     {"field":"INJECTION_INTAKE_STATUS","equals":"CURRENT"},
     {"field":"HANDOVER_ALLOWED","equals":"yes"}
+  ]'
+
+setup_resolver_selected_artifacts_ignore_historical() {
+  setup_green_checkpoint
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  mkdir -p .agent-admin/assurance .agent-workspace/execution-ceremony-admin-agent/bundles .agent-admin/prs/pr-9999
+  cat > .agent-admin/assurance/iaa-wave-record-active.md <<EOF
+## PRE-BRIEF
+PR: #9999
+Issue: #1583
+CURRENT_HEAD_SHA: ${head_sha}
+IAA_PREFLIGHT_BRIEF
+EXPECTED_QA_SCOPE:
+ - active
+EXPECTED_FAILURE_MODES:
+ - active
+FOREMAN_INSTRUCTIONS:
+ - active
+IAA_WILL_QA:
+ - active
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+## TOKEN
+**PR**: #9999
+**Issue**: maturion-isms#1583
+**Reviewed SHA**: ${head_sha}
+PHASE_B_BLOCKING_TOKEN: IAA-session-active-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  cat > .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-active.md <<EOF
+CURRENT_HEAD_SHA: ${head_sha}
+ecap_session: ecap-session-active
+ecap_verdict: PASS
+EOF
+  cat > .agent-admin/assurance/iaa-wave-record-historical.md <<'EOF'
+## PRE-BRIEF
+PR: #1111
+Issue: #1000
+CURRENT_HEAD_SHA: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+## TOKEN
+**PR**: #1111
+**Issue**: maturion-isms#1000
+**Reviewed SHA**: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+PHASE_B_BLOCKING_TOKEN: IAA-session-historical-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  cat > .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-historical.md <<'EOF'
+CURRENT_HEAD_SHA: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+ecap_session: ecap-session-historical
+ecap_verdict: PASS
+EOF
+  cat > .agent-admin/prs/pr-9999/active-state.json <<EOF
+{
+  "pr": 9999,
+  "branch": "copilot/test-checkpoint",
+  "runtime_head_sha": "${head_sha}",
+  "manifest_path": ".admin/prs/pr-9999.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-9999.md",
+  "wave_tasks_path": ".agent-admin/prs/pr-9999/wave-current-tasks.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-active.md",
+  "ecap_artifact_path": ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-active.md"
+}
+EOF
+  TEST_ACTIVE_STATE_PATH="$PWD/.agent-admin/prs/pr-9999/active-state.json"
+  TEST_CHANGED_FILES_JSON='[
+    ".admin/prs/pr-9999.json",
+    ".agent-admin/scope-declarations/pr-9999.md",
+    ".agent-admin/assurance/iaa-wave-record-active.md",
+    ".agent-admin/prehandover/proof-test.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-active.md"
+  ]'
+  git add .agent-admin/assurance/iaa-wave-record-active.md .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-active.md .agent-admin/assurance/iaa-wave-record-historical.md .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-historical.md .agent-admin/prs/pr-9999/active-state.json
+  git commit -q -m "seed resolver-selected active and historical artifacts"
+  head_sha="$(git rev-parse HEAD)"
+  sed -i "s/^CURRENT_HEAD_SHA: .*/CURRENT_HEAD_SHA: ${head_sha}/" .agent-admin/assurance/iaa-wave-record-active.md
+  sed -i "s/^\\*\\*Reviewed SHA\\*\\*: .*/**Reviewed SHA**: ${head_sha}/" .agent-admin/assurance/iaa-wave-record-active.md
+  sed -i "s/CURRENT_HEAD_SHA: .*/CURRENT_HEAD_SHA: ${head_sha}/" .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-active.md
+  sed -i "s/\"runtime_head_sha\": \".*\"/\"runtime_head_sha\": \"${head_sha}\"/" .agent-admin/prs/pr-9999/active-state.json
+  git add .agent-admin/assurance/iaa-wave-record-active.md .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-active.md .agent-admin/prs/pr-9999/active-state.json
+  git commit -q -m "refresh resolver-selected active artifacts to current head"
+  TEST_HEAD_SHA_OVERRIDE="${head_sha}"
+}
+run_checkpoint_field_test \
+  "10h. resolver-selected active artifacts are preferred over historical cross-PR files" \
+  setup_resolver_selected_artifacts_ignore_historical \
+  "HANDOVER_ALLOWED" \
+  "yes" \
+  '[
+    {"field":"HANDOVER_ALLOWED","equals":"yes"},
+    {"field":"RESULT","equals":"HANDOVER_ALLOWED"}
   ]'
 
 setup_merge_conflict_not_resolved() {

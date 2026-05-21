@@ -81,7 +81,9 @@ run_test() {
   # Create initial commit on main (simulates base branch)
   mkdir -p .agent-admin/assurance .agent-admin/prehandover \
            .agent-workspace/foreman-v2/memory \
-           .github/agents .github/workflows governance/canon
+           .github/agents .github/workflows .github/scripts governance/canon
+  cp "${SCRIPT_DIR}/resolve-active-pr-state.js" .github/scripts/resolve-active-pr-state.js
+  cp "${SCRIPT_DIR}/classify-pr-delta.sh" .github/scripts/classify-pr-delta.sh
   echo "initial" > README.md
   git add .
   git commit -q -m "Initial commit"
