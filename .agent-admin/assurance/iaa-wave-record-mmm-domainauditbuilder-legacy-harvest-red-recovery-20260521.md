@@ -16,7 +16,7 @@ PR: #1723
 ISSUE: #1722
 WAVE: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA (runtime placeholder resolved by iaa-preflight-contract-gate.sh)
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA (runtime placeholder resolved by iaa-preflight-contract-gate.sh to active 40-char PR head commit SHA)
 
 CURRENT_HEAD_CONTEXT:
 - historical_prebrief_sha: 7e1a6660cd80c7dcb9794a426feff23b651a2430
