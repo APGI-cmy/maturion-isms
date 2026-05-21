@@ -10,6 +10,50 @@
 
 ---
 
+IAA_PREFLIGHT_BRIEF
+PR: #1711
+ISSUE: #1710
+WAVE: mmm-ai-generation-wiring-20260520
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+CURRENT_HEAD_SHA: CURRENT_HEAD
+
+EXPECTED_QA_SCOPE:
+- `apps/mmm/src/components/assessment/MPSSelectionModal.tsx` — AI generate/accept/edit/save lifecycle
+- `apps/mmm/src/components/assessment/IntentCreator.tsx` — per-MPS intent generation lifecycle
+- `apps/mmm/src/components/assessment/CriteriaManagement.tsx` — per-MPS criteria generation lifecycle
+- `modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx` — AI lifecycle behavior tests
+- `.admin/prs/pr-1711.json` — per-PR manifest accuracy
+- `.agent-admin/scope-declarations/pr-1711.md` — scope declaration parity
+- `.agent-workspace/foreman-v2/memory/session-mmm-ai-generation-wiring-20260520.md` — session memory with builder delegation
+
+EXPECTED_FAILURE_MODES:
+- AI generation state not reset on modal close or domainId change (NBR-003 violation)
+- useMutation save missing onSuccess invalidateQueries (NBR-001 violation)
+- Silent catch swallowing AI generation or save errors (NBR-005 violation)
+- shadcn/lucide imports introduced in apps/mmm
+- 168 existing B4 tests regressing
+- Manifest scope referencing files not in actual diff
+- Session memory missing or lacking agents_delegated_to:
+
+FOREMAN_INSTRUCTIONS:
+- Keep `iaa_prebrief_path` and `IAA_PREFLIGHT_BRIEF_PATH` in wave-current-tasks.md synchronized to this file.
+- Ensure session memory at `.agent-workspace/foreman-v2/memory/session-mmm-ai-generation-wiring-20260520.md` contains `agents_delegated_to:` for POLC gate.
+- Ensure all 168 existing B4 tests GREEN before accepting builder handback.
+- Do not declare handover-ready while any required current-head gate is non-GREEN.
+- Resolve FOREMAN-DECISION-001 (mmm-ai-chat function), FOREMAN-DECISION-002 (getEdgeInvokeHeaders auth), FOREMAN-DECISION-003 (ADMIN role handling) before builder delegation.
+
+IAA_WILL_QA:
+- Active preflight brief structure, PR binding (#1711), and current-head relevance.
+- Wave task pointer coherence (iaa_prebrief_path in wave-current-tasks.md).
+- Scope/admin artifact parity-lock (pr-1711.json, scope-declarations/pr-1711.md).
+- NBR-001, NBR-003, NBR-005 functional-behaviour pattern compliance.
+- Anti-regression: 168 existing B4 tests + new AI lifecycle tests all GREEN.
+- No shadcn/lucide in apps/mmm components.
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
+---
+
 ## PRE-BRIEF
 
 **Produced by**: independent-assurance-agent

@@ -4,7 +4,7 @@
   "issue_title": "PR1700 deferred: complete legacy AI generation wiring for DomainAuditBuilder",
   "type": "product-fix",
   "owner": "Copilot",
-  "scope_notes": "Foreman-orchestrated MMM product wave completing the deferred AI generation wiring from PR #1700. Adapts useAIMPSGeneration, useIntentGeneration, AIGeneratedCriteriaCards, and EnhancedCriteriaGenerator as current-app implementations (no shadcn/lucide, no useOrganization, mmm-ai-chat via getEdgeInvokeHeaders()) in the three-step DomainAuditBuilder workflow with generate/accept/refine/save lifecycle and full behavior coverage tests.",
+  "scope_notes": "Foreman-orchestrated MMM product wave completing the deferred AI generation wiring from PR #1700. Wires AI generate/accept/refine/save lifecycle for MPS, intent, and criteria components using mmm-ai-chat edge function + getEdgeInvokeHeaders(). No shadcn/lucide, no useOrganization. State resets on modal close and domainId change (NBR-003). useMutation + invalidateQueries on all saves (NBR-001). Visible error surfacing (NBR-005).",
   "scope": [
     ".admin/prs/pr-1711.json",
     ".agent-admin/assurance/iaa-wave-record-mmm-ai-generation-wiring-20260520.md",
@@ -12,11 +12,8 @@
     ".agent-workspace/foreman-v2/memory/session-mmm-ai-generation-wiring-20260520.md",
     ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     "apps/mmm/src/components/assessment/CriteriaManagement.tsx",
-    "apps/mmm/src/components/assessment/DomainAuditBuilder.tsx",
     "apps/mmm/src/components/assessment/IntentCreator.tsx",
     "apps/mmm/src/components/assessment/MPSSelectionModal.tsx",
-    "apps/mmm/src/hooks/useDomainAuditBuilder.ts",
-    "modules/MMM/BUILD_PROGRESS_TRACKER.md",
     "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
   ],
   "risk": "medium",
@@ -26,7 +23,7 @@
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "ui-builder (AI generation wiring)",
   "evidence_required": [
-    "IAA wave record for mmm-ai-generation-wiring-20260520",
+    "IAA wave record for mmm-ai-generation-wiring-20260520 with bare-line IAA_PREFLIGHT_BRIEF section",
     "RED QA defined (168 existing tests must remain GREEN + new AI lifecycle tests)",
     "PR-changed Foreman session memory proves ui-builder delegation with agents_delegated_to",
     "AI generation lifecycle implemented: generate/accept/refine/save for MPS, intent, criteria",
@@ -37,7 +34,6 @@
     "AI generate buttons conditional on authenticated session with graceful 401/403 handling",
     "Legacy step order preserved (MPSs -> Intent -> Criteria)",
     "All 168 existing B4 tests GREEN + new AI lifecycle tests GREEN",
-    "BUILD_PROGRESS_TRACKER.md updated with wave record",
     "Per-PR scope declaration at .agent-admin/scope-declarations/pr-1711.md"
   ],
   "merge_authority": "CS2"
