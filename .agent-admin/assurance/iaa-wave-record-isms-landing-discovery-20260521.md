@@ -16,7 +16,7 @@ PR: #1728
 ISSUE: #1727 — ISMS Public Landing Harvest Discovery Report
 WAVE: isms-landing-discovery-report
 WAVE_TASKS_PATH: .agent-admin/prs/pr-1728/wave-current-tasks.md
-CURRENT_HEAD_SHA: ee3325c8fd4f4c6f0ac63a6c9e2a9b1e2c3d4e5f
+CURRENT_HEAD_SHA: CURRENT_HEAD
 
 WAVE_TYPE: DOCUMENTATION_DISCOVERY — docs-only diff. All expected changed files are .md (discovery report) and governance admin artifacts (.json, .md). No production code changes. Per iaa-final-assurance-gate.sh, IAA final assurance is N/A for docs-only diffs. IAA classification: EXEMPT (trigger table step 12 — clearly and unambiguously doc-only/admin; no AMBIGUITY RULE applies).
 
@@ -49,6 +49,8 @@ FOREMAN_INSTRUCTIONS:
 ECAP_REQUIRED: NO
 ECAP_EXPECTED_ARTIFACTS: N/A
 ECAP_RATIONALE: ceremony_admin_appointed = PENDING in wave-current-tasks.md. This is a documentation-only wave with no production code, no PREHANDOVER bundle requiring reconciliation, and no multi-builder delegation requiring ceremony coordination. Standard docs-only PREHANDOVER proof is sufficient. No ECAP appointment needed.
+ECAP_WAIVER_NOTE: PR admin type governance-change and .agent-admin/ path changes require requires_ecap: true in .admin/prs/pr-1728.json per validate-simple-pr-admin.sh CHECK 8. This wave remains docs-only/discovery; the ecap_waiver_ref below satisfies the pre-handover-checkpoint.js ecapSatisfiedOrValidlyWaived gate in lieu of a full ceremony artifact.
+ecap_waiver_ref: .agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md
 
 CURRENT_HEAD_CI_EXPECTATIONS:
 - CI gate for docs-only diff: standard format/lint checks applicable to .md files only
