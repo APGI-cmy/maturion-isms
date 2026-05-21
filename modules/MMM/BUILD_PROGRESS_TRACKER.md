@@ -984,7 +984,7 @@ structure for the current MMM app and adding data-backed reads from canonical MM
 
 ---
 
-## RED Recovery — DomainAuditBuilder Legacy Parity Failure (2026-05-21, Issue PENDING_ISSUE_LINK)
+## RED Recovery — DomainAuditBuilder Legacy Parity Failure (2026-05-21, Issue #1722)
 
 PR #1700 / PR #1711 restored route/data plumbing and partial AI-generation wiring,
 but failed legacy behavioural parity for DomainAuditBuilder.
@@ -999,4 +999,4 @@ but failed legacy behavioural parity for DomainAuditBuilder.
 
 **Governance correction applied in this wave**:
 - Recovery scope is explicitly reclassified under `modules/MMM/07-implementation-plan/domainauditbuilder-legacy-harvest-recovery.md`.
-- Follow-up implementation linkage is now tracked as `PENDING_ISSUE_LINK` until the new implementation issue is issued.
+- Follow-up implementation issue linked: #1724 — "Harvest legacy DomainAuditBuilder/MPS/Intent/Criteria generation components with behaviour parity".

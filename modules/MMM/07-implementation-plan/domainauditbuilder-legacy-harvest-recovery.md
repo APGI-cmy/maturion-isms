@@ -8,9 +8,9 @@
 - **Version**: 1.0.0
 - **Date**: 2026-05-21
 - **Produced By**: governance-liaison-isms-agent (delegated by foreman-v2-agent)
-- **Issue**: PENDING_ISSUE_LINK — RED recovery: classify MMM DomainAuditBuilder as legacy harvest and record PR1700/PR1711 parity failure
+- **Issue**: [maturion-isms#1722](https://github.com/APGI-cmy/maturion-isms/issues/1722)
 - **Branch**: `copilot/red-recovery-legacy-harvest-fix`
-- **Follow-up Implementation Issue**: `PENDING_ISSUE_LINK`
+- **Follow-up Implementation Issue**: [maturion-isms#1724](https://github.com/APGI-cmy/maturion-isms/issues/1724)
 
 ---
 
