@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
+const handoverIntent = require('./handover-intent');
 
 const REQUIRED_CHECKS = [
   'preflight/phase-1-evidence',
@@ -224,64 +225,19 @@ function isAfterOrSame(leftValue, rightValue) {
 }
 
 function isCheckpointTriggerComment(body) {
-  const text = String(body || '').trim();
-  return /^(?:ECAP_)?PRE_HANDOVER_CHECKPOINT(?:\b.*)?$/i.test(text) ||
-    /^\/prepare-handover(?:\b.*)?$/i.test(text);
+  return handoverIntent.isCheckpointTriggerComment(body);
 }
 
 function isCheckpointResultComment(body) {
-  return /PRE_HANDOVER_CHECKPOINT_RESULT/i.test(String(body || ''));
+  return handoverIntent.isCheckpointResultComment(body);
 }
 
 function isHandoverClaimComment(body) {
-  const text = String(body || '');
-  const rejectionNoticePattern = /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE\b/i;
-  if (!text.trim()) return false;
-  if (isCheckpointTriggerComment(text) || isCheckpointResultComment(text)) return false;
-  if (
-    /RESULT:\s*STOP_AND_FIX/i.test(text) ||
-    /RESULT:\s*CS2_INTERVENTION_REQUIRED/i.test(text) ||
-    /RESULT:\s*REJECTED_BACK_TO_PRODUCER/i.test(text) ||
-    /HANDOVER_ALLOWED:\s*no/i.test(text) ||
-    rejectionNoticePattern.test(text)
-  ) return false;
-  const claimPatterns = [
-    /\bmerge-ready\b/i,
-    /\bmerge ready\b/i,
-    /\bready to merge\b/i,
-    /\bready for review\b/i,
-    /\bready-for-review\b/i,
-    /\bhandover-ready\b/i,
-    /\bhandover ready\b/i,
-    /\bhandover claim\b/i,
-    /\bready for cs2\b/i,
-    /\bwork complete\b/i,
-    /\bimplementation complete\b/i,
-    /\bfinal summary\b/i,
-    /\bwave closure\b/i,
-    /\ball checks pass\b/i,
-    /\ball gates pass\b/i,
-    /\bmerge gate released\b/i,
-    /\bcs2 approval\b/i,
-  ];
-  return claimPatterns.some((pattern) => pattern.test(text));
+  return handoverIntent.isProducerIntentComment(body);
 }
 
 function hasExplicitReviewOrHandoverSignal(text) {
-  return [
-    /\bready[ -]?for[ -]?review\b/i,
-    /\breview-ready\b/i,
-    /\bmerge[ -]?ready\b/i,
-    /\bready to merge\b/i,
-    /\bhandover[ -]?ready\b/i,
-    /\bhandover claim\b/i,
-    /\bwork complete\b/i,
-    /\bimplementation complete\b/i,
-    /\ball checks pass\b/i,
-    /\ball gates pass\b/i,
-    /\bmerge gate released\b/i,
-    /HANDOVER_ALLOWED\s*:\s*yes/i,
-  ].some((pattern) => pattern.test(String(text || '')));
+  return handoverIntent.hasExplicitReviewOrHandoverSignal(text);
 }
 
 function isCs2Comment(comment) {
@@ -290,10 +246,9 @@ function isCs2Comment(comment) {
 }
 
 function isFailedGateSignalComment(body) {
-  const text = String(body || '');
-  if (!text.trim()) return false;
-  if (AUTHORITATIVE_GATE_MARKERS.some((marker) => text.includes(marker))) return false;
-  return /HANDOVER BLOCKED|HANDOVER_BLOCKED|CHECKPOINT REQUIRED|CHECKPOINT_REQUIRED|RESULT:\s*STOP_AND_FIX|RESULT:\s*CS2_INTERVENTION_REQUIRED|RESULT:\s*REJECTED_BACK_TO_PRODUCER|REJECTION_NOTICE|HANDOVER_ALLOWED:\s*no/i.test(text);
+  return handoverIntent.isFailedGateSignalComment(body, {
+    authoritativeMarkers: AUTHORITATIVE_GATE_MARKERS,
+  });
 }
 
 function parseChecklistItems(body) {

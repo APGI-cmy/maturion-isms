@@ -1,10 +1,12 @@
-name: Pre-Handover Checkpoint
+name: Producer Next Action Guidance
 
-# Authority: maturion-isms#1583
-# Purpose: Deliberate, comment-triggered current-head checkpoint before any
-#          handover / merge-ready / ready-for-review claim is accepted.
+# Authority: maturion-isms#1718
+# Purpose: Post exactly one sticky advisory comment with the current producer
+#          next action before any final summary / ready-for-review / handover posture.
 
 on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
   issue_comment:
     types: [created, edited]
 
@@ -15,10 +17,21 @@ permissions:
   checks: read
 
 jobs:
-  pre-handover-checkpoint:
-    name: "pre-handover/checkpoint"
+  producer-next-action-guidance:
+    name: "producer/next-action-guidance"
     runs-on: ubuntu-latest
-    if: github.event.issue.pull_request != null
+    if: |
+      (
+        github.event_name == 'pull_request_target' &&
+        (
+          startsWith(github.event.pull_request.head.ref, 'copilot/') ||
+          github.event.pull_request.user.login == 'Copilot'
+        )
+      ) ||
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request != null
+      )
 
     steps:
       - name: Checkout trusted default branch utilities
@@ -27,99 +40,69 @@ jobs:
           ref: refs/heads/${{ github.event.repository.default_branch }}
           persist-credentials: false
 
-      - name: Normalize deliberate checkpoint trigger
-        id: trigger
+      - name: Resolve trusted PR context
+        id: context
         uses: actions/github-script@v7
         with:
           script: |
             const handoverIntent = require('./.github/scripts/handover-intent.js');
-            const rawBody = context.payload.comment.body || '';
-            const normalizedBody = rawBody.trim();
-            const author = String(context.payload.comment.user?.login || '').toLowerCase();
-            const authorType = String(context.payload.comment.user?.type || '').toLowerCase();
-            const isEditedBotComment = context.payload.action === 'edited' && authorType === 'bot';
-            const authoritativeGateMarkers = [
-              '<!-- handover-checkpoint-required -->',
-              '<!-- handover-claim-gate-blocked -->',
-              '<!-- handover-claim-gate-ok -->',
-            ];
-            const isDeliberate = handoverIntent.isCheckpointTriggerComment(normalizedBody);
-            const isCheckpointResult = handoverIntent.isCheckpointResultComment(rawBody);
-            const isFailedGateSignal = handoverIntent.isFailedGateSignalComment(rawBody, {
-              authoritativeMarkers: authoritativeGateMarkers,
-            });
-            const isReviewOrHandoverSignal = handoverIntent.hasExplicitReviewOrHandoverSignal(rawBody);
-            const isCs2Comment = author === 'apgi-cmy';
-            const matched = !isCheckpointResult && !isEditedBotComment && (isDeliberate || isCs2Comment || isFailedGateSignal || isReviewOrHandoverSignal);
-            core.setOutput('matched', matched ? 'true' : 'false');
-            core.setOutput('normalized_body', normalizedBody);
-            core.setOutput('intake_only', matched && !isDeliberate ? 'true' : 'false');
+            const stickyMarker = '<!-- producer-next-action-shortfall -->';
+            const isIssueComment = context.eventName === 'issue_comment';
+            const rawCommentBody = context.payload.comment?.body || '';
+            const commentAuthorType = String(context.payload.comment?.user?.type || '').toLowerCase();
 
-      - name: Resolve PR context
-        id: pr
-        if: steps.trigger.outputs.matched == 'true'
-        uses: actions/github-script@v7
-        env:
-          TRIGGER_BODY: ${{ steps.trigger.outputs.normalized_body }}
-        with:
-          script: |
-            const prNumber = context.payload.issue.number;
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-            });
+            if (
+              isIssueComment &&
+              (
+                commentAuthorType === 'bot' ||
+                rawCommentBody.includes(stickyMarker) ||
+                !handoverIntent.shouldProcessProducerGuidanceIssueComment(rawCommentBody)
+              )
+            ) {
+              core.setOutput('matched', 'false');
+              return;
+            }
 
+            let prNumber;
+            let pr;
+            let triggerBody = '';
+
+            if (isIssueComment) {
+              prNumber = context.payload.issue.number;
+              triggerBody = rawCommentBody.trim();
+              ({ data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              }));
+            } else {
+              pr = context.payload.pull_request;
+              prNumber = pr.number;
+              triggerBody = context.payload.action === 'ready_for_review'
+                ? 'ready for review'
+                : `pull_request_target:${context.payload.action}`;
+            }
+
+            core.setOutput('matched', 'true');
             core.setOutput('pr_number', String(prNumber));
             core.setOutput('head_sha', pr.head.sha);
             core.setOutput('base_sha', pr.base.sha);
             core.setOutput('base_ref', pr.base.ref || '');
-            core.setOutput('head_ref', pr.head.ref);
+            core.setOutput('head_ref', pr.head.ref || '');
             core.setOutput('title', pr.title || '');
             core.setOutput('body', pr.body || '');
             core.setOutput('updated_at', pr.updated_at || '');
-            core.setOutput('trigger', process.env.TRIGGER_BODY || '');
-            const mergeableState = String(pr.mergeable_state || '').toLowerCase();
-            let mergeConflictChecked = 'no';
-            let mergeableWithBase = 'no';
-            if (typeof pr.mergeable === 'boolean') {
-              mergeConflictChecked = 'yes';
-              mergeableWithBase = pr.mergeable ? 'yes' : 'no';
-            } else if (mergeableState) {
-              if (['clean', 'has_hooks', 'unstable'].includes(mergeableState)) {
-                mergeConflictChecked = 'yes';
-                mergeableWithBase = 'yes';
-              } else if (mergeableState === 'dirty') {
-                mergeConflictChecked = 'yes';
-                mergeableWithBase = 'no';
-              }
-            }
-            let baseSynced = 'no';
-            try {
-              const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                basehead: `${pr.base.sha}...${pr.head.sha}`,
-              });
-              if (['ahead', 'identical'].includes(String(comparison.status || '').toLowerCase())) {
-                baseSynced = 'yes';
-              }
-            } catch (error) {
-              core.info(`Unable to determine whether PR head contains base SHA: ${error.message}`);
-            }
-            core.setOutput('merge_conflict_checked', mergeConflictChecked);
-            core.setOutput('mergeable_with_base', mergeableWithBase);
-            core.setOutput('base_synced_or_conflicts_resolved', baseSynced);
+            core.setOutput('trigger_body', triggerBody);
 
       - name: Collect current-head checkpoint inputs
         id: inputs
-        if: steps.trigger.outputs.matched == 'true'
+        if: steps.context.outputs.matched == 'true'
         uses: actions/github-script@v7
         env:
-          CHECKPOINT_INPUT_DIR: ${{ runner.temp }}/pre-handover-checkpoint
-          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
-          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
-          PR_BODY: ${{ steps.pr.outputs.body }}
+          CHECKPOINT_INPUT_DIR: ${{ runner.temp }}/producer-next-action-guidance
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          PR_BODY: ${{ steps.context.outputs.body }}
         with:
           script: |
             const fs = require('fs');
@@ -141,7 +124,7 @@ jobs:
               ref: headSha,
             });
 
-            const issueMatch = (context.payload.comment.body || '').match(/#(\d+)/);
+            const issueMatch = (context.payload.comment?.body || '').match(/#(\d+)/);
             let issueNumber = issueMatch ? issueMatch[1] : '';
             const repoFiles = {};
             const comments = [];
@@ -157,7 +140,11 @@ jobs:
                 if (!Array.isArray(data) && data.type === 'file') {
                   repoFiles[targetPath] = Buffer.from(data.content, 'base64').toString('utf8');
                 }
-              } catch {}
+              } catch (error) {
+                if (error.status !== 404) {
+                  core.info(`Unable to fetch ${targetPath} at ${headSha}: ${error.message}`);
+                }
+              }
             };
 
             const fetchDirectory = async (targetPath, includePattern) => {
@@ -174,7 +161,11 @@ jobs:
                   if (includePattern && !includePattern.test(entry.path)) continue;
                   await fetchFile(entry.path);
                 }
-              } catch {}
+              } catch (error) {
+                if (error.status !== 404) {
+                  core.info(`Unable to list ${targetPath} at ${headSha}: ${error.message}`);
+                }
+              }
             };
 
             let changedFiles = [];
@@ -232,11 +223,7 @@ jobs:
             fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
             const writeJson = (name, value) => {
               const targetPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-${name}.json`);
-              try {
-                fs.writeFileSync(targetPath, JSON.stringify(value));
-              } catch (error) {
-                throw new Error(`Failed to write ${name} checkpoint input to ${targetPath}: ${error.message}`);
-              }
+              fs.writeFileSync(targetPath, JSON.stringify(value));
               return targetPath;
             };
             const repoFilesPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-repo-files.json`);
@@ -245,72 +232,75 @@ jobs:
             core.setOutput('check_runs_path', writeJson('check-runs', checkRunsData.check_runs || []));
             core.setOutput('commit_statuses_path', writeJson('commit-statuses', statusData.statuses || []));
             core.setOutput('pr_comments_path', writeJson('comments', comments));
-            core.setOutput('issue_number', issueNumber);
             core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
             core.setOutput('repo_files_path', repoFilesPath);
+            core.setOutput('issue_number', issueNumber);
 
-      - name: Evaluate pre-handover checkpoint
+      - name: Evaluate producer next action state
         id: evaluate
-        if: steps.trigger.outputs.matched == 'true'
+        if: steps.context.outputs.matched == 'true'
         env:
-          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
           ISSUE_NUMBER: ${{ steps.inputs.outputs.issue_number }}
-          PR_TITLE: ${{ steps.pr.outputs.title }}
-          PR_BODY: ${{ steps.pr.outputs.body }}
-          PR_BRANCH: ${{ steps.pr.outputs.head_ref }}
-          BASE_BRANCH: ${{ steps.pr.outputs.base_ref }}
-          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
-          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
-          CHECKPOINT_MERGE_CONFLICT_CHECKED: ${{ steps.pr.outputs.merge_conflict_checked }}
-          CHECKPOINT_MERGEABLE_WITH_BASE: ${{ steps.pr.outputs.mergeable_with_base }}
-          CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED: ${{ steps.pr.outputs.base_synced_or_conflicts_resolved }}
-          CHECKPOINT_TRIGGER: ${{ steps.pr.outputs.trigger }}
-          CHECKPOINT_TIME: ${{ github.event.comment.created_at }}
+          PR_TITLE: ${{ steps.context.outputs.title }}
+          PR_BODY: ${{ steps.context.outputs.body }}
+          PR_UPDATED_AT: ${{ steps.context.outputs.updated_at }}
+          PR_BRANCH: ${{ steps.context.outputs.head_ref }}
+          BASE_BRANCH: ${{ steps.context.outputs.base_ref }}
+          BASE_SHA: ${{ steps.context.outputs.base_sha }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          CHECKPOINT_TRIGGER: ${{ steps.context.outputs.trigger_body }}
+          CHECKPOINT_INTAKE_ONLY: "true"
+          CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE: "true"
           CHECKPOINT_CHECK_RUNS_PATH: ${{ steps.inputs.outputs.check_runs_path }}
           CHECKPOINT_COMMIT_STATUSES_PATH: ${{ steps.inputs.outputs.commit_statuses_path }}
           CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
           CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
-          CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE: "true"
-          CHECKPOINT_INTAKE_ONLY: ${{ steps.trigger.outputs.intake_only }}
         run: |
           RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
           echo "result_json<<EOF" >> "$GITHUB_OUTPUT"
           echo "$RESULT_JSON" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
-          RESULT_BODY="$(printf '%s\n' "$RESULT_JSON" | node -e 'let data="";process.stdin.on("data",d=>data+=d);process.stdin.on("end",()=>process.stdout.write(JSON.parse(data).body));')"
-          echo "result_body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$RESULT_BODY" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$RESULT_JSON"
 
-      - name: Post or update checkpoint result
-        if: steps.trigger.outputs.matched == 'true'
+      - name: Upsert sticky producer guidance comment
+        if: steps.context.outputs.matched == 'true'
         uses: actions/github-script@v7
         env:
-          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
-          RESULT_BODY: ${{ steps.evaluate.outputs.result_body }}
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          RESULT_JSON: ${{ steps.evaluate.outputs.result_json }}
         with:
           script: |
+            const { STICKY_MARKER, renderGuidanceComment } = require('./.github/scripts/producer-next-action-guidance.js');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
-            const body = process.env.RESULT_BODY;
-            const marker = '<!-- pre-handover-checkpoint -->';
+            const headSha = process.env.HEAD_SHA || '';
+            const result = JSON.parse(process.env.RESULT_JSON || '{}');
+            const body = renderGuidanceComment({
+              prNumber,
+              headSha,
+              fields: result.fields || {},
+            });
 
-            const { data: comments } = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
               per_page: 100,
             });
 
-            const existing = comments
-              .filter((comment) => comment.body && comment.body.includes(marker))
-              .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at))[0];
+            const stickyComments = comments
+              .filter((comment) => comment.body && comment.body.includes(STICKY_MARKER))
+              .sort((left, right) => new Date(right.updated_at || right.created_at) - new Date(left.updated_at || left.created_at));
 
-            if (existing) {
+            const [primary, ...duplicates] = stickyComments;
+
+            if (primary) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: existing.id,
+                comment_id: primary.id,
                 body,
               });
             } else {
@@ -319,5 +309,13 @@ jobs:
                 repo: context.repo.repo,
                 issue_number: prNumber,
                 body,
+              });
+            }
+
+            for (const duplicate of duplicates) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: duplicate.id,
               });
             }

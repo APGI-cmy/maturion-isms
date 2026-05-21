@@ -848,6 +848,40 @@ run_checkpoint_field_test \
     {"field":"INJECTION_STATE","equals":"current"},
     {"field":"ECAP_REQUIRED","equals":"yes"},
     {"field":"IAA_REQUIRED","equals":"yes"},
+     {"field":"NEXT_REQUIRED_CONTROL","equals":"ECAP_GATE_AND_ADMIN_REPORT"},
+     {"field":"HANDOVER_ALLOWED","equals":"no"}
+   ]'
+
+setup_final_summary_before_ecap_iaa() {
+  seed_manifest_and_scope
+  seed_green_checks
+  TEST_CHECKPOINT_TRIGGER="AUTO_INJECTION_INTAKE"
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+  TEST_PR_BODY=$'## Final summary\nCurrent head looks close, but ceremony is still pending.'
+  TEST_PR_COMMENTS_JSON="$(cat <<EOF
+[
+  {
+    "body": "<!-- pre-handover-checkpoint -->\n## PRE_HANDOVER_CHECKPOINT_RESULT\nCURRENT_HEAD_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_SHA: ${head_sha}\nLATEST_INJECTION_INTAKE_AT: 2026-05-18T10:00:00Z\nINJECTION_STATE: current\nNEXT_REQUIRED_CONTROL: none\nHANDOVER_ALLOWED: no\nRESULT: INJECTION_INTAKE_CURRENT",
+    "created_at": "2026-05-18T10:00:00Z",
+    "updated_at": "2026-05-18T10:00:00Z",
+    "user": {"login": "github-actions[bot]"}
+  }
+]
+EOF
+)"
+}
+run_checkpoint_field_test \
+  "10f2. final summary language before ECAP/IAA invocation stays blocked" \
+  setup_final_summary_before_ecap_iaa \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"INJECTION_STATE","equals":"current"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
     {"field":"NEXT_REQUIRED_CONTROL","equals":"ECAP_GATE_AND_ADMIN_REPORT"},
     {"field":"HANDOVER_ALLOWED","equals":"no"}
   ]'
@@ -937,7 +971,8 @@ run_claim_test "18. draft/status comment without handover language stays false" 
 run_claim_test "18a. narrative handover topic without ready/claim posture stays false" claim "This PR updates handover gating behavior." false
 run_claim_test "18b. /prepare-handover is deliberate trigger, not claim" trigger "/prepare-handover" true
 run_claim_test "18c. /prepare-handover is excluded from handover-claim parsing" claim "/prepare-handover" false
-run_failed_gate_signal_test "18d. handover checkpoint-required advisory is not a failed-gate signal" $'<!-- handover-checkpoint-required -->\nRESULT: CHECKPOINT_REQUIRED\nHANDOVER_ALLOWED: no' false
+run_claim_test "18d. final summary is treated as producer intent" claim "Final summary: current head is ready once ceremony clears." true
+run_failed_gate_signal_test "18e. handover checkpoint-required advisory is not a failed-gate signal" $'<!-- handover-checkpoint-required -->\nRESULT: CHECKPOINT_REQUIRED\nHANDOVER_ALLOWED: no' false
 
 # ── Corrective producer comment predicate (operator-precedence regression) ──
 # Mirrors the fixed logic in handover-claim-gate.yml:

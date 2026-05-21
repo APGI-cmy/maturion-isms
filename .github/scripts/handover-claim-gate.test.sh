@@ -14,47 +14,30 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PASS=0
 FAIL=0
+INTENT_SCRIPT="${SCRIPT_DIR}/handover-intent.js"
 
 # ── Inline JS that mirrors the handover-claim-gate.yml detection logic ────────
 DETECTION_JS='
+const handoverIntent = require(process.env.INTENT_SCRIPT);
 const GATE_MARKERS = ["<!-- handover-claim-gate-blocked -->", "<!-- handover-claim-gate-ok -->"];
 const CHECKPOINT_REQUIRED_MARKER = "<!-- handover-checkpoint-required -->";
-const REJECTION_NOTICE_REGEX = /(?:ADMIN_|IAA_|FOREMAN_)?REJECTION_NOTICE/i;
-const checkpointTriggerPattern = /^(?:ECAP_)?PRE_HANDOVER_CHECKPOINT(?:\b.*)?$|^\/prepare-handover(?:\b.*)?$/i;
-const checkpointResultPattern = /PRE_HANDOVER_CHECKPOINT_RESULT/i;
 
-// Returns true if a comment body is an explicit handover/merge-ready claim.
-// Mirrors existingExplicitHandoverClaim detection in handover-claim-gate.yml.
 const isExplicitHandoverClaimComment = (body) => {
   if (!body) return false;
   if (GATE_MARKERS.some(m => body.includes(m))) return false;
   if (body.includes(CHECKPOINT_REQUIRED_MARKER)) return false;
-  if (checkpointTriggerPattern.test(body.trim()) || checkpointResultPattern.test(body)) return false;
-  if (/HANDOVER_BLOCKED|STOP_AND_FIX|CS2_INTERVENTION_REQUIRED/i.test(body)) return false;
-  if (REJECTION_NOTICE_REGEX.test(body)) return false;
-  return (
-    /\bhandover[ -]?ready\b|\bhandover claim\b/i.test(body) ||
-    /merge.?ready|ready.to.merge/i.test(body) ||
-    /all.gates.pass|merge.gate.released/i.test(body) ||
-    /\bOPOJD\b/i.test(body) ||
-    /\bPhase\s+4\b/i.test(body) ||
-    /HANDOVER_ALLOWED\s*:\s*yes/i.test(body) ||
-    /\b(?:work|implementation)\s+complete\b/i.test(body)
-  );
+  return handoverIntent.isExplicitHandoverClaimComment(body);
 };
 
-// Returns true if an issue_comment body should trigger an early-return (not a handover claim).
-// Mirrors the early-return guard at the top of the gate script.
 const isCheckpointOrBlockedStatus = (body) => {
   if (!body) return false;
   return (
-    checkpointTriggerPattern.test(body.trim()) ||
-    checkpointResultPattern.test(body) ||
-    /RESULT:\s*STOP_AND_FIX/i.test(body) ||
-    /RESULT:\s*CS2_INTERVENTION_REQUIRED/i.test(body) ||
-    /HANDOVER_ALLOWED:\s*no/i.test(body)
+    handoverIntent.isCheckpointTriggerComment(body) ||
+    handoverIntent.isCheckpointResultComment(body) ||
+    handoverIntent.isFailedGateSignalComment(body)
   );
 };
 
@@ -99,6 +82,7 @@ run_gate_classification_test() {
 
   local actual
   actual="$(
+    INTENT_SCRIPT="$INTENT_SCRIPT" \
     EVENT_NAME="$event_name" \
     COMMENT_BODY="$comment_body" \
     EXISTING_COMMENTS="$existing_comments_json" \

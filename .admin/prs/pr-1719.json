@@ -7,10 +7,21 @@
   "scope": [
     ".admin/prs/pr-1719.json",
     ".agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md",
+    ".agent-admin/evidence/pr-1719-strict-gate-change-evidence.md",
     ".agent-admin/scope-declarations/pr-1719.md",
     ".agent-workspace/foreman-v2/personal/builder-checklist-inject-next-action-guidance-20260521.md",
     ".agent-workspace/foreman-v2/personal/implementation-plan-inject-next-action-guidance-20260521.md",
-    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".github/copilot-instructions.md",
+    ".github/scripts/handover-claim-gate.test.sh",
+    ".github/scripts/handover-intent.js",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/scripts/producer-next-action-guidance.js",
+    ".github/scripts/producer-next-action-guidance.test.sh",
+    ".github/workflows/handover-claim-gate.yml",
+    ".github/workflows/pre-handover-checkpoint.yml",
+    ".github/workflows/producer-next-action-guidance.yml"
   ],
   "risk": "medium",
   "requires_iaa": true,
@@ -23,10 +34,12 @@
     "Per-PR scope declaration committed at .agent-admin/scope-declarations/pr-1719.md",
     "Wave current tasks updated for issue #1718 in .agent-workspace/foreman-v2/personal/wave-current-tasks.md",
     "Implementation plan and builder checklist committed before builder delegation",
+    "Strict gate-change evidence recorded at .agent-admin/evidence/pr-1719-strict-gate-change-evidence.md",
     "Trusted metadata-only injector posts or updates exactly one sticky producer comment",
     "Current-head NEXT_REQUIRED_CONTROL and blocker summary stays aligned with checkpoint / active-state data",
     "Existing handover gate remains the hard blocker",
-    "Regression coverage added for synchronize/open/update guidance and /prepare-handover parity"
+    "Regression coverage added for synchronize/open/update guidance and /prepare-handover parity",
+    "Validation commands reported by the builder: bash .github/scripts/resolve-active-pr-state.test.sh, bash .github/scripts/pre-handover-checkpoint.test.sh, bash .github/scripts/handover-claim-gate.test.sh, bash .github/scripts/producer-next-action-guidance.test.sh"
   ],
   "merge_authority": "CS2"
 }

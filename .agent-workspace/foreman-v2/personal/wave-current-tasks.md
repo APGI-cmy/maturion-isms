@@ -17,7 +17,7 @@ IAA_PREFLIGHT_BRIEF_REVIEWED: yes
 IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md
 IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T08:42:47Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
-BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: pending
+BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 
 ## Wave objective
 
@@ -29,6 +29,6 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: pending
 
 1. ✅ Re-run Foreman preflight, CI review, and IAA pre-brief for PR #1719.
 2. ✅ Bootstrap PR #1719 governance artifacts and active wave binding.
-3. ⏳ Delegate builder implementation for trusted metadata-only injector workflow, aligned trigger phrase centralization, and regression coverage.
-4. ⏳ Review builder handback in Quality Professor mode.
+3. ✅ Delegate builder implementation for trusted metadata-only injector workflow, aligned trigger phrase centralization, and regression coverage.
+4. ⏳ Review builder handback in Quality Professor mode and refresh scope/admin evidence to current diff.
 5. ⏳ Complete ECAP / IAA handover bundle only after current-head gates are GREEN.
