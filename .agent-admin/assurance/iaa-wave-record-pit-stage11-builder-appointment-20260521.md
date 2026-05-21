@@ -311,10 +311,21 @@ APPOINTED_BUILDER: pit-specialist (to be formally confirmed in stage11-builder-a
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING — REJECTION-PACKAGE issued; re-invocation required after fixes
+PHASE_B_BLOCKING_TOKEN: IAA-pit-stage11-builder-appointment-20260521-PASS
 FINAL_ASSURANCE_REQUIRED: YES (corrected from foreman pre-population; PRE_BUILD_STAGE_MODEL trigger)
-EXPECTED_TOKEN_REFERENCE: IAA-pit-stage11-builder-appointment-20260521-PASS (issued on next passing invocation)
-TOKEN_FILE_DESTINATION: see ## TOKEN section of this wave record (written by IAA on passing invocation per NO-STANDALONE-TOKEN-001 / Step 4.2b)
+VERDICT: ASSURANCE-TOKEN
+CHECKS_RUN: 25 checks — 25 PASS, 0 FAIL
+PR: #1730
+WAVE: pit-stage11-builder-appointment
+HEAD_SHA_AT_VERDICT: 49e32f26f4b6ec6053d7afaec200f4238199815f
+DATE: 2026-05-21
+ADOPTION_PHASE: PHASE_B_BLOCKING
+MERGE_GATE_PARITY: PASS
+MERGE_AUTHORITY: CS2 ONLY (@APGI-cmy / Johan Ras)
+OVERLAYS_APPLIED: PRE_BUILD_GATES (OVL-PBG-001–019+ADM-001) + SIMPLIFIED_ADMIN_ASSURANCE (OVL-SAA-001–008) + STRICT_MERGE_POSTURE (OVL-SMP-001–003) + CORE-020/021/026/027
+RE_INVOCATION: R1 (REJECTION-PACKAGE) → R2 (ASSURANCE-TOKEN) — both R1 ceremony failures resolved at HEAD 49e32f2
+IAA_SESSION: session-pit-stage11-builder-appointment-20260521-R2
+TOKEN_WRITTEN_BY: independent-assurance-agent (IAA-only per ECAP-001/NO-STANDALONE-TOKEN-001)
 
 ---
 
