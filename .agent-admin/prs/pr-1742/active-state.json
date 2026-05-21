@@ -1,8 +1,8 @@
 {
   "pr": 1742,
   "branch": "copilot/add-post-handover-auto-remediation",
-  "runtime_head_sha": "668ebd1981d32be6fb54ff8223c5f3d5e2eef541",
-  "base_sha": "e89016a2fdfbda4cb736e0fe0696bed4f73d2d55",
+  "runtime_head_sha": "GITHUB_PR_HEAD_SHA",
+  "base_sha": "GITHUB_BASE_SHA",
   "manifest_path": ".admin/prs/pr-1742.json",
   "scope_path": ".agent-admin/scope-declarations/pr-1742.md",
   "active_state_path": ".agent-admin/prs/pr-1742/active-state.json",
