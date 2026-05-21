@@ -982,6 +982,125 @@ EOF
 }
 run_test "AC-REBASE-5: token missing **Reviewed SHA** field must FAIL" 1 "$IAA_GATE_SCRIPT" "setup_ac_rebase5_missing_sha"
 
+# AC-REBASE-6: Token with symbolic value in **Reviewed SHA** — must FAIL.
+# Final assurance evidence subjects must be durable literal hex SHAs, not
+# symbolic runtime markers that self-reference HEAD at check time.
+setup_ac_rebase6_symbolic_sha() {
+  add_impl_file
+  cat > .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md << 'EOF'
+IAA_PREFLIGHT_BRIEF
+PR: #9999
+ISSUE: #1503
+WAVE: wave-test
+CURRENT_HEAD_SHA: CURRENT_HEAD
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+FOREMAN_OBJECTIVE: test
+EXPECTED_QA_SCOPE:
+- modules/mat/src/test.ts
+EXPECTED_FAILURE_MODES:
+- stale evidence
+FOREMAN_INSTRUCTIONS:
+- include scope in delegation
+IAA_WILL_QA:
+- iaa final assurance fields
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+EOF
+  cat > .agent-admin/assurance/iaa-token-symbolic-sha.md << 'EOF'
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-symbolic-sha-PASS
+
+**Token**: IAA-session-symbolic-sha-PASS
+**Type**: PHASE_B_BLOCKING_TOKEN
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: CURRENT_HEAD
+PREFLIGHT_BRIEF_REVIEWED: yes
+PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md
+PREFLIGHT_EXPECTATIONS_MET: yes
+UNMET_PREFLIGHT_EXPECTATIONS: none
+FINAL_IAA_RESULT: PASS
+IAA_IDENTITY_BINDING_VERDICT
+ACTUAL_PR: #9999
+ADMIN_MANIFEST_PR: #9999
+SCOPE_DECLARATION_PR: #9999
+PREHANDOVER_PR: #9999
+IAA_TOKEN_PR: #9999
+WAVE_CURRENT_TASKS_PR: #9999
+BRANCH: test-branch
+HEAD_SHA: CURRENT_HEAD
+ALL_MATCH: yes
+EOF
+  git add .
+  git commit -q -m "Token with symbolic Reviewed SHA (CURRENT_HEAD)"
+}
+run_test "AC-REBASE-6: symbolic CURRENT_HEAD in **Reviewed SHA** must FAIL" 1 "$IAA_GATE_SCRIPT" "setup_ac_rebase6_symbolic_sha"
+
+# AC-REBASE-7: Token with non-ancestor SHA, impl committed AFTER token — must FAIL.
+# When substantive files exist that were committed after the token's author timestamp,
+# the token does not cover the full substantive payload and must be rejected.
+setup_ac_rebase7_impl_after_token() {
+  # Step 1: token committed at T0
+  local FAKE_SHA="deadbeef0000000000000000000000000000aa07"
+  mkdir -p modules/mat/src
+  echo "export const initial = 1;" > modules/mat/src/initial.ts
+  cat > .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md << 'EOF'
+IAA_PREFLIGHT_BRIEF
+PR: #9999
+ISSUE: #1503
+WAVE: wave-test
+CURRENT_HEAD_SHA: CURRENT_HEAD
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+FOREMAN_OBJECTIVE: test
+EXPECTED_QA_SCOPE:
+- modules/mat/src/initial.ts
+EXPECTED_FAILURE_MODES:
+- stale evidence
+FOREMAN_INSTRUCTIONS:
+- include scope in delegation
+IAA_WILL_QA:
+- iaa final assurance fields
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+EOF
+  cat > .agent-admin/assurance/iaa-token-session-test-wave-test-20260428.md << EOF
+# IAA Assurance Token
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-test-wave-test-20260428-PASS
+
+**Token**: IAA-session-test-wave-test-20260428-PASS
+**Type**: PHASE_B_BLOCKING_TOKEN
+**Verdict**: ASSURANCE-TOKEN (PASS)
+**PR**: #9999
+**Issue**: maturion-isms#1503
+**Reviewed SHA**: ${FAKE_SHA}
+PREFLIGHT_BRIEF_REVIEWED: yes
+PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-prebrief-wave-test-20260428.md
+PREFLIGHT_EXPECTATIONS_MET: yes
+UNMET_PREFLIGHT_EXPECTATIONS: none
+FINAL_IAA_RESULT: PASS
+IAA_IDENTITY_BINDING_VERDICT
+ACTUAL_PR: #9999
+ADMIN_MANIFEST_PR: #9999
+SCOPE_DECLARATION_PR: #9999
+PREHANDOVER_PR: #9999
+IAA_TOKEN_PR: #9999
+WAVE_CURRENT_TASKS_PR: #9999
+BRANCH: test-branch
+HEAD_SHA: CURRENT_HEAD
+ALL_MATCH: yes
+EOF
+  GIT_AUTHOR_DATE="2020-01-01T10:00:00 +0000" GIT_COMMITTER_DATE="2020-01-01T10:00:00 +0000" \
+    git add . && GIT_AUTHOR_DATE="2020-01-01T10:00:00 +0000" GIT_COMMITTER_DATE="2020-01-01T10:00:00 +0000" \
+    git commit -q -m "Add IAA token at T0"
+  # Step 2: new impl file committed AFTER token (T1 > T0)
+  echo "export const added = 2;" > modules/mat/src/added.ts
+  GIT_AUTHOR_DATE="2020-01-01T10:00:01 +0000" GIT_COMMITTER_DATE="2020-01-01T10:00:01 +0000" \
+    git add . && GIT_AUTHOR_DATE="2020-01-01T10:00:01 +0000" GIT_COMMITTER_DATE="2020-01-01T10:00:01 +0000" \
+    git commit -q -m "New impl file after token (T1)"
+}
+run_test "AC-REBASE-7: impl committed after token (non-ancestor SHA) must FAIL" 1 "$IAA_GATE_SCRIPT" "setup_ac_rebase7_impl_after_token"
+
 # ================================================================
 # Cleanup
 # ================================================================
