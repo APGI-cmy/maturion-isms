@@ -314,3 +314,32 @@ PHASE_B_BLOCKING_TOKEN: PENDING
 PR: #1731
 Issue: #1726
 Reviewed SHA: PENDING
+
+## REJECTION_HISTORY
+
+### REJECTION-001 — 2026-05-21
+
+**Session**: session-1279-mmm-dab-harvest-20260521
+**Reviewed SHA**: c351fcdd5d5fd626d90fa2ba1b7e30ff3172173d
+**Total checks**: 14 substance/ceremony checks: 13 PASS, 1 FAIL
+**Substantive deliverables**: CLEAN — all 7 ACs met, 200 tests pass, structural change verified
+
+**Finding F-001 (SYSTEMIC — Ceremony)**:
+- Scope declaration at `.agent-admin/scope-declarations/pr-1731.md` does NOT conform to SCOPE_DECLARATION_SCHEMA v2.0.0
+- CI simulation (validate-scope-to-diff.sh): "empty or malformed — 0 files declared vs 10 in git diff"
+- Missing schema markers: SCOPE_SCHEMA_VERSION: v2, PR_NUMBER:, RESPONSIBILITY_DOMAIN:, IN_SCOPE:, OUT_OF_SCOPE:, EXPECTED_VERIFICATION:, SCOPE_FROZEN: YES, FILES_CHANGED: N
+- File declaration format wrong: plain paths used; script requires `- \`backtick\`` format
+- 4 undeclared ceremony files: ECAP PREHANDOVER bundle, foreman/memory PREHANDOVER copy, foreman/memory session memory, foreman parking station (suggestions-log.md)
+- A-031 carve-out NOT applicable (not IAA artifacts)
+- Pattern: SYSTEMIC — matches session-217 recurring pattern; promoted to FAIL-ONLY-ONCE A-044
+
+**Fix required**:
+Rewrite `.agent-admin/scope-declarations/pr-1731.md` to full SCOPE_DECLARATION_SCHEMA v2.0.0 format:
+- Add all required markers (SCOPE_SCHEMA_VERSION: v2, PR_NUMBER: 1731, RESPONSIBILITY_DOMAIN:, IN_SCOPE:, OUT_OF_SCOPE:, EXPECTED_VERIFICATION:, SCOPE_FROZEN: YES)
+- Set `FILES_CHANGED: 10` with all 10 files in `` - `path` `` format
+- Include all 4 previously undeclared ceremony files
+
+**FFA-05 Carry-Forward Mandate**:
+Pre-existing CSS gap: `domain-audit-builder__*` BEM classes have no CSS rules anywhere in `apps/mmm/src/index.css`. Originated in prior wave (PR #1711), NOT introduced by this wave. Next wave must add CSS rules for domain-audit-builder components OR file a tracked issue.
+
+**Re-invocation**: Required after F-001 fix. TOKEN section remains PENDING.
