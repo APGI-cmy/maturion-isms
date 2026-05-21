@@ -879,8 +879,12 @@ function evaluateCheckpoint(input = {}) {
   if (manifestPath && manifest) identityArtifacts.push({ path: manifestPath, text: JSON.stringify(manifest) });
   if (scopePresent) identityArtifacts.push({ path: scopePath, text: scopeText });
   if (waveTasksText) identityArtifacts.push({ path: waveTasksPath, text: waveTasksText });
-  identityArtifacts.push(...adminArtifacts.map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
-  identityArtifacts.push(...assuranceArtifacts.map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
+  identityArtifacts.push(
+    ...contextScopedArtifacts(adminArtifacts, { prNumber, branch }).map((artifact) => ({ path: artifact.relPath, text: artifact.text })),
+  );
+  identityArtifacts.push(
+    ...contextScopedArtifacts(assuranceArtifacts, { prNumber, issueNumber, branch }).map((artifact) => ({ path: artifact.relPath, text: artifact.text })),
+  );
   const identityMismatchFindings = [];
   if (prNumber) {
     if (manifest && Number.isInteger(manifest.pr) && manifest.pr !== prNumber) {
