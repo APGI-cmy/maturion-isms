@@ -15,7 +15,7 @@ PR: #1711
 ISSUE: #1710
 WAVE: mmm-ai-generation-wiring-20260520
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: cfb89b970cbf221995f51c95da5a712190eae265
+CURRENT_HEAD_SHA: d9abff2acc6340bb420a5f88b71a258770934c3d
 
 EXPECTED_QA_SCOPE:
 - `apps/mmm/src/components/assessment/MPSSelectionModal.tsx` — AI generate/accept/edit/save lifecycle
@@ -594,6 +594,12 @@ builder delegation:
 
 *Awaiting IAA verdict at handover review. Token to be appended by independent-assurance-agent
 after Phase 2–4 assurance of PR #1711.*
+
+Historical closure checkpoint (carry-forward complete):
+- **PR**: #1711
+- **Issue**: #1710
+- **Reviewed SHA**: d9abff2acc6340bb420a5f88b71a258770934c3d
+- **Status**: implementation carry-forward verified; final IAA blocking token pending independent assurance invocation
 
 ---
 

@@ -4,7 +4,7 @@
   "issue_title": "PR1700 deferred: complete legacy AI generation wiring for DomainAuditBuilder",
   "type": "product-fix",
   "owner": "Copilot",
-  "scope_notes": "Foreman-orchestrated MMM product wave completing the deferred AI generation wiring from PR #1700 by carrying forward and adapting useful #1708 implementation pieces into current-app runtime hooks/components and B4 behavior coverage.",
+  "scope_notes": "Foreman-orchestrated MMM product wave completing deferred PR #1700 AI generation wiring by carrying forward useful #1708 runtime pieces; generation lifecycle state is modal-owned (MPSSelectionModal/IntentCreator/CriteriaManagement) with companion hooks, while useDomainAuditBuilder remains domain/step data orchestration with shared draft typing. wave-current-tasks.md is retained only for active pre-brief pointer synchronization.",
   "scope": [
     ".admin/prs/pr-1711.json",
     ".agent-admin/assurance/iaa-wave-record-mmm-ai-generation-wiring-20260520.md",
@@ -38,7 +38,7 @@
     "getEdgeInvokeHeaders() used for all supabase.functions.invoke() calls",
     "useMutation with onSuccess queryClient.invalidateQueries for all save operations (NBR-001)",
     "Generation state reset on modal close and domainId change (NBR-003)",
-    "AI generate buttons conditional on authenticated session with graceful 401/403 handling",
+    "AI generate actions are visible; invocation requires getEdgeInvokeHeaders() and surfaces login/permission failures (401/403) as visible errors",
     "Legacy step order preserved (MPSs -> Intent -> Criteria)",
     "All 168 existing B4 tests GREEN + new AI lifecycle tests GREEN",
     "Per-PR scope declaration at .agent-admin/scope-declarations/pr-1711.md"

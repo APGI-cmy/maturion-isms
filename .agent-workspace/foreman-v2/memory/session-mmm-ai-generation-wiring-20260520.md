@@ -1,3 +1,16 @@
+session_id: session-mmm-ai-generation-wiring-20260520
+date: 2026-05-20
+agent: foreman-v2-agent
+pr_number: 1711
+issue_number: 1710
+branch: copilot/wire-legacy-mmm-ai-generation-workflow
+mode: POLC-Orchestration
+agents_delegated_to:
+  - agent: ui-builder
+    task: Implement AI generation lifecycle wiring for MPSSelectionModal, IntentCreator, CriteriaManagement, useAIMPSGeneration, useIntentGeneration, and associated behavior tests for PR #1711 / Issue #1710.
+  - agent: independent-assurance-agent
+    task: Produce and maintain IAA pre-brief wave record and preflight contract evidence for PR #1711 / Issue #1710.
+
 # Foreman Session Memory — Session mmm-ai-generation-wiring-20260520
 
 ## Session Identity
@@ -31,7 +44,7 @@
 ## Foreman Decisions
 - DECISION-001: Use mmm-ai-chat edge function for all three AI generation steps (MPS, intent, criteria)
 - DECISION-002: Auth sourced from getEdgeInvokeHeaders() — no useOrganization hook needed
-- DECISION-003: AI generate buttons conditional on authenticated session; handle 401/403 gracefully
+- DECISION-003: AI generate actions remain visible; invocation requires getEdgeInvokeHeaders() and surfaces login/permission failures (401/403) as visible errors
 
 ## Agents Delegated To
 - agents_delegated_to:
