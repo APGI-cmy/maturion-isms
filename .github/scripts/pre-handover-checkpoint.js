@@ -566,6 +566,17 @@ function contextScopedArtifacts(artifacts, context) {
   return artifacts;
 }
 
+function artifactFromResolverPath(relPath) {
+  const candidate = String(relPath || '').trim();
+  if (!candidate) return null;
+  const absolute = path.isAbsolute(candidate) ? candidate : path.join(process.cwd(), candidate);
+  const text = safeRead(absolute);
+  if (!text) return null;
+  // Resolver-selected artifacts are authoritative active-state inputs.
+  // Assign max score so they always outrank discovery-scored historical candidates.
+  return { relPath: toPosix(path.relative(process.cwd(), absolute)), text, score: Number.MAX_SAFE_INTEGER };
+}
+
 function collectCheckState(checkRuns, commitStatuses) {
   const latestByName = new Map();
   for (const run of checkRuns || []) {
@@ -742,8 +753,14 @@ function evaluateCheckpoint(input = {}) {
 
   const scopePath = String(activeState.scope_path || '').trim() || (prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '');
   const scopeText = scopePath ? safeRead(path.join(process.cwd(), scopePath)) : '';
-  const waveTasksPath = String(activeState.wave_tasks_path || '').trim() || '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
-  const waveTasksText = safeRead(path.join(process.cwd(), waveTasksPath));
+  const resolverWaveTasksPath = String(activeState.wave_tasks_path || '').trim();
+  let waveTasksPath = resolverWaveTasksPath || (prNumber ? `.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md` : '');
+  let waveTasksText = waveTasksPath ? safeRead(path.join(process.cwd(), waveTasksPath)) : '';
+  if (!resolverWaveTasksPath && !waveTasksText) {
+    // Legacy compatibility fallback only when no resolver-selected wave-tasks artifact exists.
+    waveTasksPath = '.agent-workspace/foreman-v2/personal/wave-current-tasks.md';
+    waveTasksText = safeRead(path.join(process.cwd(), waveTasksPath));
+  }
   const issueNumber = resolveIssueNumber(input.issueNumber || process.env.ISSUE_NUMBER, prBody, scopeText, manifest);
   const scopeCount = Number(readSimpleField(scopeText, 'FILES_CHANGED') || 0) || null;
   const scopePresent = Boolean(scopeText);
@@ -816,27 +833,66 @@ function evaluateCheckpoint(input = {}) {
     ? explicitBaseSynced
     : (detectedBaseSynced !== null ? detectedBaseSynced : (mergeConflictChecked && mergeableWithBase));
 
-  const proofFiles = listFilesRecursive(path.join(process.cwd(), '.agent-admin/prehandover'), (relPath) => /\/proof-.*\.md$/.test(`/${relPath}`));
-  const foremanPrehandoverFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/foreman-v2/memory'), (relPath) => /\/PREHANDOVER-.*\.md$/.test(`/${relPath}`));
-  const ecapBundleFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/execution-ceremony-admin-agent/bundles'), (relPath) => /(PREHANDOVER-|session-).+\.md$/.test(path.basename(relPath)));
-  const adminArtifacts = pickBestArtifacts([...proofFiles, ...foremanPrehandoverFiles, ...ecapBundleFiles], {
-    prNumber, issueNumber, branch, headSha,
-  });
+  const resolverSelectedEcapArtifact = artifactFromResolverPath(activeState.ecap_artifact_path);
+  const resolverSelectedIaaArtifact = artifactFromResolverPath(activeState.iaa_artifact_path);
+
+  let adminArtifacts = [];
+  if (resolverSelectedEcapArtifact) {
+    adminArtifacts = [resolverSelectedEcapArtifact];
+  } else {
+    // Legacy compatibility fallback: broad discovery when resolver-selected ECAP artifact is absent.
+    const proofFiles = listFilesRecursive(path.join(process.cwd(), '.agent-admin/prehandover'), (relPath) => /\/proof-.*\.md$/.test(`/${relPath}`));
+    const foremanPrehandoverFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/foreman-v2/memory'), (relPath) => /\/PREHANDOVER-.*\.md$/.test(`/${relPath}`));
+    const ecapBundleFiles = listFilesRecursive(path.join(process.cwd(), '.agent-workspace/execution-ceremony-admin-agent/bundles'), (relPath) => /(PREHANDOVER-|session-).+\.md$/.test(path.basename(relPath)));
+    adminArtifacts = pickBestArtifacts([...proofFiles, ...foremanPrehandoverFiles, ...ecapBundleFiles], {
+      prNumber, issueNumber, branch, headSha,
+    });
+  }
   const adminPresent = adminArtifacts.length > 0;
   const adminInvoked = adminArtifacts.some((artifact) => /ecap_invoked:\s*(yes|true)|admin_ceremony_compliance:\s*PASS|ecap_verdict:\s*PASS/i.test(artifact.text));
   const adminCurrent = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const adminStale = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
 
-  const assuranceDir = path.join(process.cwd(), '.agent-admin/assurance');
-  const prebriefStandalone = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-prebrief-.*\.md$/.test(relPath));
-  const preflightBriefFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-preflight-brief-.*\.md$/.test(relPath));
-  const waveRecords = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-wave-record-.*\.md$/.test(relPath));
-  const tokenFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-token-.*\.md$/.test(relPath));
-  const prebriefWaveRecords = waveRecords.filter((relPath) => /## PRE-BRIEF/i.test(safeRead(path.join(process.cwd(), relPath))) && !/superseded/i.test(safeRead(path.join(process.cwd(), relPath))));
-  const tokenWaveRecords = waveRecords.filter((relPath) => /## TOKEN/i.test(safeRead(path.join(process.cwd(), relPath))));
-  const prebriefFiles = pickBestArtifacts([...prebriefStandalone, ...prebriefWaveRecords], { prNumber, issueNumber, branch, headSha });
-  const preflightBriefArtifacts = pickBestArtifacts(preflightBriefFiles, { prNumber, issueNumber, branch, headSha });
-  const assuranceArtifacts = pickBestArtifacts([...tokenFiles, ...tokenWaveRecords], { prNumber, issueNumber, branch, headSha });
+  function resolverArtifactHasIaaSection(artifact, section) {
+    const text = artifact && artifact.text ? artifact.text : '';
+    if (section === 'prebrief') {
+      return /## PRE-BRIEF/i.test(text) && !/superseded/i.test(text);
+    }
+    if (section === 'preflight-brief') {
+      return /IAA_PREFLIGHT_BRIEF|## PREFLIGHT BRIEF/i.test(text);
+    }
+    if (section === 'assurance') {
+      return /## TOKEN|PHASE_B_BLOCKING_TOKEN\s*:/i.test(text);
+    }
+    return false;
+  }
+
+  let prebriefFiles = [];
+  let preflightBriefArtifacts = [];
+  let assuranceArtifacts = [];
+  if (resolverSelectedIaaArtifact) {
+    if (resolverArtifactHasIaaSection(resolverSelectedIaaArtifact, 'prebrief')) {
+      prebriefFiles = [resolverSelectedIaaArtifact];
+    }
+    if (resolverArtifactHasIaaSection(resolverSelectedIaaArtifact, 'preflight-brief')) {
+      preflightBriefArtifacts = [resolverSelectedIaaArtifact];
+    }
+    if (resolverArtifactHasIaaSection(resolverSelectedIaaArtifact, 'assurance')) {
+      assuranceArtifacts = [resolverSelectedIaaArtifact];
+    }
+  } else {
+    // Legacy compatibility fallback: broad assurance discovery when resolver-selected IAA artifact is absent.
+    const assuranceDir = path.join(process.cwd(), '.agent-admin/assurance');
+    const prebriefStandalone = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-prebrief-.*\.md$/.test(relPath));
+    const preflightBriefFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-preflight-brief-.*\.md$/.test(relPath));
+    const waveRecords = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-wave-record-.*\.md$/.test(relPath));
+    const tokenFiles = listFilesRecursive(assuranceDir, (relPath) => /^\.agent-admin\/assurance\/iaa-token-.*\.md$/.test(relPath));
+    const prebriefWaveRecords = waveRecords.filter((relPath) => /## PRE-BRIEF/i.test(safeRead(path.join(process.cwd(), relPath))) && !/superseded/i.test(safeRead(path.join(process.cwd(), relPath))));
+    const tokenWaveRecords = waveRecords.filter((relPath) => /## TOKEN/i.test(safeRead(path.join(process.cwd(), relPath))));
+    prebriefFiles = pickBestArtifacts([...prebriefStandalone, ...prebriefWaveRecords], { prNumber, issueNumber, branch, headSha });
+    preflightBriefArtifacts = pickBestArtifacts(preflightBriefFiles, { prNumber, issueNumber, branch, headSha });
+    assuranceArtifacts = pickBestArtifacts([...tokenFiles, ...tokenWaveRecords], { prNumber, issueNumber, branch, headSha });
+  }
   const preflightBriefPresent = preflightBriefArtifacts.length > 0;
   const preflightBriefCurrent = preflightBriefArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const prebriefPresent = prebriefFiles.length > 0;

@@ -27,36 +27,14 @@ EXPECTED_ISSUE_NUMBER="${EXPECTED_ISSUE_NUMBER:-}"
 ASSURANCE_DIR=".agent-admin/assurance"
 
 # ----------------------------------------------------------------
-# Delta-type classifier (mirrors resolve-active-pr-state.js classifyDelta).
-# Accepts a newline-separated file list; prints one of:
-#   REBASE_ONLY_DELTA | ADMIN_ONLY_DELTA | SUBSTANTIVE_DELTA | GATE_CHANGE_DELTA
-# Used as the PRIMARY signal for rebase-safety decisions; author timestamps
-# are only a SECONDARY signal when the delta is substantive.
+# Canonical PR delta classifier bridge.
+# Delegates to resolve-active-pr-state.js so producer-side gates consume
+# one canonical delta model (no local classifier drift).
 # ----------------------------------------------------------------
-_classify_delta_type() {
+_resolve_delta_type_from_resolver() {
   local files="$1"
-  if [ -z "$files" ]; then echo "REBASE_ONLY_DELTA"; return; fi
-  # Gate-change paths
-  if echo "$files" | grep -qE \
-      '^\.github/(workflows|scripts)/|^governance/templates/|^governance/checklists/|^governance/CANON_INVENTORY\.json$'; then
-    echo "GATE_CHANGE_DELTA"; return
-  fi
-  # Substantive production-code paths
-  if echo "$files" | grep -qE \
-      '^(apps|modules|packages|api)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|go|java|rb|rs|sql)$'; then
-    echo "SUBSTANTIVE_DELTA"; return
-  fi
-  # Non-admin paths that don't match the above are still substantive
-  local _has_non_admin=false
-  while IFS= read -r _f; do
-    [ -z "$_f" ] && continue
-    echo "$_f" | grep -qE \
-      '^\.admin/|^\.agent-admin/|^\.agent-workspace/|^\.functional-delivery/|^governance/|^docs/|^README|^CHANGELOG|(^|/)PREHANDOVER-.+\.md$' \
-      && continue
-    _has_non_admin=true; break
-  done <<< "$files"
-  if [ "$_has_non_admin" = true ]; then echo "SUBSTANTIVE_DELTA"; return; fi
-  echo "ADMIN_ONLY_DELTA"
+  printf '%s\n' "$files" | BASE_SHA="${BASE_SHA:-}" HEAD_SHA="${HEAD_SHA:-}" \
+    .github/scripts/classify-pr-delta.sh
 }
 
 # ----------------------------------------------------------------
@@ -400,7 +378,7 @@ while IFS= read -r token_file; do
       _tk_pass=false
       if [ -n "$BASE_SHA" ]; then
         _tk_delta_files="$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || true)"
-        _tk_delta_type="$(_classify_delta_type "$_tk_delta_files")"
+        _tk_delta_type="$(_resolve_delta_type_from_resolver "$_tk_delta_files")"
         case "$_tk_delta_type" in
           REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
             _tk_pass=true
@@ -613,7 +591,7 @@ while IFS= read -r wave_file; do
         _wr_pass=false
         if [ -n "$BASE_SHA" ]; then
           _wr_delta_files="$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || true)"
-          _wr_delta_type="$(_classify_delta_type "$_wr_delta_files")"
+          _wr_delta_type="$(_resolve_delta_type_from_resolver "$_wr_delta_files")"
           case "$_wr_delta_type" in
             REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
               _wr_pass=true

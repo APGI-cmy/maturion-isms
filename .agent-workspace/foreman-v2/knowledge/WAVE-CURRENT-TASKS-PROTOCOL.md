@@ -17,7 +17,7 @@ Codifies the `wave-current-tasks.md` creation and maintenance requirement for fo
 
 **At the start of every wave (Phase 2 — Alignment, after CS2 wave-start authorization is confirmed):**
 
-1. Copy `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md` to `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+1. Copy `.agent-workspace/foreman-v2/personal/wave-current-tasks-template.md` to `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md`
 2. Populate the header fields: Wave, Session ID, Date, Branch, CS2 Authorization link
 3. List every task to be delegated in the task table with status 🔴 PENDING
 4. Commit this file to the working branch **before delegating to any builder**
@@ -36,7 +36,7 @@ Codifies the `wave-current-tasks.md` creation and maintenance requirement for fo
 11. **Execute the Wave Reconciliation Checklist** (`wave-reconciliation-checklist.md`) — mandatory
     before PR open. Covers: post-wave incident → NBR entry, liveness verification, and evidence
     completeness. Record result in PREHANDOVER proof under `## Wave Reconciliation Checklist`.
-12. The `wave-current-tasks.md` file is part of the wave evidence bundle
+12. The active `wave-current-tasks.md` file (PR-scoped path) is part of the wave evidence bundle
 
 ---
 
@@ -65,7 +65,7 @@ The Pre-Brief also declares the wave-level Admin Ceremony Contract — a set of 
 
 ## Why This Matters
 
-The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads the first 500 characters of `wave-current-tasks.md` and injects it into every automated re-anchor comment. This means:
+The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads the first 500 characters of the active `wave-current-tasks.md` and injects it into every automated re-anchor comment. This means:
 
 - When context pressure causes the Foreman to lose track of outstanding tasks, the re-anchor comment restores awareness using the Foreman's own written task list
 - The task list is Foreman-authored (not injected externally), so it carries full authority in the Foreman's reasoning
@@ -75,9 +75,9 @@ The Re-Anchor Pulse workflow (`.github/workflows/foreman-reanchor.yml`) reads th
 
 ## Absence Behaviour
 
-**Mid-wave (Phase 3 — Re-Anchor Pulse fires during active wave):** If `wave-current-tasks.md` does not exist, the workflow posts a fallback message directing the Foreman to read the latest session memory file. This is sub-optimal and the Foreman must create `wave-current-tasks.md` immediately — but wave execution may continue.
+**Mid-wave (Phase 3 — Re-Anchor Pulse fires during active wave):** If PR-scoped `wave-current-tasks.md` does not exist, the workflow posts a fallback message directing the Foreman to read the latest session memory file. This is sub-optimal and the Foreman must create the PR-scoped file immediately — but wave execution may continue.
 
-**At handover (Phase 4):** A missing `wave-current-tasks.md` is a **HANDOVER BLOCKER** — it is a required wave evidence artifact from knowledge version 1.7.0 onward. Handover must not proceed until the file is produced and committed.
+**At handover (Phase 4):** A missing active PR-scoped `wave-current-tasks.md` is a **HANDOVER BLOCKER** — it is a required wave evidence artifact from knowledge version 1.7.0 onward. Handover must not proceed until the file is produced and committed.
 
 ---
 
