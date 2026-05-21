@@ -310,10 +310,16 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING
+PHASE_B_BLOCKING_TOKEN: IAA-session-1280-mmm-dab-harvest-implementation-20260521-2026-05-21-PASS
 PR: #1731
 Issue: #1726
-Reviewed SHA: PENDING
+Reviewed SHA: 40878e8
+Session: session-1280-mmm-dab-harvest-re-invocation-20260521
+Date: 2026-05-21
+Checks: 16 total — 16 PASS, 0 FAIL
+Verdict: ASSURANCE-TOKEN (PASS) — FULL_FUNCTIONAL_DELIVERY
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+Merge authority: CS2 ONLY
 
 ## REJECTION_HISTORY
 
