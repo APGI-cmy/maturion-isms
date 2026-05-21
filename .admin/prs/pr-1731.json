@@ -26,12 +26,15 @@
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "ui-builder",
   "evidence_required": [
-    "IAA wave record for mmm-dab-harvest-implementation-20260521 with bare-line IAA_PREFLIGHT_BRIEF section",
-    "DomainAuditBuilder harvested from legacy with card layout (ol→div), behaviour parity with legacy",
-    "Steps container uses role=list + aria-label for accessibility",
-    "T-MMM-S6-AI-005 test added; T-MMM-S6-AI-001 through AI-004 assertions strengthened",
-    "Per-PR scope declaration at .agent-admin/scope-declarations/pr-1731.md",
-    "200 B4 tests pass (0 failures)"
+    "IAA wave record committed at .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md",
+    "Per-PR scope declaration committed at .agent-admin/scope-declarations/pr-1731.md",
+    "Wave current tasks updated for issue #1726 in .agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "DomainAuditBuilder.tsx step container changed from ol/li to div card-grid; data-testid=domain-audit-step-card added; role=list + aria-label added to steps container for accessibility",
+    "B4 parity tests: T-MMM-S6-AI-005 new suite (3-card render), T-MMM-S6-AI-001 strengthened (intent+rationale assertions); container-not-ol test strengthened with closest('ol') and container tag check",
+    "200 B4 tests passing (0 failures, 0 skipped) per vitest.mmm-b4.config.ts",
+    "IAA ASSURANCE-TOKEN committed at .agent-workspace/independent-assurance-agent/memory/session-1280-mmm-dab-harvest-re-invocation-20260521.md",
+    "PREHANDOVER proof at .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-dab-harvest-implementation-20260521-2026-05-21.md"
   ],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "note": "Narrow preliminary PR: delivers ol/li→div card-grid structural fix and parity tests only. Issue #1726 (full legacy harvest) remains open and unsatisfied by this PR."
 }
