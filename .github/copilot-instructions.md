@@ -77,6 +77,12 @@ Phase 1 output must include:
 
 Once Phase 1 is complete and its output is produced, read the issue body and proceed with the task according to your contract.
 
+## Handover posture rule — `/prepare-handover` before any claim
+
+Before any final summary, ready-for-review, handover, or merge-ready claim on a PR, you MUST comment `/prepare-handover` (or the equivalent deliberate checkpoint trigger required by the active workflow) and wait for the refreshed current-head `PRE_HANDOVER_CHECKPOINT_RESULT`.
+
+Do not claim final summary, ready-for-review, handover, or merge-ready posture against a stale head or without that refreshed checkpoint result.
+
 ---
 
 ## Enforcement
