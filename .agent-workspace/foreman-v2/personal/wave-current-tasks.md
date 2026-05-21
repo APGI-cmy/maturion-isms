@@ -35,7 +35,7 @@ Per iaa-final-assurance-gate.sh, IAA final assurance is N/A for docs-only diffs.
 1. ✅ Phase 1 PREFLIGHT complete (identity, Tier 2, CANON, session memory, FAIL-ONLY-ONCE, merge gates)
 2. ✅ Governance admin artifacts created (pr-1728.json, scope declaration pr-1728.md, wave-current-tasks.md)
 3. ✅ IAA Pre-Brief invoked — wave record at .agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md — EXEMPT (docs-only)
-4. ⏳ Delegate discovery report creation to mat-specialist
-5. ⏳ Quality Professor review of discovery report
-6. ⏳ Create session memory and minimal PREHANDOVER proof (docs-only)
-7. ⏳ Commit and push all artifacts
+4. ✅ Discovery report created by mat-specialist (modules/isms/discovery-report/)
+5. ✅ Quality Professor review — PASS (date correction applied)
+6. ✅ Session memory created
+7. ✅ Committing all artifacts
