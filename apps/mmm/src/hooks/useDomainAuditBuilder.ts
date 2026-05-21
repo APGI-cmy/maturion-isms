@@ -38,6 +38,28 @@ export interface DomainAuditCriterionRow {
   sort_order: number;
 }
 
+export type DraftPersistenceState = 'session' | 'persisted';
+
+export interface GeneratedMpsDraft {
+  number: number;
+  title: string;
+  intent: string;
+  rationale: string;
+  acceptance: DraftPersistenceState;
+}
+
+export interface GeneratedIntentDraft {
+  mpsId: string;
+  text: string;
+  acceptance: DraftPersistenceState;
+}
+
+export interface GeneratedCriteriaDraft {
+  code: string;
+  statement: string;
+  acceptance: DraftPersistenceState;
+}
+
 export interface StepMeta {
   id: AuditStep;
   title: string;
