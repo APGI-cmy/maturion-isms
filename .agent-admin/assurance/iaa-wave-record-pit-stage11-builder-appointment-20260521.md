@@ -311,13 +311,43 @@ APPOINTED_BUILDER: pit-specialist (to be formally confirmed in stage11-builder-a
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING — final IAA assurance NOT YET ISSUED (pre-brief only at this stage)
+PHASE_B_BLOCKING_TOKEN: PENDING — REJECTION-PACKAGE issued; re-invocation required after fixes
 FINAL_ASSURANCE_REQUIRED: YES (corrected from foreman pre-population; PRE_BUILD_STAGE_MODEL trigger)
-EXPECTED_TOKEN_REFERENCE: IAA-pit-stage11-builder-appointment-20260521-PASS
-TOKEN_FILE_DESTINATION: `.agent-admin/assurance/iaa-token-pit-stage11-builder-appointment-20260521.md`
+EXPECTED_TOKEN_REFERENCE: IAA-pit-stage11-builder-appointment-20260521-PASS (issued on next passing invocation)
+TOKEN_FILE_DESTINATION: see ## TOKEN section of this wave record (written by IAA on passing invocation per NO-STANDALONE-TOKEN-001 / Step 4.2b)
 
 ---
 
 ## REJECTION_HISTORY
 
-*(Populate only if a REJECTION-PACKAGE is issued during final assurance invocation.)*
+### REJECTION-PACKAGE — R1 — 2026-05-21
+
+**IAA Session**: session-iaa-pit-stage11-builder-appointment-20260521-R1  
+**PR**: #1730  
+**Date**: 2026-05-21  
+**Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE  
+**Checks Run**: 25 checks — 23 PASS, 2 FAIL  
+**Verdict**: REJECTION-PACKAGE
+
+**FAILURE 1**:
+- Check: A-029 (FAIL-ONLY-ONCE Phase 3.1)
+- Finding: PREHANDOVER proof `iaa_audit_token` field contains `PENDING_FINAL_ASSURANCE` — this is the OLD PENDING pattern explicitly prohibited by A-029 for post-2026-03-04 proofs. The field must be pre-populated at commit time with the expected reference `IAA-pit-stage11-builder-appointment-20260521-PASS`.
+- Evidence: `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-pit-stage11-builder-appointment-20260521.md` — `iaa_audit_token: PENDING_FINAL_ASSURANCE`
+- Fix required: Foreman must add a new commit updating `iaa_audit_token: PENDING_FINAL_ASSURANCE` → `iaa_audit_token: IAA-pit-stage11-builder-appointment-20260521-PASS` in the PREHANDOVER file before re-invoking IAA.
+- Classification: Ceremony
+
+**FAILURE 2**:
+- Check: OVL-SAA-002 / wave-current-tasks.md consistency (SIMPLIFIED_ADMIN_ASSURANCE Phase 3.3)
+- Finding: Wave-current-tasks.md tasks 6 (pit-specialist delegation) and 7 (QP review) remain marked `⏳` (pending) while PREHANDOVER confirms QP VERDICT: PASS and all 5 deliverables committed. Additionally, task 9 (IAA final assurance) retains the pre-correction wording "likely N/A" when the pre-brief (IAA-authored, same wave) explicitly corrected this to REQUIRED (PRE_BUILD_STAGE_MODEL trigger applies to all BUILD_PROGRESS_TRACKER.md advancements).
+- Evidence: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` — tasks 6, 7 = ⏳; task 9 = "likely N/A" vs. pre-brief FINAL_ASSURANCE_REQUIRED: YES
+- Fix required: Foreman must add a new commit updating tasks 6 and 7 from ⏳ to ✅, and correcting task 9 wording to reflect IAA final assurance IS REQUIRED (not "likely N/A").
+- Classification: Ceremony
+
+**Systemic Prevention Note (NO-REPEAT-PREVENTABLE-001)**:
+Both failures are preventable. Structural prevention actions:
+1. A-029 pattern: Foreman session memory template should include `iaa_audit_token: [EXPECTED_REFERENCE]` as a fill-at-commit instruction (not PENDING). Template hardening target: `.agent-workspace/foreman-v2/` PREHANDOVER template.
+2. wave-current-tasks consistency: Foreman must mark tasks as ✅ immediately when builder deliverables are committed and QP review is complete — before invoking IAA. QP gate step is part of the delivery sequence, not optional.
+
+**HANDOVER_ALLOWED**: no  
+**RESULT**: REJECTED_BACK_TO_PRODUCER  
+**Re-invocation**: Required after both fixes committed and pushed.
