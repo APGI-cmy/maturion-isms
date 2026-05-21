@@ -22,7 +22,7 @@
   ],
   "risk": "low",
   "requires_iaa": true,
-  "requires_ecap": false,
+  "requires_ecap": true,
   "execution_model": "foreman-orchestrated",
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "pit-specialist",
