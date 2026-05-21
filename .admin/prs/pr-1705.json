@@ -1,0 +1,37 @@
+{
+  "pr": 1705,
+  "issue": 1704,
+  "issue_title": "Foreman: Harden PIT Stage 11 builder appointment with executable readiness proof",
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope_notes": "Docs/governance-only Stage 11 readiness-hardening package for PIT. Adds pre-appointment proof templates and blocker controls without appointing a builder, starting Stage 12, clearing Build Authorization, or asserting GREEN/live/FUNCTIONAL_PASS outcomes.",
+  "scope": [
+    ".admin/prs/pr-1705.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage11-builder-appointment-readiness-hardening-20260520.md",
+    ".agent-admin/scope-declarations/pr-1705.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/11-builder-appointment/builder-readiness-proof-pack.md",
+    "modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md",
+    "modules/pit/11-builder-appointment/stage8-hardening-acknowledgement.md",
+    "modules/pit/11-builder-appointment/wave-definition-of-ready-template.md",
+    "modules/pit/11-builder-appointment/timeline-engine-readiness-gate.md",
+    "modules/pit/11-builder-appointment/stage11-appointment-preconditions.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": false,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
+  "evidence_required": [
+    "All six Stage 11 readiness-hardening artifacts exist under modules/pit/11-builder-appointment/",
+    "Builder readiness proof pack requires concrete evidence tables/plans (not acknowledgement-only)",
+    "RED baseline reconciliation remains unresolved blocker with only Option A/Option B decision paths and CS2 sign-off requirement",
+    "Stage 8 hardening acknowledgement lists all 8 artifacts by name/path with execution-use and proof fields",
+    "Tracker keeps Stage 11 NOT_STARTED, Stage 12 NOT_STARTED, Build Authorization NOT CLEARED",
+    "144-vs-147 RED reconciliation blocker remains open unless CS2 records decision",
+    "No runtime/source/test/migration/deployment/workflow changes"
+  ],
+  "merge_authority": "CS2"
+}
