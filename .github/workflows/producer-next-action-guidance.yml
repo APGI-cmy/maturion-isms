@@ -259,7 +259,7 @@ jobs:
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
         run: |
           RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
-          RESULT_JSON_B64="$(printf '%s' "$RESULT_JSON" | base64 -w 0)"
+          RESULT_JSON_B64="$(printf '%s' "$RESULT_JSON" | base64 | tr -d '\n')"
           echo "result_json_b64=$RESULT_JSON_B64" >> "$GITHUB_OUTPUT"
           printf '%s\n' "$RESULT_JSON"
 
@@ -275,7 +275,11 @@ jobs:
             const { STICKY_MARKER, renderGuidanceComment } = require('./.github/scripts/producer-next-action-guidance.js');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA || '';
-            const result = JSON.parse(Buffer.from(process.env.RESULT_JSON_B64 || '', 'base64').toString('utf8') || '{}');
+            const resultJsonB64 = process.env.RESULT_JSON_B64 || '';
+            const decodedResult = resultJsonB64
+              ? Buffer.from(resultJsonB64, 'base64').toString('utf8')
+              : '{}';
+            const result = JSON.parse(decodedResult);
             const body = renderGuidanceComment({
               prNumber,
               headSha,

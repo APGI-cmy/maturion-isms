@@ -17,6 +17,7 @@ ISSUE: #1718
 WAVE: inject-next-action-guidance
 WAVE_TASKS_PATH: .agent-admin/prs/pr-1719/wave-current-tasks.md
 CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
+CURRENT_HEAD_SHA_NOTE: GITHUB_PR_HEAD_SHA is resolved by current-head preflight/gate runtime from the active PR head SHA for this branch.
 
 EXPECTED_QA_SCOPE:
 - `.github/workflows/preflight-evidence-gate.yml`
