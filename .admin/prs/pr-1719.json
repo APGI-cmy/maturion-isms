@@ -1,0 +1,32 @@
+{
+  "pr": 1719,
+  "issue": 1718,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "branch": "copilot/inject-next-action-guidance",
+  "scope": [
+    ".admin/prs/pr-1719.json",
+    ".agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md",
+    ".agent-admin/scope-declarations/pr-1719.md",
+    ".agent-workspace/foreman-v2/personal/builder-checklist-inject-next-action-guidance-20260521.md",
+    ".agent-workspace/foreman-v2/personal/implementation-plan-inject-next-action-guidance-20260521.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "qa-builder",
+  "evidence_required": [
+    "IAA wave record committed at .agent-admin/assurance/iaa-wave-record-inject-next-action-guidance-20260521.md",
+    "Per-PR scope declaration committed at .agent-admin/scope-declarations/pr-1719.md",
+    "Wave current tasks updated for issue #1718 in .agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "Implementation plan and builder checklist committed before builder delegation",
+    "Trusted metadata-only injector posts or updates exactly one sticky producer comment",
+    "Current-head NEXT_REQUIRED_CONTROL and blocker summary stays aligned with checkpoint / active-state data",
+    "Existing handover gate remains the hard blocker",
+    "Regression coverage added for synchronize/open/update guidance and /prepare-handover parity"
+  ],
+  "merge_authority": "CS2"
+}
