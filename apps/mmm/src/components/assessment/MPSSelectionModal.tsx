@@ -8,12 +8,9 @@
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { DomainAuditMpsRow } from '../../hooks/useDomainAuditBuilder';
+import type { DomainAuditMpsRow, GeneratedMpsDraft as GeneratedMPSItem } from '../../hooks/useDomainAuditBuilder';
 import { supabase } from '../../lib/supabase';
-import {
-  useAIMPSGeneration,
-  type GeneratedMpsDraft as GeneratedMPSItem,
-} from '../../hooks/useAIMPSGeneration';
+import { useAIMPSGeneration } from '../../hooks/useAIMPSGeneration';
 
 interface EditedMPSItem {
   title: string;

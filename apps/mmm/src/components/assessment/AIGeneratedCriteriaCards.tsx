@@ -1,9 +1,5 @@
 import React from 'react';
-
-export interface GeneratedCriterionItem {
-  code: string;
-  statement: string;
-}
+import type { GeneratedCriterionItem } from './CriteriaManagement';
 
 interface AIGeneratedCriteriaCardsProps {
   mpsId: string;
@@ -64,4 +60,3 @@ export function AIGeneratedCriteriaCards({
 }
 
 export default AIGeneratedCriteriaCards;
-

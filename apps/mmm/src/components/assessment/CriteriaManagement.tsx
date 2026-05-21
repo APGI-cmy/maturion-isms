@@ -16,7 +16,7 @@ import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
 import { AIGeneratedCriteriaCards } from './AIGeneratedCriteriaCards';
 import { EnhancedCriteriaGenerator } from './EnhancedCriteriaGenerator';
 
-interface GeneratedCriterionItem {
+export interface GeneratedCriterionItem {
   code: string;
   statement: string;
 }

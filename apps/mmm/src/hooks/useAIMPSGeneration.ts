@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { supabase, getEdgeInvokeHeaders } from '../lib/supabase';
+import type { GeneratedMpsDraft } from './useDomainAuditBuilder';
 
-export interface GeneratedMpsDraft {
+interface GeneratedMpsDraftRaw {
   number: number;
   title: string;
   intent: string;
@@ -38,14 +39,14 @@ export function useAIMPSGeneration() {
         throw new Error((invokeError as { message?: string }).message ?? 'AI generation failed');
       }
 
-      let parsed: GeneratedMpsDraft[];
+      let parsed: GeneratedMpsDraftRaw[];
       try {
-        parsed = JSON.parse((data as { reply: string }).reply) as GeneratedMpsDraft[];
+        parsed = JSON.parse((data as { reply: string }).reply) as GeneratedMpsDraftRaw[];
       } catch {
         throw new Error('Failed to parse AI response. Please try again.');
       }
 
-      return parsed;
+      return parsed.map((item) => ({ ...item, acceptance: 'session' as const }));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'AI generation failed. Please try again.';
       setError(message);
@@ -57,4 +58,3 @@ export function useAIMPSGeneration() {
 
   return { generateMPSsForDomain, isLoading, error };
 }
-
