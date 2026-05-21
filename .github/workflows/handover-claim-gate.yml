@@ -78,44 +78,13 @@ jobs:
     name: "handover-claim/check-current-head"
     runs-on: ubuntu-latest
 
-    # Only fire when:
-    # (a) A comment on a PR (not issue) contains handover keywords, OR
-    # (b) A copilot/ branch PR is marked ready_for_review
-    #
-    # Keyword groups:
-    # - User-facing: handover, merge-ready, ready to merge, all gates pass, merge gate released
-    # - Foreman governance signals: Phase 4 (handover phase), OPOJD (complete handover doctrine)
-    #   These are intentional — Foreman agents use these precise governance terms in comments.
+    # Fire on PR comments and ready_for_review posture transitions, then let the
+    # trusted default-branch detection logic decide whether the event is an
+    # explicit handover claim or an advisory/no-op signal.
     if: |
       (
         github.event_name == 'issue_comment' &&
-        github.event.issue.pull_request != null &&
-        (
-          contains(github.event.comment.body, 'handover') ||
-          contains(github.event.comment.body, 'Handover') ||
-          contains(github.event.comment.body, 'HANDOVER') ||
-          contains(github.event.comment.body, 'merge-ready') ||
-          contains(github.event.comment.body, 'Merge-ready') ||
-          contains(github.event.comment.body, 'merge ready') ||
-          contains(github.event.comment.body, 'Merge ready') ||
-          contains(github.event.comment.body, 'ready to merge') ||
-          contains(github.event.comment.body, 'Ready to merge') ||
-          contains(github.event.comment.body, 'all gates pass') ||
-          contains(github.event.comment.body, 'All gates pass') ||
-          contains(github.event.comment.body, 'ALL GATES PASS') ||
-          contains(github.event.comment.body, 'ready for review') ||
-          contains(github.event.comment.body, 'Ready for review') ||
-          contains(github.event.comment.body, 'ready-for-review') ||
-          contains(github.event.comment.body, 'Ready-for-review') ||
-          contains(github.event.comment.body, 'work complete') ||
-          contains(github.event.comment.body, 'Work complete') ||
-          contains(github.event.comment.body, 'implementation complete') ||
-          contains(github.event.comment.body, 'Implementation complete') ||
-          contains(github.event.comment.body, 'Phase 4') ||
-          contains(github.event.comment.body, 'OPOJD') ||
-          contains(github.event.comment.body, 'merge gate released') ||
-          contains(github.event.comment.body, 'Merge gate released')
-        )
+        github.event.issue.pull_request != null
       ) ||
       (
         github.event_name == 'pull_request_target' &&
@@ -126,6 +95,12 @@ jobs:
       )
 
     steps:
+      - name: Checkout trusted default branch utilities
+        uses: actions/checkout@v5
+        with:
+          ref: refs/heads/${{ github.event.repository.default_branch }}
+          persist-credentials: false
+
       - name: Determine PR number and HEAD SHA
         id: pr_info
         uses: actions/github-script@v7
@@ -159,13 +134,12 @@ jobs:
           HEAD_SHA: ${{ steps.pr_info.outputs.head_sha }}
         with:
           script: |
+            const handoverIntent = require('./.github/scripts/handover-intent.js');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA;
             const isIssueComment = context.eventName === 'issue_comment';
             const commentBody = context.payload.comment?.body || '';
             const commentCreatedAt = context.payload.comment?.created_at ? new Date(context.payload.comment.created_at) : null;
-            const checkpointTriggerPattern = /^(?:ECAP_)?PRE_HANDOVER_CHECKPOINT(?:\b.*)?$|^\/prepare-handover(?:\b.*)?$/i;
-            const checkpointResultPattern = /PRE_HANDOVER_CHECKPOINT_RESULT/i;
 
             if (!prNumber || !headSha) {
               core.warning('Could not determine PR number or HEAD SHA — skipping handover claim gate.');
@@ -175,14 +149,17 @@ jobs:
             if (
               isIssueComment &&
               (
-                checkpointTriggerPattern.test(commentBody.trim()) ||
-                checkpointResultPattern.test(commentBody) ||
-                /RESULT:\s*STOP_AND_FIX/i.test(commentBody) ||
-                /RESULT:\s*CS2_INTERVENTION_REQUIRED/i.test(commentBody) ||
-                /HANDOVER_ALLOWED:\s*no/i.test(commentBody)
+                handoverIntent.isCheckpointTriggerComment(commentBody) ||
+                handoverIntent.isCheckpointResultComment(commentBody) ||
+                handoverIntent.isFailedGateSignalComment(commentBody)
               )
             ) {
               core.info('Checkpoint trigger/result or STOP_AND_FIX/CS2_INTERVENTION_REQUIRED status comment detected — not treating as handover claim.');
+              return;
+            }
+
+            if (isIssueComment && !handoverIntent.isExplicitHandoverClaimComment(commentBody)) {
+              core.info('Issue comment does not contain an explicit handover claim signal for the hard gate. Skipping.');
               return;
             }
 
@@ -529,20 +506,7 @@ jobs:
                 if (GATE_MARKERS.some(m => b.includes(m))) return false;
                 if (b.includes(CHECKPOINT_REQUIRED_MARKER)) return false;
                 // Exclude checkpoint trigger/result comments
-                if (checkpointTriggerPattern.test(b.trim()) || checkpointResultPattern.test(b)) return false;
-                // Exclude STOP_AND_FIX / blocked status comments — not handover claims
-                if (/HANDOVER_BLOCKED|STOP_AND_FIX|CS2_INTERVENTION_REQUIRED/i.test(b)) return false;
-                if (REJECTION_NOTICE_REGEX.test(b)) return false;
-                // Match explicit handover/merge-ready claim language
-                return (
-                  /\bhandover[ -]?ready\b|\bhandover claim\b/i.test(b) ||
-                  /merge.?ready|ready.to.merge/i.test(b) ||
-                  /all.gates.pass|merge.gate.released/i.test(b) ||
-                  /\bOPOJD\b/i.test(b) ||
-                  /\bPhase\s+4\b/i.test(b) ||
-                  /HANDOVER_ALLOWED\s*:\s*yes/i.test(b) ||
-                  /\b(?:work|implementation)\s+complete\b/i.test(b)
-                );
+                return handoverIntent.isExplicitHandoverClaimComment(b);
               });
 
               if (!existingExplicitHandoverClaim) {
