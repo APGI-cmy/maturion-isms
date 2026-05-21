@@ -165,7 +165,9 @@ function classifyPostHandover({
     };
   }
 
-  const gateChangeFailed = [...failing, ...pending, ...missing].some((name) => name.includes('preflight/gate-changing-pr-rule'));
+  const gateChangeFailed = failing.some((name) => name.includes('preflight/gate-changing-pr-rule'))
+    || pending.some((name) => name.includes('preflight/gate-changing-pr-rule'))
+    || missing.some((name) => name.includes('preflight/gate-changing-pr-rule'));
   if (gateChangeFailed) {
     return {
       handoverAccepted: false,
@@ -241,9 +243,12 @@ function resolveRemediationCycle({ previousStickyBody = '', headSha = '', blocke
   const previousHead = String(previousFields.CURRENT_HEAD_SHA || '').trim();
   const previousNotAccepted = normalize(previousFields.HANDOVER_ACCEPTED) === 'no';
 
-  const nextCycle = previousNotAccepted && previousHead && previousHead === headSha
-    ? Math.max(previousCycle, 1)
-    : Math.min(previousCycle + 1, MAX_REMEDIATION_CYCLES);
+  let nextCycle;
+  if (previousNotAccepted && previousHead && previousHead === headSha) {
+    nextCycle = Math.max(previousCycle, 1);
+  } else {
+    nextCycle = Math.min(previousCycle + 1, MAX_REMEDIATION_CYCLES);
+  }
 
   return {
     cycle: nextCycle,
@@ -320,7 +325,7 @@ function renderAutoRemediationComment({
     '',
     `1. ${actionLine}`,
     '2. Do not regenerate unrelated evidence.',
-    '3. Do not change unrelated product/runtime files.',
+    '3. Do not change unrelated product/runtime files (for example unrelated modules, app pages, or database/schema files).',
     '4. Push the fix.',
     '5. Do not post another handover/final-summary claim until current-head Preflight and required CI are green.',
   ].join('\n');
@@ -334,4 +339,3 @@ module.exports = {
   resolveRemediationCycle,
   renderAutoRemediationComment,
 };
-

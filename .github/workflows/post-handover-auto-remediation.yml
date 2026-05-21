@@ -142,7 +142,11 @@ jobs:
                   const text = Buffer.from(data.content, 'base64').toString('utf8');
                   repoFiles[targetPath] = text;
                   if ((targetPath === `.admin/prs/pr-${prNumber}.json` || targetPath === '.admin/pr.json') && !manifest) {
-                    try { manifest = JSON.parse(text); } catch {}
+                    try {
+                      manifest = JSON.parse(text);
+                    } catch (error) {
+                      core.warning(`Failed to parse manifest ${targetPath}: ${error.message}`);
+                    }
                   }
                 }
               } catch (error) {
@@ -234,7 +238,8 @@ jobs:
             let activeState = null;
             try {
               activeState = repoFiles[activeStatePath] ? JSON.parse(repoFiles[activeStatePath]) : null;
-            } catch {
+            } catch (error) {
+              core.warning(`Failed to parse active state ${activeStatePath}: ${error.message}`);
               activeState = null;
             }
 
@@ -324,7 +329,12 @@ jobs:
 
             const readJson = (targetPath, fallback) => {
               if (!targetPath) return fallback;
-              try { return JSON.parse(fs.readFileSync(targetPath, 'utf8')); } catch { return fallback; }
+              try {
+                return JSON.parse(fs.readFileSync(targetPath, 'utf8'));
+              } catch (error) {
+                core.warning(`Failed to read/parse ${targetPath}: ${error.message}`);
+                return fallback;
+              }
             };
 
             const result = readJson(process.env.RESULT_FILE, {});
@@ -392,6 +402,7 @@ jobs:
             } catch (error) {
               if (!isRateLimitError(error)) throw error;
               core.setFailed([
+                'Failed to update/read sticky remediation comment due to GitHub API rate limiting. Infrastructure rerun needed.',
                 'ADVISORY_UNAVAILABLE: github_api_rate_limited',
                 'INFRASTRUCTURE_RERUN_NEEDED: yes',
                 'PR_DEFECT_INFERRED: no',
