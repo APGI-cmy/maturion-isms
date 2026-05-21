@@ -63,30 +63,15 @@ is_live_functional_delivery_evidence_file() {
   [[ "$file" =~ ^\.functional-delivery/pr-[0-9]+\.md$ ]]
 }
 
-# Delta-type classifier (mirrors resolve-active-pr-state.js classifyDelta).
-# Accepts a newline-separated file list; prints one of:
-#   REBASE_ONLY_DELTA | ADMIN_ONLY_DELTA | SUBSTANTIVE_DELTA | GATE_CHANGE_DELTA
-_classify_delta_type() {
+# Canonical PR delta classifier bridge.
+# Delegates to resolve-active-pr-state.js so producer-side gates consume
+# one canonical delta model (no local classifier drift).
+_resolve_delta_type_from_resolver() {
   local files="$1"
-  if [ -z "$files" ]; then echo "REBASE_ONLY_DELTA"; return; fi
-  if echo "$files" | grep -qE \
-      '^\.github/(workflows|scripts)/|^governance/templates/|^governance/checklists/|^governance/CANON_INVENTORY\.json$'; then
-    echo "GATE_CHANGE_DELTA"; return
-  fi
-  if echo "$files" | grep -qE \
-      '^(apps|modules|packages|api)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|go|java|rb|rs|sql)$'; then
-    echo "SUBSTANTIVE_DELTA"; return
-  fi
-  local _has_non_admin=false
-  while IFS= read -r _f; do
-    [ -z "$_f" ] && continue
-    echo "$_f" | grep -qE \
-      '^\.admin/|^\.agent-admin/|^\.agent-workspace/|^\.functional-delivery/|^governance/|^docs/|^README|^CHANGELOG|(^|/)PREHANDOVER-.+\.md$' \
-      && continue
-    _has_non_admin=true; break
-  done <<< "$files"
-  if [ "$_has_non_admin" = true ]; then echo "SUBSTANTIVE_DELTA"; return; fi
-  echo "ADMIN_ONLY_DELTA"
+  local files_json
+  files_json="$(printf '%s\n' "$files" | node -e 'const fs=require("fs");const lines=fs.readFileSync(0,"utf8").split(/\n/).map((v)=>v.trim()).filter(Boolean);process.stdout.write(JSON.stringify(lines));')"
+  CHANGED_FILES_JSON="$files_json" BASE_SHA="${BASE_SHA:-}" HEAD_SHA="${HEAD_SHA:-}" \
+    node .github/scripts/resolve-active-pr-state.js 2>/dev/null | node -e 'const fs=require("fs");try{const v=JSON.parse(fs.readFileSync(0,"utf8"));process.stdout.write(String(v.delta_type||"SUBSTANTIVE_DELTA"));}catch{process.stdout.write("SUBSTANTIVE_DELTA");}'
 }
 
 # Returns 0 (true) if the file is a governance-controlled control-surface path:
@@ -486,7 +471,7 @@ if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
   #              hex SHA only when the IAA artifact was authored after the last product-file
   #              commit (author timestamps survive git rebase).
   _4c_pass=false
-  _4c_delta_type="$(_classify_delta_type "$CHANGED_FILES")"
+  _4c_delta_type="$(_resolve_delta_type_from_resolver "$CHANGED_FILES")"
   case "$_4c_delta_type" in
     REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
       _4c_pass=true
@@ -625,7 +610,7 @@ if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
   #              commit (author timestamps survive git rebase). Placeholder/symbolic
   #              values do NOT trigger this fallback — a concrete old SHA must be present.
   _g7_pass=false
-  _g7_delta_type="$(_classify_delta_type "$CHANGED_FILES")"
+  _g7_delta_type="$(_resolve_delta_type_from_resolver "$CHANGED_FILES")"
   case "$_g7_delta_type" in
     REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
       _g7_pass=true
