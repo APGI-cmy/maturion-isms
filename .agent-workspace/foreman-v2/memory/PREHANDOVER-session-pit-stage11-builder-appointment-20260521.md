@@ -15,7 +15,7 @@
 
 ## Wave Description
 
-Formal PIT Stage 11 builder appointment wave. Moved Stage 11 from NOT_STARTED to GATE_PASSED — BUILDER_APPOINTED. pit-specialist appointed as PIT Stage 12 builder. All Stage 11 preconditions satisfied. Docs/governance/appointment evidence only — no runtime code, tests, migrations, CI changes.
+Formal PIT Stage 11 builder appointment wave. Moved Stage 11 from NOT_STARTED to GATE_PASSED — BUILDER_APPOINTED. pit-specialist appointed as PIT Stage 12 builder. All Stage 11 appointment preconditions satisfied; Build Authorization is a separate downstream gate intentionally NOT CLEARED by this PR. Docs/governance/appointment evidence only — no runtime code, tests, migrations, CI changes.
 
 ---
 

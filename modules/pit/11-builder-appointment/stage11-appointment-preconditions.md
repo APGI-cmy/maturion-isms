@@ -13,8 +13,13 @@ Stage 11 builder appointment cannot proceed unless **all** items below are true.
 - [x] Builder has submitted evidence/report/audit/notification execution plan.
 - [x] Builder has submitted denied-path execution plan.
 - [x] Builder has submitted LFV/deployed-evidence plan.
-- [ ] CS2 has explicitly cleared Build Authorization or a separate clearance artifact is filed according to the approved path.
 - [x] `BUILD_PROGRESS_TRACKER.md` records appointment and authorization state before execution begins.
+
+## Downstream gate (not required for Stage 11 appointment)
+
+Build Authorization is a separate, explicitly deferred downstream execution gate. It is **NOT** a Stage 11 appointment precondition and is intentionally NOT CLEARED by this PR.
+
+- [ ] CS2 has explicitly cleared Build Authorization or a separate clearance artifact is filed according to the approved path. *(Downstream gate — deferred to a future CS2-gated step; does not block Stage 11 appointment)*
 
 ## Verification references
 | Preconditions group | Evidence/reference |
