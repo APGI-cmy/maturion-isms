@@ -38,8 +38,8 @@ No runtime/source code, tests, migrations, deployment config, CI changes, GREEN 
 3. ✅ Wave-current-tasks.md updated for pit-stage11-builder-appointment
 4. ✅ PR admin manifest created (.admin/prs/pr-1730.json)
 5. ✅ Scope declaration created (.agent-admin/scope-declarations/pr-1730.md)
-6. ⏳ pit-specialist delegation: complete proof pack, stage8 ack, appointment artifact, tracker update
-7. ⏳ Quality Professor review of pit-specialist deliverables
-8. ⏳ ECAP Phase 4 bundle (if governance paths required; otherwise Foreman direct)
-9. ⏳ IAA final assurance (docs-only wave — likely N/A)
+6. ✅ pit-specialist delegation: complete proof pack, stage8 ack
+7. ✅ Quality Professor review of pit-specialist deliverables — VERDICT: PASS
+8. ⏳ Create Foreman session memory + PREHANDOVER proof
+9. ⏳ IAA final assurance — REQUIRED (PRE_BUILD_STAGE_MODEL trigger confirmed by IAA; BUILD_PROGRESS_TRACKER.md advancement mandates IAA regardless of docs-only scope)
 10. ⏳ Merge gate release

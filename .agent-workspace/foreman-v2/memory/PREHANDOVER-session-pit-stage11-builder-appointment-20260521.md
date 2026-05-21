@@ -101,7 +101,7 @@ This prehandover proof does NOT claim:
 
 ## IAA Audit Token Reference
 
-iaa_audit_token: PENDING_FINAL_ASSURANCE
+iaa_audit_token: IAA-pit-stage11-builder-appointment-20260521-PASS
 Expected token reference: IAA-pit-stage11-builder-appointment-20260521-PASS  
 Token file: `.agent-admin/assurance/iaa-token-pit-stage11-builder-appointment-20260521.md`
 

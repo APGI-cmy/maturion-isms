@@ -505,7 +505,7 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 - Stage 2 UX CS2 re-confirmed
 - Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~91% complete (Stages 1–11 complete/gate-passed in pre-build scope; Stage 12 not started; Build Authorization NOT CLEARED)  
+**Overall Progress**: ~91% complete (Stages 1–11 complete/gate-passed in pre-build scope; Stage 12 not started; Build Authorization NOT CLEARED — weighted estimate: Stage 12 represents ~22% of total module effort; completed pre-build stages 1–11 represent ~78% of estimated total)  
 **Build Authorization**: **NOT CLEARED** — Stage 12 implementation is blocked. CS2 must explicitly clear Build Authorization in this tracker per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`. Appointed builder is `pit-specialist`.  
 **Blockers**: Build Authorization NOT CLEARED — Stage 12 implementation blocked until CS2 explicitly clears. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
 **Next Steps**:
