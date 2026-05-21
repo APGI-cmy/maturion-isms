@@ -1,22 +1,40 @@
 {
-  "pr_number": 1731,
-  "title": "Harvest legacy DomainAuditBuilder with behaviour parity",
+  "pr": 1731,
+  "issue": 1726,
+  "type": "product-fix",
+  "owner": "Copilot",
   "branch": "copilot/harvest-domain-audit-builder-again",
-  "issue": "#1726",
-  "wave": "mmm-dab-harvest-implementation-20260521",
-  "type": "implementation",
-  "requires_ecap": true,
-  "foreman_session": "session-mmm-dab-harvest-implementation-20260521",
-  "iaa_wave_record": ".agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md",
-  "created_at": "2026-05-21",
-  "status": "active",
-  "builder_agent": "ui-builder",
-  "FILES_CHANGED": [
-    "apps/mmm/src/components/assessment/DomainAuditBuilder.tsx",
-    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx",
-    ".agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md",
-    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+  "scope": [
     ".admin/prs/pr-1731.json",
-    ".agent-admin/scope-declarations/pr-1731.md"
-  ]
+    ".agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md",
+    ".agent-admin/scope-declarations/pr-1731.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-mmm-dab-harvest-implementation-20260521-2026-05-21.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-dab-harvest-implementation-20260521-2026-05-21.md",
+    ".agent-workspace/foreman-v2/memory/session-mmm-dab-harvest-implementation-20260521-2026-05-21.md",
+    ".agent-workspace/foreman-v2/parking-station/suggestions-log.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    ".agent-workspace/independent-assurance-agent/knowledge/FAIL-ONLY-ONCE.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1279-mmm-dab-harvest-20260521.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1280-mmm-dab-harvest-re-invocation-20260521.md",
+    "apps/mmm/src/components/assessment/DomainAuditBuilder.tsx",
+    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "ui-builder",
+  "evidence_required": [
+    "IAA wave record committed at .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md",
+    "Per-PR scope declaration committed at .agent-admin/scope-declarations/pr-1731.md",
+    "Wave current tasks updated for issue #1726 in .agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "DomainAuditBuilder.tsx step container changed from ol/li to div card-grid; data-testid=domain-audit-step-card added",
+    "B4 parity tests: T-MMM-S6-AI-005 new suite (3-card render), T-MMM-S6-AI-001 strengthened (intent+rationale assertions)",
+    "200 B4 tests passing (0 failures, 0 skipped) per vitest.mmm-b4.config.ts",
+    "IAA ASSURANCE-TOKEN committed at .agent-workspace/independent-assurance-agent/memory/session-1280-mmm-dab-harvest-re-invocation-20260521.md",
+    "PREHANDOVER proof at .agent-workspace/foreman-v2/memory/PREHANDOVER-session-mmm-dab-harvest-implementation-20260521-2026-05-21.md"
+  ],
+  "merge_authority": "CS2",
+  "note": "Narrow preliminary PR: delivers ol/li→div card-grid structural fix and parity tests only. Issue #1726 (full legacy harvest) remains open and unsatisfied by this PR."
 }

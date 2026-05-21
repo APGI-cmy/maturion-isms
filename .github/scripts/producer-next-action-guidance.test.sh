@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INTENT_SCRIPT="${SCRIPT_DIR}/handover-intent.js"
 GUIDANCE_SCRIPT="${SCRIPT_DIR}/producer-next-action-guidance.js"
+CHECKPOINT_SCRIPT="${SCRIPT_DIR}/pre-handover-checkpoint.js"
 
 PASS=0
 FAIL=0
@@ -114,6 +115,122 @@ run_case \
   "8. clean guidance render flips handover posture to yes" \
   "$(printf '%s' "$clean_render" | grep -c 'HANDOVER_CLAIM_ALLOWED: yes' || true)" \
   "1"
+
+# ── Advisory-only regression tests (issue requirements) ──────────────────────
+
+# 9. HANDOVER_ALLOWED: no → renders "action still required" title
+run_case \
+  "9. HANDOVER_ALLOWED: no renders advisory title 'action still required'" \
+  "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+const out = guidance.renderGuidanceComment({
+  prNumber: 1733,
+  headSha: 'aabbccdd1234',
+  fields: { HANDOVER_ALLOWED: 'no', NEXT_REQUIRED_CONTROL: 'CURRENT_HEAD_GATES_GREEN' },
+});
+process.stdout.write(out.includes('action still required') ? 'true' : 'false');
+EOF
+)" \
+  "true"
+
+# 10. pending checks → summarizeChecks shows "pending: ..." in advisory comment
+run_case \
+  "10. pending checks render advisory guidance (summarizeChecks includes 'pending')" \
+  "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+const summary = guidance.summarizeChecks({
+  FAILING_CHECKS: 'none',
+  PENDING_CHECKS: 'preflight/evidence-exactness',
+  MISSING_CHECKS: 'none',
+});
+process.stdout.write(summary.includes('pending:') ? 'true' : 'false');
+EOF
+)" \
+  "true"
+
+# 11. missing checks → summarizeChecks shows "missing: ..." in advisory comment
+run_case \
+  "11. missing checks render advisory guidance (summarizeChecks includes 'missing')" \
+  "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+const summary = guidance.summarizeChecks({
+  FAILING_CHECKS: 'none',
+  PENDING_CHECKS: 'none',
+  MISSING_CHECKS: 'preflight/iaa-final-assurance',
+});
+process.stdout.write(summary.includes('missing:') ? 'true' : 'false');
+EOF
+)" \
+  "true"
+
+# 12. NEXT_REQUIRED_CONTROL != none → guidance includes the action sentence
+run_case \
+  "12. NEXT_REQUIRED_CONTROL != none renders guidance sentence in comment" \
+  "$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+const out = guidance.renderGuidanceComment({
+  prNumber: 1733,
+  headSha: 'aabbccdd1234',
+  fields: {
+    HANDOVER_ALLOWED: 'no',
+    NEXT_REQUIRED_CONTROL: 'ECAP_GATE_AND_ADMIN_REPORT',
+    INJECTION_STATE: 'current',
+    FAILING_CHECKS: 'none',
+    PENDING_CHECKS: 'none',
+    MISSING_CHECKS: 'none',
+    RESULT: 'STOP_AND_FIX',
+  },
+});
+// Must include the ECAP guidance sentence (defined in NEXT_ACTION_GUIDANCE map)
+process.stdout.write(out.includes('ECAP_GATE_AND_ADMIN_REPORT') ? 'true' : 'false');
+EOF
+)" \
+  "true"
+
+# 13. Invalid checkpoint JSON → pre-handover-checkpoint.js exits non-zero (internal error fails workflow)
+invalid_json_file="$(mktemp)"
+printf 'this is not valid json\n' > "$invalid_json_file"
+invalid_exit=0
+CHECKPOINT_REPO_FILES_PATH="$invalid_json_file" node "$CHECKPOINT_SCRIPT" > /dev/null 2>&1 || invalid_exit=$?
+rm -f "$invalid_json_file"
+run_case \
+  "13. invalid checkpoint JSON causes pre-handover-checkpoint to exit non-zero" \
+  "$invalid_exit" \
+  "1"
+
+# 14. Resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL
+#     from historical artifacts of other PRs present in the virtual file snapshot.
+repo_files_temp="$(mktemp)"
+node -e "
+process.stdout.write(JSON.stringify({
+  '.agent-admin/prehandover/proof-pr-1733-current.md': 'PR: #1733\nHANDOVER_ALLOWED: yes\n',
+  '.agent-admin/prehandover/proof-pr-1111-old.md':     'PR: #1111\nHANDOVER_ALLOWED: yes\n',
+  '.agent-admin/prehandover/proof-pr-2222-old.md':     'PR: #2222\nHANDOVER_ALLOWED: yes\n',
+}));
+" > "$repo_files_temp"
+
+resolver_binding="$(
+  CHECKPOINT_REPO_FILES_PATH="$repo_files_temp" \
+  ACTIVE_STATE_JSON='{"ecap_artifact_path":".agent-admin/prehandover/proof-pr-1733-current.md"}' \
+  PR_NUMBER=1733 \
+  HEAD_SHA=abc123def456 \
+  CHECKPOINT_INTAKE_ONLY=true \
+  node "$CHECKPOINT_SCRIPT" 2>/dev/null \
+  | node -e "
+    let d = '';
+    process.stdin.on('data', c => { d += c; });
+    process.stdin.on('end', () => {
+      try { process.stdout.write(JSON.parse(d).fields.ACTIVE_PR_IDENTITY_BINDING || 'UNKNOWN'); }
+      catch (e) { process.stdout.write('PARSE_ERROR'); }
+    });
+  "
+)"
+rm -f "$repo_files_temp"
+
+run_case \
+  "14. resolver-selected active-state prevents ACTIVE_PR_IDENTITY_BINDING: FAIL from historical artifacts" \
+  "$resolver_binding" \
+  "PASS"
 
 echo ""
 echo "Passed: $PASS"
