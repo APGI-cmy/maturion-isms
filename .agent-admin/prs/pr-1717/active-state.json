@@ -1,7 +1,7 @@
 {
   "pr": 1717,
   "branch": "copilot/tune-governance-preflight",
-  "runtime_head_sha": "89503bc07bbd69536c56bda9768436abe8f1641c",
+  "runtime_head_sha": "e084a05a6eadf1cda2d4bdc6ec4ccc8cdefca80d",
   "base_sha": "e73d4f4fba53ce7e4c1531f377d9dcb6594f3189",
   "manifest_path": ".admin/prs/pr-1717.json",
   "scope_path": ".agent-admin/scope-declarations/pr-1717.md",
