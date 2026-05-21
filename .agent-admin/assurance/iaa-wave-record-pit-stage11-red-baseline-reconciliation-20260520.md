@@ -50,7 +50,7 @@ FOREMAN_INSTRUCTIONS:
 
 ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS:
 - ECAP_REQUIRED: YES
-- ECAP_EXPECTED_ARTIFACTS: `.admin/prs/pr-1715.json`, `.agent-admin/scope-declarations/pr-1715.md`, and this active IAA wave record bound to PR #1715
+- ECAP_EXPECTED_ARTIFACTS: `.admin/prs/pr-1715.json`, `.agent-admin/scope-declarations/pr-1715.md`, and `.agent-admin/assurance/iaa-wave-record-pit-stage11-red-baseline-reconciliation-20260520.md`
 
 CURRENT_HEAD_CI_EXPECTATIONS:
 - Governance/admin parity checks must pass with coherent wave/issue/branch bindings
