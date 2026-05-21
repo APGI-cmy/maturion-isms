@@ -210,15 +210,52 @@ jobs:
             await fetchFile(`.agent-admin/scope-declarations/pr-${prNumber}.md`);
             await fetchFile(`.functional-delivery/pr-${prNumber}.md`);
 
+            // Fetch the active-state resolver file and PR-scoped wave tasks first.
+            // These drive resolver-selected artifact paths so we can avoid broad
+            // historical scans that flood the data with artifacts from other PRs.
+            const activeStatePath = `.agent-admin/prs/pr-${prNumber}/active-state.json`;
+            await fetchFile(activeStatePath);
+            await fetchFile(`.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md`);
+
             const bodyArtifactMatch = prBody.match(/Functional-Delivery-Artifact:\s*(\S+)/i);
             if (bodyArtifactMatch) {
               await fetchFile(bodyArtifactMatch[1]);
             }
 
-            await fetchDirectory('.agent-admin/assurance', /^\.agent-admin\/assurance\/(iaa-prebrief-|iaa-token-|iaa-wave-record-).+\.md$/);
-            await fetchDirectory('.agent-admin/prehandover', /^\.agent-admin\/prehandover\/proof-.+\.md$/);
-            await fetchDirectory('.agent-workspace/execution-ceremony-admin-agent/bundles', /^\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.+\.md$/);
-            await fetchDirectory('.agent-workspace/foreman-v2/memory', /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.+\.md$/);
+            // Parse active-state to discover resolver-selected artifact paths.
+            const activeStateText = repoFiles[activeStatePath] || '';
+            let activeState = null;
+            try {
+              activeState = activeStateText ? JSON.parse(activeStateText) : null;
+            } catch (_e) {
+              // Active-state parse failure is non-fatal in advisory mode.
+            }
+
+            const resolverSelectedPaths = [
+              activeState?.manifest_path,
+              activeState?.scope_path,
+              activeState?.iaa_artifact_path,
+              activeState?.ecap_artifact_path,
+            ].filter(Boolean);
+
+            if (resolverSelectedPaths.length > 0) {
+              // Resolver-selected mode: fetch only the specific current-PR artifacts
+              // named in active-state. Skipping broad directory scans prevents:
+              //   1. "Argument list too long" from an oversized result JSON env var.
+              //   2. ACTIVE_PR_IDENTITY_BINDING: FAIL driven by historical artifacts
+              //      from other PRs appearing in the broad assurance/prehandover dirs.
+              for (const artifactPath of resolverSelectedPaths) {
+                await fetchFile(artifactPath);
+              }
+            } else {
+              // Legacy fallback: broad discovery when no active-state resolver is present.
+              // Historical artifacts from other PRs may appear; they are treated as
+              // advisory noise and do not cause this workflow check to fail.
+              await fetchDirectory('.agent-admin/assurance', /^\.agent-admin\/assurance\/(iaa-prebrief-|iaa-token-|iaa-wave-record-).+\.md$/);
+              await fetchDirectory('.agent-admin/prehandover', /^\.agent-admin\/prehandover\/proof-.+\.md$/);
+              await fetchDirectory('.agent-workspace/execution-ceremony-admin-agent/bundles', /^\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.+\.md$/);
+              await fetchDirectory('.agent-workspace/foreman-v2/memory', /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.+\.md$/);
+            }
 
             fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
             const writeJson = (name, value) => {
@@ -257,11 +294,12 @@ jobs:
           CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
           CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
+          ACTIVE_STATE_PATH: ".agent-admin/prs/pr-${{ steps.context.outputs.pr_number }}/active-state.json"
         run: |
-          RESULT_JSON="$(node .github/scripts/pre-handover-checkpoint.js)"
-          RESULT_JSON_B64="$(printf '%s' "$RESULT_JSON" | base64 | tr -d '\n')"
-          echo "result_json_b64=$RESULT_JSON_B64" >> "$GITHUB_OUTPUT"
-          printf '%s\n' "$RESULT_JSON"
+          RESULT_FILE="${{ runner.temp }}/producer-guidance-result-${{ steps.context.outputs.pr_number }}.json"
+          node .github/scripts/pre-handover-checkpoint.js > "$RESULT_FILE"
+          echo "result_file=$RESULT_FILE" >> "$GITHUB_OUTPUT"
+          cat "$RESULT_FILE"
 
       - name: Upsert sticky producer guidance comment
         if: steps.context.outputs.matched == 'true'
@@ -269,17 +307,23 @@ jobs:
         env:
           PR_NUMBER: ${{ steps.context.outputs.pr_number }}
           HEAD_SHA: ${{ steps.context.outputs.head_sha }}
-          RESULT_JSON_B64: ${{ steps.evaluate.outputs.result_json_b64 }}
+          RESULT_FILE: ${{ steps.evaluate.outputs.result_file }}
         with:
           script: |
+            const fs = require('fs');
             const { STICKY_MARKER, renderGuidanceComment } = require('./.github/scripts/producer-next-action-guidance.js');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA || '';
-            const resultJsonB64 = process.env.RESULT_JSON_B64 || '';
-            const decodedResult = resultJsonB64
-              ? Buffer.from(resultJsonB64, 'base64').toString('utf8')
-              : '{}';
-            const result = JSON.parse(decodedResult);
+            const resultFilePath = process.env.RESULT_FILE || '';
+
+            let result = {};
+            if (resultFilePath) {
+              try {
+                result = JSON.parse(fs.readFileSync(resultFilePath, 'utf8'));
+              } catch (error) {
+                core.warning(`Could not read/parse evaluation result: ${error.message}. Using empty fallback for advisory comment.`);
+              }
+            }
             const body = renderGuidanceComment({
               prNumber,
               headSha,
