@@ -387,7 +387,14 @@ while IFS= read -r token_file; do
     FILE_VALID=false
     FAIL=true
   elif [ -n "$HEAD_SHA" ]; then
-    if git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
+    # Rebase fallback only applies to literal 40-character hex SHAs. Non-hex values
+    # are not valid commit references and must be rejected before any ancestry check.
+    if ! [[ "$TOKEN_REVIEWED_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+      echo "  ❌ Token Reviewed SHA '${TOKEN_REVIEWED_SHA}' is not a valid 40-character hex commit hash — must be a real commit reference [IAA-FINAL-GATE-009]"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: Reviewed SHA '${TOKEN_REVIEWED_SHA}' is not a valid hex SHA"
+      FILE_VALID=false
+      FAIL=true
+    elif git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
       echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is in ancestry of HEAD"
     else
       # SHA not in ancestry — may be post-rebase (the original SHA was replaced).
