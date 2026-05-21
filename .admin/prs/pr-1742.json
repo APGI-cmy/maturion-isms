@@ -5,6 +5,7 @@
   "owner": "Copilot",
   "branch": "copilot/add-post-handover-auto-remediation",
   "scope": [
+    ".admin/prs/pr-1742.json",
     ".agent-admin/assurance/iaa-wave-record-pr1742-post-handover-auto-remediation-20260521.md",
     ".agent-admin/prehandover/proof-pr-1742-post-handover-auto-remediation-20260521.md",
     ".agent-admin/prs/pr-1742/active-state.json",
