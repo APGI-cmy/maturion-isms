@@ -156,6 +156,12 @@ if [ -n "$ACTIVE_PREBRIEF_PATH" ] && [ -f "$ACTIVE_PREBRIEF_PATH" ]; then
   fi
   if [ -n "$HEAD_SHA" ]; then
     if ! grep -Eq "^CURRENT_HEAD_SHA:[[:space:]]*(${HEAD_SHA}|${HEAD_SHA:0:12}|CURRENT_HEAD|ACTIVE_HEAD_RESOLVED_BY_GATE|GITHUB_PR_HEAD_SHA)([[:space:]]|$)" "$ACTIVE_PREBRIEF_PATH"; then
+      # Rebase fallback only applies to values that are literal 40-character hex SHAs.
+      # Non-hex or malformed values are rejected immediately — no timing bypass allowed.
+      _pb_head_sha_val="$(grep -E '^CURRENT_HEAD_SHA:[[:space:]]*' "$ACTIVE_PREBRIEF_PATH" | head -1 | sed 's/^CURRENT_HEAD_SHA:[[:space:]]*//' | tr -d '[:space:]' || true)"
+      if ! [[ "$_pb_head_sha_val" =~ ^[0-9a-fA-F]{40}$ ]]; then
+        fail "Pre-flight brief CURRENT_HEAD_SHA is not current-head relevant"
+      fi
       # Literal stale SHA — accept if only rebase/admin-only head movement occurred:
       # no implementation/build files changed, OR the prebrief was authored after the
       # most-recent implementation commit (author timestamps survive git rebase).

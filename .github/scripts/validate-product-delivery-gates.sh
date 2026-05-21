@@ -458,6 +458,16 @@ if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
   # product-facing file commit (author timestamps survive git rebase).
   _4c_stale=true
   if [ -n "$BASE_SHA" ]; then
+    # Precompute the last product-facing author timestamp once; reused for every IAA artifact
+    # check below (avoids a per-file git-log call inside the IAA loop).
+    _4c_prod_files=()
+    while IFS= read -r _pf; do
+      [ -n "$_pf" ] && is_product_path "$_pf" && _4c_prod_files+=("$_pf")
+    done <<< "$CHANGED_FILES"
+    _4c_prod_last_at=""
+    if [ "${#_4c_prod_files[@]}" -gt 0 ]; then
+      _4c_prod_last_at="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_4c_prod_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+    fi
     while IFS= read -r _iaa_f; do
       [ -n "$_iaa_f" ] && [ -f "$_iaa_f" ] || continue
       # Only consider files that have the required split verdict fields
@@ -465,24 +475,14 @@ if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
       _has_fu=$(grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*(yes|no)' "$_iaa_f" && echo yes || echo no)
       _has_v=$(grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*(FULL_FUNCTIONAL_DELIVERY|PARTIAL_FUNCTIONAL_DELIVERY|ADMIN_ONLY|FAIL)' "$_iaa_f" && echo yes || echo no)
       [ "$_has_a" = "yes" ] && [ "$_has_fu" = "yes" ] && [ "$_has_v" = "yes" ] || continue
-      # Check for an old literal hex SHA in CURRENT_HEAD_SHA field
+      # Only consider canonical 40-char hex SHAs — shorter or non-hex values weaken head-binding
       _iaa_sha_val="$(grep -iE '^[[:space:]]*(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*' "$_iaa_f" | head -1 | sed 's/.*SHA[^:]*:[[:space:]]*//' | tr -d '[:space:]' || true)"
-      [[ "$_iaa_sha_val" =~ ^[0-9a-fA-F]{7,40}$ ]] || continue
-      # Old hex SHA found — compare author timestamps
+      [[ "$_iaa_sha_val" =~ ^[0-9a-fA-F]{40}$ ]] || continue
+      # Old canonical hex SHA found — compare author timestamps
       _iaa_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_iaa_f" 2>/dev/null || true)"
       [ -z "$_iaa_at" ] && _iaa_at="$(git log -1 --format='%at' HEAD -- "$_iaa_f" 2>/dev/null || true)"
       [ -z "$_iaa_at" ] && continue
-      _prod_last_at=""
-      while IFS= read -r _pf; do
-        [ -z "$_pf" ] && continue
-        if is_product_path "$_pf"; then
-          _f_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_pf" 2>/dev/null || true)"
-          if [ -n "$_f_at" ] && ( [ -z "$_prod_last_at" ] || [ "$_f_at" -gt "$_prod_last_at" ] ); then
-            _prod_last_at="$_f_at"
-          fi
-        fi
-      done <<< "$CHANGED_FILES"
-      if [ -z "$_prod_last_at" ] || [ "$_iaa_at" -ge "$_prod_last_at" ]; then
+      if [ -z "$_4c_prod_last_at" ] || [ "$_iaa_at" -ge "$_4c_prod_last_at" ]; then
         _4c_stale=false
         break
       fi
@@ -585,21 +585,20 @@ if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
   # product-facing file commit, the evidence is still current.
   _g7_stale=true
   _ev_sha_val="$(grep -iE '^[[:space:]]*Current head SHA reviewed:[[:space:]]*' "$EVIDENCE_PATH" | head -1 | sed 's/.*reviewed:[[:space:]]*//' | tr -d '[:space:]' || true)"
-  if [[ "$_ev_sha_val" =~ ^[0-9a-fA-F]{7,40}$ ]] && [ -n "$BASE_SHA" ]; then
-    # Old literal hex SHA found — compare author timestamps
+  # Only canonical 40-char hex SHAs trigger the timing fallback; non-hex values weaken head-binding
+  if [[ "$_ev_sha_val" =~ ^[0-9a-fA-F]{40}$ ]] && [ -n "$BASE_SHA" ]; then
+    # Old canonical hex SHA found — compare author timestamps using a single git-log pass
     _ev_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$EVIDENCE_PATH" 2>/dev/null || true)"
     [ -z "$_ev_at" ] && _ev_at="$(git log -1 --format='%at' HEAD -- "$EVIDENCE_PATH" 2>/dev/null || true)"
     if [ -n "$_ev_at" ]; then
-      _prod_last_at_g7=""
+      _g7_prod_files=()
       while IFS= read -r _pf; do
-        [ -z "$_pf" ] && continue
-        if is_product_path "$_pf"; then
-          _f_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_pf" 2>/dev/null || true)"
-          if [ -n "$_f_at" ] && ( [ -z "$_prod_last_at_g7" ] || [ "$_f_at" -gt "$_prod_last_at_g7" ] ); then
-            _prod_last_at_g7="$_f_at"
-          fi
-        fi
+        [ -n "$_pf" ] && is_product_path "$_pf" && _g7_prod_files+=("$_pf")
       done <<< "$CHANGED_FILES"
+      _prod_last_at_g7=""
+      if [ "${#_g7_prod_files[@]}" -gt 0 ]; then
+        _prod_last_at_g7="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_g7_prod_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+      fi
       if [ -z "$_prod_last_at_g7" ] || [ "$_ev_at" -ge "$_prod_last_at_g7" ]; then
         _g7_stale=false
       fi
