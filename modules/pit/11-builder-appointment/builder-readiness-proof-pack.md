@@ -11,7 +11,7 @@ This artifact does not appoint a builder, does not start Stage 12 build executio
 
 ## Required inputs reviewed
 Builder candidate confirms review of:
-- [x] `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stages 1–10 GATE_PASSED chain confirmed; Stage 11 NOT_STARTED; Stage 12 NOT_STARTED; Build Authorization NOT CLEARED
+- [x] `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stages 1–10 GATE_PASSED chain confirmed; Stage 11 NOT_STARTED at review time (this wave advances it to GATE_PASSED — BUILDER_APPOINTED); Stage 12 NOT_STARTED; Build Authorization NOT CLEARED
 - [x] `modules/pit/08-implementation-plan/*` hardened Stage 8 package — all 8 hardening artifacts reviewed (wave manifest, data/API matrix, route/screen matrix, timeline contract, dependency graph, DoD template, BERM, clearance path)
 - [x] `modules/pit/09-builder-checklist/*` — GATE_PASSED (maturion-isms#1687)
 - [x] `modules/pit/10-iaa-pre-brief/*` — IAA response ACCEPTED conditional (maturion-isms#1698 / PR #1701)
@@ -25,7 +25,7 @@ Builder candidate confirms review of:
 
 ## Section A — Route/screen/state execution map
 
-All 27 routes from `modules/pit/08-implementation-plan/route-screen-state-acceptance-matrix.md` and `modules/pit/06-qa-to-red/red-test-suite-catalog.md` Category 1.
+All 27 canonical PIT routes (PIT-RED-ROUTE-001 through PIT-RED-ROUTE-027) from `modules/pit/08-implementation-plan/route-screen-state-acceptance-matrix.md` plus 2 ROUTE-category resilience RED rows (PIT-RED-ROUTE-028 SPA fallback and PIT-RED-ROUTE-029 global error boundary) = 29 ROUTE-category rows total under the reconciled 147-test baseline.
 
 | Route ID / Path | Screen | Owning Wave | Loading state | Empty state | Permission-denied state | Network-error state | Data state | Planned implementation unit(s) | Planned verification evidence |
 |---|---|---|---|---|---|---|---|---|---|
@@ -200,7 +200,7 @@ To be executed after CS2 grants Build Authorization clearance and Stage 12 comme
 
 ## Builder readiness decision checklist
 - [x] All required tables/plans above are fully populated with concrete, auditable detail.
-- [x] 27-route and primary-screen/five-state coverage is complete.
+- [x] 27-route canonical coverage and 29 ROUTE-category RED-test coverage (27 canonical routes + SPA fallback PIT-RED-ROUTE-028 + error boundary PIT-RED-ROUTE-029) with five-state coverage is complete.
 - [x] Role/auth/denied-path coverage is complete.
 - [x] Data/API/RLS/Edge Function map is complete.
 - [x] RED allocation plus reconciliation proof is complete.

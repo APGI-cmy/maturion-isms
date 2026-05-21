@@ -22,7 +22,7 @@ Stage 11 builder appointment cannot proceed unless **all** items below are true.
 | Stage and IAA gate status | `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stages 1–10 all GATE_PASSED; Stage 11 GATE_PASSED — BUILDER_APPOINTED (maturion-isms#1729 / PR #1730) |
 | RED reconciliation closure | `modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md` (CS2 Option B recorded, 2026-05-20; maturion-isms#1714 / PR #1715) |
 | Stage 8 hardening acknowledgement | `modules/pit/11-builder-appointment/stage8-hardening-acknowledgement.md` (all 8 artifacts acknowledged with concrete execution use statements; submitted 2026-05-21) |
-| Route/screen/state map | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section A — all 29 routes with 5 UI states per applicable route |
+| Route/screen/state map | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section A — all 27 canonical PIT routes plus 2 ROUTE-category resilience RED rows (PIT-RED-ROUTE-028 SPA fallback, PIT-RED-ROUTE-029 global error boundary) = 29 ROUTE-category rows; 5 UI states per applicable route |
 | Timeline strategy | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section C — all 13 timeline control areas |
 | Data/API/RLS map | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section D — all 10 wave domains |
 | Evidence/report/audit/notification plan | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section E |

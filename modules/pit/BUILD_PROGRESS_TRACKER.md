@@ -438,7 +438,7 @@ The IAA Pre-Brief must include:
 **Functional-Delivery Guardrails (maturion-isms#1575 — all verified SATISFIED)**:
 
 - [x] Stages 1–10 are gate-passed by their respective authorities
-- [x] Builder has acknowledged the full functional scope (all 29 routes including SPA fallback + error boundary, all 5 UI states, all role-denied paths)
+- [x] Builder has acknowledged the full functional scope (all 27 canonical PIT routes plus 2 ROUTE-category resilience RED rows — PIT-RED-ROUTE-028 SPA fallback and PIT-RED-ROUTE-029 global error boundary — covering 29 ROUTE-category test rows in total; all 5 UI states; all role-denied paths)
 - [x] RED tests exist and are understood by the builder (Stage 6 RED suite filed; 147-test baseline acknowledged)
 - [x] PBFAG has passed (Stage 7 PBFAG GATE_PASSED)
 - [x] Handover evidence requirements accepted by the builder (per Stage 12 guardrails and BERM)

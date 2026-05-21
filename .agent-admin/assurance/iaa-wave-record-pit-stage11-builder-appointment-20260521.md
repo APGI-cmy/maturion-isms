@@ -59,7 +59,7 @@ CURRENT_HEAD_CI_EXPECTATIONS:
 - Preflight evidence/admin parity gates must see active wave-record + wave-current-tasks binding for PR #1730
 - Scope declaration parity must match exact changed-file set
 - Stage posture checks must preserve Stage 12 NOT_STARTED and Build Authorization NOT CLEARED
-- IAA final assurance: NOT_REQUIRED (docs/governance-only PR scope; no implementation/runtime diff)
+- IAA final assurance: REQUIRED (PRE_BUILD_STAGE_MODEL trigger — BUILD_PROGRESS_TRACKER.md advanced; corrected from initial template value; see ## PRE-BRIEF section for correction rationale)
 
 POLC_AND_BUILDER_DELEGATION_EXPECTATIONS:
 - POLC mode: Stage 11 appointment governance execution

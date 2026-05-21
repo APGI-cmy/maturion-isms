@@ -48,24 +48,39 @@ Build Authorization is a separate, explicit CS2-gated step. It requires:
 
 ---
 
-## Preconditions satisfied
+## Appointment-specific preconditions satisfied
 
-All Stage 11 appointment preconditions from `modules/pit/11-builder-appointment/stage11-appointment-preconditions.md` are satisfied:
+All appointment-specific Stage 11 preconditions from `modules/pit/11-builder-appointment/stage11-appointment-preconditions.md` are satisfied. Build Authorization is an explicitly unresolved downstream execution gate and is intentionally not satisfied or cleared by this PR — see the separate section below.
 
-| Precondition | Status | Evidence |
+| Appointment precondition | Status | Evidence |
 |---|---|---|
 | Stages 1–10 gate-passed | ✅ SATISFIED | `modules/pit/BUILD_PROGRESS_TRACKER.md` — all 10 stages GATE_PASSED |
 | Stage 10 IAA response accepted | ✅ SATISFIED | `modules/pit/10-iaa-pre-brief/iaa-response.md` — PRE-BRIEF ACCEPTED (conditional) |
 | 144-vs-147 RED test reconciliation resolved | ✅ SATISFIED | `modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md` — CS2 Option B, 147 baseline, maturion-isms#1714 / PR #1715 |
 | Builder acknowledged all Stage 8 hardening artifacts | ✅ SATISFIED | `modules/pit/11-builder-appointment/stage8-hardening-acknowledgement.md` — all 8 artifacts acknowledged with concrete execution use statements |
-| Route/screen/state execution map submitted | ✅ SATISFIED | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section A — all 29 routes with 5 UI states |
+| Route/screen/state execution map submitted | ✅ SATISFIED | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section A — all 27 canonical PIT routes plus 2 ROUTE-category resilience RED rows (PIT-RED-ROUTE-028 SPA fallback, PIT-RED-ROUTE-029 global error boundary) = 29 ROUTE-category rows; 5 UI states per applicable route |
 | Timeline-engine implementation strategy submitted | ✅ SATISFIED | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section C — all 13 timeline controls with determinism/testability methods |
 | Data/API/RLS execution map submitted | ✅ SATISFIED | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section D — all 10 wave domains |
 | Evidence/report/audit/notification execution plan submitted | ✅ SATISFIED | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section E |
 | Denied-path execution plan submitted | ✅ SATISFIED | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section F — all roles and denied paths |
 | LFV/deployed-evidence collection plan submitted | ✅ SATISFIED | `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md` Section G |
-| Build Authorization separately gated | ✅ CONFIRMED — NOT CLEARED | `modules/pit/08-implementation-plan/build-authorization-clearance-path.md` |
 | Tracker records appointment and authorization state | ✅ SATISFIED | `modules/pit/BUILD_PROGRESS_TRACKER.md` — Stage 11 GATE_PASSED — BUILDER_APPOINTED recorded |
+
+## Build Authorization — explicitly unresolved downstream gate
+
+Build Authorization is **NOT an appointment precondition**. It is a separate, explicitly unresolved downstream execution gate that is intentionally not satisfied or cleared by this PR.
+
+> **Build Authorization: NOT CLEARED**  
+> This PR does not clear Build Authorization and must not be interpreted as doing so.  
+> The next gate for Build Authorization clearance is an explicit CS2 statement in `BUILD_PROGRESS_TRACKER.md` per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`.
+
+Build Authorization clearance requires all of:
+1. This Stage 11 appointment on record ✅ (this document satisfies requirement 3 of the clearance path)
+2. CS2 explicit tracker clearance (CS2 must update `BUILD_PROGRESS_TRACKER.md` with explicit clearance statement — **not yet done**)
+3. Builder acknowledgement package linked
+4. All other steps in `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`
+
+**No interpretation of this document, or any Stage 8/9/10/11 governance artifact, constitutes implied Build Authorization.**
 
 ---
 
