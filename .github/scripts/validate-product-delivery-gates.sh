@@ -616,11 +616,6 @@ fi
 # Note: SHA match is intentionally case-sensitive (`grep -qF`) because commit
 # hashes are canonical lowercase hex strings and should match exactly.
 # ---------------------------------------------------------------------------
-# ---------------------------------------------------------------------------
-# Gate 7: Evidence must include current reviewed head SHA
-# Note: SHA match is intentionally case-sensitive (`grep -qF`) because commit
-# hashes are canonical lowercase hex strings and should match exactly.
-# ---------------------------------------------------------------------------
 if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
   # Exact HEAD SHA not in evidence. Use resolver/delta model:
   #   PRIMARY  — if the PR's delta is admin/rebase-only, no product-facing files

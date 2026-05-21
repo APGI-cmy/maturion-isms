@@ -376,25 +376,17 @@ while IFS= read -r token_file; do
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: missing **Reviewed SHA**: field"
     FILE_VALID=false
     FAIL=true
-  elif ! echo "$TOKEN_REVIEWED_SHA" | grep -qE '^[0-9a-fA-F]{7,40}$'; then
-    # Symbolic values (CURRENT_HEAD, ACTIVE_HEAD_RESOLVED_BY_GATE, etc.) are NOT valid
-    # in a final assurance evidence subject field. A final token must record a durable,
-    # literal reviewed commit SHA — "which substantive commit was reviewed?" must have a
-    # concrete, portable answer. Symbolic runtime markers belong only in runtime identity
-    # fields such as CURRENT_HEAD_SHA or HEAD_SHA, not in the final evidence subject.
-    echo "  ❌ **Reviewed SHA** must be a literal hex SHA — symbolic runtime markers are not allowed in final assurance tokens [IAA-FINAL-GATE-008]"
-    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: **Reviewed SHA** is not a literal hex SHA (symbolic values not permitted)"
+  elif ! echo "$TOKEN_REVIEWED_SHA" | grep -qE '^[0-9a-fA-F]{40}$'; then
+    # A final token's **Reviewed SHA** must be a canonical 40-character hex commit SHA.
+    # Symbolic runtime markers (CURRENT_HEAD, ACTIVE_HEAD_RESOLVED_BY_GATE, etc.) and
+    # abbreviated SHAs are not valid — a final assurance token must durably record the
+    # exact substantive commit reviewed, not a runtime reference that can self-resolve.
+    echo "  ❌ **Reviewed SHA** must be a canonical 40-character hex SHA — symbolic or abbreviated values are not allowed in final assurance tokens [IAA-FINAL-GATE-008]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: **Reviewed SHA** is not a canonical 40-char hex SHA (symbolic/abbreviated values not permitted)"
     FILE_VALID=false
     FAIL=true
   elif [ -n "$HEAD_SHA" ]; then
-    # Rebase fallback only applies to literal 40-character hex SHAs. Non-hex values
-    # are not valid commit references and must be rejected before any ancestry check.
-    if ! [[ "$TOKEN_REVIEWED_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
-      echo "  ❌ Token Reviewed SHA '${TOKEN_REVIEWED_SHA}' is not a valid 40-character hex commit hash — must be a real commit reference [IAA-FINAL-GATE-009]"
-      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: Reviewed SHA '${TOKEN_REVIEWED_SHA}' is not a valid hex SHA"
-      FILE_VALID=false
-      FAIL=true
-    elif git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
+    if git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
       echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is in ancestry of HEAD"
     else
       # SHA not in ancestry — may be post-rebase (the original SHA was replaced).
@@ -606,12 +598,12 @@ while IFS= read -r wave_file; do
       WR_FILE_VALID=false
       FAIL=true
       FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **Reviewed SHA**: field in ## TOKEN section"
-    elif ! echo "$WR_REVIEWED_SHA" | grep -qE '^[0-9a-fA-F]{7,40}$'; then
-      # Symbolic values are not valid in a final assurance evidence subject field.
-      echo "  ❌ Wave record **Reviewed SHA** must be a literal hex SHA — symbolic runtime markers are not allowed [IAA-FINAL-GATE-008]"
+    elif ! echo "$WR_REVIEWED_SHA" | grep -qE '^[0-9a-fA-F]{40}$'; then
+      # A wave record's **Reviewed SHA** must be a canonical 40-character hex commit SHA.
+      echo "  ❌ Wave record **Reviewed SHA** must be a canonical 40-char hex SHA — symbolic or abbreviated values are not allowed [IAA-FINAL-GATE-008]"
       WR_FILE_VALID=false
       FAIL=true
-      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: **Reviewed SHA** is not a literal hex SHA (symbolic values not permitted)"
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: **Reviewed SHA** is not a canonical 40-char hex SHA (symbolic/abbreviated values not permitted)"
     elif [ -n "$HEAD_SHA" ]; then
       if git merge-base --is-ancestor "$WR_REVIEWED_SHA" HEAD 2>/dev/null; then
         echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} is in ancestry of HEAD"
