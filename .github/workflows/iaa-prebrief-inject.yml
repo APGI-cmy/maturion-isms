@@ -87,7 +87,7 @@ jobs:
                   if (waveMatch) waveNum = waveMatch[1];
                   break;
                 } catch (_inner) {
-                  // try next compatible path
+                  // Expected compatibility miss (typically 404 on absent path); try next path.
                 }
               }
             } catch (_e) {
@@ -419,7 +419,7 @@ jobs:
               '',
               '### Your obligations (from `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0):',
               '',
-              '1. Read `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` in full (legacy fallback: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only when PR-scoped file is absent)',
+              '1. Read `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` in full (replace `<PR_NUMBER>` with the active PR number; legacy fallback: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only when PR-scoped file is absent)',
               '2. Identify all qualifying tasks per `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`',
               '3. For each qualifying task, declare:',
               '   - Which proof phases (1–4) are required',
@@ -476,7 +476,7 @@ jobs:
               '',
               '### Your obligations (from `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0):',
               '',
-              '1. Read `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` in full (legacy fallback: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only when PR-scoped file is absent)',
+              '1. Read `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` in full (replace `<PR_NUMBER>` with the active PR number; legacy fallback: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only when PR-scoped file is absent)',
               '2. Identify all qualifying tasks per `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`',
               '3. For each qualifying task, declare:',
               '   - Which proof phases (1–4) are required',
@@ -578,7 +578,7 @@ jobs:
               '',
               '### Your obligations (from `IAA_PRE_BRIEF_PROTOCOL.md` v1.1.0):',
               '',
-              '1. Read `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` in full (legacy fallback: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only when PR-scoped file is absent)',
+              '1. Read `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` in full (replace `<PR_NUMBER>` with the active PR number; legacy fallback: `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only when PR-scoped file is absent)',
               '2. Identify all qualifying tasks per `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`',
               '3. For each qualifying task, declare:',
               '   - Which proof phases (1–4) are required',

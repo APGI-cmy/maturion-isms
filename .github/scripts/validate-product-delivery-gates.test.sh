@@ -26,6 +26,7 @@ run_test() {
   git config user.name "Test User"
   mkdir -p .functional-delivery .agent-admin/assurance apps/mmm/src apps/mmm/tests governance/checklists governance/templates docs/governance .agent-workspace/foreman-v2/knowledge .github/scripts
   cp "${SCRIPT_DIR}/resolve-active-pr-state.js" .github/scripts/resolve-active-pr-state.js
+  cp "${SCRIPT_DIR}/classify-pr-delta.sh" .github/scripts/classify-pr-delta.sh
   echo "init" > README.md
   cat > .agent-admin/assurance/iaa-token-historical.md << 'EOF'
 PHASE_B_BLOCKING_TOKEN: IAA-session-historical-PASS

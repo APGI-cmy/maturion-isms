@@ -33,10 +33,8 @@ ASSURANCE_DIR=".agent-admin/assurance"
 # ----------------------------------------------------------------
 _resolve_delta_type_from_resolver() {
   local files="$1"
-  local files_json
-  files_json="$(printf '%s\n' "$files" | node -e 'const fs=require("fs");const lines=fs.readFileSync(0,"utf8").split(/\n/).map((v)=>v.trim()).filter(Boolean);process.stdout.write(JSON.stringify(lines));')"
-  CHANGED_FILES_JSON="$files_json" BASE_SHA="${BASE_SHA:-}" HEAD_SHA="${HEAD_SHA:-}" \
-    node .github/scripts/resolve-active-pr-state.js 2>/dev/null | node -e 'const fs=require("fs");try{const v=JSON.parse(fs.readFileSync(0,"utf8"));process.stdout.write(String(v.delta_type||"SUBSTANTIVE_DELTA"));}catch{process.stdout.write("SUBSTANTIVE_DELTA");}'
+  printf '%s\n' "$files" | BASE_SHA="${BASE_SHA:-}" HEAD_SHA="${HEAD_SHA:-}" \
+    .github/scripts/classify-pr-delta.sh
 }
 
 # ----------------------------------------------------------------

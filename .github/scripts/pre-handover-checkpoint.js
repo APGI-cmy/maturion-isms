@@ -572,6 +572,8 @@ function artifactFromResolverPath(relPath) {
   const absolute = path.isAbsolute(candidate) ? candidate : path.join(process.cwd(), candidate);
   const text = safeRead(absolute);
   if (!text) return null;
+  // Resolver-selected artifacts are authoritative active-state inputs.
+  // Assign max score so they always outrank discovery-scored historical candidates.
   return { relPath: toPosix(path.relative(process.cwd(), absolute)), text, score: Number.MAX_SAFE_INTEGER };
 }
 

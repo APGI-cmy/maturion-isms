@@ -83,6 +83,7 @@ run_test() {
            .agent-workspace/foreman-v2/memory \
            .github/agents .github/workflows .github/scripts governance/canon
   cp "${SCRIPT_DIR}/resolve-active-pr-state.js" .github/scripts/resolve-active-pr-state.js
+  cp "${SCRIPT_DIR}/classify-pr-delta.sh" .github/scripts/classify-pr-delta.sh
   echo "initial" > README.md
   git add .
   git commit -q -m "Initial commit"

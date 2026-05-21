@@ -181,7 +181,7 @@ run_checkpoint_field_test() {
     ACTIVE_STATE_JSON="$TEST_ACTIVE_STATE_JSON" \
     ACTIVE_STATE_PATH="$TEST_ACTIVE_STATE_PATH" \
     node "$CHECKPOINT_SCRIPT"
-   )"
+  )"
 
   if OUTPUT="$output" EXPECTED_RESULT="$expected_result" EXPECTED_HANDOVER="$expected_handover" FIELD_CHECKS="$expected_field_checks_json" node - <<'EOF'
 const output = JSON.parse(process.env.OUTPUT || '{}');
