@@ -240,11 +240,11 @@ Baseline reference snapshot: catalog `Version v1.0`, `Date 2026-05-13`, `Issue m
 
 | RED category | Declared count | Allocated wave |
 |---|---:|---|
-| ROUTE | 28 | W8.1, W8.2, W8.3, W8.5, W8.6, W8.8 |
+| ROUTE | 29 | W8.1, W8.2, W8.3, W8.5, W8.6, W8.8 |
 | AUTH | 15 | W8.1 |
 | RLS | 13 | W8.2 |
 | PROJECT | 16 | W8.3, W8.7 |
-| TIMELINE | 10 | W8.6 |
+| TIMELINE | 12 | W8.6 |
 | EVIDENCE | 10 | W8.5 |
 | NOTIFICATION | 7 | W8.4 |
 | REPORT | 8 | W8.8 |
