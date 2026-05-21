@@ -853,13 +853,33 @@ function evaluateCheckpoint(input = {}) {
   const adminCurrent = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const adminStale = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
 
+  function resolverArtifactHasIaaSection(artifact, section) {
+    const text = artifact && artifact.text ? artifact.text : '';
+    if (section === 'prebrief') {
+      return /## PRE-BRIEF/i.test(text) && !/superseded/i.test(text);
+    }
+    if (section === 'preflight-brief') {
+      return /IAA_PREFLIGHT_BRIEF|## PREFLIGHT BRIEF/i.test(text);
+    }
+    if (section === 'assurance') {
+      return /## TOKEN|PHASE_B_BLOCKING_TOKEN\s*:/i.test(text);
+    }
+    return false;
+  }
+
   let prebriefFiles = [];
   let preflightBriefArtifacts = [];
   let assuranceArtifacts = [];
   if (resolverSelectedIaaArtifact) {
-    prebriefFiles = [resolverSelectedIaaArtifact];
-    preflightBriefArtifacts = [resolverSelectedIaaArtifact];
-    assuranceArtifacts = [resolverSelectedIaaArtifact];
+    if (resolverArtifactHasIaaSection(resolverSelectedIaaArtifact, 'prebrief')) {
+      prebriefFiles = [resolverSelectedIaaArtifact];
+    }
+    if (resolverArtifactHasIaaSection(resolverSelectedIaaArtifact, 'preflight-brief')) {
+      preflightBriefArtifacts = [resolverSelectedIaaArtifact];
+    }
+    if (resolverArtifactHasIaaSection(resolverSelectedIaaArtifact, 'assurance')) {
+      assuranceArtifacts = [resolverSelectedIaaArtifact];
+    }
   } else {
     // Legacy compatibility fallback: broad assurance discovery when resolver-selected IAA artifact is absent.
     const assuranceDir = path.join(process.cwd(), '.agent-admin/assurance');
