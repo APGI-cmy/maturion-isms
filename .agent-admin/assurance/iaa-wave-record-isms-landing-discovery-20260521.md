@@ -15,7 +15,7 @@ IAA_PREFLIGHT_BRIEF
 PR: #1728
 ISSUE: #1727 — ISMS Public Landing Harvest Discovery Report
 WAVE: isms-landing-discovery-report
-WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+WAVE_TASKS_PATH: .agent-admin/prs/pr-1728/wave-current-tasks.md
 CURRENT_HEAD_SHA: ee3325c8fd4f4c6f0ac63a6c9e2a9b1e2c3d4e5f
 
 WAVE_TYPE: DOCUMENTATION_DISCOVERY — docs-only diff. All expected changed files are .md (discovery report) and governance admin artifacts (.json, .md). No production code changes. Per iaa-final-assurance-gate.sh, IAA final assurance is N/A for docs-only diffs. IAA classification: EXEMPT (trigger table step 12 — clearly and unambiguously doc-only/admin; no AMBIGUITY RULE applies).
