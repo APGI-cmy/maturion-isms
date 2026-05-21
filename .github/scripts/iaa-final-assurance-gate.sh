@@ -27,6 +27,39 @@ EXPECTED_ISSUE_NUMBER="${EXPECTED_ISSUE_NUMBER:-}"
 ASSURANCE_DIR=".agent-admin/assurance"
 
 # ----------------------------------------------------------------
+# Delta-type classifier (mirrors resolve-active-pr-state.js classifyDelta).
+# Accepts a newline-separated file list; prints one of:
+#   REBASE_ONLY_DELTA | ADMIN_ONLY_DELTA | SUBSTANTIVE_DELTA | GATE_CHANGE_DELTA
+# Used as the PRIMARY signal for rebase-safety decisions; author timestamps
+# are only a SECONDARY signal when the delta is substantive.
+# ----------------------------------------------------------------
+_classify_delta_type() {
+  local files="$1"
+  if [ -z "$files" ]; then echo "REBASE_ONLY_DELTA"; return; fi
+  # Gate-change paths
+  if echo "$files" | grep -qE \
+      '^\.github/(workflows|scripts)/|^governance/templates/|^governance/checklists/|^governance/CANON_INVENTORY\.json$'; then
+    echo "GATE_CHANGE_DELTA"; return
+  fi
+  # Substantive production-code paths
+  if echo "$files" | grep -qE \
+      '^(apps|modules|packages|api)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|go|java|rb|rs|sql)$'; then
+    echo "SUBSTANTIVE_DELTA"; return
+  fi
+  # Non-admin paths that don't match the above are still substantive
+  local _has_non_admin=false
+  while IFS= read -r _f; do
+    [ -z "$_f" ] && continue
+    echo "$_f" | grep -qE \
+      '^\.admin/|^\.agent-admin/|^\.agent-workspace/|^\.functional-delivery/|^governance/|^docs/|^README|^CHANGELOG|(^|/)PREHANDOVER-.+\.md$' \
+      && continue
+    _has_non_admin=true; break
+  done <<< "$files"
+  if [ "$_has_non_admin" = true ]; then echo "SUBSTANTIVE_DELTA"; return; fi
+  echo "ADMIN_ONLY_DELTA"
+}
+
+# ----------------------------------------------------------------
 # CS2 sign-off bypass
 # ----------------------------------------------------------------
 if [[ "$PR_LABELS" == *"CS sign-off: approved"* ]]; then
@@ -343,17 +376,66 @@ while IFS= read -r token_file; do
     FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: missing **Reviewed SHA**: field"
     FILE_VALID=false
     FAIL=true
-  elif echo "$TOKEN_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
-    echo "  ✅ Reviewed SHA: explicit current-head marker ($TOKEN_REVIEWED_SHA)"
+  elif ! echo "$TOKEN_REVIEWED_SHA" | grep -qE '^[0-9a-fA-F]{40}$'; then
+    # A final token's **Reviewed SHA** must be a canonical 40-character hex commit SHA.
+    # Symbolic runtime markers (CURRENT_HEAD, ACTIVE_HEAD_RESOLVED_BY_GATE, etc.) and
+    # abbreviated SHAs are not valid — a final assurance token must durably record the
+    # exact substantive commit reviewed, not a runtime reference that can self-resolve.
+    echo "  ❌ **Reviewed SHA** must be a canonical 40-character hex SHA — symbolic or abbreviated values are not allowed in final assurance tokens [IAA-FINAL-GATE-008]"
+    FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: **Reviewed SHA** is not a canonical 40-char hex SHA (symbolic/abbreviated values not permitted)"
+    FILE_VALID=false
+    FAIL=true
   elif [ -n "$HEAD_SHA" ]; then
-    # Token SHA must be an ancestor of HEAD (reachable from current HEAD in this repo)
     if git merge-base --is-ancestor "$TOKEN_REVIEWED_SHA" HEAD 2>/dev/null; then
       echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is in ancestry of HEAD"
     else
-      echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is not in ancestry of HEAD [IAA-FINAL-GATE-009]"
-      FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not reachable from HEAD"
-      FILE_VALID=false
-      FAIL=true
+      # SHA not in ancestry — may be post-rebase (the original SHA was replaced).
+      # Resolver/delta model:
+      #   PRIMARY  — classify the PR's delta type; admin/rebase-only movement means no
+      #              new substantive content exists and the reviewed SHA still covers the
+      #              full payload.
+      #   SECONDARY — when the delta IS substantive, verify that no impl file was
+      #              committed after the token (author timestamps survive git rebase and
+      #              confirm the token post-dates all substantive changes).
+      _tk_pass=false
+      if [ -n "$BASE_SHA" ]; then
+        _tk_delta_files="$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || true)"
+        _tk_delta_type="$(_classify_delta_type "$_tk_delta_files")"
+        case "$_tk_delta_type" in
+          REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
+            _tk_pass=true
+            echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not in ancestry — rebase-safe (${_tk_delta_type}: no substantive changes in PR)"
+            ;;
+          SUBSTANTIVE_DELTA|GATE_CHANGE_DELTA)
+            # Secondary: check that no impl file was committed after the token.
+            _tk_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$token_file" 2>/dev/null || true)"
+            [ -z "$_tk_at" ] && _tk_at="$(git log -1 --format='%at' HEAD -- "$token_file" 2>/dev/null || true)"
+            if [ -n "$_tk_at" ]; then
+              _tk_impl_files=()
+              while IFS= read -r _f; do
+                [ -n "$_f" ] && echo "$_f" | grep -qE \
+                  '^(modules|apps|packages)/[^/]+/(src|tests?)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|sql)$' \
+                  && _tk_impl_files+=("$_f")
+              done <<< "$_tk_delta_files"
+              _tk_last_impl_at=""
+              if [ "${#_tk_impl_files[@]}" -gt 0 ]; then
+                _tk_last_impl_at="$(git log --format='%at' "${BASE_SHA}..HEAD" -- \
+                  "${_tk_impl_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+              fi
+              if [ -z "$_tk_last_impl_at" ] || [ "$_tk_at" -ge "$_tk_last_impl_at" ]; then
+                _tk_pass=true
+                echo "  ✅ Reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not in ancestry — rebase-safe (${_tk_delta_type}: token covers all substantive commits)"
+              fi
+            fi
+            ;;
+        esac
+      fi
+      if [ "$_tk_pass" = false ]; then
+        echo "  ❌ Token reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} is not in ancestry of HEAD [IAA-FINAL-GATE-009]"
+        FAIL_REASONS="${FAIL_REASONS}\n  - ${token_file}: reviewed SHA ${TOKEN_REVIEWED_SHA:0:12} not reachable from HEAD"
+        FILE_VALID=false
+        FAIL=true
+      fi
     fi
   else
     echo "  ✅ Reviewed SHA present: ${TOKEN_REVIEWED_SHA:0:12} (HEAD_SHA not set — skipping ancestry check)"
@@ -516,16 +598,56 @@ while IFS= read -r wave_file; do
       WR_FILE_VALID=false
       FAIL=true
       FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: missing **Reviewed SHA**: field in ## TOKEN section"
-    elif echo "$WR_REVIEWED_SHA" | grep -qiE "^CURRENT_HEAD$|^CURRENT$|^HEAD$"; then
-      echo "  ✅ Wave record reviewed SHA: explicit current-head marker"
+    elif ! echo "$WR_REVIEWED_SHA" | grep -qE '^[0-9a-fA-F]{40}$'; then
+      # A wave record's **Reviewed SHA** must be a canonical 40-character hex commit SHA.
+      echo "  ❌ Wave record **Reviewed SHA** must be a canonical 40-char hex SHA — symbolic or abbreviated values are not allowed [IAA-FINAL-GATE-008]"
+      WR_FILE_VALID=false
+      FAIL=true
+      FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: **Reviewed SHA** is not a canonical 40-char hex SHA (symbolic/abbreviated values not permitted)"
     elif [ -n "$HEAD_SHA" ]; then
       if git merge-base --is-ancestor "$WR_REVIEWED_SHA" HEAD 2>/dev/null; then
         echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} is in ancestry of HEAD"
       else
-        echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry of HEAD [IAA-FINAL-GATE-009]"
-        WR_FILE_VALID=false
-        FAIL=true
-        FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA not reachable from HEAD"
+        # SHA not in ancestry — may be post-rebase.
+        # Resolver/delta model: primary delta-type, secondary author timestamp.
+        _wr_pass=false
+        if [ -n "$BASE_SHA" ]; then
+          _wr_delta_files="$(git diff --name-only "${BASE_SHA}...HEAD" 2>/dev/null || true)"
+          _wr_delta_type="$(_classify_delta_type "$_wr_delta_files")"
+          case "$_wr_delta_type" in
+            REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
+              _wr_pass=true
+              echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry — rebase-safe (${_wr_delta_type}: no substantive changes in PR)"
+              ;;
+            SUBSTANTIVE_DELTA|GATE_CHANGE_DELTA)
+              _wr_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$wave_file" 2>/dev/null || true)"
+              [ -z "$_wr_at" ] && _wr_at="$(git log -1 --format='%at' HEAD -- "$wave_file" 2>/dev/null || true)"
+              if [ -n "$_wr_at" ]; then
+                _wr_impl_files=()
+                while IFS= read -r _f; do
+                  [ -n "$_f" ] && echo "$_f" | grep -qE \
+                    '^(modules|apps|packages)/[^/]+/(src|tests?)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|sql)$' \
+                    && _wr_impl_files+=("$_f")
+                done <<< "$_wr_delta_files"
+                _wr_last_impl_at=""
+                if [ "${#_wr_impl_files[@]}" -gt 0 ]; then
+                  _wr_last_impl_at="$(git log --format='%at' "${BASE_SHA}..HEAD" -- \
+                    "${_wr_impl_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+                fi
+                if [ -z "$_wr_last_impl_at" ] || [ "$_wr_at" -ge "$_wr_last_impl_at" ]; then
+                  _wr_pass=true
+                  echo "  ✅ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry — rebase-safe (${_wr_delta_type}: wave record covers all substantive commits)"
+                fi
+              fi
+              ;;
+          esac
+        fi
+        if [ "$_wr_pass" = false ]; then
+          echo "  ❌ Wave record reviewed SHA ${WR_REVIEWED_SHA:0:12} not in ancestry of HEAD [IAA-FINAL-GATE-009]"
+          WR_FILE_VALID=false
+          FAIL=true
+          FAIL_REASONS="${FAIL_REASONS}\n  - ${wave_file}: reviewed SHA not reachable from HEAD"
+        fi
       fi
     else
       echo "  ✅ Wave record reviewed SHA: ${WR_REVIEWED_SHA:0:12} (ancestry check skipped — HEAD_SHA not set)"

@@ -63,6 +63,32 @@ is_live_functional_delivery_evidence_file() {
   [[ "$file" =~ ^\.functional-delivery/pr-[0-9]+\.md$ ]]
 }
 
+# Delta-type classifier (mirrors resolve-active-pr-state.js classifyDelta).
+# Accepts a newline-separated file list; prints one of:
+#   REBASE_ONLY_DELTA | ADMIN_ONLY_DELTA | SUBSTANTIVE_DELTA | GATE_CHANGE_DELTA
+_classify_delta_type() {
+  local files="$1"
+  if [ -z "$files" ]; then echo "REBASE_ONLY_DELTA"; return; fi
+  if echo "$files" | grep -qE \
+      '^\.github/(workflows|scripts)/|^governance/templates/|^governance/checklists/|^governance/CANON_INVENTORY\.json$'; then
+    echo "GATE_CHANGE_DELTA"; return
+  fi
+  if echo "$files" | grep -qE \
+      '^(apps|modules|packages|api)/|^supabase/(functions|migrations)/|.*\.(ts|tsx|js|jsx|py|go|java|rb|rs|sql)$'; then
+    echo "SUBSTANTIVE_DELTA"; return
+  fi
+  local _has_non_admin=false
+  while IFS= read -r _f; do
+    [ -z "$_f" ] && continue
+    echo "$_f" | grep -qE \
+      '^\.admin/|^\.agent-admin/|^\.agent-workspace/|^\.functional-delivery/|^governance/|^docs/|^README|^CHANGELOG|(^|/)PREHANDOVER-.+\.md$' \
+      && continue
+    _has_non_admin=true; break
+  done <<< "$files"
+  if [ "$_has_non_admin" = true ]; then echo "SUBSTANTIVE_DELTA"; return; fi
+  echo "ADMIN_ONLY_DELTA"
+}
+
 # Returns 0 (true) if the file is a governance-controlled control-surface path:
 #   governance/canon/**, governance/templates/**, .agent-workspace/independent-assurance-agent/**
 #   .github/scripts/**, .github/workflows/**
@@ -453,9 +479,58 @@ echo "✅ IAA Functional Verdict gate: PASS"
 
 # Gate 4c: No-current-head-drift (same artifact must contain verdict split + current head)
 if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
-  echo "❌ FAIL — IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD ($HEAD_SHA) in the same artifact."
-  echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
-  exit 1
+  # Exact SHA not found. Use resolver/delta model:
+  #   PRIMARY  — if the PR's delta is admin/rebase-only, no product-facing files
+  #              changed and the evidence still covers the full payload.
+  #   SECONDARY — if product-facing files did change, accept a stale canonical 40-char
+  #              hex SHA only when the IAA artifact was authored after the last product-file
+  #              commit (author timestamps survive git rebase).
+  _4c_pass=false
+  _4c_delta_type="$(_classify_delta_type "$CHANGED_FILES")"
+  case "$_4c_delta_type" in
+    REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
+      _4c_pass=true
+      echo "ℹ️  No-current-head-drift: rebase-safe (${_4c_delta_type}: no product-facing changes)"
+      ;;
+    SUBSTANTIVE_DELTA|GATE_CHANGE_DELTA)
+      if [ -n "$BASE_SHA" ]; then
+        # Precompute last product-facing commit timestamp once (avoids per-file git-log inside loop)
+        _4c_prod_files=()
+        while IFS= read -r _pf; do
+          [ -n "$_pf" ] && is_product_path "$_pf" && _4c_prod_files+=("$_pf")
+        done <<< "$CHANGED_FILES"
+        _4c_prod_last_at=""
+        if [ "${#_4c_prod_files[@]}" -gt 0 ]; then
+          _4c_prod_last_at="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_4c_prod_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+        fi
+        while IFS= read -r _iaa_f; do
+          [ -n "$_iaa_f" ] && [ -f "$_iaa_f" ] || continue
+          _has_a=$(grep -qiE '^[[:space:]]*(\*\*)?ADMIN_PASS(\*\*)?:[[:space:]]*(yes|no)' "$_iaa_f" && echo yes || echo no)
+          _has_fu=$(grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*(yes|no)' "$_iaa_f" && echo yes || echo no)
+          _has_v=$(grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*(FULL_FUNCTIONAL_DELIVERY|PARTIAL_FUNCTIONAL_DELIVERY|ADMIN_ONLY|FAIL)' "$_iaa_f" && echo yes || echo no)
+          [ "$_has_a" = "yes" ] && [ "$_has_fu" = "yes" ] && [ "$_has_v" = "yes" ] || continue
+          # Only canonical 40-char hex SHAs trigger the timing fallback; shorter or
+          # non-hex values (including placeholders) weaken head-binding and are rejected.
+          _iaa_sha_val="$(grep -iE '^[[:space:]]*(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*' "$_iaa_f" | head -1 | sed 's/.*SHA[^:]*:[[:space:]]*//' | tr -d '[:space:]' || true)"
+          [[ "$_iaa_sha_val" =~ ^[0-9a-fA-F]{40}$ ]] || continue
+          # Secondary: artifact authored after last product-facing commit?
+          _iaa_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_iaa_f" 2>/dev/null || true)"
+          [ -z "$_iaa_at" ] && _iaa_at="$(git log -1 --format='%at' HEAD -- "$_iaa_f" 2>/dev/null || true)"
+          [ -z "$_iaa_at" ] && continue
+          if [ -z "$_4c_prod_last_at" ] || [ "$_iaa_at" -ge "$_4c_prod_last_at" ]; then
+            _4c_pass=true
+            echo "ℹ️  No-current-head-drift: rebase-safe (${_4c_delta_type}: IAA artifact covers all product-facing commits)"
+            break
+          fi
+        done <<< "$IAA_FILES"
+      fi
+      ;;
+  esac
+  if [ "$_4c_pass" = false ]; then
+    echo "❌ FAIL — IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD ($HEAD_SHA) in the same artifact."
+    echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
+    exit 1
+  fi
 fi
 echo "✅ No-current-head-drift gate: PASS"
 
@@ -542,8 +617,47 @@ fi
 # hashes are canonical lowercase hex strings and should match exactly.
 # ---------------------------------------------------------------------------
 if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
-  exit 1
+  # Exact HEAD SHA not in evidence. Use resolver/delta model:
+  #   PRIMARY  — if the PR's delta is admin/rebase-only, no product-facing files
+  #              changed and the evidence still covers the current payload.
+  #   SECONDARY — for substantive deltas, a stale canonical 40-char hex SHA is accepted
+  #              only when the evidence was authored after the last product-facing file
+  #              commit (author timestamps survive git rebase). Placeholder/symbolic
+  #              values do NOT trigger this fallback — a concrete old SHA must be present.
+  _g7_pass=false
+  _g7_delta_type="$(_classify_delta_type "$CHANGED_FILES")"
+  case "$_g7_delta_type" in
+    REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
+      _g7_pass=true
+      echo "ℹ️  Gate 7: rebase-safe (${_g7_delta_type}: no product-facing changes)"
+      ;;
+    SUBSTANTIVE_DELTA|GATE_CHANGE_DELTA)
+      # Only canonical 40-char hex SHAs trigger the timing fallback
+      _ev_sha_val="$(grep -iE '^[[:space:]]*Current head SHA reviewed:[[:space:]]*' "$EVIDENCE_PATH" | head -1 | sed 's/.*reviewed:[[:space:]]*//' | tr -d '[:space:]' || true)"
+      if [[ "$_ev_sha_val" =~ ^[0-9a-fA-F]{40}$ ]] && [ -n "$BASE_SHA" ]; then
+        _ev_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$EVIDENCE_PATH" 2>/dev/null || true)"
+        [ -z "$_ev_at" ] && _ev_at="$(git log -1 --format='%at' HEAD -- "$EVIDENCE_PATH" 2>/dev/null || true)"
+        if [ -n "$_ev_at" ]; then
+          _g7_prod_files=()
+          while IFS= read -r _pf; do
+            [ -n "$_pf" ] && is_product_path "$_pf" && _g7_prod_files+=("$_pf")
+          done <<< "$CHANGED_FILES"
+          _prod_last_at_g7=""
+          if [ "${#_g7_prod_files[@]}" -gt 0 ]; then
+            _prod_last_at_g7="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_g7_prod_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
+          fi
+          if [ -z "$_prod_last_at_g7" ] || [ "$_ev_at" -ge "$_prod_last_at_g7" ]; then
+            _g7_pass=true
+            echo "ℹ️  Gate 7: rebase-safe (${_g7_delta_type}: evidence covers all product-facing commits)"
+          fi
+        fi
+      fi
+      ;;
+  esac
+  if [ "$_g7_pass" = false ]; then
+    echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
+    exit 1
+  fi
 fi
 
 echo ""
