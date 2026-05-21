@@ -47,34 +47,78 @@ function renderGuidanceComment({ prNumber, headSha, fields = {} }) {
   const nextRequiredControl = String(fields.NEXT_REQUIRED_CONTROL || 'none');
   const shortSha = String(headSha || '').slice(0, 12) || 'unknown';
   const checksSummary = summarizeChecks(fields);
-  const title = clean
-    ? '## ✅ Producer next action guidance — current head is clean'
-    : '## ⏭️ Producer next action guidance — action still required';
+  const result = String(fields.RESULT || '').toUpperCase();
+  const advisoryUnavailable = String(fields.ADVISORY_UNAVAILABLE || '').toLowerCase();
+  const stopAndFix = result === 'STOP_AND_FIX';
+  const gray = advisoryUnavailable === 'github_api_rate_limited' || result === 'ADVISORY_UNAVAILABLE';
+  const amber = !gray && !stopAndFix && !clean;
   const status = clean ? 'yes' : 'no';
 
-  const lines = [
-    STICKY_MARKER,
-    title,
-    '',
-    `@copilot — trusted current-head guidance for PR #${prNumber} (\`${shortSha}...\`).`,
-    '',
-    `- FINAL_SUMMARY_ALLOWED: ${status}`,
-    `- READY_FOR_REVIEW_ALLOWED: ${status}`,
-    `- HANDOVER_CLAIM_ALLOWED: ${status}`,
-    `- NEXT_REQUIRED_CONTROL: ${nextRequiredControl}`,
-    `- INJECTION_STATE: ${String(fields.INJECTION_STATE || 'unknown')}`,
-    `- CURRENT_HEAD_CHECKS: ${checksSummary}`,
-    `- CHECKPOINT_RESULT: ${String(fields.RESULT || 'unknown')}`,
+  const header = gray
+    ? '# ⚪ ADVISORY UNAVAILABLE — GITHUB API RATE LIMIT'
+    : stopAndFix
+      ? '# 🛑 STOP — DO NOT CONTINUE TO HANDOVER'
+      : clean
+        ? '# ✅ GREEN — current head guidance is clean'
+        : '# 🟠 AMBER — guidance pending / waiting';
+
+  const lines = [STICKY_MARKER, header, '', `@copilot — trusted current-head guidance for PR #${prNumber} (\`${shortSha}...\`).`, ''];
+
+  if (gray) {
+    lines.push(
+      'ADVISORY_UNAVAILABLE: github_api_rate_limited',
+      'INFRASTRUCTURE_RERUN_NEEDED: yes',
+      'PR_DEFECT_INFERRED: no',
+      '',
+      'GitHub API rate limiting prevented reliable advisory read/write checks. Re-run this workflow after rate limits reset.',
+      'This is infrastructure rerun-needed noise, not a product/governance defect inference.',
+    );
+    return lines.join('\n');
+  }
+
+  if (stopAndFix) {
+    lines.push(
+      'STOP_AND_FIX: yes',
+      'HANDOVER_ALLOWED: no',
+      'FINAL_SUMMARY_ALLOWED: no',
+      'READY_FOR_REVIEW_ALLOWED: no',
+      `NEXT_REQUIRED_CONTROL: ${nextRequiredControl}`,
+      '',
+      'You must stop implementation/handover activity and fix the listed blocker before posting any final summary, ready-for-review claim, merge-ready claim, or handover message.',
+      '',
+      'Current blocker:',
+      `- ${String(fields.REASON || `Control \`${nextRequiredControl}\` is still blocking.`).trim()}`,
+      '',
+      'Required next action:',
+      `1. ${nextActionSentence(nextRequiredControl)}`,
+      '2. Do not regenerate unrelated evidence.',
+      '3. Rerun current-head preflight/checkpoint after the targeted fix.',
+      '4. Only after green current-head checks, run `/prepare-handover`.',
+      '',
+      `CURRENT_HEAD_CHECKS: ${checksSummary}`,
+      `CHECKPOINT_RESULT: ${String(fields.RESULT || 'unknown')}`,
+    );
+    return lines.join('\n');
+  }
+
+  lines.push(
+    `FINAL_SUMMARY_ALLOWED: ${status}`,
+    `READY_FOR_REVIEW_ALLOWED: ${status}`,
+    `HANDOVER_CLAIM_ALLOWED: ${status}`,
+    `NEXT_REQUIRED_CONTROL: ${nextRequiredControl}`,
+    `INJECTION_STATE: ${String(fields.INJECTION_STATE || 'unknown')}`,
+    `CURRENT_HEAD_CHECKS: ${checksSummary}`,
+    `CHECKPOINT_RESULT: ${String(fields.RESULT || 'unknown')}`,
     '',
     clean
-      ? '> ✅ Current-head checks and producer-side controls are clean.'
-      : `> 🚫 Not yet clean. ${nextActionSentence(nextRequiredControl)}`,
-    '> Before any final summary, ready for review, handover, or merge-ready claim, comment `/prepare-handover` and wait for the refreshed `PRE_HANDOVER_CHECKPOINT_RESULT` on the current HEAD.',
-  ];
+      ? '✅ Current-head checks and producer-side controls are clean.'
+      : amber
+        ? `Waiting on pending checks/data. ${nextActionSentence(nextRequiredControl)}`
+        : `Not yet clean. ${nextActionSentence(nextRequiredControl)}`,
+    'Before any final summary, ready for review, handover, or merge-ready claim, comment `/prepare-handover` and wait for the refreshed `PRE_HANDOVER_CHECKPOINT_RESULT` on the current HEAD.',
+  );
 
-  if (!clean && String(fields.REASON || '').trim()) {
-    lines.push(`> Current blocker summary: ${String(fields.REASON).trim()}`);
-  }
+  if (amber && String(fields.REASON || '').trim()) lines.push(`Current status: ${String(fields.REASON).trim()}`);
 
   return lines.join('\n');
 }

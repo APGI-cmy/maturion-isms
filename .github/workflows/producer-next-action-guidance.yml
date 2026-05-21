@@ -107,22 +107,32 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
+            const isRateLimitError = (error) => {
+              const status = Number(error?.status || error?.response?.status || 0);
+              const message = String(error?.message || error?.response?.data?.message || '').toLowerCase();
+              const remaining = String(error?.response?.headers?.['x-ratelimit-remaining'] || '');
+              return (status === 403 || status === 429) && (
+                message.includes('rate limit') ||
+                remaining === '0'
+              );
+            };
             const headSha = process.env.HEAD_SHA;
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const prBody = process.env.PR_BODY || '';
+            let advisoryUnavailable = '';
 
-            const { data: checkRunsData } = await github.rest.checks.listForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: headSha,
-              per_page: 100,
-            });
-
-            const { data: statusData } = await github.rest.repos.getCombinedStatusForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: headSha,
-            });
+            const safeApi = async (operation, fn, fallback) => {
+              try {
+                return await fn();
+              } catch (error) {
+                if (!isRateLimitError(error)) throw error;
+                advisoryUnavailable = 'github_api_rate_limited';
+                core.warning(`[producer-next-action-guidance] ${operation}: ADVISORY_UNAVAILABLE: github_api_rate_limited`);
+                core.warning('INFRASTRUCTURE_RERUN_NEEDED: yes');
+                core.warning('PR_DEFECT_INFERRED: no');
+                return fallback;
+              }
+            };
 
             const issueMatch = (context.payload.comment?.body || '').match(/#(\d+)/);
             let issueNumber = issueMatch ? issueMatch[1] : '';
@@ -141,6 +151,13 @@ jobs:
                   repoFiles[targetPath] = Buffer.from(data.content, 'base64').toString('utf8');
                 }
               } catch (error) {
+                if (isRateLimitError(error)) {
+                  advisoryUnavailable = 'github_api_rate_limited';
+                  core.warning(`[producer-next-action-guidance] getContent(${targetPath}): ADVISORY_UNAVAILABLE: github_api_rate_limited`);
+                  core.warning('INFRASTRUCTURE_RERUN_NEEDED: yes');
+                  core.warning('PR_DEFECT_INFERRED: no');
+                  return;
+                }
                 if (error.status !== 404) {
                   core.info(`Unable to fetch ${targetPath} at ${headSha}: ${error.message}`);
                 }
@@ -168,32 +185,61 @@ jobs:
               }
             };
 
-            let changedFiles = [];
-            let page = 1;
-            while (true) {
-              const { data: files } = await github.rest.pulls.listFiles({
+            const { data: checkRunsData } = await safeApi(
+              'checks.listForRef',
+              () => github.rest.checks.listForRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: prNumber,
+                ref: headSha,
                 per_page: 100,
-                page,
-              });
-              changedFiles = changedFiles.concat(files.map((file) => file.filename));
-              if (files.length < 100) break;
+              }),
+              { data: { check_runs: [] } },
+            );
+
+            const { data: statusData } = await safeApi(
+              'repos.getCombinedStatusForRef',
+              () => github.rest.repos.getCombinedStatusForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: headSha,
+              }),
+              { data: { statuses: [] } },
+            );
+
+            let changedFiles = [];
+            let page = 1;
+            while (!advisoryUnavailable) {
+              const { data: files } = await safeApi(
+                'pulls.listFiles',
+                () => github.rest.pulls.listFiles({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  per_page: 100,
+                  page,
+                }),
+                { data: [] },
+              );
+              changedFiles = changedFiles.concat((files || []).map((file) => file.filename));
+              if (!files || files.length < 100) break;
               page += 1;
             }
 
             page = 1;
-            while (true) {
-              const { data: pageComments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                per_page: 100,
-                page,
-              });
-              comments.push(...pageComments);
-              if (pageComments.length < 100) break;
+            while (!advisoryUnavailable) {
+              const { data: pageComments } = await safeApi(
+                'issues.listComments',
+                () => github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  per_page: 100,
+                  page,
+                }),
+                { data: [] },
+              );
+              comments.push(...(pageComments || []));
+              if (!pageComments || pageComments.length < 100) break;
               page += 1;
             }
 
@@ -273,6 +319,8 @@ jobs:
             core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
             core.setOutput('repo_files_path', repoFilesPath);
             core.setOutput('issue_number', issueNumber);
+            core.setOutput('advisory_unavailable', advisoryUnavailable || 'none');
+            core.setOutput('infrastructure_rerun_needed', advisoryUnavailable ? 'yes' : 'no');
 
       - name: Evaluate producer next action state
         id: evaluate
@@ -296,9 +344,19 @@ jobs:
           CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
           ACTIVE_STATE_PATH: ".agent-admin/prs/pr-${{ steps.context.outputs.pr_number }}/active-state.json"
+          ADVISORY_UNAVAILABLE: ${{ steps.inputs.outputs.advisory_unavailable }}
         run: |
           RESULT_FILE="${{ runner.temp }}/producer-guidance-result-${{ steps.context.outputs.pr_number }}.json"
-          node .github/scripts/pre-handover-checkpoint.js > "$RESULT_FILE"
+          if [ "${ADVISORY_UNAVAILABLE:-none}" = "github_api_rate_limited" ]; then
+            cat > "$RESULT_FILE" <<'JSON'
+          {"fields":{"RESULT":"ADVISORY_UNAVAILABLE","ADVISORY_UNAVAILABLE":"github_api_rate_limited","INFRASTRUCTURE_RERUN_NEEDED":"yes","PR_DEFECT_INFERRED":"no","HANDOVER_ALLOWED":"no","NEXT_REQUIRED_CONTROL":"CURRENT_HEAD_GATES_GREEN","REASON":"GitHub API rate limit prevented advisory state refresh. Re-run needed."}}
+          JSON
+            echo "ADVISORY_UNAVAILABLE: github_api_rate_limited"
+            echo "INFRASTRUCTURE_RERUN_NEEDED: yes"
+            echo "PR_DEFECT_INFERRED: no"
+          else
+            node .github/scripts/pre-handover-checkpoint.js > "$RESULT_FILE"
+          fi
           echo "result_file=$RESULT_FILE" >> "$GITHUB_OUTPUT"
           cat "$RESULT_FILE"
 
@@ -313,6 +371,15 @@ jobs:
           script: |
             const fs = require('fs');
             const { STICKY_MARKER, renderGuidanceComment } = require('./.github/scripts/producer-next-action-guidance.js');
+            const isRateLimitError = (error) => {
+              const status = Number(error?.status || error?.response?.status || 0);
+              const message = String(error?.message || error?.response?.data?.message || '').toLowerCase();
+              const remaining = String(error?.response?.headers?.['x-ratelimit-remaining'] || '');
+              return (status === 403 || status === 429) && (
+                message.includes('rate limit') ||
+                remaining === '0'
+              );
+            };
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA || '';
             const resultFilePath = process.env.RESULT_FILE || '';
@@ -331,39 +398,48 @@ jobs:
               fields: result.fields || {},
             });
 
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              per_page: 100,
-            });
-
-            const stickyComments = comments
-              .filter((comment) => comment.body && comment.body.includes(STICKY_MARKER))
-              .sort((left, right) => new Date(right.updated_at || right.created_at) - new Date(left.updated_at || left.created_at));
-
-            const [primary, ...duplicates] = stickyComments;
-
-            if (primary) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: primary.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
+            try {
+              const comments = await github.paginate(github.rest.issues.listComments, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body,
+                per_page: 100,
               });
-            }
 
-            for (const duplicate of duplicates) {
-              await github.rest.issues.deleteComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: duplicate.id,
-              });
+              const stickyComments = comments
+                .filter((comment) => comment.body && comment.body.includes(STICKY_MARKER))
+                .sort((left, right) => new Date(right.updated_at || right.created_at) - new Date(left.updated_at || left.created_at));
+
+              const [primary, ...duplicates] = stickyComments;
+
+              if (primary) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: primary.id,
+                  body,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body,
+                });
+              }
+
+              for (const duplicate of duplicates) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: duplicate.id,
+                });
+              }
+            } catch (error) {
+              if (!isRateLimitError(error)) throw error;
+              core.setFailed([
+                'ADVISORY_UNAVAILABLE: github_api_rate_limited',
+                'INFRASTRUCTURE_RERUN_NEEDED: yes',
+                'PR_DEFECT_INFERRED: no',
+              ].join('\n'));
             }
