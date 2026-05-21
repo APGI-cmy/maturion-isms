@@ -108,9 +108,13 @@ export function DomainAuditBuilder({
       ) : null}
 
       {/* Three-step workflow (legacy order preserved) */}
-      <div className="domain-audit-builder__steps">
+      <div
+        className="domain-audit-builder__steps"
+        role="list"
+        aria-label="Domain audit workflow steps"
+      >
         {steps.map((step) => (
-          <div key={step.id} className="domain-audit-builder__step">
+          <div key={step.id} className="domain-audit-builder__step" role="listitem">
             <div className="domain-audit-builder__step-card" data-testid="domain-audit-step-card">
               <span className="domain-audit-builder__step-number">{step.order}</span>
               <div className="domain-audit-builder__step-body">

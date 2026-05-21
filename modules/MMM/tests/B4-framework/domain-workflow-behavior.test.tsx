@@ -871,7 +871,13 @@ describe('T-MMM-S6-AI-005: DomainAuditBuilder renders three card-based step item
       if (parent) {
         expect(parent.tagName.toLowerCase()).not.toBe('ol');
       }
+      // No ancestor of any card should be an <ol>
+      expect(card.closest('ol')).toBeNull();
     }
+    // The steps container element itself must not be an <ol>
+    const stepsContainer = document.querySelector('.domain-audit-builder__steps');
+    expect(stepsContainer).not.toBeNull();
+    expect(stepsContainer!.tagName.toLowerCase()).not.toBe('ol');
   });
 
   it('first step card renders "Create MPSs"', async () => {
