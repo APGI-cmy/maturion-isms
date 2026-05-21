@@ -10,6 +10,7 @@
 **Authority**: CS2 (Johan Ras / @APGI-cmy)  
 **STOP-AND-FIX**: ACTIVE  
 **Current HEAD SHA (pre-brief time)**: 276ea0865ef2106cec616de2837f7a6cdb8e672f
+**Current HEAD SHA (PR review/update)**: 8ba7238f9e8bd0489edee13a51f4d7e7c9054448
 
 ---
 
@@ -18,7 +19,7 @@ PR: #1715
 ISSUE: #1714
 WAVE: pit-stage11-red-baseline-reconciliation
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-CURRENT_HEAD_SHA: 276ea0865ef2106cec616de2837f7a6cdb8e672f
+CURRENT_HEAD_SHA: 8ba7238f9e8bd0489edee13a51f4d7e7c9054448
 
 EXPECTED_QA_SCOPE:
 - `modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md`
@@ -48,8 +49,8 @@ FOREMAN_INSTRUCTIONS:
 - Keep Build Authorization as NOT CLEARED in all touched artifacts.
 
 ECAP_REQUIRED / ECAP_EXPECTED_ARTIFACTS:
-- ECAP_REQUIRED: NO
-- ECAP_EXPECTED_ARTIFACTS: none unless execution-ceremony scope is introduced
+- ECAP_REQUIRED: YES
+- ECAP_EXPECTED_ARTIFACTS: `.admin/prs/pr-1715.json`, `.agent-admin/scope-declarations/pr-1715.md`, and this active IAA wave record bound to PR #1715
 
 CURRENT_HEAD_CI_EXPECTATIONS:
 - Governance/admin parity checks must pass with coherent wave/issue/branch bindings
