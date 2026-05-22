@@ -1,0 +1,32 @@
+{
+  "pr": 1728,
+  "issue": 1727,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "branch": "copilot/create-isms-public-landing-report",
+  "scope": [
+    ".admin/prs/pr-1728.json",
+    ".agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md",
+    ".agent-admin/prs/pr-1728/active-state.json",
+    ".agent-admin/prs/pr-1728/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1728.md",
+    ".agent-workspace/foreman-v2/memory/session-issue-1727-isms-landing-discovery-20260521.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/isms/discovery-report/isms-public-landing-harvest-discovery-report.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "mat-specialist",
+  "evidence_required": [
+    "IAA wave record committed at .agent-admin/assurance/iaa-wave-record-isms-landing-discovery-20260521.md",
+    "Per-PR scope declaration committed at .agent-admin/scope-declarations/pr-1728.md",
+    "Wave current tasks updated for issue #1727",
+    "Discovery report committed at modules/isms/discovery-report/isms-public-landing-harvest-discovery-report.md",
+    "Report covers all 8 required sections (A through H)",
+    "Report documents legacy file inventory, portal inventory, route table, CTA map, harvest matrix, MMM handoff contract, PIT placeholder, 12-stage worklist"
+  ],
+  "merge_authority": "CS2"
+}
