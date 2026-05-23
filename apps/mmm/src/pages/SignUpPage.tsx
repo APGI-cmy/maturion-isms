@@ -11,7 +11,7 @@ export default function SignUpPage() {
     // If Supabase requires email confirmation, data.session will be null.
     // Do not navigate to a protected route — show a confirmation prompt instead.
     if (data.session) {
-      navigate('/onboarding');
+      navigate('/dashboard');
     } else {
       setConfirmed(true);
     }
