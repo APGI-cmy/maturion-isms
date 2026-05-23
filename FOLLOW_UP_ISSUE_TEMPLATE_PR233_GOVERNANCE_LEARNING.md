@@ -3,7 +3,7 @@
 Use this issue body to record the PR #233 governance learning for CodexAdvisor:
 
 ```markdown
-@codex-advisor - **GOVERNANCE LEARNING**: Agent File Modification Authority
+@CodexAdvisor-agent - **GOVERNANCE LEARNING**: Agent File Modification Authority
 
 **Context**: PR #233 (builder agent Copilot discovery fix)
 
