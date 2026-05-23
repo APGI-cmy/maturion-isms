@@ -740,6 +740,8 @@ A CS2 written waiver with a named scheduled follow-up PR is the only permitted e
 | 2.8.0 | 2026-04-22 | A-036 (Temporal Integrity — future-dated factual claims are REJECTION-PACKAGE blockers; canon ref T-001/T-002), A-037 (Evidence-Type Discipline — LIVE_RUNTIME/LIVE_E2E items cannot be satisfied by STATIC_CODE/CI_TEST/CONFIG evidence; canon ref E-001/E-002/E-003) added — governance hardening following PR #1444 review miss. Canon: TEMPORAL_AND_EVIDENCE_INTEGRITY_CANON.md. Next sequential ID: A-038. |
 | 2.9.0 | 2026-04-26 | A-038 (§7.x-OVL-PBG coupling — any §7.x addition to PRE_BUILD_STAGE_MODEL_CANON.md requires simultaneous OVL-PBG-NNN addition to iaa-category-overlays.md and §7.x reference update to iaa-trigger-table.md PRE_BUILD_STAGE_MODEL supporting controls — same wave, same PR or explicit CS2 waiver) added — REJECTION-001 systemic prevention, session-072-20260426, wave mmm-deploy-strategy-oversight-20260426, issue maturion-isms#1468. Next sequential ID: A-039. |
 | 3.0.0 | 2026-04-28 | A-039 (Agent Claims Are Not Evidence — Acceptance-Criteria Matrix required before PASS; ACR-22), A-040 (Evidence-Type Downgrade Prohibition — runtime evidence cannot be substituted without CS2 waiver; ACR-23), A-041 (Diff-First Classification — IAA must independently compute changed files; ACR-25), A-042 (Independent Risk Challenge mandatory before PASS token; ACR-26) added — evidence-first IAA assurance restoration; authority: CS2 — maturion-isms#1492. Next sequential ID: A-043. |
+| 3.0.1 | 2026-04-28 | A-043 (Product-Build Assurance Must Validate Workflow Correctness — whole user journey, not patch correctness; CTA capability map; schema-contract checks on all invoked functions) added — REJECTION-001 systemic prevention, PR #1590. Next sequential ID: A-044. |
+| 3.1.0 | 2026-05-21 | A-044 (Foreman/ECAP Ceremony Files Must Be Pre-Declared in Per-PR Scope Declaration — ECAP bundle + foreman/memory PREHANDOVER copy + foreman/memory session memory + parking station must all appear in FILES_CHANGED with backtick format before wave close; A-031 carve-out does NOT cover foreman/ECAP files) added — REJECTION-001 pattern promotion from session-217 learning note (wave pit-stage8-gate-pass-stage9-initiate-20260519) confirmed by REJECTION-PACKAGE F-001 on PR #1731 wave mmm-dab-harvest-implementation-20260521. Next sequential ID: A-045. |
 
 ---
 
@@ -958,3 +960,38 @@ Required future behaviour:
 > - Any NO above => FUNCTIONAL_PASS: no and REJECTION-PACKAGE or PARTIAL_FUNCTIONAL_DELIVERY.
 
 **Status**: ACTIVE — enforced on product-facing BUILD/T2 invocations
+
+---
+
+### A-044 — Foreman/ECAP Ceremony Files Must Be Pre-Declared in Per-PR Scope Declaration
+
+**Triggered by**: APGI-cmy/maturion-isms#1726 (PR #1731) — scope declaration assembled without accounting for foreman ceremony commits. session-217 learning note identified the same pattern (wave pit-stage8-gate-pass-stage9-initiate-20260519, PR #1679) but was not promoted to a named rule. IAA issued REJECTION-PACKAGE F-001 on both invocations for the same root cause.
+
+**Incident pattern**: When a wave involves ECAP or Foreman ceremony activity, the following files are ALWAYS committed to the branch in addition to deliverables:
+1. `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-{wave}-{date}.md` (ECAP bundle)
+2. `.agent-workspace/foreman-v2/memory/PREHANDOVER-session-{wave}-{date}.md` (Foreman memory copy of PREHANDOVER)
+3. `.agent-workspace/foreman-v2/memory/session-{wave}-{date}.md` (Foreman session memory)
+4. `.agent-workspace/foreman-v2/parking-station/suggestions-log.md` (Foreman parking station update)
+
+These files are committed to the branch and appear in `git diff --name-only origin/main...HEAD`. If the scope declaration is assembled before these ceremony commits — or without explicitly accounting for them — the `FILES_CHANGED` count and file list will be incorrect, causing validate-scope-to-diff.sh to report "empty or malformed" (when format is wrong) or count mismatch (when format is correct but files omitted).
+
+**A-031 carve-out does NOT cover these files.** A-031 applies exclusively to IAA's own ceremony artifacts (`.agent-workspace/independent-assurance-agent/` files only). Foreman/ECAP ceremony files are NOT IAA artifacts and MUST be explicitly declared.
+
+**Permanent Rule**:
+For any wave that includes Foreman memory commits, ECAP PREHANDOVER bundle, or parking station updates, the per-PR scope declaration MUST:
+1. Include all four ceremony file paths listed above (where applicable) in the `FILES_CHANGED` section.
+2. Set `FILES_CHANGED: N` to the total count including ceremony files.
+3. Use the correct backtick format: `` - `path/to/file` `` for every entry.
+4. Be assembled or updated AFTER the final Foreman ceremony commit — not before.
+
+**Scope declaration template note**: All PRODUCT_BUILD, AAWP_MAT, and PRE_BUILD_STAGE_MODEL scope declarations should pre-populate ceremony file slots in a "Governance & Ceremony" subsection of `## FILES_CHANGED`. The four paths above are predictable at wave initialisation; Foreman must add them at scope declaration creation time.
+
+**How this is checked in Phase 3 (A-044 Scope Ceremony Completeness)**:
+> A-044 Foreman/ECAP Ceremony Files:
+> - Foreman memory + ECAP PREHANDOVER bundle in scope declaration? [YES — paths listed / NO — F-001]
+> - Parking station entry in scope declaration? [YES / NO — F-001]
+> - Scope declaration format: backtick entries? [YES / NO — F-001 format failure]
+> - FILES_CHANGED: N matches git diff count? [YES / NO — F-001 count mismatch]
+> Any NO above → F-001 / REJECTION-PACKAGE.
+
+**Status**: ACTIVE — enforced on all PRODUCT_BUILD / AAWP_MAT / PRE_BUILD_STAGE_MODEL invocations where Foreman/ECAP ceremony files are committed to the branch

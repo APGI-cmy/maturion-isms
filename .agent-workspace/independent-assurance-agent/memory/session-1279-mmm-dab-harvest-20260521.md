@@ -1,0 +1,8 @@
+# IAA Session Memory — Session 1279
+
+- session_id: session-1279-mmm-dab-harvest-20260521
+- pr_reviewed: #1731 — Harvest legacy DomainAuditBuilder/MPS/Intent/Criteria generation components with behaviour parity (wave: mmm-dab-harvest-implementation-20260521, HEAD SHA: c351fcdd5d5fd626d90fa2ba1b7e30ff3172173d)
+- overlay_applied: PRODUCT_BUILD_ASSURANCE (primary) + AAWP_MAT (co-trigger via ambiguity rule)
+- verdict: REJECTION-PACKAGE (token: IAA-session-1279-mmm-dab-harvest-20260521-REJECT-001)
+- checks_run: 14 substance/ceremony checks: 13 PASS, 1 FAIL (F-001 — Scope Declaration Non-Compliance SCOPE_SCHEMA_v2 + A-026/A-028)
+- learning_note: F-001 confirms session-217 recurring pattern: ECAP bundle (.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-*), foreman memory PREHANDOVER copy (.agent-workspace/foreman-v2/memory/PREHANDOVER-*), foreman session memory (.agent-workspace/foreman-v2/memory/session-*), and foreman parking station (suggestions-log.md) are ALWAYS committed to the wave branch but repeatedly omitted from per-PR scope declarations. A-031 carve-out does NOT cover these (it covers IAA-own artifacts only). Additionally, the scope declaration at pr-1731.md used wrong format (plain paths, no backticks) and omitted ALL required v2 schema markers — CI validator reported "empty or malformed" (0 files found). Promoted to FAIL-ONLY-ONCE A-044. Substantive deliverables were CLEAN: 7/7 ACs met, 200 tests pass, structural change (ol→div) confirmed, A-042 risk challenge complete, A-043 workflow complete. Carry-Forward Mandate issued: domain-audit-builder__* CSS classes (pre-existing from PR #1711) — no CSS rules defined; next wave must address.
