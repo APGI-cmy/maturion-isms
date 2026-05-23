@@ -1,0 +1,35 @@
+{
+  "pr": 1738,
+  "issue": 1737,
+  "issue_title": "CS2: Clear PIT Build Authorization after Stage 11 builder appointment",
+  "type": "governance-change",
+  "owner": "Copilot",
+  "scope_notes": "Governance-only clearance wave. Updates PIT tracker with explicit CS2 Build Authorization CLEARED statement after Stage 9/10/11 evidence chain confirmation and 147 RED baseline reconciliation; Stage 12 remains NOT_STARTED and must be started only in a separate downstream issue/PR. No runtime/source/test/migration/deployment/workflow changes.",
+  "scope": [
+    ".admin/prs/pr-1738.json",
+    ".agent-admin/assurance/iaa-wave-record-pit-build-authorization-clearance-stage11-20260521.md",
+    ".agent-admin/scope-declarations/pr-1738.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md",
+    "modules/pit/BUILD_PROGRESS_TRACKER.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "none",
+  "evidence_required": [
+    "BUILD_PROGRESS_TRACKER.md contains explicit CS2 Build Authorization CLEARED statement",
+    "Stage 9 gate-pass evidence linked in tracker",
+    "Stage 10 IAA pre-brief/gate-pass evidence linked in tracker",
+    "Stage 11 builder appointment record linked in tracker",
+    "Builder readiness proof pack linked in tracker",
+    "Stage 8 hardening acknowledgement linked in tracker",
+    "147 RED baseline reconciliation decision linked and binding confirmed",
+    "Appointed builder confirmed as pit-specialist",
+    "Stage 12 remains NOT_STARTED in this PR",
+    "Stage 12 execution stated as separate downstream issue/PR",
+    "No runtime/source code, test, migration, deployment config, or workflow changes"
+  ],
+  "merge_authority": "CS2"
+}
