@@ -219,15 +219,41 @@ jobs:
             await fetchFile(`.agent-admin/scope-declarations/pr-${prNumber}.md`);
             await fetchFile(`.functional-delivery/pr-${prNumber}.md`);
 
+            const activeStatePath = `.agent-admin/prs/pr-${prNumber}/active-state.json`;
+            await fetchFile(activeStatePath);
+            await fetchFile(`.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md`);
+
             const bodyArtifactMatch = prBody.match(/Functional-Delivery-Artifact:\s*(\S+)/i);
             if (bodyArtifactMatch) {
               await fetchFile(bodyArtifactMatch[1]);
             }
 
-            await fetchDirectory('.agent-admin/assurance', /^\.agent-admin\/assurance\/(iaa-prebrief-|iaa-token-|iaa-wave-record-).+\.md$/);
-            await fetchDirectory('.agent-admin/prehandover', /^\.agent-admin\/prehandover\/proof-.+\.md$/);
-            await fetchDirectory('.agent-workspace/execution-ceremony-admin-agent/bundles', /^\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.+\.md$/);
-            await fetchDirectory('.agent-workspace/foreman-v2/memory', /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.+\.md$/);
+            const activeStateText = repoFiles[activeStatePath] || '';
+            let activeState = null;
+            try {
+              activeState = activeStateText ? JSON.parse(activeStateText) : null;
+            } catch (error) {
+              core.info(`Active-state JSON for PR #${prNumber} could not be parsed (${error.message}). Using legacy fallback discovery.`);
+            }
+
+            const resolverSelectedPaths = [
+              activeState?.manifest_path,
+              activeState?.scope_path,
+              activeState?.iaa_artifact_path,
+              activeState?.ecap_artifact_path,
+              activeState?.wave_tasks_path,
+            ].filter(Boolean);
+
+            if (resolverSelectedPaths.length > 0) {
+              for (const artifactPath of resolverSelectedPaths) {
+                await fetchFile(artifactPath);
+              }
+            } else {
+              await fetchDirectory('.agent-admin/assurance', /^\.agent-admin\/assurance\/(iaa-prebrief-|iaa-token-|iaa-wave-record-).+\.md$/);
+              await fetchDirectory('.agent-admin/prehandover', /^\.agent-admin\/prehandover\/proof-.+\.md$/);
+              await fetchDirectory('.agent-workspace/execution-ceremony-admin-agent/bundles', /^\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.+\.md$/);
+              await fetchDirectory('.agent-workspace/foreman-v2/memory', /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.+\.md$/);
+            }
 
             fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
             const writeJson = (name, value) => {

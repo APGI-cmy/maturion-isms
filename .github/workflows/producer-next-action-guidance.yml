@@ -285,6 +285,7 @@ jobs:
               activeState?.scope_path,
               activeState?.iaa_artifact_path,
               activeState?.ecap_artifact_path,
+              activeState?.wave_tasks_path,
             ].filter(Boolean);
 
             if (resolverSelectedPaths.length > 0) {
