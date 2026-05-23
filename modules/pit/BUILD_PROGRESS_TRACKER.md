@@ -3,8 +3,8 @@
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
 **Last Updated**: 2026-05-21
-**Updated By**: foreman-v2-agent (Stage 11 formal builder appointment — maturion-isms#1729 / PR #1730; pit-specialist appointed as builder; Build Authorization NOT CLEARED)
-> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 GATE_PASSED (IMPLEMENTATION PLAN COMPLETE AND APPROVED) — STAGE 9 GATE_PASSED (BUILDER CHECKLIST COMPLETE AND APPROVED) — STAGE 10 GATE_PASSED (IAA PRE-BRIEF ACCEPTED; READINESS ONLY; BUILD AUTH NOT CLEARED) — STAGE 11 GATE_PASSED (BUILDER APPOINTED — pit-specialist; BUILD AUTH NOT CLEARED)  
+**Updated By**: foreman-v2-agent (CS2 Build Authorization clearance after Stage 11 builder appointment — PR #1738; appointed builder: pit-specialist; Stage 12 remains NOT_STARTED)
+> **Classification**: ACTIVE — STAGE 4 CS2 APPROVED — STAGE 5 ARCHITECTURE GATE-PASSED (CS2/FOREMAN) — STAGE 5b LFV PACKAGE MERGED — STAGE 6 QA-TO-RED GATE-PASSED (CS2/FOREMAN) — STAGE 7 PBFAG GATE-PASSED (PRE-BUILD PACKAGE) — STAGE 8 GATE_PASSED (IMPLEMENTATION PLAN COMPLETE AND APPROVED) — STAGE 9 GATE_PASSED (BUILDER CHECKLIST COMPLETE AND APPROVED) — STAGE 10 GATE_PASSED (IAA PRE-BRIEF ACCEPTED; READINESS ONLY) — STAGE 11 GATE_PASSED (BUILDER APPOINTED — pit-specialist) — BUILD AUTHORIZATION CLEARED BY CS2 (TRACKER-EXPLICIT) — STAGE 12 NOT_STARTED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
 > **Retrofit Issue**: [maturion-isms#1575](https://github.com/APGI-cmy/maturion-isms/issues/1575) — PIT pre-build functional delivery retrofit (PR #1576)
@@ -443,16 +443,23 @@ The IAA Pre-Brief must include:
 - [x] PBFAG has passed (Stage 7 PBFAG GATE_PASSED)
 - [x] Handover evidence requirements accepted by the builder (per Stage 12 guardrails and BERM)
 - [x] Build wave scope is frozen: no scope changes after appointment without CS2 approval and new appointment cycle
-- [ ] **Build Authorization has NOT been explicitly cleared by CS2** — this remains a separate future gate
+- [x] **Build Authorization explicitly cleared by CS2 in this tracker** after Stage 9/10/11 evidence verification; Stage 12 remains `NOT_STARTED` in this PR and must begin only via a separate downstream Stage 12 execution issue/PR
 
 **Completion Date**: 2026-05-21  
 **Notes**: Stage 11 formal builder appointment executed per maturion-isms#1729 / PR #1730. `pit-specialist` is appointed as the PIT Stage 12 builder. All Stage 11 preconditions are satisfied. Builder has confirmed the reconciled 147-test baseline (CS2 Option B) and acknowledged all 8 Stage 8 hardening artifacts with concrete execution use statements, including complete route/screen/state maps, timeline engine strategy, data/API/RLS maps, evidence/audit/notification plans, denied-path plans, LFV evidence collection plan, and top 10 failure modes.
 
-> **Build Authorization**: **NOT CLEARED** — Stage 12 build execution is blocked until CS2 explicitly clears Build Authorization in this tracker per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`.
+> **CS2 Build Authorization Clearance (explicit tracker statement)**: **CLEARED** by CS2 (`@APGI-cmy`) in this tracker update after confirming the required positive path in `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`:
+> - Stage 9 gate-pass evidence: `modules/pit/09-builder-checklist/stage9-gate-pass-review.md`
+> - Stage 10 IAA pre-brief/gate-pass evidence: `modules/pit/10-iaa-pre-brief/iaa-response.md` and `modules/pit/10-iaa-pre-brief/stage10-gate-pass-review.md`
+> - Stage 11 builder appointment record: `modules/pit/11-builder-appointment/stage11-builder-appointment.md`
+> - Builder acknowledgement/readiness package: `modules/pit/11-builder-appointment/builder-readiness-proof-pack.md`
+> - Stage 8 hardening acknowledgement: `modules/pit/11-builder-appointment/stage8-hardening-acknowledgement.md`
+> - RED baseline reconciliation decision: `modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md` (**147 baseline is binding**, including `PIT-RED-ROUTE-029`, `PIT-RED-TIMELINE-011`, `PIT-RED-TIMELINE-012`)
+> - Appointed builder confirmed: `pit-specialist`
 >
-> **Stage 12**: **NOT_STARTED** — Stage 12 build execution must not begin until Build Authorization is explicitly cleared.
+> **Stage 12**: **NOT_STARTED** — This PR is governance-only clearance. Stage 12 execution must be initiated only in a separate downstream Stage 12 execution issue/PR.
 >
-> **Non-overclaim**: This Stage 11 appointment does **not** start Stage 12 build execution, does **not** clear Build Authorization, does **not** claim tests are GREEN, does **not** claim live deployment proof exists, and does **not** claim FUNCTIONAL_PASS.
+> **Non-overclaim**: The Stage 11 appointment itself does **not** start Stage 12 build execution and does **not** imply automatic authorization; Build Authorization clearance is valid only via the explicit CS2 tracker statement recorded above. This update does **not** claim tests are GREEN, does **not** claim live deployment proof exists, and does **not** claim FUNCTIONAL_PASS.
 
 ---
 
@@ -482,18 +489,17 @@ Build completion requires ALL of the following evidence categories. Missing any 
 - [ ] No unresolved critical functional gaps: all P0 and P1 FRS requirements verified functional in deployed environment
 
 **Completion Date**: N/A  
-**Notes**: Core build not yet started. However, as an artifact of Wave 9.7 AIMC integration
+**Notes**: Core build not yet started. Build Authorization is now explicitly CLEARED by CS2 in this tracker update, but Stage 12 execution remains intentionally not started in this PR and must begin in a separate downstream Stage 12 execution issue/PR. However, as an artifact of Wave 9.7 AIMC integration
 (pre-12-stage), `src/services/aimc-wiring.ts` exists as an AIMC integration component and
 `pit-advisor.md` persona exists in `packages/ai-centre/src/agents/`. These are integration
-artifacts, not core PIT module build deliverables. Mapped from old Stage 5. Build Authorization
-remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment is complete and CS2 has explicitly cleared Build Authorization.
+artifacts, not core PIT module build deliverables. Mapped from old Stage 5.
 
 ---
 
 ## Current Stage Summary
 
 **Current Stage**:
-- Stage 11 Builder Appointment **GATE_PASSED — BUILDER_APPOINTED** (maturion-isms#1729 / PR #1730; 2026-05-21; pit-specialist appointed; Build Authorization NOT CLEARED; Stage 12 NOT_STARTED)
+- Stage 11 Builder Appointment **GATE_PASSED — BUILDER_APPOINTED** (maturion-isms#1729 / PR #1730; 2026-05-21; pit-specialist appointed; Stage 12 NOT_STARTED)
 - Stage 10 IAA Pre-Brief **GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED** (2026-05-20; readiness-only gate; blocker integrity preserved via `iaa-response.md` + `stage10-gate-pass-review.md`)
 - Stage 9 Builder Checklist **GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED** (maturion-isms#1687; review 2026-05-19; reconfirmed 2026-05-20 per stage9-post-stage8-hardening-reconfirmation.md)
 - Stage 8 Implementation Plan **GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED** (maturion-isms#1679; review 2026-05-19; all 9 Functional-Delivery Guardrails verified PASS; builder-executable hardening addendum artifacts filed under `modules/pit/08-implementation-plan/` via PR #1693)
@@ -505,14 +511,14 @@ remains NOT CLEARED — Stage 12 cannot begin until Stage 11 Builder Appointment
 - Stage 2 UX CS2 re-confirmed
 - Stage 3 FRS CS2 re-confirmed  
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576 (2026-05-08)  
-**Overall Progress**: ~91% complete (Stages 1–11 complete/gate-passed in pre-build scope; Stage 12 not started; Build Authorization NOT CLEARED — weighted estimate: Stage 12 represents ~22% of total module effort; completed pre-build stages 1–11 represent ~78% of estimated total)  
-**Build Authorization**: **NOT CLEARED** — Stage 12 implementation is blocked. CS2 must explicitly clear Build Authorization in this tracker per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`. Appointed builder is `pit-specialist`.  
-**Blockers**: Build Authorization NOT CLEARED — Stage 12 implementation blocked until CS2 explicitly clears. FUNCTIONAL_PASS not claimable until PIT is deployed and LFV workflow evidence collected.  
+**Overall Progress**: ~91% complete (Stages 1–11 complete/gate-passed in pre-build scope; Stage 12 not started; Build Authorization CLEARED by CS2 — weighted estimate: Stage 12 represents ~22% of total module effort; completed pre-build stages 1–11 represent ~78% of estimated total)  
+**Build Authorization**: **CLEARED** — explicitly cleared by CS2 (`@APGI-cmy`) in this tracker update per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md` after Stage 9/10/11 evidence verification and 147 RED baseline reconciliation confirmation. Appointed builder is `pit-specialist`.  
+**Blockers**: Stage 12 execution has not started in this governance-only PR and must be initiated in a separate downstream Stage 12 execution issue/PR. `FUNCTIONAL_PASS` remains not claimable until PIT is deployed and LFV workflow evidence is collected.  
 **Next Steps**:
-1. Build Authorization clearance: CS2 must explicitly state clearance in this tracker per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`
-2. Alternatively, CS2 may issue a separate downstream issue for Stage 12 build execution planning
-3. Keep Stage 12 NOT_STARTED until Build Authorization is explicitly cleared
-4. Keep Build Authorization NOT CLEARED until CS2 explicit clearance statement is recorded
+1. Open/execute a separate downstream Stage 12 issue/PR for PIT build execution (W8.1+), using this tracker-cleared Build Authorization as the entry gate
+2. Keep Stage 12 `NOT_STARTED` in this PR
+3. Preserve governance-only scope in this PR (no runtime/source/test/migration/deployment/workflow changes)
+4. Maintain 147 RED baseline as binding for Stage 12 execution waves
 **MMM-Derived Learning Controls (Carry-Forward)**:
 PIT carries forward 8 build-process improvement controls from the MMM module build. These are
 documented in the App Description (§ MMM Lessons Promoted Into PIT) and the improvement register:
@@ -540,11 +546,11 @@ documented in the App Description (§ MMM Lessons Promoted Into PIT) and the imp
 - [x] Stage 7 PBFAG: **GATE_PASSED — PBFAG_COMPLETE_AND_APPROVED** (2026-05-19) — package reviewed against Stage 7 required artifacts and guardrails in pre-build definition/evidence-contract scope (no live execution or FUNCTIONAL_PASS claim)
 - [x] Stage 8 Implementation Plan: **GATE_PASSED — IMPLEMENTATION_PLAN_COMPLETE_AND_APPROVED** (maturion-isms#1679; 2026-05-19) — all 22 issue checklist items PASS; all 9 Functional-Delivery Guardrails PASS; review authority: foreman-v2-agent; review evidence: `modules/pit/08-implementation-plan/stage8-gate-pass-review.md`
 - [x] Stage 9 Builder Checklist: **GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED** (maturion-isms#1687; review authority: foreman-v2-agent; 2026-05-19) — `builder-checklist.md` and `stage9-gate-pass-review.md` filed; all 19 criteria PASS; all 8 Functional-Delivery Guardrails PASS; reconfirmed valid after Stage 8 hardening (maturion-isms#1694 / PR #1695 — 2026-05-20 — see `stage9-post-stage8-hardening-reconfirmation.md`)
-- [x] Stage 10 IAA Pre-Brief: **GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED** (maturion-isms#1698 / PR #1701; review authority: foreman-v2-agent + IAA; 2026-05-20) — `iaa-pre-brief.md`, `iaa-response.md`, `stage10-gate-pass-review.md` filed; RED reconciliation 147-test CS2 Option B closure recorded; Build Authorization NOT CLEARED
-- [x] Stage 11 Builder Appointment: **GATE_PASSED — BUILDER_APPOINTED** (maturion-isms#1729 / PR #1730; review authority: foreman-v2-agent; 2026-05-21) — pit-specialist appointed; `stage11-builder-appointment.md`, `builder-readiness-proof-pack.md` (all 8 sections), `stage8-hardening-acknowledgement.md` (all 8 artifacts), `stage11-appointment-preconditions.md` (all TBD resolved) filed; 147-test baseline acknowledged; Build Authorization NOT CLEARED; Stage 12 NOT_STARTED
+- [x] Stage 10 IAA Pre-Brief: **GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED** (maturion-isms#1698 / PR #1701; review authority: foreman-v2-agent + IAA; 2026-05-20) — `iaa-pre-brief.md`, `iaa-response.md`, `stage10-gate-pass-review.md` filed; RED reconciliation 147-test CS2 Option B closure recorded
+- [x] Stage 11 Builder Appointment: **GATE_PASSED — BUILDER_APPOINTED** (maturion-isms#1729 / PR #1730; review authority: foreman-v2-agent; 2026-05-21) — pit-specialist appointed; `stage11-builder-appointment.md`, `builder-readiness-proof-pack.md` (all 8 sections), `stage8-hardening-acknowledgement.md` (all 8 artifacts), `stage11-appointment-preconditions.md` (all TBD resolved) filed; 147-test baseline acknowledged; Stage 12 NOT_STARTED
 - [x] Traceability chain: App Description ✅ → UX Workflow (CS2_RECONFIRMED) → FRS (CS2_RECONFIRMED) → TRS (CS2_APPROVED) → Architecture (GATE_PASSED) → LFV Package (MERGED) → QA-to-Red (GATE_PASSED)
 - [x] Stage 1 approval obtained — Johan Ras / CS2 approved 2026-05-06 (ref: maturion-isms#1540)
-- [x] Build Authorization: **NOT CLEARED** — Stage 12 implementation blocked; CS2 must explicitly clear per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`; appointed builder is pit-specialist
+- [x] Build Authorization: **CLEARED (CS2 explicit tracker statement)** — clearance recorded in this tracker update per `modules/pit/08-implementation-plan/build-authorization-clearance-path.md`; evidence linked: Stage 9 gate-pass (`modules/pit/09-builder-checklist/stage9-gate-pass-review.md`), Stage 10 IAA (`modules/pit/10-iaa-pre-brief/iaa-response.md`, `modules/pit/10-iaa-pre-brief/stage10-gate-pass-review.md`), Stage 11 appointment (`modules/pit/11-builder-appointment/stage11-builder-appointment.md`), builder readiness proof pack (`modules/pit/11-builder-appointment/builder-readiness-proof-pack.md`), Stage 8 hardening acknowledgement (`modules/pit/11-builder-appointment/stage8-hardening-acknowledgement.md`), 147 baseline reconciliation (`modules/pit/11-builder-appointment/red-baseline-reconciliation-decision.md`); appointed builder is pit-specialist; Stage 12 remains NOT_STARTED in this PR and must start in a separate downstream Stage 12 issue/PR
 - [x] Evidence artifacts created for Stage 1 (checklist at `.agent-admin/evidence/app-description-checklist/pit-20260506.md`)
 - [x] Stage 2 completion evidence: `.agent-admin/evidence/stage2-completion-checklist/pit-stage2-20260506.md`
 - [x] Stage 3 FRS artifact updated: `modules/pit/02-frs/functional-requirements.md` (v0.2-hardened per maturion-isms#1556)
