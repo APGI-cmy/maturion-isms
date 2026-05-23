@@ -17,7 +17,8 @@ IAA_PREFLIGHT_BRIEF_REVIEWED: yes
 IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
 IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T12:50:00Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
-BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes — delegated scope is limited to the preliminary card-layout/accessibility/test hardening slice documented in `.admin/prs/pr-1731.json` and `.agent-admin/scope-declarations/pr-1731.md`.
+BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
+BUILDER_DELEGATION_NOTE: delegated scope is limited to the preliminary card-layout/accessibility/test hardening slice documented in `.admin/prs/pr-1731.json` and `.agent-admin/scope-declarations/pr-1731.md`.
 
 ## Wave objective
 
