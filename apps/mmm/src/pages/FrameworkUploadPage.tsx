@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { supabase, getEdgeInvokeHeaders } from '@/lib/supabase';
 
 function AppNav() {
@@ -43,13 +43,27 @@ const MODES = [
   },
 ];
 
+function resolveModeFromQuery(modeParam: string | null): 'A' | 'B' | 'C' {
+  const normalized = (modeParam ?? '').trim().toUpperCase();
+  if (normalized === 'A' || normalized === 'VERBATIM') return 'A';
+  if (normalized === 'C' || normalized === 'HYBRID') return 'C';
+  return 'B';
+}
+
 export default function FrameworkUploadPage() {
-  const [mode, setMode] = useState<'A'|'B'|'C'>('B');
+  const [searchParams] = useSearchParams();
+  const requestedMode = resolveModeFromQuery(searchParams.get('mode'));
+  const [mode, setMode] = useState<'A'|'B'|'C'>(requestedMode);
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [started, setStarted] = useState(false);
   const [modeAValidationError, setModeAValidationError] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setMode(requestedMode);
+  }, [requestedMode]);
+
   const mutation = useMutation({
     mutationFn: async () => {
       const initFramework = async (name: string, sourceType: 'GENERATED' | 'HYBRID' | 'VERBATIM') => {
@@ -137,13 +151,13 @@ export default function FrameworkUploadPage() {
       <main className="upload-page">
         <div className="container">
           <div className="upload-page__back">
-            <Link className="upload-page__back-link" to="/frameworks">← Back to Frameworks</Link>
+            <Link className="upload-page__back-link" to="/framework-origin">← Back to Criteria Mode</Link>
           </div>
 
           <div className="page-header">
             <h1 className="page-header__title">Upload Framework Source</h1>
             <p className="page-header__subtitle">
-              Choose how you want to create your maturity framework. Select a mode below and press Start.
+              Step 2 of 3: choose your build route, then start generation to continue into the domain workspace.
             </p>
           </div>
 
