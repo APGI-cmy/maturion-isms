@@ -10,15 +10,15 @@ Use this issue body to record the PR #233 governance learning for CodexAdvisor:
 **What Happened**: You correctly modified 5 builder agent files in `.github/agents/` to restore Copilot discovery.
 
 **Governance Rule Clarification**:
-- ✅ **YOU MAY**: Modify `.github/agents/**` files (agent-factory protocol authority)
-- ❌ **OTHER AGENTS MAY NOT**: governance-liaison, foreman, builders MUST NOT modify agent files
-- ✅ **EXCEPTION**: CS2-approved issues may authorize specific changes
+- ❌ **DEFAULT RULE**: No agent may modify `.github/agents/**` files unless the active canon explicitly permits it.
+- ✅ **ONLY ALLOWED WRITER**: CodexAdvisor may modify `.github/agents/**` files only with explicit CS2 permission via a CS2-approved issue.
+- ❌ **ALL OTHER AGENTS**: `governance-liaison-isms-agent`, foreman, builders, and every non-CodexAdvisor agent must not modify agent files.
 
-**This PR**: ✅ CORRECT - You have authority; changes were structural reformatting only.
+**This PR**: ✅ CORRECT - The `.github/agents/**` edits were within the explicit CS2-approved issue scope and therefore permitted for CodexAdvisor.
 
-**Record in Memory**: Only codex-advisor (you) may write to `.github/agents/**` files. Others must delegate to you.
+**Record in Memory**: `.github/agents/**` writes are prohibited by default. Only CodexAdvisor may perform them, and only when explicit CS2 permission is granted via a CS2-approved issue. All other agents must delegate.
 
-**Authority**: CS2 clarification 2026-02-16, governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md
+**Authority**: governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md
 ```
 
 ## Current Canon Guardrail
