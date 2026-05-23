@@ -17,7 +17,8 @@ IAA_PREFLIGHT_BRIEF_REVIEWED: yes
 IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-pit-w8.1-auth-router-shell-20260521.md
 IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T15:07:29Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
-BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes — Build Authorization is CLEARED in `modules/pit/BUILD_PROGRESS_TRACKER.md` via PR #1738; Stage 12 execution remains scoped to W8.1 auth/router/shell and cannot claim FUNCTIONAL_PASS without required runtime evidence gates.
+BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
+BUILDER_DELEGATION_NOTE: Build Authorization is CLEARED in `modules/pit/BUILD_PROGRESS_TRACKER.md` via PR #1738; Stage 12 execution remains scoped to W8.1 auth/router/shell and cannot claim FUNCTIONAL_PASS without required runtime evidence gates.
 
 ## Wave objective
 

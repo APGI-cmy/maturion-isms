@@ -4,7 +4,7 @@
 **Date**: 2026-05-21  
 **Branch**: copilot/start-pit-w8-1-auth-router-shell  
 **Issue**: PENDING — Stage 12: Start PIT W8.1 Auth, Router, Shell build execution  
-**PR**: PENDING  
+**PR**: #1741
 **IAA Version**: 6.2.0 / Contract 2.10.0  
 **Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE  
 **STOP-AND-FIX**: ACTIVE  
@@ -24,7 +24,7 @@ Anti-regression obligations: [yes — apply FUNCTIONAL-BEHAVIOUR-REGISTRY NBR-00
 
 IAA_PREFLIGHT_BRIEF
 
-PR: PENDING
+PR: #1741
 ISSUE: PENDING - Stage 12: Start PIT W8.1 Auth, Router, Shell build execution
 WAVE: pit-w8.1-auth-router-shell
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
