@@ -108,10 +108,14 @@ export function DomainAuditBuilder({
       ) : null}
 
       {/* Three-step workflow (legacy order preserved) */}
-      <ol className="domain-audit-builder__steps" aria-label="Domain audit workflow steps">
+      <div
+        className="domain-audit-builder__steps"
+        role="list"
+        aria-label="Domain audit workflow steps"
+      >
         {steps.map((step) => (
-          <li key={step.id} className="domain-audit-builder__step">
-            <div className="domain-audit-builder__step-card">
+          <div key={step.id} className="domain-audit-builder__step" role="listitem">
+            <div className="domain-audit-builder__step-card" data-testid="domain-audit-step-card">
               <span className="domain-audit-builder__step-number">{step.order}</span>
               <div className="domain-audit-builder__step-body">
                 <h3 className="domain-audit-builder__step-title">{step.title}</h3>
@@ -144,9 +148,9 @@ export function DomainAuditBuilder({
                 {step.title} ({step.count})
               </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ol>
+      </div>
 
       {/* Modal/panel adaptations — legacy child component equivalents */}
       <MPSSelectionModal
