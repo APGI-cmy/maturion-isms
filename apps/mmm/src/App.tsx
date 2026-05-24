@@ -56,6 +56,8 @@ export default function App() {
             <Route path="/pit-export/:id" element={<ProtectedRoute><PitExportPage /></ProtectedRoute>} />
             <Route path="/assessment/framework" element={<ProtectedRoute><AssessmentFrameworkHandoffPage /></ProtectedRoute>} />
             <Route path="/assessment/framework/domain/:domainId" element={<ProtectedRoute><DomainWorkspacePage /></ProtectedRoute>} />
+            <Route path="/assessment-framework" element={<ProtectedRoute><AssessmentFrameworkHandoffPage /></ProtectedRoute>} />
+            <Route path="/audit/domain/:domainId" element={<ProtectedRoute><DomainWorkspacePage /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
       </ErrorBoundary>

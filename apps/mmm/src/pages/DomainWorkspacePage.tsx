@@ -1,6 +1,26 @@
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { DomainAuditBuilder } from '../components/assessment/DomainAuditBuilder';
 
+const DOMAIN_LABELS: Record<string, string> = {
+  'leadership-and-governance': 'Leadership and Governance',
+  'process-integrity': 'Process Integrity',
+  'people-and-culture': 'People and Culture',
+  protection: 'Protection',
+  'proof-it-works': 'Proof It Works',
+};
+
+function toDomainLabel(domainId: string): string {
+  if (DOMAIN_LABELS[domainId]) {
+    return DOMAIN_LABELS[domainId];
+  }
+
+  return domainId
+    .split('-')
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(' ');
+}
+
 function AppNav() {
   return (
     <header className="app-shell__header">
@@ -26,11 +46,11 @@ export default function DomainWorkspacePage() {
   // Prefer the canonical domain label passed as a query param.
   // This ensures the workspace always shows "Process Integrity" etc.,
   // never an internal slug or placeholder identifier.
-  const domainLabel = searchParams.get('domain_name') ?? domainId ?? '';
+  const domainLabel = searchParams.get('domain_name') ?? (domainId ? toDomainLabel(domainId) : '');
 
   const backPath = frameworkId
     ? `/assessment/framework?framework_id=${frameworkId}`
-    : '/frameworks';
+    : '/assessment/framework';
 
   if (!domainId) {
     return (

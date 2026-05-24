@@ -65,6 +65,10 @@ export function DomainAuditBuilder({
     sourceDomainId,
   });
 
+  // Always prefer the resolved MMM domain row ID for persistence operations.
+  // Falls back to sourceDomainId and then route slug only when needed.
+  const persistedDomainId = domain?.id ?? sourceDomainId ?? domainId;
+
   return (
     <div className="domain-audit-builder" data-testid="domain-audit-builder">
       <div className="domain-audit-builder__summary" data-testid="domain-audit-summary">
@@ -154,7 +158,7 @@ export function DomainAuditBuilder({
 
       {/* Modal/panel adaptations — legacy child component equivalents */}
       <MPSSelectionModal
-        domainId={domainId}
+        domainId={persistedDomainId}
         domainName={domain?.name ?? domainName ?? domainId}
         open={isMPSModalOpen}
         mpsRows={mpsRows}
@@ -163,7 +167,7 @@ export function DomainAuditBuilder({
         onClose={() => setIsMPSModalOpen(false)}
       />
       <IntentCreator
-        domainId={domainId}
+        domainId={persistedDomainId}
         domainName={domain?.name ?? domainName ?? domainId}
         open={isIntentCreatorOpen}
         mpsRows={mpsRows}
@@ -172,7 +176,7 @@ export function DomainAuditBuilder({
         onClose={() => setIsIntentCreatorOpen(false)}
       />
       <CriteriaManagement
-        domainId={domainId}
+        domainId={persistedDomainId}
         domainName={domain?.name ?? domainName ?? domainId}
         open={isCriteriaManagementOpen}
         mpsRows={mpsRows}
