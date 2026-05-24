@@ -232,7 +232,7 @@ describe("T-MMM-S6-035: FrameworkReviewPage invalidates ['frameworks', id] on co
   it('routes compile success to legacy framework workspace', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
     expect(src).toContain('/assessment/framework');
-    expect(src).toContain('window.location.assign');
+    expect(src).toContain('navigate(');
     expect(src).toContain('framework_id=');
   });
 });
@@ -907,5 +907,21 @@ describe('T-MMM-S6-189: Legacy step model preserved — Create MPSs / Create Int
   it('useDomainAuditBuilder hook exposes handleStepClick (step dispatch contract)', () => {
     const src = readFile('apps/mmm/src/hooks/useDomainAuditBuilder.ts');
     expect(src).toContain('handleStepClick');
+  });
+});
+
+// ─── T-MMM-S6-191: FrameworkReviewPage must not dead-end when status is REVIEW ─
+// RED: forces a direct continuation path to the framework workspace even when
+// compile is disabled (for example after successful compile has already moved
+// status to REVIEW and proposed rows are no longer present).
+describe('T-MMM-S6-191: FrameworkReviewPage provides non-dead-end workspace continuation in REVIEW state', () => {
+  it('FrameworkReviewPage contains an explicit "Open Framework Workspace" action', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
+    expect(src).toContain('Open Framework Workspace');
+  });
+  it('FrameworkReviewPage continuation action routes to /assessment/framework with framework_id context', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
+    expect(src).toContain('/assessment/framework');
+    expect(src).toContain('framework_id=');
   });
 });
