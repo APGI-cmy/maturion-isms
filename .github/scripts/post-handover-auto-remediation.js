@@ -8,6 +8,7 @@ const GOVERNANCE_CONTROL_PATTERNS = [
   /^\.github\/workflows\//,
   /^\.github\/scripts\//,
   /^\.github\/agents\//,
+  /^\.agent-admin\//,
 ];
 
 function normalize(value) {
