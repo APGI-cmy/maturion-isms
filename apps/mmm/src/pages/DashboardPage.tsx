@@ -24,6 +24,115 @@ function getInvokeStatus(error: unknown): number | undefined {
   return typeof status === 'number' ? status : undefined;
 }
 
+type WorkflowStage = 'LOGIN' | 'ONBOARDING' | 'MODE_SELECTION' | 'FRAMEWORK_BUILD' | 'DOMAIN_WORKSPACE';
+
+interface WorkflowNextStep {
+  href: string;
+  label: string;
+  description: string;
+}
+
+interface WorkflowSummary {
+  stage: WorkflowStage;
+  nextStep: WorkflowNextStep;
+}
+
+async function resolveWorkflowSummary(): Promise<WorkflowSummary> {
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+
+  const userId = sessionData.session?.user?.id;
+  if (!userId) {
+    return {
+      stage: 'LOGIN',
+      nextStep: {
+        href: '/login',
+        label: 'Sign In',
+        description: 'Sign in to resume your maturity workflow.',
+      },
+    };
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('mmm_profiles')
+    .select('organisation_id,current_framework_id')
+    .eq('id', userId)
+    .maybeSingle();
+  if (profileError) throw profileError;
+
+  if (!profile?.organisation_id) {
+    return {
+      stage: 'ONBOARDING',
+      nextStep: {
+        href: '/onboarding',
+        label: 'Click Here To Start',
+        description: 'Complete Get To Know You onboarding so Maturion can tailor guidance to your organisation.',
+      },
+    };
+  }
+
+  const { data: organisation, error: orgError } = await supabase
+    .from('mmm_organisations')
+    .select('onboarding_complete')
+    .eq('id', profile.organisation_id)
+    .maybeSingle();
+  if (orgError) throw orgError;
+
+  if (!organisation?.onboarding_complete) {
+    return {
+      stage: 'ONBOARDING',
+      nextStep: {
+        href: '/onboarding',
+        label: 'Continue Onboarding',
+        description: 'Finish onboarding so criteria setup can be unlocked.',
+      },
+    };
+  }
+
+  const { data: frameworks, error: frameworksError } = await supabase
+    .from('mmm_frameworks')
+    .select('id,status,updated_at')
+    .eq('organisation_id', profile.organisation_id)
+    .order('updated_at', { ascending: false })
+    .limit(1);
+  if (frameworksError) throw frameworksError;
+
+  const latestFramework = frameworks?.[0] ?? null;
+  if (!latestFramework?.id) {
+    return {
+      stage: 'MODE_SELECTION',
+      nextStep: {
+        href: '/framework-origin',
+        label: 'Choose Criteria Mode',
+        description: 'Select Verbatim, New Generation, or Hybrid before building your first domain criteria set.',
+      },
+    };
+  }
+
+  const frameworkId = profile.current_framework_id ?? latestFramework.id;
+  const status = String(latestFramework.status ?? '').toUpperCase();
+
+  if (status === 'DRAFT') {
+    return {
+      stage: 'FRAMEWORK_BUILD',
+      nextStep: {
+        href: `/frameworks/${frameworkId}/review`,
+        label: 'Continue Framework Build',
+        description: 'Review, compile, and move your framework into the legacy domain workspace.',
+      },
+    };
+  }
+
+  return {
+    stage: 'DOMAIN_WORKSPACE',
+    nextStep: {
+      href: `/assessment/framework?framework_id=${encodeURIComponent(frameworkId)}`,
+      label: 'Open Domain Workspace',
+      description: 'Enter the 5-domain maturity workspace to generate MPS, intent statements, and criteria.',
+    },
+  };
+}
+
 function AppNav() {
   return (
     <header className="app-shell__header">
@@ -63,7 +172,17 @@ export default function DashboardPage() {
     staleTime: 30_000, // TR-005: cache for dashboard render performance
   });
 
-  if (isLoading) {
+  const {
+    data: workflow,
+    isLoading: workflowLoading,
+    isError: workflowError,
+  } = useQuery({
+    queryKey: ['dashboard-workflow'],
+    queryFn: resolveWorkflowSummary,
+    staleTime: 30_000,
+  });
+
+  if (isLoading || workflowLoading) {
     return (
       <div className="app-shell">
         <AppNav />
@@ -76,35 +195,16 @@ export default function DashboardPage() {
     );
   }
 
-  if (isError) {
-    const isPermissionError = (error as any)?.status === 403;
-    return (
-      <div className="app-shell">
-        <AppNav />
-        <main className="dashboard-page">
-          <div className="container">
-            <div className="page-header">
-              <h1 className="page-header__title">Maturity Dashboard</h1>
-            </div>
-            {isPermissionError ? (
-              <div className="alert alert-error" role="alert" data-testid="dashboard-permission-error">
-                Your account does not have the required role (ADMIN or LEAD_AUDITOR) to view dashboard
-                data. Contact your organisation administrator to request access.
-              </div>
-            ) : (
-              <div className="alert alert-error" role="alert" data-testid="dashboard-error">
-                Unable to load dashboard data. Please check your connection and try again.
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  const pipelineStages: Array<{ id: string; status: string; count: number }> = dashboard?.pipeline_stages ?? [];
-  const sevenDayTrend = dashboard?.seven_day_trend;
-  const hasData = pipelineStages.length > 0 || (sevenDayTrend?.assessments_started ?? 0) > 0;
+  const dashboardStatus = isError ? (error as { status?: number } | undefined) : undefined;
+  const isPermissionError = dashboardStatus?.status === 403;
+  const pipelineStages: Array<{ id: string; status: string; count: number }> = isError ? [] : (dashboard?.pipeline_stages ?? []);
+  const sevenDayTrend = isError ? null : dashboard?.seven_day_trend;
+  const hasData = !isError && (pipelineStages.length > 0 || (sevenDayTrend?.assessments_started ?? 0) > 0);
+  const nextStep = workflow?.nextStep ?? {
+    href: '/onboarding',
+    label: 'Click Here To Start',
+    description: 'Complete onboarding to begin your maturity workflow.',
+  };
 
   return (
     <div className="app-shell">
@@ -115,18 +215,33 @@ export default function DashboardPage() {
             <h1 className="page-header__title">Maturity Dashboard</h1>
             <p className="page-header__subtitle">Overview of your maturity programme status.</p>
           </div>
+          {isError ? (
+            <div
+              className="alert alert-error"
+              role="status"
+              data-testid={isPermissionError ? 'dashboard-permission-error' : 'dashboard-error'}
+            >
+              {isPermissionError
+                ? 'Telemetry is not available yet for this account role. You can still continue with setup below.'
+                : 'Live dashboard telemetry is temporarily unavailable. You can still continue with setup below.'}
+            </div>
+          ) : null}
 
           {!hasData ? (
             <div className="dashboard-empty-state" data-testid="dashboard-empty-state">
               <div className="dashboard-empty-state__icon" aria-hidden="true">📁</div>
-              <h2 className="dashboard-empty-state__title">No framework source-pack data has been uploaded yet</h2>
+              <h2 className="dashboard-empty-state__title">Your dashboard is ready — let&apos;s start the workflow</h2>
               <p className="dashboard-empty-state__body">
-                To begin your maturity assessment, upload a framework source-pack document.
-                Once uploaded, your pipeline status and trend data will appear here.
+                {nextStep.description}
               </p>
-              <Link className="btn btn-primary" to="/frameworks/upload" data-testid="dashboard-upload-cta">
-                Upload Framework Source-Pack
+              <Link className="btn btn-primary" to={nextStep.href} data-testid="dashboard-upload-cta">
+                {nextStep.label}
               </Link>
+              {workflowError ? (
+                <p className="dashboard-empty-state__body" role="status" style={{ marginTop: '0.75rem' }}>
+                  We couldn&apos;t verify progress state exactly, so default guidance is shown.
+                </p>
+              ) : null}
             </div>
           ) : (
             <>
@@ -162,7 +277,8 @@ export default function DashboardPage() {
           )}
 
           <div className="dashboard-actions">
-            <Link className="btn btn-outline" to="/frameworks/upload">Upload Framework Source-Pack</Link>
+            <Link className="btn btn-outline" to={nextStep.href}>{nextStep.label}</Link>
+            <Link className="btn btn-outline" to="/framework-origin">Criteria Mode</Link>
             <Link className="btn btn-outline" to="/frameworks">View Frameworks</Link>
           </div>
         </div>
