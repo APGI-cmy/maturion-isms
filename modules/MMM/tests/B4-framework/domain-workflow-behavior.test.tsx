@@ -474,6 +474,11 @@ describe('T-MMM-S6-AI-001: AI generation lifecycle — MPS generation', () => {
     expect(items).toHaveLength(2);
     expect(items[0].textContent).toContain('Access Control');
     expect(items[1].textContent).toContain('Audit Logging');
+    // Verify intent and rationale are also visible on generated MPS cards (legacy parity)
+    expect(items[0].textContent).toContain('Ensure access is governed');
+    expect(items[0].textContent).toContain('Security baseline');
+    expect(items[1].textContent).toContain('Log all audit events');
+    expect(items[1].textContent).toContain('Traceability');
   });
 
   it('"Accept All" selects all generated items', async () => {
@@ -834,6 +839,66 @@ describe('T-MMM-S6-AI-004: generation state resets when domainId changes (NBR-00
       </QueryClientProvider>,
     );
     expect(screen.queryByTestId('generated-criteria-list-mps-1')).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// T-MMM-S6-AI-005: Legacy harvest parity — three generation step cards render
+// ---------------------------------------------------------------------------
+
+describe('T-MMM-S6-AI-005: DomainAuditBuilder renders three card-based step items (legacy harvest parity)', () => {
+  beforeEach(() => {
+    configureScenario({ domainRows: [{ id: 'domain-1', name: 'Process Integrity', code: 'PI', sort_order: 1, framework_id: 'framework-1' }], mpsRows: baseMpsRows, criteriaRows: [] });
+  });
+  afterEach(() => { cleanup(); });
+
+  it('renders three domain audit step cards (not an ordered list)', async () => {
+    renderDomainWorkspace();
+    await screen.findByTestId('domain-audit-builder');
+    const stepCards = screen.getAllByTestId('domain-audit-step-card');
+    expect(stepCards).toHaveLength(3);
+  });
+
+  it('step cards container is NOT an ordered list element (legacy card workflow, not list shell)', async () => {
+    renderDomainWorkspace();
+    await screen.findByTestId('domain-audit-builder');
+    const stepCards = screen.getAllByTestId('domain-audit-step-card');
+    // The card elements themselves (and their direct parents) must not be <li> or <ol>
+    for (const card of stepCards) {
+      expect(card.tagName.toLowerCase()).not.toBe('li');
+      expect(card.tagName.toLowerCase()).not.toBe('ol');
+      const parent = card.parentElement;
+      if (parent) {
+        expect(parent.tagName.toLowerCase()).not.toBe('ol');
+      }
+      // No ancestor of any card should be an <ol>
+      expect(card.closest('ol')).toBeNull();
+    }
+    // The steps container element itself must not be an <ol>
+    const stepsContainer = document.querySelector('.domain-audit-builder__steps');
+    expect(stepsContainer).not.toBeNull();
+    expect(stepsContainer!.tagName.toLowerCase()).not.toBe('ol');
+  });
+
+  it('first step card renders "Create MPSs"', async () => {
+    renderDomainWorkspace();
+    await screen.findByTestId('domain-audit-builder');
+    const stepCards = screen.getAllByTestId('domain-audit-step-card');
+    expect(stepCards[0].textContent).toContain('Create MPSs');
+  });
+
+  it('second step card renders "Create Intent"', async () => {
+    renderDomainWorkspace();
+    await screen.findByTestId('domain-audit-builder');
+    const stepCards = screen.getAllByTestId('domain-audit-step-card');
+    expect(stepCards[1].textContent).toContain('Create Intent');
+  });
+
+  it('third step card renders "Create Criteria"', async () => {
+    renderDomainWorkspace();
+    await screen.findByTestId('domain-audit-builder');
+    const stepCards = screen.getAllByTestId('domain-audit-step-card');
+    expect(stepCards[2].textContent).toContain('Create Criteria');
   });
 });
 
