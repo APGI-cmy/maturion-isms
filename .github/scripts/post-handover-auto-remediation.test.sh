@@ -176,6 +176,20 @@ EOF
 )" \
   "1"
 
+run_case \
+  "9. .agent-admin/ files trigger governance-control detection" \
+  "$(node - "$SCRIPT" <<'EOF'
+const remediation = require(process.argv[2]);
+const decision = remediation.classifyPostHandover({
+  fields: { HANDOVER_ALLOWED: 'no' },
+  changedFiles: ['.agent-admin/assurance/iaa-wave-record-test.md'],
+  manifest: { requires_ecap: false },
+});
+process.stdout.write(decision.failureClassification);
+EOF
+)" \
+  "ADMIN_MANIFEST_DEFECT"
+
 echo ""
 echo "Passed: $PASS"
 echo "Failed: $FAIL"

@@ -46,7 +46,10 @@ jobs:
             const isIssueComment = context.eventName === 'issue_comment';
             const rawCommentBody = context.payload.comment?.body || '';
             const commentAuthorType = String(context.payload.comment?.user?.type || '').toLowerCase();
+            const commentAuthorAssociation = String(context.payload.comment?.author_association || '').toUpperCase();
+            const commentAuthorLogin = String(context.payload.comment?.user?.login || '');
             const hasHandoverIntent = handoverIntent.hasExplicitReviewOrHandoverSignal(rawCommentBody);
+            const trustedAssociations = ['OWNER', 'MEMBER', 'COLLABORATOR'];
 
             if (
               isIssueComment &&
@@ -58,6 +61,16 @@ jobs:
             ) {
               core.setOutput('matched', 'false');
               return;
+            }
+
+            if (isIssueComment) {
+              const prAuthorLogin = String(context.payload.issue?.user?.login || '');
+              const isTrusted = trustedAssociations.includes(commentAuthorAssociation)
+                || (prAuthorLogin && commentAuthorLogin === prAuthorLogin);
+              if (!isTrusted) {
+                core.setOutput('matched', 'false');
+                return;
+              }
             }
 
             let prNumber;
