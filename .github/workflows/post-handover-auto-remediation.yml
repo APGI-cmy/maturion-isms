@@ -1,0 +1,414 @@
+name: Post-Handover Auto-Remediation
+
+on:
+  issue_comment:
+    types: [created, edited]
+  pull_request_target:
+    types: [ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: read
+
+jobs:
+  post-handover-auto-remediation:
+    name: "handover/post-remediation-loop"
+    runs-on: ubuntu-latest
+    if: |
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request != null
+      ) ||
+      (
+        github.event_name == 'pull_request_target' &&
+        (
+          startsWith(github.event.pull_request.head.ref, 'copilot/') ||
+          github.event.pull_request.user.login == 'Copilot'
+        )
+      )
+
+    steps:
+      - name: Checkout trusted default branch utilities
+        uses: actions/checkout@v5
+        with:
+          ref: refs/heads/${{ github.event.repository.default_branch }}
+          persist-credentials: false
+
+      - name: Resolve trusted PR context
+        id: context
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const handoverIntent = require('./.github/scripts/handover-intent.js');
+            const stickyMarker = '<!-- post-handover-auto-remediation -->';
+            const isIssueComment = context.eventName === 'issue_comment';
+            const rawCommentBody = context.payload.comment?.body || '';
+            const commentAuthorType = String(context.payload.comment?.user?.type || '').toLowerCase();
+            const hasHandoverIntent = handoverIntent.hasExplicitReviewOrHandoverSignal(rawCommentBody);
+
+            if (
+              isIssueComment &&
+              (
+                commentAuthorType === 'bot' ||
+                rawCommentBody.includes(stickyMarker) ||
+                !hasHandoverIntent
+              )
+            ) {
+              core.setOutput('matched', 'false');
+              return;
+            }
+
+            let prNumber;
+            let pr;
+
+            if (isIssueComment) {
+              prNumber = context.payload.issue.number;
+              ({ data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              }));
+            } else {
+              pr = context.payload.pull_request;
+              prNumber = pr.number;
+            }
+
+            core.setOutput('matched', 'true');
+            core.setOutput('pr_number', String(prNumber));
+            core.setOutput('head_sha', pr.head.sha);
+            core.setOutput('base_sha', pr.base.sha);
+            core.setOutput('base_ref', pr.base.ref || '');
+            core.setOutput('head_ref', pr.head.ref || '');
+            core.setOutput('title', pr.title || '');
+            core.setOutput('body', pr.body || '');
+            core.setOutput('updated_at', pr.updated_at || '');
+            core.setOutput('trigger_body', isIssueComment ? rawCommentBody.trim() : 'ready for review');
+
+      - name: Collect current-head checkpoint inputs
+        id: inputs
+        if: steps.context.outputs.matched == 'true'
+        uses: actions/github-script@v7
+        env:
+          INPUT_DIR: ${{ runner.temp }}/post-handover-auto-remediation
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          PR_BODY: ${{ steps.context.outputs.body }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const isRateLimitError = (error) => {
+              const status = Number(error?.status || error?.response?.status || 0);
+              const message = String(error?.message || error?.response?.data?.message || '').toLowerCase();
+              const remaining = String(error?.response?.headers?.['x-ratelimit-remaining'] || '');
+              return (status === 403 || status === 429) && (message.includes('rate limit') || remaining === '0');
+            };
+            const headSha = process.env.HEAD_SHA;
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const prBody = process.env.PR_BODY || '';
+            let advisoryUnavailable = 'none';
+
+            const safeApi = async (operation, fn, fallback) => {
+              try {
+                return await fn();
+              } catch (error) {
+                if (!isRateLimitError(error)) throw error;
+                advisoryUnavailable = operation === 'issues.listComments'
+                  ? 'comments_api_rate_limited'
+                  : 'github_api_rate_limited';
+                core.warning(`[post-handover-auto-remediation] ${operation}: ADVISORY_UNAVAILABLE (${advisoryUnavailable})`);
+                return fallback;
+              }
+            };
+
+            let issueNumber = '';
+            const repoFiles = {};
+            const comments = [];
+            let manifest = null;
+
+            const fetchFile = async (targetPath) => {
+              if (advisoryUnavailable !== 'none') return;
+              try {
+                const { data } = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: targetPath,
+                  ref: headSha,
+                });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  const text = Buffer.from(data.content, 'base64').toString('utf8');
+                  repoFiles[targetPath] = text;
+                  if ((targetPath === `.admin/prs/pr-${prNumber}.json` || targetPath === '.admin/pr.json') && !manifest) {
+                    try {
+                      manifest = JSON.parse(text);
+                    } catch (error) {
+                      core.warning(`Failed to parse manifest ${targetPath}: ${error.message}`);
+                    }
+                  }
+                }
+              } catch (error) {
+                if (isRateLimitError(error)) {
+                  advisoryUnavailable = 'github_api_rate_limited';
+                  core.warning(`[post-handover-auto-remediation] getContent(${targetPath}): ADVISORY_UNAVAILABLE (github_api_rate_limited)`);
+                  return;
+                }
+                if (error.status !== 404) core.info(`Unable to fetch ${targetPath} at ${headSha}: ${error.message}`);
+              }
+            };
+
+            const { data: checkRunsData } = await safeApi(
+              'checks.listForRef',
+              () => github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: headSha,
+                per_page: 100,
+              }),
+              { data: { check_runs: [] } },
+            );
+
+            const { data: statusData } = await safeApi(
+              'repos.getCombinedStatusForRef',
+              () => github.rest.repos.getCombinedStatusForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: headSha,
+              }),
+              { data: { statuses: [] } },
+            );
+
+            let changedFiles = [];
+            let page = 1;
+            while (advisoryUnavailable === 'none') {
+              const { data: files } = await safeApi(
+                'pulls.listFiles',
+                () => github.rest.pulls.listFiles({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  per_page: 100,
+                  page,
+                }),
+                { data: [] },
+              );
+              changedFiles = changedFiles.concat((files || []).map((file) => file.filename));
+              if (!files || files.length < 100) break;
+              page += 1;
+            }
+
+            page = 1;
+            while (advisoryUnavailable === 'none') {
+              const { data: pageComments } = await safeApi(
+                'issues.listComments',
+                () => github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  per_page: 100,
+                  page,
+                }),
+                { data: [] },
+              );
+              comments.push(...(pageComments || []));
+              if (!pageComments || pageComments.length < 100) break;
+              page += 1;
+            }
+
+            if (!issueNumber) {
+              await fetchFile(`.agent-admin/scope-declarations/pr-${prNumber}.md`);
+              const scopeText = repoFiles[`.agent-admin/scope-declarations/pr-${prNumber}.md`] || '';
+              const match = scopeText.match(/^ISSUE:\s*#?(\d+)/m);
+              if (match) issueNumber = match[1];
+            }
+
+            await fetchFile(`.admin/prs/pr-${prNumber}.json`);
+            await fetchFile('.admin/pr.json');
+            await fetchFile(`.functional-delivery/pr-${prNumber}.md`);
+
+            const activeStatePath = `.agent-admin/prs/pr-${prNumber}/active-state.json`;
+            await fetchFile(activeStatePath);
+            await fetchFile(`.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md`);
+
+            const bodyArtifactMatch = prBody.match(/Functional-Delivery-Artifact:\s*(\S+)/i);
+            if (bodyArtifactMatch) await fetchFile(bodyArtifactMatch[1]);
+
+            let activeState = null;
+            try {
+              activeState = repoFiles[activeStatePath] ? JSON.parse(repoFiles[activeStatePath]) : null;
+            } catch (error) {
+              core.warning(`Failed to parse active state ${activeStatePath}: ${error.message}`);
+              activeState = null;
+            }
+
+            const resolverSelectedPaths = [
+              activeState?.manifest_path,
+              activeState?.scope_path,
+              activeState?.iaa_artifact_path,
+              activeState?.ecap_artifact_path,
+            ].filter(Boolean);
+
+            for (const selectedPath of resolverSelectedPaths) await fetchFile(selectedPath);
+
+            fs.mkdirSync(process.env.INPUT_DIR, { recursive: true });
+            const writeJson = (name, value) => {
+              const targetPath = path.join(process.env.INPUT_DIR, `pr-${prNumber}-${name}.json`);
+              fs.writeFileSync(targetPath, JSON.stringify(value));
+              return targetPath;
+            };
+
+            const repoFilesPath = writeJson('repo-files', repoFiles);
+            core.setOutput('check_runs_path', writeJson('check-runs', checkRunsData.check_runs || []));
+            core.setOutput('commit_statuses_path', writeJson('commit-statuses', statusData.statuses || []));
+            core.setOutput('pr_comments_path', writeJson('comments', comments));
+            core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
+            core.setOutput('manifest_path', writeJson('manifest', manifest || null));
+            core.setOutput('repo_files_path', repoFilesPath);
+            core.setOutput('issue_number', issueNumber);
+            core.setOutput('advisory_unavailable', advisoryUnavailable);
+
+      - name: Evaluate current-head posture
+        id: evaluate
+        if: steps.context.outputs.matched == 'true'
+        env:
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          ISSUE_NUMBER: ${{ steps.inputs.outputs.issue_number }}
+          PR_TITLE: ${{ steps.context.outputs.title }}
+          PR_BODY: ${{ steps.context.outputs.body }}
+          PR_UPDATED_AT: ${{ steps.context.outputs.updated_at }}
+          PR_BRANCH: ${{ steps.context.outputs.head_ref }}
+          BASE_BRANCH: ${{ steps.context.outputs.base_ref }}
+          BASE_SHA: ${{ steps.context.outputs.base_sha }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          CHECKPOINT_TRIGGER: ${{ steps.context.outputs.trigger_body }}
+          CHECKPOINT_CHECK_RUNS_PATH: ${{ steps.inputs.outputs.check_runs_path }}
+          CHECKPOINT_COMMIT_STATUSES_PATH: ${{ steps.inputs.outputs.commit_statuses_path }}
+          CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
+          CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
+          CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
+          ACTIVE_STATE_PATH: ".agent-admin/prs/pr-${{ steps.context.outputs.pr_number }}/active-state.json"
+          ADVISORY_UNAVAILABLE: ${{ steps.inputs.outputs.advisory_unavailable }}
+        run: |
+          RESULT_FILE="${{ runner.temp }}/post-handover-remediation-result-${{ steps.context.outputs.pr_number }}.json"
+          if [ "${ADVISORY_UNAVAILABLE:-none}" = "comments_api_rate_limited" ]; then
+            printf '%s\n' '{"fields":{"RESULT":"ADVISORY_UNAVAILABLE","HANDOVER_ALLOWED":"no","NEXT_REQUIRED_CONTROL":"WAIT_FOR_ADVISORY_RECOVERY","REASON":"PR comments unavailable due to GitHub API rate limit.","ADVISORY_UNAVAILABLE":"comments_api_rate_limited","INFRASTRUCTURE_RERUN_NEEDED":"yes"}}' > "$RESULT_FILE"
+          elif [ "${ADVISORY_UNAVAILABLE:-none}" = "github_api_rate_limited" ]; then
+            printf '%s\n' '{"fields":{"RESULT":"ADVISORY_UNAVAILABLE","HANDOVER_ALLOWED":"no","NEXT_REQUIRED_CONTROL":"RERUN_INFRASTRUCTURE_CHECKS","REASON":"GitHub API rate limit prevented reliable gate evaluation.","ADVISORY_UNAVAILABLE":"github_api_rate_limited","INFRASTRUCTURE_RERUN_NEEDED":"yes"}}' > "$RESULT_FILE"
+          else
+            node .github/scripts/pre-handover-checkpoint.js > "$RESULT_FILE"
+          fi
+          echo "result_file=$RESULT_FILE" >> "$GITHUB_OUTPUT"
+          cat "$RESULT_FILE"
+
+      - name: Upsert sticky post-handover remediation comment
+        if: steps.context.outputs.matched == 'true'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.context.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.context.outputs.head_sha }}
+          RESULT_FILE: ${{ steps.evaluate.outputs.result_file }}
+          CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
+          CHECK_RUNS_PATH: ${{ steps.inputs.outputs.check_runs_path }}
+          MANIFEST_PATH: ${{ steps.inputs.outputs.manifest_path }}
+          ADVISORY_UNAVAILABLE: ${{ steps.inputs.outputs.advisory_unavailable }}
+        with:
+          script: |
+            const fs = require('fs');
+            const remediation = require('./.github/scripts/post-handover-auto-remediation.js');
+            const isRateLimitError = (error) => {
+              const status = Number(error?.status || error?.response?.status || 0);
+              const message = String(error?.message || error?.response?.data?.message || '').toLowerCase();
+              const remaining = String(error?.response?.headers?.['x-ratelimit-remaining'] || '');
+              return (status === 403 || status === 429) && (message.includes('rate limit') || remaining === '0');
+            };
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const headSha = process.env.HEAD_SHA || '';
+            const advisoryUnavailable = process.env.ADVISORY_UNAVAILABLE || 'none';
+
+            const readJson = (targetPath, fallback) => {
+              if (!targetPath) return fallback;
+              try {
+                return JSON.parse(fs.readFileSync(targetPath, 'utf8'));
+              } catch (error) {
+                core.warning(`Failed to read/parse ${targetPath}: ${error.message}`);
+                return fallback;
+              }
+            };
+
+            const result = readJson(process.env.RESULT_FILE, {});
+            const changedFiles = readJson(process.env.CHANGED_FILES_PATH, []);
+            const checkRuns = readJson(process.env.CHECK_RUNS_PATH, []);
+            const manifest = readJson(process.env.MANIFEST_PATH, null);
+
+            const decision = remediation.classifyPostHandover({
+              fields: result.fields || {},
+              changedFiles,
+              manifest,
+              checkRuns,
+              advisoryUnavailable,
+            });
+
+            try {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 100,
+              });
+
+              const stickyComments = comments
+                .filter((comment) =>
+                  comment.body &&
+                  comment.body.includes(remediation.STICKY_MARKER) &&
+                  comment.user &&
+                  comment.user.login === 'github-actions[bot]'
+                )
+                .sort((left, right) => new Date(right.updated_at || right.created_at) - new Date(left.updated_at || left.created_at));
+
+              const [primary, ...duplicates] = stickyComments;
+              const cycle = remediation.resolveRemediationCycle({
+                previousStickyBody: primary?.body || '',
+                headSha,
+                blocked: !decision.handoverAccepted,
+              });
+
+              const body = remediation.renderAutoRemediationComment({
+                decision,
+                headSha,
+                cycle: cycle.cycle,
+                escalated: cycle.escalated,
+              });
+
+              if (primary) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: primary.id,
+                  body,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body,
+                });
+              }
+
+              for (const duplicate of duplicates) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: duplicate.id,
+                });
+              }
+            } catch (error) {
+              if (!isRateLimitError(error)) throw error;
+              core.setFailed([
+                'Failed to update/read sticky remediation comment due to GitHub API rate limiting. Infrastructure rerun needed.',
+                'ADVISORY_UNAVAILABLE: github_api_rate_limited',
+                'INFRASTRUCTURE_RERUN_NEEDED: yes',
+                'PR_DEFECT_INFERRED: no',
+              ].join('\n'));
+            }

@@ -1,0 +1,31 @@
+{
+  "pr": 1742,
+  "branch": "copilot/add-post-handover-auto-remediation",
+  "runtime_head_sha": "GITHUB_PR_HEAD_SHA",
+  "base_sha": "GITHUB_BASE_SHA",
+  "manifest_path": ".admin/prs/pr-1742.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-1742.md",
+  "active_state_path": ".agent-admin/prs/pr-1742/active-state.json",
+  "wave_tasks_path": ".agent-admin/prs/pr-1742/wave-current-tasks.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-pr1742-post-handover-auto-remediation-20260521.md",
+  "ecap_artifact_path": ".agent-admin/prehandover/proof-pr-1742-post-handover-auto-remediation-20260521.md",
+  "bootstrap_required": false,
+  "rebase_only_delta": false,
+  "admin_only_delta": false,
+  "substantive_delta_after_evidence": false,
+  "gate_change_delta": true,
+  "next_required_action": "PASS",
+  "delta_type": "GATE_CHANGE_DELTA",
+  "contradictions": [],
+  "changed_files": [
+    ".admin/prs/pr-1742.json",
+    ".agent-admin/assurance/iaa-wave-record-pr1742-post-handover-auto-remediation-20260521.md",
+    ".agent-admin/prehandover/proof-pr-1742-post-handover-auto-remediation-20260521.md",
+    ".agent-admin/prs/pr-1742/active-state.json",
+    ".agent-admin/prs/pr-1742/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1742.md",
+    ".github/scripts/post-handover-auto-remediation.js",
+    ".github/scripts/post-handover-auto-remediation.test.sh",
+    ".github/workflows/post-handover-auto-remediation.yml"
+  ]
+}
