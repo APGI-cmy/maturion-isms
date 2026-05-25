@@ -123,8 +123,7 @@ jobs:
               }
             };
 
-            const issueMatch = (context.payload.comment?.body || '').match(/#(\d+)/);
-            let issueNumber = issueMatch ? issueMatch[1] : '';
+            let issueNumber = '';
             const repoFiles = {};
             const comments = [];
             let manifest = null;
