@@ -1,12 +1,30 @@
 import { useState } from 'react';
 import { supabase, getEdgeInvokeHeaders } from '../lib/supabase';
 import type { GeneratedMpsDraft } from './useDomainAuditBuilder';
+import { LEGACY_DOMAIN_BLUEPRINTS, normalizeDomainKey } from '../lib/legacyDomainBlueprint';
 
 interface GeneratedMpsDraftRaw {
   number: number;
   title: string;
   intent: string;
   rationale: string;
+}
+
+function toFallbackDrafts(domainName: string): GeneratedMpsDraft[] {
+  const lookup = normalizeDomainKey(domainName);
+  const matchedDomain =
+    LEGACY_DOMAIN_BLUEPRINTS.find((domain) => normalizeDomainKey(domain.name) === lookup) ??
+    LEGACY_DOMAIN_BLUEPRINTS.find((domain) => lookup.includes(normalizeDomainKey(domain.name))) ??
+    LEGACY_DOMAIN_BLUEPRINTS.find((domain) => lookup.includes(domain.slug)) ??
+    LEGACY_DOMAIN_BLUEPRINTS[LEGACY_DOMAIN_BLUEPRINTS.length - 1];
+
+  return matchedDomain.mps.map((item) => ({
+    number: item.number,
+    title: item.title,
+    intent: item.intent,
+    rationale: `Legacy fallback blueprint for ${matchedDomain.name}.`,
+    acceptance: 'session' as const,
+  }));
 }
 
 export function useAIMPSGeneration() {
@@ -43,14 +61,20 @@ export function useAIMPSGeneration() {
       try {
         parsed = JSON.parse((data as { reply: string }).reply) as GeneratedMpsDraftRaw[];
       } catch {
-        throw new Error('Failed to parse AI response. Please try again.');
+        setError('Failed to parse AI response. Loaded legacy fallback MPS pack for this domain.');
+        return toFallbackDrafts(domainName);
+      }
+
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        setError('AI returned no MPS rows. Loaded legacy fallback MPS pack for this domain.');
+        return toFallbackDrafts(domainName);
       }
 
       return parsed.map((item) => ({ ...item, acceptance: 'session' as const }));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'AI generation failed. Please try again.';
-      setError(message);
-      throw new Error(message);
+      setError(`${message} Loaded legacy fallback MPS pack for this domain.`);
+      return toFallbackDrafts(domainName);
     } finally {
       setIsLoading(false);
     }

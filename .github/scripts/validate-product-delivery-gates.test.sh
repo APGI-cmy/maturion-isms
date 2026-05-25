@@ -49,7 +49,11 @@ EOF
   base_sha=$(git rev-parse main)
   head_sha=$(git rev-parse HEAD)
   if ( [ -d .functional-delivery ] || [ -d .agent-admin/assurance ] ) && [ ! -f .skip-head-sha-rewrite ]; then
-    python3 - "$head_sha" <<'PYEOF'
+    local py_exec="python3"
+    if ! command -v python3 >/dev/null 2>&1; then
+      py_exec="python"
+    fi
+    "$py_exec" - "$head_sha" <<'PYEOF'
 import pathlib, re, sys
 head_sha = sys.argv[1]
 for root, pattern in [
@@ -166,6 +170,9 @@ Partial scope accepted by CS2: not_applicable
 Builder QA functional report reference: modules/MMM/05-qa-to-red/qa-to-red-catalog.md
 ECAP/admin-gate report reference: .agent-admin/prehandover/proof-9999.md
 IAA final assurance reference: .agent-admin/assurance/iaa-token-session-9999.md
+BUILD_TO_RED_TEST_REFERENCE: T-MMM-S6-001, T-MMM-S6-035
+BUILDER_APPOINTMENT_REFERENCE: modules/MMM/10-builder-appointment/builder-contract.md section 3.2
+ROLE_ASSIGNMENT_REFERENCE: .agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md
 | CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
 |---|---|---|---|---|---|---|---|
 | Create framework | start setup | /framework/create | /api/frameworks/init | frameworks | framework created | error shown | test T-1 |
@@ -307,6 +314,9 @@ Partial scope accepted by CS2: not_applicable
 Builder QA functional report reference: ref
 ECAP/admin-gate report reference: ref
 IAA final assurance reference: ref
+BUILD_TO_RED_TEST_REFERENCE: T-MMM-S6-028
+BUILDER_APPOINTMENT_REFERENCE: modules/MMM/10-builder-appointment/builder-contract.md section 3.4
+ROLE_ASSIGNMENT_REFERENCE: .agent-admin/assurance/wave-role-reference.md
 | CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
 |---|---|---|---|---|---|---|---|
 | cta | intent | route | /api/frameworks/init | obj | ok | fail | ev |
@@ -436,6 +446,9 @@ Partial scope accepted by CS2: no
 Builder QA functional report reference: ref
 ECAP/admin-gate report reference: ref
 IAA final assurance reference: ref
+BUILD_TO_RED_TEST_REFERENCE: T-MMM-S6-028, T-MMM-S6-035
+BUILDER_APPOINTMENT_REFERENCE: modules/MMM/10-builder-appointment/builder-contract.md section 3.4
+ROLE_ASSIGNMENT_REFERENCE: .agent-admin/assurance/wave-role-reference.md
 | CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
 |---|---|---|---|---|---|---|---|
 | cta | intent | route | /api/frameworks/init | obj | ok | fail | ev |
@@ -483,6 +496,9 @@ CS2_WAIVER_QUOTE: "CS2 accepts partial scope for this wave while known partials 
 Builder QA functional report reference: ref
 ECAP/admin-gate report reference: ref
 IAA final assurance reference: ref
+BUILD_TO_RED_TEST_REFERENCE: T-MMM-S6-028, T-MMM-S6-035
+BUILDER_APPOINTMENT_REFERENCE: modules/MMM/10-builder-appointment/builder-contract.md section 3.4
+ROLE_ASSIGNMENT_REFERENCE: .agent-admin/assurance/wave-role-reference.md
 | CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
 |---|---|---|---|---|---|---|---|
 | cta | intent | route | /api/frameworks/init | obj | ok | fail | ev |
@@ -939,6 +955,9 @@ Partial scope accepted by CS2: not_applicable
 Builder QA functional report reference: modules/MMM/05-qa-to-red/qa-to-red-catalog.md
 ECAP/admin-gate report reference: .agent-admin/prehandover/proof-9999.md
 IAA final assurance reference: .agent-admin/assurance/iaa-token-session-9999.md
+BUILD_TO_RED_TEST_REFERENCE: T-MMM-S6-001, T-MMM-S6-035
+BUILDER_APPOINTMENT_REFERENCE: modules/MMM/10-builder-appointment/builder-contract.md section 3.2
+ROLE_ASSIGNMENT_REFERENCE: .agent-admin/assurance/iaa-wave-record-mmm-stage11-builder-appointment-20260420.md
 | CTA / visible action | User intent | UI route/component | Backend/API/Edge target | Data/storage object | Success state | Failure state | Evidence |
 |---|---|---|---|---|---|---|---|
 | Create framework | start setup | /framework/create | /api/frameworks/init | frameworks | framework created | error shown | test T-1 |

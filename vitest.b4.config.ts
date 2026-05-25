@@ -2,8 +2,12 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['modules/MMM/tests/B4-framework/**/*.test.ts', 'modules/MMM/tests/B4-framework/**/*.test.tsx'],
+    include: [
+      // Source-contract suite (repo-root executable).
+      'modules/MMM/tests/B4-framework/b4-framework.test.ts',
+    ],
     globals: true,
     reporters: ['verbose'],
+    environment: 'jsdom',
   },
 });

@@ -119,11 +119,24 @@ export function DomainAuditBuilder({
       >
         {steps.map((step) => (
           <div key={step.id} className="domain-audit-builder__step" role="listitem">
-            <div className="domain-audit-builder__step-card" data-testid="domain-audit-step-card">
+            <div
+              className={`domain-audit-builder__step-card domain-audit-builder__step-card--${step.status}`}
+              data-testid="domain-audit-step-card"
+            >
               <span className="domain-audit-builder__step-number">{step.order}</span>
               <div className="domain-audit-builder__step-body">
                 <h3 className="domain-audit-builder__step-title">{step.title}</h3>
                 <p className="domain-audit-builder__step-desc">{step.description}</p>
+                <p
+                  className={`domain-audit-builder__step-status domain-audit-builder__step-status--${step.status}`}
+                  data-testid={`step-status-${step.id}`}
+                >
+                  {step.status === 'completed'
+                    ? 'Completed'
+                    : step.status === 'active'
+                    ? 'Active'
+                    : 'Locked'}
+                </p>
                 <p
                   className="domain-audit-builder__step-summary"
                   data-testid={`step-summary-${step.id}`}
@@ -148,8 +161,9 @@ export function DomainAuditBuilder({
                 onClick={() => handleStepClick(step.id as AuditStep)}
                 aria-label={`Open ${step.title}`}
                 aria-expanded={activeStep === step.id}
+                disabled={step.status === 'locked'}
               >
-                {step.title} ({step.count})
+                {step.status === 'locked' ? 'Locked' : `${step.title} (${step.count})`}
               </button>
             </div>
           </div>

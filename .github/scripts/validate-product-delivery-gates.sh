@@ -303,7 +303,7 @@ for route in "${GUARDED_ROUTES[@]}"; do
     test_proof=$(grep -R -l -F "$route" apps modules packages supabase 2>/dev/null | grep -E '(test|spec)\.(ts|tsx|js|jsx|py)$' | head -1 || true)
     capability="$(route_capability "$route")"
     map_proof=""
-    if [ -n "$capability" ] && grep -qiF "$capability" "$EVIDENCE_PATH" && grep -qiF "$route" "$EVIDENCE_PATH"; then
+    if [ -n "$capability" ] && grep -qF "$capability" "$EVIDENCE_PATH" && grep -qF "$route" "$EVIDENCE_PATH"; then
       map_proof="evidence-map"
     elif echo "$PR_BODY" | grep -qiE "Route Approval:[[:space:]]*${route}"; then
       map_proof="pr-body-route-approval"
@@ -358,15 +358,43 @@ required_sections=(
   "Builder QA functional report reference:"
   "ECAP/admin-gate report reference:"
   "IAA final assurance reference:"
+  "BUILD_TO_RED_TEST_REFERENCE:"
+  "BUILDER_APPOINTMENT_REFERENCE:"
+  "ROLE_ASSIGNMENT_REFERENCE:"
 )
 
 for section in "${required_sections[@]}"; do
-  if ! grep -qiF "$section" "$EVIDENCE_PATH"; then
+  if ! grep -qF "$section" "$EVIDENCE_PATH"; then
     echo "❌ FAIL — Functional evidence missing required section: $section"
     exit 1
   fi
 done
 echo "✅ Functional Delivery Evidence gate: PASS"
+
+# ---------------------------------------------------------------------------
+# Gate 3a: Build-to-Red and builder appointment linkage
+# ---------------------------------------------------------------------------
+if ! grep -qiE '^[[:space:]]*(\*\*)?(BUILD_TO_RED_TEST_REFERENCE|Build-to-Red test reference)(\*\*)?:[[:space:]]*.+$' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — Functional evidence missing BUILD_TO_RED_TEST_REFERENCE."
+  exit 1
+fi
+if ! grep -qiE 'T-MMM-S6-[0-9]{3}' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — BUILD_TO_RED_TEST_REFERENCE must include at least one T-MMM-S6-### test label."
+  exit 1
+fi
+if ! grep -qiE '^[[:space:]]*(\*\*)?(BUILDER_APPOINTMENT_REFERENCE|Builder appointment reference)(\*\*)?:[[:space:]]*.+$' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — Functional evidence missing BUILDER_APPOINTMENT_REFERENCE."
+  exit 1
+fi
+if ! grep -qiE 'modules/MMM/10-builder-appointment/builder-contract\.md' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — BUILDER_APPOINTMENT_REFERENCE must cite modules/MMM/10-builder-appointment/builder-contract.md."
+  exit 1
+fi
+if ! grep -qiE '^[[:space:]]*(\*\*)?(ROLE_ASSIGNMENT_REFERENCE|Role assignment reference)(\*\*)?:[[:space:]]*.+$' "$EVIDENCE_PATH"; then
+  echo "❌ FAIL — Functional evidence missing ROLE_ASSIGNMENT_REFERENCE."
+  exit 1
+fi
+echo "✅ Build-to-Red linkage gate: PASS"
 
 # ---------------------------------------------------------------------------
 # Gate 3b: Split verdict and contradiction integrity (evidence-level)

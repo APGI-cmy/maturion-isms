@@ -34,6 +34,9 @@ Partial scope accepted by CS2: yes/no/not_applicable
 Builder QA functional report reference: <path/url>
 ECAP/admin-gate report reference: <path/url>
 IAA final assurance reference: <path/url>
+BUILD_TO_RED_TEST_REFERENCE: <T-MMM-S6-### list for this wave>
+BUILDER_APPOINTMENT_REFERENCE: <modules/MMM/10-builder-appointment/builder-contract.md section ...>
+ROLE_ASSIGNMENT_REFERENCE: <path/url to wave role assignment evidence>
 
 ADMIN_PASS: yes/no
 FUNCTIONAL_PASS: yes/no
@@ -51,6 +54,8 @@ FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_
 - If partial delivery is claimed, include explicit CS2 waiver quote under `CS2_WAIVER_QUOTE`.
 - `PARTIAL_FUNCTIONAL_DELIVERY` is non-mergeable by default. Only explicit quoted CS2 acceptance can remove that block.
 - IAA verdict/evidence must remain bound to current PR head SHA; if head changes, re-run IAA and refresh evidence.
+- Functional evidence must include explicit `BUILD_TO_RED_TEST_REFERENCE`,
+  `BUILDER_APPOINTMENT_REFERENCE`, and `ROLE_ASSIGNMENT_REFERENCE` fields.
 - Enforcement reference: `.github/scripts/validate-product-delivery-gates.sh`.
 
 ## Rejection Package Shape (for failed functional delivery)

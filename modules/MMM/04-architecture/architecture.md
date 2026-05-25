@@ -100,8 +100,11 @@ Architecturally, MMM is:
 2. **100% TRS traceability**: All 66 TRs are addressed. See §A14.
 3. **Frozen integration contracts**: AIMC, PIT, and KUC boundary contracts at §A6 are frozen
    for all downstream stages. No boundary change without CS2-authorized architecture revision.
-4. **No legacy component injection**: The legacy sub-folders in `capabilities/` are formally
-   retired artifacts. MMM is built fresh from FRS/TRS specifications.
+4. **No ERM/WRAC capability-folder injection**: The legacy sub-folders in `capabilities/`
+   are formally retired artifacts for MMM implementation purposes. This prohibition applies
+   to `modules/MMM/04-architecture/capabilities/**` ERM/WRAC files only; it does not block
+   approved MMM legacy-workspace harvesting from `apps/maturion-maturity-legacy/src` and
+   `apps/isms-portal/src` under the transitional bridge contract.
 
 ---
 
@@ -236,6 +239,9 @@ for compile handoff. It is not yet the canonical long-term MMM route shape.
 - `AssessmentFrameworkBridgePage` owns handoff orchestration and context validation.
 - Legacy `AssessmentFramework` workspace (if mounted) remains inside the bridge boundary
   and does not own MMM shell routing.
+- Transitional harvest source scope is restricted to legacy MMM workspace files under
+  `apps/maturion-maturity-legacy/src` and `apps/isms-portal/src`; ERM/WRAC capability-folder
+  artifacts in `modules/MMM/04-architecture/capabilities/**` are excluded from this bridge.
 
 **Active context contract**:
 - Required context: `framework_id` query parameter.
@@ -268,6 +274,9 @@ for compile handoff. It is not yet the canonical long-term MMM route shape.
   to `framework_id` + canonical domain identity.
 - Domain workspace routes must preserve framework context and support contextual return to the
   active framework workspace (not loop users to generic framework list by default).
+- Domain workspace must expose the three-step criteria authoring path (Create MPS, Create Intent,
+  Create Criteria). Non-implemented domain details may be clearly marked as in-progress, but the
+  route must render an actionable non-blank workspace.
 
 ### A3.4 — State Management (Zustand)
 
@@ -1352,6 +1361,10 @@ to MMM architecture and must not be used by any MMM builder or QA agent.**
   audit. This audit confirms that these specific files (ERM schema, ERM edge functions,
   ERM component maps) are not design-system-compatible candidates for the Maturity
   Management domain and are not suitable for Shared Platform adoption.
+- This finding is specific to the ERM/WRAC capability sub-folders in this directory. It does
+  not prohibit transitional MMM legacy workflow harvesting from
+  `apps/maturion-maturity-legacy/src` and `apps/isms-portal/src` when such harvesting satisfies
+  FRS/TRS contracts for compile handoff and canonical five-domain workspace behavior.
 
 **What is rebuilt fresh**:
 - All MMM components (React pages, feature components, Edge Functions, database schema)

@@ -2,8 +2,10 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { DomainAuditBuilder } from '../components/assessment/DomainAuditBuilder';
 
 const DOMAIN_LABELS: Record<string, string> = {
+  'leadership-governance': 'Leadership and Governance',
   'leadership-and-governance': 'Leadership and Governance',
   'process-integrity': 'Process Integrity',
+  'people-culture': 'People and Culture',
   'people-and-culture': 'People and Culture',
   protection: 'Protection',
   'proof-it-works': 'Proof It Works',

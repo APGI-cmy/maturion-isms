@@ -253,14 +253,18 @@ Onboarding must be complete before the framework-origin fork is presented.
 
 ### FR-012 — Framework-Origin Decision Fork
 Immediately after organisation onboarding completes, MMM must present the user with a
-required framework-origin decision fork offering two options:
+required framework-origin decision fork offering three options:
 (a) **Mode A — Verbatim Upload**: for organisations with an existing maturity standard,
-(b) **Mode B — New Criteria Creation**: for organisations starting without an existing model.
+(b) **Mode B — New Criteria Creation**: for organisations starting without an existing model,
+(c) **Mode C — Hybrid**: for organisations that need combined verbatim import and net-new
+    AI-assisted criteria generation in one framework session.
 
 The selected mode must be recorded in `frameworks.origin_mode`.
 
 **Source**: §AD-7.2, §UX-J-05  
-**Acceptance**: Fork screen displayed post-onboarding; origin_mode recorded; correct pathway initiated.
+**Acceptance**: Fork screen displayed post-onboarding with Mode A/Mode B/Mode C choices;
+`origin_mode` recorded as `verbatim_import` | `ai_generated` | `hybrid`; correct pathway
+initiated with no dead-end navigation.
 
 ---
 
@@ -351,7 +355,9 @@ This structure must be the default unless an imported framework or approved conf
 mode introduces a controlled variant.
 
 **Source**: §AD-10  
-**Acceptance**: New frameworks initialized without an import use these five domains as defaults.
+**Acceptance**: New frameworks initialized without an import use these five domains as
+defaults. Post-compile framework workspace renders these five canonical domains as primary
+domain cards, regardless of source-harvest labels.
 
 ### FR-020 — Verbatim Upload Flow (Mode A)
 When Mode A (Verbatim Upload) is selected, MMM must:
@@ -456,6 +462,9 @@ All approval actions must be audit-trailed in `approvals` and `approval_comments
 **Source**: §AD-21, §UX-J-08  
 **Acceptance**: Three approval levels enforced; `approvals` records reflect each level;
 `approval_comments` track back-and-forth; framework cannot be published without Level 3 sign-off.
+Compile handoff from framework review must route to
+`/assessment/framework?framework_id=<id>` and present the canonical five-domain workspace.
+Redirect to sign-up/login after successful compile is prohibited.
 
 ### FR-027 — Framework Publication
 MMM must support a framework publication event that:
@@ -472,16 +481,20 @@ Publication creates a `publications` record with version and timestamp.
 **Acceptance**: On publication, all six activation effects confirmed; `publications` record
 created; framework is locked for assessment activity.
 
-### FR-028 — Hybrid Framework Mode Timing (OQ-009 RESOLVED)
+### FR-028 — Hybrid Framework Mode (OQ-009 RESOLVED)
 Hybrid framework mode (import existing standard + AI normalization/completion of missing
-parts) is **not an MVP requirement**. It is an explicitly planned future mode.
+parts) is a required MMM workflow in the active scope.
 
-MMM MVP must support only Mode A (Verbatim Upload) and Mode B (New Criteria Creation).
-The J-05 fork decision screen must present only two options at MVP. Hybrid mode may be
-introduced in a future release upon explicit CS2 authorization.
+MMM must support Mode A (Verbatim Upload), Mode B (New Criteria Creation), and Mode C
+(Hybrid) in the framework-origin fork. Hybrid must allow:
+(a) verbatim source ingestion with source anchors for imported content,
+(b) AI-assisted generation for missing or explicitly requested net-new maturity content,
+(c) merged review and approval without forcing users into a separate framework session.
 
 **Source**: §AD-7.4, §UX-J-05, OQ-009 resolution  
-**Acceptance**: MVP fork screen has exactly two options; no hybrid pathway in initial build.
+**Acceptance**: J-05 fork presents three options. Hybrid sessions preserve merged lineage
+(`source_anchor` for imported items + generated-origin markers for AI additions) and allow
+continuation into compile/review flow without mode-reset loops.
 
 ---
 
@@ -1344,9 +1357,9 @@ in all user-facing screens and navigation. No "MAT" branding in MMM.
 ### OQ-009 — Hybrid Framework Mode Timing (RESOLVED — FR-028)
 **Question**: Is hybrid framework mode MVP or later?
 
-**FRS Resolution**: Hybrid framework mode is NOT MVP. MMM MVP supports only Mode A
-(Verbatim Upload) and Mode B (New Criteria Creation). Hybrid mode deferred to a future
-release requiring explicit CS2 authorization.
+**FRS Resolution**: Hybrid framework mode is in active scope. MMM supports Mode A
+(Verbatim Upload), Mode B (New Criteria Creation), and Mode C (Hybrid) as framework
+origin choices, with merged compile/review continuity requirements.
 
 **Disposition**: RESOLVED. See FR-028.
 

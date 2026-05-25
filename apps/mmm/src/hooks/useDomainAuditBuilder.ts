@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 
 export type AuditStep = 'mps' | 'intent' | 'criteria';
+export type AuditStepStatus = 'locked' | 'active' | 'completed';
 
 export interface DomainAuditDomain {
   id: string;
@@ -65,12 +66,13 @@ export interface StepMeta {
   title: string;
   description: string;
   order: number;
+  status: AuditStepStatus;
   count: number;
   summary: string;
   previewItems: string[];
 }
 
-const BASE_AUDIT_STEPS: Omit<StepMeta, 'count' | 'summary' | 'previewItems'>[] = [
+const BASE_AUDIT_STEPS: Omit<StepMeta, 'count' | 'summary' | 'previewItems' | 'status'>[] = [
   { id: 'mps', title: 'Create MPSs', description: 'Define Maturity Practice Statements for this domain.', order: 1 },
   { id: 'intent', title: 'Create Intent', description: 'Write intent statements for each MPS.', order: 2 },
   { id: 'criteria', title: 'Create Criteria', description: 'Define criteria scoped to each MPS.', order: 3 },
@@ -232,14 +234,21 @@ export function useDomainAuditBuilder({
 
   const steps = useMemo<StepMeta[]>(() => {
     const intentRows = mpsRows.filter((row) => Boolean(row.intent_statement?.trim()));
+    const hasDomainContext = Boolean(domain?.id);
+    const hasMps = mpsRows.length > 0;
+    const hasCompleteIntents = hasMps && intentRows.length === mpsRows.length;
+    const hasCriteria = criteriaRows.length > 0;
 
     return BASE_AUDIT_STEPS.map((step) => {
       if (step.id === 'mps') {
         return {
           ...step,
+          status: !hasDomainContext ? 'locked' : mpsRows.length > 0 ? 'completed' : 'active',
           count: mpsRows.length,
           summary:
-            mpsRows.length > 0
+            !hasDomainContext
+              ? 'Compile this framework domain first to unlock MPS authoring.'
+              : mpsRows.length > 0
               ? `${mpsRows.length} MPS rows loaded from MMM current data source.`
               : 'No MPS rows loaded for this routed domain yet.',
           previewItems: mpsRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
@@ -249,9 +258,17 @@ export function useDomainAuditBuilder({
       if (step.id === 'intent') {
         return {
           ...step,
+          status:
+            !hasDomainContext || !hasMps
+              ? 'locked'
+              : intentRows.length > 0
+              ? 'completed'
+              : 'active',
           count: intentRows.length,
           summary:
-            intentRows.length > 0
+            !hasDomainContext || !hasMps
+              ? 'Create and store at least one MPS before generating intents.'
+              : intentRows.length > 0
               ? `${intentRows.length} intent statements are available from current MMM data.`
               : 'No intent statements are currently stored for this domain.',
           previewItems: intentRows
@@ -262,15 +279,23 @@ export function useDomainAuditBuilder({
 
       return {
         ...step,
+        status:
+          !hasDomainContext || !hasCompleteIntents
+            ? 'locked'
+            : hasCriteria
+            ? 'completed'
+            : 'active',
         count: criteriaRows.length,
         summary:
-          criteriaRows.length > 0
+          !hasDomainContext || !hasCompleteIntents
+            ? 'Complete intent statements for this domain to unlock criteria generation.'
+            : criteriaRows.length > 0
             ? `${criteriaRows.length} criteria rows grouped under ${mpsRows.length} MPS entries.`
             : 'No criteria rows are currently stored for this domain.',
         previewItems: criteriaRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
       };
     });
-  }, [criteriaRows, mpsRows]);
+  }, [criteriaRows, domain?.id, mpsRows]);
 
   const isLoading = isDomainLoading || isMpsLoading || isCriteriaLoading;
   const errorMessage =
@@ -292,6 +317,10 @@ export function useDomainAuditBuilder({
   };
 
   const handleStepClick = (step: AuditStep) => {
+    const targetStep = steps.find((candidate) => candidate.id === step);
+    if (!targetStep || targetStep.status === 'locked') {
+      return;
+    }
     setActiveStep(step);
   };
 
