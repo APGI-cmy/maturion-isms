@@ -358,7 +358,12 @@ jobs:
               });
 
               const stickyComments = comments
-                .filter((comment) => comment.body && comment.body.includes(remediation.STICKY_MARKER))
+                .filter((comment) =>
+                  comment.body &&
+                  comment.body.includes(remediation.STICKY_MARKER) &&
+                  comment.user &&
+                  comment.user.login === 'github-actions[bot]'
+                )
                 .sort((left, right) => new Date(right.updated_at || right.created_at) - new Date(left.updated_at || left.created_at));
 
               const [primary, ...duplicates] = stickyComments;
