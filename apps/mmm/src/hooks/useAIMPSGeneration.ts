@@ -31,6 +31,10 @@ export function useAIMPSGeneration() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const setFallbackWarning = () => {
+    setError('AI service unavailable. Loaded legacy fallback MPS pack for this domain.');
+  };
+
   const generateMPSsForDomain = async (domainName: string): Promise<GeneratedMpsDraft[]> => {
     setIsLoading(true);
     setError(null);
@@ -48,8 +52,14 @@ export function useAIMPSGeneration() {
         `[{"number": 1, "title": "...", "intent": "...", "rationale": "..."}]\n` +
         `Return only the JSON array, no additional text.`;
 
-      const { data, error: invokeError } = await supabase.functions.invoke('mmm-ai-chat', {
-        body: { message: prompt },
+      const { data, error: invokeError } = await supabase.functions.invoke('mmm-ai-chat-user', {
+        body: {
+          message: prompt,
+          context: {
+            workflow_stage: 'mps_generation',
+            domain_name: domainName,
+          },
+        },
         headers,
       });
 
@@ -61,19 +71,18 @@ export function useAIMPSGeneration() {
       try {
         parsed = JSON.parse((data as { reply: string }).reply) as GeneratedMpsDraftRaw[];
       } catch {
-        setError('Failed to parse AI response. Loaded legacy fallback MPS pack for this domain.');
+        setFallbackWarning();
         return toFallbackDrafts(domainName);
       }
 
       if (!Array.isArray(parsed) || parsed.length === 0) {
-        setError('AI returned no MPS rows. Loaded legacy fallback MPS pack for this domain.');
+        setFallbackWarning();
         return toFallbackDrafts(domainName);
       }
 
       return parsed.map((item) => ({ ...item, acceptance: 'session' as const }));
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'AI generation failed. Please try again.';
-      setError(`${message} Loaded legacy fallback MPS pack for this domain.`);
+      setFallbackWarning();
       return toFallbackDrafts(domainName);
     } finally {
       setIsLoading(false);

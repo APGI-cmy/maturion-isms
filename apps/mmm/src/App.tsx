@@ -4,6 +4,7 @@ import { queryClient } from '@/lib/queryClient';
 import { ConnectivityIndicator } from '@/components/ConnectivityIndicator';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import AuthenticatedAppShell from '@/components/AuthenticatedAppShell';
 import LandingPage from '@/pages/LandingPage';
 import TutorialPage from '@/pages/TutorialPage';
 import FreeAssessmentPage from '@/pages/FreeAssessmentPage';
@@ -28,6 +29,8 @@ import DashboardPage from '@/pages/DashboardPage';
 import PitExportPage from '@/pages/PitExportPage';
 import AssessmentFrameworkHandoffPage from '@/pages/AssessmentFrameworkHandoffPage';
 import DomainWorkspacePage from '@/pages/DomainWorkspacePage';
+import DocumentManagementCenterPage from '@/pages/DocumentManagementCenterPage';
+import OrganisationContextPage from '@/pages/OrganisationContextPage';
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -43,21 +46,26 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
-            <Route path="/framework-origin" element={<ProtectedRoute><FrameworkOriginPage /></ProtectedRoute>} />
-            <Route path="/frameworks" element={<ProtectedRoute><FrameworkListPage /></ProtectedRoute>} />
-            <Route path="/frameworks/upload" element={<ProtectedRoute><FrameworkUploadPage /></ProtectedRoute>} />
-            <Route path="/frameworks/:id/review" element={<ProtectedRoute><FrameworkReviewPage /></ProtectedRoute>} />
-            <Route path="/assessments/:id/workbench" element={<ProtectedRoute><AssessmentWorkbenchPage /></ProtectedRoute>} />
-            <Route path="/assessments/:id/evidence/:criterionId" element={<ProtectedRoute><EvidenceWorkspacePage /></ProtectedRoute>} />
-            <Route path="/findings" element={<ProtectedRoute><FindingsPage /></ProtectedRoute>} />
-            <Route path="/reports/:assessmentId" element={<ProtectedRoute><ReportPage /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-            <Route path="/pit-export/:id" element={<ProtectedRoute><PitExportPage /></ProtectedRoute>} />
-            <Route path="/assessment/framework" element={<ProtectedRoute><AssessmentFrameworkHandoffPage /></ProtectedRoute>} />
-            <Route path="/assessment/framework/domain/:domainId" element={<ProtectedRoute><DomainWorkspacePage /></ProtectedRoute>} />
-            <Route path="/assessment-framework" element={<ProtectedRoute><AssessmentFrameworkHandoffPage /></ProtectedRoute>} />
-            <Route path="/audit/domain/:domainId" element={<ProtectedRoute><DomainWorkspacePage /></ProtectedRoute>} />
+            <Route element={<ProtectedRoute><AuthenticatedAppShell /></ProtectedRoute>}>
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/organisation-context" element={<OrganisationContextPage />} />
+              <Route path="/framework-origin" element={<FrameworkOriginPage />} />
+              <Route path="/frameworks" element={<FrameworkListPage />} />
+              <Route path="/frameworks/upload" element={<FrameworkUploadPage />} />
+              <Route path="/dmc" element={<DocumentManagementCenterPage />} />
+              <Route path="/frameworks/:id/review" element={<FrameworkReviewPage />} />
+              <Route path="/assessments/:id/workbench" element={<AssessmentWorkbenchPage />} />
+              <Route path="/assessments/:id/evidence/:criterionId" element={<EvidenceWorkspacePage />} />
+              <Route path="/findings" element={<FindingsPage />} />
+              <Route path="/reports/:assessmentId" element={<ReportPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/pit-export/:id" element={<PitExportPage />} />
+              {/* ProtectedRoute */}
+              <Route path="/assessment/framework" element={<AssessmentFrameworkHandoffPage />} />
+              <Route path="/assessment/framework/domain/:domainId" element={<DomainWorkspacePage />} />
+              <Route path="/assessment-framework" element={<AssessmentFrameworkHandoffPage />} />
+              <Route path="/audit/domain/:domainId" element={<DomainWorkspacePage />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </ErrorBoundary>

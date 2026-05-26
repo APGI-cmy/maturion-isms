@@ -7,10 +7,11 @@
  * Adapted for the MMM current app without shadcn/lucide or legacy hook dependencies.
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { DomainAuditMpsRow, GeneratedMpsDraft as GeneratedMPSItem } from '../../hooks/useDomainAuditBuilder';
-import { supabase } from '../../lib/supabase';
+import { getEdgeInvokeHeaders, supabase } from '../../lib/supabase';
 import { useAIMPSGeneration } from '../../hooks/useAIMPSGeneration';
+import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
 
 interface EditedMPSItem {
   title: string;
@@ -48,7 +49,11 @@ export function MPSSelectionModal({
   onClose,
 }: MPSSelectionModalProps) {
   const queryClient = useQueryClient();
-  const { generateMPSsForDomain, isLoading: isGeneratingFromHook } = useAIMPSGeneration();
+  const {
+    generateMPSsForDomain,
+    isLoading: isGeneratingFromHook,
+    error: hookGenerationError,
+  } = useAIMPSGeneration();
 
   const [generatedMPS, setGeneratedMPS] = useState<GeneratedMPSItem[]>([]);
   const [selectedMPSNumbers, setSelectedMPSNumbers] = useState<Set<number>>(new Set());
@@ -101,6 +106,47 @@ export function MPSSelectionModal({
     onError: (err: Error) => {
       // NBR-005: surface save errors to user
       setSaveError(err.message);
+    },
+  });
+
+  const approvalStateQuery = useQuery({
+    queryKey: ['mps-l1-approval-state', domainId, mpsRows.map((row) => row.id).join(',')],
+    queryFn: async () => {
+      if (mpsRows.length === 0) return {} as Record<string, string>;
+      const { data, error } = await supabase
+        .from('mmm_mps_approval_actions')
+        .select('mps_id,resulting_state,created_at')
+        .in('mps_id', mpsRows.map((row) => row.id))
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+
+      const map: Record<string, string> = {};
+      for (const row of data ?? []) {
+        if (!map[row.mps_id]) {
+          map[row.mps_id] = row.resulting_state;
+        }
+      }
+      return map;
+    },
+    enabled: open,
+  });
+
+  const mpsApprovalActionMutation = useMutation({
+    mutationFn: async (payload: { mps_id: string; action_type: 'approve' | 'reopen' | 'reject' | 'regenerate' }) => {
+      const headers = await getEdgeInvokeHeaders();
+      const { error } = await supabase.functions.invoke('mmm-mps-approval-action', {
+        headers,
+        body: {
+          mps_id: payload.mps_id,
+          domain_id: domainId,
+          action_type: payload.action_type,
+        },
+      });
+      if (error) throw new Error(error.message || 'Failed to execute MPS approval action.');
+    },
+    onSuccess: () => {
+      approvalStateQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
     },
   });
 
@@ -182,7 +228,12 @@ export function MPSSelectionModal({
 
   if (!open) return null;
 
-  const displayError = generationError ?? saveError;
+  const blockingError = generationError ?? saveError;
+  const fallbackWarning =
+    !blockingError && hookGenerationError?.includes('Loaded legacy fallback MPS pack')
+      ? hookGenerationError
+      : null;
+  const displayError = blockingError ?? (!fallbackWarning ? hookGenerationError : null);
 
   return (
     <div
@@ -213,6 +264,15 @@ export function MPSSelectionModal({
           {displayError ? (
             <div role="alert" className="alert alert-error" data-testid="mps-generation-error">
               {displayError}
+            </div>
+          ) : null}
+          {fallbackWarning ? (
+            <div
+              role="status"
+              className="alert alert-warning"
+              data-testid="mps-generation-warning"
+            >
+              {fallbackWarning}
             </div>
           ) : null}
 
@@ -360,9 +420,38 @@ export function MPSSelectionModal({
                   <div>Sort order: {mps.sort_order}</div>
                   <div>
                     Intent linkage:{' '}
-                    {mps.intent_statement?.trim()
-                      ? mps.intent_statement
+                    {hasTrimmedText(mps.intent_statement)
+                      ? toTrimmedText(mps.intent_statement)
                       : 'No intent statement stored yet.'}
+                  </div>
+                  <div>
+                    L1 state:{' '}
+                    <strong>
+                      {(approvalStateQuery.data?.[mps.id] ?? 'draft').replace(/_/g, ' ').toUpperCase()}
+                    </strong>
+                  </div>
+                  <div className="dmc-row-actions" style={{ marginTop: '0.4rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'approve' })}
+                    >
+                      Approve L1
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reopen' })}
+                    >
+                      Reopen
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reject' })}
+                    >
+                      Reject
+                    </button>
                   </div>
                 </li>
               ))}

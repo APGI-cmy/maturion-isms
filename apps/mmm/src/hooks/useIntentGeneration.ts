@@ -31,8 +31,15 @@ export function useIntentGeneration() {
         `The intent statement should describe the purpose and objective of this MPS in one or two sentences.\n` +
         `Return only the intent statement text, no additional formatting.`;
 
-      const { data, error: invokeError } = await supabase.functions.invoke('mmm-ai-chat', {
-        body: { message: prompt },
+      const { data, error: invokeError } = await supabase.functions.invoke('mmm-ai-chat-user', {
+        body: {
+          message: prompt,
+          context: {
+            workflow_stage: 'intent_generation',
+            domain_name: domainName,
+            mps_code: mpsCode,
+          },
+        },
         headers,
       });
 

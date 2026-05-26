@@ -1351,6 +1351,14 @@ model (Leadership and Governance, Process Integrity, People and Culture, Protect
 Works). Session/auth continuity must be preserved; redirecting users to sign-up/login after a
 successful compile is a technical defect.
 
+### TR-FD-008 — Compile Handoff Render Resilience
+
+The `/assessment/framework` handoff route must be render-safe when upstream payload fields are
+nullish or malformed (for example non-string `framework.name`, `framework.status`,
+`domain.name`, or `domain.code`). Data-access adapters and UI boundary components must normalize
+such values to typed placeholders and continue rendering canonical workspace cards. Transitioning
+from visible workspace render to global error-boundary fallback after data hydration is prohibited.
+
 ---
 
 ## 14. Acceptance Criteria Verification

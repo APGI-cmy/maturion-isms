@@ -412,6 +412,12 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   color: var(--color-success);
 }
 
+.alert-warning {
+  background-color: var(--color-warning-bg);
+  border-left-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
 /* ---------------------------------------------------------
    11. Hero Section
    --------------------------------------------------------- */
@@ -1506,6 +1512,102 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
 }
 
 /* ---------------------------------------------------------
+   26. Document Management Centre (DMC)
+   --------------------------------------------------------- */
+.dmc-page {
+  padding: var(--space-8) 0 var(--space-16);
+  flex: 1;
+}
+
+.dmc-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+@media (min-width: 900px) {
+  .dmc-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.dmc-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1000px) {
+  .dmc-layout {
+    grid-template-columns: 360px 1fr;
+  }
+}
+
+.dmc-upload-panel .card__title,
+.dmc-documents-panel .card__title {
+  margin-bottom: var(--space-3);
+}
+
+.dmc-upload-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.dmc-documents-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.dmc-filter-group {
+  margin-bottom: 0;
+  min-width: 180px;
+}
+
+.dmc-table-wrap {
+  overflow-x: auto;
+}
+
+.dmc-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+}
+
+.dmc-table th,
+.dmc-table td {
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-3);
+  vertical-align: top;
+  font-size: 0.875rem;
+}
+
+.dmc-table th {
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: var(--color-surface-alt);
+}
+
+.dmc-table td p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.dmc-row-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 120px;
+}
+
+/* ---------------------------------------------------------
    30. Get To Know You Wizard (maturion-isms#13)
    --------------------------------------------------------- */
 
@@ -2173,4 +2275,81 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   justify-content: flex-end;
   gap: var(--space-3);
   flex-wrap: wrap;
+}
+.mmm-shell {
+  display: grid;
+  grid-template-columns: var(--mmm-sidebar-width, 148px) 8px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.mmm-shell__sidebar {
+  border-right: 1px solid #d9e1ec;
+  background: #f8fafc;
+  padding: 0.6rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+}
+
+.mmm-shell__brand {
+  font-weight: 800;
+  color: #0c2f5a;
+  margin-bottom: 1rem;
+}
+
+.mmm-shell__brand span {
+  color: #0ea5a1;
+}
+
+.mmm-shell__resize-handle {
+  cursor: col-resize;
+  background: #e5edf7;
+  transition: background-color 120ms ease;
+}
+
+.mmm-shell__resize-handle:hover {
+  background: #c7d6ea;
+}
+
+.mmm-shell__nav {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mmm-shell__nav-link {
+  display: block;
+  padding: 0.55rem 0.7rem;
+  border-radius: 6px;
+  color: #334155;
+  text-decoration: none;
+}
+
+.mmm-shell__nav-link:hover {
+  background: #e8eef6;
+}
+
+.mmm-shell__nav-link--active {
+  background: #dcecff;
+  color: #0c2f5a;
+  font-weight: 700;
+}
+
+.mmm-shell__content {
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  .mmm-shell {
+    grid-template-columns: 1fr;
+  }
+  .mmm-shell__sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #d9e1ec;
+  }
+  .mmm-shell__resize-handle {
+    display: none;
+  }
 }

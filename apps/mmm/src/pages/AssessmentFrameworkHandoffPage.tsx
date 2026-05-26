@@ -43,12 +43,32 @@ function canonicalNameToSlug(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 }
 
-function normalizeForLookup(value: string): string {
-  return value
+function normalizeForLookup(value: unknown): string {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  const normalized = value.trim();
+  if (!normalized) {
+    return '';
+  }
+
+  return normalized
     .toLowerCase()
     .replace(/&/g, 'and')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+function toDisplayText(value: unknown, fallback: string): string {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : fallback;
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return fallback;
 }
 
 function buildMpsCode(domainCode: string, blueprint: LegacyMpsBlueprint): string {
@@ -67,7 +87,7 @@ function AppNav() {
           <span className="app-nav__logo">Maturion <span>MMM</span></span>
           <Link className="app-nav__link" to="/dashboard">Dashboard</Link>
           <Link className="app-nav__link" to="/frameworks">Frameworks</Link>
-          <Link className="app-nav__link" to="/frameworks/upload">Upload</Link>
+          <Link className="app-nav__link" to="/dmc">DMC</Link>
           <Link className="app-nav__link" to="/onboarding">Onboarding</Link>
         </nav>
       </div>
@@ -81,7 +101,8 @@ interface DomainCardProps {
   index: number;
   frameworkId: string;
   domainMetrics?: FrameworkHandoffDomainMetrics;
-  frameworkStatus: string | undefined;
+  domainApproval?: { status: string; locked: boolean };
+  frameworkStatus: string | null | undefined;
   metricsLoading: boolean;
 }
 
@@ -91,9 +112,11 @@ function DomainCard({
   index,
   frameworkId,
   domainMetrics,
+  domainApproval,
   frameworkStatus,
   metricsLoading,
 }: DomainCardProps) {
+  const resolvedDomainCode = toDisplayText(domain?.code, 'Pending');
   // Route by canonical slug so the URL is always stable and human-readable.
   // The actual DB domain ID (if present) is passed as source_domain_id for
   // future backend use, but it is never used as the primary route key.
@@ -104,6 +127,20 @@ function DomainCard({
     `?framework_id=${encodeURIComponent(frameworkId)}` +
     `&domain_name=${encodeURIComponent(canonicalName)}` +
     sourceDomainParam;
+  const criteriaStatus =
+    (domainMetrics?.criteriaCount ?? 0) > 0 ? 'Generated' : 'Pending';
+  const approvalStatus = domainApproval?.status
+    ? domainApproval.status.replace(/_/g, ' ').toUpperCase()
+    : (frameworkStatus ?? 'Draft');
+  const readiness = domainApproval?.status === 'approved_l2'
+    ? 'Ready for implementation'
+    : 'Not ready';
+  const maturityLevel =
+    (domainMetrics?.criteriaCount ?? 0) >= 5
+      ? 'Compliant'
+      : (domainMetrics?.criteriaCount ?? 0) >= 1
+      ? 'Reactive'
+      : 'Basic';
 
   return (
     <div
@@ -114,7 +151,7 @@ function DomainCard({
       <div className="domain-card__header">
         <h3 className="domain-card__title">{canonicalName}</h3>
         {domain ? (
-          <span className="domain-card__code">{domain.code}</span>
+          <span className="domain-card__code">{resolvedDomainCode}</span>
         ) : (
           <span className="domain-card__placeholder-badge">Pending</span>
         )}
@@ -128,33 +165,33 @@ function DomainCard({
           </span>
         </div>
         <div className="domain-card__stat">
-          <span className="domain-card__stat-label">Criteria Count</span>
+          <span className="domain-card__stat-label">Criteria Status</span>
           <span className="domain-card__stat-value" data-testid="domain-criteria-count">
-            {metricsLoading ? '...' : (domainMetrics?.criteriaCount ?? 0)}
+            {metricsLoading ? '...' : criteriaStatus}
           </span>
         </div>
         <div className="domain-card__stat">
-          <span className="domain-card__stat-label">Maturity Level</span>
+          <span className="domain-card__stat-label">Domain Maturity</span>
           <span className="domain-card__stat-value" data-testid="domain-maturity-level">
-            {domainMetrics && domainMetrics.criteriaCount > 0 ? 'In Progress' : 'Pending'}
-          </span>
-        </div>
-        <div className="domain-card__stat">
-          <span className="domain-card__stat-label">Evidence Upload</span>
-          <span className="domain-card__stat-value" data-testid="domain-evidence-completion">
-            Not started
+            {maturityLevel}
           </span>
         </div>
         <div className="domain-card__stat">
           <span className="domain-card__stat-label">Approval Status</span>
           <span className="domain-card__stat-value" data-testid="domain-approval-status">
-            {frameworkStatus ?? 'Draft'}
+            {approvalStatus}
           </span>
         </div>
         <div className="domain-card__stat">
-          <span className="domain-card__stat-label">Compile Status</span>
+          <span className="domain-card__stat-label">Evidence Upload</span>
+          <span className="domain-card__stat-value" data-testid="domain-evidence-completion">
+            {readiness === 'Ready for implementation' ? 'Configured' : 'Pending'}
+          </span>
+        </div>
+        <div className="domain-card__stat">
+          <span className="domain-card__stat-label">Implementation Readiness</span>
           <span className="domain-card__stat-value" data-testid="domain-compile-status">
-            {frameworkStatus === 'REVIEW' || frameworkStatus === 'PUBLISHED' ? 'Compiled' : 'Pending'}
+            {readiness}
           </span>
         </div>
       </div>
@@ -172,128 +209,6 @@ export default function AssessmentFrameworkHandoffPage() {
   const [searchParams] = useSearchParams();
   const frameworkId = searchParams.get('framework_id');
   const queryClient = useQueryClient();
-
-  const {
-    framework,
-    isLoading,
-    isError,
-    domains,
-    domainsLoading,
-    domainsError,
-    domainMetrics,
-    domainMetricsLoading,
-  } =
-    useFrameworkHandoffContext(frameworkId);
-
-  if (!frameworkId) {
-    return (
-      <div className="app-shell">
-        <AppNav />
-        <main className="assessment-framework-handoff-page">
-          <div className="container">
-            <div
-              className="alert alert-error"
-              role="alert"
-              data-testid="handoff-missing-framework-id"
-            >
-              <p>No framework ID provided. Please navigate from the framework compile workflow.</p>
-              <Link to="/frameworks">Back to Frameworks</Link>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="app-shell">
-        <AppNav />
-        <main className="assessment-framework-handoff-page">
-          <div className="container">
-            <p className="handoff-loading" data-testid="handoff-loading">
-              Loading framework workspace…
-            </p>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (isError || !framework) {
-    return (
-      <div className="app-shell">
-        <AppNav />
-        <main className="assessment-framework-handoff-page">
-          <div className="container">
-            <div
-              className="alert alert-error"
-              role="alert"
-              data-testid="handoff-framework-not-found"
-            >
-              Framework not found. The framework ID may be invalid or you may not have access.{' '}
-              <Link to="/frameworks">View all frameworks</Link>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  // Build canonical slot array: 5 slots backed by DB domains.
-  // Prefer exact canonical name/code matching first; then fall back to positional mapping.
-  const sortedDomains = domains ? domains.slice().sort((a, b) => a.sort_order - b.sort_order) : [];
-  const matchedByCanonicalName = new Map<string, FrameworkHandoffDomain>();
-  const consumedDomainIds = new Set<string>();
-
-  for (const domain of sortedDomains) {
-    const candidateKeys = [
-      normalizeForLookup(domain.name),
-      normalizeForLookup(domain.code),
-      normalizeForLookup(`${domain.code}-${domain.name}`),
-    ];
-
-    for (const canonicalName of CANONICAL_DOMAIN_NAMES) {
-      if (matchedByCanonicalName.has(canonicalName)) continue;
-      const canonicalKeys = [
-        normalizeForLookup(canonicalName),
-        normalizeForLookup(canonicalNameToSlug(canonicalName)),
-      ];
-      if (candidateKeys.some((candidate) => canonicalKeys.includes(candidate))) {
-        matchedByCanonicalName.set(canonicalName, domain);
-        consumedDomainIds.add(domain.id);
-        break;
-      }
-    }
-  }
-
-  const unconsumedDomains = sortedDomains.filter((domain) => !consumedDomainIds.has(domain.id));
-  const canonicalSlots = CANONICAL_DOMAIN_NAMES.map((name, i) => {
-    const matched = matchedByCanonicalName.get(name);
-    if (matched) {
-      return {
-        canonicalName: name,
-        domain: matched,
-        index: i + 1,
-      };
-    }
-    return {
-      canonicalName: name,
-      domain: unconsumedDomains.shift() as FrameworkHandoffDomain | undefined,
-      index: i + 1,
-    };
-  });
-
-  const missingCanonicalCount = canonicalSlots.filter((slot) => !slot.domain).length;
-  const totalMpsCount = canonicalSlots.reduce((sum, slot) => {
-    const slotCount = slot.domain?.id ? domainMetrics[slot.domain.id]?.mpsCount ?? 0 : 0;
-    return sum + slotCount;
-  }, 0);
-  const needsLegacyRepair =
-    !domainsLoading &&
-    !domainsError &&
-    (missingCanonicalCount > 0 || totalMpsCount <= 1);
-
   const legacyRepairMutation = useMutation({
     mutationFn: async () => {
       if (!frameworkId) {
@@ -361,6 +276,131 @@ export default function AssessmentFrameworkHandoffPage() {
     },
   });
 
+  const {
+    framework,
+    isLoading,
+    isError,
+    domains,
+    domainsLoading,
+    domainsError,
+    domainMetrics,
+    domainApprovalStatus,
+    domainMetricsLoading,
+  } =
+    useFrameworkHandoffContext(frameworkId);
+
+  if (!frameworkId) {
+    return (
+      <div className="app-shell">
+        <AppNav />
+        <main className="assessment-framework-handoff-page">
+          <div className="container">
+            <div
+              className="alert alert-error"
+              role="alert"
+              data-testid="handoff-missing-framework-id"
+            >
+              <p>No framework ID provided. Please navigate from the framework compile workflow.</p>
+              <Link to="/frameworks">Back to Frameworks</Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="app-shell">
+        <AppNav />
+        <main className="assessment-framework-handoff-page">
+          <div className="container">
+            <p className="handoff-loading" data-testid="handoff-loading">
+              Loading framework workspace…
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (isError || !framework) {
+    return (
+      <div className="app-shell">
+        <AppNav />
+        <main className="assessment-framework-handoff-page">
+          <div className="container">
+            <div
+              className="alert alert-error"
+              role="alert"
+              data-testid="handoff-framework-not-found"
+            >
+              Framework not found. The framework ID may be invalid or you may not have access.{' '}
+              <Link to="/frameworks">View all frameworks</Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Build canonical slot array: 5 slots backed by DB domains.
+  // Prefer exact canonical name/code matching first; then fall back to positional mapping.
+  const sortedDomains = (domains ?? [])
+    .filter((domain): domain is FrameworkHandoffDomain => Boolean(domain?.id))
+    .slice()
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const matchedByCanonicalName = new Map<string, FrameworkHandoffDomain>();
+  const consumedDomainIds = new Set<string>();
+
+  for (const domain of sortedDomains) {
+    const candidateKeys = [
+      normalizeForLookup(domain.name),
+      normalizeForLookup(domain.code),
+      normalizeForLookup(`${domain.code}-${domain.name}`),
+    ];
+
+    for (const canonicalName of CANONICAL_DOMAIN_NAMES) {
+      if (matchedByCanonicalName.has(canonicalName)) continue;
+      const canonicalKeys = [
+        normalizeForLookup(canonicalName),
+        normalizeForLookup(canonicalNameToSlug(canonicalName)),
+      ];
+      if (candidateKeys.some((candidate) => canonicalKeys.includes(candidate))) {
+        matchedByCanonicalName.set(canonicalName, domain);
+        consumedDomainIds.add(domain.id);
+        break;
+      }
+    }
+  }
+
+  const unconsumedDomains = sortedDomains.filter((domain) => !consumedDomainIds.has(domain.id));
+  const canonicalSlots = CANONICAL_DOMAIN_NAMES.map((name, i) => {
+    const matched = matchedByCanonicalName.get(name);
+    if (matched) {
+      return {
+        canonicalName: name,
+        domain: matched,
+        index: i + 1,
+      };
+    }
+    return {
+      canonicalName: name,
+      domain: unconsumedDomains.shift() as FrameworkHandoffDomain | undefined,
+      index: i + 1,
+    };
+  });
+
+  const missingCanonicalCount = canonicalSlots.filter((slot) => !slot.domain).length;
+  const totalMpsCount = canonicalSlots.reduce((sum, slot) => {
+    const slotCount = slot.domain?.id ? domainMetrics[slot.domain.id]?.mpsCount ?? 0 : 0;
+    return sum + slotCount;
+  }, 0);
+  const needsLegacyRepair =
+    !domainsLoading &&
+    !domainsError &&
+    (missingCanonicalCount > 0 || totalMpsCount <= 1);
+
   return (
     <div className="app-shell">
       <AppNav />
@@ -369,15 +409,17 @@ export default function AssessmentFrameworkHandoffPage() {
           <div className="page-header">
             <div>
               <h1 className="page-header__title" data-testid="handoff-framework-name">
-                {framework.name}
+                {toDisplayText(framework.name, 'Untitled Framework')}
               </h1>
               <p className="page-header__subtitle">Framework Workspace</p>
             </div>
             <span
-              className={`handoff-framework-badge handoff-framework-badge--${framework.status?.toLowerCase() ?? 'unknown'}`}
+              className={`handoff-framework-badge handoff-framework-badge--${
+                normalizeForLookup(framework.status) || 'unknown'
+              }`}
               data-testid="handoff-framework-status"
             >
-              {framework.status ?? 'Unknown'}
+              {toDisplayText(framework.status, 'Unknown')}
             </span>
           </div>
 
@@ -429,6 +471,7 @@ export default function AssessmentFrameworkHandoffPage() {
                     index={slot.index}
                     frameworkId={frameworkId}
                     domainMetrics={slot.domain?.id ? domainMetrics[slot.domain.id] : undefined}
+                    domainApproval={slot.domain?.id ? domainApprovalStatus[slot.domain.id] : undefined}
                     frameworkStatus={framework?.status}
                     metricsLoading={domainMetricsLoading}
                   />

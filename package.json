@@ -8,6 +8,8 @@
     "build": "echo 'Build script to be configured'",
     "test": "vitest run",
     "test:mat:red": "vitest run --config vitest.config.ts",
+    "supabase:mmm:set-secrets": "powershell -ExecutionPolicy Bypass -File scripts/setup-mmm-edge-secrets.ps1",
+    "supabase:mmm:validate-ai-linkage": "powershell -ExecutionPolicy Bypass -File scripts/validate-mmm-ai-linkage.ps1",
     "lint": "echo 'Linting placeholder - to be configured with eslint/biome'",
     "type-check": "echo 'Type checking placeholder - to be configured with tsc'"
   },

@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { DomainAuditMpsRow } from '../../hooks/useDomainAuditBuilder';
 import { supabase } from '../../lib/supabase';
 import { useIntentGeneration } from '../../hooks/useIntentGeneration';
+import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
 
 interface PerMpsIntentState {
   isGenerating: boolean;
@@ -120,14 +121,15 @@ export function IntentCreator({
         [mps.id]: { isGenerating: false, generatedIntent: reply, editedIntent: reply, error: null },
       }));
     } catch (err: unknown) {
-      // NBR-005: surface generation errors to user
+      const fallbackIntent =
+        `Ensure ${mps.name} (${mps.code}) is clearly defined, implemented, and evidenced within the ${domainName} domain.`;
       setMpsIntentStates((prev) => ({
         ...prev,
         [mps.id]: {
           isGenerating: false,
-          generatedIntent: null,
-          editedIntent: '',
-          error: err instanceof Error ? err.message : 'AI generation failed. Please try again.',
+          generatedIntent: fallbackIntent,
+          editedIntent: fallbackIntent,
+          error: 'AI service unavailable. Loaded fallback intent draft.',
         },
       }));
     }
@@ -244,8 +246,8 @@ export function IntentCreator({
                     ) : (
                       <div>
                         <div>
-                          {mps.intent_statement?.trim()
-                            ? mps.intent_statement
+                          {hasTrimmedText(mps.intent_statement)
+                            ? toTrimmedText(mps.intent_statement)
                             : 'No intent statement stored for this MPS yet.'}
                         </div>
                         <button
@@ -254,7 +256,7 @@ export function IntentCreator({
                           data-testid={`generate-intent-btn-${mps.id}`}
                           onClick={() => handleGenerate(mps)}
                         >
-                          {mps.intent_statement?.trim() ? 'Regenerate intent' : 'Generate intent'}
+                          {hasTrimmedText(mps.intent_statement) ? 'Regenerate intent' : 'Generate intent'}
                         </button>
                       </div>
                     )}

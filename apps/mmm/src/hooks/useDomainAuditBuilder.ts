@@ -10,6 +10,12 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import {
+  hasTrimmedText,
+  toDisplayNumber,
+  toDisplayText,
+  toTrimmedText,
+} from '../lib/safeText';
 
 export type AuditStep = 'mps' | 'intent' | 'criteria';
 export type AuditStepStatus = 'locked' | 'active' | 'completed';
@@ -89,6 +95,8 @@ function truncate(value: string, max = 96): string {
   return value.length > max ? `${value.slice(0, max - 1)}…` : value;
 }
 
+type SupabaseRow = Record<string, unknown>;
+
 export interface UseDomainAuditBuilderOptions {
   domainId: string;
   frameworkId?: string | null;
@@ -155,10 +163,12 @@ export function useDomainAuditBuilder({
 
       const lookupKey = normalizeDomainKey(domainName ?? domainId);
       const matchedDomain = (data ?? []).find((candidate) => {
+        const candidateName = toDisplayText(candidate.name);
+        const candidateCode = toDisplayText(candidate.code);
         const candidateKeys = [
-          normalizeDomainKey(candidate.name),
-          normalizeDomainKey(candidate.code),
-          normalizeDomainKey(`${candidate.code}-${candidate.name}`),
+          normalizeDomainKey(candidateName),
+          normalizeDomainKey(candidateCode),
+          normalizeDomainKey(`${candidateCode}-${candidateName}`),
         ];
         return candidateKeys.includes(lookupKey);
       });
@@ -167,7 +177,13 @@ export function useDomainAuditBuilder({
         return null;
       }
 
-      return matchedDomain as DomainAuditDomain;
+      return {
+        id: toDisplayText(matchedDomain.id),
+        name: toDisplayText(matchedDomain.name, domainName ?? domainId),
+        code: toDisplayText(matchedDomain.code, domainId),
+        sort_order: toDisplayNumber(matchedDomain.sort_order, 0),
+        framework_id: toDisplayText(matchedDomain.framework_id, frameworkId ?? ''),
+      } as DomainAuditDomain;
     },
     enabled: Boolean(domainId) && Boolean(sourceDomainId || frameworkId),
     retry: false,
@@ -194,7 +210,18 @@ export function useDomainAuditBuilder({
         throw new Error(error.message);
       }
 
-      return (data ?? []) as DomainAuditMpsRow[];
+      const rows = (data ?? []) as SupabaseRow[];
+      return rows.map((row, index) => {
+        const intentStatement = toTrimmedText(row.intent_statement);
+        return {
+          id: toDisplayText(row.id, `mps-${index + 1}`),
+          domain_id: toDisplayText(row.domain_id, domain.id),
+          name: toDisplayText(row.name, `MPS ${index + 1}`),
+          code: toDisplayText(row.code, `MPS-${index + 1}`),
+          sort_order: toDisplayNumber(row.sort_order, index + 1),
+          intent_statement: intentStatement.length > 0 ? intentStatement : null,
+        };
+      });
     },
     enabled: Boolean(domain?.id),
     retry: false,
@@ -219,7 +246,14 @@ export function useDomainAuditBuilder({
         throw new Error(error.message);
       }
 
-      return (data ?? []) as DomainAuditCriterionRow[];
+      const rows = (data ?? []) as SupabaseRow[];
+      return rows.map((row, index) => ({
+        id: toDisplayText(row.id, `criterion-${index + 1}`),
+        mps_id: toDisplayText(row.mps_id),
+        name: toDisplayText(row.name, `Criterion ${index + 1}`),
+        code: toDisplayText(row.code, `C-${index + 1}`),
+        sort_order: toDisplayNumber(row.sort_order, index + 1),
+      }));
     },
     enabled: mpsIds.length > 0,
     retry: false,
@@ -233,7 +267,7 @@ export function useDomainAuditBuilder({
   }, [criteriaRows]);
 
   const steps = useMemo<StepMeta[]>(() => {
-    const intentRows = mpsRows.filter((row) => Boolean(row.intent_statement?.trim()));
+    const intentRows = mpsRows.filter((row) => hasTrimmedText(row.intent_statement));
     const hasDomainContext = Boolean(domain?.id);
     const hasMps = mpsRows.length > 0;
     const hasCompleteIntents = hasMps && intentRows.length === mpsRows.length;
@@ -273,7 +307,7 @@ export function useDomainAuditBuilder({
               : 'No intent statements are currently stored for this domain.',
           previewItems: intentRows
             .slice(0, 3)
-            .map((row) => `${row.code} — ${truncate(row.intent_statement ?? '')}`),
+            .map((row) => `${row.code} — ${truncate(toTrimmedText(row.intent_statement))}`),
         };
       }
 

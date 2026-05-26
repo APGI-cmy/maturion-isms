@@ -34,7 +34,7 @@ const KUC_SERVICE_TOKEN = Deno.env.get('KUC_SERVICE_TOKEN') ?? '';
 /** TR-020: KUC classification response */
 export interface KucClassificationResponse {
   upload_id: string;
-  document_role: 'criteria_source' | 'evidence';
+  document_role: 'criteria_source' | 'evidence' | 'knowledge_source' | 'guidance' | 'template';
   classification: {
     type: string;
     confidence: number;
@@ -56,7 +56,7 @@ export interface KucUploadMetadata {
   filename: string;
   mime_type: string;
   size_bytes: number;
-  upload_context: 'framework_source' | 'evidence';
+  upload_context: 'framework_source' | 'evidence' | 'subject_knowledge';
 }
 
 const KUC_TIMEOUT_MS = 30_000;
@@ -72,7 +72,7 @@ const KUC_TIMEOUT_MS = 30_000;
  */
 export async function uploadToKuc(
   file: File | Blob,
-  documentRole: 'criteria_source' | 'evidence',
+  documentRole: 'criteria_source' | 'evidence' | 'knowledge_source' | 'guidance' | 'template',
   organisationId: string,
   userId: string,
   metadata: KucUploadMetadata,
@@ -112,8 +112,12 @@ export async function uploadToKuc(
       headers['Authorization'] = `Bearer ${KUC_SERVICE_TOKEN}`;
     }
 
+    const uploadPath = metadata.upload_context === 'subject_knowledge'
+      ? 'framework-source'
+      : metadata.upload_context.replace('_', '-');
+
     const response = await fetch(
-      `${KUC_BASE_URL}/api/upload/${metadata.upload_context}`,
+      `${KUC_BASE_URL}/api/upload/${uploadPath}`,
       {
         method: 'POST',
         headers,
@@ -168,18 +172,25 @@ export async function uploadToKuc(
  * Preserves document_role and provides nominal classification for downstream processing.
  */
 function buildStubKucClassification(
-  documentRole: 'criteria_source' | 'evidence',
+  documentRole: 'criteria_source' | 'evidence' | 'knowledge_source' | 'guidance' | 'template',
   filename: string,
 ): KucUploadResult {
   const kuc_classification: KucClassificationResponse = {
     upload_id: crypto.randomUUID(),
     document_role: documentRole,
     classification: {
-      type: documentRole === 'criteria_source' ? 'framework_document' : 'evidence_document',
+      type:
+        documentRole === 'criteria_source'
+          ? 'framework_document'
+          : documentRole === 'evidence'
+          ? 'evidence_document'
+          : 'knowledge_document',
       confidence: 0.85,
       categories: [documentRole],
     },
-    parse_job_id: documentRole === 'criteria_source' ? crypto.randomUUID() : null,
+    parse_job_id: documentRole === 'criteria_source' || documentRole === 'knowledge_source'
+      ? crypto.randomUUID()
+      : null,
   };
 
   console.log(

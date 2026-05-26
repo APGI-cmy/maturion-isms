@@ -250,6 +250,9 @@ for compile handoff. It is not yet the canonical long-term MMM route shape.
   error state and recovery action.
 - Blank render is explicitly prohibited for all handoff outcomes.
 - Raw harvested-domain-only list render is explicitly NOT a valid success state.
+- Malformed/nullish payload field values from upstream sources (for example non-string `name`,
+  `status`, or `code`) MUST be normalized to safe placeholders at the boundary and MUST NOT
+  trigger global error-boundary fallback for this route.
 
 **Framework Configuration Workspace boundary contract**:
 - `/assessment/framework?framework_id=:id` MUST render canonical domain containers as five cards:

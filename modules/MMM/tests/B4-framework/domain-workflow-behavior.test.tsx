@@ -344,7 +344,10 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   it('loads and renders MPS rows with code, name, sort order, and intent linkage', async () => {
     renderDomainWorkspace();
 
-    fireEvent.click(await screen.findByTestId('step-action-mps'));
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-mps').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-mps'));
 
     const list = await screen.findByTestId('mps-selection-list');
     expect(within(list).getByText('PI-001')).toBeTruthy();
@@ -356,7 +359,10 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   it('renders intent statements from mmm_maturity_process_steps intent_statement values', async () => {
     renderDomainWorkspace();
 
-    fireEvent.click(await screen.findByTestId('step-action-intent'));
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-intent').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-intent'));
 
     const list = await screen.findByTestId('intent-list');
     expect(within(list).getByText(/PI-001/)).toBeTruthy();
@@ -366,7 +372,10 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   it('loads criteria rows and groups them under their related MPS entries', async () => {
     renderDomainWorkspace();
 
-    fireEvent.click(await screen.findByTestId('step-action-criteria'));
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
 
     const groups = await screen.findAllByTestId('criteria-group');
     expect(groups).toHaveLength(2);
@@ -390,6 +399,9 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
       'Loading domain workflow data…',
     );
 
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-mps').hasAttribute('disabled')).toBe(false);
+    });
     fireEvent.click(screen.getByTestId('step-action-mps'));
     expect(screen.getByTestId('mps-selection-loading').textContent).toContain('Loading MPS data…');
   });
@@ -548,11 +560,13 @@ describe('T-MMM-S6-AI-001: AI generation lifecycle — MPS generation', () => {
     expect(insertArg[0]).toMatchObject({ domain_id: 'domain-1', name: 'Access Control' });
   });
 
-  it('AI function error shows mps-generation-error', async () => {
+  it('AI function error shows non-blocking fallback warning with generated legacy pack', async () => {
     configureAIError();
     renderMPSSelectionModal({ mpsRows: [] });
     fireEvent.click(screen.getByTestId('generate-mps-btn'));
-    await waitFor(() => expect(screen.getByTestId('mps-generation-error')).toBeTruthy());
+    await waitFor(() => expect(screen.getByTestId('mps-generation-warning')).toBeTruthy());
+    expect(screen.queryByTestId('mps-generation-error')).toBeNull();
+    expect(screen.getByTestId('generated-mps-list')).toBeTruthy();
   });
 
   it('closing modal resets generation state', async () => {

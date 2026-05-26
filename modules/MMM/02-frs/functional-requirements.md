@@ -465,6 +465,8 @@ All approval actions must be audit-trailed in `approvals` and `approval_comments
 Compile handoff from framework review must route to
 `/assessment/framework?framework_id=<id>` and present the canonical five-domain workspace.
 Redirect to sign-up/login after successful compile is prohibited.
+Malformed or nullish framework/domain payload fields must degrade to visible placeholders on this
+route; runtime crash fallback ("Something went wrong") is prohibited for handoff hydration outcomes.
 
 ### FR-027 — Framework Publication
 MMM must support a framework publication event that:

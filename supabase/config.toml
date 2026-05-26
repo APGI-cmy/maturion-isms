@@ -82,3 +82,30 @@ verify_jwt = true
 
 [functions.mmm-ai-assessment-interpret]
 verify_jwt = true
+
+[functions.mmm-ai-chat-user]
+verify_jwt = true
+
+[functions.mmm-subject-knowledge-list]
+verify_jwt = true
+
+[functions.mmm-subject-knowledge-upload]
+verify_jwt = true
+
+[functions.mmm-subject-knowledge-reprocess]
+verify_jwt = true
+
+[functions.mmm-subject-knowledge-migrate-legacy]
+verify_jwt = true
+
+[functions.mmm-organisation-context]
+verify_jwt = true
+
+[functions.mmm-mps-approval-action]
+verify_jwt = true
+
+[functions.mmm-domain-approval-action]
+verify_jwt = true
+
+[functions.mmm-domain-approval-comment]
+verify_jwt = true

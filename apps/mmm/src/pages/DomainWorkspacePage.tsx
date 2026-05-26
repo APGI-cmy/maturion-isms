@@ -31,7 +31,7 @@ function AppNav() {
           <span className="app-nav__logo">Maturion <span>MMM</span></span>
           <Link className="app-nav__link" to="/dashboard">Dashboard</Link>
           <Link className="app-nav__link" to="/frameworks">Frameworks</Link>
-          <Link className="app-nav__link" to="/frameworks/upload">Upload</Link>
+          <Link className="app-nav__link" to="/dmc">DMC</Link>
           <Link className="app-nav__link" to="/onboarding">Onboarding</Link>
         </nav>
       </div>

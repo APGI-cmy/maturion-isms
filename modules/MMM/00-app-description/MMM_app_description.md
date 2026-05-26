@@ -218,6 +218,14 @@ There may never again be multiple canonical owners of:
 
 MMM is the single source of truth.
 
+### 5.5 Runtime Resilience Rule
+Core MMM workflow pages must remain usable even if selected edge-function invocations are temporarily unavailable.
+
+Required resilience behavior:
+- Organisation Context must fall back to canonical table access when edge runtime calls fail.
+- DMC inventory must fall back to canonical table access when edge runtime calls fail.
+- Sidebar workflow entry points must not route users into dead-end states that require hidden query prerequisites.
+
 ---
 
 ## 6. User Entry Journey

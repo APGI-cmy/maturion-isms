@@ -15,6 +15,7 @@ import type {
 import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
 import { AIGeneratedCriteriaCards } from './AIGeneratedCriteriaCards';
 import { EnhancedCriteriaGenerator } from './EnhancedCriteriaGenerator';
+import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
 
 export interface GeneratedCriterionItem {
   code: string;
@@ -27,6 +28,23 @@ interface PerMpsCriteriaState {
   acceptedCodes: Set<string>;
   refinePrompt: string;
   error: string | null;
+}
+
+function buildFallbackCriteria(mpsCode: string, mpsName: string, domainName: string): GeneratedCriterionItem[] {
+  return [
+    {
+      code: `${mpsCode}-C001`,
+      statement: `Document and approve the ${mpsName} control design for ${domainName}.`,
+    },
+    {
+      code: `${mpsCode}-C002`,
+      statement: `Define accountable owners, review frequency, and escalation triggers for ${mpsName}.`,
+    },
+    {
+      code: `${mpsCode}-C003`,
+      statement: `Maintain auditable evidence proving ${mpsName} execution and effectiveness.`,
+    },
+  ];
 }
 
 export interface CriteriaManagementProps {
@@ -146,8 +164,15 @@ export function CriteriaManagement({
         `Each criterion should be specific, measurable, and auditable.\n` +
         `Return a JSON array: [{"code": "${mps.code}-C001", "statement": "..."}]\n` +
         `Return only the JSON array.`;
-      const { data, error } = await supabase.functions.invoke('mmm-ai-chat', {
-        body: { message: prompt },
+      const { data, error } = await supabase.functions.invoke('mmm-ai-chat-user', {
+        body: {
+          message: prompt,
+          context: {
+            workflow_stage: 'criteria_generation',
+            domain_name: domainName,
+            mps_code: mps.code,
+          },
+        },
         headers,
       });
       if (error) throw new Error((error as { message?: string }).message ?? 'AI generation failed');
@@ -167,16 +192,16 @@ export function CriteriaManagement({
           error: null,
         },
       }));
-    } catch (err: unknown) {
-      // NBR-005: surface generation errors to user
+    } catch {
+      const fallback = buildFallbackCriteria(mps.code, mps.name, domainName);
       setMpsCriteriaStates((prev) => ({
         ...prev,
         [mps.id]: {
           isGenerating: false,
-          generatedCriteria: [],
-          acceptedCodes: new Set(),
+          generatedCriteria: fallback,
+          acceptedCodes: new Set(fallback.map((item) => item.code)),
           refinePrompt,
-          error: err instanceof Error ? err.message : 'AI generation failed. Please try again.',
+          error: 'AI service unavailable. Loaded fallback criteria draft.',
         },
       }));
     }
@@ -282,8 +307,8 @@ export function CriteriaManagement({
                     </h3>
                     <p>
                       Intent:{' '}
-                      {mps.intent_statement?.trim()
-                        ? mps.intent_statement
+                      {hasTrimmedText(mps.intent_statement)
+                        ? toTrimmedText(mps.intent_statement)
                         : 'No intent statement stored for this MPS yet.'}
                     </p>
 
