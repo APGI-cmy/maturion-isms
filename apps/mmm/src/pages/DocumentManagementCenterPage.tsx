@@ -42,8 +42,30 @@ type MigrationResult = {
   migrated_count: number;
   deduped_count: number;
   failed_count: number;
+  manual_import_required?: boolean;
+  message?: string;
   failures?: Array<Record<string, unknown>>;
 };
+
+function summarizeBulkFailures(results: Array<{ file: string; ok: boolean; error?: string }>): string {
+  const failed = results.filter((item) => !item.ok);
+  if (failed.length === 0) {
+    return '';
+  }
+
+  const buckets = new Map<string, number>();
+  for (const item of failed) {
+    const key = (item.error ?? 'Unknown error').trim();
+    buckets.set(key, (buckets.get(key) ?? 0) + 1);
+  }
+
+  const ranked = [...buckets.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([reason, count]) => `${count}x ${reason}`);
+
+  return `Top failure causes: ${ranked.join(' | ')}`;
+}
 
 type ProfileContext = {
   userId: string;
@@ -103,6 +125,35 @@ function formatFileSize(bytes: number): string {
 function isSuperuserRole(role: string | null): boolean {
   if (!role) return false;
   return SUPERUSER_ROLES.has(role.trim().toUpperCase());
+}
+
+async function invokeEdgeWithDiagnostics<T>(functionName: string, body: Record<string, unknown>): Promise<T> {
+  const headers = await getEdgeInvokeHeaders();
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+  const endpoint = `${supabaseUrl}/functions/v1/${functionName}`;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  const raw = await response.text();
+  let parsed: unknown = null;
+  try {
+    parsed = raw ? JSON.parse(raw) : null;
+  } catch {
+    parsed = raw;
+  }
+
+  if (!response.ok) {
+    const detail =
+      typeof parsed === 'object' && parsed && 'error' in (parsed as Record<string, unknown>)
+        ? String((parsed as Record<string, unknown>).error)
+        : raw || `HTTP ${response.status}`;
+    throw new Error(`${functionName} failed: ${detail}`);
+  }
+
+  return (parsed ?? {}) as T;
 }
 
 async function fetchProfileContext(): Promise<ProfileContext> {
@@ -201,13 +252,16 @@ async function fetchSubjectKnowledgeDocuments(): Promise<SubjectKnowledgeListRes
 export default function DocumentManagementCenterPage() {
   const queryClient = useQueryClient();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [bulkFiles, setBulkFiles] = useState<File[]>([]);
   const [title, setTitle] = useState('');
   const [documentType, setDocumentType] = useState('knowledge_source');
   const [tags, setTags] = useState('');
   const [notes, setNotes] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [migrationResult, setMigrationResult] = useState<MigrationResult | null>(null);
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
 
   const profileQuery = useQuery({
     queryKey: ['dmc-profile-context'],
@@ -233,12 +287,11 @@ export default function DocumentManagementCenterPage() {
         throw new Error('Profile context is still loading.');
       }
 
-      if (!isSuperuserRole(profile.role)) {
-        throw new Error('Subject Knowledge upload requires superuser admin role.');
-      }
-
       if (!profile.organisationId) {
         throw new Error('No organisation context found for this user.');
+      }
+      if (!isSuperuserRole(profile.role)) {
+        throw new Error(`Current role "${profile.role ?? 'Unknown'}" cannot upload subject knowledge. Ask an ADMIN/SUPERUSER to grant access.`);
       }
 
       const safeFileName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -257,10 +310,9 @@ export default function DocumentManagementCenterPage() {
         .map((tag) => tag.trim())
         .filter(Boolean);
 
-      const headers = await getEdgeInvokeHeaders();
-      const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-upload', {
-        headers,
-        body: {
+      const data = await invokeEdgeWithDiagnostics<{ chunk_count?: number; kuc_error?: string | null }>(
+        'mmm-subject-knowledge-upload',
+        {
           title: title.trim() || selectedFile.name.replace(/\.[^/.]+$/, ''),
           file_name: selectedFile.name,
           mime_type: selectedFile.type || 'application/octet-stream',
@@ -271,13 +323,9 @@ export default function DocumentManagementCenterPage() {
           tags: parsedTags,
           upload_notes: notes.trim() || null,
         },
-      });
+      );
 
-      if (error) {
-        throw new Error(error.message || 'Unable to register subject knowledge document.');
-      }
-
-      return data as { chunk_count?: number; kuc_error?: string | null };
+      return data;
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['dmc-subject-documents'] });
@@ -285,6 +333,7 @@ export default function DocumentManagementCenterPage() {
       setTitle('');
       setTags('');
       setNotes('');
+      setActionMessage(null);
       const chunks = Number(result?.chunk_count ?? 0);
       if (result?.kuc_error) {
         setStatusMessage(`Uploaded and indexed ${chunks} chunk(s). KUC warning: ${result.kuc_error}`);
@@ -293,21 +342,95 @@ export default function DocumentManagementCenterPage() {
       }
     },
     onError: (error) => {
+      setActionMessage(null);
+      setStatusMessage((error as Error).message);
+    },
+  });
+
+  const bulkUploadMutation = useMutation({
+    mutationFn: async () => {
+      const profile = profileQuery.data;
+      if (!profile) {
+        throw new Error('Profile context is still loading.');
+      }
+      if (!profile.organisationId) {
+        throw new Error('No organisation context found for this user.');
+      }
+      if (!isSuperuserRole(profile.role)) {
+        throw new Error(`Current role "${profile.role ?? 'Unknown'}" cannot bulk upload subject knowledge. Ask an ADMIN/SUPERUSER to grant access.`);
+      }
+      if (bulkFiles.length === 0) {
+        throw new Error('Please choose one or more files before bulk upload.');
+      }
+
+      const results: Array<{ file: string; ok: boolean; error?: string }> = [];
+
+      for (const file of bulkFiles) {
+        try {
+          const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const storagePath = `${profile.organisationId}/${profile.userId}/${Date.now()}-${safeFileName}`;
+          const bucket = 'mmm-subject-knowledge';
+
+          const { error: uploadError } = await supabase.storage.from(bucket).upload(storagePath, file, {
+            upsert: false,
+          });
+          if (uploadError) {
+            throw new Error(uploadError.message || 'Unable to upload file to storage.');
+          }
+
+          const inferredTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
+
+          await invokeEdgeWithDiagnostics(
+            'mmm-subject-knowledge-upload',
+            {
+              title: inferredTitle || file.name,
+              file_name: file.name,
+              mime_type: file.type || 'application/octet-stream',
+              file_size: file.size,
+              storage_bucket: bucket,
+              storage_path: storagePath,
+              document_role: 'knowledge_source',
+              tags: [],
+              upload_notes: 'Auto-ingested via DMC bulk upload.',
+            },
+          );
+
+          results.push({ file: file.name, ok: true });
+        } catch (err) {
+          results.push({
+            file: file.name,
+            ok: false,
+            error: err instanceof Error ? err.message : 'Unknown bulk upload error.',
+          });
+        }
+      }
+
+      return results;
+    },
+    onSuccess: (results) => {
+      queryClient.invalidateQueries({ queryKey: ['dmc-subject-documents'] });
+      setBulkFiles([]);
+      setActionMessage(null);
+      const success = results.filter((item) => item.ok).length;
+      const failed = results.length - success;
+      const summary = summarizeBulkFailures(results);
+      setStatusMessage(
+        `Bulk upload completed: ${success} succeeded, ${failed} failed.${summary ? ` ${summary}` : ''}`,
+      );
+    },
+    onError: (error) => {
+      setActionMessage(null);
       setStatusMessage((error as Error).message);
     },
   });
 
   const reprocessMutation = useMutation({
     mutationFn: async (documentId: string) => {
-      const headers = await getEdgeInvokeHeaders();
-      const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
-        headers,
-        body: { document_id: documentId },
-      });
-      if (error) {
-        throw new Error(error.message || 'Failed to queue document reprocessing.');
-      }
-      return data as { chunk_count?: number; kuc_error?: string | null };
+      const data = await invokeEdgeWithDiagnostics<{ chunk_count?: number; kuc_error?: string | null }>(
+        'mmm-subject-knowledge-reprocess',
+        { document_id: documentId },
+      );
+      return data;
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['dmc-subject-documents'] });
@@ -353,24 +476,29 @@ export default function DocumentManagementCenterPage() {
 
   const migrateLegacyMutation = useMutation({
     mutationFn: async () => {
-      const headers = await getEdgeInvokeHeaders();
-      const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-migrate-legacy', {
-        headers,
-        body: {},
-      });
-      if (error) {
-        throw new Error(error.message || 'Failed to run legacy migration.');
-      }
-      return data as MigrationResult;
+      const data = await invokeEdgeWithDiagnostics<MigrationResult>(
+        'mmm-subject-knowledge-migrate-legacy',
+        {},
+      );
+      return data;
     },
     onSuccess: (result) => {
+      setActionMessage(null);
       setMigrationResult(result);
       queryClient.invalidateQueries({ queryKey: ['dmc-subject-documents'] });
+      if (result.manual_import_required) {
+        setStatusMessage(
+          result.message ??
+            'No legacy source configured. Please upload your knowledge files into this DMC project.',
+        );
+        return;
+      }
       setStatusMessage(
         `Legacy migration run ${result.migration_run_id} completed: scanned=${result.scanned_count}, migrated=${result.migrated_count}, deduped=${result.deduped_count}, failed=${result.failed_count}.`,
       );
     },
     onError: (error) => {
+      setActionMessage(null);
       setStatusMessage((error as Error).message);
     },
   });
@@ -390,8 +518,100 @@ export default function DocumentManagementCenterPage() {
     return documents.filter((doc) => (doc.processing_status ?? 'pending').toLowerCase() === statusFilter);
   }, [documents, statusFilter]);
 
+  const allFilteredSelected =
+    filteredDocuments.length > 0 &&
+    filteredDocuments.every((doc) => selectedDocumentIds.includes(doc.id));
+
   const role = profileQuery.data?.role ?? null;
   const isSuperuser = isSuperuserRole(role);
+
+  const handleSingleUploadClick = () => {
+    setActionMessage('Upload request started...');
+    if (!selectedFile) {
+      setActionMessage(null);
+      setStatusMessage('Please choose a knowledge file before uploading.');
+      return;
+    }
+    uploadMutation.mutate();
+  };
+
+  const handleBulkUploadClick = () => {
+    setActionMessage('Bulk upload request started...');
+    if (bulkFiles.length === 0) {
+      setActionMessage(null);
+      setStatusMessage('Please choose one or more files for bulk upload.');
+      return;
+    }
+    bulkUploadMutation.mutate();
+  };
+
+  const handleLegacyCheckClick = () => {
+    setActionMessage('Legacy migration check started...');
+    migrateLegacyMutation.mutate();
+  };
+
+  const toggleDocumentSelection = (documentId: string) => {
+    setSelectedDocumentIds((prev) =>
+      prev.includes(documentId) ? prev.filter((id) => id !== documentId) : [...prev, documentId],
+    );
+  };
+
+  const toggleSelectAllFiltered = () => {
+    setSelectedDocumentIds((prev) => {
+      if (allFilteredSelected) {
+        return prev.filter((id) => !filteredDocuments.some((doc) => doc.id === id));
+      }
+      const set = new Set(prev);
+      filteredDocuments.forEach((doc) => set.add(doc.id));
+      return [...set];
+    });
+  };
+
+  const handleReprocessSelected = async () => {
+    if (selectedDocumentIds.length === 0) {
+      setStatusMessage('Select one or more documents to reprocess.');
+      return;
+    }
+
+    setActionMessage(`Reprocessing ${selectedDocumentIds.length} selected document(s)...`);
+    let success = 0;
+    const failures: string[] = [];
+    for (const documentId of selectedDocumentIds) {
+      try {
+        await reprocessMutation.mutateAsync(documentId);
+        success += 1;
+      } catch (error) {
+        failures.push((error as Error).message);
+      }
+    }
+    setActionMessage(null);
+    const failedCount = selectedDocumentIds.length - success;
+    setStatusMessage(`Bulk reprocess completed: ${success} succeeded, ${failedCount} failed.${failedCount ? ` ${summarizeBulkFailures(failures.map((e, i) => ({ file: `${i}`, ok: false, error: e })) )}` : ''}`);
+  };
+
+  const handleArchiveSelected = async () => {
+    if (selectedDocumentIds.length === 0) {
+      setStatusMessage('Select one or more documents to archive.');
+      return;
+    }
+    setActionMessage(`Archiving ${selectedDocumentIds.length} selected document(s)...`);
+    let success = 0;
+    const failures: string[] = [];
+    for (const documentId of selectedDocumentIds) {
+      try {
+        await deleteMutation.mutateAsync(documentId);
+        success += 1;
+      } catch (error) {
+        failures.push((error as Error).message);
+      }
+    }
+    setActionMessage(null);
+    const failedCount = selectedDocumentIds.length - success;
+    setStatusMessage(`Bulk archive completed: ${success} succeeded, ${failedCount} failed.${failedCount ? ` ${summarizeBulkFailures(failures.map((e, i) => ({ file: `${i}`, ok: false, error: e })) )}` : ''}`);
+    if (!failedCount) {
+      setSelectedDocumentIds([]);
+    }
+  };
 
   return (
     <div className="app-shell">
@@ -416,8 +636,8 @@ export default function DocumentManagementCenterPage() {
           ) : null}
 
           {!profileQuery.isLoading && !isSuperuser ? (
-            <div className="alert alert-error" role="alert">
-              Subject Knowledge management is restricted to superuser admins. Your current MMM role is{' '}
+            <div className="alert" role="status">
+              Subject Knowledge writes are validated server-side for superuser roles. Current MMM role:{' '}
               <strong>{role ?? 'Unknown'}</strong>.
             </div>
           ) : null}
@@ -454,8 +674,22 @@ export default function DocumentManagementCenterPage() {
                   className="form-control"
                   type="file"
                   onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
-                  disabled={!isSuperuser || uploadMutation.isPending}
+                  disabled={uploadMutation.isPending}
                 />
+              </div>
+              <div className="form-group">
+                <label htmlFor="dmc-bulk-files">Bulk knowledge files</label>
+                <input
+                  id="dmc-bulk-files"
+                  className="form-control"
+                  type="file"
+                  multiple
+                  onChange={(event) => setBulkFiles(Array.from(event.target.files ?? []))}
+                  disabled={bulkUploadMutation.isPending}
+                />
+                <p className="card__body" style={{ marginTop: '0.5rem' }}>
+                  {bulkFiles.length} file(s) selected. Bulk mode auto-extracts filename, MIME type, and file size.
+                </p>
               </div>
               <div className="form-group">
                 <label htmlFor="dmc-title">Title</label>
@@ -466,7 +700,7 @@ export default function DocumentManagementCenterPage() {
                   placeholder="Optional display title"
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
-                  disabled={!isSuperuser || uploadMutation.isPending}
+                  disabled={uploadMutation.isPending}
                 />
               </div>
               <div className="form-group">
@@ -476,7 +710,7 @@ export default function DocumentManagementCenterPage() {
                   className="form-control"
                   value={documentType}
                   onChange={(event) => setDocumentType(event.target.value)}
-                  disabled={!isSuperuser || uploadMutation.isPending}
+                  disabled={uploadMutation.isPending}
                 >
                   {SUBJECT_DOCUMENT_TYPES.map((docType) => (
                     <option key={docType} value={docType}>
@@ -494,7 +728,7 @@ export default function DocumentManagementCenterPage() {
                   placeholder="Comma-separated tags"
                   value={tags}
                   onChange={(event) => setTags(event.target.value)}
-                  disabled={!isSuperuser || uploadMutation.isPending}
+                  disabled={uploadMutation.isPending}
                 />
               </div>
               <div className="form-group">
@@ -506,29 +740,59 @@ export default function DocumentManagementCenterPage() {
                   placeholder="What should Maturion learn from this file?"
                   value={notes}
                   onChange={(event) => setNotes(event.target.value)}
-                  disabled={!isSuperuser || uploadMutation.isPending}
+                  disabled={uploadMutation.isPending}
                 />
               </div>
               <div className="dmc-upload-actions">
                 <button
                   className="btn btn-primary"
-                  onClick={() => uploadMutation.mutate()}
-                  disabled={!isSuperuser || uploadMutation.isPending || !selectedFile}
+                  onClick={handleSingleUploadClick}
+                  disabled={uploadMutation.isPending}
                 >
                   {uploadMutation.isPending ? 'Uploading…' : 'Upload to Subject Knowledge'}
                 </button>
                 <button
-                  className="btn btn-outline"
-                  onClick={() => migrateLegacyMutation.mutate()}
-                  disabled={!isSuperuser || migrateLegacyMutation.isPending}
+                  className="btn btn-primary"
+                  onClick={handleBulkUploadClick}
+                  disabled={bulkUploadMutation.isPending}
                 >
-                  {migrateLegacyMutation.isPending ? 'Migrating…' : 'Migrate Legacy Knowledge'}
+                  {bulkUploadMutation.isPending ? 'Bulk Uploading…' : 'Bulk Upload Files'}
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={handleLegacyCheckClick}
+                  disabled={migrateLegacyMutation.isPending}
+                >
+                  {migrateLegacyMutation.isPending ? 'Checking…' : 'Legacy Migration Check'}
                 </button>
                 <Link className="btn btn-outline" to="/framework-origin">Go to Criteria Modes</Link>
               </div>
+              {statusMessage ? (
+                <div
+                  className={`alert ${statusMessage.toLowerCase().includes('failed') || statusMessage.toLowerCase().includes('error') || statusMessage.toLowerCase().includes('please choose') ? 'alert-error' : 'alert-success'}`}
+                  role="status"
+                  style={{ marginTop: '0.5rem' }}
+                >
+                  {statusMessage}
+                </div>
+              ) : null}
+              {actionMessage ? (
+                <p className="card__body" style={{ marginTop: '0.5rem' }}>{actionMessage}</p>
+              ) : null}
+              <p className="card__body" style={{ marginTop: '0.75rem' }}>
+                If your old Supabase project was deleted, use this DMC page as the new source of truth and upload files directly here.
+              </p>
+              {!selectedFile && !bulkFiles.length ? (
+                <p className="card__body" style={{ marginTop: '0.5rem' }}>
+                  Select a file (or multiple files) first, then click upload. If you click without files selected, DMC will show a clear error.
+                </p>
+              ) : null}
               {migrationResult ? (
                 <div className="alert" role="status">
                   <p><strong>migration_run_id:</strong> {migrationResult.migration_run_id}</p>
+                  {migrationResult.manual_import_required ? (
+                    <p><strong>Manual import required:</strong> Yes (no legacy source configured)</p>
+                  ) : null}
                   <p>
                     scanned_count: {migrationResult.scanned_count} | migrated_count: {migrationResult.migrated_count} |
                     deduped_count: {migrationResult.deduped_count} | failed_count: {migrationResult.failed_count}
@@ -556,6 +820,25 @@ export default function DocumentManagementCenterPage() {
                   </select>
                 </div>
               </div>
+              <div className="dmc-upload-actions" style={{ marginBottom: '0.75rem' }}>
+                <button className="btn btn-outline" onClick={toggleSelectAllFiltered}>
+                  {allFilteredSelected ? 'Clear Select (Filtered)' : 'Select All (Filtered)'}
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={handleReprocessSelected}
+                  disabled={reprocessMutation.isPending || selectedDocumentIds.length === 0}
+                >
+                  Reprocess Selected ({selectedDocumentIds.length})
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={handleArchiveSelected}
+                  disabled={deleteMutation.isPending || selectedDocumentIds.length === 0}
+                >
+                  Archive Selected ({selectedDocumentIds.length})
+                </button>
+              </div>
 
               {documentsQuery.isLoading ? (
                 <p className="card__body">Loading subject knowledge documents…</p>
@@ -572,6 +855,7 @@ export default function DocumentManagementCenterPage() {
                   <table className="dmc-table">
                     <thead>
                       <tr>
+                        <th>Select</th>
                         <th>Document</th>
                         <th>Role</th>
                         <th>Status</th>
@@ -583,6 +867,14 @@ export default function DocumentManagementCenterPage() {
                     <tbody>
                       {filteredDocuments.map((doc) => (
                         <tr key={doc.id}>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedDocumentIds.includes(doc.id)}
+                              onChange={() => toggleDocumentSelection(doc.id)}
+                              aria-label={`Select ${doc.file_name}`}
+                            />
+                          </td>
                           <td>
                             <strong>{doc.title || doc.file_name}</strong>
                             <p>{doc.file_name}</p>

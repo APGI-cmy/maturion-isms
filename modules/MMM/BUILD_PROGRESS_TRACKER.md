@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-05-21  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
+**Last Updated**: 2026-05-27  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688; wave: mmm-traceability-cleanup-build-to-green-20260527 — QA trace map activated, untraced runtime artifacts removed/quarantined, DMC click-failure class recorded and gated with T-MMM-DMC-008); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
@@ -1002,3 +1002,69 @@ but failed legacy behavioural parity for DomainAuditBuilder.
 - Follow-up implementation issue linked: #1724 — "Harvest legacy DomainAuditBuilder/MPS/Intent/Criteria generation components with behaviour parity".
 - CS2 clarification locked in: everything post wizard/compile handoff (five-domain cards, domain navigation, selected-domain workspace, three creation cards, generation lifecycles, and knowledge/document context dependency) is classified as LEGACY HARVEST unless proven missing in legacy source.
 - #1724 remains blocked until this broader harvest classification is treated as controlling pre-build scope.
+
+---
+
+## Traceability Failure Register — Live (2026-05-27)
+
+This tracker now serves as the active failure and traceability register for MMM recovery waves.
+
+### New Failure Records (Current)
+
+1. **DMC interaction failure: greyed/no-response upload controls**
+   - Failure Class: Runtime UX failure (silent/no immediate action response).
+   - Cause Class: Client-side control gating and insufficient immediate action feedback.
+   - Corrective Action: DMC action handlers now emit immediate status text + explicit validation messages.
+   - QA-to-Red Gate: `T-MMM-DMC-008` added and set GREEN.
+
+2. **Legacy migration dependency misassumption**
+   - Failure Class: Integration assumption failure.
+   - Cause Class: Legacy Supabase source deleted; migration path treated missing legacy source as fatal.
+   - Corrective Action: `mmm-subject-knowledge-migrate-legacy` now returns a manual-import-required success response when legacy source is absent.
+   - Operational Impact: DMC in current MMM project is the source of truth; corpus must be re-uploaded/bulk-uploaded.
+
+3. **Runtime traceability gap / untraced active artifacts**
+   - Failure Class: Governance traceability failure.
+   - Cause Class: Active runtime artifacts existed without explicit QA linkage.
+   - Corrective Action: QA trace map introduced; untraced runtime artifacts removed from active paths.
+
+4. **Bulk upload opaque failure diagnostics**
+   - Failure Class: Runtime observability failure.
+   - Symptom: DMC reported aggregate failure totals (for example `0 succeeded, 25 failed`) without actionable cause.
+   - Corrective Action: Added grouped failure diagnostics (`Top failure causes`) and explicit role authorization error text.
+   - QA-to-Red Gates: `T-MMM-DMC-009` (in-panel feedback placement) and `T-MMM-DMC-010` (bulk failure cause visibility) added and set GREEN.
+
+5. **DMC schema-cache table-not-found failure**
+   - Failure Class: Deployment/data-plane failure.
+   - Symptom: `Could not find the table 'public.mmm_subject_knowledge_documents' in the schema cache`.
+   - Cause Class: Remote migration history drift; canonical DMC migrations not applied on live project.
+   - Corrective Action: Supabase migration history repaired and remote migrations applied (`20260525000002`, `20260526000003`).
+   - QA-to-Red Gate: `T-MMM-DMC-011` added (operational schema alignment gate).
+
+6. **DMC generic non-2xx error masking (bulk upload diagnostics)**
+   - Failure Class: Runtime observability/diagnostics failure.
+   - Symptom: UI reported `Edge Function returned a non-2xx status code` for all failed uploads with no actionable cause.
+   - Cause Class: `supabase.functions.invoke` generic error path masked edge response payload details.
+   - Corrective Action: DMC moved to diagnostic edge invocation path that parses non-2xx response payloads and surfaces `<function> failed: <error>`.
+   - QA-to-Red Gate: `T-MMM-DMC-012` added.
+
+### Traceability Controls Activated
+
+- Trace Map Artifact:
+  - `modules/MMM/05-qa-to-red/qa-trace-map-build-to-green-2026-05-27.md`
+- Cleanup Governance Artifact:
+  - `modules/MMM/05-qa-to-red/cleanup-wave-build-traceability.md`
+- QA Artifact Update:
+  - `modules/MMM/05-qa-to-red/dmc-subject-knowledge-qa-to-red.md` (includes `T-MMM-DMC-008`, `T-MMM-DMC-009`, `T-MMM-DMC-010`)
+
+### Removed / Quarantined Untraced Runtime Artifacts
+
+- Removed component: `apps/mmm/src/components/AIPageAssistant.tsx` (unreferenced, untraced).
+- Removed duplicate alias routes (untraced):
+  - `/assessment-framework`
+  - `/audit/domain/:domainId`
+
+### Current Build-to-Green Evidence
+
+- Full B4 suite after cleanup/failure-observability hardening: **233/233 PASS** (9 test files).
+- Status: active runtime path is currently constrained to QA-linked, build-to-green components for B4 scope.

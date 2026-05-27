@@ -63,8 +63,6 @@ export default function App() {
               {/* ProtectedRoute */}
               <Route path="/assessment/framework" element={<AssessmentFrameworkHandoffPage />} />
               <Route path="/assessment/framework/domain/:domainId" element={<DomainWorkspacePage />} />
-              <Route path="/assessment-framework" element={<AssessmentFrameworkHandoffPage />} />
-              <Route path="/audit/domain/:domainId" element={<DomainWorkspacePage />} />
             </Route>
           </Routes>
         </BrowserRouter>

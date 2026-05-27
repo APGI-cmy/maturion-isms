@@ -75,18 +75,7 @@ Deno.serve(async (req: Request) => {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     return jsonResponse({ error: 'Service configuration error' }, 500);
   }
-  if (!LEGACY_SUPABASE_URL || !LEGACY_SUPABASE_SERVICE_ROLE_KEY) {
-    return jsonResponse(
-      {
-        error:
-          'LEGACY_SUPABASE_URL and LEGACY_SUPABASE_SERVICE_ROLE_KEY are required for automated migration.',
-      },
-      500,
-    );
-  }
-
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  const legacy = createClient(LEGACY_SUPABASE_URL, LEGACY_SUPABASE_SERVICE_ROLE_KEY);
 
   let claims: { userId: string; orgId: string; role: string };
   try {
@@ -112,6 +101,38 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     return jsonResponse({ error: (error as Error).message }, 500);
   }
+
+  if (!LEGACY_SUPABASE_URL || !LEGACY_SUPABASE_SERVICE_ROLE_KEY) {
+    await supabase
+      .from('mmm_subject_knowledge_migration_runs')
+      .update({
+        status: 'completed',
+        scanned_count: 0,
+        migrated_count: 0,
+        deduped_count: 0,
+        failed_count: 0,
+        failure_report: [],
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', runId);
+
+    return jsonResponse(
+      {
+        migration_run_id: runId,
+        dry_run: false,
+        scanned_count: 0,
+        migrated_count: 0,
+        deduped_count: 0,
+        failed_count: 0,
+        manual_import_required: true,
+        message:
+          'No legacy Supabase source is configured. Use DMC upload to rebuild the subject knowledge corpus in this project.',
+      },
+      200,
+    );
+  }
+
+  const legacy = createClient(LEGACY_SUPABASE_URL, LEGACY_SUPABASE_SERVICE_ROLE_KEY);
 
   const failures: Array<Record<string, unknown>> = [];
   let migratedCount = 0;

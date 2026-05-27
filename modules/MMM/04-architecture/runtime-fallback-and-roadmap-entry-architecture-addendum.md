@@ -10,3 +10,6 @@ Client flows use an **edge-first, canonical-fallback** strategy:
 - Organisation Context page (`mmm-organisation-context` -> fallback tables).
 - DMC inventory (`mmm-subject-knowledge-list` -> fallback table).
 - Sidebar roadmap entry routed to non-dead-end workflow entry (`/frameworks`).
+- DMC command surface (Upload/Bulk Upload/Migration Check) with local action-feedback zone so request start, validation errors, and result states are visible at click location.
+- DMC bulk-ingest diagnostics aggregate and surface dominant failure causes (top grouped reasons) to prevent opaque "N failed" outcomes.
+- DMC edge invocation path must parse and expose non-2xx response payload bodies (`{ error: ... }`) so runtime failures are actionable and not masked by generic client errors.

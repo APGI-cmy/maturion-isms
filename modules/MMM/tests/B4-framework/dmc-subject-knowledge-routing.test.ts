@@ -51,7 +51,7 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
     expect(src).toContain('Document Management Centre (DMC)');
     expect(src).toContain('Upload Subject Knowledge');
-    expect(src).toContain('Subject Knowledge management is restricted to superuser admins');
+    expect(src).toContain('Subject Knowledge writes are validated server-side for superuser roles');
   });
 
   it('loads document inventory through canonical subject-knowledge list function', () => {
@@ -64,6 +64,43 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
     expect(src).toContain(".storage.from(bucket).upload(storagePath, selectedFile");
     expect(src).toContain("const bucket = 'mmm-subject-knowledge'");
+    expect(src).toContain("'mmm-subject-knowledge-upload'");
+    expect(src).toContain("'mmm-subject-knowledge-reprocess'");
+  });
+
+  it('does not hard-disable upload actions purely on client-side role gate', () => {
+    const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(src).toContain('disabled={uploadMutation.isPending}');
+    expect(src).toContain('disabled={bulkUploadMutation.isPending}');
+    expect(src).toContain('disabled={migrateLegacyMutation.isPending}');
+  });
+
+  it('provides immediate click feedback and validation errors for upload actions', () => {
+    const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(src).toContain("setActionMessage('Upload request started...')");
+    expect(src).toContain("setStatusMessage('Please choose a knowledge file before uploading.')");
+    expect(src).toContain("setActionMessage('Bulk upload request started...')");
+    expect(src).toContain("setStatusMessage('Please choose one or more files for bulk upload.')");
+  });
+
+  it('renders in-panel status/error feedback directly beneath DMC action buttons', () => {
+    const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(src).toContain('{statusMessage ? (');
+    expect(src).toContain("className={`alert ${statusMessage.toLowerCase().includes('failed') || statusMessage.toLowerCase().includes('error') || statusMessage.toLowerCase().includes('please choose') ? 'alert-error' : 'alert-success'}`}");
+    expect(src).toContain('style={{ marginTop: \'0.5rem\' }}');
+  });
+
+  it('surfaces grouped bulk-upload failure diagnostics instead of only raw fail counts', () => {
+    const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(src).toContain('function summarizeBulkFailures');
+    expect(src).toContain("Top failure causes:");
+    expect(src).toContain('cannot bulk upload subject knowledge');
+  });
+
+  it('uses diagnostic edge invocation path to surface real non-2xx response bodies', () => {
+    const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(src).toContain('async function invokeEdgeWithDiagnostics');
+    expect(src).toContain('throw new Error(`${functionName} failed: ${detail}`)');
     expect(src).toContain("'mmm-subject-knowledge-upload'");
     expect(src).toContain("'mmm-subject-knowledge-reprocess'");
   });

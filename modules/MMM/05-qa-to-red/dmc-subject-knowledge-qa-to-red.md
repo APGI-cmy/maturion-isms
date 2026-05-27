@@ -43,6 +43,42 @@
 - **RED Condition**: Any authenticated role can upload/archive/reprocess subject knowledge.
 - **GREEN Acceptance**: DMC contains explicit superuser role guard and denial messaging for non-superuser roles.
 
+### T-MMM-DMC-007 — Upload Controls Not Deadlocked by Client-Side Role Resolution
+- **Source**: Runtime resilience requirement (avoid false-disabled upload CTAs)
+- **Layer**: Unit/static
+- **RED Condition**: Upload, bulk upload, or migration check buttons remain disabled solely because client role hydration is stale/null.
+- **GREEN Acceptance**: Client enables controls based on file/pending state; server-side edge functions remain authority for role authorization.
+
+### T-MMM-DMC-008 — DMC Action Clicks Must Produce Immediate User Feedback
+- **Source**: Fully functional UX control requirement (no silent click outcomes)
+- **Layer**: Unit/static
+- **RED Condition**: Clicking Upload/Bulk Upload produces no immediate visible action feedback when validation fails or request starts.
+- **GREEN Acceptance**: DMC action handlers set immediate status text and explicit validation errors for missing file selection.
+
+### T-MMM-DMC-009 — DMC Status/Errors Must Render In-Panel Near Action Buttons
+- **Source**: Architecture runtime feedback placement rule
+- **Layer**: Unit/static
+- **RED Condition**: DMC only renders feedback at remote page positions and user cannot see response at click location.
+- **GREEN Acceptance**: DMC upload panel renders status/error alert directly below action buttons.
+
+### T-MMM-DMC-010 — Bulk Upload Failures Must Expose Dominant Error Causes
+- **Source**: Failure observability requirement (no opaque aggregate fail result)
+- **Layer**: Unit/static
+- **RED Condition**: Bulk upload reports only count failure totals without actionable reason diagnostics.
+- **GREEN Acceptance**: Bulk upload status message includes grouped top failure causes (reason + count).
+
+### T-MMM-DMC-011 — Live Supabase Schema Must Include DMC Canonical Tables
+- **Source**: Deployment/runtime schema contract
+- **Layer**: Operational gate
+- **RED Condition**: DMC runtime shows `Could not find the table 'public.mmm_subject_knowledge_documents' in the schema cache`.
+- **GREEN Acceptance**: `supabase migration list` shows remote alignment through `20260525000002` and `20260526000003`, and DMC inventory no longer throws schema-cache table-not-found.
+
+### T-MMM-DMC-012 — DMC Must Surface Real Edge Error Payloads (Non-2xx Diagnostics)
+- **Source**: Runtime observability and triage requirement
+- **Layer**: Unit/static
+- **RED Condition**: DMC displays only generic `Edge Function returned a non-2xx status code`.
+- **GREEN Acceptance**: DMC parses response body for edge failures and shows function-specific diagnostic text (`<function> failed: <error>`).
+
 ## Execution Mapping
 
 - Test file:
