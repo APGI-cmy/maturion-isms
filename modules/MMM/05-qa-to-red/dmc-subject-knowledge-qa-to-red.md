@@ -85,6 +85,18 @@
 - **RED Condition**: Bulk reprocess fails with `unsupported Unicode escape sequence` (`\u0000 cannot be converted to text`) and 0 documents succeed.
 - **GREEN Acceptance**: Shared subject-knowledge sanitization removes null/control characters before chunk/json writes; bulk reprocess can complete without unicode-escape DB rejection for valid docs.
 
+### T-MMM-DMC-014 — Reprocess Path Retries JSONB Chunk Inserts With Slim Metadata Fallback
+- **Source**: Runtime resilience requirement for legacy edge-case metadata payloads
+- **Layer**: Unit/static + operational
+- **RED Condition**: Reprocess fails with `invalid input syntax for type json` for a small subset of legacy documents.
+- **GREEN Acceptance**: Reprocess handler retries `ai_knowledge` insert with slim metadata payload when JSONB parser rejection occurs, allowing document completion instead of terminal failure.
+
+### T-MMM-DMC-015 — Reprocess Completion Update Retries Without KUC JSON Blob
+- **Source**: Runtime completion-state resilience
+- **Layer**: Unit/static + operational
+- **RED Condition**: Reprocess chunk insert succeeds but completion update fails with `invalid input syntax for type json`.
+- **GREEN Acceptance**: Reprocess completion update retries with `kuc_classification = null` and document reaches completed state.
+
 ## Execution Mapping
 
 - Test file:

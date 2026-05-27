@@ -20,6 +20,14 @@
   - **QA-to-Red Gate**: Added `T-MMM-DMC-013` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
   - **Build-to-Green Fix**: Added shared null/control-char sanitization for chunk + JSON metadata paths in DMC reprocess pipeline.
 
+- **2026-05-27 — DMC Single-Document JSON Parse Failure (Post-Reprocess Sweep)**
+  - **Observed Failure**: `24 succeeded, 1 failed` with `invalid input syntax for type json`.
+  - **Impact**: One legacy subject-knowledge document remained failed after bulk reprocess wave.
+  - **Prebuild/Architecture Update**: Runtime resilience expectation expanded for strict JSONB parser compatibility on legacy edge-case payloads.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-014` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Added reprocess insert retry using slim metadata fallback when JSONB parse failure is detected.
+  - **Follow-up Hardening**: Added completion-update fallback (`kuc_classification = null`) for residual JSON parse failures during final document status update.
+
 ---
 
 ## Stage Migration Note

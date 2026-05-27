@@ -113,4 +113,16 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     expect(reprocess).toContain('sanitizeForPostgresText');
     expect(reprocess).toContain('sanitizeForPostgresJson');
   });
+
+  it('retries reprocess ai_knowledge insert with slim metadata on JSONB parse failures', () => {
+    const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
+    expect(reprocess).toContain('invalid input syntax for type json');
+    expect(reprocess).toContain("retry_mode: 'json_slim_fallback'");
+  });
+
+  it('retries completion update without kuc_classification when JSON parse fails at document update stage', () => {
+    const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
+    expect(reprocess).toContain('final-document-update(json-slim-fallback)');
+    expect(reprocess).toContain('kuc_classification: null');
+  });
 });

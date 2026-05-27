@@ -138,27 +138,61 @@ Deno.serve(async (req: Request) => {
     if (chunkPayloads.length > 0) {
       const { error: chunkError } = await supabase.from('ai_knowledge').insert(chunkPayloads);
       if (chunkError) {
-        throw new Error(chunkError.message || 'Unable to persist ai_knowledge chunks.');
+        const lower = (chunkError.message ?? '').toLowerCase();
+        // Retry path for strict json parser failures on legacy edge-case metadata payloads.
+        if (lower.includes('invalid input syntax for type json')) {
+          const slim = chunkPayloads.map((payload) => ({
+            ...payload,
+            metadata: { document_role: documentRole, retry_mode: 'json_slim_fallback' },
+          }));
+          const { error: retryError } = await supabase.from('ai_knowledge').insert(slim);
+          if (retryError) {
+            throw new Error(retryError.message || 'Unable to persist ai_knowledge chunks (json retry failed).');
+          }
+        } else {
+          throw new Error(chunkError.message || 'Unable to persist ai_knowledge chunks.');
+        }
       }
     }
 
     const fileHash = await sha256Hex(`${doc.file_name}:${doc.storage_bucket}:${doc.storage_path}:${doc.file_size ?? 0}`);
-    await supabase
+    const completionUpdate = {
+      processing_status: 'completed',
+      processing_error: !kucResult.success && !kucResult.fallback
+        ? sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`)
+        : null,
+      chunk_count: chunkPayloads.length,
+      content_hash: fileHash,
+      kuc_upload_id: kucResult.kuc_classification?.upload_id ?? null,
+      kuc_parse_job_id: kucResult.kuc_classification?.parse_job_id ?? null,
+      kuc_classification: sanitizeForPostgresJson(kucResult.kuc_classification ?? null),
+      updated_by: claims.userId,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error: completionError } = await supabase
       .from('mmm_subject_knowledge_documents')
-      .update({
-        processing_status: 'completed',
-        processing_error: !kucResult.success && !kucResult.fallback
-          ? sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`)
-          : null,
-        chunk_count: chunkPayloads.length,
-        content_hash: fileHash,
-        kuc_upload_id: kucResult.kuc_classification?.upload_id ?? null,
-        kuc_parse_job_id: kucResult.kuc_classification?.parse_job_id ?? null,
-        kuc_classification: sanitizeForPostgresJson(kucResult.kuc_classification ?? null),
-        updated_by: claims.userId,
-        updated_at: new Date().toISOString(),
-      })
+      .update(completionUpdate)
       .eq('id', documentId);
+
+    if (completionError) {
+      const lower = (completionError.message ?? '').toLowerCase();
+      if (lower.includes('invalid input syntax for type json')) {
+        // Final fallback: write completion state without KUC classification blob.
+        const { error: slimCompletionError } = await supabase
+          .from('mmm_subject_knowledge_documents')
+          .update({
+            ...completionUpdate,
+            kuc_classification: null,
+          })
+          .eq('id', documentId);
+        if (slimCompletionError) {
+          throw new Error(`final-document-update(json-slim-fallback): ${slimCompletionError.message}`);
+        }
+      } else {
+        throw new Error(`final-document-update: ${completionError.message}`);
+      }
+    }
 
     return jsonResponse(
       {

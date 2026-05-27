@@ -81,14 +81,26 @@ export function chunkText(content: string, chunkSize = 2000, chunkOverlap = 200)
  */
 export function sanitizeForPostgresText(input: string): string {
   if (!input) return '';
-  return input
+  const normalized = input
     .replace(/\u0000/g, '')
     .replace(/[\u0001-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
     .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n');
+  return typeof normalized.toWellFormed === 'function'
+    ? normalized.toWellFormed()
+    : normalized;
 }
 
 export function sanitizeForPostgresJson<T>(value: T): T {
+  if (value === undefined) {
+    return null as T;
+  }
+  if (typeof value === 'number' && !Number.isFinite(value)) {
+    return null as T;
+  }
+  if (typeof value === 'symbol' || typeof value === 'function') {
+    return null as T;
+  }
   if (typeof value === 'string') {
     return sanitizeForPostgresText(value) as T;
   }
