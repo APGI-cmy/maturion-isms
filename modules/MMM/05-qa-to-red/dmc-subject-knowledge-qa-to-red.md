@@ -79,6 +79,12 @@
 - **RED Condition**: DMC displays only generic `Edge Function returned a non-2xx status code`.
 - **GREEN Acceptance**: DMC parses response body for edge failures and shows function-specific diagnostic text (`<function> failed: <error>`).
 
+### T-MMM-DMC-013 — Reprocess Path Sanitizes Null/Control Characters Before Canonical Inserts
+- **Source**: Runtime data-safety contract for canonical knowledge writes
+- **Layer**: Unit/static + operational
+- **RED Condition**: Bulk reprocess fails with `unsupported Unicode escape sequence` (`\u0000 cannot be converted to text`) and 0 documents succeed.
+- **GREEN Acceptance**: Shared subject-knowledge sanitization removes null/control characters before chunk/json writes; bulk reprocess can complete without unicode-escape DB rejection for valid docs.
+
 ## Execution Mapping
 
 - Test file:

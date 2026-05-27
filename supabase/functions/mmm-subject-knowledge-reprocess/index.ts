@@ -13,6 +13,8 @@ import {
   isTextLikeMimeType,
   normalizeSubjectDocumentRole,
   requireSubjectKnowledgeSuperuser,
+  sanitizeForPostgresJson,
+  sanitizeForPostgresText,
   sha256Hex,
 } from '../_shared/mmm-subject-knowledge.ts';
 
@@ -105,14 +107,14 @@ Deno.serve(async (req: Request) => {
 
     let extractedText = '';
     if (isTextLikeMimeType(doc.mime_type)) {
-      extractedText = (await fileBlob.text()).trim();
+      extractedText = sanitizeForPostgresText(await fileBlob.text()).trim();
     }
     if (!extractedText) {
-      extractedText = [
+      extractedText = sanitizeForPostgresText([
         `Subject knowledge document: ${doc.title ?? doc.file_name}`,
         `MIME type: ${doc.mime_type}`,
         doc.upload_notes ? `Uploader notes: ${doc.upload_notes}` : '',
-      ].filter(Boolean).join('\n');
+      ].filter(Boolean).join('\n'));
     }
 
     const chunkPayloads = await buildChunkPayloads({
@@ -146,13 +148,13 @@ Deno.serve(async (req: Request) => {
       .update({
         processing_status: 'completed',
         processing_error: !kucResult.success && !kucResult.fallback
-          ? `KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`
+          ? sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`)
           : null,
         chunk_count: chunkPayloads.length,
         content_hash: fileHash,
         kuc_upload_id: kucResult.kuc_classification?.upload_id ?? null,
         kuc_parse_job_id: kucResult.kuc_classification?.parse_job_id ?? null,
-        kuc_classification: kucResult.kuc_classification ?? null,
+        kuc_classification: sanitizeForPostgresJson(kucResult.kuc_classification ?? null),
         updated_by: claims.userId,
         updated_at: new Date().toISOString(),
       })
@@ -169,7 +171,7 @@ Deno.serve(async (req: Request) => {
       200,
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unexpected reprocess error.';
+    const message = sanitizeForPostgresText(error instanceof Error ? error.message : 'Unexpected reprocess error.');
     await supabase
       .from('mmm_subject_knowledge_documents')
       .update({
