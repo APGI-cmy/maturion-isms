@@ -60,7 +60,7 @@ export function isTextLikeMimeType(mimeType: string): boolean {
 }
 
 export function chunkText(content: string, chunkSize = 2000, chunkOverlap = 200): string[] {
-  const trimmed = content.trim();
+  const trimmed = sanitizeForPostgresText(content).trim();
   if (!trimmed) return [];
   if (trimmed.length <= chunkSize) return [trimmed];
 
@@ -73,6 +73,33 @@ export function chunkText(content: string, chunkSize = 2000, chunkOverlap = 200)
     cursor = Math.max(0, end - chunkOverlap);
   }
   return chunks;
+}
+
+/**
+ * Remove characters that Postgres text/jsonb rejects (notably NULL) and normalize line endings.
+ * This is required for DMC ingestion/reprocess paths that may receive binary-adjacent text payloads.
+ */
+export function sanitizeForPostgresText(input: string): string {
+  if (!input) return '';
+  return input
+    .replace(/\u0000/g, '')
+    .replace(/[\u0001-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n');
+}
+
+export function sanitizeForPostgresJson<T>(value: T): T {
+  if (typeof value === 'string') {
+    return sanitizeForPostgresText(value) as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeForPostgresJson(item)) as T;
+  }
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, sanitizeForPostgresJson(v)]);
+    return Object.fromEntries(entries) as T;
+  }
+  return value;
 }
 
 function bytesToHex(bytes: Uint8Array): string {
@@ -115,6 +142,12 @@ export async function buildChunkPayloads(params: {
   } = params;
 
   const chunks = chunkText(content, chunkSize, chunkOverlap);
+  const safeDocumentRole = sanitizeForPostgresText(documentRole);
+  const safeSourceDocumentName = sanitizeForPostgresText(sourceDocumentName);
+  const safeSource = sanitizeForPostgresText(source);
+  const safeDomain = sanitizeForPostgresText(domain);
+  const safeModule = sanitizeForPostgresText(module);
+  const safeMetadata = sanitizeForPostgresJson(metadata);
   const payloads: Array<Record<string, unknown>> = [];
   for (let index = 0; index < chunks.length; index += 1) {
     const chunk = chunks[index];
@@ -122,19 +155,19 @@ export async function buildChunkPayloads(params: {
     payloads.push({
       organisation_id: organisationId,
       content: chunk,
-      source,
-      domain,
-      module,
+      source: safeSource,
+      domain: safeDomain,
+      module: safeModule,
       approval_status: approvalStatus,
       chunk_index: index,
       chunk_size: chunkSize,
       chunk_overlap: chunkOverlap,
-      source_document_name: sourceDocumentName,
+      source_document_name: safeSourceDocumentName,
       document_id: documentId,
       content_hash: contentHash,
       metadata: {
-        ...metadata,
-        document_role: documentRole,
+        ...safeMetadata,
+        document_role: safeDocumentRole,
       },
     });
   }
