@@ -125,4 +125,10 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     expect(reprocess).toContain('final-document-update(json-slim-fallback)');
     expect(reprocess).toContain('kuc_classification: null');
   });
+
+  it('retries chunk insert with empty metadata object on second JSON parse failure', () => {
+    const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
+    expect(reprocess).toContain('minimal json retry failed');
+    expect(reprocess).toContain('metadata: {}');
+  });
 });

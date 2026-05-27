@@ -97,6 +97,12 @@
 - **RED Condition**: Reprocess chunk insert succeeds but completion update fails with `invalid input syntax for type json`.
 - **GREEN Acceptance**: Reprocess completion update retries with `kuc_classification = null` and document reaches completed state.
 
+### T-MMM-DMC-016 — Reprocess Chunk Insert Has Final Empty-Metadata JSON Fallback
+- **Source**: Runtime resilience for legacy documents with strict JSON parser edge cases
+- **Layer**: Unit/static + operational
+- **RED Condition**: Reprocess still fails after slim metadata retry with `invalid input syntax for type json`.
+- **GREEN Acceptance**: Reprocess performs final chunk insert retry with `metadata: {}` and completes for recoverable documents.
+
 ## Execution Mapping
 
 - Test file:

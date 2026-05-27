@@ -147,7 +147,20 @@ Deno.serve(async (req: Request) => {
           }));
           const { error: retryError } = await supabase.from('ai_knowledge').insert(slim);
           if (retryError) {
-            throw new Error(retryError.message || 'Unable to persist ai_knowledge chunks (json retry failed).');
+            const retryLower = (retryError.message ?? '').toLowerCase();
+            if (retryLower.includes('invalid input syntax for type json')) {
+              // Final fallback: insert with empty metadata object.
+              const minimal = chunkPayloads.map((payload) => ({
+                ...payload,
+                metadata: {},
+              }));
+              const { error: finalRetryError } = await supabase.from('ai_knowledge').insert(minimal);
+              if (finalRetryError) {
+                throw new Error(finalRetryError.message || 'Unable to persist ai_knowledge chunks (minimal json retry failed).');
+              }
+            } else {
+              throw new Error(retryError.message || 'Unable to persist ai_knowledge chunks (json retry failed).');
+            }
           }
         } else {
           throw new Error(chunkError.message || 'Unable to persist ai_knowledge chunks.');

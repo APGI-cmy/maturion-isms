@@ -27,6 +27,7 @@
   - **QA-to-Red Gate**: Added `T-MMM-DMC-014` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
   - **Build-to-Green Fix**: Added reprocess insert retry using slim metadata fallback when JSONB parse failure is detected.
   - **Follow-up Hardening**: Added completion-update fallback (`kuc_classification = null`) for residual JSON parse failures during final document status update.
+  - **Follow-up Hardening 2**: Added final `ai_knowledge` insert retry with `metadata: {}` for persistent JSON parse failures on legacy edge-case payloads.
 
 ---
 
