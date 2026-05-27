@@ -104,4 +104,13 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     expect(src).toContain("'mmm-subject-knowledge-upload'");
     expect(src).toContain("'mmm-subject-knowledge-reprocess'");
   });
+
+  it('sanitizes reprocess chunk/json payloads to prevent unicode-escape DB failures', () => {
+    const shared = readFile('supabase/functions/_shared/mmm-subject-knowledge.ts');
+    const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
+    expect(shared).toContain('export function sanitizeForPostgresText');
+    expect(shared).toContain('export function sanitizeForPostgresJson');
+    expect(reprocess).toContain('sanitizeForPostgresText');
+    expect(reprocess).toContain('sanitizeForPostgresJson');
+  });
 });
