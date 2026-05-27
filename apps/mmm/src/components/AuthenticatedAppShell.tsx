@@ -4,7 +4,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/organisation-context', label: 'Organisation Context' },
-  { to: '/frameworks', label: 'Maturity Roadmap' },
+  { to: '/maturity-roadmap', label: 'Maturity Roadmap' },
   { to: '/frameworks', label: 'Frameworks' },
   { to: '/dmc', label: 'DMC' },
 ];

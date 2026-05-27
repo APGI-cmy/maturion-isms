@@ -100,7 +100,7 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
   it('uses diagnostic edge invocation path to surface real non-2xx response bodies', () => {
     const src = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
     expect(src).toContain('async function invokeEdgeWithDiagnostics');
-    expect(src).toContain('throw new Error(`${functionName} failed: ${detail}`)');
+    expect(src).toContain('throw new Error(`${functionName} failed: ${detail}${code ? ` [${code}]` : \'\'}`)');
     expect(src).toContain("'mmm-subject-knowledge-upload'");
     expect(src).toContain("'mmm-subject-knowledge-reprocess'");
   });
@@ -130,5 +130,49 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
     expect(reprocess).toContain('minimal json retry failed');
     expect(reprocess).toContain('metadata: {}');
+  });
+
+  it('implements duplicate upload detection and replace flow (single + bulk)', () => {
+    const page = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    const uploadFn = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');
+    expect(uploadFn).toContain("code: 'DUPLICATE_FILE'");
+    expect(uploadFn).toContain('replace_existing');
+    expect(page).toContain('[DUPLICATE_FILE]');
+    expect(page).toContain('replace_existing: true');
+  });
+
+  it('requires archive confirmation prompt for bulk and single archive actions', () => {
+    const page = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(page).toContain('Are you sure you want to archive');
+    expect(page).toContain('window.confirm');
+  });
+
+  it('renders DMC status legend and tone classes for Pending/Processing/Completed/Failed', () => {
+    const page = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    const css = readFile('apps/mmm/src/index.css');
+    expect(page).toContain('dmc-status-legend');
+    expect(page).toContain('dmc-status-pill');
+    expect(css).toContain('.dmc-status-pill.dmc-status--completed');
+    expect(css).toContain('.dmc-status-pill.dmc-status--failed');
+  });
+
+  it('clears hidden selection state when status filter changes', () => {
+    const page = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(page).toContain('useEffect(() => {');
+    expect(page).toContain('setSelectedDocumentIds([]);');
+    expect(page).toContain('}, [statusFilter]);');
+  });
+
+  it('clears selected ids after bulk reprocess and prunes stale ids when inventory changes', () => {
+    const page = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
+    expect(page).toContain('setSelectedDocumentIds((previous) =>');
+    expect(page).toContain('previous.filter((id) => documents.some((doc) => doc.id === id))');
+    expect(page).toContain('setSelectedDocumentIds([]);');
+  });
+
+  it('reprocess fetch avoids optional legacy JSON columns to prevent row-level parse failures', () => {
+    const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
+    expect(reprocess).toContain(".select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,upload_notes')");
+    expect(reprocess).not.toContain('document_role,tags,upload_notes');
   });
 });

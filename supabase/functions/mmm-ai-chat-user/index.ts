@@ -11,6 +11,46 @@ import { callAimc } from '../_shared/mmm-aimc-client.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const AIMC_BASE_URL = (
+  Deno.env.get('AIMC_BASE_URL') ??
+  Deno.env.get('AI_GATEWAY_URL') ??
+  ''
+).replace(/\/+$/, '');
+const AIMC_SERVICE_TOKEN = Deno.env.get('AIMC_SERVICE_TOKEN') ?? '';
+
+async function tryOpenAICompatChat(message: string): Promise<{ reply: string } | null> {
+  if (!AIMC_BASE_URL || !AIMC_SERVICE_TOKEN) {
+    return null;
+  }
+
+  const endpoint = `${AIMC_BASE_URL}/v1/chat/completions`;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': `Bearer ${AIMC_SERVICE_TOKEN}`,
+    },
+    body: JSON.stringify({
+      model: 'auto',
+      messages: [{ role: 'user', content: message }],
+      temperature: 0.2,
+    }),
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const payload = (await response.json()) as Record<string, unknown>;
+  const choices = (payload.choices as Array<Record<string, unknown>> | undefined) ?? [];
+  const first = choices[0];
+  const msg = (first?.message as Record<string, unknown> | undefined) ?? {};
+  const content = (msg.content as string | undefined) ?? '';
+  if (!content.trim()) {
+    return null;
+  }
+  return { reply: content };
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -74,6 +114,20 @@ Deno.serve(async (req: Request) => {
   }
 
   if (!aimcResult.success) {
+    const err = (aimcResult.error ?? '').toLowerCase();
+    if (err.includes('http 404')) {
+      const openAiCompat = await tryOpenAICompatChat(message);
+      if (openAiCompat) {
+        return jsonResponse(
+          {
+            reply: openAiCompat.reply,
+            request_id: `compat-${crypto.randomUUID()}`,
+            compat_fallback: true,
+          },
+          200,
+        );
+      }
+    }
     return jsonResponse({ error: 'AIMC call failed', detail: aimcResult.error }, 502);
   }
 

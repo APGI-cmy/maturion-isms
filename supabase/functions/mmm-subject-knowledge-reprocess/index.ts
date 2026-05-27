@@ -62,7 +62,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: doc, error: docError } = await supabase
     .from('mmm_subject_knowledge_documents')
-    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,tags,upload_notes')
+    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,upload_notes')
     .eq('id', documentId)
     .eq('organisation_id', claims.orgId)
     .is('archived_at', null)
@@ -129,7 +129,7 @@ Deno.serve(async (req: Request) => {
       metadata: {
         storage_bucket: doc.storage_bucket,
         storage_path: doc.storage_path,
-        tags: doc.tags ?? [],
+        tags: [],
         kuc_classification: kucResult.kuc_classification ?? null,
       },
     });

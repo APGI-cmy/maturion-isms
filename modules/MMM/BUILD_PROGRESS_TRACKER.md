@@ -29,6 +29,50 @@
   - **Follow-up Hardening**: Added completion-update fallback (`kuc_classification = null`) for residual JSON parse failures during final document status update.
   - **Follow-up Hardening 2**: Added final `ai_knowledge` insert retry with `metadata: {}` for persistent JSON parse failures on legacy edge-case payloads.
 
+- **2026-05-27 — DMC UX/Data-Integrity Follow-ups (Duplicates, Archive Guard, Selection Safety, Status Tones)**
+  - **Observed Failures**:
+    1) duplicate uploads were not explicitly flagged to user,  
+    2) archive could be triggered without confirmation,  
+    3) hidden multi-selection persisted across filter context,  
+    4) status-state visual cues were insufficient for operational scanning.
+  - **Prebuild/Architecture Update**: Added duplicate-replace contract, archive confirmation requirement, selection reset safety rule, and standard status tonal UX requirement.
+  - **QA-to-Red Gates**: Added `T-MMM-DMC-017` through `T-MMM-DMC-020`.
+  - **Build-to-Green Fix**: Implemented duplicate detect/replace flow, archive confirmation prompts, selection reset on filter change, and DMC status legend + tonal row/pill styling.
+
+- **2026-05-27 — DMC Residual Single-File Reprocess Failure (Legacy Row JSON Tolerance)**
+  - **Observed Failure**: One residual document (`25. MPS 25 – Remote Assurance.docx`) continued to fail reprocess while peer documents completed.
+  - **Impact**: Last critical MPS knowledge source remained in failed state; confidence risk for complete 25-MPS corpus.
+  - **Prebuild/Architecture Update**: Strengthened runtime tolerance rule: reprocess must not hard-fail on optional legacy JSON columns.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-021` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Reprocess document fetch no longer depends on optional `tags` JSON column; metadata defaults to safe empty tags for chunk writes.
+
+- **2026-05-27 — Maturion AI Runtime Fallback During Verbatim MPS Generation**
+  - **Observed Failure**: UI showed `AI service unavailable. Loaded legacy fallback MPS pack for this domain.` despite successful verbatim-looking output.
+  - **Impact**: MPS flow executed through fallback pack instead of live AIMC routing.
+  - **Root Cause**: Edge client expected `AIMC_BASE_URL` only, while project secrets used `AI_GATEWAY_URL`.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-202` asserting AIMC client supports alias-based base URL resolution.
+  - **Build-to-Green Fix**: AIMC client now resolves base URL from `AIMC_BASE_URL` or `AI_GATEWAY_URL` and returns explicit configuration errors when URL/token are missing.
+
+- **2026-05-27 — MPS Modal Still Showing Generic non-2xx AI Failure**
+  - **Observed Failure**: MPS modal displayed `AI service unavailable (Edge Function returned a non-2xx status code)` without actionable backend detail.
+  - **Impact**: Operator could not determine whether failure was gateway path, token, or service availability.
+  - **Prebuild/Architecture Update**: Reinforced runtime observability requirement: UI must surface concrete edge response detail for AI failures.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-203` and `T-MMM-S6-204`.
+  - **Build-to-Green Fix**: MPS hook switched to diagnostic fetch path that parses edge JSON error payload; AIMC client now tries multiple endpoint candidates (`/api/ai/{op}`, `/api/{op}`, `/{op}`) before failing.
+
+- **2026-05-27 — AIMC 404 Persisted During MPS Generation**
+  - **Observed Failure**: `AI service unavailable (AIMC HTTP 404: {"detail":"Not Found"})`.
+  - **Impact**: MPS generation stayed on legacy fallback despite functional DMC and verbatim context wiring.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-205`.
+  - **Build-to-Green Fix**: Added `mmm-ai-chat-user` compatibility bridge to attempt OpenAI-style `/v1/chat/completions` on AIMC 404 before returning failure.
+
+- **2026-05-27 — Verbatim MPS Flow Still Surfaced AIMC 404 Despite Available Framework Data**
+  - **Observed Failure**: Leadership/Governance MPS modal showed `AI service unavailable (AIMC HTTP 404: {"detail":"Not Found"})` even when verbatim framework MPS had already been parsed into MMM.
+  - **Impact**: Correct verbatim output was produced through fallback path but user received false-negative AI availability warning and confidence loss.
+  - **Prebuild/Architecture Update**: Added verbatim-mode source-of-truth rule to runtime architecture addendum: verbatim MPS must prefer canonical framework proposal tables before AIMC.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-206` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: `useAIMPSGeneration` now loads MPS directly from `mmm_proposed_domains` + `mmm_proposed_mps` when framework source type is `VERBATIM`; AIMC call remains for Hybrid/New modes.
+
 ---
 
 ## Stage Migration Note

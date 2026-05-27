@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { getEdgeInvokeHeaders, supabase } from '@/lib/supabase';
@@ -110,6 +110,14 @@ function toStatusLabel(status: string | null): string {
   return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 }
 
+function toStatusToneClass(status: string | null): string {
+  const normalized = (status ?? '').toLowerCase();
+  if (normalized === 'completed') return 'dmc-status--completed';
+  if (normalized === 'processing' || normalized === 'pending') return 'dmc-status--processing';
+  if (normalized === 'failed') return 'dmc-status--failed';
+  return 'dmc-status--pending';
+}
+
 function formatFileSize(bytes: number): string {
   if (bytes <= 0) return '0 B';
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -146,11 +154,13 @@ async function invokeEdgeWithDiagnostics<T>(functionName: string, body: Record<s
   }
 
   if (!response.ok) {
-    const detail =
-      typeof parsed === 'object' && parsed && 'error' in (parsed as Record<string, unknown>)
-        ? String((parsed as Record<string, unknown>).error)
-        : raw || `HTTP ${response.status}`;
-    throw new Error(`${functionName} failed: ${detail}`);
+    if (typeof parsed === 'object' && parsed) {
+      const obj = parsed as Record<string, unknown>;
+      const detail = 'error' in obj ? String(obj.error) : raw || `HTTP ${response.status}`;
+      const code = 'code' in obj ? String(obj.code) : '';
+      throw new Error(`${functionName} failed: ${detail}${code ? ` [${code}]` : ''}`);
+    }
+    throw new Error(`${functionName} failed: ${raw || `HTTP ${response.status}`}`);
   }
 
   return (parsed ?? {}) as T;
@@ -262,6 +272,7 @@ export default function DocumentManagementCenterPage() {
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [migrationResult, setMigrationResult] = useState<MigrationResult | null>(null);
   const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
+  const [bulkDuplicateMode, setBulkDuplicateMode] = useState<'ask' | 'replace' | 'skip'>('ask');
 
   const profileQuery = useQuery({
     queryKey: ['dmc-profile-context'],
@@ -310,20 +321,41 @@ export default function DocumentManagementCenterPage() {
         .map((tag) => tag.trim())
         .filter(Boolean);
 
-      const data = await invokeEdgeWithDiagnostics<{ chunk_count?: number; kuc_error?: string | null }>(
-        'mmm-subject-knowledge-upload',
-        {
-          title: title.trim() || selectedFile.name.replace(/\.[^/.]+$/, ''),
-          file_name: selectedFile.name,
-          mime_type: selectedFile.type || 'application/octet-stream',
-          file_size: selectedFile.size,
-          storage_bucket: bucket,
-          storage_path: storagePath,
-          document_role: documentType,
-          tags: parsedTags,
-          upload_notes: notes.trim() || null,
-        },
-      );
+      const payload = {
+        title: title.trim() || selectedFile.name.replace(/\.[^/.]+$/, ''),
+        file_name: selectedFile.name,
+        mime_type: selectedFile.type || 'application/octet-stream',
+        file_size: selectedFile.size,
+        storage_bucket: bucket,
+        storage_path: storagePath,
+        document_role: documentType,
+        tags: parsedTags,
+        upload_notes: notes.trim() || null,
+      };
+
+      let data: { chunk_count?: number; kuc_error?: string | null };
+      try {
+        data = await invokeEdgeWithDiagnostics<{ chunk_count?: number; kuc_error?: string | null }>(
+          'mmm-subject-knowledge-upload',
+          payload,
+        );
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (message.includes('[DUPLICATE_FILE]')) {
+          const replace = window.confirm(
+            `This file already exists in DMC (${selectedFile.name}). Do you want to replace the existing file?`,
+          );
+          if (!replace) {
+            throw new Error('Upload skipped: duplicate file retained.');
+          }
+          data = await invokeEdgeWithDiagnostics<{ chunk_count?: number; kuc_error?: string | null }>(
+            'mmm-subject-knowledge-upload',
+            { ...payload, replace_existing: true },
+          );
+        } else {
+          throw error;
+        }
+      }
 
       return data;
     },
@@ -364,6 +396,7 @@ export default function DocumentManagementCenterPage() {
       }
 
       const results: Array<{ file: string; ok: boolean; error?: string }> = [];
+      let duplicateMode = bulkDuplicateMode;
 
       for (const file of bulkFiles) {
         try {
@@ -380,20 +413,44 @@ export default function DocumentManagementCenterPage() {
 
           const inferredTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
 
-          await invokeEdgeWithDiagnostics(
-            'mmm-subject-knowledge-upload',
-            {
-              title: inferredTitle || file.name,
-              file_name: file.name,
-              mime_type: file.type || 'application/octet-stream',
-              file_size: file.size,
-              storage_bucket: bucket,
-              storage_path: storagePath,
-              document_role: 'knowledge_source',
-              tags: [],
-              upload_notes: 'Auto-ingested via DMC bulk upload.',
-            },
-          );
+          const payload = {
+            title: inferredTitle || file.name,
+            file_name: file.name,
+            mime_type: file.type || 'application/octet-stream',
+            file_size: file.size,
+            storage_bucket: bucket,
+            storage_path: storagePath,
+            document_role: 'knowledge_source',
+            tags: [],
+            upload_notes: 'Auto-ingested via DMC bulk upload.',
+          };
+
+          try {
+            await invokeEdgeWithDiagnostics('mmm-subject-knowledge-upload', payload);
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            if (!message.includes('[DUPLICATE_FILE]')) {
+              throw error;
+            }
+
+            if (duplicateMode === 'ask') {
+              const replaceAll = window.confirm(
+                'One or more selected files already exist in DMC. Click OK to replace duplicates, or Cancel to skip duplicates.',
+              );
+              duplicateMode = replaceAll ? 'replace' : 'skip';
+              setBulkDuplicateMode(duplicateMode);
+            }
+
+            if (duplicateMode === 'skip') {
+              results.push({ file: file.name, ok: false, error: 'Duplicate skipped.' });
+              continue;
+            }
+
+            await invokeEdgeWithDiagnostics('mmm-subject-knowledge-upload', {
+              ...payload,
+              replace_existing: true,
+            });
+          }
 
           results.push({ file: file.name, ok: true });
         } catch (err) {
@@ -518,6 +575,16 @@ export default function DocumentManagementCenterPage() {
     return documents.filter((doc) => (doc.processing_status ?? 'pending').toLowerCase() === statusFilter);
   }, [documents, statusFilter]);
 
+  useEffect(() => {
+    setSelectedDocumentIds([]);
+  }, [statusFilter]);
+
+  useEffect(() => {
+    setSelectedDocumentIds((previous) =>
+      previous.filter((id) => documents.some((doc) => doc.id === id)),
+    );
+  }, [documents]);
+
   const allFilteredSelected =
     filteredDocuments.length > 0 &&
     filteredDocuments.every((doc) => selectedDocumentIds.includes(doc.id));
@@ -587,11 +654,19 @@ export default function DocumentManagementCenterPage() {
     setActionMessage(null);
     const failedCount = selectedDocumentIds.length - success;
     setStatusMessage(`Bulk reprocess completed: ${success} succeeded, ${failedCount} failed.${failedCount ? ` ${summarizeBulkFailures(failures.map((e, i) => ({ file: `${i}`, ok: false, error: e })) )}` : ''}`);
+    setSelectedDocumentIds([]);
   };
 
   const handleArchiveSelected = async () => {
     if (selectedDocumentIds.length === 0) {
       setStatusMessage('Select one or more documents to archive.');
+      return;
+    }
+    const confirmArchive = window.confirm(
+      `Are you sure you want to archive ${selectedDocumentIds.length} selected file(s)?`,
+    );
+    if (!confirmArchive) {
+      setStatusMessage('Archive cancelled.');
       return;
     }
     setActionMessage(`Archiving ${selectedDocumentIds.length} selected document(s)...`);
@@ -684,7 +759,10 @@ export default function DocumentManagementCenterPage() {
                   className="form-control"
                   type="file"
                   multiple
-                  onChange={(event) => setBulkFiles(Array.from(event.target.files ?? []))}
+                  onChange={(event) => {
+                    setBulkFiles(Array.from(event.target.files ?? []));
+                    setBulkDuplicateMode('ask');
+                  }}
                   disabled={bulkUploadMutation.isPending}
                 />
                 <p className="card__body" style={{ marginTop: '0.5rem' }}>
@@ -820,6 +898,12 @@ export default function DocumentManagementCenterPage() {
                   </select>
                 </div>
               </div>
+              <div className="dmc-status-legend" aria-label="Document status legend">
+                <span className="dmc-status-pill dmc-status--pending">Pending</span>
+                <span className="dmc-status-pill dmc-status--processing">Processing</span>
+                <span className="dmc-status-pill dmc-status--completed">Completed</span>
+                <span className="dmc-status-pill dmc-status--failed">Failed</span>
+              </div>
               <div className="dmc-upload-actions" style={{ marginBottom: '0.75rem' }}>
                 <button className="btn btn-outline" onClick={toggleSelectAllFiltered}>
                   {allFilteredSelected ? 'Clear Select (Filtered)' : 'Select All (Filtered)'}
@@ -866,7 +950,7 @@ export default function DocumentManagementCenterPage() {
                     </thead>
                     <tbody>
                       {filteredDocuments.map((doc) => (
-                        <tr key={doc.id}>
+                        <tr key={doc.id} className={toStatusToneClass(doc.processing_status)}>
                           <td>
                             <input
                               type="checkbox"
@@ -883,7 +967,11 @@ export default function DocumentManagementCenterPage() {
                             ) : null}
                           </td>
                           <td>{doc.document_role}</td>
-                          <td>{toStatusLabel(doc.processing_status)}</td>
+                          <td>
+                            <span className={`dmc-status-pill ${toStatusToneClass(doc.processing_status)}`}>
+                              {toStatusLabel(doc.processing_status)}
+                            </span>
+                          </td>
                           <td>{formatFileSize(doc.file_size)}</td>
                           <td>{doc.chunk_count ?? 0}</td>
                           <td>
@@ -897,7 +985,11 @@ export default function DocumentManagementCenterPage() {
                               </button>
                               <button
                                 className="btn btn-outline"
-                                onClick={() => deleteMutation.mutate(doc.id)}
+                                onClick={() => {
+                                  const ok = window.confirm(`Are you sure you want to archive "${doc.file_name}"?`);
+                                  if (!ok) return;
+                                  deleteMutation.mutate(doc.id);
+                                }}
                                 disabled={!isSuperuser || deleteMutation.isPending}
                               >
                                 Archive

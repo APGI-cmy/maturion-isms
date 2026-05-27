@@ -20,9 +20,11 @@ describe('T-MMM-S6-188: Protected routes use unified sidebar shell', () => {
     expect(src).toContain('path="/organisation-context"');
   });
 
-  it('Maturity Roadmap sidebar route resolves to frameworks list to avoid missing framework_id dead-end', () => {
-    const src = readFile('apps/mmm/src/components/AuthenticatedAppShell.tsx');
-    expect(src).toContain("{ to: '/frameworks', label: 'Maturity Roadmap' }");
+  it('Maturity Roadmap sidebar route is separated from frameworks list route', () => {
+    const shell = readFile('apps/mmm/src/components/AuthenticatedAppShell.tsx');
+    const app = readFile('apps/mmm/src/App.tsx');
+    expect(shell).toContain("{ to: '/maturity-roadmap', label: 'Maturity Roadmap' }");
+    expect(app).toContain('path="/maturity-roadmap" element={<MaturityRoadmapPage />}');
   });
 });
 

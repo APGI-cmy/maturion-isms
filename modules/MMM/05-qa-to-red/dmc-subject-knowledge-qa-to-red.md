@@ -103,6 +103,60 @@
 - **RED Condition**: Reprocess still fails after slim metadata retry with `invalid input syntax for type json`.
 - **GREEN Acceptance**: Reprocess performs final chunk insert retry with `metadata: {}` and completes for recoverable documents.
 
+### T-MMM-DMC-017 — Duplicate Uploads Must Prompt Replace/Skip Behavior
+- **Source**: DMC operational UX + data-integrity contract
+- **Layer**: Unit/static + operational
+- **RED Condition**: Duplicate files are silently duplicated with no user choice.
+- **GREEN Acceptance**: Duplicate upload surfaces explicit replacement choice (`replace_existing`) and supports skip behavior for bulk duplicates.
+
+### T-MMM-DMC-018 — Archive Actions Must Require Confirmation
+- **Source**: Safe destructive-action UX control
+- **Layer**: Unit/static
+- **RED Condition**: Archive single/bulk executes immediately with no confirmation.
+- **GREEN Acceptance**: Archive action requires explicit confirmation prompt containing selected count or filename context.
+
+### T-MMM-DMC-019 — Selection State Must Reset on Status Filter Change
+- **Source**: Bulk-action safety contract
+- **Layer**: Unit/static
+- **RED Condition**: Hidden previous selections persist across filter changes, causing unintended bulk operations.
+- **GREEN Acceptance**: Selection state is reset when status filter changes.
+
+### T-MMM-DMC-020 — DMC Status Color-Coding Standard Is Visible In Inventory UX
+- **Source**: UX scanning and consistency standard
+- **Layer**: Unit/static
+- **RED Condition**: Pending/Processing/Completed/Failed have no consistent visual distinction.
+- **GREEN Acceptance**: DMC renders legend + subtle tonal classes for all status states.
+
+### T-MMM-DMC-021 — Reprocess Must Not Depend On Potentially Corrupt Legacy JSON Columns
+- **Source**: Runtime resilience for legacy-row recoverability
+- **Layer**: Unit/static + operational
+- **RED Condition**: Reprocess fails for specific legacy rows because optional JSON columns (for example `tags`) cannot be parsed.
+- **GREEN Acceptance**: Reprocess fetch path avoids hard dependency on optional legacy JSON payload fields; document can be processed using safe defaults.
+
+### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
+- **Source**: Runtime observability + build-to-red anti-silent-failure policy
+- **Layer**: Unit/static + operational
+- **RED Condition**: MPS modal only reports generic `Edge Function returned a non-2xx status code`.
+- **GREEN Acceptance**: MPS generation request parses edge response body and surfaces concrete reason/detail (e.g., AIMC endpoint/auth/config failure), while preserving fallback behavior.
+
+### T-MMM-S6-204 — AIMC Client Must Probe Gateway Endpoint Variants
+- **Source**: Boundary resilience for environment URL-shape drift
+- **Layer**: Unit/static
+- **RED Condition**: AIMC client hardcodes one namespace path and fails when gateway is mounted at a different API prefix.
+- **GREEN Acceptance**: AIMC client attempts canonical and fallback endpoint candidates for each operation before failing.
+
+### T-MMM-S6-205 — AI Chat Must Auto-Bridge to OpenAI-Compatible Gateway on AIMC 404
+- **Source**: Runtime compatibility requirement for gateway endpoint variance
+- **Layer**: Unit/static + operational
+- **RED Condition**: AIMC chat route 404 causes unconditional fallback despite gateway exposing `/v1/chat/completions`.
+- **GREEN Acceptance**: `mmm-ai-chat-user` attempts OpenAI-compatible `/v1/chat/completions` bridge on AIMC 404 and returns usable reply when available.
+
+### T-MMM-S6-206 — Verbatim MPS Generation Must Use Framework-Proposed MPS Without AIMC Dependency
+- **Source**: Verbatim-mode functional contract (uploaded framework is source-of-truth wording)
+- **Layer**: Unit/static + operational
+- **RED Condition**: Verbatim MPS flow still depends on AIMC chat route and shows 404/unavailable banner even when `mmm_proposed_mps` data exists for the selected framework/domain.
+- **GREEN Acceptance**: `useAIMPSGeneration` loads MPS from `mmm_proposed_domains` + `mmm_proposed_mps` for `source_type=VERBATIM` first; no AIMC-unavailable warning is required for this path.
+
 ## Execution Mapping
 
 - Test file:

@@ -13,6 +13,8 @@ import {
   isTextLikeMimeType,
   normalizeSubjectDocumentRole,
   requireSubjectKnowledgeSuperuser,
+  sanitizeForPostgresJson,
+  sanitizeForPostgresText,
   sha256Hex,
 } from '../_shared/mmm-subject-knowledge.ts';
 
@@ -29,6 +31,7 @@ type UploadBody = {
   document_role?: string;
   tags?: string[];
   upload_notes?: string | null;
+  replace_existing?: boolean;
 };
 
 function fallbackContentFromMetadata(body: UploadBody): string {
@@ -78,12 +81,43 @@ Deno.serve(async (req: Request) => {
   const fileSize = Number.isFinite(body.file_size) ? Number(body.file_size) : 0;
   const documentRole = normalizeSubjectDocumentRole(body.document_role);
   const tags = Array.isArray(body.tags) ? body.tags.filter((tag) => typeof tag === 'string') : [];
+  const replaceExisting = body.replace_existing === true;
 
   if (!fileName || !storageBucket || !storagePath || !title) {
     return jsonResponse(
       { error: 'title, file_name, storage_bucket, and storage_path are required.' },
       400,
     );
+  }
+
+  const { data: duplicate } = await supabase
+    .from('mmm_subject_knowledge_documents')
+    .select('id,file_name,file_size')
+    .eq('organisation_id', claims.orgId)
+    .eq('file_name', fileName)
+    .is('archived_at', null)
+    .maybeSingle();
+
+  if (duplicate && !replaceExisting) {
+    return jsonResponse(
+      {
+        error: `Duplicate file already exists (${fileName}).`,
+        code: 'DUPLICATE_FILE',
+        duplicate_document_id: duplicate.id,
+      },
+      409,
+    );
+  }
+
+  if (duplicate && replaceExisting) {
+    await supabase
+      .from('mmm_subject_knowledge_documents')
+      .update({
+        archived_at: new Date().toISOString(),
+        updated_by: claims.userId,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', duplicate.id);
   }
 
   const { data: inserted, error: insertError } = await supabase
@@ -149,7 +183,7 @@ Deno.serve(async (req: Request) => {
 
     let extractedText = '';
     if (isTextLikeMimeType(mimeType)) {
-      extractedText = (await fileBlob.text()).trim();
+      extractedText = sanitizeForPostgresText(await fileBlob.text()).trim();
     }
     if (!extractedText) {
       extractedText = fallbackContentFromMetadata(body);
@@ -190,13 +224,13 @@ Deno.serve(async (req: Request) => {
       content_hash: fileHash,
       kuc_upload_id: kucResult.kuc_classification?.upload_id ?? null,
       kuc_parse_job_id: kucResult.kuc_classification?.parse_job_id ?? null,
-      kuc_classification: kucResult.kuc_classification ?? null,
+      kuc_classification: sanitizeForPostgresJson(kucResult.kuc_classification ?? null),
       updated_by: claims.userId,
       updated_at: new Date().toISOString(),
     };
 
     if (!kucResult.success && !kucResult.fallback) {
-      updatePayload.processing_error = `KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`;
+      updatePayload.processing_error = sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`);
     }
 
     await supabase

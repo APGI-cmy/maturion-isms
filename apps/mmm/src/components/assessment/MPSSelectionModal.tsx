@@ -33,6 +33,8 @@ export interface MPSSelectionModalProps {
   errorMessage: string | null;
   /** Callback to close/cancel the modal. */
   onClose: () => void;
+  /** Framework context for source-mode aware generation. */
+  frameworkId?: string | null;
 }
 
 /**
@@ -47,6 +49,7 @@ export function MPSSelectionModal({
   isLoading,
   errorMessage,
   onClose,
+  frameworkId,
 }: MPSSelectionModalProps) {
   const queryClient = useQueryClient();
   const {
@@ -155,7 +158,7 @@ export function MPSSelectionModal({
     setGenerationError(null);
     setSaveError(null);
     try {
-      const parsed = await generateMPSsForDomain(domainName);
+      const parsed = await generateMPSsForDomain(domainName, { frameworkId });
       setGeneratedMPS(parsed);
       setSelectedMPSNumbers(new Set(parsed.map((item) => item.number)));
     } catch (err: unknown) {

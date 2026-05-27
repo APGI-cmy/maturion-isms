@@ -226,6 +226,7 @@ export function DomainAuditBuilder({
       <MPSSelectionModal
         domainId={persistedDomainId}
         domainName={domain?.name ?? domainName ?? domainId}
+        frameworkId={frameworkId}
         open={isMPSModalOpen}
         mpsRows={mpsRows}
         isLoading={isLoading}

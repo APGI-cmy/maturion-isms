@@ -31,6 +31,7 @@ import AssessmentFrameworkHandoffPage from '@/pages/AssessmentFrameworkHandoffPa
 import DomainWorkspacePage from '@/pages/DomainWorkspacePage';
 import DocumentManagementCenterPage from '@/pages/DocumentManagementCenterPage';
 import OrganisationContextPage from '@/pages/OrganisationContextPage';
+import MaturityRoadmapPage from '@/pages/MaturityRoadmapPage';
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -49,6 +50,7 @@ export default function App() {
             <Route element={<ProtectedRoute><AuthenticatedAppShell /></ProtectedRoute>}>
               <Route path="/onboarding" element={<OnboardingPage />} />
               <Route path="/organisation-context" element={<OrganisationContextPage />} />
+              <Route path="/maturity-roadmap" element={<MaturityRoadmapPage />} />
               <Route path="/framework-origin" element={<FrameworkOriginPage />} />
               <Route path="/frameworks" element={<FrameworkListPage />} />
               <Route path="/frameworks/upload" element={<FrameworkUploadPage />} />
