@@ -11,6 +11,15 @@
 > **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)  
 > **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change. Stale tracker text is a governance defect (see `modules/MMM/_readiness/mmm-document-control-baseline.md`).
 
+## Recent Failure Register (Live)
+
+- **2026-05-27 — DMC Bulk Reprocess Unicode Failure**
+  - **Observed Failure**: `Bulk reprocess completed: 0 succeeded, 25 failed ... unsupported Unicode escape sequence`.
+  - **Impact**: Existing uploaded documents could not be reprocessed; DMC inventory remained in failed state.
+  - **Prebuild/Architecture Update**: Added canonical-write sanitization requirement to `04-architecture/runtime-fallback-and-roadmap-entry-architecture-addendum.md`.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-013` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Added shared null/control-char sanitization for chunk + JSON metadata paths in DMC reprocess pipeline.
+
 ---
 
 ## Stage Migration Note
