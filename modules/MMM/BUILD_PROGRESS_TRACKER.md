@@ -1209,3 +1209,14 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Covered by workflow behavior checks and manual domain-flow regression validation in this wave.
    - Build-to-Green Evidence:
      - MMM build: PASS (`npm run build`, 2026-05-28).
+
+9. **Intent regenerate live-AI reliability gap (fallback shown during successful save path)**
+   - Failure Class: AI endpoint resilience/route-compatibility gap.
+   - Symptom: `Regenerate intent` frequently returned fallback warning while user could still accept and save.
+   - Cause Class: Primary AIMC route failures were not always followed by broader compatibility endpoint probing.
+   - Corrective Action:
+     - Hardened `mmm-ai-chat-user` to probe multiple compatibility endpoints before declaring fallback:
+       `/v1/chat/completions`, `/api/v1/chat/completions`, `/chat/completions`, `/api/chat`.
+     - Compatibility probing now runs for both AIMC fallback and non-success cases.
+   - QA-to-Red Trace:
+     - Regenerate-intent reliability behavior recorded for follow-up automated endpoint-contract test coverage.

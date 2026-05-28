@@ -18,38 +18,72 @@ const AIMC_BASE_URL = (
 ).replace(/\/+$/, '');
 const AIMC_SERVICE_TOKEN = Deno.env.get('AIMC_SERVICE_TOKEN') ?? '';
 
-async function tryOpenAICompatChat(message: string): Promise<{ reply: string } | null> {
+async function tryOpenAICompatChat(message: string): Promise<{ reply: string; endpoint: string } | null> {
   if (!AIMC_BASE_URL || !AIMC_SERVICE_TOKEN) {
     return null;
   }
 
-  const endpoint = `${AIMC_BASE_URL}/v1/chat/completions`;
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Authorization': `Bearer ${AIMC_SERVICE_TOKEN}`,
+  const candidates: Array<{ endpoint: string; body: Record<string, unknown> }> = [
+    {
+      endpoint: `${AIMC_BASE_URL}/v1/chat/completions`,
+      body: {
+        model: 'auto',
+        messages: [{ role: 'user', content: message }],
+        temperature: 0.2,
+      },
     },
-    body: JSON.stringify({
-      model: 'auto',
-      messages: [{ role: 'user', content: message }],
-      temperature: 0.2,
-    }),
-  });
+    {
+      endpoint: `${AIMC_BASE_URL}/api/v1/chat/completions`,
+      body: {
+        model: 'auto',
+        messages: [{ role: 'user', content: message }],
+        temperature: 0.2,
+      },
+    },
+    {
+      endpoint: `${AIMC_BASE_URL}/chat/completions`,
+      body: {
+        model: 'auto',
+        messages: [{ role: 'user', content: message }],
+        temperature: 0.2,
+      },
+    },
+    {
+      endpoint: `${AIMC_BASE_URL}/api/chat`,
+      body: { message, temperature: 0.2 },
+    },
+  ];
 
-  if (!response.ok) {
-    return null;
+  for (const candidate of candidates) {
+    const response = await fetch(candidate.endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Bearer ${AIMC_SERVICE_TOKEN}`,
+      },
+      body: JSON.stringify(candidate.body),
+    });
+
+    if (!response.ok) {
+      continue;
+    }
+
+    const payload = (await response.json()) as Record<string, unknown>;
+    const directReply = (payload.reply as string | undefined) ?? (payload.message as string | undefined) ?? '';
+    if (directReply.trim()) {
+      return { reply: directReply, endpoint: candidate.endpoint };
+    }
+
+    const choices = (payload.choices as Array<Record<string, unknown>> | undefined) ?? [];
+    const first = choices[0];
+    const msg = (first?.message as Record<string, unknown> | undefined) ?? {};
+    const content = (msg.content as string | undefined) ?? '';
+    if (content.trim()) {
+      return { reply: content, endpoint: candidate.endpoint };
+    }
   }
 
-  const payload = (await response.json()) as Record<string, unknown>;
-  const choices = (payload.choices as Array<Record<string, unknown>> | undefined) ?? [];
-  const first = choices[0];
-  const msg = (first?.message as Record<string, unknown> | undefined) ?? {};
-  const content = (msg.content as string | undefined) ?? '';
-  if (!content.trim()) {
-    return null;
-  }
-  return { reply: content };
+  return null;
 }
 
 Deno.serve(async (req: Request) => {
@@ -102,32 +136,31 @@ Deno.serve(async (req: Request) => {
     },
   );
 
-  if (aimcResult.fallback) {
-    return jsonResponse(
-      {
-        fallback: true,
-        reason: aimcResult.fallback_reason,
-        message: 'AI features temporarily unavailable',
-      },
-      503,
-    );
-  }
-
-  if (!aimcResult.success) {
-    const err = (aimcResult.error ?? '').toLowerCase();
-    if (err.includes('http 404')) {
-      const openAiCompat = await tryOpenAICompatChat(message);
-      if (openAiCompat) {
-        return jsonResponse(
-          {
-            reply: openAiCompat.reply,
-            request_id: `compat-${crypto.randomUUID()}`,
-            compat_fallback: true,
-          },
-          200,
-        );
-      }
+  if (aimcResult.fallback || !aimcResult.success) {
+    const openAiCompat = await tryOpenAICompatChat(message);
+    if (openAiCompat) {
+      return jsonResponse(
+        {
+          reply: openAiCompat.reply,
+          request_id: `compat-${crypto.randomUUID()}`,
+          compat_fallback: true,
+          compat_endpoint: openAiCompat.endpoint,
+        },
+        200,
+      );
     }
+
+    if (aimcResult.fallback) {
+      return jsonResponse(
+        {
+          fallback: true,
+          reason: aimcResult.fallback_reason,
+          message: 'AI features temporarily unavailable',
+        },
+        503,
+      );
+    }
+
     return jsonResponse({ error: 'AIMC call failed', detail: aimcResult.error }, 502);
   }
 

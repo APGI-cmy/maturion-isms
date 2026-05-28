@@ -18,6 +18,7 @@ interface PerMpsIntentState {
   generatedIntent: string | null;
   editedIntent: string;
   error: string | null;
+  fallbackNotice: string | null;
 }
 
 export interface IntentCreatorProps {
@@ -100,6 +101,7 @@ export function IntentCreator({
             generatedIntent: null,
             editedIntent: '',
             error: null,
+            fallbackNotice: null,
           },
         };
       });
@@ -109,7 +111,13 @@ export function IntentCreator({
     onError: (err: Error, { mpsId }) => {
       // NBR-005: surface save errors to user
       setMpsIntentStates((prev) => {
-        const current = prev[mpsId] ?? { isGenerating: false, generatedIntent: null, editedIntent: '', error: null };
+        const current = prev[mpsId] ?? {
+          isGenerating: false,
+          generatedIntent: null,
+          editedIntent: '',
+          error: null,
+          fallbackNotice: null,
+        };
         return { ...prev, [mpsId]: { ...current, error: err.message } };
       });
     },
@@ -119,7 +127,13 @@ export function IntentCreator({
     setModalError(null);
     setMpsIntentStates((prev) => ({
       ...prev,
-      [mps.id]: { isGenerating: true, generatedIntent: null, editedIntent: '', error: null },
+      [mps.id]: {
+        isGenerating: true,
+        generatedIntent: null,
+        editedIntent: '',
+        error: null,
+        fallbackNotice: null,
+      },
     }));
     try {
       const reply = await generateIntent({
@@ -130,7 +144,13 @@ export function IntentCreator({
       });
       setMpsIntentStates((prev) => ({
         ...prev,
-        [mps.id]: { isGenerating: false, generatedIntent: reply, editedIntent: reply, error: null },
+        [mps.id]: {
+          isGenerating: false,
+          generatedIntent: reply,
+          editedIntent: reply,
+          error: null,
+          fallbackNotice: null,
+        },
       }));
     } catch (err: unknown) {
       const fallbackIntent =
@@ -141,7 +161,9 @@ export function IntentCreator({
           isGenerating: false,
           generatedIntent: fallbackIntent,
           editedIntent: fallbackIntent,
-          error: 'AI service unavailable. Loaded fallback intent draft.',
+          error: null,
+          fallbackNotice:
+            'AI service is temporarily unavailable. Fallback draft loaded — you can edit and submit.',
         },
       }));
     }
@@ -149,7 +171,13 @@ export function IntentCreator({
 
   const handleEditIntent = (mpsId: string, value: string) => {
     setMpsIntentStates((prev) => {
-      const current = prev[mpsId] ?? { isGenerating: false, generatedIntent: null, editedIntent: '', error: null };
+      const current = prev[mpsId] ?? {
+        isGenerating: false,
+        generatedIntent: null,
+        editedIntent: '',
+        error: null,
+        fallbackNotice: null,
+      };
       return { ...prev, [mpsId]: { ...current, editedIntent: value } };
     });
   };
@@ -264,6 +292,15 @@ export function IntentCreator({
                         data-testid={`intent-generation-error-${mps.id}`}
                       >
                         {state.error}
+                      </div>
+                    ) : null}
+                    {state?.fallbackNotice ? (
+                      <div
+                        role="status"
+                        className="alert"
+                        data-testid={`intent-generation-fallback-${mps.id}`}
+                      >
+                        {state.fallbackNotice}
                       </div>
                     ) : null}
 
