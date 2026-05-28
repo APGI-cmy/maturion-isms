@@ -98,6 +98,8 @@ export function IntentCreator({
           },
         };
       });
+      resetAllStates();
+      onClose();
     },
     onError: (err: Error, { mpsId }) => {
       // NBR-005: surface save errors to user
@@ -236,7 +238,7 @@ export function IntentCreator({
                           onClick={() => handleAccept(mps)}
                           disabled={saveMutation.isPending}
                         >
-                          {saveMutation.isPending ? 'Saving…' : 'Accept'}
+                          {saveMutation.isPending ? 'Saving…' : 'Accept / Submit'}
                         </button>
                         <button
                           type="button"
