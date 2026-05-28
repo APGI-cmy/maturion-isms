@@ -75,11 +75,13 @@ describe('T-MMM-S6-205: AI chat bridge supports OpenAI-compatible fallback on AI
 });
 
 describe('T-MMM-S6-206: Verbatim MPS mode bypasses AIMC chat and loads framework-proposed MPS directly', () => {
-  it('useAIMPSGeneration reads mmm_proposed_domains + mmm_proposed_mps for VERBATIM frameworks', () => {
+  it('useAIMPSGeneration reads proposed/canonical framework MPS tables before AIMC path', () => {
     const src = readFile('apps/mmm/src/hooks/useAIMPSGeneration.ts');
     expect(src).toContain('loadVerbatimDraftsFromFramework');
+    expect(src).toContain('.eq(\'domain_id\', options.sourceDomainId)');
     expect(src).toContain(".from('mmm_proposed_domains')");
     expect(src).toContain(".from('mmm_proposed_mps')");
-    expect(src).toContain("framework.source_type !== 'VERBATIM'");
+    expect(src).toContain(".from('mmm_domains')");
+    expect(src).toContain(".from('mmm_maturity_process_steps')");
   });
 });

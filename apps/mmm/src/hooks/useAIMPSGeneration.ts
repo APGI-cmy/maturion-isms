@@ -27,6 +27,11 @@ interface VerbatimMpsRow {
   intent_statement: string | null;
 }
 
+interface CanonicalDomainRow {
+  id: string;
+  name: string;
+}
+
 function toFallbackDrafts(domainName: string): GeneratedMpsDraft[] {
   const lookup = normalizeDomainKey(domainName);
   const matchedDomain =
@@ -63,7 +68,7 @@ export function useAIMPSGeneration() {
       .eq('id', frameworkId)
       .maybeSingle<VerbatimFrameworkRow>();
 
-    if (!framework || framework.source_type !== 'VERBATIM') {
+    if (!framework) {
       return null;
     }
 
@@ -75,33 +80,59 @@ export function useAIMPSGeneration() {
 
     const lookup = normalizeDomainKey(domainName);
     const matched = (proposedDomains ?? []).find((d) => normalizeDomainKey(d.name) === lookup);
-    if (!matched) {
-      return null;
+    if (matched) {
+      const { data: proposedMps } = await supabase
+        .from('mmm_proposed_mps')
+        .select('name,sort_order,intent_statement')
+        .eq('proposed_domain_id', matched.id)
+        .order('sort_order', { ascending: true })
+        .returns<VerbatimMpsRow[]>();
+
+      if (proposedMps && proposedMps.length > 0) {
+        return proposedMps.map((row, idx) => ({
+          number: Number.isFinite(row.sort_order ?? NaN) ? Number(row.sort_order) : idx + 1,
+          title: row.name,
+          intent: row.intent_statement?.trim() || `Maintain ${row.name}.`,
+          rationale: 'Verbatim extraction from uploaded framework source.',
+          acceptance: 'session' as const,
+        }));
+      }
     }
 
-    const { data: proposedMps } = await supabase
-      .from('mmm_proposed_mps')
+    // Canonical fallback when proposed rows were already compiled/cleaned.
+    const { data: canonicalDomains } = await supabase
+      .from('mmm_domains')
+      .select('id,name')
+      .eq('framework_id', frameworkId)
+      .returns<CanonicalDomainRow[]>();
+    const canonicalMatched = (canonicalDomains ?? []).find(
+      (d) => normalizeDomainKey(d.name) === lookup,
+    );
+    if (!canonicalMatched) return null;
+
+    const { data: canonicalMps } = await supabase
+      .from('mmm_maturity_process_steps')
       .select('name,sort_order,intent_statement')
-      .eq('proposed_domain_id', matched.id)
+      .eq('domain_id', canonicalMatched.id)
       .order('sort_order', { ascending: true })
       .returns<VerbatimMpsRow[]>();
 
-    if (!proposedMps || proposedMps.length === 0) {
+    if (!canonicalMps || canonicalMps.length === 0) {
       return null;
     }
 
-    return proposedMps.map((row, idx) => ({
-      number: Number.isFinite(row.sort_order ?? NaN) ? Number(row.sort_order) : idx + 1,
+    return canonicalMps.map((row, idx) => ({
+      number: Number.isFinite(row.sort_order ?? NaN) ? Number(row.sort_order) + 1 : idx + 1,
       title: row.name,
       intent: row.intent_statement?.trim() || `Maintain ${row.name}.`,
-      rationale: 'Verbatim extraction from uploaded framework source.',
+      rationale: 'Verbatim extraction from compiled framework domain.',
       acceptance: 'session' as const,
     }));
   };
 
   const generateMPSsForDomain = async (
     domainName: string,
-    options?: { frameworkId?: string | null },
+    options?: { frameworkId?: string | null; sourceDomainId?: string | null },
   ): Promise<GeneratedMpsDraft[]> => {
     setIsLoading(true);
     setError(null);
@@ -115,6 +146,26 @@ export function useAIMPSGeneration() {
 
       let frameworkSourceType: string | null = null;
       let frameworkName: string | null = null;
+
+      // First preference: exact resolved domain context already supplied by the workflow.
+      if (options?.sourceDomainId) {
+        const { data: directMps } = await supabase
+          .from('mmm_maturity_process_steps')
+          .select('name,sort_order,intent_statement')
+          .eq('domain_id', options.sourceDomainId)
+          .order('sort_order', { ascending: true })
+          .returns<VerbatimMpsRow[]>();
+        if (directMps && directMps.length > 0) {
+          return directMps.map((row, idx) => ({
+            number: Number.isFinite(row.sort_order ?? NaN) ? Number(row.sort_order) + 1 : idx + 1,
+            title: row.name,
+            intent: row.intent_statement?.trim() || `Maintain ${row.name}.`,
+            rationale: 'Verbatim extraction from resolved domain context.',
+            acceptance: 'session' as const,
+          }));
+        }
+      }
+
       if (options?.frameworkId) {
         const verbatimDrafts = await loadVerbatimDraftsFromFramework(options.frameworkId, domainName);
         if (verbatimDrafts && verbatimDrafts.length > 0) {

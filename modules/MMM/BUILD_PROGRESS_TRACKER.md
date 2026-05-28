@@ -73,6 +73,13 @@
   - **QA-to-Red Gate**: Added `T-MMM-S6-206` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
   - **Build-to-Green Fix**: `useAIMPSGeneration` now loads MPS directly from `mmm_proposed_domains` + `mmm_proposed_mps` when framework source type is `VERBATIM`; AIMC call remains for Hybrid/New modes.
 
+- **2026-05-27 — Verbatim MPS Still Hit AIMC Path When Framework Linkage Was Incomplete**
+  - **Observed Failure**: Modal continued to display AIMC 404 warning after previous verbatim bypass fix.
+  - **Root Cause**: Generator did not use already-resolved `source_domain_id` context from the domain workflow modal.
+  - **Prebuild/Architecture Update**: Verbatim extraction precedence extended to include direct domain-context reads before framework-level lookup.
+  - **QA-to-Red Gate**: `T-MMM-S6-206` expanded to assert direct `domain_id` canonical read path.
+  - **Build-to-Green Fix**: `MPSSelectionModal` now passes `sourceDomainId` to `useAIMPSGeneration`; hook first reads `mmm_maturity_process_steps` by `domain_id`, then proposed/canonical framework tables, then AIMC.
+
 ---
 
 ## Stage Migration Note

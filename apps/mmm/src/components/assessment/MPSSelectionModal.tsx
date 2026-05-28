@@ -158,7 +158,10 @@ export function MPSSelectionModal({
     setGenerationError(null);
     setSaveError(null);
     try {
-      const parsed = await generateMPSsForDomain(domainName, { frameworkId });
+      const parsed = await generateMPSsForDomain(domainName, {
+        frameworkId,
+        sourceDomainId: domainId,
+      });
       setGeneratedMPS(parsed);
       setSelectedMPSNumbers(new Set(parsed.map((item) => item.number)));
     } catch (err: unknown) {
