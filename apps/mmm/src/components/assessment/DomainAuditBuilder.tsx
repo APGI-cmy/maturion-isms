@@ -87,7 +87,7 @@ export function DomainAuditBuilder({
     },
     enabled: Boolean(persistedDomainId),
   });
-  const isDomainSignedOff = domainApprovalQuery.data?.status === 'approved';
+  const isDomainSignedOff = domainApprovalQuery.data?.status === 'approved_l2';
 
   const domainApprovalActionMutation = useMutation({
     mutationFn: async (action_type: 'submit' | 'return' | 'resubmit' | 'approve') => {
