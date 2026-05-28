@@ -44,6 +44,21 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'domain_id and action_type are required.' }, 400);
   }
 
+  // Ownership guard: validate that the submitted domain belongs to the caller org
+  // before creating/updating approval rows with service-role privileges.
+  const { data: ownedDomain, error: ownedDomainError } = await supabase
+    .from('mmm_domains')
+    .select('id, framework:mmm_frameworks!inner(id, organisation_id)')
+    .eq('id', body.domain_id)
+    .eq('mmm_frameworks.organisation_id', claims.orgId)
+    .maybeSingle();
+  if (ownedDomainError) {
+    return jsonResponse({ error: ownedDomainError.message || 'Failed to validate domain ownership.' }, 500);
+  }
+  if (!ownedDomain?.id) {
+    return jsonResponse({ error: 'Domain not found in caller organisation scope.' }, 403);
+  }
+
   const transition = mapAction(body.action_type);
   const now = new Date().toISOString();
 

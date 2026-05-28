@@ -1,0 +1,29 @@
+{
+  "pr": 1747,
+  "branch": "fix/mmm-guided-workflow-legacy-handoff",
+  "runtime_head_sha": "GITHUB_PR_HEAD_SHA",
+  "base_sha": "GITHUB_BASE_SHA",
+  "manifest_path": ".admin/prs/pr-1747.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-1747.md",
+  "active_state_path": ".agent-admin/prs/pr-1747/active-state.json",
+  "wave_tasks_path": ".agent-admin/prs/pr-1747/wave-current-tasks.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-prebrief-pr1747.md",
+  "bootstrap_required": false,
+  "rebase_only_delta": false,
+  "admin_only_delta": false,
+  "substantive_delta_after_evidence": false,
+  "gate_change_delta": false,
+  "next_required_action": "PASS",
+  "delta_type": "PRODUCT_FIX_DELTA",
+  "contradictions": [],
+  "changed_files": [
+    ".admin/prs/pr-1747.json",
+    ".agent-admin/assurance/iaa-prebrief-pr1747.md",
+    ".agent-admin/prs/pr-1747/active-state.json",
+    ".agent-admin/prs/pr-1747/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1747.md",
+    ".functional-delivery/pr-1747.md",
+    "apps/mmm/src/components/assessment/DomainAuditBuilder.tsx",
+    "supabase/functions/mmm-domain-approval-action/index.ts"
+  ]
+}

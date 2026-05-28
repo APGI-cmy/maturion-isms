@@ -1,0 +1,29 @@
+{
+  "pr": 1747,
+  "issue": 1731,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "branch": "fix/mmm-guided-workflow-legacy-handoff",
+  "scope": [
+    ".admin/prs/pr-1747.json",
+    ".agent-admin/assurance/iaa-prebrief-pr1747.md",
+    ".agent-admin/prs/pr-1747/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1747.md",
+    ".functional-delivery/pr-1747.md",
+    "apps/mmm/src/components/assessment/DomainAuditBuilder.tsx",
+    "supabase/functions/mmm-domain-approval-action/index.ts"
+  ],
+  "risk": "medium",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "ui-builder",
+  "evidence_required": [
+    "Domain ownership guard added in mmm-domain-approval-action before create/update.",
+    "Domain signed-off state recognizes approved_l2 in DomainAuditBuilder.",
+    "PR-scoped IAA pre-brief evidence present.",
+    "Functional delivery evidence present at .functional-delivery/pr-1747.md"
+  ],
+  "merge_authority": "CS2"
+}

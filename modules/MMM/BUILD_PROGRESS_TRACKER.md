@@ -1220,3 +1220,14 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Compatibility probing now runs for both AIMC fallback and non-success cases.
    - QA-to-Red Trace:
      - Regenerate-intent reliability behavior recorded for follow-up automated endpoint-contract test coverage.
+
+10. **PR #1747 governance + approval integrity gate failure**
+   - Failure Class: governance-gate evidence gap + security integrity bug.
+   - Symptom: `foreman-implementation-check`, `builder-involvement-check`, and `preflight/product-delivery-gates` failed; review also flagged unverified `domain_id` ownership and `approved_l2` status mismatch.
+   - Corrective Action:
+     - Added explicit domain ownership validation in `mmm-domain-approval-action` prior to create/update.
+     - Updated `DomainAuditBuilder` sign-off detection to accept `approved_l2` (and legacy `approved`).
+     - Added PR-scoped evidence bundle: `.admin/prs/pr-1747.json`, `.agent-admin/prs/pr-1747/wave-current-tasks.md`, `.agent-admin/scope-declarations/pr-1747.md`, `.agent-admin/assurance/iaa-prebrief-pr1747.md`, `.functional-delivery/pr-1747.md`.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-SEC-DOMAIN-OWNERSHIP` (cross-org domain submit rejected).
+     - `T-MMM-S6-STATUS-APPROVED-L2` (L2-approved domain card renders completed state).
