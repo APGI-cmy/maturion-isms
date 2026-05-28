@@ -166,7 +166,7 @@ export function IntentCreator({
 
   const handleAcceptAll = async () => {
     setModalError(null);
-    const upserts = mpsRows
+    const updates = mpsRows
       .map((mps) => {
         const state = mpsIntentStates[mps.id];
         const candidate = state?.editedIntent ?? mps.intent_statement ?? '';
@@ -174,20 +174,22 @@ export function IntentCreator({
         if (intentText.length === 0) {
           return null;
         }
-        return { id: mps.id, intent_statement: intentText };
+        return { mpsId: mps.id, intentText };
       })
-      .filter((row): row is { id: string; intent_statement: string } => row !== null);
+      .filter((row): row is { mpsId: string; intentText: string } => row !== null);
 
-    if (upserts.length === 0) {
+    if (updates.length === 0) {
       return;
     }
 
-    const { error } = await supabase
-      .from('mmm_maturity_process_steps')
-      .upsert(upserts, { onConflict: 'id' });
-
-    if (error) {
-      throw new Error(error.message);
+    for (const updateRow of updates) {
+      const { error } = await supabase
+        .from('mmm_maturity_process_steps')
+        .update({ intent_statement: updateRow.intentText })
+        .eq('id', updateRow.mpsId);
+      if (error) {
+        throw new Error(error.message);
+      }
     }
 
     queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
