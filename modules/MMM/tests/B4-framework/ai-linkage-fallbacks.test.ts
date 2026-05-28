@@ -85,6 +85,7 @@ describe('T-MMM-S6-206: Verbatim MPS mode bypasses AIMC chat and loads framework
     expect(src).toContain(".from('mmm_proposed_mps')");
     expect(src).toContain(".from('mmm_domains')");
     expect(src).toContain(".from('mmm_maturity_process_steps')");
+    expect(src).toContain('filterScaffoldDrafts');
   });
 });
 
@@ -106,9 +107,11 @@ describe('T-MMM-S6-213: Intent and Criteria AI linkage use shared mode-source co
     expect(intent).toContain('resolveModeSourceContext');
     expect(intent).toContain('mode_source_strategy');
     expect(intent).toContain('mode_source_context');
+    expect(intent).toContain('external_research_required: true');
     expect(criteria).toContain('resolveModeSourceContext');
     expect(criteria).toContain('mode_source_strategy');
     expect(criteria).toContain('mode_source_context');
+    expect(criteria).toContain('external_research_required: true');
     expect(criteria).toContain(".from('mmm_proposed_criteria')");
     expect(criteria).toContain("source_origin: 'uploaded_source'");
   });

@@ -238,6 +238,7 @@ export function CriteriaManagement({
         ` (intent: "${mps.intent_statement ?? 'not set'}") in the "${domainName}" domain.\n` +
         `Mode-source strategy: ${modeContext.mode_source_strategy}.\n` +
         `Available organisation/framework source documents: ${modeContext.mode_source_documents.map((doc) => `${doc.title} (${doc.file_name}, ${doc.processing_status}, chunks=${doc.chunk_count})`).join('; ') || 'none'}.\n` +
+        `Perform external web research on the organisation profile and peer organisations in the same industry as supporting context only; never override tenant source documents.\n` +
         `${modeContext.source_rules.join('\n')}\n` +
         (refinePrompt ? `Additional refinement context: ${refinePrompt}\n` : '') +
         `Each criterion should be specific, measurable, and auditable.\n` +
@@ -253,6 +254,7 @@ export function CriteriaManagement({
             framework_id: frameworkId ?? null,
             mode_source_strategy: modeContext.mode_source_strategy,
             mode_source_context: modeContext,
+            external_research_required: true,
             tenant_isolation_required: true,
           },
         },

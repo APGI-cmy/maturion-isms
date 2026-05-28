@@ -38,6 +38,7 @@ export function useIntentGeneration() {
         `Mode-source strategy: ${modeContext.mode_source_strategy}.\n` +
         `Use organisation context, selected Verbatim/Hybrid/New rules, and source documents before generic wording.\n` +
         `Available organisation/framework source documents: ${modeContext.mode_source_documents.map((doc) => `${doc.title} (${doc.file_name}, ${doc.processing_status}, chunks=${doc.chunk_count})`).join('; ') || 'none'}.\n` +
+        `Perform external web research on the organisation website and peer organisations in the same industry as supporting context only; do not override tenant source documents.\n` +
         `${modeContext.source_rules.join('\n')}\n` +
         `The intent statement should describe the purpose and objective of this MPS in one or two sentences.\n` +
         `Return only the intent statement text, no additional formatting.`;
@@ -52,6 +53,7 @@ export function useIntentGeneration() {
             framework_id: frameworkId ?? null,
             mode_source_strategy: modeContext.mode_source_strategy,
             mode_source_context: modeContext,
+            external_research_required: true,
             tenant_isolation_required: true,
           },
         },

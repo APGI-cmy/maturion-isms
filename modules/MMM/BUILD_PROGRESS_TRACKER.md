@@ -114,6 +114,13 @@
   - **QA-to-Red Gates**: Added `T-MMM-S6-217`.
   - **Build-to-Green Fix**: MPS modal now renders consulted-source telemetry (including mode behavior and organisation website context when available) and domain-scoped USER_PREFERENCE_CAPTURE evidence count/last timestamp.
 
+- **2026-05-28 — Residual Verbatim Quality Drift (Scaffold Placeholder + Cross-Mode Research Consistency)**
+  - **Observed Failure**: Verbatim MPS output still surfaced scaffold placeholder row (`Uploaded Framework Management`) and research behavior differed by mode.
+  - **Impact**: Verbatim fidelity and cross-mode Maturion capability consistency remained below expected expert behavior.
+  - **Prebuild/Architecture Update**: Added quality control requiring scaffold suppression and unified external-research request contract across Verbatim/Hybrid/Generated.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-218` and `T-MMM-S6-219`.
+  - **Build-to-Green Fix**: Added placeholder suppression filter in MPS generation and set `external_research_required=true` in MPS/Intent/Criteria generation contexts while preserving tenant-source precedence rules.
+
 ---
 
 ## Stage Migration Note

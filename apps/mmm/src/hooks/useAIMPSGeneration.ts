@@ -50,6 +50,20 @@ function dedupeDraftsByTitle(drafts: GeneratedMpsDraft[]): GeneratedMpsDraft[] {
   return deduped.map((item, index) => ({ ...item, number: index + 1 }));
 }
 
+function isScaffoldPlaceholderTitle(title: string): boolean {
+  const key = normalizeDomainKey(title);
+  return (
+    key.includes('uploaded-framework-management') ||
+    key === 'framework-management' ||
+    key.includes('placeholder')
+  );
+}
+
+function filterScaffoldDrafts(drafts: GeneratedMpsDraft[]): GeneratedMpsDraft[] {
+  const filtered = drafts.filter((draft) => !isScaffoldPlaceholderTitle(draft.title));
+  return filtered.length > 0 ? filtered : drafts;
+}
+
 function toFallbackDrafts(domainName: string): GeneratedMpsDraft[] {
   const lookup = normalizeDomainKey(domainName);
   const matchedDomain =
@@ -197,9 +211,7 @@ export function useAIMPSGeneration() {
         ),
         ...(organisationWebsite ? [`Organisation profile website: ${organisationWebsite}`] : []),
         `Mode strategy: ${modeContext.mode_source_strategy}`,
-        ...(modeContext.framework_source_type === 'VERBATIM'
-          ? ['External web benchmarking: skipped (VERBATIM mode preserves uploaded source).']
-          : ['External web benchmarking: enabled by selected mode.']),
+        'External web benchmarking: enabled (advisory context, never overrides tenant source documents).',
       ];
       setLastConsultedResources(baseConsultedResources);
 
@@ -213,7 +225,7 @@ export function useAIMPSGeneration() {
           ]);
           return ensureMinimumVerbatimDrafts(
             domainName,
-            dedupeDraftsByTitle(verbatimDrafts),
+            dedupeDraftsByTitle(filterScaffoldDrafts(verbatimDrafts)),
             5,
           );
         }
@@ -240,7 +252,7 @@ export function useAIMPSGeneration() {
             }));
             return ensureMinimumVerbatimDrafts(
               domainName,
-              dedupeDraftsByTitle(directDrafts),
+              dedupeDraftsByTitle(filterScaffoldDrafts(directDrafts)),
               5,
             );
           }
@@ -271,6 +283,7 @@ export function useAIMPSGeneration() {
         `Mode-source strategy: ${modeContext.mode_source_strategy}.\n` +
         `Organisation: ${modeContext.organisation_name ?? 'unknown'}.\n` +
         `Available organisation/framework source documents: ${modeContext.mode_source_documents.map((doc) => `${doc.title} (${doc.file_name}, ${doc.processing_status}, chunks=${doc.chunk_count})`).join('; ') || 'none'}.\n` +
+        `Perform external web research on the organisation profile and peer organisations in the same industry; use results only as supporting context and never as a replacement for tenant source documents.\n` +
         `${modeContext.source_rules.join('\n')}\n` +
         `${frameworkName ? `Framework: ${frameworkName}\n` : ''}` +
         `Each MPS should describe a specific expectation. Return a JSON array with this structure:\n` +
@@ -288,6 +301,7 @@ export function useAIMPSGeneration() {
           verbatim_required: frameworkSourceType === 'VERBATIM',
           mode_source_strategy: modeContext.mode_source_strategy,
           mode_source_context: modeContext,
+          external_research_required: true,
           tenant_isolation_required: true,
         },
       };
@@ -346,7 +360,9 @@ export function useAIMPSGeneration() {
         return toFallbackDrafts(domainName);
       }
 
-      return dedupeDraftsByTitle(parsed.map((item) => ({ ...item, acceptance: 'session' as const })));
+      return dedupeDraftsByTitle(
+        filterScaffoldDrafts(parsed.map((item) => ({ ...item, acceptance: 'session' as const }))),
+      );
     } catch (err: unknown) {
       setFallbackWarning(err instanceof Error ? err.message : undefined);
       return toFallbackDrafts(domainName);

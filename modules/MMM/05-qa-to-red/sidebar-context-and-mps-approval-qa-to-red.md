@@ -101,3 +101,11 @@
 ### T-MMM-S6-217 — MPS modal must expose memory-capture evidence and consulted-source telemetry
 - RED: User cannot verify what sources were consulted or whether preference memory capture records exist.
 - GREEN: MPS modal surfaces consulted-source telemetry and domain-scoped `USER_PREFERENCE_CAPTURE` evidence count/last-recorded timestamp.
+
+### T-MMM-S6-218 — Verbatim generation must suppress scaffold placeholder artifacts
+- RED: Verbatim MPS output includes scaffold placeholders like `Uploaded Framework Management`.
+- GREEN: generation filters scaffold placeholders before presenting and persisting MPS suggestions.
+
+### T-MMM-S6-219 — External research context must be requested consistently across all modes
+- RED: Web/peer research is only requested for Hybrid/New, creating inconsistent Maturion context behavior.
+- GREEN: MPS, Intent, and Criteria generation payloads set `external_research_required=true` for Verbatim/Hybrid/Generated, with tenant-source precedence preserved.
