@@ -45,6 +45,7 @@ export function DomainAuditBuilder({
   domainName,
   sourceDomainId,
 }: DomainAuditBuilderProps) {
+  const [focusedMpsId, setFocusedMpsId] = React.useState<string | null>(null);
   const {
     activeStep,
     steps,
@@ -195,7 +196,31 @@ export function DomainAuditBuilder({
                 >
                   {step.summary}
                 </p>
-                {step.previewItems.length > 0 ? (
+                {step.id === 'mps' && mpsRows.length > 0 ? (
+                  <div
+                    className="domain-audit-builder__step-preview"
+                    data-testid={`step-preview-${step.id}`}
+                  >
+                    {mpsRows.map((row) => (
+                      <div key={row.id} className="domain-audit-builder__mps-preview-row">
+                        <span>{row.code} — {row.name}</span>
+                        <span className="domain-audit-builder__mps-preview-actions">
+                          <span className="domain-audit-builder__mps-status-pill">Draft</span>
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            onClick={() => {
+                              setFocusedMpsId(row.id);
+                              setIsMPSModalOpen(true);
+                            }}
+                          >
+                            Edit
+                          </button>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : step.previewItems.length > 0 ? (
                   <ul
                     className="domain-audit-builder__step-preview"
                     data-testid={`step-preview-${step.id}`}
@@ -227,11 +252,15 @@ export function DomainAuditBuilder({
         domainId={persistedDomainId}
         domainName={domain?.name ?? domainName ?? domainId}
         frameworkId={frameworkId}
+        focusMpsId={focusedMpsId}
         open={isMPSModalOpen}
         mpsRows={mpsRows}
         isLoading={isLoading}
         errorMessage={errorMessage}
-        onClose={() => setIsMPSModalOpen(false)}
+        onClose={() => {
+          setFocusedMpsId(null);
+          setIsMPSModalOpen(false);
+        }}
       />
       <IntentCreator
         domainId={persistedDomainId}

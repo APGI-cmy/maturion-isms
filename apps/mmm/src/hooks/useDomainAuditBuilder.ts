@@ -96,6 +96,10 @@ function truncate(value: string, max = 96): string {
   return value.length > max ? `${value.slice(0, max - 1)}…` : value;
 }
 
+function normalizeMpsKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
 type SupabaseRow = Record<string, unknown>;
 
 export interface UseDomainAuditBuilderOptions {
@@ -212,7 +216,7 @@ export function useDomainAuditBuilder({
       }
 
       const rows = (data ?? []) as SupabaseRow[];
-      return rows.map((row, index) => {
+      const mappedRows = rows.map((row, index) => {
         const intentStatement = toTrimmedText(row.intent_statement);
         return {
           id: toDisplayText(row.id, `mps-${index + 1}`),
@@ -223,6 +227,14 @@ export function useDomainAuditBuilder({
           intent_statement: intentStatement.length > 0 ? intentStatement : null,
         };
       });
+      const deduped = new Map<string, DomainAuditMpsRow>();
+      for (const row of mappedRows) {
+        const dedupeKey = `${normalizeMpsKey(row.code)}|${normalizeMpsKey(row.name)}`;
+        if (!deduped.has(dedupeKey)) {
+          deduped.set(dedupeKey, row);
+        }
+      }
+      return Array.from(deduped.values()).sort((a, b) => a.sort_order - b.sort_order);
     },
     enabled: Boolean(domain?.id),
     retry: false,

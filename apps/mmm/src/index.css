@@ -2442,3 +2442,31 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
     display: none;
   }
 }
+
+.domain-audit-builder__mps-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #d7dfec;
+}
+
+.domain-audit-builder__mps-preview-row:last-child {
+  border-bottom: 0;
+}
+
+.domain-audit-builder__mps-preview-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.domain-audit-builder__mps-status-pill {
+  display: inline-block;
+  padding: 0.18rem 0.6rem;
+  border: 1px solid #0f284f;
+  border-radius: 0.45rem;
+  font-weight: 600;
+  background: #ffffff;
+}

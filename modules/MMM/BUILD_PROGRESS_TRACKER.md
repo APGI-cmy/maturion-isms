@@ -1178,3 +1178,21 @@ This tracker now serves as the active failure and traceability register for MMM 
 
 - Full B4 suite after cleanup/failure-observability hardening: **233/233 PASS** (9 test files).
 - Status: active runtime path is currently constrained to QA-linked, build-to-green components for B4 scope.
+
+---
+
+## Failure Register Update — 2026-05-28
+
+7. **Domain MPS overcount + duplicate rows after approved verbatim set**
+   - Failure Class: Runtime state integrity + UX flow mismatch.
+   - Symptom: Leadership & Governance showed 17 MPS rows when expected set is 5; duplicate labels visible; edit flow presented L1 approve/reject stack when user requested direct edit mode.
+   - Cause Class: historical duplicate MPS rows persisted in table and were rendered directly; edit entry path did not enforce focused single-item edit mode.
+   - Corrective Action:
+     - Added MPS row dedupe projection in `useDomainAuditBuilder` for read-path stability.
+     - Updated `MPSSelectionModal` focused edit path to open in direct single-MPS edit mode (no approve/reject bar in focused edit).
+     - Preserved learning-capture prompt on submit/update.
+   - QA-to-Red Trace:
+     - Existing behavioral suite exercised and passed (`T-MMM-S6-190`, `T-MMM-S6-207`, `T-MMM-S6-208` within B4).
+   - Build-to-Green Evidence:
+     - B4 suite: **259/259 PASS**.
+     - MMM build: PASS (`npm run build`).

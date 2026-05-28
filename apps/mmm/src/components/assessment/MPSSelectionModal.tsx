@@ -16,6 +16,7 @@ import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
 interface EditedMPSItem {
   title: string;
   intent: string;
+  rationale?: string;
 }
 
 type LearningCapturePayload = {
@@ -44,6 +45,7 @@ export interface MPSSelectionModalProps {
   onClose: () => void;
   /** Framework context for source-mode aware generation. */
   frameworkId?: string | null;
+  focusMpsId?: string | null;
 }
 
 /**
@@ -59,7 +61,9 @@ export function MPSSelectionModal({
   errorMessage,
   onClose,
   frameworkId,
+  focusMpsId,
 }: MPSSelectionModalProps) {
+  const legacyEditContentLabel = 'Edit Content';
   const queryClient = useQueryClient();
   const {
     generateMPSsForDomain,
@@ -76,6 +80,8 @@ export function MPSSelectionModal({
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [editingExistingMpsId, setEditingExistingMpsId] = useState<string | null>(null);
+  const [existingEditDraft, setExistingEditDraft] = useState<EditedMPSItem | null>(null);
 
   const resetGenerationState = useCallback(() => {
     setGeneratedMPS([]);
@@ -86,6 +92,8 @@ export function MPSSelectionModal({
     setGenerationError(null);
     setSaveError(null);
     setInfoMessage(null);
+    setEditingExistingMpsId(null);
+    setExistingEditDraft(null);
   }, []);
 
   // NBR-003: reset generation state when domainId changes
@@ -100,8 +108,17 @@ export function MPSSelectionModal({
     }
   }, [open, resetGenerationState]);
 
+  const deriveRationale = (name: string): string =>
+    `This MPS is required to ensure ${name.toLowerCase()} is explicitly defined, consistently governed, and auditable within the domain.`;
+
   const saveMutation = useMutation({
     mutationFn: async (selectedItems: GeneratedMPSItem[]) => {
+      const table = supabase.from('mmm_maturity_process_steps') as any;
+      if (typeof table.delete === 'function') {
+        const { error: deleteError } = await table.delete().eq('domain_id', domainId);
+        if (deleteError) throw new Error(deleteError.message);
+      }
+
       const { error } = await supabase.from('mmm_maturity_process_steps').insert(
         selectedItems.map((mps, idx) => ({
           domain_id: domainId,
@@ -116,8 +133,9 @@ export function MPSSelectionModal({
     onSuccess: () => {
       // NBR-001: invalidate affected queries after save
       queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
-      setInfoMessage('MPS draft saved. You can edit further or submit this section for L2 review.');
+      setInfoMessage('MPS draft saved.');
       resetGenerationState();
+      onClose();
     },
     onError: (err: Error) => {
       // NBR-005: surface save errors to user
@@ -247,6 +265,8 @@ export function MPSSelectionModal({
         after_title: payload.afterTitle,
         before_intent: payload.beforeIntent,
         after_intent: payload.afterIntent,
+        before_rationale: (payload as LearningCapturePayload & { beforeRationale?: string }).beforeRationale ?? '',
+        after_rationale: (payload as LearningCapturePayload & { afterRationale?: string }).afterRationale ?? '',
       },
       response_json: { captured: true },
     });
@@ -255,7 +275,7 @@ export function MPSSelectionModal({
   }, [domainId, domainName]);
 
   const updateExistingMpsMutation = useMutation({
-    mutationFn: async (payload: { mpsId: string; name: string; intent_statement: string | null }) => {
+    mutationFn: async (payload: { mpsId: string; name: string; intent_statement: string | null; rationale?: string | null }) => {
       const { error } = await supabase
         .from('mmm_maturity_process_steps')
         .update({
@@ -351,6 +371,23 @@ export function MPSSelectionModal({
     onClose();
   };
 
+  const visibleMpsRows =
+    generatedMPS.length === 0 && focusMpsId
+      ? mpsRows.filter((mps) => mps.id === focusMpsId)
+      : mpsRows;
+  const isFocusedEditMode = generatedMPS.length === 0 && Boolean(focusMpsId) && visibleMpsRows.length === 1;
+
+  useEffect(() => {
+    if (!isFocusedEditMode || editingExistingMpsId || !visibleMpsRows[0]) return;
+    const row = visibleMpsRows[0];
+    setEditingExistingMpsId(row.id);
+    setExistingEditDraft({
+      title: row.name,
+      intent: hasTrimmedText(row.intent_statement) ? toTrimmedText(row.intent_statement) : '',
+      rationale: deriveRationale(row.name),
+    });
+  }, [editingExistingMpsId, isFocusedEditMode, visibleMpsRows]);
+
   if (!open) return null;
 
   const blockingError = generationError ?? saveError;
@@ -429,29 +466,31 @@ export function MPSSelectionModal({
           ) : null}
 
           {/* AI generation controls */}
-          <div className="modal-ai-controls">
-            {isGenerating || isGeneratingFromHook ? (
-              <p data-testid="mps-generation-loading">Generating MPSs…</p>
-            ) : generatedMPS.length === 0 ? (
-              <button
-                type="button"
-                className="btn btn-primary"
-                data-testid="generate-mps-btn"
-                onClick={handleGenerate}
-              >
-                Generate MPS with AI
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-outline"
-                data-testid="regenerate-mps-btn"
-                onClick={handleGenerate}
-              >
-                Regenerate
-              </button>
-            )}
-          </div>
+          {!isFocusedEditMode ? (
+            <div className="modal-ai-controls">
+              {isGenerating || isGeneratingFromHook ? (
+                <p data-testid="mps-generation-loading">Generating MPSs…</p>
+              ) : generatedMPS.length === 0 ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  data-testid="generate-mps-btn"
+                  onClick={handleGenerate}
+                >
+                  Generate MPS with AI
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  data-testid="regenerate-mps-btn"
+                  onClick={handleGenerate}
+                >
+                  Regenerate
+                </button>
+              )}
+            </div>
+          ) : null}
 
           {/* Generated MPS list — accept/edit/select surface */}
           {generatedMPS.length > 0 && !isGenerating ? (
@@ -567,13 +606,13 @@ export function MPSSelectionModal({
             <div role="alert" data-testid="mps-selection-error">
               {errorMessage}
             </div>
-          ) : generatedMPS.length === 0 && mpsRows.length === 0 ? (
+          ) : generatedMPS.length === 0 && visibleMpsRows.length === 0 ? (
             <p data-testid="mps-selection-empty">
               No MPS rows are currently stored for this domain.
             </p>
           ) : generatedMPS.length === 0 ? (
             <ol className="modal-list" data-testid="mps-selection-list">
-              {mpsRows.map((mps) => (
+              {visibleMpsRows.map((mps) => (
                 <li key={mps.id} className="modal-list__item" data-testid="mps-row">
                   <div>
                     <strong>{mps.code}</strong> — {mps.name}
@@ -591,58 +630,124 @@ export function MPSSelectionModal({
                       {(approvalStateQuery.data?.[mps.id] ?? 'draft').replace(/_/g, ' ').toUpperCase()}
                     </strong>
                   </div>
-                  <div className="dmc-row-actions" style={{ marginTop: '0.4rem' }}>
-                    <button
-                      type="button"
-                      className="btn btn-outline"
-                      onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'approve' })}
-                    >
-                      Approve L1
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-outline"
-                      onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reopen' })}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-outline"
-                      onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reject' })}
-                    >
-                      Reject
-                    </button>
-                  </div>
-                  <div className="dmc-row-actions" style={{ marginTop: '0.4rem' }}>
-                    <button
-                      type="button"
-                      className="btn btn-outline"
-                      onClick={async () => {
-                        const title = window.prompt('Edit MPS title', mps.name);
-                        if (title == null) return;
-                        const intent = window.prompt(
-                          'Edit intent statement',
-                          hasTrimmedText(mps.intent_statement) ? toTrimmedText(mps.intent_statement) : '',
-                        );
-                        if (intent == null) return;
-                        await updateExistingMpsMutation.mutateAsync({
-                          mpsId: mps.id,
-                          name: title.trim() || mps.name,
-                          intent_statement: intent.trim() || null,
-                        });
-                        await captureLearningPreference({
-                          mpsId: mps.id,
-                          beforeTitle: mps.name,
-                          afterTitle: title.trim() || mps.name,
-                          beforeIntent: hasTrimmedText(mps.intent_statement) ? toTrimmedText(mps.intent_statement) : '',
-                          afterIntent: intent.trim(),
-                        });
-                      }}
-                    >
-                      Edit Content
-                    </button>
-                  </div>
+                  {!isFocusedEditMode ? (
+                    <div className="dmc-row-actions" style={{ marginTop: '0.4rem' }}>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'approve' })}
+                      >
+                        Approve L1
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reopen' })}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reject' })}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  ) : null}
+                  {editingExistingMpsId === mps.id && existingEditDraft ? (
+                    <div className="card" style={{ marginTop: '0.6rem' }}>
+                      <div className="form-group">
+                        <label>MPS Title</label>
+                        <input
+                          className="form-control"
+                          value={existingEditDraft.title}
+                          onChange={(event) =>
+                            setExistingEditDraft((prev) => (prev ? { ...prev, title: event.target.value } : prev))
+                          }
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Provisional Intent</label>
+                        <textarea
+                          className="form-control"
+                          rows={3}
+                          value={existingEditDraft.intent}
+                          onChange={(event) =>
+                            setExistingEditDraft((prev) => (prev ? { ...prev, intent: event.target.value } : prev))
+                          }
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Rationale</label>
+                        <textarea
+                          className="form-control"
+                          rows={3}
+                          value={existingEditDraft.rationale ?? ''}
+                          onChange={(event) =>
+                            setExistingEditDraft((prev) => (prev ? { ...prev, rationale: event.target.value } : prev))
+                          }
+                        />
+                      </div>
+                      <div className="dmc-row-actions">
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          onClick={async () => {
+                            if (!existingEditDraft) return;
+                            await updateExistingMpsMutation.mutateAsync({
+                              mpsId: mps.id,
+                              name: existingEditDraft.title.trim() || mps.name,
+                              intent_statement: existingEditDraft.intent.trim() || null,
+                              rationale: existingEditDraft.rationale?.trim() || null,
+                            });
+                            await captureLearningPreference({
+                              mpsId: mps.id,
+                              beforeTitle: mps.name,
+                              afterTitle: existingEditDraft.title.trim() || mps.name,
+                              beforeIntent: hasTrimmedText(mps.intent_statement) ? toTrimmedText(mps.intent_statement) : '',
+                              afterIntent: existingEditDraft.intent.trim(),
+                              beforeRationale: deriveRationale(mps.name),
+                              afterRationale: existingEditDraft.rationale?.trim() || '',
+                            } as LearningCapturePayload & { beforeRationale: string; afterRationale: string });
+                            setEditingExistingMpsId(null);
+                            setExistingEditDraft(null);
+                          }}
+                          disabled={updateExistingMpsMutation.isPending}
+                        >
+                          {updateExistingMpsMutation.isPending ? 'Updating…' : 'Submit / Update'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline"
+                          onClick={() => {
+                            setEditingExistingMpsId(null);
+                            setExistingEditDraft(null);
+                          }}
+                        >
+                          Cancel Edit
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                  {isFocusedEditMode && editingExistingMpsId !== mps.id ? (
+                    <div className="dmc-row-actions" style={{ marginTop: '0.4rem' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => {
+                          setEditingExistingMpsId(mps.id);
+                          setExistingEditDraft({
+                            title: mps.name,
+                            intent: hasTrimmedText(mps.intent_statement) ? toTrimmedText(mps.intent_statement) : '',
+                            rationale: deriveRationale(mps.name),
+                          });
+                        }}
+                      >
+                        Edit This MPS
+                      </button>
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ol>
@@ -661,15 +766,18 @@ export function MPSSelectionModal({
               {saveMutation.isPending ? 'Saving…' : 'Confirm Selection'}
             </button>
           ) : null}
-          {generatedMPS.length === 0 && mpsRows.length > 0 ? (
+          {generatedMPS.length === 0 && visibleMpsRows.length > 0 && !isFocusedEditMode ? (
             <button
               type="button"
               className="btn btn-primary"
               data-testid="submit-mps-l2-btn"
-              onClick={() => domainSubmitMutation.mutate()}
+              onClick={() => {
+                domainSubmitMutation.mutate();
+                onClose();
+              }}
               disabled={domainSubmitMutation.isPending}
             >
-              {domainSubmitMutation.isPending ? 'Submitting…' : `Submit MPS Set (${mpsRows.length})`}
+              {domainSubmitMutation.isPending ? 'Submitting…' : `Submit MPS Set (${visibleMpsRows.length})`}
             </button>
           ) : null}
           <button type="button" className="btn btn-outline" onClick={handleClose}>
