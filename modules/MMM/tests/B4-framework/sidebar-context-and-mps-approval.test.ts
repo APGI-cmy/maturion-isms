@@ -141,3 +141,13 @@ describe('T-MMM-S6-215: MPS modal displays consulted source resources', () => {
     expect(src).toContain('lastConsultedResources');
   });
 });
+
+describe('T-MMM-S6-217: MPS modal displays memory capture evidence for domain edits', () => {
+  it('MPS modal surfaces memory evidence toast with USER_PREFERENCE_CAPTURE count', () => {
+    const src = readFile('apps/mmm/src/components/assessment/MPSSelectionModal.tsx');
+    expect(src).toContain('mps-memory-evidence-toast');
+    expect(src).toContain('Memory capture evidence:');
+    expect(src).toContain("eq('action_type', 'USER_PREFERENCE_CAPTURE')");
+    expect(src).toContain("eq('context_type', 'MPS_EDIT')");
+  });
+});

@@ -187,16 +187,30 @@ export function useAIMPSGeneration() {
       const modeContext = options?.frameworkId
         ? await resolveModeSourceContext(options.frameworkId)
         : defaultModeSourceContext(null);
-      setLastConsultedResources(
-        modeContext.mode_source_documents.map(
+      const organisationWebsite =
+        typeof modeContext.organisation_context?.primaryWebsiteUrl === 'string'
+          ? modeContext.organisation_context.primaryWebsiteUrl
+          : null;
+      const baseConsultedResources = [
+        ...modeContext.mode_source_documents.map(
           (doc) => `${doc.title} (${doc.file_name}, ${doc.processing_status})`,
         ),
-      );
+        ...(organisationWebsite ? [`Organisation profile website: ${organisationWebsite}`] : []),
+        `Mode strategy: ${modeContext.mode_source_strategy}`,
+        ...(modeContext.framework_source_type === 'VERBATIM'
+          ? ['External web benchmarking: skipped (VERBATIM mode preserves uploaded source).']
+          : ['External web benchmarking: enabled by selected mode.']),
+      ];
+      setLastConsultedResources(baseConsultedResources);
 
       if (options?.frameworkId) {
         // Verbatim mode must prefer source-parse artifacts before reusing mutable runtime rows.
         const verbatimDrafts = await loadVerbatimDraftsFromFramework(options.frameworkId, domainName);
         if (verbatimDrafts && verbatimDrafts.length > 0) {
+          setLastConsultedResources((prev) => [
+            ...prev,
+            'Framework-proposed verbatim artifacts: mmm_proposed_domains + mmm_proposed_mps',
+          ]);
           return ensureMinimumVerbatimDrafts(
             domainName,
             dedupeDraftsByTitle(verbatimDrafts),
@@ -213,6 +227,10 @@ export function useAIMPSGeneration() {
             .order('sort_order', { ascending: true });
           const directMpsRows = (directMps ?? []) as VerbatimMpsRow[];
           if (directMpsRows.length > 0) {
+            setLastConsultedResources((prev) => [
+              ...prev,
+              `Resolved domain context: mmm_maturity_process_steps (${options.sourceDomainId})`,
+            ]);
             const directDrafts = directMpsRows.map((row, idx) => ({
               number: Number.isFinite(row.sort_order ?? NaN) ? Number(row.sort_order) + 1 : idx + 1,
               title: row.name,

@@ -147,6 +147,32 @@ export function MPSSelectionModal({
     enabled: open,
   });
 
+  const memoryEvidenceQuery = useQuery({
+    queryKey: ['mps-memory-evidence', domainId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('mmm_ai_interactions')
+        .select('id,created_at,status,request_json')
+        .eq('action_type', 'USER_PREFERENCE_CAPTURE')
+        .eq('context_type', 'MPS_EDIT')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      const rows = (data ?? []) as Array<{
+        id: string;
+        created_at: string;
+        status: string;
+        request_json: Record<string, unknown> | null;
+      }>;
+      const domainRows = rows.filter((row) => row.request_json?.domain_id === domainId);
+      return {
+        count: domainRows.length,
+        lastRecordedAt: domainRows[0]?.created_at ?? null,
+      };
+    },
+    enabled: open,
+  });
+
   const mpsApprovalActionMutation = useMutation({
     mutationFn: async (payload: { mps_id: string; action_type: 'approve' | 'reopen' | 'reject' | 'regenerate' }) => {
       const headers = await getEdgeInvokeHeaders();
@@ -386,6 +412,19 @@ export function MPSSelectionModal({
               data-testid="mps-consulted-resources-toast"
             >
               Resources consulted: {lastConsultedResources.join('; ')}
+            </div>
+          ) : null}
+          {generatedMPS.length > 0 ? (
+            <div
+              role="status"
+              className="alert alert-success"
+              data-testid="mps-memory-evidence-toast"
+            >
+              Memory capture evidence: {memoryEvidenceQuery.data?.count ?? 0} recorded preference updates
+              for this domain
+              {memoryEvidenceQuery.data?.lastRecordedAt
+                ? ` (last recorded ${new Date(memoryEvidenceQuery.data.lastRecordedAt).toLocaleString()})`
+                : '.'}
             </div>
           ) : null}
 

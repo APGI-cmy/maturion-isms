@@ -107,6 +107,13 @@
   - **QA-to-Red Gates**: Added `T-MMM-S6-215` and `T-MMM-S6-216`.
   - **Build-to-Green Fix**: MPS generator now de-duplicates verbatim rows and publishes consulted-resource toast; Criteria generation now resolves from `mmm_proposed_criteria` for matched proposed MPS before AI/fallback.
 
+- **2026-05-28 — Explainability Evidence Gap (Consulted Sources + Memory Capture Visibility)**
+  - **Observed Failure**: User could not see a consulted-source toast and had no visible evidence that preference-learning memory was being captured for the active domain.
+  - **Impact**: Trust and auditability of Maturion decisions were reduced despite improved output quality.
+  - **Prebuild/Architecture Update**: Explainability controls expanded to require operator-visible consulted-source telemetry and memory-capture evidence in the MPS working modal.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-217`.
+  - **Build-to-Green Fix**: MPS modal now renders consulted-source telemetry (including mode behavior and organisation website context when available) and domain-scoped USER_PREFERENCE_CAPTURE evidence count/last timestamp.
+
 ---
 
 ## Stage Migration Note

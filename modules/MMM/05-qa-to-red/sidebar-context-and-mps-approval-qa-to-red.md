@@ -97,3 +97,7 @@
 ### T-MMM-S6-216 — Verbatim criteria generation must prefer parsed framework criteria
 - RED: Criteria generation falls back to generic non-verbatim text despite available parsed framework criteria.
 - GREEN: Criteria generation resolves criteria from `mmm_proposed_criteria` for matching proposed MPS before AI fallback.
+
+### T-MMM-S6-217 — MPS modal must expose memory-capture evidence and consulted-source telemetry
+- RED: User cannot verify what sources were consulted or whether preference memory capture records exist.
+- GREEN: MPS modal surfaces consulted-source telemetry and domain-scoped `USER_PREFERENCE_CAPTURE` evidence count/last-recorded timestamp.
