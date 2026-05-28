@@ -104,7 +104,6 @@ export default function FrameworkOriginPage() {
           <p className="wizard-step__hint wizard-step__hint--info">
             Next step: you&apos;ll generate or upload framework content, then move directly into the domain workspace.
           </p>
-
           <button className="btn btn-primary w-full" onClick={handleContinue}>
             Continue
           </button>

@@ -298,7 +298,7 @@ function StepDocuments({ data, onChange }: { data: WizardData; onChange: (patch:
       <p className="wizard-step__hint">
         You can supply policy documents, existing frameworks, or security standards to help Maturion AI
         understand your organisation&rsquo;s existing posture. Document upload is available after onboarding via the
-        Framework workspace.
+        DMC (Document Management Centre).
       </p>
       <div className="form-group">
         <label htmlFor="documentNotes">Document Notes (optional)</label>

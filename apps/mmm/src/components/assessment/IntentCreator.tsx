@@ -11,12 +11,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { DomainAuditMpsRow } from '../../hooks/useDomainAuditBuilder';
 import { supabase } from '../../lib/supabase';
 import { useIntentGeneration } from '../../hooks/useIntentGeneration';
+import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
 
 interface PerMpsIntentState {
   isGenerating: boolean;
   generatedIntent: string | null;
   editedIntent: string;
   error: string | null;
+  fallbackNotice: string | null;
 }
 
 export interface IntentCreatorProps {
@@ -34,6 +36,10 @@ export interface IntentCreatorProps {
   errorMessage: string | null;
   /** Callback to close/cancel. */
   onClose: () => void;
+  /** Framework context for Verbatim/Hybrid/New source-mode generation. */
+  frameworkId?: string | null;
+  /** Optional callback after a successful modal-level submit action. */
+  onSubmitted?: () => void;
 }
 
 /**
@@ -48,13 +54,17 @@ export function IntentCreator({
   isLoading,
   errorMessage,
   onClose,
+  frameworkId,
+  onSubmitted,
 }: IntentCreatorProps) {
   const queryClient = useQueryClient();
   const { generateIntent } = useIntentGeneration();
   const [mpsIntentStates, setMpsIntentStates] = useState<Record<string, PerMpsIntentState>>({});
+  const [modalError, setModalError] = useState<string | null>(null);
 
   const resetAllStates = useCallback(() => {
     setMpsIntentStates({});
+    setModalError(null);
   }, []);
 
   // NBR-003: reset generation state when domainId changes
@@ -91,43 +101,69 @@ export function IntentCreator({
             generatedIntent: null,
             editedIntent: '',
             error: null,
+            fallbackNotice: null,
           },
         };
       });
+      resetAllStates();
+      onClose();
     },
     onError: (err: Error, { mpsId }) => {
       // NBR-005: surface save errors to user
       setMpsIntentStates((prev) => {
-        const current = prev[mpsId] ?? { isGenerating: false, generatedIntent: null, editedIntent: '', error: null };
+        const current = prev[mpsId] ?? {
+          isGenerating: false,
+          generatedIntent: null,
+          editedIntent: '',
+          error: null,
+          fallbackNotice: null,
+        };
         return { ...prev, [mpsId]: { ...current, error: err.message } };
       });
     },
   });
 
   const handleGenerate = async (mps: DomainAuditMpsRow) => {
+    setModalError(null);
     setMpsIntentStates((prev) => ({
       ...prev,
-      [mps.id]: { isGenerating: true, generatedIntent: null, editedIntent: '', error: null },
+      [mps.id]: {
+        isGenerating: true,
+        generatedIntent: null,
+        editedIntent: '',
+        error: null,
+        fallbackNotice: null,
+      },
     }));
     try {
       const reply = await generateIntent({
         domainName,
         mpsCode: mps.code,
         mpsName: mps.name,
+        frameworkId,
       });
-      setMpsIntentStates((prev) => ({
-        ...prev,
-        [mps.id]: { isGenerating: false, generatedIntent: reply, editedIntent: reply, error: null },
-      }));
-    } catch (err: unknown) {
-      // NBR-005: surface generation errors to user
       setMpsIntentStates((prev) => ({
         ...prev,
         [mps.id]: {
           isGenerating: false,
-          generatedIntent: null,
-          editedIntent: '',
-          error: err instanceof Error ? err.message : 'AI generation failed. Please try again.',
+          generatedIntent: reply,
+          editedIntent: reply,
+          error: null,
+          fallbackNotice: null,
+        },
+      }));
+    } catch (err: unknown) {
+      const fallbackIntent =
+        `Ensure ${mps.name} (${mps.code}) is clearly defined, implemented, and evidenced within the ${domainName} domain.`;
+      setMpsIntentStates((prev) => ({
+        ...prev,
+        [mps.id]: {
+          isGenerating: false,
+          generatedIntent: fallbackIntent,
+          editedIntent: fallbackIntent,
+          error: null,
+          fallbackNotice:
+            'AI service is temporarily unavailable. Fallback draft loaded — you can edit and submit.',
         },
       }));
     }
@@ -135,7 +171,13 @@ export function IntentCreator({
 
   const handleEditIntent = (mpsId: string, value: string) => {
     setMpsIntentStates((prev) => {
-      const current = prev[mpsId] ?? { isGenerating: false, generatedIntent: null, editedIntent: '', error: null };
+      const current = prev[mpsId] ?? {
+        isGenerating: false,
+        generatedIntent: null,
+        editedIntent: '',
+        error: null,
+        fallbackNotice: null,
+      };
       return { ...prev, [mpsId]: { ...current, editedIntent: value } };
     });
   };
@@ -143,6 +185,45 @@ export function IntentCreator({
   const handleAccept = (mps: DomainAuditMpsRow) => {
     const intentText = mpsIntentStates[mps.id]?.editedIntent ?? '';
     saveMutation.mutate({ mpsId: mps.id, intentText });
+  };
+
+  const hasGeneratedDrafts = mpsRows.some((mps) => {
+    const state = mpsIntentStates[mps.id];
+    return Boolean(state && state.generatedIntent !== null && state.generatedIntent !== undefined);
+  });
+
+  const handleAcceptAll = async () => {
+    setModalError(null);
+    const updates = mpsRows
+      .map((mps) => {
+        const state = mpsIntentStates[mps.id];
+        const candidate = state?.editedIntent ?? mps.intent_statement ?? '';
+        const intentText = candidate.trim();
+        if (intentText.length === 0) {
+          return null;
+        }
+        return { mpsId: mps.id, intentText };
+      })
+      .filter((row): row is { mpsId: string; intentText: string } => row !== null);
+
+    if (updates.length === 0) {
+      return;
+    }
+
+    for (const updateRow of updates) {
+      const { error } = await supabase
+        .from('mmm_maturity_process_steps')
+        .update({ intent_statement: updateRow.intentText })
+        .eq('id', updateRow.mpsId);
+      if (error) {
+        throw new Error(error.message);
+      }
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
+    resetAllStates();
+    onSubmitted?.();
+    onClose();
   };
 
   const handleReject = (mpsId: string) => {
@@ -185,6 +266,10 @@ export function IntentCreator({
             <div role="alert" data-testid="intent-creator-error">
               {errorMessage}
             </div>
+          ) : modalError ? (
+            <div role="alert" className="alert alert-error" data-testid="intent-creator-modal-error">
+              {modalError}
+            </div>
           ) : mpsRows.length === 0 ? (
             <p data-testid="intent-creator-empty">
               No MPS rows are currently available for intent rendering.
@@ -209,6 +294,15 @@ export function IntentCreator({
                         {state.error}
                       </div>
                     ) : null}
+                    {state?.fallbackNotice ? (
+                      <div
+                        role="status"
+                        className="alert"
+                        data-testid={`intent-generation-fallback-${mps.id}`}
+                      >
+                        {state.fallbackNotice}
+                      </div>
+                    ) : null}
 
                     {state?.isGenerating ? (
                       <p data-testid={`intent-generation-loading-${mps.id}`}>
@@ -230,7 +324,7 @@ export function IntentCreator({
                           onClick={() => handleAccept(mps)}
                           disabled={saveMutation.isPending}
                         >
-                          {saveMutation.isPending ? 'Saving…' : 'Accept'}
+                          {saveMutation.isPending ? 'Saving…' : 'Accept / Submit'}
                         </button>
                         <button
                           type="button"
@@ -244,8 +338,8 @@ export function IntentCreator({
                     ) : (
                       <div>
                         <div>
-                          {mps.intent_statement?.trim()
-                            ? mps.intent_statement
+                          {hasTrimmedText(mps.intent_statement)
+                            ? toTrimmedText(mps.intent_statement)
                             : 'No intent statement stored for this MPS yet.'}
                         </div>
                         <button
@@ -254,7 +348,7 @@ export function IntentCreator({
                           data-testid={`generate-intent-btn-${mps.id}`}
                           onClick={() => handleGenerate(mps)}
                         >
-                          {mps.intent_statement?.trim() ? 'Regenerate intent' : 'Generate intent'}
+                          {hasTrimmedText(mps.intent_statement) ? 'Regenerate intent' : 'Generate intent'}
                         </button>
                       </div>
                     )}
@@ -265,6 +359,19 @@ export function IntentCreator({
           )}
         </div>
         <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              void handleAcceptAll().catch((error: unknown) => {
+                const message = error instanceof Error ? error.message : 'Failed to submit intent set.';
+                setModalError(message);
+              });
+            }}
+            disabled={saveMutation.isPending || isLoading || mpsRows.length === 0 || !hasGeneratedDrafts}
+          >
+            Accept / Submit
+          </button>
           <button type="button" className="btn btn-outline" onClick={() => { resetAllStates(); onClose(); }}>
             Cancel
           </button>

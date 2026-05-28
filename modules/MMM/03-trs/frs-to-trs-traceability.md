@@ -59,7 +59,7 @@ All 80 FRS requirements (FR-001 through FR-080) are explicitly traced below.
 | FR-023 | AI Proposed Altering Mechanism | TR-015, TR-033, TR-034 | `/api/ai/framework-alter` endpoint (TR-015); human oversight (TR-033); AI logging (TR-034) |
 | FR-024 | Intent Statements | TR-022 | `intent_statement` column in `maturity_process_steps` (TR-022) |
 | FR-025 | Criteria Card Requirements | TR-022 | `criteria` table with all required columns (TR-022) |
-| FR-026 | Framework Review and Three-Tier Approval Workflow | TR-022, TR-031, TR-036 | `frameworks.status` states (TR-022); RLS write restriction by role (TR-031, TR-036) |
+| FR-026 | Framework Review and Three-Tier Approval Workflow | TR-022, TR-031, TR-036, TR-FD-007, TR-FD-008 | `frameworks.status` states (TR-022); RLS write restriction by role (TR-031, TR-036); compile handoff continuity + render resilience (TR-FD-007, TR-FD-008) |
 | FR-027 | Framework Publication | TR-022, TR-027, TR-031 | PUBLISHED status in `frameworks` (TR-022); immutable snapshot (TR-027); RLS blocks post-publish writes (TR-031) |
 | FR-028 | Hybrid Framework Mode Timing (OQ-009 RESOLVED) | TR-022 | `frameworks.source_type` accommodates hybrid mode (TR-022) |
 | FR-029 | Criterion Drill-Down | TR-022, TR-007 | `criteria` table (TR-022); audit session load performance for criteria drill-down (TR-007) |

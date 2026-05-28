@@ -232,7 +232,7 @@ describe("T-MMM-S6-035: FrameworkReviewPage invalidates ['frameworks', id] on co
   it('routes compile success to legacy framework workspace', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
     expect(src).toContain('/assessment/framework');
-    expect(src).toContain('window.location.assign');
+    expect(src).toContain('navigate(');
     expect(src).toContain('framework_id=');
   });
 });
@@ -907,5 +907,59 @@ describe('T-MMM-S6-189: Legacy step model preserved — Create MPSs / Create Int
   it('useDomainAuditBuilder hook exposes handleStepClick (step dispatch contract)', () => {
     const src = readFile('apps/mmm/src/hooks/useDomainAuditBuilder.ts');
     expect(src).toContain('handleStepClick');
+  });
+});
+
+// ─── T-MMM-S6-191: FrameworkReviewPage must not dead-end when status is REVIEW ─
+// RED: forces a direct continuation path to the framework workspace even when
+// compile is disabled (for example after successful compile has already moved
+// status to REVIEW and proposed rows are no longer present).
+describe('T-MMM-S6-191: FrameworkReviewPage provides non-dead-end workspace continuation in REVIEW state', () => {
+  it('FrameworkReviewPage contains an explicit "Open Framework Workspace" action', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
+    expect(src).toContain('Open Framework Workspace');
+  });
+  it('FrameworkReviewPage continuation action routes to /assessment/framework with framework_id context', () => {
+    const src = readFile('apps/mmm/src/pages/FrameworkReviewPage.tsx');
+    expect(src).toContain('/assessment/framework');
+    expect(src).toContain('framework_id=');
+  });
+});
+
+// ─── T-MMM-S6-192: Fallback framework scaffold preserves legacy 5-domain model ─
+// RED: when AIMC/KUC degraded fallback is used, MMM must still produce the legacy
+// domain topology so the user journey does not collapse into a single placeholder domain.
+describe('T-MMM-S6-192: Fallback scaffold includes full legacy 5-domain structure', () => {
+  it('fallback file defines all five canonical domain names', () => {
+    const src = readFile('supabase/functions/_shared/mmm-fallback-framework.ts');
+    expect(src).toContain("name: 'Leadership and Governance'");
+    expect(src).toContain("name: 'Process Integrity'");
+    expect(src).toContain("name: 'People and Culture'");
+    expect(src).toContain("name: 'Protection'");
+    expect(src).toContain("name: 'Proof It Works'");
+  });
+
+  it('fallback file includes MPS 1-25 coverage markers', () => {
+    const src = readFile('supabase/functions/_shared/mmm-fallback-framework.ts');
+    expect(src).toContain('MPS_001_');
+    expect(src).toContain('MPS_010_');
+    expect(src).toContain('MPS_015_');
+    expect(src).toContain('MPS_020_');
+    expect(src).toContain('MPS_025_');
+  });
+});
+
+// ─── T-MMM-S6-193: Handoff page exposes legacy blueprint repair action ───────
+// RED: existing thin frameworks created before the full fallback scaffold must
+// have a visible one-click repair path in the framework workspace.
+describe('T-MMM-S6-193: Framework handoff includes legacy blueprint repair action', () => {
+  it('AssessmentFrameworkHandoffPage renders legacy repair banner test id', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('legacy-domain-repair-banner');
+  });
+
+  it('AssessmentFrameworkHandoffPage includes "Load Legacy Domain Blueprint" action text', () => {
+    const src = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
+    expect(src).toContain('Load Legacy Domain Blueprint');
   });
 });

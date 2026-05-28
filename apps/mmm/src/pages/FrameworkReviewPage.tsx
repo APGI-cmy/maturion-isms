@@ -64,13 +64,11 @@ export default function FrameworkReviewPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['frameworks', id] }); // NBR-001
       queryClient.invalidateQueries({ queryKey: ['domains', id] }); // NBR-001
-      const normalizedBaseUrl = (import.meta.env.VITE_APP_URL ?? window.location.origin).replace(/\/$/, '');
-      const legacyWorkspacePath = '/assessment/framework';
       const frameworkId = id ?? '';
       const frameworkQuery = frameworkId ? `?framework_id=${encodeURIComponent(frameworkId)}` : '';
-      // TODO(governance-interop): Transitional bridge into legacy workspace.
-      // Replace window.location.assign with unified SPA routing/state continuity once governance-shell migration is complete.
-      window.location.assign(`${normalizedBaseUrl}${legacyWorkspacePath}${frameworkQuery}`);
+      // Use in-app SPA navigation so compile handoff preserves the current auth session
+      // and always lands on the local 5-domain workspace route.
+      navigate(`/assessment/framework${frameworkQuery}`);
     },
   });
 
@@ -93,6 +91,9 @@ export default function FrameworkReviewPage() {
 
   const isReview = framework?.status?.toLowerCase() === 'review';
   const canPublish = isReview && !publishMutation.isPending && !publishMutation.isSuccess;
+  const frameworkWorkspacePath = id
+    ? `/assessment/framework?framework_id=${encodeURIComponent(id)}`
+    : '/assessment/framework';
 
   // Compile is blocked while parse job is still active
   const parseJobActive = parseJob && (parseJob.status === 'PENDING' || parseJob.status === 'PROCESSING');
@@ -179,6 +180,21 @@ export default function FrameworkReviewPage() {
           <span aria-live="assertive" role="alert" style={{ color: 'red' }}>
             ✗ Compile failed: {(compileMutation.error as Error).message}
           </span>
+        )}
+
+        {/* REVIEW-state continuation path to avoid dead-end when compile is no longer available */}
+        {isReview && (
+          <div style={{ marginTop: '0.75rem' }}>
+            <button
+              onClick={() => navigate(frameworkWorkspacePath)}
+              style={{ marginRight: '0.5rem' }}
+            >
+              Open Framework Workspace
+            </button>
+            <span style={{ color: '#666', fontSize: '0.875rem' }}>
+              (Framework is already in REVIEW. Continue to domain workspace.)
+            </span>
+          </div>
         )}
       </section>
 

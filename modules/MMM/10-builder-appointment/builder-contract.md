@@ -152,6 +152,10 @@ ECAP: execution-ceremony-admin-agent — [confirmed / pending]
 IAA: independent-assurance-agent — [confirmed / pending]
 
 All five roles confirmed: [ ] YES / [ ] NO (HANDOVER BLOCKER if NO)
+Build-to-Red labels linked to this wave: [T-MMM-S6-___, T-MMM-S6-___]
+Builder appointment scope reference: modules/MMM/10-builder-appointment/builder-contract.md section [wave section]
+Role assignment evidence reference: <path to wave evidence artifact>
+Build-to-Red linkage confirmed: [ ] YES / [ ] NO (HANDOVER BLOCKER if NO)
 ```
 
 ### Origin
@@ -159,6 +163,15 @@ All five roles confirmed: [ ] YES / [ ] NO (HANDOVER BLOCKER if NO)
 This requirement was added in response to PR maturion-isms#1553. The root cause analysis
 identified that the integration and QA roles were assumed rather than explicitly assigned,
 leading to dead CTAs being missed in review.
+
+### Build-to-Red Binding Rule
+
+For every wave, handover evidence MUST include explicit linkage to:
+1. The exact RED test IDs being converted to GREEN for that wave (`T-MMM-S6-*` labels).
+2. The builder appointment section authorizing that wave's scope.
+3. The role assignment artifact proving Builder/QA/Integration/ECAP/IAA appointment completion.
+
+If any of these three links are missing, wave handover is blocked even when CI is green.
 
 ---
 

@@ -10,8 +10,15 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import {
+  hasTrimmedText,
+  toDisplayNumber,
+  toDisplayText,
+  toTrimmedText,
+} from '../lib/safeText';
 
 export type AuditStep = 'mps' | 'intent' | 'criteria';
+export type AuditStepStatus = 'locked' | 'active' | 'completed';
 
 export interface DomainAuditDomain {
   id: string;
@@ -46,6 +53,7 @@ export interface GeneratedMpsDraft {
   intent: string;
   rationale: string;
   acceptance: DraftPersistenceState;
+  source_origin?: 'uploaded_source' | 'ai_completion' | 'subject_knowledge';
 }
 
 export interface GeneratedIntentDraft {
@@ -65,12 +73,13 @@ export interface StepMeta {
   title: string;
   description: string;
   order: number;
+  status: AuditStepStatus;
   count: number;
   summary: string;
   previewItems: string[];
 }
 
-const BASE_AUDIT_STEPS: Omit<StepMeta, 'count' | 'summary' | 'previewItems'>[] = [
+const BASE_AUDIT_STEPS: Omit<StepMeta, 'count' | 'summary' | 'previewItems' | 'status'>[] = [
   { id: 'mps', title: 'Create MPSs', description: 'Define Maturity Practice Statements for this domain.', order: 1 },
   { id: 'intent', title: 'Create Intent', description: 'Write intent statements for each MPS.', order: 2 },
   { id: 'criteria', title: 'Create Criteria', description: 'Define criteria scoped to each MPS.', order: 3 },
@@ -86,6 +95,14 @@ function normalizeDomainKey(value: string): string {
 function truncate(value: string, max = 96): string {
   return value.length > max ? `${value.slice(0, max - 1)}…` : value;
 }
+
+function normalizeMpsKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+const PLACEHOLDER_MPS_NAMES = new Set(['uploaded framework management']);
+
+type SupabaseRow = Record<string, unknown>;
 
 export interface UseDomainAuditBuilderOptions {
   domainId: string;
@@ -153,10 +170,12 @@ export function useDomainAuditBuilder({
 
       const lookupKey = normalizeDomainKey(domainName ?? domainId);
       const matchedDomain = (data ?? []).find((candidate) => {
+        const candidateName = toDisplayText(candidate.name);
+        const candidateCode = toDisplayText(candidate.code);
         const candidateKeys = [
-          normalizeDomainKey(candidate.name),
-          normalizeDomainKey(candidate.code),
-          normalizeDomainKey(`${candidate.code}-${candidate.name}`),
+          normalizeDomainKey(candidateName),
+          normalizeDomainKey(candidateCode),
+          normalizeDomainKey(`${candidateCode}-${candidateName}`),
         ];
         return candidateKeys.includes(lookupKey);
       });
@@ -165,7 +184,13 @@ export function useDomainAuditBuilder({
         return null;
       }
 
-      return matchedDomain as DomainAuditDomain;
+      return {
+        id: toDisplayText(matchedDomain.id),
+        name: toDisplayText(matchedDomain.name, domainName ?? domainId),
+        code: toDisplayText(matchedDomain.code, domainId),
+        sort_order: toDisplayNumber(matchedDomain.sort_order, 0),
+        framework_id: toDisplayText(matchedDomain.framework_id, frameworkId ?? ''),
+      } as DomainAuditDomain;
     },
     enabled: Boolean(domainId) && Boolean(sourceDomainId || frameworkId),
     retry: false,
@@ -192,7 +217,32 @@ export function useDomainAuditBuilder({
         throw new Error(error.message);
       }
 
-      return (data ?? []) as DomainAuditMpsRow[];
+      const rows = (data ?? []) as SupabaseRow[];
+      const mappedRows = rows.map((row, index) => {
+        const intentStatement = toTrimmedText(row.intent_statement);
+        return {
+          id: toDisplayText(row.id, `mps-${index + 1}`),
+          domain_id: toDisplayText(row.domain_id, domain.id),
+          name: toDisplayText(row.name, `MPS ${index + 1}`),
+          code: toDisplayText(row.code, `MPS-${index + 1}`),
+          sort_order: toDisplayNumber(row.sort_order, index + 1),
+          intent_statement: intentStatement.length > 0 ? intentStatement : null,
+        };
+      });
+      const nonPlaceholderRows = mappedRows.filter(
+        (row) => !PLACEHOLDER_MPS_NAMES.has(normalizeMpsKey(row.name)),
+      );
+      const candidateRows =
+        nonPlaceholderRows.length > 0 ? nonPlaceholderRows : mappedRows;
+
+      const deduped = new Map<string, DomainAuditMpsRow>();
+      for (const row of candidateRows) {
+        const dedupeKey = normalizeMpsKey(row.name);
+        if (!deduped.has(dedupeKey)) {
+          deduped.set(dedupeKey, row);
+        }
+      }
+      return Array.from(deduped.values()).sort((a, b) => a.sort_order - b.sort_order);
     },
     enabled: Boolean(domain?.id),
     retry: false,
@@ -217,7 +267,14 @@ export function useDomainAuditBuilder({
         throw new Error(error.message);
       }
 
-      return (data ?? []) as DomainAuditCriterionRow[];
+      const rows = (data ?? []) as SupabaseRow[];
+      return rows.map((row, index) => ({
+        id: toDisplayText(row.id, `criterion-${index + 1}`),
+        mps_id: toDisplayText(row.mps_id),
+        name: toDisplayText(row.name, `Criterion ${index + 1}`),
+        code: toDisplayText(row.code, `C-${index + 1}`),
+        sort_order: toDisplayNumber(row.sort_order, index + 1),
+      }));
     },
     enabled: mpsIds.length > 0,
     retry: false,
@@ -231,15 +288,22 @@ export function useDomainAuditBuilder({
   }, [criteriaRows]);
 
   const steps = useMemo<StepMeta[]>(() => {
-    const intentRows = mpsRows.filter((row) => Boolean(row.intent_statement?.trim()));
+    const intentRows = mpsRows.filter((row) => hasTrimmedText(row.intent_statement));
+    const hasDomainContext = Boolean(domain?.id);
+    const hasMps = mpsRows.length > 0;
+    const hasCompleteIntents = hasMps && intentRows.length === mpsRows.length;
+    const hasCriteria = criteriaRows.length > 0;
 
     return BASE_AUDIT_STEPS.map((step) => {
       if (step.id === 'mps') {
         return {
           ...step,
+          status: !hasDomainContext ? 'locked' : mpsRows.length > 0 ? 'completed' : 'active',
           count: mpsRows.length,
           summary:
-            mpsRows.length > 0
+            !hasDomainContext
+              ? 'Compile this framework domain first to unlock MPS authoring.'
+              : mpsRows.length > 0
               ? `${mpsRows.length} MPS rows loaded from MMM current data source.`
               : 'No MPS rows loaded for this routed domain yet.',
           previewItems: mpsRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
@@ -249,28 +313,44 @@ export function useDomainAuditBuilder({
       if (step.id === 'intent') {
         return {
           ...step,
+          status:
+            !hasDomainContext || !hasMps
+              ? 'locked'
+              : intentRows.length > 0
+              ? 'completed'
+              : 'active',
           count: intentRows.length,
           summary:
-            intentRows.length > 0
+            !hasDomainContext || !hasMps
+              ? 'Create and store at least one MPS before generating intents.'
+              : intentRows.length > 0
               ? `${intentRows.length} intent statements are available from current MMM data.`
               : 'No intent statements are currently stored for this domain.',
           previewItems: intentRows
             .slice(0, 3)
-            .map((row) => `${row.code} — ${truncate(row.intent_statement ?? '')}`),
+            .map((row) => `${row.code} — ${truncate(toTrimmedText(row.intent_statement))}`),
         };
       }
 
       return {
         ...step,
+        status:
+          !hasDomainContext || !hasCompleteIntents
+            ? 'locked'
+            : hasCriteria
+            ? 'completed'
+            : 'active',
         count: criteriaRows.length,
         summary:
-          criteriaRows.length > 0
+          !hasDomainContext || !hasCompleteIntents
+            ? 'Complete intent statements for this domain to unlock criteria generation.'
+            : criteriaRows.length > 0
             ? `${criteriaRows.length} criteria rows grouped under ${mpsRows.length} MPS entries.`
             : 'No criteria rows are currently stored for this domain.',
         previewItems: criteriaRows.slice(0, 3).map((row) => `${row.code} — ${row.name}`),
       };
     });
-  }, [criteriaRows, mpsRows]);
+  }, [criteriaRows, domain?.id, mpsRows]);
 
   const isLoading = isDomainLoading || isMpsLoading || isCriteriaLoading;
   const errorMessage =
@@ -292,6 +372,10 @@ export function useDomainAuditBuilder({
   };
 
   const handleStepClick = (step: AuditStep) => {
+    const targetStep = steps.find((candidate) => candidate.id === step);
+    if (!targetStep || targetStep.status === 'locked') {
+      return;
+    }
     setActiveStep(step);
   };
 

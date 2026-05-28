@@ -27,12 +27,26 @@
 | D10 | Cross-Cutting — Infrastructure & Quality Gates | T-MMM-S6-153–164 | 12 |
 | D11 | Product Identity & Governance | T-MMM-S6-165–176 | 12 |
 | D12 | Full Functional Delivery Gate (CTA/API Verification) | T-MMM-S6-FD-001–006 | 6 |
-| D13 | Compile Handoff Transitional Bridge — `/assessment/framework` | T-MMM-S6-177–184 | 8 |
-| **TOTAL** | | **T-MMM-S6-001–184 + FD-001–006** | **190** |
+| D13 | Compile Handoff Transitional Bridge — `/assessment/framework` | T-MMM-S6-177–185 | 9 |
+| **TOTAL** | | **T-MMM-S6-001–185 + FD-001–006** | **191** |
 
 **FR Coverage**: 80/80 (100%)
 **TR Coverage**: 66/66 (all security/integration/quality TRs fully covered; all others by domain)
 **Journey Coverage**: 17/17 (J-01 through J-17; compile-handoff transitional bridge coverage is tracked under J-06/J-07, not as a separate journey)
+
+## Stage 6 Addenda
+
+- Domain workspace runtime resilience gate: `T-MMM-S6-186`  
+  See: `modules/MMM/05-qa-to-red/domain-workspace-runtime-resilience-qa-to-red.md`
+- MPS AI fallback non-blocking gate: `T-MMM-S6-187`  
+  See: `modules/MMM/05-qa-to-red/mps-ai-fallback-nonblocking-qa-to-red.md`
+- Sidebar/context/DMC migration/approval workflow gates: `T-MMM-S6-188`–`T-MMM-S6-193`  
+- Sidebar compact-width safeguard gate: `T-MMM-S6-194`  
+- Sidebar manual resize safeguard gate: `T-MMM-S6-195`  
+- Framework-origin non-blocking routing gate: `T-MMM-S6-196`  
+- Edge-runtime fallback gates: `T-MMM-S6-197`–`T-MMM-S6-198`  
+- AI linkage fallback gates: `T-MMM-S6-199`–`T-MMM-S6-201`  
+  See: `modules/MMM/05-qa-to-red/sidebar-context-and-mps-approval-qa-to-red.md`
 
 ---
 
@@ -1496,7 +1510,20 @@
   `/assessment/framework?framework_id=<invalid-or-unresolvable-id>` each render distinct visible error
   states with recovery action.
 
+### T-MMM-S6-185 — Compile Handoff Workspace Must Not Crash on Malformed Payload Fields
+
+- **Source**: FR-026 compile handoff continuity acceptance + Architecture §A3.3a boundary error contract
+- **Layer**: Integration/UI behavior
+- **Description**: When framework/domain payload fields contain non-string or nullish values
+  (for example malformed imported metadata), `/assessment/framework?framework_id=:id` must
+  still render the canonical workspace with safe placeholders and must not fall into a
+  global boundary crash state.
+- **RED Condition**: Route briefly renders then collapses into "Something went wrong. Please refresh."
+  (or blank/error-boundary fallback) after data hydration.
+- **Acceptance Criteria**: Canonical five domain cards remain visible, placeholder labels are shown
+  for malformed fields, and no global error-boundary fallback is displayed for this route.
+
 ---
 
 *End of MMM Stage 6 — QA-to-Red Catalog*
-*Total: 190 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys + compile handoff bridge covered*
+*Total: 191 tests | 80 FRs covered | 66 TRs covered (all key TRs) | 17 Journeys + compile handoff bridge covered*

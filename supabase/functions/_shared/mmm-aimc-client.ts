@@ -38,8 +38,14 @@ import {
   buildFallbackResponse,
 } from './mmm-circuit-breaker.ts';
 
-/** AIMC service base URL — TR-013 */
-const AIMC_BASE_URL = Deno.env.get('AIMC_BASE_URL') ?? '';
+/** AIMC service base URL — TR-013
+ * Supports both canonical AIMC_BASE_URL and legacy alias AI_GATEWAY_URL.
+ */
+const AIMC_BASE_URL = (
+  Deno.env.get('AIMC_BASE_URL') ??
+  Deno.env.get('AI_GATEWAY_URL') ??
+  ''
+).replace(/\/+$/, '');
 /** AIMC service-to-service token — TR-011 */
 const AIMC_SERVICE_TOKEN = Deno.env.get('AIMC_SERVICE_TOKEN') ?? '';
 
@@ -99,7 +105,7 @@ function sleep(ms: number): Promise<void> {
  * Content-Type: application/json — TR-012.
  */
 async function makeAimcHttpCall(
-  operation: string,
+  endpointUrl: string,
   payload: AimcRequestEnvelope,
   timeoutMs: number,
 ): Promise<AimcResponseEnvelope> {
@@ -107,7 +113,7 @@ async function makeAimcHttpCall(
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetch(`${AIMC_BASE_URL}${AIMC_NAMESPACE}/${operation}`, {
+    const response = await fetch(endpointUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -149,6 +155,25 @@ export async function callAimc(
   actorId: string,
   context: Record<string, unknown>,
 ): Promise<AimcCallResult> {
+  if (!AIMC_BASE_URL) {
+    return {
+      success: false,
+      data: null,
+      error: 'AIMC_BASE_URL_MISSING (or AI_GATEWAY_URL not configured)',
+      request_id: `config-${crypto.randomUUID()}`,
+      fallback: false,
+    };
+  }
+  if (!AIMC_SERVICE_TOKEN) {
+    return {
+      success: false,
+      data: null,
+      error: 'AIMC_SERVICE_TOKEN_MISSING',
+      request_id: `config-${crypto.randomUUID()}`,
+      fallback: false,
+    };
+  }
+
   // TR-009: Check circuit breaker state
   if (!isCircuitClosed('AIMC')) {
     const fallback = buildFallbackResponse('AIMC');
@@ -182,6 +207,11 @@ export async function callAimc(
 
   let lastError: Error | null = null;
   const totalAttempts = config.maxRetries + 1;
+  const endpointCandidates = [
+    `${AIMC_BASE_URL}${AIMC_NAMESPACE}/${operation}`,
+    `${AIMC_BASE_URL}/api/${operation}`,
+    `${AIMC_BASE_URL}/${operation}`,
+  ];
 
   for (let attempt = 0; attempt < totalAttempts; attempt++) {
     if (attempt > 0) {
@@ -190,7 +220,19 @@ export async function callAimc(
     }
 
     try {
-      const envelope = await makeAimcHttpCall(operation, payload, config.timeoutMs);
+      let envelope: AimcResponseEnvelope | null = null;
+      for (const endpointUrl of endpointCandidates) {
+        try {
+          envelope = await makeAimcHttpCall(endpointUrl, payload, config.timeoutMs);
+          break;
+        } catch (candidateError) {
+          lastError = candidateError instanceof Error ? candidateError : new Error(String(candidateError));
+        }
+      }
+
+      if (!envelope) {
+        throw lastError ?? new Error('AIMC call failed for all endpoint candidates');
+      }
 
       // TR-012: Validate response envelope
       if (envelope.success === false && envelope.error) {

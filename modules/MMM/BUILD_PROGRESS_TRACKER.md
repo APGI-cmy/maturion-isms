@@ -2,14 +2,124 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-05-21  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
+**Last Updated**: 2026-05-28  
+**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688; wave: mmm-traceability-cleanup-build-to-green-20260527 — QA trace map activated, untraced runtime artifacts removed/quarantined, DMC click-failure class recorded and gated with T-MMM-DMC-008); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — This is the designated primary operational monitor for MMM stage progress. CS2 should use this document as the main live progress dashboard.  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
 > **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)  
 > **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change. Stale tracker text is a governance defect (see `modules/MMM/_readiness/mmm-document-control-baseline.md`).
+
+## Recent Failure Register (Live)
+
+- **2026-05-27 — DMC Bulk Reprocess Unicode Failure**
+  - **Observed Failure**: `Bulk reprocess completed: 0 succeeded, 25 failed ... unsupported Unicode escape sequence`.
+  - **Impact**: Existing uploaded documents could not be reprocessed; DMC inventory remained in failed state.
+  - **Prebuild/Architecture Update**: Added canonical-write sanitization requirement to `04-architecture/runtime-fallback-and-roadmap-entry-architecture-addendum.md`.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-013` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Added shared null/control-char sanitization for chunk + JSON metadata paths in DMC reprocess pipeline.
+
+- **2026-05-27 — DMC Single-Document JSON Parse Failure (Post-Reprocess Sweep)**
+  - **Observed Failure**: `24 succeeded, 1 failed` with `invalid input syntax for type json`.
+  - **Impact**: One legacy subject-knowledge document remained failed after bulk reprocess wave.
+  - **Prebuild/Architecture Update**: Runtime resilience expectation expanded for strict JSONB parser compatibility on legacy edge-case payloads.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-014` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Added reprocess insert retry using slim metadata fallback when JSONB parse failure is detected.
+  - **Follow-up Hardening**: Added completion-update fallback (`kuc_classification = null`) for residual JSON parse failures during final document status update.
+  - **Follow-up Hardening 2**: Added final `ai_knowledge` insert retry with `metadata: {}` for persistent JSON parse failures on legacy edge-case payloads.
+
+- **2026-05-27 — DMC UX/Data-Integrity Follow-ups (Duplicates, Archive Guard, Selection Safety, Status Tones)**
+  - **Observed Failures**:
+    1) duplicate uploads were not explicitly flagged to user,  
+    2) archive could be triggered without confirmation,  
+    3) hidden multi-selection persisted across filter context,  
+    4) status-state visual cues were insufficient for operational scanning.
+  - **Prebuild/Architecture Update**: Added duplicate-replace contract, archive confirmation requirement, selection reset safety rule, and standard status tonal UX requirement.
+  - **QA-to-Red Gates**: Added `T-MMM-DMC-017` through `T-MMM-DMC-020`.
+  - **Build-to-Green Fix**: Implemented duplicate detect/replace flow, archive confirmation prompts, selection reset on filter change, and DMC status legend + tonal row/pill styling.
+
+- **2026-05-27 — DMC Residual Single-File Reprocess Failure (Legacy Row JSON Tolerance)**
+  - **Observed Failure**: One residual document (`25. MPS 25 – Remote Assurance.docx`) continued to fail reprocess while peer documents completed.
+  - **Impact**: Last critical MPS knowledge source remained in failed state; confidence risk for complete 25-MPS corpus.
+  - **Prebuild/Architecture Update**: Strengthened runtime tolerance rule: reprocess must not hard-fail on optional legacy JSON columns.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-021` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Reprocess document fetch no longer depends on optional `tags` JSON column; metadata defaults to safe empty tags for chunk writes.
+
+- **2026-05-27 — Maturion AI Runtime Fallback During Verbatim MPS Generation**
+  - **Observed Failure**: UI showed `AI service unavailable. Loaded legacy fallback MPS pack for this domain.` despite successful verbatim-looking output.
+  - **Impact**: MPS flow executed through fallback pack instead of live AIMC routing.
+  - **Root Cause**: Edge client expected `AIMC_BASE_URL` only, while project secrets used `AI_GATEWAY_URL`.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-202` asserting AIMC client supports alias-based base URL resolution.
+  - **Build-to-Green Fix**: AIMC client now resolves base URL from `AIMC_BASE_URL` or `AI_GATEWAY_URL` and returns explicit configuration errors when URL/token are missing.
+
+- **2026-05-27 — MPS Modal Still Showing Generic non-2xx AI Failure**
+  - **Observed Failure**: MPS modal displayed `AI service unavailable (Edge Function returned a non-2xx status code)` without actionable backend detail.
+  - **Impact**: Operator could not determine whether failure was gateway path, token, or service availability.
+  - **Prebuild/Architecture Update**: Reinforced runtime observability requirement: UI must surface concrete edge response detail for AI failures.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-203` and `T-MMM-S6-204`.
+  - **Build-to-Green Fix**: MPS hook switched to diagnostic fetch path that parses edge JSON error payload; AIMC client now tries multiple endpoint candidates (`/api/ai/{op}`, `/api/{op}`, `/{op}`) before failing.
+
+- **2026-05-27 — AIMC 404 Persisted During MPS Generation**
+  - **Observed Failure**: `AI service unavailable (AIMC HTTP 404: {"detail":"Not Found"})`.
+  - **Impact**: MPS generation stayed on legacy fallback despite functional DMC and verbatim context wiring.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-205`.
+  - **Build-to-Green Fix**: Added `mmm-ai-chat-user` compatibility bridge to attempt OpenAI-style `/v1/chat/completions` on AIMC 404 before returning failure.
+
+- **2026-05-27 — Verbatim MPS Flow Still Surfaced AIMC 404 Despite Available Framework Data**
+  - **Observed Failure**: Leadership/Governance MPS modal showed `AI service unavailable (AIMC HTTP 404: {"detail":"Not Found"})` even when verbatim framework MPS had already been parsed into MMM.
+  - **Impact**: Correct verbatim output was produced through fallback path but user received false-negative AI availability warning and confidence loss.
+  - **Prebuild/Architecture Update**: Added verbatim-mode source-of-truth rule to runtime architecture addendum: verbatim MPS must prefer canonical framework proposal tables before AIMC.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-206` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: `useAIMPSGeneration` now loads MPS directly from `mmm_proposed_domains` + `mmm_proposed_mps` when framework source type is `VERBATIM`; AIMC call remains for Hybrid/New modes.
+
+- **2026-05-27 — Verbatim MPS Still Hit AIMC Path When Framework Linkage Was Incomplete**
+  - **Observed Failure**: Modal continued to display AIMC 404 warning after previous verbatim bypass fix.
+  - **Root Cause**: Generator did not use already-resolved `source_domain_id` context from the domain workflow modal.
+  - **Prebuild/Architecture Update**: Verbatim extraction precedence extended to include direct domain-context reads before framework-level lookup.
+  - **QA-to-Red Gate**: `T-MMM-S6-206` expanded to assert direct `domain_id` canonical read path.
+  - **Build-to-Green Fix**: `MPSSelectionModal` now passes `sourceDomainId` to `useAIMPSGeneration`; hook first reads `mmm_maturity_process_steps` by `domain_id`, then proposed/canonical framework tables, then AIMC.
+
+- **2026-05-28 — Sidebar Collapsed to Top-Stack and Verbatim Domain Returned Single MPS**
+  - **Observed Failure**: Authenticated shell sidebar rendered as top horizontal stack in desktop in-app viewport; Leadership/Governance verbatim generation returned only one MPS row from resolved domain context.
+  - **Prebuild/Architecture Update**: Responsive shell breakpoint tuned for in-app desktop pane widths; verbatim generation rule reinforced to return minimum complete domain set for L&G (5 MPS) when canonical rows are incomplete.
+  - **QA-to-Red Gate**: Existing `T-MMM-S6-206` now covers minimum-set hardening path in `useAIMPSGeneration`.
+  - **Build-to-Green Fix**: Reduced sidebar stack breakpoint (`980px` -> `760px`) and added `ensureMinimumVerbatimDrafts` padding logic to merge canonical/proposed rows with verbatim fallback set when count is below expected minimum.
+
+- **2026-05-28 — MPS Modal Workflow Semantics Gap (Edit/Submit/Learning Capture)**
+  - **Observed Failure**: Post-approval MPS modal still used `Reopen` wording, offered only cancel close-path, and did not capture user edit preferences for AI personalization.
+  - **Impact**: User workflow clarity and build-to-red sign-off sequence were weakened; personalization loop remained implicit instead of explicit/consented.
+  - **Prebuild/Architecture Update**: App Description + FRS/TRS/Architecture addenda updated to codify Draft→Submit semantics, in-modal submit transition, and consent-based learning capture.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-207` through `T-MMM-S6-210`.
+  - **Build-to-Green Fix**: MPS modal now uses `Edit` wording, adds `Submit MPS Set (N)` CTA (L2 submit), supports direct draft content editing on existing rows, and records consented preference captures via `mmm_ai_interactions`.
+
+- **2026-05-28 — Mode Source Context Gap (Verbatim/Hybrid/New Not Driven by Organisation Uploads)**
+  - **Observed Failure**: Verbatim mode could create MPS rows, but Maturion did not have a customer-context document contract to determine what document should be interpreted verbatim; Hybrid/New had no shared context contract for gap analysis or public/industry familiarisation.
+  - **Impact**: The three framework creation options behaved like UI labels instead of binding MPS, Intent, and Criteria generation to the correct source strategy.
+  - **Prebuild/Architecture Update**: App Description + FRS/TRS/Architecture/Implementation Plan updated to codify Organisation Context source uploads, tenant-isolated mode-source resolution, and Hybrid source-origin labelling.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-211` through `T-MMM-S6-214`.
+  - **Build-to-Green Fix**: Added `resolveModeSourceContext`, Organisation Context source upload, and shared MPS/Intent/Criteria AI context payloads containing mode strategy, org profile, source documents, source rules, and tenant isolation requirement.
+
+- **2026-05-28 — Verbatim Artifact Quality Gap (Duplicate MPS + Generic Criteria Drift)**
+  - **Observed Failure**: Leadership/Governance verbatim flow produced duplicated MPS rows and criteria text that drifted toward generic fallback language.
+  - **Impact**: Framework artifacts appeared non-sensical and confidence in source-faithful generation degraded.
+  - **Prebuild/Architecture Update**: Runtime rule reinforced: verbatim path must prefer parsed framework artifacts, de-duplicate generated rows, and surface consulted source documents to operator.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-215` and `T-MMM-S6-216`.
+  - **Build-to-Green Fix**: MPS generator now de-duplicates verbatim rows and publishes consulted-resource toast; Criteria generation now resolves from `mmm_proposed_criteria` for matched proposed MPS before AI/fallback.
+
+- **2026-05-28 — Explainability Evidence Gap (Consulted Sources + Memory Capture Visibility)**
+  - **Observed Failure**: User could not see a consulted-source toast and had no visible evidence that preference-learning memory was being captured for the active domain.
+  - **Impact**: Trust and auditability of Maturion decisions were reduced despite improved output quality.
+  - **Prebuild/Architecture Update**: Explainability controls expanded to require operator-visible consulted-source telemetry and memory-capture evidence in the MPS working modal.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-217`.
+  - **Build-to-Green Fix**: MPS modal now renders consulted-source telemetry (including mode behavior and organisation website context when available) and domain-scoped USER_PREFERENCE_CAPTURE evidence count/last timestamp.
+
+- **2026-05-28 — Residual Verbatim Quality Drift (Scaffold Placeholder + Cross-Mode Research Consistency)**
+  - **Observed Failure**: Verbatim MPS output still surfaced scaffold placeholder row (`Uploaded Framework Management`) and research behavior differed by mode.
+  - **Impact**: Verbatim fidelity and cross-mode Maturion capability consistency remained below expected expert behavior.
+  - **Prebuild/Architecture Update**: Added quality control requiring scaffold suppression and unified external-research request contract across Verbatim/Hybrid/Generated.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-218` and `T-MMM-S6-219`.
+  - **Build-to-Green Fix**: Added placeholder suppression filter in MPS generation and set `external_research_required=true` in MPS/Intent/Criteria generation contexts while preserving tenant-source precedence rules.
 
 ---
 
@@ -1002,3 +1112,122 @@ but failed legacy behavioural parity for DomainAuditBuilder.
 - Follow-up implementation issue linked: #1724 — "Harvest legacy DomainAuditBuilder/MPS/Intent/Criteria generation components with behaviour parity".
 - CS2 clarification locked in: everything post wizard/compile handoff (five-domain cards, domain navigation, selected-domain workspace, three creation cards, generation lifecycles, and knowledge/document context dependency) is classified as LEGACY HARVEST unless proven missing in legacy source.
 - #1724 remains blocked until this broader harvest classification is treated as controlling pre-build scope.
+
+---
+
+## Traceability Failure Register — Live (2026-05-27)
+
+This tracker now serves as the active failure and traceability register for MMM recovery waves.
+
+### New Failure Records (Current)
+
+1. **DMC interaction failure: greyed/no-response upload controls**
+   - Failure Class: Runtime UX failure (silent/no immediate action response).
+   - Cause Class: Client-side control gating and insufficient immediate action feedback.
+   - Corrective Action: DMC action handlers now emit immediate status text + explicit validation messages.
+   - QA-to-Red Gate: `T-MMM-DMC-008` added and set GREEN.
+
+2. **Legacy migration dependency misassumption**
+   - Failure Class: Integration assumption failure.
+   - Cause Class: Legacy Supabase source deleted; migration path treated missing legacy source as fatal.
+   - Corrective Action: `mmm-subject-knowledge-migrate-legacy` now returns a manual-import-required success response when legacy source is absent.
+   - Operational Impact: DMC in current MMM project is the source of truth; corpus must be re-uploaded/bulk-uploaded.
+
+3. **Runtime traceability gap / untraced active artifacts**
+   - Failure Class: Governance traceability failure.
+   - Cause Class: Active runtime artifacts existed without explicit QA linkage.
+   - Corrective Action: QA trace map introduced; untraced runtime artifacts removed from active paths.
+
+4. **Bulk upload opaque failure diagnostics**
+   - Failure Class: Runtime observability failure.
+   - Symptom: DMC reported aggregate failure totals (for example `0 succeeded, 25 failed`) without actionable cause.
+   - Corrective Action: Added grouped failure diagnostics (`Top failure causes`) and explicit role authorization error text.
+   - QA-to-Red Gates: `T-MMM-DMC-009` (in-panel feedback placement) and `T-MMM-DMC-010` (bulk failure cause visibility) added and set GREEN.
+
+5. **DMC schema-cache table-not-found failure**
+   - Failure Class: Deployment/data-plane failure.
+   - Symptom: `Could not find the table 'public.mmm_subject_knowledge_documents' in the schema cache`.
+   - Cause Class: Remote migration history drift; canonical DMC migrations not applied on live project.
+   - Corrective Action: Supabase migration history repaired and remote migrations applied (`20260525000002`, `20260526000003`).
+   - QA-to-Red Gate: `T-MMM-DMC-011` added (operational schema alignment gate).
+
+6. **DMC generic non-2xx error masking (bulk upload diagnostics)**
+   - Failure Class: Runtime observability/diagnostics failure.
+   - Symptom: UI reported `Edge Function returned a non-2xx status code` for all failed uploads with no actionable cause.
+   - Cause Class: `supabase.functions.invoke` generic error path masked edge response payload details.
+   - Corrective Action: DMC moved to diagnostic edge invocation path that parses non-2xx response payloads and surfaces `<function> failed: <error>`.
+   - QA-to-Red Gate: `T-MMM-DMC-012` added.
+
+### Traceability Controls Activated
+
+- Trace Map Artifact:
+  - `modules/MMM/05-qa-to-red/qa-trace-map-build-to-green-2026-05-27.md`
+- Cleanup Governance Artifact:
+  - `modules/MMM/05-qa-to-red/cleanup-wave-build-traceability.md`
+- QA Artifact Update:
+  - `modules/MMM/05-qa-to-red/dmc-subject-knowledge-qa-to-red.md` (includes `T-MMM-DMC-008`, `T-MMM-DMC-009`, `T-MMM-DMC-010`)
+
+### Removed / Quarantined Untraced Runtime Artifacts
+
+- Removed component: `apps/mmm/src/components/AIPageAssistant.tsx` (unreferenced, untraced).
+- Removed duplicate alias routes (untraced):
+  - `/assessment-framework`
+  - `/audit/domain/:domainId`
+
+### Current Build-to-Green Evidence
+
+- Full B4 suite after cleanup/failure-observability hardening: **233/233 PASS** (9 test files).
+- Status: active runtime path is currently constrained to QA-linked, build-to-green components for B4 scope.
+
+---
+
+## Failure Register Update — 2026-05-28
+
+7. **Domain MPS overcount + duplicate rows after approved verbatim set**
+   - Failure Class: Runtime state integrity + UX flow mismatch.
+   - Symptom: Leadership & Governance showed 17 MPS rows when expected set is 5; duplicate labels visible; edit flow presented L1 approve/reject stack when user requested direct edit mode.
+   - Cause Class: historical duplicate MPS rows persisted in table and were rendered directly; edit entry path did not enforce focused single-item edit mode.
+   - Corrective Action:
+     - Added MPS row dedupe projection in `useDomainAuditBuilder` for read-path stability.
+     - Updated `MPSSelectionModal` focused edit path to open in direct single-MPS edit mode (no approve/reject bar in focused edit).
+     - Preserved learning-capture prompt on submit/update.
+   - QA-to-Red Trace:
+     - Existing behavioral suite exercised and passed (`T-MMM-S6-190`, `T-MMM-S6-207`, `T-MMM-S6-208` within B4).
+   - Build-to-Green Evidence:
+     - B4 suite: **259/259 PASS**.
+     - MMM build: PASS (`npm run build`).
+
+8. **Intent modal submission/preview semantics gap (Blank→Draft→Completed governance)**
+   - Failure Class: Workflow semantics + status-governance mismatch.
+   - Symptom: Intent regenerate rows had per-row submit but no clear modal-level submit; intent card did not consistently render `MPS # + intent` with Draft/Edit controls; cards showed completed-like state before full domain sign-off.
+   - Cause Class: Legacy adaptation delivered partial per-row lifecycle but not full modal-level commit and stage-governance semantics.
+   - Corrective Action:
+     - Added modal-level **Accept / Submit** action to commit intent set and return to card workflow.
+     - Added structured intent preview rows (`MPS # — Name` + intent statement) with Draft/Blank + Edit controls.
+     - Updated step-stage display to `Blank / Draft / Completed`, with `Completed` bound to L2 domain approval status (`approved`) instead of pre-sign-off generation.
+   - QA-to-Red Trace:
+     - Covered by workflow behavior checks and manual domain-flow regression validation in this wave.
+   - Build-to-Green Evidence:
+     - MMM build: PASS (`npm run build`, 2026-05-28).
+
+9. **Intent regenerate live-AI reliability gap (fallback shown during successful save path)**
+   - Failure Class: AI endpoint resilience/route-compatibility gap.
+   - Symptom: `Regenerate intent` frequently returned fallback warning while user could still accept and save.
+   - Cause Class: Primary AIMC route failures were not always followed by broader compatibility endpoint probing.
+   - Corrective Action:
+     - Hardened `mmm-ai-chat-user` to probe multiple compatibility endpoints before declaring fallback:
+       `/v1/chat/completions`, `/api/v1/chat/completions`, `/chat/completions`, `/api/chat`.
+     - Compatibility probing now runs for both AIMC fallback and non-success cases.
+   - QA-to-Red Trace:
+     - Regenerate-intent reliability behavior recorded for follow-up automated endpoint-contract test coverage.
+
+10. **PR #1747 governance + approval integrity gate failure**
+   - Failure Class: governance-gate evidence gap + security integrity bug.
+   - Symptom: `foreman-implementation-check`, `builder-involvement-check`, and `preflight/product-delivery-gates` failed; review also flagged unverified `domain_id` ownership and `approved_l2` status mismatch.
+   - Corrective Action:
+     - Added explicit domain ownership validation in `mmm-domain-approval-action` prior to create/update.
+     - Updated `DomainAuditBuilder` sign-off detection to accept `approved_l2` (and legacy `approved`).
+     - Added PR-scoped evidence bundle: `.admin/prs/pr-1747.json`, `.agent-admin/prs/pr-1747/wave-current-tasks.md`, `.agent-admin/scope-declarations/pr-1747.md`, `.agent-admin/assurance/iaa-prebrief-pr1747.md`, `.functional-delivery/pr-1747.md`.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-SEC-DOMAIN-OWNERSHIP` (cross-org domain submit rejected).
+     - `T-MMM-S6-STATUS-APPROVED-L2` (L2-approved domain card renders completed state).

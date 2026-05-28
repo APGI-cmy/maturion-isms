@@ -15,10 +15,13 @@ import type {
 import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
 import { AIGeneratedCriteriaCards } from './AIGeneratedCriteriaCards';
 import { EnhancedCriteriaGenerator } from './EnhancedCriteriaGenerator';
+import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
+import { defaultModeSourceContext, resolveModeSourceContext } from '../../lib/modeSourceContext';
 
 export interface GeneratedCriterionItem {
   code: string;
   statement: string;
+  source_origin?: 'uploaded_source' | 'ai_completion' | 'subject_knowledge';
 }
 
 interface PerMpsCriteriaState {
@@ -27,6 +30,39 @@ interface PerMpsCriteriaState {
   acceptedCodes: Set<string>;
   refinePrompt: string;
   error: string | null;
+}
+
+function buildFallbackCriteria(mpsCode: string, mpsName: string, domainName: string): GeneratedCriterionItem[] {
+  return [
+    {
+      code: `${mpsCode}-C001`,
+      statement: `Document and approve the ${mpsName} control design for ${domainName}.`,
+    },
+    {
+      code: `${mpsCode}-C002`,
+      statement: `Define accountable owners, review frequency, and escalation triggers for ${mpsName}.`,
+    },
+    {
+      code: `${mpsCode}-C003`,
+      statement: `Maintain auditable evidence proving ${mpsName} execution and effectiveness.`,
+    },
+  ];
+}
+
+function normalizeCriteriaKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function dedupeCriteria(criteria: GeneratedCriterionItem[]): GeneratedCriterionItem[] {
+  const seen = new Set<string>();
+  const next: GeneratedCriterionItem[] = [];
+  for (const item of criteria) {
+    const key = normalizeCriteriaKey(item.statement);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    next.push(item);
+  }
+  return next;
 }
 
 export interface CriteriaManagementProps {
@@ -46,6 +82,8 @@ export interface CriteriaManagementProps {
   errorMessage: string | null;
   /** Callback to close/cancel. */
   onClose: () => void;
+  /** Framework context for Verbatim/Hybrid/New source-mode generation. */
+  frameworkId?: string | null;
 }
 
 /**
@@ -61,6 +99,7 @@ export function CriteriaManagement({
   isLoading,
   errorMessage,
   onClose,
+  frameworkId,
 }: CriteriaManagementProps) {
   const queryClient = useQueryClient();
   const [mpsCriteriaStates, setMpsCriteriaStates] = useState<Record<string, PerMpsCriteriaState>>({});
@@ -139,15 +178,86 @@ export function CriteriaManagement({
       } catch {
         throw new Error('Please log in to use AI generation features.');
       }
+      const modeContext = frameworkId
+        ? await resolveModeSourceContext(frameworkId)
+        : defaultModeSourceContext(null);
+
+      if (frameworkId && modeContext.framework_source_type === 'VERBATIM') {
+        const { data: proposedDomains } = await supabase
+          .from('mmm_proposed_domains')
+          .select('id,name')
+          .eq('framework_id', frameworkId);
+        const domainLookup = domainName.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        const proposedDomain = (proposedDomains ?? []).find(
+          (row) =>
+            String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === domainLookup,
+        );
+        if (proposedDomain) {
+          const { data: proposedMps } = await supabase
+            .from('mmm_proposed_mps')
+            .select('id,name,code')
+            .eq('proposed_domain_id', proposedDomain.id);
+          const mpsNameLookup = mps.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          const linkedMps = (proposedMps ?? []).find(
+            (row) =>
+              String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() ===
+                mpsNameLookup || row.code === mps.code,
+          );
+          if (linkedMps) {
+            const { data: proposedCriteria } = await supabase
+              .from('mmm_proposed_criteria')
+              .select('code,name,sort_order')
+              .eq('proposed_mps_id', linkedMps.id)
+              .order('sort_order', { ascending: true });
+            const verbatimCriteria = dedupeCriteria(
+              (proposedCriteria ?? []).map((row, idx) => ({
+                code: row.code || `${mps.code}-C${String(idx + 1).padStart(3, '0')}`,
+                statement: row.name,
+                source_origin: 'uploaded_source' as const,
+              })),
+            );
+            if (verbatimCriteria.length > 0) {
+              setMpsCriteriaStates((prev) => ({
+                ...prev,
+                [mps.id]: {
+                  isGenerating: false,
+                  generatedCriteria: verbatimCriteria,
+                  acceptedCodes: new Set(verbatimCriteria.map((c) => c.code)),
+                  refinePrompt,
+                  error: null,
+                },
+              }));
+              return;
+            }
+          }
+        }
+      }
+
       const prompt =
         `Generate 3-5 audit criteria for Maturity Practice Statement "${mps.code} — ${mps.name}"` +
         ` (intent: "${mps.intent_statement ?? 'not set'}") in the "${domainName}" domain.\n` +
+        `Mode-source strategy: ${modeContext.mode_source_strategy}.\n` +
+        `Available organisation/framework source documents: ${modeContext.mode_source_documents.map((doc) => `${doc.title} (${doc.file_name}, ${doc.processing_status}, chunks=${doc.chunk_count})`).join('; ') || 'none'}.\n` +
+        `Perform external web research on the organisation profile and peer organisations in the same industry as supporting context only; never override tenant source documents.\n` +
+        `${modeContext.source_rules.join('\n')}\n` +
         (refinePrompt ? `Additional refinement context: ${refinePrompt}\n` : '') +
         `Each criterion should be specific, measurable, and auditable.\n` +
-        `Return a JSON array: [{"code": "${mps.code}-C001", "statement": "..."}]\n` +
+        `Return a JSON array: [{"code": "${mps.code}-C001", "statement": "...", "source_origin": "uploaded_source|ai_completion|subject_knowledge"}]\n` +
         `Return only the JSON array.`;
-      const { data, error } = await supabase.functions.invoke('mmm-ai-chat', {
-        body: { message: prompt },
+      const { data, error } = await supabase.functions.invoke('mmm-ai-chat-user', {
+        body: {
+          message: prompt,
+          context: {
+            workflow_stage: 'criteria_generation',
+            domain_name: domainName,
+            mps_code: mps.code,
+            framework_id: frameworkId ?? null,
+            mode_source_strategy: modeContext.mode_source_strategy,
+            mode_source_context: modeContext,
+            external_research_required: true,
+            tenant_isolation_required: true,
+          },
+        },
         headers,
       });
       if (error) throw new Error((error as { message?: string }).message ?? 'AI generation failed');
@@ -157,26 +267,27 @@ export function CriteriaManagement({
       } catch {
         throw new Error('Failed to parse AI response. Please try again.');
       }
+      const deduped = dedupeCriteria(parsed);
       setMpsCriteriaStates((prev) => ({
         ...prev,
         [mps.id]: {
           isGenerating: false,
-          generatedCriteria: parsed,
-          acceptedCodes: new Set(parsed.map((c) => c.code)),
+          generatedCriteria: deduped,
+          acceptedCodes: new Set(deduped.map((c) => c.code)),
           refinePrompt,
           error: null,
         },
       }));
-    } catch (err: unknown) {
-      // NBR-005: surface generation errors to user
+    } catch {
+      const fallback = buildFallbackCriteria(mps.code, mps.name, domainName);
       setMpsCriteriaStates((prev) => ({
         ...prev,
         [mps.id]: {
           isGenerating: false,
-          generatedCriteria: [],
-          acceptedCodes: new Set(),
+          generatedCriteria: fallback,
+          acceptedCodes: new Set(fallback.map((item) => item.code)),
           refinePrompt,
-          error: err instanceof Error ? err.message : 'AI generation failed. Please try again.',
+          error: 'AI service unavailable. Loaded fallback criteria draft.',
         },
       }));
     }
@@ -282,8 +393,8 @@ export function CriteriaManagement({
                     </h3>
                     <p>
                       Intent:{' '}
-                      {mps.intent_statement?.trim()
-                        ? mps.intent_statement
+                      {hasTrimmedText(mps.intent_statement)
+                        ? toTrimmedText(mps.intent_statement)
                         : 'No intent statement stored for this MPS yet.'}
                     </p>
 

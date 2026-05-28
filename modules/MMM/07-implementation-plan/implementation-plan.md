@@ -62,6 +62,13 @@ backend routes without user-facing confirmation is NOT complete. Both sides must
 together. Explicit placeholders are permitted only when declared in the wave evidence pack
 and approved by CS2.
 
+### 2026-05-28 Execution Addendum (MPS Authoring Hardening)
+- Include a dedicated micro-wave for MPS authoring UX/state hardening:
+  1) rename `Reopen` → `Edit`,
+  2) keep draft edits open until higher-level sign-off,
+  3) expose in-modal `Submit MPS Set (N)` transition,
+  4) persist consented user preference-learning events for AI personalization.
+
 ### Origin
 
 This standard was added in response to PR maturion-isms#1553. The failure mode: wave marked
@@ -1254,6 +1261,22 @@ TypeScript types generated from schema must be regenerated after any schema chan
 ---
 
 ## 9. Wave Hygiene Declaration
+
+### Recovery Micro-Wave — Mode Source Context for Verbatim/Hybrid/New (2026-05-28)
+
+**Scope**: Organisation Context source-document upload and shared source-mode resolution for MPS,
+Intent, and Criteria generation.
+
+**Strict order**:
+1. Prebuild alignment: App Description, FRS, TRS, Architecture, QA-to-Red, and tracker updated.
+2. QA-to-Red: `T-MMM-S6-211` through `T-MMM-S6-214` added for source upload, shared AI context, and Hybrid origin labelling.
+3. Build-to-Green: add `resolveModeSourceContext`, Organisation Context upload, and shared MPS/Intent/Criteria AI payload wiring.
+4. Assurance: run B4 suite, then ECAP/IAA evidence check before handover.
+
+**Builder Assignment**: MMM frontend/runtime builder with Foreman orchestration.
+
+**Acceptance**: Verbatim/Hybrid/New mode semantics are not treated as UI-only labels; they become
+runtime source strategies supplied to all three roadmap artifact generation stages.
 
 This implementation plan satisfies the Stage 8 wave hygiene requirements:
 

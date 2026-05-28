@@ -249,6 +249,7 @@ All MMM → AIMC HTTP calls must enforce the following timeout values:
 |-----------|----------------|-------------|
 | Framework parsing | 60 s | 1 retry with 10 s backoff |
 | Framework generation | 90 s | 1 retry with 15 s backoff |
+| Framework merge (hybrid) | 90 s | 1 retry with 15 s backoff |
 | Evidence evaluation | 30 s | 2 retries with 5 s backoff |
 | Scoring recommendations | 30 s | 2 retries with 5 s backoff |
 | Contextual chat / explain | 45 s | 1 retry with 10 s backoff |
@@ -266,6 +267,7 @@ Functions. AIMC endpoint inventory:
 |----------|--------|---------|
 | `/api/ai/framework-parse` | POST | Mode A verbatim structure extraction |
 | `/api/ai/framework-generate` | POST | Mode B new framework AI generation |
+| `/api/ai/framework-merge` | POST | Mode C hybrid merge (verbatim + generated composition) |
 | `/api/ai/framework-alter` | POST | AI-proposed altering mechanism |
 | `/api/ai/evidence-evaluate` | POST | Evidence relevance and score proposal |
 | `/api/ai/recommend` | POST | Maturity improvement recommendations |
@@ -1146,7 +1148,7 @@ Architecture stage defining:
 | Data format | JSON, canonical AIMC response envelope (TR-012) |
 | Versioning | Unversioned (`/api/ai/*`), 30-day migration window on future successor (TR-013) |
 | Timeout | Per-operation (30–90 s), 1–2 retries (TR-014) |
-| Endpoints | 8 AIMC endpoints (TR-015) |
+| Endpoints | 9 AIMC endpoints (TR-015) |
 | Boundary | Zero direct AI provider calls in MMM (TR-011) |
 
 ### Q3: Technical Export Contract — MMM ↔ PIT
@@ -1340,6 +1342,22 @@ with error states.
 For every wave, the implementation plan must include a section declaring: which backend calls
 are new, which are existing, and for each new call — the Edge Function path, the Vercel route
 name, and a smoke test URL. This runtime evidence is part of wave handover.
+
+### TR-FD-007 — Compile Handoff Route Continuity
+
+After successful compile from framework review, MMM must navigate to
+`/assessment/framework?framework_id=<id>` and hydrate the canonical five-domain workspace
+model (Leadership and Governance, Process Integrity, People and Culture, Protection, Proof it
+Works). Session/auth continuity must be preserved; redirecting users to sign-up/login after a
+successful compile is a technical defect.
+
+### TR-FD-008 — Compile Handoff Render Resilience
+
+The `/assessment/framework` handoff route must be render-safe when upstream payload fields are
+nullish or malformed (for example non-string `framework.name`, `framework.status`,
+`domain.name`, or `domain.code`). Data-access adapters and UI boundary components must normalize
+such values to typed placeholders and continue rendering canonical workspace cards. Transitioning
+from visible workspace render to global error-boundary fallback after data hydration is prohibited.
 
 ---
 
