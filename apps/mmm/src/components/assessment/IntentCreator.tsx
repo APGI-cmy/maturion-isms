@@ -35,6 +35,8 @@ export interface IntentCreatorProps {
   errorMessage: string | null;
   /** Callback to close/cancel. */
   onClose: () => void;
+  /** Framework context for Verbatim/Hybrid/New source-mode generation. */
+  frameworkId?: string | null;
 }
 
 /**
@@ -49,6 +51,7 @@ export function IntentCreator({
   isLoading,
   errorMessage,
   onClose,
+  frameworkId,
 }: IntentCreatorProps) {
   const queryClient = useQueryClient();
   const { generateIntent } = useIntentGeneration();
@@ -115,6 +118,7 @@ export function IntentCreator({
         domainName,
         mpsCode: mps.code,
         mpsName: mps.name,
+        frameworkId,
       });
       setMpsIntentStates((prev) => ({
         ...prev,

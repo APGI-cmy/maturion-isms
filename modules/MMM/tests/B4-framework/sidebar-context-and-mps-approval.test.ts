@@ -87,3 +87,57 @@ describe('T-MMM-S6-195: Sidebar width is manually adjustable by user', () => {
     expect(src).toContain('--mmm-sidebar-width');
   });
 });
+
+describe('T-MMM-S6-207: MPS L1 action naming and submit transition clarity', () => {
+  it('MPS modal uses Edit label and exposes Submit MPS Set action', () => {
+    const src = readFile('apps/mmm/src/components/assessment/MPSSelectionModal.tsx');
+    expect(src).toContain('Edit');
+    expect(src).toContain('Edit Content');
+    expect(src).toContain('Submit MPS Set');
+    expect(src).toContain("'mmm-domain-approval-action'");
+  });
+});
+
+describe('T-MMM-S6-208: MPS edit captures user learning preference', () => {
+  it('MPS modal prompts for memory consent and records USER_PREFERENCE_CAPTURE', () => {
+    const src = readFile('apps/mmm/src/components/assessment/MPSSelectionModal.tsx');
+    expect(src).toContain('Do you want me to include this in my memory system?');
+    expect(src).toContain('USER_PREFERENCE_CAPTURE');
+    expect(src).toContain('Preference recorded. Maturion will apply this style in future proposals.');
+  });
+});
+
+describe('T-MMM-S6-211: Organisation Context uploads mode-source documents', () => {
+  it('OrganisationContextPage writes customer source documents as organisation_context ledger rows', () => {
+    const src = readFile('apps/mmm/src/pages/OrganisationContextPage.tsx');
+    expect(src).toContain('Organisation Source Documents');
+    expect(src).toContain('Upload Organisation Source');
+    expect(src).toContain("scope_type: 'organisation_context'");
+    expect(src).toContain('source_mode:${sourceMode}');
+    expect(src).toContain("'mmm_subject_knowledge_documents'");
+    expect(src).toContain("'mmm-subject-knowledge'");
+  });
+});
+
+describe('T-MMM-S6-214: Hybrid source-origin labelling is supported in MPS UI', () => {
+  it('MPS modal renders source_origin badges for uploaded and AI-added material', () => {
+    const modal = readFile('apps/mmm/src/components/assessment/MPSSelectionModal.tsx');
+    const css = readFile('apps/mmm/src/index.css');
+    expect(modal).toContain('source_origin');
+    expect(modal).toContain('source-origin--');
+    expect(modal).toContain('Uploaded source');
+    expect(modal).toContain('AI completion');
+    expect(css).toContain('.source-origin--uploaded_source');
+    expect(css).toContain('.source-origin--ai_completion');
+    expect(css).toContain('.source-origin--subject_knowledge');
+  });
+});
+
+describe('T-MMM-S6-215: MPS modal displays consulted source resources', () => {
+  it('MPS modal surfaces resources consulted toast after generation', () => {
+    const src = readFile('apps/mmm/src/components/assessment/MPSSelectionModal.tsx');
+    expect(src).toContain('mps-consulted-resources-toast');
+    expect(src).toContain('Resources consulted:');
+    expect(src).toContain('lastConsultedResources');
+  });
+});

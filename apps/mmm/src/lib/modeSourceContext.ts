@@ -1,0 +1,178 @@
+import { supabase } from './supabase';
+
+export type CriteriaMode = 'VERBATIM' | 'HYBRID' | 'GENERATED';
+
+export type ModeSourceDocument = {
+  id: string;
+  title: string;
+  file_name: string;
+  scope_type: string;
+  document_role: string;
+  processing_status: string;
+  chunk_count: number;
+  tags: string[];
+  upload_notes: string | null;
+};
+
+export type ModeSourceContext = {
+  organisation_id: string | null;
+  organisation_name: string | null;
+  organisation_context: Record<string, unknown>;
+  framework_id: string | null;
+  framework_name: string | null;
+  framework_source_type: CriteriaMode | null;
+  mode_source_strategy: 'verbatim_context_document' | 'hybrid_gap_analysis' | 'new_generation_public_research';
+  mode_source_documents: ModeSourceDocument[];
+  source_rules: string[];
+  tenant_isolation_required: true;
+};
+
+type ProfileRow = { organisation_id: string | null };
+type OrganisationRow = { id: string; name: string; context: Record<string, unknown> | null };
+type FrameworkRow = { id: string; name: string | null; source_type: string | null };
+type DocumentRow = {
+  id: string;
+  title: string | null;
+  file_name: string | null;
+  scope_type: string | null;
+  document_role: string | null;
+  processing_status: string | null;
+  chunk_count: number | null;
+  tags: unknown;
+  upload_notes: string | null;
+};
+
+function normalizeCriteriaMode(input: string | null | undefined): CriteriaMode | null {
+  if (input === 'VERBATIM' || input === 'HYBRID' || input === 'GENERATED') return input;
+  return null;
+}
+
+function toTags(input: unknown): string[] {
+  return Array.isArray(input) ? input.filter((tag): tag is string => typeof tag === 'string') : [];
+}
+
+function modeStrategy(mode: CriteriaMode | null): ModeSourceContext['mode_source_strategy'] {
+  if (mode === 'VERBATIM') return 'verbatim_context_document';
+  if (mode === 'HYBRID') return 'hybrid_gap_analysis';
+  return 'new_generation_public_research';
+}
+
+function sourceRules(mode: CriteriaMode | null): string[] {
+  if (mode === 'VERBATIM') {
+    return [
+      'VERBATIM: resolve uploaded organisation/framework source documents first and preserve source wording wherever it maps to the requested domain artifact.',
+      'VERBATIM: do not invent replacement MPS, intent, or criteria content when an uploaded source statement exists.',
+      'VERBATIM: mark gaps explicitly instead of silently filling them with generic content.',
+    ];
+  }
+  if (mode === 'HYBRID') {
+    return [
+      'HYBRID: map uploaded organisation source content into the five MMM domains, then identify missing maturity-model components.',
+      'HYBRID: label harvested material as source_origin=uploaded_source and AI completion material as source_origin=ai_completion.',
+      'HYBRID: use subject knowledge only to complete gaps, improve structure, and align to security best practice.',
+    ];
+  }
+  return [
+    'GENERATED: create a new framework from organisation profile, industry tags, website context, and approved subject knowledge.',
+    'GENERATED: public research is supplementary and must not override canonical subject knowledge.',
+    'GENERATED: never use another customer tenant context as source material.',
+  ];
+}
+
+export function defaultModeSourceContext(frameworkId?: string | null): ModeSourceContext {
+  return {
+    organisation_id: null,
+    organisation_name: null,
+    organisation_context: {},
+    framework_id: frameworkId ?? null,
+    framework_name: null,
+    framework_source_type: null,
+    mode_source_strategy: 'new_generation_public_research',
+    mode_source_documents: [],
+    source_rules: sourceRules(null),
+    tenant_isolation_required: true,
+  };
+}
+
+export async function resolveModeSourceContext(frameworkId?: string | null): Promise<ModeSourceContext> {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const userId = sessionData.session?.user?.id;
+  if (!userId) {
+    return defaultModeSourceContext(frameworkId);
+  }
+
+  const { data: profile } = await supabase
+    .from('mmm_profiles')
+    .select('organisation_id')
+    .eq('id', userId)
+    .maybeSingle<ProfileRow>();
+
+  const organisationId = profile?.organisation_id ?? null;
+  let organisation: OrganisationRow | null = null;
+  if (organisationId) {
+    const { data } = await supabase
+      .from('mmm_organisations')
+      .select('id,name,context')
+      .eq('id', organisationId)
+      .maybeSingle<OrganisationRow>();
+    organisation = data ?? null;
+  }
+
+  let framework: FrameworkRow | null = null;
+  if (frameworkId) {
+    const { data } = await supabase
+      .from('mmm_frameworks')
+      .select('id,name,source_type')
+      .eq('id', frameworkId)
+      .maybeSingle<FrameworkRow>();
+    framework = data ?? null;
+  }
+
+  const mode = normalizeCriteriaMode(framework?.source_type);
+  let documents: ModeSourceDocument[] = [];
+  if (organisationId) {
+    const { data } = await supabase
+      .from('mmm_subject_knowledge_documents')
+      .select('id,title,file_name,scope_type,document_role,processing_status,chunk_count,tags,upload_notes')
+      .eq('organisation_id', organisationId)
+      .is('archived_at', null)
+      .order('created_at', { ascending: false });
+
+    documents = ((data ?? []) as DocumentRow[])
+      .map((doc) => ({
+        id: doc.id,
+        title: doc.title ?? doc.file_name ?? 'Untitled context document',
+        file_name: doc.file_name ?? 'unknown',
+        scope_type: doc.scope_type ?? 'subject_knowledge',
+        document_role: doc.document_role ?? 'knowledge_source',
+        processing_status: doc.processing_status ?? 'pending',
+        chunk_count: doc.chunk_count ?? 0,
+        tags: toTags(doc.tags),
+        upload_notes: doc.upload_notes ?? null,
+      }))
+      .filter((doc) => {
+        const tags = doc.tags.join('|');
+        return (
+          doc.scope_type === 'organisation_context' ||
+          doc.scope_type === 'framework_context' ||
+          tags.includes('organisation_context') ||
+          tags.includes('mode_source') ||
+          (frameworkId ? tags.includes(`framework_id:${frameworkId}`) : false) ||
+          (mode ? tags.includes(`source_mode:${mode}`) : false)
+        );
+      });
+  }
+
+  return {
+    organisation_id: organisationId,
+    organisation_name: organisation?.name ?? null,
+    organisation_context: organisation?.context ?? {},
+    framework_id: frameworkId ?? null,
+    framework_name: framework?.name ?? null,
+    framework_source_type: mode,
+    mode_source_strategy: modeStrategy(mode),
+    mode_source_documents: documents,
+    source_rules: sourceRules(mode),
+    tenant_isolation_required: true,
+  };
+}

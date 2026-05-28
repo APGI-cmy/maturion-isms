@@ -236,6 +236,7 @@ export function DomainAuditBuilder({
       <IntentCreator
         domainId={persistedDomainId}
         domainName={domain?.name ?? domainName ?? domainId}
+        frameworkId={frameworkId}
         open={isIntentCreatorOpen}
         mpsRows={mpsRows}
         isLoading={isLoading}
@@ -245,6 +246,7 @@ export function DomainAuditBuilder({
       <CriteriaManagement
         domainId={persistedDomainId}
         domainName={domain?.name ?? domainName ?? domainId}
+        frameworkId={frameworkId}
         open={isCriteriaManagementOpen}
         mpsRows={mpsRows}
         criteriaByMps={criteriaByMps}

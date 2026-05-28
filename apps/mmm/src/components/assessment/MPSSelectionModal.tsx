@@ -18,6 +18,15 @@ interface EditedMPSItem {
   intent: string;
 }
 
+type LearningCapturePayload = {
+  mpsId?: string;
+  mpsNumber?: number;
+  beforeTitle: string;
+  afterTitle: string;
+  beforeIntent: string;
+  afterIntent: string;
+};
+
 export interface MPSSelectionModalProps {
   /** The domain currently being built. */
   domainId: string;
@@ -56,6 +65,7 @@ export function MPSSelectionModal({
     generateMPSsForDomain,
     isLoading: isGeneratingFromHook,
     error: hookGenerationError,
+    lastConsultedResources,
   } = useAIMPSGeneration();
 
   const [generatedMPS, setGeneratedMPS] = useState<GeneratedMPSItem[]>([]);
@@ -65,6 +75,7 @@ export function MPSSelectionModal({
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   const resetGenerationState = useCallback(() => {
     setGeneratedMPS([]);
@@ -74,6 +85,7 @@ export function MPSSelectionModal({
     setIsGenerating(false);
     setGenerationError(null);
     setSaveError(null);
+    setInfoMessage(null);
   }, []);
 
   // NBR-003: reset generation state when domainId changes
@@ -104,6 +116,7 @@ export function MPSSelectionModal({
     onSuccess: () => {
       // NBR-001: invalidate affected queries after save
       queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
+      setInfoMessage('MPS draft saved. You can edit further or submit this section for L2 review.');
       resetGenerationState();
     },
     onError: (err: Error) => {
@@ -151,6 +164,86 @@ export function MPSSelectionModal({
       approvalStateQuery.refetch();
       queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
     },
+  });
+
+  const domainSubmitMutation = useMutation({
+    mutationFn: async () => {
+      const headers = await getEdgeInvokeHeaders();
+      const { error } = await supabase.functions.invoke('mmm-domain-approval-action', {
+        headers,
+        body: {
+          domain_id: domainId,
+          action_type: 'submit',
+        },
+      });
+      if (error) throw new Error(error.message || 'Failed to submit MPS set for L2 review.');
+    },
+    onSuccess: () => {
+      setInfoMessage('MPS section submitted for L2 review.');
+    },
+    onError: (err: Error) => {
+      setSaveError(err.message);
+    },
+  });
+
+  const captureLearningPreference = useCallback(async (payload: LearningCapturePayload) => {
+    const headers = await getEdgeInvokeHeaders();
+    const remember = window.confirm(
+      'Thank you for your direction. I will adopt this preference. Do you want me to include this in my memory system?',
+    );
+    if (!remember) return;
+
+    await supabase.functions.invoke('mmm-ai-chat-user', {
+      headers,
+      body: {
+        message: 'Capture user preference from MPS edit for future proposal alignment.',
+        context: {
+          workflow_stage: 'mps_preference_capture',
+          domain_id: domainId,
+          domain_name: domainName,
+          preference_capture: payload,
+        },
+      },
+    }).catch(() => {
+      // Non-blocking preference capture path: continue even if AI endpoint is unavailable.
+    });
+
+    await supabase.from('mmm_ai_interactions').insert({
+      action_type: 'USER_PREFERENCE_CAPTURE',
+      context_type: 'MPS_EDIT',
+      target_entity_id: payload.mpsId ?? null,
+      status: 'recorded',
+      request_json: {
+        domain_id: domainId,
+        domain_name: domainName,
+        mps_number: payload.mpsNumber ?? null,
+        before_title: payload.beforeTitle,
+        after_title: payload.afterTitle,
+        before_intent: payload.beforeIntent,
+        after_intent: payload.afterIntent,
+      },
+      response_json: { captured: true },
+    });
+
+    setInfoMessage('Preference recorded. Maturion will apply this style in future proposals.');
+  }, [domainId, domainName]);
+
+  const updateExistingMpsMutation = useMutation({
+    mutationFn: async (payload: { mpsId: string; name: string; intent_statement: string | null }) => {
+      const { error } = await supabase
+        .from('mmm_maturity_process_steps')
+        .update({
+          name: payload.name,
+          intent_statement: payload.intent_statement,
+        })
+        .eq('id', payload.mpsId);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
+      setInfoMessage('MPS updated in draft state. You can continue editing before final sign-off.');
+    },
+    onError: (err: Error) => setSaveError(err.message),
   });
 
   const handleGenerate = async () => {
@@ -281,6 +374,20 @@ export function MPSSelectionModal({
               {fallbackWarning}
             </div>
           ) : null}
+          {infoMessage ? (
+            <div role="status" className="alert alert-success" data-testid="mps-info-message">
+              {infoMessage}
+            </div>
+          ) : null}
+          {generatedMPS.length > 0 && lastConsultedResources.length > 0 ? (
+            <div
+              role="status"
+              className="alert alert-success"
+              data-testid="mps-consulted-resources-toast"
+            >
+              Resources consulted: {lastConsultedResources.join('; ')}
+            </div>
+          ) : null}
 
           {/* AI generation controls */}
           <div className="modal-ai-controls">
@@ -386,6 +493,15 @@ export function MPSSelectionModal({
                         </div>
                       ) : (
                         <div>
+                          {item.source_origin ? (
+                            <span className={`source-origin source-origin--${item.source_origin}`}>
+                              {item.source_origin === 'uploaded_source'
+                                ? 'Uploaded source'
+                                : item.source_origin === 'ai_completion'
+                                ? 'AI completion'
+                                : 'Subject knowledge'}
+                            </span>
+                          ) : null}
                           <p>Intent: {displayIntent}</p>
                           <p>Rationale: {item.rationale}</p>
                           <button
@@ -449,7 +565,7 @@ export function MPSSelectionModal({
                       className="btn btn-outline"
                       onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reopen' })}
                     >
-                      Reopen
+                      Edit
                     </button>
                     <button
                       type="button"
@@ -457,6 +573,35 @@ export function MPSSelectionModal({
                       onClick={() => mpsApprovalActionMutation.mutate({ mps_id: mps.id, action_type: 'reject' })}
                     >
                       Reject
+                    </button>
+                  </div>
+                  <div className="dmc-row-actions" style={{ marginTop: '0.4rem' }}>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={async () => {
+                        const title = window.prompt('Edit MPS title', mps.name);
+                        if (title == null) return;
+                        const intent = window.prompt(
+                          'Edit intent statement',
+                          hasTrimmedText(mps.intent_statement) ? toTrimmedText(mps.intent_statement) : '',
+                        );
+                        if (intent == null) return;
+                        await updateExistingMpsMutation.mutateAsync({
+                          mpsId: mps.id,
+                          name: title.trim() || mps.name,
+                          intent_statement: intent.trim() || null,
+                        });
+                        await captureLearningPreference({
+                          mpsId: mps.id,
+                          beforeTitle: mps.name,
+                          afterTitle: title.trim() || mps.name,
+                          beforeIntent: hasTrimmedText(mps.intent_statement) ? toTrimmedText(mps.intent_statement) : '',
+                          afterIntent: intent.trim(),
+                        });
+                      }}
+                    >
+                      Edit Content
                     </button>
                   </div>
                 </li>
@@ -475,6 +620,17 @@ export function MPSSelectionModal({
               disabled={saveMutation.isPending || selectedMPSNumbers.size === 0}
             >
               {saveMutation.isPending ? 'Saving…' : 'Confirm Selection'}
+            </button>
+          ) : null}
+          {generatedMPS.length === 0 && mpsRows.length > 0 ? (
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-testid="submit-mps-l2-btn"
+              onClick={() => domainSubmitMutation.mutate()}
+              disabled={domainSubmitMutation.isPending}
+            >
+              {domainSubmitMutation.isPending ? 'Submitting…' : `Submit MPS Set (${mpsRows.length})`}
             </button>
           ) : null}
           <button type="button" className="btn btn-outline" onClick={handleClose}>

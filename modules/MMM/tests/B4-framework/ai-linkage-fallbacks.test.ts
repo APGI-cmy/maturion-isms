@@ -78,10 +78,48 @@ describe('T-MMM-S6-206: Verbatim MPS mode bypasses AIMC chat and loads framework
   it('useAIMPSGeneration reads proposed/canonical framework MPS tables before AIMC path', () => {
     const src = readFile('apps/mmm/src/hooks/useAIMPSGeneration.ts');
     expect(src).toContain('loadVerbatimDraftsFromFramework');
+    expect(src).toContain('ensureMinimumVerbatimDrafts');
+    expect(src).toContain('dedupeDraftsByTitle');
     expect(src).toContain('.eq(\'domain_id\', options.sourceDomainId)');
     expect(src).toContain(".from('mmm_proposed_domains')");
     expect(src).toContain(".from('mmm_proposed_mps')");
     expect(src).toContain(".from('mmm_domains')");
     expect(src).toContain(".from('mmm_maturity_process_steps')");
+  });
+});
+
+describe('T-MMM-S6-212: MPS AI linkage consumes Organisation Context mode-source contract', () => {
+  it('useAIMPSGeneration resolves mode source context before invoking user AI endpoint', () => {
+    const src = readFile('apps/mmm/src/hooks/useAIMPSGeneration.ts');
+    expect(src).toContain('resolveModeSourceContext');
+    expect(src).toContain('mode_source_strategy');
+    expect(src).toContain('mode_source_documents');
+    expect(src).toContain('tenant_isolation_required');
+    expect(src).toContain('source_origin');
+  });
+});
+
+describe('T-MMM-S6-213: Intent and Criteria AI linkage use shared mode-source context', () => {
+  it('Intent and Criteria generation both call resolveModeSourceContext and pass mode context', () => {
+    const intent = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
+    const criteria = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(intent).toContain('resolveModeSourceContext');
+    expect(intent).toContain('mode_source_strategy');
+    expect(intent).toContain('mode_source_context');
+    expect(criteria).toContain('resolveModeSourceContext');
+    expect(criteria).toContain('mode_source_strategy');
+    expect(criteria).toContain('mode_source_context');
+    expect(criteria).toContain(".from('mmm_proposed_criteria')");
+    expect(criteria).toContain("source_origin: 'uploaded_source'");
+  });
+
+  it('shared resolver defines Verbatim, Hybrid, and New Generation strategy rules', () => {
+    const src = readFile('apps/mmm/src/lib/modeSourceContext.ts');
+    expect(src).toContain('verbatim_context_document');
+    expect(src).toContain('hybrid_gap_analysis');
+    expect(src).toContain('new_generation_public_research');
+    expect(src).toContain('VERBATIM: resolve uploaded organisation/framework source documents first');
+    expect(src).toContain('HYBRID: map uploaded organisation source content');
+    expect(src).toContain('GENERATED: create a new framework from organisation profile');
   });
 });

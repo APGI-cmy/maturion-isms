@@ -2,7 +2,7 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-05-27  
+**Last Updated**: 2026-05-28  
 **Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688; wave: mmm-traceability-cleanup-build-to-green-20260527 — QA trace map activated, untraced runtime artifacts removed/quarantined, DMC click-failure class recorded and gated with T-MMM-DMC-008); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
@@ -79,6 +79,33 @@
   - **Prebuild/Architecture Update**: Verbatim extraction precedence extended to include direct domain-context reads before framework-level lookup.
   - **QA-to-Red Gate**: `T-MMM-S6-206` expanded to assert direct `domain_id` canonical read path.
   - **Build-to-Green Fix**: `MPSSelectionModal` now passes `sourceDomainId` to `useAIMPSGeneration`; hook first reads `mmm_maturity_process_steps` by `domain_id`, then proposed/canonical framework tables, then AIMC.
+
+- **2026-05-28 — Sidebar Collapsed to Top-Stack and Verbatim Domain Returned Single MPS**
+  - **Observed Failure**: Authenticated shell sidebar rendered as top horizontal stack in desktop in-app viewport; Leadership/Governance verbatim generation returned only one MPS row from resolved domain context.
+  - **Prebuild/Architecture Update**: Responsive shell breakpoint tuned for in-app desktop pane widths; verbatim generation rule reinforced to return minimum complete domain set for L&G (5 MPS) when canonical rows are incomplete.
+  - **QA-to-Red Gate**: Existing `T-MMM-S6-206` now covers minimum-set hardening path in `useAIMPSGeneration`.
+  - **Build-to-Green Fix**: Reduced sidebar stack breakpoint (`980px` -> `760px`) and added `ensureMinimumVerbatimDrafts` padding logic to merge canonical/proposed rows with verbatim fallback set when count is below expected minimum.
+
+- **2026-05-28 — MPS Modal Workflow Semantics Gap (Edit/Submit/Learning Capture)**
+  - **Observed Failure**: Post-approval MPS modal still used `Reopen` wording, offered only cancel close-path, and did not capture user edit preferences for AI personalization.
+  - **Impact**: User workflow clarity and build-to-red sign-off sequence were weakened; personalization loop remained implicit instead of explicit/consented.
+  - **Prebuild/Architecture Update**: App Description + FRS/TRS/Architecture addenda updated to codify Draft→Submit semantics, in-modal submit transition, and consent-based learning capture.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-207` through `T-MMM-S6-210`.
+  - **Build-to-Green Fix**: MPS modal now uses `Edit` wording, adds `Submit MPS Set (N)` CTA (L2 submit), supports direct draft content editing on existing rows, and records consented preference captures via `mmm_ai_interactions`.
+
+- **2026-05-28 — Mode Source Context Gap (Verbatim/Hybrid/New Not Driven by Organisation Uploads)**
+  - **Observed Failure**: Verbatim mode could create MPS rows, but Maturion did not have a customer-context document contract to determine what document should be interpreted verbatim; Hybrid/New had no shared context contract for gap analysis or public/industry familiarisation.
+  - **Impact**: The three framework creation options behaved like UI labels instead of binding MPS, Intent, and Criteria generation to the correct source strategy.
+  - **Prebuild/Architecture Update**: App Description + FRS/TRS/Architecture/Implementation Plan updated to codify Organisation Context source uploads, tenant-isolated mode-source resolution, and Hybrid source-origin labelling.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-211` through `T-MMM-S6-214`.
+  - **Build-to-Green Fix**: Added `resolveModeSourceContext`, Organisation Context source upload, and shared MPS/Intent/Criteria AI context payloads containing mode strategy, org profile, source documents, source rules, and tenant isolation requirement.
+
+- **2026-05-28 — Verbatim Artifact Quality Gap (Duplicate MPS + Generic Criteria Drift)**
+  - **Observed Failure**: Leadership/Governance verbatim flow produced duplicated MPS rows and criteria text that drifted toward generic fallback language.
+  - **Impact**: Framework artifacts appeared non-sensical and confidence in source-faithful generation degraded.
+  - **Prebuild/Architecture Update**: Runtime rule reinforced: verbatim path must prefer parsed framework artifacts, de-duplicate generated rows, and surface consulted source documents to operator.
+  - **QA-to-Red Gates**: Added `T-MMM-S6-215` and `T-MMM-S6-216`.
+  - **Build-to-Green Fix**: MPS generator now de-duplicates verbatim rows and publishes consulted-resource toast; Criteria generation now resolves from `mmm_proposed_criteria` for matched proposed MPS before AI/fallback.
 
 ---
 

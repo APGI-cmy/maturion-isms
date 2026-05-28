@@ -53,6 +53,7 @@ export interface GeneratedMpsDraft {
   intent: string;
   rationale: string;
   acceptance: DraftPersistenceState;
+  source_origin?: 'uploaded_source' | 'ai_completion' | 'subject_knowledge';
 }
 
 export interface GeneratedIntentDraft {

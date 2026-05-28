@@ -32,6 +32,8 @@ type OrganisationContextResponse = {
   };
 };
 
+type OrganisationModeSource = 'VERBATIM' | 'HYBRID' | 'GENERATED';
+
 async function fetchOrganisationContext(): Promise<OrganisationContextResponse> {
   const headers = await getEdgeInvokeHeaders();
   const { data, error } = await supabase.functions.invoke('mmm-organisation-context', {
@@ -71,6 +73,9 @@ async function fetchOrganisationContext(): Promise<OrganisationContextResponse> 
 export default function OrganisationContextPage() {
   const qc = useQueryClient();
   const [message, setMessage] = useState<string | null>(null);
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [sourceMode, setSourceMode] = useState<OrganisationModeSource>('VERBATIM');
+  const [isUploadingSource, setIsUploadingSource] = useState(false);
   const query = useQuery({ queryKey: ['organisation-context'], queryFn: fetchOrganisationContext });
   const org = query.data?.organisation;
   const context = org?.context ?? {};
@@ -119,6 +124,66 @@ export default function OrganisationContextPage() {
     },
     onError: (err) => setMessage((err as Error).message),
   });
+
+  const uploadModeSourceDocument = async () => {
+    if (!org) throw new Error('Organisation context not loaded.');
+    if (!sourceFile) throw new Error('Choose a source document before uploading.');
+
+    setIsUploadingSource(true);
+    setMessage(null);
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw new Error(sessionError.message);
+      const userId = sessionData.session?.user?.id;
+      if (!userId) throw new Error('No authenticated user found.');
+
+      const safeName = sourceFile.name.replace(/[^a-zA-Z0-9._-]+/g, '-');
+      const storagePath = `organisation-context/${org.id}/${Date.now()}-${safeName}`;
+      const { error: uploadError } = await supabase.storage
+        .from('mmm-subject-knowledge')
+        .upload(storagePath, sourceFile, {
+          contentType: sourceFile.type || 'application/octet-stream',
+          upsert: false,
+        });
+      if (uploadError) throw new Error(uploadError.message);
+
+      const tags = [
+        'organisation_context',
+        'mode_source',
+        `source_mode:${sourceMode}`,
+        `organisation_id:${org.id}`,
+      ];
+      const { error: insertError } = await supabase.from('mmm_subject_knowledge_documents').insert({
+        organisation_id: org.id,
+        uploaded_by: userId,
+        updated_by: userId,
+        title: `${sourceMode} source - ${sourceFile.name}`,
+        file_name: sourceFile.name,
+        mime_type: sourceFile.type || 'application/octet-stream',
+        file_size: sourceFile.size,
+        storage_bucket: 'mmm-subject-knowledge',
+        storage_path: storagePath,
+        document_role: 'knowledge_source',
+        scope_type: 'organisation_context',
+        processing_status: 'pending',
+        tags,
+        upload_notes:
+          sourceMode === 'VERBATIM'
+            ? 'Authoritative verbatim source document for MPS, intent, and criteria extraction.'
+            : sourceMode === 'HYBRID'
+            ? 'Hybrid source document: harvest customer material, then complete gaps with subject knowledge.'
+            : 'New-generation context source: use as organisation familiarisation material.',
+      });
+      if (insertError) throw new Error(insertError.message);
+
+      setSourceFile(null);
+      setMessage('Organisation source document uploaded. Maturion will use it according to the selected mode.');
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'Organisation source upload failed.');
+    } finally {
+      setIsUploadingSource(false);
+    }
+  };
 
   if (query.isLoading) return <main className="container"><p>Loading organisation context…</p></main>;
   if (query.isError || !org) return <main className="container"><p role="alert">Failed to load organisation context.</p></main>;
@@ -204,6 +269,45 @@ export default function OrganisationContextPage() {
           disabled={saveMutation.isPending}
         >
           {saveMutation.isPending ? 'Saving…' : 'Save Context'}
+        </button>
+      </div>
+
+      <div className="card" data-testid="organisation-source-upload">
+        <h2>Organisation Source Documents</h2>
+        <p>
+          Upload the customer-specific document Maturion should use for Verbatim, Hybrid, or New Generation
+          framework creation.
+        </p>
+        <div className="form-group">
+          <label htmlFor="context-source-mode">Framework creation mode</label>
+          <select
+            id="context-source-mode"
+            className="form-control"
+            value={sourceMode}
+            onChange={(event) => setSourceMode(event.target.value as OrganisationModeSource)}
+          >
+            <option value="VERBATIM">Verbatim source</option>
+            <option value="HYBRID">Hybrid source</option>
+            <option value="GENERATED">New generation context</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="context-source-file">Source document</label>
+          <input
+            id="context-source-file"
+            className="form-control"
+            type="file"
+            onChange={(event) => setSourceFile(event.target.files?.[0] ?? null)}
+          />
+        </div>
+        <button
+          type="button"
+          className="btn btn-primary"
+          data-testid="upload-organisation-source-btn"
+          onClick={uploadModeSourceDocument}
+          disabled={!sourceFile || isUploadingSource}
+        >
+          {isUploadingSource ? 'Uploading…' : 'Upload Organisation Source'}
         </button>
       </div>
     </main>

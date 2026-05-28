@@ -57,3 +57,43 @@
 ### T-MMM-S6-201 — Criteria AI linkage must use user-scoped endpoint with fallback
 - RED: criteria generation hard-fails when AI call fails.
 - GREEN: criteria generation uses `mmm-ai-chat-user` and returns deterministic fallback criteria set.
+
+### T-MMM-S6-207 — MPS modal actions must align with Draft→Submit workflow language
+- RED: modal exposes ambiguous `Reopen` wording and only `Cancel` action after L1 operations.
+- GREEN: modal uses `Edit` language for draft rework and exposes explicit `Submit MPS Set` action for L2 transition.
+
+### T-MMM-S6-208 — MPS edits must trigger user-preference learning capture consent
+- RED: user edits are applied with no learning-capture acknowledgement or consent prompt.
+- GREEN: after MPS edit save, modal prompts for preference memory consent and persists learning event metadata.
+
+### T-MMM-S6-209 — MPS section must remain editable until higher-level sign-off
+- RED: once L1 actions are used, users cannot reopen content edits before L2/L3 completion.
+- GREEN: modal supports repeatable `Edit Content` updates while domain is not finally signed off.
+
+### T-MMM-S6-210 — MPS submission state must be visibly actionable in-modal
+- RED: user cannot submit completed MPS set from the working modal context.
+- GREEN: modal footer exposes count-aware submit CTA (`Submit MPS Set (N)`) and success confirmation.
+
+### T-MMM-S6-211 — Organisation Context uploads mode-source documents
+- RED: Organisation Context only stores text profile fields, so Verbatim/Hybrid/New generation cannot resolve the customer source document from the customer context domain.
+- GREEN: Organisation Context exposes a customer source-document upload, stores it in the canonical knowledge ledger with `scope_type = organisation_context`, and tags it with `source_mode:<VERBATIM|HYBRID|GENERATED>`.
+
+### T-MMM-S6-212 — MPS AI generation consumes mode-source context
+- RED: MPS generation only receives a mode label and cannot inspect organisation context documents before calling Maturion.
+- GREEN: MPS generation resolves `mode_source_strategy`, organisation profile, and organisation/framework source documents before invoking `mmm-ai-chat-user`.
+
+### T-MMM-S6-213 — Intent and Criteria generation consume the same mode-source context
+- RED: Intent and Criteria generation can drift from the Verbatim/Hybrid/New source rule used for MPS.
+- GREEN: Intent and Criteria generation use the same `resolveModeSourceContext` contract as MPS and pass the resolved context into the user-scoped AI endpoint.
+
+### T-MMM-S6-214 — Hybrid origin labelling is supported for harvested versus AI-added content
+- RED: Hybrid output provides no visible distinction between uploaded-source material and AI completion material.
+- GREEN: generated artifacts accept `source_origin` metadata and the MPS modal renders colour-coded origin badges for `uploaded_source`, `ai_completion`, and `subject_knowledge`.
+
+### T-MMM-S6-215 — MPS generation must de-duplicate verbatim rows and expose consulted sources
+- RED: Verbatim MPS generation returns repeated rows and does not show which documents were consulted.
+- GREEN: MPS generation de-duplicates by normalized source title and the modal shows a consulted-resources status toast.
+
+### T-MMM-S6-216 — Verbatim criteria generation must prefer parsed framework criteria
+- RED: Criteria generation falls back to generic non-verbatim text despite available parsed framework criteria.
+- GREEN: Criteria generation resolves criteria from `mmm_proposed_criteria` for matching proposed MPS before AI fallback.

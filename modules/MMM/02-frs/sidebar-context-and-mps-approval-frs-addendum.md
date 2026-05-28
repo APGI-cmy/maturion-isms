@@ -22,6 +22,15 @@ This addendum governs three recovery capabilities:
   - reviewer return with comments,
   - user resubmit,
   - reviewer final approval and domain lock.
+- MPS modal language must reflect draft workflow semantics:
+  - `Edit` replaces ambiguous reopen wording,
+  - users can submit the MPS set from the same modal context once draft completion is reached.
+- MPS rows must expose stage indicators and editable state while domain sign-off is pending.
+- Any user edit to AI-proposed MPS content must support a preference-learning capture confirmation and write a traceable learning event.
+- Organisation Context must support customer-specific source-document upload for Verbatim, Hybrid, and New Generation modes.
+- Verbatim mode must use uploaded Organisation/Framework Context documents as authoritative source material for MPS, Intent, and Criteria generation.
+- Hybrid mode must perform source harvesting plus gap completion and expose harvested-versus-AI-added origin semantics.
+- New Generation mode must use organisation profile, industry, website/public context, and approved subject knowledge while preserving tenant isolation.
 
 ## DMC Functional Requirements
 - DMC must operate on AIMC-canonical MMM tables.

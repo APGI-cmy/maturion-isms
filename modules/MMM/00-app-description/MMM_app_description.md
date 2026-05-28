@@ -48,6 +48,12 @@ MMM is not a patch to MAT or Roadmap.
 MMM is the new canonical maturity capability.
 This document is intended not only to define product behavior, but also to serve as a one-time-build constitutional foundation from which downstream requirements, architecture, QA, and wave implementation must be derived without omission of known historical failure modes.
 
+### 0.1 2026-05-28 Hardening Clarification (MPS Workflow)
+- In MPS authoring, `Edit` is the normative draft action label (instead of ambiguous reopen terminology).
+- MPS authoring remains editable until higher-level sign-off closes the domain loop.
+- MPS modal must support direct section submission into L2 review once draft set is complete.
+- User edits of AI-proposed MPS content are preference signals: MMM must request explicit consent to store preference memory and record a traceable learning event when accepted.
+
 ---
 
 ## 1. Product Identity
@@ -1938,6 +1944,26 @@ user outcome, system state, backend dependency, and completion evidence.
 This definition applies to every downstream FRS, TRS, QA, and implementation artifact derived
 from this document. A capability is not delivered until the user can perform the action live,
 not merely see the UI control.
+
+### Mode Source Strategy — Verbatim / Hybrid / New
+
+The framework creation mode selected by the user is a binding AI source strategy for all three
+roadmap artifact layers: MPS, Intent, and Criteria.
+
+- **Verbatim**: Maturion must first resolve the uploaded Organisation/Framework Context source
+  document and preserve its wording/structure wherever it maps into the MMM domain/MPS/criteria
+  model. Missing elements are flagged as gaps; generic content must not silently replace available
+  source wording.
+- **Hybrid**: Maturion must map uploaded customer material into the five MMM domains, identify what
+  exists, and fill gaps using approved subject knowledge. Harvested material and AI-completion
+  material must be distinguishable in the UI.
+- **New Generation**: Maturion must use the organisation profile, industry tags, website/public
+  context, and approved subject knowledge to create a new maturity roadmap. Public research is
+  supplementary and must remain tenant-isolated.
+
+Organisation Context therefore includes customer-specific source-document upload. DMC remains the
+admin subject-knowledge centre; Organisation Context documents remain customer-context knowledge and
+must not be promoted into global subject knowledge without explicit approval.
 
 ### Failure Class Reference — maturion-isms#1553
 
