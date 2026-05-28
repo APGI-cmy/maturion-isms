@@ -87,6 +87,7 @@ export function DomainAuditBuilder({
     },
     enabled: Boolean(persistedDomainId),
   });
+  const isDomainSignedOff = domainApprovalQuery.data?.status === 'approved';
 
   const domainApprovalActionMutation = useMutation({
     mutationFn: async (action_type: 'submit' | 'return' | 'resubmit' | 'approve') => {
@@ -121,6 +122,19 @@ export function DomainAuditBuilder({
     },
     onSuccess: () => setDomainApprovalComment(''),
   });
+
+  const resolveCardStage = React.useCallback(
+    (step: AuditStep) => {
+      if (isDomainSignedOff) {
+        return 'Completed';
+      }
+      if (step === 'mps' && mpsRows.length > 0) return 'Draft';
+      if (step === 'intent' && mpsRows.some((row) => hasTrimmedText(row.intent_statement))) return 'Draft';
+      if (step === 'criteria' && criteriaRows.length > 0) return 'Draft';
+      return 'Blank';
+    },
+    [criteriaRows.length, isDomainSignedOff, mpsRows],
+  );
 
   return (
     <div className="domain-audit-builder" data-testid="domain-audit-builder">
@@ -184,11 +198,7 @@ export function DomainAuditBuilder({
                   className={`domain-audit-builder__step-status domain-audit-builder__step-status--${step.status}`}
                   data-testid={`step-status-${step.id}`}
                 >
-                  {step.status === 'completed'
-                    ? 'Completed'
-                    : step.status === 'active'
-                    ? 'Active'
-                    : 'Locked'}
+                  {resolveCardStage(step.id as AuditStep)}
                 </p>
                 <p
                   className="domain-audit-builder__step-summary"
@@ -213,6 +223,36 @@ export function DomainAuditBuilder({
                               setFocusedMpsId(row.id);
                               setIsMPSModalOpen(true);
                             }}
+                          >
+                            Edit
+                          </button>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : step.id === 'intent' && mpsRows.length > 0 ? (
+                  <div
+                    className="domain-audit-builder__step-preview"
+                    data-testid={`step-preview-${step.id}`}
+                  >
+                    {mpsRows.map((row) => (
+                      <div key={row.id} className="domain-audit-builder__mps-preview-row">
+                        <span>
+                          {row.code} — {row.name}
+                          <div style={{ fontSize: '0.92rem', marginTop: '0.2rem' }}>
+                            {hasTrimmedText(row.intent_statement)
+                              ? row.intent_statement
+                              : 'Intent not drafted yet.'}
+                          </div>
+                        </span>
+                        <span className="domain-audit-builder__mps-preview-actions">
+                          <span className="domain-audit-builder__mps-status-pill">
+                            {hasTrimmedText(row.intent_statement) ? 'Draft' : 'Blank'}
+                          </span>
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            onClick={() => setIsIntentCreatorOpen(true)}
                           >
                             Edit
                           </button>
@@ -270,6 +310,7 @@ export function DomainAuditBuilder({
         mpsRows={mpsRows}
         isLoading={isLoading}
         errorMessage={errorMessage}
+        onSubmitted={() => setIsIntentCreatorOpen(false)}
         onClose={() => setIsIntentCreatorOpen(false)}
       />
       <CriteriaManagement

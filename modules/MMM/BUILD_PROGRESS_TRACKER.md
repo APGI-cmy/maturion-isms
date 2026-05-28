@@ -1196,3 +1196,16 @@ This tracker now serves as the active failure and traceability register for MMM 
    - Build-to-Green Evidence:
      - B4 suite: **259/259 PASS**.
      - MMM build: PASS (`npm run build`).
+
+8. **Intent modal submission/preview semantics gap (Blank→Draft→Completed governance)**
+   - Failure Class: Workflow semantics + status-governance mismatch.
+   - Symptom: Intent regenerate rows had per-row submit but no clear modal-level submit; intent card did not consistently render `MPS # + intent` with Draft/Edit controls; cards showed completed-like state before full domain sign-off.
+   - Cause Class: Legacy adaptation delivered partial per-row lifecycle but not full modal-level commit and stage-governance semantics.
+   - Corrective Action:
+     - Added modal-level **Accept / Submit** action to commit intent set and return to card workflow.
+     - Added structured intent preview rows (`MPS # — Name` + intent statement) with Draft/Blank + Edit controls.
+     - Updated step-stage display to `Blank / Draft / Completed`, with `Completed` bound to L2 domain approval status (`approved`) instead of pre-sign-off generation.
+   - QA-to-Red Trace:
+     - Covered by workflow behavior checks and manual domain-flow regression validation in this wave.
+   - Build-to-Green Evidence:
+     - MMM build: PASS (`npm run build`, 2026-05-28).
