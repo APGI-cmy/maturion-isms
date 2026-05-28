@@ -288,6 +288,9 @@ export function MPSSelectionModal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['domain-audit-mps', domainId] });
       setInfoMessage('MPS updated in draft state. You can continue editing before final sign-off.');
+      if (focusMpsId) {
+        onClose();
+      }
     },
     onError: (err: Error) => setSaveError(err.message),
   });

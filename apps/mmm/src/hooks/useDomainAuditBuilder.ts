@@ -100,6 +100,8 @@ function normalizeMpsKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
+const PLACEHOLDER_MPS_NAMES = new Set(['uploaded framework management']);
+
 type SupabaseRow = Record<string, unknown>;
 
 export interface UseDomainAuditBuilderOptions {
@@ -227,9 +229,15 @@ export function useDomainAuditBuilder({
           intent_statement: intentStatement.length > 0 ? intentStatement : null,
         };
       });
+      const nonPlaceholderRows = mappedRows.filter(
+        (row) => !PLACEHOLDER_MPS_NAMES.has(normalizeMpsKey(row.name)),
+      );
+      const candidateRows =
+        nonPlaceholderRows.length > 0 ? nonPlaceholderRows : mappedRows;
+
       const deduped = new Map<string, DomainAuditMpsRow>();
-      for (const row of mappedRows) {
-        const dedupeKey = `${normalizeMpsKey(row.code)}|${normalizeMpsKey(row.name)}`;
+      for (const row of candidateRows) {
+        const dedupeKey = normalizeMpsKey(row.name);
         if (!deduped.has(dedupeKey)) {
           deduped.set(dedupeKey, row);
         }
