@@ -1,42 +1,40 @@
 # Wave Current Tasks — foreman-v2-agent
 
-Wave: mmm-dab-harvest-implementation-20260521
-Session ID: session-mmm-dab-harvest-implementation-20260521
+Wave: pit-w8.1-auth-router-shell
+Session ID: session-pit-w8.1-auth-router-shell-20260521
 Date: 2026-05-21
-Branch: copilot/harvest-domain-audit-builder-again
-Issue: #1726 — Harvest legacy DomainAuditBuilder/MPS/Intent/Criteria generation components with behaviour parity
-PR: #1731
-CS2 Authorization: Issue #1726 opened by CS2 / @APGI-cmy on 2026-05-21; issue #1722 dependency closed by CS2 on 2026-05-21. PR #1731 is now explicitly scoped as a narrow preliminary DomainAuditBuilder card-layout fix; the full #1726 legacy harvest remains open and unsatisfied by this PR.
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
-implementation_plan_path: modules/MMM/07-implementation-plan/domainauditbuilder-legacy-harvest-recovery.md
-builder_checklist_path: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
-ceremony_admin_appointed: PENDING
+Branch: copilot/start-pit-w8-1-auth-router-shell
+Issue: PENDING — Stage 12: Start PIT W8.1 Auth, Router, Shell build execution
+PR: #1741
+CS2 Authorization: Triggering issue was opened by @APGI-cmy (CS2) and assigned to Copilot — valid wave-start authorization per Phase 2 Step 2.1 condition 2. Build Authorization is now tracker-explicitly CLEARED on `main` by PR #1738 after Stage 11 builder appointment.
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-w8.1-auth-router-shell-20260521.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-w8.1-auth-router-shell-20260521.md
+implementation_plan_path: modules/pit/08-implementation-plan/implementation-plan.md
+builder_checklist_path: modules/pit/09-builder-checklist/builder-checklist.md
+ceremony_admin_appointed: NOT_REQUIRED
 
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
-IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
-IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T12:50:00Z
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-pit-w8.1-auth-router-shell-20260521.md
+IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-05-21T15:07:29Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
-BUILDER_DELEGATION_NOTE: delegated scope is limited to the preliminary card-layout/accessibility/test hardening slice documented in `.admin/prs/pr-1731.json` and `.agent-admin/scope-declarations/pr-1731.md`.
+BUILDER_DELEGATION_NOTE: Build Authorization is CLEARED in `modules/pit/BUILD_PROGRESS_TRACKER.md` via PR #1738; Stage 12 execution remains scoped to W8.1 auth/router/shell and cannot claim FUNCTIONAL_PASS without required runtime evidence gates.
 
 ## Wave objective
 
-Deliver the narrow preliminary DomainAuditBuilder card-layout fix that changes the three workflow steps from ordered-list markup to accessible card/listitem elements, with behaviour tests proving the preliminary parity signal.
+Prepare the controlled Stage 12 W8.1 auth/router/shell execution posture now that Build Authorization is explicitly CLEARED on `main`.
 
 **Boundaries**:
-- Do not claim completion of the full legacy DomainAuditBuilder/MPS/Intent/Criteria harvest required by issue #1726.
-- Keep #1726 open and explicitly unsatisfied by this PR.
-- Do not expand into MPSSelectionModal, IntentCreator, CriteriaManagement, hooks, upload architecture, or broader AI-generation lifecycle work in this PR.
-- Maintain current-head ECAP/IAA evidence before any merge-ready claim.
+- Scope remains limited to W8.1 auth/router/shell unless CS2 authorizes broader Stage 12 execution.
+- Runtime/source changes must stay tied to the approved implementation plan, builder checklist, and IAA pre-brief scope.
+- No FUNCTIONAL_PASS, merge-ready, or live-delivery claim may be made without current-head ECAP/IAA evidence and required runtime verification gates.
+- Stage 12 remains evidence-bound: claims must cite concrete artifact paths, current HEAD SHA, and green current-head checks.
 
 ## Active task sequence
 
-1. ✅ Phase 1 preflight — identity, Tier 2, CANON, FAIL-ONLY-ONCE, merge gate checks
-2. ✅ IAA wave record created: .agent-admin/assurance/iaa-wave-record-mmm-dab-harvest-implementation-20260521.md
-3. ✅ PR #1731 scope narrowed to preliminary card-layout/accessibility/test hardening slice
-4. ✅ UI builder delivered DomainAuditBuilder card layout + parity tests
-5. ✅ Quality Professor / review feedback incorporated for narrow scope framing
-6. ✅ ECAP / PREHANDOVER / IAA final assurance artifacts recorded
-7. ⏳ Current-head checks must be green after merge-conflict resolution before final merge-ready posture
-8. ⏳ Final human/CS2 review decision required because prior review state is CHANGES_REQUESTED
+1. ✅ Phase 1 preflight complete (identity, Tier 2, Tier 1, sessions, breaches, merge gates)
+2. ✅ Phase 1.8 IAA pre-brief invoked and recorded
+3. ✅ Required Stage 8/11 and tracker artifacts reviewed for W8.1 start gate
+4. ✅ Build Authorization checked after `main` update: CLEARED by PR #1738
+5. ✅ W8.1 builder delegation may proceed only within the authorized Stage 12 scope and IAA pre-brief boundaries
+6. ⏳ Produce current-head ECAP/IAA handover evidence before any merge-ready or FUNCTIONAL_PASS claim
