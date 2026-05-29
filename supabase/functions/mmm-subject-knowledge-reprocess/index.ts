@@ -12,7 +12,6 @@ import {
   buildChunkPayloads,
   isTextLikeMimeType,
   normalizeSubjectDocumentRole,
-  requireSubjectKnowledgeSuperuser,
   sanitizeForPostgresJson,
   sanitizeForPostgresText,
   sha256Hex,
@@ -43,7 +42,6 @@ Deno.serve(async (req: Request) => {
   let claims: { userId: string; orgId: string; role: string };
   try {
     claims = await validateJWT(req, supabase);
-    requireSubjectKnowledgeSuperuser(claims.role);
   } catch (response) {
     return response as Response;
   }
@@ -62,7 +60,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: doc, error: docError } = await supabase
     .from('mmm_subject_knowledge_documents')
-    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,upload_notes')
+    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes')
     .eq('id', documentId)
     .eq('organisation_id', claims.orgId)
     .is('archived_at', null)
@@ -70,6 +68,20 @@ Deno.serve(async (req: Request) => {
 
   if (docError || !doc) {
     return jsonResponse({ error: docError?.message ?? 'Document not found.' }, 404);
+  }
+
+  // Organisation-context sources are allowed for standard admins as well; global subject knowledge remains superuser-only.
+  const role = (claims.role ?? '').trim().toUpperCase();
+  const isSuperuser = ['ADMIN', 'OWNER', 'SUPERUSER', 'BACKOFFICE_ADMIN', 'LEAD_AUDITOR'].includes(role);
+  const isOrgContext = (doc.scope_type ?? '').toLowerCase() === 'organisation_context';
+  if (!isSuperuser && !isOrgContext) {
+    return jsonResponse(
+      {
+        error: 'Insufficient role for subject knowledge reprocess',
+        actual: claims.role,
+      },
+      403,
+    );
   }
 
   await supabase

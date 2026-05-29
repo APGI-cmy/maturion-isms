@@ -62,6 +62,17 @@ function modeStrategy(mode: CriteriaMode | null): ModeSourceContext['mode_source
   return 'new_generation_public_research';
 }
 
+function deriveModeFromDocuments(documents: ModeSourceDocument[]): CriteriaMode | null {
+  const ordered = [...documents];
+  for (const doc of ordered) {
+    const tags = doc.tags ?? [];
+    if (tags.includes('source_mode:VERBATIM')) return 'VERBATIM';
+    if (tags.includes('source_mode:HYBRID')) return 'HYBRID';
+    if (tags.includes('source_mode:GENERATED')) return 'GENERATED';
+  }
+  return null;
+}
+
 function sourceRules(mode: CriteriaMode | null): string[] {
   if (mode === 'VERBATIM') {
     return [
@@ -133,7 +144,7 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
     framework = data ?? null;
   }
 
-  const mode = normalizeCriteriaMode(framework?.source_type);
+  const frameworkMode = normalizeCriteriaMode(framework?.source_type);
   let documents: ModeSourceDocument[] = [];
   if (organisationId) {
     const { data } = await supabase
@@ -166,6 +177,9 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
         );
       });
   }
+
+  const documentModeOverride = deriveModeFromDocuments(documents);
+  const mode = documentModeOverride ?? frameworkMode;
 
   return {
     organisation_id: organisationId,

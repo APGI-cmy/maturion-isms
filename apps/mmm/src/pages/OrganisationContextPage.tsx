@@ -85,6 +85,7 @@ export default function OrganisationContextPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceMode, setSourceMode] = useState<OrganisationModeSource>('VERBATIM');
   const [isUploadingSource, setIsUploadingSource] = useState(false);
+  const [activeDocActionId, setActiveDocActionId] = useState<string | null>(null);
   const query = useQuery({ queryKey: ['organisation-context'], queryFn: fetchOrganisationContext });
   const org = query.data?.organisation;
   const sourceDocsQuery = useQuery({
@@ -149,6 +150,65 @@ export default function OrganisationContextPage() {
     },
     onError: (err) => setMessage((err as Error).message),
   });
+
+  const reprocessOrganisationSource = async (documentId: string) => {
+    try {
+      setActiveDocActionId(documentId);
+      const headers = await getEdgeInvokeHeaders();
+      const { error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
+        headers,
+        body: { document_id: documentId },
+      });
+      if (error) throw new Error(error.message || 'Reprocess failed.');
+      setMessage('Organisation source reprocess started/completed.');
+      qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org?.id] });
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'Reprocess failed.');
+    } finally {
+      setActiveDocActionId(null);
+    }
+  };
+
+  const deleteOrganisationSource = async (doc: OrganisationSourceDoc) => {
+    if (!org?.id) return;
+    try {
+      setActiveDocActionId(doc.id);
+      const confirmed = window.confirm(`Delete source document "${doc.title ?? doc.file_name ?? doc.id}"?`);
+      if (!confirmed) return;
+
+      const { data: fullDoc, error: fullDocError } = await supabase
+        .from('mmm_subject_knowledge_documents')
+        .select('id,storage_bucket,storage_path')
+        .eq('id', doc.id)
+        .maybeSingle();
+      if (fullDocError || !fullDoc) throw new Error(fullDocError?.message || 'Document lookup failed.');
+
+      if (fullDoc.storage_bucket && fullDoc.storage_path) {
+        await supabase.storage.from(fullDoc.storage_bucket).remove([fullDoc.storage_path]);
+      }
+
+      await supabase.from('ai_knowledge').delete().eq('document_id', doc.id);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const userId = sessionData.session?.user?.id ?? null;
+      const { error: archiveError } = await supabase
+        .from('mmm_subject_knowledge_documents')
+        .update({
+          archived_at: new Date().toISOString(),
+          updated_by: userId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', doc.id)
+        .eq('organisation_id', org.id);
+      if (archiveError) throw new Error(archiveError.message || 'Delete failed.');
+
+      setMessage('Organisation source deleted.');
+      qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'Delete failed.');
+    } finally {
+      setActiveDocActionId(null);
+    }
+  };
 
   const uploadModeSourceDocument = async () => {
     if (!org) throw new Error('Organisation context not loaded.');
@@ -377,6 +437,24 @@ export default function OrganisationContextPage() {
                     <strong>{doc.title ?? doc.file_name ?? 'Untitled source'}</strong>
                     <div>
                       status: {doc.processing_status ?? 'pending'} | chunks: {doc.chunk_count ?? 0}
+                    </div>
+                    <div style={{ marginTop: 6, display: 'flex', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => reprocessOrganisationSource(doc.id)}
+                        disabled={activeDocActionId === doc.id}
+                      >
+                        Reprocess
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => deleteOrganisationSource(doc)}
+                        disabled={activeDocActionId === doc.id}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </li>
                 ))}
