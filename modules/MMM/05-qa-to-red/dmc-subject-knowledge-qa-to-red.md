@@ -157,6 +157,12 @@
 - **RED Condition**: Verbatim MPS flow still depends on AIMC chat route and shows 404/unavailable banner even when `mmm_proposed_mps` data exists for the selected framework/domain.
 - **GREEN Acceptance**: `useAIMPSGeneration` loads MPS from `mmm_proposed_domains` + `mmm_proposed_mps` for `source_type=VERBATIM` first; no AIMC-unavailable warning is required for this path.
 
+### T-MMM-S6-220 — Verbatim Intent Must Resolve From Processed Organisation-Source Chunks
+- **Source**: Verbatim mode fidelity contract (organisation source wording must drive intent text)
+- **Layer**: Unit/static + operational
+- **RED Condition**: Organisation source shows processed (`completed`) but regenerate intent still returns generic or paraphrased text without querying `ai_knowledge` chunk content.
+- **GREEN Acceptance**: `useIntentGeneration` resolves `source_mode:VERBATIM` documents, queries `ai_knowledge` by `document_id`, and extracts direct source-aligned wording before proposed/fallback branches.
+
 ## Execution Mapping
 
 - Test file:

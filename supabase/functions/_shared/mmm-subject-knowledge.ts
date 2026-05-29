@@ -59,6 +59,70 @@ export function isTextLikeMimeType(mimeType: string): boolean {
   );
 }
 
+function toObject(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function collectKucTextSegments(input: unknown, acc: string[]): void {
+  if (!input) return;
+  if (typeof input === 'string') {
+    const text = sanitizeForPostgresText(input).trim();
+    if (text.length > 0) acc.push(text);
+    return;
+  }
+  if (Array.isArray(input)) {
+    for (const item of input) collectKucTextSegments(item, acc);
+    return;
+  }
+  const obj = toObject(input);
+  if (!obj) return;
+
+  const textKeys = [
+    'text',
+    'content',
+    'extracted_text',
+    'raw_text',
+    'markdown',
+    'parsed_text',
+  ];
+  for (const key of textKeys) {
+    const value = obj[key];
+    if (typeof value === 'string') {
+      const text = sanitizeForPostgresText(value).trim();
+      if (text.length > 0) acc.push(text);
+    }
+  }
+
+  const nestedKeys = ['chunks', 'pages', 'segments', 'sections', 'results', 'data'];
+  for (const key of nestedKeys) {
+    collectKucTextSegments(obj[key], acc);
+  }
+}
+
+export function extractBestEffortText(params: {
+  mimeType: string;
+  fileBlob: Blob;
+  fallbackText: string;
+  kucClassification?: unknown;
+}): Promise<string> {
+  const { mimeType, fileBlob, fallbackText, kucClassification } = params;
+  return (async () => {
+    if (isTextLikeMimeType(mimeType)) {
+      const rawText = sanitizeForPostgresText(await fileBlob.text()).trim();
+      if (rawText.length > 0) return rawText;
+    }
+
+    const kucSegments: string[] = [];
+    collectKucTextSegments(kucClassification, kucSegments);
+    const kucText = sanitizeForPostgresText(kucSegments.join('\n\n')).trim();
+    if (kucText.length > 0) return kucText;
+
+    return sanitizeForPostgresText(fallbackText).trim();
+  })();
+}
+
 export function chunkText(content: string, chunkSize = 2000, chunkOverlap = 200): string[] {
   const trimmed = sanitizeForPostgresText(content).trim();
   if (!trimmed) return [];

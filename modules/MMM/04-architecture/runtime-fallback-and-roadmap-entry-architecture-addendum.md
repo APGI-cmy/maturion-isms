@@ -19,3 +19,5 @@ Client flows use an **edge-first, canonical-fallback** strategy:
 - DMC status model must expose consistent tonal UX treatment (Pending/Processing/Completed/Failed) via subtle card/row/pill color coding for fast operational scanning.
 - DMC reprocess must tolerate legacy-row anomalies by avoiding hard dependency on optional JSON fields (for example `tags`) and using safe defaults where needed.
 - MPS generation in `VERBATIM` mode must source records directly from canonical framework proposal tables (`mmm_proposed_domains` + `mmm_proposed_mps`) before AIMC invocation; uploaded framework content is authoritative for this mode and must not hard-fail on AIMC chat-route outages.
+- Organisation-context source documents (PDF/DOCX/non-text MIME) must not be indexed as metadata-only placeholders when KUC parse payload text is available; DMC upload/reprocess must extract best-effort parsed text from KUC classification payload before fallback content synthesis.
+- Intent generation in `VERBATIM` mode must resolve direct source wording from processed organisation-source chunks (`ai_knowledge` rows linked by `document_id`) prior to proposed-table/default draft fallback.

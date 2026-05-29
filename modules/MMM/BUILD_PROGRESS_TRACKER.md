@@ -13,6 +13,15 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-05-29 — Verbatim Intent Drift After Organisation Source Upload**
+  - **Observed Failure**: Organisation source upload showed `completed | chunks: 1`, but regenerated intent remained non-verbatim and drifted to generic wording.
+  - **Impact**: Verbatim mode guarantee broken at intent stage; user could not rely on exact source-language carry-through.
+  - **Prebuild/Architecture Update**: Added explicit source-parsing and verbatim intent precedence requirements in `04-architecture/runtime-fallback-and-roadmap-entry-architecture-addendum.md`.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-220` in `tests/B4-framework/ai-linkage-fallbacks.test.ts` and referenced in `03-trs/ai-linkage-validation-matrix-mps-intent-criteria.md`.
+  - **Build-to-Green Fix**:
+    - DMC upload/reprocess now extracts best-effort parsed text from KUC classification payload for non-text MIME files before metadata fallback.
+    - Verbatim intent generation now reads processed organisation-source chunks from `ai_knowledge` first, then falls back to proposed-table mapping if no direct source sentence is found.
+
 - **2026-05-27 — DMC Bulk Reprocess Unicode Failure**
   - **Observed Failure**: `Bulk reprocess completed: 0 succeeded, 25 failed ... unsupported Unicode escape sequence`.
   - **Impact**: Existing uploaded documents could not be reprocessed; DMC inventory remained in failed state.

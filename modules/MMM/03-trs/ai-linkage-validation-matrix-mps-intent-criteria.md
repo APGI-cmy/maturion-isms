@@ -16,6 +16,7 @@ Validate runtime linkage from MMM domain workflow surfaces to Maturion AI paths 
 - `T-MMM-S6-199`: MPS generation uses user-scoped AI endpoint + fallback pack.
 - `T-MMM-S6-200`: Intent generation uses user-scoped AI endpoint + fallback intent draft.
 - `T-MMM-S6-201`: Criteria generation uses user-scoped AI endpoint + fallback criteria draft.
+- `T-MMM-S6-220`: Verbatim intent generation must resolve from processed organisation-source chunks (`ai_knowledge`) before proposed-table fallback.
 
 ## Runtime Validation Evidence (2026-05-26)
 

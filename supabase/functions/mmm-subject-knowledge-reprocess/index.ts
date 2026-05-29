@@ -10,7 +10,7 @@ import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
 import { uploadToKuc } from '../_shared/mmm-kuc-client.ts';
 import {
   buildChunkPayloads,
-  isTextLikeMimeType,
+  extractBestEffortText,
   normalizeSubjectDocumentRole,
   sanitizeForPostgresJson,
   sanitizeForPostgresText,
@@ -117,17 +117,16 @@ Deno.serve(async (req: Request) => {
       },
     );
 
-    let extractedText = '';
-    if (isTextLikeMimeType(doc.mime_type)) {
-      extractedText = sanitizeForPostgresText(await fileBlob.text()).trim();
-    }
-    if (!extractedText) {
-      extractedText = sanitizeForPostgresText([
+    const extractedText = await extractBestEffortText({
+      mimeType: doc.mime_type,
+      fileBlob,
+      fallbackText: [
         `Subject knowledge document: ${doc.title ?? doc.file_name}`,
         `MIME type: ${doc.mime_type}`,
         doc.upload_notes ? `Uploader notes: ${doc.upload_notes}` : '',
-      ].filter(Boolean).join('\n'));
-    }
+      ].filter(Boolean).join('\n'),
+      kucClassification: kucResult.kuc_classification,
+    });
 
     const chunkPayloads = await buildChunkPayloads({
       organisationId: claims.orgId,

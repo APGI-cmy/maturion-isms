@@ -13,6 +13,54 @@ interface GenerateIntentInput {
   frameworkId?: string | null;
 }
 
+function normalizeLookup(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function pickVerbatimIntentFromKnowledge(params: {
+  content: string;
+  mpsName: string;
+  domainName: string;
+}): string | null {
+  const { content, mpsName, domainName } = params;
+  const text = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length >= 32);
+
+  const mpsTokens = normalizeLookup(mpsName).split(' ').filter((token) => token.length >= 4);
+  const domainTokens = normalizeLookup(domainName).split(' ').filter((token) => token.length >= 4);
+
+  const candidates: string[] = [];
+  for (const line of lines) {
+    const lowered = line.toLowerCase();
+    const mpsScore = mpsTokens.filter((token) => lowered.includes(token)).length;
+    const domainScore = domainTokens.filter((token) => lowered.includes(token)).length;
+    const isVerbSentence = /^[A-Z][^.!?]*\b(?:shall|must|ensure|establish|define|set|maintain|track|verify)\b/i.test(line);
+    if ((mpsScore > 0 && domainScore > 0) || (mpsScore > 1) || (isVerbSentence && mpsScore > 0)) {
+      candidates.push(line.replace(/\s+/g, ' ').trim());
+    }
+  }
+
+  if (candidates.length > 0) {
+    const best = candidates.sort((a, b) => a.length - b.length)[0];
+    return best;
+  }
+
+  const sentenceMatches = text.match(/[^.!?\n]{30,220}[.!?]/g) ?? [];
+  for (const sentence of sentenceMatches) {
+    const normalized = sentence.replace(/\s+/g, ' ').trim();
+    const lowered = normalized.toLowerCase();
+    const mpsScore = mpsTokens.filter((token) => lowered.includes(token)).length;
+    if (mpsScore > 0) {
+      return normalized;
+    }
+  }
+
+  return null;
+}
+
 export function useIntentGeneration() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,23 +90,52 @@ export function useIntentGeneration() {
       }
 
       if (frameworkId && modeContext.framework_source_type === 'VERBATIM') {
+        const verbatimSourceDocIds = modeContext.mode_source_documents
+          .filter(
+            (doc) =>
+              doc.processing_status.toLowerCase() === 'completed' &&
+              doc.chunk_count > 0 &&
+              doc.tags.some((tag) => tag === 'source_mode:VERBATIM'),
+          )
+          .map((doc) => doc.id);
+
+        if (verbatimSourceDocIds.length > 0) {
+          const { data: knowledgeRows } = await supabase
+            .from('ai_knowledge')
+            .select('content,chunk_index')
+            .in('document_id', verbatimSourceDocIds)
+            .order('chunk_index', { ascending: true });
+
+          const joinedContent = (knowledgeRows ?? [])
+            .map((row) => String((row as { content?: unknown }).content ?? ''))
+            .join('\n');
+          const extractedIntent = pickVerbatimIntentFromKnowledge({
+            content: joinedContent,
+            mpsName,
+            domainName,
+          });
+          if (extractedIntent) {
+            return extractedIntent;
+          }
+        }
+
         const { data: proposedDomains } = await supabase
           .from('mmm_proposed_domains')
           .select('id,name')
           .eq('framework_id', frameworkId);
-        const domainLookup = domainName.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        const domainLookup = normalizeLookup(domainName);
         const proposedDomain = (proposedDomains ?? []).find(
-          (row) => String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === domainLookup,
+          (row) => normalizeLookup(String(row.name)) === domainLookup,
         );
         if (proposedDomain) {
           const { data: proposedMps } = await supabase
             .from('mmm_proposed_mps')
             .select('name,code,intent_statement')
             .eq('proposed_domain_id', proposedDomain.id);
-          const mpsNameLookup = mpsName.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          const mpsNameLookup = normalizeLookup(mpsName);
           const linkedMps = (proposedMps ?? []).find(
             (row) =>
-              String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === mpsNameLookup ||
+              normalizeLookup(String(row.name)) === mpsNameLookup ||
               row.code === mpsCode,
           );
           const verbatimIntent = linkedMps?.intent_statement?.trim();

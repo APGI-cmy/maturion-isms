@@ -10,7 +10,7 @@ import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
 import { uploadToKuc } from '../_shared/mmm-kuc-client.ts';
 import {
   buildChunkPayloads,
-  isTextLikeMimeType,
+  extractBestEffortText,
   normalizeSubjectDocumentRole,
   requireSubjectKnowledgeSuperuser,
   sanitizeForPostgresJson,
@@ -181,13 +181,12 @@ Deno.serve(async (req: Request) => {
       },
     );
 
-    let extractedText = '';
-    if (isTextLikeMimeType(mimeType)) {
-      extractedText = sanitizeForPostgresText(await fileBlob.text()).trim();
-    }
-    if (!extractedText) {
-      extractedText = fallbackContentFromMetadata(body);
-    }
+    const extractedText = await extractBestEffortText({
+      mimeType,
+      fileBlob,
+      fallbackText: fallbackContentFromMetadata(body),
+      kucClassification: kucResult.kuc_classification,
+    });
 
     const fileHash = await sha256Hex(`${fileName}:${storageBucket}:${storagePath}:${fileSize}`);
     const chunkPayloads = await buildChunkPayloads({
