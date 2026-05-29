@@ -1267,3 +1267,17 @@ This tracker now serves as the active failure and traceability register for MMM 
    - QA-to-Red Trace:
      - `T-MMM-S6-CRIT-205` verbatim source-readiness gate.
      - `T-MMM-S6-CRIT-206` verbatim intent extraction gate.
+
+13. **Organisation source PDF parsed as single low-value chunk (`chunks: 1`)**
+   - Failure Class: ingestion depth gap (AI-assisted parse stage missing in org-source pipeline).
+   - Symptom: large organisation-context PDF processed as `completed | chunks: 1`; verbatim regenerate then failed with `no source-faithful intent text could be extracted`.
+   - Cause Class: upload/reprocess depended on KUC classification payload + best-effort fallback text; no guaranteed AI document parse stage before chunking.
+   - Corrective Action:
+     - Added AI parse stage in `mmm-subject-knowledge-upload` and `mmm-subject-knowledge-reprocess`:
+       - Generate signed URL for uploaded file.
+       - Call AI Gateway `/api/v1/parse`.
+       - Convert structured parse output (domains/MPS/criteria + intent/guidance) into chunkable canonical text.
+     - Extended shared extractor contract to prefer `aiParsedText` when available.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-ORGSRC-301` large PDF ingest must produce source-faithful extract path before fallback.
+     - `T-MMM-S6-ORGSRC-302` verbatim regenerate blocked unless parsed-source quality is present.
