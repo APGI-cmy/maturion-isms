@@ -14,15 +14,6 @@ on:
       - 'apps/mat-ai-gateway/**'
       - '.github/workflows/deploy-mmm-ai-gateway.yml'
   workflow_dispatch:
-    inputs:
-      run_cwt:
-        description: 'Run Combined Wave Test (MMM-T-0001–0959) after deploy'
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - 'false'
-          - 'true'
 
 jobs:
   lint:
@@ -256,7 +247,7 @@ jobs:
     needs: [deploy-production]
     permissions:
       contents: read
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_cwt == 'true'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     steps:
       - uses: actions/checkout@v5
       - name: Install pnpm before Node cache resolution
