@@ -98,8 +98,9 @@ export function useIntentGeneration() {
               doc.tags.some((tag) => tag === 'source_mode:VERBATIM'),
           )
           .map((doc) => doc.id);
+        const hasProcessedVerbatimDocs = verbatimSourceDocIds.length > 0;
 
-        if (verbatimSourceDocIds.length > 0) {
+        if (hasProcessedVerbatimDocs) {
           const { data: knowledgeRows } = await supabase
             .from('ai_knowledge')
             .select('content,chunk_index')
@@ -117,6 +118,9 @@ export function useIntentGeneration() {
           if (extractedIntent) {
             return extractedIntent;
           }
+          throw new Error(
+            `Verbatim mode is active, but no source-faithful intent text could be extracted for ${mpsCode}. Reprocess the organisation source document and verify parsed chunk quality before regenerating.`,
+          );
         }
 
         const { data: proposedDomains } = await supabase

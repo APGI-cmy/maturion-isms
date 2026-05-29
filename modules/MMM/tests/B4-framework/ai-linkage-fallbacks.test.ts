@@ -133,6 +133,6 @@ describe('T-MMM-S6-220: Verbatim intent generation resolves from processed organ
     expect(src).toContain("doc.tags.some((tag) => tag === 'source_mode:VERBATIM')");
     expect(src).toContain(".from('ai_knowledge')");
     expect(src).toContain('pickVerbatimIntentFromKnowledge');
-    expect(src).toContain("Verbatim intent source is missing");
+    expect(src).toContain('no source-faithful intent text could be extracted');
   });
 });

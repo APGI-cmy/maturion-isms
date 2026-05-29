@@ -18,7 +18,6 @@ interface PerMpsIntentState {
   generatedIntent: string | null;
   editedIntent: string;
   error: string | null;
-  fallbackNotice: string | null;
 }
 
 export interface IntentCreatorProps {
@@ -101,7 +100,6 @@ export function IntentCreator({
             generatedIntent: null,
             editedIntent: '',
             error: null,
-            fallbackNotice: null,
           },
         };
       });
@@ -116,7 +114,6 @@ export function IntentCreator({
           generatedIntent: null,
           editedIntent: '',
           error: null,
-          fallbackNotice: null,
         };
         return { ...prev, [mpsId]: { ...current, error: err.message } };
       });
@@ -132,7 +129,6 @@ export function IntentCreator({
         generatedIntent: null,
         editedIntent: '',
         error: null,
-        fallbackNotice: null,
       },
     }));
     try {
@@ -149,7 +145,6 @@ export function IntentCreator({
           generatedIntent: reply,
           editedIntent: reply,
           error: null,
-          fallbackNotice: null,
         },
       }));
     } catch (err: unknown) {
@@ -157,7 +152,8 @@ export function IntentCreator({
       const isSourceGate =
         message.includes('Verbatim mode requires') ||
         message.includes('Hybrid mode requires') ||
-        message.includes('Verbatim intent source is missing');
+        message.includes('Verbatim intent source is missing') ||
+        message.includes('no source-faithful intent text could be extracted');
       if (isSourceGate) {
         setMpsIntentStates((prev) => ({
           ...prev,
@@ -166,22 +162,17 @@ export function IntentCreator({
             generatedIntent: null,
             editedIntent: '',
             error: message,
-            fallbackNotice: null,
           },
         }));
         return;
       }
-      const fallbackIntent =
-        `Ensure ${mps.name} (${mps.code}) is clearly defined, implemented, and evidenced within the ${domainName} domain.`;
       setMpsIntentStates((prev) => ({
         ...prev,
         [mps.id]: {
           isGenerating: false,
-          generatedIntent: fallbackIntent,
-          editedIntent: fallbackIntent,
-          error: null,
-          fallbackNotice:
-            'AI service is temporarily unavailable. Loaded fallback intent draft. You can edit and submit.',
+          generatedIntent: null,
+          editedIntent: '',
+          error: `This process did not succeed. ${message}`,
         },
       }));
     }
@@ -194,7 +185,6 @@ export function IntentCreator({
         generatedIntent: null,
         editedIntent: '',
         error: null,
-        fallbackNotice: null,
       };
       return { ...prev, [mpsId]: { ...current, editedIntent: value } };
     });
@@ -312,16 +302,6 @@ export function IntentCreator({
                         {state.error}
                       </div>
                     ) : null}
-                    {state?.fallbackNotice ? (
-                      <div
-                        role="status"
-                        className="alert"
-                        data-testid={`intent-generation-error-${mps.id}`}
-                      >
-                        <span data-testid={`intent-generation-fallback-${mps.id}`}>{state.fallbackNotice}</span>
-                      </div>
-                    ) : null}
-
                     {state?.isGenerating ? (
                       <p data-testid={`intent-generation-loading-${mps.id}`}>
                         Generating intent for {mps.code}…
