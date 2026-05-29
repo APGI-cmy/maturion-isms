@@ -162,8 +162,7 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
           doc.scope_type === 'framework_context' ||
           tags.includes('organisation_context') ||
           tags.includes('mode_source') ||
-          (frameworkId ? tags.includes(`framework_id:${frameworkId}`) : false) ||
-          (mode ? tags.includes(`source_mode:${mode}`) : false)
+          (frameworkId ? tags.includes(`framework_id:${frameworkId}`) : false)
         );
       });
   }

@@ -33,6 +33,15 @@ type OrganisationContextResponse = {
 };
 
 type OrganisationModeSource = 'VERBATIM' | 'HYBRID' | 'GENERATED';
+type OrganisationSourceDoc = {
+  id: string;
+  title: string | null;
+  file_name: string | null;
+  processing_status: string | null;
+  chunk_count: number | null;
+  tags: string[] | null;
+  created_at: string;
+};
 
 async function fetchOrganisationContext(): Promise<OrganisationContextResponse> {
   const headers = await getEdgeInvokeHeaders();
@@ -78,6 +87,22 @@ export default function OrganisationContextPage() {
   const [isUploadingSource, setIsUploadingSource] = useState(false);
   const query = useQuery({ queryKey: ['organisation-context'], queryFn: fetchOrganisationContext });
   const org = query.data?.organisation;
+  const sourceDocsQuery = useQuery({
+    queryKey: ['organisation-context-source-docs', org?.id],
+    enabled: Boolean(org?.id),
+    queryFn: async (): Promise<OrganisationSourceDoc[]> => {
+      if (!org?.id) return [];
+      const { data, error } = await supabase
+        .from('mmm_subject_knowledge_documents')
+        .select('id,title,file_name,processing_status,chunk_count,tags,created_at')
+        .eq('organisation_id', org.id)
+        .eq('scope_type', 'organisation_context')
+        .is('archived_at', null)
+        .order('created_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      return (data as OrganisationSourceDoc[]) ?? [];
+    },
+  });
   const context = org?.context ?? {};
 
   const [draft, setDraft] = useState<OrganisationContextPayload>({});
@@ -178,6 +203,7 @@ export default function OrganisationContextPage() {
 
       setSourceFile(null);
       setMessage('Organisation source document uploaded. Maturion will use it according to the selected mode.');
+      qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Organisation source upload failed.');
     } finally {
@@ -309,6 +335,32 @@ export default function OrganisationContextPage() {
         >
           {isUploadingSource ? 'Uploading…' : 'Upload Organisation Source'}
         </button>
+
+        <div className="form-group" style={{ marginTop: 16 }}>
+          <h3 style={{ marginBottom: 8 }}>Uploaded Organisation Sources</h3>
+          {sourceDocsQuery.isLoading ? <p>Loading uploaded source documents…</p> : null}
+          {sourceDocsQuery.isError ? (
+            <p role="alert">
+              Failed to load uploaded source documents: {(sourceDocsQuery.error as Error).message}
+            </p>
+          ) : null}
+          {!sourceDocsQuery.isLoading && !sourceDocsQuery.isError ? (
+            sourceDocsQuery.data && sourceDocsQuery.data.length > 0 ? (
+              <ul style={{ margin: 0, paddingLeft: 18 }}>
+                {sourceDocsQuery.data.map((doc) => (
+                  <li key={doc.id} style={{ marginBottom: 8 }}>
+                    <strong>{doc.title ?? doc.file_name ?? 'Untitled source'}</strong>
+                    <div>
+                      status: {doc.processing_status ?? 'pending'} | chunks: {doc.chunk_count ?? 0}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No organisation source documents uploaded yet.</p>
+            )
+          ) : null}
+        </div>
       </div>
     </main>
   );
