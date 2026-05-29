@@ -30,5 +30,20 @@ describe('T-MMM-S6-220: Verbatim intent generation quality gate', () => {
     expect(upload).toContain('extractBestEffortText');
     expect(reprocess).toContain('extractBestEffortText');
   });
-});
 
+  it('queries canonical verbatim index before secondary extraction paths', () => {
+    const src = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
+    expect(src).toContain(".from('mmm_org_source_verbatim_index')");
+    expect(src).toContain(".eq('organisation_id', orgId)");
+    expect(src).toContain('.eq(\'domain_name\', domainName)');
+  });
+
+  it('marks verbatim organisation source as failed when no extractable intents are indexed', () => {
+    const upload = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');
+    const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
+    expect(upload).toContain('mmm_org_source_verbatim_index');
+    expect(upload).toContain("VERBATIM source parse failed: no extractable MPS intent statements found.");
+    expect(reprocess).toContain('mmm_org_source_verbatim_index');
+    expect(reprocess).toContain("VERBATIM source parse failed: no extractable MPS intent statements found.");
+  });
+});

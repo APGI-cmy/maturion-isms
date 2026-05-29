@@ -121,6 +121,37 @@ export function useIntentGeneration() {
       }
 
       if (frameworkId && modeContext.framework_source_type === 'VERBATIM') {
+        const { data: profile } = await supabase
+          .from('mmm_profiles')
+          .select('organisation_id')
+          .eq('id', (await supabase.auth.getUser()).data.user?.id ?? '')
+          .maybeSingle();
+        const orgId = profile?.organisation_id ?? null;
+        if (orgId) {
+          const { data: verbatimIndexedRows } = await supabase
+            .from('mmm_org_source_verbatim_index')
+            .select('mps_code,mps_title,intent_verbatim,domain_name,confidence')
+            .eq('organisation_id', orgId)
+            .eq('domain_name', domainName);
+          const normalizedMpsName = normalizeLookup(mpsName);
+          const indexedMatch = (verbatimIndexedRows ?? []).find((row) => {
+            const code = String((row as { mps_code?: unknown }).mps_code ?? '');
+            const title = String((row as { mps_title?: unknown }).mps_title ?? '');
+            return (
+              normalizeLookup(code) === normalizeLookup(mpsCode) ||
+              normalizeLookup(title) === normalizedMpsName ||
+              normalizeLookup(title).includes(normalizedMpsName) ||
+              normalizedMpsName.includes(normalizeLookup(title))
+            );
+          });
+          const indexedIntent = String(
+            (indexedMatch as { intent_verbatim?: unknown } | undefined)?.intent_verbatim ?? '',
+          ).trim();
+          if (indexedIntent) {
+            return indexedIntent;
+          }
+        }
+
         const verbatimSourceDocIds = modeContext.mode_source_documents
           .filter(
             (doc) =>

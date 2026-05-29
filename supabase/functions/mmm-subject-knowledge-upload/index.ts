@@ -47,21 +47,25 @@ function fallbackContentFromMetadata(body: UploadBody): string {
 const AI_GATEWAY_URL = (Deno.env.get('AI_GATEWAY_URL') ?? '').replace(/\/+$/, '');
 const AI_PARSE_TIMEOUT_MS = 120_000;
 
+type AiParseResult = {
+  domains?: Array<Record<string, unknown>>;
+  mini_performance_standards?: Array<Record<string, unknown>>;
+  confidence_score?: number;
+};
+
 async function tryAiGatewayParseText(params: {
   supabase: ReturnType<typeof createClient>;
   storageBucket: string;
   storagePath: string;
   tenantId: string;
-}): Promise<string | null> {
+}): Promise<{ text: string | null; parseResult: AiParseResult | null }> {
   const { supabase, storageBucket, storagePath, tenantId } = params;
-  if (!AI_GATEWAY_URL) return null;
+  if (!AI_GATEWAY_URL) return { text: null, parseResult: null };
 
   const { data: signedUrlData, error: signedUrlError } = await supabase.storage
     .from(storageBucket)
     .createSignedUrl(storagePath, 60 * 10);
-  if (signedUrlError || !signedUrlData?.signedUrl) {
-    return null;
-  }
+  if (signedUrlError || !signedUrlData?.signedUrl) return { text: null, parseResult: null };
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), AI_PARSE_TIMEOUT_MS);
@@ -76,14 +80,57 @@ async function tryAiGatewayParseText(params: {
       }),
       signal: controller.signal,
     });
-    if (!response.ok) return null;
-    const parseResult = await response.json();
-    return buildKnowledgeTextFromAiParseResult(parseResult);
+    if (!response.ok) return { text: null, parseResult: null };
+    const parseResult = (await response.json()) as AiParseResult;
+    return { text: buildKnowledgeTextFromAiParseResult(parseResult), parseResult };
   } catch {
-    return null;
+    return { text: null, parseResult: null };
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+function deriveSourceModeFromTags(tags: string[]): 'VERBATIM' | 'HYBRID' | 'GENERATED' {
+  if (tags.includes('source_mode:VERBATIM')) return 'VERBATIM';
+  if (tags.includes('source_mode:HYBRID')) return 'HYBRID';
+  return 'GENERATED';
+}
+
+function buildVerbatimIndexRows(params: {
+  organisationId: string;
+  documentId: string;
+  frameworkId: string | null;
+  sourceMode: 'VERBATIM' | 'HYBRID' | 'GENERATED';
+  parseResult: AiParseResult | null;
+}): Array<Record<string, unknown>> {
+  const { organisationId, documentId, frameworkId, sourceMode, parseResult } = params;
+  if (!parseResult) return [];
+  const confidence = typeof parseResult.confidence_score === 'number' ? parseResult.confidence_score : null;
+  const mpsList = Array.isArray(parseResult.mini_performance_standards)
+    ? parseResult.mini_performance_standards
+    : [];
+  const rows: Array<Record<string, unknown>> = [];
+  for (const mps of mpsList) {
+    const domainName = sanitizeForPostgresText(String(mps.domain_name ?? '')).trim();
+    const mpsCode = sanitizeForPostgresText(String(mps.number ?? '')).trim();
+    const mpsTitle = sanitizeForPostgresText(String(mps.name ?? '')).trim();
+    const intent = sanitizeForPostgresText(String(mps.intent_statement ?? '')).trim();
+    if (!domainName || !mpsCode || !mpsTitle || !intent) continue;
+    rows.push({
+      organisation_id: organisationId,
+      document_id: documentId,
+      framework_id: frameworkId,
+      source_mode: sourceMode,
+      domain_name: domainName,
+      mps_code: mpsCode,
+      mps_title: mpsTitle,
+      intent_verbatim: intent,
+      source_anchor: null,
+      confidence,
+      extracted_at: new Date().toISOString(),
+    });
+  }
+  return rows;
 }
 
 Deno.serve(async (req: Request) => {
@@ -224,7 +271,7 @@ Deno.serve(async (req: Request) => {
       },
     );
 
-    const aiParsedText = await tryAiGatewayParseText({
+    const aiParse = await tryAiGatewayParseText({
       supabase,
       storageBucket,
       storagePath,
@@ -236,7 +283,7 @@ Deno.serve(async (req: Request) => {
       fileBlob,
       fallbackText: fallbackContentFromMetadata(body),
       kucClassification: kucResult.kuc_classification,
-      aiParsedText,
+      aiParsedText: aiParse.text,
     });
 
     const fileHash = await sha256Hex(`${fileName}:${storageBucket}:${storagePath}:${fileSize}`);
@@ -267,8 +314,29 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    const frameworkIdTag = tags.find((tag) => tag.startsWith('framework_id:')) ?? null;
+    const frameworkId = frameworkIdTag ? frameworkIdTag.replace('framework_id:', '').trim() : null;
+    const sourceMode = deriveSourceModeFromTags(tags);
+    const verbatimRows = buildVerbatimIndexRows({
+      organisationId: claims.orgId,
+      documentId,
+      frameworkId,
+      sourceMode,
+      parseResult: aiParse.parseResult,
+    });
+    await supabase.from('mmm_org_source_verbatim_index').delete().eq('document_id', documentId);
+    if (verbatimRows.length > 0) {
+      const { error: indexError } = await supabase
+        .from('mmm_org_source_verbatim_index')
+        .upsert(verbatimRows, { onConflict: 'document_id,domain_name,mps_code' });
+      if (indexError) {
+        throw new Error(indexError.message || 'Unable to persist verbatim source index rows.');
+      }
+    }
+
+    const isOrgVerbatim = tags.includes('organisation_context') && sourceMode === 'VERBATIM';
     const updatePayload: Record<string, unknown> = {
-      processing_status: 'completed',
+      processing_status: isOrgVerbatim && verbatimRows.length === 0 ? 'failed' : 'completed',
       processing_error: null,
       chunk_count: chunkPayloads.length,
       content_hash: fileHash,
@@ -281,6 +349,9 @@ Deno.serve(async (req: Request) => {
 
     if (!kucResult.success && !kucResult.fallback) {
       updatePayload.processing_error = sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`);
+    }
+    if (isOrgVerbatim && verbatimRows.length === 0) {
+      updatePayload.processing_error = 'VERBATIM source parse failed: no extractable MPS intent statements found.';
     }
 
     await supabase

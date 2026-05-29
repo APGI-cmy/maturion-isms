@@ -1281,3 +1281,15 @@ This tracker now serves as the active failure and traceability register for MMM 
    - QA-to-Red Trace:
      - `T-MMM-S6-ORGSRC-301` large PDF ingest must produce source-faithful extract path before fallback.
      - `T-MMM-S6-ORGSRC-302` verbatim regenerate blocked unless parsed-source quality is present.
+
+14. **Verbatim-source redesign wave (strict index-first contract)**
+   - Failure Class: contract ambiguity between "processed chunk exists" and "verbatim intent is extractable".
+   - Symptom: document status appeared `completed` while regenerate-intent still failed verbatim extraction.
+   - Corrective Action:
+     - Added canonical table `mmm_org_source_verbatim_index` for organisation source extraction outputs.
+     - Upload/Reprocess now executes AI parse stage and writes per-MPS verbatim intents into index rows.
+     - Verbatim organisation source now hard-fails (`processing_status=failed`) if no extractable MPS intents are produced.
+     - Runtime intent generation now resolves verbatim intent from `mmm_org_source_verbatim_index` first.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-ORGSRC-303` organisation source must not be marked completed for VERBATIM if index rows=0.
+     - `T-MMM-S6-ORGSRC-304` intent regenerate reads canonical verbatim index before generic paths.

@@ -39,6 +39,7 @@ type OrganisationSourceDoc = {
   file_name: string | null;
   processing_status: string | null;
   chunk_count: number | null;
+  processing_error: string | null;
   tags: string[] | null;
   created_at: string;
 };
@@ -95,7 +96,7 @@ export default function OrganisationContextPage() {
       if (!org?.id) return [];
       const { data, error } = await supabase
         .from('mmm_subject_knowledge_documents')
-        .select('id,title,file_name,processing_status,chunk_count,tags,created_at')
+        .select('id,title,file_name,processing_status,chunk_count,processing_error,tags,created_at')
         .eq('organisation_id', org.id)
         .eq('scope_type', 'organisation_context')
         .is('archived_at', null)
@@ -457,6 +458,11 @@ export default function OrganisationContextPage() {
                     <div>
                       status: {doc.processing_status ?? 'pending'} | chunks: {doc.chunk_count ?? 0}
                     </div>
+                    {doc.processing_error ? (
+                      <div role="alert" style={{ color: '#b91c1c' }}>
+                        parse note: {doc.processing_error}
+                      </div>
+                    ) : null}
                     <div style={{ marginTop: 6, display: 'flex', gap: 8 }}>
                       <button
                         type="button"

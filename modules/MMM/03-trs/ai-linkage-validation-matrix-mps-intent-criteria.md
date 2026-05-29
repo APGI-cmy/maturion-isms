@@ -41,3 +41,12 @@ Validate runtime linkage from MMM domain workflow surfaces to Maturion AI paths 
   - `pnpm supabase:mmm:set-secrets -- -ProjectRef ujucvyyspfxlxlfdamda -LegacySupabaseUrl "<url>" -LegacySupabaseServiceRoleKey "<key>"`
 - Validate matrix:
   - `pnpm supabase:mmm:validate-ai-linkage -- -SupabaseUrl "https://ujucvyyspfxlxlfdamda.supabase.co" -AnonKey "<anon>"`
+
+## Verbatim Source Canonical Contract (Wave 2026-05-29)
+
+- `VERBATIM` mode resolves intent from `mmm_org_source_verbatim_index` first.
+- Organisation source documents tagged `source_mode:VERBATIM` are considered parse-ready only when:
+  - `processing_status = completed`
+  - at least one indexed `intent_verbatim` row exists for the document.
+- If index rows are zero, processing status must be `failed` and include actionable parse diagnostics.
+- Regenerate-intent must not silently downgrade to generic wording in VERBATIM mode.
