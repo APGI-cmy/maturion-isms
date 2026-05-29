@@ -153,6 +153,24 @@ export function IntentCreator({
         },
       }));
     } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'AI generation failed.';
+      const isSourceGate =
+        message.includes('Verbatim mode requires') ||
+        message.includes('Hybrid mode requires') ||
+        message.includes('Verbatim intent source is missing');
+      if (isSourceGate) {
+        setMpsIntentStates((prev) => ({
+          ...prev,
+          [mps.id]: {
+            isGenerating: false,
+            generatedIntent: null,
+            editedIntent: '',
+            error: message,
+            fallbackNotice: null,
+          },
+        }));
+        return;
+      }
       const fallbackIntent =
         `Ensure ${mps.name} (${mps.code}) is clearly defined, implemented, and evidenced within the ${domainName} domain.`;
       setMpsIntentStates((prev) => ({
@@ -163,7 +181,7 @@ export function IntentCreator({
           editedIntent: fallbackIntent,
           error: null,
           fallbackNotice:
-            'AI service is temporarily unavailable. Fallback draft loaded — you can edit and submit.',
+            'AI service is temporarily unavailable. Loaded fallback intent draft. You can edit and submit.',
         },
       }));
     }
@@ -298,9 +316,9 @@ export function IntentCreator({
                       <div
                         role="status"
                         className="alert"
-                        data-testid={`intent-generation-fallback-${mps.id}`}
+                        data-testid={`intent-generation-error-${mps.id}`}
                       >
-                        {state.fallbackNotice}
+                        <span data-testid={`intent-generation-fallback-${mps.id}`}>{state.fallbackNotice}</span>
                       </div>
                     ) : null}
 

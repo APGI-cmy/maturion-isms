@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { supabase, getEdgeInvokeHeaders } from '../lib/supabase';
-import { defaultModeSourceContext, resolveModeSourceContext } from '../lib/modeSourceContext';
+import {
+  defaultModeSourceContext,
+  evaluateModeSourceAvailability,
+  resolveModeSourceContext,
+} from '../lib/modeSourceContext';
 
 interface GenerateIntentInput {
   domainName: string;
@@ -32,11 +36,48 @@ export function useIntentGeneration() {
       const modeContext = frameworkId
         ? await resolveModeSourceContext(frameworkId)
         : defaultModeSourceContext(null);
+      const sourceAvailability = evaluateModeSourceAvailability(modeContext);
+      if (sourceAvailability.blockingError) {
+        throw new Error(sourceAvailability.blockingError);
+      }
+
+      if (frameworkId && modeContext.framework_source_type === 'VERBATIM') {
+        const { data: proposedDomains } = await supabase
+          .from('mmm_proposed_domains')
+          .select('id,name')
+          .eq('framework_id', frameworkId);
+        const domainLookup = domainName.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        const proposedDomain = (proposedDomains ?? []).find(
+          (row) => String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === domainLookup,
+        );
+        if (proposedDomain) {
+          const { data: proposedMps } = await supabase
+            .from('mmm_proposed_mps')
+            .select('name,code,intent_statement')
+            .eq('proposed_domain_id', proposedDomain.id);
+          const mpsNameLookup = mpsName.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          const linkedMps = (proposedMps ?? []).find(
+            (row) =>
+              String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === mpsNameLookup ||
+              row.code === mpsCode,
+          );
+          const verbatimIntent = linkedMps?.intent_statement?.trim();
+          if (verbatimIntent) {
+            return verbatimIntent;
+          }
+        }
+        throw new Error(
+          `Verbatim intent source is missing for ${mpsCode} in ${domainName}. Please confirm the source document is uploaded, processed, and mapped.`,
+        );
+      }
 
       const prompt =
         `Write a concise intent statement for Maturity Practice Statement "${mpsCode} — ${mpsName}" in the "${domainName}" domain.\n` +
         `Mode-source strategy: ${modeContext.mode_source_strategy}.\n` +
         `Use organisation context, selected Verbatim/Hybrid/New rules, and source documents before generic wording.\n` +
+        (sourceAvailability.warnings.length > 0
+          ? `Source availability warnings: ${sourceAvailability.warnings.join(' ')}\n`
+          : '') +
         `Available organisation/framework source documents: ${modeContext.mode_source_documents.map((doc) => `${doc.title} (${doc.file_name}, ${doc.processing_status}, chunks=${doc.chunk_count})`).join('; ') || 'none'}.\n` +
         `Perform external web research on the organisation website and peer organisations in the same industry as supporting context only; do not override tenant source documents.\n` +
         `${modeContext.source_rules.join('\n')}\n` +

@@ -1231,3 +1231,30 @@ This tracker now serves as the active failure and traceability register for MMM 
    - QA-to-Red Trace:
      - `T-MMM-S6-SEC-DOMAIN-OWNERSHIP` (cross-org domain submit rejected).
      - `T-MMM-S6-STATUS-APPROVED-L2` (L2-approved domain card renders completed state).
+
+11. **Criteria modal fallback + deferred-routing gap**
+   - Failure Class: workflow semantics + AI parse resilience.
+   - Symptom: criteria modal frequently displayed fallback warning; no modal-level submit; no explicit deferred handling when user-added criteria semantically fit another MPS/domain.
+   - Corrective Action:
+     - Added AI reply parser resilience for mixed text + JSON array payloads.
+     - Added modal-level `Accept / Submit` action for accepted criteria across MPS sections.
+     - Added `Add More Criteria` flow with deferred-target detection and explicit user warning when routed.
+     - Added criteria source tags (`ai_completion`, `uploaded_source`, `subject_knowledge`, `user_added`, `deferred_user`) in generated list.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-CRIT-201` parse resilience.
+     - `T-MMM-S6-CRIT-202` deferred routing persistence.
+     - `T-MMM-S6-CRIT-203` modal-level submit flow.
+     - `T-MMM-S6-CRIT-204` source-origin tag visibility.
+
+12. **Verbatim mode source-readiness + non-verbatim intent drift**
+   - Failure Class: source-governance + mode-contract breach.
+   - Symptom: intent/criteria regenerate could proceed with fallback/generic text when source document was missing or not processed; verbatim intent did not always mirror uploaded source semantics.
+   - Cause Class: mode-source availability was not enforced as a precondition; verbatim intent path still allowed generic AI route.
+   - Corrective Action:
+     - Added source-readiness evaluator to block `VERBATIM`/`HYBRID` generation when no processed source is available.
+     - Added explicit user-facing notifications for source unavailability.
+     - Enforced verbatim intent resolution from `mmm_proposed_mps.intent_statement` (domain/MPS match) before any AI path.
+     - Added explicit error when verbatim mapping is missing, instead of silent generic fallback.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-CRIT-205` verbatim source-readiness gate.
+     - `T-MMM-S6-CRIT-206` verbatim intent extraction gate.
