@@ -42,6 +42,11 @@ export function AIGeneratedCriteriaCards({
                 aria-label={`Select criterion ${criterion.code}`}
               />
               <strong> {criterion.code}</strong> — {criterion.statement}
+              {criterion.source_origin ? (
+                <span style={{ marginLeft: '0.5rem', fontSize: '0.85rem' }}>
+                  [{criterion.source_origin}]
+                </span>
+              ) : null}
             </label>
           </li>
         ))}

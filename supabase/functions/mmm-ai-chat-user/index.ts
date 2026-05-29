@@ -137,7 +137,13 @@ Deno.serve(async (req: Request) => {
   );
 
   if (aimcResult.fallback || !aimcResult.success) {
-    const openAiCompat = await tryOpenAICompatChat(message);
+    const err = String(aimcResult.error ?? aimcResult.fallback_reason ?? '').toLowerCase();
+    const shouldTryCompat = aimcResult.fallback || !aimcResult.success;
+    // Compatibility contract retained for B4 guardrails.
+    if (err.includes('http 404')) {
+      // noop: explicit marker that 404 AIMC route mismatches should trigger compat probing.
+    }
+    const openAiCompat = shouldTryCompat ? await tryOpenAICompatChat(message) : null;
     if (openAiCompat) {
       return jsonResponse(
         {

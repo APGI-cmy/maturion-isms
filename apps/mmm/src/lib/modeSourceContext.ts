@@ -27,6 +27,11 @@ export type ModeSourceContext = {
   tenant_isolation_required: true;
 };
 
+export type ModeSourceAvailability = {
+  blockingError: string | null;
+  warnings: string[];
+};
+
 type ProfileRow = { organisation_id: string | null };
 type OrganisationRow = { id: string; name: string; context: Record<string, unknown> | null };
 type FrameworkRow = { id: string; name: string | null; source_type: string | null };
@@ -175,4 +180,37 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
     source_rules: sourceRules(mode),
     tenant_isolation_required: true,
   };
+}
+
+export function evaluateModeSourceAvailability(context: ModeSourceContext): ModeSourceAvailability {
+  const docs = context.mode_source_documents;
+  const completedDocs = docs.filter(
+    (doc) => doc.processing_status.toLowerCase() === 'completed' && doc.chunk_count > 0,
+  );
+  const pendingDocs = docs.filter((doc) => doc.processing_status.toLowerCase() !== 'completed');
+
+  const warnings: string[] = [];
+  if (pendingDocs.length > 0) {
+    warnings.push(
+      `Some source documents are not ready yet: ${pendingDocs.map((doc) => `${doc.title} (${doc.processing_status})`).join('; ')}.`,
+    );
+  }
+
+  if (context.framework_source_type === 'VERBATIM' && completedDocs.length === 0) {
+    return {
+      blockingError:
+        'Verbatim mode requires at least one processed source document (completed with extracted chunks). Upload/reprocess the source and retry.',
+      warnings,
+    };
+  }
+
+  if (context.framework_source_type === 'HYBRID' && completedDocs.length === 0) {
+    return {
+      blockingError:
+        'Hybrid mode requires at least one processed source document for gap analysis. Upload/reprocess the source and retry.',
+      warnings,
+    };
+  }
+
+  return { blockingError: null, warnings };
 }

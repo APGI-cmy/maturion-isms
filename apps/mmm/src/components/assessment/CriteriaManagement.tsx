@@ -16,12 +16,18 @@ import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
 import { AIGeneratedCriteriaCards } from './AIGeneratedCriteriaCards';
 import { EnhancedCriteriaGenerator } from './EnhancedCriteriaGenerator';
 import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
-import { defaultModeSourceContext, resolveModeSourceContext } from '../../lib/modeSourceContext';
+import {
+  defaultModeSourceContext,
+  evaluateModeSourceAvailability,
+  resolveModeSourceContext,
+} from '../../lib/modeSourceContext';
 
 export interface GeneratedCriterionItem {
   code: string;
   statement: string;
-  source_origin?: 'uploaded_source' | 'ai_completion' | 'subject_knowledge';
+  source_origin?: 'uploaded_source' | 'ai_completion' | 'subject_knowledge' | 'user_added' | 'deferred_user';
+  deferred_target_mps_id?: string | null;
+  created_by_display?: string | null;
 }
 
 interface PerMpsCriteriaState {
@@ -30,6 +36,48 @@ interface PerMpsCriteriaState {
   acceptedCodes: Set<string>;
   refinePrompt: string;
   error: string | null;
+}
+
+function parseCriteriaArrayFromReply(reply: string): GeneratedCriterionItem[] {
+  try {
+    return JSON.parse(reply) as GeneratedCriterionItem[];
+  } catch {
+    const start = reply.indexOf('[');
+    const end = reply.lastIndexOf(']');
+    if (start >= 0 && end > start) {
+      const slice = reply.slice(start, end + 1);
+      return JSON.parse(slice) as GeneratedCriterionItem[];
+    }
+    throw new Error('Failed to parse AI response. Please try again.');
+  }
+}
+
+function tokenizeForMatch(value: string): Set<string> {
+  return new Set(
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]+/g, ' ')
+      .split(/\s+/)
+      .filter((token) => token.length > 2),
+  );
+}
+
+function resolveDeferredTargetMpsId(statement: string, mpsRows: DomainAuditMpsRow[]): string | null {
+  const statementTokens = tokenizeForMatch(statement);
+  let bestId: string | null = null;
+  let bestScore = 0;
+  for (const mps of mpsRows) {
+    const mpsTokens = tokenizeForMatch(`${mps.code} ${mps.name}`);
+    let score = 0;
+    mpsTokens.forEach((token) => {
+      if (statementTokens.has(token)) score += 1;
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      bestId = mps.id;
+    }
+  }
+  return bestScore > 0 ? bestId : null;
 }
 
 function buildFallbackCriteria(mpsCode: string, mpsName: string, domainName: string): GeneratedCriterionItem[] {
@@ -103,6 +151,7 @@ export function CriteriaManagement({
 }: CriteriaManagementProps) {
   const queryClient = useQueryClient();
   const [mpsCriteriaStates, setMpsCriteriaStates] = useState<Record<string, PerMpsCriteriaState>>({});
+  const [addCriteriaDrafts, setAddCriteriaDrafts] = useState<Record<string, string>>({});
 
   const resetAllStates = useCallback(() => {
     setMpsCriteriaStates({});
@@ -132,7 +181,7 @@ export function CriteriaManagement({
     }) => {
       const { error } = await supabase.from('mmm_criteria').insert(
         accepted.map((criterion, idx) => ({
-          mps_id: mpsId,
+          mps_id: criterion.deferred_target_mps_id ?? mpsId,
           name: criterion.statement,
           code: criterion.code,
           sort_order: idx,
@@ -181,6 +230,10 @@ export function CriteriaManagement({
       const modeContext = frameworkId
         ? await resolveModeSourceContext(frameworkId)
         : defaultModeSourceContext(null);
+      const sourceAvailability = evaluateModeSourceAvailability(modeContext);
+      if (sourceAvailability.blockingError) {
+        throw new Error(sourceAvailability.blockingError);
+      }
 
       if (frameworkId && modeContext.framework_source_type === 'VERBATIM') {
         const { data: proposedDomains } = await supabase
@@ -231,12 +284,18 @@ export function CriteriaManagement({
             }
           }
         }
+        throw new Error(
+          `Verbatim criteria source is missing for ${mps.code} in ${domainName}. Please confirm the source document is uploaded, processed, and mapped.`,
+        );
       }
 
       const prompt =
         `Generate 3-5 audit criteria for Maturity Practice Statement "${mps.code} — ${mps.name}"` +
         ` (intent: "${mps.intent_statement ?? 'not set'}") in the "${domainName}" domain.\n` +
         `Mode-source strategy: ${modeContext.mode_source_strategy}.\n` +
+        (sourceAvailability.warnings.length > 0
+          ? `Source availability warnings: ${sourceAvailability.warnings.join(' ')}\n`
+          : '') +
         `Available organisation/framework source documents: ${modeContext.mode_source_documents.map((doc) => `${doc.title} (${doc.file_name}, ${doc.processing_status}, chunks=${doc.chunk_count})`).join('; ') || 'none'}.\n` +
         `Perform external web research on the organisation profile and peer organisations in the same industry as supporting context only; never override tenant source documents.\n` +
         `${modeContext.source_rules.join('\n')}\n` +
@@ -261,12 +320,7 @@ export function CriteriaManagement({
         headers,
       });
       if (error) throw new Error((error as { message?: string }).message ?? 'AI generation failed');
-      let parsed: GeneratedCriterionItem[];
-      try {
-        parsed = JSON.parse((data as { reply: string }).reply) as GeneratedCriterionItem[];
-      } catch {
-        throw new Error('Failed to parse AI response. Please try again.');
-      }
+      const parsed = parseCriteriaArrayFromReply((data as { reply: string }).reply);
       const deduped = dedupeCriteria(parsed);
       setMpsCriteriaStates((prev) => ({
         ...prev,
@@ -278,7 +332,25 @@ export function CriteriaManagement({
           error: null,
         },
       }));
-    } catch {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'AI generation failed.';
+      const isSourceGate =
+        message.includes('Verbatim mode requires') ||
+        message.includes('Hybrid mode requires') ||
+        message.includes('Verbatim criteria source is missing');
+      if (isSourceGate) {
+        setMpsCriteriaStates((prev) => ({
+          ...prev,
+          [mps.id]: {
+            isGenerating: false,
+            generatedCriteria: [],
+            acceptedCodes: new Set(),
+            refinePrompt,
+            error: message,
+          },
+        }));
+        return;
+      }
       const fallback = buildFallbackCriteria(mps.code, mps.name, domainName);
       setMpsCriteriaStates((prev) => ({
         ...prev,
@@ -343,6 +415,53 @@ export function CriteriaManagement({
     const accepted = state.generatedCriteria.filter((c) => state.acceptedCodes.has(c.code));
     if (accepted.length === 0) return;
     saveMutation.mutate({ mpsId: mps.id, accepted });
+  };
+
+  const handleSaveAllAccepted = () => {
+    mpsRows.forEach((mps) => {
+      const state = mpsCriteriaStates[mps.id];
+      if (!state) return;
+      const accepted = state.generatedCriteria.filter((c) => state.acceptedCodes.has(c.code));
+      if (accepted.length === 0) return;
+      saveMutation.mutate({ mpsId: mps.id, accepted });
+    });
+    resetAllStates();
+    onClose();
+  };
+
+  const handleAddCriteria = (mps: DomainAuditMpsRow) => {
+    const raw = addCriteriaDrafts[mps.id] ?? '';
+    const statement = raw.trim();
+    if (!statement) return;
+    const targetMpsId = resolveDeferredTargetMpsId(statement, mpsRows);
+    const isDeferred = Boolean(targetMpsId && targetMpsId !== mps.id);
+    const state = mpsCriteriaStates[mps.id] ?? {
+      isGenerating: false,
+      generatedCriteria: [],
+      acceptedCodes: new Set<string>(),
+      refinePrompt: '',
+      error: null,
+    };
+    const nextIndex = state.generatedCriteria.length + 1;
+    const code = `${mps.code}-C${String(nextIndex).padStart(3, '0')}`;
+    const added: GeneratedCriterionItem = {
+      code,
+      statement,
+      source_origin: isDeferred ? 'deferred_user' : 'user_added',
+      deferred_target_mps_id: isDeferred ? targetMpsId : null,
+      created_by_display: 'current_user',
+    };
+    const nextGenerated = dedupeCriteria([...state.generatedCriteria, added]);
+    setMpsCriteriaStates((prev) => ({
+      ...prev,
+      [mps.id]: {
+        ...state,
+        generatedCriteria: nextGenerated,
+        acceptedCodes: new Set([...Array.from(state.acceptedCodes), code]),
+        error: isDeferred ? 'Deferred routing detected: this criterion will be inserted under the better-fit MPS on submit.' : null,
+      },
+    }));
+    setAddCriteriaDrafts((prev) => ({ ...prev, [mps.id]: '' }));
   };
 
   if (!open) return null;
@@ -448,6 +567,27 @@ export function CriteriaManagement({
                            onRefinePromptChange={(value) => handleRefinePromptChange(mps.id, value)}
                            onGenerate={() => handleGenerate(mps)}
                          />
+                         <div className="enhanced-criteria-generator" style={{ marginTop: '0.75rem' }}>
+                           <label htmlFor={`criteria-add-${mps.id}`}>Add more criteria</label>
+                           <textarea
+                             id={`criteria-add-${mps.id}`}
+                             rows={3}
+                             placeholder="Add a criterion (Verb + Noun + Context)."
+                             value={addCriteriaDrafts[mps.id] ?? ''}
+                             onChange={(event) => {
+                               setAddCriteriaDrafts((prev) => ({ ...prev, [mps.id]: event.target.value }));
+                             }}
+                             data-testid={`criteria-add-input-${mps.id}`}
+                           />
+                           <button
+                             type="button"
+                             className="btn btn-outline"
+                             onClick={() => handleAddCriteria(mps)}
+                             data-testid={`criteria-add-btn-${mps.id}`}
+                           >
+                             Add More Criteria
+                           </button>
+                         </div>
                        </div>
                      )}
                   </section>
@@ -457,6 +597,14 @@ export function CriteriaManagement({
           )}
         </div>
         <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSaveAllAccepted}
+            disabled={!Object.values(mpsCriteriaStates).some((state) => state.acceptedCodes.size > 0) || saveMutation.isPending}
+          >
+            Accept / Submit
+          </button>
           <button type="button" className="btn btn-outline" onClick={() => { resetAllStates(); onClose(); }}>
             Cancel
           </button>
