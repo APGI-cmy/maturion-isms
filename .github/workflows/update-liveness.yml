@@ -14,19 +14,7 @@ name: Update Liveness Status
 # for repository write operations in accordance with repo token governance.
 
 on:
-  # ── Automatic: after successful MAT frontend deployment ──────────────────
-  workflow_run:
-    workflows:
-      - "Deploy MAT Frontend to Vercel"
-      - "Deploy MAT Edge Functions"
-      - "Deploy MAT AI Gateway"
-      # ── Add new deploy workflows here as components emerge ────────────────
-      # - "Deploy MAT AI Chat"         # mat-ai-chat (add when workflow exists)
-      # - "Deploy Scoring Service"     # scoring-service (add when workflow exists)
-    types: [completed]
-    branches: [main]
-
-  # ── Manual: Foreman / IAA / CS2 incident update ──────────────────────────
+  # ── Manual only: Foreman / IAA / CS2 incident update ─────────────────────
   workflow_dispatch:
     inputs:
       component:
@@ -69,10 +57,7 @@ jobs:
     name: Update last-known-good.md
     runs-on: ubuntu-latest
     # For workflow_run: only proceed when the triggering workflow succeeded
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success')
+    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout repository
