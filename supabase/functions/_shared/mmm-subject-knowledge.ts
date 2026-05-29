@@ -106,9 +106,13 @@ export function extractBestEffortText(params: {
   fileBlob: Blob;
   fallbackText: string;
   kucClassification?: unknown;
+  aiParsedText?: string | null;
 }): Promise<string> {
-  const { mimeType, fileBlob, fallbackText, kucClassification } = params;
+  const { mimeType, fileBlob, fallbackText, kucClassification, aiParsedText } = params;
   return (async () => {
+    const aiText = sanitizeForPostgresText(aiParsedText ?? '').trim();
+    if (aiText.length > 0) return aiText;
+
     if (isTextLikeMimeType(mimeType)) {
       const rawText = sanitizeForPostgresText(await fileBlob.text()).trim();
       if (rawText.length > 0) return rawText;
@@ -121,6 +125,52 @@ export function extractBestEffortText(params: {
 
     return sanitizeForPostgresText(fallbackText).trim();
   })();
+}
+
+export function buildKnowledgeTextFromAiParseResult(parseResult: unknown): string {
+  const root = toObject(parseResult);
+  if (!root) return '';
+
+  const parts: string[] = [];
+  const domains = Array.isArray(root.domains) ? root.domains : [];
+  for (const domain of domains) {
+    const d = toObject(domain);
+    if (!d) continue;
+    const name = sanitizeForPostgresText(String(d.name ?? '')).trim();
+    if (name) parts.push(`Domain: ${name}`);
+  }
+
+  const mps = Array.isArray(root.mini_performance_standards) ? root.mini_performance_standards : [];
+  for (const item of mps) {
+    const row = toObject(item);
+    if (!row) continue;
+    const number = sanitizeForPostgresText(String(row.number ?? '')).trim();
+    const name = sanitizeForPostgresText(String(row.name ?? '')).trim();
+    const intent = sanitizeForPostgresText(String(row.intent_statement ?? '')).trim();
+    const guidance = sanitizeForPostgresText(String(row.guidance ?? '')).trim();
+    if (number || name) parts.push(`MPS ${number}${name ? ` - ${name}` : ''}`.trim());
+    if (intent) parts.push(`Intent: ${intent}`);
+    if (guidance) parts.push(`Guidance: ${guidance}`);
+  }
+
+  const criteria = Array.isArray(root.criteria) ? root.criteria : [];
+  for (const item of criteria) {
+    const row = toObject(item);
+    if (!row) continue;
+    const number = sanitizeForPostgresText(String(row.number ?? '')).trim();
+    const mpsNumber = sanitizeForPostgresText(String(row.mps_number ?? '')).trim();
+    const title = sanitizeForPostgresText(String(row.title ?? '')).trim();
+    const description = sanitizeForPostgresText(String(row.description ?? '')).trim();
+    const intent = sanitizeForPostgresText(String(row.intent_statement ?? '')).trim();
+    const guidance = sanitizeForPostgresText(String(row.guidance ?? '')).trim();
+    if (number || title) parts.push(`Criteria ${number}${title ? ` - ${title}` : ''}`.trim());
+    if (mpsNumber) parts.push(`Criteria MPS: ${mpsNumber}`);
+    if (description) parts.push(`Description: ${description}`);
+    if (intent) parts.push(`Intent: ${intent}`);
+    if (guidance) parts.push(`Guidance: ${guidance}`);
+  }
+
+  return sanitizeForPostgresText(parts.join('\n\n')).trim();
 }
 
 export function chunkText(content: string, chunkSize = 2000, chunkOverlap = 200): string[] {

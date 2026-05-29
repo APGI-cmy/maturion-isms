@@ -9,6 +9,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
 import { uploadToKuc } from '../_shared/mmm-kuc-client.ts';
 import {
+  buildKnowledgeTextFromAiParseResult,
   buildChunkPayloads,
   extractBestEffortText,
   normalizeSubjectDocumentRole,
@@ -19,10 +20,51 @@ import {
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const AI_GATEWAY_URL = (Deno.env.get('AI_GATEWAY_URL') ?? '').replace(/\/+$/, '');
+const AI_PARSE_TIMEOUT_MS = 120_000;
 
 type ReprocessBody = {
   document_id?: string;
 };
+
+async function tryAiGatewayParseText(params: {
+  supabase: ReturnType<typeof createClient>;
+  storageBucket: string;
+  storagePath: string;
+  tenantId: string;
+}): Promise<string | null> {
+  const { supabase, storageBucket, storagePath, tenantId } = params;
+  if (!AI_GATEWAY_URL) return null;
+
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+    .from(storageBucket)
+    .createSignedUrl(storagePath, 60 * 10);
+  if (signedUrlError || !signedUrlData?.signedUrl) {
+    return null;
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_PARSE_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${AI_GATEWAY_URL}/api/v1/parse`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        document_url: signedUrlData.signedUrl,
+        tenant_id: tenantId,
+        file_path: storagePath,
+      }),
+      signal: controller.signal,
+    });
+    if (!response.ok) return null;
+    const parseResult = await response.json();
+    return buildKnowledgeTextFromAiParseResult(parseResult);
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -117,6 +159,13 @@ Deno.serve(async (req: Request) => {
       },
     );
 
+    const aiParsedText = await tryAiGatewayParseText({
+      supabase,
+      storageBucket: doc.storage_bucket,
+      storagePath: doc.storage_path,
+      tenantId: claims.orgId,
+    });
+
     const extractedText = await extractBestEffortText({
       mimeType: doc.mime_type,
       fileBlob,
@@ -126,6 +175,7 @@ Deno.serve(async (req: Request) => {
         doc.upload_notes ? `Uploader notes: ${doc.upload_notes}` : '',
       ].filter(Boolean).join('\n'),
       kucClassification: kucResult.kuc_classification,
+      aiParsedText,
     });
 
     const chunkPayloads = await buildChunkPayloads({
