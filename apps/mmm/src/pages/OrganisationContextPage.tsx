@@ -201,8 +201,33 @@ export default function OrganisationContextPage() {
       });
       if (insertError) throw new Error(insertError.message);
 
+      // Auto-reprocess immediately so organisation source documents become chunked/AI-consumable
+      // without requiring the user to switch to DMC first.
+      const { data: insertedDoc, error: insertedLookupError } = await supabase
+        .from('mmm_subject_knowledge_documents')
+        .select('id')
+        .eq('organisation_id', org.id)
+        .eq('storage_bucket', 'mmm-subject-knowledge')
+        .eq('storage_path', storagePath)
+        .maybeSingle();
+      if (insertedLookupError || !insertedDoc?.id) {
+        throw new Error(insertedLookupError?.message || 'Source document saved but could not resolve document id for processing.');
+      }
+
+      const headers = await getEdgeInvokeHeaders();
+      const { error: reprocessError } = await supabase.functions.invoke(
+        'mmm-subject-knowledge-reprocess',
+        {
+          headers,
+          body: { document_id: insertedDoc.id },
+        },
+      );
+      if (reprocessError) {
+        throw new Error(reprocessError.message || 'Source document uploaded but automatic processing failed.');
+      }
+
       setSourceFile(null);
-      setMessage('Organisation source document uploaded. Maturion will use it according to the selected mode.');
+      setMessage('Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.');
       qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Organisation source upload failed.');
