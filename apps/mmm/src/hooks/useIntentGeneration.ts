@@ -19,10 +19,11 @@ function normalizeLookup(value: string): string {
 
 function pickVerbatimIntentFromKnowledge(params: {
   content: string;
+  mpsCode: string;
   mpsName: string;
   domainName: string;
 }): string | null {
-  const { content, mpsName, domainName } = params;
+  const { content, mpsCode, mpsName, domainName } = params;
   const text = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   const lines = text
     .split('\n')
@@ -31,6 +32,29 @@ function pickVerbatimIntentFromKnowledge(params: {
 
   const mpsTokens = normalizeLookup(mpsName).split(' ').filter((token) => token.length >= 4);
   const domainTokens = normalizeLookup(domainName).split(' ').filter((token) => token.length >= 4);
+  const mpsCodeLookup = normalizeLookup(mpsCode);
+
+  // Prefer explicit "MPS ... / Intent: ..." pairings when present.
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    const lowered = line.toLowerCase();
+    const isMpsHeading = /^mps[\s:-]/i.test(line) || lowered.includes('mps');
+    if (!isMpsHeading) continue;
+
+    const lineNorm = normalizeLookup(line);
+    const lineMatchesCode = mpsCodeLookup.length > 0 && lineNorm.includes(mpsCodeLookup);
+    const lineMatchesName = mpsTokens.some((token) => lowered.includes(token));
+    if (!lineMatchesCode && !lineMatchesName) continue;
+
+    for (let j = i + 1; j < Math.min(lines.length, i + 8); j += 1) {
+      const next = lines[j];
+      if (/^intent\s*:/i.test(next)) {
+        const extracted = next.replace(/^intent\s*:\s*/i, '').trim();
+        if (extracted.length >= 24) return extracted;
+      }
+      if (/^mps[\s:-]/i.test(next) || /^criteria[\s:-]/i.test(next)) break;
+    }
+  }
 
   const candidates: string[] = [];
   for (const line of lines) {
@@ -112,15 +136,13 @@ export function useIntentGeneration() {
             .join('\n');
           const extractedIntent = pickVerbatimIntentFromKnowledge({
             content: joinedContent,
+            mpsCode,
             mpsName,
             domainName,
           });
           if (extractedIntent) {
             return extractedIntent;
           }
-          throw new Error(
-            `Verbatim mode is active, but no source-faithful intent text could be extracted for ${mpsCode}. Reprocess the organisation source document and verify parsed chunk quality before regenerating.`,
-          );
         }
 
         const { data: proposedDomains } = await supabase
@@ -146,6 +168,11 @@ export function useIntentGeneration() {
           if (verbatimIntent) {
             return verbatimIntent;
           }
+        }
+        if (hasProcessedVerbatimDocs) {
+          throw new Error(
+            `Verbatim mode is active, but no source-faithful intent text could be extracted for ${mpsCode}. Reprocess the organisation source document and verify parsed chunk quality before regenerating.`,
+          );
         }
         throw new Error(
           `Verbatim intent source is missing for ${mpsCode} in ${domainName}. Please confirm the source document is uploaded, processed, and mapped.`,
