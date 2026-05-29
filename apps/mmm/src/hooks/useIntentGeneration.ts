@@ -17,6 +17,13 @@ function normalizeLookup(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
+function isVerbatimMatch(sourceText: string, candidate: string): boolean {
+  const source = normalizeLookup(sourceText);
+  const probe = normalizeLookup(candidate);
+  if (probe.length < 24) return false;
+  return source.includes(probe);
+}
+
 function pickVerbatimIntentFromKnowledge(params: {
   content: string;
   mpsCode: string;
@@ -123,6 +130,7 @@ export function useIntentGeneration() {
           )
           .map((doc) => doc.id);
         const hasProcessedVerbatimDocs = verbatimSourceDocIds.length > 0;
+        let processedVerbatimText = '';
 
         if (hasProcessedVerbatimDocs) {
           const { data: knowledgeRows } = await supabase
@@ -134,6 +142,7 @@ export function useIntentGeneration() {
           const joinedContent = (knowledgeRows ?? [])
             .map((row) => String((row as { content?: unknown }).content ?? ''))
             .join('\n');
+          processedVerbatimText = joinedContent;
           const extractedIntent = pickVerbatimIntentFromKnowledge({
             content: joinedContent,
             mpsCode,
@@ -142,6 +151,33 @@ export function useIntentGeneration() {
           });
           if (extractedIntent) {
             return extractedIntent;
+          }
+
+          const strictPrompt =
+            `Extract the exact VERBATIM intent sentence for MPS "${mpsCode} — ${mpsName}" in domain "${domainName}".\n` +
+            `Return one sentence copied exactly from source text, no paraphrase, no extra text.\n\n` +
+            `SOURCE TEXT:\n${joinedContent}`;
+          const { data: strictData, error: strictInvokeError } = await supabase.functions.invoke('mmm-ai-chat-user', {
+            body: {
+              message: strictPrompt,
+              context: {
+                workflow_stage: 'intent_generation_verbatim_strict',
+                domain_name: domainName,
+                mps_code: mpsCode,
+                framework_id: frameworkId ?? null,
+                mode_source_strategy: modeContext.mode_source_strategy,
+                mode_source_context: modeContext,
+                external_research_required: false,
+                tenant_isolation_required: true,
+              },
+            },
+            headers,
+          });
+          if (!strictInvokeError) {
+            const strictReply = (strictData as { reply?: string })?.reply?.trim() ?? '';
+            if (strictReply && isVerbatimMatch(joinedContent, strictReply)) {
+              return strictReply;
+            }
           }
         }
 
@@ -165,7 +201,10 @@ export function useIntentGeneration() {
               row.code === mpsCode,
           );
           const verbatimIntent = linkedMps?.intent_statement?.trim();
-          if (verbatimIntent) {
+          if (
+            verbatimIntent &&
+            (!hasProcessedVerbatimDocs || isVerbatimMatch(processedVerbatimText, verbatimIntent))
+          ) {
             return verbatimIntent;
           }
         }
