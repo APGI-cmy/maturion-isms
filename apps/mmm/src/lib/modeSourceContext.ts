@@ -73,6 +73,22 @@ function deriveModeFromDocuments(documents: ModeSourceDocument[]): CriteriaMode 
   return null;
 }
 
+function deriveModeFromOrganisationContext(context: Record<string, unknown>): CriteriaMode | null {
+  const candidates = [
+    context.frameworkCreationMode,
+    context.sourceMode,
+    context.framework_mode,
+  ];
+  for (const value of candidates) {
+    if (typeof value !== 'string') continue;
+    const normalized = value.trim().toUpperCase();
+    if (normalized === 'VERBATIM' || normalized === 'HYBRID' || normalized === 'GENERATED') {
+      return normalized as CriteriaMode;
+    }
+  }
+  return null;
+}
+
 function sourceRules(mode: CriteriaMode | null): string[] {
   if (mode === 'VERBATIM') {
     return [
@@ -178,8 +194,9 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
       });
   }
 
+  const orgContextModeOverride = deriveModeFromOrganisationContext(organisation?.context ?? {});
   const documentModeOverride = deriveModeFromDocuments(documents);
-  const mode = documentModeOverride ?? frameworkMode;
+  const mode = orgContextModeOverride ?? documentModeOverride ?? frameworkMode;
 
   return {
     organisation_id: organisationId,

@@ -286,8 +286,27 @@ export default function OrganisationContextPage() {
         throw new Error(reprocessError.message || 'Source document uploaded but automatic processing failed.');
       }
 
+      // Persist the selected mode in organisation context so runtime mode resolution
+      // remains stable across framework pages and sessions.
+      const nextContext = {
+        ...(org.context ?? {}),
+        frameworkCreationMode: sourceMode,
+        sourceMode,
+      };
+      const { error: contextPersistError } = await supabase
+        .from('mmm_organisations')
+        .update({
+          context: nextContext,
+          context_updated_at: new Date().toISOString(),
+        })
+        .eq('id', org.id);
+      if (contextPersistError) {
+        throw new Error(contextPersistError.message || 'Source processed, but mode context save failed.');
+      }
+
       setSourceFile(null);
       setMessage('Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.');
+      qc.invalidateQueries({ queryKey: ['organisation-context'] });
       qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Organisation source upload failed.');
