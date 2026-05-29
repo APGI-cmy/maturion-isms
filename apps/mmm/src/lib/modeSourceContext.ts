@@ -196,7 +196,9 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
 
   const orgContextModeOverride = deriveModeFromOrganisationContext(organisation?.context ?? {});
   const documentModeOverride = deriveModeFromDocuments(documents);
-  const mode = orgContextModeOverride ?? documentModeOverride ?? frameworkMode;
+  // Runtime source docs are the strongest signal because users can change mode
+  // per upload flow; older context/source_type values may lag behind.
+  const mode = documentModeOverride ?? orgContextModeOverride ?? frameworkMode;
 
   return {
     organisation_id: organisationId,
@@ -214,6 +216,8 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
 
 export function evaluateModeSourceAvailability(context: ModeSourceContext): ModeSourceAvailability {
   const docs = context.mode_source_documents;
+  const documentModeOverride = deriveModeFromDocuments(docs);
+  const effectiveMode = documentModeOverride ?? context.framework_source_type;
   const completedDocs = docs.filter(
     (doc) => doc.processing_status.toLowerCase() === 'completed' && doc.chunk_count > 0,
   );
@@ -226,7 +230,7 @@ export function evaluateModeSourceAvailability(context: ModeSourceContext): Mode
     );
   }
 
-  if (context.framework_source_type === 'VERBATIM' && completedDocs.length === 0) {
+  if (effectiveMode === 'VERBATIM' && completedDocs.length === 0) {
     return {
       blockingError:
         'Verbatim mode requires at least one processed source document (completed with extracted chunks). Upload/reprocess the source and retry.',
@@ -234,7 +238,7 @@ export function evaluateModeSourceAvailability(context: ModeSourceContext): Mode
     };
   }
 
-  if (context.framework_source_type === 'HYBRID' && completedDocs.length === 0) {
+  if (effectiveMode === 'HYBRID' && completedDocs.length === 0) {
     return {
       blockingError:
         'Hybrid mode requires at least one processed source document for gap analysis. Upload/reprocess the source and retry.',
