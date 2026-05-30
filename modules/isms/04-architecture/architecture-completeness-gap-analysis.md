@@ -95,6 +95,10 @@ Stage 6 QA-to-Red can begin as a gap-exposing artifact, but the architecture doe
 
 Build/lint/test commands are listed, but CI workflow expectations, deployment platform, preview behavior, env validation, health checks, and rollback are not specified.
 
+### FFD-GAP-008 — Free assessment result flow is incomplete
+
+The public free assessment branch is identified as a required pre-subscription practical exercise, but the architecture does not yet define the exact result route, result-state persistence, subscribe/auth/onboarding handoff, or the rule preventing a public result from dead-ending into private `/assessment`.
+
 ---
 
 ## 5. Required Architecture Remediation Before Implementation Handover
