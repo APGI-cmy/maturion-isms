@@ -43,8 +43,10 @@ describe('T-MMM-S6-220: Verbatim intent generation quality gate', () => {
     const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
     expect(upload).toContain('mmm_org_source_verbatim_index');
     expect(upload).toContain("VERBATIM source parse failed: no extractable MPS intent statements found.");
+    expect(upload).toContain('mps_headings=');
     expect(reprocess).toContain('mmm_org_source_verbatim_index');
     expect(reprocess).toContain("VERBATIM source parse failed: no extractable MPS intent statements found.");
+    expect(reprocess).toContain('mps_headings=');
   });
 
   it('includes deterministic MPS/Intent fallback extraction for LDCS-style source text blocks', () => {

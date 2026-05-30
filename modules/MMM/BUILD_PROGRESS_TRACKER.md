@@ -20,6 +20,13 @@
   - **QA-to-Red Gate**: Extended `T-MMM-S6-220` to assert gateway parse schema includes MPS `intent_statement` + `guidance` fields.
   - **Build-to-Green Fix**: Updated `apps/mat-ai-gateway/services/parsing.py` schema + prompt to require MPS-level verbatim `intent_statement` and `guidance`.
 
+- **2026-05-30 — VERBATIM Source Ingestion Precedence + Diagnostics Hardening**
+  - **Observed Failure**: Organisation source remained `failed | chunks: 1` even after redeploy/reprocess.
+  - **Root Cause**: Reprocess/upload path prioritized short AI summary text over full extracted corpus for organisation VERBATIM sources.
+  - **Build-to-Green Fix**:
+    - Organisation VERBATIM ingestion now bypasses AI summary text and indexes from full extracted text first.
+    - Failure parse note now includes diagnostics: `chars`, `mps_headings`, `ai_summary_chars` for deterministic debugging.
+
 - **2026-05-29 — Verbatim Intent Drift After Organisation Source Upload**
   - **Observed Failure**: Organisation source upload showed `completed | chunks: 1`, but regenerated intent remained non-verbatim and drifted to generic wording.
   - **Impact**: Verbatim mode guarantee broken at intent stage; user could not rely on exact source-language carry-through.
