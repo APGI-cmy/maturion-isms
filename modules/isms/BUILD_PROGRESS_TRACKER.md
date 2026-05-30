@@ -3,32 +3,11 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-05-29  
-**Updated By**: foreman-agent (wave: `isms-stage-alignment-20260529`)
+**Updated By**: foreman-agent (wave: `isms-stage4-trs-20260529`)
 
-> **Classification**: ACTIVE — PRE-BUILD RECONCILED THROUGH STAGE 3  
+> **Classification**: ACTIVE — PRE-BUILD RECONCILED THROUGH STAGE 4  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
-
----
-
-## Reconciliation Note
-
-The previous tracker state was stale. It stated that Stage 1 had not started because no `app-description.md` file existed. The current ISMS authority artifact is:
-
-```text
-modules/isms/00-app-description/ISMS_app_description.md
-```
-
-The tracker is now reconciled to the repo canonical stage model:
-
-```text
-Stage 1 = App Description
-Stage 2 = UX Workflow & Wiring Spec
-Stage 3 = Functional Requirements Specification
-Stage 4 = Technical Requirements Specification
-```
-
-The earlier user reference to “Stage 2 / FRS” is treated as an instruction to proceed with requirements work, not as a change to the canonical stage model.
 
 ---
 
@@ -39,13 +18,13 @@ The earlier user reference to “Stage 2 / FRS” is treated as an instruction t
 | Stage 1 | App Description | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-app-description-v1.2.0-ai-cs2-proxy-signoff-20260529.md` |
 | Stage 2 | UX Workflow & Wiring Spec | COMPLETE — Approved with conditions | `modules/isms/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
 | Stage 3 | FRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-frs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
-| Stage 4 | TRS | NOT_STARTED — NEXT | `modules/isms/03-trs/` |
-| Stage 5 | Architecture | IN_PROGRESS — requires TRS reconciliation | `modules/isms/04-architecture/` |
+| Stage 4 | TRS | COMPLETE — Approved with conditions | `modules/isms/03-trs/technical-requirements-specification.md` |
+| Stage 5 | Architecture | IN_PROGRESS — NEXT RECONCILIATION STAGE | `modules/isms/04-architecture/` |
 | Stage 6 | QA-to-Red | NOT_STARTED | `modules/isms/05-qa-to-red/` |
 | Stage 7 | PBFAG | NOT_STARTED | `modules/isms/06-pbfag/` |
 | Stage 8 | Implementation Plan | NOT_STARTED | `modules/isms/07-implementation-plan/` |
 | Stage 9 | Builder Checklist | PARTIAL | `modules/isms/08-builder-checklist/builder-checklist.md` exists for public landing harvest |
-| Stage 10 | IAA Pre-Brief | PARTIAL | `.agent-admin/assurance/` contains FRS and alignment assurance artifacts |
+| Stage 10 | IAA Pre-Brief | PARTIAL | `.agent-admin/assurance/` contains pre-build assurance artifacts |
 | Stage 11 | Builder Appointment | PARTIAL | `.agent-admin/builder-appointments/` contains pre-build appointments |
 | Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
@@ -59,13 +38,6 @@ The earlier user reference to “Stage 2 / FRS” is treated as an instruction t
 **Approval Artifact**: `.agent-admin/signoffs/isms-app-description-v1.2.0-ai-cs2-proxy-signoff-20260529.md`  
 **Completion Date**: 2026-05-29
 
-Conditions carried forward:
-
-- reconcile canonical App Description path wording;
-- preserve ISMS as platform front door;
-- preserve MMM as module within ISMS;
-- carry open routing and handoff issues into downstream artifacts.
-
 ---
 
 ## Stage 2: UX Workflow & Wiring Spec
@@ -75,11 +47,6 @@ Conditions carried forward:
 **Primary Artifact**: `ux-workflow-wiring-spec.md`  
 **Carry-Forward Register**: `open-issues-carry-forward.md`  
 **Completion Date**: 2026-05-29
-
-Conditions carried forward:
-
-- open issues must be addressed, deferred, or waived in TRS/Architecture;
-- implementation handover remains blocked.
 
 ---
 
@@ -91,33 +58,41 @@ Conditions carried forward:
 **Approval Artifact**: `.agent-admin/signoffs/isms-frs-v0.1.0-ai-cs2-proxy-signoff-20260529.md`  
 **Completion Date**: 2026-05-29
 
-Conditions carried forward:
-
-- Stage 4 TRS must preserve FRS traceability;
-- known open issues must remain visible;
-- no implementation handover from FRS alone.
-
 ---
 
 ## Stage 4: Technical Requirements Specification
 
-**Status**: NOT_STARTED — NEXT GOVERNED STAGE  
-**Location**: `modules/isms/03-trs/`
-
-Required artifacts:
-
+**Status**: COMPLETE — APPROVED WITH CONDITIONS  
+**Location**: `modules/isms/03-trs/`  
+**Primary Artifacts**:
 - `technical-requirements-specification.md`
 - `frs-to-trs-traceability.md`
-- open issue disposition table referencing `modules/isms/01-ux-workflow-wiring-spec/open-issues-carry-forward.md`
+
+**Completion Date**: 2026-05-29  
+**Notes**: Stage 4 defines route, module-card, free-assessment, subscription, onboarding, shared-context, handoff, Ask Maturion, audit, data/security, and build/test technical requirements. Open issues were dispositioned in TRS Section 13.
+
+---
+
+## Stage 5: Architecture
+
+**Status**: IN_PROGRESS — NEXT GOVERNED RECONCILIATION STAGE  
+**Location**: `modules/isms/04-architecture/`
+
+Required next actions:
+
+- reconcile existing architecture against Stage 4 TRS;
+- create TRS-to-Architecture mapping;
+- confirm component ownership for routes, context providers, entitlement checks, onboarding, audit events, and module handoff;
+- preserve implementation handover block until later gates pass.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 4 — Technical Requirements Specification is next.  
-**Stages 1–3**: Approved with conditions.  
+**Current Stage**: Stage 5 — Architecture reconciliation is next.  
+**Stages 1–4**: Approved with conditions.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create Stage 4 TRS and FRS-to-TRS traceability.
+**Next Required Action**: Reconcile architecture to TRS.
 
 ---
 
@@ -127,9 +102,8 @@ Required artifacts:
 - [x] Stage 1 App Description approved with conditions
 - [x] Stage 2 UX Workflow & Wiring Spec created/backfilled and approved with conditions
 - [x] Stage 3 FRS approved with conditions
-- [x] Open issues carry-forward register created
-- [x] Traceability maintained from App Description to UX Workflow to FRS
-- [ ] Stage 4 TRS complete
+- [x] Stage 4 TRS created and approved with conditions
+- [x] FRS-to-TRS traceability created
 - [ ] Architecture reconciled to TRS
 - [ ] QA-to-Red complete
 - [ ] PBFAG complete
@@ -139,13 +113,18 @@ Required artifacts:
 
 ## Open Conditions Carried Forward
 
-See:
+Open issues are now partially dispositioned in TRS Section 13. Remaining items must carry into Stage 5 Architecture:
 
-```text
-modules/isms/01-ux-workflow-wiring-spec/open-issues-carry-forward.md
-```
-
-Key items include onboarding route, post-checkout destination, MMM handoff, free assessment result flow, PIT future entry route, non-MMM practical exercises, Ask Maturion capability boundary, subscription entitlements, audit event contract, and implementation CI/build gates.
+- canonical App Description path mismatch;
+- final onboarding component design;
+- checkout completion transition choice;
+- MMM internal vs external handoff decision;
+- free assessment public result implementation;
+- future PIT private route reservation;
+- Ask Maturion implementation boundary;
+- subscription entitlement data source;
+- audit event storage/integration;
+- implementation build/test/CI evidence.
 
 ---
 
