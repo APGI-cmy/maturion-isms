@@ -82,8 +82,9 @@ function buildVerbatimIndexRows(params: {
   frameworkId: string | null;
   sourceMode: 'VERBATIM' | 'HYBRID' | 'GENERATED';
   parseResult: AiParseResult | null;
+  extractedText: string;
 }): Array<Record<string, unknown>> {
-  const { organisationId, documentId, frameworkId, sourceMode, parseResult } = params;
+  const { organisationId, documentId, frameworkId, sourceMode, parseResult, extractedText } = params;
   if (!parseResult) return [];
   const confidence = typeof parseResult.confidence_score === 'number' ? parseResult.confidence_score : null;
   const mpsList = Array.isArray(parseResult.mini_performance_standards)
@@ -107,6 +108,34 @@ function buildVerbatimIndexRows(params: {
       intent_verbatim: intent,
       source_anchor: null,
       confidence,
+      extracted_at: new Date().toISOString(),
+    });
+  }
+  if (rows.length > 0) return rows;
+
+  const normalized = extractedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const mpsMatches = [...normalized.matchAll(/MPS\s*(\d+)\s*[–-]\s*([^\n]+)\n/gi)];
+  for (let i = 0; i < mpsMatches.length; i += 1) {
+    const current = mpsMatches[i];
+    const start = current.index ?? 0;
+    const end = i + 1 < mpsMatches.length ? (mpsMatches[i + 1].index ?? normalized.length) : normalized.length;
+    const block = normalized.slice(start, end);
+    const intentMatch = block.match(/Intent\s*\n([\s\S]*?)(?:\n\s*Required\s+Actions|\n\s*MPS\s*\d+\s*[–-]|$)/i);
+    const intent = sanitizeForPostgresText((intentMatch?.[1] ?? '').replace(/\s+/g, ' ').trim());
+    if (!intent || intent.length < 24) continue;
+    const number = sanitizeForPostgresText(String(current[1] ?? '').trim());
+    const title = sanitizeForPostgresText(String(current[2] ?? '').trim());
+    rows.push({
+      organisation_id: organisationId,
+      document_id: documentId,
+      framework_id: frameworkId,
+      source_mode: sourceMode,
+      domain_name: 'Leadership and Governance',
+      mps_code: `D001.MPS${number.padStart(3, '0')}`,
+      mps_title: title,
+      intent_verbatim: intent,
+      source_anchor: `MPS ${number}`,
+      confidence: 0.71,
       extracted_at: new Date().toISOString(),
     });
   }
@@ -286,6 +315,7 @@ Deno.serve(async (req: Request) => {
       frameworkId,
       sourceMode,
       parseResult: aiParse.parseResult,
+      extractedText,
     });
     await supabase.from('mmm_org_source_verbatim_index').delete().eq('document_id', documentId);
     if (verbatimRows.length > 0) {
