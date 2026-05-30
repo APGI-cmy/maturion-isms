@@ -96,6 +96,10 @@ function deriveSourceModeFromTags(tags: string[]): 'VERBATIM' | 'HYBRID' | 'GENE
   return 'GENERATED';
 }
 
+function isOrganisationVerbatimSource(tags: string[]): boolean {
+  return tags.includes('organisation_context') && tags.includes('source_mode:VERBATIM');
+}
+
 function buildVerbatimIndexRows(params: {
   organisationId: string;
   documentId: string;
@@ -312,13 +316,16 @@ Deno.serve(async (req: Request) => {
       storagePath,
       tenantId: claims.orgId,
     });
+    const orgVerbatim = isOrganisationVerbatimSource(tags);
 
     const extractedText = await extractBestEffortText({
       mimeType,
       fileBlob,
       fallbackText: fallbackContentFromMetadata(body),
       kucClassification: kucResult.kuc_classification,
-      aiParsedText: aiParse.text,
+      // For organisation VERBATIM source, use full extracted corpus first (file/KUC) rather than
+      // AI parse summary text to preserve raw "Intent/Required Actions" blocks.
+      aiParsedText: orgVerbatim ? null : aiParse.text,
     });
 
     const fileHash = await sha256Hex(`${fileName}:${storageBucket}:${storagePath}:${fileSize}`);
@@ -387,7 +394,10 @@ Deno.serve(async (req: Request) => {
       updatePayload.processing_error = sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`);
     }
     if (isOrgVerbatim && verbatimRows.length === 0) {
-      updatePayload.processing_error = 'VERBATIM source parse failed: no extractable MPS intent statements found.';
+      const headingCount = (extractedText.match(/(?:^|\n)\s*MPS\s*[A-Za-z0-9.]+\s*[–-]/gi) ?? []).length;
+      updatePayload.processing_error =
+        `VERBATIM source parse failed: no extractable MPS intent statements found. ` +
+        `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0})`;
     }
 
     await supabase

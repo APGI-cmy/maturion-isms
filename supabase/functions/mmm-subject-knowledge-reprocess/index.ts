@@ -76,6 +76,10 @@ function deriveSourceModeFromTags(tags: string[]): 'VERBATIM' | 'HYBRID' | 'GENE
   return 'GENERATED';
 }
 
+function isOrganisationVerbatimSource(tags: string[]): boolean {
+  return tags.includes('organisation_context') && tags.includes('source_mode:VERBATIM');
+}
+
 function buildVerbatimIndexRows(params: {
   organisationId: string;
   documentId: string;
@@ -246,6 +250,8 @@ Deno.serve(async (req: Request) => {
       storagePath: doc.storage_path,
       tenantId: claims.orgId,
     });
+    const tags = Array.isArray(doc.tags) ? doc.tags.filter((tag): tag is string => typeof tag === 'string') : [];
+    const orgVerbatim = isOrganisationVerbatimSource(tags);
 
     const extractedText = await extractBestEffortText({
       mimeType: doc.mime_type,
@@ -256,7 +262,7 @@ Deno.serve(async (req: Request) => {
         doc.upload_notes ? `Uploader notes: ${doc.upload_notes}` : '',
       ].filter(Boolean).join('\n'),
       kucClassification: kucResult.kuc_classification,
-      aiParsedText: aiParse.text,
+      aiParsedText: orgVerbatim ? null : aiParse.text,
     });
 
     const chunkPayloads = await buildChunkPayloads({
@@ -271,7 +277,7 @@ Deno.serve(async (req: Request) => {
       metadata: {
         storage_bucket: doc.storage_bucket,
         storage_path: doc.storage_path,
-        tags: [],
+        tags,
         kuc_classification: kucResult.kuc_classification ?? null,
       },
     });
@@ -310,7 +316,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const tags = Array.isArray(doc.tags) ? doc.tags.filter((tag): tag is string => typeof tag === 'string') : [];
     const frameworkIdTag = tags.find((tag) => tag.startsWith('framework_id:')) ?? null;
     const frameworkId = frameworkIdTag ? frameworkIdTag.replace('framework_id:', '').trim() : null;
     const sourceMode = deriveSourceModeFromTags(tags);
@@ -348,7 +353,10 @@ Deno.serve(async (req: Request) => {
       updated_at: new Date().toISOString(),
     };
     if (isOrgVerbatim && verbatimRows.length === 0) {
-      completionUpdate.processing_error = 'VERBATIM source parse failed: no extractable MPS intent statements found.';
+      const headingCount = (extractedText.match(/(?:^|\n)\s*MPS\s*[A-Za-z0-9.]+\s*[–-]/gi) ?? []).length;
+      completionUpdate.processing_error =
+        `VERBATIM source parse failed: no extractable MPS intent statements found. ` +
+        `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0})`;
     }
 
     const { error: completionError } = await supabase
