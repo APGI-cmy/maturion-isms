@@ -141,6 +141,8 @@ class ParsedMPS(TypedDict, total=False):
     name: str
     number: str
     sort_order: int
+    intent_statement: str
+    guidance: str
     level_descriptors: list[dict]  # [{"level": int, "descriptor_text": str}]
 
 
@@ -262,6 +264,8 @@ Your output MUST always be a JSON object matching this exact schema:
       "name": "...",
       "number": "...",
       "sort_order": <int>,
+      "intent_statement": "...",
+      "guidance": "...",
       "level_descriptors": [
         {"level": 1, "descriptor_text": "..."},
         {"level": 2, "descriptor_text": "..."},

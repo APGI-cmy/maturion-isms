@@ -135,16 +135,19 @@ function buildVerbatimIndexRows(params: {
 
   // Deterministic fallback parser for LDCS-like verbatim docs where AI parse omits intent_statement.
   const normalized = extractedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  const mpsMatches = [...normalized.matchAll(/MPS\s*(\d+)\s*[–-]\s*([^\n]+)\n/gi)];
+  const mpsMatches = [...normalized.matchAll(/(?:^|\n)\s*MPS\s*([A-Za-z0-9.]+)\s*[–-]\s*([^\n]+)(?:\n|$)/gi)];
   for (let i = 0; i < mpsMatches.length; i += 1) {
     const current = mpsMatches[i];
     const start = current.index ?? 0;
     const end = i + 1 < mpsMatches.length ? (mpsMatches[i + 1].index ?? normalized.length) : normalized.length;
     const block = normalized.slice(start, end);
-    const intentMatch = block.match(/Intent\s*\n([\s\S]*?)(?:\n\s*Required\s+Actions|\n\s*MPS\s*\d+\s*[–-]|$)/i);
+    const intentMatch = block.match(
+      /Intent\s*(?::|\n)\s*([\s\S]*?)(?:\n\s*Required\s+Actions|\n\s*MPS\s*[A-Za-z0-9.]+\s*[–-]|$)/i,
+    );
     const intent = sanitizeForPostgresText((intentMatch?.[1] ?? '').replace(/\s+/g, ' ').trim());
     if (!intent || intent.length < 24) continue;
-    const number = sanitizeForPostgresText(String(current[1] ?? '').trim());
+    const rawNumber = sanitizeForPostgresText(String(current[1] ?? '').trim());
+    const numberDigits = rawNumber.match(/\d+/)?.[0] ?? rawNumber;
     const title = sanitizeForPostgresText(String(current[2] ?? '').trim());
     rows.push({
       organisation_id: organisationId,
@@ -152,10 +155,12 @@ function buildVerbatimIndexRows(params: {
       framework_id: frameworkId,
       source_mode: sourceMode,
       domain_name: 'Leadership and Governance',
-      mps_code: `D001.MPS${number.padStart(3, '0')}`,
+      mps_code: rawNumber.toUpperCase().includes('MPS')
+        ? rawNumber.toUpperCase()
+        : `D001.MPS${numberDigits.padStart(3, '0')}`,
       mps_title: title,
       intent_verbatim: intent,
-      source_anchor: `MPS ${number}`,
+      source_anchor: `MPS ${rawNumber}`,
       confidence: 0.71,
       extracted_at: new Date().toISOString(),
     });

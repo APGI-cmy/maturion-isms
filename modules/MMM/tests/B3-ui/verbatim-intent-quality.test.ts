@@ -50,9 +50,18 @@ describe('T-MMM-S6-220: Verbatim intent generation quality gate', () => {
   it('includes deterministic MPS/Intent fallback extraction for LDCS-style source text blocks', () => {
     const upload = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');
     const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
-    expect(upload).toContain('Intent\\s*\\n');
+    expect(upload).toContain('Intent\\s*(?::|\\n)');
     expect(upload).toContain('Required\\s+Actions');
-    expect(reprocess).toContain('Intent\\s*\\n');
+    expect(reprocess).toContain('Intent\\s*(?::|\\n)');
     expect(reprocess).toContain('Required\\s+Actions');
+  });
+
+  it('requires AI Gateway parse schema to include MPS-level verbatim intent extraction fields', () => {
+    const gateway = readFile('apps/mat-ai-gateway/services/parsing.py');
+    expect(gateway).toContain('class ParsedMPS(TypedDict, total=False):');
+    expect(gateway).toContain('intent_statement: str');
+    expect(gateway).toContain('"mini_performance_standards": [');
+    expect(gateway).toContain('"intent_statement": "..."');
+    expect(gateway).toContain('"guidance": "..."');
   });
 });

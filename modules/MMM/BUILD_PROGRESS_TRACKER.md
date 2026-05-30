@@ -13,6 +13,13 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-05-30 — VERBATIM Source Parse False-Negative (Intent Field Omission)**
+  - **Observed Failure**: Organisation source document completed ingest but persisted `parse failed: no extractable MPS intent statements found`, causing intent regenerate to miss verbatim text.
+  - **Root Cause**: AI Gateway parse prompt/schema for `mini_performance_standards` did not explicitly include `intent_statement`/`guidance` fields for MPS extraction.
+  - **Prebuild/Architecture Update**: Enforced MPS-level intent/guidance contract as required parse output for VERBATIM mode.
+  - **QA-to-Red Gate**: Extended `T-MMM-S6-220` to assert gateway parse schema includes MPS `intent_statement` + `guidance` fields.
+  - **Build-to-Green Fix**: Updated `apps/mat-ai-gateway/services/parsing.py` schema + prompt to require MPS-level verbatim `intent_statement` and `guidance`.
+
 - **2026-05-29 — Verbatim Intent Drift After Organisation Source Upload**
   - **Observed Failure**: Organisation source upload showed `completed | chunks: 1`, but regenerated intent remained non-verbatim and drifted to generic wording.
   - **Impact**: Verbatim mode guarantee broken at intent stage; user could not rely on exact source-language carry-through.
