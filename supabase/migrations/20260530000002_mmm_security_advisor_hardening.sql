@@ -6,7 +6,8 @@
 --   - enable RLS on public tables flagged as exposed without RLS
 --   - remove client role access from migration tracking tables
 --   - convert flagged views to SECURITY INVOKER
---   - revoke anon/public EXECUTE from sensitive SECURITY DEFINER helpers
+--   - revoke anon/public EXECUTE from sensitive SECURITY DEFINER helpers while
+--     preserving authenticated EXECUTE where existing RLS policies require it
 -- Author: ChatGPT delegated by Johan Ras
 -- =============================================================================
 
@@ -16,12 +17,20 @@ ALTER TABLE IF EXISTS public.healthcheck ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.maturity_levels ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.mmm_native_migrations ENABLE ROW LEVEL SECURITY;
 
-REVOKE ALL ON TABLE public.legacy_migrations FROM anon, authenticated;
-REVOKE ALL ON TABLE public.aimc_migrations FROM anon, authenticated;
-REVOKE ALL ON TABLE public.mmm_native_migrations FROM anon, authenticated;
-
 DO $$
 BEGIN
+  IF to_regclass('public.legacy_migrations') IS NOT NULL THEN
+    REVOKE ALL ON TABLE public.legacy_migrations FROM anon, authenticated;
+  END IF;
+
+  IF to_regclass('public.aimc_migrations') IS NOT NULL THEN
+    REVOKE ALL ON TABLE public.aimc_migrations FROM anon, authenticated;
+  END IF;
+
+  IF to_regclass('public.mmm_native_migrations') IS NOT NULL THEN
+    REVOKE ALL ON TABLE public.mmm_native_migrations FROM anon, authenticated;
+  END IF;
+
   IF to_regclass('public.healthcheck') IS NOT NULL THEN
     DROP POLICY IF EXISTS healthcheck_authenticated_read ON public.healthcheck;
     CREATE POLICY healthcheck_authenticated_read
@@ -73,6 +82,13 @@ BEGIN
   LOOP
     EXECUTE format('REVOKE EXECUTE ON FUNCTION %I.%I(%s) FROM anon', fn.nspname, fn.proname, fn.args);
     EXECUTE format('REVOKE EXECUTE ON FUNCTION %I.%I(%s) FROM PUBLIC', fn.nspname, fn.proname, fn.args);
+
+    -- mmm_current_user_org_id() and mmm_current_user_role() are used by existing
+    -- RLS policies. Grant EXECUTE back to authenticated so Data API access keeps
+    -- working after the PUBLIC revoke removes PostgreSQL's default execute path.
+    IF fn.proname IN ('mmm_current_user_org_id', 'mmm_current_user_role') THEN
+      EXECUTE format('GRANT EXECUTE ON FUNCTION %I.%I(%s) TO authenticated', fn.nspname, fn.proname, fn.args);
+    END IF;
   END LOOP;
 END;
 $$;
