@@ -1,6 +1,6 @@
 # IAA Token
 
-PR: pending
+PR: #1749
 Branch: `foreman/stage6-qa-to-red`
 Date: 2026-05-30
 Status: ISSUED
