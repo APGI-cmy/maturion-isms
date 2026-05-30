@@ -74,6 +74,7 @@
 
 Remaining items must carry into Stage 7 PBFAG and later implementation gates:
 
+- canonical App Description path mismatch remains a governance cleanup item;
 - architecture completeness gate remains RED for implementation handover;
 - deployment target and runtime entrypoint architecture must be completed;
 - environment variable registry and `.env.example` obligations must be completed;
