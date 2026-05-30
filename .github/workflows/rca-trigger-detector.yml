@@ -1,12 +1,7 @@
 name: RCA Trigger Detector
 
 on:
-  pull_request:
-    types: [opened, ready_for_review, synchronize, reopened]
-  issue_comment:
-    types: [created]
-  workflow_run:
-    types: [completed]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,10 +13,7 @@ jobs:
   detect-and-mark-rca:
     name: "rca/trigger-detector"
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null) ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request')
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Resolve PR context
         id: context

@@ -13,6 +13,29 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-05-30 — VERBATIM Source Parse False-Negative (Intent Field Omission)**
+  - **Observed Failure**: Organisation source document completed ingest but persisted `parse failed: no extractable MPS intent statements found`, causing intent regenerate to miss verbatim text.
+  - **Root Cause**: AI Gateway parse prompt/schema for `mini_performance_standards` did not explicitly include `intent_statement`/`guidance` fields for MPS extraction.
+  - **Prebuild/Architecture Update**: Enforced MPS-level intent/guidance contract as required parse output for VERBATIM mode.
+  - **QA-to-Red Gate**: Extended `T-MMM-S6-220` to assert gateway parse schema includes MPS `intent_statement` + `guidance` fields.
+  - **Build-to-Green Fix**: Updated `apps/mat-ai-gateway/services/parsing.py` schema + prompt to require MPS-level verbatim `intent_statement` and `guidance`.
+
+- **2026-05-30 — VERBATIM Source Ingestion Precedence + Diagnostics Hardening**
+  - **Observed Failure**: Organisation source remained `failed | chunks: 1` even after redeploy/reprocess.
+  - **Root Cause**: Reprocess/upload path prioritized short AI summary text over full extracted corpus for organisation VERBATIM sources.
+  - **Build-to-Green Fix**:
+    - Organisation VERBATIM ingestion now bypasses AI summary text and indexes from full extracted text first.
+    - Failure parse note now includes diagnostics: `chars`, `mps_headings`, `ai_summary_chars` for deterministic debugging.
+
+- **2026-05-29 — Verbatim Intent Drift After Organisation Source Upload**
+  - **Observed Failure**: Organisation source upload showed `completed | chunks: 1`, but regenerated intent remained non-verbatim and drifted to generic wording.
+  - **Impact**: Verbatim mode guarantee broken at intent stage; user could not rely on exact source-language carry-through.
+  - **Prebuild/Architecture Update**: Added explicit source-parsing and verbatim intent precedence requirements in `04-architecture/runtime-fallback-and-roadmap-entry-architecture-addendum.md`.
+  - **QA-to-Red Gate**: Added `T-MMM-S6-220` in `tests/B4-framework/ai-linkage-fallbacks.test.ts` and referenced in `03-trs/ai-linkage-validation-matrix-mps-intent-criteria.md`.
+  - **Build-to-Green Fix**:
+    - DMC upload/reprocess now extracts best-effort parsed text from KUC classification payload for non-text MIME files before metadata fallback.
+    - Verbatim intent generation now reads processed organisation-source chunks from `ai_knowledge` first, then falls back to proposed-table mapping if no direct source sentence is found.
+
 - **2026-05-27 — DMC Bulk Reprocess Unicode Failure**
   - **Observed Failure**: `Bulk reprocess completed: 0 succeeded, 25 failed ... unsupported Unicode escape sequence`.
   - **Impact**: Existing uploaded documents could not be reprocessed; DMC inventory remained in failed state.
@@ -1258,3 +1281,29 @@ This tracker now serves as the active failure and traceability register for MMM 
    - QA-to-Red Trace:
      - `T-MMM-S6-CRIT-205` verbatim source-readiness gate.
      - `T-MMM-S6-CRIT-206` verbatim intent extraction gate.
+
+13. **Organisation source PDF parsed as single low-value chunk (`chunks: 1`)**
+   - Failure Class: ingestion depth gap (AI-assisted parse stage missing in org-source pipeline).
+   - Symptom: large organisation-context PDF processed as `completed | chunks: 1`; verbatim regenerate then failed with `no source-faithful intent text could be extracted`.
+   - Cause Class: upload/reprocess depended on KUC classification payload + best-effort fallback text; no guaranteed AI document parse stage before chunking.
+   - Corrective Action:
+     - Added AI parse stage in `mmm-subject-knowledge-upload` and `mmm-subject-knowledge-reprocess`:
+       - Generate signed URL for uploaded file.
+       - Call AI Gateway `/api/v1/parse`.
+       - Convert structured parse output (domains/MPS/criteria + intent/guidance) into chunkable canonical text.
+     - Extended shared extractor contract to prefer `aiParsedText` when available.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-ORGSRC-301` large PDF ingest must produce source-faithful extract path before fallback.
+     - `T-MMM-S6-ORGSRC-302` verbatim regenerate blocked unless parsed-source quality is present.
+
+14. **Verbatim-source redesign wave (strict index-first contract)**
+   - Failure Class: contract ambiguity between "processed chunk exists" and "verbatim intent is extractable".
+   - Symptom: document status appeared `completed` while regenerate-intent still failed verbatim extraction.
+   - Corrective Action:
+     - Added canonical table `mmm_org_source_verbatim_index` for organisation source extraction outputs.
+     - Upload/Reprocess now executes AI parse stage and writes per-MPS verbatim intents into index rows.
+     - Verbatim organisation source now hard-fails (`processing_status=failed`) if no extractable MPS intents are produced.
+     - Runtime intent generation now resolves verbatim intent from `mmm_org_source_verbatim_index` first.
+   - QA-to-Red Trace:
+     - `T-MMM-S6-ORGSRC-303` organisation source must not be marked completed for VERBATIM if index rows=0.
+     - `T-MMM-S6-ORGSRC-304` intent regenerate reads canonical verbatim index before generic paths.

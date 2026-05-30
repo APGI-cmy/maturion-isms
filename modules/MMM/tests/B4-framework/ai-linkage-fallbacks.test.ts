@@ -126,3 +126,13 @@ describe('T-MMM-S6-213: Intent and Criteria AI linkage use shared mode-source co
     expect(src).toContain('GENERATED: create a new framework from organisation profile');
   });
 });
+
+describe('T-MMM-S6-220: Verbatim intent generation resolves from processed organisation source chunks first', () => {
+  it('useIntentGeneration reads ai_knowledge for VERBATIM-tagged mode source documents before proposed fallback mapping', () => {
+    const src = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
+    expect(src).toContain("doc.tags.some((tag) => tag === 'source_mode:VERBATIM')");
+    expect(src).toContain(".from('ai_knowledge')");
+    expect(src).toContain('pickVerbatimIntentFromKnowledge');
+    expect(src).toContain('no source-faithful intent text could be extracted');
+  });
+});

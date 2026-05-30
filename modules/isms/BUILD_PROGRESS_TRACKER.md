@@ -2,259 +2,111 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-04-08  
-**Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure)
+**Last Updated**: 2026-05-30  
+**Updated By**: foreman-agent (wave: `isms-stage5-architecture-completeness-gap`)
 
-> **Classification**: ACTIVE — RETROFIT NOW  
-> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0 (effective 2026-04-05)  
-> **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
-
----
-
-## Stage Migration Note
-
-This tracker was migrated from the legacy 6-stage format to the canonical 12-stage format
-per wave `align-12stage-prebuild-20260406` (2026-04-06).
-
-**Anomaly Flagged**: The `00-app-description/` folder is empty (no `app-description.md` found),
-yet Architecture contains work (`architecture.md`, `integrations/`). App Description must be
-created before this module can proceed through the canonical stage sequence.
-
-**Old → New Stage Mapping**:
-| Old Stage | Old Name | New Stage | New Name | Status |
-|-----------|----------|-----------|----------|--------|
-| Stage 0 | App Description | Stage 1 | App Description | RETROFIT_STUB_CREATED — pending CS2 approval |
-| Stage 1 | FRS | Stage 3 | FRS | NOT_STARTED (folder empty) |
-| Stage 1.5 | TRS | Stage 4 | TRS | NOT_STARTED |
-| Stage 2 | Architecture | Stage 5 | Architecture | IN_PROGRESS |
-| Stage 3 | Implementation Plan | Stage 8 | Implementation Plan | NOT_STARTED |
-| Stage 4 | Builder Appointment | Stage 11 | Builder Appointment | NOT_STARTED |
-| Stage 5 | Build | Stage 12 | Build | NOT_STARTED |
-| — | (new stage) | Stage 2 | UX Workflow & Wiring Spec | NOT_STARTED |
-| — | (new stage) | Stage 6 | QA-to-Red | NOT_STARTED |
-| — | (new stage) | Stage 7 | PBFAG | NOT_STARTED |
-| — | (new stage) | Stage 9 | Builder Checklist | NOT_STARTED |
-| — | (new stage) | Stage 10 | IAA Pre-Brief | NOT_STARTED |
+> **Classification**: ACTIVE — PRE-BUILD RECONCILED THROUGH STAGE 5 WITH ARCHITECTURE COMPLETENESS GAP ANALYSIS  
+> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
+> **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
 ---
 
-## Module Lifecycle Progress
+## Stage Status Summary
 
-Track the progression through the canonical module lifecycle stages per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0.
-
-### Stage 1: App Description
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/00-app-description/`  
-**Key Artifacts**:
-- [ ] `app-description.md` — Authoritative intent, scope, users, outputs, constraints
-- [ ] All §AD-01–§AD-24 sections per `APP_DESCRIPTION_REQUIREMENT_POLICY.md` v2.0 complete
-- [ ] App Description approved by designated authority
-
-**Completion Date**: N/A  
-**Notes**: ⚠️ **ANOMALY**: App Description folder exists but is empty. The old tracker
-incorrectly marked this as COMPLETE. An App Description must be created before this module
-can proceed through Stages 2–12 in the canonical sequence.
-
----
-
-### Stage 2: UX Workflow & Wiring Spec
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/01-ux-workflow-wiring-spec/`  
-**Key Artifacts**:
-- [ ] `ux-workflow-wiring-spec.md` — Complete user journey maps, screen interactions, data flows, wiring
-- [ ] All primary and secondary user paths documented
-- [ ] Explicit wiring between UI elements, API endpoints, schema tables, and reporting outputs
-- [ ] Approved by Foreman and client/user representative
-
-**Completion Date**: N/A  
-**Notes**: Not started. Required before FRS can proceed.
+| Stage | Artifact | Status | Evidence |
+|---|---|---|---|
+| Stage 1 | App Description | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-app-description-v1.2.0-ai-cs2-proxy-signoff-20260529.md` |
+| Stage 2 | UX Workflow & Wiring Spec | COMPLETE — Approved with conditions | `modules/isms/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
+| Stage 3 | FRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-frs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
+| Stage 4 | TRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-trs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
+| Stage 5 | Architecture | COMPLETE — Approved with conditions; completeness gate RED for implementation handover | `modules/isms/04-architecture/architecture-completeness-gap-analysis.md` |
+| Stage 6 | QA-to-Red | NOT_STARTED — NEXT | `modules/isms/05-qa-to-red/` |
+| Stage 7 | PBFAG | NOT_STARTED | `modules/isms/06-pbfag/` |
+| Stage 8 | Implementation Plan | NOT_STARTED | `modules/isms/07-implementation-plan/` |
+| Stage 9 | Builder Checklist | PARTIAL | `modules/isms/08-builder-checklist/builder-checklist.md` exists for public landing harvest |
+| Stage 10 | IAA Pre-Brief | PARTIAL | `.agent-admin/assurance/` contains pre-build assurance artifacts |
+| Stage 11 | Builder Appointment | PARTIAL | `.agent-admin/builder-appointments/` contains pre-build appointments |
+| Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
 ---
 
-### Stage 3: Functional Requirements Specification (FRS)
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/02-frs/`  
-**Key Artifacts**:
-- [ ] `functional-requirements.md` — Verifiable requirements derived from App Description + UX Workflow & Wiring Spec
-- [ ] Derivation statements from both upstream artifacts included
-- [ ] 100% §AD traceability confirmed; no TBD items
-- [ ] FRS approved by designated authority
+## Stage 5: Architecture
 
-**Completion Date**: N/A  
-**Notes**: FRS folder exists but is empty. Mapped from old Stage 1.
-
----
-
-### Stage 4: Technical Requirements Specification (TRS)
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/03-trs/`  
-**Key Artifacts**:
-- [ ] `technical-requirements-specification.md` — Technical constraints, performance requirements, integration requirements
-- [ ] `frs-to-trs-traceability.md` — Traceability matrix linking FRS to TRS
-- [ ] Tool validation and quality gate definitions
-- [ ] TRS approved by designated authority
-
-**Completion Date**: N/A  
-**Notes**: Not started. Mapped from old Stage 1.5.
-
----
-
-### Stage 5: Architecture
-**Status**: [ ] IN_PROGRESS  
+**Status**: COMPLETE — APPROVED WITH CONDITIONS FOR PRE-BUILD PROGRESSION; ARCHITECTURE COMPLETENESS GATE RED FOR IMPLEMENTATION HANDOVER  
 **Location**: `modules/isms/04-architecture/`  
-**Key Artifacts**:
-- [x] `architecture.md` — Architecture document exists
-- [x] `integrations/` — Integrations folder exists
-- [ ] All TRS requirements traceable to architecture components
-- [ ] Architecture completeness checklist per `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md` PASS
-- [ ] Architecture approved by designated authority
+**Primary Artifacts**:
+- `architecture.md` — retained as original strategic ecosystem architecture
+- `architecture-reconciliation-stage5.md` — TRS-aligned implementation architecture bridge
+- `trs-to-architecture-traceability.md` — TRS-to-Architecture mapping
+- `architecture-completeness-gap-analysis.md` — mandatory governance-canon gap analysis against `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md`
 
-**Completion Date**: N/A  
-**Notes**: Architecture is in progress. `architecture.md` and `integrations/` folder exist.
-Formal gate-pass requires upstream stages to be completed first. Mapped from old Stage 2.
-
----
-
-### Stage 6: QA-to-Red
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/05-qa-to-red/`  
-**Key Artifacts**:
-- [ ] Full RED test suite derived from FRS + TRS + Architecture
-- [ ] Coverage of all user journeys from Stage 2
-- [ ] QA Catalog alignment confirmed
-- [ ] RED QA suite signed off by Foreman
-
-**Completion Date**: N/A  
-**Notes**: Not started. New stage in 12-stage model.
-
----
-
-### Stage 7: PBFAG (Pre-Build Functionality Assessment Gate)
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/06-pbfag/`  
-**Key Artifacts**:
-- [ ] PBFAG checklist completed — all checks PASS
-- [ ] Change-Propagation Audit complete
-- [ ] Runtime/Deployment Contract filed
-- [ ] Golden Path Verification Pack defined
-- [ ] PBFAG PASS recorded by Foreman
-
-**Completion Date**: N/A  
-**Notes**: Not started. New hard gate in 12-stage model.
-
----
-
-### Stage 8: Implementation Plan
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/07-implementation-plan/`  
-**Key Artifacts**:
-- [ ] `implementation-plan.md` — Delivery wave breakdown with explicit scope per wave
-- [ ] Wave sequencing with dependency declarations
-- [ ] No placeholder waves or TBD scope entries
-- [ ] Implementation Plan approved by Foreman
-
-**Completion Date**: N/A  
-**Notes**: Folder exists but not yet populated. Mapped from old Stage 3.
-
----
-
-### Stage 9: Builder Checklist
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/08-builder-checklist/`  
-**Key Artifacts**:
-- [ ] Builder Checklist completed for each builder candidate
-- [ ] Builder agent contracts verified as current
-- [ ] Scope, RED QA, and architecture comprehension confirmed
-- [ ] Foreman role-fit confirmation recorded
-- [ ] Builder Checklist PASS for all appointed builders
-
-**Completion Date**: N/A  
-**Notes**: Not started. New hard gate in 12-stage model.
-
----
-
-### Stage 10: IAA Pre-Brief
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/09-iaa-pre-brief/`  
-**Key Artifacts**:
-- [ ] IAA Pre-Brief invoked by Foreman with full context
-- [ ] IAA Pre-Brief artifact filed
-- [ ] ASSURANCE-TOKEN or PHASE_A_ADVISORY status recorded
-- [ ] Pre-Brief acknowledged by Foreman and all designated builders
-
-**Completion Date**: N/A  
-**Notes**: Not started. New stage in 12-stage model.
-
----
-
-### Stage 11: Builder Appointment
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/10-builder-appointment/`  
-**Key Artifacts**:
-- [ ] `builder-contract.md` — Explicit builder agent contract
-- [ ] Formal appointment issued by Foreman after all Stages 1–10 gate-passed
-- [ ] Appointment recorded in module tracker
-- [ ] Builder appointed by FM
-
-**Completion Date**: N/A  
-**Notes**: Folder exists but not yet populated. Mapped from old Stage 4.
-
----
-
-### Stage 12: Build Execution & Evidence
-**Status**: [ ] NOT_STARTED  
-**Location**: `modules/isms/11-build/`  
-**Key Artifacts**:
-- [ ] Implementation code in `apps/` or `packages/`
-- [ ] Test evidence (QA-to-Green per wave)
-- [ ] QA validation results
-- [ ] Build completion evidence
-- [ ] Handover documentation
-
-**Completion Date**: N/A  
-**Notes**: Build not yet started. Mapped from old Stage 5.
+**Completion Date**: 2026-05-29  
+**Gap Analysis Date**: 2026-05-30  
+**Notes**: Stage 5 resolves the initial architecture decisions for public/private route boundaries, onboarding route, checkout transition, MMM handoff, module route reservations, entitlement model, Ask Maturion boundary, and audit event contract. The governance-canon completeness analysis records RED gaps for implementation handover and must be used as mandatory input for Stage 6 QA-to-Red.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 1 NOT_STARTED — App Description required first (see anomaly above)  
-**Overall Progress**: ~8% complete (Architecture IN_PROGRESS but App Description gap exists)  
-**Blockers**: App Description must be created before canonical stage progression can resume  
-**Next Steps**:
-1. Create `app-description.md` in `modules/isms/00-app-description/`
-2. Complete Stage 2 (UX Workflow & Wiring Spec)
-3. Complete Stage 3 (FRS) building on App Description + UX Workflow
-4. Complete Stage 4 (TRS)
-5. Formally gate-pass Stage 5 (Architecture — content already exists, needs approval)
+**Current Stage**: Stage 6 — QA-to-Red is next.  
+**Stages 1–5**: Approved with conditions for pre-build progression.  
+**Architecture Completeness Gate**: RED for implementation handover.  
+**Implementation Handover**: Not authorized.  
+**Next Required Action**: Create QA-to-Red suite derived from UX, FRS, TRS, Architecture, and `modules/isms/04-architecture/architecture-completeness-gap-analysis.md`.
+
+---
+
+## Mandatory Stage 6 Inputs
+
+Stage 6 QA-to-Red must explicitly use:
+
+- `modules/isms/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md`
+- `modules/isms/01-ux-workflow-wiring-spec/open-issues-carry-forward.md`
+- `modules/isms/02-frs/functional-requirements.md`
+- `modules/isms/03-trs/technical-requirements-specification.md`
+- `modules/isms/03-trs/frs-to-trs-traceability.md`
+- `modules/isms/04-architecture/architecture.md`
+- `modules/isms/04-architecture/architecture-reconciliation-stage5.md`
+- `modules/isms/04-architecture/trs-to-architecture-traceability.md`
+- `modules/isms/04-architecture/architecture-completeness-gap-analysis.md`
+
+Stage 6 must include RED coverage for the gap-analysis findings, including deployment/runtime architecture, env registry, Supabase schema, RLS, edge functions, AI capability wiring, system wiring, E2E functional paths, observability, and wave-based regression safety.
 
 ---
 
 ## Governance Compliance
 
-- [ ] All stages proceeding in order — **GAP: Architecture exists without App Description**
-- [ ] Traceability maintained (App Description → UX Workflow → FRS → TRS → Architecture)
-- [ ] All required approvals obtained
-- [ ] Evidence artifacts created for each stage
-- [ ] Module manifest up to date
+- [x] Stage 1 App Description approved with conditions
+- [x] Stage 2 UX Workflow & Wiring Spec approved with conditions
+- [x] Stage 3 FRS approved with conditions
+- [x] Stage 4 TRS approved with conditions
+- [x] Stage 5 Architecture reconciled to TRS and approved with conditions
+- [x] FRS-to-TRS traceability created
+- [x] TRS-to-Architecture traceability created
+- [x] Architecture completeness gap analysis filed
+- [ ] QA-to-Red complete
+- [ ] PBFAG complete
+- [ ] Implementation handover authorized
 
 ---
 
-## Notes and Observations
+## Open Conditions Carried Forward
 
-**Governance Upgrade (2026-04-06)**: Stage model migrated from legacy 6-stage (Stage 0–5) to
-canonical 12-stage per `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0. See Stage Migration Note above.
+Remaining items must carry into Stage 6 QA-to-Red and later implementation gates:
 
-**Prior Note (2026-02-13)**: TRS stage introduced per governance upgrade "Governance Upgrade:
-Insert Technical Requirements Specification (TRS) Step". This stage prevents downstream
-implementation failures by capturing technical constraints, performance requirements, and tool
-validation rules between FRS and Architecture.
-
-**ISMS Navigator AI Persona**: `isms-navigator.md` persona exists in `packages/ai-centre/src/agents/`
-for AIMC wiring (Wave 9.8). Module build is pending Wave 9.8 CS2 wave-start.
+- canonical App Description path mismatch remains a governance cleanup item;
+- deployment target and runtime entrypoint architecture must be completed;
+- environment variable registry and `.env.example` obligations must be completed;
+- Supabase schema, migration, RLS, and tenant isolation must be completed where persistence is used;
+- edge function registry and invocation map must be completed;
+- Ask Maturion adapter, prompt, context, and failure contracts must be completed;
+- full system wiring and E2E path traces must be completed;
+- free assessment result implementation must avoid dead-end to private `/assessment`;
+- non-MMM practical exercises remain deferred;
+- persistent entitlement data source must be finalized before production implementation;
+- audit storage/integration must be finalized before production implementation;
+- build/test/CI evidence remains future-gated.
 
 ---
 
-**Template Version**: 1.0.0 (12-stage model per PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0)  
-**Template Authority**: `governance/templates/BUILD_PROGRESS_TRACKER_TEMPLATE.md`  
-**Last Template Update**: 2026-04-06
+**Last Tracker Reconciliation**: 2026-05-30

@@ -9,8 +9,9 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
 import { uploadToKuc } from '../_shared/mmm-kuc-client.ts';
 import {
+  buildKnowledgeTextFromAiParseResult,
   buildChunkPayloads,
-  isTextLikeMimeType,
+  extractBestEffortText,
   normalizeSubjectDocumentRole,
   requireSubjectKnowledgeSuperuser,
   sanitizeForPostgresJson,
@@ -41,6 +42,134 @@ function fallbackContentFromMetadata(body: UploadBody): string {
     body.upload_notes ? `Uploader notes: ${body.upload_notes}` : '',
   ].filter(Boolean);
   return parts.join('\n');
+}
+
+const AI_GATEWAY_URL = (Deno.env.get('AI_GATEWAY_URL') ?? '').replace(/\/+$/, '');
+const AI_PARSE_TIMEOUT_MS = 120_000;
+
+type AiParseResult = {
+  domains?: Array<Record<string, unknown>>;
+  mini_performance_standards?: Array<Record<string, unknown>>;
+  confidence_score?: number;
+};
+
+async function tryAiGatewayParseText(params: {
+  supabase: ReturnType<typeof createClient>;
+  storageBucket: string;
+  storagePath: string;
+  tenantId: string;
+}): Promise<{ text: string | null; parseResult: AiParseResult | null }> {
+  const { supabase, storageBucket, storagePath, tenantId } = params;
+  if (!AI_GATEWAY_URL) return { text: null, parseResult: null };
+
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+    .from(storageBucket)
+    .createSignedUrl(storagePath, 60 * 10);
+  if (signedUrlError || !signedUrlData?.signedUrl) return { text: null, parseResult: null };
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_PARSE_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${AI_GATEWAY_URL}/api/v1/parse`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        document_url: signedUrlData.signedUrl,
+        tenant_id: tenantId,
+        file_path: storagePath,
+      }),
+      signal: controller.signal,
+    });
+    if (!response.ok) return { text: null, parseResult: null };
+    const parseResult = (await response.json()) as AiParseResult;
+    return { text: buildKnowledgeTextFromAiParseResult(parseResult), parseResult };
+  } catch {
+    return { text: null, parseResult: null };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+function deriveSourceModeFromTags(tags: string[]): 'VERBATIM' | 'HYBRID' | 'GENERATED' {
+  if (tags.includes('source_mode:VERBATIM')) return 'VERBATIM';
+  if (tags.includes('source_mode:HYBRID')) return 'HYBRID';
+  return 'GENERATED';
+}
+
+function isOrganisationVerbatimSource(tags: string[]): boolean {
+  return tags.includes('organisation_context') && tags.includes('source_mode:VERBATIM');
+}
+
+function buildVerbatimIndexRows(params: {
+  organisationId: string;
+  documentId: string;
+  frameworkId: string | null;
+  sourceMode: 'VERBATIM' | 'HYBRID' | 'GENERATED';
+  parseResult: AiParseResult | null;
+  extractedText: string;
+}): Array<Record<string, unknown>> {
+  const { organisationId, documentId, frameworkId, sourceMode, parseResult, extractedText } = params;
+  if (!parseResult) return [];
+  const confidence = typeof parseResult.confidence_score === 'number' ? parseResult.confidence_score : null;
+  const mpsList = Array.isArray(parseResult.mini_performance_standards)
+    ? parseResult.mini_performance_standards
+    : [];
+  const rows: Array<Record<string, unknown>> = [];
+  for (const mps of mpsList) {
+    const domainName = sanitizeForPostgresText(String(mps.domain_name ?? '')).trim();
+    const mpsCode = sanitizeForPostgresText(String(mps.number ?? '')).trim();
+    const mpsTitle = sanitizeForPostgresText(String(mps.name ?? '')).trim();
+    const intent = sanitizeForPostgresText(String(mps.intent_statement ?? '')).trim();
+    if (!domainName || !mpsCode || !mpsTitle || !intent) continue;
+    rows.push({
+      organisation_id: organisationId,
+      document_id: documentId,
+      framework_id: frameworkId,
+      source_mode: sourceMode,
+      domain_name: domainName,
+      mps_code: mpsCode,
+      mps_title: mpsTitle,
+      intent_verbatim: intent,
+      source_anchor: null,
+      confidence,
+      extracted_at: new Date().toISOString(),
+    });
+  }
+  if (rows.length > 0) return rows;
+
+  // Deterministic fallback parser for LDCS-like verbatim docs where AI parse omits intent_statement.
+  const normalized = extractedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const mpsMatches = [...normalized.matchAll(/(?:^|\n)\s*MPS\s*([A-Za-z0-9.]+)\s*[–-]\s*([^\n]+)(?:\n|$)/gi)];
+  for (let i = 0; i < mpsMatches.length; i += 1) {
+    const current = mpsMatches[i];
+    const start = current.index ?? 0;
+    const end = i + 1 < mpsMatches.length ? (mpsMatches[i + 1].index ?? normalized.length) : normalized.length;
+    const block = normalized.slice(start, end);
+    const intentMatch = block.match(
+      /Intent\s*(?::|\n)\s*([\s\S]*?)(?:\n\s*Required\s+Actions|\n\s*MPS\s*[A-Za-z0-9.]+\s*[–-]|$)/i,
+    );
+    const intent = sanitizeForPostgresText((intentMatch?.[1] ?? '').replace(/\s+/g, ' ').trim());
+    if (!intent || intent.length < 24) continue;
+    const rawNumber = sanitizeForPostgresText(String(current[1] ?? '').trim());
+    const numberDigits = rawNumber.match(/\d+/)?.[0] ?? rawNumber;
+    const title = sanitizeForPostgresText(String(current[2] ?? '').trim());
+    rows.push({
+      organisation_id: organisationId,
+      document_id: documentId,
+      framework_id: frameworkId,
+      source_mode: sourceMode,
+      domain_name: 'Leadership and Governance',
+      mps_code: rawNumber.toUpperCase().includes('MPS')
+        ? rawNumber.toUpperCase()
+        : `D001.MPS${numberDigits.padStart(3, '0')}`,
+      mps_title: title,
+      intent_verbatim: intent,
+      source_anchor: `MPS ${rawNumber}`,
+      confidence: 0.71,
+      extracted_at: new Date().toISOString(),
+    });
+  }
+  return rows;
 }
 
 Deno.serve(async (req: Request) => {
@@ -181,13 +310,23 @@ Deno.serve(async (req: Request) => {
       },
     );
 
-    let extractedText = '';
-    if (isTextLikeMimeType(mimeType)) {
-      extractedText = sanitizeForPostgresText(await fileBlob.text()).trim();
-    }
-    if (!extractedText) {
-      extractedText = fallbackContentFromMetadata(body);
-    }
+    const aiParse = await tryAiGatewayParseText({
+      supabase,
+      storageBucket,
+      storagePath,
+      tenantId: claims.orgId,
+    });
+    const orgVerbatim = isOrganisationVerbatimSource(tags);
+
+    const extractedText = await extractBestEffortText({
+      mimeType,
+      fileBlob,
+      fallbackText: fallbackContentFromMetadata(body),
+      kucClassification: kucResult.kuc_classification,
+      // For organisation VERBATIM source, use full extracted corpus first (file/KUC) rather than
+      // AI parse summary text to preserve raw "Intent/Required Actions" blocks.
+      aiParsedText: orgVerbatim ? null : aiParse.text,
+    });
 
     const fileHash = await sha256Hex(`${fileName}:${storageBucket}:${storagePath}:${fileSize}`);
     const chunkPayloads = await buildChunkPayloads({
@@ -217,8 +356,30 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    const frameworkIdTag = tags.find((tag) => tag.startsWith('framework_id:')) ?? null;
+    const frameworkId = frameworkIdTag ? frameworkIdTag.replace('framework_id:', '').trim() : null;
+    const sourceMode = deriveSourceModeFromTags(tags);
+    const verbatimRows = buildVerbatimIndexRows({
+      organisationId: claims.orgId,
+      documentId,
+      frameworkId,
+      sourceMode,
+      parseResult: aiParse.parseResult,
+      extractedText,
+    });
+    await supabase.from('mmm_org_source_verbatim_index').delete().eq('document_id', documentId);
+    if (verbatimRows.length > 0) {
+      const { error: indexError } = await supabase
+        .from('mmm_org_source_verbatim_index')
+        .upsert(verbatimRows, { onConflict: 'document_id,domain_name,mps_code' });
+      if (indexError) {
+        throw new Error(indexError.message || 'Unable to persist verbatim source index rows.');
+      }
+    }
+
+    const isOrgVerbatim = tags.includes('organisation_context') && sourceMode === 'VERBATIM';
     const updatePayload: Record<string, unknown> = {
-      processing_status: 'completed',
+      processing_status: isOrgVerbatim && verbatimRows.length === 0 ? 'failed' : 'completed',
       processing_error: null,
       chunk_count: chunkPayloads.length,
       content_hash: fileHash,
@@ -231,6 +392,12 @@ Deno.serve(async (req: Request) => {
 
     if (!kucResult.success && !kucResult.fallback) {
       updatePayload.processing_error = sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`);
+    }
+    if (isOrgVerbatim && verbatimRows.length === 0) {
+      const headingCount = (extractedText.match(/(?:^|\n)\s*MPS\s*[A-Za-z0-9.]+\s*[–-]/gi) ?? []).length;
+      updatePayload.processing_error =
+        `VERBATIM source parse failed: no extractable MPS intent statements found. ` +
+        `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0})`;
     }
 
     await supabase

@@ -62,6 +62,33 @@ function modeStrategy(mode: CriteriaMode | null): ModeSourceContext['mode_source
   return 'new_generation_public_research';
 }
 
+function deriveModeFromDocuments(documents: ModeSourceDocument[]): CriteriaMode | null {
+  const ordered = [...documents];
+  for (const doc of ordered) {
+    const tags = doc.tags ?? [];
+    if (tags.includes('source_mode:VERBATIM')) return 'VERBATIM';
+    if (tags.includes('source_mode:HYBRID')) return 'HYBRID';
+    if (tags.includes('source_mode:GENERATED')) return 'GENERATED';
+  }
+  return null;
+}
+
+function deriveModeFromOrganisationContext(context: Record<string, unknown>): CriteriaMode | null {
+  const candidates = [
+    context.frameworkCreationMode,
+    context.sourceMode,
+    context.framework_mode,
+  ];
+  for (const value of candidates) {
+    if (typeof value !== 'string') continue;
+    const normalized = value.trim().toUpperCase();
+    if (normalized === 'VERBATIM' || normalized === 'HYBRID' || normalized === 'GENERATED') {
+      return normalized as CriteriaMode;
+    }
+  }
+  return null;
+}
+
 function sourceRules(mode: CriteriaMode | null): string[] {
   if (mode === 'VERBATIM') {
     return [
@@ -133,7 +160,7 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
     framework = data ?? null;
   }
 
-  const mode = normalizeCriteriaMode(framework?.source_type);
+  const frameworkMode = normalizeCriteriaMode(framework?.source_type);
   let documents: ModeSourceDocument[] = [];
   if (organisationId) {
     const { data } = await supabase
@@ -162,11 +189,16 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
           doc.scope_type === 'framework_context' ||
           tags.includes('organisation_context') ||
           tags.includes('mode_source') ||
-          (frameworkId ? tags.includes(`framework_id:${frameworkId}`) : false) ||
-          (mode ? tags.includes(`source_mode:${mode}`) : false)
+          (frameworkId ? tags.includes(`framework_id:${frameworkId}`) : false)
         );
       });
   }
+
+  const orgContextModeOverride = deriveModeFromOrganisationContext(organisation?.context ?? {});
+  const documentModeOverride = deriveModeFromDocuments(documents);
+  // Runtime source docs are the strongest signal because users can change mode
+  // per upload flow; older context/source_type values may lag behind.
+  const mode = documentModeOverride ?? orgContextModeOverride ?? frameworkMode;
 
   return {
     organisation_id: organisationId,
@@ -184,6 +216,8 @@ export async function resolveModeSourceContext(frameworkId?: string | null): Pro
 
 export function evaluateModeSourceAvailability(context: ModeSourceContext): ModeSourceAvailability {
   const docs = context.mode_source_documents;
+  const documentModeOverride = deriveModeFromDocuments(docs);
+  const effectiveMode = documentModeOverride ?? context.framework_source_type;
   const completedDocs = docs.filter(
     (doc) => doc.processing_status.toLowerCase() === 'completed' && doc.chunk_count > 0,
   );
@@ -196,7 +230,7 @@ export function evaluateModeSourceAvailability(context: ModeSourceContext): Mode
     );
   }
 
-  if (context.framework_source_type === 'VERBATIM' && completedDocs.length === 0) {
+  if (effectiveMode === 'VERBATIM' && completedDocs.length === 0) {
     return {
       blockingError:
         'Verbatim mode requires at least one processed source document (completed with extracted chunks). Upload/reprocess the source and retry.',
@@ -204,7 +238,7 @@ export function evaluateModeSourceAvailability(context: ModeSourceContext): Mode
     };
   }
 
-  if (context.framework_source_type === 'HYBRID' && completedDocs.length === 0) {
+  if (effectiveMode === 'HYBRID' && completedDocs.length === 0) {
     return {
       blockingError:
         'Hybrid mode requires at least one processed source document for gap analysis. Upload/reprocess the source and retry.',

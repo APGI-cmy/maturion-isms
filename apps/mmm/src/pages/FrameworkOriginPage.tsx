@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
 const ORIGIN_OPTIONS: { value: 'VERBATIM' | 'GENERATED' | 'HYBRID'; label: string; description: string }[] = [
@@ -30,6 +31,26 @@ export default function FrameworkOriginPage() {
   const [mode, setMode] = useState<'VERBATIM'|'GENERATED'|'HYBRID'>('GENERATED');
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: async (selectedMode: 'VERBATIM' | 'GENERATED' | 'HYBRID') => {
+      const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
+        body: {
+          source_type: selectedMode,
+        },
+      });
+      if (error) {
+        throw new Error(error.message || 'Unable to initialise framework mode.');
+      }
+      return data as { framework_id?: string } | null;
+    },
+    onSuccess: (data) => {
+      const uploadMode = toUploadMode(mode);
+      const frameworkId = data?.framework_id;
+      const suffix = frameworkId ? `&framework_id=${encodeURIComponent(frameworkId)}` : '';
+      navigate(`/frameworks/upload?mode=${uploadMode}${suffix}`);
+    },
+  });
 
   // Guard: redirect to /onboarding if the user has not completed the wizard (maturion-isms#13)
   useEffect(() => {
@@ -69,8 +90,7 @@ export default function FrameworkOriginPage() {
   }, [navigate]);
 
   function handleContinue() {
-    const uploadMode = toUploadMode(mode);
-    navigate(`/frameworks/upload?mode=${uploadMode}`);
+    mutation.mutate(mode);
   }
 
   if (!onboardingChecked) return <div className="setup-page"><div className="container">Loading…</div></div>;
@@ -104,8 +124,13 @@ export default function FrameworkOriginPage() {
           <p className="wizard-step__hint wizard-step__hint--info">
             Next step: you&apos;ll generate or upload framework content, then move directly into the domain workspace.
           </p>
+          {mutation.isError ? (
+            <p role="alert" className="wizard-step__hint wizard-step__hint--error">
+              We could not initialise the selected framework mode. Please try again.
+            </p>
+          ) : null}
           <button className="btn btn-primary w-full" onClick={handleContinue}>
-            Continue
+            {mutation.isPending ? 'Preparing...' : 'Continue'}
           </button>
         </div>
       </div>

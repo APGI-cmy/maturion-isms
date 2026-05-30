@@ -59,6 +59,120 @@ export function isTextLikeMimeType(mimeType: string): boolean {
   );
 }
 
+function toObject(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function collectKucTextSegments(input: unknown, acc: string[]): void {
+  if (!input) return;
+  if (typeof input === 'string') {
+    const text = sanitizeForPostgresText(input).trim();
+    if (text.length > 0) acc.push(text);
+    return;
+  }
+  if (Array.isArray(input)) {
+    for (const item of input) collectKucTextSegments(item, acc);
+    return;
+  }
+  const obj = toObject(input);
+  if (!obj) return;
+
+  const textKeys = [
+    'text',
+    'content',
+    'extracted_text',
+    'raw_text',
+    'markdown',
+    'parsed_text',
+  ];
+  for (const key of textKeys) {
+    const value = obj[key];
+    if (typeof value === 'string') {
+      const text = sanitizeForPostgresText(value).trim();
+      if (text.length > 0) acc.push(text);
+    }
+  }
+
+  const nestedKeys = ['chunks', 'pages', 'segments', 'sections', 'results', 'data'];
+  for (const key of nestedKeys) {
+    collectKucTextSegments(obj[key], acc);
+  }
+}
+
+export function extractBestEffortText(params: {
+  mimeType: string;
+  fileBlob: Blob;
+  fallbackText: string;
+  kucClassification?: unknown;
+  aiParsedText?: string | null;
+}): Promise<string> {
+  const { mimeType, fileBlob, fallbackText, kucClassification, aiParsedText } = params;
+  return (async () => {
+    const aiText = sanitizeForPostgresText(aiParsedText ?? '').trim();
+    if (aiText.length > 0) return aiText;
+
+    if (isTextLikeMimeType(mimeType)) {
+      const rawText = sanitizeForPostgresText(await fileBlob.text()).trim();
+      if (rawText.length > 0) return rawText;
+    }
+
+    const kucSegments: string[] = [];
+    collectKucTextSegments(kucClassification, kucSegments);
+    const kucText = sanitizeForPostgresText(kucSegments.join('\n\n')).trim();
+    if (kucText.length > 0) return kucText;
+
+    return sanitizeForPostgresText(fallbackText).trim();
+  })();
+}
+
+export function buildKnowledgeTextFromAiParseResult(parseResult: unknown): string {
+  const root = toObject(parseResult);
+  if (!root) return '';
+
+  const parts: string[] = [];
+  const domains = Array.isArray(root.domains) ? root.domains : [];
+  for (const domain of domains) {
+    const d = toObject(domain);
+    if (!d) continue;
+    const name = sanitizeForPostgresText(String(d.name ?? '')).trim();
+    if (name) parts.push(`Domain: ${name}`);
+  }
+
+  const mps = Array.isArray(root.mini_performance_standards) ? root.mini_performance_standards : [];
+  for (const item of mps) {
+    const row = toObject(item);
+    if (!row) continue;
+    const number = sanitizeForPostgresText(String(row.number ?? '')).trim();
+    const name = sanitizeForPostgresText(String(row.name ?? '')).trim();
+    const intent = sanitizeForPostgresText(String(row.intent_statement ?? '')).trim();
+    const guidance = sanitizeForPostgresText(String(row.guidance ?? '')).trim();
+    if (number || name) parts.push(`MPS ${number}${name ? ` - ${name}` : ''}`.trim());
+    if (intent) parts.push(`Intent: ${intent}`);
+    if (guidance) parts.push(`Guidance: ${guidance}`);
+  }
+
+  const criteria = Array.isArray(root.criteria) ? root.criteria : [];
+  for (const item of criteria) {
+    const row = toObject(item);
+    if (!row) continue;
+    const number = sanitizeForPostgresText(String(row.number ?? '')).trim();
+    const mpsNumber = sanitizeForPostgresText(String(row.mps_number ?? '')).trim();
+    const title = sanitizeForPostgresText(String(row.title ?? '')).trim();
+    const description = sanitizeForPostgresText(String(row.description ?? '')).trim();
+    const intent = sanitizeForPostgresText(String(row.intent_statement ?? '')).trim();
+    const guidance = sanitizeForPostgresText(String(row.guidance ?? '')).trim();
+    if (number || title) parts.push(`Criteria ${number}${title ? ` - ${title}` : ''}`.trim());
+    if (mpsNumber) parts.push(`Criteria MPS: ${mpsNumber}`);
+    if (description) parts.push(`Description: ${description}`);
+    if (intent) parts.push(`Intent: ${intent}`);
+    if (guidance) parts.push(`Guidance: ${guidance}`);
+  }
+
+  return sanitizeForPostgresText(parts.join('\n\n')).trim();
+}
+
 export function chunkText(content: string, chunkSize = 2000, chunkOverlap = 200): string[] {
   const trimmed = sanitizeForPostgresText(content).trim();
   if (!trimmed) return [];
