@@ -6,8 +6,8 @@
 **Date**: 2026-04-23  
 **Author**: mat-specialist (delegated by foreman-v2-agent)  
 **Project ID**: ujucvyyspfxlxlfdamda  
-**Version**: 1.0.0  
-**Status**: ACTIVE — effective from wave supabase-reconciliation-20260423
+**Version**: 1.1.0  
+**Status**: ACTIVE — effective from wave supabase-data-api-grants-20260530
 
 ---
 
@@ -89,14 +89,40 @@ CREATE TABLE IF NOT EXISTS public.mmm_risk_register (
 
 -- Enable RLS immediately on creation
 ALTER TABLE public.mmm_risk_register ENABLE ROW LEVEL SECURITY;
+
+-- Explicit Data API grants: required for tables accessed through supabase-js/PostgREST
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.mmm_risk_register TO authenticated;
 ```
 
-### 2.3 RLS Policy Requirement
+### 2.3 RLS and Explicit Grant Requirement
 
-Every new table migration **must** include:
+Every new public-schema table migration **must** include:
 
 1. `ALTER TABLE <table> ENABLE ROW LEVEL SECURITY;`
 2. RLS policies using `public.mmm_current_user_org_id()` and/or `public.mmm_current_user_role()` helpers
+3. Explicit table grants for any role that must access the table through the Supabase Data API (`supabase-js`, PostgREST, or GraphQL)
+
+Use the narrowest required grant set. Do not grant to `anon` unless the table is intentionally public and the PR explains why.
+
+Typical authenticated table pattern:
+
+```sql
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON TABLE public.some_table TO authenticated;
+```
+
+For destructive actions, include both a grant and an RLS policy:
+
+```sql
+GRANT DELETE ON TABLE public.some_table TO authenticated;
+
+CREATE POLICY some_table_delete
+  ON public.some_table
+  FOR DELETE
+  TO authenticated
+  USING (organisation_id = public.mmm_current_user_org_id());
+```
 
 If RLS policies are complex, they may be placed in a separate migration file (next sequential number, same date).
 
@@ -115,6 +141,8 @@ If RLS policies are complex, they may be placed in a separate migration file (ne
 
 - **Never** modify or delete an existing migration file that has been applied to production
 - **Never** create a migration that bypasses the RLS model
+- **Never** grant broad `anon` access without explicit PR justification
+- **Never** create a client-facing public-schema table without explicit Data API grants and matching RLS policies
 - **Never** create a migration that stores secrets or API keys
 - **Never** use `DROP TABLE` without a compensating data backup procedure documented in the PR
 - Schema-destructive operations (DROP, TRUNCATE, column removal) require CS2 explicit approval comment in the PR
@@ -258,7 +286,7 @@ Changes to `supabase/functions/_shared/` affect all functions that import from i
 2. Confirm tests pass for each affected function
 3. Note that deployment requires re-deploying all affected functions (or all functions via `supabase functions deploy`)
 
-### 4.4 Deleting a Function
+### 4.4 Removing an Edge Function
 
 1. Remove the directory from `supabase/functions/`
 2. Remove the `[functions.<name>]` section from `supabase/config.toml`
@@ -391,6 +419,7 @@ The following checks must be completed before committing any Supabase-affecting 
 - [ ] No duplicate timestamp with existing migration files
 - [ ] Header comment block present (wave, issue, purpose, author)
 - [ ] `ENABLE ROW LEVEL SECURITY` included for any new table
+- [ ] Explicit Data API grants included for any table accessed through `supabase-js`, PostgREST, or GraphQL
 - [ ] RLS policies use `mmm_current_user_org_id()` / `mmm_current_user_role()` helpers
 - [ ] No secrets, API keys, or credentials in the migration SQL
 - [ ] `supabase db push --local` succeeds with no errors
@@ -448,6 +477,7 @@ CS2 should run `supabase db diff --linked` after every production deployment and
 |---|---|---|
 | Extra table/column in live DB not in repo | Critical | Immediate back-port migration + wave |
 | Missing policy (policy deleted from live) | Critical | Immediate back-port migration |
+| Missing explicit grant for a Data API table | High | Add explicit grants in next migration before deployment closes |
 | Extra function deployed to live not in repo | High | Add to repo + `config.toml` + PR in next wave |
 | MIME type mismatch on bucket | Medium | Back-port migration in next wave |
 | Auth config changes not documented | Medium | Document in OC checklist |
@@ -533,8 +563,9 @@ CS2 documents the rotation date in the operational log (OC checklist / `modules/
 
 | Version | Date | Wave | Change |
 |---|---|---|---|
+| 1.1.0 | 2026-05-30 | supabase-data-api-grants-20260530 | Added explicit Data API grants requirement and migration preflight checks |
 | 1.0.0 | 2026-04-23 | supabase-reconciliation-20260423 | Initial version — establishes agent-driven Supabase operating procedure for MMM |
 
 ---
 
-**Wave**: supabase-reconciliation-20260423 | **Issue**: #1461 | **Authority**: CS2
+**Wave**: supabase-data-api-grants-20260530 | **Issue**: #1461 | **Authority**: CS2
