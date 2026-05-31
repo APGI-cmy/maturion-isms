@@ -32,7 +32,7 @@ The standard is not “documents exist”. The standard is whether a builder can
 | Stage 5 Gap | `modules/isms/04-architecture/architecture-completeness-gap-analysis.md` | RED for implementation handover |
 | Stage 6 | `modules/isms/05-qa-to-red/qa-to-red-catalog.md` | RED catalog specified |
 | Stage 6 Traceability | `modules/isms/05-qa-to-red/qa-to-red-traceability.md` | Complete for RED QA |
-| Tracker | `modules/isms/BUILD_PROGRESS_TRACKER.md` | Reconciled through Stage 6 |
+| Tracker | `modules/isms/BUILD_PROGRESS_TRACKER.md` | Reconciled through Stage 7 |
 
 ---
 
@@ -223,6 +223,7 @@ The following remediation artifacts are mandatory before Stage 8 can responsibly
 8. `modules/isms/04-architecture/e2e-functional-paths.md`
 9. `modules/isms/04-architecture/error-observability-architecture.md`
 10. `modules/isms/04-architecture/implementation-wave-plan.md`
+11. `modules/isms/04-architecture/subscription-checkout-entitlement-architecture.md`
 
 ---
 
