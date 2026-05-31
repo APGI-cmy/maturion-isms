@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-05-30  
-**Updated By**: foreman-agent (wave: `isms-stage5-architecture-completeness-gap`)
+**Updated By**: foreman-agent (wave: `isms-stage6-qa-to-red-20260530`)
 
-> **Classification**: ACTIVE — PRE-BUILD RECONCILED THROUGH STAGE 5 WITH ARCHITECTURE COMPLETENESS GAP ANALYSIS  
+> **Classification**: ACTIVE — PRE-BUILD RECONCILED THROUGH STAGE 6  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -20,8 +20,8 @@
 | Stage 3 | FRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-frs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
 | Stage 4 | TRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-trs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
 | Stage 5 | Architecture | COMPLETE — Approved with conditions; completeness gate RED for implementation handover | `modules/isms/04-architecture/architecture-completeness-gap-analysis.md` |
-| Stage 6 | QA-to-Red | NOT_STARTED — NEXT | `modules/isms/05-qa-to-red/` |
-| Stage 7 | PBFAG | NOT_STARTED | `modules/isms/06-pbfag/` |
+| Stage 6 | QA-to-Red | COMPLETE — RED catalog specified | `modules/isms/05-qa-to-red/qa-to-red-catalog.md` |
+| Stage 7 | PBFAG | NOT_STARTED — NEXT | `modules/isms/06-pbfag/` |
 | Stage 8 | Implementation Plan | NOT_STARTED | `modules/isms/07-implementation-plan/` |
 | Stage 9 | Builder Checklist | PARTIAL | `modules/isms/08-builder-checklist/builder-checklist.md` exists for public landing harvest |
 | Stage 10 | IAA Pre-Brief | PARTIAL | `.agent-admin/assurance/` contains pre-build assurance artifacts |
@@ -30,47 +30,26 @@
 
 ---
 
-## Stage 5: Architecture
+## Stage 6: QA-to-Red
 
-**Status**: COMPLETE — APPROVED WITH CONDITIONS FOR PRE-BUILD PROGRESSION; ARCHITECTURE COMPLETENESS GATE RED FOR IMPLEMENTATION HANDOVER  
-**Location**: `modules/isms/04-architecture/`  
+**Status**: COMPLETE — RED CATALOG SPECIFIED  
+**Location**: `modules/isms/05-qa-to-red/`  
 **Primary Artifacts**:
-- `architecture.md` — retained as original strategic ecosystem architecture
-- `architecture-reconciliation-stage5.md` — TRS-aligned implementation architecture bridge
-- `trs-to-architecture-traceability.md` — TRS-to-Architecture mapping
-- `architecture-completeness-gap-analysis.md` — mandatory governance-canon gap analysis against `ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md`
+- `qa-to-red-catalog.md` — 120 RED tests across route wiring, module cards, free assessment, subscription/onboarding, context/handoff, AI, edge functions, Supabase/RLS, audit, deployment/CI, and architecture completeness
+- `qa-to-red-traceability.md` — FRS/TRS/gap-analysis coverage matrix
 
-**Completion Date**: 2026-05-29  
-**Gap Analysis Date**: 2026-05-30  
-**Notes**: Stage 5 resolves the initial architecture decisions for public/private route boundaries, onboarding route, checkout transition, MMM handoff, module route reservations, entitlement model, Ask Maturion boundary, and audit event contract. The governance-canon completeness analysis records RED gaps for implementation handover and must be used as mandatory input for Stage 6 QA-to-Red.
+**Completion Date**: 2026-05-30  
+**Notes**: Stage 6 defines RED QA expectations. It does not mean tests are implemented or passing. The catalog is intentionally RED until implementation satisfies it.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 6 — QA-to-Red is next.  
-**Stages 1–5**: Approved with conditions for pre-build progression.  
+**Current Stage**: Stage 7 — PBFAG is next.  
+**Stages 1–6**: Approved/progressed for pre-build governance.  
 **Architecture Completeness Gate**: RED for implementation handover.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create QA-to-Red suite derived from UX, FRS, TRS, Architecture, and `modules/isms/04-architecture/architecture-completeness-gap-analysis.md`.
-
----
-
-## Mandatory Stage 6 Inputs
-
-Stage 6 QA-to-Red must explicitly use:
-
-- `modules/isms/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md`
-- `modules/isms/01-ux-workflow-wiring-spec/open-issues-carry-forward.md`
-- `modules/isms/02-frs/functional-requirements.md`
-- `modules/isms/03-trs/technical-requirements-specification.md`
-- `modules/isms/03-trs/frs-to-trs-traceability.md`
-- `modules/isms/04-architecture/architecture.md`
-- `modules/isms/04-architecture/architecture-reconciliation-stage5.md`
-- `modules/isms/04-architecture/trs-to-architecture-traceability.md`
-- `modules/isms/04-architecture/architecture-completeness-gap-analysis.md`
-
-Stage 6 must include RED coverage for the gap-analysis findings, including deployment/runtime architecture, env registry, Supabase schema, RLS, edge functions, AI capability wiring, system wiring, E2E functional paths, observability, and wave-based regression safety.
+**Next Required Action**: Create PBFAG and ensure it blocks implementation until architecture completeness, QA, build, CI, and handover prerequisites are satisfied or explicitly waived.
 
 ---
 
@@ -84,7 +63,8 @@ Stage 6 must include RED coverage for the gap-analysis findings, including deplo
 - [x] FRS-to-TRS traceability created
 - [x] TRS-to-Architecture traceability created
 - [x] Architecture completeness gap analysis filed
-- [ ] QA-to-Red complete
+- [x] Stage 6 QA-to-Red catalog created
+- [x] QA-to-Red traceability created
 - [ ] PBFAG complete
 - [ ] Implementation handover authorized
 
@@ -92,9 +72,10 @@ Stage 6 must include RED coverage for the gap-analysis findings, including deplo
 
 ## Open Conditions Carried Forward
 
-Remaining items must carry into Stage 6 QA-to-Red and later implementation gates:
+Remaining items must carry into Stage 7 PBFAG and later implementation gates:
 
 - canonical App Description path mismatch remains a governance cleanup item;
+- architecture completeness gate remains RED for implementation handover;
 - deployment target and runtime entrypoint architecture must be completed;
 - environment variable registry and `.env.example` obligations must be completed;
 - Supabase schema, migration, RLS, and tenant isolation must be completed where persistence is used;
@@ -102,7 +83,6 @@ Remaining items must carry into Stage 6 QA-to-Red and later implementation gates
 - Ask Maturion adapter, prompt, context, and failure contracts must be completed;
 - full system wiring and E2E path traces must be completed;
 - free assessment result implementation must avoid dead-end to private `/assessment`;
-- non-MMM practical exercises remain deferred;
 - persistent entitlement data source must be finalized before production implementation;
 - audit storage/integration must be finalized before production implementation;
 - build/test/CI evidence remains future-gated.
