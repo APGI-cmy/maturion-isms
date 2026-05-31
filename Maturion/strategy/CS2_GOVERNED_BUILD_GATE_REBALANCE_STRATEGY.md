@@ -330,20 +330,27 @@ Recommended fields:
 ```json
 {
   "pr": 0,
+  "issue": 0,
+  "type": "security-remediation",
   "class": "SECURITY_REMEDIATION",
   "owner": "CS2",
   "merge_authority": "CS2",
   "risk": "medium",
-  "scope": [],
+  "scope": [
+    ".admin/prs/pr-<number>.json"
+  ],
   "qa_to_red_reference": "",
   "requires_builder": false,
   "requires_qp": true,
   "requires_ecap": false,
   "requires_iaa": false,
-  "requires_security_advisor_evidence": false,
+  "requires_security_advisor": false,
   "requires_preview_runtime": false,
   "hard_gates": [],
   "advisory_gates": [],
+  "evidence_required": [
+    "placeholder: describe required evidence items for this PR"
+  ],
   "cs2_override_allowed": true,
   "cs2_justification": ""
 }
