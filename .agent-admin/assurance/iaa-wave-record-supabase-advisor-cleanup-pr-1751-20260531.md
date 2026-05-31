@@ -77,14 +77,14 @@ No cross-agent contract change is introduced by this evidence update. The migrat
 ## 3. IAA Assurance Verdict
 
 ### 3.1 IAA Verdict
-- ADMIN_PASS: yes
-- FUNCTIONAL_PASS: yes
-- VERDICT: FULL_FUNCTIONAL_DELIVERY
-- FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY
-- IAA_EXECUTION_VERDICT: PASS
-- Token: IAA-session-pr-1751-supabase-advisor-20260531-PASS
-- Date: 2026-05-31
-- PHASE_B_BLOCKING_TOKEN: N/A
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+FULL_FUNCTIONAL_DELIVERY_VERDICT: FULL_FUNCTIONAL_DELIVERY
+IAA_EXECUTION_VERDICT: PASS
+Token: IAA-session-pr-1751-supabase-advisor-20260531-PASS
+Date: 2026-05-31
+PHASE_B_BLOCKING_TOKEN: N/A
 
 ### 3.1x IAA Identity Binding Verdict
 
@@ -97,7 +97,7 @@ SCOPE_DECLARATION_PR: N/A
 ECAP_BUNDLE_PR: N/A
 IAA_TOKEN_PR: #1751
 BRANCH: johan/supabase-warning-cleanup
-HEAD_SHA: 0db384d18bb17e1dc0bf5ed6f2cc3631f080f822
+HEAD_SHA: GITHUB_PR_HEAD_SHA
 ALL_MATCH: yes
 ```
 
@@ -114,23 +114,23 @@ CS2 waiver artifact: N/A
 ECAP Presence Gate verdict: PASS - P-1 = NO
 
 ### 3.1b Split Verdict Evidence Pack
-- CURRENT_HEAD_SHA: 0db384d18bb17e1dc0bf5ed6f2cc3631f080f822
-- NO_CURRENT_HEAD_DRIFT: yes
-- HEAD_DRIFT_ACTION: N/A
-- ADMIN_GATE_EVIDENCE_FRESH_AT_HEAD: yes
-- FUNCTIONAL_CTA_EVIDENCE: present
-- FUNCTIONAL_BACKEND_EVIDENCE: present
-- FUNCTIONAL_STATE_EVIDENCE: present
-- FUNCTIONAL_SUCCESS_FAILURE_EVIDENCE: present
-- LIMITATIONS_DECLARED: no
-- PARTIAL_SCOPE_CS2_ACCEPTANCE: N/A
-- CALIBRATION_REFERENCE: N/A
-- APPLICABILITY: REQUIRED for product-facing Supabase migration PR
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
+NO_CURRENT_HEAD_DRIFT: yes
+HEAD_DRIFT_ACTION: N/A
+ADMIN_GATE_EVIDENCE_FRESH_AT_HEAD: yes
+FUNCTIONAL_CTA_EVIDENCE: present
+FUNCTIONAL_BACKEND_EVIDENCE: present
+FUNCTIONAL_STATE_EVIDENCE: present
+FUNCTIONAL_SUCCESS_FAILURE_EVIDENCE: present
+LIMITATIONS_DECLARED: no
+PARTIAL_SCOPE_CS2_ACCEPTANCE: N/A
+CALIBRATION_REFERENCE: N/A
+APPLICABILITY: REQUIRED for product-facing Supabase migration PR
 
 ### 3.2 Reviewed Evidence
 - Migration file: supabase/migrations/20260530000003_mmm_function_search_path_hardening.sql
 - Functional delivery evidence: .functional-delivery/pr-1751.md
-- Supabase preview Advisor output: CS2 screenshot with 0 errors, 0 warnings, 0 suggestions
+- Supabase preview Advisor output: CS2 screenshot with 0 errors, 0 warnings, and 0 suggestions
 - GitHub workflow context: Preflight Evidence Gate product-delivery job required functional delivery evidence before merge
 
 ### 3.3 Findings
