@@ -60,6 +60,12 @@ export interface KucUploadMetadata {
 }
 
 const KUC_TIMEOUT_MS = Number(Deno.env.get('KUC_TIMEOUT_MS') ?? '180000');
+const KUC_RETRY_ATTEMPTS = Number(Deno.env.get('KUC_RETRY_ATTEMPTS') ?? '4');
+const KUC_RETRY_BASE_DELAY_MS = Number(Deno.env.get('KUC_RETRY_BASE_DELAY_MS') ?? '1500');
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 /**
  * Upload a document to KUC and receive classification metadata.
@@ -95,76 +101,103 @@ export async function uploadToKuc(
     return buildStubKucClassification(documentRole, metadata.filename);
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), KUC_TIMEOUT_MS);
+  // TR-019: Build multipart/form-data request once; Blob/File can be reused safely.
+  const formData = new FormData();
+  formData.append('file', file, metadata.filename);
+  formData.append('document_role', documentRole);
+  formData.append('organisation_id', organisationId);
+  formData.append('user_id', userId);
+  formData.append('metadata', JSON.stringify(metadata));
 
-  try {
-    // TR-019: Build multipart/form-data request
-    const formData = new FormData();
-    formData.append('file', file, metadata.filename);
-    formData.append('document_role', documentRole);
-    formData.append('organisation_id', organisationId);
-    formData.append('user_id', userId);
-    formData.append('metadata', JSON.stringify(metadata));
+  const headers: Record<string, string> = {};
+  if (KUC_SERVICE_TOKEN) {
+    headers['Authorization'] = `Bearer ${KUC_SERVICE_TOKEN}`;
+  }
 
-    const headers: Record<string, string> = {};
-    if (KUC_SERVICE_TOKEN) {
-      headers['Authorization'] = `Bearer ${KUC_SERVICE_TOKEN}`;
-    }
+  const uploadPath = metadata.upload_context === 'subject_knowledge'
+    ? 'framework-source'
+    : metadata.upload_context.replace('_', '-');
+  const endpoint = `${KUC_BASE_URL}/api/upload/${uploadPath}`;
 
-    const uploadPath = metadata.upload_context === 'subject_knowledge'
-      ? 'framework-source'
-      : metadata.upload_context.replace('_', '-');
+  let lastError = 'unknown';
 
-    const response = await fetch(
-      `${KUC_BASE_URL}/api/upload/${uploadPath}`,
-      {
+  for (let attempt = 1; attempt <= KUC_RETRY_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), KUC_TIMEOUT_MS);
+    try {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers,
         body: formData,
         signal: controller.signal,
-      },
-    );
+      });
 
-    clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
 
-    // NBR-002: HTTP 403 from KUC must propagate — no silent swallowing
-    if (response.status === 403) {
-      recordFailure('KUC', 'HTTP_403');
+      // NBR-002: HTTP 403 from KUC must propagate — no silent swallowing
+      if (response.status === 403) {
+        recordFailure('KUC', 'HTTP_403');
+        return {
+          success: false,
+          kuc_classification: null,
+          error: 'KUC returned HTTP 403 — insufficient access',
+          fallback: false,
+        };
+      }
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => 'unknown');
+        const shortError = `KUC HTTP ${response.status}: ${errText}`.slice(0, 1000);
+        lastError = shortError;
+
+        // Retry only for transient upstream failures.
+        if ([502, 503, 504].includes(response.status) && attempt < KUC_RETRY_ATTEMPTS) {
+          await sleep(KUC_RETRY_BASE_DELAY_MS * attempt);
+          continue;
+        }
+        throw new Error(shortError);
+      }
+
+      const classification = (await response.json()) as KucClassificationResponse;
+      recordSuccess('KUC');
+      return {
+        success: true,
+        kuc_classification: classification,
+        error: null,
+        fallback: false,
+      };
+    } catch (err) {
+      clearTimeout(timeoutId);
+      const message = err instanceof Error ? err.message : String(err);
+      lastError = message.slice(0, 1000);
+
+      // Retry aborted/timeouts and transient network errors.
+      const retryable =
+        message.toLowerCase().includes('aborted') ||
+        message.toLowerCase().includes('timeout') ||
+        message.toLowerCase().includes('network');
+      if (retryable && attempt < KUC_RETRY_ATTEMPTS) {
+        await sleep(KUC_RETRY_BASE_DELAY_MS * attempt);
+        continue;
+      }
+
+      recordFailure('KUC', lastError);
       return {
         success: false,
         kuc_classification: null,
-        error: 'KUC returned HTTP 403 — insufficient access',
+        error: lastError,
         fallback: false,
       };
     }
-
-    if (!response.ok) {
-      const errText = await response.text().catch(() => 'unknown');
-      throw new Error(`KUC HTTP ${response.status}: ${errText}`);
-    }
-
-    const classification = (await response.json()) as KucClassificationResponse;
-    recordSuccess('KUC');
-
-    return {
-      success: true,
-      kuc_classification: classification,
-      error: null,
-      fallback: false,
-    };
-  } catch (err) {
-    clearTimeout(timeoutId);
-    const message = err instanceof Error ? err.message : String(err);
-    recordFailure('KUC', message);
-
-    return {
-      success: false,
-      kuc_classification: null,
-      error: message,
-      fallback: false,
-    };
   }
+
+  recordFailure('KUC', lastError);
+  return {
+    success: false,
+    kuc_classification: null,
+    error: lastError,
+    fallback: false,
+  };
 }
 
 /**

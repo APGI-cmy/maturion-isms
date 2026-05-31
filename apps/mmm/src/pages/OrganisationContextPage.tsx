@@ -44,6 +44,19 @@ type OrganisationSourceDoc = {
   created_at: string;
 };
 
+function resolveMimeType(file: File): string {
+  if (file.type && file.type.trim().length > 0) return file.type;
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.pdf')) return 'application/pdf';
+  if (name.endsWith('.docx')) return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  if (name.endsWith('.doc')) return 'application/msword';
+  if (name.endsWith('.txt')) return 'text/plain';
+  if (name.endsWith('.md')) return 'text/markdown';
+  if (name.endsWith('.csv')) return 'text/csv';
+  if (name.endsWith('.json')) return 'application/json';
+  return 'application/octet-stream';
+}
+
 async function fetchOrganisationContext(): Promise<OrganisationContextResponse> {
   const headers = await getEdgeInvokeHeaders();
   const { data, error } = await supabase.functions.invoke('mmm-organisation-context', {
@@ -224,11 +237,12 @@ export default function OrganisationContextPage() {
       if (!userId) throw new Error('No authenticated user found.');
 
       const safeName = sourceFile.name.replace(/[^a-zA-Z0-9._-]+/g, '-');
+      const mimeType = resolveMimeType(sourceFile);
       const storagePath = `organisation-context/${org.id}/${Date.now()}-${safeName}`;
       const { error: uploadError } = await supabase.storage
         .from('mmm-subject-knowledge')
         .upload(storagePath, sourceFile, {
-          contentType: sourceFile.type || 'application/octet-stream',
+          contentType: mimeType,
           upsert: false,
         });
       if (uploadError) throw new Error(uploadError.message);
@@ -245,7 +259,7 @@ export default function OrganisationContextPage() {
         updated_by: userId,
         title: `${sourceMode} source - ${sourceFile.name}`,
         file_name: sourceFile.name,
-        mime_type: sourceFile.type || 'application/octet-stream',
+        mime_type: mimeType,
         file_size: sourceFile.size,
         storage_bucket: 'mmm-subject-knowledge',
         storage_path: storagePath,
