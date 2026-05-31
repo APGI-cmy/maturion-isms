@@ -59,7 +59,7 @@ export interface KucUploadMetadata {
   upload_context: 'framework_source' | 'evidence' | 'subject_knowledge';
 }
 
-const KUC_TIMEOUT_MS = 30_000;
+const KUC_TIMEOUT_MS = Number(Deno.env.get('KUC_TIMEOUT_MS') ?? '180000');
 
 /**
  * Upload a document to KUC and receive classification metadata.
