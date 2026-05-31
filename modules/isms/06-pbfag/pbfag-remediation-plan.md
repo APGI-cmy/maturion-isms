@@ -24,14 +24,15 @@ This remediation plan defines the architecture completion work required before S
 |---|---|---|---|
 | R-01 | `deployment-runtime-architecture.md` | Define deployment target, runtime entrypoints, build output, static assets, provisioning, rollback | Yes |
 | R-02 | `environment-variable-registry.md` | Define env vars, `.env.example` obligations, public/secret classification, validation | Yes |
-| R-03 | `supabase-data-architecture.md` | Define persistence model for onboarding, entitlements, free assessment, handoff, audit | Yes if persistence is used |
-| R-04 | `rls-and-tenant-isolation-matrix.md` | Define table-level RLS/CRUD/tenant boundary rules | Yes if persistence is used |
+| R-03 | `supabase-data-architecture.md` | Define persistence model or explicitly record a no-persistence decision for onboarding, entitlements, free assessment, handoff, audit | Yes |
+| R-04 | `rls-and-tenant-isolation-matrix.md` | Define table-level RLS/CRUD/tenant boundary rules, or explicitly record why no RLS is needed if no persistence is used | Yes |
 | R-05 | `edge-function-registry.md` | Define whether ISMS uses edge functions and map invocations/contracts | Yes |
 | R-06 | `ai-capability-architecture.md` | Define Ask Maturion adapter, prompt contracts, context payload, permission filter, fallback | Yes |
 | R-07 | `system-wiring-map.md` | Define UI/routes/context/auth/Supabase/AI/audit/checkout/module handoff wiring | Yes |
 | R-08 | `e2e-functional-paths.md` | Trace primary/failure/degraded paths end-to-end | Yes |
 | R-09 | `error-observability-architecture.md` | Define error taxonomy, logging, monitoring, health checks, redaction, degraded mode | Yes |
 | R-10 | `implementation-wave-plan.md` | Define build waves, isolated QA, cumulative regression, no future wiring handoff | Yes |
+| R-11 | `subscription-checkout-entitlement-architecture.md` | Define provider/mock strategy, checkout callback contract, subscription state, entitlement activation, failure/cancel/retry behavior | Yes |
 
 ---
 
@@ -39,7 +40,7 @@ This remediation plan defines the architecture completion work required before S
 
 Architecture remediation is sufficient only when:
 
-- every remediation artifact exists;
+- every remediation artifact exists, including explicit no-use decisions where a capability is intentionally deferred;
 - each artifact maps back to Stage 6 RED tests;
 - the architecture completeness gap analysis can be updated from RED to GREEN or waived item-by-item;
 - PBFAG can be rerun with no unresolved builder assumptions;
