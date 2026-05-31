@@ -66,8 +66,10 @@ app.add_middleware(
 # Routers
 # ---------------------------------------------------------------------------
 from routers.ai_routes import router as ai_router  # noqa: E402
+from routers.kuc_routes import router as kuc_router  # noqa: E402
 
 app.include_router(ai_router)
+app.include_router(kuc_router)
 
 
 # ---------------------------------------------------------------------------
