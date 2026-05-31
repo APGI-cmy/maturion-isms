@@ -99,6 +99,7 @@ export default function OrganisationContextPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceMode, setSourceMode] = useState<OrganisationModeSource>('VERBATIM');
   const [isUploadingSource, setIsUploadingSource] = useState(false);
+  const [sourceUploadStatus, setSourceUploadStatus] = useState<string | null>(null);
   const [activeDocActionId, setActiveDocActionId] = useState<string | null>(null);
   const query = useQuery({ queryKey: ['organisation-context'], queryFn: fetchOrganisationContext });
   const org = query.data?.organisation;
@@ -230,6 +231,7 @@ export default function OrganisationContextPage() {
 
     setIsUploadingSource(true);
     setMessage(null);
+    setSourceUploadStatus('Starting upload…');
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw new Error(sessionError.message);
@@ -257,6 +259,7 @@ export default function OrganisationContextPage() {
         });
         throw new Error(`Storage upload failed: ${detail}`);
       }
+      setSourceUploadStatus('Storage upload complete. Saving document metadata…');
 
       const tags = [
         'organisation_context',
@@ -297,6 +300,7 @@ export default function OrganisationContextPage() {
         });
         throw new Error(`Database insert failed: ${detail}`);
       }
+      setSourceUploadStatus('Metadata saved. Processing source document…');
 
       // Auto-reprocess immediately so organisation source documents become chunked/AI-consumable
       // without requiring the user to switch to DMC first.
@@ -322,6 +326,7 @@ export default function OrganisationContextPage() {
       if (reprocessError) {
         throw new Error(reprocessError.message || 'Source document uploaded but automatic processing failed.');
       }
+      setSourceUploadStatus('Processing complete. Finalizing mode context…');
 
       // Persist the selected mode in organisation context so runtime mode resolution
       // remains stable across framework pages and sessions.
@@ -342,10 +347,12 @@ export default function OrganisationContextPage() {
       }
 
       setSourceFile(null);
+      setSourceUploadStatus('Organisation source upload finished successfully.');
       setMessage('Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.');
       qc.invalidateQueries({ queryKey: ['organisation-context'] });
       qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
     } catch (err) {
+      setSourceUploadStatus(err instanceof Error ? err.message : 'Organisation source upload failed.');
       setMessage(err instanceof Error ? err.message : 'Organisation source upload failed.');
     } finally {
       setIsUploadingSource(false);
@@ -471,11 +478,16 @@ export default function OrganisationContextPage() {
           type="button"
           className="btn btn-primary"
           data-testid="upload-organisation-source-btn"
-          onClick={uploadModeSourceDocument}
+          onClick={() => {
+            void uploadModeSourceDocument();
+          }}
           disabled={!sourceFile || isUploadingSource}
         >
           {isUploadingSource ? 'Uploading…' : 'Upload Organisation Source'}
         </button>
+        {sourceUploadStatus ? (
+          <p role="status" style={{ marginTop: 8 }}>{sourceUploadStatus}</p>
+        ) : null}
 
         <div className="form-group" style={{ marginTop: 16 }}>
           <h3 style={{ marginBottom: 8 }}>Uploaded Organisation Sources</h3>
