@@ -21,6 +21,7 @@ import {
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const KUC_BASE_URL = (Deno.env.get('KUC_BASE_URL') ?? '').replace(/\/+$/, '');
 
 type UploadBody = {
   title?: string;
@@ -395,9 +396,14 @@ Deno.serve(async (req: Request) => {
     }
     if (isOrgVerbatim && verbatimRows.length === 0) {
       const headingCount = (extractedText.match(/(?:^|\n)\s*MPS\s*[A-Za-z0-9.]+\s*[–-]/gi) ?? []).length;
+      const kucTextCandidate = sanitizeForPostgresText(
+        String((kucResult.kuc_classification as Record<string, unknown> | null)?.extracted_text ?? ''),
+      ).trim();
       updatePayload.processing_error =
         `VERBATIM source parse failed: no extractable MPS intent statements found. ` +
-        `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0})`;
+        `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0}, ` +
+        `kuc_success=${kucResult.success}, kuc_error=${kucResult.error ?? 'none'}, kuc_chars=${kucTextCandidate.length}, ` +
+        `kuc_base_url_present=${KUC_BASE_URL ? 'yes' : 'no'})`;
     }
 
     await supabase
