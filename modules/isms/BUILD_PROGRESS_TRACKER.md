@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-05-30  
-**Updated By**: foreman-agent (wave: `isms-stage7-pbfag-20260530`)
+**Last Updated**: 2026-05-31  
+**Updated By**: foreman-agent (wave: `isms-stage7-architecture-remediation-20260531`)
 
-> **Classification**: ACTIVE — PRE-BUILD RECONCILED THROUGH STAGE 7; IMPLEMENTATION HANDOVER BLOCKED  
+> **Classification**: ACTIVE — PBFAG REMEDIATION PACK CREATED; STAGE 8 STILL BLOCKED PENDING PBFAG RERUN  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -19,10 +19,10 @@
 | Stage 2 | UX Workflow & Wiring Spec | COMPLETE — Approved with conditions | `modules/isms/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
 | Stage 3 | FRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-frs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
 | Stage 4 | TRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-trs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
-| Stage 5 | Architecture | COMPLETE — Approved with conditions; completeness gate RED for implementation handover | `modules/isms/04-architecture/architecture-completeness-gap-analysis.md` |
+| Stage 5 | Architecture | COMPLETE — Approved with conditions; remediation pack added | `modules/isms/04-architecture/architecture-remediation-pack.md` |
 | Stage 6 | QA-to-Red | COMPLETE — RED catalog specified | `modules/isms/05-qa-to-red/qa-to-red-catalog.md` |
-| Stage 7 | PBFAG | COMPLETE — FAILED implementation handover; remediation required | `modules/isms/06-pbfag/pre-build-functionality-assessment-gate.md` |
-| Stage 8 | Implementation Plan | BLOCKED | `modules/isms/06-pbfag/pbfag-remediation-plan.md` |
+| Stage 7 | PBFAG | COMPLETE — FAILED implementation handover; remediation pack created | `modules/isms/06-pbfag/pre-build-functionality-assessment-gate.md` |
+| Stage 8 | Implementation Plan | BLOCKED pending PBFAG rerun/amendment | `modules/isms/06-pbfag/pbfag-remediation-plan.md` |
 | Stage 9 | Builder Checklist | PARTIAL | `modules/isms/08-builder-checklist/builder-checklist.md` exists for public landing harvest |
 | Stage 10 | IAA Pre-Brief | PARTIAL | `.agent-admin/assurance/` contains pre-build assurance artifacts |
 | Stage 11 | Builder Appointment | PARTIAL | `.agent-admin/builder-appointments/` contains pre-build appointments |
@@ -30,27 +30,34 @@
 
 ---
 
-## Stage 7: PBFAG
+## PBFAG Remediation Status
 
-**Status**: COMPLETE — FAIL FOR IMPLEMENTATION HANDOVER  
-**Location**: `modules/isms/06-pbfag/`  
-**Primary Artifacts**:
-- `pre-build-functionality-assessment-gate.md` — PBFAG result and fully functional delivery assessment
-- `pbfag-remediation-plan.md` — mandatory remediation plan before Stage 8 implementation planning
+**Status**: FIRST-PASS REMEDIATION PACK CREATED  
+**Location**: `modules/isms/04-architecture/architecture-remediation-pack.md`
 
-**Completion Date**: 2026-05-30  
-**Notes**: PBFAG confirms that Stages 1–6 are sufficient to identify blockers, but not sufficient to authorize implementation handover. Architecture completeness remains RED. Stage 8 Implementation Plan is blocked until required architecture remediation is completed or explicitly waived.
+The remediation pack covers:
+
+- deployment and runtime architecture;
+- environment variable registry;
+- Supabase data architecture;
+- RLS and tenant isolation;
+- edge function registry;
+- AI capability architecture;
+- system wiring map;
+- E2E functional paths;
+- error and observability architecture;
+- subscription, checkout, and entitlement architecture;
+- implementation wave plan.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Remediation required before Stage 8.  
+**Current Stage**: PBFAG remediation review required.  
 **Stages 1–7**: Progressed through PBFAG assessment.  
-**PBFAG Result**: FAIL for implementation handover.  
-**Architecture Completeness Gate**: RED for implementation handover.  
+**PBFAG Result**: FAIL for implementation handover until remediation is accepted.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Complete PBFAG remediation plan, then rerun or amend PBFAG before Stage 8 Implementation Plan.
+**Next Required Action**: Review the remediation pack and rerun or amend PBFAG before Stage 8 Implementation Plan.
 
 ---
 
@@ -61,14 +68,12 @@
 - [x] Stage 3 FRS approved with conditions
 - [x] Stage 4 TRS approved with conditions
 - [x] Stage 5 Architecture reconciled to TRS and approved with conditions
-- [x] FRS-to-TRS traceability created
-- [x] TRS-to-Architecture traceability created
 - [x] Architecture completeness gap analysis filed
 - [x] Stage 6 QA-to-Red catalog created
-- [x] QA-to-Red traceability created
 - [x] Stage 7 PBFAG completed
 - [x] PBFAG remediation plan created
-- [ ] Architecture remediation complete
+- [x] Architecture remediation pack created
+- [ ] PBFAG rerun/amendment complete
 - [ ] Stage 8 Implementation Plan authorized
 - [ ] Implementation handover authorized
 
@@ -76,23 +81,13 @@
 
 ## Open Conditions Carried Forward
 
-Remaining items must be remediated before Stage 8 or explicitly waived:
+Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- architecture completeness gate remains RED for implementation handover;
-- deployment target and runtime entrypoint architecture must be completed;
-- environment variable registry and `.env.example` obligations must be completed;
-- Supabase schema, migration, RLS, and tenant isolation must be completed where persistence is used;
-- edge function registry and invocation map must be completed;
-- Ask Maturion adapter, prompt, context, and failure contracts must be completed;
-- full system wiring and E2E path traces must be completed;
-- error, observability, logging, health check, and degraded mode architecture must be completed;
-- implementation wave plan must be completed;
-- free assessment result implementation must avoid dead-end to private `/assessment`;
-- persistent entitlement data source must be finalized before production implementation;
-- audit storage/integration must be finalized before production implementation;
-- build/test/CI evidence remains future-gated.
+- remediation pack must be reviewed against PBFAG blockers;
+- PBFAG must be rerun or amended before Stage 8;
+- implementation build/test/CI evidence remains future-gated.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-05-30
+**Last Tracker Reconciliation**: 2026-05-31
