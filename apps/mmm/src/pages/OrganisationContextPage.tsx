@@ -44,6 +44,19 @@ type OrganisationSourceDoc = {
   created_at: string;
 };
 
+function resolveMimeType(file: File): string {
+  if (file.type && file.type.trim().length > 0) return file.type;
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.pdf')) return 'application/pdf';
+  if (name.endsWith('.docx')) return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  if (name.endsWith('.doc')) return 'application/msword';
+  if (name.endsWith('.txt')) return 'text/plain';
+  if (name.endsWith('.md')) return 'text/markdown';
+  if (name.endsWith('.csv')) return 'text/csv';
+  if (name.endsWith('.json')) return 'application/json';
+  return 'application/octet-stream';
+}
+
 async function fetchOrganisationContext(): Promise<OrganisationContextResponse> {
   const headers = await getEdgeInvokeHeaders();
   const { data, error } = await supabase.functions.invoke('mmm-organisation-context', {
@@ -86,6 +99,7 @@ export default function OrganisationContextPage() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceMode, setSourceMode] = useState<OrganisationModeSource>('VERBATIM');
   const [isUploadingSource, setIsUploadingSource] = useState(false);
+  const [sourceUploadStatus, setSourceUploadStatus] = useState<string | null>(null);
   const [activeDocActionId, setActiveDocActionId] = useState<string | null>(null);
   const query = useQuery({ queryKey: ['organisation-context'], queryFn: fetchOrganisationContext });
   const org = query.data?.organisation;
@@ -217,21 +231,35 @@ export default function OrganisationContextPage() {
 
     setIsUploadingSource(true);
     setMessage(null);
+    setSourceUploadStatus('Starting upload…');
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw new Error(sessionError.message);
       const userId = sessionData.session?.user?.id;
       if (!userId) throw new Error('No authenticated user found.');
 
-      const safeName = sourceFile.name.replace(/[^a-zA-Z0-9._-]+/g, '-');
-      const storagePath = `organisation-context/${org.id}/${Date.now()}-${safeName}`;
+      const safeName = sourceFile.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
+      const mimeType = resolveMimeType(sourceFile);
+      const storagePath = `${org.id}/${userId}/${Date.now()}-${safeName}`;
       const { error: uploadError } = await supabase.storage
         .from('mmm-subject-knowledge')
         .upload(storagePath, sourceFile, {
-          contentType: sourceFile.type || 'application/octet-stream',
+          contentType: mimeType,
           upsert: false,
         });
-      if (uploadError) throw new Error(uploadError.message);
+      if (uploadError) {
+        const detail = JSON.stringify({
+          message: uploadError.message,
+          name: uploadError.name,
+          statusCode: (uploadError as { statusCode?: string }).statusCode ?? null,
+          error: (uploadError as { error?: string }).error ?? null,
+          path: storagePath,
+          mimeType,
+          fileSize: sourceFile.size,
+        });
+        throw new Error(`Storage upload failed: ${detail}`);
+      }
+      setSourceUploadStatus('Storage upload complete. Saving document metadata…');
 
       const tags = [
         'organisation_context',
@@ -245,7 +273,7 @@ export default function OrganisationContextPage() {
         updated_by: userId,
         title: `${sourceMode} source - ${sourceFile.name}`,
         file_name: sourceFile.name,
-        mime_type: sourceFile.type || 'application/octet-stream',
+        mime_type: mimeType,
         file_size: sourceFile.size,
         storage_bucket: 'mmm-subject-knowledge',
         storage_path: storagePath,
@@ -260,7 +288,19 @@ export default function OrganisationContextPage() {
             ? 'Hybrid source document: harvest customer material, then complete gaps with subject knowledge.'
             : 'New-generation context source: use as organisation familiarisation material.',
       });
-      if (insertError) throw new Error(insertError.message);
+      if (insertError) {
+        const detail = JSON.stringify({
+          message: insertError.message,
+          code: insertError.code ?? null,
+          details: insertError.details ?? null,
+          hint: insertError.hint ?? null,
+          orgId: org.id,
+          scopeType: 'organisation_context',
+          sourceMode,
+        });
+        throw new Error(`Database insert failed: ${detail}`);
+      }
+      setSourceUploadStatus('Metadata saved. Processing source document…');
 
       // Auto-reprocess immediately so organisation source documents become chunked/AI-consumable
       // without requiring the user to switch to DMC first.
@@ -286,6 +326,7 @@ export default function OrganisationContextPage() {
       if (reprocessError) {
         throw new Error(reprocessError.message || 'Source document uploaded but automatic processing failed.');
       }
+      setSourceUploadStatus('Processing complete. Finalizing mode context…');
 
       // Persist the selected mode in organisation context so runtime mode resolution
       // remains stable across framework pages and sessions.
@@ -306,10 +347,12 @@ export default function OrganisationContextPage() {
       }
 
       setSourceFile(null);
+      setSourceUploadStatus('Organisation source upload finished successfully.');
       setMessage('Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.');
       qc.invalidateQueries({ queryKey: ['organisation-context'] });
       qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
     } catch (err) {
+      setSourceUploadStatus(err instanceof Error ? err.message : 'Organisation source upload failed.');
       setMessage(err instanceof Error ? err.message : 'Organisation source upload failed.');
     } finally {
       setIsUploadingSource(false);
@@ -435,11 +478,16 @@ export default function OrganisationContextPage() {
           type="button"
           className="btn btn-primary"
           data-testid="upload-organisation-source-btn"
-          onClick={uploadModeSourceDocument}
+          onClick={() => {
+            void uploadModeSourceDocument();
+          }}
           disabled={!sourceFile || isUploadingSource}
         >
           {isUploadingSource ? 'Uploading…' : 'Upload Organisation Source'}
         </button>
+        {sourceUploadStatus ? (
+          <p role="status" style={{ marginTop: 8 }}>{sourceUploadStatus}</p>
+        ) : null}
 
         <div className="form-group" style={{ marginTop: 16 }}>
           <h3 style={{ marginBottom: 8 }}>Uploaded Organisation Sources</h3>
