@@ -236,16 +236,27 @@ export default function OrganisationContextPage() {
       const userId = sessionData.session?.user?.id;
       if (!userId) throw new Error('No authenticated user found.');
 
-      const safeName = sourceFile.name.replace(/[^a-zA-Z0-9._-]+/g, '-');
+      const safeName = sourceFile.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
       const mimeType = resolveMimeType(sourceFile);
-      const storagePath = `organisation-context/${org.id}/${Date.now()}-${safeName}`;
+      const storagePath = `${org.id}/${userId}/${Date.now()}-${safeName}`;
       const { error: uploadError } = await supabase.storage
         .from('mmm-subject-knowledge')
         .upload(storagePath, sourceFile, {
           contentType: mimeType,
           upsert: false,
         });
-      if (uploadError) throw new Error(uploadError.message);
+      if (uploadError) {
+        const detail = JSON.stringify({
+          message: uploadError.message,
+          name: uploadError.name,
+          statusCode: (uploadError as { statusCode?: string }).statusCode ?? null,
+          error: (uploadError as { error?: string }).error ?? null,
+          path: storagePath,
+          mimeType,
+          fileSize: sourceFile.size,
+        });
+        throw new Error(`Storage upload failed: ${detail}`);
+      }
 
       const tags = [
         'organisation_context',
@@ -274,7 +285,18 @@ export default function OrganisationContextPage() {
             ? 'Hybrid source document: harvest customer material, then complete gaps with subject knowledge.'
             : 'New-generation context source: use as organisation familiarisation material.',
       });
-      if (insertError) throw new Error(insertError.message);
+      if (insertError) {
+        const detail = JSON.stringify({
+          message: insertError.message,
+          code: insertError.code ?? null,
+          details: insertError.details ?? null,
+          hint: insertError.hint ?? null,
+          orgId: org.id,
+          scopeType: 'organisation_context',
+          sourceMode,
+        });
+        throw new Error(`Database insert failed: ${detail}`);
+      }
 
       // Auto-reprocess immediately so organisation source documents become chunked/AI-consumable
       // without requiring the user to switch to DMC first.
