@@ -52,9 +52,15 @@ def _extract_text(content: bytes, filename: str, content_type: str | None) -> st
     name = (filename or "").lower()
     mime = (content_type or "").lower()
     if "pdf" in mime or name.endswith(".pdf"):
-        return _extract_text_from_pdf(content)
+        try:
+            return _extract_text_from_pdf(content)
+        except Exception:
+            return ""
     if "wordprocessingml" in mime or name.endswith(".docx"):
-        return _extract_text_from_docx(content)
+        try:
+            return _extract_text_from_docx(content)
+        except Exception:
+            return ""
     try:
         return content.decode("utf-8", errors="ignore")
     except Exception:
@@ -70,7 +76,12 @@ async def upload_framework_source(
     metadata: str | None = Form(None),
 ) -> dict[str, Any]:
     payload = await file.read()
-    extracted_text = _extract_text(payload, file.filename or "", file.content_type)
+    extraction_error: str | None = None
+    try:
+        extracted_text = _extract_text(payload, file.filename or "", file.content_type)
+    except Exception as exc:
+        extracted_text = ""
+        extraction_error = str(exc)
     parse_job_id = str(uuid.uuid4())
     upload_id = str(uuid.uuid4())
 
@@ -95,6 +106,7 @@ async def upload_framework_source(
             "mime_type": file.content_type,
             "size_bytes": len(payload),
             "chars": len(extracted_text),
+            "extraction_error": extraction_error,
         },
     }
 
@@ -108,7 +120,12 @@ async def upload_evidence(
     metadata: str | None = Form(None),
 ) -> dict[str, Any]:
     payload = await file.read()
-    extracted_text = _extract_text(payload, file.filename or "", file.content_type)
+    extraction_error: str | None = None
+    try:
+        extracted_text = _extract_text(payload, file.filename or "", file.content_type)
+    except Exception as exc:
+        extracted_text = ""
+        extraction_error = str(exc)
     upload_id = str(uuid.uuid4())
 
     return {
@@ -132,5 +149,6 @@ async def upload_evidence(
             "mime_type": file.content_type,
             "size_bytes": len(payload),
             "chars": len(extracted_text),
+            "extraction_error": extraction_error,
         },
     }
