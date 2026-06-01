@@ -7,7 +7,7 @@
 | Stage | Stage 8 |
 | Version | v0.1.0 |
 | Wave | `isms-stage8-implementation-plan-20260601` |
-| Status | DRAFT — Planning artifact only |
+| Status | COMPLETE — Planning artifact only |
 
 ---
 
@@ -57,7 +57,7 @@ This plan derives from:
 | W3 | Subscribe, Checkout Mock, Auth, Onboarding | Subscription selection, checkout transition, auth entry, onboarding shell | D4 |
 | W4 | Shared Context, Entitlement, MMM Handoff | ISMS context provider, entitlement checks, protected module entry | D5 |
 | W5 | Ask Maturion Adapter | Safe public/private AI adapter and prompt seed wiring | D6 |
-| W6 | Persistence, Schema/RLS, Audit | Supabase schema, RLS, hooks, audit writer, env alignment | D8, D9 |
+| W6 | Backend Boundary, Persistence, Schema/RLS, Audit | Edge/backend registry, no-function/use decisions, Supabase schema, RLS, hooks, audit writer, env alignment | D7, D8, D9 |
 | W7 | Deployment, Runtime, Env, CI Hardening | Deployment target, SPA fallback, env validation, CI evidence | D10 |
 | W8 | Cumulative Regression and PBFAG Rerun | Full regression, architecture completeness update, PBFAG rerun | D11 + all prior |
 
@@ -186,10 +186,11 @@ Evidence:
 - build/lint/test logs;
 - PR CI green.
 
-### W6 — Persistence, Schema/RLS, Audit
+### W6 — Backend Boundary, Persistence, Schema/RLS, Audit
 
 Likely files:
 
+- `modules/isms/04-architecture/edge-function-registry.md` or equivalent amendment to architecture remediation artifacts
 - `supabase/migrations/*`
 - `apps/isms-portal/src/lib/supabase/*`
 - `apps/isms-portal/src/hooks/*`
@@ -198,6 +199,9 @@ Likely files:
 
 Outcomes:
 
+- D7 backend-boundary RED tests are owned by this wave;
+- edge function registry exists or explicit no-edge-function decision is recorded;
+- any edge/backend invocation has caller, input, output, auth, error, and deploy-status mapping;
 - schemas exist for required persisted objects or explicit no-persistence waiver exists;
 - RLS policies exist for tenant-scoped tables;
 - schema-to-hook matrix passes;
@@ -206,6 +210,8 @@ Outcomes:
 
 Evidence:
 
+- edge/backend registry evidence;
+- no-unregistered-function-invocation evidence;
 - migration evidence;
 - RLS evidence;
 - schema-to-hook evidence;
@@ -261,7 +267,7 @@ Evidence:
 W1 -> W2 -> W3 -> W4 -> W5 -> W6 -> W7 -> W8
 ```
 
-W6 may not begin production persistence work until schema/RLS decisions are approved.
+W6 may not begin production persistence work until backend-boundary, schema, and RLS decisions are approved.
 
 W7 may not finalize production deployment until provider and environment decisions are approved.
 
