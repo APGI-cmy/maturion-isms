@@ -231,14 +231,17 @@ normalize_class() {
 # PR class router
 # -----------------------------------------------------------------------------
 
-MANIFEST_CLASS="$(normalize_class "$(manifest_field class || true)")"
+MANIFEST_CLASS_RAW="$(manifest_field class || true)"
+MANIFEST_CLASS="$(normalize_class "$MANIFEST_CLASS_RAW")"
+if [ -n "$MANIFEST_CLASS_RAW" ] && [ -z "$MANIFEST_CLASS" ]; then
+  fail "Unknown PR manifest class '$MANIFEST_CLASS_RAW'. Expected one of: APP_FUNCTIONAL_BUILD, DATABASE_MIGRATION, SECURITY_REMEDIATION, GOVERNANCE_CONTROL, AGENT_CONTRACT, EVIDENCE_ONLY, REBASE_ONLY, CS2_HOTFIX."
+fi
 PR_CLASS=""
 CLASS_REASON=""
 
 if [ -n "$MANIFEST_CLASS" ]; then
   PR_CLASS="$MANIFEST_CLASS"
   CLASS_REASON="declared in PR manifest"
-elif all_files_evidence_only; then
   PR_CLASS="EVIDENCE_ONLY"
   CLASS_REASON="diff contains only evidence/admin artifacts"
 elif all_files_governance_controlled; then
