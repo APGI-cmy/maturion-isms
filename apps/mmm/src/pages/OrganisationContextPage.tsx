@@ -328,7 +328,7 @@ export default function OrganisationContextPage() {
       }
 
       const headers = await getEdgeInvokeHeaders();
-      const { error: reprocessError } = await supabase.functions.invoke(
+      const { data: reprocessData, error: reprocessError } = await supabase.functions.invoke(
         'mmm-subject-knowledge-reprocess',
         {
           headers,
@@ -337,6 +337,13 @@ export default function OrganisationContextPage() {
       );
       if (reprocessError) {
         throw new Error(reprocessError.message || 'Source document uploaded but automatic processing failed.');
+      }
+      if (reprocessData && typeof reprocessData === 'object' && 'success' in reprocessData && (reprocessData as { success?: boolean }).success === false) {
+        const detail =
+          typeof (reprocessData as { error?: unknown }).error === 'string'
+            ? (reprocessData as { error: string }).error
+            : 'Source document uploaded, but processing failed.';
+        throw new Error(detail);
       }
       setSourceUploadStatus('Processing complete. Finalizing mode context…');
 

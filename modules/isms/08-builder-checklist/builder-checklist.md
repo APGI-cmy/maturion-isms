@@ -1,143 +1,213 @@
-# Builder Checklist — ISMS Public Landing Harvest
+# ISMS Stage 9 — Builder Checklist
 
-**Stage**: 8 (Builder Checklist)
-**Wave**: isms-public-landing-harvest-20260514
-**Issue**: #1645
-**PR**: #1646
-**Builder**: ui-builder
-**Authority**: foreman-v2-agent contract v6.2.0 Phase 3 Step 3.3
-**Version**: v1.0.0
-
----
-
-## 1. Pre-Build Checklist (Builder must confirm before starting)
-
-| # | Item | Confirmed |
-|---|---|---|
-| B-PRE-1 | Read harvest-map.md in full | [ ] |
-| B-PRE-2 | Read route-boundary-map.md in full — understand PUBLIC vs PRIVATE | [ ] |
-| B-PRE-3 | Read module-card-inventory.md in full — understand all 7 card specs | [ ] |
-| B-PRE-4 | Read ux-journey-contract.md in full — understand the sacred journey sequence | [ ] |
-| B-PRE-5 | Read implementation-map.md in full — understand all files to create | [ ] |
-| B-PRE-6 | Read accessibility-requirements.md in full | [ ] |
-| B-PRE-7 | Read verification-plan.md in full — know the QP criteria | [ ] |
-| B-PRE-8 | Read ISMS_app_description.md §16 — understand the authority model | [ ] |
-| B-PRE-9 | Confirm: legacy source is at `apps/maturion-maturity-legacy/src/` | [ ] |
-| B-PRE-10 | Confirm: target app is `apps/isms-portal/src/` | [ ] |
-
----
-
-## 2. Implementation Checklist
-
-### 2.1 App Infrastructure
-
-| # | Task | Done |
-|---|---|---|
-| B-INF-1 | Set up `apps/isms-portal/package.json` with required dependencies | [ ] |
-| B-INF-2 | Create `apps/isms-portal/index.html` with `<html lang="en">` and Vite entry | [ ] |
-| B-INF-3 | Create `apps/isms-portal/vite.config.ts` with `@/` path alias | [ ] |
-| B-INF-4 | Create `apps/isms-portal/tailwind.config.ts` matching maturion-maturity-legacy | [ ] |
-| B-INF-5 | Create `apps/isms-portal/src/main.tsx` with ReactDOM.createRoot | [ ] |
-| B-INF-6 | Create `apps/isms-portal/src/index.css` with Tailwind directives | [ ] |
-| B-INF-7 | Create `apps/isms-portal/src/App.tsx` with full routing | [ ] |
-| B-INF-8 | Create `apps/isms-portal/src/lib/routes.ts` with all route constants | [ ] |
-
-### 2.2 Public Landing Page
-
-| # | Task | Done |
-|---|---|---|
-| B-LAND-1 | Create `apps/isms-portal/src/pages/Index.tsx` (harvest from legacy) | [ ] |
-| B-LAND-2 | Include hero section with primary CTA | [ ] |
-| B-LAND-3 | Include all 7 module discovery cards | [ ] |
-| B-LAND-4 | Include feature promise cards | [ ] |
-| B-LAND-5 | Include ISMS journey/domains section | [ ] |
-| B-LAND-6 | Remove all console.log debug statements | [ ] |
-| B-LAND-7 | Remove useToast on page load | [ ] |
-| B-LAND-8 | Update module card names to canonical ISMS names | [ ] |
-| B-LAND-9 | Update module card routes to `/marketing/<module>` pattern | [ ] |
-| B-LAND-10 | Free Assessment CTA routes to `/free-assessment` | [ ] |
-
-### 2.3 Module Marketing Pages
-
-| # | Task | Done |
-|---|---|---|
-| B-MKTG-1 | Create `RiskManagementInfo.tsx` → `/marketing/risk-management` | [ ] |
-| B-MKTG-2 | Create `PITInfo.tsx` → `/marketing/project-implementation` | [ ] |
-| B-MKTG-3 | Create `DataAnalyticsInfo.tsx` → `/marketing/data-analytics-assurance` | [ ] |
-| B-MKTG-4 | Create `DataExtractionInfo.tsx` → `/marketing/systems-integration` | [ ] |
-| B-MKTG-5 | Create `SkillsDevelopmentInfo.tsx` → `/marketing/skills-development` | [ ] |
-| B-MKTG-6 | Create `IncidentManagementInfo.tsx` → `/marketing/incident-intelligence` | [ ] |
-| B-MKTG-7 | Each page has: badge, icon header, features list, benefits cards, Subscribe CTA | [ ] |
-| B-MKTG-8 | Each page has: back navigation → `/` | [ ] |
-| B-MKTG-9 | Update internal navigation links to `/marketing/*` routes | [ ] |
-
-### 2.4 Assessment and Subscription Flow
-
-| # | Task | Done |
-|---|---|---|
-| B-SUB-1 | Create `FreeAssessment.tsx` → `/free-assessment` (PUBLIC) | [ ] |
-| B-SUB-2 | Free assessment clearly indicates MMM/Maturity Roadmap tie | [ ] |
-| B-SUB-3 | Create `Subscribe.tsx` → `/subscribe` (PUBLIC) | [ ] |
-| B-SUB-4 | Create `SubscribeCheckout.tsx` → `/subscribe/checkout` (PUBLIC) | [ ] |
-
-### 2.5 Supporting Pages
-
-| # | Task | Done |
-|---|---|---|
-| B-SUPP-1 | Create `Journey.tsx` → `/journey` (PUBLIC) | [ ] |
-| B-SUPP-2 | Create `ModulesOverview.tsx` → `/modules` (PUBLIC) | [ ] |
-| B-SUPP-3 | Create `NotFound.tsx` → `*` catch-all | [ ] |
-
-### 2.6 Route Configuration
-
-| # | Task | Done |
-|---|---|---|
-| B-ROUTE-1 | All marketing routes are PUBLIC (no ProtectedRoute wrapper) | [ ] |
-| B-ROUTE-2 | `/journey` is PUBLIC (no ProtectedRoute wrapper) | [ ] |
-| B-ROUTE-3 | `/free-assessment` is PUBLIC (no ProtectedRoute wrapper) | [ ] |
-| B-ROUTE-4 | Legacy route redirects implemented | [ ] |
-| B-ROUTE-5 | All routes use ROUTES.* constants | [ ] |
-
----
-
-## 3. MANDATORY INVARIANTS (Builder must never violate)
-
-> ⚠️ These are hard rules. Any violation is a QP FAIL.
-
-| # | Invariant |
+| Field | Value |
 |---|---|
-| INV-1 | NO marketing page may be wrapped in ProtectedRoute |
-| INV-2 | `/free-assessment` must be PUBLIC |
-| INV-3 | `/journey` must be PUBLIC |
-| INV-4 | Module card names must use canonical ISMS names (see module-card-inventory.md) |
-| INV-5 | Free Assessment must indicate Maturity Roadmap / MMM tie |
-| INV-6 | MMM card routes to `/marketing/maturity-roadmap` (NOT `/maturity/setup` or `/`) |
-| INV-7 | Zero console.log debug statements in production code |
-| INV-8 | No wide useToast welcome message on landing page load |
-| INV-9 | Legacy source files (`apps/maturion-maturity-legacy/`) must NOT be modified |
-| INV-10 | All route constants must be defined in `src/lib/routes.ts` |
+| Product | ISMS — Integrated Security Management System |
+| Artifact | Builder Checklist |
+| Stage | Stage 9 |
+| Version | v0.1.0 |
+| Wave | `isms-stage9-builder-checklist-20260601` |
+| Status | COMPLETE — Checklist artifact only |
 
 ---
 
-## 4. Post-Build Checklist (Builder must confirm before handover)
+## 1. Purpose
 
-| # | Item | Done |
+This checklist translates the Stage 8 Implementation Plan into builder-ready controls.
+
+It does not appoint implementation builders, authorize runtime implementation, or approve implementation handover.
+
+---
+
+## 2. Builder Pre-Start Checklist
+
+Before any implementation wave starts, the builder must confirm:
+
+| ID | Required confirmation | Done |
 |---|---|---|
-| B-POST-1 | `pnpm run build` passes with zero errors | [ ] |
-| B-POST-2 | TypeScript type check passes with zero errors | [ ] |
-| B-POST-3 | All existing tests still pass | [ ] |
-| B-POST-4 | All 13 V-* verification items from verification-plan.md satisfied | [ ] |
-| B-POST-5 | All required screenshots (SS-1 through SS-10) captured and attached | [ ] |
-| B-POST-6 | All INV-1 through INV-10 invariants confirmed compliant | [ ] |
-| B-POST-7 | Route boundary verification checklist in verification-plan.md completed | [ ] |
+| B-PRE-001 | Read `modules/isms/00-app-description/ISMS_app_description.md` | [ ] |
+| B-PRE-002 | Read `modules/isms/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` | [ ] |
+| B-PRE-003 | Read `modules/isms/02-frs/functional-requirements.md` | [ ] |
+| B-PRE-004 | Read `modules/isms/03-trs/technical-requirements-specification.md` | [ ] |
+| B-PRE-005 | Read `modules/isms/04-architecture/architecture-reconciliation-stage5.md` | [ ] |
+| B-PRE-006 | Read `modules/isms/04-architecture/architecture-completeness-gap-analysis.md` | [ ] |
+| B-PRE-007 | Read `modules/isms/04-architecture/architecture-remediation-pack.md` | [ ] |
+| B-PRE-008 | Read `modules/isms/05-qa-to-red/qa-to-red-catalog.md` | [ ] |
+| B-PRE-009 | Read `modules/isms/06-pbfag/pre-build-functionality-assessment-gate.md` | [ ] |
+| B-PRE-010 | Read `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` | [ ] |
+| B-PRE-011 | Read `modules/isms/07-implementation-plan/implementation-plan.md` | [ ] |
+| B-PRE-012 | Read `modules/isms/07-implementation-plan/wave-evidence-plan.md` | [ ] |
+| B-PRE-013 | Confirm implementation scope is limited to the appointed wave | [ ] |
+| B-PRE-014 | Confirm no runtime work starts without wave-specific builder appointment | [ ] |
 
 ---
 
-## 5. Handover Trigger
+## 3. Global Builder Invariants
 
-Only trigger handover when ALL post-build checklist items are checked.
-Any unchecked item = premature handover = REJECTION_NOTICE from Foreman QP.
+These apply to every future implementation wave.
+
+| ID | Invariant |
+|---|---|
+| B-INV-001 | Public routes must remain public unless explicitly changed by approved architecture. |
+| B-INV-002 | Private routes must require auth and entitlement where applicable. |
+| B-INV-003 | No module card may route directly to private module execution from public marketing. |
+| B-INV-004 | Free assessment must not dead-end into private `/assessment`. |
+| B-INV-005 | Legacy source may be harvested/read but not modified unless explicitly authorized. |
+| B-INV-006 | No wave may claim future wiring as complete. |
+| B-INV-007 | No direct AI provider integration may bypass the approved Ask Maturion adapter boundary. |
+| B-INV-008 | No Supabase persistence may be introduced without schema/RLS review or explicit no-persistence waiver. |
+| B-INV-009 | No edge/backend function invocation may exist without registry entry or explicit no-function decision. |
+| B-INV-010 | No implementation wave may merge while required PR checks or useful review conversations remain unresolved. |
+| B-INV-011 | Documentation-only work must not claim runtime build/test/deploy success unless actually verified. |
+| B-INV-012 | Implementation handover remains blocked until later gates authorize it. |
 
 ---
 
-**Authority**: foreman-v2-agent | Wave: isms-public-landing-harvest-20260514
+## 4. Wave Builder Checklists
+
+### W1 — Route Registry, Public Pages, Redirects
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W1-001 | Create or validate central route constants. | [ ] |
+| W1-002 | Wire public routes for landing, modules, journey, free assessment, subscribe, auth, and marketing pages. | [ ] |
+| W1-003 | Ensure private route placeholders are protected. | [ ] |
+| W1-004 | Implement legacy marketing redirects to canonical `/marketing/*` routes. | [ ] |
+| W1-005 | Use shared module-card configuration for landing and modules overview. | [ ] |
+| W1-006 | Verify module cards route to public marketing pages only. | [ ] |
+| W1-007 | Map implementation to Stage 6 D1 and D2 RED tests. | [ ] |
+| W1-008 | Capture build, lint, test, and CI evidence. | [ ] |
+
+### W2 — Free Assessment Result Flow
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W2-001 | Implement public free assessment entry. | [ ] |
+| W2-002 | Capture high-level responses. | [ ] |
+| W2-003 | Compute indicative maturity baseline. | [ ] |
+| W2-004 | Render result state with conversion path. | [ ] |
+| W2-005 | Prevent public result dead-end into private `/assessment`. | [ ] |
+| W2-006 | Preserve or explicitly handle refresh/back navigation state. | [ ] |
+| W2-007 | Map implementation to Stage 6 D3 RED tests. | [ ] |
+| W2-008 | Capture build, lint, test, and CI evidence. | [ ] |
+
+### W3 — Subscribe, Checkout Mock, Auth, Onboarding
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W3-001 | Implement subscribe page with package options. | [ ] |
+| W3-002 | Accept optional source journey context. | [ ] |
+| W3-003 | Implement checkout mock or provider placeholder with explicit non-production status. | [ ] |
+| W3-004 | Route unauthenticated checkout success to auth. | [ ] |
+| W3-005 | Route authenticated checkout success to onboarding. | [ ] |
+| W3-006 | Implement onboarding shell and required fields. | [ ] |
+| W3-007 | Validate required onboarding fields. | [ ] |
+| W3-008 | Map implementation to Stage 6 D4 RED tests. | [ ] |
+| W3-009 | Capture build, lint, test, and CI evidence. | [ ] |
+
+### W4 — Shared Context, Entitlement, MMM Handoff
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W4-001 | Implement shared ISMS context provider/hook. | [ ] |
+| W4-002 | Implement entitlement checks for private module access. | [ ] |
+| W4-003 | Route unsubscribed module access to explanation/upgrade path. | [ ] |
+| W4-004 | Implement MMM handoff payload to `/maturity/setup`. | [ ] |
+| W4-005 | Reserve/protect future PIT, Risk, Incidents, Analytics, Integrations, and Skills routes. | [ ] |
+| W4-006 | Emit or prepare handoff audit event hook. | [ ] |
+| W4-007 | Map implementation to Stage 6 D5 RED tests. | [ ] |
+| W4-008 | Capture build, lint, test, and CI evidence. | [ ] |
+
+### W5 — Ask Maturion Adapter
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W5-001 | Implement Ask Maturion adapter boundary. | [ ] |
+| W5-002 | Enforce public educational prompt contract. | [ ] |
+| W5-003 | Enforce authenticated filtered-context contract. | [ ] |
+| W5-004 | Ensure AI cannot bypass route guards or entitlements. | [ ] |
+| W5-005 | Add non-blocking AI fallback behavior. | [ ] |
+| W5-006 | Add module card prompt seeds or explicit deferred markers. | [ ] |
+| W5-007 | Map implementation to Stage 6 D6 RED tests. | [ ] |
+| W5-008 | Capture build, lint, test, and CI evidence. | [ ] |
+
+### W6 — Backend Boundary, Persistence, Schema/RLS, Audit
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W6-001 | Create or update edge/backend function registry. | [ ] |
+| W6-002 | Record explicit no-edge-function decisions where no function is used. | [ ] |
+| W6-003 | Define Supabase schema or explicit no-persistence waiver. | [ ] |
+| W6-004 | Add migrations where persistence is used. | [ ] |
+| W6-005 | Define RLS and tenant isolation policies where persistence is used. | [ ] |
+| W6-006 | Create schema-to-hook validation evidence. | [ ] |
+| W6-007 | Implement audit writer or explicit non-production stub. | [ ] |
+| W6-008 | Update `.env.example` and environment registry as needed. | [ ] |
+| W6-009 | Map implementation to Stage 6 D7, D8, and D9 RED tests. | [ ] |
+| W6-010 | Capture build, lint, test, and CI evidence. | [ ] |
+
+### W7 — Deployment, Runtime, Env, CI Hardening
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W7-001 | Confirm MMM Vercel deployment remains passing. | [ ] |
+| W7-002 | Configure or create ISMS Vercel deployment path. | [ ] |
+| W7-003 | Confirm ISMS Vercel project uses monorepo pnpm install settings. | [ ] |
+| W7-004 | Decide whether ISMS needs a GitHub deployment workflow or Vercel project auto-deploy is sufficient. | [ ] |
+| W7-005 | Verify Vercel install reaches build step. | [ ] |
+| W7-006 | Verify `pnpm --filter isms-portal build` result. | [ ] |
+| W7-007 | Record deployment URL or failure evidence. | [ ] |
+| W7-008 | Map implementation to Stage 6 D10 RED tests. | [ ] |
+| W7-009 | Capture build, lint, test, and CI evidence. | [ ] |
+
+### W8 — Cumulative Regression and PBFAG Rerun
+
+| ID | Builder requirement | Done |
+|---|---|---|
+| W8-001 | Run all prior wave QA evidence checks. | [ ] |
+| W8-002 | Update architecture completeness status or waivers. | [ ] |
+| W8-003 | Rerun or amend PBFAG after implementation evidence. | [ ] |
+| W8-004 | Confirm Stage 9 checklist items are completed or explicitly waived. | [ ] |
+| W8-005 | Confirm future handover gates remain blocked until authorized. | [ ] |
+| W8-006 | Map implementation to Stage 6 D11 and cumulative D1-D10 RED tests. | [ ] |
+| W8-007 | Capture build, lint, test, and CI evidence. | [ ] |
+
+---
+
+## 5. Standard Evidence Required for Every Wave
+
+| ID | Evidence | Required |
+|---|---|---|
+| B-EV-001 | Scope declaration for wave | yes |
+| B-EV-002 | Builder appointment for wave | yes |
+| B-EV-003 | RED-to-GREEN mapping for affected QA tests | yes |
+| B-EV-004 | Route/wiring evidence | when routes/wiring are touched |
+| B-EV-005 | Build evidence | yes |
+| B-EV-006 | Lint evidence | yes |
+| B-EV-007 | Test evidence | yes |
+| B-EV-008 | CI status inspection | yes |
+| B-EV-009 | Foreman QP | yes |
+| B-EV-010 | IAA wave record/token | yes |
+| B-EV-011 | Copilot/Codex review disposition | yes |
+| B-EV-012 | Vercel/deployment evidence | W7 and any deployment-affecting wave |
+
+---
+
+## 6. Vercel Deployment Checkpoint
+
+Current deployment state entering Stage 9:
+
+| Deployment | Status |
+|---|---|
+| MMM Vercel deployment | Passing after monorepo config cleanup |
+| ISMS Vercel deployment | No GitHub deployment workflow yet; manual Vercel project settings prepared |
+
+Builder must not treat ISMS deployment as verified until the ISMS Vercel project or workflow produces passing evidence.
+
+---
+
+## 7. Stage 9 Disposition
+
+This checklist is sufficient for Stage 10 IAA Pre-Brief preparation after PR approval and CI pass.
+
+It does not authorize implementation execution or implementation handover.
