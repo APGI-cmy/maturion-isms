@@ -22,8 +22,7 @@
   "license": "UNLICENSED",
   "packageManager": "pnpm@9.12.0",
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.15.7"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@maturion/ai-centre": "workspace:*",
