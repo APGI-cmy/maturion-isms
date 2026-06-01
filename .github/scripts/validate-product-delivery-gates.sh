@@ -10,7 +10,7 @@ BASE_SHA="${BASE_SHA:-}"
 PR_NUMBER="${PR_NUMBER:-}"
 PR_LABELS="${PR_LABELS:-}"
 PR_BODY="${PR_BODY:-}"
-HEAD_SHA="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || echo "") }"
+HEAD_SHA="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || echo "")}"
 HEAD_SHA="${HEAD_SHA//[[:space:]]/}"
 DEFAULT_EVIDENCE_PATH="${FUNCTIONAL_DELIVERY_EVIDENCE_PATH:-}"
 
