@@ -89,7 +89,7 @@ Recommended Vercel settings:
 
 | Setting | Value |
 |---|---|
-| Vercel Project | ISMS portal project |
+| Vercel Project | `<isms-portal-project-name>` |
 | Root Directory | `./` or blank / repository root |
 | Install Command | `corepack enable && pnpm install --no-frozen-lockfile` |
 | Build Command | `pnpm --filter isms-portal build` |
