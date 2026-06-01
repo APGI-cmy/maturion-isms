@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-05-31  
-**Updated By**: foreman-agent (wave: `isms-stage7-pbfag-amendment-20260531`)
+**Last Updated**: 2026-06-01  
+**Updated By**: foreman-agent (wave: `isms-stage8-implementation-plan-20260601`)
 
-> **Classification**: ACTIVE — PBFAG AMENDMENT ACCEPTED; STAGE 8 IMPLEMENTATION PLAN AUTHORIZED  
+> **Classification**: ACTIVE — STAGE 8 IMPLEMENTATION PLAN COMPLETE; STAGE 9 BUILDER CHECKLIST NEXT  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -22,30 +22,31 @@
 | Stage 5 | Architecture | COMPLETE — Approved with conditions; remediation pack accepted for planning | `modules/isms/04-architecture/architecture-remediation-pack.md` |
 | Stage 6 | QA-to-Red | COMPLETE — RED catalog specified | `modules/isms/05-qa-to-red/qa-to-red-catalog.md` |
 | Stage 7 | PBFAG | COMPLETE — Amendment accepts remediation for Stage 8 planning only | `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` |
-| Stage 8 | Implementation Plan | AUTHORIZED — NEXT | `modules/isms/07-implementation-plan/` |
-| Stage 9 | Builder Checklist | PARTIAL | `modules/isms/08-builder-checklist/builder-checklist.md` exists for public landing harvest |
+| Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
+| Stage 9 | Builder Checklist | NOT_STARTED — NEXT | `modules/isms/08-builder-checklist/` |
 | Stage 10 | IAA Pre-Brief | PARTIAL | `.agent-admin/assurance/` contains pre-build assurance artifacts |
 | Stage 11 | Builder Appointment | PARTIAL | `.agent-admin/builder-appointments/` contains pre-build appointments |
 | Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
 ---
 
-## PBFAG Amendment Status
+## Stage 8: Implementation Plan
 
-**Status**: ACCEPTED FOR STAGE 8 PLANNING ONLY  
-**Location**: `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md`
+**Status**: COMPLETE — PLANNING ARTIFACT ONLY  
+**Location**: `modules/isms/07-implementation-plan/`  
+**Primary Artifacts**:
+- `implementation-plan.md` — eight-wave implementation plan from public shell through cumulative regression
+- `wave-evidence-plan.md` — evidence required for each future implementation wave
 
-The amendment accepts `modules/isms/04-architecture/architecture-remediation-pack.md` as sufficient to proceed to Stage 8 Implementation Plan.
-
-This does not approve implementation handover, builder appointment, or runtime build execution.
+**Notes**: Stage 8 creates the implementation plan. It does not authorize runtime implementation, builder appointment, or implementation handover.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 8 Implementation Plan is next.  
+**Current Stage**: Stage 9 Builder Checklist is next.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create Stage 8 Implementation Plan from the approved pre-build chain and remediation pack.
+**Next Required Action**: Create Stage 9 Builder Checklist aligned to the Stage 8 implementation waves.
 
 ---
 
@@ -61,8 +62,8 @@ This does not approve implementation handover, builder appointment, or runtime b
 - [x] Stage 6 QA-to-Red catalog created
 - [x] Stage 7 PBFAG completed
 - [x] PBFAG amendment accepted remediation for Stage 8 planning
-- [x] Stage 8 Implementation Plan authorized
-- [ ] Stage 8 Implementation Plan complete
+- [x] Stage 8 Implementation Plan complete
+- [x] Wave evidence plan complete
 - [ ] Stage 9 Builder Checklist complete
 - [ ] Implementation handover authorized
 
@@ -73,10 +74,10 @@ This does not approve implementation handover, builder appointment, or runtime b
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- Stage 8 must define wave-level scope, dependencies, files touched, QA mapping, and CI evidence plan;
+- Stage 9 must produce builder checklist criteria from Stage 8 waves;
 - implementation build/test/CI evidence remains future-gated;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-05-31
+**Last Tracker Reconciliation**: 2026-06-01
