@@ -75,7 +75,8 @@ jobs:
           LEGACY_TOKEN='modules/mat/frontend'
           FAIL=0
 
-          # Check vercel.json for legacy MAT path tokens
+          # Check root vercel.json for legacy MAT path tokens only.
+          # In monorepo mode, root vercel.json is intentionally shared and may not define app outputDirectory.
           if grep -q "$LEGACY_TOKEN" vercel.json; then
             echo "❌ STALE-PATH: vercel.json still references '$LEGACY_TOKEN'"
             echo "   Update vercel.json buildCommand/outputDirectory/installCommand/devCommand to apps/mmm"
@@ -84,13 +85,25 @@ jobs:
             echo "✅ vercel.json: no legacy MAT path token found"
           fi
 
-          # Assert vercel.json outputDirectory starts with apps/mmm
-          OUTPUT_DIR=$(node -e "const v=require('./vercel.json'); process.stdout.write(v.outputDirectory||'')")
-          if [[ "$OUTPUT_DIR" != apps/mmm* ]]; then
-            echo "❌ STALE-PATH: vercel.json outputDirectory is '$OUTPUT_DIR' — expected apps/mmm path"
+          # In monorepo deployment model, enforce app-level vercel config for MMM.
+          if [ ! -f "apps/mmm/vercel.json" ]; then
+            echo "❌ STALE-PATH: apps/mmm/vercel.json is missing"
             FAIL=1
           else
-            echo "✅ vercel.json outputDirectory: $OUTPUT_DIR"
+            APP_OUTPUT_DIR=$(node -e "const v=require('./apps/mmm/vercel.json'); process.stdout.write(v.outputDirectory||'')")
+            if [[ "$APP_OUTPUT_DIR" != "dist" ]]; then
+              echo "❌ STALE-PATH: apps/mmm/vercel.json outputDirectory is '$APP_OUTPUT_DIR' — expected 'dist'"
+              FAIL=1
+            else
+              echo "✅ apps/mmm/vercel.json outputDirectory: $APP_OUTPUT_DIR"
+            fi
+
+            if grep -q "$LEGACY_TOKEN" apps/mmm/vercel.json; then
+              echo "❌ STALE-PATH: apps/mmm/vercel.json still references '$LEGACY_TOKEN'"
+              FAIL=1
+            else
+              echo "✅ apps/mmm/vercel.json: no legacy MAT path token found"
+            fi
           fi
 
           if [ "$FAIL" -ne 0 ]; then

@@ -411,6 +411,15 @@ Deno.serve(async (req: Request) => {
       })
       .eq('id', documentId);
 
-    return jsonResponse({ error: message, document_id: documentId }, 500);
+    // Return a structured non-fatal response so the UI can continue and show the
+    // persisted document status/error instead of a generic invoke transport failure.
+    return jsonResponse(
+      {
+        success: false,
+        error: message,
+        document_id: documentId,
+      },
+      200,
+    );
   }
 });
