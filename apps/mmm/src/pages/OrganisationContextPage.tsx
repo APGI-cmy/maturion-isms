@@ -462,6 +462,7 @@ export default function OrganisationContextPage() {
 
       <div className="card" data-testid="organisation-source-upload">
         <h2>Organisation Source Documents</h2>
+        <p style={{ color: 'red', fontWeight: 700 }}>DEBUG-MARKER-20260601-A</p>
         <p>
           Upload the customer-specific document Maturion should use for Verbatim, Hybrid, or New Generation
           framework creation.
