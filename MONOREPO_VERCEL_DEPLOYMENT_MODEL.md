@@ -5,7 +5,7 @@
 | Repository | `APGI-cmy/maturion-isms` |
 | Artifact Type | Deployment model / operating note |
 | Scope | All deployable apps and modules in this monorepo |
-| Status | Proposed standard for review |
+| Status | Adopted standard pending Vercel project setting verification |
 | Date | 2026-06-01 |
 
 ---
@@ -70,33 +70,37 @@ Use `--no-frozen-lockfile` until the lockfile/package-manager version alignment 
 
 The existing MMM deployment should remain app-specific.
 
-Expected pattern:
+`apps/mmm/package.json` confirms the MMM package name is `@maturion/mmm`.
+
+Recommended Vercel settings:
 
 | Setting | Value |
 |---|---|
+| Vercel Project | `maturion-isms-mmm` |
 | Root Directory | `./` or blank / repository root |
 | Install Command | `corepack enable && pnpm install --no-frozen-lockfile` |
-| Build Command | `pnpm --filter <mmm-package-name> build` |
+| Build Command | `pnpm --filter @maturion/mmm build` |
 | Output Directory | `apps/mmm/dist` |
-
-The exact MMM package filter must be confirmed from `apps/mmm/package.json` before changing MMM project settings.
+| Framework Preset | Vite |
 
 ### ISMS Portal Project
 
-Expected pattern:
+Recommended Vercel settings:
 
 | Setting | Value |
 |---|---|
+| Vercel Project | `<isms-portal-project-name>` |
 | Root Directory | `./` or blank / repository root |
 | Install Command | `corepack enable && pnpm install --no-frozen-lockfile` |
 | Build Command | `pnpm --filter isms-portal build` |
 | Output Directory | `apps/isms-portal/dist` |
+| Framework Preset | Vite |
 
 ---
 
 ## 6. Root `vercel.json` Policy
 
-For a multi-app monorepo, root `vercel.json` should not contain app-specific values such as:
+For a multi-app monorepo, root `vercel.json` must not contain app-specific values such as:
 
 ```json
 {
@@ -114,7 +118,7 @@ Recommended root `vercel.json` responsibility:
 - generic SPA rewrite behavior if safe for all apps;
 - repo-wide non-app-specific Vercel behavior.
 
-Not recommended in root `vercel.json`:
+Not allowed in root `vercel.json` for the multi-app model:
 
 - one app's install command;
 - one app's build command;
@@ -130,13 +134,12 @@ Before removing app-specific settings from root `vercel.json`, confirm that each
 
 Recommended sequence:
 
-1. Confirm MMM package name from `apps/mmm/package.json`.
-2. Configure MMM Vercel project with MMM-specific install/build/output settings.
-3. Configure ISMS Vercel project with ISMS-specific install/build/output settings.
-4. Create a PR that removes app-specific install/build/output settings from root `vercel.json`.
-5. Deploy ISMS and confirm Vercel uses pnpm install.
-6. Deploy MMM and confirm it still builds from its own project settings.
-7. Repeat the same pattern for future apps/modules.
+1. Configure MMM Vercel project with MMM-specific install/build/output settings.
+2. Configure ISMS Vercel project with ISMS-specific install/build/output settings.
+3. Merge a PR that removes app-specific install/build/output settings from root `vercel.json`.
+4. Deploy ISMS and confirm Vercel uses pnpm install.
+5. Deploy MMM and confirm it still builds from its own project settings.
+6. Repeat the same pattern for future apps/modules.
 
 ---
 
@@ -190,8 +193,8 @@ A successful deployment test should record:
 
 ## 10. Current ISMS Finding
 
-The ISMS Vercel project currently fails before build because Vercel is still running `npm install`, while the app depends on pnpm workspace packages.
+The ISMS Vercel project failed before build because Vercel was still running `npm install`, while the app depends on pnpm workspace packages.
 
 This is a deployment configuration issue, not yet an ISMS runtime build failure.
 
-The next cleanup PR should adjust root `vercel.json` so app-specific Vercel project settings can take effect without breaking other module deployments.
+This cleanup removes app-specific install/build/output settings from root `vercel.json` so app-specific Vercel project settings can take effect.
