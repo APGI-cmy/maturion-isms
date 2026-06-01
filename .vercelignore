@@ -63,10 +63,8 @@ pnpm-debug.log*
 # Dependencies (Vercel installs these)
 node_modules/
 
-# Build artifacts from other apps (only mat-frontend is deployed)
+# Build artifacts from app workspaces
 apps/*/dist/
-!apps/mat-frontend/
-apps/mat-ai-gateway/
 apps/*/build/
 apps/*/.next/
 apps/*/.turbo/
@@ -78,8 +76,9 @@ supabase/
 infrastructure/
 Maturion/
 
-# Package manager files (Vercel handles installation)
-pnpm-lock.yaml
+# Package manager state
+# Keep pnpm-workspace.yaml, package.json files, and pnpm-lock.yaml available to Vercel.
+# This repository uses pnpm workspaces and Vercel install commands depend on these files.
 package-lock.json
 yarn.lock
 
