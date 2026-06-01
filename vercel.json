@@ -1,10 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd apps/mmm && pnpm run build",
-  "outputDirectory": "apps/mmm/dist",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "framework": null,
-  "installCommand": "cd apps/mmm && pnpm install --frozen-lockfile",
-  "devCommand": "cd apps/mmm && pnpm run dev",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev",
   "rewrites": [
     { "source": "/health", "destination": "/api/health" },
     {
