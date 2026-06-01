@@ -3,8 +3,8 @@
 ## Status
 **Type**: Tier-1 Canonical Governance Standard  
 **Authority**: CS2 (Johan Ras)  
-**Version**: 2.1.0  
-**Effective Date**: 2026-05-12  
+**Version**: 2.0.0  
+**Effective Date**: 2026-05-07  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Layer-Down Status**: PUBLIC_API  
 **Applies To**: All Agents, All Foreman Instances, All Builders, All PM Roles, All Application Repositories, All Wave Executions
@@ -38,33 +38,6 @@ This standard derives authority from and integrates with:
 - **WAVE_MODEL.md** - Wave closure requires validated deliverables
 - **BUILD_EFFECTIVENESS_STANDARD.md** - Measures completeness of original build
 - **MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md** - Wave closure certification requirements
-- **LIVE_FUNCTIONAL_VERIFICATION_CANON.md** v1.0.0 — Live functional verification as the mandatory third assurance tier
-
----
-
-## 2a. Delivery Assurance Tiers
-
-This standard defines three sequential, non-substitutable tiers of delivery assurance. All three are required for a UI/application build to be acceptable.
-
-| Tier | Name | Verdict Field | Definition | PR Status |
-|------|------|--------------|------------|-----------|
-| 1 | Admin correctness | `ADMIN_PASS` | All governance ceremony artifacts are present and correct; PR is structurally admissible | Admissible |
-| 2 | Code correctness | `CODE_PASS` | All CI tests pass, linters pass, type checks pass, build succeeds; code is correct as implemented | Plausible |
-| 3 | Live functional verification | `FUNCTIONAL_PASS` | Live verification workflow ran against deployed build; all 8 LFV gates passed; CS2 UI acceptance complete | **Acceptable** |
-
-**Binding operating law**:
-
-> Admin correctness makes a PR admissible.  
-> Code correctness makes a PR plausible.  
-> Live functional verification makes a PR acceptable.
-
-For application builds:
-
-> No deployed workflow evidence → no functional pass.  
-> No functional pass → no handover.  
-> No handover → no merge.
-
-**Enforcement**: `LIVE_FUNCTIONAL_VERIFICATION_CANON.md` §7 defines the mandatory IAA verification rule and the eight product-build gates that must all pass before `FUNCTIONAL_PASS: yes`.
 
 ---
 
@@ -917,14 +890,13 @@ The following downstream artifacts must absorb this canon change in subsequent p
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0.0 | 2026-02-16 | CS2 (Johan Ras) | Initial standard creation addressing critical governance gap: missing frontend deliverable despite requirements |
-| 2.1.0 | 2026-05-12 | CS2 (Johan Ras) | Added §2a Delivery Assurance Tiers: three-tier model (Admin admissible / Code plausible / LFV acceptable); binding operating law; constitutional reference to LIVE_FUNCTIONAL_VERIFICATION_CANON.md v1.0.0. Issue: maturion-isms#1617. |
 | 2.0.0 | 2026-05-07 | CS2 (Johan Ras) | Added §12 Delivery Verdict Taxonomy: FULL_FUNCTIONAL_DELIVERY, PARTIAL_FUNCTIONAL_DELIVERY, UI_SHELL_ONLY, ADMIN_PASS, FUNCTIONAL_PASS definitions; IAA split verdict model for product-facing PRs; governing principle (admin admissibility vs functional acceptability); APGI-cmy/maturion-isms#1553 calibration example; prohibited failure modes; downstream layer-down implications. Authority: CS2 — Canon alignment issue: require full functional delivery for product build PASS. |
 
 ---
 
 **END OF FULLY FUNCTIONAL DELIVERY STANDARD**
 
-**Authority**: CS2 (Johan Ras) | **Version**: 2.1.0 | **Effective**: 2026-05-12
+**Authority**: CS2 (Johan Ras) | **Version**: 2.0.0 | **Effective**: 2026-05-07
 
 ---
 

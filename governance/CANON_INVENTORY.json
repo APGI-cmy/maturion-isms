@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-05-22",
-  "total_canons": 204,
+  "total_canons": 203,
   "generation_timestamp": "2026-05-22T00:00:00Z",
   "canons": [
     {
@@ -974,14 +974,14 @@
     },
     {
       "filename": "FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
-      "version": "2.1.0",
-      "file_hash": "52a0aa68ef7d9f24e1482016d8dec4b0d4306d1cf53e3145e64ea4cbc2bdfc3c",
-      "effective_date": "2026-05-12",
+      "version": "2.0.0",
+      "file_hash": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871",
+      "effective_date": "2026-05-07",
       "description": "This standard establishes explicit definitions and enforcement mechanisms for \"fully functional\" delivery across design, implementation, and deployment phases.",
       "type": "canon",
       "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "52a0aa68ef7d9f24e1482016d8dec4b0d4306d1cf53e3145e64ea4cbc2bdfc3c"
+      "file_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871"
     },
     {
       "filename": "GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md",
@@ -2225,17 +2225,6 @@
       "path": "governance/policy/TEST_REMOVAL_GOVERNANCE_GATE.md",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1bd997b07837e1c3375f5b4b40c9086a8fd39d598341f749ed7c8e23f0ad3c84"
-    },
-    {
-      "filename": "LIVE_FUNCTIONAL_VERIFICATION_CANON.md",
-      "version": "1.0.0",
-      "file_hash": "21333761e52ff6dd9ddbcec17b72d5e795515b7eaac84c91bf15a0511b6bd7d9",
-      "effective_date": "2026-05-12",
-      "description": "Live Functional Verification (LFV) as the mandatory third assurance tier for all UI/application builds. Defines three-tier delivery assurance principle, nine pre-build artifact templates, eight mandatory product-build gates, and IAA three-tier verdict model.",
-      "type": "canon",
-      "path": "governance/canon/LIVE_FUNCTIONAL_VERIFICATION_CANON.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "21333761e52ff6dd9ddbcec17b72d5e795515b7eaac84c91bf15a0511b6bd7d9"
     },
     {
       "filename": "CODEX_BUILD_COMPLETION_DEFINITION.md",
