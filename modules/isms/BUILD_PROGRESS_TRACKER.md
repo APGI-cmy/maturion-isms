@@ -24,7 +24,7 @@
 | Stage 7 | PBFAG | COMPLETE — Amendment accepts remediation for Stage 8 planning only | `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` |
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
-| Stage 10 | IAA Pre-Brief | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
+| Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
 | Stage 11 | Builder Appointment | NOT_STARTED — NEXT | `.agent-admin/builder-appointments/` |
 | Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
@@ -36,9 +36,9 @@
 **Location**: `modules/isms/09-iaa-pre-brief/`  
 **Primary Artifacts**:
 - `iaa-pre-brief.md` — assurance briefing for independent review before Stage 11 Builder Appointment
-- `iaa-pre-brief-acknowledgements.md` — acknowledgement gate closure and IAA PASS WITH CONDITIONS position
+- `iaa-pre-brief-acknowledgements.md` — acknowledgement gate closure, explicit Stage 10 builder-acknowledgement waiver, and IAA PASS WITH CONDITIONS position
 
-**Notes**: Stage 10 is closed with conditions. Stage 11 may prepare wave-specific builder appointments only. Runtime implementation and implementation handover remain blocked.
+**Notes**: Stage 10 is closed with conditions. Stage 11 may prepare wave-specific builder appointments only. Stage 10 builder acknowledgement is waived only because no builders are designated yet; each Stage 11 appointment must record builder acknowledgement before execution. Runtime implementation and implementation handover remain blocked.
 
 ---
 
@@ -46,7 +46,7 @@
 
 **Current Stage**: Stage 11 Builder Appointment is next.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create wave-specific Stage 11 Builder Appointment. Each appointed builder must acknowledge the Stage 10 pre-brief and Stage 9 checklist inside the appointment artifact or a linked acknowledgement record.
+**Next Required Action**: Create wave-specific Stage 11 Builder Appointment. Each appointed builder must acknowledge the Stage 10 pre-brief, Stage 10 acknowledgement artifact, and Stage 9 checklist inside the appointment artifact or a linked acknowledgement record.
 
 ---
 
@@ -66,7 +66,7 @@
 - [x] Wave evidence plan complete
 - [x] Stage 9 Builder Checklist complete
 - [x] Stage 10 IAA Pre-Brief filed
-- [x] Stage 10 acknowledgements recorded or deferred with binding Stage 11 condition
+- [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [ ] Stage 11 Builder Appointment complete
 - [ ] Implementation handover authorized
 
@@ -78,7 +78,7 @@ Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
 - Stage 11 must appoint builders with wave-specific scope and constraints;
-- each Stage 11 builder appointment must include explicit acknowledgement of the Stage 10 pre-brief and Stage 9 checklist;
+- each Stage 11 builder appointment must include explicit acknowledgement of the Stage 10 pre-brief, Stage 10 acknowledgement artifact, and Stage 9 checklist;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
 - implementation build/test/CI evidence remains future-gated;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
