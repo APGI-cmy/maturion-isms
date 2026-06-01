@@ -226,8 +226,20 @@ export default function OrganisationContextPage() {
   };
 
   const uploadModeSourceDocument = async () => {
-    if (!org) throw new Error('Organisation context not loaded.');
-    if (!sourceFile) throw new Error('Choose a source document before uploading.');
+    if (!org) {
+      const err = 'Organisation context not loaded.';
+      setSourceUploadStatus(err);
+      setMessage(err);
+      window.alert(err);
+      return;
+    }
+    if (!sourceFile) {
+      const err = 'Choose a source document before uploading.';
+      setSourceUploadStatus(err);
+      setMessage(err);
+      window.alert(err);
+      return;
+    }
 
     setIsUploadingSource(true);
     setMessage(null);
@@ -352,8 +364,10 @@ export default function OrganisationContextPage() {
       qc.invalidateQueries({ queryKey: ['organisation-context'] });
       qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
     } catch (err) {
-      setSourceUploadStatus(err instanceof Error ? err.message : 'Organisation source upload failed.');
-      setMessage(err instanceof Error ? err.message : 'Organisation source upload failed.');
+      const msg = err instanceof Error ? err.message : 'Organisation source upload failed.';
+      setSourceUploadStatus(msg);
+      setMessage(msg);
+      window.alert(msg);
     } finally {
       setIsUploadingSource(false);
     }
@@ -448,6 +462,7 @@ export default function OrganisationContextPage() {
 
       <div className="card" data-testid="organisation-source-upload">
         <h2>Organisation Source Documents</h2>
+        <p style={{ color: 'red', fontWeight: 700 }}>DEBUG-MARKER-20260601-A</p>
         <p>
           Upload the customer-specific document Maturion should use for Verbatim, Hybrid, or New Generation
           framework creation.
