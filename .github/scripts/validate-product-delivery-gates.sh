@@ -10,7 +10,7 @@ BASE_SHA="${BASE_SHA:-}"
 PR_NUMBER="${PR_NUMBER:-}"
 PR_LABELS="${PR_LABELS:-}"
 PR_BODY="${PR_BODY:-}"
-HEAD_SHA="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || echo "") }"
+HEAD_SHA="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || echo "")}"
 HEAD_SHA="${HEAD_SHA//[[:space:]]/}"
 DEFAULT_EVIDENCE_PATH="${FUNCTIONAL_DELIVERY_EVIDENCE_PATH:-}"
 
@@ -238,14 +238,11 @@ fi
 if [ -n "$MANIFEST_CLASS" ]; then
   case "$PR_CLASS:$MANIFEST_CLASS" in
     APP_FUNCTIONAL_BUILD:APP_FUNCTIONAL_BUILD|APP_FUNCTIONAL_BUILD:CS2_HOTFIX)
-      PR_CLASS="$MANIFEST_CLASS"
-      CLASS_REASON="manifest agrees with app/runtime payload or declares CS2 hotfix" ;;
+      PR_CLASS="$MANIFEST_CLASS"; CLASS_REASON="manifest agrees with app/runtime payload or declares CS2 hotfix" ;;
     DATABASE_MIGRATION:DATABASE_MIGRATION|DATABASE_MIGRATION:SECURITY_REMEDIATION|SECURITY_REMEDIATION:SECURITY_REMEDIATION|SECURITY_REMEDIATION:DATABASE_MIGRATION)
-      PR_CLASS="$MANIFEST_CLASS"
-      CLASS_REASON="manifest agrees with database/security payload" ;;
+      PR_CLASS="$MANIFEST_CLASS"; CLASS_REASON="manifest agrees with database/security payload" ;;
     GOVERNANCE_CONTROL:GOVERNANCE_CONTROL|GOVERNANCE_CONTROL:AGENT_CONTRACT|EVIDENCE_ONLY:EVIDENCE_ONLY|EVIDENCE_ONLY:REBASE_ONLY)
-      PR_CLASS="$MANIFEST_CLASS"
-      CLASS_REASON="manifest agrees with non-runtime payload" ;;
+      PR_CLASS="$MANIFEST_CLASS"; CLASS_REASON="manifest agrees with non-runtime payload" ;;
     *)
       fail "PR manifest class '$MANIFEST_CLASS' conflicts with changed-file payload class '$PR_CLASS'. Manifest cannot downgrade runtime/database/governance evidence requirements." ;;
   esac
