@@ -7,7 +7,7 @@
 | Stage | Stage 10 |
 | Version | v0.1.0 |
 | Wave | `isms-stage10-iaa-pre-brief-20260601` |
-| Status | COMPLETE — Pre-brief artifact only |
+| Status | FILED — ACKNOWLEDGEMENTS PENDING |
 
 ---
 
@@ -107,7 +107,7 @@ IAA must explicitly carry forward these conditions:
 |---|---|---|
 | COND-001 | Implementation execution is not authorized by Stage 10. | Must remain blocked |
 | COND-002 | Implementation handover is not authorized by Stage 10. | Must remain blocked |
-| COND-003 | Builder appointment is future-gated to Stage 11. | Must remain blocked until Stage 11 |
+| COND-003 | Builder appointment is future-gated to Stage 11. | Must remain blocked until acknowledgements are recorded |
 | COND-004 | ISMS Vercel deployment is not yet verified. | Must be future-gated to W7 unless created earlier |
 | COND-005 | ISMS GitHub deployment workflow does not exist yet. | Must be W7 checklist item or earlier explicit build-system wave |
 | COND-006 | Supabase/RLS implementation is not yet built. | Must be W6 checklist item |
@@ -118,7 +118,23 @@ IAA must explicitly carry forward these conditions:
 
 ---
 
-## 7. IAA Expected Output
+## 7. Acknowledgement Gate
+
+Stage 10 is not gate-passed until acknowledgements are recorded.
+
+Required acknowledgements:
+
+| Role | Required acknowledgement | Status |
+|---|---|---|
+| Foreman | Foreman acknowledges the pre-brief and confirms Stage 11 appointment must be wave-specific. | Pending |
+| Designated builder(s) | Each designated builder acknowledges the pre-brief before appointment/execution. | Pending until Stage 11 candidates are named |
+| IAA | IAA records assurance-token or PHASE_A_ADVISORY position before proceeding. | Filed as PR artifact; final position pending PR review |
+
+Because no implementation builder has been appointed yet, builder acknowledgements are necessarily pending. Stage 11 may prepare appointments only after this acknowledgement gate is satisfied or explicitly waived.
+
+---
+
+## 8. IAA Expected Output
 
 After reviewing this pre-brief, IAA should produce or approve an assurance position that states one of:
 
@@ -131,15 +147,15 @@ FAIL — Stage 11 must not proceed until remediation is complete
 The expected recommendation is:
 
 ```text
-PASS WITH CONDITIONS — Stage 11 Builder Appointment may proceed only if appointments remain wave-specific and implementation execution remains separately gated.
+PASS WITH CONDITIONS — Stage 11 Builder Appointment may proceed only after acknowledgements are recorded, appointments remain wave-specific, and implementation execution remains separately gated.
 ```
 
 ---
 
-## 8. Stage 10 Disposition
+## 9. Stage 10 Disposition
 
-Stage 10 IAA Pre-Brief is complete as a pre-brief artifact.
+Stage 10 IAA Pre-Brief is filed as a pre-brief artifact.
 
 It does not authorize implementation execution or implementation handover.
 
-If PR review and CI pass, the next stage is Stage 11 Builder Appointment.
+Stage 10 is not gate-passed until the acknowledgement gate is satisfied or explicitly waived.
