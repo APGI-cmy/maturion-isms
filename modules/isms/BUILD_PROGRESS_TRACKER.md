@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-01  
-**Updated By**: foreman-agent (wave: `isms-stage8-implementation-plan-20260601`)
+**Updated By**: foreman-agent (wave: `isms-stage9-builder-checklist-20260601`)
 
-> **Classification**: ACTIVE — STAGE 8 IMPLEMENTATION PLAN COMPLETE; STAGE 9 BUILDER CHECKLIST NEXT  
+> **Classification**: ACTIVE — STAGE 9 BUILDER CHECKLIST COMPLETE; STAGE 10 IAA PRE-BRIEF NEXT  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -23,30 +23,29 @@
 | Stage 6 | QA-to-Red | COMPLETE — RED catalog specified | `modules/isms/05-qa-to-red/qa-to-red-catalog.md` |
 | Stage 7 | PBFAG | COMPLETE — Amendment accepts remediation for Stage 8 planning only | `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` |
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
-| Stage 9 | Builder Checklist | NOT_STARTED — NEXT | `modules/isms/08-builder-checklist/` |
-| Stage 10 | IAA Pre-Brief | PARTIAL | `.agent-admin/assurance/` contains pre-build assurance artifacts |
-| Stage 11 | Builder Appointment | PARTIAL | `.agent-admin/builder-appointments/` contains pre-build appointments |
+| Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
+| Stage 10 | IAA Pre-Brief | NOT_STARTED — NEXT | `.agent-admin/assurance/` |
+| Stage 11 | Builder Appointment | NOT_STARTED | `.agent-admin/builder-appointments/` |
 | Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
 ---
 
-## Stage 8: Implementation Plan
+## Stage 9: Builder Checklist
 
-**Status**: COMPLETE — PLANNING ARTIFACT ONLY  
-**Location**: `modules/isms/07-implementation-plan/`  
-**Primary Artifacts**:
-- `implementation-plan.md` — eight-wave implementation plan from public shell through cumulative regression
-- `wave-evidence-plan.md` — evidence required for each future implementation wave
+**Status**: COMPLETE — CHECKLIST ARTIFACT ONLY  
+**Location**: `modules/isms/08-builder-checklist/`  
+**Primary Artifact**:
+- `builder-checklist.md` — builder controls for all Stage 8 implementation waves, including pre-start confirmations, global invariants, wave checklists, evidence requirements, and Vercel deployment checkpoint
 
-**Notes**: Stage 8 creates the implementation plan. It does not authorize runtime implementation, builder appointment, or implementation handover.
+**Notes**: Stage 9 creates the builder checklist. It does not appoint builders, authorize runtime implementation, or approve implementation handover.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 9 Builder Checklist is next.  
+**Current Stage**: Stage 10 IAA Pre-Brief is next.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create Stage 9 Builder Checklist aligned to the Stage 8 implementation waves.
+**Next Required Action**: Create Stage 10 IAA Pre-Brief aligned to the Stage 8 waves and Stage 9 checklist.
 
 ---
 
@@ -64,7 +63,8 @@
 - [x] PBFAG amendment accepted remediation for Stage 8 planning
 - [x] Stage 8 Implementation Plan complete
 - [x] Wave evidence plan complete
-- [ ] Stage 9 Builder Checklist complete
+- [x] Stage 9 Builder Checklist complete
+- [ ] Stage 10 IAA Pre-Brief complete
 - [ ] Implementation handover authorized
 
 ---
@@ -74,7 +74,8 @@
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- Stage 9 must produce builder checklist criteria from Stage 8 waves;
+- Stage 10 must brief IAA against Stage 8 waves and Stage 9 checklist;
+- ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
 - implementation build/test/CI evidence remains future-gated;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
 
