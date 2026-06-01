@@ -3,7 +3,7 @@
 **Version**: 1.0.0
 **Status**: Canon
 **Authority**: CS2
-**Effective date**: 2026-06-01
+**Effective Date**: 2026-06-01
 **Layer-down status**: PUBLIC_API
 
 ---
