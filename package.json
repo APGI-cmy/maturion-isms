@@ -20,7 +20,7 @@
   ],
   "author": "",
   "license": "UNLICENSED",
-  "packageManager": "pnpm@8.15.7",
+  "packageManager": "pnpm@9.12.0",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.15.7"
