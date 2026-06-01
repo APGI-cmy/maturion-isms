@@ -7,7 +7,7 @@
 | Stage | Stage 8 |
 | Version | v0.1.0 |
 | Wave | `isms-stage8-implementation-plan-20260601` |
-| Status | DRAFT — Planning artifact only |
+| Status | COMPLETE — Planning artifact only |
 
 ---
 
@@ -48,7 +48,7 @@ Each wave must include:
 | W3 | Subscribe, checkout mock, auth, onboarding transitions | D4 |
 | W4 | Shared context, entitlements, MMM handoff, protected module routes | D5 |
 | W5 | Ask Maturion adapter, prompt seeds, context filtering, fallback | D6 |
-| W6 | Schema/RLS/audit/env alignment or explicit no-persistence waiver | D8, D9 |
+| W6 | Edge/backend registry, schema/RLS/audit/env alignment or explicit no-persistence/no-function waiver | D7, D8, D9 |
 | W7 | Deployment/env/CI hardening and route verification | D10 |
 | W8 | Cumulative regression, architecture completeness update, PBFAG rerun | D11 + D1-D10 |
 
