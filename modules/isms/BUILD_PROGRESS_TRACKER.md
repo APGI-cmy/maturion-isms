@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-01  
-**Updated By**: foreman-agent (wave: `isms-stage9-builder-checklist-20260601`)
+**Updated By**: foreman-agent (wave: `isms-stage10-iaa-pre-brief-20260601`)
 
-> **Classification**: ACTIVE — STAGE 9 BUILDER CHECKLIST COMPLETE; STAGE 10 IAA PRE-BRIEF NEXT  
+> **Classification**: ACTIVE — STAGE 10 IAA PRE-BRIEF COMPLETE; STAGE 11 BUILDER APPOINTMENT NEXT  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -24,28 +24,28 @@
 | Stage 7 | PBFAG | COMPLETE — Amendment accepts remediation for Stage 8 planning only | `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` |
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
-| Stage 10 | IAA Pre-Brief | NOT_STARTED — NEXT | `modules/isms/09-iaa-pre-brief/` |
-| Stage 11 | Builder Appointment | NOT_STARTED | `.agent-admin/builder-appointments/` |
+| Stage 10 | IAA Pre-Brief | COMPLETE — Pre-brief artifact only | `modules/isms/09-iaa-pre-brief/iaa-pre-brief.md` |
+| Stage 11 | Builder Appointment | NOT_STARTED — NEXT | `.agent-admin/builder-appointments/` |
 | Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
 ---
 
-## Stage 9: Builder Checklist
+## Stage 10: IAA Pre-Brief
 
-**Status**: COMPLETE — CHECKLIST ARTIFACT ONLY  
-**Location**: `modules/isms/08-builder-checklist/`  
+**Status**: COMPLETE — PRE-BRIEF ARTIFACT ONLY  
+**Location**: `modules/isms/09-iaa-pre-brief/`  
 **Primary Artifact**:
-- `builder-checklist.md` — builder controls for all Stage 8 implementation waves, including pre-start confirmations, global invariants, wave checklists, evidence requirements, and Vercel deployment checkpoint
+- `iaa-pre-brief.md` — assurance briefing for independent review before Stage 11 Builder Appointment
 
-**Notes**: Stage 9 creates the builder checklist. It does not appoint builders, authorize runtime implementation, or approve implementation handover.
+**Notes**: Stage 10 prepares independent assurance review. It does not appoint builders, authorize runtime implementation, or approve implementation handover.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 10 IAA Pre-Brief is next.  
+**Current Stage**: Stage 11 Builder Appointment is next.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create Stage 10 IAA Pre-Brief aligned to the Stage 8 waves and Stage 9 checklist in `modules/isms/09-iaa-pre-brief/`.
+**Next Required Action**: Create Stage 11 Builder Appointment with wave-specific scope and constraints.
 
 ---
 
@@ -64,7 +64,8 @@
 - [x] Stage 8 Implementation Plan complete
 - [x] Wave evidence plan complete
 - [x] Stage 9 Builder Checklist complete
-- [ ] Stage 10 IAA Pre-Brief complete
+- [x] Stage 10 IAA Pre-Brief complete
+- [ ] Stage 11 Builder Appointment complete
 - [ ] Implementation handover authorized
 
 ---
@@ -74,7 +75,7 @@
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- Stage 10 must brief IAA against Stage 8 waves and Stage 9 checklist;
+- Stage 11 must appoint builders with wave-specific scope and constraints;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
 - implementation build/test/CI evidence remains future-gated;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
