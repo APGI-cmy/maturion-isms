@@ -373,9 +373,11 @@ fi
 
 if [ "$PR_CLASS" = "CS2_HOTFIX" ]; then
   CS2_JUSTIFICATION="$(manifest_field cs2_justification || true)"
+  CS2_JUSTIFICATION="$(printf '%s' "$CS2_JUSTIFICATION" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
   if [ -z "$CS2_JUSTIFICATION" ] || echo "$CS2_JUSTIFICATION" | grep -qiE '^(tbd|todo|n/a|na|placeholder)$'; then
     fail "CS2_HOTFIX requires non-placeholder cs2_justification in the PR manifest."
   fi
+fi
 fi
 
 if [ -z "$EVIDENCE_PATH" ] || [ ! -f "$EVIDENCE_PATH" ]; then
