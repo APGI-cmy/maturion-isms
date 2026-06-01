@@ -1,9 +1,8 @@
 #!/bin/bash
 # validate-product-delivery-gates.sh
-# Purpose: Phase 5 product-delivery hard gates for CTA mapping, endpoint integrity,
-#          functional evidence completeness, IAA functional verdict split, and
-#          placeholder honesty.
-# Authority: maturion-isms#1573
+# Purpose: CS2 governed-build gate router for product delivery, database/security
+#          remediation, evidence-only, rebase-only, and governance-control PRs.
+# Authority: Maturion/strategy/CS2_GOVERNED_BUILD_GATE_REBALANCE_STRATEGY.md
 
 set -euo pipefail
 
@@ -11,16 +10,22 @@ BASE_SHA="${BASE_SHA:-}"
 PR_NUMBER="${PR_NUMBER:-}"
 PR_LABELS="${PR_LABELS:-}"
 PR_BODY="${PR_BODY:-}"
-HEAD_SHA="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || echo "")}"
+HEAD_SHA="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || echo "") }"
+HEAD_SHA="${HEAD_SHA//[[:space:]]/}"
 DEFAULT_EVIDENCE_PATH="${FUNCTIONAL_DELIVERY_EVIDENCE_PATH:-}"
 
-echo "=== Product Delivery Gate Suite ==="
-echo "Issue: maturion-isms#1573"
-echo ""
+SCRIPT_NAME="CS2 Governed Build Gate Router"
+
+log() { printf '%s\n' "$*"; }
+fail() { log "FAIL - $*"; exit 1; }
+pass() { log "PASS - $*"; exit 0; }
+
+log "=== ${SCRIPT_NAME} ==="
+log "Authority: Maturion/strategy/CS2_GOVERNED_BUILD_GATE_REBALANCE_STRATEGY.md"
+log ""
 
 if [[ "$PR_LABELS" == *"governance"* ]] && [[ "$PR_LABELS" == *"automated"* ]] && [[ "$PR_LABELS" == *"agent:liaison"* ]]; then
-  echo "✅ PASS — Automated governance alignment PR bypass."
-  exit 0
+  pass "Automated governance alignment PR bypass."
 fi
 
 compute_changed_files() {
@@ -35,80 +40,122 @@ compute_changed_files() {
 
 CHANGED_FILES="$(compute_changed_files || true)"
 if [ -z "$CHANGED_FILES" ]; then
-  echo "✅ PASS — No changed files."
-  exit 0
+  pass "No changed files."
 fi
 
-is_product_path() {
+if [ -z "$HEAD_SHA" ]; then
+  fail "HEAD_SHA is required for governed build gate validation."
+fi
+if ! [[ "$HEAD_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+  fail "HEAD_SHA must be a 40-character git SHA."
+fi
+
+log "Changed files:"
+printf '%s\n' "$CHANGED_FILES" | sed '/^$/d' | sed 's/^/  - /'
+log ""
+
+# -----------------------------------------------------------------------------
+# Path classifiers
+# -----------------------------------------------------------------------------
+
+is_evidence_file() {
   local file="$1"
   case "$file" in
-    .github/*|governance/*|docs/*|.agent-admin/*|.agent-workspace/*)
-      return 1
-      ;;
-    .functional-delivery/pr-template.md)
-      return 1
+    .functional-delivery/pr-[0-9]*.md|.agent-admin/assurance/*.md|.agent-admin/prehandover/*.md|.admin/prs/pr-*.json)
+      return 0
       ;;
   esac
-
-  [[ "$file" =~ ^supabase/migrations/ ]] && return 0
-  [[ "$file" =~ ^supabase/seed/ ]] && return 0
-  [[ "$file" =~ ^(apps|packages|supabase/functions|api)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
-  [[ "$file" =~ ^modules/[^/]+/(src|app|api|frontend|backend|pages?|components?|routes?)/ ]] && [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
-  [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && [[ "$file" =~ (^|/)(src|app|api|pages?|components?|routes?)/ ]] && return 0
   return 1
 }
 
-is_live_functional_delivery_evidence_file() {
-  local file="$1"
-  [[ "$file" =~ ^\.functional-delivery/pr-[0-9]+\.md$ ]]
-}
-
-# Canonical PR delta classifier bridge.
-# Delegates to resolve-active-pr-state.js so producer-side gates consume
-# one canonical delta model (no local classifier drift).
-_resolve_delta_type_from_resolver() {
-  local files="$1"
-  printf '%s\n' "$files" | BASE_SHA="${BASE_SHA:-}" HEAD_SHA="${HEAD_SHA:-}" \
-    .github/scripts/classify-pr-delta.sh
-}
-
-# Returns 0 (true) if the file is a governance-controlled control-surface path:
-#   governance/canon/**, governance/templates/**, .agent-workspace/independent-assurance-agent/**
-#   .github/scripts/**, .github/workflows/**
-# These paths are subject to ECAP/IAA/canon-inventory or gate-changing-pr-rule gates,
-# not product-delivery gates.
 is_governance_controlled_path() {
   local file="$1"
   case "$file" in
     governance/canon/*|governance/templates/*|.agent-workspace/independent-assurance-agent/*)
       return 0
       ;;
-    .github/scripts/*|.github/workflows/*)
+    .github/scripts/*|.github/workflows/*|.github/agents/*)
+      return 0
+      ;;
+    Maturion/strategy/*|docs/governance/*)
       return 0
       ;;
   esac
   return 1
 }
 
-# Returns 0 (true) if ALL changed files are governance-controlled paths.
-# When true, narrative PR body language must not trigger product-facing classification;
-# only explicit formal claim markers remain active.
-is_governance_controlled_only_pr() {
-  # Empty diff → not governance-only (conservative)
-  [ -n "$CHANGED_FILES" ] || return 1
-  local all_gov_controlled=true
-  while IFS= read -r file; do
-    [ -z "$file" ] && continue
-    if ! is_governance_controlled_path "$file"; then
-      all_gov_controlled=false
-      break
-    fi
-  done <<< "$CHANGED_FILES"
-  [ "$all_gov_controlled" = "true" ]
+is_database_path() {
+  local file="$1"
+  case "$file" in
+    supabase/migrations/*|supabase/seed/*)
+      return 0
+      ;;
+  esac
+  return 1
 }
 
-# Explicit formal claim markers — always trigger product-facing classification regardless of diff.
-# These represent structured fields that assert delivery status.
+is_app_functional_path() {
+  local file="$1"
+  case "$file" in
+    apps/*|packages/*|supabase/functions/*|api/*)
+      [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
+      ;;
+    modules/*/src/*|modules/*/app/*|modules/*/api/*|modules/*/frontend/*|modules/*/backend/*|modules/*/page*/*|modules/*/component*/*|modules/*/route*/*)
+      [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && return 0
+      ;;
+  esac
+  [[ "$file" =~ \.(tsx|jsx|ts|js|py|go)$ ]] && [[ "$file" =~ (^|/)(src|app|api|pages?|components?|routes?)/ ]] && return 0
+  return 1
+}
+
+all_files_match() {
+  local fn="$1"
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    if ! "$fn" "$file"; then
+      return 1
+    fi
+  done <<< "$CHANGED_FILES"
+  return 0
+}
+
+any_file_matches() {
+  local fn="$1"
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    if "$fn" "$file"; then
+      return 0
+    fi
+  done <<< "$CHANGED_FILES"
+  return 1
+}
+
+all_files_database_or_evidence() {
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    if is_database_path "$file" || is_evidence_file "$file"; then
+      continue
+    fi
+    return 1
+  done <<< "$CHANGED_FILES"
+  return 0
+}
+
+all_files_evidence_only() {
+  all_files_match is_evidence_file
+}
+
+all_files_governance_controlled() {
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
+    if is_governance_controlled_path "$file" || is_evidence_file "$file"; then
+      continue
+    fi
+    return 1
+  done <<< "$CHANGED_FILES"
+  return 0
+}
+
 pr_body_explicit_product_claim() {
   [ -n "$PR_BODY" ] || return 1
   local claim_patterns=(
@@ -128,69 +175,110 @@ pr_body_explicit_product_claim() {
   return 1
 }
 
-# Narrative hint patterns — trigger product-facing classification only when the diff is NOT
-# governance-controlled-only. Governance/canon/template PRs routinely discuss these concepts
-# without making formal delivery assertions, so suppressing them avoids false positives.
-pr_body_narrative_product_hint() {
+pr_body_security_hint() {
   [ -n "$PR_BODY" ] || return 1
-  local hint_patterns=(
-    '(^|[[:space:][:punct:]])PARTIAL_FUNCTIONAL_DELIVERY([[:space:]]*$)'
-    '(^|[[:space:][:punct:]])functional[[:space:]]+delivery([[:space:][:punct:]]|$)'
-    '(^|[[:space:][:punct:]])(handover[[:space:]]+readiness|ready[[:space:]]+for[[:space:]]+handover)([[:space:][:punct:]]|$)'
-    'Pass/fail result:[[:space:]]*pass([[:space:]]*$)'
-  )
-  local pattern
-  for pattern in "${hint_patterns[@]}"; do
-    if echo "$PR_BODY" | grep -qiE "$pattern"; then
-      return 0
-    fi
-  done
-  return 1
+  echo "$PR_BODY" | grep -qiE 'security advisor|security remediation|rls|row level security|auth|vulnerab|hardening|leaked password|policy|extension_in_public|function_search_path|supabase advisor'
 }
 
-pr_body_claims_product_delivery() {
-  pr_body_explicit_product_claim && return 0
-  ! is_governance_controlled_only_pr && pr_body_narrative_product_hint && return 0
-  return 1
+manifest_path_for_pr() {
+  if [ -n "$PR_NUMBER" ] && [ -f ".admin/prs/pr-${PR_NUMBER}.json" ]; then
+    echo ".admin/prs/pr-${PR_NUMBER}.json"
+  elif [ -f ".admin/pr.json" ]; then
+    echo ".admin/pr.json"
+  fi
 }
 
-PRODUCT_FACING=false
-PRODUCT_FILES=""
-while IFS= read -r file; do
-  [ -z "$file" ] && continue
-  if is_product_path "$file" || is_live_functional_delivery_evidence_file "$file"; then
-    PRODUCT_FACING=true
-    PRODUCT_FILES="${PRODUCT_FILES}\n${file}"
+manifest_field() {
+  local field="$1"
+  local manifest
+  manifest="$(manifest_path_for_pr || true)"
+  [ -n "$manifest" ] || return 0
+  python3 - "$manifest" "$field" <<'PYEOF' 2>/dev/null || true
+import json, sys
+path, field = sys.argv[1], sys.argv[2]
+try:
+    data = json.load(open(path))
+except Exception:
+    sys.exit(0)
+value = data.get(field, data.get('pr_class' if field == 'class' else field, ''))
+if isinstance(value, bool):
+    print('true' if value else 'false')
+elif isinstance(value, (list, dict)):
+    import json as _json
+    print(_json.dumps(value))
+elif value is not None:
+    print(str(value))
+PYEOF
+}
+
+normalize_class() {
+  local value="$1"
+  value="$(printf '%s' "$value" | tr '[:lower:] -' '[:upper:]__')"
+  case "$value" in
+    APP_FUNCTIONAL_BUILD|FUNCTIONAL|PRODUCT|PRODUCT_FIX) echo "APP_FUNCTIONAL_BUILD" ;;
+    DATABASE_MIGRATION|DATABASE|DB_MIGRATION|MIGRATION) echo "DATABASE_MIGRATION" ;;
+    SECURITY_REMEDIATION|SECURITY|SECURITY_HARDENING) echo "SECURITY_REMEDIATION" ;;
+    GOVERNANCE_CONTROL|GOVERNANCE|GATE_CHANGE) echo "GOVERNANCE_CONTROL" ;;
+    AGENT_CONTRACT) echo "AGENT_CONTRACT" ;;
+    EVIDENCE_ONLY|ADMIN_ONLY) echo "EVIDENCE_ONLY" ;;
+    REBASE_ONLY) echo "REBASE_ONLY" ;;
+    CS2_HOTFIX|HOTFIX) echo "CS2_HOTFIX" ;;
+    *) echo "" ;;
+  esac
+}
+
+# -----------------------------------------------------------------------------
+# PR class router
+# -----------------------------------------------------------------------------
+
+MANIFEST_CLASS="$(normalize_class "$(manifest_field class || true)")"
+PR_CLASS=""
+CLASS_REASON=""
+
+if [ -n "$MANIFEST_CLASS" ]; then
+  PR_CLASS="$MANIFEST_CLASS"
+  CLASS_REASON="declared in PR manifest"
+elif all_files_evidence_only; then
+  PR_CLASS="EVIDENCE_ONLY"
+  CLASS_REASON="diff contains only evidence/admin artifacts"
+elif all_files_governance_controlled; then
+  PR_CLASS="GOVERNANCE_CONTROL"
+  CLASS_REASON="diff contains only governance-controlled/documentation strategy paths"
+elif all_files_database_or_evidence && any_file_matches is_database_path; then
+  if pr_body_security_hint; then
+    PR_CLASS="SECURITY_REMEDIATION"
+    CLASS_REASON="database migration with security remediation/advisor context"
+  else
+    PR_CLASS="DATABASE_MIGRATION"
+    CLASS_REASON="database migration/seed change without app runtime source changes"
   fi
-done <<< "$CHANGED_FILES"
-
-if [ "$PRODUCT_FACING" = false ]; then
-  if pr_body_explicit_product_claim; then
-    PRODUCT_FACING=true
-    PRODUCT_FILES="${PRODUCT_FILES}\n<pr-body-explicit-product-claim>"
-  elif ! is_governance_controlled_only_pr && pr_body_narrative_product_hint; then
-    PRODUCT_FACING=true
-    PRODUCT_FILES="${PRODUCT_FILES}\n<pr-body-narrative-product-hint>"
-  fi
+elif any_file_matches is_app_functional_path || pr_body_explicit_product_claim; then
+  PR_CLASS="APP_FUNCTIONAL_BUILD"
+  CLASS_REASON="app/runtime path or explicit product-delivery claim"
+else
+  PR_CLASS="EVIDENCE_ONLY"
+  CLASS_REASON="no app, database, or governance-control gate payload detected"
 fi
 
-if [ "$PRODUCT_FACING" = false ]; then
-  echo "ℹ️  Not a product-facing PR by classifier — Phase 5 product gates N/A."
-  exit 0
+log "Detected PR class: ${PR_CLASS}"
+log "Classification reason: ${CLASS_REASON}"
+log ""
+
+if [ "$PR_CLASS" = "GOVERNANCE_CONTROL" ] || [ "$PR_CLASS" = "AGENT_CONTRACT" ]; then
+  pass "Product delivery gates are not applicable to ${PR_CLASS}. Governance-control gates own this PR."
 fi
 
-if [ -z "$HEAD_SHA" ]; then
-  echo "❌ FAIL — HEAD_SHA is required for product-facing PR validation."
-  exit 1
-fi
-if ! [[ "$HEAD_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
-  echo "❌ FAIL — HEAD_SHA must be a 40-character git SHA."
-  exit 1
+if [ "$PR_CLASS" = "EVIDENCE_ONLY" ]; then
+  pass "Evidence-only PR: product delivery gates are advisory only and no product files changed."
 fi
 
-echo "Product-facing scope detected:"
-echo -e "$PRODUCT_FILES" | sed '/^$/d' | sed 's/^/  - /'
-echo ""
+if [ "$PR_CLASS" = "REBASE_ONLY" ]; then
+  pass "Rebase-only PR: no fresh product delivery artifact required by this gate."
+fi
+
+# -----------------------------------------------------------------------------
+# Evidence resolution helpers
+# -----------------------------------------------------------------------------
 
 resolve_evidence_path() {
   local from_body=""
@@ -213,19 +301,87 @@ resolve_evidence_path() {
   done
 }
 
-EVIDENCE_PATH="$(resolve_evidence_path)"
-if [ -z "$EVIDENCE_PATH" ] || [ ! -f "$EVIDENCE_PATH" ]; then
-  echo "❌ FAIL — Functional delivery evidence missing."
-  echo "   Required default path: .functional-delivery/pr-${PR_NUMBER}.md"
-  echo "   Optional equivalent: set FUNCTIONAL_DELIVERY_EVIDENCE_PATH or PR body line 'Functional-Delivery-Artifact: <path>'"
-  exit 1
+field_present() {
+  local file="$1"
+  local pattern="$2"
+  grep -qiE "$pattern" "$file"
+}
+
+require_field() {
+  local file="$1"
+  local label="$2"
+  local pattern="$3"
+  if ! field_present "$file" "$pattern"; then
+    fail "$label missing from evidence profile ($file)."
+  fi
+}
+
+EVIDENCE_PATH="$(resolve_evidence_path || true)"
+
+# -----------------------------------------------------------------------------
+# Database / security profiles
+# -----------------------------------------------------------------------------
+
+run_database_or_security_profile() {
+  local profile="$1"
+  if [ -z "$EVIDENCE_PATH" ] || [ ! -f "$EVIDENCE_PATH" ]; then
+    fail "${profile} requires a scoped evidence artifact. Expected .functional-delivery/pr-${PR_NUMBER}.md or Functional-Delivery-Artifact path."
+  fi
+
+  log "Evidence profile selected: ${profile}"
+  log "Evidence artifact: ${EVIDENCE_PATH}"
+
+  require_field "$EVIDENCE_PATH" "Migration purpose / remediation purpose" 'MIGRATION_PURPOSE:|Migration purpose:|REMEDIATION_PURPOSE:|Remediation purpose:'
+  require_field "$EVIDENCE_PATH" "Preview migration/database validation" 'PREVIEW_MIGRATION:|Preview migration:|DATABASE_VALIDATION:|Database validation:|Preview validation:'
+  require_field "$EVIDENCE_PATH" "Verification SQL/result summary" 'VERIFICATION_SQL:|Verification SQL:|VERIFICATION_RESULT:|Verification result:|Security Advisor:'
+  require_field "$EVIDENCE_PATH" "Post-merge checklist" 'POST_MERGE_CHECKLIST:|Post-merge checklist:|Production rollout checklist:|POST_DEPLOY_CHECKLIST:'
+
+  if [ "$profile" = "SECURITY_REMEDIATION" ]; then
+    require_field "$EVIDENCE_PATH" "Original security finding/risk source" 'SECURITY_FINDING:|Original finding:|Risk source:|Security Advisor:'
+    require_field "$EVIDENCE_PATH" "Access-control impact assessment" 'ACCESS_CONTROL_IMPACT:|Access-control impact:|RLS impact:|Service-role impact:|client-role impact:'
+  fi
+
+  if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
+    fail "Evidence file must include current HEAD SHA value (${HEAD_SHA})."
+  fi
+
+  log "Hard blockers: none"
+  log "Advisory findings: UI CTA / full app journey evidence not applicable to ${profile} unless runtime UI/API files changed."
+  log ""
+  pass "${profile} governed evidence profile satisfied."
+}
+
+case "$PR_CLASS" in
+  DATABASE_MIGRATION)
+    run_database_or_security_profile "DATABASE_MIGRATION"
+    ;;
+  SECURITY_REMEDIATION)
+    run_database_or_security_profile "SECURITY_REMEDIATION"
+    ;;
+esac
+
+# -----------------------------------------------------------------------------
+# App functional build profile
+# -----------------------------------------------------------------------------
+
+if [ "$PR_CLASS" != "APP_FUNCTIONAL_BUILD" ] && [ "$PR_CLASS" != "CS2_HOTFIX" ]; then
+  pass "No product delivery gate requirements for PR class ${PR_CLASS}."
 fi
 
-echo "Functional evidence artifact: $EVIDENCE_PATH"
+if [ "$PR_CLASS" = "CS2_HOTFIX" ]; then
+  CS2_JUSTIFICATION="$(manifest_field cs2_justification || true)"
+  if [ -z "$CS2_JUSTIFICATION" ] || echo "$CS2_JUSTIFICATION" | grep -qiE '^(tbd|todo|n/a|na|placeholder)$'; then
+    fail "CS2_HOTFIX requires non-placeholder cs2_justification in the PR manifest."
+  fi
+fi
 
-# ---------------------------------------------------------------------------
-# Gate 1: No Dead CTA (mapping required when CTA patterns present)
-# ---------------------------------------------------------------------------
+if [ -z "$EVIDENCE_PATH" ] || [ ! -f "$EVIDENCE_PATH" ]; then
+  fail "APP_FUNCTIONAL_BUILD requires functional delivery evidence. Expected .functional-delivery/pr-${PR_NUMBER}.md or Functional-Delivery-Artifact path."
+fi
+
+log "Evidence profile selected: APP_FUNCTIONAL_BUILD"
+log "Functional evidence artifact: $EVIDENCE_PATH"
+
 CTA_SCAN_FILES=""
 CTA_PAT='(<button|onClick|fetch\(|navigate\(|supabase\.functions\.invoke)'
 while IFS= read -r file; do
@@ -239,18 +395,15 @@ done <<< "$CHANGED_FILES"
 
 if [ -n "$CTA_SCAN_FILES" ]; then
   if ! grep -qiE 'CTA.?/visible action|Backend/API/Edge target|Success state|Failure state' "$EVIDENCE_PATH"; then
-    echo "❌ FAIL — CTA/action patterns detected but evidence lacks CTA mapping table fields."
+    log "CTA/action patterns detected:"
     echo -e "$CTA_SCAN_FILES" | sed '/^$/d' | sed 's/^/  - /'
-    exit 1
+    fail "CTA/action patterns detected but evidence lacks CTA mapping table fields."
   fi
-  echo "✅ No Dead CTA gate: PASS"
+  log "No Dead CTA gate: PASS"
 else
-  echo "ℹ️  No CTA patterns detected in changed product files."
+  log "No CTA patterns detected in changed product files."
 fi
 
-# ---------------------------------------------------------------------------
-# Gate 2: No Invented Endpoint (for guarded routes)
-# ---------------------------------------------------------------------------
 INVENTED_FAIL=false
 declare -a GUARDED_ROUTES=(
   "/api/organisations"
@@ -310,10 +463,10 @@ for route in "${GUARDED_ROUTES[@]}"; do
     fi
 
     if [ -z "$exists_proof" ] || [ -z "$test_proof" ] || [ -z "$map_proof" ]; then
-      echo "❌ FAIL — No Invented Endpoint gate for $route"
-      [ -z "$exists_proof" ] && echo "   Missing proof: exact route implementation exists (non-doc source)."
-      [ -z "$test_proof" ] && echo "   Missing proof: route is covered in a test/spec file."
-      [ -z "$map_proof" ] && echo "   Missing proof: route-to-capability mapping or explicit route approval."
+      log "FAIL - No Invented Endpoint gate for $route"
+      [ -z "$exists_proof" ] && log "   Missing proof: exact route implementation exists (non-doc source)."
+      [ -z "$test_proof" ] && log "   Missing proof: route is covered in a test/spec file."
+      [ -z "$map_proof" ] && log "   Missing proof: route-to-capability mapping or explicit route approval."
       INVENTED_FAIL=true
     fi
   fi
@@ -322,11 +475,8 @@ done
 if [ "$INVENTED_FAIL" = true ]; then
   exit 1
 fi
-echo "✅ No Invented Endpoint gate: PASS"
+log "No Invented Endpoint gate: PASS"
 
-# ---------------------------------------------------------------------------
-# Gate 3: Functional Delivery Evidence completeness
-# ---------------------------------------------------------------------------
 required_sections=(
   "PR:"
   "Issue:"
@@ -365,81 +515,57 @@ required_sections=(
 
 for section in "${required_sections[@]}"; do
   if ! grep -qF "$section" "$EVIDENCE_PATH"; then
-    echo "❌ FAIL — Functional evidence missing required section: $section"
-    exit 1
+    fail "Functional evidence missing required section: $section"
   fi
 done
-echo "✅ Functional Delivery Evidence gate: PASS"
+log "Functional Delivery Evidence gate: PASS"
 
-# ---------------------------------------------------------------------------
-# Gate 3a: Build-to-Red and builder appointment linkage
-# ---------------------------------------------------------------------------
 if ! grep -qiE '^[[:space:]]*(\*\*)?(BUILD_TO_RED_TEST_REFERENCE|Build-to-Red test reference)(\*\*)?:[[:space:]]*.+$' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Functional evidence missing BUILD_TO_RED_TEST_REFERENCE."
-  exit 1
+  fail "Functional evidence missing BUILD_TO_RED_TEST_REFERENCE."
 fi
 if ! grep -qiE 'T-MMM-S6-[0-9]{3}' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — BUILD_TO_RED_TEST_REFERENCE must include at least one T-MMM-S6-### test label."
-  exit 1
+  fail "BUILD_TO_RED_TEST_REFERENCE must include at least one T-MMM-S6-### test label."
 fi
 if ! grep -qiE '^[[:space:]]*(\*\*)?(BUILDER_APPOINTMENT_REFERENCE|Builder appointment reference)(\*\*)?:[[:space:]]*.+$' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Functional evidence missing BUILDER_APPOINTMENT_REFERENCE."
-  exit 1
+  fail "Functional evidence missing BUILDER_APPOINTMENT_REFERENCE."
 fi
 if ! grep -qiE 'modules/MMM/10-builder-appointment/builder-contract\.md' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — BUILDER_APPOINTMENT_REFERENCE must cite modules/MMM/10-builder-appointment/builder-contract.md."
-  exit 1
+  fail "BUILDER_APPOINTMENT_REFERENCE must cite modules/MMM/10-builder-appointment/builder-contract.md."
 fi
 if ! grep -qiE '^[[:space:]]*(\*\*)?(ROLE_ASSIGNMENT_REFERENCE|Role assignment reference)(\*\*)?:[[:space:]]*.+$' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Functional evidence missing ROLE_ASSIGNMENT_REFERENCE."
-  exit 1
+  fail "Functional evidence missing ROLE_ASSIGNMENT_REFERENCE."
 fi
-echo "✅ Build-to-Red linkage gate: PASS"
+log "Build-to-Red linkage gate: PASS"
 
-# ---------------------------------------------------------------------------
-# Gate 3b: Split verdict and contradiction integrity (evidence-level)
-# ---------------------------------------------------------------------------
 if ! grep -qiE '^[[:space:]]*(\*\*)?ADMIN_PASS(\*\*)?:[[:space:]]*(yes|no)' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Evidence missing split verdict field: ADMIN_PASS"
-  exit 1
+  fail "Evidence missing split verdict field: ADMIN_PASS"
 fi
 if ! grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*(yes|no)' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Evidence missing split verdict field: FUNCTIONAL_PASS"
-  exit 1
+  fail "Evidence missing split verdict field: FUNCTIONAL_PASS"
 fi
 if ! grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*(FULL_FUNCTIONAL_DELIVERY|PARTIAL_FUNCTIONAL_DELIVERY|ADMIN_ONLY|FAIL)' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — Evidence missing split verdict field: VERDICT/FULL_FUNCTIONAL_DELIVERY_VERDICT"
-  exit 1
+  fail "Evidence missing split verdict field: VERDICT/FULL_FUNCTIONAL_DELIVERY_VERDICT"
 fi
 
 if grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*yes' "$EVIDENCE_PATH" && \
    ! grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)' "$EVIDENCE_PATH"; then
-  echo "❌ FAIL — FUNCTIONAL_PASS: yes requires VERDICT: FULL_FUNCTIONAL_DELIVERY."
-  exit 1
+  fail "FUNCTIONAL_PASS: yes requires VERDICT: FULL_FUNCTIONAL_DELIVERY."
 fi
 
 if grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*FULL_FUNCTIONAL_DELIVERY([[:space:]]*$)' "$EVIDENCE_PATH"; then
   known_partials_value="$(grep -iE '^[[:space:]]*(KNOWN_PARTIALS|Known partials):' "$EVIDENCE_PATH" | head -1 | cut -d: -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' || true)"
   known_partials_value_lower="$(printf '%s' "$known_partials_value" | tr '[:upper:]' '[:lower:]')"
   if [ -n "$known_partials_value" ] && [ "$known_partials_value_lower" != "none" ]; then
-    echo "❌ FAIL — FULL_FUNCTIONAL_DELIVERY cannot coexist with known partials."
-    exit 1
+    fail "FULL_FUNCTIONAL_DELIVERY cannot coexist with known partials."
   fi
   if grep -qiE 'outstanding|pending|not[[:space:]-]verified|incomplete' "$EVIDENCE_PATH"; then
-    echo "❌ FAIL — FULL_FUNCTIONAL_DELIVERY cannot coexist with outstanding/pending/not-verified language."
-    exit 1
+    fail "FULL_FUNCTIONAL_DELIVERY cannot coexist with outstanding/pending/not-verified language."
   fi
 fi
 
-# ---------------------------------------------------------------------------
-# Gate 4: IAA functional verdict split (product-facing requires split fields)
-# ---------------------------------------------------------------------------
 IAA_FILES="$(git diff --name-only --diff-filter=AM "${BASE_SHA:-HEAD~1}...HEAD" 2>/dev/null | grep -E '^\.agent-admin/assurance/(iaa-token-|iaa-wave-record-).+\.md$' || true)"
-
 if [ -z "$IAA_FILES" ]; then
-  echo "❌ FAIL - Product-facing PR requires a PR-diff IAA assurance artifact with split verdict fields."
-  echo "   No added/modified IAA token/wave-record file was found in this PR diff."
-  exit 1
+  fail "APP_FUNCTIONAL_BUILD requires a PR-diff IAA assurance artifact with split verdict fields."
 fi
 
 IAA_VERDICT_OK=false
@@ -448,11 +574,9 @@ IAA_HEAD_KEY_REGEX='^[[:space:]]*(-[[:space:]]*)?(\*\*)?CURRENT_HEAD_SHA(\*\*)?:
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
-
   has_admin=$(grep -qiE '^[[:space:]]*(\*\*)?ADMIN_PASS(\*\*)?:[[:space:]]*(yes|no)' "$iaa_file" && echo yes || echo no)
   has_functional=$(grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*(yes|no)' "$iaa_file" && echo yes || echo no)
   has_verdict=$(grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*(FULL_FUNCTIONAL_DELIVERY|PARTIAL_FUNCTIONAL_DELIVERY|ADMIN_ONLY|FAIL)' "$iaa_file" && echo yes || echo no)
-
   if [ "$has_admin" = "yes" ] && [ "$has_functional" = "yes" ] && [ "$has_verdict" = "yes" ]; then
     IAA_VERDICT_OK=true
     if awk -v sha="$HEAD_SHA" -v keyre="$IAA_HEAD_KEY_REGEX" '
@@ -463,10 +587,7 @@ while IFS= read -r iaa_file; do
         if (line ~ keyre) {
           sub(keyre, "", line)
           sub(/[[:space:]]+$/, "", line)
-          if (line == sha) {
-            found = 1
-            exit 0
-          }
+          if (line == sha) { found = 1; exit 0 }
         }
       }
       END { exit(found ? 0 : 1) }
@@ -478,92 +599,24 @@ while IFS= read -r iaa_file; do
 done <<< "$IAA_FILES"
 
 if [ "$IAA_VERDICT_OK" = false ]; then
-  echo "❌ FAIL — IAA Functional Verdict gate: split fields missing."
-  echo "   Required fields for product-facing PRs:"
-  echo "   - ADMIN_PASS: yes/no"
-  echo "   - FUNCTIONAL_PASS: yes/no"
-  echo "   - VERDICT: FULL_FUNCTIONAL_DELIVERY | PARTIAL_FUNCTIONAL_DELIVERY | ADMIN_ONLY | FAIL"
-  echo "     (FULL_FUNCTIONAL_DELIVERY_VERDICT accepted as alias)"
-  exit 1
+  fail "IAA Functional Verdict gate: split fields missing."
 fi
-echo "✅ IAA Functional Verdict gate: PASS"
-
-# Gate 4c: No-current-head-drift (same artifact must contain verdict split + current head)
 if [ "$IAA_VERDICT_HEAD_BOUND" = false ]; then
-  # Exact SHA not found. Use resolver/delta model:
-  #   PRIMARY  — if the PR's delta is admin/rebase-only, no product-facing files
-  #              changed and the evidence still covers the full payload.
-  #   SECONDARY — if product-facing files did change, accept a stale canonical 40-char
-  #              hex SHA only when the IAA artifact was authored after the last product-file
-  #              commit (author timestamps survive git rebase).
-  _4c_pass=false
-  _4c_delta_type="$(_resolve_delta_type_from_resolver "$CHANGED_FILES")"
-  case "$_4c_delta_type" in
-    REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
-      _4c_pass=true
-      echo "ℹ️  No-current-head-drift: rebase-safe (${_4c_delta_type}: no product-facing changes)"
-      ;;
-    SUBSTANTIVE_DELTA|GATE_CHANGE_DELTA)
-      if [ -n "$BASE_SHA" ]; then
-        # Precompute last product-facing commit timestamp once (avoids per-file git-log inside loop)
-        _4c_prod_files=()
-        while IFS= read -r _pf; do
-          [ -n "$_pf" ] && is_product_path "$_pf" && _4c_prod_files+=("$_pf")
-        done <<< "$CHANGED_FILES"
-        _4c_prod_last_at=""
-        if [ "${#_4c_prod_files[@]}" -gt 0 ]; then
-          _4c_prod_last_at="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_4c_prod_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
-        fi
-        while IFS= read -r _iaa_f; do
-          [ -n "$_iaa_f" ] && [ -f "$_iaa_f" ] || continue
-          _has_a=$(grep -qiE '^[[:space:]]*(\*\*)?ADMIN_PASS(\*\*)?:[[:space:]]*(yes|no)' "$_iaa_f" && echo yes || echo no)
-          _has_fu=$(grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*(yes|no)' "$_iaa_f" && echo yes || echo no)
-          _has_v=$(grep -qiE '^[[:space:]]*(\*\*)?(VERDICT|FULL_FUNCTIONAL_DELIVERY_VERDICT)(\*\*)?:[[:space:]]*(FULL_FUNCTIONAL_DELIVERY|PARTIAL_FUNCTIONAL_DELIVERY|ADMIN_ONLY|FAIL)' "$_iaa_f" && echo yes || echo no)
-          [ "$_has_a" = "yes" ] && [ "$_has_fu" = "yes" ] && [ "$_has_v" = "yes" ] || continue
-          # Only canonical 40-char hex SHAs trigger the timing fallback; shorter or
-          # non-hex values (including placeholders) weaken head-binding and are rejected.
-          _iaa_sha_val="$(grep -iE '^[[:space:]]*(\*\*)?CURRENT_HEAD_SHA(\*\*)?:[[:space:]]*' "$_iaa_f" | head -1 | sed 's/.*SHA[^:]*:[[:space:]]*//' | tr -d '[:space:]' || true)"
-          [[ "$_iaa_sha_val" =~ ^[0-9a-fA-F]{40}$ ]] || continue
-          # Secondary: artifact authored after last product-facing commit?
-          _iaa_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$_iaa_f" 2>/dev/null || true)"
-          [ -z "$_iaa_at" ] && _iaa_at="$(git log -1 --format='%at' HEAD -- "$_iaa_f" 2>/dev/null || true)"
-          [ -z "$_iaa_at" ] && continue
-          if [ -z "$_4c_prod_last_at" ] || [ "$_iaa_at" -ge "$_4c_prod_last_at" ]; then
-            _4c_pass=true
-            echo "ℹ️  No-current-head-drift: rebase-safe (${_4c_delta_type}: IAA artifact covers all product-facing commits)"
-            break
-          fi
-        done <<< "$IAA_FILES"
-      fi
-      ;;
-  esac
-  if [ "$_4c_pass" = false ]; then
-    echo "❌ FAIL — IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD ($HEAD_SHA) in the same artifact."
-    echo "   Add current reviewed head SHA to the PR-diff IAA token/wave-record, or re-run IAA after head change."
-    exit 1
-  fi
+  fail "IAA assurance artifact must bind verdict and CURRENT_HEAD_SHA to current HEAD (${HEAD_SHA})."
 fi
-echo "✅ No-current-head-drift gate: PASS"
+log "IAA Functional Verdict and head binding gates: PASS"
 
-# Gate 4b: PASS_WITH_CS2_WAIVER must quote explicit CS2 waiver text
-# Accepted formats in evidence/templates:
-#   CS2 waiver quote: "<explicit waiver text>"
-#   CS2_WAIVER_QUOTE: "<explicit waiver text>"
 cs2_waiver_quote_regex='((CS2[[:space:]_-]*waiver([[:space:]_-]*(quote|text))?)|CS2_WAIVER_QUOTE)[[:space:]]*:[[:space:]]*".+"'
 while IFS= read -r iaa_file; do
   [ -n "$iaa_file" ] || continue
   [ -f "$iaa_file" ] || continue
   if grep -qiE 'PASS_WITH_CS2_WAIVER' "$iaa_file"; then
     if ! grep -qiE "$cs2_waiver_quote_regex" "$iaa_file"; then
-      echo "❌ FAIL — PASS_WITH_CS2_WAIVER in $iaa_file requires quoted explicit CS2 waiver text."
-      exit 1
+      fail "PASS_WITH_CS2_WAIVER in $iaa_file requires quoted explicit CS2 waiver text."
     fi
   fi
 done <<< "$IAA_FILES"
 
-# ---------------------------------------------------------------------------
-# Gate 5: Placeholder honesty
-# ---------------------------------------------------------------------------
 placeholder_regex='not yet wired|TODO([[:space:]]+|:[[:space:]]*|_[[:space:]]*|-+[[:space:]]*)backend|placeholder[[:space:]]+(wiring|implementation|backend)|temporary[[:space:]]+(stub|shim)'
 pass_claim_regex='FUNCTIONAL_PASS:[[:space:]]*yes|FULL_FUNCTIONAL_DELIVERY|functional PASS|full functional delivery|100% build|one-time build|complete product workflow'
 partial_allowed=false
@@ -574,102 +627,34 @@ if grep -qiE 'FUNCTIONAL_PASS:[[:space:]]*no' "$EVIDENCE_PATH" && \
   if grep -qiE "$cs2_waiver_quote_regex" "$EVIDENCE_PATH"; then
     partial_allowed=true
   else
-    echo "❌ FAIL — Partial functional delivery with CS2 acceptance requires quoted explicit CS2 waiver text in functional evidence."
-    echo "   Required line example: CS2_WAIVER_QUOTE: \"<exact CS2 waiver / partial-scope acceptance text>\""
-    exit 1
+    fail "Partial functional delivery with CS2 acceptance requires quoted explicit CS2 waiver text in functional evidence."
   fi
 fi
 
 PLACEHOLDER_FOUND=false
 PASS_CLAIM_FOUND=false
-
-if [ -f "$EVIDENCE_PATH" ] && grep -qiE "$placeholder_regex" "$EVIDENCE_PATH"; then
-  PLACEHOLDER_FOUND=true
-fi
-if [ -f "$EVIDENCE_PATH" ] && grep -qiE "$pass_claim_regex" "$EVIDENCE_PATH"; then
-  PASS_CLAIM_FOUND=true
-fi
-if [ -n "$PR_BODY" ] && echo "$PR_BODY" | grep -qiE "$placeholder_regex"; then
-  PLACEHOLDER_FOUND=true
-fi
-if [ -n "$PR_BODY" ] && echo "$PR_BODY" | grep -qiE "$pass_claim_regex"; then
-  PASS_CLAIM_FOUND=true
-fi
+if grep -qiE "$placeholder_regex" "$EVIDENCE_PATH"; then PLACEHOLDER_FOUND=true; fi
+if grep -qiE "$pass_claim_regex" "$EVIDENCE_PATH"; then PASS_CLAIM_FOUND=true; fi
+if [ -n "$PR_BODY" ] && echo "$PR_BODY" | grep -qiE "$placeholder_regex"; then PLACEHOLDER_FOUND=true; fi
+if [ -n "$PR_BODY" ] && echo "$PR_BODY" | grep -qiE "$pass_claim_regex"; then PASS_CLAIM_FOUND=true; fi
 
 if [ "$PLACEHOLDER_FOUND" = true ] && [ "$PASS_CLAIM_FOUND" = true ] && [ "$partial_allowed" = false ]; then
-  echo "❌ FAIL — Placeholder Honesty gate."
-  echo "   Placeholder/incomplete language found while functional-pass/full-delivery claim exists."
-  echo "   Allowed partial path requires:"
-  echo "   - FUNCTIONAL_PASS: no"
-  echo "   - VERDICT (or FULL_FUNCTIONAL_DELIVERY_VERDICT): PARTIAL_FUNCTIONAL_DELIVERY"
-  echo "   - Partial scope accepted by CS2: yes"
-  echo "   - CS2_WAIVER_QUOTE (or CS2 waiver quote): \"<explicit text>\""
-  exit 1
+  fail "Placeholder/incomplete language found while functional-pass/full-delivery claim exists."
 fi
-echo "✅ Placeholder Honesty gate: PASS"
+log "Placeholder Honesty gate: PASS"
 
-# ---------------------------------------------------------------------------
-# Gate 6: False-PASS phrase contradictions and handover language discipline
-# ---------------------------------------------------------------------------
 if grep -qiE '^[[:space:]]*(\*\*)?FUNCTIONAL_PASS(\*\*)?:[[:space:]]*no' "$EVIDENCE_PATH"; then
   if grep -qiE 'code[[:space:]]+quality[[:space:]]+PASS|technically[[:space:]]+correct|no[[:space:]]+regressions' "$EVIDENCE_PATH"; then
-    echo "❌ FAIL — product-facing evidence cannot use acceptance language while FUNCTIONAL_PASS: no."
-    exit 1
+    fail "Product-facing evidence cannot use acceptance language while FUNCTIONAL_PASS: no."
   fi
   if grep -qiE 'ready[[:space:]]+for[[:space:]]+handover|merge[[:space:]]+gate[[:space:]]+released|ready[[:space:]]+for[[:space:]]+merge|closure[[:space:]]+approved' "$EVIDENCE_PATH"; then
-    echo "❌ FAIL — handover/merge/closure language is prohibited when FUNCTIONAL_PASS: no."
-    exit 1
+    fail "Handover/merge/closure language is prohibited when FUNCTIONAL_PASS: no."
   fi
 fi
 
-# ---------------------------------------------------------------------------
-# Gate 7: Evidence must include current reviewed head SHA
-# Note: SHA match is intentionally case-sensitive (`grep -qF`) because commit
-# hashes are canonical lowercase hex strings and should match exactly.
-# ---------------------------------------------------------------------------
 if ! grep -qF "$HEAD_SHA" "$EVIDENCE_PATH"; then
-  # Exact HEAD SHA not in evidence. Use resolver/delta model:
-  #   PRIMARY  — if the PR's delta is admin/rebase-only, no product-facing files
-  #              changed and the evidence still covers the current payload.
-  #   SECONDARY — for substantive deltas, a stale canonical 40-char hex SHA is accepted
-  #              only when the evidence was authored after the last product-facing file
-  #              commit (author timestamps survive git rebase). Placeholder/symbolic
-  #              values do NOT trigger this fallback — a concrete old SHA must be present.
-  _g7_pass=false
-  _g7_delta_type="$(_resolve_delta_type_from_resolver "$CHANGED_FILES")"
-  case "$_g7_delta_type" in
-    REBASE_ONLY_DELTA|ADMIN_ONLY_DELTA)
-      _g7_pass=true
-      echo "ℹ️  Gate 7: rebase-safe (${_g7_delta_type}: no product-facing changes)"
-      ;;
-    SUBSTANTIVE_DELTA|GATE_CHANGE_DELTA)
-      # Only canonical 40-char hex SHAs trigger the timing fallback
-      _ev_sha_val="$(grep -iE '^[[:space:]]*Current head SHA reviewed:[[:space:]]*' "$EVIDENCE_PATH" | head -1 | sed 's/.*reviewed:[[:space:]]*//' | tr -d '[:space:]' || true)"
-      if [[ "$_ev_sha_val" =~ ^[0-9a-fA-F]{40}$ ]] && [ -n "$BASE_SHA" ]; then
-        _ev_at="$(git log -1 --format='%at' "${BASE_SHA}..HEAD" -- "$EVIDENCE_PATH" 2>/dev/null || true)"
-        [ -z "$_ev_at" ] && _ev_at="$(git log -1 --format='%at' HEAD -- "$EVIDENCE_PATH" 2>/dev/null || true)"
-        if [ -n "$_ev_at" ]; then
-          _g7_prod_files=()
-          while IFS= read -r _pf; do
-            [ -n "$_pf" ] && is_product_path "$_pf" && _g7_prod_files+=("$_pf")
-          done <<< "$CHANGED_FILES"
-          _prod_last_at_g7=""
-          if [ "${#_g7_prod_files[@]}" -gt 0 ]; then
-            _prod_last_at_g7="$(git log --format='%at' "${BASE_SHA}..HEAD" -- "${_g7_prod_files[@]}" 2>/dev/null | sort -rn | head -1 || true)"
-          fi
-          if [ -z "$_prod_last_at_g7" ] || [ "$_ev_at" -ge "$_prod_last_at_g7" ]; then
-            _g7_pass=true
-            echo "ℹ️  Gate 7: rebase-safe (${_g7_delta_type}: evidence covers all product-facing commits)"
-          fi
-        fi
-      fi
-      ;;
-  esac
-  if [ "$_g7_pass" = false ]; then
-    echo "❌ FAIL — Evidence file must include current HEAD SHA value ($HEAD_SHA)."
-    exit 1
-  fi
+  fail "Evidence file must include current HEAD SHA value (${HEAD_SHA})."
 fi
 
-echo ""
-echo "✅ PASS — All Phase 5 product delivery hard gates passed."
+log ""
+pass "All required hard gates passed for PR class ${PR_CLASS}."
