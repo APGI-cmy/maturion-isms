@@ -24,7 +24,7 @@
 | Stage 7 | PBFAG | COMPLETE — Amendment accepts remediation for Stage 8 planning only | `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` |
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
-| Stage 10 | IAA Pre-Brief | NOT_STARTED — NEXT | `.agent-admin/assurance/` |
+| Stage 10 | IAA Pre-Brief | NOT_STARTED — NEXT | `modules/isms/09-iaa-pre-brief/` |
 | Stage 11 | Builder Appointment | NOT_STARTED | `.agent-admin/builder-appointments/` |
 | Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
@@ -45,7 +45,7 @@
 
 **Current Stage**: Stage 10 IAA Pre-Brief is next.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create Stage 10 IAA Pre-Brief aligned to the Stage 8 waves and Stage 9 checklist.
+**Next Required Action**: Create Stage 10 IAA Pre-Brief aligned to the Stage 8 waves and Stage 9 checklist in `modules/isms/09-iaa-pre-brief/`.
 
 ---
 
