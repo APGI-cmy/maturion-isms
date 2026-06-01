@@ -15,7 +15,7 @@
 
 This artifact closes the Stage 10 acknowledgement gate for the ISMS pre-build package.
 
-It records Foreman proxy acknowledgement, IAA assurance position, and the conditional builder acknowledgement rule required before Stage 11 builder appointment proceeds into execution.
+It records Foreman proxy acknowledgement, IAA assurance position, and an explicit limited waiver for builder acknowledgements because no implementation builders have been designated yet.
 
 ---
 
@@ -42,11 +42,28 @@ It records Foreman proxy acknowledgement, IAA assurance position, and the condit
 |---|---|---|
 | User proxy / Foreman | Foreman acting as user proxy acknowledges the Stage 10 IAA Pre-Brief and confirms Stage 11 must remain wave-specific. | Acknowledged |
 | IAA | IAA position is PASS WITH CONDITIONS for Stage 11 appointment preparation. | Acknowledged |
-| Designated builder(s) | No implementation builders are designated yet. Each Stage 11 builder appointment must include explicit acknowledgement before execution. | Deferred to Stage 11 appointment artifact |
+| Designated builder(s) | No implementation builders are designated at Stage 10. Builder acknowledgement cannot be recorded until builder candidates are named. | Explicitly waived for Stage 10 closure only; mandatory at Stage 11 before execution |
 
 ---
 
-## 4. IAA Position
+## 4. Limited Builder-Acknowledgement Waiver
+
+The Stage 10 builder acknowledgement requirement is waived only for closing Stage 10 because there are no designated builders at this stage.
+
+This waiver does not remove the acknowledgement requirement. It transfers the requirement into Stage 11 as a blocking appointment condition.
+
+Stage 11 must not authorize a builder appointment unless the appointment artifact or a linked acknowledgement record confirms that each named builder has acknowledged:
+
+- `modules/isms/09-iaa-pre-brief/iaa-pre-brief.md`;
+- `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md`;
+- `modules/isms/08-builder-checklist/builder-checklist.md`;
+- wave-specific scope and constraints;
+- build/lint/test/CI evidence obligations;
+- no implementation handover without later gate approval.
+
+---
+
+## 5. IAA Position
 
 ```text
 PASS WITH CONDITIONS — Stage 11 Builder Appointment may proceed for wave-specific appointment preparation only.
@@ -55,7 +72,7 @@ PASS WITH CONDITIONS — Stage 11 Builder Appointment may proceed for wave-speci
 Conditions:
 
 - Stage 11 must appoint builders wave-by-wave.
-- Each appointed builder must acknowledge the Stage 10 pre-brief and Stage 9 checklist inside the appointment artifact or a linked acknowledgement record.
+- Each appointed builder must acknowledge the Stage 10 pre-brief, Stage 10 acknowledgement artifact, and Stage 9 checklist inside the appointment artifact or a linked acknowledgement record.
 - Stage 11 must not authorize uncontrolled runtime implementation.
 - Implementation execution remains separately gated.
 - Implementation handover remains blocked.
@@ -63,7 +80,7 @@ Conditions:
 
 ---
 
-## 5. Fully Functional Build Objective Check
+## 6. Fully Functional Build Objective Check
 
 The Stage 10 pre-brief is aligned to the fully functional build objective because it requires future waves to provide:
 
@@ -83,15 +100,16 @@ The Stage 10 pre-brief is aligned to the fully functional build objective becaus
 
 ---
 
-## 6. Stage 10 Closure Decision
+## 7. Stage 10 Closure Decision
 
 ```text
 STAGE 10 ACKNOWLEDGEMENT GATE: PASS WITH CONDITIONS
-STAGE 11 BUILDER APPOINTMENT: AUTHORIZED FOR WAVE-SPECIFIC APPOINTMENT PREPARATION
+BUILDER ACKNOWLEDGEMENT AT STAGE 10: EXPLICITLY WAIVED BECAUSE NO BUILDERS ARE DESIGNATED
+STAGE 11 BUILDER APPOINTMENT: AUTHORIZED FOR WAVE-SPECIFIC APPOINTMENT PREPARATION ONLY
 RUNTIME IMPLEMENTATION: NOT AUTHORIZED
 IMPLEMENTATION HANDOVER: NOT AUTHORIZED
 ```
 
 Stage 10 is closed with conditions.
 
-The next stage is Stage 11 Builder Appointment.
+The next stage is Stage 11 Builder Appointment. Stage 11 must satisfy the transferred builder acknowledgement requirement before any appointed builder may execute implementation work.
