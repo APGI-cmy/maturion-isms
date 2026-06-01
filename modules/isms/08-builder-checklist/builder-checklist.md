@@ -30,13 +30,15 @@ Before any implementation wave starts, the builder must confirm:
 | B-PRE-003 | Read `modules/isms/02-frs/functional-requirements.md` | [ ] |
 | B-PRE-004 | Read `modules/isms/03-trs/technical-requirements-specification.md` | [ ] |
 | B-PRE-005 | Read `modules/isms/04-architecture/architecture-reconciliation-stage5.md` | [ ] |
-| B-PRE-006 | Read `modules/isms/04-architecture/architecture-remediation-pack.md` | [ ] |
-| B-PRE-007 | Read `modules/isms/05-qa-to-red/qa-to-red-catalog.md` | [ ] |
-| B-PRE-008 | Read `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` | [ ] |
-| B-PRE-009 | Read `modules/isms/07-implementation-plan/implementation-plan.md` | [ ] |
-| B-PRE-010 | Read `modules/isms/07-implementation-plan/wave-evidence-plan.md` | [ ] |
-| B-PRE-011 | Confirm implementation scope is limited to the appointed wave | [ ] |
-| B-PRE-012 | Confirm no runtime work starts without wave-specific builder appointment | [ ] |
+| B-PRE-006 | Read `modules/isms/04-architecture/architecture-completeness-gap-analysis.md` | [ ] |
+| B-PRE-007 | Read `modules/isms/04-architecture/architecture-remediation-pack.md` | [ ] |
+| B-PRE-008 | Read `modules/isms/05-qa-to-red/qa-to-red-catalog.md` | [ ] |
+| B-PRE-009 | Read `modules/isms/06-pbfag/pre-build-functionality-assessment-gate.md` | [ ] |
+| B-PRE-010 | Read `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` | [ ] |
+| B-PRE-011 | Read `modules/isms/07-implementation-plan/implementation-plan.md` | [ ] |
+| B-PRE-012 | Read `modules/isms/07-implementation-plan/wave-evidence-plan.md` | [ ] |
+| B-PRE-013 | Confirm implementation scope is limited to the appointed wave | [ ] |
+| B-PRE-014 | Confirm no runtime work starts without wave-specific builder appointment | [ ] |
 
 ---
 
@@ -63,7 +65,7 @@ These apply to every future implementation wave.
 
 ## 4. Wave Builder Checklists
 
-## W1 — Route Registry, Public Pages, Redirects
+### W1 — Route Registry, Public Pages, Redirects
 
 | ID | Builder requirement | Done |
 |---|---|---|
@@ -76,7 +78,7 @@ These apply to every future implementation wave.
 | W1-007 | Map implementation to Stage 6 D1 and D2 RED tests. | [ ] |
 | W1-008 | Capture build, lint, test, and CI evidence. | [ ] |
 
-## W2 — Free Assessment Result Flow
+### W2 — Free Assessment Result Flow
 
 | ID | Builder requirement | Done |
 |---|---|---|
@@ -89,7 +91,7 @@ These apply to every future implementation wave.
 | W2-007 | Map implementation to Stage 6 D3 RED tests. | [ ] |
 | W2-008 | Capture build, lint, test, and CI evidence. | [ ] |
 
-## W3 — Subscribe, Checkout Mock, Auth, Onboarding
+### W3 — Subscribe, Checkout Mock, Auth, Onboarding
 
 | ID | Builder requirement | Done |
 |---|---|---|
@@ -103,7 +105,7 @@ These apply to every future implementation wave.
 | W3-008 | Map implementation to Stage 6 D4 RED tests. | [ ] |
 | W3-009 | Capture build, lint, test, and CI evidence. | [ ] |
 
-## W4 — Shared Context, Entitlement, MMM Handoff
+### W4 — Shared Context, Entitlement, MMM Handoff
 
 | ID | Builder requirement | Done |
 |---|---|---|
@@ -116,7 +118,7 @@ These apply to every future implementation wave.
 | W4-007 | Map implementation to Stage 6 D5 RED tests. | [ ] |
 | W4-008 | Capture build, lint, test, and CI evidence. | [ ] |
 
-## W5 — Ask Maturion Adapter
+### W5 — Ask Maturion Adapter
 
 | ID | Builder requirement | Done |
 |---|---|---|
@@ -129,7 +131,7 @@ These apply to every future implementation wave.
 | W5-007 | Map implementation to Stage 6 D6 RED tests. | [ ] |
 | W5-008 | Capture build, lint, test, and CI evidence. | [ ] |
 
-## W6 — Backend Boundary, Persistence, Schema/RLS, Audit
+### W6 — Backend Boundary, Persistence, Schema/RLS, Audit
 
 | ID | Builder requirement | Done |
 |---|---|---|
@@ -144,7 +146,7 @@ These apply to every future implementation wave.
 | W6-009 | Map implementation to Stage 6 D7, D8, and D9 RED tests. | [ ] |
 | W6-010 | Capture build, lint, test, and CI evidence. | [ ] |
 
-## W7 — Deployment, Runtime, Env, CI Hardening
+### W7 — Deployment, Runtime, Env, CI Hardening
 
 | ID | Builder requirement | Done |
 |---|---|---|
@@ -158,7 +160,7 @@ These apply to every future implementation wave.
 | W7-008 | Map implementation to Stage 6 D10 RED tests. | [ ] |
 | W7-009 | Capture build, lint, test, and CI evidence. | [ ] |
 
-## W8 — Cumulative Regression and PBFAG Rerun
+### W8 — Cumulative Regression and PBFAG Rerun
 
 | ID | Builder requirement | Done |
 |---|---|---|
