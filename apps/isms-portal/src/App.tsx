@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
+import { PitErrorBoundary } from '@/components/PitErrorBoundary';
 import { ROUTES } from '@/lib/routes';
 import Index from './pages/Index';
 import ModulesOverview from './pages/ModulesOverview';
@@ -21,8 +22,17 @@ import SkillsDevelopmentInfo from './pages/SkillsDevelopmentInfo';
 import IncidentManagementInfo from './pages/IncidentManagementInfo';
 import MaturityRoadmapInfo from './pages/MaturityRoadmapInfo';
 import NotFound from './pages/NotFound';
+import { PitShell } from './pages/pit/PitShell';
 
 const queryClient = new QueryClient();
+
+const protectedPitRoute = (title: string, description: string) => (
+  <ProtectedRoute>
+    <PitErrorBoundary>
+      <PitShell title={title} description={description} />
+    </PitErrorBoundary>
+  </ProtectedRoute>
+);
 
 const App = () => {
   return (
@@ -36,6 +46,43 @@ const App = () => {
               {/* Public landing pages — no authentication required */}
               <Route path={ROUTES.HOME} element={<Index />} />
               <Route path={ROUTES.AUTH} element={<LoginForm />} />
+              <Route path={ROUTES.LOGIN} element={<LoginForm />} />
+              <Route
+                path={ROUTES.SIGNUP}
+                element={
+                  <PitShell
+                    title="Create your Maturion account"
+                    description="Public signup foundation for PIT Stage 12 Slice 1. Account creation behavior is completed in a later governed slice."
+                  />
+                }
+              />
+              <Route
+                path={ROUTES.FORGOT_PASSWORD}
+                element={
+                  <PitShell
+                    title="Password recovery"
+                    description="Public password recovery route foundation for PIT Stage 12 Slice 1."
+                  />
+                }
+              />
+              <Route
+                path={ROUTES.RESET_PASSWORD}
+                element={
+                  <PitShell
+                    title="Reset password"
+                    description="Public reset-password route foundation for PIT Stage 12 Slice 1."
+                  />
+                }
+              />
+              <Route
+                path={ROUTES.INVITE}
+                element={
+                  <PitShell
+                    title="Accept invitation"
+                    description="Public invitation acceptance route foundation for PIT Stage 12 Slice 1."
+                  />
+                }
+              />
               <Route path={ROUTES.MODULES} element={<ModulesOverview />} />
               <Route path={ROUTES.JOURNEY} element={<Journey />} />
               <Route path={ROUTES.FREE_ASSESSMENT} element={<FreeAssessment />} />
@@ -98,19 +145,34 @@ const App = () => {
                 element={<Navigate to={ROUTES.MARKETING_SYSTEMS_INTEGRATION} replace />}
               />
 
-              {/* Protected routes — authentication required */}
+              {/* PIT Stage 12 Slice 1 protected runtime routes */}
               <Route
                 path={ROUTES.DASHBOARD}
-                element={
-                  <ProtectedRoute>
-                    <div className="p-8 text-center">
-                      <h1 className="text-2xl font-bold">Dashboard</h1>
-                      <p className="text-muted-foreground mt-2">
-                        Dashboard content will be implemented in the next phase.
-                      </p>
-                    </div>
-                  </ProtectedRoute>
-                }
+                element={protectedPitRoute(
+                  'PIT dashboard',
+                  'Protected dashboard shell for the Project Implementation Tracker runtime foundation.',
+                )}
+              />
+              <Route
+                path={ROUTES.PROJECTS}
+                element={protectedPitRoute(
+                  'PIT projects',
+                  'Protected project list shell for the Project Implementation Tracker runtime foundation.',
+                )}
+              />
+              <Route
+                path={ROUTES.PROJECTS_NEW}
+                element={protectedPitRoute(
+                  'Create PIT project',
+                  'Protected project creation shell for the Project Implementation Tracker runtime foundation.',
+                )}
+              />
+              <Route
+                path={ROUTES.ONBOARDING}
+                element={protectedPitRoute(
+                  'PIT onboarding',
+                  'Protected onboarding shell for the Project Implementation Tracker runtime foundation.',
+                )}
               />
 
               {/* Catch-all */}
