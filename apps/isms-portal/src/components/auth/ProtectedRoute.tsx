@@ -12,7 +12,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   if (!user) {
-    return <Navigate to={ROUTES.AUTH} replace state={{ from: location.pathname }} />;
+    const intendedDestination = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate to={ROUTES.LOGIN} replace state={{ from: intendedDestination }} />;
   }
 
   return <>{children}</>;
