@@ -132,6 +132,17 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     expect(reprocess).toContain('metadata: {}');
   });
 
+  it('omits ai_knowledge metadata column after JSON retries still fail', () => {
+    const shared = readFile('supabase/functions/_shared/mmm-subject-knowledge.ts');
+    const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
+    const uploadFn = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');
+    expect(shared).toContain('export function sanitizeKnowledgeInsertPayload');
+    expect(shared).toContain('export function omitKnowledgeMetadataColumn');
+    expect(reprocess).toContain('omitKnowledgeMetadataColumn');
+    expect(reprocess).toContain('metadata column omitted');
+    expect(uploadFn).toContain('omitKnowledgeMetadataColumn');
+  });
+
   it('implements duplicate upload detection and replace flow (single + bulk)', () => {
     const page = readFile('apps/mmm/src/pages/DocumentManagementCenterPage.tsx');
     const uploadFn = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');

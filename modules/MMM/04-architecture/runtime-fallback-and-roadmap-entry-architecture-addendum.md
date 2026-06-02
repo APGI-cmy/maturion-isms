@@ -14,6 +14,7 @@ Client flows use an **edge-first, canonical-fallback** strategy:
 - DMC bulk-ingest diagnostics aggregate and surface dominant failure causes (top grouped reasons) to prevent opaque "N failed" outcomes.
 - DMC edge invocation path must parse and expose non-2xx response payload bodies (`{ error: ... }`) so runtime failures are actionable and not masked by generic client errors.
 - DMC upload/reprocess canonical-write path must sanitize null/control characters from chunk content and JSON metadata before `ai_knowledge` + document status writes to prevent Postgres `unsupported Unicode escape sequence` runtime failures.
+- DMC upload/reprocess `ai_knowledge` writes must treat JSON parser failures as a whole-row insert resilience issue, not only a metadata-shape issue: after slim/empty metadata retries fail with `invalid input syntax for type json`, the runtime must retry without the JSONB `metadata` column and rely on the table default `{}`.
 - DMC upload path must enforce duplicate detection by active file identity and support explicit replace semantics (`replace_existing`) instead of silently duplicating records.
 - DMC destructive actions (archive single/bulk) must require explicit user confirmation before mutation.
 - DMC status model must expose consistent tonal UX treatment (Pending/Processing/Completed/Failed) via subtle card/row/pill color coding for fast operational scanning.

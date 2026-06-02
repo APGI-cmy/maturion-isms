@@ -13,7 +13,9 @@ import {
   buildChunkPayloads,
   extractBestEffortText,
   normalizeSubjectDocumentRole,
+  omitKnowledgeMetadataColumn,
   requireSubjectKnowledgeSuperuser,
+  sanitizeKnowledgeInsertPayload,
   sanitizeForPostgresJson,
   sanitizeForPostgresText,
   sha256Hex,
@@ -353,7 +355,28 @@ Deno.serve(async (req: Request) => {
     if (chunkPayloads.length > 0) {
       const { error: chunkError } = await supabase.from('ai_knowledge').insert(chunkPayloads);
       if (chunkError) {
-        throw new Error(chunkError.message || 'Unable to persist ai_knowledge chunks.');
+        const lower = (chunkError.message ?? '').toLowerCase();
+        if (!lower.includes('invalid input syntax for type json')) {
+          throw new Error(chunkError.message || 'Unable to persist ai_knowledge chunks.');
+        }
+
+        const minimal = chunkPayloads.map((payload) => ({
+          ...sanitizeKnowledgeInsertPayload(payload),
+          metadata: {},
+        }));
+        const { error: minimalError } = await supabase.from('ai_knowledge').insert(minimal);
+        if (minimalError) {
+          const minimalLower = (minimalError.message ?? '').toLowerCase();
+          if (!minimalLower.includes('invalid input syntax for type json')) {
+            throw new Error(minimalError.message || 'Unable to persist ai_knowledge chunks (minimal json retry failed).');
+          }
+
+          const noMetadata = chunkPayloads.map(omitKnowledgeMetadataColumn);
+          const { error: noMetadataError } = await supabase.from('ai_knowledge').insert(noMetadata);
+          if (noMetadataError) {
+            throw new Error(noMetadataError.message || 'Unable to persist ai_knowledge chunks (metadata column omitted).');
+          }
+        }
       }
     }
 
