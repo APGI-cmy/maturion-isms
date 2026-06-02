@@ -2,7 +2,7 @@ import { ROUTES } from './routes';
 
 export type PitRouteAccess = 'public' | 'protected';
 
-export interface PitStage12RouteDefinition {
+export interface PitStage12W81RouteDefinition {
   readonly id: string;
   readonly path: string;
   readonly label: string;
@@ -10,7 +10,7 @@ export interface PitStage12RouteDefinition {
   readonly stage8Wave: 'W8.1';
 }
 
-export const PIT_STAGE12_W8_1_ROUTES: readonly PitStage12RouteDefinition[] = [
+export const PIT_STAGE12_W8_1_ROUTES: readonly PitStage12W81RouteDefinition[] = [
   { id: 'pit-route-home', path: ROUTES.HOME, label: 'ISMS public landing', access: 'public', stage8Wave: 'W8.1' },
   { id: 'pit-route-login', path: ROUTES.LOGIN, label: 'Login', access: 'public', stage8Wave: 'W8.1' },
   { id: 'pit-route-signup', path: ROUTES.SIGNUP, label: 'Signup', access: 'public', stage8Wave: 'W8.1' },
