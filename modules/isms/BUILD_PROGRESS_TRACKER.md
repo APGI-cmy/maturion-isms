@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-01  
-**Updated By**: foreman-agent (wave: `isms-stage10-iaa-pre-brief-20260601`)
+**Updated By**: foreman-agent (wave: `isms-stage10-acknowledgement-gate-20260601`)
 
-> **Classification**: ACTIVE — STAGE 10 IAA PRE-BRIEF FILED; ACKNOWLEDGEMENTS PENDING  
+> **Classification**: ACTIVE — STAGE 10 CLOSED WITH CONDITIONS; STAGE 11 BUILDER APPOINTMENT NEXT  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -24,28 +24,29 @@
 | Stage 7 | PBFAG | COMPLETE — Amendment accepts remediation for Stage 8 planning only | `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` |
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
-| Stage 10 | IAA Pre-Brief | FILED — ACKNOWLEDGEMENTS PENDING | `modules/isms/09-iaa-pre-brief/iaa-pre-brief.md` |
-| Stage 11 | Builder Appointment | BLOCKED pending Stage 10 acknowledgements | `.agent-admin/builder-appointments/` |
+| Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
+| Stage 11 | Builder Appointment | NOT_STARTED — NEXT | `.agent-admin/builder-appointments/` |
 | Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
 
 ---
 
-## Stage 10: IAA Pre-Brief
+## Stage 10: IAA Pre-Brief Acknowledgement Gate
 
-**Status**: FILED — ACKNOWLEDGEMENTS PENDING  
+**Status**: CLOSED WITH CONDITIONS  
 **Location**: `modules/isms/09-iaa-pre-brief/`  
-**Primary Artifact**:
+**Primary Artifacts**:
 - `iaa-pre-brief.md` — assurance briefing for independent review before Stage 11 Builder Appointment
+- `iaa-pre-brief-acknowledgements.md` — acknowledgement gate closure, explicit Stage 10 builder-acknowledgement waiver, and IAA PASS WITH CONDITIONS position
 
-**Notes**: Stage 10 prepares independent assurance review. It does not appoint builders, authorize runtime implementation, or approve implementation handover. Stage 10 is not gate-passed until required acknowledgements are recorded or explicitly waived.
+**Notes**: Stage 10 is closed with conditions. Stage 11 may prepare wave-specific builder appointments only. Stage 10 builder acknowledgement is waived only because no builders are designated yet; each Stage 11 appointment must record builder acknowledgement before execution. Runtime implementation and implementation handover remain blocked.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 10 acknowledgement gate.  
+**Current Stage**: Stage 11 Builder Appointment is next.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Record Foreman, IAA, and designated-builder acknowledgements before Stage 11 Builder Appointment proceeds.
+**Next Required Action**: Create wave-specific Stage 11 Builder Appointment. Each appointed builder must acknowledge the Stage 10 pre-brief, Stage 10 acknowledgement artifact, and Stage 9 checklist inside the appointment artifact or a linked acknowledgement record.
 
 ---
 
@@ -65,7 +66,7 @@
 - [x] Wave evidence plan complete
 - [x] Stage 9 Builder Checklist complete
 - [x] Stage 10 IAA Pre-Brief filed
-- [ ] Stage 10 acknowledgements recorded
+- [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [ ] Stage 11 Builder Appointment complete
 - [ ] Implementation handover authorized
 
@@ -76,8 +77,8 @@
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- Stage 10 acknowledgements must be recorded before Stage 11 proceeds or explicitly waived;
 - Stage 11 must appoint builders with wave-specific scope and constraints;
+- each Stage 11 builder appointment must include explicit acknowledgement of the Stage 10 pre-brief, Stage 10 acknowledgement artifact, and Stage 9 checklist;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
 - implementation build/test/CI evidence remains future-gated;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
