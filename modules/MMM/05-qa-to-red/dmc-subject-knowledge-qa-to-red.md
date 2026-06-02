@@ -133,6 +133,12 @@
 - **RED Condition**: Reprocess fails for specific legacy rows because optional JSON columns (for example `tags`) cannot be parsed.
 - **GREEN Acceptance**: Reprocess fetch path avoids hard dependency on optional legacy JSON payload fields; document can be processed using safe defaults.
 
+### T-MMM-DMC-022 — ai_knowledge JSON Retry Must Omit Metadata Column After Empty-Object Retry Fails
+- **Source**: Live organisation-source upload failure, 2026-06-02.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Organisation source upload writes storage + document ledger rows, but reprocess then fails all `ai_knowledge` insert retries with `invalid input syntax for type json`, leaving `processing_status=failed` and `chunk_count=0`.
+- **GREEN Acceptance**: Upload/reprocess sanitize the full `ai_knowledge` insert row and, after JSON metadata fallbacks still fail, retry without the `metadata` column so Postgres applies the table default `{}`.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

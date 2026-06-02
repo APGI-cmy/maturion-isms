@@ -13,6 +13,8 @@ import {
   buildChunkPayloads,
   extractBestEffortText,
   normalizeSubjectDocumentRole,
+  omitKnowledgeMetadataColumn,
+  sanitizeKnowledgeInsertPayload,
   sanitizeForPostgresJson,
   sanitizeForPostgresText,
   sha256Hex,
@@ -291,7 +293,7 @@ Deno.serve(async (req: Request) => {
         // Retry path for strict json parser failures on legacy edge-case metadata payloads.
         if (lower.includes('invalid input syntax for type json')) {
           const slim = chunkPayloads.map((payload) => ({
-            ...payload,
+            ...sanitizeKnowledgeInsertPayload(payload),
             metadata: { document_role: documentRole, retry_mode: 'json_slim_fallback' },
           }));
           const { error: retryError } = await supabase.from('ai_knowledge').insert(slim);
@@ -300,12 +302,22 @@ Deno.serve(async (req: Request) => {
             if (retryLower.includes('invalid input syntax for type json')) {
               // Final fallback: insert with empty metadata object.
               const minimal = chunkPayloads.map((payload) => ({
-                ...payload,
+                ...sanitizeKnowledgeInsertPayload(payload),
                 metadata: {},
               }));
               const { error: finalRetryError } = await supabase.from('ai_knowledge').insert(minimal);
               if (finalRetryError) {
-                throw new Error(finalRetryError.message || 'Unable to persist ai_knowledge chunks (minimal json retry failed).');
+                const finalRetryLower = (finalRetryError.message ?? '').toLowerCase();
+                if (finalRetryLower.includes('invalid input syntax for type json')) {
+                  // Last resort: omit the JSONB column entirely so Postgres applies its '{}' default.
+                  const noMetadata = chunkPayloads.map(omitKnowledgeMetadataColumn);
+                  const { error: noMetadataError } = await supabase.from('ai_knowledge').insert(noMetadata);
+                  if (noMetadataError) {
+                    throw new Error(noMetadataError.message || 'Unable to persist ai_knowledge chunks (metadata column omitted).');
+                  }
+                } else {
+                  throw new Error(finalRetryError.message || 'Unable to persist ai_knowledge chunks (minimal json retry failed).');
+                }
               }
             } else {
               throw new Error(retryError.message || 'Unable to persist ai_knowledge chunks (json retry failed).');

@@ -467,6 +467,21 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
+      - name: Validate production build env vars are present
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "${VITE_SUPABASE_URL:-}" ] || [ "$VITE_SUPABASE_URL" = "https://placeholder.supabase.co" ]; then
+            echo "❌ FAIL: VITE_SUPABASE_URL is missing or placeholder in deploy-production job."
+            exit 1
+          fi
+          if [ -z "${VITE_SUPABASE_ANON_KEY:-}" ] || [ "$VITE_SUPABASE_ANON_KEY" = "placeholder-anon-key" ]; then
+            echo "❌ FAIL: VITE_SUPABASE_ANON_KEY is missing or placeholder in deploy-production job."
+            exit 1
+          fi
+          echo "✅ PASS: Production Supabase env vars are present before vercel build --prod."
+
       - name: Configure Vercel project
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -480,6 +495,10 @@ jobs:
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Patch .vercel/output routing — replace error-fallback /404.html with /index.html rewrite (production)
@@ -550,12 +569,177 @@ jobs:
           echo "✅ PASS: SPA catch-all route to /index.html confirmed in .vercel/output/config.json (production):"
           echo "  $CATCH_ALL"
 
+      - name: Verify production bundle embeds Supabase env
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          set -euo pipefail
+
+          bundle=$(find .vercel/output -type f -path '*/assets/index-*.js' | head -n1)
+
+          if [ -z "$bundle" ]; then
+            echo "❌ FAIL: Could not find built frontend bundle under .vercel/output."
+            exit 1
+          fi
+
+          echo "Checking built production bundle: $bundle"
+
+          if ! grep -Fq "$VITE_SUPABASE_URL" "$bundle"; then
+            echo "❌ FAIL: Built bundle does not contain VITE_SUPABASE_URL."
+            exit 1
+          fi
+
+          if ! grep -Fq "$VITE_SUPABASE_ANON_KEY" "$bundle"; then
+            echo "❌ FAIL: Built bundle does not contain VITE_SUPABASE_ANON_KEY."
+            echo "   This would deploy a blank page with: supabaseKey is required."
+            exit 1
+          fi
+
+          if grep -Eq 'supabase\.co",[A-Za-z_$][A-Za-z0-9_$]*=""' "$bundle"; then
+            echo "❌ FAIL: Built bundle appears to embed an empty Supabase anon key."
+            echo "   This would deploy a blank page with: supabaseKey is required."
+            exit 1
+          fi
+
+          echo "✅ PASS: Built bundle contains the Supabase URL and anon key."
+
       - name: Deploy Production to Vercel
         id: deploy
         run: |
           url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "production-url=$url" >> $GITHUB_OUTPUT
           echo "Production URL: $url"
+
+      - name: Guard custom domain serves same production JS hash
+        env:
+          PRODUCTION_URL: ${{ steps.deploy.outputs.production-url }}
+        run: |
+          set -euo pipefail
+
+          CUSTOM_DOMAIN_URL="https://mmm.maturion.com"
+          PROJECT_PRODUCTION_ALIAS="https://maturion-isms-mmm.vercel.app"
+          DEPLOYED_URL="${PRODUCTION_URL:-}"
+          REFERENCE_URL=""
+          REFERENCE_ASSET=""
+          REFERENCE_HASH=""
+
+          normalize_url() {
+            local url="$1"
+            echo "${url%/}"
+          }
+
+          fetch_html() {
+            local url="$1"
+            curl -L -sS --fail \
+              --connect-timeout 15 \
+              --max-time 45 \
+              "$url/" 2>/dev/null
+          }
+
+          extract_asset() {
+            local html="$1"
+            echo "$html" | grep -oE '/assets/index-[A-Za-z0-9_-]+\.js' | head -n1
+          }
+
+          extract_hash() {
+            local asset="$1"
+            echo "$asset" | sed -E 's#^/assets/index-([A-Za-z0-9_-]+)\.js$#\1#'
+          }
+
+          has_empty_supabase_key_literal() {
+            local js="$1"
+            echo "$js" | grep -Eq 'supabase\.co",[A-Za-z_$][A-Za-z0-9_$]*=""'
+          }
+
+          CANDIDATES=()
+          if [ -n "$DEPLOYED_URL" ]; then
+            CANDIDATES+=("$(normalize_url "$DEPLOYED_URL")")
+          fi
+          CANDIDATES+=("$(normalize_url "$PROJECT_PRODUCTION_ALIAS")")
+
+          for candidate in "${CANDIDATES[@]}"; do
+            html=$(fetch_html "$candidate" || true)
+            if [ -z "$html" ]; then
+              continue
+            fi
+            asset=$(extract_asset "$html")
+            if [ -z "$asset" ]; then
+              continue
+            fi
+            REFERENCE_URL="$candidate"
+            REFERENCE_ASSET="$asset"
+            REFERENCE_HASH="$(extract_hash "$asset")"
+            break
+          done
+
+          if [ -z "$REFERENCE_URL" ] || [ -z "$REFERENCE_ASSET" ] || [ -z "$REFERENCE_HASH" ]; then
+            echo "❌ FAIL: Could not resolve a reference production URL/asset hash."
+            echo "   Tried deployment URL and project production alias."
+            exit 1
+          fi
+
+          custom_html=$(fetch_html "$CUSTOM_DOMAIN_URL" || true)
+          if [ -z "$custom_html" ]; then
+            echo "❌ FAIL: Could not fetch custom-domain HTML from: $CUSTOM_DOMAIN_URL"
+            echo "   Ensure DNS/domain mapping is healthy before promoting this deployment."
+            exit 1
+          fi
+
+          custom_asset=$(extract_asset "$custom_html")
+
+          if [ -z "$custom_asset" ]; then
+            echo "❌ FAIL: Could not extract /assets/index-*.js from custom-domain HTML ($CUSTOM_DOMAIN_URL)."
+            exit 1
+          fi
+
+          custom_hash=$(extract_hash "$custom_asset")
+
+          echo "Reference production URL: $REFERENCE_URL"
+          echo "Reference production asset: $REFERENCE_ASSET (hash: $REFERENCE_HASH)"
+          echo "Custom domain asset:      $custom_asset (hash: $custom_hash)"
+
+          if [ "$REFERENCE_HASH" != "$custom_hash" ]; then
+            echo "❌ FAIL: Custom domain serves a different JS hash than the just-deployed production URL."
+            echo "   reference: $REFERENCE_URL -> $REFERENCE_ASSET"
+            echo "   custom:   $CUSTOM_DOMAIN_URL -> $custom_asset"
+            echo "   This usually means domain alias/DNS still points at an older deployment."
+            exit 1
+          fi
+
+          reference_js=$(curl -L -sS --fail \
+            --connect-timeout 15 \
+            --max-time 45 \
+            "$REFERENCE_URL$REFERENCE_ASSET" 2>/dev/null || true)
+          custom_js=$(curl -L -sS --fail \
+            --connect-timeout 15 \
+            --max-time 45 \
+            "$CUSTOM_DOMAIN_URL$custom_asset" 2>/dev/null || true)
+
+          if [ -z "$reference_js" ]; then
+            echo "❌ FAIL: Could not download reference production JS bundle for env validation."
+            exit 1
+          fi
+
+          if [ -z "$custom_js" ]; then
+            echo "❌ FAIL: Could not download custom-domain JS bundle for env validation."
+            exit 1
+          fi
+
+          if has_empty_supabase_key_literal "$reference_js"; then
+            echo "❌ FAIL: Reference production JS bundle appears to embed an empty Supabase anon key."
+            echo "   This causes runtime blank pages with: 'supabaseKey is required'."
+            exit 1
+          fi
+
+          if has_empty_supabase_key_literal "$custom_js"; then
+            echo "❌ FAIL: Custom-domain JS bundle appears to embed an empty Supabase anon key."
+            echo "   This causes runtime blank pages with: 'supabaseKey is required'."
+            exit 1
+          fi
+
+          echo "✅ PASS: Custom domain and deployed production URL serve the same JS hash."
+          echo "✅ PASS: Supabase anon key is not empty in both checked JS bundles."
 
       - name: Create deployment summary
         run: |
