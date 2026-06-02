@@ -73,14 +73,25 @@ async function tryAiGatewayParseText(params: {
   }
 }
 
-function deriveSourceModeFromTags(tags: string[]): 'VERBATIM' | 'HYBRID' | 'GENERATED' {
-  if (tags.includes('source_mode:VERBATIM')) return 'VERBATIM';
-  if (tags.includes('source_mode:HYBRID')) return 'HYBRID';
+function deriveSourceModeFromSafeFields(params: {
+  title?: string | null;
+  uploadNotes?: string | null;
+}): 'VERBATIM' | 'HYBRID' | 'GENERATED' {
+  const text = `${params.title ?? ''}\n${params.uploadNotes ?? ''}`.toUpperCase();
+  if (text.includes('VERBATIM SOURCE') || text.includes('AUTHORITATIVE VERBATIM')) return 'VERBATIM';
+  if (text.includes('HYBRID SOURCE') || text.includes('HYBRID')) return 'HYBRID';
   return 'GENERATED';
 }
 
-function isOrganisationVerbatimSource(tags: string[]): boolean {
-  return tags.includes('organisation_context') && tags.includes('source_mode:VERBATIM');
+function buildSafeReprocessTags(params: {
+  scopeType?: string | null;
+  sourceMode: 'VERBATIM' | 'HYBRID' | 'GENERATED';
+}): string[] {
+  const tags = [`source_mode:${params.sourceMode}`];
+  if ((params.scopeType ?? '').toLowerCase() === 'organisation_context') {
+    tags.unshift('organisation_context', 'mode_source');
+  }
+  return tags;
 }
 
 function buildVerbatimIndexRows(params: {
@@ -190,7 +201,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: doc, error: docError } = await supabase
     .from('mmm_subject_knowledge_documents')
-    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes,tags')
+    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes')
     .eq('id', documentId)
     .eq('organisation_id', claims.orgId)
     .is('archived_at', null)
@@ -253,8 +264,12 @@ Deno.serve(async (req: Request) => {
       storagePath: doc.storage_path,
       tenantId: claims.orgId,
     });
-    const tags = Array.isArray(doc.tags) ? doc.tags.filter((tag): tag is string => typeof tag === 'string') : [];
-    const orgVerbatim = isOrganisationVerbatimSource(tags);
+    const sourceMode = deriveSourceModeFromSafeFields({
+      title: doc.title,
+      uploadNotes: doc.upload_notes,
+    });
+    const tags = buildSafeReprocessTags({ scopeType: doc.scope_type, sourceMode });
+    const orgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
 
     const extractedText = await extractBestEffortText({
       mimeType: doc.mime_type,
@@ -329,9 +344,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const frameworkIdTag = tags.find((tag) => tag.startsWith('framework_id:')) ?? null;
-    const frameworkId = frameworkIdTag ? frameworkIdTag.replace('framework_id:', '').trim() : null;
-    const sourceMode = deriveSourceModeFromTags(tags);
+    const frameworkId = null;
     const verbatimRows = buildVerbatimIndexRows({
       organisationId: claims.orgId,
       documentId,

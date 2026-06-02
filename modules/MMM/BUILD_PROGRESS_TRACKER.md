@@ -13,6 +13,22 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-02 — Organisation Source Reprocess/Archive Appears To Remove Uploaded File**
+  - **Observed Failure**: User reported that clicking reprocess caused the uploaded organisation source file to disappear.
+  - **Evidence**: Code inspection found `OrganisationContextPage.tsx` placed `Reprocess` beside a `Delete` action that physically called Supabase Storage `.remove(...)` and then hid the row with `archived_at`. Reprocess itself did not remove storage, but the adjacent action created a destructive UI trap and audit-retention breach.
+  - **Root Cause**: Organisation Source page used destructive delete semantics instead of the DMC archive pattern; reprocess also ignored structured `{ success: false }` edge responses, allowing false success messaging.
+  - **Prebuild/Architecture Update**: DMC architecture addendum now requires organisation-source archive/reprocess to be non-destructive, retaining storage objects and chunks for audit/recovery.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-023` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Organisation Source UI now archives instead of deletes, preserves uploaded storage/chunks, and surfaces structured reprocess failure payloads. Reprocess edge function redeployed to Supabase project `ujucvyyspfxlxlfdamda`.
+
+- **2026-06-02 — MMM Vercel Production Guard Fails On Unconfigured Custom Domain**
+  - **Observed Failure**: `deploy-mmm-vercel.yml` failed in `Deploy Production` at `Guard custom domain serves same production JS hash` with `Could not fetch custom-domain HTML from: https://mmm.maturion.com`.
+  - **Evidence**: DNS lookup returned no records for `mmm.maturion.com`; Vercel project `maturion-isms-mmm` domains are `maturion-isms-mmm.vercel.app`, `maturion-isms-mmm-rassie-ras-projects.vercel.app`, and `maturion-isms-mmm-git-main-rassie-ras-projects.vercel.app`. `https://maturion-isms-mmm.vercel.app/` returned HTTP 200 and a current `/assets/index-*.js` bundle.
+  - **Root Cause**: Workflow hard-coded `https://mmm.maturion.com` as the production environment/guard target even though the MMM project is not configured with that custom domain and DNS does not resolve it.
+  - **Prebuild/Architecture Update**: DMC architecture addendum now binds MMM deploy validation to the configured Vercel project alias by default, with `MMM_CUSTOM_DOMAIN_URL` as the explicit opt-in custom-domain guard.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-024` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Vercel workflow now uses `https://maturion-isms-mmm.vercel.app` as canonical production URL unless a real custom domain is configured.
+
 - **2026-06-02 — Organisation Source Upload JSON Insert Failure**
   - **Observed Failure**: Organisation source upload displayed `invalid input syntax for type json`; uploaded document row remained `failed | chunks: 0`.
   - **Evidence**: Supabase live logs showed storage upload `POST 200`, `mmm_subject_knowledge_documents` insert `POST 201`, then three `ai_knowledge` insert attempts `POST 400` from `mmm-subject-knowledge-reprocess`, followed by a document status `PATCH 204` marking the row failed.

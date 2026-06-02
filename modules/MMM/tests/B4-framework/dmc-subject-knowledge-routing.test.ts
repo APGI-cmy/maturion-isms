@@ -183,7 +183,29 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
 
   it('reprocess fetch avoids optional legacy JSON columns to prevent row-level parse failures', () => {
     const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
-    expect(reprocess).toContain(".select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,upload_notes')");
-    expect(reprocess).not.toContain('document_role,tags,upload_notes');
+    expect(reprocess).toContain(".select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes')");
+    expect(reprocess).not.toContain('upload_notes,tags');
+    expect(reprocess).toContain('deriveSourceModeFromSafeFields');
+    expect(reprocess).toContain('buildSafeReprocessTags');
+  });
+
+  it('keeps organisation-source archive non-destructive and surfaces reprocess failures', () => {
+    const page = readFile('apps/mmm/src/pages/OrganisationContextPage.tsx');
+    expect(page).toContain('archiveOrganisationSource');
+    expect(page).toContain('The uploaded file will be retained.');
+    expect(page).toContain('The uploaded file was retained for audit/recovery.');
+    expect(page).not.toContain('.remove([fullDoc.storage_path])');
+    expect(page).not.toContain("from('ai_knowledge').delete().eq('document_id', doc.id)");
+    expect(page).toContain('result?.success === false');
+  });
+
+  it('uses the Vercel project alias as production canonical URL unless a real custom domain is configured', () => {
+    const workflow = readFile('.github/workflows/deploy-mmm-vercel.yml');
+    expect(workflow).toContain('url: https://maturion-isms-mmm.vercel.app');
+    expect(workflow).toContain('MMM_CUSTOM_DOMAIN_URL');
+    expect(workflow).toContain('CANONICAL_PRODUCTION_URL="${MMM_CUSTOM_DOMAIN_URL:-$PROJECT_PRODUCTION_ALIAS}"');
+    expect(workflow).toContain('Guard canonical production URL serves same production JS hash');
+    expect(workflow).not.toContain('CUSTOM_DOMAIN_URL="https://mmm.maturion.com"');
+    expect(workflow).not.toContain('url: https://mmm.maturion.com');
   });
 });
