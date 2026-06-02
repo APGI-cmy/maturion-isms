@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-01  
-**Updated By**: foreman-agent (wave: `isms-stage10-acknowledgement-gate-20260601`)
+**Last Updated**: 2026-06-02  
+**Updated By**: foreman-agent (wave: `isms-stage11-w1-route-public-shell-20260602`)
 
-> **Classification**: ACTIVE — STAGE 10 CLOSED WITH CONDITIONS; STAGE 11 BUILDER APPOINTMENT NEXT  
+> **Classification**: ACTIVE — STAGE 11 W1 BUILDER APPOINTMENT CREATED; W1 EXECUTION NEXT AFTER MERGE  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -25,28 +25,27 @@
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | NOT_STARTED — NEXT | `.agent-admin/builder-appointments/` |
-| Stage 12 | Build Execution & Evidence | NOT_STARTED — implementation handover not authorized | `modules/isms/11-build/` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md` |
+| Stage 12 | Build Execution & Evidence | NOT_STARTED — W1 execution next after merge | `modules/isms/11-build/` |
 
 ---
 
-## Stage 10: IAA Pre-Brief Acknowledgement Gate
+## Stage 11: W1 Builder Appointment
 
-**Status**: CLOSED WITH CONDITIONS  
-**Location**: `modules/isms/09-iaa-pre-brief/`  
-**Primary Artifacts**:
-- `iaa-pre-brief.md` — assurance briefing for independent review before Stage 11 Builder Appointment
-- `iaa-pre-brief-acknowledgements.md` — acknowledgement gate closure, explicit Stage 10 builder-acknowledgement waiver, and IAA PASS WITH CONDITIONS position
+**Status**: COMPLETE FOR W1 ONLY  
+**Location**: `.agent-admin/builder-appointments/`  
+**Primary Artifact**:
+- `isms-stage11-w1-route-public-shell-builder-appointment.md` — W1-only builder appointment for Route Registry, Public Pages, Redirects
 
-**Notes**: Stage 10 is closed with conditions. Stage 11 may prepare wave-specific builder appointments only. Stage 10 builder acknowledgement is waived only because no builders are designated yet; each Stage 11 appointment must record builder acknowledgement before execution. Runtime implementation and implementation handover remain blocked.
+**Notes**: Stage 11 appointment is limited to W1 only. W2-W8 are not appointed. Runtime implementation may begin only for W1 after this appointment PR is merged. Implementation handover remains blocked.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 11 Builder Appointment is next.  
+**Current Stage**: Stage 12 W1 Build Execution & Evidence is next after merge.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Create wave-specific Stage 11 Builder Appointment. Each appointed builder must acknowledge the Stage 10 pre-brief, Stage 10 acknowledgement artifact, and Stage 9 checklist inside the appointment artifact or a linked acknowledgement record.
+**Next Required Action**: Execute W1 only, then perform Foreman QP, ECAP, IAA, PR CI gate inspection, and handover recommendation only if W1 evidence is satisfactory.
 
 ---
 
@@ -67,7 +66,11 @@
 - [x] Stage 9 Builder Checklist complete
 - [x] Stage 10 IAA Pre-Brief filed
 - [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
-- [ ] Stage 11 Builder Appointment complete
+- [x] Stage 11 W1 Builder Appointment complete
+- [ ] Stage 12 W1 Build Execution complete
+- [ ] W1 Foreman QP complete
+- [ ] W1 ECAP complete
+- [ ] W1 IAA complete
 - [ ] Implementation handover authorized
 
 ---
@@ -77,12 +80,12 @@
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- Stage 11 must appoint builders with wave-specific scope and constraints;
-- each Stage 11 builder appointment must include explicit acknowledgement of the Stage 10 pre-brief, Stage 10 acknowledgement artifact, and Stage 9 checklist;
+- W1 execution must stay limited to Route Registry, Public Pages, Redirects;
+- W2-W8 remain unappointed and unauthorized;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
-- implementation build/test/CI evidence remains future-gated;
+- implementation build/test/CI evidence remains future-gated to W1 execution;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-01
+**Last Tracker Reconciliation**: 2026-06-02
