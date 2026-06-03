@@ -10,6 +10,13 @@ import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
 const ModulesOverview: React.FC = () => {
   const navigate = useNavigate();
 
+  const handleModuleKeyDown = (event: React.KeyboardEvent, route: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      navigate(route);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
       {/* Header */}
@@ -51,8 +58,12 @@ const ModulesOverview: React.FC = () => {
             return (
               <Card
                 key={module.id}
-                className={`relative cursor-pointer transition-all duration-200 hover:shadow-lg border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open public overview for ${module.name}`}
+                className={`relative cursor-pointer transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
                 onClick={() => navigate(module.route)}
+                onKeyDown={(event) => handleModuleKeyDown(event, module.route)}
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
@@ -61,7 +72,10 @@ const ModulesOverview: React.FC = () => {
                     >
                       <IconComponent className="h-6 w-6" />
                     </div>
-                    <Lock className="h-5 w-5 text-muted-foreground" aria-label="Private workspace gated" />
+                    <Lock
+                      className="h-5 w-5 text-muted-foreground"
+                      aria-label="Private workspace gated"
+                    />
                   </div>
                   <div className="flex items-center justify-between gap-3">
                     <CardTitle className="text-xl">{module.name}</CardTitle>
