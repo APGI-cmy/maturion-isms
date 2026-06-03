@@ -175,6 +175,22 @@ const App = () => {
                 )}
               />
 
+              {/* ISMS W1 protected private placeholders */}
+              <Route
+                path={ROUTES.ASSESSMENT}
+                element={protectedPitRoute(
+                  'ISMS assessment',
+                  'Protected assessment workspace placeholder for the governed ISMS free assessment result flow.',
+                )}
+              />
+              <Route
+                path={ROUTES.MATURITY_SETUP}
+                element={protectedPitRoute(
+                  'Maturity setup',
+                  'Protected maturity setup placeholder for post-subscription ISMS onboarding.',
+                )}
+              />
+
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
