@@ -74,6 +74,7 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
    - Descriptor authoring applies across Verbatim, Hybrid, and New Generation modes because maturity level semantics are applied to accepted criteria, not to the criteria-generation source mode.
    - Descriptor text must reconstruct the accepted criterion into observable Basic, Reactive, Compliant, Proactive, and Resilient operating states. It must not copy the criterion into each level.
    - When an approved descriptor methodology reference is present in subject knowledge, descriptor generation must use it as doctrine. If AI output is missing, invalid, or materially too similar to the criterion text, the UI must fall back to deterministic methodology templates instead of presenting duplicated descriptors.
+   - The deterministic methodology generator is the governed stable path for descriptor creation. AI may refine descriptors, but live AI route unavailability must not block descriptor authoring or present generic non-2xx transport errors as a failed user action.
 
 ## QA Binding
 

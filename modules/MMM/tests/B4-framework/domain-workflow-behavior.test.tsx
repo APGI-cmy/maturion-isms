@@ -38,6 +38,12 @@ type Scenario = {
     level: number;
     descriptor_text: string;
   }>;
+  knowledgeRows: Array<{
+    content: string;
+    source_document_name: string;
+    metadata?: Record<string, unknown>;
+    chunk_index: number;
+  }>;
   pendingTable: string | null;
   failTable: string | null;
 };
@@ -49,6 +55,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
     mpsRows: [],
     criteriaRows: [],
     levelDescriptorRows: [],
+    knowledgeRows: [],
     pendingTable: null,
     failTable: null,
   };
@@ -120,7 +127,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
           order: () => queryResult(table, []),
         };
       },
-      order: () => queryResult(table, []),
+      order: () => queryResult(table, table === 'ai_knowledge' ? scenario.knowledgeRows : []),
       single: () => queryResult(table, []),
     })),
     insert,
@@ -149,6 +156,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
         mpsRows: [],
         criteriaRows: [],
         levelDescriptorRows: [],
+        knowledgeRows: [],
         pendingTable: null,
         failTable: null,
         ...next,
@@ -456,6 +464,39 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const upsertArg = mockUpsert.mock.calls[0][0] as Array<Record<string, unknown>>;
     expect(upsertArg).toHaveLength(5);
     expect(upsertArg[0]).toMatchObject({ criterion_id: 'criterion-1', level: 1 });
+  });
+
+  it('descriptor generation stays green when AI refinement returns non-2xx', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+      knowledgeRows: [
+        {
+          source_document_name: 'LDCS_Maturity_Model_Descriptor_Guideline_Approved_Methodology_Reference.md',
+          metadata: { role: 'criteria_source' },
+          chunk_index: 0,
+          content:
+            'Operational Maturity Model Descriptor Guideline. Critical authoring rule: do not copy the criterion into each level. Basic Reactive Compliant Proactive Resilient descriptors reconstruct operating states.',
+        },
+      ],
+    });
+    configureAIError();
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-1'));
+
+    const descriptorGrid = await screen.findByTestId('level-descriptor-grid-criterion-1');
+    expect(within(descriptorGrid).getByText('Basic')).toBeTruthy();
+    expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
+    const status = await screen.findByText(/Maturity descriptors created from the approved methodology reference/i);
+    expect(status.textContent).toContain('AI refinement is temporarily unavailable');
+    expect(status.textContent).not.toContain('Used methodology fallback');
+    expect(status.textContent).not.toContain('non-2xx');
+    expect(mockSupabase.functions.invoke).toHaveBeenCalled();
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {

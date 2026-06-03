@@ -1395,3 +1395,15 @@ This tracker now serves as the active failure and traceability register for MMM 
    - QA-to-Red Trace:
      - `T-MMM-S6-ORGSRC-303` organisation source must not be marked completed for VERBATIM if index rows=0.
      - `T-MMM-S6-ORGSRC-304` intent regenerate reads canonical verbatim index before generic paths.
+
+15. **Maturity descriptor AI refinement non-2xx banner**
+   - Failure Class: user-facing observability + descriptor workflow resilience.
+   - Symptom: `Create maturity descriptors` generated five usable methodology descriptors but displayed `Used methodology fallback after AI reconstruction was unavailable or invalid: Edge Function returned a non-2xx status code`.
+   - Cause Class: descriptor authoring treated live AI refinement as the visible success path and surfaced Supabase's generic invoke error when the AI route returned non-2xx.
+   - Corrective Action:
+     - Made the governed methodology generator the stable descriptor authoring path.
+     - Kept AI reconstruction as optional refinement when available.
+     - Added diagnostic edge-response probing for concrete failure detail, while preserving successful editable descriptor drafts.
+     - Replaced scary fallback wording with a clear success message when AI refinement is temporarily unavailable.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-033` descriptor authoring must stay green when AI refinement is unavailable.

@@ -199,6 +199,12 @@
 - **RED Condition**: `Create maturity descriptors` copies the accepted criterion into Basic, Reactive, Compliant, Proactive, and Resilient with only the level label/generic guidance changed.
 - **GREEN Acceptance**: Descriptor generation uses the uploaded Approved Methodology Reference when available, rejects AI responses that are identical or materially too similar to the criterion, and emits five distinct auditable operating-state statements where Compliant is the neutral baseline, Proactive includes risk-based review/measurement/improvement, and Resilient includes embedded controls, automation or hard barriers where practicable, exception escalation, continuity, and survival of staff turnover/disruption.
 
+### T-MMM-DMC-033 — Descriptor Authoring Must Stay Green When AI Refinement Is Unavailable
+- **Source**: Live descriptor recreation banner, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: `Create maturity descriptors` successfully creates fallback descriptor drafts but presents a scary generic message such as `Used methodology fallback after AI reconstruction was unavailable or invalid: Edge Function returned a non-2xx status code`, making the user think descriptor creation failed.
+- **GREEN Acceptance**: Descriptor authoring treats the approved methodology generator as the governed stable path, optionally attempts AI refinement, extracts concrete edge failure detail for diagnostics, and keeps five editable descriptors visible with a clear success message when AI refinement is temporarily unavailable.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

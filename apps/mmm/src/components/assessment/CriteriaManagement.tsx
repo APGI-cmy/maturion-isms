@@ -125,6 +125,11 @@ interface CriterionActionMessage {
   text: string;
 }
 
+interface AiChatUserRequest {
+  message: string;
+  context: Record<string, unknown>;
+}
+
 interface DescriptorMethodologyRow {
   content?: unknown;
   source_document_name?: unknown;
@@ -438,6 +443,60 @@ function parseDescriptorArrayFromReply(reply: string): LevelDescriptorDraft[] {
       descriptor_text: descriptorText.trim(),
     };
   });
+}
+
+function edgePayloadDetail(payload: Record<string, unknown>, fallback: string): string {
+  return String(
+    payload.detail ??
+      payload.reason ??
+      payload.error ??
+      payload.message ??
+      fallback,
+  );
+}
+
+async function invokeAiChatUserWithDiagnostics(
+  requestBody: AiChatUserRequest,
+  headers: Record<string, string>,
+): Promise<Record<string, unknown>> {
+  const invokeResult = await supabase.functions.invoke('mmm-ai-chat-user', {
+    body: requestBody,
+    headers,
+  });
+
+  if (!invokeResult.error) {
+    return ((invokeResult.data as Record<string, unknown> | null) ?? {});
+  }
+
+  const genericMessage =
+    (invokeResult.error as { message?: string }).message ??
+    'AI generation failed.';
+
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+    if (!supabaseUrl) {
+      throw new Error(genericMessage);
+    }
+    const response = await fetch(`${supabaseUrl}/functions/v1/mmm-ai-chat-user`, {
+      method: 'POST',
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+    const raw = await response.text();
+    let payload: Record<string, unknown> = {};
+    try {
+      payload = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+    } catch {
+      payload = { message: raw };
+    }
+    const detail = edgePayloadDetail(payload, genericMessage || `HTTP ${response.status}`);
+    throw new Error(detail || `HTTP ${response.status}`);
+  } catch (diagnosticError) {
+    throw new Error(diagnosticError instanceof Error ? diagnosticError.message : genericMessage);
+  }
 }
 
 function validateMaturityDescriptorDrafts(
@@ -1046,6 +1105,10 @@ export function CriteriaManagement({
         .select('content,source_document_name,metadata,chunk_index')
         .order('chunk_index', { ascending: true });
       const methodologySnippet = extractMethodologySnippet((methodologyRows ?? []) as DescriptorMethodologyRow[]);
+      const methodologyDrafts = validateMaturityDescriptorDrafts(
+        activeCriterionText,
+        buildFallbackMaturityDescriptorDrafts(criterionForFallback),
+      );
 
       if (methodologySnippet) {
         try {
@@ -1063,8 +1126,8 @@ export function CriteriaManagement({
             `- Each descriptor must be auditable and evidence-oriented.\n\n` +
             `Return only a JSON array with exactly five objects:\n` +
             `[{"level":1,"label":"Basic","descriptor_text":"..."},{"level":2,"label":"Reactive","descriptor_text":"..."},{"level":3,"label":"Compliant","descriptor_text":"..."},{"level":4,"label":"Proactive","descriptor_text":"..."},{"level":5,"label":"Resilient","descriptor_text":"..."}]`;
-          const { data, error } = await supabase.functions.invoke('mmm-ai-chat-user', {
-            body: {
+          const data = await invokeAiChatUserWithDiagnostics(
+            {
               message: prompt,
               context: {
                 workflow_stage: 'criteria_maturity_descriptor_generation',
@@ -1077,8 +1140,7 @@ export function CriteriaManagement({
               },
             },
             headers,
-          });
-          if (error) throw new Error((error as { message?: string }).message ?? 'AI descriptor generation failed');
+          );
           const parsed = parseDescriptorArrayFromReply((data as { reply: string }).reply);
           const validated = validateMaturityDescriptorDrafts(activeCriterionText, parsed);
           setDescriptorDraftsByCriterion((prev) => ({
@@ -1094,32 +1156,26 @@ export function CriteriaManagement({
           }));
           return;
         } catch (aiError) {
-          const fallback = validateMaturityDescriptorDrafts(
-            activeCriterionText,
-            buildFallbackMaturityDescriptorDrafts(criterionForFallback),
-          );
           setDescriptorDraftsByCriterion((prev) => ({
             ...prev,
-            [criterion.id]: fallback,
+            [criterion.id]: methodologyDrafts,
           }));
           setCriterionActionMessages((prev) => ({
             ...prev,
             [criterion.id]: {
               type: 'success',
-              text: `Used methodology fallback after AI reconstruction was unavailable or invalid: ${aiError instanceof Error ? aiError.message : 'unknown issue'}`,
+              text:
+                'Maturity descriptors created from the approved methodology reference. ' +
+                `AI refinement is temporarily unavailable (${aiError instanceof Error ? aiError.message : 'unknown issue'}), so Maturion used the governed methodology generator.`,
             },
           }));
           return;
         }
       }
 
-      const fallback = validateMaturityDescriptorDrafts(
-        activeCriterionText,
-        buildFallbackMaturityDescriptorDrafts(criterionForFallback),
-      );
       setDescriptorDraftsByCriterion((prev) => ({
         ...prev,
-        [criterion.id]: fallback,
+        [criterion.id]: methodologyDrafts,
       }));
       setCriterionActionMessages((prev) => ({
         ...prev,
