@@ -13,6 +13,28 @@ export function isSourceFaithfulStatement(sourceText: string, candidate: string)
   return probe.length >= 24 && source.includes(probe);
 }
 
+function findChunkOverlap(previous: string, next: string): number {
+  const maxOverlap = Math.min(previous.length, next.length, 1000);
+  for (let length = maxOverlap; length >= 40; length -= 1) {
+    if (previous.endsWith(next.slice(0, length))) return length;
+  }
+  return 0;
+}
+
+export function mergeOverlappingTextChunks(chunks: string[]): string {
+  const normalizedChunks = chunks
+    .map((chunk) => chunk.replace(/\r\n/g, '\n').replace(/\r/g, '\n'))
+    .filter((chunk) => chunk.trim().length > 0);
+  if (normalizedChunks.length === 0) return '';
+
+  let merged = normalizedChunks[0];
+  for (const chunk of normalizedChunks.slice(1)) {
+    const overlap = findChunkOverlap(merged, chunk);
+    merged += overlap > 0 ? chunk.slice(overlap) : `\n${chunk}`;
+  }
+  return merged;
+}
+
 export function extractMpsOrdinal(mpsCode: string, fallbackName = ''): number | null {
   const combined = `${mpsCode} ${fallbackName}`;
   const mpsMatch = combined.match(/\bMPS\s*0*(\d{1,3})\b/i);

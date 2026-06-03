@@ -5,6 +5,7 @@ import {
   extractMpsOrdinal,
   extractVerbatimCriteriaFromKnowledge,
   isSourceFaithfulStatement,
+  mergeOverlappingTextChunks,
 } from '../../../../apps/mmm/src/lib/verbatimCriteriaExtraction';
 
 const ROOT = resolve(__dirname, '../../../..');
@@ -143,6 +144,51 @@ The chain of custody for each operation will be set out in matrix form.
     ]);
   });
 
+  it('merges overlapped ai_knowledge chunks before extracting criteria', () => {
+    const sourceText = `
+Leadership and Governance
+MPS 1 - Leadership
+Intent
+To set clear expectations for Security Management that are codified with a policy and supporting procedures.
+Required Actions
+A Security Policy signed by the most senior executive for Lucara Botswana should be prominently displayed in all locations.
+The Security Policy will be a short document that will at least outline the company's obligations and the individual's obligations regarding Security and/or security related activities.
+The Policy will be incorporated into the operation's induction process for all personnel, contractors and visitors.
+The Heads of Department / HODs, Superintendents, etc. - leaders at all levels - will endeavour to make the Security Policy relevant to their place of operation / workplace.
+Through setting a limited number of Golden Rules that define applicable security requirements based on the associated risk profile and acceptable risk tolerance
+Through short awareness and training sessions on aspects of Security conducted at least bi-weekly or as often as security incidents and matters are brought to their attention.
+Leadership teams in high-risk diamond areas will regularly assess the Security culture and adherence to security protocols of their workplaces.
+MPS 2 - Chain of Custody and Diamond Control Committee
+Intent
+To provide clear accountability for custody.
+Required Actions
+The chain of custody for each operation will be set out in matrix form.
+`;
+    const cut = sourceText.indexOf("The Security Policy will be a short") + 44;
+    const chunkA = sourceText.slice(0, cut);
+    const chunkB = sourceText.slice(cut - 140);
+    const merged = mergeOverlappingTextChunks([chunkA, chunkB]);
+
+    const criteria = extractVerbatimCriteriaFromKnowledge({
+      content: merged,
+      mpsCode: 'D001.MPS001',
+      mpsName: 'Leadership',
+      domainName: 'Leadership and Governance',
+    });
+
+    expect(criteria.map((criterion) => criterion.statement)).toContain(
+      "The Security Policy will be a short document that will at least outline the company's obligations and the individual's obligations regarding Security and/or security related activities.",
+    );
+    expect(criteria.map((criterion) => criterion.statement)).toContain(
+      'Through setting a limited number of Golden Rules that define applicable security requirements based on the associated risk profile and acceptable risk tolerance',
+    );
+    expect(criteria.map((criterion) => criterion.statement)).toContain(
+      'Through short awareness and training sessions on aspects of Security conducted at least bi-weekly or as often as security incidents and matters are brought to their attention.',
+    );
+    expect(criteria.some((criterion) => criterion.statement === 'The Security Policy will be a short')).toBe(false);
+    expect(criteria.some((criterion) => criterion.statement.startsWith('visitors on entry'))).toBe(false);
+  });
+
   it('resolves MPS ordinals from MMM codes without coupling to document filenames', () => {
     expect(extractMpsOrdinal('D001.MPS001', 'Leadership')).toBe(1);
     expect(extractMpsOrdinal('MPS 12', 'Training')).toBe(12);
@@ -168,6 +214,7 @@ The chain of custody for each operation will be set out in matrix form.
   it('wires CriteriaManagement to ai_knowledge before proposed/fallback criteria in VERBATIM mode', () => {
     const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
     expect(src).toContain('extractVerbatimCriteriaFromKnowledge');
+    expect(src).toContain('mergeOverlappingTextChunks');
     expect(src).toContain(".from('ai_knowledge')");
     expect(src).toContain('const primaryVerbatimSourceDoc = modeContext.mode_source_documents.find');
     expect(src).toContain("doc.tags.some((tag) => tag === 'source_mode:VERBATIM')");

@@ -25,6 +25,7 @@ import {
 import {
   extractVerbatimCriteriaFromKnowledge,
   isSourceFaithfulStatement,
+  mergeOverlappingTextChunks,
   normalizeVerbatimLookup,
 } from '../../lib/verbatimCriteriaExtraction';
 
@@ -257,9 +258,9 @@ export function CriteriaManagement({
             .in('document_id', verbatimSourceDocIds)
             .order('chunk_index', { ascending: true });
 
-          processedVerbatimText = (knowledgeRows ?? [])
-            .map((row) => String((row as { content?: unknown }).content ?? ''))
-            .join('\n');
+          processedVerbatimText = mergeOverlappingTextChunks(
+            (knowledgeRows ?? []).map((row) => String((row as { content?: unknown }).content ?? '')),
+          );
 
           const sourceCriteria = extractVerbatimCriteriaFromKnowledge({
             content: processedVerbatimText,
