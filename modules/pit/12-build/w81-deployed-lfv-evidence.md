@@ -24,18 +24,26 @@ Close the remaining W8.1 deployed-evidence gap after PR #1777.
 
 `apps/isms-portal/scripts/pit-w81-deployed-smoke.mjs`
 
-Run command:
+Hydrated browser LFV command:
 
 ```text
 PIT_W81_BASE_URL=<deployed-preview-or-live-url> node apps/isms-portal/scripts/pit-w81-deployed-smoke.mjs
 ```
 
+Advisory static probe only:
+
+```text
+PIT_W81_BASE_URL=<deployed-preview-or-live-url> PIT_W81_STATIC_ONLY=1 node apps/isms-portal/scripts/pit-w81-deployed-smoke.mjs
+```
+
+Static probe output is advisory only and must not be used as W8.1 deployed LFV PASS evidence. PASS evidence requires the hydrated browser mode to execute the React app and return `lfValidated: true` with all route results passing.
+
 ## Evidence status
 
 | Evidence item | Status | Notes |
 |---|---|---|
-| Direct-load checks | PENDING_RUNTIME_CAPTURE | Requires deployed preview/live URL execution. |
-| Refresh checks | PENDING_RUNTIME_CAPTURE | Browser refresh evidence must be captured manually or by browser automation. |
+| Direct-load checks | PENDING_HYDRATED_RUNTIME_CAPTURE | Requires hydrated browser execution against deployed preview/live URL. |
+| Refresh checks | PENDING_HYDRATED_RUNTIME_CAPTURE | Browser refresh evidence must be captured manually or by browser automation. |
 | Deep-link screenshots | PENDING_RUNTIME_CAPTURE | Attach screenshots or file paths after capture. |
 | Auth redirect HAR/equivalent | PENDING_RUNTIME_CAPTURE | Capture protected route access and redirect to `/login` with intended destination state. |
 | Shell-state screenshots | PENDING_RUNTIME_CAPTURE | Capture data/empty/loading/permission-denied/network-error states where available. |
@@ -44,8 +52,8 @@ PIT_W81_BASE_URL=<deployed-preview-or-live-url> node apps/isms-portal/scripts/pi
 
 ## Current finding
 
-This PR adds the repeatable deployed-smoke harness and the W8.1 deployed-evidence ledger. It does not claim the runtime captures are complete unless the harness output and screenshots/HARs are attached during review.
+This PR adds the repeatable hydrated deployed-smoke harness and the W8.1 deployed-evidence ledger. It does not claim runtime captures are complete unless hydrated harness output and screenshots/HARs are attached during review.
 
 ## W8.1 exit posture
 
-W8.1 may be declared fully exited only after the PENDING_RUNTIME_CAPTURE rows above are replaced with PASS evidence from a deployed preview/live environment.
+W8.1 may be declared fully exited only after the pending runtime capture rows above are replaced with PASS evidence from a deployed preview/live environment.
