@@ -193,6 +193,12 @@
 - **RED Condition**: After criteria are accepted, the main card only offers `Create Criteria`, saved criteria are not clearly re-enterable/editable, and criterion-level maturity descriptors cannot be generated or approved under each criterion.
 - **GREEN Acceptance**: The criteria step card shows a mini dashboard with MPS count and criteria count per MPS, the action changes to `View / Edit Criteria` when accepted criteria exist, saved criteria reopen as editable cards, and each criterion can generate/edit/save five maturity level descriptors (Basic, Reactive, Compliant, Proactive, Resilient) under `mmm_level_descriptors`.
 
+### T-MMM-DMC-032 — Maturity Descriptors Must Reconstruct Criteria Into Level-Specific Operating States
+- **Source**: Live descriptor-authoring regression, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: `Create maturity descriptors` copies the accepted criterion into Basic, Reactive, Compliant, Proactive, and Resilient with only the level label/generic guidance changed.
+- **GREEN Acceptance**: Descriptor generation uses the uploaded Approved Methodology Reference when available, rejects AI responses that are identical or materially too similar to the criterion, and emits five distinct auditable operating-state statements where Compliant is the neutral baseline, Proactive includes risk-based review/measurement/improvement, and Resilient includes embedded controls, automation or hard barriers where practicable, exception escalation, continuity, and survival of staff turnover/disruption.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

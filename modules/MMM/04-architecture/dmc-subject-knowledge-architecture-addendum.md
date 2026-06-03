@@ -72,6 +72,8 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
    - The criteria step card must summarise the downstream structure by MPS and criterion count so the same pattern can later roll up to domain and framework cards.
    - Criterion-level maturity descriptors are authored below each criterion using the canonical `mmm_level_descriptors` table with one descriptor per criterion/level.
    - Descriptor authoring applies across Verbatim, Hybrid, and New Generation modes because maturity level semantics are applied to accepted criteria, not to the criteria-generation source mode.
+   - Descriptor text must reconstruct the accepted criterion into observable Basic, Reactive, Compliant, Proactive, and Resilient operating states. It must not copy the criterion into each level.
+   - When an approved descriptor methodology reference is present in subject knowledge, descriptor generation must use it as doctrine. If AI output is missing, invalid, or materially too similar to the criterion text, the UI must fall back to deterministic methodology templates instead of presenting duplicated descriptors.
 
 ## QA Binding
 

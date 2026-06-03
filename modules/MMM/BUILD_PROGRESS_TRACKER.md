@@ -13,6 +13,14 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — Maturity Descriptors Copy Criterion Into Every Level**
+  - **Observed Failure**: The new descriptor authoring UI opened correctly, but `Create maturity descriptors` produced Basic/Reactive/Compliant/Proactive/Resilient text by copying the accepted criterion into each descriptor and only changing the level label/generic guidance.
+  - **Evidence**: User screenshot showed `Basic: A Security Policy signed...` followed by nearly the full criterion text repeated again under Reactive and the remaining levels.
+  - **Root Cause**: The first descriptor slice used a temporary template (`level + criterion + generic DNA phrase`) to validate the UI/storage workflow. It did not yet use the uploaded Approved Methodology Reference or reconstruct criteria into level-specific operating states.
+  - **Prebuild/Architecture Update**: DMC architecture now requires descriptor generation to use the approved methodology reference when available, reject duplicated/too-similar descriptor output, and fall back to deterministic methodology patterns if AI output is unavailable or invalid.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-032` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor creation now retrieves descriptor-guideline chunks from `ai_knowledge`, prompts AI to reconstruct the criterion into five auditable operating states, validates that output is not a criterion copy, and uses a deterministic control-object methodology fallback covering policy, procedure, register/matrix, governance, training, technical controls, incidents, access, continuity, and monitoring.
+
 - **2026-06-03 — Accepted Criteria Not Re-Enterable And No Descriptor Authoring Workspace**
   - **Observed Failure**: After all five Leadership and Governance MPS criteria were accepted, the criteria card still presented a `Create Criteria` action and did not provide a clear way to reopen/edit accepted criteria or create maturity level descriptors underneath each criterion.
   - **Evidence**: User report and screenshot showed 55 accepted criteria grouped under 5 MPS entries, but the workflow still framed the next action as criteria creation instead of criteria management. The next product requirement is to generate Basic/Reactive/Compliant/Proactive/Resilient descriptors per criterion before MPS/domain scoring can be averaged.

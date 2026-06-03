@@ -447,6 +447,9 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const descriptorGrid = await screen.findByTestId('level-descriptor-grid-criterion-1');
     expect(within(descriptorGrid).getByText('Basic')).toBeTruthy();
     expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
+    const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    expect(basicDescriptor.value).not.toContain('Basic: Approval checkpoints documented');
+    expect(basicDescriptor.value).toMatch(/absent|informal|dependent|weak/i);
     fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
 
     await waitFor(() => expect(mockUpsert).toHaveBeenCalled());
