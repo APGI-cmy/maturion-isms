@@ -13,6 +13,14 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — Accepted Criteria Not Re-Enterable And No Descriptor Authoring Workspace**
+  - **Observed Failure**: After all five Leadership and Governance MPS criteria were accepted, the criteria card still presented a `Create Criteria` action and did not provide a clear way to reopen/edit accepted criteria or create maturity level descriptors underneath each criterion.
+  - **Evidence**: User report and screenshot showed 55 accepted criteria grouped under 5 MPS entries, but the workflow still framed the next action as criteria creation instead of criteria management. The next product requirement is to generate Basic/Reactive/Compliant/Proactive/Resilient descriptors per criterion before MPS/domain scoring can be averaged.
+  - **Root Cause**: The MMM criteria workflow treated accepted criteria as terminal rows and did not yet expose descriptor state from `mmm_level_descriptors`. Database RLS also only allowed descriptor reads and criteria inserts, not authenticated organisation-scoped criterion edits or descriptor upserts.
+  - **Prebuild/Architecture Update**: DMC architecture now defines criteria dashboard/readback and criterion-level descriptor authoring as canonical post-criteria workflow behaviour across Verbatim, Hybrid, and New Generation modes.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-031` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Domain audit criteria cards now show a per-MPS criteria dashboard, change the action to `View / Edit Criteria` when rows exist, reopen saved criteria as editable cards, generate five maturity descriptors using the canonical maturity DNA levels, and persist descriptor rows through `mmm_level_descriptors` upsert. A migration adds org-scoped update/upsert RLS policies and a unique `(criterion_id, level)` index.
+
 - **2026-06-03 — VERBATIM MPS002 Criteria Extracts Format Instruction Instead Of Required Actions**
   - **Observed Failure**: After MPS001 criteria extracted correctly, `D001.MPS002 — Chain of Custody and Security Control Committee` generated only `These actions are mandatory and should be implemented` instead of the real `2.1` through `2.8` Required Actions and `2.7.x` child evidence clauses.
   - **Evidence**: Live UI screenshot showed a single uploaded-source criterion for MPS002. Source inspection showed the real document uses `MPS 2 - Chain of Custody and Diamond Control Committee`, while the MMM scaffold uses `Security Control Committee`; Word extraction also split `Committee` as `Commi ttee`. The source contains a reusable format instruction line, `Required Actions: These actions are mandatory...`, before the real MPS sections.

@@ -187,6 +187,12 @@
 - **RED Condition**: Criteria generation for a later MPS returns only the document-format instruction text (`These actions are mandatory...`) or misses real Required Actions because the source title wording differs slightly from the MMM scaffold title.
 - **GREEN Acceptance**: MPS criteria extraction rejects table-of-contents and format-instruction `Required Actions` text, matches real MPS sections by ordinal plus heading-token similarity or same-ordinal numbered actions, and extracts all evidence-bearing Required Action clauses including parent/child groups.
 
+### T-MMM-DMC-031 — Accepted Criteria Must Reopen For Editing And Descriptor Authoring
+- **Source**: Live criteria workflow usability review, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: After criteria are accepted, the main card only offers `Create Criteria`, saved criteria are not clearly re-enterable/editable, and criterion-level maturity descriptors cannot be generated or approved under each criterion.
+- **GREEN Acceptance**: The criteria step card shows a mini dashboard with MPS count and criteria count per MPS, the action changes to `View / Edit Criteria` when accepted criteria exist, saved criteria reopen as editable cards, and each criterion can generate/edit/save five maturity level descriptors (Basic, Reactive, Compliant, Proactive, Resilient) under `mmm_level_descriptors`.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

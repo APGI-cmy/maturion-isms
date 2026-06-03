@@ -67,6 +67,12 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
    - Evidence categories are the smallest auditable Required Action units. Parent clauses that only introduce child requirements are not evidence items by themselves; each child clause must be emitted with enough parent context to stand alone in evidence collection.
    - MPS section matching must reject table-of-contents and format-instruction `Required Actions` text. It may tolerate wording drift between scaffold titles and uploaded-source titles when the MPS ordinal and/or same-ordinal numbered Required Actions identify the real section.
 
+11. **Criteria dashboard and maturity descriptor authoring**
+   - Accepted criteria remain first-class editable artifacts; users must be able to reopen criteria management without re-running criteria generation.
+   - The criteria step card must summarise the downstream structure by MPS and criterion count so the same pattern can later roll up to domain and framework cards.
+   - Criterion-level maturity descriptors are authored below each criterion using the canonical `mmm_level_descriptors` table with one descriptor per criterion/level.
+   - Descriptor authoring applies across Verbatim, Hybrid, and New Generation modes because maturity level semantics are applied to accepted criteria, not to the criteria-generation source mode.
+
 ## QA Binding
 
 - `modules/MMM/05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`
