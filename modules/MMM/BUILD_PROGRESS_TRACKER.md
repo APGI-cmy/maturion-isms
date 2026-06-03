@@ -13,6 +13,14 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — VERBATIM Index Miss Demotes Chunked Source To Failed**
+  - **Observed Failure**: User reopened the Organisation Context page and found the Lucara source still attached to the profile but marked `failed | chunks: 1236`. Reprocess and fresh upload preserved chunks but repeated the same failed parser note.
+  - **Evidence**: UI parse note reported `chars=2224433`, `chunks=1236`, `mps_headings=0`, and `kuc_error=Invalid URL: 'KUC_BASE_URL = https://maturion-kuc-staging.onrender.com/api/upload/framework-source'`; code inspection found upload/reprocess using `processing_status: isOrgVerbatim && verbatimRows.length === 0 ? 'failed' : 'completed'`.
+  - **Root Cause**: The backend treated absence of canonical verbatim index rows as terminal failure even when extracted source chunks existed. The index builder also returned early when AI parse was unavailable instead of attempting deterministic extraction against full source text.
+  - **Prebuild/Architecture Update**: DMC architecture now states canonical verbatim index rows are preferred but chunk-positive sources remain usable and completed with warnings.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-026` and updated `T-MMM-DMC-025`/`T-MMM-S6-303`.
+  - **Build-to-Green Fix**: Upload/reprocess now keep chunk-positive VERBATIM sources completed with parser/index warnings, chunk fallback accepts existing failed-warning legacy rows, Organisation Source display clarifies chunk-ready parser warnings, and KUC base URL input is normalized before upload calls.
+
 - **2026-06-03 — VERBATIM Intent Gate Rejects Chunked Organisation Source**
   - **Observed Failure**: User reported that Leadership and Governance intent generation still blocked after the Lucara source document processed. Organisation Source inventory showed `status: processing | chunks: 1236`, while the intent tab reported `Verbatim mode requires at least one processed source document (completed with extracted chunks)`.
   - **Evidence**: `apps/mmm/src/lib/modeSourceContext.ts` accepted only `processing_status === 'completed' && chunk_count > 0`; `apps/mmm/src/hooks/useIntentGeneration.ts` used the same completed-only filter before querying `ai_knowledge`.

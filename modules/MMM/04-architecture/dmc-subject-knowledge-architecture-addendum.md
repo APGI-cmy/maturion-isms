@@ -49,9 +49,10 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
 
 8. **Chunk-positive VERBATIM source readiness**
    - VERBATIM intent generation is governed by available extracted source chunks, not only by the final document ledger status string.
-   - A non-failed organisation/framework source document with `chunk_count > 0` is usable for strict verbatim extraction from `ai_knowledge`, even if the UI status still shows `processing` due to final status-update lag.
-   - Failed documents and zero-chunk documents remain blocked because they do not provide usable source text for verbatim extraction.
+   - An organisation/framework source document with `chunk_count > 0` is usable for strict verbatim extraction from `ai_knowledge`, even if the UI status still shows `processing` or carries a parser/index warning.
+   - Zero-chunk documents remain blocked because they do not provide usable source text for verbatim extraction.
    - Status-lag warnings should remain visible so operators can diagnose ingestion completion drift without blocking available chunk-based extraction.
+   - Canonical `mmm_org_source_verbatim_index` rows are the preferred deterministic lookup path, but absence of index rows must not demote a chunk-positive source to failed.
 
 ## QA Binding
 

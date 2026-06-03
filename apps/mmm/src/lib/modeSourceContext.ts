@@ -90,8 +90,7 @@ function deriveModeFromOrganisationContext(context: Record<string, unknown>): Cr
 }
 
 export function isChunkedSourceReadyForExtraction(doc: ModeSourceDocument): boolean {
-  const status = doc.processing_status.toLowerCase();
-  return doc.chunk_count > 0 && status !== 'failed';
+  return doc.chunk_count > 0;
 }
 
 function sourceRules(mode: CriteriaMode | null): string[] {
@@ -242,7 +241,7 @@ export function evaluateModeSourceAvailability(context: ModeSourceContext): Mode
   if (effectiveMode === 'VERBATIM' && usableDocs.length === 0) {
     return {
       blockingError:
-        'Verbatim mode requires at least one chunked, non-failed source document. Upload/reprocess the source and retry.',
+        'Verbatim mode requires at least one source document with extracted chunks. Upload/reprocess the source and retry.',
       warnings,
     };
   }

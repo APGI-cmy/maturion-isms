@@ -112,9 +112,8 @@ function buildVerbatimIndexRows(params: {
   extractedText: string;
 }): Array<Record<string, unknown>> {
   const { organisationId, documentId, frameworkId, sourceMode, parseResult, extractedText } = params;
-  if (!parseResult) return [];
-  const confidence = typeof parseResult.confidence_score === 'number' ? parseResult.confidence_score : null;
-  const mpsList = Array.isArray(parseResult.mini_performance_standards)
+  const confidence = typeof parseResult?.confidence_score === 'number' ? parseResult.confidence_score : null;
+  const mpsList = Array.isArray(parseResult?.mini_performance_standards)
     ? parseResult.mini_performance_standards
     : [];
   const rows: Array<Record<string, unknown>> = [];
@@ -402,8 +401,9 @@ Deno.serve(async (req: Request) => {
     }
 
     const isOrgVerbatim = tags.includes('organisation_context') && sourceMode === 'VERBATIM';
+    const hasExtractedChunks = chunkPayloads.length > 0;
     const updatePayload: Record<string, unknown> = {
-      processing_status: isOrgVerbatim && verbatimRows.length === 0 ? 'failed' : 'completed',
+      processing_status: hasExtractedChunks ? 'completed' : 'failed',
       processing_error: null,
       chunk_count: chunkPayloads.length,
       content_hash: fileHash,
@@ -423,7 +423,7 @@ Deno.serve(async (req: Request) => {
         String((kucResult.kuc_classification as Record<string, unknown> | null)?.extracted_text ?? ''),
       ).trim();
       updatePayload.processing_error =
-        `VERBATIM source parse failed: no extractable MPS intent statements found. ` +
+        `VERBATIM source index warning: no extractable MPS intent statements were indexed; chunk fallback remains available. ` +
         `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0}, ` +
         `kuc_success=${kucResult.success}, kuc_error=${kucResult.error ?? 'none'}, kuc_chars=${kucTextCandidate.length}, ` +
         `kuc_base_url_present=${KUC_BASE_URL ? 'yes' : 'no'})`;

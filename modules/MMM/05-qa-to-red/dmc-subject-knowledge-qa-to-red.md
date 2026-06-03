@@ -155,7 +155,13 @@
 - **Source**: Live VERBATIM intent-generation failure, 2026-06-03.
 - **Layer**: Unit/static + operational
 - **RED Condition**: Organisation source inventory shows extracted chunks (`chunk_count > 0`) while the ledger status remains `processing`, and intent regeneration blocks with `Verbatim mode requires at least one processed source document`.
-- **GREEN Acceptance**: VERBATIM readiness and chunk fallback treat non-failed organisation/framework source documents with extracted chunks as usable for verbatim extraction, while failed/zero-chunk sources remain blocked and status-lag warnings remain visible.
+- **GREEN Acceptance**: VERBATIM readiness and chunk fallback treat organisation/framework source documents with extracted chunks as usable for verbatim extraction, including parser/index-warning statuses, while zero-chunk sources remain blocked and status-lag warnings remain visible.
+
+### T-MMM-DMC-026 — VERBATIM Index Failure Must Not Demote Chunked Source To Failed
+- **Source**: Live organisation-source regression report, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Upload/reprocess writes `ai_knowledge` chunks (`chunk_count > 0`) but marks the organisation source `failed` because `mmm_org_source_verbatim_index` has no rows, causing the saved profile source to appear broken.
+- **GREEN Acceptance**: Upload/reprocess marks chunk-positive organisation VERBATIM sources `completed` with a parser/index warning note when canonical index rows are absent; only zero-chunk ingestion remains failed.
 
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
@@ -190,8 +196,8 @@
 ### T-MMM-S6-303 — VERBATIM Source Processing Must Produce Canonical Verbatim Index Rows
 - **Source**: Verbatim runtime contract redesign (index-first lookup)
 - **Layer**: Unit/static + operational
-- **RED Condition**: Organisation source document is marked `completed` in VERBATIM mode with zero indexed `intent_verbatim` rows.
-- **GREEN Acceptance**: Reprocess/upload writes `mmm_org_source_verbatim_index` rows from parsed source and blocks completion (`processing_status=failed`) when none are extractable.
+- **RED Condition**: Organisation source document has no extracted chunks and no indexed `intent_verbatim` rows, yet is marked usable for VERBATIM generation.
+- **GREEN Acceptance**: Reprocess/upload writes `mmm_org_source_verbatim_index` rows when extractable; if rows are absent but chunks exist, the document remains completed with a warning and chunk fallback remains the source-of-truth path.
 
 ### T-MMM-S6-304 — VERBATIM Intent Regenerate Must Query Canonical Verbatim Index First
 - **Source**: Runtime determinism + anti-paraphrase policy

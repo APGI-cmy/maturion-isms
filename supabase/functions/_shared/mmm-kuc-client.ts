@@ -28,7 +28,13 @@ import {
   buildFallbackResponse,
 } from './mmm-circuit-breaker.ts';
 
-const KUC_BASE_URL = Deno.env.get('KUC_BASE_URL') ?? '';
+function normalizeKucBaseUrl(raw: string): string {
+  const withoutAssignment = raw.replace(/^\s*KUC_BASE_URL\s*=\s*/i, '').trim();
+  const withoutUploadPath = withoutAssignment.replace(/\/api\/upload\/[^/?#]+\/?$/i, '');
+  return withoutUploadPath.replace(/\/+$/, '');
+}
+
+const KUC_BASE_URL = normalizeKucBaseUrl(Deno.env.get('KUC_BASE_URL') ?? '');
 const KUC_SERVICE_TOKEN = Deno.env.get('KUC_SERVICE_TOKEN') ?? '';
 
 /** TR-020: KUC classification response */

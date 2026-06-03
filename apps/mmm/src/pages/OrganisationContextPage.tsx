@@ -54,7 +54,10 @@ type ReprocessResponse = {
 function formatOrganisationSourceStatus(doc: OrganisationSourceDoc): string {
   const status = doc.processing_status ?? 'pending';
   const chunks = doc.chunk_count ?? 0;
-  if (chunks > 0 && status.toLowerCase() !== 'completed' && status.toLowerCase() !== 'failed') {
+  if (chunks > 0 && status.toLowerCase() === 'failed') {
+    return 'completed (chunks ready; parser/index warning)';
+  }
+  if (chunks > 0 && status.toLowerCase() !== 'completed') {
     return `${status} (chunks ready for VERBATIM extraction)`;
   }
   return status;
