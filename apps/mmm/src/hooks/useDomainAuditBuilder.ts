@@ -43,6 +43,14 @@ export interface DomainAuditCriterionRow {
   name: string;
   code: string;
   sort_order: number;
+  maturity_level_target: number | null;
+}
+
+export interface DomainAuditLevelDescriptorRow {
+  id: string;
+  criterion_id: string;
+  level: number;
+  descriptor_text: string;
 }
 
 export type DraftPersistenceState = 'session' | 'persisted';
@@ -125,6 +133,7 @@ export interface UseDomainAuditBuilderReturn {
   mpsRows: DomainAuditMpsRow[];
   criteriaRows: DomainAuditCriterionRow[];
   criteriaByMps: Record<string, DomainAuditCriterionRow[]>;
+  levelDescriptorsByCriterion: Record<string, DomainAuditLevelDescriptorRow[]>;
   isLoading: boolean;
   errorMessage: string | null;
 }
@@ -259,7 +268,7 @@ export function useDomainAuditBuilder({
     queryFn: async () => {
       const { data, error } = await supabase
         .from('mmm_criteria')
-        .select('id, mps_id, name, code, sort_order')
+        .select('id, mps_id, name, code, sort_order, maturity_level_target')
         .in('mps_id', mpsIds)
         .order('sort_order');
 
@@ -274,6 +283,10 @@ export function useDomainAuditBuilder({
         name: toDisplayText(row.name, `Criterion ${index + 1}`),
         code: toDisplayText(row.code, `C-${index + 1}`),
         sort_order: toDisplayNumber(row.sort_order, index + 1),
+        maturity_level_target:
+          typeof row.maturity_level_target === 'number'
+            ? row.maturity_level_target
+            : null,
       }));
     },
     enabled: mpsIds.length > 0,
@@ -286,6 +299,47 @@ export function useDomainAuditBuilder({
       return grouped;
     }, {});
   }, [criteriaRows]);
+
+  const criterionIds = useMemo(() => criteriaRows.map((row) => row.id), [criteriaRows]);
+
+  const {
+    data: levelDescriptorRows = [],
+    isLoading: isLevelDescriptorLoading,
+    error: levelDescriptorError,
+  } = useQuery<DomainAuditLevelDescriptorRow[]>({
+    queryKey: ['domain-audit-level-descriptors', criterionIds],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('mmm_level_descriptors')
+        .select('id, criterion_id, level, descriptor_text')
+        .in('criterion_id', criterionIds)
+        .order('level');
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const rows = (data ?? []) as SupabaseRow[];
+      return rows.map((row, index) => ({
+        id: toDisplayText(row.id, `level-descriptor-${index + 1}`),
+        criterion_id: toDisplayText(row.criterion_id),
+        level: toDisplayNumber(row.level, 1),
+        descriptor_text: toDisplayText(row.descriptor_text),
+      }));
+    },
+    enabled: criterionIds.length > 0,
+    retry: false,
+  });
+
+  const levelDescriptorsByCriterion = useMemo<Record<string, DomainAuditLevelDescriptorRow[]>>(() => {
+    return levelDescriptorRows.reduce<Record<string, DomainAuditLevelDescriptorRow[]>>((grouped, descriptor) => {
+      grouped[descriptor.criterion_id] = [
+        ...(grouped[descriptor.criterion_id] ?? []),
+        descriptor,
+      ].sort((a, b) => a.level - b.level);
+      return grouped;
+    }, {});
+  }, [levelDescriptorRows]);
 
   const steps = useMemo<StepMeta[]>(() => {
     const intentRows = mpsRows.filter((row) => hasTrimmedText(row.intent_statement));
@@ -352,11 +406,12 @@ export function useDomainAuditBuilder({
     });
   }, [criteriaRows, domain?.id, mpsRows]);
 
-  const isLoading = isDomainLoading || isMpsLoading || isCriteriaLoading;
+  const isLoading = isDomainLoading || isMpsLoading || isCriteriaLoading || isLevelDescriptorLoading;
   const errorMessage =
     (domainError as Error | null)?.message ??
     (mpsError as Error | null)?.message ??
     (criteriaError as Error | null)?.message ??
+    (levelDescriptorError as Error | null)?.message ??
     null;
 
   const setIsMPSModalOpen = (open: boolean) => {
@@ -393,6 +448,7 @@ export function useDomainAuditBuilder({
     mpsRows,
     criteriaRows,
     criteriaByMps,
+    levelDescriptorsByCriterion,
     isLoading,
     errorMessage,
   };

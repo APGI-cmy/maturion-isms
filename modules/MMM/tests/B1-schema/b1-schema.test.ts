@@ -81,6 +81,9 @@ const IMMUTABLE_TABLES = ['mmm_audit_logs', 'mmm_override_log'];
 /** Storage buckets required */
 const REQUIRED_BUCKETS = ['mmm-evidence', 'mmm-framework-sources'];
 
+/** AIMC canonical runtime tables intentionally shared by MMM source extraction. */
+const ALLOWED_SHARED_RUNTIME_TABLES = ['ai_knowledge'];
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
@@ -179,6 +182,7 @@ const tablesSQL = readMigrationFile('core_tables');
 const rlsSQL = readMigrationFile('rls_policies');
 const indexesSQL = readMigrationFile('indexes');
 const storageSQL = readMigrationFile('storage_buckets');
+const criteriaEditSQL = readMigrationFile('criteria_edit_and_level_descriptor_writes');
 
 describe('T-MMM-S6-139 — Migration files exist', () => {
   it('supabase/migrations directory exists', () => {
@@ -445,6 +449,16 @@ describe('T-MMM-S6-151 — Column definitions: mandatory columns present (TR-022
     expect(tablesSQL).toMatch(/level\s+integer\s+NOT\s+NULL\s+CHECK\s*\(\s*level\s+BETWEEN\s+1\s+AND\s+5\s*\)/i);
   });
 
+  it('mmm_level_descriptors enforces one row per criterion and level', () => {
+    expect(criteriaEditSQL).toMatch(/ON\s+(?:public\.)?mmm_level_descriptors\s*\(\s*criterion_id\s*,\s*level\s*\)/i);
+  });
+
+  it('accepted criteria and level descriptors have org-scoped write policies for editing workflow', () => {
+    expect(criteriaEditSQL).toContain('mmm_criteria_update_own_org');
+    expect(criteriaEditSQL).toContain('mmm_level_descriptors_insert_own_org');
+    expect(criteriaEditSQL).toContain('mmm_level_descriptors_update_own_org');
+  });
+
   it('mmm_evidence has status CHECK (PENDING/ACCEPTED/REJECTED)', () => {
     expect(tablesSQL).toMatch(/CHECK\s*\(\s*status\s+IN\s*\(\s*'PENDING'\s*,\s*'ACCEPTED'\s*,\s*'REJECTED'\s*\)\s*\)/i);
   });
@@ -576,8 +590,8 @@ describe('T-MMM-S6-156 — TR-028: No tables outside mmm_ namespace (architectur
     while ((match = createTablePattern.exec(allSQL)) !== null) {
       tableNames.push(match[1]);
     }
-    // All found table names should start with mmm_
-    const nonMmmTables = tableNames.filter(t => !t.startsWith('mmm_'));
+    // All found table names should start with mmm_, except explicitly shared runtime stores.
+    const nonMmmTables = tableNames.filter(t => !t.startsWith('mmm_') && !ALLOWED_SHARED_RUNTIME_TABLES.includes(t));
     expect(nonMmmTables).toHaveLength(0);
   });
 });

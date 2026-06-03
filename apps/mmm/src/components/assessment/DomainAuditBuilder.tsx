@@ -53,6 +53,7 @@ export function DomainAuditBuilder({
     mpsRows,
     criteriaRows,
     criteriaByMps,
+    levelDescriptorsByCriterion,
     isLoading,
     errorMessage,
     isMPSModalOpen,
@@ -137,6 +138,17 @@ export function DomainAuditBuilder({
     },
     [criteriaRows.length, isDomainSignedOff, mpsRows],
   );
+
+  const criteriaCountByMps = React.useMemo(() => {
+    return mpsRows.map((mps) => ({
+      mps,
+      criteriaCount: (criteriaByMps[mps.id] ?? []).length,
+      descriptorCount: (criteriaByMps[mps.id] ?? []).reduce(
+        (total, criterion) => total + (levelDescriptorsByCriterion[criterion.id] ?? []).length,
+        0,
+      ),
+    }));
+  }, [criteriaByMps, levelDescriptorsByCriterion, mpsRows]);
 
   return (
     <div className="domain-audit-builder" data-testid="domain-audit-builder">
@@ -262,6 +274,30 @@ export function DomainAuditBuilder({
                       </div>
                     ))}
                   </div>
+                ) : step.id === 'criteria' && mpsRows.length > 0 ? (
+                  <div
+                    className="criteria-step-dashboard"
+                    data-testid="criteria-step-dashboard"
+                  >
+                    <div className="criteria-step-dashboard__summary">
+                      <strong>{mpsRows.length}</strong> MPS entries
+                      <span>{criteriaRows.length} criteria</span>
+                    </div>
+                    <div className="criteria-step-dashboard__grid">
+                      {criteriaCountByMps.map(({ mps, criteriaCount, descriptorCount }) => (
+                        <div
+                          key={mps.id}
+                          className="criteria-step-dashboard__item"
+                          data-testid="criteria-step-dashboard-item"
+                        >
+                          <span className="criteria-step-dashboard__code">{mps.code}</span>
+                          <strong>{criteriaCount}</strong>
+                          <span>criteria</span>
+                          <small>{descriptorCount}/5-level descriptors</small>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 ) : step.previewItems.length > 0 ? (
                   <ul
                     className="domain-audit-builder__step-preview"
@@ -282,7 +318,11 @@ export function DomainAuditBuilder({
                 aria-expanded={activeStep === step.id}
                 disabled={step.status === 'locked'}
               >
-                {step.status === 'locked' ? 'Locked' : `${step.title} (${step.count})`}
+                {step.status === 'locked'
+                  ? 'Locked'
+                  : step.id === 'criteria' && step.count > 0
+                  ? `View / Edit Criteria (${step.count})`
+                  : `${step.title} (${step.count})`}
               </button>
             </div>
           </div>
@@ -322,6 +362,7 @@ export function DomainAuditBuilder({
         open={isCriteriaManagementOpen}
         mpsRows={mpsRows}
         criteriaByMps={criteriaByMps}
+        levelDescriptorsByCriterion={levelDescriptorsByCriterion}
         isLoading={isLoading}
         errorMessage={errorMessage}
         onClose={() => setIsCriteriaManagementOpen(false)}
