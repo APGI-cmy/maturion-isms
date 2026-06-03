@@ -151,6 +151,12 @@
 - **RED Condition**: `deploy-mmm-vercel.yml` hard-codes `https://mmm.maturion.com` even though Vercel project `maturion-isms-mmm` does not have that domain attached and DNS has no `mmm` record, causing production deploys to fail after successful build/deploy.
 - **GREEN Acceptance**: Workflow uses `https://maturion-isms-mmm.vercel.app` as the canonical production URL by default, while allowing an explicitly configured `MMM_CUSTOM_DOMAIN_URL` to opt back into custom-domain JS-hash validation once DNS/domain mapping exists.
 
+### T-MMM-DMC-025 — VERBATIM Intent Readiness Must Accept Chunk-Positive Organisation Sources
+- **Source**: Live VERBATIM intent-generation failure, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Organisation source inventory shows extracted chunks (`chunk_count > 0`) while the ledger status remains `processing`, and intent regeneration blocks with `Verbatim mode requires at least one processed source document`.
+- **GREEN Acceptance**: VERBATIM readiness and chunk fallback treat non-failed organisation/framework source documents with extracted chunks as usable for verbatim extraction, while failed/zero-chunk sources remain blocked and status-lag warnings remain visible.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

@@ -13,6 +13,14 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — VERBATIM Intent Gate Rejects Chunked Organisation Source**
+  - **Observed Failure**: User reported that Leadership and Governance intent generation still blocked after the Lucara source document processed. Organisation Source inventory showed `status: processing | chunks: 1236`, while the intent tab reported `Verbatim mode requires at least one processed source document (completed with extracted chunks)`.
+  - **Evidence**: `apps/mmm/src/lib/modeSourceContext.ts` accepted only `processing_status === 'completed' && chunk_count > 0`; `apps/mmm/src/hooks/useIntentGeneration.ts` used the same completed-only filter before querying `ai_knowledge`.
+  - **Root Cause**: VERBATIM readiness depended on the final ledger status label rather than the operational evidence required for extraction: chunk rows. A lagging final status PATCH could therefore block verbatim extraction even when chunks already existed.
+  - **Prebuild/Architecture Update**: DMC architecture addendum now defines chunk-positive non-failed organisation/framework sources as usable for VERBATIM extraction, with failed/zero-chunk sources still blocked.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-025` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: VERBATIM readiness and intent fallback are now chunk-aware while preserving strict source-faithful extraction; the Organisation Source UI labels chunk-positive status-lag rows as ready for VERBATIM extraction.
+
 - **2026-06-02 — Organisation Source Reprocess/Archive Appears To Remove Uploaded File**
   - **Observed Failure**: User reported that clicking reprocess caused the uploaded organisation source file to disappear.
   - **Evidence**: Code inspection found `OrganisationContextPage.tsx` placed `Reprocess` beside a `Delete` action that physically called Supabase Storage `.remove(...)` and then hid the row with `archived_at`. Reprocess itself did not remove storage, but the adjacent action created a destructive UI trap and audit-retention breach.

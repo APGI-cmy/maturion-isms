@@ -194,6 +194,7 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     expect(page).toContain('archiveOrganisationSource');
     expect(page).toContain('The uploaded file will be retained.');
     expect(page).toContain('The uploaded file was retained for audit/recovery.');
+    expect(page).toContain('chunks ready for VERBATIM extraction');
     expect(page).not.toContain('.remove([fullDoc.storage_path])');
     expect(page).not.toContain("from('ai_knowledge').delete().eq('document_id', doc.id)");
     expect(page).toContain('result?.success === false');
@@ -207,5 +208,18 @@ describe('T-MMM-DMC-002: Subject Knowledge DMC behavior is wired to legacy/AIMC 
     expect(workflow).toContain('Guard canonical production URL serves same production JS hash');
     expect(workflow).not.toContain('CUSTOM_DOMAIN_URL="https://mmm.maturion.com"');
     expect(workflow).not.toContain('url: https://mmm.maturion.com');
+  });
+
+  it('treats chunk-positive non-failed source documents as usable for VERBATIM intent extraction', () => {
+    const modeContext = readFile('apps/mmm/src/lib/modeSourceContext.ts');
+    const intentHook = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
+
+    expect(modeContext).toContain('export function isChunkedSourceReadyForExtraction');
+    expect(modeContext).toContain('return doc.chunk_count > 0 && status !== \'failed\';');
+    expect(modeContext).toContain('const usableDocs = docs.filter(isChunkedSourceReadyForExtraction);');
+    expect(modeContext).toContain('chunked, non-failed source document');
+    expect(modeContext).not.toContain("doc.processing_status.toLowerCase() === 'completed' && doc.chunk_count > 0");
+    expect(intentHook).toContain('isChunkedSourceReadyForExtraction(doc)');
+    expect(intentHook).not.toContain("doc.processing_status.toLowerCase() === 'completed' &&");
   });
 });

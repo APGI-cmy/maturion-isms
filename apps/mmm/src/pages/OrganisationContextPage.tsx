@@ -51,6 +51,15 @@ type ReprocessResponse = {
   chunk_count?: number;
 };
 
+function formatOrganisationSourceStatus(doc: OrganisationSourceDoc): string {
+  const status = doc.processing_status ?? 'pending';
+  const chunks = doc.chunk_count ?? 0;
+  if (chunks > 0 && status.toLowerCase() !== 'completed' && status.toLowerCase() !== 'failed') {
+    return `${status} (chunks ready for VERBATIM extraction)`;
+  }
+  return status;
+}
+
 function resolveMimeType(file: File): string {
   if (file.type && file.type.trim().length > 0) return file.type;
   const name = file.name.toLowerCase();
@@ -527,7 +536,7 @@ export default function OrganisationContextPage() {
                   <li key={doc.id} style={{ marginBottom: 8 }}>
                     <strong>{doc.title ?? doc.file_name ?? 'Untitled source'}</strong>
                     <div>
-                      status: {doc.processing_status ?? 'pending'} | chunks: {doc.chunk_count ?? 0}
+                      status: {formatOrganisationSourceStatus(doc)} | chunks: {doc.chunk_count ?? 0}
                     </div>
                     {doc.processing_error ? (
                       <div role="alert" style={{ color: '#b91c1c' }}>
