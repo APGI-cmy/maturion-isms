@@ -1162,9 +1162,7 @@ export function CriteriaManagement({
             ...prev,
             [criterion.id]: {
               type: 'success',
-              text:
-                'Maturity descriptors created from the approved methodology reference. ' +
-                `AI refinement is temporarily unavailable (${aiError instanceof Error ? aiError.message : 'unknown issue'}), so Maturion used the governed methodology generator.`,
+              text: 'Maturity descriptors created from the approved methodology reference.',
             },
           }));
           return;

@@ -1404,7 +1404,7 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Made the governed methodology generator the stable descriptor authoring path.
      - Kept AI reconstruction as optional refinement when available.
      - Added diagnostic edge-response probing for concrete failure detail, while preserving successful editable descriptor drafts.
-     - Replaced scary fallback wording with a clear success message when AI refinement is temporarily unavailable.
+     - Replaced scary fallback wording with a clean success message and hid AI/AIMC/404 diagnostics from the normal user banner.
    - QA-to-Red Trace:
      - `T-MMM-DMC-033` descriptor authoring must stay green when AI refinement is unavailable.
 
