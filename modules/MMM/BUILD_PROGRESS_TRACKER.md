@@ -13,6 +13,14 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — Maturity Descriptors Copy Criterion Into Every Level**
+  - **Observed Failure**: The new descriptor authoring UI opened correctly, but `Create maturity descriptors` produced Basic/Reactive/Compliant/Proactive/Resilient text by copying the accepted criterion into each descriptor and only changing the level label/generic guidance.
+  - **Evidence**: User screenshot showed `Basic: A Security Policy signed...` followed by nearly the full criterion text repeated again under Reactive and the remaining levels.
+  - **Root Cause**: The first descriptor slice used a temporary template (`level + criterion + generic DNA phrase`) to validate the UI/storage workflow. It did not yet use the uploaded Approved Methodology Reference or reconstruct criteria into level-specific operating states.
+  - **Prebuild/Architecture Update**: DMC architecture now requires descriptor generation to use the approved methodology reference when available, reject duplicated/too-similar descriptor output, and fall back to deterministic methodology patterns if AI output is unavailable or invalid.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-032` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor creation now retrieves descriptor-guideline chunks from `ai_knowledge`, prompts AI to reconstruct the criterion into five auditable operating states, validates that output is not a criterion copy, and uses a deterministic control-object methodology fallback covering policy, procedure, register/matrix, governance, training, technical controls, incidents, access, continuity, and monitoring.
+
 - **2026-06-03 — Accepted Criteria Not Re-Enterable And No Descriptor Authoring Workspace**
   - **Observed Failure**: After all five Leadership and Governance MPS criteria were accepted, the criteria card still presented a `Create Criteria` action and did not provide a clear way to reopen/edit accepted criteria or create maturity level descriptors underneath each criterion.
   - **Evidence**: User report and screenshot showed 55 accepted criteria grouped under 5 MPS entries, but the workflow still framed the next action as criteria creation instead of criteria management. The next product requirement is to generate Basic/Reactive/Compliant/Proactive/Resilient descriptors per criterion before MPS/domain scoring can be averaged.
@@ -1387,3 +1395,26 @@ This tracker now serves as the active failure and traceability register for MMM 
    - QA-to-Red Trace:
      - `T-MMM-S6-ORGSRC-303` organisation source must not be marked completed for VERBATIM if index rows=0.
      - `T-MMM-S6-ORGSRC-304` intent regenerate reads canonical verbatim index before generic paths.
+
+15. **Maturity descriptor AI refinement non-2xx banner**
+   - Failure Class: user-facing observability + descriptor workflow resilience.
+   - Symptom: `Create maturity descriptors` generated five usable methodology descriptors but displayed `Used methodology fallback after AI reconstruction was unavailable or invalid: Edge Function returned a non-2xx status code`.
+   - Cause Class: descriptor authoring treated live AI refinement as the visible success path and surfaced Supabase's generic invoke error when the AI route returned non-2xx.
+   - Corrective Action:
+     - Made the governed methodology generator the stable descriptor authoring path.
+     - Kept AI reconstruction as optional refinement when available.
+     - Added diagnostic edge-response probing for concrete failure detail, while preserving successful editable descriptor drafts.
+     - Replaced scary fallback wording with a clear success message when AI refinement is temporarily unavailable.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-033` descriptor authoring must stay green when AI refinement is unavailable.
+
+16. **Maturity descriptor obligation wording instead of evidence state**
+   - Failure Class: descriptor semantics / audit evidence framing.
+   - Symptom: Basic maturity descriptor started with wording such as `the policy must be approved...`, which reads as the original requirement rather than the maturity state of available evidence.
+   - Cause Class: deterministic descriptor generator summarised the accepted criterion as a requirement subject before appending maturity-state language.
+   - Corrective Action:
+     - Reframed generated descriptors around evidence subjects, for example policy approval/currency evidence, communication/display evidence, ownership, review, and awareness evidence.
+     - Added prompt rule that AI-refined descriptors must describe evidence state and avoid `must`/`shall` requirement phrasing.
+     - Added B4 regression assertions that generated fallback descriptors do not contain `must be approved` and start from evidence-state language.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-034` maturity descriptors must describe evidence state, not restate obligations.
