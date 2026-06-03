@@ -3,58 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Shield,
-  TrendingUp,
-  Eye,
-  FileText,
-  Users,
-  Settings,
-  ChevronRight,
-  Lock,
-} from 'lucide-react';
+import { Shield, Users, Settings, ChevronRight, Lock } from 'lucide-react';
 import { ROUTES } from '@/lib/routes';
-
-const ismsModules = [
-  {
-    id: 'maturity-development',
-    name: 'Maturity Development',
-    description: 'Build and assess your organizational security maturity framework',
-    icon: TrendingUp,
-    isSubscribed: false,
-    route: ROUTES.MARKETING_MATURITY_ROADMAP,
-  },
-  {
-    id: 'risk-management',
-    name: 'Risk Management Framework',
-    description: 'Comprehensive risk identification and mitigation strategies',
-    icon: Shield,
-    isSubscribed: false,
-    route: ROUTES.MARKETING_RISK_MANAGEMENT,
-  },
-  {
-    id: 'action-management',
-    name: 'Action Management System',
-    description: 'Streamline corrective actions and tracking',
-    icon: FileText,
-    isSubscribed: false,
-    route: ROUTES.MARKETING_PROJECT_IMPLEMENTATION,
-  },
-  {
-    id: 'video-surveillance',
-    name: 'Video Surveillance Analysis',
-    description: 'AI-driven insights from video surveillance data',
-    icon: Eye,
-    isSubscribed: false,
-    route: ROUTES.MARKETING_DATA_ANALYTICS,
-  },
-];
+import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
 
 const ModulesOverview: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleModuleClick = (module: (typeof ismsModules)[0]) => {
-    navigate(module.route);
+  const handleModuleKeyDown = (event: React.KeyboardEvent, route: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      navigate(route);
+    }
   };
 
   return (
@@ -85,30 +45,42 @@ const ModulesOverview: React.FC = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">ISMS Platform Modules</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Choose from our comprehensive Information Security Management System modules to build
-            and maintain your organization&#39;s security maturity.
+            Explore the public overview of each Information Security Management System module before
+            subscribing or entering a private workspace.
           </p>
         </div>
 
         {/* Modules Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {ismsModules.map((module) => {
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {ISMS_MODULE_CARDS.map((module) => {
             const IconComponent = module.icon;
 
             return (
               <Card
                 key={module.id}
-                className="relative cursor-pointer transition-all duration-200 hover:shadow-lg"
-                onClick={() => handleModuleClick(module)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open public overview for ${module.name}`}
+                className={`relative cursor-pointer transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
+                onClick={() => navigate(module.route)}
+                onKeyDown={(event) => handleModuleKeyDown(event, module.route)}
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
-                    <div className="p-3 rounded-lg bg-muted text-muted-foreground">
+                    <div
+                      className={`p-3 rounded-lg bg-gradient-to-r ${module.gradient} text-white shadow-sm`}
+                    >
                       <IconComponent className="h-6 w-6" />
                     </div>
-                    <Lock className="h-5 w-5 text-muted-foreground" />
+                    <Lock
+                      className="h-5 w-5 text-muted-foreground"
+                      aria-label="Private workspace gated"
+                    />
                   </div>
-                  <CardTitle className="text-xl">{module.name}</CardTitle>
+                  <div className="flex items-center justify-between gap-3">
+                    <CardTitle className="text-xl">{module.name}</CardTitle>
+                    <Badge variant={module.badgeVariant}>{module.badge}</Badge>
+                  </div>
                   <CardDescription className="text-base leading-relaxed">
                     {module.description}
                   </CardDescription>
@@ -116,14 +88,12 @@ const ModulesOverview: React.FC = () => {
 
                 <CardContent>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <Badge variant="outline" className="text-muted-foreground">
-                        Learn More
-                      </Badge>
-                    </div>
+                    <Badge variant="outline" className="text-muted-foreground">
+                      Public overview
+                    </Badge>
 
                     <div className="flex items-center">
-                      <span className="text-sm text-muted-foreground mr-2">View Details</span>
+                      <span className="text-sm text-muted-foreground mr-2">Learn More</span>
                       <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </div>
                   </div>
@@ -144,7 +114,8 @@ const ModulesOverview: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Our team is ready to help you maximize the value of your ISMS investment.
+                Start with the free assessment or review subscription options when you are ready to
+                move from public discovery into a private module workspace.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button variant="outline" onClick={() => navigate(ROUTES.FREE_ASSESSMENT)}>
