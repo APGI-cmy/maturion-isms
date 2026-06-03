@@ -34,6 +34,7 @@
 
 **Status**: MERGED — POST-MERGE CORRECTION OPENED  
 **Merged PR**: #1776 (`20d226612f0be0f5c83488865d9d84b56e6204dd`)  
+**Correction PR**: #1779  
 **Correction branch**: `foreman/w1-post-merge-correction`  
 **Location**: `modules/isms/11-build/`  
 **Primary Evidence**:
@@ -43,6 +44,7 @@
 - `.agent-admin/assurance/iaa-wave-record-isms-w1-route-public-shell-20260602.md` — IAA wave record
 - `.agent-admin/assurance/iaa-token-isms-w1-route-public-shell-20260602.md` — IAA token
 - `.functional-delivery/pr-1776.md` — post-merge functional delivery/anomaly record restored in correction PR
+- `.functional-delivery/pr-1779.md` — PR-scoped functional-delivery gate evidence for correction PR
 - `.agent-workspace/foreman-v2/memory/session-1776-20260603.md` — post-merge Foreman memory/anomaly record restored in correction PR
 
 **Runtime files changed by W1**:
@@ -55,6 +57,7 @@
 - add protected route registrations for `ROUTES.ASSESSMENT` and `ROUTES.MATURITY_SETUP` in `apps/isms-portal/src/App.tsx`;
 - replace stale `CI PENDING` tracker wording with true post-merge correction state;
 - restore/file missing `.functional-delivery/pr-1776.md` evidence record;
+- add PR-scoped `.functional-delivery/pr-1779.md` gate evidence record;
 - restore/file missing `.agent-workspace/foreman-v2/memory/session-1776-20260603.md` session-memory record;
 - keep W2-W8 unappointed and unimplemented.
 
@@ -62,9 +65,9 @@
 
 ## Current Stage Summary
 
-**Current Stage**: W1 post-merge correction PR preparation.  
+**Current Stage**: W1 post-merge correction PR review and CI gate inspection.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Open and review the W1 post-merge correction PR; inspect CI/review results; only then decide whether W1 can be accepted as complete and whether W2 appointment may begin.
+**Next Required Action**: Review PR #1779, inspect CI/review results, resolve or disposition Copilot conversations, and only then decide whether W1 can be accepted as complete and whether W2 appointment may begin.
 
 ---
 
@@ -86,12 +89,12 @@
 - [x] Stage 10 IAA Pre-Brief filed
 - [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [x] Stage 11 W1 Builder Appointment complete
-- [x] Stage 12 W1 Build Execution implemented
+- [x] Stage 12 W1 merged via PR #1776
 - [x] W1 Foreman QP filed
 - [x] W1 ECAP filed
 - [x] W1 IAA filed
 - [x] W1 PR #1776 merged
-- [ ] W1 post-merge correction PR opened
+- [x] W1 post-merge correction PR #1779 opened
 - [ ] W1 post-merge correction CI passed
 - [ ] W1 post-merge correction review conversations resolved
 - [ ] W1 handover authorized
