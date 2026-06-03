@@ -89,6 +89,10 @@ function deriveModeFromOrganisationContext(context: Record<string, unknown>): Cr
   return null;
 }
 
+export function isChunkedSourceReadyForExtraction(doc: ModeSourceDocument): boolean {
+  return doc.chunk_count > 0;
+}
+
 function sourceRules(mode: CriteriaMode | null): string[] {
   if (mode === 'VERBATIM') {
     return [
@@ -218,10 +222,9 @@ export function evaluateModeSourceAvailability(context: ModeSourceContext): Mode
   const docs = context.mode_source_documents;
   const documentModeOverride = deriveModeFromDocuments(docs);
   const effectiveMode = documentModeOverride ?? context.framework_source_type;
-  const completedDocs = docs.filter(
-    (doc) => doc.processing_status.toLowerCase() === 'completed' && doc.chunk_count > 0,
-  );
-  const pendingDocs = docs.filter((doc) => doc.processing_status.toLowerCase() !== 'completed');
+  const usableDocs = docs.filter(isChunkedSourceReadyForExtraction);
+  const pendingDocs = docs.filter((doc) => !isChunkedSourceReadyForExtraction(doc));
+  const statusLagDocs = usableDocs.filter((doc) => doc.processing_status.toLowerCase() !== 'completed');
 
   const warnings: string[] = [];
   if (pendingDocs.length > 0) {
@@ -229,16 +232,21 @@ export function evaluateModeSourceAvailability(context: ModeSourceContext): Mode
       `Some source documents are not ready yet: ${pendingDocs.map((doc) => `${doc.title} (${doc.processing_status})`).join('; ')}.`,
     );
   }
+  if (statusLagDocs.length > 0) {
+    warnings.push(
+      `Some source documents have extracted chunks but their final status is still updating: ${statusLagDocs.map((doc) => `${doc.title} (${doc.processing_status}, chunks=${doc.chunk_count})`).join('; ')}.`,
+    );
+  }
 
-  if (effectiveMode === 'VERBATIM' && completedDocs.length === 0) {
+  if (effectiveMode === 'VERBATIM' && usableDocs.length === 0) {
     return {
       blockingError:
-        'Verbatim mode requires at least one processed source document (completed with extracted chunks). Upload/reprocess the source and retry.',
+        'Verbatim mode requires at least one source document with extracted chunks. Upload/reprocess the source and retry.',
       warnings,
     };
   }
 
-  if (effectiveMode === 'HYBRID' && completedDocs.length === 0) {
+  if (effectiveMode === 'HYBRID' && usableDocs.length === 0) {
     return {
       blockingError:
         'Hybrid mode requires at least one processed source document for gap analysis. Upload/reprocess the source and retry.',

@@ -73,14 +73,41 @@ async function tryAiGatewayParseText(params: {
   }
 }
 
-function deriveSourceModeFromTags(tags: string[]): 'VERBATIM' | 'HYBRID' | 'GENERATED' {
-  if (tags.includes('source_mode:VERBATIM')) return 'VERBATIM';
-  if (tags.includes('source_mode:HYBRID')) return 'HYBRID';
+function deriveSourceModeFromSafeFields(params: {
+  title?: string | null;
+  uploadNotes?: string | null;
+}): 'VERBATIM' | 'HYBRID' | 'GENERATED' {
+  const text = `${params.title ?? ''}\n${params.uploadNotes ?? ''}`.toUpperCase();
+  if (text.includes('VERBATIM SOURCE') || text.includes('AUTHORITATIVE VERBATIM')) return 'VERBATIM';
+  if (text.includes('HYBRID SOURCE') || text.includes('HYBRID')) return 'HYBRID';
   return 'GENERATED';
 }
 
-function isOrganisationVerbatimSource(tags: string[]): boolean {
-  return tags.includes('organisation_context') && tags.includes('source_mode:VERBATIM');
+function buildSafeReprocessTags(params: {
+  scopeType?: string | null;
+  sourceMode: 'VERBATIM' | 'HYBRID' | 'GENERATED';
+}): string[] {
+  const tags = [`source_mode:${params.sourceMode}`];
+  if ((params.scopeType ?? '').toLowerCase() === 'organisation_context') {
+    tags.unshift('organisation_context', 'mode_source');
+  }
+  return tags;
+}
+
+function domainNameForMpsNumber(number: number): string {
+  if (number >= 1 && number <= 5) return 'Leadership and Governance';
+  if (number >= 6 && number <= 11) return 'Process Integrity';
+  if (number >= 12 && number <= 15) return 'People and Culture';
+  if (number >= 16 && number <= 21) return 'Protection';
+  return 'Proof';
+}
+
+function domainCodeForMpsNumber(number: number): string {
+  if (number >= 1 && number <= 5) return 'D001';
+  if (number >= 6 && number <= 11) return 'D002';
+  if (number >= 12 && number <= 15) return 'D003';
+  if (number >= 16 && number <= 21) return 'D004';
+  return 'D005';
 }
 
 function buildVerbatimIndexRows(params: {
@@ -92,9 +119,8 @@ function buildVerbatimIndexRows(params: {
   extractedText: string;
 }): Array<Record<string, unknown>> {
   const { organisationId, documentId, frameworkId, sourceMode, parseResult, extractedText } = params;
-  if (!parseResult) return [];
-  const confidence = typeof parseResult.confidence_score === 'number' ? parseResult.confidence_score : null;
-  const mpsList = Array.isArray(parseResult.mini_performance_standards)
+  const confidence = typeof parseResult?.confidence_score === 'number' ? parseResult.confidence_score : null;
+  const mpsList = Array.isArray(parseResult?.mini_performance_standards)
     ? parseResult.mini_performance_standards
     : [];
   const rows: Array<Record<string, unknown>> = [];
@@ -120,7 +146,9 @@ function buildVerbatimIndexRows(params: {
   }
   if (rows.length > 0) return rows;
 
-  const normalized = extractedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const normalizedFull = extractedText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const realMpsStart = normalizedFull.search(/\n\s*Leadership\s+and\s+Governance\s*\n\s*MPS\s*1\s*[–-]/i);
+  const normalized = realMpsStart >= 0 ? normalizedFull.slice(realMpsStart) : normalizedFull;
   const mpsMatches = [...normalized.matchAll(/(?:^|\n)\s*MPS\s*([A-Za-z0-9.]+)\s*[–-]\s*([^\n]+)(?:\n|$)/gi)];
   for (let i = 0; i < mpsMatches.length; i += 1) {
     const current = mpsMatches[i];
@@ -128,22 +156,23 @@ function buildVerbatimIndexRows(params: {
     const end = i + 1 < mpsMatches.length ? (mpsMatches[i + 1].index ?? normalized.length) : normalized.length;
     const block = normalized.slice(start, end);
     const intentMatch = block.match(
-      /Intent\s*(?::|\n)\s*([\s\S]*?)(?:\n\s*Required\s+Actions|\n\s*MPS\s*[A-Za-z0-9.]+\s*[–-]|$)/i,
+      /Intent\s*(?::|\n|(?=[A-Z]))\s*([\s\S]*?)(?:\n\s*Required\s+Actions|\n\s*Required\s+Actions|\n\s*MPS\s*[A-Za-z0-9.]+\s*[–-]|$)/i,
     );
     const intent = sanitizeForPostgresText((intentMatch?.[1] ?? '').replace(/\s+/g, ' ').trim());
     if (!intent || intent.length < 24) continue;
     const rawNumber = sanitizeForPostgresText(String(current[1] ?? '').trim());
     const numberDigits = rawNumber.match(/\d+/)?.[0] ?? rawNumber;
+    const mpsNumber = Number.parseInt(numberDigits, 10);
     const title = sanitizeForPostgresText(String(current[2] ?? '').trim());
     rows.push({
       organisation_id: organisationId,
       document_id: documentId,
       framework_id: frameworkId,
       source_mode: sourceMode,
-      domain_name: 'Leadership and Governance',
+      domain_name: domainNameForMpsNumber(Number.isFinite(mpsNumber) ? mpsNumber : 1),
       mps_code: rawNumber.toUpperCase().includes('MPS')
         ? rawNumber.toUpperCase()
-        : `D001.MPS${numberDigits.padStart(3, '0')}`,
+        : `${domainCodeForMpsNumber(Number.isFinite(mpsNumber) ? mpsNumber : 1)}.MPS${numberDigits.padStart(3, '0')}`,
       mps_title: title,
       intent_verbatim: intent,
       source_anchor: `MPS ${rawNumber}`,
@@ -190,7 +219,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: doc, error: docError } = await supabase
     .from('mmm_subject_knowledge_documents')
-    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes,tags')
+    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes')
     .eq('id', documentId)
     .eq('organisation_id', claims.orgId)
     .is('archived_at', null)
@@ -253,8 +282,12 @@ Deno.serve(async (req: Request) => {
       storagePath: doc.storage_path,
       tenantId: claims.orgId,
     });
-    const tags = Array.isArray(doc.tags) ? doc.tags.filter((tag): tag is string => typeof tag === 'string') : [];
-    const orgVerbatim = isOrganisationVerbatimSource(tags);
+    const sourceMode = deriveSourceModeFromSafeFields({
+      title: doc.title,
+      uploadNotes: doc.upload_notes,
+    });
+    const tags = buildSafeReprocessTags({ scopeType: doc.scope_type, sourceMode });
+    const orgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
 
     const extractedText = await extractBestEffortText({
       mimeType: doc.mime_type,
@@ -329,9 +362,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const frameworkIdTag = tags.find((tag) => tag.startsWith('framework_id:')) ?? null;
-    const frameworkId = frameworkIdTag ? frameworkIdTag.replace('framework_id:', '').trim() : null;
-    const sourceMode = deriveSourceModeFromTags(tags);
+    const frameworkId = null;
     const verbatimRows = buildVerbatimIndexRows({
       organisationId: claims.orgId,
       documentId,
@@ -352,8 +383,9 @@ Deno.serve(async (req: Request) => {
 
     const fileHash = await sha256Hex(`${doc.file_name}:${doc.storage_bucket}:${doc.storage_path}:${doc.file_size ?? 0}`);
     const isOrgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
+    const hasExtractedChunks = chunkPayloads.length > 0;
     const completionUpdate = {
-      processing_status: isOrgVerbatim && verbatimRows.length === 0 ? 'failed' : 'completed',
+      processing_status: hasExtractedChunks ? 'completed' : 'failed',
       processing_error: !kucResult.success && !kucResult.fallback
         ? sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`)
         : null,
@@ -371,7 +403,7 @@ Deno.serve(async (req: Request) => {
         String((kucResult.kuc_classification as Record<string, unknown> | null)?.extracted_text ?? ''),
       ).trim();
       completionUpdate.processing_error =
-        `VERBATIM source parse failed: no extractable MPS intent statements found. ` +
+        `VERBATIM source index warning: no extractable MPS intent statements were indexed; chunk fallback remains available. ` +
         `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0}, ` +
         `kuc_success=${kucResult.success}, kuc_error=${kucResult.error ?? 'none'}, kuc_chars=${kucTextCandidate.length}, ` +
         `kuc_base_url_present=${KUC_BASE_URL ? 'yes' : 'no'})`;

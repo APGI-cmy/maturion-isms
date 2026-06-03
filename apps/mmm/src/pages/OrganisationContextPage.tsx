@@ -44,6 +44,25 @@ type OrganisationSourceDoc = {
   created_at: string;
 };
 
+type ReprocessResponse = {
+  success?: boolean;
+  error?: string;
+  document_id?: string;
+  chunk_count?: number;
+};
+
+function formatOrganisationSourceStatus(doc: OrganisationSourceDoc): string {
+  const status = doc.processing_status ?? 'pending';
+  const chunks = doc.chunk_count ?? 0;
+  if (chunks > 0 && status.toLowerCase() === 'failed') {
+    return 'completed (chunks ready; parser/index warning)';
+  }
+  if (chunks > 0 && status.toLowerCase() !== 'completed') {
+    return `${status} (chunks ready for VERBATIM extraction)`;
+  }
+  return status;
+}
+
 function resolveMimeType(file: File): string {
   if (file.type && file.type.trim().length > 0) return file.type;
   const name = file.name.toLowerCase();
@@ -170,12 +189,16 @@ export default function OrganisationContextPage() {
     try {
       setActiveDocActionId(documentId);
       const headers = await getEdgeInvokeHeaders();
-      const { error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
+      const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
         headers,
         body: { document_id: documentId },
       });
       if (error) throw new Error(error.message || 'Reprocess failed.');
-      setMessage('Organisation source reprocess started/completed.');
+      const result = data as ReprocessResponse | null;
+      if (result?.success === false) {
+        throw new Error(result.error || 'Organisation source reprocess failed.');
+      }
+      setMessage(`Organisation source reprocess completed${typeof result?.chunk_count === 'number' ? ` with ${result.chunk_count} chunk(s)` : ''}.`);
       qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org?.id] });
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Reprocess failed.');
@@ -184,25 +207,15 @@ export default function OrganisationContextPage() {
     }
   };
 
-  const deleteOrganisationSource = async (doc: OrganisationSourceDoc) => {
+  const archiveOrganisationSource = async (doc: OrganisationSourceDoc) => {
     if (!org?.id) return;
     try {
       setActiveDocActionId(doc.id);
-      const confirmed = window.confirm(`Delete source document "${doc.title ?? doc.file_name ?? doc.id}"?`);
+      const confirmed = window.confirm(
+        `Archive source document "${doc.title ?? doc.file_name ?? doc.id}"? The uploaded file will be retained.`,
+      );
       if (!confirmed) return;
 
-      const { data: fullDoc, error: fullDocError } = await supabase
-        .from('mmm_subject_knowledge_documents')
-        .select('id,storage_bucket,storage_path')
-        .eq('id', doc.id)
-        .maybeSingle();
-      if (fullDocError || !fullDoc) throw new Error(fullDocError?.message || 'Document lookup failed.');
-
-      if (fullDoc.storage_bucket && fullDoc.storage_path) {
-        await supabase.storage.from(fullDoc.storage_bucket).remove([fullDoc.storage_path]);
-      }
-
-      await supabase.from('ai_knowledge').delete().eq('document_id', doc.id);
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData.session?.user?.id ?? null;
       const { error: archiveError } = await supabase
@@ -214,12 +227,12 @@ export default function OrganisationContextPage() {
         })
         .eq('id', doc.id)
         .eq('organisation_id', org.id);
-      if (archiveError) throw new Error(archiveError.message || 'Delete failed.');
+      if (archiveError) throw new Error(archiveError.message || 'Archive failed.');
 
-      setMessage('Organisation source deleted.');
+      setMessage('Organisation source archived. The uploaded file was retained for audit/recovery.');
       qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : 'Delete failed.');
+      setMessage(err instanceof Error ? err.message : 'Archive failed.');
     } finally {
       setActiveDocActionId(null);
     }
@@ -526,7 +539,7 @@ export default function OrganisationContextPage() {
                   <li key={doc.id} style={{ marginBottom: 8 }}>
                     <strong>{doc.title ?? doc.file_name ?? 'Untitled source'}</strong>
                     <div>
-                      status: {doc.processing_status ?? 'pending'} | chunks: {doc.chunk_count ?? 0}
+                      status: {formatOrganisationSourceStatus(doc)} | chunks: {doc.chunk_count ?? 0}
                     </div>
                     {doc.processing_error ? (
                       <div role="alert" style={{ color: '#b91c1c' }}>
@@ -545,10 +558,10 @@ export default function OrganisationContextPage() {
                       <button
                         type="button"
                         className="btn btn-secondary"
-                        onClick={() => deleteOrganisationSource(doc)}
+                        onClick={() => archiveOrganisationSource(doc)}
                         disabled={activeDocActionId === doc.id}
                       >
-                        Delete
+                        Archive
                       </button>
                     </div>
                   </li>

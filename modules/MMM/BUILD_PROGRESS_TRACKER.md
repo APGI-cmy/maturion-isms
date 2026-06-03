@@ -13,6 +13,70 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — VERBATIM MPS002 Criteria Extracts Format Instruction Instead Of Required Actions**
+  - **Observed Failure**: After MPS001 criteria extracted correctly, `D001.MPS002 — Chain of Custody and Security Control Committee` generated only `These actions are mandatory and should be implemented` instead of the real `2.1` through `2.8` Required Actions and `2.7.x` child evidence clauses.
+  - **Evidence**: Live UI screenshot showed a single uploaded-source criterion for MPS002. Source inspection showed the real document uses `MPS 2 - Chain of Custody and Diamond Control Committee`, while the MMM scaffold uses `Security Control Committee`; Word extraction also split `Committee` as `Commi ttee`. The source contains a reusable format instruction line, `Required Actions: These actions are mandatory...`, before the real MPS sections.
+  - **Root Cause**: The VERBATIM criteria matcher was too dependent on strict heading title matching, accepted broad block text matches that let table-of-contents/format sections leak into candidate blocks, and searched for the next MPS heading from inside the current heading, which could truncate the real block to an empty slice.
+  - **Prebuild/Architecture Update**: DMC architecture now requires criteria extraction to reject table-of-contents/format-instruction Required Actions and tolerate source/scaffold title drift when the MPS ordinal or same-ordinal numbered Required Actions identify the real section.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-030` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: The VERBATIM criteria extractor now starts next-heading searches after the matched heading, rejects page-number substring title matches such as `Leadership13`, matches title drift using significant heading-token overlap, treats same-ordinal numbered Required Actions as a positive section signal, and filters generic format-instruction text before criteria emission.
+
+- **2026-06-03 — VERBATIM Criteria Generation Falls Back To Hybrid/Generic Wording**
+  - **Observed Failure**: After intent extraction returned the Lucara source wording verbatim, criteria generation for `D001.MPS001 — Leadership` displayed a generic criterion (`A documented governance charter...`) with `(hybrid source)` instead of copying the source document's `Required Actions`.
+  - **Evidence**: `CriteriaManagement.tsx` resolved VERBATIM criteria only from `mmm_proposed_criteria`, which can contain older fallback/generated rows, and did not query processed organisation-source chunks for the matching MPS `Required Actions` block. After the first criteria fix, the live environment still showed the source-quality error because multiple historical Lucara duplicate rows had positive `chunk_count`, so criteria extraction could read older failed/binary duplicate chunks instead of the newest completed source row. After selecting the newest source row, live source chunks showed MPS 1 Required Actions across chunks 9-10; the extractor found the MPS block but failed because MPS 1 has no `Guidance` heading before the next MPS boundary. After the block terminator fix, criteria generated but some statements were truncated or duplicated because overlapped `ai_knowledge` chunks were concatenated with a raw newline rather than reconstructed.
+  - **Root Cause**: The criteria stage had not yet been upgraded to the same source-faithful extraction precedence as intent generation; it trusted proposed criteria as uploaded source without verifying the wording against `ai_knowledge`. The first source-chunk criteria path also combined all chunk-positive VERBATIM source documents instead of selecting the primary/newest usable source row, the Required Actions parser did not treat end-of-MPS-block as a valid terminator when `Guidance` is absent, and chunk overlap was not de-duplicated before paragraph extraction.
+  - **Prebuild/Architecture Update**: DMC architecture now requires VERBATIM criteria extraction from matching MPS `Required Actions` sections before proposed/AI/fallback paths.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-028` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: `CriteriaManagement` now selects the primary/newest chunk-positive `source_mode:VERBATIM` document, reconstructs overlapped `ai_knowledge` chunks before parsing, extracts the matching MPS `Required Actions` block as uploaded-source criteria including end-of-block terminated sections, verifies proposed criteria against processed source text before reuse, and blocks silent fallback when no source-faithful criteria are available.
+
+- **2026-06-03 — VERBATIM Criteria Parent Clauses Misaligned To Evidence Units**
+  - **Observed Failure**: MPS 1 Required Action `1.4` appeared as its own criterion, while the actual evidence-bearing subclauses `1.4.1` and `1.4.2` were either omitted as child structure or presented without the parent context needed for evidence collection.
+  - **Evidence**: User comparison showed the source document treats `1.4` as a stem and `1.4.1`/`1.4.2` as the auditable requirements. The generated criteria needed separate evidence categories for Golden Rules and awareness/training, each carrying the `1.4` parent stem.
+  - **Root Cause**: The VERBATIM criteria extractor treated each paragraph line as an evidence criterion instead of distinguishing parent context clauses from child evidence clauses.
+  - **Prebuild/Architecture Update**: DMC architecture now defines evidence categories as the smallest auditable Required Action units and requires child clauses to carry parent context.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-029` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: The VERBATIM criteria extractor now detects numbered child clauses and unnumbered child paragraphs such as consecutive `Through...` lines, skips the parent stem as standalone evidence, and emits each child as a separate source-faithful criterion with inherited parent context.
+
+- **2026-06-03 — VERBATIM Intent Extraction Fails Because DOCX Was Chunked As Binary**
+  - **Observed Failure**: After source reprocess showed `processing (chunks ready for VERBATIM extraction) | chunks: 1236`, regenerating intent still failed with `no source-faithful intent text could be extracted for D001.MPS001`.
+  - **Evidence**: Live `ai_knowledge` samples for the current Lucara source document started with raw DOCX ZIP bytes (`PK... [Content_Types].xml ... word/document.xml`) and keyword searches for `leadership`, `governance`, `management`, `policy`, `responsibility`, and related terms returned zero rows.
+  - **Root Cause**: The fallback extractor treated non-text files as `fileBlob.text()`/binary-adjacent content when KUC/AI parse did not return text, so `.docx` files were chunked before being unzipped into WordprocessingML text.
+  - **Prebuild/Architecture Update**: DMC architecture now requires deterministic DOCX unzip/text extraction before chunking and forbids raw Office package bytes as successful knowledge chunks.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-027` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: DOCX WordprocessingML extraction now runs before `ai_knowledge` writes, deterministic MPS intent indexing starts at the real MPS section with correct domain mapping, and the live Lucara source was repaired to `completed | chunks: 162` with 25 canonical verbatim index rows.
+
+- **2026-06-03 — VERBATIM Index Miss Demotes Chunked Source To Failed**
+  - **Observed Failure**: User reopened the Organisation Context page and found the Lucara source still attached to the profile but marked `failed | chunks: 1236`. Reprocess and fresh upload preserved chunks but repeated the same failed parser note.
+  - **Evidence**: UI parse note reported `chars=2224433`, `chunks=1236`, `mps_headings=0`, and `kuc_error=Invalid URL: 'KUC_BASE_URL = https://maturion-kuc-staging.onrender.com/api/upload/framework-source'`; code inspection found upload/reprocess using `processing_status: isOrgVerbatim && verbatimRows.length === 0 ? 'failed' : 'completed'`.
+  - **Root Cause**: The backend treated absence of canonical verbatim index rows as terminal failure even when extracted source chunks existed. The index builder also returned early when AI parse was unavailable instead of attempting deterministic extraction against full source text.
+  - **Prebuild/Architecture Update**: DMC architecture now states canonical verbatim index rows are preferred but chunk-positive sources remain usable and completed with warnings.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-026` and updated `T-MMM-DMC-025`/`T-MMM-S6-303`.
+  - **Build-to-Green Fix**: Upload/reprocess now keep chunk-positive VERBATIM sources completed with parser/index warnings, chunk fallback accepts existing failed-warning legacy rows, Organisation Source display clarifies chunk-ready parser warnings, and KUC base URL input is normalized before upload calls.
+
+- **2026-06-03 — VERBATIM Intent Gate Rejects Chunked Organisation Source**
+  - **Observed Failure**: User reported that Leadership and Governance intent generation still blocked after the Lucara source document processed. Organisation Source inventory showed `status: processing | chunks: 1236`, while the intent tab reported `Verbatim mode requires at least one processed source document (completed with extracted chunks)`.
+  - **Evidence**: `apps/mmm/src/lib/modeSourceContext.ts` accepted only `processing_status === 'completed' && chunk_count > 0`; `apps/mmm/src/hooks/useIntentGeneration.ts` used the same completed-only filter before querying `ai_knowledge`.
+  - **Root Cause**: VERBATIM readiness depended on the final ledger status label rather than the operational evidence required for extraction: chunk rows. A lagging final status PATCH could therefore block verbatim extraction even when chunks already existed.
+  - **Prebuild/Architecture Update**: DMC architecture addendum now defines chunk-positive non-failed organisation/framework sources as usable for VERBATIM extraction, with failed/zero-chunk sources still blocked.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-025` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: VERBATIM readiness and intent fallback are now chunk-aware while preserving strict source-faithful extraction; the Organisation Source UI labels chunk-positive status-lag rows as ready for VERBATIM extraction.
+
+- **2026-06-02 — Organisation Source Reprocess/Archive Appears To Remove Uploaded File**
+  - **Observed Failure**: User reported that clicking reprocess caused the uploaded organisation source file to disappear.
+  - **Evidence**: Code inspection found `OrganisationContextPage.tsx` placed `Reprocess` beside a `Delete` action that physically called Supabase Storage `.remove(...)` and then hid the row with `archived_at`. Reprocess itself did not remove storage, but the adjacent action created a destructive UI trap and audit-retention breach.
+  - **Root Cause**: Organisation Source page used destructive delete semantics instead of the DMC archive pattern; reprocess also ignored structured `{ success: false }` edge responses, allowing false success messaging.
+  - **Prebuild/Architecture Update**: DMC architecture addendum now requires organisation-source archive/reprocess to be non-destructive, retaining storage objects and chunks for audit/recovery.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-023` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Organisation Source UI now archives instead of deletes, preserves uploaded storage/chunks, and surfaces structured reprocess failure payloads. Reprocess edge function redeployed to Supabase project `ujucvyyspfxlxlfdamda`.
+
+- **2026-06-02 — MMM Vercel Production Guard Fails On Unconfigured Custom Domain**
+  - **Observed Failure**: `deploy-mmm-vercel.yml` failed in `Deploy Production` at `Guard custom domain serves same production JS hash` with `Could not fetch custom-domain HTML from: https://mmm.maturion.com`.
+  - **Evidence**: DNS lookup returned no records for `mmm.maturion.com`; Vercel project `maturion-isms-mmm` domains are `maturion-isms-mmm.vercel.app`, `maturion-isms-mmm-rassie-ras-projects.vercel.app`, and `maturion-isms-mmm-git-main-rassie-ras-projects.vercel.app`. `https://maturion-isms-mmm.vercel.app/` returned HTTP 200 and a current `/assets/index-*.js` bundle.
+  - **Root Cause**: Workflow hard-coded `https://mmm.maturion.com` as the production environment/guard target even though the MMM project is not configured with that custom domain and DNS does not resolve it.
+  - **Prebuild/Architecture Update**: DMC architecture addendum now binds MMM deploy validation to the configured Vercel project alias by default, with `MMM_CUSTOM_DOMAIN_URL` as the explicit opt-in custom-domain guard.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-024` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Vercel workflow now uses `https://maturion-isms-mmm.vercel.app` as canonical production URL unless a real custom domain is configured.
+
 - **2026-06-02 — Organisation Source Upload JSON Insert Failure**
   - **Observed Failure**: Organisation source upload displayed `invalid input syntax for type json`; uploaded document row remained `failed | chunks: 0`.
   - **Evidence**: Supabase live logs showed storage upload `POST 200`, `mmm_subject_knowledge_documents` insert `POST 201`, then three `ai_knowledge` insert attempts `POST 400` from `mmm-subject-knowledge-reprocess`, followed by a document status `PATCH 204` marking the row failed.
