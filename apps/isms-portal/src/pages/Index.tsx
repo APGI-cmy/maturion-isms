@@ -104,6 +104,13 @@ const Index: React.FC = () => {
     navigate(ROUTES.FREE_ASSESSMENT);
   };
 
+  const handleModuleKeyDown = (event: React.KeyboardEvent, route: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      navigate(route);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-violet-50/40">
       {/* Header */}
@@ -211,8 +218,12 @@ const Index: React.FC = () => {
             {ISMS_MODULE_CARDS.map((module) => (
               <Card
                 key={module.id}
-                className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer group border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open public overview for ${module.name}`}
+                className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer group border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
                 onClick={() => navigate(module.route)}
+                onKeyDown={(event) => handleModuleKeyDown(event, module.route)}
               >
                 <CardHeader className="text-center pb-4">
                   <div className="flex justify-end mb-2">
