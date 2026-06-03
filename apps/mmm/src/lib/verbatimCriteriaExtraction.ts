@@ -87,7 +87,7 @@ function collectCandidateMpsBlocks(params: {
 
 function extractRequiredActionsBlock(mpsBlock: string): string | null {
   const match = mpsBlock.match(
-    /Required\s+Actions\s*([\s\S]*?)(?=\n\s*(?:Guidance|Standard\s+of\s+Proof|Maturity\s+Level|Scoring|Evidence|Domain:|MPS\s*[A-Za-z0-9.]+\s*[\u2013-]|$))/i,
+    /Required\s+Actions\s*([\s\S]*?)(?=(?:\n\s*(?:Guidance|Standard\s+of\s+Proof|Maturity\s+Level|Scoring|Evidence|Domain:|MPS\s*[A-Za-z0-9.]+\s*[\u2013-])|$))/i,
   );
   const block = match?.[1]?.trim() ?? '';
   return block.length > 0 ? block : null;

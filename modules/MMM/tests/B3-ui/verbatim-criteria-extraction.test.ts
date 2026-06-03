@@ -106,6 +106,43 @@ The chain of custody for each operation will be set out in matrix form.
     ]);
   });
 
+  it('extracts Required Actions when the MPS block ends without a Guidance heading', () => {
+    const sourceText = `
+Leadership and Governance
+MPS 1 - Leadership
+Intent
+To set clear expectations for Security Management that are codified with a policy and supporting procedures.
+Required Actions
+A Security Policy signed by the most senior executive for Lucara Botswana should be prominently displayed.
+The Security Policy will be a short document that outlines company and individual obligations.
+MPS 2 - Chain of Custody and Diamond Control Committee
+Intent
+To provide clear accountability for custody.
+Required Actions
+The chain of custody for each operation will be set out in matrix form.
+`;
+
+    const criteria = extractVerbatimCriteriaFromKnowledge({
+      content: sourceText,
+      mpsCode: 'D001.MPS001',
+      mpsName: 'Leadership',
+      domainName: 'Leadership and Governance',
+    });
+
+    expect(criteria).toEqual([
+      {
+        code: 'D001.MPS001.C001',
+        statement:
+          'A Security Policy signed by the most senior executive for Lucara Botswana should be prominently displayed.',
+      },
+      {
+        code: 'D001.MPS001.C002',
+        statement:
+          'The Security Policy will be a short document that outlines company and individual obligations.',
+      },
+    ]);
+  });
+
   it('resolves MPS ordinals from MMM codes without coupling to document filenames', () => {
     expect(extractMpsOrdinal('D001.MPS001', 'Leadership')).toBe(1);
     expect(extractMpsOrdinal('MPS 12', 'Training')).toBe(12);
