@@ -26,7 +26,7 @@ import { PitShell } from './pages/pit/PitShell';
 
 const queryClient = new QueryClient();
 
-const protectedPitRoute = (title: string, description: string) => (
+const privateShellRoute = (title: string, description: string) => (
   <ProtectedRoute>
     <PitErrorBoundary>
       <PitShell title={title} description={description} />
@@ -148,28 +148,28 @@ const App = () => {
               {/* PIT Stage 12 Slice 1 protected runtime routes */}
               <Route
                 path={ROUTES.DASHBOARD}
-                element={protectedPitRoute(
+                element={privateShellRoute(
                   'PIT dashboard',
                   'Protected dashboard shell for the Project Implementation Tracker runtime foundation.',
                 )}
               />
               <Route
                 path={ROUTES.PROJECTS}
-                element={protectedPitRoute(
+                element={privateShellRoute(
                   'PIT projects',
                   'Protected project list shell for the Project Implementation Tracker runtime foundation.',
                 )}
               />
               <Route
                 path={ROUTES.PROJECTS_NEW}
-                element={protectedPitRoute(
+                element={privateShellRoute(
                   'Create PIT project',
                   'Protected project creation shell for the Project Implementation Tracker runtime foundation.',
                 )}
               />
               <Route
                 path={ROUTES.ONBOARDING}
-                element={protectedPitRoute(
+                element={privateShellRoute(
                   'PIT onboarding',
                   'Protected onboarding shell for the Project Implementation Tracker runtime foundation.',
                 )}
@@ -178,14 +178,14 @@ const App = () => {
               {/* ISMS W1 protected private placeholders */}
               <Route
                 path={ROUTES.ASSESSMENT}
-                element={protectedPitRoute(
+                element={privateShellRoute(
                   'ISMS assessment',
                   'Protected assessment workspace placeholder for the governed ISMS free assessment result flow.',
                 )}
               />
               <Route
                 path={ROUTES.MATURITY_SETUP}
-                element={protectedPitRoute(
+                element={privateShellRoute(
                   'Maturity setup',
                   'Protected maturity setup placeholder for post-subscription ISMS onboarding.',
                 )}
