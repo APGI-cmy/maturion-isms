@@ -151,6 +151,36 @@
 - **RED Condition**: `deploy-mmm-vercel.yml` hard-codes `https://mmm.maturion.com` even though Vercel project `maturion-isms-mmm` does not have that domain attached and DNS has no `mmm` record, causing production deploys to fail after successful build/deploy.
 - **GREEN Acceptance**: Workflow uses `https://maturion-isms-mmm.vercel.app` as the canonical production URL by default, while allowing an explicitly configured `MMM_CUSTOM_DOMAIN_URL` to opt back into custom-domain JS-hash validation once DNS/domain mapping exists.
 
+### T-MMM-DMC-025 — VERBATIM Intent Readiness Must Accept Chunk-Positive Organisation Sources
+- **Source**: Live VERBATIM intent-generation failure, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Organisation source inventory shows extracted chunks (`chunk_count > 0`) while the ledger status remains `processing`, and intent regeneration blocks with `Verbatim mode requires at least one processed source document`.
+- **GREEN Acceptance**: VERBATIM readiness and chunk fallback treat organisation/framework source documents with extracted chunks as usable for verbatim extraction, including parser/index-warning statuses, while zero-chunk sources remain blocked and status-lag warnings remain visible.
+
+### T-MMM-DMC-026 — VERBATIM Index Failure Must Not Demote Chunked Source To Failed
+- **Source**: Live organisation-source regression report, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Upload/reprocess writes `ai_knowledge` chunks (`chunk_count > 0`) but marks the organisation source `failed` because `mmm_org_source_verbatim_index` has no rows, causing the saved profile source to appear broken.
+- **GREEN Acceptance**: Upload/reprocess marks chunk-positive organisation VERBATIM sources `completed` with a parser/index warning note when canonical index rows are absent; only zero-chunk ingestion remains failed.
+
+### T-MMM-DMC-027 — DOCX Organisation Sources Must Be Unzipped Before Chunking
+- **Source**: Live VERBATIM intent extraction failure, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Uploaded `.docx` source produces `ai_knowledge` chunks containing raw ZIP/binary payload beginning with `PK` and Word package paths instead of searchable document text; intent extraction cannot find leadership/governance wording.
+- **GREEN Acceptance**: Upload/reprocess extracts readable text from DOCX `word/*.xml` entries before chunking, so `ai_knowledge.content` is searchable source text and VERBATIM intent extraction can operate on real document clauses.
+
+### T-MMM-DMC-028 — VERBATIM Criteria Must Copy Required Actions From Organisation Source
+- **Source**: Live VERBATIM criteria-generation drift, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Criteria generation for a source-backed VERBATIM MPS returns generic or Hybrid fallback wording such as `(hybrid source)` instead of copying the matching source document `Required Actions` block.
+- **GREEN Acceptance**: VERBATIM criteria generation resolves `source_mode:VERBATIM` organisation/framework documents, queries `ai_knowledge` chunks, extracts the matching MPS `Required Actions` text as uploaded-source criteria, and blocks with a source-quality error rather than silently falling back to generated criteria when no required actions are extractable.
+
+### T-MMM-DMC-029 — VERBATIM Criteria Must Preserve Evidence-Bearing Child Clauses
+- **Source**: Live VERBATIM criteria evidence-shape review, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A parent Required Action clause with child subclauses is saved as a standalone evidence criterion while its evidence-bearing child clauses are omitted, separated from parent context, or flattened into ambiguous fragments.
+- **GREEN Acceptance**: When a Required Action parent clause has child clauses (for example `1.4.1`, `1.4.2`, or unnumbered child paragraphs such as `Through...` lines), each child is emitted as its own evidence-bearing criterion with the parent stem carried into the statement; the parent stem is not emitted as a standalone evidence item.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational
@@ -184,8 +214,8 @@
 ### T-MMM-S6-303 — VERBATIM Source Processing Must Produce Canonical Verbatim Index Rows
 - **Source**: Verbatim runtime contract redesign (index-first lookup)
 - **Layer**: Unit/static + operational
-- **RED Condition**: Organisation source document is marked `completed` in VERBATIM mode with zero indexed `intent_verbatim` rows.
-- **GREEN Acceptance**: Reprocess/upload writes `mmm_org_source_verbatim_index` rows from parsed source and blocks completion (`processing_status=failed`) when none are extractable.
+- **RED Condition**: Organisation source document has no extracted chunks and no indexed `intent_verbatim` rows, yet is marked usable for VERBATIM generation.
+- **GREEN Acceptance**: Reprocess/upload writes `mmm_org_source_verbatim_index` rows when extractable; if rows are absent but chunks exist, the document remains completed with a warning and chunk fallback remains the source-of-truth path.
 
 ### T-MMM-S6-304 — VERBATIM Intent Regenerate Must Query Canonical Verbatim Index First
 - **Source**: Runtime determinism + anti-paraphrase policy

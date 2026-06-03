@@ -31,31 +31,55 @@ describe('T-MMM-S6-220: Verbatim intent generation quality gate', () => {
     expect(reprocess).toContain('extractBestEffortText');
   });
 
+  it('extracts DOCX WordprocessingML text before ai_knowledge chunking', () => {
+    const shared = readFile('supabase/functions/_shared/mmm-subject-knowledge.ts');
+    expect(shared).toContain("import JSZip from 'https://esm.sh/jszip@3.10.1'");
+    expect(shared).toContain('function extractDocxText');
+    expect(shared).toContain("path === 'word/document.xml'");
+    expect(shared).toContain("matchAll(/<w:p\\b[^>]*>([\\s\\S]*?)<\\/w:p>/g)");
+    expect(shared).toContain("matchAll(/<w:t\\b[^>]*>([\\s\\S]*?)<\\/w:t>/g)");
+    expect(shared).toContain('if (isDocxMimeType(mimeType))');
+    expect(shared).toContain('return docxText');
+  });
+
   it('queries canonical verbatim index before secondary extraction paths', () => {
     const src = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
     expect(src).toContain(".from('mmm_org_source_verbatim_index')");
     expect(src).toContain(".eq('organisation_id', orgId)");
-    expect(src).toContain('.eq(\'domain_name\', domainName)');
+    expect(src).toContain(".ilike('domain_name', `%${domainName}%`)");
   });
 
-  it('marks verbatim organisation source as failed when no extractable intents are indexed', () => {
+  it('keeps chunked verbatim organisation source completed when no extractable intents are indexed', () => {
     const upload = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');
     const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
     expect(upload).toContain('mmm_org_source_verbatim_index');
-    expect(upload).toContain("VERBATIM source parse failed: no extractable MPS intent statements found.");
+    expect(upload).toContain("processing_status: hasExtractedChunks ? 'completed' : 'failed'");
+    expect(upload).toContain('VERBATIM source index warning: no extractable MPS intent statements were indexed; chunk fallback remains available.');
     expect(upload).toContain('mps_headings=');
     expect(reprocess).toContain('mmm_org_source_verbatim_index');
-    expect(reprocess).toContain("VERBATIM source parse failed: no extractable MPS intent statements found.");
+    expect(reprocess).toContain("processing_status: hasExtractedChunks ? 'completed' : 'failed'");
+    expect(reprocess).toContain('VERBATIM source index warning: no extractable MPS intent statements were indexed; chunk fallback remains available.');
     expect(reprocess).toContain('mps_headings=');
+  });
+
+  it('normalizes malformed KUC_BASE_URL values before upload calls', () => {
+    const kucClient = readFile('supabase/functions/_shared/mmm-kuc-client.ts');
+    expect(kucClient).toContain('function normalizeKucBaseUrl');
+    expect(kucClient).toContain("raw.replace(/^\\s*KUC_BASE_URL\\s*=\\s*/i, '').trim()");
+    expect(kucClient).toContain("replace(/\\/api\\/upload\\/[^/?#]+\\/?$/i, '')");
   });
 
   it('includes deterministic MPS/Intent fallback extraction for LDCS-style source text blocks', () => {
     const upload = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');
     const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
-    expect(upload).toContain('Intent\\s*(?::|\\n)');
+    expect(upload).toContain('Intent\\s*(?::|\\n|(?=[A-Z]))');
     expect(upload).toContain('Required\\s+Actions');
-    expect(reprocess).toContain('Intent\\s*(?::|\\n)');
+    expect(upload).toContain('function domainNameForMpsNumber');
+    expect(upload).toContain('function domainCodeForMpsNumber');
+    expect(reprocess).toContain('Intent\\s*(?::|\\n|(?=[A-Z]))');
     expect(reprocess).toContain('Required\\s+Actions');
+    expect(reprocess).toContain('function domainNameForMpsNumber');
+    expect(reprocess).toContain('function domainCodeForMpsNumber');
   });
 
   it('requires AI Gateway parse schema to include MPS-level verbatim intent extraction fields', () => {

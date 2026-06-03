@@ -3,6 +3,7 @@ import { supabase, getEdgeInvokeHeaders } from '../lib/supabase';
 import {
   defaultModeSourceContext,
   evaluateModeSourceAvailability,
+  isChunkedSourceReadyForExtraction,
   resolveModeSourceContext,
 } from '../lib/modeSourceContext';
 
@@ -132,7 +133,7 @@ export function useIntentGeneration() {
             .from('mmm_org_source_verbatim_index')
             .select('mps_code,mps_title,intent_verbatim,domain_name,confidence')
             .eq('organisation_id', orgId)
-            .eq('domain_name', domainName);
+            .ilike('domain_name', `%${domainName}%`);
           const normalizedMpsName = normalizeLookup(mpsName);
           const indexedMatch = (verbatimIndexedRows ?? []).find((row) => {
             const code = String((row as { mps_code?: unknown }).mps_code ?? '');
@@ -155,8 +156,7 @@ export function useIntentGeneration() {
         const verbatimSourceDocIds = modeContext.mode_source_documents
           .filter(
             (doc) =>
-              doc.processing_status.toLowerCase() === 'completed' &&
-              doc.chunk_count > 0 &&
+              isChunkedSourceReadyForExtraction(doc) &&
               doc.tags.some((tag) => tag === 'source_mode:VERBATIM'),
           )
           .map((doc) => doc.id);
