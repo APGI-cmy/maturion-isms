@@ -133,6 +133,24 @@
 - **RED Condition**: Reprocess fails for specific legacy rows because optional JSON columns (for example `tags`) cannot be parsed.
 - **GREEN Acceptance**: Reprocess fetch path avoids hard dependency on optional legacy JSON payload fields; document can be processed using safe defaults.
 
+### T-MMM-DMC-022 — ai_knowledge JSON Retry Must Omit Metadata Column After Empty-Object Retry Fails
+- **Source**: Live organisation-source upload failure, 2026-06-02.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Organisation source upload writes storage + document ledger rows, but reprocess then fails all `ai_knowledge` insert retries with `invalid input syntax for type json`, leaving `processing_status=failed` and `chunk_count=0`.
+- **GREEN Acceptance**: Upload/reprocess sanitize the full `ai_knowledge` insert row and, after JSON metadata fallbacks still fail, retry without the `metadata` column so Postgres applies the table default `{}`.
+
+### T-MMM-DMC-023 — Organisation Source Archive/Reprocess Must Be Non-Destructive
+- **Source**: Live organisation-source reprocess confusion, 2026-06-02.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Reprocess or the adjacent organisation-source action physically removes the uploaded storage object, deletes canonical chunks before successful recovery, or reports success while the edge function returned `{ success: false }`.
+- **GREEN Acceptance**: Organisation Source UI presents Archive rather than Delete, retains the uploaded storage object and existing chunks for audit/recovery, and surfaces structured reprocess failure responses instead of showing a false completion message.
+
+### T-MMM-DMC-024 — MMM Vercel Guard Must Target Configured Production Alias
+- **Source**: Live GitHub Actions failure, 2026-06-02.
+- **Layer**: Unit/static + operational
+- **RED Condition**: `deploy-mmm-vercel.yml` hard-codes `https://mmm.maturion.com` even though Vercel project `maturion-isms-mmm` does not have that domain attached and DNS has no `mmm` record, causing production deploys to fail after successful build/deploy.
+- **GREEN Acceptance**: Workflow uses `https://maturion-isms-mmm.vercel.app` as the canonical production URL by default, while allowing an explicitly configured `MMM_CUSTOM_DOMAIN_URL` to opt back into custom-domain JS-hash validation once DNS/domain mapping exists.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

@@ -228,6 +228,30 @@ export function sanitizeForPostgresJson<T>(value: T): T {
   return value;
 }
 
+export function sanitizeKnowledgeInsertPayload(payload: Record<string, unknown>): Record<string, unknown> {
+  return {
+    organisation_id: sanitizeForPostgresText(String(payload.organisation_id ?? '')),
+    content: sanitizeForPostgresText(String(payload.content ?? '')),
+    source: sanitizeForPostgresText(String(payload.source ?? '')),
+    domain: sanitizeForPostgresText(String(payload.domain ?? '')),
+    module: sanitizeForPostgresText(String(payload.module ?? '')),
+    approval_status: sanitizeForPostgresText(String(payload.approval_status ?? 'approved')),
+    chunk_index: Number.isFinite(Number(payload.chunk_index)) ? Number(payload.chunk_index) : 0,
+    chunk_size: Number.isFinite(Number(payload.chunk_size)) ? Number(payload.chunk_size) : 2000,
+    chunk_overlap: Number.isFinite(Number(payload.chunk_overlap)) ? Number(payload.chunk_overlap) : 200,
+    source_document_name: sanitizeForPostgresText(String(payload.source_document_name ?? '')),
+    document_id: sanitizeForPostgresText(String(payload.document_id ?? '')),
+    content_hash: sanitizeForPostgresText(String(payload.content_hash ?? '')),
+    metadata: sanitizeForPostgresJson(payload.metadata ?? {}),
+  };
+}
+
+export function omitKnowledgeMetadataColumn(payload: Record<string, unknown>): Record<string, unknown> {
+  const sanitized = sanitizeKnowledgeInsertPayload(payload);
+  delete sanitized.metadata;
+  return sanitized;
+}
+
 function bytesToHex(bytes: Uint8Array): string {
   return [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
 }
@@ -278,7 +302,7 @@ export async function buildChunkPayloads(params: {
   for (let index = 0; index < chunks.length; index += 1) {
     const chunk = chunks[index];
     const contentHash = await sha256Hex(`${documentId}:${index}:${chunk}`);
-    payloads.push({
+    payloads.push(sanitizeKnowledgeInsertPayload({
       organisation_id: organisationId,
       content: chunk,
       source: safeSource,
@@ -295,7 +319,7 @@ export async function buildChunkPayloads(params: {
         ...safeMetadata,
         document_role: safeDocumentRole,
       },
-    });
+    }));
   }
 
   return payloads;

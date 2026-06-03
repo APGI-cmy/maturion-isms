@@ -37,6 +37,16 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
    - Legacy table/function contract retained (`ai_documents`, `ai_upload_audit`, `process-ai-document`).
    - Mode A/B/C framework workflows unchanged.
 
+6. **Organisation source retention**
+   - Organisation source documents are audit-bearing inputs and must not be physically removed by routine UI archive/reprocess actions.
+   - Archive hides the document from active organisation-source lists by setting `archived_at`; it retains the Supabase Storage object and existing canonical chunks for recovery, audit, and forensic diagnosis.
+   - Reprocess must report structured edge failure payloads to the UI. A non-transport response with `{ success: false }` is a failed reprocess, not a completed one.
+
+7. **Production deployment alias guard**
+   - MMM Vercel deployment validation must target the configured MMM project production alias by default: `https://maturion-isms-mmm.vercel.app`.
+   - `https://mmm.maturion.com` is not the default canonical target until it is attached to the Vercel project and resolves in DNS.
+   - Once a custom domain is configured, CI may opt into the same JS-hash guard with `MMM_CUSTOM_DOMAIN_URL`.
+
 ## QA Binding
 
 - `modules/MMM/05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`

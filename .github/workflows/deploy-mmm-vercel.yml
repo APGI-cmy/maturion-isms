@@ -438,7 +438,7 @@ jobs:
       contents: read
     environment:
       name: production
-      url: https://mmm.maturion.com
+      url: https://maturion-isms-mmm.vercel.app
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -611,14 +611,15 @@ jobs:
           echo "production-url=$url" >> $GITHUB_OUTPUT
           echo "Production URL: $url"
 
-      - name: Guard custom domain serves same production JS hash
+      - name: Guard canonical production URL serves same production JS hash
         env:
           PRODUCTION_URL: ${{ steps.deploy.outputs.production-url }}
+          MMM_CUSTOM_DOMAIN_URL: ${{ vars.MMM_CUSTOM_DOMAIN_URL || secrets.MMM_CUSTOM_DOMAIN_URL || '' }}
         run: |
           set -euo pipefail
 
-          CUSTOM_DOMAIN_URL="https://mmm.maturion.com"
           PROJECT_PRODUCTION_ALIAS="https://maturion-isms-mmm.vercel.app"
+          CANONICAL_PRODUCTION_URL="${MMM_CUSTOM_DOMAIN_URL:-$PROJECT_PRODUCTION_ALIAS}"
           DEPLOYED_URL="${PRODUCTION_URL:-}"
           REFERENCE_URL=""
           REFERENCE_ASSET=""
@@ -679,31 +680,32 @@ jobs:
             exit 1
           fi
 
-          custom_html=$(fetch_html "$CUSTOM_DOMAIN_URL" || true)
-          if [ -z "$custom_html" ]; then
-            echo "❌ FAIL: Could not fetch custom-domain HTML from: $CUSTOM_DOMAIN_URL"
-            echo "   Ensure DNS/domain mapping is healthy before promoting this deployment."
+          canonical_html=$(fetch_html "$CANONICAL_PRODUCTION_URL" || true)
+          if [ -z "$canonical_html" ]; then
+            echo "❌ FAIL: Could not fetch canonical production HTML from: $CANONICAL_PRODUCTION_URL"
+            echo "   If this is a custom domain, ensure DNS/domain mapping is healthy before promoting this deployment."
             exit 1
           fi
 
-          custom_asset=$(extract_asset "$custom_html")
+          canonical_asset=$(extract_asset "$canonical_html")
 
-          if [ -z "$custom_asset" ]; then
-            echo "❌ FAIL: Could not extract /assets/index-*.js from custom-domain HTML ($CUSTOM_DOMAIN_URL)."
+          if [ -z "$canonical_asset" ]; then
+            echo "❌ FAIL: Could not extract /assets/index-*.js from canonical production HTML ($CANONICAL_PRODUCTION_URL)."
             exit 1
           fi
 
-          custom_hash=$(extract_hash "$custom_asset")
+          canonical_hash=$(extract_hash "$canonical_asset")
 
           echo "Reference production URL: $REFERENCE_URL"
           echo "Reference production asset: $REFERENCE_ASSET (hash: $REFERENCE_HASH)"
-          echo "Custom domain asset:      $custom_asset (hash: $custom_hash)"
+          echo "Canonical production URL: $CANONICAL_PRODUCTION_URL"
+          echo "Canonical production asset: $canonical_asset (hash: $canonical_hash)"
 
-          if [ "$REFERENCE_HASH" != "$custom_hash" ]; then
-            echo "❌ FAIL: Custom domain serves a different JS hash than the just-deployed production URL."
+          if [ "$REFERENCE_HASH" != "$canonical_hash" ]; then
+            echo "❌ FAIL: Canonical production URL serves a different JS hash than the just-deployed production URL."
             echo "   reference: $REFERENCE_URL -> $REFERENCE_ASSET"
-            echo "   custom:   $CUSTOM_DOMAIN_URL -> $custom_asset"
-            echo "   This usually means domain alias/DNS still points at an older deployment."
+            echo "   canonical: $CANONICAL_PRODUCTION_URL -> $canonical_asset"
+            echo "   This usually means an alias/domain still points at an older deployment."
             exit 1
           fi
 
@@ -711,18 +713,18 @@ jobs:
             --connect-timeout 15 \
             --max-time 45 \
             "$REFERENCE_URL$REFERENCE_ASSET" 2>/dev/null || true)
-          custom_js=$(curl -L -sS --fail \
+          canonical_js=$(curl -L -sS --fail \
             --connect-timeout 15 \
             --max-time 45 \
-            "$CUSTOM_DOMAIN_URL$custom_asset" 2>/dev/null || true)
+            "$CANONICAL_PRODUCTION_URL$canonical_asset" 2>/dev/null || true)
 
           if [ -z "$reference_js" ]; then
             echo "❌ FAIL: Could not download reference production JS bundle for env validation."
             exit 1
           fi
 
-          if [ -z "$custom_js" ]; then
-            echo "❌ FAIL: Could not download custom-domain JS bundle for env validation."
+          if [ -z "$canonical_js" ]; then
+            echo "❌ FAIL: Could not download canonical production JS bundle for env validation."
             exit 1
           fi
 
@@ -732,13 +734,13 @@ jobs:
             exit 1
           fi
 
-          if has_empty_supabase_key_literal "$custom_js"; then
-            echo "❌ FAIL: Custom-domain JS bundle appears to embed an empty Supabase anon key."
+          if has_empty_supabase_key_literal "$canonical_js"; then
+            echo "❌ FAIL: Canonical production JS bundle appears to embed an empty Supabase anon key."
             echo "   This causes runtime blank pages with: 'supabaseKey is required'."
             exit 1
           fi
 
-          echo "✅ PASS: Custom domain and deployed production URL serve the same JS hash."
+          echo "✅ PASS: Canonical production URL and deployed production URL serve the same JS hash."
           echo "✅ PASS: Supabase anon key is not empty in both checked JS bundles."
 
       - name: Create deployment summary
@@ -756,7 +758,7 @@ jobs:
           PRODUCTION_URL: ${{ steps.deploy.outputs.production-url }}
           VITE_LIVE_DEPLOYMENT_URL: ${{ secrets.VITE_LIVE_DEPLOYMENT_URL }}
         run: |
-          SMOKE_URL="${PRODUCTION_URL:-${VITE_LIVE_DEPLOYMENT_URL:-https://mmm.maturion.com}}"
+          SMOKE_URL="${PRODUCTION_URL:-${VITE_LIVE_DEPLOYMENT_URL:-https://maturion-isms-mmm.vercel.app}}"
           echo "Running SPA direct-route smoke test (production) against: $SMOKE_URL"
           ROUTES=("/dashboard" "/frameworks" "/frameworks/upload")
           FAIL=0
@@ -794,7 +796,7 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
           echo "Running E2E auth smoke test against production URL..."
-          SMOKE_URL="${PRODUCTION_SITE_URL:-https://mmm.maturion.com}"
+          SMOKE_URL="${PRODUCTION_SITE_URL:-https://maturion-isms-mmm.vercel.app}"
           echo "Checking production app is reachable: $SMOKE_URL"
           http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$SMOKE_URL/" 2>/dev/null || echo "000")
           if echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
