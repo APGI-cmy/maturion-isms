@@ -19,8 +19,14 @@ import { hasTrimmedText, toTrimmedText } from '../../lib/safeText';
 import {
   defaultModeSourceContext,
   evaluateModeSourceAvailability,
+  isChunkedSourceReadyForExtraction,
   resolveModeSourceContext,
 } from '../../lib/modeSourceContext';
+import {
+  extractVerbatimCriteriaFromKnowledge,
+  isSourceFaithfulStatement,
+  normalizeVerbatimLookup,
+} from '../../lib/verbatimCriteriaExtraction';
 
 export interface GeneratedCriterionItem {
   code: string;
@@ -236,24 +242,70 @@ export function CriteriaManagement({
       }
 
       if (frameworkId && modeContext.framework_source_type === 'VERBATIM') {
+        const verbatimSourceDocIds = modeContext.mode_source_documents
+          .filter(
+            (doc) =>
+              isChunkedSourceReadyForExtraction(doc) &&
+              doc.tags.some((tag) => tag === 'source_mode:VERBATIM'),
+          )
+          .map((doc) => doc.id);
+        let processedVerbatimText = '';
+
+        if (verbatimSourceDocIds.length > 0) {
+          const { data: knowledgeRows } = await supabase
+            .from('ai_knowledge')
+            .select('content,chunk_index')
+            .in('document_id', verbatimSourceDocIds)
+            .order('chunk_index', { ascending: true });
+
+          processedVerbatimText = (knowledgeRows ?? [])
+            .map((row) => String((row as { content?: unknown }).content ?? ''))
+            .join('\n');
+
+          const sourceCriteria = extractVerbatimCriteriaFromKnowledge({
+            content: processedVerbatimText,
+            mpsCode: mps.code,
+            mpsName: mps.name,
+            domainName,
+          }).map((criterion) => ({
+            ...criterion,
+            source_origin: 'uploaded_source' as const,
+          }));
+
+          if (sourceCriteria.length > 0) {
+            const verbatimCriteria = dedupeCriteria(sourceCriteria);
+            setMpsCriteriaStates((prev) => ({
+              ...prev,
+              [mps.id]: {
+                isGenerating: false,
+                generatedCriteria: verbatimCriteria,
+                acceptedCodes: new Set(verbatimCriteria.map((c) => c.code)),
+                refinePrompt,
+                error: null,
+              },
+            }));
+            return;
+          }
+        }
+
         const { data: proposedDomains } = await supabase
           .from('mmm_proposed_domains')
           .select('id,name')
           .eq('framework_id', frameworkId);
-        const domainLookup = domainName.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        const domainLookup = normalizeVerbatimLookup(domainName);
         const proposedDomain = (proposedDomains ?? []).find(
           (row) =>
-            String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === domainLookup,
+            normalizeVerbatimLookup(String(row.name ?? '')) === domainLookup,
         );
         if (proposedDomain) {
           const { data: proposedMps } = await supabase
             .from('mmm_proposed_mps')
             .select('id,name,code')
             .eq('proposed_domain_id', proposedDomain.id);
-          const mpsNameLookup = mps.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          const mpsNameLookup = normalizeVerbatimLookup(mps.name);
           const linkedMps = (proposedMps ?? []).find(
             (row) =>
-              String(row.name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() ===
+              normalizeVerbatimLookup(String(row.name ?? '')) ===
                 mpsNameLookup || row.code === mps.code,
           );
           if (linkedMps) {
@@ -267,7 +319,10 @@ export function CriteriaManagement({
                 code: row.code || `${mps.code}-C${String(idx + 1).padStart(3, '0')}`,
                 statement: row.name,
                 source_origin: 'uploaded_source' as const,
-              })),
+              })).filter((criterion) =>
+                !processedVerbatimText ||
+                isSourceFaithfulStatement(processedVerbatimText, criterion.statement),
+              ),
             );
             if (verbatimCriteria.length > 0) {
               setMpsCriteriaStates((prev) => ({
@@ -285,7 +340,7 @@ export function CriteriaManagement({
           }
         }
         throw new Error(
-          `Verbatim criteria source is missing for ${mps.code} in ${domainName}. Please confirm the source document is uploaded, processed, and mapped.`,
+          `Verbatim mode is active, but no source Required Actions could be extracted for ${mps.code}. Reprocess the organisation source document and verify parsed chunk quality before regenerating criteria.`,
         );
       }
 
@@ -337,7 +392,8 @@ export function CriteriaManagement({
       const isSourceGate =
         message.includes('Verbatim mode requires') ||
         message.includes('Hybrid mode requires') ||
-        message.includes('Verbatim criteria source is missing');
+        message.includes('Verbatim criteria source is missing') ||
+        message.includes('no source Required Actions could be extracted');
       if (isSourceGate) {
         setMpsCriteriaStates((prev) => ({
           ...prev,

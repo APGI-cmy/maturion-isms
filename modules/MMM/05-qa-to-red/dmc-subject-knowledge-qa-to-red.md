@@ -169,6 +169,12 @@
 - **RED Condition**: Uploaded `.docx` source produces `ai_knowledge` chunks containing raw ZIP/binary payload beginning with `PK` and Word package paths instead of searchable document text; intent extraction cannot find leadership/governance wording.
 - **GREEN Acceptance**: Upload/reprocess extracts readable text from DOCX `word/*.xml` entries before chunking, so `ai_knowledge.content` is searchable source text and VERBATIM intent extraction can operate on real document clauses.
 
+### T-MMM-DMC-028 — VERBATIM Criteria Must Copy Required Actions From Organisation Source
+- **Source**: Live VERBATIM criteria-generation drift, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Criteria generation for a source-backed VERBATIM MPS returns generic or Hybrid fallback wording such as `(hybrid source)` instead of copying the matching source document `Required Actions` block.
+- **GREEN Acceptance**: VERBATIM criteria generation resolves `source_mode:VERBATIM` organisation/framework documents, queries `ai_knowledge` chunks, extracts the matching MPS `Required Actions` text as uploaded-source criteria, and blocks with a source-quality error rather than silently falling back to generated criteria when no required actions are extractable.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

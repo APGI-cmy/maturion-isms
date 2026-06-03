@@ -13,6 +13,14 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — VERBATIM Criteria Generation Falls Back To Hybrid/Generic Wording**
+  - **Observed Failure**: After intent extraction returned the Lucara source wording verbatim, criteria generation for `D001.MPS001 — Leadership` displayed a generic criterion (`A documented governance charter...`) with `(hybrid source)` instead of copying the source document's `Required Actions`.
+  - **Evidence**: `CriteriaManagement.tsx` resolved VERBATIM criteria only from `mmm_proposed_criteria`, which can contain older fallback/generated rows, and did not query processed organisation-source chunks for the matching MPS `Required Actions` block.
+  - **Root Cause**: The criteria stage had not yet been upgraded to the same source-faithful extraction precedence as intent generation; it trusted proposed criteria as uploaded source without verifying the wording against `ai_knowledge`.
+  - **Prebuild/Architecture Update**: DMC architecture now requires VERBATIM criteria extraction from matching MPS `Required Actions` sections before proposed/AI/fallback paths.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-028` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: `CriteriaManagement` now queries `source_mode:VERBATIM` source chunks from `ai_knowledge`, extracts the matching MPS `Required Actions` block as uploaded-source criteria, verifies proposed criteria against processed source text before reuse, and blocks silent fallback when no source-faithful criteria are available.
+
 - **2026-06-03 — VERBATIM Intent Extraction Fails Because DOCX Was Chunked As Binary**
   - **Observed Failure**: After source reprocess showed `processing (chunks ready for VERBATIM extraction) | chunks: 1236`, regenerating intent still failed with `no source-faithful intent text could be extracted for D001.MPS001`.
   - **Evidence**: Live `ai_knowledge` samples for the current Lucara source document started with raw DOCX ZIP bytes (`PK... [Content_Types].xml ... word/document.xml`) and keyword searches for `leadership`, `governance`, `management`, `policy`, `responsibility`, and related terms returned zero rows.
