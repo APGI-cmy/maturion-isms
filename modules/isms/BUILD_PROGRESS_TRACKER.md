@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-02  
-**Updated By**: foreman-agent (wave: `isms-stage11-w1-route-public-shell-20260602`)
+**Updated By**: foreman-agent (wave: `isms-w1-route-public-shell-20260602`)
 
-> **Classification**: ACTIVE — STAGE 11 W1 BUILDER APPOINTMENT CREATED; W1 EXECUTION NEXT AFTER MERGE  
+> **Classification**: ACTIVE — W1 BUILD EXECUTED; CI AND REVIEW GATES PENDING  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -26,26 +26,34 @@
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
 | Stage 11 | Builder Appointment | COMPLETE FOR W1 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md` |
-| Stage 12 | Build Execution & Evidence | NOT_STARTED — W1 execution next after merge | `modules/isms/11-build/` |
+| Stage 12 | W1 Build Execution & Evidence | IMPLEMENTED — CI PENDING | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
 
 ---
 
-## Stage 11: W1 Builder Appointment
+## Stage 12: W1 Route Public Shell
 
-**Status**: COMPLETE FOR W1 ONLY  
-**Location**: `.agent-admin/builder-appointments/`  
-**Primary Artifact**:
-- `isms-stage11-w1-route-public-shell-builder-appointment.md` — W1-only builder appointment for Route Registry, Public Pages, Redirects
+**Status**: IMPLEMENTED — CI AND REVIEW GATES PENDING  
+**Location**: `modules/isms/11-build/`  
+**Primary Evidence**:
+- `w1-route-public-shell-evidence.md` — W1 implementation evidence
+- `.agent-admin/quality/isms-w1-route-public-shell-20260602-foreman-qp.md` — Foreman QP
+- `.agent-admin/ecap/isms-w1-route-public-shell-20260602-ecap.md` — ECAP
+- `.agent-admin/assurance/iaa-wave-record-isms-w1-route-public-shell-20260602.md` — IAA wave record
+- `.agent-admin/assurance/iaa-token-isms-w1-route-public-shell-20260602.md` — IAA token
 
-**Notes**: Stage 11 appointment is limited to W1 only. W2-W8 are not appointed. Runtime implementation may begin only for W1 after this appointment PR is merged. Implementation handover remains blocked.
+**Runtime files changed**:
+- `apps/isms-portal/src/App.tsx`
+- `apps/isms-portal/src/lib/moduleCards.ts`
+- `apps/isms-portal/src/pages/Index.tsx`
+- `apps/isms-portal/src/pages/ModulesOverview.tsx`
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Stage 12 W1 Build Execution & Evidence is next after merge.  
+**Current Stage**: W1 PR review and CI gate inspection.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Execute W1 only, then perform Foreman QP, ECAP, IAA, PR CI gate inspection, and handover recommendation only if W1 evidence is satisfactory.
+**Next Required Action**: Open W1 implementation PR, inspect CI, resolve review conversations, and only then recommend W1 handover if evidence is satisfactory.
 
 ---
 
@@ -67,11 +75,13 @@
 - [x] Stage 10 IAA Pre-Brief filed
 - [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [x] Stage 11 W1 Builder Appointment complete
-- [ ] Stage 12 W1 Build Execution complete
-- [ ] W1 Foreman QP complete
-- [ ] W1 ECAP complete
-- [ ] W1 IAA complete
-- [ ] Implementation handover authorized
+- [x] Stage 12 W1 Build Execution implemented
+- [x] W1 Foreman QP filed
+- [x] W1 ECAP filed
+- [x] W1 IAA filed
+- [ ] W1 PR CI passed
+- [ ] W1 review conversations resolved
+- [ ] W1 handover authorized
 
 ---
 
@@ -80,10 +90,10 @@
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- W1 execution must stay limited to Route Registry, Public Pages, Redirects;
+- W1 PR CI must pass before handover recommendation;
+- W1 review conversations must be resolved or dispositioned;
 - W2-W8 remain unappointed and unauthorized;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
-- implementation build/test/CI evidence remains future-gated to W1 execution;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
 
 ---

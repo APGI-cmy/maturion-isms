@@ -10,6 +10,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
   DomainAuditCriterionRow,
+  DomainAuditLevelDescriptorRow,
   DomainAuditMpsRow,
 } from '../../hooks/useDomainAuditBuilder';
 import { supabase, getEdgeInvokeHeaders } from '../../lib/supabase';
@@ -108,6 +109,50 @@ function normalizeCriteriaKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
+interface CriterionEditDraft {
+  code: string;
+  name: string;
+}
+
+interface LevelDescriptorDraft {
+  level: number;
+  label: string;
+  descriptor_text: string;
+}
+
+interface CriterionActionMessage {
+  type: 'success' | 'error';
+  text: string;
+}
+
+const MATURITY_LEVELS: Array<{ level: number; label: string; guidance: string }> = [
+  {
+    level: 1,
+    label: 'Basic',
+    guidance: 'majority of requirements are not in place or remain informal and vulnerable',
+  },
+  {
+    level: 2,
+    label: 'Reactive',
+    guidance: 'some requirements are in place, but execution is inconsistent and response-led',
+  },
+  {
+    level: 3,
+    label: 'Compliant',
+    guidance: 'requirements are in place, documented, communicated, and managed in a clear framework',
+  },
+  {
+    level: 4,
+    label: 'Proactive',
+    guidance: 'the process is optimised, measured, improved, and anticipates future events',
+  },
+  {
+    level: 5,
+    label: 'Resilient',
+    guidance: 'the requirement is internalised, owned by everyone, and resilient under stress',
+  },
+];
+
 function dedupeCriteria(criteria: GeneratedCriterionItem[]): GeneratedCriterionItem[] {
   const seen = new Set<string>();
   const next: GeneratedCriterionItem[] = [];
@@ -118,6 +163,30 @@ function dedupeCriteria(criteria: GeneratedCriterionItem[]): GeneratedCriterionI
     next.push(item);
   }
   return next;
+}
+
+function buildMaturityDescriptorDrafts(criterion: DomainAuditCriterionRow): LevelDescriptorDraft[] {
+  return MATURITY_LEVELS.map(({ level, label, guidance }) => ({
+    level,
+    label,
+    descriptor_text: `${label}: ${criterion.name} - ${guidance}.`,
+  }));
+}
+
+function descriptorCoverage(
+  criteriaRows: DomainAuditCriterionRow[],
+  levelDescriptorsByCriterion: Record<string, DomainAuditLevelDescriptorRow[]>,
+): { completeCriteria: number; totalDescriptors: number } {
+  return criteriaRows.reduce(
+    (coverage, criterion) => {
+      const count = levelDescriptorsByCriterion[criterion.id]?.length ?? 0;
+      return {
+        completeCriteria: coverage.completeCriteria + (count >= 5 ? 1 : 0),
+        totalDescriptors: coverage.totalDescriptors + count,
+      };
+    },
+    { completeCriteria: 0, totalDescriptors: 0 },
+  );
 }
 
 export interface CriteriaManagementProps {
@@ -131,6 +200,8 @@ export interface CriteriaManagementProps {
   mpsRows: DomainAuditMpsRow[];
   /** Criteria rows grouped by MPS id. */
   criteriaByMps: Record<string, DomainAuditCriterionRow[]>;
+  /** Level descriptors grouped by criterion id. */
+  levelDescriptorsByCriterion: Record<string, DomainAuditLevelDescriptorRow[]>;
   /** Whether MPS/criteria rows are still loading. */
   isLoading: boolean;
   /** Visible error state for failed domain workflow reads. */
@@ -151,6 +222,7 @@ export function CriteriaManagement({
   open,
   mpsRows,
   criteriaByMps,
+  levelDescriptorsByCriterion,
   isLoading,
   errorMessage,
   onClose,
@@ -159,9 +231,13 @@ export function CriteriaManagement({
   const queryClient = useQueryClient();
   const [mpsCriteriaStates, setMpsCriteriaStates] = useState<Record<string, PerMpsCriteriaState>>({});
   const [addCriteriaDrafts, setAddCriteriaDrafts] = useState<Record<string, string>>({});
+  const [criterionEditDrafts, setCriterionEditDrafts] = useState<Record<string, CriterionEditDraft>>({});
+  const [descriptorDraftsByCriterion, setDescriptorDraftsByCriterion] = useState<Record<string, LevelDescriptorDraft[]>>({});
+  const [criterionActionMessages, setCriterionActionMessages] = useState<Record<string, CriterionActionMessage>>({});
 
   const resetAllStates = useCallback(() => {
     setMpsCriteriaStates({});
+    setCriterionActionMessages({});
   }, []);
 
   // NBR-003: reset generation state when domainId changes
@@ -175,6 +251,17 @@ export function CriteriaManagement({
       resetAllStates();
     }
   }, [open, resetAllStates]);
+
+  useEffect(() => {
+    const nextDrafts: Record<string, CriterionEditDraft> = {};
+    Object.values(criteriaByMps).flat().forEach((criterion) => {
+      nextDrafts[criterion.id] = {
+        code: criterion.code,
+        name: criterion.name,
+      };
+    });
+    setCriterionEditDrafts(nextDrafts);
+  }, [criteriaByMps]);
 
   const mpsIds = mpsRows.map((m) => m.id);
 
@@ -212,6 +299,75 @@ export function CriteriaManagement({
         const current = prev[mpsId] ?? { isGenerating: false, generatedCriteria: [], acceptedCodes: new Set(), refinePrompt: '', error: null };
         return { ...prev, [mpsId]: { ...current, error: err.message } };
       });
+    },
+  });
+
+  const updateCriterionMutation = useMutation({
+    mutationFn: async (criterion: DomainAuditCriterionRow) => {
+      const draft = criterionEditDrafts[criterion.id];
+      if (!draft?.name.trim() || !draft?.code.trim()) {
+        throw new Error('Criterion code and text are required before saving.');
+      }
+      const { error } = await supabase
+        .from('mmm_criteria')
+        .update({
+          code: draft.code.trim(),
+          name: draft.name.trim(),
+        })
+        .eq('id', criterion.id);
+      if (error) throw new Error(error.message);
+      return criterion.id;
+    },
+    onSuccess: (_criterionId, criterion) => {
+      queryClient.invalidateQueries({ queryKey: ['domain-audit-criteria', mpsIds] });
+      setCriterionActionMessages((prev) => ({
+        ...prev,
+        [criterion.id]: { type: 'success', text: 'Criterion edit saved.' },
+      }));
+    },
+    onError: (err: Error, criterion) => {
+      setCriterionActionMessages((prev) => ({
+        ...prev,
+        [criterion.id]: { type: 'error', text: err.message },
+      }));
+    },
+  });
+
+  const saveDescriptorMutation = useMutation({
+    mutationFn: async (criterion: DomainAuditCriterionRow) => {
+      const drafts = descriptorDraftsByCriterion[criterion.id] ??
+        (levelDescriptorsByCriterion[criterion.id] ?? []).map((descriptor) => ({
+          level: descriptor.level,
+          label: MATURITY_LEVELS.find((item) => item.level === descriptor.level)?.label ?? `Level ${descriptor.level}`,
+          descriptor_text: descriptor.descriptor_text,
+        }));
+      if (drafts.length !== 5 || drafts.some((draft) => !draft.descriptor_text.trim())) {
+        throw new Error('All five maturity level descriptors must be completed before saving.');
+      }
+      const { error } = await supabase.from('mmm_level_descriptors').upsert(
+        drafts.map((draft) => ({
+          criterion_id: criterion.id,
+          level: draft.level,
+          descriptor_text: draft.descriptor_text.trim(),
+        })),
+        { onConflict: 'criterion_id,level' },
+      );
+      if (error) throw new Error(error.message);
+      return criterion.id;
+    },
+    onSuccess: (_criterionId, criterion) => {
+      queryClient.invalidateQueries({ queryKey: ['domain-audit-level-descriptors'] });
+      queryClient.invalidateQueries({ queryKey: ['domain-audit-criteria', mpsIds] });
+      setCriterionActionMessages((prev) => ({
+        ...prev,
+        [criterion.id]: { type: 'success', text: 'Maturity descriptors saved.' },
+      }));
+    },
+    onError: (err: Error, criterion) => {
+      setCriterionActionMessages((prev) => ({
+        ...prev,
+        [criterion.id]: { type: 'error', text: err.message },
+      }));
     },
   });
 
@@ -520,6 +676,66 @@ export function CriteriaManagement({
     setAddCriteriaDrafts((prev) => ({ ...prev, [mps.id]: '' }));
   };
 
+  const handleCriterionDraftChange = (
+    criterionId: string,
+    field: keyof CriterionEditDraft,
+    value: string,
+  ) => {
+    setCriterionEditDrafts((prev) => ({
+      ...prev,
+      [criterionId]: {
+        ...(prev[criterionId] ?? { code: '', name: '' }),
+        [field]: value,
+      },
+    }));
+  };
+
+  const getDescriptorDrafts = (criterion: DomainAuditCriterionRow): LevelDescriptorDraft[] => {
+    const activeDrafts = descriptorDraftsByCriterion[criterion.id];
+    if (activeDrafts) return activeDrafts;
+    const storedDescriptors = levelDescriptorsByCriterion[criterion.id] ?? [];
+    if (storedDescriptors.length > 0) {
+      return MATURITY_LEVELS.map(({ level, label }) => {
+        const stored = storedDescriptors.find((descriptor) => descriptor.level === level);
+        return {
+          level,
+          label,
+          descriptor_text: stored?.descriptor_text ?? '',
+        };
+      });
+    }
+    return [];
+  };
+
+  const handleGenerateDescriptors = (criterion: DomainAuditCriterionRow) => {
+    setDescriptorDraftsByCriterion((prev) => ({
+      ...prev,
+      [criterion.id]: buildMaturityDescriptorDrafts(criterion),
+    }));
+  };
+
+  const handleDescriptorDraftChange = (
+    criterionId: string,
+    level: number,
+    descriptorText: string,
+  ) => {
+    setDescriptorDraftsByCriterion((prev) => {
+      const existing =
+        prev[criterionId] ??
+        MATURITY_LEVELS.map(({ level: itemLevel, label }) => ({
+          level: itemLevel,
+          label,
+          descriptor_text: '',
+        }));
+      return {
+        ...prev,
+        [criterionId]: existing.map((draft) =>
+          draft.level === level ? { ...draft, descriptor_text: descriptorText } : draft,
+        ),
+      };
+    });
+  };
+
   if (!open) return null;
 
   return (
@@ -532,7 +748,7 @@ export function CriteriaManagement({
     >
       <div className="modal-content">
         <div className="modal-header">
-          <h2 className="modal-title">Create Criteria</h2>
+          <h2 className="modal-title">Criteria Management</h2>
           <button
             type="button"
             className="modal-close"
@@ -561,6 +777,11 @@ export function CriteriaManagement({
               {mpsRows.map((mps) => {
                 const criteriaRows = criteriaByMps[mps.id] ?? [];
                 const state = mpsCriteriaStates[mps.id];
+                const coverage = descriptorCoverage(criteriaRows, levelDescriptorsByCriterion);
+                const descriptorSummary =
+                  criteriaRows.length > 0
+                    ? `${coverage.completeCriteria}/${criteriaRows.length} criteria have full level descriptors`
+                    : 'No criteria yet';
                 return (
                   <section key={mps.id} className="criteria-group" data-testid="criteria-group">
                     <h3>
@@ -572,6 +793,12 @@ export function CriteriaManagement({
                         ? toTrimmedText(mps.intent_statement)
                         : 'No intent statement stored for this MPS yet.'}
                     </p>
+                    <div className="criteria-group__dashboard" data-testid={`criteria-mps-dashboard-${mps.id}`}>
+                      <span><strong>{criteriaRows.length}</strong> criteria</span>
+                      <span><strong>{coverage.totalDescriptors}</strong> level descriptor statements</span>
+                      <span>MPS maturity: <strong>Not rated yet</strong></span>
+                      <span>{descriptorSummary}</span>
+                    </div>
 
                     {/* Per-MPS error (NBR-005) */}
                     {state?.error ? (
@@ -603,18 +830,120 @@ export function CriteriaManagement({
                          {criteriaRows.length === 0 ? (
                           <p>No criteria rows are currently stored for this MPS.</p>
                         ) : (
-                          <ol className="modal-list">
+                          <div className="criteria-card-list">
                             {criteriaRows.map((criterion) => (
-                              <li
+                              <article
                                 key={criterion.id}
-                                className="modal-list__item"
+                                className="criteria-card"
                                 data-testid="criteria-row"
                               >
-                                <strong>{criterion.code}</strong> — {criterion.name} (sort order:{' '}
-                                {criterion.sort_order})
-                              </li>
+                                <div className="criteria-card__header">
+                                  <div>
+                                    <label htmlFor={`criteria-code-${criterion.id}`}>Criterion code</label>
+                                    <input
+                                      id={`criteria-code-${criterion.id}`}
+                                      className="form-control"
+                                      value={criterionEditDrafts[criterion.id]?.code ?? criterion.code}
+                                      onChange={(event) =>
+                                        handleCriterionDraftChange(criterion.id, 'code', event.target.value)
+                                      }
+                                      data-testid={`criteria-code-input-${criterion.id}`}
+                                    />
+                                  </div>
+                                  <div>
+                                    <span>Sort order: {criterion.sort_order}</span>
+                                    <span>
+                                      Descriptor coverage:{' '}
+                                      {(levelDescriptorsByCriterion[criterion.id] ?? []).length}/5
+                                    </span>
+                                  </div>
+                                </div>
+                                <label htmlFor={`criteria-text-${criterion.id}`}>Criterion statement</label>
+                                <textarea
+                                  id={`criteria-text-${criterion.id}`}
+                                  className="form-control"
+                                  rows={3}
+                                  value={criterionEditDrafts[criterion.id]?.name ?? criterion.name}
+                                  onChange={(event) =>
+                                    handleCriterionDraftChange(criterion.id, 'name', event.target.value)
+                                  }
+                                  data-testid={`criteria-name-input-${criterion.id}`}
+                                />
+                                <div className="criteria-card__actions">
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline"
+                                    onClick={() => updateCriterionMutation.mutate(criterion)}
+                                    disabled={updateCriterionMutation.isPending}
+                                    data-testid={`criteria-save-btn-${criterion.id}`}
+                                  >
+                                    Save criterion edit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => handleGenerateDescriptors(criterion)}
+                                    data-testid={`generate-descriptors-btn-${criterion.id}`}
+                                  >
+                                    {(levelDescriptorsByCriterion[criterion.id] ?? []).length > 0
+                                      ? 'Regenerate maturity descriptors'
+                                      : 'Create maturity descriptors'}
+                                  </button>
+                                </div>
+                                {criterionActionMessages[criterion.id] ? (
+                                  <div
+                                    className={`criteria-card__message criteria-card__message--${criterionActionMessages[criterion.id].type}`}
+                                    role={criterionActionMessages[criterion.id].type === 'error' ? 'alert' : 'status'}
+                                  >
+                                    {criterionActionMessages[criterion.id].text}
+                                  </div>
+                                ) : null}
+
+                                {getDescriptorDrafts(criterion).length > 0 ? (
+                                  <div
+                                    className="level-descriptor-grid"
+                                    data-testid={`level-descriptor-grid-${criterion.id}`}
+                                  >
+                                    {getDescriptorDrafts(criterion).map((descriptor) => (
+                                      <div
+                                        key={descriptor.level}
+                                        className={`level-descriptor-card level-descriptor-card--${descriptor.level}`}
+                                      >
+                                        <label htmlFor={`descriptor-${criterion.id}-${descriptor.level}`}>
+                                          {descriptor.label}
+                                        </label>
+                                        <textarea
+                                          id={`descriptor-${criterion.id}-${descriptor.level}`}
+                                          className="form-control"
+                                          rows={4}
+                                          value={descriptor.descriptor_text}
+                                          onChange={(event) =>
+                                            handleDescriptorDraftChange(
+                                              criterion.id,
+                                              descriptor.level,
+                                              event.target.value,
+                                            )
+                                          }
+                                          data-testid={`descriptor-input-${criterion.id}-${descriptor.level}`}
+                                        />
+                                      </div>
+                                    ))}
+                                    <div className="criteria-card__actions">
+                                      <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={() => saveDescriptorMutation.mutate(criterion)}
+                                        disabled={saveDescriptorMutation.isPending}
+                                        data-testid={`save-descriptors-btn-${criterion.id}`}
+                                      >
+                                        Save maturity descriptors
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : null}
+                              </article>
                             ))}
-                          </ol>
+                          </div>
                         )}
                          <EnhancedCriteriaGenerator
                            mpsId={mps.id}

@@ -30,17 +30,25 @@ type Scenario = {
     name: string;
     code: string;
     sort_order: number;
+    maturity_level_target?: number | null;
+  }>;
+  levelDescriptorRows: Array<{
+    id: string;
+    criterion_id: string;
+    level: number;
+    descriptor_text: string;
   }>;
   pendingTable: string | null;
   failTable: string | null;
 };
 
-const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, configureAIError, mockInsert, mockUpdate } = vi.hoisted(() => {
+const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, configureAIError, mockInsert, mockUpdate, mockUpsert } = vi.hoisted(() => {
   const calls: Array<Record<string, unknown>> = [];
   let scenario: Scenario = {
     domainRows: [],
     mpsRows: [],
     criteriaRows: [],
+    levelDescriptorRows: [],
     pendingTable: null,
     failTable: null,
   };
@@ -66,6 +74,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
   };
 
   const insert = vi.fn(() => Promise.resolve({ data: [], error: null }));
+  const upsert = vi.fn(() => Promise.resolve({ data: [], error: null }));
   const update = vi.fn(() => ({
     eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
   }));
@@ -101,6 +110,12 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
           };
         }
 
+        if (table === 'mmm_level_descriptors' && column === 'criterion_id') {
+          return {
+            order: () => queryResult(table, scenario.levelDescriptorRows),
+          };
+        }
+
         return {
           order: () => queryResult(table, []),
         };
@@ -109,6 +124,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
       single: () => queryResult(table, []),
     })),
     insert,
+    upsert,
     update,
   }));
 
@@ -132,6 +148,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
       scenario = {
         mpsRows: [],
         criteriaRows: [],
+        levelDescriptorRows: [],
         pendingTable: null,
         failTable: null,
         ...next,
@@ -139,6 +156,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
       calls.length = 0;
       from.mockClear();
       insert.mockClear();
+      upsert.mockClear();
       update.mockClear();
       functionsInvoke.mockClear();
       aiInvokeResult = { data: { reply: '[]' }, error: null };
@@ -152,6 +170,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
     supabaseCalls: calls,
     mockInsert: insert,
     mockUpdate: update,
+    mockUpsert: upsert,
   };
 });
 
@@ -254,6 +273,7 @@ function renderCriteriaManagement(props?: Partial<React.ComponentProps<typeof Cr
         open={true}
         mpsRows={baseMpsRowsForModal}
         criteriaByMps={{}}
+        levelDescriptorsByCriterion={{}}
         isLoading={false}
         errorMessage={null}
         onClose={vi.fn()}
@@ -380,9 +400,59 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const groups = await screen.findAllByTestId('criteria-group');
     expect(groups).toHaveLength(2);
     expect(within(groups[0]).getByText(/PI-001 — Workflow Ownership/)).toBeTruthy();
-    expect(within(groups[0]).getByText(/PI-001-C001/)).toBeTruthy();
-    expect(within(groups[0]).getByText(/Approval checkpoints documented/)).toBeTruthy();
-    expect(within(groups[1]).getByText(/PI-002-C001/)).toBeTruthy();
+    expect(within(groups[0]).getByDisplayValue('PI-001-C001')).toBeTruthy();
+    expect(within(groups[0]).getByDisplayValue('Approval checkpoints documented')).toBeTruthy();
+    expect(within(groups[1]).getByDisplayValue('PI-002-C001')).toBeTruthy();
+  });
+
+  it('criteria step card renders a per-MPS criteria dashboard and reopens as view/edit', async () => {
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').textContent).toContain('View / Edit Criteria (3)');
+    });
+    expect(screen.getByTestId('criteria-step-dashboard')).toBeTruthy();
+    const dashboardItems = screen.getAllByTestId('criteria-step-dashboard-item');
+    expect(dashboardItems).toHaveLength(2);
+    expect(dashboardItems[0].textContent).toContain('PI-001');
+    expect(dashboardItems[0].textContent).toContain('2');
+    expect(dashboardItems[1].textContent).toContain('PI-002');
+    expect(dashboardItems[1].textContent).toContain('1');
+  });
+
+  it('saved criteria can be edited from the criteria modal', async () => {
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    const input = await screen.findByTestId('criteria-name-input-criterion-1') as HTMLTextAreaElement;
+    fireEvent.change(input, { target: { value: 'Workflow owner formally assigned and reviewed' } });
+    fireEvent.click(screen.getByTestId('criteria-save-btn-criterion-1'));
+
+    await waitFor(() => expect(mockUpdate).toHaveBeenCalled());
+  });
+
+  it('criteria cards generate and save five maturity level descriptors', async () => {
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-1'));
+
+    const descriptorGrid = await screen.findByTestId('level-descriptor-grid-criterion-1');
+    expect(within(descriptorGrid).getByText('Basic')).toBeTruthy();
+    expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
+
+    await waitFor(() => expect(mockUpsert).toHaveBeenCalled());
+    const upsertArg = mockUpsert.mock.calls[0][0] as Array<Record<string, unknown>>;
+    expect(upsertArg).toHaveLength(5);
+    expect(upsertArg[0]).toMatchObject({ criterion_id: 'criterion-1', level: 1 });
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {

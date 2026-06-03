@@ -16,12 +16,9 @@ import {
   Lock,
   BarChart,
   Rocket,
-  TrendingUp,
-  Database,
-  GraduationCap,
-  AlertCircle,
 } from 'lucide-react';
 import { ROUTES } from '@/lib/routes';
+import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
 
 const OPERATIONAL_DOMAINS = [
   {
@@ -74,86 +71,6 @@ const OPERATIONAL_DOMAINS = [
   },
 ];
 
-const ISMS_MODULES = [
-  {
-    name: 'Maturity Roadmap',
-    description: 'Build and assess your organizational security maturity with AI-driven insights',
-    icon: TrendingUp,
-    route: ROUTES.MARKETING_MATURITY_ROADMAP,
-    gradient: 'from-emerald-400 to-green-500',
-    bgGradient: 'from-emerald-50 to-green-50',
-    borderColor: 'border-emerald-200',
-    badge: 'Foundation',
-    badgeVariant: 'default' as const,
-  },
-  {
-    name: 'Risk Management',
-    description: 'Comprehensive risk identification, assessment, and mitigation strategies',
-    icon: Shield,
-    route: ROUTES.MARKETING_RISK_MANAGEMENT,
-    gradient: 'from-orange-400 to-amber-500',
-    bgGradient: 'from-orange-50 to-amber-50',
-    borderColor: 'border-orange-200',
-    badge: 'Coming Soon',
-    badgeVariant: 'secondary' as const,
-  },
-  {
-    name: 'Project Implementation Tracking',
-    description: 'Automated process testing, control effectiveness, and continuous monitoring',
-    icon: Settings,
-    route: ROUTES.MARKETING_PROJECT_IMPLEMENTATION,
-    gradient: 'from-blue-400 to-cyan-500',
-    bgGradient: 'from-blue-50 to-cyan-50',
-    borderColor: 'border-blue-200',
-    badge: 'Coming Soon',
-    badgeVariant: 'secondary' as const,
-  },
-  {
-    name: 'Data Analytics & Assurance',
-    description: 'Real-time dashboards, predictive analytics, and AI-powered insights',
-    icon: BarChart,
-    route: ROUTES.MARKETING_DATA_ANALYTICS,
-    gradient: 'from-purple-400 to-indigo-500',
-    bgGradient: 'from-purple-50 to-indigo-50',
-    borderColor: 'border-purple-200',
-    badge: 'Coming Soon',
-    badgeVariant: 'secondary' as const,
-  },
-  {
-    name: 'Systems Integration',
-    description: 'Connect multiple data sources with automated extraction and transformation',
-    icon: Database,
-    route: ROUTES.MARKETING_SYSTEMS_INTEGRATION,
-    gradient: 'from-cyan-400 to-teal-500',
-    bgGradient: 'from-cyan-50 to-teal-50',
-    borderColor: 'border-cyan-200',
-    badge: 'Coming Soon',
-    badgeVariant: 'secondary' as const,
-  },
-  {
-    name: 'Skills Development',
-    description: 'Globally recognized development track for the next generation of security professionals',
-    icon: GraduationCap,
-    route: ROUTES.MARKETING_SKILLS_DEVELOPMENT,
-    gradient: 'from-teal-400 to-green-500',
-    bgGradient: 'from-teal-50 to-green-50',
-    borderColor: 'border-teal-200',
-    badge: 'Coming Soon',
-    badgeVariant: 'secondary' as const,
-  },
-  {
-    name: 'Incident & Intelligence Hub',
-    description: '24/7 incident tracking, automated escalation, root cause analysis, and response intelligence',
-    icon: AlertCircle,
-    route: ROUTES.MARKETING_INCIDENT_INTELLIGENCE,
-    gradient: 'from-red-400 to-pink-500',
-    bgGradient: 'from-red-50 to-pink-50',
-    borderColor: 'border-red-200',
-    badge: 'Coming Soon',
-    badgeVariant: 'secondary' as const,
-  },
-];
-
 const FEATURE_PROMISES = [
   {
     icon: Clock,
@@ -187,6 +104,13 @@ const Index: React.FC = () => {
     navigate(ROUTES.FREE_ASSESSMENT);
   };
 
+  const handleModuleKeyDown = (event: React.KeyboardEvent, route: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      navigate(route);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-violet-50/40">
       {/* Header */}
@@ -200,18 +124,10 @@ const Index: React.FC = () => {
               <h1 className="text-2xl font-bold">Maturion</h1>
             </div>
             <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(ROUTES.MODULES)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate(ROUTES.MODULES)}>
                 Modules
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(ROUTES.JOURNEY)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate(ROUTES.JOURNEY)}>
                 Journey
               </Button>
               <Button
@@ -237,8 +153,8 @@ const Index: React.FC = () => {
             Integrated Security Management System
           </h1>
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-            One platform to assess, govern, and continuously improve your organisation&apos;s
-            security posture — from free maturity assessment to full operational excellence.
+            One platform to assess, govern, and continuously improve your organisation&apos;s security
+            posture — from free maturity assessment to full operational excellence.
           </p>
 
           <div className="space-y-3">
@@ -250,9 +166,7 @@ const Index: React.FC = () => {
               Start Your Free Assessment
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="text-sm text-muted-foreground">
-              Powered by the Maturity Roadmap module
-            </p>
+            <p className="text-sm text-muted-foreground">Powered by the Maturity Roadmap module</p>
           </div>
         </div>
       </section>
@@ -293,7 +207,7 @@ const Index: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-              🌐 Your Integrated ISMS Platform
+              Your Integrated ISMS Platform
             </h2>
             <p className="text-lg text-muted-foreground">
               Seven integrated modules to build and maintain operational security maturity
@@ -301,11 +215,15 @@ const Index: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {ISMS_MODULES.map((module, index) => (
+            {ISMS_MODULE_CARDS.map((module) => (
               <Card
-                key={index}
-                className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer group border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
+                key={module.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open public overview for ${module.name}`}
+                className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer group border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
                 onClick={() => navigate(module.route)}
+                onKeyDown={(event) => handleModuleKeyDown(event, module.route)}
               >
                 <CardHeader className="text-center pb-4">
                   <div className="flex justify-end mb-2">
@@ -394,9 +312,7 @@ const Index: React.FC = () => {
               Start Your Free Assessment
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="text-sm text-muted-foreground">
-              Powered by the Maturity Roadmap module
-            </p>
+            <p className="text-sm text-muted-foreground">Powered by the Maturity Roadmap module</p>
           </div>
         </div>
       </section>
