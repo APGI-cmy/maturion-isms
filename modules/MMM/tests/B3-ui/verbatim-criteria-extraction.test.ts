@@ -62,6 +62,50 @@ This second MPS action must not be returned for MPS 1.
     ]);
   });
 
+  it('skips table-of-contents MPS headings and extracts the real Required Actions section', () => {
+    const sourceText = `
+MPS 1 - Leadership13
+MPS 2 - Chain of Custody and Diamond Control Committee14
+Overview
+Format of Minimum Performance Standards
+Required Actions: These actions are mandatory and should be implemented.
+Leadership and Governance
+MPS 1 - Leadership
+Intent
+To set clear expectations for Security Management that are codified with a policy and supporting procedures.
+Required Actions
+A Security Policy signed by the most senior executive for Lucara Botswana should be prominently displayed.
+The Security Policy will be a short document that outlines company and individual obligations.
+Guidance
+Guidance reserved.
+MPS 2 - Chain of Custody and Diamond Control Committee
+Intent
+To provide clear accountability for custody.
+Required Actions
+The chain of custody for each operation will be set out in matrix form.
+`;
+
+    const criteria = extractVerbatimCriteriaFromKnowledge({
+      content: sourceText,
+      mpsCode: 'D001.MPS001',
+      mpsName: 'Leadership',
+      domainName: 'Leadership and Governance',
+    });
+
+    expect(criteria).toEqual([
+      {
+        code: 'D001.MPS001.C001',
+        statement:
+          'A Security Policy signed by the most senior executive for Lucara Botswana should be prominently displayed.',
+      },
+      {
+        code: 'D001.MPS001.C002',
+        statement:
+          'The Security Policy will be a short document that outlines company and individual obligations.',
+      },
+    ]);
+  });
+
   it('resolves MPS ordinals from MMM codes without coupling to document filenames', () => {
     expect(extractMpsOrdinal('D001.MPS001', 'Leadership')).toBe(1);
     expect(extractMpsOrdinal('MPS 12', 'Training')).toBe(12);
@@ -88,6 +132,7 @@ This second MPS action must not be returned for MPS 1.
     const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
     expect(src).toContain('extractVerbatimCriteriaFromKnowledge');
     expect(src).toContain(".from('ai_knowledge')");
+    expect(src).toContain('const primaryVerbatimSourceDoc = modeContext.mode_source_documents.find');
     expect(src).toContain("doc.tags.some((tag) => tag === 'source_mode:VERBATIM')");
     expect(src).toContain('isSourceFaithfulStatement(processedVerbatimText, criterion.statement)');
     expect(src).toContain('no source Required Actions could be extracted');

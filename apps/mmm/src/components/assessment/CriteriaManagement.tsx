@@ -242,13 +242,12 @@ export function CriteriaManagement({
       }
 
       if (frameworkId && modeContext.framework_source_type === 'VERBATIM') {
-        const verbatimSourceDocIds = modeContext.mode_source_documents
-          .filter(
-            (doc) =>
-              isChunkedSourceReadyForExtraction(doc) &&
-              doc.tags.some((tag) => tag === 'source_mode:VERBATIM'),
-          )
-          .map((doc) => doc.id);
+        const primaryVerbatimSourceDoc = modeContext.mode_source_documents.find(
+          (doc) =>
+            isChunkedSourceReadyForExtraction(doc) &&
+            doc.tags.some((tag) => tag === 'source_mode:VERBATIM'),
+        );
+        const verbatimSourceDocIds = primaryVerbatimSourceDoc ? [primaryVerbatimSourceDoc.id] : [];
         let processedVerbatimText = '';
 
         if (verbatimSourceDocIds.length > 0) {
