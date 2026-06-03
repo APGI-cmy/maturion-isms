@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-02  
-**Updated By**: foreman-agent (wave: `isms-w1-route-public-shell-20260602`)
+**Last Updated**: 2026-06-03  
+**Updated By**: foreman-agent (post-merge correction: `foreman/w1-post-merge-correction`)
 
-> **Classification**: ACTIVE — W1 BUILD EXECUTED; CI AND REVIEW GATES PENDING  
+> **Classification**: ACTIVE — W1 MERGED; POST-MERGE CORRECTION OPENED FOR ROUTE/EVIDENCE RECONCILIATION  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -26,13 +26,15 @@
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
 | Stage 11 | Builder Appointment | COMPLETE FOR W1 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md` |
-| Stage 12 | W1 Build Execution & Evidence | IMPLEMENTED — CI PENDING | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
+| Stage 12 | W1 Build Execution & Evidence | MERGED — POST-MERGE CORRECTION OPENED | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
 
 ---
 
 ## Stage 12: W1 Route Public Shell
 
-**Status**: IMPLEMENTED — CI AND REVIEW GATES PENDING  
+**Status**: MERGED — POST-MERGE CORRECTION OPENED  
+**Merged PR**: #1776 (`20d226612f0be0f5c83488865d9d84b56e6204dd`)  
+**Correction branch**: `foreman/w1-post-merge-correction`  
 **Location**: `modules/isms/11-build/`  
 **Primary Evidence**:
 - `w1-route-public-shell-evidence.md` — W1 implementation evidence
@@ -40,20 +42,29 @@
 - `.agent-admin/ecap/isms-w1-route-public-shell-20260602-ecap.md` — ECAP
 - `.agent-admin/assurance/iaa-wave-record-isms-w1-route-public-shell-20260602.md` — IAA wave record
 - `.agent-admin/assurance/iaa-token-isms-w1-route-public-shell-20260602.md` — IAA token
+- `.functional-delivery/pr-1776.md` — post-merge functional delivery/anomaly record restored in correction PR
+- `.agent-workspace/foreman-v2/memory/session-1776-20260603.md` — post-merge Foreman memory/anomaly record restored in correction PR
 
-**Runtime files changed**:
+**Runtime files changed by W1**:
 - `apps/isms-portal/src/App.tsx`
 - `apps/isms-portal/src/lib/moduleCards.ts`
 - `apps/isms-portal/src/pages/Index.tsx`
 - `apps/isms-portal/src/pages/ModulesOverview.tsx`
 
+**Post-merge correction scope**:
+- add protected route registrations for `ROUTES.ASSESSMENT` and `ROUTES.MATURITY_SETUP` in `apps/isms-portal/src/App.tsx`;
+- replace stale `CI PENDING` tracker wording with true post-merge correction state;
+- restore/file missing `.functional-delivery/pr-1776.md` evidence record;
+- restore/file missing `.agent-workspace/foreman-v2/memory/session-1776-20260603.md` session-memory record;
+- keep W2-W8 unappointed and unimplemented.
+
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: W1 PR review and CI gate inspection.  
+**Current Stage**: W1 post-merge correction PR preparation.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Open W1 implementation PR, inspect CI, resolve review conversations, and only then recommend W1 handover if evidence is satisfactory.
+**Next Required Action**: Open and review the W1 post-merge correction PR; inspect CI/review results; only then decide whether W1 can be accepted as complete and whether W2 appointment may begin.
 
 ---
 
@@ -79,8 +90,10 @@
 - [x] W1 Foreman QP filed
 - [x] W1 ECAP filed
 - [x] W1 IAA filed
-- [ ] W1 PR CI passed
-- [ ] W1 review conversations resolved
+- [x] W1 PR #1776 merged
+- [ ] W1 post-merge correction PR opened
+- [ ] W1 post-merge correction CI passed
+- [ ] W1 post-merge correction review conversations resolved
 - [ ] W1 handover authorized
 
 ---
@@ -90,12 +103,12 @@
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- W1 PR CI must pass before handover recommendation;
-- W1 review conversations must be resolved or dispositioned;
+- W1 post-merge correction PR must pass CI before W1 acceptance recommendation;
+- W1 correction review conversations must be resolved or dispositioned;
 - W2-W8 remain unappointed and unauthorized;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-02
+**Last Tracker Reconciliation**: 2026-06-03
