@@ -56,6 +56,44 @@ function findNextMpsHeadingIndex(text: string, startFrom: number): number {
   return nextHeading >= 0 ? startFrom + nextHeading : text.length;
 }
 
+function significantTitleTokens(value: string): Set<string> {
+  const stopWords = new Set(['and', 'the', 'of', 'for', 'with', 'mps', 'intent']);
+  return new Set(
+    normalizeVerbatimLookup(value)
+      .split(' ')
+      .filter((token) => token.length >= 3 && !stopWords.has(token)),
+  );
+}
+
+function titleMatchesMpsName(title: string, mpsName: string): boolean {
+  const mpsNameLookup = normalizeVerbatimLookup(mpsName);
+  const titleLookup = normalizeVerbatimLookup(title);
+  if (
+    !mpsNameLookup ||
+    titleLookup === mpsNameLookup
+  ) {
+    return true;
+  }
+
+  const expectedTokens = significantTitleTokens(mpsName);
+  const actualTokens = significantTitleTokens(title);
+  if (expectedTokens.size === 0 || actualTokens.size === 0) return false;
+
+  let overlap = 0;
+  for (const token of expectedTokens) {
+    if (actualTokens.has(token)) overlap += 1;
+  }
+  const overlapRatio = overlap / Math.min(expectedTokens.size, actualTokens.size);
+
+  return overlap >= 2 && overlapRatio >= 0.5;
+}
+
+function containsNumberedActionsForOrdinal(block: string, ordinal: number): boolean {
+  const requiredActions = extractRequiredActionsBlock(block);
+  if (!requiredActions) return false;
+  return new RegExp(`(?:^|\\n)\\s*${ordinal}\\.\\d+\\s+`, 'i').test(requiredActions);
+}
+
 function collectCandidateMpsBlocks(params: {
   text: string;
   mpsCode: string;
@@ -75,16 +113,12 @@ function collectCandidateMpsBlocks(params: {
     );
     for (const match of text.matchAll(headingRegex)) {
       const start = match.index ?? 0;
-      const end = findNextMpsHeadingIndex(text, start + 1);
+      const headingEnd = start + String(match[0] ?? '').length;
+      const end = findNextMpsHeadingIndex(text, headingEnd);
       const block = text.slice(start, end);
-      const blockLookup = normalizeVerbatimLookup(block.slice(0, 500));
-      const titleLookup = normalizeVerbatimLookup(String(match[1] ?? ''));
-      const titleMatches =
-        !mpsNameLookup ||
-        titleLookup.includes(mpsNameLookup) ||
-        mpsNameLookup.includes(titleLookup) ||
-        blockLookup.includes(mpsNameLookup);
-      if (titleMatches && /Required\s+Actions/i.test(block)) {
+      const titleMatches = titleMatchesMpsName(String(match[1] ?? ''), mpsName);
+      const hasMatchingNumberedActions = containsNumberedActionsForOrdinal(block, ordinal);
+      if ((titleMatches || hasMatchingNumberedActions) && /Required\s+Actions/i.test(block)) {
         blocks.push(block);
       }
     }
@@ -126,6 +160,8 @@ function parseActionLine(raw: string): ParsedActionLine | null {
   if (/^(required actions?|guidance|intent|standard of proof|maturity level)$/i.test(trimmed)) return null;
   if (/^page\s+\d+/i.test(trimmed)) return null;
   if (/^mps\s+\d+/i.test(trimmed)) return null;
+  if (/^:\s*these actions are mandatory\b/i.test(trimmed)) return null;
+  if (/^these actions are mandatory\b/i.test(trimmed)) return null;
 
   const numbered = trimmed.match(/^(\d+(?:\.\d+)+)\s+(.+)$/);
   if (numbered) {

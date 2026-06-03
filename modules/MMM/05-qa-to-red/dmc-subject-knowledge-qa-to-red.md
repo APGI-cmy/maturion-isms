@@ -181,6 +181,12 @@
 - **RED Condition**: A parent Required Action clause with child subclauses is saved as a standalone evidence criterion while its evidence-bearing child clauses are omitted, separated from parent context, or flattened into ambiguous fragments.
 - **GREEN Acceptance**: When a Required Action parent clause has child clauses (for example `1.4.1`, `1.4.2`, or unnumbered child paragraphs such as `Through...` lines), each child is emitted as its own evidence-bearing criterion with the parent stem carried into the statement; the parent stem is not emitted as a standalone evidence item.
 
+### T-MMM-DMC-030 — VERBATIM Criteria Must Ignore Format Instructions And Match Real MPS Sections
+- **Source**: Live VERBATIM MPS002 criteria extraction regression, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Criteria generation for a later MPS returns only the document-format instruction text (`These actions are mandatory...`) or misses real Required Actions because the source title wording differs slightly from the MMM scaffold title.
+- **GREEN Acceptance**: MPS criteria extraction rejects table-of-contents and format-instruction `Required Actions` text, matches real MPS sections by ordinal plus heading-token similarity or same-ordinal numbered actions, and extracts all evidence-bearing Required Action clauses including parent/child groups.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

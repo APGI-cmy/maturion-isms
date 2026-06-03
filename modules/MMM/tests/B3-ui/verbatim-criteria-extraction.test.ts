@@ -226,6 +226,52 @@ The chain of custody for each operation will be set out in matrix form.
     );
   });
 
+  it('skips format-instruction Required Actions text and extracts later MPS criteria despite title wording drift', () => {
+    const sourceText = `
+Leadership and Governance
+Format of Minimum Performance Standards
+Intent: The reason why it is done.
+Required Actions: These actions are mandatory and should be implemented.
+Guidance: Guidance can be used to explain considerations.
+
+MPS 1 - Leadership
+Intent
+To set clear expectations for Security Management.
+Required Actions
+1.1 A Security Policy signed by the most senior executive should be prominently displayed.
+
+MPS 2 - Chain of Custody and Diamond Control Commi ttee Intent
+To provide clear accountability for the custody of diamond material.
+Required Actions
+2.1 The chain of custody for each operation will be set out in matrix form, with an accountable manager named for each part of the chain.
+2.2 The chain of custody document will be reviewed at least annually and in the event of any personnel or process changes.
+2.7 The DCC will have a clear mandate and charter. As a minimum this will include:
+2.7.1 Developing and approving joint operations and security procedures in high-risk areas.
+2.7.2 Reviewing the human aspects of the teams working in high-risk areas.
+2.8 The DCC will meet at least four times a year. Minutes will be taken of these meetings.
+Guidance
+Reserved.
+`;
+
+    const criteria = extractVerbatimCriteriaFromKnowledge({
+      content: sourceText,
+      mpsCode: 'D001.MPS002',
+      mpsName: 'Chain of Custody and Security Control Committee',
+      domainName: 'Leadership and Governance',
+    });
+
+    expect(criteria.map((criterion) => criterion.statement)).toEqual([
+      'The chain of custody for each operation will be set out in matrix form, with an accountable manager named for each part of the chain.',
+      'The chain of custody document will be reviewed at least annually and in the event of any personnel or process changes.',
+      'The DCC will have a clear mandate and charter. As a minimum this will include developing and approving joint operations and security procedures in high-risk areas.',
+      'The DCC will have a clear mandate and charter. As a minimum this will include reviewing the human aspects of the teams working in high-risk areas.',
+      'The DCC will meet at least four times a year. Minutes will be taken of these meetings.',
+    ]);
+    expect(criteria.map((criterion) => criterion.statement)).not.toContain(
+      ': These actions are mandatory and should be implemented.',
+    );
+  });
+
   it('resolves MPS ordinals from MMM codes without coupling to document filenames', () => {
     expect(extractMpsOrdinal('D001.MPS001', 'Leadership')).toBe(1);
     expect(extractMpsOrdinal('MPS 12', 'Training')).toBe(12);
