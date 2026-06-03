@@ -7,13 +7,24 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
+type RouteLocationParts = {
+  pathname: string;
+  search: string;
+  hash: string;
+};
+
+export const getAuthRedirectTarget = (parts: RouteLocationParts) => ({
+  to: ROUTES.LOGIN,
+  from: `${parts.pathname}${parts.search}${parts.hash}`,
+});
+
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
 
   if (!user) {
-    const intendedDestination = `${location.pathname}${location.search}${location.hash}`;
-    return <Navigate to={ROUTES.LOGIN} replace state={{ from: intendedDestination }} />;
+    const redirect = getAuthRedirectTarget(location);
+    return <Navigate to={redirect.to} replace state={{ from: redirect.from }} />;
   }
 
   return <>{children}</>;
