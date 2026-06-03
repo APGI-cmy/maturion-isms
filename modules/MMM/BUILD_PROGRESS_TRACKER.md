@@ -21,6 +21,14 @@
   - **QA-to-Red Gate**: Added `T-MMM-DMC-028` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
   - **Build-to-Green Fix**: `CriteriaManagement` now selects the primary/newest chunk-positive `source_mode:VERBATIM` document, reconstructs overlapped `ai_knowledge` chunks before parsing, extracts the matching MPS `Required Actions` block as uploaded-source criteria including end-of-block terminated sections, verifies proposed criteria against processed source text before reuse, and blocks silent fallback when no source-faithful criteria are available.
 
+- **2026-06-03 — VERBATIM Criteria Parent Clauses Misaligned To Evidence Units**
+  - **Observed Failure**: MPS 1 Required Action `1.4` appeared as its own criterion, while the actual evidence-bearing subclauses `1.4.1` and `1.4.2` were either omitted as child structure or presented without the parent context needed for evidence collection.
+  - **Evidence**: User comparison showed the source document treats `1.4` as a stem and `1.4.1`/`1.4.2` as the auditable requirements. The generated criteria needed separate evidence categories for Golden Rules and awareness/training, each carrying the `1.4` parent stem.
+  - **Root Cause**: The VERBATIM criteria extractor treated each paragraph line as an evidence criterion instead of distinguishing parent context clauses from child evidence clauses.
+  - **Prebuild/Architecture Update**: DMC architecture now defines evidence categories as the smallest auditable Required Action units and requires child clauses to carry parent context.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-029` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: The VERBATIM criteria extractor now detects numbered child clauses and unnumbered child paragraphs such as consecutive `Through...` lines, skips the parent stem as standalone evidence, and emits each child as a separate source-faithful criterion with inherited parent context.
+
 - **2026-06-03 — VERBATIM Intent Extraction Fails Because DOCX Was Chunked As Binary**
   - **Observed Failure**: After source reprocess showed `processing (chunks ready for VERBATIM extraction) | chunks: 1236`, regenerating intent still failed with `no source-faithful intent text could be extracted for D001.MPS001`.
   - **Evidence**: Live `ai_knowledge` samples for the current Lucara source document started with raw DOCX ZIP bytes (`PK... [Content_Types].xml ... word/document.xml`) and keyword searches for `leadership`, `governance`, `management`, `policy`, `responsibility`, and related terms returned zero rows.

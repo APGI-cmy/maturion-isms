@@ -64,6 +64,7 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
    - For MPS-shaped source documents, criteria are copied from the matching MPS `Required Actions` section before any proposed-table, AI, subject-knowledge, or legacy fallback path is considered.
    - Proposed criteria may only be used in VERBATIM mode when their text can be matched back to processed source chunks; generic or Hybrid fallback criteria must not be relabeled as uploaded-source criteria.
    - If no source-faithful required actions are extractable, the UI must show a source-quality error and block silent fallback generation.
+   - Evidence categories are the smallest auditable Required Action units. Parent clauses that only introduce child requirements are not evidence items by themselves; each child clause must be emitted with enough parent context to stand alone in evidence collection.
 
 ## QA Binding
 

@@ -175,6 +175,12 @@
 - **RED Condition**: Criteria generation for a source-backed VERBATIM MPS returns generic or Hybrid fallback wording such as `(hybrid source)` instead of copying the matching source document `Required Actions` block.
 - **GREEN Acceptance**: VERBATIM criteria generation resolves `source_mode:VERBATIM` organisation/framework documents, queries `ai_knowledge` chunks, extracts the matching MPS `Required Actions` text as uploaded-source criteria, and blocks with a source-quality error rather than silently falling back to generated criteria when no required actions are extractable.
 
+### T-MMM-DMC-029 — VERBATIM Criteria Must Preserve Evidence-Bearing Child Clauses
+- **Source**: Live VERBATIM criteria evidence-shape review, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A parent Required Action clause with child subclauses is saved as a standalone evidence criterion while its evidence-bearing child clauses are omitted, separated from parent context, or flattened into ambiguous fragments.
+- **GREEN Acceptance**: When a Required Action parent clause has child clauses (for example `1.4.1`, `1.4.2`, or unnumbered child paragraphs such as `Through...` lines), each child is emitted as its own evidence-bearing criterion with the parent stem carried into the statement; the parent stem is not emitted as a standalone evidence item.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

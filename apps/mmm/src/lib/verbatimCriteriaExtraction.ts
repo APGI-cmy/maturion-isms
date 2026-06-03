@@ -115,24 +115,91 @@ function extractRequiredActionsBlock(mpsBlock: string): string | null {
   return block.length > 0 ? block : null;
 }
 
+type ParsedActionLine = {
+  number: string | null;
+  text: string;
+};
+
+function parseActionLine(raw: string): ParsedActionLine | null {
+  const trimmed = raw.replace(/\s+/g, ' ').trim();
+  if (trimmed.length < 24) return null;
+  if (/^(required actions?|guidance|intent|standard of proof|maturity level)$/i.test(trimmed)) return null;
+  if (/^page\s+\d+/i.test(trimmed)) return null;
+  if (/^mps\s+\d+/i.test(trimmed)) return null;
+
+  const numbered = trimmed.match(/^(\d+(?:\.\d+)+)\s+(.+)$/);
+  if (numbered) {
+    return {
+      number: numbered[1],
+      text: numbered[2].trim(),
+    };
+  }
+
+  return {
+    number: null,
+    text: trimmed.replace(/^\s*(?:[-*\u2022]|\d+[.)]|[a-z][.)])\s+/i, '').trim(),
+  };
+}
+
+function directChildLines(lines: ParsedActionLine[], parent: ParsedActionLine, parentIndex: number): ParsedActionLine[] {
+  if (parent.number) {
+    const prefix = `${parent.number}.`;
+    return lines
+      .slice(parentIndex + 1)
+      .filter((line) => line.number?.startsWith(prefix))
+      .filter((line) => line.number?.slice(prefix.length).includes('.') === false);
+  }
+
+  const children: ParsedActionLine[] = [];
+  for (const line of lines.slice(parentIndex + 1)) {
+    if (/^through\b/i.test(line.text)) {
+      children.push(line);
+      continue;
+    }
+    break;
+  }
+  return children.length >= 2 ? children : [];
+}
+
+function joinParentAndChild(parent: string, child: string): string {
+  const parentStem = parent.replace(/[.;:]\s*$/, '').trim();
+  const childStem = child.replace(/^[A-Z]/, (letter) => letter.toLowerCase());
+  return `${parentStem} ${childStem}`.replace(/\s+/g, ' ').trim();
+}
+
 function cleanRequiredActionLines(block: string): string[] {
   const seen = new Set<string>();
-  const lines: string[] = [];
-  for (const raw of block.split('\n')) {
-    const line = raw
-      .replace(/^\s*(?:[-*\u2022]|\d+[.)]|[a-z][.)])\s+/i, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (line.length < 24) continue;
-    if (/^(required actions?|guidance|intent|standard of proof|maturity level)$/i.test(line)) continue;
-    if (/^page\s+\d+/i.test(line)) continue;
-    if (/^mps\s+\d+/i.test(line)) continue;
-    const key = normalizeVerbatimLookup(line);
+  const lines = block
+    .split('\n')
+    .map(parseActionLine)
+    .filter((line): line is ParsedActionLine => Boolean(line));
+  const evidenceStatements: string[] = [];
+  const consumedChildIndexes = new Set<number>();
+
+  for (let index = 0; index < lines.length; index += 1) {
+    if (consumedChildIndexes.has(index)) continue;
+    const line = lines[index];
+    const children = directChildLines(lines, line, index);
+    if (children.length > 0) {
+      for (const child of children) {
+        const childIndex = lines.indexOf(child);
+        if (childIndex >= 0) consumedChildIndexes.add(childIndex);
+        evidenceStatements.push(joinParentAndChild(line.text, child.text));
+      }
+      continue;
+    }
+
+    evidenceStatements.push(line.text);
+  }
+
+  const deduped: string[] = [];
+  for (const statement of evidenceStatements) {
+    const key = normalizeVerbatimLookup(statement);
     if (seen.has(key)) continue;
     seen.add(key);
-    lines.push(line);
+    deduped.push(statement);
   }
-  return lines;
+  return deduped;
 }
 
 export function extractVerbatimCriteriaFromKnowledge(params: {
