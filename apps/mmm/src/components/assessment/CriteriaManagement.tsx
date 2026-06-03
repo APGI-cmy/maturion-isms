@@ -366,47 +366,44 @@ function identifyControlObject(criterionText: string): DescriptorControlObject {
   return bestScore > 0 ? best : generic;
 }
 
-function summariseRequirement(criterionText: string, controlObject: DescriptorControlObject): string {
+function summariseEvidenceSubject(criterionText: string, controlObject: DescriptorControlObject): string {
   const clean = stripCriterionBoilerplate(criterionText);
-  const firstSentence = clean.split(/(?<=[.!?])\s+/)[0]?.trim() ?? clean;
-  if (firstSentence.length <= 145) return firstSentence;
-
-  const lower = firstSentence.toLowerCase();
+  const lower = clean.toLowerCase();
   if (controlObject.key === 'policy' && lower.includes('policy')) {
-    return 'the policy must be approved, current, communicated, displayed or made available, and evidenced';
+    return 'Evidence for policy approval/currency, communication or display, ownership, review, and awareness';
   }
   if (controlObject.key === 'register_matrix' && (lower.includes('matrix') || lower.includes('custody'))) {
-    return 'the accountability matrix must name owners, define controls, and remain current through changes';
+    return 'Evidence for the accountability matrix, named owners, defined controls, version control, and change review';
   }
   if (controlObject.key === 'committee_governance') {
-    return 'the governance requirement must assign ownership, make decisions, track actions, and verify closure';
+    return 'Evidence for governance forum mandate, decisions, assigned actions, escalation, and closure verification';
   }
   if (controlObject.key === 'procedure') {
-    return 'the procedure must be approved, current, communicated, followed, and evidenced in operation';
+    return 'Evidence for procedure approval/currency, communication, execution records, training, and review';
   }
   if (controlObject.key === 'technical_control') {
-    return 'the technical or physical control must be designed, maintained, monitored, and verified as effective';
+    return 'Evidence for technical or physical control design, maintenance, monitoring, testing, and effectiveness';
   }
   if (controlObject.key === 'access_authorisation') {
-    return 'the access requirement must authorise, record, review, and revoke access based on role and risk';
+    return 'Evidence for access authorisation, logs, role rules, review, exception handling, and revocation';
   }
   if (controlObject.key === 'monitoring_metrics') {
-    return 'the monitoring requirement must define measures, review performance, and close exceptions';
+    return 'Evidence for defined measures, dashboards or reports, accountable review, actions, and closure';
   }
-  return `${controlObject.objectPhrase} required by this criterion`;
+  return `Evidence for the ${controlObject.objectPhrase}`;
 }
 
 function buildFallbackMaturityDescriptorDrafts(criterion: DomainAuditCriterionRow): LevelDescriptorDraft[] {
   const criterionText = criterionEditSafeText(criterion);
   const controlObject = identifyControlObject(criterionText);
-  const requirement = summariseRequirement(criterionText, controlObject);
+  const evidenceSubject = summariseEvidenceSubject(criterionText, controlObject);
 
   const descriptions: Record<number, string> = {
-    1: `${requirement} ${controlObject.basic}. Minimum evidence such as ${controlObject.minimumEvidence} is absent, weak, outdated, or not repeatable.`,
-    2: `${requirement} ${controlObject.reactive}. Evidence shows response and correction, but not stable ownership, prevention, or sustained control.`,
-    3: `${requirement} ${controlObject.compliant}. The auditor should be able to verify ${controlObject.minimumEvidence} at the required minimum cadence.`,
-    4: `${requirement} ${controlObject.proactive}. Evidence must show risk-based review, metrics or trends, owner action, and improvement of control effectiveness.`,
-    5: `${requirement} ${controlObject.resilient}. Evidence must show embedded routines, system or hard-barrier support where practicable, exception escalation, continuity, and survival of staff turnover or disruption.`,
+    1: `${evidenceSubject} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`,
+    2: `${evidenceSubject} exists in some form, but records show activity mainly after incidents, audits, management pressure, or visible non-conformance. Evidence supports response and correction, but not stable ownership, prevention, or sustained control.`,
+    3: `${evidenceSubject} is current, complete, traceable, and available for auditor verification at the required minimum cadence. The evidence set includes ${controlObject.minimumEvidence} and shows the control is implemented as required.`,
+    4: `${evidenceSubject} shows owner-led, risk-based review and improvement. Records include metrics or trends, incident or change learning, accountable actions, and evidence that control effectiveness is improved before failures recur.`,
+    5: `${evidenceSubject} is embedded into routines, systems, monitoring, and escalation so the control remains effective during staff turnover, abnormal operations, or disruption. Records show continuity, exception escalation, automated or hard-barrier support where practicable, and independent assurance.`,
   };
 
   return MATURITY_LEVELS.map(({ level, label }) => ({
@@ -1120,6 +1117,7 @@ export function CriteriaManagement({
             `Rules:\n` +
             `- Do not copy the criterion into each level.\n` +
             `- Reconstruct the criterion into observable operating states for Basic, Reactive, Compliant, Proactive, and Resilient.\n` +
+            `- Phrase each descriptor as the state of the evidence at that level; do not phrase descriptors as "must", "shall", or future requirements.\n` +
             `- Compliant is the neutral baseline where the requirement is approved, implemented, communicated, recorded, and evidenced.\n` +
             `- Proactive must include risk-based review, measurement/trends, ownership, and improvement.\n` +
             `- Resilient must include embeddedness, automation or hard barriers where practicable, exception escalation, continuity, and survival of staff turnover/disruption.\n` +

@@ -457,6 +457,8 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
     const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
     expect(basicDescriptor.value).not.toContain('Basic: Approval checkpoints documented');
+    expect(basicDescriptor.value).not.toMatch(/\bmust be approved\b/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence for/i);
     expect(basicDescriptor.value).toMatch(/absent|informal|dependent|weak/i);
     fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
 
@@ -492,6 +494,9 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const descriptorGrid = await screen.findByTestId('level-descriptor-grid-criterion-1');
     expect(within(descriptorGrid).getByText('Basic')).toBeTruthy();
     expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
+    const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    expect(basicDescriptor.value).not.toMatch(/\bmust\b|\bshall\b/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence for/i);
     const status = await screen.findByText(/Maturity descriptors created from the approved methodology reference/i);
     expect(status.textContent).toContain('AI refinement is temporarily unavailable');
     expect(status.textContent).not.toContain('Used methodology fallback');

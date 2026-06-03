@@ -205,6 +205,12 @@
 - **RED Condition**: `Create maturity descriptors` successfully creates fallback descriptor drafts but presents a scary generic message such as `Used methodology fallback after AI reconstruction was unavailable or invalid: Edge Function returned a non-2xx status code`, making the user think descriptor creation failed.
 - **GREEN Acceptance**: Descriptor authoring treats the approved methodology generator as the governed stable path, optionally attempts AI refinement, extracts concrete edge failure detail for diagnostics, and keeps five editable descriptors visible with a clear success message when AI refinement is temporarily unavailable.
 
+### T-MMM-DMC-034 — Maturity Descriptors Must Describe Evidence State, Not Restate Obligations
+- **Source**: Live descriptor semantic review, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Basic/Reactive/Compliant/Proactive/Resilient descriptors say the criterion "must" or "shall" be approved/current/implemented, which restates the obligation instead of describing what the evidence shows at that maturity level.
+- **GREEN Acceptance**: Descriptor text is phrased as observable evidence state at each level, for example absent/weak/fragmented evidence at Basic, current/traceable/verifiable evidence at Compliant, and embedded/continuous/assured evidence at Resilient.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

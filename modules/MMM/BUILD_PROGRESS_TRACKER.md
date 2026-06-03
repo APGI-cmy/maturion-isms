@@ -1407,3 +1407,14 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Replaced scary fallback wording with a clear success message when AI refinement is temporarily unavailable.
    - QA-to-Red Trace:
      - `T-MMM-DMC-033` descriptor authoring must stay green when AI refinement is unavailable.
+
+16. **Maturity descriptor obligation wording instead of evidence state**
+   - Failure Class: descriptor semantics / audit evidence framing.
+   - Symptom: Basic maturity descriptor started with wording such as `the policy must be approved...`, which reads as the original requirement rather than the maturity state of available evidence.
+   - Cause Class: deterministic descriptor generator summarised the accepted criterion as a requirement subject before appending maturity-state language.
+   - Corrective Action:
+     - Reframed generated descriptors around evidence subjects, for example policy approval/currency evidence, communication/display evidence, ownership, review, and awareness evidence.
+     - Added prompt rule that AI-refined descriptors must describe evidence state and avoid `must`/`shall` requirement phrasing.
+     - Added B4 regression assertions that generated fallback descriptors do not contain `must be approved` and start from evidence-state language.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-034` maturity descriptors must describe evidence state, not restate obligations.
