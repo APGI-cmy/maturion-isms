@@ -163,6 +163,12 @@
 - **RED Condition**: Upload/reprocess writes `ai_knowledge` chunks (`chunk_count > 0`) but marks the organisation source `failed` because `mmm_org_source_verbatim_index` has no rows, causing the saved profile source to appear broken.
 - **GREEN Acceptance**: Upload/reprocess marks chunk-positive organisation VERBATIM sources `completed` with a parser/index warning note when canonical index rows are absent; only zero-chunk ingestion remains failed.
 
+### T-MMM-DMC-027 — DOCX Organisation Sources Must Be Unzipped Before Chunking
+- **Source**: Live VERBATIM intent extraction failure, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Uploaded `.docx` source produces `ai_knowledge` chunks containing raw ZIP/binary payload beginning with `PK` and Word package paths instead of searchable document text; intent extraction cannot find leadership/governance wording.
+- **GREEN Acceptance**: Upload/reprocess extracts readable text from DOCX `word/*.xml` entries before chunking, so `ai_knowledge.content` is searchable source text and VERBATIM intent extraction can operate on real document clauses.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

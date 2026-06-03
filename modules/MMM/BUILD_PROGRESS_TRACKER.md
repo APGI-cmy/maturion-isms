@@ -13,6 +13,14 @@
 
 ## Recent Failure Register (Live)
 
+- **2026-06-03 — VERBATIM Intent Extraction Fails Because DOCX Was Chunked As Binary**
+  - **Observed Failure**: After source reprocess showed `processing (chunks ready for VERBATIM extraction) | chunks: 1236`, regenerating intent still failed with `no source-faithful intent text could be extracted for D001.MPS001`.
+  - **Evidence**: Live `ai_knowledge` samples for the current Lucara source document started with raw DOCX ZIP bytes (`PK... [Content_Types].xml ... word/document.xml`) and keyword searches for `leadership`, `governance`, `management`, `policy`, `responsibility`, and related terms returned zero rows.
+  - **Root Cause**: The fallback extractor treated non-text files as `fileBlob.text()`/binary-adjacent content when KUC/AI parse did not return text, so `.docx` files were chunked before being unzipped into WordprocessingML text.
+  - **Prebuild/Architecture Update**: DMC architecture now requires deterministic DOCX unzip/text extraction before chunking and forbids raw Office package bytes as successful knowledge chunks.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-027` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: DOCX WordprocessingML extraction now runs before `ai_knowledge` writes, deterministic MPS intent indexing starts at the real MPS section with correct domain mapping, and the live Lucara source was repaired to `completed | chunks: 162` with 25 canonical verbatim index rows.
+
 - **2026-06-03 — VERBATIM Index Miss Demotes Chunked Source To Failed**
   - **Observed Failure**: User reopened the Organisation Context page and found the Lucara source still attached to the profile but marked `failed | chunks: 1236`. Reprocess and fresh upload preserved chunks but repeated the same failed parser note.
   - **Evidence**: UI parse note reported `chars=2224433`, `chunks=1236`, `mps_headings=0`, and `kuc_error=Invalid URL: 'KUC_BASE_URL = https://maturion-kuc-staging.onrender.com/api/upload/framework-source'`; code inspection found upload/reprocess using `processing_status: isOrgVerbatim && verbatimRows.length === 0 ? 'failed' : 'completed'`.

@@ -31,6 +31,17 @@ describe('T-MMM-S6-220: Verbatim intent generation quality gate', () => {
     expect(reprocess).toContain('extractBestEffortText');
   });
 
+  it('extracts DOCX WordprocessingML text before ai_knowledge chunking', () => {
+    const shared = readFile('supabase/functions/_shared/mmm-subject-knowledge.ts');
+    expect(shared).toContain("import JSZip from 'https://esm.sh/jszip@3.10.1'");
+    expect(shared).toContain('function extractDocxText');
+    expect(shared).toContain("path === 'word/document.xml'");
+    expect(shared).toContain("matchAll(/<w:p\\b[^>]*>([\\s\\S]*?)<\\/w:p>/g)");
+    expect(shared).toContain("matchAll(/<w:t\\b[^>]*>([\\s\\S]*?)<\\/w:t>/g)");
+    expect(shared).toContain('if (isDocxMimeType(mimeType))');
+    expect(shared).toContain('return docxText');
+  });
+
   it('queries canonical verbatim index before secondary extraction paths', () => {
     const src = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
     expect(src).toContain(".from('mmm_org_source_verbatim_index')");
@@ -61,10 +72,14 @@ describe('T-MMM-S6-220: Verbatim intent generation quality gate', () => {
   it('includes deterministic MPS/Intent fallback extraction for LDCS-style source text blocks', () => {
     const upload = readFile('supabase/functions/mmm-subject-knowledge-upload/index.ts');
     const reprocess = readFile('supabase/functions/mmm-subject-knowledge-reprocess/index.ts');
-    expect(upload).toContain('Intent\\s*(?::|\\n)');
+    expect(upload).toContain('Intent\\s*(?::|\\n|(?=[A-Z]))');
     expect(upload).toContain('Required\\s+Actions');
-    expect(reprocess).toContain('Intent\\s*(?::|\\n)');
+    expect(upload).toContain('function domainNameForMpsNumber');
+    expect(upload).toContain('function domainCodeForMpsNumber');
+    expect(reprocess).toContain('Intent\\s*(?::|\\n|(?=[A-Z]))');
     expect(reprocess).toContain('Required\\s+Actions');
+    expect(reprocess).toContain('function domainNameForMpsNumber');
+    expect(reprocess).toContain('function domainCodeForMpsNumber');
   });
 
   it('requires AI Gateway parse schema to include MPS-level verbatim intent extraction fields', () => {

@@ -7,6 +7,7 @@
  * - text chunking + hashing for ai_knowledge inserts
  */
 
+import JSZip from 'https://esm.sh/jszip@3.10.1';
 import { jsonResponse } from './mmm-auth.ts';
 
 export const SUBJECT_SUPERUSER_ROLES = new Set([
@@ -57,6 +58,56 @@ export function isTextLikeMimeType(mimeType: string): boolean {
     normalized.includes('csv') ||
     normalized.includes('markdown')
   );
+}
+
+function isDocxMimeType(mimeType: string): boolean {
+  return mimeType.toLowerCase().includes('officedocument.wordprocessingml.document');
+}
+
+function decodeXmlEntities(input: string): string {
+  return input
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+}
+
+function wordXmlToText(xml: string): string {
+  const paragraphs = [...xml.matchAll(/<w:p\b[^>]*>([\s\S]*?)<\/w:p>/g)]
+    .map((paragraph) =>
+      [...(paragraph[1] ?? '').matchAll(/<w:t\b[^>]*>([\s\S]*?)<\/w:t>/g)]
+        .map((match) => decodeXmlEntities(match[1] ?? ''))
+        .join('')
+        .trim(),
+    )
+    .filter((text) => text.length > 0);
+  if (paragraphs.length > 0) {
+    return sanitizeForPostgresText(paragraphs.join('\n')).trim();
+  }
+
+  const textRuns = [...xml.matchAll(/<w:t\b[^>]*>([\s\S]*?)<\/w:t>/g)]
+    .map((match) => decodeXmlEntities(match[1] ?? '').trim())
+    .filter((text) => text.length > 0);
+  return sanitizeForPostgresText(textRuns.join('\n')).trim();
+}
+
+async function extractDocxText(fileBlob: Blob): Promise<string> {
+  const zip = await JSZip.loadAsync(await fileBlob.arrayBuffer());
+  const xmlPaths = Object.keys(zip.files)
+    .filter((path) =>
+      path === 'word/document.xml' ||
+      /^word\/(?:header|footer|footnotes|endnotes)\d*\.xml$/i.test(path),
+    )
+    .sort((a, b) => (a === 'word/document.xml' ? -1 : b === 'word/document.xml' ? 1 : a.localeCompare(b)));
+  const parts: string[] = [];
+  for (const path of xmlPaths) {
+    const file = zip.file(path);
+    if (!file) continue;
+    const text = wordXmlToText(await file.async('text'));
+    if (text) parts.push(text);
+  }
+  return sanitizeForPostgresText(parts.join('\n\n')).trim();
 }
 
 function toObject(value: unknown): Record<string, unknown> | null {
@@ -110,6 +161,11 @@ export function extractBestEffortText(params: {
 }): Promise<string> {
   const { mimeType, fileBlob, fallbackText, kucClassification, aiParsedText } = params;
   return (async () => {
+    if (isDocxMimeType(mimeType)) {
+      const docxText = await extractDocxText(fileBlob);
+      if (docxText.length > 0) return docxText;
+    }
+
     const aiText = sanitizeForPostgresText(aiParsedText ?? '').trim();
     if (aiText.length > 0) return aiText;
 

@@ -54,6 +54,11 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
    - Status-lag warnings should remain visible so operators can diagnose ingestion completion drift without blocking available chunk-based extraction.
    - Canonical `mmm_org_source_verbatim_index` rows are the preferred deterministic lookup path, but absence of index rows must not demote a chunk-positive source to failed.
 
+9. **Office document text extraction**
+   - DOCX organisation sources must be unzipped and converted from WordprocessingML to readable text before any `ai_knowledge` chunk writes.
+   - Raw Office package bytes (`PK...`, `[Content_Types].xml`, `word/document.xml`) are not valid knowledge chunks and must never be treated as successful VERBATIM source extraction.
+   - KUC/AI parse results may enrich extraction, but local DOCX text extraction is the deterministic fallback for Word source documents.
+
 ## QA Binding
 
 - `modules/MMM/05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`
