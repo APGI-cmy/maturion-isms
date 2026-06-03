@@ -24,6 +24,15 @@ import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
 
+const PrivatePlaceholder = ({ title }: { title: string }) => (
+  <div className="p-8 text-center">
+    <h1 className="text-2xl font-bold">{title}</h1>
+    <p className="text-muted-foreground mt-2">
+      This private workspace will be implemented in a later ISMS build wave.
+    </p>
+  </div>
+);
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -98,17 +107,28 @@ const App = () => {
                 element={<Navigate to={ROUTES.MARKETING_SYSTEMS_INTEGRATION} replace />}
               />
 
-              {/* Protected routes — authentication required */}
+              {/* Protected route placeholders — authentication required */}
               <Route
                 path={ROUTES.DASHBOARD}
                 element={
                   <ProtectedRoute>
-                    <div className="p-8 text-center">
-                      <h1 className="text-2xl font-bold">Dashboard</h1>
-                      <p className="text-muted-foreground mt-2">
-                        Dashboard content will be implemented in the next phase.
-                      </p>
-                    </div>
+                    <PrivatePlaceholder title="Dashboard" />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.ASSESSMENT}
+                element={
+                  <ProtectedRoute>
+                    <PrivatePlaceholder title="Assessment Workspace" />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path={ROUTES.MATURITY_SETUP}
+                element={
+                  <ProtectedRoute>
+                    <PrivatePlaceholder title="Maturity Setup" />
                   </ProtectedRoute>
                 }
               />
