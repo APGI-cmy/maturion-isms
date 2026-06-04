@@ -1,29 +1,117 @@
 export type MaturityLevel = 'Basic' | 'Reactive' | 'Compliant' | 'Proactive' | 'Resilient';
-export type AssessmentDomainId = 'leadership-governance' | 'process-integrity' | 'people-culture' | 'protection' | 'proof';
 
-export interface AssessmentDomain { id: AssessmentDomainId; name: string; summary: string }
-export interface AssessmentQuestion { id: string; domainId: AssessmentDomainId; mps: string; question: string }
-export interface AssessmentAnswerOption { value: number; label: string; descriptor: string }
-export interface DomainResult { domainId: AssessmentDomainId; domainName: string; score: number; level: MaturityLevel; nextLevel: MaturityLevel | null; answeredQuestions: number; improvementParagraph: string }
-export interface AssessmentContext { organisationName: string; sector: string }
-export interface AssessmentReport { overallScore: number; overallLevel: MaturityLevel; domainResults: DomainResult[]; executiveSummary: string; resilienceSummary: string; generatedAt: string }
+export type AssessmentDomainId =
+  | 'leadership-governance'
+  | 'process-integrity'
+  | 'people-culture'
+  | 'protection'
+  | 'proof';
 
-export const maturityLevels: MaturityLevel[] = ['Basic', 'Reactive', 'Compliant', 'Proactive', 'Resilient'];
+export interface AssessmentDomain {
+  id: AssessmentDomainId;
+  name: string;
+  summary: string;
+}
+
+export interface AssessmentQuestion {
+  id: string;
+  domainId: AssessmentDomainId;
+  mps: string;
+  question: string;
+}
+
+export interface AssessmentAnswerOption {
+  value: number;
+  label: string;
+  descriptor: string;
+}
+
+export interface DomainResult {
+  domainId: AssessmentDomainId;
+  domainName: string;
+  score: number;
+  level: MaturityLevel;
+  nextLevel: MaturityLevel | null;
+  answeredQuestions: number;
+  improvementParagraph: string;
+}
+
+export interface AssessmentContext {
+  organisationName: string;
+  sector: string;
+}
+
+export interface AssessmentReport {
+  overallScore: number;
+  overallLevel: MaturityLevel;
+  domainResults: DomainResult[];
+  executiveSummary: string;
+  resilienceSummary: string;
+  generatedAt: string;
+}
+
+export const maturityLevels: MaturityLevel[] = [
+  'Basic',
+  'Reactive',
+  'Compliant',
+  'Proactive',
+  'Resilient',
+];
 
 export const assessmentDomains: AssessmentDomain[] = [
-  { id: 'leadership-governance', name: 'Leadership and Governance', summary: 'Accountability, ownership, chain of custody, risk management and regulatory control.' },
-  { id: 'process-integrity', name: 'Process Integrity', summary: 'Operational control, recovery, sales, change and failure-management processes.' },
-  { id: 'people-culture', name: 'People and Culture', summary: 'Human rights, reliable people, engagement and learning culture.' },
-  { id: 'protection', name: 'Protection', summary: 'Physical control, technical systems, operations, logistics, monitoring and recovery.' },
-  { id: 'proof', name: 'Proof', summary: 'Evidence, reviews, investigations, metrics and management information.' },
+  {
+    id: 'leadership-governance',
+    name: 'Leadership and Governance',
+    summary: 'Accountability, ownership, chain of custody, risk management and regulatory control.',
+  },
+  {
+    id: 'process-integrity',
+    name: 'Process Integrity',
+    summary: 'Operational control, recovery, sales, change and failure-management processes.',
+  },
+  {
+    id: 'people-culture',
+    name: 'People and Culture',
+    summary: 'Human rights, reliable people, engagement and learning culture.',
+  },
+  {
+    id: 'protection',
+    name: 'Protection',
+    summary: 'Physical control, technical systems, operations, logistics, monitoring and recovery.',
+  },
+  {
+    id: 'proof',
+    name: 'Proof',
+    summary: 'Evidence, reviews, investigations, metrics and management information.',
+  },
 ];
 
 export const answerOptions: AssessmentAnswerOption[] = [
-  { value: 1, label: 'Person-dependent', descriptor: 'Mostly informal, inconsistent or dependent on individual effort.' },
-  { value: 2, label: 'Event-led', descriptor: 'Controls exist in places, but updates mainly follow incidents, audits or pressure.' },
-  { value: 3, label: 'Minimum controlled', descriptor: 'The required control exists, is documented, communicated and evidenced.' },
-  { value: 4, label: 'Risk-led improvement', descriptor: 'Owners use risk reviews, metrics and trends to improve before failure.' },
-  { value: 5, label: 'Embedded and recoverable', descriptor: 'Controls are embedded into routines or systems, monitored and resilient to disruption.' },
+  {
+    value: 1,
+    label: 'Person-dependent',
+    descriptor: 'Mostly informal, inconsistent or dependent on individual effort.',
+  },
+  {
+    value: 2,
+    label: 'Event-led',
+    descriptor: 'Controls exist in places, but updates mainly follow incidents, audits or pressure.',
+  },
+  {
+    value: 3,
+    label: 'Minimum controlled',
+    descriptor: 'The required control exists, is documented, communicated and evidenced.',
+  },
+  {
+    value: 4,
+    label: 'Risk-led improvement',
+    descriptor: 'Owners use risk reviews, metrics and trends to improve before failure.',
+  },
+  {
+    value: 5,
+    label: 'Embedded and recoverable',
+    descriptor: 'Controls are embedded into routines or systems, monitored and resilient to disruption.',
+  },
 ];
 
 const questionRows: Array<[string, AssessmentDomainId, string, string]> = [
@@ -54,10 +142,16 @@ const questionRows: Array<[string, AssessmentDomainId, string, string]> = [
   ['mps-24', 'proof', 'MPS 24 - Security Information Management and Analysis', 'How well is information collected, analysed, shared and used for decisions?'],
 ];
 
-export const assessmentQuestions: AssessmentQuestion[] = questionRows.map(([id, domainId, mps, question]) => ({ id, domainId, mps, question }));
+export const assessmentQuestions: AssessmentQuestion[] = questionRows.map(
+  ([id, domainId, mps, question]) => ({ id, domainId, mps, question }),
+);
 
 const levelNarratives: Record<MaturityLevel, string> = {
-  Basic: 'exposed and person-dependent', Reactive: 'responsive but still event-led', Compliant: 'controlled at the minimum baseline', Proactive: 'risk-led and improvement-oriented', Resilient: 'embedded, monitored and recoverable',
+  Basic: 'exposed and person-dependent',
+  Reactive: 'responsive but still event-led',
+  Compliant: 'controlled at the minimum baseline',
+  Proactive: 'risk-led and improvement-oriented',
+  Resilient: 'embedded, monitored and recoverable',
 };
 
 export function scoreToLevel(score: number): MaturityLevel {
@@ -73,28 +167,59 @@ export function nextMaturityLevel(level: MaturityLevel): MaturityLevel | null {
   return index >= 0 && index < maturityLevels.length - 1 ? maturityLevels[index + 1] : null;
 }
 
-function roundScore(value: number): number { return Math.round(value * 10) / 10; }
+function roundScore(value: number): number {
+  return Math.round(value * 10) / 10;
+}
 
 function createImprovementParagraph(domain: AssessmentDomain, level: MaturityLevel, nextLevel: MaturityLevel | null): string {
-  if (!nextLevel) return `${domain.name} is already presenting as resilient. Protect that advantage through monitoring, recovery testing, exception closure and leadership review.`;
-  const actions: Record<MaturityLevel, string> = { Basic: 'define accountable owners', Reactive: 'stabilise controls so action is not only event-led', Compliant: 'prove that controls are implemented and evidenced', Proactive: 'connect controls to metrics, trends and improvement', Resilient: 'embed controls into routines with monitoring, escalation and recovery evidence' };
+  if (!nextLevel) {
+    return `${domain.name} is already presenting as resilient. Protect that advantage through monitoring, recovery testing, exception closure and leadership review.`;
+  }
+
+  const actions: Record<MaturityLevel, string> = {
+    Basic: 'define accountable owners',
+    Reactive: 'stabilise controls so action is not only event-led',
+    Compliant: 'prove that controls are implemented and evidenced',
+    Proactive: 'connect controls to metrics, trends and improvement',
+    Resilient: 'embed controls into routines with monitoring, escalation and recovery evidence',
+  };
+
   return `${domain.name} currently appears ${levelNarratives[level]}. To move toward ${nextLevel}, the organisation should ${actions[nextLevel]}. To achieve resilience, this domain must become independent of single individuals, supported by objective evidence, monitored for exceptions and capable of recovering during abnormal operations.`;
 }
 
-export function createAssessmentReport(answers: Record<string, number>, context: AssessmentContext, generatedAt = new Date().toISOString()): AssessmentReport {
+export function createAssessmentReport(
+  answers: Record<string, number>,
+  context: AssessmentContext,
+  generatedAt = new Date().toISOString(),
+): AssessmentReport {
   const domainResults = assessmentDomains.map((domain) => {
     const questions = assessmentQuestions.filter((question) => question.domainId === domain.id);
-    const values = questions.map((question) => answers[question.id]).filter((value): value is number => typeof value === 'number');
+    const values = questions
+      .map((question) => answers[question.id])
+      .filter((value): value is number => typeof value === 'number');
     const average = values.length ? roundScore(values.reduce((sum, value) => sum + value, 0) / values.length) : 0;
     const level = scoreToLevel(average || 1);
     const nextLevel = nextMaturityLevel(level);
-    return { domainId: domain.id, domainName: domain.name, score: average, level, nextLevel, answeredQuestions: values.length, improvementParagraph: createImprovementParagraph(domain, level, nextLevel) };
+
+    return {
+      domainId: domain.id,
+      domainName: domain.name,
+      score: average,
+      level,
+      nextLevel,
+      answeredQuestions: values.length,
+      improvementParagraph: createImprovementParagraph(domain, level, nextLevel),
+    };
   });
+
   const answeredScores = domainResults.filter((result) => result.answeredQuestions > 0).map((result) => result.score);
-  const overallScore = answeredScores.length ? roundScore(answeredScores.reduce((sum, score) => sum + score, 0) / answeredScores.length) : 0;
+  const overallScore = answeredScores.length
+    ? roundScore(answeredScores.reduce((sum, score) => sum + score, 0) / answeredScores.length)
+    : 0;
   const overallLevel = scoreToLevel(overallScore || 1);
   const orgName = context.organisationName.trim() || 'the organisation';
   const sector = context.sector.trim() || 'its sector';
+
   return {
     overallScore,
     overallLevel,
