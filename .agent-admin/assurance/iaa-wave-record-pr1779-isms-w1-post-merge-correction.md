@@ -1,12 +1,10 @@
 # IAA Wave Record — PR #1779 ISMS W1 Post-Merge Correction
 
-| Field | Value |
-|---|---|
-| PR | #1779 |
-| Wave | ISMS W1 post-merge correction |
-| Related PR | #1776 |
-| Status | PASS WITH CONDITIONS |
-| CURRENT_HEAD_SHA | CURRENT_HEAD |
+PR: #1779
+Wave: ISMS W1 post-merge correction
+Related PR: #1776
+Status: PASS WITH CONDITIONS
+CURRENT_HEAD_SHA: CURRENT_HEAD
 
 ---
 
