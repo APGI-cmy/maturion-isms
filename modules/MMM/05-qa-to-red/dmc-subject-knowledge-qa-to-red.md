@@ -193,6 +193,30 @@
 - **RED Condition**: After criteria are accepted, the main card only offers `Create Criteria`, saved criteria are not clearly re-enterable/editable, and criterion-level maturity descriptors cannot be generated or approved under each criterion.
 - **GREEN Acceptance**: The criteria step card shows a mini dashboard with MPS count and criteria count per MPS, the action changes to `View / Edit Criteria` when accepted criteria exist, saved criteria reopen as editable cards, and each criterion can generate/edit/save five maturity level descriptors (Basic, Reactive, Compliant, Proactive, Resilient) under `mmm_level_descriptors`.
 
+### T-MMM-DMC-032 — Maturity Descriptors Must Reconstruct Criteria Into Level-Specific Operating States
+- **Source**: Live descriptor-authoring regression, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: `Create maturity descriptors` copies the accepted criterion into Basic, Reactive, Compliant, Proactive, and Resilient with only the level label/generic guidance changed.
+- **GREEN Acceptance**: Descriptor generation uses the uploaded Approved Methodology Reference when available, rejects AI responses that are identical or materially too similar to the criterion, and emits five distinct auditable operating-state statements where Compliant is the neutral baseline, Proactive includes risk-based review/measurement/improvement, and Resilient includes embedded controls, automation or hard barriers where practicable, exception escalation, continuity, and survival of staff turnover/disruption.
+
+### T-MMM-DMC-033 — Descriptor Authoring Must Stay Green When AI Refinement Is Unavailable
+- **Source**: Live descriptor recreation banner, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: `Create maturity descriptors` successfully creates fallback descriptor drafts but presents a scary generic message such as `Used methodology fallback after AI reconstruction was unavailable or invalid: Edge Function returned a non-2xx status code`, making the user think descriptor creation failed.
+- **GREEN Acceptance**: Descriptor authoring treats the approved methodology generator as the governed stable path, optionally attempts AI refinement, keeps five editable descriptors visible, and does not expose AI/AIMC/404/non-2xx diagnostics in the normal success banner.
+
+### T-MMM-DMC-034 — Maturity Descriptors Must Describe Evidence State, Not Restate Obligations
+- **Source**: Live descriptor semantic review, 2026-06-03.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Basic/Reactive/Compliant/Proactive/Resilient descriptors say the criterion "must" or "shall" be approved/current/implemented, which restates the obligation instead of describing what the evidence shows at that maturity level.
+- **GREEN Acceptance**: Descriptor text is phrased as observable evidence state at each level, for example absent/weak/fragmented evidence at Basic, current/traceable/verifiable evidence at Compliant, and embedded/continuous/assured evidence at Resilient.
+
+### T-MMM-DMC-035 — Descriptor Save Must Be Visible And Capture User Edits For Learning
+- **Source**: Live descriptor save/edit usability review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Clicking `Save maturity descriptors` provides no visible response, descriptor text can be modified without an explicit per-level edit action, or changed descriptor text is saved without an immutable audit/learning trace.
+- **GREEN Acceptance**: Descriptor cards are read-only by default and expose an `Edit descriptor` control per maturity level, the save action shows adjacent pending/success/error feedback, and descriptor saves route through a service-role function that persists `mmm_level_descriptors`, writes `MATURITY_DESCRIPTOR_SAVE` to `mmm_audit_logs`, and records changed descriptor text as `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT` telemetry for Maturion learning.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

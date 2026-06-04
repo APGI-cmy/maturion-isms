@@ -38,6 +38,12 @@ type Scenario = {
     level: number;
     descriptor_text: string;
   }>;
+  knowledgeRows: Array<{
+    content: string;
+    source_document_name: string;
+    metadata?: Record<string, unknown>;
+    chunk_index: number;
+  }>;
   pendingTable: string | null;
   failTable: string | null;
 };
@@ -49,6 +55,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
     mpsRows: [],
     criteriaRows: [],
     levelDescriptorRows: [],
+    knowledgeRows: [],
     pendingTable: null,
     failTable: null,
   };
@@ -120,7 +127,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
           order: () => queryResult(table, []),
         };
       },
-      order: () => queryResult(table, []),
+      order: () => queryResult(table, table === 'ai_knowledge' ? scenario.knowledgeRows : []),
       single: () => queryResult(table, []),
     })),
     insert,
@@ -132,7 +139,20 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
     data: { reply: '[]' },
     error: null,
   };
-  const functionsInvoke = vi.fn(() => Promise.resolve(aiInvokeResult));
+  const functionsInvoke = vi.fn((functionName: string) => {
+    if (functionName === 'mmm-level-descriptor-save') {
+      return Promise.resolve({
+        data: {
+          ok: true,
+          saved_count: 5,
+          changed_count: 1,
+          learning_event_recorded: true,
+        },
+        error: null,
+      });
+    }
+    return Promise.resolve(aiInvokeResult);
+  });
 
   return {
     mockSupabase: {
@@ -149,6 +169,7 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
         mpsRows: [],
         criteriaRows: [],
         levelDescriptorRows: [],
+        knowledgeRows: [],
         pendingTable: null,
         failTable: null,
         ...next,
@@ -447,12 +468,73 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const descriptorGrid = await screen.findByTestId('level-descriptor-grid-criterion-1');
     expect(within(descriptorGrid).getByText('Basic')).toBeTruthy();
     expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
+    const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    expect(basicDescriptor.value).not.toContain('Basic: Approval checkpoints documented');
+    expect(basicDescriptor.value).not.toMatch(/\bmust be approved\b/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence for/i);
+    expect(basicDescriptor.value).toMatch(/absent|informal|dependent|weak/i);
+    expect(basicDescriptor.readOnly).toBe(true);
+
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
+    expect(basicDescriptor.readOnly).toBe(false);
+    fireEvent.change(basicDescriptor, {
+      target: {
+        value:
+          'Evidence for policy approval and display is weak, person-dependent, and not retained in a repeatable audit trail.',
+      },
+    });
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
     fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
 
-    await waitFor(() => expect(mockUpsert).toHaveBeenCalled());
-    const upsertArg = mockUpsert.mock.calls[0][0] as Array<Record<string, unknown>>;
-    expect(upsertArg).toHaveLength(5);
-    expect(upsertArg[0]).toMatchObject({ criterion_id: 'criterion-1', level: 1 });
+    await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledWith(
+      'mmm-level-descriptor-save',
+      expect.objectContaining({
+        body: expect.objectContaining({
+          criterion_id: 'criterion-1',
+          edited_levels: [1],
+        }),
+      }),
+    ));
+    const saveStatus = await screen.findByTestId('descriptor-save-status-criterion-1');
+    expect(saveStatus.textContent).toMatch(/Saved 5 maturity descriptors.*Recorded 1 descriptor edit/i);
+  });
+
+  it('descriptor generation stays green when AI refinement returns non-2xx', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+      knowledgeRows: [
+        {
+          source_document_name: 'LDCS_Maturity_Model_Descriptor_Guideline_Approved_Methodology_Reference.md',
+          metadata: { role: 'criteria_source' },
+          chunk_index: 0,
+          content:
+            'Operational Maturity Model Descriptor Guideline. Critical authoring rule: do not copy the criterion into each level. Basic Reactive Compliant Proactive Resilient descriptors reconstruct operating states.',
+        },
+      ],
+    });
+    configureAIError();
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-1'));
+
+    const descriptorGrid = await screen.findByTestId('level-descriptor-grid-criterion-1');
+    expect(within(descriptorGrid).getByText('Basic')).toBeTruthy();
+    expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
+    const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    expect(basicDescriptor.value).not.toMatch(/\bmust\b|\bshall\b/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence for/i);
+    const status = await screen.findByText(/Maturity descriptors created from the approved methodology reference/i);
+    expect(status.textContent).not.toContain('AI refinement');
+    expect(status.textContent).not.toContain('AIMC');
+    expect(status.textContent).not.toContain('404');
+    expect(status.textContent).not.toContain('Used methodology fallback');
+    expect(status.textContent).not.toContain('non-2xx');
+    expect(mockSupabase.functions.invoke).toHaveBeenCalled();
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {
