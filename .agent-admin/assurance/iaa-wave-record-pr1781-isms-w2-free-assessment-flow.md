@@ -7,6 +7,30 @@ CURRENT_HEAD_SHA: CURRENT_HEAD
 
 ---
 
+## PRE-BRIEF
+
+IAA pre-brief reviewed before W2 implementation delegation.
+
+Expected W2 scope:
+
+- public `/free-assessment` response capture;
+- five LDCS domain structure;
+- MPS-derived operating-state questions;
+- maturity levels: Basic, Reactive, Compliant, Proactive, Resilient;
+- indicative score and domain-level report;
+- printable/exportable ESCO-facing marketing report;
+- conversion links to ISMS, Journey/loss-prevention philosophy, and subscription/sign-up routes;
+- no private MMM execution, persistence, live AI provider call or W3-W8 implementation.
+
+Pre-brief conditions:
+
+- Builder delegation must be recorded in Foreman session memory.
+- W2 must not claim full production maturity roadmap execution.
+- W2 report must be clear that it is indicative and marketing-oriented, not a formal audit opinion.
+- W2 must keep public assessment separate from private `/assessment` and `/maturity/setup` execution.
+
+---
+
 ## Review
 
 IAA reviewed the PR #1781 W2 scope against the ISMS Stage 8 implementation plan, Stage 9 builder checklist, uploaded LDCS criteria source, and approved maturity descriptor methodology.
