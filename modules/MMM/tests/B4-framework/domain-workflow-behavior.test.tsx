@@ -139,7 +139,20 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
     data: { reply: '[]' },
     error: null,
   };
-  const functionsInvoke = vi.fn(() => Promise.resolve(aiInvokeResult));
+  const functionsInvoke = vi.fn((functionName: string) => {
+    if (functionName === 'mmm-level-descriptor-save') {
+      return Promise.resolve({
+        data: {
+          ok: true,
+          saved_count: 5,
+          changed_count: 1,
+          learning_event_recorded: true,
+        },
+        error: null,
+      });
+    }
+    return Promise.resolve(aiInvokeResult);
+  });
 
   return {
     mockSupabase: {
@@ -460,12 +473,30 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(basicDescriptor.value).not.toMatch(/\bmust be approved\b/i);
     expect(basicDescriptor.value).toMatch(/^Evidence for/i);
     expect(basicDescriptor.value).toMatch(/absent|informal|dependent|weak/i);
+    expect(basicDescriptor.readOnly).toBe(true);
+
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
+    expect(basicDescriptor.readOnly).toBe(false);
+    fireEvent.change(basicDescriptor, {
+      target: {
+        value:
+          'Evidence for policy approval and display is weak, person-dependent, and not retained in a repeatable audit trail.',
+      },
+    });
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
     fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
 
-    await waitFor(() => expect(mockUpsert).toHaveBeenCalled());
-    const upsertArg = mockUpsert.mock.calls[0][0] as Array<Record<string, unknown>>;
-    expect(upsertArg).toHaveLength(5);
-    expect(upsertArg[0]).toMatchObject({ criterion_id: 'criterion-1', level: 1 });
+    await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledWith(
+      'mmm-level-descriptor-save',
+      expect.objectContaining({
+        body: expect.objectContaining({
+          criterion_id: 'criterion-1',
+          edited_levels: [1],
+        }),
+      }),
+    ));
+    const saveStatus = await screen.findByTestId('descriptor-save-status-criterion-1');
+    expect(saveStatus.textContent).toMatch(/Saved 5 maturity descriptors.*Recorded 1 descriptor edit/i);
   });
 
   it('descriptor generation stays green when AI refinement returns non-2xx', async () => {

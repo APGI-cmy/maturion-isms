@@ -211,6 +211,12 @@
 - **RED Condition**: Basic/Reactive/Compliant/Proactive/Resilient descriptors say the criterion "must" or "shall" be approved/current/implemented, which restates the obligation instead of describing what the evidence shows at that maturity level.
 - **GREEN Acceptance**: Descriptor text is phrased as observable evidence state at each level, for example absent/weak/fragmented evidence at Basic, current/traceable/verifiable evidence at Compliant, and embedded/continuous/assured evidence at Resilient.
 
+### T-MMM-DMC-035 — Descriptor Save Must Be Visible And Capture User Edits For Learning
+- **Source**: Live descriptor save/edit usability review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Clicking `Save maturity descriptors` provides no visible response, descriptor text can be modified without an explicit per-level edit action, or changed descriptor text is saved without an immutable audit/learning trace.
+- **GREEN Acceptance**: Descriptor cards are read-only by default and expose an `Edit descriptor` control per maturity level, the save action shows adjacent pending/success/error feedback, and descriptor saves route through a service-role function that persists `mmm_level_descriptors`, writes `MATURITY_DESCRIPTOR_SAVE` to `mmm_audit_logs`, and records changed descriptor text as `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT` telemetry for Maturion learning.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

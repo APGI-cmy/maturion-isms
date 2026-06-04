@@ -76,6 +76,7 @@ Restore legacy document-management capability into MMM as a governed Subject Kno
    - Descriptor text must be phrased as the state of the audit evidence at that level, not as a restated obligation. Avoid "must" or "shall" requirement phrasing in generated descriptor drafts.
    - When an approved descriptor methodology reference is present in subject knowledge, descriptor generation must use it as doctrine. If AI output is missing, invalid, or materially too similar to the criterion text, the UI must fall back to deterministic methodology templates instead of presenting duplicated descriptors.
    - The deterministic methodology generator is the governed stable path for descriptor creation. AI may refine descriptors, but live AI route unavailability must not block descriptor authoring or present generic non-2xx transport errors as a failed user action.
+   - Descriptor persistence must provide visible adjacent save feedback. Each Basic/Reactive/Compliant/Proactive/Resilient descriptor must have an explicit edit control so user edits are intentional, and save must route through a service-role path that records `MATURITY_DESCRIPTOR_SAVE` audit evidence plus `USER_PREFERENCE_CAPTURE` learning telemetry for changed descriptor text.
 
 ## QA Binding
 

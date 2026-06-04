@@ -234,6 +234,25 @@ describe('T-MMM-S6-125: mmm-ai-framework-alter exists (AI alter function)', () =
   });
 });
 
+describe('T-MMM-DMC-035: maturity descriptor save captures audit and learning events', () => {
+  it('mmm-level-descriptor-save exists and is registered in config.toml', () => {
+    expect(fileExists('supabase/functions/mmm-level-descriptor-save/index.ts')).toBe(true);
+    const config = readFile('supabase/config.toml');
+    expect(config).toContain('[functions.mmm-level-descriptor-save]');
+    expect(config).toContain('verify_jwt = true');
+  });
+
+  it('mmm-level-descriptor-save writes descriptor rows, audit logs, and preference-learning telemetry', () => {
+    const src = readFile('supabase/functions/mmm-level-descriptor-save/index.ts');
+    expect(src).toContain('mmm_level_descriptors');
+    expect(src).toContain('mmm_audit_logs');
+    expect(src).toContain('MATURITY_DESCRIPTOR_SAVE');
+    expect(src).toContain('mmm_ai_interactions');
+    expect(src).toContain('USER_PREFERENCE_CAPTURE');
+    expect(src).toContain('MATURITY_DESCRIPTOR_EDIT');
+  });
+});
+
 describe('T-MMM-S6-126: mmm-ai-recommend exists (AI recommend function)', () => {
   it('file exists', () => {
     expect(fileExists('supabase/functions/mmm-ai-recommend/index.ts')).toBe(true);

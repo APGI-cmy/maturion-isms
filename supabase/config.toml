@@ -104,6 +104,9 @@ verify_jwt = true
 [functions.mmm-mps-approval-action]
 verify_jwt = true
 
+[functions.mmm-level-descriptor-save]
+verify_jwt = true
+
 [functions.mmm-domain-approval-action]
 verify_jwt = true
 

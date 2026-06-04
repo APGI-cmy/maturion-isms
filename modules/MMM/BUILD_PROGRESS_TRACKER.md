@@ -2,7 +2,7 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-06-02
+**Last Updated**: 2026-06-04
 **Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688; wave: mmm-traceability-cleanup-build-to-green-20260527 — QA trace map activated, untraced runtime artifacts removed/quarantined, DMC click-failure class recorded and gated with T-MMM-DMC-008); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
@@ -12,6 +12,14 @@
 > **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change. Stale tracker text is a governance defect (see `modules/MMM/_readiness/mmm-document-control-baseline.md`).
 
 ## Recent Failure Register (Live)
+
+- **2026-06-04 — Maturity Descriptor Save Silent And Edit Learning Not Explicit**
+  - **Observed Failure**: After descriptors were generated, clicking `Save maturity descriptors` did not provide a clear response, and descriptor editing did not expose an explicit per-level edit action or visible learning/audit capture.
+  - **Evidence**: User screenshot showed the descriptor textareas and bottom save button with no post-click response. User confirmed that all editing should be recorded by Maturion so future descriptor generation can learn from accepted changes.
+  - **Root Cause**: The descriptor UI reused a generic criterion-level status banner above the descriptor grid and saved descriptor rows directly from the browser. That made save confirmation easy to miss and did not use the service-role audit/AI-interaction path required by the MMM learning model.
+  - **Prebuild/Architecture Update**: DMC architecture now requires adjacent save feedback, explicit per-level descriptor edit controls, and service-role descriptor persistence that writes immutable audit evidence plus preference-learning telemetry.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-035` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor cards are read-only until `Edit descriptor` is clicked, descriptor saves call `mmm-level-descriptor-save`, the UI shows saved/learning confirmation beside the save button, and the edge function upserts `mmm_level_descriptors`, writes `MATURITY_DESCRIPTOR_SAVE` to `mmm_audit_logs`, and records changed descriptor text as `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT`.
 
 - **2026-06-03 — Maturity Descriptors Copy Criterion Into Every Level**
   - **Observed Failure**: The new descriptor authoring UI opened correctly, but `Create maturity descriptors` produced Basic/Reactive/Compliant/Proactive/Resilient text by copying the accepted criterion into each descriptor and only changing the level label/generic guidance.
@@ -1418,3 +1426,15 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Added B4 regression assertions that generated fallback descriptors do not contain `must be approved` and start from evidence-state language.
    - QA-to-Red Trace:
      - `T-MMM-DMC-034` maturity descriptors must describe evidence state, not restate obligations.
+
+17. **Maturity descriptor save silent and edit learning not explicit**
+   - Failure Class: user-facing persistence feedback + learning traceability.
+   - Symptom: `Save maturity descriptors` gave no adjacent visible response and descriptor edits were plain textarea changes without a clear per-level edit action or learning capture signal.
+   - Cause Class: descriptor save used a direct browser upsert and reused the generic criterion message location, bypassing the service-role audit/AI-interaction pattern used for governed learning capture.
+   - Corrective Action:
+     - Added per-level `Edit descriptor` controls and locked descriptor textareas by default.
+     - Routed descriptor saves through `mmm-level-descriptor-save`.
+     - Added adjacent saved/error feedback under the descriptor save button.
+     - Wrote immutable `MATURITY_DESCRIPTOR_SAVE` audit events and `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT` telemetry for changed descriptor text.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-035` descriptor save must be visible and capture user edits for learning.

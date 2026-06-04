@@ -125,6 +125,22 @@ interface CriterionActionMessage {
   text: string;
 }
 
+interface DescriptorSaveResult {
+  criterionId: string;
+  savedCount: number;
+  changedCount: number;
+  learningEventRecorded: boolean;
+}
+
+interface DescriptorSaveResponse {
+  savedCount?: number;
+  saved_count?: number;
+  changedCount?: number;
+  changed_count?: number;
+  learningEventRecorded?: boolean;
+  learning_event_recorded?: boolean;
+}
+
 interface AiChatUserRequest {
   message: string;
   context: Record<string, unknown>;
@@ -607,12 +623,18 @@ export function CriteriaManagement({
   const [criterionEditDrafts, setCriterionEditDrafts] = useState<Record<string, CriterionEditDraft>>({});
   const [descriptorDraftsByCriterion, setDescriptorDraftsByCriterion] = useState<Record<string, LevelDescriptorDraft[]>>({});
   const [criterionActionMessages, setCriterionActionMessages] = useState<Record<string, CriterionActionMessage>>({});
+  const [descriptorSaveMessages, setDescriptorSaveMessages] = useState<Record<string, CriterionActionMessage>>({});
   const [descriptorGeneratingByCriterion, setDescriptorGeneratingByCriterion] = useState<Record<string, boolean>>({});
+  const [descriptorEditingByKey, setDescriptorEditingByKey] = useState<Record<string, boolean>>({});
+  const [descriptorEditedLevelsByCriterion, setDescriptorEditedLevelsByCriterion] = useState<Record<string, Set<number>>>({});
 
   const resetAllStates = useCallback(() => {
     setMpsCriteriaStates({});
     setCriterionActionMessages({});
+    setDescriptorSaveMessages({});
     setDescriptorGeneratingByCriterion({});
+    setDescriptorEditingByKey({});
+    setDescriptorEditedLevelsByCriterion({});
   }, []);
 
   // NBR-003: reset generation state when domainId changes
@@ -719,27 +741,72 @@ export function CriteriaManagement({
       if (drafts.length !== 5 || drafts.some((draft) => !draft.descriptor_text.trim())) {
         throw new Error('All five maturity level descriptors must be completed before saving.');
       }
-      const { error } = await supabase.from('mmm_level_descriptors').upsert(
-        drafts.map((draft) => ({
+      const editedLevels = Array.from(descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>()).sort();
+      const headers = await getEdgeInvokeHeaders();
+      const { data, error } = await supabase.functions.invoke('mmm-level-descriptor-save', {
+        headers,
+        body: {
+          domain_id: domainId,
+          domain_name: domainName,
           criterion_id: criterion.id,
-          level: draft.level,
-          descriptor_text: draft.descriptor_text.trim(),
-        })),
-        { onConflict: 'criterion_id,level' },
-      );
-      if (error) throw new Error(error.message);
-      return criterion.id;
+          criterion_code: criterion.code,
+          criterion_text: criterionEditDrafts[criterion.id]?.name ?? criterion.name,
+          edited_levels: editedLevels,
+          descriptors: drafts.map((draft) => ({
+            level: draft.level,
+            label: draft.label,
+            descriptor_text: draft.descriptor_text.trim(),
+          })),
+        },
+      });
+      if (error) throw new Error(error.message || 'Failed to save maturity descriptors.');
+      const result = (data ?? {}) as DescriptorSaveResponse;
+      return {
+        criterionId: criterion.id,
+        savedCount: result.savedCount ?? result.saved_count ?? drafts.length,
+        changedCount: result.changedCount ?? result.changed_count ?? editedLevels.length,
+        learningEventRecorded: Boolean(result.learningEventRecorded ?? result.learning_event_recorded),
+      } as DescriptorSaveResult;
     },
-    onSuccess: (_criterionId, criterion) => {
+    onSuccess: (result, criterion) => {
       queryClient.invalidateQueries({ queryKey: ['domain-audit-level-descriptors'] });
       queryClient.invalidateQueries({ queryKey: ['domain-audit-criteria', mpsIds] });
+      setDescriptorEditedLevelsByCriterion((prev) => {
+        const next = { ...prev };
+        delete next[criterion.id];
+        return next;
+      });
+      setDescriptorEditingByKey((prev) => {
+        const next = { ...prev };
+        MATURITY_LEVELS.forEach(({ level }) => {
+          delete next[`${criterion.id}:${level}`];
+        });
+        return next;
+      });
+      const learningSuffix = result.learningEventRecorded
+        ? ` Recorded ${result.changedCount} descriptor edit${result.changedCount === 1 ? '' : 's'} for Maturion learning.`
+        : ' No descriptor text edits were detected.';
       setCriterionActionMessages((prev) => ({
         ...prev,
-        [criterion.id]: { type: 'success', text: 'Maturity descriptors saved.' },
+        [criterion.id]: {
+          type: 'success',
+          text: `Saved ${result.savedCount} maturity descriptors.${learningSuffix}`,
+        },
+      }));
+      setDescriptorSaveMessages((prev) => ({
+        ...prev,
+        [criterion.id]: {
+          type: 'success',
+          text: `Saved ${result.savedCount} maturity descriptors.${learningSuffix}`,
+        },
       }));
     },
     onError: (err: Error, criterion) => {
       setCriterionActionMessages((prev) => ({
+        ...prev,
+        [criterion.id]: { type: 'error', text: err.message },
+      }));
+      setDescriptorSaveMessages((prev) => ({
         ...prev,
         [criterion.id]: { type: 'error', text: err.message },
       }));
@@ -1095,6 +1162,11 @@ export function CriteriaManagement({
         text: 'Creating maturity descriptors from the approved methodology reference...',
       },
     }));
+    setDescriptorSaveMessages((prev) => {
+      const next = { ...prev };
+      delete next[criterion.id];
+      return next;
+    });
 
     try {
       const { data: methodologyRows } = await supabase
@@ -1145,6 +1217,18 @@ export function CriteriaManagement({
             ...prev,
             [criterion.id]: validated,
           }));
+          setDescriptorEditedLevelsByCriterion((prev) => {
+            const next = { ...prev };
+            delete next[criterion.id];
+            return next;
+          });
+          setDescriptorEditingByKey((prev) => {
+            const next = { ...prev };
+            MATURITY_LEVELS.forEach(({ level }) => {
+              delete next[`${criterion.id}:${level}`];
+            });
+            return next;
+          });
           setCriterionActionMessages((prev) => ({
             ...prev,
             [criterion.id]: {
@@ -1158,6 +1242,18 @@ export function CriteriaManagement({
             ...prev,
             [criterion.id]: methodologyDrafts,
           }));
+          setDescriptorEditedLevelsByCriterion((prev) => {
+            const next = { ...prev };
+            delete next[criterion.id];
+            return next;
+          });
+          setDescriptorEditingByKey((prev) => {
+            const next = { ...prev };
+            MATURITY_LEVELS.forEach(({ level }) => {
+              delete next[`${criterion.id}:${level}`];
+            });
+            return next;
+          });
           setCriterionActionMessages((prev) => ({
             ...prev,
             [criterion.id]: {
@@ -1173,6 +1269,18 @@ export function CriteriaManagement({
         ...prev,
         [criterion.id]: methodologyDrafts,
       }));
+      setDescriptorEditedLevelsByCriterion((prev) => {
+        const next = { ...prev };
+        delete next[criterion.id];
+        return next;
+      });
+      setDescriptorEditingByKey((prev) => {
+        const next = { ...prev };
+        MATURITY_LEVELS.forEach(({ level }) => {
+          delete next[`${criterion.id}:${level}`];
+        });
+        return next;
+      });
       setCriterionActionMessages((prev) => ({
         ...prev,
         [criterion.id]: {
@@ -1213,6 +1321,22 @@ export function CriteriaManagement({
         ),
       };
     });
+    setDescriptorEditedLevelsByCriterion((prev) => {
+      const edited = new Set(prev[criterionId] ?? []);
+      edited.add(level);
+      return {
+        ...prev,
+        [criterionId]: edited,
+      };
+    });
+  };
+
+  const toggleDescriptorEdit = (criterionId: string, level: number) => {
+    const key = `${criterionId}:${level}`;
+    setDescriptorEditingByKey((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   if (!open) return null;
@@ -1391,13 +1515,30 @@ export function CriteriaManagement({
                                         key={descriptor.level}
                                         className={`level-descriptor-card level-descriptor-card--${descriptor.level}`}
                                       >
-                                        <label htmlFor={`descriptor-${criterion.id}-${descriptor.level}`}>
-                                          {descriptor.label}
-                                        </label>
+                                        <div className="level-descriptor-card__header">
+                                          <label htmlFor={`descriptor-${criterion.id}-${descriptor.level}`}>
+                                            {descriptor.label}
+                                          </label>
+                                          <button
+                                            type="button"
+                                            className="btn btn-outline btn-sm"
+                                            onClick={() => toggleDescriptorEdit(criterion.id, descriptor.level)}
+                                            data-testid={`edit-descriptor-btn-${criterion.id}-${descriptor.level}`}
+                                          >
+                                            {descriptorEditingByKey[`${criterion.id}:${descriptor.level}`]
+                                              ? 'Done editing'
+                                              : 'Edit descriptor'}
+                                          </button>
+                                        </div>
                                         <textarea
                                           id={`descriptor-${criterion.id}-${descriptor.level}`}
-                                          className="form-control"
+                                          className={`form-control ${
+                                            descriptorEditingByKey[`${criterion.id}:${descriptor.level}`]
+                                              ? ''
+                                              : 'form-control--readonly'
+                                          }`}
                                           rows={4}
+                                          readOnly={!descriptorEditingByKey[`${criterion.id}:${descriptor.level}`]}
                                           value={descriptor.descriptor_text}
                                           onChange={(event) =>
                                             handleDescriptorDraftChange(
@@ -1408,6 +1549,10 @@ export function CriteriaManagement({
                                           }
                                           data-testid={`descriptor-input-${criterion.id}-${descriptor.level}`}
                                         />
+                                        <p className="level-descriptor-card__hint">
+                                          Use Edit descriptor to adjust this level. Saved changes are recorded for
+                                          Maturion learning and audit traceability.
+                                        </p>
                                       </div>
                                     ))}
                                     <div className="criteria-card__actions">
@@ -1418,9 +1563,20 @@ export function CriteriaManagement({
                                         disabled={saveDescriptorMutation.isPending}
                                         data-testid={`save-descriptors-btn-${criterion.id}`}
                                       >
-                                        Save maturity descriptors
+                                        {saveDescriptorMutation.isPending && saveDescriptorMutation.variables?.id === criterion.id
+                                          ? 'Saving descriptors...'
+                                          : 'Save maturity descriptors'}
                                       </button>
                                     </div>
+                                    {descriptorSaveMessages[criterion.id] ? (
+                                      <div
+                                        className={`criteria-card__message criteria-card__message--${descriptorSaveMessages[criterion.id].type}`}
+                                        role={descriptorSaveMessages[criterion.id].type === 'error' ? 'alert' : 'status'}
+                                        data-testid={`descriptor-save-status-${criterion.id}`}
+                                      >
+                                        {descriptorSaveMessages[criterion.id].text}
+                                      </div>
+                                    ) : null}
                                   </div>
                                 ) : null}
                               </article>
