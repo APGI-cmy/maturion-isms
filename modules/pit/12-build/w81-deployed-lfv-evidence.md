@@ -7,7 +7,7 @@ Captured by: Johan Ras / CS2 operator, using the merged W8.1 hydrated deployed-s
 
 ## Purpose
 
-Close the remaining W8.1 deployed route/auth evidence gap after PR #1777 and PR #1778.
+Record the W8.1 deployed route/auth hydrated-smoke evidence after PR #1777 and PR #1778.
 
 ## Routes requiring deployed direct-load and refresh evidence
 
@@ -29,7 +29,7 @@ Close the remaining W8.1 deployed route/auth evidence gap after PR #1777 and PR 
 Executed command:
 
 ```text
-PIT_W81_BASE_URL=https://maturion-pit.vercel.app node apps/isms-portal/scripts/pit-w81-deployed-smoke.mjs
+PIT_W81_BASE_URL=https://maturion-pit.vercel.app node apps/isms-portal/scripts/pit-w81-deployed-smoke.mjs > pit-w81-deployed-smoke-result.json
 ```
 
 PowerShell verification also returned:
@@ -187,16 +187,16 @@ Get-Content .\pit-w81-deployed-smoke-result.json | Select-String '"pass": false|
 | Evidence item | Status | Notes |
 |---|---|---|
 | Direct-load checks | PASS | Hydrated browser LFV run executed against `https://maturion-pit.vercel.app`; all W8.1 routes returned `pass: true`. |
-| Refresh checks | PASS_EQUIVALENT | Hydrated browser route navigation executed each route as a direct deep-link load. Manual browser refresh screenshots were not separately attached, but the harness validates deployed deep-link route hydration rather than static HTML fallback only. |
-| Deep-link screenshots | PASS_EQUIVALENT | CS2 supplied UI screenshot showing deployed `https://maturion-pit.vercel.app/` rendering without white screen; hydrated route JSON provides per-route visual/hydration proxy evidence. |
-| Auth redirect HAR/equivalent | PASS_EQUIVALENT | Protected routes `/dashboard`, `/projects`, `/projects/new`, and `/onboarding` all ended at `/login` with `protectedRouteRedirectedToLogin: true`; no errors recorded. |
-| Shell-state screenshots | PARTIAL_PASS | W8.1 deployed route/auth shell hydration is proven. Full data/empty/loading/permission-denied/network-error screenshots remain future richer-state evidence as those states are not all externally reachable in W8.1 unauthenticated LFV. |
+| Refresh checks | NOT_CAPTURED | The harness executed direct deep-link loads for each route. It did not perform an explicit browser refresh/reload cycle. |
+| Deep-link screenshots | OUTCOME_ONLY_NO_SCREENSHOTS | CS2 supplied a UI screenshot showing deployed `/` rendering without white screen. No per-route screenshot artifact is attached in this PR. |
+| Auth redirect HAR/equivalent | OUTCOME_ONLY_DESTINATION_STATE_NOT_VERIFIED | Protected routes `/dashboard`, `/projects`, `/projects/new`, and `/onboarding` ended at `/login` with `protectedRouteRedirectedToLogin: true`; no HAR/trace artifact is attached, and React Router `location.state.from` / query-hash preservation was not verified in the deployed browser evidence. |
+| Shell-state screenshots | NOT_CAPTURED | Full data/empty/loading/permission-denied/network-error screenshots are not attached and are not all externally reachable in W8.1 unauthenticated LFV. |
 | Route coverage ledger | FILED | `modules/pit/12-build/w81-route-coverage-ledger.md` |
 | Auth journey pass matrix | FILED | `modules/pit/12-build/w81-auth-journey-pass-matrix.md` |
 
 ## W8.1 exit decision
 
-W8.1 route/auth deployed LFV is accepted as **PASS for W8.1 scope**.
+W8.1 deployed route/auth **hydrated smoke** is accepted as PASS for the evidence actually captured.
 
 The deployed hydrated browser evidence proves:
 
@@ -205,8 +205,16 @@ The deployed hydrated browser evidence proves:
 - no console/page errors were recorded by the hydrated smoke harness;
 - the LFV harness exited successfully with `$LASTEXITCODE = 0` and no `pass: false` or `error` rows.
 
-This closes the W8.1 route/auth deployed-evidence gap and unblocks W8.2 planning/implementation.
+The following W8.1 evidence items remain not captured in this PR and must not be represented as passed:
+
+- explicit browser refresh/reload checks;
+- per-route screenshots;
+- HAR/trace artifact;
+- deployed verification of intended-destination state preservation, including query/hash behavior;
+- full shell-state screenshots for data/empty/loading/permission-denied/network-error.
+
+This PR records a valid W8.1 hydrated route/auth smoke PASS, but it does **not** by itself close every W8.1 LFV evidence row or unblock W8.2.
 
 ## Non-overclaim
 
-This W8.1 PASS does **not** claim full PIT Stage 12 completion, CS2 L3 completion for the whole module, production handover, or global `FUNCTIONAL_PASS` for PIT. It only accepts the W8.1 route/auth deployment slice as passed.
+This W8.1 evidence does **not** claim full PIT Stage 12 completion, CS2 L3 completion for the whole module, production handover, global `FUNCTIONAL_PASS` for PIT, or W8.2 authorization. It only accepts the W8.1 deployed hydrated route/auth smoke evidence as passed.
