@@ -25,7 +25,7 @@
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | COMPLETE FOR W1 AND W2 ONLY | `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1 AND W2 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md` |
 | Stage 12 | W1 Build Execution & Evidence | MERGED — ACCEPTED FOR W1 SCOPE | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
 | Stage 12 | W2 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
 
@@ -38,6 +38,10 @@
 **Correction PR**: #1779 (`3fe209365b26a5fdd35f34f40da441c96bed001f`)  
 **Primary Evidence**:
 - `modules/isms/11-build/w1-route-public-shell-evidence.md`
+- `.agent-admin/quality/isms-w1-route-public-shell-20260602-foreman-qp.md`
+- `.agent-admin/ecap/isms-w1-route-public-shell-20260602-ecap.md`
+- `.agent-admin/assurance/iaa-wave-record-isms-w1-route-public-shell-20260602.md`
+- `.agent-admin/assurance/iaa-token-isms-w1-route-public-shell-20260602.md`
 - `.functional-delivery/pr-1776.md`
 - `.functional-delivery/pr-1779.md`
 
@@ -52,9 +56,13 @@ W1 delivered the route/public shell scope only. It does not claim full ISMS prod
 **Primary Evidence**:
 - `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md` — W2 appointment
 - `modules/isms/11-build/w2-free-assessment-flow-evidence.md` — W2 implementation evidence
+- `.functional-delivery/pr-1781.md` — PR-scoped functional delivery evidence
+- `.agent-admin/assurance/iaa-wave-record-pr1781-isms-w2-free-assessment-flow.md` — PR-scoped IAA evidence
+- `.agent-workspace/foreman-v2/memory/session-1781-20260604.md` — Foreman session/delegation evidence
 
 **Runtime files changed by W2**:
 - `apps/isms-portal/src/lib/freeAssessment.ts`
+- `apps/isms-portal/src/lib/freeAssessment.test.ts`
 - `apps/isms-portal/src/pages/FreeAssessment.tsx`
 
 **W2 scope**:
@@ -97,7 +105,7 @@ W1 delivered the route/public shell scope only. It does not claim full ISMS prod
 - [x] Stage 12 W1 merged and corrected
 - [x] Stage 11 W2 Builder Appointment complete
 - [x] Stage 12 W2 implementation opened on branch
-- [ ] W2 PR opened
+- [x] W2 PR #1781 opened
 - [ ] W2 CI passed
 - [ ] W2 review conversations resolved
 - [ ] W2 handover authorized
