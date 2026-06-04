@@ -227,7 +227,13 @@
 - **Source**: Live auditor-consistency review, 2026-06-04.
 - **Layer**: Unit/static + operational
 - **RED Condition**: A maturity descriptor begins with a broad evidence category such as `Evidence for policy approval/currency` or `Evidence for governance forum mandate`, leaving auditors to infer which exact accepted criterion requirement is being assessed.
-- **GREEN Acceptance**: Each Basic/Reactive/Compliant/Proactive/Resilient descriptor begins with the accepted criterion requirement restated as an auditable subject, then describes the evidence state at that level. For example, `A documented governance charter that defines leadership responsibilities and decision authority is absent, weak...`, rather than a generic governance-forum evidence category.
+- **GREEN Acceptance**: Each Basic/Reactive/Compliant/Proactive/Resilient descriptor begins with `Evidence that ...`, restates the accepted criterion requirement as a grammatical auditable clause, then describes the evidence state at that level. For example, `Evidence that a documented governance charter that defines leadership responsibilities and decision authority is absent, weak...`, rather than a generic governance-forum evidence category.
+
+### T-MMM-DMC-038 — Descriptor Classifier Must Not Over-Match Role Support From HOD Wording Alone
+- **Source**: Live descriptor grammar and classifier review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A criterion about HODs/leaders making the Security Policy relevant through Golden Rules is classified as Risk Manager support/escalation merely because it contains HOD wording.
+- **GREEN Acceptance**: Risk Manager support/escalation descriptors are generated only when the accepted criterion actually names the Risk Manager/Security Manager support or escalation role. HOD/leader Golden Rules criteria retain HODs/leaders, Golden Rules, associated risk profile, and acceptable risk tolerance in the generated evidence clause.
 
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy

@@ -452,8 +452,8 @@ function criterionRequirementSubject(criterionText: string): string {
 
   let subject = clean
     .replace(/^A documented governance charter defines\b/i, 'A documented governance charter that defines')
-    .replace(/^The Security Policy will be a short document that will at least outline\b/i, 'The Security Policy as a short document that at least outlines')
-    .replace(/\bwill be a short document that will at least outline\b/gi, 'as a short document that at least outlines')
+    .replace(/^The Security Policy will be a short document that will at least outline\b/i, 'The Security Policy is a short document that at least outlines')
+    .replace(/\bwill be a short document that will at least outline\b/gi, 'is a short document that at least outlines')
     .replace(/\bshould be prominently displayed\. This display,/gi, 'and prominently displayed, with display')
     .replace(/\bshould be either communicated\b/gi, 'communicated')
     .replace(/\bshould be placed\b/gi, 'placed')
@@ -472,12 +472,68 @@ function criterionRequirementSubject(criterionText: string): string {
   return subject.replace(/[.;:,]+$/g, '').trim();
 }
 
+function evidenceClauseSubject(subject: string): string {
+  const trimmed = subject.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
+  if (!trimmed) return 'the accepted criterion requirement';
+  return trimmed
+    .replace(/^The Risk Manager: Security will support\b/i, 'the Risk Manager: Security provides Security support')
+    .replace(/^Risk Manager: Security support\b/i, 'the Risk Manager: Security provides Security support')
+    .replace(/^Risk Manager: Security accountability\b/i, 'the Risk Manager: Security is accountable')
+    .replace(/^Risk Manager: Security independent\/direct reporting\b/i, 'the Risk Manager: Security reports independently/directly')
+    .replace(/^A Security Policy\b/i, 'a Security Policy')
+    .replace(/^The Security Policy\b/i, 'the Security Policy')
+    .replace(/^A documented governance charter\b/i, 'a documented governance charter')
+    .replace(/^The Heads of Department\b/i, 'the Heads of Department')
+    .replace(/^A\b/, 'a')
+    .replace(/^The\b/, 'the');
+}
+
 function identifyControlObject(criterionText: string): DescriptorControlObject {
   const normalized = normalizeDescriptorText(criterionText);
   const generic = DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'generic_control') ?? DESCRIPTOR_CONTROL_OBJECTS[0];
+  const hasRiskManagerActor =
+    normalized.includes('risk manager') || normalized.includes('security manager');
+  const supportEscalationTerms = [
+    'support',
+    'deviate',
+    'deviation',
+    'escalate',
+    'escalation',
+    'dcc',
+    'general manager',
+    'md lucara',
+    'business unit manager',
+  ];
+
+  if (
+    hasRiskManagerActor &&
+    (normalized.includes('accountable') ||
+      normalized.includes('delivery of security') ||
+      normalized.includes('coordination') ||
+      normalized.includes('co ordination'))
+  ) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'role_accountability') ?? generic;
+  }
+  if (
+    hasRiskManagerActor &&
+    (normalized.includes('report independently') ||
+      normalized.includes('report directly') ||
+      normalized.includes('senior executive') ||
+      normalized.includes('chief risk officer') ||
+      normalized.includes('managing director'))
+  ) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'direct_reporting') ?? generic;
+  }
+  if (hasRiskManagerActor && supportEscalationTerms.some((term) => normalized.includes(term))) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'role_support_escalation') ?? generic;
+  }
+
   let best = generic;
   let bestScore = -1;
-  for (const controlObject of DESCRIPTOR_CONTROL_OBJECTS.filter((item) => item.key !== 'generic_control')) {
+  const roleSpecificKeys = new Set(['role_accountability', 'direct_reporting', 'role_support_escalation']);
+  for (const controlObject of DESCRIPTOR_CONTROL_OBJECTS.filter(
+    (item) => item.key !== 'generic_control' && !roleSpecificKeys.has(item.key),
+  )) {
     const score = controlObject.keywords.reduce(
       (total, keyword) => total + (normalized.includes(normalizeDescriptorText(keyword)) ? 1 : 0),
       0,
@@ -495,13 +551,13 @@ function summariseEvidenceSubject(criterionText: string, controlObject: Descript
   const lower = clean.toLowerCase();
   if (controlObject.key === 'role_accountability') {
     const siteScope = lower.includes('kdm') && lower.includes('dtp') ? ' at KDM and DTP' : '';
-    return `Risk Manager: Security accountability, coordination, and alignment with this standard for delivery of security${siteScope}`;
+    return `the Risk Manager: Security is accountable for delivery of security${siteScope}, coordination, and alignment with this standard`;
   }
   if (controlObject.key === 'direct_reporting') {
-    return 'Risk Manager: Security independent/direct reporting to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
+    return 'the Risk Manager: Security reports independently/directly to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
   }
   if (controlObject.key === 'role_support_escalation') {
-    return 'Risk Manager: Security support to HODs/Business Unit Managers, standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
+    return 'the Risk Manager: Security provides Security support to HODs/Business Unit Managers through standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
   }
   return criterionRequirementSubject(clean) || controlObject.objectPhrase;
 }
@@ -510,13 +566,15 @@ function buildFallbackMaturityDescriptorDrafts(criterion: DomainAuditCriterionRo
   const criterionText = criterionEditSafeText(criterion);
   const controlObject = identifyControlObject(criterionText);
   const evidenceSubject = summariseEvidenceSubject(criterionText, controlObject);
+  const evidenceClause = evidenceClauseSubject(evidenceSubject);
+  const evidenceLead = `Evidence that ${evidenceClause}`;
 
   const descriptions: Record<number, string> = {
-    1: `${evidenceSubject} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`,
-    2: `${evidenceSubject} exists in some form, but records show activity mainly after incidents, audits, management pressure, or visible non-conformance. Evidence supports response and correction, but not stable ownership, prevention, or sustained control.`,
-    3: `${evidenceSubject} is current, complete, traceable, and available for auditor verification at the required minimum cadence. The evidence set includes ${controlObject.minimumEvidence} and shows the control is implemented as required.`,
-    4: `${evidenceSubject} shows owner-led, risk-based review and improvement. Records include metrics or trends, incident or change learning, accountable actions, and evidence that control effectiveness is improved before failures recur.`,
-    5: `${evidenceSubject} is embedded into routines, systems, monitoring, and escalation so the control remains effective during staff turnover, abnormal operations, or disruption. Records show continuity, exception escalation, automated or hard-barrier support where practicable, and independent assurance.`,
+    1: `${evidenceLead} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`,
+    2: `${evidenceLead} exists in some form, but records show activity mainly after incidents, audits, management pressure, or visible non-conformance. Evidence supports response and correction, but not stable ownership, prevention, or sustained control.`,
+    3: `${evidenceLead} is current, complete, traceable, and available for auditor verification at the required minimum cadence. The evidence set includes ${controlObject.minimumEvidence} and shows the control is implemented as required.`,
+    4: `${evidenceLead} shows owner-led, risk-based review and improvement. Records include metrics or trends, incident or change learning, accountable actions, and evidence that control effectiveness is improved before failures recur.`,
+    5: `${evidenceLead} is embedded into routines, systems, monitoring, and escalation so the control remains effective during staff turnover, abnormal operations, or disruption. Records show continuity, exception escalation, automated or hard-barrier support where practicable, and independent assurance.`,
   };
 
   return MATURITY_LEVELS.map(({ level, label }) => ({
@@ -1286,7 +1344,7 @@ export function CriteriaManagement({
             `Rules:\n` +
             `- Do not copy the criterion into each level.\n` +
             `- Reconstruct the criterion into observable operating states for Basic, Reactive, Compliant, Proactive, and Resilient.\n` +
-            `- Begin every descriptor with the actual criterion evidence requirement restated as an auditable subject, then define the evidence state for that maturity level.\n` +
+            `- Begin every descriptor with "Evidence that ..." followed by the actual criterion evidence requirement restated as a grammatical auditable clause, then define the evidence state for that maturity level.\n` +
             `- Preserve the criterion-specific actor/action/object in every descriptor; the exact thing requested by the criterion must remain visible in the maturity evidence subject.\n` +
             `- Do not replace role, reporting-line, support, escalation, or meeting criteria with generic policy/control wording.\n` +
             `- For reporting-line criteria, describe evidence of direct access, regular meetings, agendas/minutes, decisions, actions, and escalation with the senior executive.\n` +

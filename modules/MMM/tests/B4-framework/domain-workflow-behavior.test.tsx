@@ -471,7 +471,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
     expect(basicDescriptor.value).not.toContain('Basic: Approval checkpoints documented');
     expect(basicDescriptor.value).not.toMatch(/\bmust be approved\b/i);
-    expect(basicDescriptor.value).toMatch(/^Workflow owner formally assigned/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence that Workflow owner formally assigned/i);
     expect(basicDescriptor.value).toMatch(/absent|informal|dependent|weak/i);
     expect(basicDescriptor.readOnly).toBe(true);
 
@@ -527,7 +527,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
     const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
     expect(basicDescriptor.value).not.toMatch(/\bmust\b|\bshall\b/i);
-    expect(basicDescriptor.value).toMatch(/^Workflow owner formally assigned/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence that Workflow owner formally assigned/i);
     const status = await screen.findByText(/Maturity descriptors created from the approved methodology reference/i);
     expect(status.textContent).not.toContain('AI refinement');
     expect(status.textContent).not.toContain('AIMC');
@@ -577,21 +577,21 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-role-accountability'));
     const roleBasic = await screen.findByTestId('descriptor-input-criterion-role-accountability-1') as HTMLTextAreaElement;
-    expect(roleBasic.value).toMatch(/^Risk Manager: Security accountability/);
+    expect(roleBasic.value).toMatch(/^Evidence that the Risk Manager: Security is accountable/);
     expect(roleBasic.value).toContain('delivery of security');
     expect(roleBasic.value).toContain('this standard');
     expect(roleBasic.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-direct-reporting'));
     const reportingCompliant = await screen.findByTestId('descriptor-input-criterion-direct-reporting-3') as HTMLTextAreaElement;
-    expect(reportingCompliant.value).toMatch(/^Risk Manager: Security independent\/direct reporting/);
+    expect(reportingCompliant.value).toMatch(/^Evidence that the Risk Manager: Security reports independently\/directly/);
     expect(reportingCompliant.value).toMatch(/most senior executive/i);
     expect(reportingCompliant.value).toMatch(/meeting cadence|agendas\/minutes|action logs/i);
     expect(reportingCompliant.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-hod-support'));
     const supportProactive = await screen.findByTestId('descriptor-input-criterion-hod-support-4') as HTMLTextAreaElement;
-    expect(supportProactive.value).toMatch(/^Risk Manager: Security support to HODs\/Business Unit Managers/);
+    expect(supportProactive.value).toMatch(/^Evidence that the Risk Manager: Security provides Security support/);
     expect(supportProactive.value).toMatch(/deviation escalation|DCC\/GM\/MD/i);
     expect(supportProactive.value).toMatch(/closure/i);
     expect(supportProactive.value).not.toMatch(/governance forum mandate/i);
@@ -623,6 +623,14 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
         name:
           'A documented governance charter defines leadership responsibilities and decision authority (hybrid source).',
       },
+      {
+        id: 'criterion-hod-golden-rules',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C004',
+        sort_order: 4,
+        name:
+          'The Heads of Department / HODs, Superintendents, etc. - leaders at all levels - will endeavour to make the Security Policy relevant to their place of operation / workplace through setting a limited number of Golden Rules that define applicable security requirements based on the associated risk profile and acceptable risk tolerance.',
+      },
     ];
 
     configureScenario({
@@ -637,14 +645,14 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-policy-display'));
     const displayBasic = await screen.findByTestId('descriptor-input-criterion-policy-display-1') as HTMLTextAreaElement;
-    expect(displayBasic.value).toMatch(/^A Security Policy signed by the most senior executive/i);
+    expect(displayBasic.value).toMatch(/^Evidence that a Security Policy signed by the most senior executive/i);
     expect(displayBasic.value).toContain('prominently displayed');
     expect(displayBasic.value).toMatch(/absent|weak|outdated/i);
     expect(displayBasic.value).not.toMatch(/policy approval\/currency/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-policy-outline'));
     const outlineCompliant = await screen.findByTestId('descriptor-input-criterion-policy-outline-3') as HTMLTextAreaElement;
-    expect(outlineCompliant.value).toMatch(/^The Security Policy as a short document that at least outlines/i);
+    expect(outlineCompliant.value).toMatch(/^Evidence that the Security Policy is a short document that at least outlines/i);
     expect(outlineCompliant.value).toContain('company’s obligations');
     expect(outlineCompliant.value).toMatch(/current, complete, traceable/i);
     expect(outlineCompliant.value).not.toMatch(/policy approval\/currency/i);
@@ -652,9 +660,16 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-governance-charter'));
     const charterBasic = await screen.findByTestId('descriptor-input-criterion-governance-charter-1') as HTMLTextAreaElement;
     expect(charterBasic.value).toMatch(
-      /^A documented governance charter that defines leadership responsibilities and decision authority is absent/i,
+      /^Evidence that a documented governance charter that defines leadership responsibilities and decision authority is absent/i,
     );
     expect(charterBasic.value).not.toMatch(/governance forum mandate/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-hod-golden-rules'));
+    const goldenRulesBasic = await screen.findByTestId('descriptor-input-criterion-hod-golden-rules-1') as HTMLTextAreaElement;
+    expect(goldenRulesBasic.value).toMatch(/^Evidence that the Heads of Department \/ HODs/i);
+    expect(goldenRulesBasic.value).toContain('Golden Rules');
+    expect(goldenRulesBasic.value).toContain('risk profile and acceptable risk tolerance');
+    expect(goldenRulesBasic.value).not.toMatch(/Risk Manager: Security support/i);
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {

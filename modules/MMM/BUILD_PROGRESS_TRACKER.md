@@ -1462,3 +1462,15 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Added B4 regression coverage for Security Policy display, Security Policy obligation-outline, and documented governance charter examples.
    - QA-to-Red Trace:
      - `T-MMM-DMC-037` maturity descriptors must start from the actual evidence requirement.
+
+20. **Auditor-operable descriptors became grammatical fragments and over-matched HOD support**
+   - Failure Class: descriptor grammar + classifier precision.
+   - Symptom: Requirement-first descriptor text dropped the word `Evidence` and produced clipped noun phrases such as `Risk Manager: Security support to HODs... is absent`; HOD/Golden Rules criteria could also be misclassified as Risk Manager support because HOD wording was too heavily weighted.
+   - Cause Class: criterion-subject derivation produced a noun phrase instead of a grammatical evidence clause, and role-support classification did not require a Risk Manager/Security Manager actor.
+   - Corrective Action:
+     - Restored `Evidence that ...` as the descriptor lead-in.
+     - Converted role-specific descriptor subjects into grammatical clauses, e.g. `Evidence that the Risk Manager: Security provides Security support...`.
+     - Narrowed Risk Manager support/escalation classification so HOD wording alone cannot trigger that profile.
+     - Added B4 regression coverage for the HOD/Golden Rules/risk-tolerance criterion.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-038` descriptor classifier must not over-match role support from HOD wording alone.
