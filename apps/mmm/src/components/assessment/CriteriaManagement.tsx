@@ -444,6 +444,34 @@ function firstCriterionClause(criterionText: string): string {
   return words.length > 18 ? words.slice(0, 18).join(' ') : source;
 }
 
+function criterionRequirementSubject(criterionText: string): string {
+  const clean = stripCriterionBoilerplate(criterionText)
+    .replace(/\s+/g, ' ')
+    .replace(/[.;:,]+$/g, '')
+    .trim();
+
+  let subject = clean
+    .replace(/^A documented governance charter defines\b/i, 'A documented governance charter that defines')
+    .replace(/^The Security Policy will be a short document that will at least outline\b/i, 'The Security Policy as a short document that at least outlines')
+    .replace(/\bwill be a short document that will at least outline\b/gi, 'as a short document that at least outlines')
+    .replace(/\bshould be prominently displayed\. This display,/gi, 'and prominently displayed, with display')
+    .replace(/\bshould be either communicated\b/gi, 'communicated')
+    .replace(/\bshould be placed\b/gi, 'placed')
+    .replace(/\bwill at least outline\b/gi, 'at least outlines')
+    .replace(/\bwill be\b/gi, 'is')
+    .replace(/\bshould be\b/gi, 'is')
+    .replace(/\bshall be\b/gi, 'is')
+    .replace(/\bmust be\b/gi, 'is')
+    .replace(/\bwill\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!subject) {
+    subject = firstCriterionClause(clean);
+  }
+  return subject.replace(/[.;:,]+$/g, '').trim();
+}
+
 function identifyControlObject(criterionText: string): DescriptorControlObject {
   const normalized = normalizeDescriptorText(criterionText);
   const generic = DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'generic_control') ?? DESCRIPTOR_CONTROL_OBJECTS[0];
@@ -467,40 +495,15 @@ function summariseEvidenceSubject(criterionText: string, controlObject: Descript
   const lower = clean.toLowerCase();
   if (controlObject.key === 'role_accountability') {
     const siteScope = lower.includes('kdm') && lower.includes('dtp') ? ' at KDM and DTP' : '';
-    return `Evidence for Risk Manager: Security accountability, coordination, and alignment with this standard for delivery of security${siteScope}`;
+    return `Risk Manager: Security accountability, coordination, and alignment with this standard for delivery of security${siteScope}`;
   }
   if (controlObject.key === 'direct_reporting') {
-    return 'Evidence for Risk Manager: Security independent/direct reporting to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
+    return 'Risk Manager: Security independent/direct reporting to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
   }
   if (controlObject.key === 'role_support_escalation') {
-    return 'Evidence for Risk Manager: Security support to HODs/Business Unit Managers, standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
+    return 'Risk Manager: Security support to HODs/Business Unit Managers, standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
   }
-  if (controlObject.key === 'policy' && lower.includes('policy')) {
-    return 'Evidence for policy approval/currency, communication or display, ownership, review, and awareness';
-  }
-  if (controlObject.key === 'register_matrix' && (lower.includes('matrix') || lower.includes('custody'))) {
-    return 'Evidence for the accountability matrix, named owners, defined controls, version control, and change review';
-  }
-  if (controlObject.key === 'committee_governance') {
-    return 'Evidence for governance forum mandate, decisions, assigned actions, escalation, and closure verification';
-  }
-  if (controlObject.key === 'procedure') {
-    return 'Evidence for procedure approval/currency, communication, execution records, training, and review';
-  }
-  if (controlObject.key === 'technical_control') {
-    return 'Evidence for technical or physical control design, maintenance, monitoring, testing, and effectiveness';
-  }
-  if (controlObject.key === 'access_authorisation') {
-    return 'Evidence for access authorisation, logs, role rules, review, exception handling, and revocation';
-  }
-  if (controlObject.key === 'monitoring_metrics') {
-    return 'Evidence for defined measures, dashboards or reports, accountable review, actions, and closure';
-  }
-  const criterionAnchor = firstCriterionClause(clean);
-  if (criterionAnchor) {
-    return `Evidence for ${criterionAnchor} evidence, ownership, and assurance`;
-  }
-  return `Evidence for the ${controlObject.objectPhrase}`;
+  return criterionRequirementSubject(clean) || controlObject.objectPhrase;
 }
 
 function buildFallbackMaturityDescriptorDrafts(criterion: DomainAuditCriterionRow): LevelDescriptorDraft[] {
@@ -1283,7 +1286,8 @@ export function CriteriaManagement({
             `Rules:\n` +
             `- Do not copy the criterion into each level.\n` +
             `- Reconstruct the criterion into observable operating states for Basic, Reactive, Compliant, Proactive, and Resilient.\n` +
-            `- Preserve the criterion-specific actor/action/object in every descriptor; at least one distinctive phrase from the criterion must remain visible in the maturity evidence subject.\n` +
+            `- Begin every descriptor with the actual criterion evidence requirement restated as an auditable subject, then define the evidence state for that maturity level.\n` +
+            `- Preserve the criterion-specific actor/action/object in every descriptor; the exact thing requested by the criterion must remain visible in the maturity evidence subject.\n` +
             `- Do not replace role, reporting-line, support, escalation, or meeting criteria with generic policy/control wording.\n` +
             `- For reporting-line criteria, describe evidence of direct access, regular meetings, agendas/minutes, decisions, actions, and escalation with the senior executive.\n` +
             `- For support/escalation criteria, describe evidence of support provided to HODs/Business Unit Managers, deviations escalated, decisions made, actions assigned, and closure.\n` +

@@ -1450,3 +1450,15 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Added B4 regression coverage using the live Risk Manager examples.
    - QA-to-Red Trace:
      - `T-MMM-DMC-036` maturity descriptors must preserve criterion-specific evidence anchors.
+
+19. **Maturity descriptors not auditor-operable enough**
+   - Failure Class: descriptor precision / auditor consistency.
+   - Symptom: Security Policy and governance-charter descriptors still began with generic phrases such as `Evidence for policy approval/currency` or `Evidence for governance forum mandate`, forcing auditors to infer the exact evidence requirement from the original criterion.
+   - Cause Class: descriptor generation preserved a broad anchor but did not restate the actual accepted criterion requirement as the first clause of each level descriptor.
+   - Corrective Action:
+     - Added the auditor-operable rule that each descriptor starts with the exact criterion evidence requirement restated as an auditable subject, then appends the maturity evidence state.
+     - Updated deterministic descriptor subject derivation for policy-display, policy-outline, governance-charter, and generic criteria.
+     - Tightened the AI reconstruction prompt with the same criterion-requirement-first rule.
+     - Added B4 regression coverage for Security Policy display, Security Policy obligation-outline, and documented governance charter examples.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-037` maturity descriptors must start from the actual evidence requirement.
