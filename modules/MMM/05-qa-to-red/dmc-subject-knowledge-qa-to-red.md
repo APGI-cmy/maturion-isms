@@ -217,6 +217,18 @@
 - **RED Condition**: Clicking `Save maturity descriptors` provides no visible response, descriptor text can be modified without an explicit per-level edit action, or changed descriptor text is saved without an immutable audit/learning trace.
 - **GREEN Acceptance**: Descriptor cards are read-only by default and expose an `Edit descriptor` control per maturity level, the save action shows adjacent pending/success/error feedback, and descriptor saves route through a service-role function that persists `mmm_level_descriptors`, writes `MATURITY_DESCRIPTOR_SAVE` to `mmm_audit_logs`, and records changed descriptor text as `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT` telemetry for Maturion learning.
 
+### T-MMM-DMC-036 — Maturity Descriptors Must Preserve Criterion-Specific Evidence Anchors
+- **Source**: Live descriptor semantic review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A role, reporting-line, meeting, support, or escalation criterion generates generic maturity descriptors such as policy ownership/display/awareness or generic control requirement evidence without referencing the criterion's actual actor, action, object, cadence, or evidence route.
+- **GREEN Acceptance**: Each generated maturity descriptor preserves a distinctive criterion-specific evidence anchor while applying Basic/Reactive/Compliant/Proactive/Resilient evidence-state doctrine. For example Risk Manager accountability descriptors reference Risk Manager: Security accountability, delivery of security, and standard alignment; reporting descriptors reference direct senior-executive reporting/meeting evidence; and HOD support descriptors reference HOD/Business Unit support, deviation escalation, decisions, actions, and closure.
+
+### T-MMM-DMC-037 — Maturity Descriptors Must Start From The Actual Evidence Requirement
+- **Source**: Live auditor-consistency review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A maturity descriptor begins with a broad evidence category such as `Evidence for policy approval/currency` or `Evidence for governance forum mandate`, leaving auditors to infer which exact accepted criterion requirement is being assessed.
+- **GREEN Acceptance**: Each Basic/Reactive/Compliant/Proactive/Resilient descriptor begins with the accepted criterion requirement restated as an auditable subject, then describes the evidence state at that level. For example, `A documented governance charter that defines leadership responsibilities and decision authority is absent, weak...`, rather than a generic governance-forum evidence category.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

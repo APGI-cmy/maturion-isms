@@ -471,7 +471,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
     expect(basicDescriptor.value).not.toContain('Basic: Approval checkpoints documented');
     expect(basicDescriptor.value).not.toMatch(/\bmust be approved\b/i);
-    expect(basicDescriptor.value).toMatch(/^Evidence for/i);
+    expect(basicDescriptor.value).toMatch(/^Workflow owner formally assigned/i);
     expect(basicDescriptor.value).toMatch(/absent|informal|dependent|weak/i);
     expect(basicDescriptor.readOnly).toBe(true);
 
@@ -527,7 +527,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
     const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
     expect(basicDescriptor.value).not.toMatch(/\bmust\b|\bshall\b/i);
-    expect(basicDescriptor.value).toMatch(/^Evidence for/i);
+    expect(basicDescriptor.value).toMatch(/^Workflow owner formally assigned/i);
     const status = await screen.findByText(/Maturity descriptors created from the approved methodology reference/i);
     expect(status.textContent).not.toContain('AI refinement');
     expect(status.textContent).not.toContain('AIMC');
@@ -535,6 +535,126 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(status.textContent).not.toContain('Used methodology fallback');
     expect(status.textContent).not.toContain('non-2xx');
     expect(mockSupabase.functions.invoke).toHaveBeenCalled();
+  });
+
+  it('maturity descriptors preserve criterion-specific role, reporting, and support anchors', async () => {
+    const riskManagerCriteria: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-role-accountability',
+        mps_id: 'mps-1',
+        code: 'D001.MPS003.C006',
+        sort_order: 5,
+        name:
+          'The Risk Manager: Security is the person who will be accountable for the delivery of security at the operations (both KDM and DTP) and co-ordination of security on behalf of the General Manager in accordance with this standard, laws rules and regulations and applicable Lucara Policies.',
+      },
+      {
+        id: 'criterion-direct-reporting',
+        mps_id: 'mps-1',
+        code: 'D001.MPS003.C007',
+        sort_order: 6,
+        name:
+          'The Risk Manager: Security will report independently and directly to the most senior executive of the operation. Currently, the Risk Manager: Security reports direct to the Chief Risk Officer, who reports to the Managing Director.',
+      },
+      {
+        id: 'criterion-hod-support',
+        mps_id: 'mps-1',
+        code: 'D001.MPS003.C008',
+        sort_order: 7,
+        name:
+          'The Risk Manager: Security will support Heads of Department (HOD) / Business Unit Managers in achieving Security in their areas through enforcing the intent of this standard. Where a HOD wishes to deviate from this standard the Risk Manager: Security Manager will escalate the issue to the DCC or the General Manager or MD Lucara Botswana.',
+      },
+    ];
+
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: riskManagerCriteria,
+    });
+    renderCriteriaManagement({
+      criteriaByMps: {
+        'mps-1': riskManagerCriteria,
+      },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-role-accountability'));
+    const roleBasic = await screen.findByTestId('descriptor-input-criterion-role-accountability-1') as HTMLTextAreaElement;
+    expect(roleBasic.value).toMatch(/^Risk Manager: Security accountability/);
+    expect(roleBasic.value).toContain('delivery of security');
+    expect(roleBasic.value).toContain('this standard');
+    expect(roleBasic.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-direct-reporting'));
+    const reportingCompliant = await screen.findByTestId('descriptor-input-criterion-direct-reporting-3') as HTMLTextAreaElement;
+    expect(reportingCompliant.value).toMatch(/^Risk Manager: Security independent\/direct reporting/);
+    expect(reportingCompliant.value).toMatch(/most senior executive/i);
+    expect(reportingCompliant.value).toMatch(/meeting cadence|agendas\/minutes|action logs/i);
+    expect(reportingCompliant.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-hod-support'));
+    const supportProactive = await screen.findByTestId('descriptor-input-criterion-hod-support-4') as HTMLTextAreaElement;
+    expect(supportProactive.value).toMatch(/^Risk Manager: Security support to HODs\/Business Unit Managers/);
+    expect(supportProactive.value).toMatch(/deviation escalation|DCC\/GM\/MD/i);
+    expect(supportProactive.value).toMatch(/closure/i);
+    expect(supportProactive.value).not.toMatch(/governance forum mandate/i);
+  });
+
+  it('maturity descriptors begin with the actual criterion evidence requirement before level state', async () => {
+    const precisionCriteria: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-policy-display',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C001',
+        sort_order: 1,
+        name:
+          'A Security Policy signed by the most senior executive for Lucara Botswana - applicable to both Karowe Diamond Mine (KDM) and the Corporate Office at the Diamond Technology Park (DTP) should be prominently displayed. This display, subject to the location (at the Corporate Office or KDM) should be either communicated via email and placed on available and accessible social media platforms like Yammer.',
+      },
+      {
+        id: 'criterion-policy-outline',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C002',
+        sort_order: 2,
+        name:
+          'The Security Policy will be a short document that will at least outline the company’s obligations and the individual’s obligations regarding Security and/or security related activities.',
+      },
+      {
+        id: 'criterion-governance-charter',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C003',
+        sort_order: 3,
+        name:
+          'A documented governance charter defines leadership responsibilities and decision authority (hybrid source).',
+      },
+    ];
+
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: precisionCriteria,
+    });
+    renderCriteriaManagement({
+      criteriaByMps: {
+        'mps-1': precisionCriteria,
+      },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-policy-display'));
+    const displayBasic = await screen.findByTestId('descriptor-input-criterion-policy-display-1') as HTMLTextAreaElement;
+    expect(displayBasic.value).toMatch(/^A Security Policy signed by the most senior executive/i);
+    expect(displayBasic.value).toContain('prominently displayed');
+    expect(displayBasic.value).toMatch(/absent|weak|outdated/i);
+    expect(displayBasic.value).not.toMatch(/policy approval\/currency/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-policy-outline'));
+    const outlineCompliant = await screen.findByTestId('descriptor-input-criterion-policy-outline-3') as HTMLTextAreaElement;
+    expect(outlineCompliant.value).toMatch(/^The Security Policy as a short document that at least outlines/i);
+    expect(outlineCompliant.value).toContain('company’s obligations');
+    expect(outlineCompliant.value).toMatch(/current, complete, traceable/i);
+    expect(outlineCompliant.value).not.toMatch(/policy approval\/currency/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-governance-charter'));
+    const charterBasic = await screen.findByTestId('descriptor-input-criterion-governance-charter-1') as HTMLTextAreaElement;
+    expect(charterBasic.value).toMatch(
+      /^A documented governance charter that defines leadership responsibilities and decision authority is absent/i,
+    );
+    expect(charterBasic.value).not.toMatch(/governance forum mandate/i);
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {
