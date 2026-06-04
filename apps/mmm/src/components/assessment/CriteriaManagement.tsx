@@ -451,6 +451,14 @@ function criterionRequirementSubject(criterionText: string): string {
     .trim();
 
   let subject = clean
+    .replace(
+      /\. A process will exist for recording that\b/gi,
+      ' supported by a process recording that',
+    )
+    .replace(
+      /\. A process exists for recording that\b/gi,
+      ' supported by a process recording that',
+    )
     .replace(/^A documented governance charter defines\b/i, 'A documented governance charter that defines')
     .replace(/^The Security Policy will be a short document that will at least outline\b/i, 'The Security Policy is a short document that at least outlines')
     .replace(/\bwill be a short document that will at least outline\b/gi, 'is a short document that at least outlines')

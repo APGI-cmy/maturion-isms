@@ -631,6 +631,14 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
         name:
           'The Heads of Department / HODs, Superintendents, etc. - leaders at all levels - will endeavour to make the Security Policy relevant to their place of operation / workplace through setting a limited number of Golden Rules that define applicable security requirements based on the associated risk profile and acceptable risk tolerance.',
       },
+      {
+        id: 'criterion-induction-process',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C005',
+        sort_order: 5,
+        name:
+          'The Policy will be incorporated into the operation’s induction process for all personnel, contractors and visitors. A process will exist for recording that all personnel, contractors and visitors understand and agree to comply with it.',
+      },
     ];
 
     configureScenario({
@@ -670,6 +678,13 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(goldenRulesBasic.value).toContain('Golden Rules');
     expect(goldenRulesBasic.value).toContain('risk profile and acceptable risk tolerance');
     expect(goldenRulesBasic.value).not.toMatch(/Risk Manager: Security support/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-induction-process'));
+    const inductionBasic = await screen.findByTestId('descriptor-input-criterion-induction-process-1') as HTMLTextAreaElement;
+    expect(inductionBasic.value).toMatch(/^Evidence that the Policy is incorporated into the operation’s induction process/i);
+    expect(inductionBasic.value).toContain('supported by a process recording that all personnel, contractors and visitors understand and agree to comply with it');
+    expect(inductionBasic.value).toMatch(/is absent, weak, outdated/i);
+    expect(inductionBasic.value).not.toMatch(/visitors\. A process/i);
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {

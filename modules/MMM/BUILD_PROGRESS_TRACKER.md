@@ -1474,3 +1474,14 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Added B4 regression coverage for the HOD/Golden Rules/risk-tolerance criterion.
    - QA-to-Red Trace:
      - `T-MMM-DMC-038` descriptor classifier must not over-match role support from HOD wording alone.
+
+21. **Verbatim multi-sentence criterion produced malformed descriptor grammar**
+   - Failure Class: verbatim descriptor grammar / multi-evidence compression.
+   - Symptom: A verbatim criterion with two sentences produced text such as `Evidence that the Policy is incorporated... visitors. A process exist ... is absent`, placing the maturity state after the second sentence and making the descriptor hard to audit.
+   - Cause Class: descriptor subject derivation preserved the source sentence break instead of compressing related verbatim evidence requirements into one auditable clause.
+   - Corrective Action:
+     - Added deterministic compression for the induction-process + recording-process pattern.
+     - Kept the accepted verbatim criterion as one criterion while creating one grammatical descriptor evidence clause.
+     - Added B4 regression coverage for the policy induction/process-recording criterion.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-039` verbatim multi-sentence criteria must compress into one evidence clause.
