@@ -498,7 +498,9 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(basicDescriptor.value).not.toMatch(/\bmust\b|\bshall\b/i);
     expect(basicDescriptor.value).toMatch(/^Evidence for/i);
     const status = await screen.findByText(/Maturity descriptors created from the approved methodology reference/i);
-    expect(status.textContent).toContain('AI refinement is temporarily unavailable');
+    expect(status.textContent).not.toContain('AI refinement');
+    expect(status.textContent).not.toContain('AIMC');
+    expect(status.textContent).not.toContain('404');
     expect(status.textContent).not.toContain('Used methodology fallback');
     expect(status.textContent).not.toContain('non-2xx');
     expect(mockSupabase.functions.invoke).toHaveBeenCalled();

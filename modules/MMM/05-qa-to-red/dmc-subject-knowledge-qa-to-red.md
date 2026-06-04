@@ -203,7 +203,7 @@
 - **Source**: Live descriptor recreation banner, 2026-06-03.
 - **Layer**: Unit/static + operational
 - **RED Condition**: `Create maturity descriptors` successfully creates fallback descriptor drafts but presents a scary generic message such as `Used methodology fallback after AI reconstruction was unavailable or invalid: Edge Function returned a non-2xx status code`, making the user think descriptor creation failed.
-- **GREEN Acceptance**: Descriptor authoring treats the approved methodology generator as the governed stable path, optionally attempts AI refinement, extracts concrete edge failure detail for diagnostics, and keeps five editable descriptors visible with a clear success message when AI refinement is temporarily unavailable.
+- **GREEN Acceptance**: Descriptor authoring treats the approved methodology generator as the governed stable path, optionally attempts AI refinement, keeps five editable descriptors visible, and does not expose AI/AIMC/404/non-2xx diagnostics in the normal success banner.
 
 ### T-MMM-DMC-034 — Maturity Descriptors Must Describe Evidence State, Not Restate Obligations
 - **Source**: Live descriptor semantic review, 2026-06-03.
