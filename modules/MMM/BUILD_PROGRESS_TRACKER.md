@@ -1438,3 +1438,15 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Wrote immutable `MATURITY_DESCRIPTOR_SAVE` audit events and `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT` telemetry for changed descriptor text.
    - QA-to-Red Trace:
      - `T-MMM-DMC-035` descriptor save must be visible and capture user edits for learning.
+
+18. **Maturity descriptors too generic for role/reporting/support criteria**
+   - Failure Class: descriptor semantic fidelity / criterion-anchor drift.
+   - Symptom: Risk Manager accountability, direct-reporting, and HOD support criteria generated maturity descriptors about generic policy/control/governance evidence instead of the actual role, reporting, meeting, support, deviation, escalation, and closure evidence required by the accepted criterion.
+   - Cause Class: deterministic descriptor subject selection chose broad control profiles and did not enforce that the accepted criterion's actor/action/object remained visible in each maturity evidence state.
+   - Corrective Action:
+     - Added criterion-anchor fidelity doctrine to the architecture addendum and QA-to-red catalog.
+     - Added role accountability, direct reporting, and role support/escalation descriptor profiles.
+     - Tightened AI reconstruction instructions so live AI output must preserve criterion-specific actors/actions/objects and must not collapse role/reporting/support criteria into generic policy wording.
+     - Added B4 regression coverage using the live Risk Manager examples.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-036` maturity descriptors must preserve criterion-specific evidence anchors.
