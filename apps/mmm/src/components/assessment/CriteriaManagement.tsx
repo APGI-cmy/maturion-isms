@@ -88,18 +88,33 @@ function resolveDeferredTargetMpsId(statement: string, mpsRows: DomainAuditMpsRo
   return bestScore > 0 ? bestId : null;
 }
 
+function buildSequentialCriterionCode(mpsCode: string, index: number): string {
+  const separator = mpsCode.includes('.') ? '.' : '-';
+  return `${mpsCode}${separator}C${String(index).padStart(3, '0')}`;
+}
+
+function normalizeGeneratedCriteriaCodes(
+  criteria: GeneratedCriterionItem[],
+  mpsCode: string,
+): GeneratedCriterionItem[] {
+  return criteria.map((criterion, idx) => ({
+    ...criterion,
+    code: buildSequentialCriterionCode(mpsCode, idx + 1),
+  }));
+}
+
 function buildFallbackCriteria(mpsCode: string, mpsName: string, domainName: string): GeneratedCriterionItem[] {
   return [
     {
-      code: `${mpsCode}-C001`,
+      code: buildSequentialCriterionCode(mpsCode, 1),
       statement: `Document and approve the ${mpsName} control design for ${domainName}.`,
     },
     {
-      code: `${mpsCode}-C002`,
+      code: buildSequentialCriterionCode(mpsCode, 2),
       statement: `Define accountable owners, review frequency, and escalation triggers for ${mpsName}.`,
     },
     {
-      code: `${mpsCode}-C003`,
+      code: buildSequentialCriterionCode(mpsCode, 3),
       statement: `Maintain auditable evidence proving ${mpsName} execution and effectiveness.`,
     },
   ];
@@ -451,9 +466,17 @@ function criterionRequirementSubject(criterionText: string): string {
     .trim();
 
   let subject = clean
+    .replace(
+      /\. A process will exist for recording that\b/gi,
+      ' supported by a process recording that',
+    )
+    .replace(
+      /\. A process exists for recording that\b/gi,
+      ' supported by a process recording that',
+    )
     .replace(/^A documented governance charter defines\b/i, 'A documented governance charter that defines')
-    .replace(/^The Security Policy will be a short document that will at least outline\b/i, 'The Security Policy as a short document that at least outlines')
-    .replace(/\bwill be a short document that will at least outline\b/gi, 'as a short document that at least outlines')
+    .replace(/^The Security Policy will be a short document that will at least outline\b/i, 'The Security Policy is a short document that at least outlines')
+    .replace(/\bwill be a short document that will at least outline\b/gi, 'is a short document that at least outlines')
     .replace(/\bshould be prominently displayed\. This display,/gi, 'and prominently displayed, with display')
     .replace(/\bshould be either communicated\b/gi, 'communicated')
     .replace(/\bshould be placed\b/gi, 'placed')
@@ -472,12 +495,94 @@ function criterionRequirementSubject(criterionText: string): string {
   return subject.replace(/[.;:,]+$/g, '').trim();
 }
 
+function evidenceClauseSubject(subject: string): string {
+  const trimmed = subject.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
+  if (!trimmed) return 'the accepted criterion requirement';
+  return trimmed
+    .replace(/^The Risk Manager: Security will support\b/i, 'the Risk Manager: Security provides Security support')
+    .replace(/^Risk Manager: Security support\b/i, 'the Risk Manager: Security provides Security support')
+    .replace(/^Risk Manager: Security accountability\b/i, 'the Risk Manager: Security is accountable')
+    .replace(/^Risk Manager: Security independent\/direct reporting\b/i, 'the Risk Manager: Security reports independently/directly')
+    .replace(/^A Security Policy\b/i, 'a Security Policy')
+    .replace(/^The Security Policy\b/i, 'the Security Policy')
+    .replace(/^A documented governance charter\b/i, 'a documented governance charter')
+    .replace(/^The Heads of Department\b/i, 'the Heads of Department')
+    .replace(/^A\b/, 'a')
+    .replace(/^The\b/, 'the');
+}
+
+function evidenceLeadFromClause(clause: string): string {
+  const clean = clause.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
+  if (!clean) return 'Evidence that the accepted criterion requirement';
+  const after = (pattern: RegExp) => clean.replace(pattern, '').replace(/\s+/g, ' ').trim();
+
+  if (/^to indicate\b/i.test(clean)) {
+    return `Evidence indicating ${after(/^to indicate\b/i)}`;
+  }
+  if (/^to identify\b/i.test(clean)) {
+    return `Evidence identifying ${after(/^to identify\b/i)}`;
+  }
+  if (/^to provide\b/i.test(clean)) {
+    return `Evidence providing ${after(/^to provide\b/i)}`;
+  }
+  if (/^to establish\b/i.test(clean)) {
+    return `Evidence establishing ${after(/^to establish\b/i)}`;
+  }
+  if (/^to ensure\b/i.test(clean)) {
+    return `Evidence demonstrating ${after(/^to ensure\b/i)}`;
+  }
+  if (/^where\b/i.test(clean)) {
+    return `Evidence that, ${clean.replace(/^where\b/i, 'where')}`;
+  }
+  return `Evidence that ${clean}`;
+}
+
 function identifyControlObject(criterionText: string): DescriptorControlObject {
   const normalized = normalizeDescriptorText(criterionText);
   const generic = DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'generic_control') ?? DESCRIPTOR_CONTROL_OBJECTS[0];
+  const hasRiskManagerActor =
+    normalized.includes('risk manager') || normalized.includes('security manager');
+  const supportEscalationTerms = [
+    'support',
+    'deviate',
+    'deviation',
+    'escalate',
+    'escalation',
+    'dcc',
+    'general manager',
+    'md lucara',
+    'business unit manager',
+  ];
+
+  if (
+    hasRiskManagerActor &&
+    (normalized.includes('accountable') ||
+      normalized.includes('delivery of security') ||
+      normalized.includes('coordination') ||
+      normalized.includes('co ordination'))
+  ) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'role_accountability') ?? generic;
+  }
+  if (
+    hasRiskManagerActor &&
+    (normalized.includes('report independently') ||
+      normalized.includes('report directly') ||
+      normalized.includes('senior executive') ||
+      normalized.includes('chief risk officer') ||
+      normalized.includes('managing director'))
+  ) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'direct_reporting') ?? generic;
+  }
+  if (hasRiskManagerActor && supportEscalationTerms.some((term) => normalized.includes(term))) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'role_support_escalation') ?? generic;
+  }
+
   let best = generic;
   let bestScore = -1;
-  for (const controlObject of DESCRIPTOR_CONTROL_OBJECTS.filter((item) => item.key !== 'generic_control')) {
+  const roleSpecificKeys = new Set(['role_accountability', 'direct_reporting', 'role_support_escalation']);
+  for (const controlObject of DESCRIPTOR_CONTROL_OBJECTS.filter(
+    (item) => item.key !== 'generic_control' && !roleSpecificKeys.has(item.key),
+  )) {
     const score = controlObject.keywords.reduce(
       (total, keyword) => total + (normalized.includes(normalizeDescriptorText(keyword)) ? 1 : 0),
       0,
@@ -495,13 +600,13 @@ function summariseEvidenceSubject(criterionText: string, controlObject: Descript
   const lower = clean.toLowerCase();
   if (controlObject.key === 'role_accountability') {
     const siteScope = lower.includes('kdm') && lower.includes('dtp') ? ' at KDM and DTP' : '';
-    return `Risk Manager: Security accountability, coordination, and alignment with this standard for delivery of security${siteScope}`;
+    return `the Risk Manager: Security is accountable for delivery of security${siteScope}, coordination, and alignment with this standard`;
   }
   if (controlObject.key === 'direct_reporting') {
-    return 'Risk Manager: Security independent/direct reporting to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
+    return 'the Risk Manager: Security reports independently/directly to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
   }
   if (controlObject.key === 'role_support_escalation') {
-    return 'Risk Manager: Security support to HODs/Business Unit Managers, standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
+    return 'the Risk Manager: Security provides Security support to HODs/Business Unit Managers through standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
   }
   return criterionRequirementSubject(clean) || controlObject.objectPhrase;
 }
@@ -510,13 +615,15 @@ function buildFallbackMaturityDescriptorDrafts(criterion: DomainAuditCriterionRo
   const criterionText = criterionEditSafeText(criterion);
   const controlObject = identifyControlObject(criterionText);
   const evidenceSubject = summariseEvidenceSubject(criterionText, controlObject);
+  const evidenceClause = evidenceClauseSubject(evidenceSubject);
+  const evidenceLead = evidenceLeadFromClause(evidenceClause);
 
   const descriptions: Record<number, string> = {
-    1: `${evidenceSubject} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`,
-    2: `${evidenceSubject} exists in some form, but records show activity mainly after incidents, audits, management pressure, or visible non-conformance. Evidence supports response and correction, but not stable ownership, prevention, or sustained control.`,
-    3: `${evidenceSubject} is current, complete, traceable, and available for auditor verification at the required minimum cadence. The evidence set includes ${controlObject.minimumEvidence} and shows the control is implemented as required.`,
-    4: `${evidenceSubject} shows owner-led, risk-based review and improvement. Records include metrics or trends, incident or change learning, accountable actions, and evidence that control effectiveness is improved before failures recur.`,
-    5: `${evidenceSubject} is embedded into routines, systems, monitoring, and escalation so the control remains effective during staff turnover, abnormal operations, or disruption. Records show continuity, exception escalation, automated or hard-barrier support where practicable, and independent assurance.`,
+    1: `${evidenceLead} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`,
+    2: `${evidenceLead} exists in some form, but records show activity mainly after incidents, audits, management pressure, or visible non-conformance. Evidence supports response and correction, but not stable ownership, prevention, or sustained control.`,
+    3: `${evidenceLead} is current, complete, traceable, and available for auditor verification at the required minimum cadence. The evidence set includes ${controlObject.minimumEvidence} and shows the control is implemented as required.`,
+    4: `${evidenceLead} shows owner-led, risk-based review and improvement. Records include metrics or trends, incident or change learning, accountable actions, and evidence that control effectiveness is improved before failures recur.`,
+    5: `${evidenceLead} is embedded into routines, systems, monitoring, and escalation so the control remains effective during staff turnover, abnormal operations, or disruption. Records show continuity, exception escalation, automated or hard-barrier support where practicable, and independent assurance.`,
   };
 
   return MATURITY_LEVELS.map(({ level, label }) => ({
@@ -748,14 +855,17 @@ export function CriteriaManagement({
 
   useEffect(() => {
     const nextDrafts: Record<string, CriterionEditDraft> = {};
-    Object.values(criteriaByMps).flat().forEach((criterion) => {
-      nextDrafts[criterion.id] = {
-        code: criterion.code,
-        name: criterion.name,
-      };
+    Object.entries(criteriaByMps).forEach(([mpsId, criteriaRows]) => {
+      const mps = mpsRows.find((row) => row.id === mpsId);
+      criteriaRows.forEach((criterion, idx) => {
+        nextDrafts[criterion.id] = {
+          code: mps ? buildSequentialCriterionCode(mps.code, idx + 1) : criterion.code,
+          name: criterion.name,
+        };
+      });
     });
     setCriterionEditDrafts(nextDrafts);
-  }, [criteriaByMps]);
+  }, [criteriaByMps, mpsRows]);
 
   const mpsIds = mpsRows.map((m) => m.id);
 
@@ -767,13 +877,21 @@ export function CriteriaManagement({
       mpsId: string;
       accepted: GeneratedCriterionItem[];
     }) => {
+      const targetCounters = new Map<string, number>();
       const { error } = await supabase.from('mmm_criteria').insert(
-        accepted.map((criterion, idx) => ({
-          mps_id: criterion.deferred_target_mps_id ?? mpsId,
-          name: criterion.statement,
-          code: criterion.code,
-          sort_order: idx,
-        })),
+        accepted.map((criterion) => {
+          const targetMpsId = criterion.deferred_target_mps_id ?? mpsId;
+          const targetMps = mpsRows.find((row) => row.id === targetMpsId) ?? mpsRows.find((row) => row.id === mpsId);
+          const nextSortOrder =
+            (targetCounters.get(targetMpsId) ?? (criteriaByMps[targetMpsId]?.length ?? 0)) + 1;
+          targetCounters.set(targetMpsId, nextSortOrder);
+          return {
+            mps_id: targetMpsId,
+            name: criterion.statement,
+            code: buildSequentialCriterionCode(targetMps?.code ?? criterion.code.replace(/[-.]C\d{3}$/i, ''), nextSortOrder),
+            sort_order: nextSortOrder,
+          };
+        }),
       );
       if (error) throw new Error(error.message);
       return mpsId;
@@ -846,7 +964,7 @@ export function CriteriaManagement({
           domain_id: domainId,
           domain_name: domainName,
           criterion_id: criterion.id,
-          criterion_code: criterion.code,
+          criterion_code: criterionEditDrafts[criterion.id]?.code ?? criterion.code,
           criterion_text: criterionEditDrafts[criterion.id]?.name ?? criterion.name,
           edited_levels: editedLevels,
           descriptors: drafts.map((draft) => ({
@@ -968,7 +1086,7 @@ export function CriteriaManagement({
           }));
 
           if (sourceCriteria.length > 0) {
-            const verbatimCriteria = dedupeCriteria(sourceCriteria);
+            const verbatimCriteria = normalizeGeneratedCriteriaCodes(dedupeCriteria(sourceCriteria), mps.code);
             setMpsCriteriaStates((prev) => ({
               ...prev,
               [mps.id]: {
@@ -1009,16 +1127,16 @@ export function CriteriaManagement({
               .select('code,name,sort_order')
               .eq('proposed_mps_id', linkedMps.id)
               .order('sort_order', { ascending: true });
-            const verbatimCriteria = dedupeCriteria(
+            const verbatimCriteria = normalizeGeneratedCriteriaCodes(dedupeCriteria(
               (proposedCriteria ?? []).map((row, idx) => ({
-                code: row.code || `${mps.code}-C${String(idx + 1).padStart(3, '0')}`,
+                code: row.code || buildSequentialCriterionCode(mps.code, idx + 1),
                 statement: row.name,
                 source_origin: 'uploaded_source' as const,
               })).filter((criterion) =>
                 !processedVerbatimText ||
                 isSourceFaithfulStatement(processedVerbatimText, criterion.statement),
               ),
-            );
+            ), mps.code);
             if (verbatimCriteria.length > 0) {
               setMpsCriteriaStates((prev) => ({
                 ...prev,
@@ -1051,7 +1169,7 @@ export function CriteriaManagement({
         `${modeContext.source_rules.join('\n')}\n` +
         (refinePrompt ? `Additional refinement context: ${refinePrompt}\n` : '') +
         `Each criterion should be specific, measurable, and auditable.\n` +
-        `Return a JSON array: [{"code": "${mps.code}-C001", "statement": "...", "source_origin": "uploaded_source|ai_completion|subject_knowledge"}]\n` +
+        `Return a JSON array: [{"code": "${buildSequentialCriterionCode(mps.code, 1)}", "statement": "...", "source_origin": "uploaded_source|ai_completion|subject_knowledge"}]\n` +
         `Return only the JSON array.`;
       const { data, error } = await supabase.functions.invoke('mmm-ai-chat-user', {
         body: {
@@ -1071,7 +1189,7 @@ export function CriteriaManagement({
       });
       if (error) throw new Error((error as { message?: string }).message ?? 'AI generation failed');
       const parsed = parseCriteriaArrayFromReply((data as { reply: string }).reply);
-      const deduped = dedupeCriteria(parsed);
+      const deduped = normalizeGeneratedCriteriaCodes(dedupeCriteria(parsed), mps.code);
       setMpsCriteriaStates((prev) => ({
         ...prev,
         [mps.id]: {
@@ -1102,7 +1220,7 @@ export function CriteriaManagement({
         }));
         return;
       }
-      const fallback = buildFallbackCriteria(mps.code, mps.name, domainName);
+      const fallback = normalizeGeneratedCriteriaCodes(buildFallbackCriteria(mps.code, mps.name, domainName), mps.code);
       setMpsCriteriaStates((prev) => ({
         ...prev,
         [mps.id]: {
@@ -1194,7 +1312,7 @@ export function CriteriaManagement({
       error: null,
     };
     const nextIndex = state.generatedCriteria.length + 1;
-    const code = `${mps.code}-C${String(nextIndex).padStart(3, '0')}`;
+    const code = buildSequentialCriterionCode(mps.code, nextIndex);
     const added: GeneratedCriterionItem = {
       code,
       statement,
@@ -1286,7 +1404,8 @@ export function CriteriaManagement({
             `Rules:\n` +
             `- Do not copy the criterion into each level.\n` +
             `- Reconstruct the criterion into observable operating states for Basic, Reactive, Compliant, Proactive, and Resilient.\n` +
-            `- Begin every descriptor with the actual criterion evidence requirement restated as an auditable subject, then define the evidence state for that maturity level.\n` +
+            `- Begin every descriptor with a grammatical evidence lead-in, normally "Evidence that ...", followed by the actual criterion evidence requirement restated as an auditable clause, then define the evidence state for that maturity level.\n` +
+            `- Self-correct descriptor grammar before returning JSON: never emit "Evidence that To..." or "Evidence that Where..."; use "Evidence indicating..." for infinitive clauses and "Evidence that, where..." for conditional clauses.\n` +
             `- Preserve the criterion-specific actor/action/object in every descriptor; the exact thing requested by the criterion must remain visible in the maturity evidence subject.\n` +
             `- Do not replace role, reporting-line, support, escalation, or meeting criteria with generic policy/control wording.\n` +
             `- For reporting-line criteria, describe evidence of direct access, regular meetings, agendas/minutes, decisions, actions, and escalation with the senior executive.\n` +
@@ -1536,7 +1655,7 @@ export function CriteriaManagement({
                           <p>No criteria rows are currently stored for this MPS.</p>
                         ) : (
                           <div className="criteria-card-list">
-                            {criteriaRows.map((criterion) => (
+                            {criteriaRows.map((criterion, criterionIndex) => (
                               <article
                                 key={criterion.id}
                                 className="criteria-card"
@@ -1556,7 +1675,7 @@ export function CriteriaManagement({
                                     />
                                   </div>
                                   <div>
-                                    <span>Sort order: {criterion.sort_order}</span>
+                                    <span>Sequence: {criterionIndex + 1}</span>
                                     <span>
                                       Descriptor coverage:{' '}
                                       {(levelDescriptorsByCriterion[criterion.id] ?? []).length}/5

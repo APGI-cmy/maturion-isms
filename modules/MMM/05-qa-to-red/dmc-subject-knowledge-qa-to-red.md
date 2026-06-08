@@ -227,7 +227,31 @@
 - **Source**: Live auditor-consistency review, 2026-06-04.
 - **Layer**: Unit/static + operational
 - **RED Condition**: A maturity descriptor begins with a broad evidence category such as `Evidence for policy approval/currency` or `Evidence for governance forum mandate`, leaving auditors to infer which exact accepted criterion requirement is being assessed.
-- **GREEN Acceptance**: Each Basic/Reactive/Compliant/Proactive/Resilient descriptor begins with the accepted criterion requirement restated as an auditable subject, then describes the evidence state at that level. For example, `A documented governance charter that defines leadership responsibilities and decision authority is absent, weak...`, rather than a generic governance-forum evidence category.
+- **GREEN Acceptance**: Each Basic/Reactive/Compliant/Proactive/Resilient descriptor begins with `Evidence that ...`, restates the accepted criterion requirement as a grammatical auditable clause, then describes the evidence state at that level. For example, `Evidence that a documented governance charter that defines leadership responsibilities and decision authority is absent, weak...`, rather than a generic governance-forum evidence category.
+
+### T-MMM-DMC-038 — Descriptor Classifier Must Not Over-Match Role Support From HOD Wording Alone
+- **Source**: Live descriptor grammar and classifier review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A criterion about HODs/leaders making the Security Policy relevant through Golden Rules is classified as Risk Manager support/escalation merely because it contains HOD wording.
+- **GREEN Acceptance**: Risk Manager support/escalation descriptors are generated only when the accepted criterion actually names the Risk Manager/Security Manager support or escalation role. HOD/leader Golden Rules criteria retain HODs/leaders, Golden Rules, associated risk profile, and acceptable risk tolerance in the generated evidence clause.
+
+### T-MMM-DMC-039 — Verbatim Multi-Sentence Criteria Must Compress Into One Evidence Clause
+- **Source**: Live verbatim descriptor review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A verbatim accepted criterion with two sentences is copied into the descriptor with the sentence break intact, causing malformed text such as `Evidence that ... visitors. A process exist ... is absent`.
+- **GREEN Acceptance**: Verbatim multi-sentence criteria remain a single criterion but are converted into one grammatical evidence clause before maturity-state wording is appended. For example, induction-process criteria combine the induction requirement and supporting recording-process requirement using `supported by a process recording that ...`.
+
+### T-MMM-DMC-040 — Descriptor Evidence Lead-Ins Must Self-Correct Source Grammar
+- **Source**: Live descriptor grammar review, 2026-06-08.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Descriptor generation blindly prefixes source wording and emits malformed evidence statements such as `Evidence that To indicate...` or `Evidence that Where possible...`.
+- **GREEN Acceptance**: Descriptor lead-ins are grammar-normalized before display and save. Infinitive evidence requirements use readable forms such as `Evidence indicating...`, `Evidence identifying...`, or `Evidence providing...`; conditional requirements use `Evidence that, where...`; and no generated descriptor begins with `Evidence that To` or `Evidence that Where`.
+
+### T-MMM-DMC-041 — Criterion Codes And Visible Sequence Must Align Per MPS
+- **Source**: Live criteria modal sequence review, 2026-06-08.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A criterion card displays a code such as `D001.MPS002.C002` while the row is the first criterion for that MPS or has visible sequence/sort order 1, leaving the auditor unsure which criterion number is authoritative.
+- **GREEN Acceptance**: Generated, accepted, and manually added criteria are normalized to one-based per-MPS codes (`C001`, `C002`, ...), saved with matching one-based `sort_order`, and reopened with a visible `Sequence` label. Historical persisted drift is repaired in the editable code draft so the first displayed criterion under an MPS opens as `C001`.
 
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy

@@ -426,6 +426,47 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(within(groups[1]).getByDisplayValue('PI-002-C001')).toBeTruthy();
   });
 
+  it('criteria cards display one-based visible sequence rather than raw persisted sort order', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: [
+        {
+          id: 'zero-sort-criterion-1',
+          mps_id: 'mps-1',
+          name: 'First historical criterion',
+          code: 'PI-001-C001',
+          sort_order: 0,
+        },
+        {
+          id: 'zero-sort-criterion-2',
+          mps_id: 'mps-1',
+          name: 'Second historical criterion',
+          code: 'PI-001-C002',
+          sort_order: 1,
+        },
+        {
+          id: 'wrong-code-first-criterion',
+          mps_id: 'mps-2',
+          name: 'First criterion saved with a drifted code',
+          code: 'PI-002-C002',
+          sort_order: 1,
+        },
+      ],
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    expect(await screen.findByDisplayValue('PI-001-C002')).toBeTruthy();
+    expect(screen.getByText('Sequence: 2')).toBeTruthy();
+    expect(screen.queryByText('Sort order: 1')).toBeNull();
+    const repairedCode = await screen.findByTestId('criteria-code-input-wrong-code-first-criterion') as HTMLInputElement;
+    expect(repairedCode.value).toBe('PI-002-C001');
+  });
+
   it('criteria step card renders a per-MPS criteria dashboard and reopens as view/edit', async () => {
     renderDomainWorkspace();
 
@@ -471,7 +512,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
     expect(basicDescriptor.value).not.toContain('Basic: Approval checkpoints documented');
     expect(basicDescriptor.value).not.toMatch(/\bmust be approved\b/i);
-    expect(basicDescriptor.value).toMatch(/^Workflow owner formally assigned/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence that Workflow owner formally assigned/i);
     expect(basicDescriptor.value).toMatch(/absent|informal|dependent|weak/i);
     expect(basicDescriptor.readOnly).toBe(true);
 
@@ -527,7 +568,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(within(descriptorGrid).getByText('Resilient')).toBeTruthy();
     const basicDescriptor = screen.getByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
     expect(basicDescriptor.value).not.toMatch(/\bmust\b|\bshall\b/i);
-    expect(basicDescriptor.value).toMatch(/^Workflow owner formally assigned/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence that Workflow owner formally assigned/i);
     const status = await screen.findByText(/Maturity descriptors created from the approved methodology reference/i);
     expect(status.textContent).not.toContain('AI refinement');
     expect(status.textContent).not.toContain('AIMC');
@@ -577,21 +618,21 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-role-accountability'));
     const roleBasic = await screen.findByTestId('descriptor-input-criterion-role-accountability-1') as HTMLTextAreaElement;
-    expect(roleBasic.value).toMatch(/^Risk Manager: Security accountability/);
+    expect(roleBasic.value).toMatch(/^Evidence that the Risk Manager: Security is accountable/);
     expect(roleBasic.value).toContain('delivery of security');
     expect(roleBasic.value).toContain('this standard');
     expect(roleBasic.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-direct-reporting'));
     const reportingCompliant = await screen.findByTestId('descriptor-input-criterion-direct-reporting-3') as HTMLTextAreaElement;
-    expect(reportingCompliant.value).toMatch(/^Risk Manager: Security independent\/direct reporting/);
+    expect(reportingCompliant.value).toMatch(/^Evidence that the Risk Manager: Security reports independently\/directly/);
     expect(reportingCompliant.value).toMatch(/most senior executive/i);
     expect(reportingCompliant.value).toMatch(/meeting cadence|agendas\/minutes|action logs/i);
     expect(reportingCompliant.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-hod-support'));
     const supportProactive = await screen.findByTestId('descriptor-input-criterion-hod-support-4') as HTMLTextAreaElement;
-    expect(supportProactive.value).toMatch(/^Risk Manager: Security support to HODs\/Business Unit Managers/);
+    expect(supportProactive.value).toMatch(/^Evidence that the Risk Manager: Security provides Security support/);
     expect(supportProactive.value).toMatch(/deviation escalation|DCC\/GM\/MD/i);
     expect(supportProactive.value).toMatch(/closure/i);
     expect(supportProactive.value).not.toMatch(/governance forum mandate/i);
@@ -623,6 +664,38 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
         name:
           'A documented governance charter defines leadership responsibilities and decision authority (hybrid source).',
       },
+      {
+        id: 'criterion-hod-golden-rules',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C004',
+        sort_order: 4,
+        name:
+          'The Heads of Department / HODs, Superintendents, etc. - leaders at all levels - will endeavour to make the Security Policy relevant to their place of operation / workplace through setting a limited number of Golden Rules that define applicable security requirements based on the associated risk profile and acceptable risk tolerance.',
+      },
+      {
+        id: 'criterion-induction-process',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C005',
+        sort_order: 5,
+        name:
+          'The Policy will be incorporated into the operation’s induction process for all personnel, contractors and visitors. A process will exist for recording that all personnel, contractors and visitors understand and agree to comply with it.',
+      },
+      {
+        id: 'criterion-to-indicate',
+        mps_id: 'mps-1',
+        code: 'D001.MPS002.C001',
+        sort_order: 6,
+        name:
+          'To indicate all accountable and responsible people, the Chain of Custody Matrix does list all those from the MD, GM to those in the Mining Operations and Support Services.',
+      },
+      {
+        id: 'criterion-where-possible',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C006',
+        sort_order: 7,
+        name:
+          'Where possible and applicable, specific Security accountabilities and performance measures will be documented within role descriptions for those in high-risk diamond areas, security and management.',
+      },
     ];
 
     configureScenario({
@@ -637,14 +710,14 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-policy-display'));
     const displayBasic = await screen.findByTestId('descriptor-input-criterion-policy-display-1') as HTMLTextAreaElement;
-    expect(displayBasic.value).toMatch(/^A Security Policy signed by the most senior executive/i);
+    expect(displayBasic.value).toMatch(/^Evidence that a Security Policy signed by the most senior executive/i);
     expect(displayBasic.value).toContain('prominently displayed');
     expect(displayBasic.value).toMatch(/absent|weak|outdated/i);
     expect(displayBasic.value).not.toMatch(/policy approval\/currency/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-policy-outline'));
     const outlineCompliant = await screen.findByTestId('descriptor-input-criterion-policy-outline-3') as HTMLTextAreaElement;
-    expect(outlineCompliant.value).toMatch(/^The Security Policy as a short document that at least outlines/i);
+    expect(outlineCompliant.value).toMatch(/^Evidence that the Security Policy is a short document that at least outlines/i);
     expect(outlineCompliant.value).toContain('company’s obligations');
     expect(outlineCompliant.value).toMatch(/current, complete, traceable/i);
     expect(outlineCompliant.value).not.toMatch(/policy approval\/currency/i);
@@ -652,9 +725,34 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-governance-charter'));
     const charterBasic = await screen.findByTestId('descriptor-input-criterion-governance-charter-1') as HTMLTextAreaElement;
     expect(charterBasic.value).toMatch(
-      /^A documented governance charter that defines leadership responsibilities and decision authority is absent/i,
+      /^Evidence that a documented governance charter that defines leadership responsibilities and decision authority is absent/i,
     );
     expect(charterBasic.value).not.toMatch(/governance forum mandate/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-hod-golden-rules'));
+    const goldenRulesBasic = await screen.findByTestId('descriptor-input-criterion-hod-golden-rules-1') as HTMLTextAreaElement;
+    expect(goldenRulesBasic.value).toMatch(/^Evidence that the Heads of Department \/ HODs/i);
+    expect(goldenRulesBasic.value).toContain('Golden Rules');
+    expect(goldenRulesBasic.value).toContain('risk profile and acceptable risk tolerance');
+    expect(goldenRulesBasic.value).not.toMatch(/Risk Manager: Security support/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-induction-process'));
+    const inductionBasic = await screen.findByTestId('descriptor-input-criterion-induction-process-1') as HTMLTextAreaElement;
+    expect(inductionBasic.value).toMatch(/^Evidence that the Policy is incorporated into the operation’s induction process/i);
+    expect(inductionBasic.value).toContain('supported by a process recording that all personnel, contractors and visitors understand and agree to comply with it');
+    expect(inductionBasic.value).toMatch(/is absent, weak, outdated/i);
+    expect(inductionBasic.value).not.toMatch(/visitors\. A process/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-to-indicate'));
+    const toIndicateBasic = await screen.findByTestId('descriptor-input-criterion-to-indicate-1') as HTMLTextAreaElement;
+    expect(toIndicateBasic.value).toMatch(/^Evidence indicating all accountable and responsible people/i);
+    expect(toIndicateBasic.value).not.toMatch(/^Evidence that To/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-where-possible'));
+    const wherePossibleResilient = await screen.findByTestId('descriptor-input-criterion-where-possible-5') as HTMLTextAreaElement;
+    expect(wherePossibleResilient.value).toMatch(/^Evidence that, where possible and applicable/i);
+    expect(wherePossibleResilient.value).toContain('specific Security accountabilities and performance measures');
+    expect(wherePossibleResilient.value).not.toMatch(/^Evidence that Where/i);
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {
@@ -1009,7 +1107,8 @@ describe('T-MMM-S6-AI-003: AI generation lifecycle — criteria generation', () 
   it('save accepted fires mutation insert to mmm_criteria and clears generated list', async () => {
     configureAIResponse({
       reply: JSON.stringify([
-        { code: 'PI-001-C001', statement: 'Workflow owner formally assigned' },
+        { code: 'PI-001-C002', statement: 'Workflow owner formally assigned' },
+        { code: 'PI-001-C005', statement: 'Approval checkpoints documented' },
       ]),
     });
     renderCriteriaManagement();
@@ -1018,7 +1117,8 @@ describe('T-MMM-S6-AI-003: AI generation lifecycle — criteria generation', () 
     fireEvent.click(screen.getByTestId('save-criteria-btn-mps-1'));
     await waitFor(() => expect(mockInsert).toHaveBeenCalled());
     const insertArg = mockInsert.mock.calls[0][0] as Array<Record<string, unknown>>;
-    expect(insertArg[0]).toMatchObject({ mps_id: 'mps-1', code: 'PI-001-C001' });
+    expect(insertArg[0]).toMatchObject({ mps_id: 'mps-1', code: 'PI-001-C001', sort_order: 1 });
+    expect(insertArg[1]).toMatchObject({ mps_id: 'mps-1', code: 'PI-001-C002', sort_order: 2 });
   });
 
   it('AI error shows per-MPS error state', async () => {
