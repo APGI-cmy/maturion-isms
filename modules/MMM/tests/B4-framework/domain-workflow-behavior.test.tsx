@@ -426,6 +426,47 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(within(groups[1]).getByDisplayValue('PI-002-C001')).toBeTruthy();
   });
 
+  it('criteria cards display one-based visible sequence rather than raw persisted sort order', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: [
+        {
+          id: 'zero-sort-criterion-1',
+          mps_id: 'mps-1',
+          name: 'First historical criterion',
+          code: 'PI-001-C001',
+          sort_order: 0,
+        },
+        {
+          id: 'zero-sort-criterion-2',
+          mps_id: 'mps-1',
+          name: 'Second historical criterion',
+          code: 'PI-001-C002',
+          sort_order: 1,
+        },
+        {
+          id: 'wrong-code-first-criterion',
+          mps_id: 'mps-2',
+          name: 'First criterion saved with a drifted code',
+          code: 'PI-002-C002',
+          sort_order: 1,
+        },
+      ],
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    expect(await screen.findByDisplayValue('PI-001-C002')).toBeTruthy();
+    expect(screen.getByText('Sequence: 2')).toBeTruthy();
+    expect(screen.queryByText('Sort order: 1')).toBeNull();
+    const repairedCode = await screen.findByTestId('criteria-code-input-wrong-code-first-criterion') as HTMLInputElement;
+    expect(repairedCode.value).toBe('PI-002-C001');
+  });
+
   it('criteria step card renders a per-MPS criteria dashboard and reopens as view/edit', async () => {
     renderDomainWorkspace();
 
@@ -639,6 +680,22 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
         name:
           'The Policy will be incorporated into the operation’s induction process for all personnel, contractors and visitors. A process will exist for recording that all personnel, contractors and visitors understand and agree to comply with it.',
       },
+      {
+        id: 'criterion-to-indicate',
+        mps_id: 'mps-1',
+        code: 'D001.MPS002.C001',
+        sort_order: 6,
+        name:
+          'To indicate all accountable and responsible people, the Chain of Custody Matrix does list all those from the MD, GM to those in the Mining Operations and Support Services.',
+      },
+      {
+        id: 'criterion-where-possible',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C006',
+        sort_order: 7,
+        name:
+          'Where possible and applicable, specific Security accountabilities and performance measures will be documented within role descriptions for those in high-risk diamond areas, security and management.',
+      },
     ];
 
     configureScenario({
@@ -685,6 +742,17 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(inductionBasic.value).toContain('supported by a process recording that all personnel, contractors and visitors understand and agree to comply with it');
     expect(inductionBasic.value).toMatch(/is absent, weak, outdated/i);
     expect(inductionBasic.value).not.toMatch(/visitors\. A process/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-to-indicate'));
+    const toIndicateBasic = await screen.findByTestId('descriptor-input-criterion-to-indicate-1') as HTMLTextAreaElement;
+    expect(toIndicateBasic.value).toMatch(/^Evidence indicating all accountable and responsible people/i);
+    expect(toIndicateBasic.value).not.toMatch(/^Evidence that To/i);
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-where-possible'));
+    const wherePossibleResilient = await screen.findByTestId('descriptor-input-criterion-where-possible-5') as HTMLTextAreaElement;
+    expect(wherePossibleResilient.value).toMatch(/^Evidence that, where possible and applicable/i);
+    expect(wherePossibleResilient.value).toContain('specific Security accountabilities and performance measures');
+    expect(wherePossibleResilient.value).not.toMatch(/^Evidence that Where/i);
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {
@@ -1039,7 +1107,8 @@ describe('T-MMM-S6-AI-003: AI generation lifecycle — criteria generation', () 
   it('save accepted fires mutation insert to mmm_criteria and clears generated list', async () => {
     configureAIResponse({
       reply: JSON.stringify([
-        { code: 'PI-001-C001', statement: 'Workflow owner formally assigned' },
+        { code: 'PI-001-C002', statement: 'Workflow owner formally assigned' },
+        { code: 'PI-001-C005', statement: 'Approval checkpoints documented' },
       ]),
     });
     renderCriteriaManagement();
@@ -1048,7 +1117,8 @@ describe('T-MMM-S6-AI-003: AI generation lifecycle — criteria generation', () 
     fireEvent.click(screen.getByTestId('save-criteria-btn-mps-1'));
     await waitFor(() => expect(mockInsert).toHaveBeenCalled());
     const insertArg = mockInsert.mock.calls[0][0] as Array<Record<string, unknown>>;
-    expect(insertArg[0]).toMatchObject({ mps_id: 'mps-1', code: 'PI-001-C001' });
+    expect(insertArg[0]).toMatchObject({ mps_id: 'mps-1', code: 'PI-001-C001', sort_order: 1 });
+    expect(insertArg[1]).toMatchObject({ mps_id: 'mps-1', code: 'PI-001-C002', sort_order: 2 });
   });
 
   it('AI error shows per-MPS error state', async () => {

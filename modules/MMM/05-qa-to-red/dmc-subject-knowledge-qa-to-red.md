@@ -241,6 +241,18 @@
 - **RED Condition**: A verbatim accepted criterion with two sentences is copied into the descriptor with the sentence break intact, causing malformed text such as `Evidence that ... visitors. A process exist ... is absent`.
 - **GREEN Acceptance**: Verbatim multi-sentence criteria remain a single criterion but are converted into one grammatical evidence clause before maturity-state wording is appended. For example, induction-process criteria combine the induction requirement and supporting recording-process requirement using `supported by a process recording that ...`.
 
+### T-MMM-DMC-040 — Descriptor Evidence Lead-Ins Must Self-Correct Source Grammar
+- **Source**: Live descriptor grammar review, 2026-06-08.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Descriptor generation blindly prefixes source wording and emits malformed evidence statements such as `Evidence that To indicate...` or `Evidence that Where possible...`.
+- **GREEN Acceptance**: Descriptor lead-ins are grammar-normalized before display and save. Infinitive evidence requirements use readable forms such as `Evidence indicating...`, `Evidence identifying...`, or `Evidence providing...`; conditional requirements use `Evidence that, where...`; and no generated descriptor begins with `Evidence that To` or `Evidence that Where`.
+
+### T-MMM-DMC-041 — Criterion Codes And Visible Sequence Must Align Per MPS
+- **Source**: Live criteria modal sequence review, 2026-06-08.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A criterion card displays a code such as `D001.MPS002.C002` while the row is the first criterion for that MPS or has visible sequence/sort order 1, leaving the auditor unsure which criterion number is authoritative.
+- **GREEN Acceptance**: Generated, accepted, and manually added criteria are normalized to one-based per-MPS codes (`C001`, `C002`, ...), saved with matching one-based `sort_order`, and reopened with a visible `Sequence` label. Historical persisted drift is repaired in the editable code draft so the first displayed criterion under an MPS opens as `C001`.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational
