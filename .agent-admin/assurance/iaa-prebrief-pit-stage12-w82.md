@@ -1,7 +1,7 @@
 # IAA Prebrief - PIT Stage 12 W8.2
 
 IAA_PREFLIGHT_BRIEF: true
-PR: TBD
+PR: 1782
 ISSUE: 1774
 WAVE: PIT_STAGE12_W8_2_RLS_DENIED_PATHS
 WAVE_TASKS_PATH: modules/pit/12-build/w82-rls-denied-path-evidence.md
