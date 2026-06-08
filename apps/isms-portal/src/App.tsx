@@ -43,6 +43,9 @@ const protectedOnboardingRoute = (
   </ProtectedRoute>
 );
 
+const adminShellRoute = (title: string, description: string) =>
+  privateShellRoute(title, `${description} Access policy: W8.2 admin/RLS-first denied-path foundation.`);
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -177,6 +180,43 @@ const App = () => {
                 )}
               />
               <Route path={ROUTES.ONBOARDING} element={protectedOnboardingRoute} />
+
+              {/* PIT Stage 12 W8.2 admin/RLS denied-path foundations */}
+              <Route
+                path={ROUTES.ADMIN_ORG}
+                element={adminShellRoute(
+                  'Organisation administration',
+                  'Protected organisation administration shell for W8.2 access-control foundations.',
+                )}
+              />
+              <Route
+                path={ROUTES.ADMIN_USERS}
+                element={adminShellRoute(
+                  'User administration',
+                  'Protected user administration shell for W8.2 role and tenant access foundations.',
+                )}
+              />
+              <Route
+                path={ROUTES.ADMIN_SETTINGS}
+                element={adminShellRoute(
+                  'Admin settings',
+                  'Protected admin settings shell for W8.2 role-gated configuration foundations.',
+                )}
+              />
+              <Route
+                path={ROUTES.ADMIN_AUDIT_LOG}
+                element={adminShellRoute(
+                  'Audit log',
+                  'Protected audit log shell for W8.2 denied-path and audit-surface foundations.',
+                )}
+              />
+              <Route
+                path={ROUTES.QA_DASHBOARD}
+                element={adminShellRoute(
+                  'QA dashboard',
+                  'Protected QA dashboard shell for W8.2 admin visibility foundations.',
+                )}
+              />
 
               {/* ISMS W1 protected private placeholders */}
               <Route
