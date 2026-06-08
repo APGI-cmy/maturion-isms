@@ -57,7 +57,6 @@ const FreeAssessment = () => {
     anchor.href = url;
     anchor.download = 'isms-free-maturity-assessment-report.txt';
     anchor.click();
-    URL.revokeObjectURL(url);
   };
 
   const domainQuestionCounts = assessmentDomains.map((domain) => ({
