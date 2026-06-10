@@ -2223,7 +2223,14 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   z-index: 1200;
 }
 
+.modal-overlay--nested {
+  position: absolute;
+  z-index: 2;
+  background: rgba(8, 22, 39, 0.35);
+}
+
 .modal-content {
+  position: relative;
   width: min(980px, 100%);
   max-height: 92vh;
   background-color: var(--color-surface);
@@ -2233,6 +2240,10 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+.modal-content--narrow {
+  width: min(560px, 100%);
 }
 
 .modal-header {
@@ -2448,6 +2459,12 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   color: #b91c1c;
 }
 
+.btn-sm {
+  min-height: 2rem;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+}
+
 .level-descriptor-grid {
   display: grid;
   gap: var(--space-3);
@@ -2459,6 +2476,29 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   padding: var(--space-3);
+}
+
+.level-descriptor-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.level-descriptor-card__header label {
+  margin-bottom: 0;
+}
+
+.form-control--readonly {
+  background: #f8fafc;
+  color: var(--color-text);
+}
+
+.level-descriptor-card__hint {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  margin: var(--space-2) 0 0;
 }
 
 .level-descriptor-card--1 { border-left-color: #f97316; }

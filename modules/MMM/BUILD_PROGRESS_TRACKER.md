@@ -2,7 +2,7 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-06-02
+**Last Updated**: 2026-06-10
 **Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688; wave: mmm-traceability-cleanup-build-to-green-20260527 — QA trace map activated, untraced runtime artifacts removed/quarantined, DMC click-failure class recorded and gated with T-MMM-DMC-008); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
@@ -12,6 +12,46 @@
 > **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change. Stale tracker text is a governance defect (see `modules/MMM/_readiness/mmm-document-control-baseline.md`).
 
 ## Recent Failure Register (Live)
+
+- **2026-06-10 — Descriptor Included Verbatim Guidance Note As Evidence Requirement**
+  - **Observed Failure**: A maturity descriptor included a parenthetical `Note:` from the accepted verbatim criterion about Performance Management Scorecards, KPA/Objectives, HR consultation, and additional role-description review. After the first fix, regenerated descriptors could still include the note when AI refinement returned it.
+  - **Evidence**: User screenshot and follow-up runtime text showed the note text inside the generated descriptor and clarified that the note is guidance/reference for understanding the criterion, not part of the evidence requirement.
+  - **Root Cause**: Descriptor evidence-clause generation stripped generic source tags but did not remove explicit explanatory `Note:`/`Guidance:`/`Reference:` text before deriving the auditable evidence subject. The first correction only protected deterministic fallback/prompting; AI-refined descriptors also needed sanitization at final validation.
+  - **Prebuild/Architecture Update**: DMC architecture now states that explanatory notes remain visible in the accepted criterion but are excluded from descriptor evidence clauses.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-042` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor subject derivation now strips parenthetical/bracketed note/guidance/reference text before maturity descriptor construction, the AI reconstruction prompt carries the same exclusion rule, and validated AI descriptor output is sanitized before display/save.
+
+- **2026-06-10 — Descriptor Edit Learning Was Not An Explicit AI Interaction**
+  - **Observed Failure**: Descriptor edits were saved and recorded for learning, but the UI did not make Maturion's learning behavior visible at the moment of correction.
+  - **Evidence**: User requested a Maturion pop-up after edits thanking the user for guidance, explaining that the correction can improve future accuracy, and asking whether to record it into the memory system.
+  - **Root Cause**: Learning capture was implemented as backend telemetry after save, not as a visible consented AI-learning UX step during editing.
+  - **Prebuild/Architecture Update**: DMC architecture now requires a first-edit learning prompt per criterion with explicit Yes/No consent.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-043` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor editing now opens a Maturion learning prompt. `Yes` records changed levels as learning telemetry on save; `No` still persists descriptor text while omitting edited levels from memory capture for that criterion.
+
+- **2026-06-08 — Descriptor Lead-In Grammar Copied Source Capitalisation**
+  - **Observed Failure**: Some maturity descriptors began with malformed text such as `Evidence that To...` or `Evidence that Where...` when the accepted verbatim criterion started with an infinitive or conditional phrase.
+  - **Evidence**: User screenshots showed descriptors beginning `Evidence that To indicate...` and `Evidence that Where possible...`, with the user confirming Maturion should self-read and correct grammar before presenting descriptor drafts.
+  - **Root Cause**: The deterministic descriptor generator correctly anchored descriptors to the actual criterion text but used a single `Evidence that ${clause}` prefix for every clause shape. Infinitive and conditional source clauses require different evidence lead-ins.
+  - **Prebuild/Architecture Update**: DMC architecture now requires descriptor lead-ins to be grammar-normalized before display and save, including `Evidence indicating...` for infinitive clauses and `Evidence that, where...` for conditional clauses.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-040` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor fallback generation now routes criterion clauses through a lead-in normalizer and the AI descriptor prompt explicitly forbids `Evidence that To...` / `Evidence that Where...` outputs.
+
+- **2026-06-08 — Criterion Code And Visible Sequence Drift**
+  - **Observed Failure**: The criteria edit modal showed a criterion code such as `D001.MPS002.C002` while the row was sequence/sort order 1, creating uncertainty over the real criterion number.
+  - **Evidence**: User screenshot showed `CRITERION CODE D001.MPS002.C002` beside `Sort order: 1` / first-row context.
+  - **Root Cause**: Earlier generation and save paths trusted incoming AI/source codes and raw persisted sort values. Historical rows could therefore retain a drifted `C002` code or zero/one-based sort mismatch even after the criteria list was otherwise correct.
+  - **Prebuild/Architecture Update**: DMC architecture now defines criterion codes as one-based sequence identifiers within each MPS and requires visible sequence labels instead of raw historical sort values.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-041` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Criteria generation, fallback, manual add, and save paths normalize codes to the MPS sequence; accepted criteria save one-based `sort_order`; saved cards display `Sequence`; and historical drift is repaired in the editable code draft when the criteria modal opens.
+
+- **2026-06-04 — Maturity Descriptor Save Silent And Edit Learning Not Explicit**
+  - **Observed Failure**: After descriptors were generated, clicking `Save maturity descriptors` did not provide a clear response, and descriptor editing did not expose an explicit per-level edit action or visible learning/audit capture.
+  - **Evidence**: User screenshot showed the descriptor textareas and bottom save button with no post-click response. User confirmed that all editing should be recorded by Maturion so future descriptor generation can learn from accepted changes.
+  - **Root Cause**: The descriptor UI reused a generic criterion-level status banner above the descriptor grid and saved descriptor rows directly from the browser. That made save confirmation easy to miss and did not use the service-role audit/AI-interaction path required by the MMM learning model.
+  - **Prebuild/Architecture Update**: DMC architecture now requires adjacent save feedback, explicit per-level descriptor edit controls, and service-role descriptor persistence that writes immutable audit evidence plus preference-learning telemetry.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-035` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor cards are read-only until `Edit descriptor` is clicked, descriptor saves call `mmm-level-descriptor-save`, the UI shows saved/learning confirmation beside the save button, and the edge function upserts `mmm_level_descriptors`, writes `MATURITY_DESCRIPTOR_SAVE` to `mmm_audit_logs`, and records changed descriptor text as `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT`.
 
 - **2026-06-03 — Maturity Descriptors Copy Criterion Into Every Level**
   - **Observed Failure**: The new descriptor authoring UI opened correctly, but `Create maturity descriptors` produced Basic/Reactive/Compliant/Proactive/Resilient text by copying the accepted criterion into each descriptor and only changing the level label/generic guidance.
@@ -1418,3 +1458,107 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Added B4 regression assertions that generated fallback descriptors do not contain `must be approved` and start from evidence-state language.
    - QA-to-Red Trace:
      - `T-MMM-DMC-034` maturity descriptors must describe evidence state, not restate obligations.
+
+17. **Maturity descriptor save silent and edit learning not explicit**
+   - Failure Class: user-facing persistence feedback + learning traceability.
+   - Symptom: `Save maturity descriptors` gave no adjacent visible response and descriptor edits were plain textarea changes without a clear per-level edit action or learning capture signal.
+   - Cause Class: descriptor save used a direct browser upsert and reused the generic criterion message location, bypassing the service-role audit/AI-interaction pattern used for governed learning capture.
+   - Corrective Action:
+     - Added per-level `Edit descriptor` controls and locked descriptor textareas by default.
+     - Routed descriptor saves through `mmm-level-descriptor-save`.
+     - Added adjacent saved/error feedback under the descriptor save button.
+     - Wrote immutable `MATURITY_DESCRIPTOR_SAVE` audit events and `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT` telemetry for changed descriptor text.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-035` descriptor save must be visible and capture user edits for learning.
+
+18. **Maturity descriptors too generic for role/reporting/support criteria**
+   - Failure Class: descriptor semantic fidelity / criterion-anchor drift.
+   - Symptom: Risk Manager accountability, direct-reporting, and HOD support criteria generated maturity descriptors about generic policy/control/governance evidence instead of the actual role, reporting, meeting, support, deviation, escalation, and closure evidence required by the accepted criterion.
+   - Cause Class: deterministic descriptor subject selection chose broad control profiles and did not enforce that the accepted criterion's actor/action/object remained visible in each maturity evidence state.
+   - Corrective Action:
+     - Added criterion-anchor fidelity doctrine to the architecture addendum and QA-to-red catalog.
+     - Added role accountability, direct reporting, and role support/escalation descriptor profiles.
+     - Tightened AI reconstruction instructions so live AI output must preserve criterion-specific actors/actions/objects and must not collapse role/reporting/support criteria into generic policy wording.
+     - Added B4 regression coverage using the live Risk Manager examples.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-036` maturity descriptors must preserve criterion-specific evidence anchors.
+
+19. **Maturity descriptors not auditor-operable enough**
+   - Failure Class: descriptor precision / auditor consistency.
+   - Symptom: Security Policy and governance-charter descriptors still began with generic phrases such as `Evidence for policy approval/currency` or `Evidence for governance forum mandate`, forcing auditors to infer the exact evidence requirement from the original criterion.
+   - Cause Class: descriptor generation preserved a broad anchor but did not restate the actual accepted criterion requirement as the first clause of each level descriptor.
+   - Corrective Action:
+     - Added the auditor-operable rule that each descriptor starts with the exact criterion evidence requirement restated as an auditable subject, then appends the maturity evidence state.
+     - Updated deterministic descriptor subject derivation for policy-display, policy-outline, governance-charter, and generic criteria.
+     - Tightened the AI reconstruction prompt with the same criterion-requirement-first rule.
+     - Added B4 regression coverage for Security Policy display, Security Policy obligation-outline, and documented governance charter examples.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-037` maturity descriptors must start from the actual evidence requirement.
+
+20. **Auditor-operable descriptors became grammatical fragments and over-matched HOD support**
+   - Failure Class: descriptor grammar + classifier precision.
+   - Symptom: Requirement-first descriptor text dropped the word `Evidence` and produced clipped noun phrases such as `Risk Manager: Security support to HODs... is absent`; HOD/Golden Rules criteria could also be misclassified as Risk Manager support because HOD wording was too heavily weighted.
+   - Cause Class: criterion-subject derivation produced a noun phrase instead of a grammatical evidence clause, and role-support classification did not require a Risk Manager/Security Manager actor.
+   - Corrective Action:
+     - Restored `Evidence that ...` as the descriptor lead-in.
+     - Converted role-specific descriptor subjects into grammatical clauses, e.g. `Evidence that the Risk Manager: Security provides Security support...`.
+     - Narrowed Risk Manager support/escalation classification so HOD wording alone cannot trigger that profile.
+     - Added B4 regression coverage for the HOD/Golden Rules/risk-tolerance criterion.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-038` descriptor classifier must not over-match role support from HOD wording alone.
+
+21. **Verbatim multi-sentence criterion produced malformed descriptor grammar**
+   - Failure Class: verbatim descriptor grammar / multi-evidence compression.
+   - Symptom: A verbatim criterion with two sentences produced text such as `Evidence that the Policy is incorporated... visitors. A process exist ... is absent`, placing the maturity state after the second sentence and making the descriptor hard to audit.
+   - Cause Class: descriptor subject derivation preserved the source sentence break instead of compressing related verbatim evidence requirements into one auditable clause.
+   - Corrective Action:
+     - Added deterministic compression for the induction-process + recording-process pattern.
+     - Kept the accepted verbatim criterion as one criterion while creating one grammatical descriptor evidence clause.
+     - Added B4 regression coverage for the policy induction/process-recording criterion.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-039` verbatim multi-sentence criteria must compress into one evidence clause.
+
+22. **Descriptor lead-in copied source grammar into malformed evidence text**
+   - Failure Class: descriptor grammar / source lead-in normalization.
+   - Symptom: Source clauses beginning with `To...` or `Where...` produced descriptors such as `Evidence that To indicate...` and `Evidence that Where possible...`.
+   - Cause Class: descriptor generation used one static `Evidence that` prefix for all accepted criterion clause shapes.
+   - Corrective Action:
+     - Added a descriptor lead-in normalizer for infinitive and conditional clauses.
+     - Preserved criterion-specific evidence content while producing grammatical starts such as `Evidence indicating...` and `Evidence that, where...`.
+     - Added B4 regression coverage for `To indicate...` and `Where possible...` verbatim criteria.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-040` descriptor evidence lead-ins must self-correct source grammar.
+
+23. **Criterion code did not match per-MPS visible sequence**
+   - Failure Class: criteria identity / sequence normalization.
+   - Symptom: A first-row criterion could display a code such as `D001.MPS002.C002`, creating disagreement between the criterion code and row sequence.
+   - Cause Class: Criteria generation and save paths trusted AI/source-supplied codes and raw persisted sort values, allowing historical zero/one-based drift to remain visible.
+   - Corrective Action:
+     - Normalized generated, fallback, manually added, and accepted criteria codes to one-based per-MPS sequence values.
+     - Saved accepted criteria with matching one-based `sort_order`.
+     - Reopened saved criteria using a visible `Sequence` label and repaired drifted editable code drafts from MPS order.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-041` criterion codes and visible sequence must align per MPS.
+
+24. **Verbatim guidance note leaked into maturity descriptor**
+   - Failure Class: descriptor evidence-subject hygiene / verbatim guidance handling.
+   - Symptom: Parenthetical guidance text beginning with `Note:` was included inside the level descriptor evidence clause.
+   - Cause Class: Descriptor generation treated all accepted criterion text as evidence-bearing text and did not distinguish explanatory notes from the criterion requirement; AI-refined descriptor text also needed final sanitization because prompt-only rules are not an enforcement boundary.
+   - Corrective Action:
+     - Added descriptor-only stripping for parenthetical/bracketed `Note:`, `Guidance:`, and `Reference:` text.
+     - Kept notes available in the main accepted criterion text for user context.
+     - Added final descriptor-output sanitization for AI-refined drafts before display/save.
+     - Added B4 regression coverage for the Performance Management Scorecard / KPA note pattern, including an AI response that incorrectly echoes the note.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-042` descriptor evidence clauses must exclude verbatim guidance notes.
+
+25. **Descriptor edit learning was hidden from the user**
+   - Failure Class: AI-learning UX / consented memory capture.
+   - Symptom: Descriptor edits were recorded for learning only after save, without an explicit Maturion interaction at the moment the user corrected the descriptor.
+   - Cause Class: Learning capture was handled as backend telemetry instead of a visible AI-learning prompt.
+   - Corrective Action:
+     - Added a first-edit Maturion learning prompt per criterion.
+     - Added Yes/No controls to decide whether changed descriptor levels are submitted as learning memory.
+     - Preserved descriptor save when the user declines learning capture.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-043` descriptor edits must ask for user learning consent.

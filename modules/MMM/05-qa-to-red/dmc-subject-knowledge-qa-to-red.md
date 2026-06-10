@@ -211,6 +211,60 @@
 - **RED Condition**: Basic/Reactive/Compliant/Proactive/Resilient descriptors say the criterion "must" or "shall" be approved/current/implemented, which restates the obligation instead of describing what the evidence shows at that maturity level.
 - **GREEN Acceptance**: Descriptor text is phrased as observable evidence state at each level, for example absent/weak/fragmented evidence at Basic, current/traceable/verifiable evidence at Compliant, and embedded/continuous/assured evidence at Resilient.
 
+### T-MMM-DMC-035 — Descriptor Save Must Be Visible And Capture User Edits For Learning
+- **Source**: Live descriptor save/edit usability review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Clicking `Save maturity descriptors` provides no visible response, descriptor text can be modified without an explicit per-level edit action, or changed descriptor text is saved without an immutable audit/learning trace.
+- **GREEN Acceptance**: Descriptor cards are read-only by default and expose an `Edit descriptor` control per maturity level, the save action shows adjacent pending/success/error feedback, and descriptor saves route through a service-role function that persists `mmm_level_descriptors`, writes `MATURITY_DESCRIPTOR_SAVE` to `mmm_audit_logs`, and records changed descriptor text as `USER_PREFERENCE_CAPTURE` / `MATURITY_DESCRIPTOR_EDIT` telemetry for Maturion learning.
+
+### T-MMM-DMC-036 — Maturity Descriptors Must Preserve Criterion-Specific Evidence Anchors
+- **Source**: Live descriptor semantic review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A role, reporting-line, meeting, support, or escalation criterion generates generic maturity descriptors such as policy ownership/display/awareness or generic control requirement evidence without referencing the criterion's actual actor, action, object, cadence, or evidence route.
+- **GREEN Acceptance**: Each generated maturity descriptor preserves a distinctive criterion-specific evidence anchor while applying Basic/Reactive/Compliant/Proactive/Resilient evidence-state doctrine. For example Risk Manager accountability descriptors reference Risk Manager: Security accountability, delivery of security, and standard alignment; reporting descriptors reference direct senior-executive reporting/meeting evidence; and HOD support descriptors reference HOD/Business Unit support, deviation escalation, decisions, actions, and closure.
+
+### T-MMM-DMC-037 — Maturity Descriptors Must Start From The Actual Evidence Requirement
+- **Source**: Live auditor-consistency review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A maturity descriptor begins with a broad evidence category such as `Evidence for policy approval/currency` or `Evidence for governance forum mandate`, leaving auditors to infer which exact accepted criterion requirement is being assessed.
+- **GREEN Acceptance**: Each Basic/Reactive/Compliant/Proactive/Resilient descriptor begins with `Evidence that ...`, restates the accepted criterion requirement as a grammatical auditable clause, then describes the evidence state at that level. For example, `Evidence that a documented governance charter that defines leadership responsibilities and decision authority is absent, weak...`, rather than a generic governance-forum evidence category.
+
+### T-MMM-DMC-038 — Descriptor Classifier Must Not Over-Match Role Support From HOD Wording Alone
+- **Source**: Live descriptor grammar and classifier review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A criterion about HODs/leaders making the Security Policy relevant through Golden Rules is classified as Risk Manager support/escalation merely because it contains HOD wording.
+- **GREEN Acceptance**: Risk Manager support/escalation descriptors are generated only when the accepted criterion actually names the Risk Manager/Security Manager support or escalation role. HOD/leader Golden Rules criteria retain HODs/leaders, Golden Rules, associated risk profile, and acceptable risk tolerance in the generated evidence clause.
+
+### T-MMM-DMC-039 — Verbatim Multi-Sentence Criteria Must Compress Into One Evidence Clause
+- **Source**: Live verbatim descriptor review, 2026-06-04.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A verbatim accepted criterion with two sentences is copied into the descriptor with the sentence break intact, causing malformed text such as `Evidence that ... visitors. A process exist ... is absent`.
+- **GREEN Acceptance**: Verbatim multi-sentence criteria remain a single criterion but are converted into one grammatical evidence clause before maturity-state wording is appended. For example, induction-process criteria combine the induction requirement and supporting recording-process requirement using `supported by a process recording that ...`.
+
+### T-MMM-DMC-040 — Descriptor Evidence Lead-Ins Must Self-Correct Source Grammar
+- **Source**: Live descriptor grammar review, 2026-06-08.
+- **Layer**: Unit/static + operational
+- **RED Condition**: Descriptor generation blindly prefixes source wording and emits malformed evidence statements such as `Evidence that To indicate...` or `Evidence that Where possible...`.
+- **GREEN Acceptance**: Descriptor lead-ins are grammar-normalized before display and save. Infinitive evidence requirements use readable forms such as `Evidence indicating...`, `Evidence identifying...`, or `Evidence providing...`; conditional requirements use `Evidence that, where...`; and no generated descriptor begins with `Evidence that To` or `Evidence that Where`.
+
+### T-MMM-DMC-041 — Criterion Codes And Visible Sequence Must Align Per MPS
+- **Source**: Live criteria modal sequence review, 2026-06-08.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A criterion card displays a code such as `D001.MPS002.C002` while the row is the first criterion for that MPS or has visible sequence/sort order 1, leaving the auditor unsure which criterion number is authoritative.
+- **GREEN Acceptance**: Generated, accepted, and manually added criteria are normalized to one-based per-MPS codes (`C001`, `C002`, ...), saved with matching one-based `sort_order`, and reopened with a visible `Sequence` label. Historical persisted drift is repaired in the editable code draft so the first displayed criterion under an MPS opens as `C001`.
+
+### T-MMM-DMC-042 — Descriptor Evidence Clauses Must Exclude Verbatim Guidance Notes
+- **Source**: Live descriptor note-contamination review, 2026-06-10.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A descriptor includes parenthetical explanatory text from the accepted criterion, such as a `Note:` about Performance Management Scorecards, KPAs, HR consultation, or other background context, making the level statement longer than the actual evidence requirement.
+- **GREEN Acceptance**: Verbatim criterion notes remain in the main accepted criterion for context, but descriptor generation strips parenthetical/bracketed `Note:`, `Guidance:`, and `Reference:` text before building Basic/Reactive/Compliant/Proactive/Resilient evidence clauses and sanitizes any AI-refined descriptor text before display/save.
+
+### T-MMM-DMC-043 — Descriptor Edits Must Ask For User Learning Consent
+- **Source**: Live AI-learning UX requirement, 2026-06-10.
+- **Layer**: Unit/static + operational
+- **RED Condition**: User descriptor edits are silently treated as learning input, or the UI gives no visible indication that Maturion noticed the user's correction and can incorporate it into future guidance.
+- **GREEN Acceptance**: The first descriptor text edit for a criterion opens a Maturion learning prompt thanking the user for the guidance and asking whether to record the edit in learning memory. `Yes` preserves changed levels for learning telemetry; `No` still saves descriptor text but sends no edited levels for memory capture for that criterion.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational
