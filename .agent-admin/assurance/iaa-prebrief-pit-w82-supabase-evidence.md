@@ -1,7 +1,7 @@
 # IAA Prebrief - PIT W8.2 Supabase Evidence
 
 IAA_PREFLIGHT_BRIEF: true
-PR: TBD
+PR: 1790
 ISSUE: 1774
 WAVE: PIT_W8_2_SUPABASE_EVIDENCE
 WAVE_TASKS_PATH: modules/pit/12-build/w82-supabase-rls-verification-evidence.md
