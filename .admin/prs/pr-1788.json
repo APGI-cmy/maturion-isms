@@ -1,0 +1,50 @@
+{
+  "pr": 1788,
+  "issue": 1787,
+  "type": "product-fix",
+  "owner": "Foreman orchestrated, Copilot runtime builder",
+  "module": "MMM",
+  "branch": "foreman/issue-1787-descriptor-reconstruction",
+  "wave_id": "mmm-dmc-descriptor-reconstruction-20260610",
+  "scope": [
+    ".agent-admin/scope-declarations/issue-1787-descriptor-reconstruction.md",
+    ".agent-admin/builder-appointments/issue-1787-descriptor-reconstruction-builder-contract.md",
+    ".agent-workspace/foreman-v2/memory/session-issue-1787-descriptor-reconstruction-20260610.md",
+    ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-issue-1787-descriptor-reconstruction-20260610.md",
+    ".agent-admin/assurance/iaa-prebrief-issue-1787-descriptor-reconstruction.md",
+    ".agent-admin/quality/issue-1787-descriptor-reconstruction-foreman-qp.md",
+    ".agent-admin/ecap/issue-1787-descriptor-reconstruction-ecap.md",
+    ".agent-admin/assurance/iaa-review-issue-1787-descriptor-reconstruction.md",
+    ".agent-admin/prehandover/proof-pr-1788-issue-1787-descriptor-reconstruction-20260610.md",
+    "modules/MMM/04-architecture/issue-1787-descriptor-reconstruction-addendum.md",
+    "modules/MMM/05-qa-to-red/issue-1787-descriptor-reconstruction-qa-to-red.md",
+    "apps/mmm/src/components/assessment/CriteriaManagement.tsx",
+    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
+  ],
+  "risk": "medium-high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "copilot-runtime-builder",
+  "builder_agents": [
+    "ui-builder",
+    "qa-builder",
+    "copilot-runtime-builder"
+  ],
+  "red_gates": [
+    "T-MMM-DMC-044",
+    "T-MMM-DMC-045",
+    "T-MMM-DMC-046",
+    "T-MMM-DMC-047",
+    "T-MMM-DMC-048"
+  ],
+  "evidence_required": [
+    "fresh CI run on latest PR head must pass or be explicitly waived by CS2",
+    "Foreman QP is conditional until CI is green",
+    "IAA verdict is STOP-AND-VERIFY until latest check status is inspected",
+    "PR must remain draft until all merge gates are green or waived"
+  ],
+  "merge_authority": "CS2",
+  "merge_recommendation": "none-yet"
+}
