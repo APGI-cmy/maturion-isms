@@ -1,32 +1,33 @@
-
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { CheckCircle, ArrowLeft, Shield, CreditCard, Building2 } from "lucide-react";
-import { useSubscriptionModules } from "@/hooks/useSubscriptionModules";
-import { CheckoutForm } from "@/components/checkout/CheckoutForm";
-import { EFTPaymentSection } from "@/components/checkout/EFTPaymentSection";
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { CheckCircle, ArrowLeft, Shield, CreditCard, Building2 } from 'lucide-react';
+import { useSubscriptionModules } from '@/hooks/useSubscriptionModules';
+import { CheckoutForm } from '@/components/checkout/CheckoutForm';
+import { EFTPaymentSection } from '@/components/checkout/EFTPaymentSection';
+import { useAuth } from '@/context/AuthContext';
+import { PENDING_CHECKOUT_STORAGE_KEY, parseSubscriptionSelection } from '@/lib/subscription';
+import { ROUTES } from '@/lib/routes';
 
 const SubscribeCheckout = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { modules, loading } = useSubscriptionModules();
+  const { user } = useAuth();
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'eft'>('card');
-  const [isYearly, setIsYearly] = useState(false);
 
-  // Parse selected modules from URL params
-  const selectedModules = searchParams.get('modules')?.split(',') || [];
-  const isBundle = searchParams.get('bundle') === 'true';
-  const yearlyParam = searchParams.get('yearly') === 'true';
+  const selection = parseSubscriptionSelection(searchParams);
+  const selectedModules = selection.selectedModules;
+  const isBundle = selection.isBundle;
+  const isYearly = selection.isYearly;
 
   useEffect(() => {
-    setIsYearly(yearlyParam);
-  }, [yearlyParam]);
+    window.localStorage.setItem(PENDING_CHECKOUT_STORAGE_KEY, JSON.stringify({ ...selection, capturedAt: new Date().toISOString() }));
+  }, [selection.isBundle, selection.isYearly, selection.source, selection.selectedModules.join(',')]);
 
-  // Calculate pricing
   const calculatePrice = (monthlyPrice: number, yearlyDiscount: number) => {
     if (isYearly) {
       const yearlyPrice = monthlyPrice * 12;
@@ -42,18 +43,25 @@ const SubscribeCheckout = () => {
     return isYearly ? bundleYearly : bundleMonthly;
   };
 
-  // Get selected modules data
-  const selectedModuleData = modules.filter(module => 
-    selectedModules.includes(module.id) || isBundle
-  );
-
-  const totalPrice = isBundle 
+  const selectedModuleData = modules.filter((module) => selectedModules.includes(module.id) || isBundle);
+  const totalPrice = isBundle
     ? calculateBundlePrice()
-    : selectedModuleData.reduce((sum, module) => 
-        sum + calculatePrice(module.monthly_price, module.yearly_discount_percentage), 0
-      );
-
+    : selectedModuleData.reduce((sum, module) => sum + calculatePrice(module.monthly_price, module.yearly_discount_percentage), 0);
   const yearlyDiscount = isYearly ? 10 : 0;
+
+  const handleMockSuccess = () => {
+    window.localStorage.setItem(
+      PENDING_CHECKOUT_STORAGE_KEY,
+      JSON.stringify({ ...selection, paymentMethod, totalPrice, completedAt: new Date().toISOString() }),
+    );
+
+    if (user) {
+      navigate(ROUTES.ONBOARDING);
+      return;
+    }
+
+    navigate(ROUTES.AUTH, { state: { from: ROUTES.ONBOARDING }, replace: true });
+  };
 
   if (loading) {
     return (
@@ -77,7 +85,7 @@ const SubscribeCheckout = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate('/subscribe')} className="w-full">
+            <Button onClick={() => navigate(ROUTES.SUBSCRIBE)} className="w-full">
               Return to Module Selection
             </Button>
           </CardContent>
@@ -89,32 +97,23 @@ const SubscribeCheckout = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <div className="container max-w-6xl mx-auto py-8 px-4">
-        {/* Header */}
         <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/subscribe')}
-            className="mb-4"
-          >
+          <Button variant="ghost" onClick={() => navigate(ROUTES.SUBSCRIBE)} className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Module Selection
           </Button>
-          
           <h1 className="text-3xl font-bold mb-2">Complete Your Subscription</h1>
           <p className="text-muted-foreground">
-            Secure checkout for your ISMS platform access
+            W3 mock checkout for ISMS platform access. Production payment integration remains future scope.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left Column - Order Summary */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Subscription Summary</CardTitle>
-                <CardDescription>
-                  Review your selected modules and pricing
-                </CardDescription>
+                <CardDescription>Review your selected modules and pricing</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {isBundle ? (
@@ -122,9 +121,7 @@ const SubscribeCheckout = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="font-semibold">Full ISMS Access Bundle</h3>
-                        <p className="text-sm text-muted-foreground">
-                          All modules included
-                        </p>
+                        <p className="text-sm text-muted-foreground">All modules included</p>
                       </div>
                       <Badge variant="secondary">Best Value</Badge>
                     </div>
@@ -156,14 +153,10 @@ const SubscribeCheckout = () => {
                 )}
 
                 <Separator />
-
-                {/* Pricing Breakdown */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Billing Period:</span>
-                    <span className="font-medium">
-                      {isYearly ? 'Yearly' : 'Monthly'}
-                    </span>
+                    <span className="font-medium">{isYearly ? 'Yearly' : 'Monthly'}</span>
                   </div>
                   {isYearly && (
                     <div className="flex justify-between text-sm text-green-600">
@@ -180,16 +173,14 @@ const SubscribeCheckout = () => {
               </CardContent>
             </Card>
 
-            {/* Security Notice */}
             <Card className="border-primary/20 bg-primary/5">
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
                   <Shield className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                   <div className="text-sm">
-                    <p className="font-medium text-primary mb-1">Secure Payment Processing</p>
+                    <p className="font-medium text-primary mb-1">W3 non-production checkout</p>
                     <p className="text-muted-foreground">
-                      Payments are secure and processed through Stripe. Your data is protected 
-                      under our ISO/IEC 27001-compliant platform.
+                      This checkout records local journey context only. No payment provider, invoice, entitlement or production subscription is created in W3.
                     </p>
                   </div>
                 </div>
@@ -197,17 +188,13 @@ const SubscribeCheckout = () => {
             </Card>
           </div>
 
-          {/* Right Column - Payment Method */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Payment Method</CardTitle>
-                <CardDescription>
-                  Choose your preferred payment option
-                </CardDescription>
+                <CardDescription>Choose a mock checkout option</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Payment Method Selection */}
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <input
@@ -216,15 +203,14 @@ const SubscribeCheckout = () => {
                       name="payment-method"
                       value="card"
                       checked={paymentMethod === 'card'}
-                      onChange={(e) => setPaymentMethod(e.target.value as 'card')}
+                      onChange={(event) => setPaymentMethod(event.target.value as 'card')}
                       className="w-4 h-4 text-primary"
                     />
                     <label htmlFor="card" className="flex items-center gap-2 text-sm font-medium">
                       <CreditCard className="h-4 w-4" />
-                      Credit/Debit Card
+                      Credit/Debit Card Mock
                     </label>
                   </div>
-
                   <div className="flex items-center space-x-2">
                     <input
                       type="radio"
@@ -232,25 +218,24 @@ const SubscribeCheckout = () => {
                       name="payment-method"
                       value="eft"
                       checked={paymentMethod === 'eft'}
-                      onChange={(e) => setPaymentMethod(e.target.value as 'eft')}
+                      onChange={(event) => setPaymentMethod(event.target.value as 'eft')}
                       className="w-4 h-4 text-primary"
                     />
                     <label htmlFor="eft" className="flex items-center gap-2 text-sm font-medium">
                       <Building2 className="h-4 w-4" />
-                      Bank Transfer (EFT)
+                      Bank Transfer Mock
                     </label>
                   </div>
                 </div>
 
                 <Separator />
-
-                {/* Payment Forms */}
                 {paymentMethod === 'card' ? (
-                  <CheckoutForm 
+                  <CheckoutForm
                     totalAmount={totalPrice}
                     isYearly={isYearly}
                     selectedModules={selectedModules}
                     isBundle={isBundle}
+                    onMockSuccess={handleMockSuccess}
                   />
                 ) : (
                   <EFTPaymentSection
@@ -258,6 +243,7 @@ const SubscribeCheckout = () => {
                     isYearly={isYearly}
                     selectedModules={selectedModules}
                     isBundle={isBundle}
+                    onMockSuccess={handleMockSuccess}
                   />
                 )}
               </CardContent>

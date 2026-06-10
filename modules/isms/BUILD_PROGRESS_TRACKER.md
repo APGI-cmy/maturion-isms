@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-04  
-**Updated By**: foreman-agent (wave: `isms-w2-free-assessment-flow`)
+**Last Updated**: 2026-06-08  
+**Updated By**: foreman-agent (wave: `isms-w3-subscribe-auth-onboarding`)
 
-> **Classification**: ACTIVE — W2 FREE ASSESSMENT RESULT FLOW OPENED  
+> **Classification**: ACTIVE — W3 SUBSCRIBE/CHECKOUT/AUTH/ONBOARDING OPENED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -25,9 +25,10 @@
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | COMPLETE FOR W1 AND W2 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1, W2 AND W3 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md` |
 | Stage 12 | W1 Build Execution & Evidence | MERGED — ACCEPTED FOR W1 SCOPE | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
-| Stage 12 | W2 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
+| Stage 12 | W2 Build Execution & Evidence | MERGED — ACCEPTED FOR W2 SCOPE | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
+| Stage 12 | W3 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` |
 
 ---
 
@@ -45,42 +46,56 @@
 - `.functional-delivery/pr-1776.md`
 - `.functional-delivery/pr-1779.md`
 
-W1 delivered the route/public shell scope only. It does not claim full ISMS product delivery.
-
 ---
 
 ## Stage 12: W2 Free Assessment Result Flow
 
-**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
-**Branch**: `foreman/isms-w2-free-assessment-flow`  
+**Status**: MERGED — ACCEPTED FOR W2 SCOPE  
+**Merged PR**: #1781 (`f7d592dfcd9caf3f748f78318eea629f95fe8174`)  
 **Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md` — W2 appointment
-- `modules/isms/11-build/w2-free-assessment-flow-evidence.md` — W2 implementation evidence
-- `.functional-delivery/pr-1781.md` — PR-scoped functional delivery evidence
-- `.agent-admin/assurance/iaa-wave-record-pr1781-isms-w2-free-assessment-flow.md` — PR-scoped IAA evidence
-- `.agent-workspace/foreman-v2/memory/session-1781-20260604.md` — Foreman session/delegation evidence
+- `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`
+- `modules/isms/11-build/w2-free-assessment-flow-evidence.md`
+- `.functional-delivery/pr-1781.md`
+- `.agent-admin/assurance/iaa-wave-record-pr1781-isms-w2-free-assessment-flow.md`
+- `.agent-workspace/foreman-v2/memory/session-1781-20260604.md`
 
-**Runtime files changed by W2**:
-- `apps/isms-portal/src/lib/freeAssessment.ts`
-- `apps/isms-portal/src/lib/freeAssessment.test.ts`
-- `apps/isms-portal/src/pages/FreeAssessment.tsx`
+W2 delivered the public free assessment and report scope only. It does not claim W3-W8 delivery.
 
-**W2 scope**:
-- public free assessment response capture;
-- five LDCS maturity domains;
-- MPS-aligned operating-state questions;
-- Basic/Reactive/Compliant/Proactive/Resilient scoring;
-- printable/exportable ESCO-facing report;
-- report links to main ISMS page, Journey/loss-prevention philosophy page, and subscription path;
-- no dead-end into private `/assessment`.
+---
+
+## Stage 12: W3 Subscribe, Checkout Mock, Auth, Onboarding
+
+**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
+**Branch**: `foreman/isms-w3-subscribe-auth-onboarding`  
+**Primary Evidence**:
+- `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md` — W3 appointment
+- `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` — W3 implementation evidence
+
+**Runtime files changed by W3**:
+- `apps/isms-portal/src/lib/subscription.ts`
+- `apps/isms-portal/src/context/AuthContext.tsx`
+- `apps/isms-portal/src/components/auth/LoginForm.tsx`
+- `apps/isms-portal/src/pages/Onboarding.tsx`
+- `apps/isms-portal/src/App.tsx`
+- `apps/isms-portal/src/components/checkout/CheckoutForm.tsx`
+- `apps/isms-portal/src/components/checkout/EFTPaymentSection.tsx`
+- `apps/isms-portal/src/pages/SubscribeCheckout.tsx`
+
+**W3 scope**:
+- checkout mock completion;
+- auth entry for unauthenticated checkout completion;
+- protected onboarding shell;
+- required onboarding fields;
+- onboarding completion route to protected dashboard placeholder;
+- W4 entitlement/MMM handoff remains out of scope.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: W2 PR preparation and CI gate inspection.  
+**Current Stage**: W3 PR preparation and CI gate inspection.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Open/review the W2 PR, inspect CI/review results, complete required evidence, and only then decide whether W2 can be accepted as complete.
+**Next Required Action**: Open/review the W3 PR, inspect CI/review results, complete required evidence, and only then decide whether W3 can be accepted as complete.
 
 ---
 
@@ -104,11 +119,13 @@ W1 delivered the route/public shell scope only. It does not claim full ISMS prod
 - [x] Stage 11 W1 Builder Appointment complete
 - [x] Stage 12 W1 merged and corrected
 - [x] Stage 11 W2 Builder Appointment complete
-- [x] Stage 12 W2 implementation opened on branch
-- [x] W2 PR #1781 opened
-- [ ] W2 CI passed
-- [ ] W2 review conversations resolved
-- [ ] W2 handover authorized
+- [x] Stage 12 W2 merged
+- [x] Stage 11 W3 Builder Appointment complete
+- [x] Stage 12 W3 implementation opened on branch
+- [ ] W3 PR opened
+- [ ] W3 CI passed
+- [ ] W3 review conversations resolved
+- [ ] W3 handover authorized
 
 ---
 
@@ -117,12 +134,12 @@ W1 delivered the route/public shell scope only. It does not claim full ISMS prod
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- W2 PR must pass CI before W2 acceptance recommendation;
-- W2 review conversations must be resolved or dispositioned;
-- W3-W8 remain unappointed and unauthorized;
+- W3 PR must pass CI before W3 acceptance recommendation;
+- W3 review conversations must be resolved or dispositioned;
+- W4-W8 remain unappointed and unauthorized;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-04
+**Last Tracker Reconciliation**: 2026-06-08
