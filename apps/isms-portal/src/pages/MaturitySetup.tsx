@@ -15,7 +15,7 @@ const MaturitySetup = () => {
         <div>
           <h1 className="text-4xl font-bold">Maturity roadmap setup</h1>
           <p className="mt-2 text-muted-foreground">
-            W5 adds safe Ask Maturion guidance for this protected handoff surface. The full MMM execution engine remains future scope.
+            W5 adds a safe Ask Maturion preview for this protected handoff surface. The full MMM execution engine remains future scope.
           </p>
         </div>
         <AskMaturionButton
@@ -61,7 +61,7 @@ const MaturitySetup = () => {
           </div>
 
           <div className="rounded-lg bg-muted p-4 text-sm text-muted-foreground">
-            This is a W5 protected guidance surface. Ask Maturion does not invoke a live AI provider, persist data to Supabase, emit audit events, bypass entitlements, or execute the private MMM engine.
+            This is a W5 protected preview surface. Ask Maturion does not invoke a live AI provider, persist data to Supabase, emit audit events, bypass entitlements, or execute the private MMM engine.
           </div>
 
           <div className="flex flex-wrap gap-3">
