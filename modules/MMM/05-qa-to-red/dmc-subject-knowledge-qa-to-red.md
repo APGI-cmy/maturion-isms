@@ -253,6 +253,18 @@
 - **RED Condition**: A criterion card displays a code such as `D001.MPS002.C002` while the row is the first criterion for that MPS or has visible sequence/sort order 1, leaving the auditor unsure which criterion number is authoritative.
 - **GREEN Acceptance**: Generated, accepted, and manually added criteria are normalized to one-based per-MPS codes (`C001`, `C002`, ...), saved with matching one-based `sort_order`, and reopened with a visible `Sequence` label. Historical persisted drift is repaired in the editable code draft so the first displayed criterion under an MPS opens as `C001`.
 
+### T-MMM-DMC-042 — Descriptor Evidence Clauses Must Exclude Verbatim Guidance Notes
+- **Source**: Live descriptor note-contamination review, 2026-06-10.
+- **Layer**: Unit/static + operational
+- **RED Condition**: A descriptor includes parenthetical explanatory text from the accepted criterion, such as a `Note:` about Performance Management Scorecards, KPAs, HR consultation, or other background context, making the level statement longer than the actual evidence requirement.
+- **GREEN Acceptance**: Verbatim criterion notes remain in the main accepted criterion for context, but descriptor generation strips parenthetical/bracketed `Note:`, `Guidance:`, and `Reference:` text before building Basic/Reactive/Compliant/Proactive/Resilient evidence clauses and sanitizes any AI-refined descriptor text before display/save.
+
+### T-MMM-DMC-043 — Descriptor Edits Must Ask For User Learning Consent
+- **Source**: Live AI-learning UX requirement, 2026-06-10.
+- **Layer**: Unit/static + operational
+- **RED Condition**: User descriptor edits are silently treated as learning input, or the UI gives no visible indication that Maturion noticed the user's correction and can incorporate it into future guidance.
+- **GREEN Acceptance**: The first descriptor text edit for a criterion opens a Maturion learning prompt thanking the user for the guidance and asking whether to record the edit in learning memory. `Yes` preserves changed levels for learning telemetry; `No` still saves descriptor text but sends no edited levels for memory capture for that criterion.
+
 ### T-MMM-S6-203 — MPS AI Generation Must Surface Real AIMC Failure Detail (No Generic non-2xx)
 - **Source**: Runtime observability + build-to-red anti-silent-failure policy
 - **Layer**: Unit/static + operational

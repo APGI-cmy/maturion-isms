@@ -14,6 +14,7 @@ import Journey from './pages/Journey';
 import FreeAssessment from './pages/FreeAssessment';
 import Subscribe from './pages/Subscribe';
 import SubscribeCheckout from './pages/SubscribeCheckout';
+import Onboarding from './pages/Onboarding';
 import RiskManagementInfo from './pages/RiskManagementInfo';
 import PITInfo from './pages/PITInfo';
 import DataAnalyticsInfo from './pages/DataAnalyticsInfo';
@@ -30,6 +31,14 @@ const privateShellRoute = (title: string, description: string) => (
   <ProtectedRoute>
     <PitErrorBoundary>
       <PitShell title={title} description={description} />
+    </PitErrorBoundary>
+  </ProtectedRoute>
+);
+
+const protectedOnboardingRoute = (
+  <ProtectedRoute>
+    <PitErrorBoundary>
+      <Onboarding />
     </PitErrorBoundary>
   </ProtectedRoute>
 );
@@ -170,13 +179,7 @@ const App = () => {
                   'Protected project creation shell for the Project Implementation Tracker runtime foundation.',
                 )}
               />
-              <Route
-                path={ROUTES.ONBOARDING}
-                element={privateShellRoute(
-                  'PIT onboarding',
-                  'Protected onboarding shell for the Project Implementation Tracker runtime foundation.',
-                )}
-              />
+              <Route path={ROUTES.ONBOARDING} element={protectedOnboardingRoute} />
 
               {/* PIT Stage 12 W8.2 admin/RLS denied-path foundations */}
               <Route

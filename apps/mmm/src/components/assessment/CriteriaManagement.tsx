@@ -129,6 +129,11 @@ interface CriterionEditDraft {
   name: string;
 }
 
+interface DescriptorLearningPrompt {
+  criterionId: string;
+  level: number;
+}
+
 interface LevelDescriptorDraft {
   level: number;
   label: string;
@@ -448,8 +453,24 @@ function stripCriterionBoilerplate(criterionText: string): string {
     .trim();
 }
 
+function stripDescriptorGuidanceNotes(criterionText: string): string {
+  return criterionText
+    .replace(/\s*\((?:Note|Guidance|Reference):[^)]*\)/gi, '')
+    .replace(/\s*\[(?:Note|Guidance|Reference):[^\]]*\]/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function sanitizeDescriptorDraftText(descriptorText: string): string {
+  return stripDescriptorGuidanceNotes(descriptorText)
+    .replace(/\s+\./g, '.')
+    .replace(/\s+,/g, ',')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function firstCriterionClause(criterionText: string): string {
-  const clean = stripCriterionBoilerplate(criterionText);
+  const clean = stripDescriptorGuidanceNotes(stripCriterionBoilerplate(criterionText));
   const [firstSentence] = clean.split(/(?<=[.!?])\s+/);
   const source = (firstSentence || clean)
     .replace(/\s+/g, ' ')
@@ -460,7 +481,7 @@ function firstCriterionClause(criterionText: string): string {
 }
 
 function criterionRequirementSubject(criterionText: string): string {
-  const clean = stripCriterionBoilerplate(criterionText)
+  const clean = stripDescriptorGuidanceNotes(stripCriterionBoilerplate(criterionText))
     .replace(/\s+/g, ' ')
     .replace(/[.;:,]+$/g, '')
     .trim();
@@ -731,7 +752,7 @@ function validateMaturityDescriptorDrafts(
     if (!draft?.descriptor_text.trim()) {
       throw new Error(`Descriptor generation omitted ${label}.`);
     }
-    const text = draft.descriptor_text.trim();
+    const text = sanitizeDescriptorDraftText(draft.descriptor_text);
     if (normalizeDescriptorText(text) === normalizeDescriptorText(`${label}: ${normalizedCriterion}`)) {
       throw new Error('Descriptor generation copied the criterion instead of reconstructing maturity states.');
     }
@@ -831,6 +852,8 @@ export function CriteriaManagement({
   const [descriptorGeneratingByCriterion, setDescriptorGeneratingByCriterion] = useState<Record<string, boolean>>({});
   const [descriptorEditingByKey, setDescriptorEditingByKey] = useState<Record<string, boolean>>({});
   const [descriptorEditedLevelsByCriterion, setDescriptorEditedLevelsByCriterion] = useState<Record<string, Set<number>>>({});
+  const [descriptorLearningPrompt, setDescriptorLearningPrompt] = useState<DescriptorLearningPrompt | null>(null);
+  const [descriptorLearningConsentByCriterion, setDescriptorLearningConsentByCriterion] = useState<Record<string, boolean>>({});
 
   const resetAllStates = useCallback(() => {
     setMpsCriteriaStates({});
@@ -839,6 +862,8 @@ export function CriteriaManagement({
     setDescriptorGeneratingByCriterion({});
     setDescriptorEditingByKey({});
     setDescriptorEditedLevelsByCriterion({});
+    setDescriptorLearningPrompt(null);
+    setDescriptorLearningConsentByCriterion({});
   }, []);
 
   // NBR-003: reset generation state when domainId changes
@@ -956,7 +981,10 @@ export function CriteriaManagement({
       if (drafts.length !== 5 || drafts.some((draft) => !draft.descriptor_text.trim())) {
         throw new Error('All five maturity level descriptors must be completed before saving.');
       }
-      const editedLevels = Array.from(descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>()).sort();
+      const learningConsent = descriptorLearningConsentByCriterion[criterion.id] !== false;
+      const editedLevels = learningConsent
+        ? Array.from(descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>()).sort()
+        : [];
       const headers = await getEdgeInvokeHeaders();
       const { data, error } = await supabase.functions.invoke('mmm-level-descriptor-save', {
         headers,
@@ -998,9 +1026,12 @@ export function CriteriaManagement({
         });
         return next;
       });
-      const learningSuffix = result.learningEventRecorded
+      const learningConsent = descriptorLearningConsentByCriterion[criterion.id] !== false;
+      const learningSuffix = result.learningEventRecorded && learningConsent
         ? ` Recorded ${result.changedCount} descriptor edit${result.changedCount === 1 ? '' : 's'} for Maturion learning.`
-        : ' No descriptor text edits were detected.';
+        : learningConsent
+          ? ' No descriptor text edits were detected.'
+          : ' Descriptor edits were saved without Maturion learning capture for this criterion.';
       setCriterionActionMessages((prev) => ({
         ...prev,
         [criterion.id]: {
@@ -1406,6 +1437,7 @@ export function CriteriaManagement({
             `- Reconstruct the criterion into observable operating states for Basic, Reactive, Compliant, Proactive, and Resilient.\n` +
             `- Begin every descriptor with a grammatical evidence lead-in, normally "Evidence that ...", followed by the actual criterion evidence requirement restated as an auditable clause, then define the evidence state for that maturity level.\n` +
             `- Self-correct descriptor grammar before returning JSON: never emit "Evidence that To..." or "Evidence that Where..."; use "Evidence indicating..." for infinitive clauses and "Evidence that, where..." for conditional clauses.\n` +
+            `- Treat parenthetical Note/Guidance/Reference text as explanatory context only; do not include those notes in descriptor evidence clauses.\n` +
             `- Preserve the criterion-specific actor/action/object in every descriptor; the exact thing requested by the criterion must remain visible in the maturity evidence subject.\n` +
             `- Do not replace role, reporting-line, support, escalation, or meeting criteria with generic policy/control wording.\n` +
             `- For reporting-line criteria, describe evidence of direct access, regular meetings, agendas/minutes, decisions, actions, and escalation with the senior executive.\n` +
@@ -1550,6 +1582,9 @@ export function CriteriaManagement({
         [criterionId]: edited,
       };
     });
+    if (descriptorLearningConsentByCriterion[criterionId] === undefined) {
+      setDescriptorLearningPrompt((current) => current ?? { criterionId, level });
+    }
   };
 
   const toggleDescriptorEdit = (criterionId: string, level: number) => {
@@ -1558,6 +1593,15 @@ export function CriteriaManagement({
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const handleDescriptorLearningConsent = (consent: boolean) => {
+    if (!descriptorLearningPrompt) return;
+    setDescriptorLearningConsentByCriterion((prev) => ({
+      ...prev,
+      [descriptorLearningPrompt.criterionId]: consent,
+    }));
+    setDescriptorLearningPrompt(null);
   };
 
   if (!open) return null;
@@ -1571,6 +1615,46 @@ export function CriteriaManagement({
       data-testid="criteria-management"
     >
       <div className="modal-content">
+        {descriptorLearningPrompt ? (
+          <div
+            className="modal-overlay modal-overlay--nested"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Maturion learning guidance"
+            data-testid="descriptor-learning-prompt"
+          >
+            <div className="modal-content modal-content--narrow">
+              <div className="modal-header">
+                <h3 className="modal-title">Maturion Learning</h3>
+              </div>
+              <div className="modal-body">
+                <p>
+                  Thank you for the guidance. I can use this correction to improve future maturity
+                  descriptor drafts for this criterion.
+                </p>
+                <p>Would you like me to record this edit in my learning memory?</p>
+                <div className="criteria-card__actions">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => handleDescriptorLearningConsent(true)}
+                    data-testid="descriptor-learning-yes"
+                  >
+                    Yes, record it
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={() => handleDescriptorLearningConsent(false)}
+                    data-testid="descriptor-learning-no"
+                  >
+                    No, just save the edit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
         <div className="modal-header">
           <h2 className="modal-title">Criteria Management</h2>
           <button
