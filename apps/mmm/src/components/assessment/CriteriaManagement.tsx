@@ -988,7 +988,7 @@ export function CriteriaManagement({
       }
       // T-MMM-DMC-046: compute edited_levels using per-level consent — only
       // include a level in the learning payload when the user consented for
-      // that specific level (consent not explicitly declined).
+      // that specific level (explicit true only).
       const editedLevelSet = descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>();
       const editedLevels = Array.from(editedLevelSet)
         .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] === true)
@@ -1037,11 +1037,11 @@ export function CriteriaManagement({
       // T-MMM-DMC-046: compute learningSuffix based on per-level consent decisions.
       const savedEditedLevelSet = descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>();
       const consentedLevelCount = Array.from(savedEditedLevelSet)
-        .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] !== false)
+        .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] === true)
         .length;
       const learningSuffix = result.learningEventRecorded && consentedLevelCount > 0
         ? ` Recorded ${result.changedCount} descriptor edit${result.changedCount === 1 ? '' : 's'} for Maturion learning.`
-        : consentedLevelCount > 0
+        : result.changedCount === 0
           ? ' No descriptor text edits were detected.'
           : ' Descriptor edits were saved without Maturion learning capture for this criterion.';
       setCriterionActionMessages((prev) => ({
@@ -1597,7 +1597,7 @@ export function CriteriaManagement({
     // T-MMM-DMC-046: prompt per edited level, not once per criterion — each
     // maturity level requires its own independent learning-consent decision.
     const levelConsentKey = `${criterionId}:${level}`;
-    if (descriptorLearningConsentByCriterion[levelConsentKey] === undefined) {
+    if (!Object.prototype.hasOwnProperty.call(descriptorLearningConsentByCriterion, levelConsentKey)) {
       setDescriptorLearningPrompt((current) => current ?? { criterionId, level });
     }
   };
