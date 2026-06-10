@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { MessageCircle, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,7 @@ interface AskMaturionButtonProps {
 export const AskMaturionButton = ({ moduleKey, organisationName, sector, primaryGoal }: AskMaturionButtonProps) => {
   const { user } = useAuth();
   const { entitlement } = useIsms();
+  const panelId = useId();
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState<string | null>(null);
@@ -39,17 +40,22 @@ export const AskMaturionButton = ({ moduleKey, organisationName, sector, primary
 
   return (
     <div className="print:hidden">
-      <Button variant="outline" onClick={() => setOpen((current) => !current)}>
+      <Button
+        variant="outline"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        aria-controls={panelId}
+      >
         <MessageCircle className="mr-2 h-4 w-4" />
         Ask Maturion
       </Button>
 
       {open && (
-        <Card className="mt-4 border-primary/30">
+        <Card id={panelId} role="region" aria-label="Ask Maturion preview panel" className="mt-4 border-primary/30">
           <CardHeader>
             <CardTitle>Ask Maturion</CardTitle>
             <CardDescription>
-              W5 safe adapter preview. Public answers are educational only; private context is used only when authentication and entitlement allow it.
+              W5 safe adapter preview. It prepares deterministic educational or filtered-context guidance without calling a live AI provider.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -64,7 +70,7 @@ export const AskMaturionButton = ({ moduleKey, organisationName, sector, primary
             </label>
             <Button onClick={askMaturion}>
               <Send className="mr-2 h-4 w-4" />
-              Generate safe response
+              Prepare safe preview
             </Button>
             {answer && (
               <div className="whitespace-pre-wrap rounded-lg bg-muted p-4 text-sm leading-6 text-muted-foreground">
