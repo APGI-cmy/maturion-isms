@@ -63,7 +63,7 @@ export function createEntitlementState(selection: Partial<SubscriptionSelection>
 
   return {
     isBundle: Boolean(selection.isBundle),
-    entitledModules: Boolean(selection.isBundle) ? allIsmsModules : uniqueModules,
+    entitledModules: Boolean(selection.isBundle) ? [...allIsmsModules] : uniqueModules,
     source: selection.source ?? null,
     completedAt: selection.completedAt ?? null,
   };
