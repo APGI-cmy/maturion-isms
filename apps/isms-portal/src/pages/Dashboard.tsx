@@ -72,7 +72,7 @@ const Dashboard = () => {
         <div>
           <h1 className="text-4xl font-bold">ISMS workspace</h1>
           <p className="mt-2 max-w-3xl text-muted-foreground">
-            W5 adds a safe Ask Maturion adapter preview. It can explain ISMS concepts and use filtered private context only when authentication and entitlement allow it.
+            W5 adds a safe Ask Maturion preview. It prepares deterministic educational or filtered-context guidance without calling a live AI provider.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
