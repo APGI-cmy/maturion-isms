@@ -51,7 +51,7 @@ const Dashboard = () => {
 
   const openModule = (moduleKey: IsmsModuleKey) => {
     if (!hasModuleEntitlement(entitlement, moduleKey)) {
-      navigate(`${ROUTES.SUBSCRIBE}?module=${moduleKey}&source=dashboard-upgrade`);
+      navigate(`${ROUTES.SUBSCRIBE}?modules=${moduleKey}&source=dashboard-upgrade`);
       return;
     }
 
