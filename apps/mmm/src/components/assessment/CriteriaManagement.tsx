@@ -991,7 +991,7 @@ export function CriteriaManagement({
       // that specific level (consent not explicitly declined).
       const editedLevelSet = descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>();
       const editedLevels = Array.from(editedLevelSet)
-        .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] !== false)
+        .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] === true)
         .sort();
       const headers = await getEdgeInvokeHeaders();
       const { data, error } = await supabase.functions.invoke('mmm-level-descriptor-save', {
