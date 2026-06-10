@@ -257,7 +257,7 @@
 - **Source**: Live descriptor note-contamination review, 2026-06-10.
 - **Layer**: Unit/static + operational
 - **RED Condition**: A descriptor includes parenthetical explanatory text from the accepted criterion, such as a `Note:` about Performance Management Scorecards, KPAs, HR consultation, or other background context, making the level statement longer than the actual evidence requirement.
-- **GREEN Acceptance**: Verbatim criterion notes remain in the main accepted criterion for context, but descriptor generation strips parenthetical/bracketed `Note:`, `Guidance:`, and `Reference:` text before building Basic/Reactive/Compliant/Proactive/Resilient evidence clauses.
+- **GREEN Acceptance**: Verbatim criterion notes remain in the main accepted criterion for context, but descriptor generation strips parenthetical/bracketed `Note:`, `Guidance:`, and `Reference:` text before building Basic/Reactive/Compliant/Proactive/Resilient evidence clauses and sanitizes any AI-refined descriptor text before display/save.
 
 ### T-MMM-DMC-043 — Descriptor Edits Must Ask For User Learning Consent
 - **Source**: Live AI-learning UX requirement, 2026-06-10.

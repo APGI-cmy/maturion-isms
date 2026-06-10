@@ -461,6 +461,14 @@ function stripDescriptorGuidanceNotes(criterionText: string): string {
     .trim();
 }
 
+function sanitizeDescriptorDraftText(descriptorText: string): string {
+  return stripDescriptorGuidanceNotes(descriptorText)
+    .replace(/\s+\./g, '.')
+    .replace(/\s+,/g, ',')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function firstCriterionClause(criterionText: string): string {
   const clean = stripDescriptorGuidanceNotes(stripCriterionBoilerplate(criterionText));
   const [firstSentence] = clean.split(/(?<=[.!?])\s+/);
@@ -749,7 +757,7 @@ function validateMaturityDescriptorDrafts(
     if (!draft?.descriptor_text.trim()) {
       throw new Error(`Descriptor generation omitted ${label}.`);
     }
-    const text = draft.descriptor_text.trim();
+    const text = sanitizeDescriptorDraftText(draft.descriptor_text);
     if (normalizeDescriptorText(text) === normalizeDescriptorText(`${label}: ${normalizedCriterion}`)) {
       throw new Error('Descriptor generation copied the criterion instead of reconstructing maturity states.');
     }

@@ -791,6 +791,58 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(wherePossibleResilient.value).not.toMatch(/^Evidence that Where/i);
   });
 
+  it('sanitizes uploaded-source notes from AI-refined maturity descriptors before display', async () => {
+    const noteCriterion: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-note-ai',
+        mps_id: 'mps-1',
+        code: 'D001.MPS001.C006',
+        sort_order: 1,
+        name:
+          'Where possible and applicable, specific Security accountabilities and performance measures will be documented within role descriptions for those in high-risk diamond areas, security and management. (Note: Within the current Performance Management Scorecard/System’s and approved Generic Objectives, reference is made to ‘Security’ and ‘Governance’ where KPA/Objectives and KPI/Measures are listed for those in a HOD and/or Superintendent role. Consultation need to be held with HR to review any role descriptions for those in high-risk diamond areas / Security / Management and determine if additional security responsibilities are required to be included and/or enhanced)',
+      },
+    ];
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: noteCriterion,
+      knowledgeRows: [
+        {
+          source_document_name: 'LDCS_Maturity_Model_Descriptor_Guideline_Approved_Methodology_Reference.md',
+          metadata: { role: 'criteria_source' },
+          chunk_index: 0,
+          content: 'Approved methodology reference for Basic Reactive Compliant Proactive Resilient descriptors.',
+        },
+      ],
+    });
+    const maturityLevels = [
+      { level: 1, label: 'Basic' },
+      { level: 2, label: 'Reactive' },
+      { level: 3, label: 'Compliant' },
+      { level: 4, label: 'Proactive' },
+      { level: 5, label: 'Resilient' },
+    ];
+    configureAIResponse({
+      reply: JSON.stringify(maturityLevels.map(({ level, label }) => ({
+        level,
+        label,
+        descriptor_text:
+          `Evidence that, where possible and applicable, specific Security accountabilities and performance measures is documented within role descriptions for those in high-risk diamond areas, security and management. (Note: Within the current Performance Management Scorecard/System’s and approved Generic Objectives, reference is made to ‘Security’ and ‘Governance’ where KPA/Objectives and KPI/Measures are listed for those in a HOD and/or Superintendent role. Consultation need to be held with HR to review any role descriptions for those in high-risk diamond areas / Security / Management and determine if additional security responsibilities are required to be included and/or enhanced) ${label.toLowerCase()} evidence state is auditable and level-specific.`,
+      }))),
+    });
+    renderCriteriaManagement({
+      criteriaByMps: {
+        'mps-1': noteCriterion,
+      },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-note-ai'));
+    const aiBasic = await screen.findByTestId('descriptor-input-criterion-note-ai-1') as HTMLTextAreaElement;
+    expect(aiBasic.value).toContain('specific Security accountabilities and performance measures');
+    expect(aiBasic.value).not.toContain('Performance Management Scorecard');
+    expect(aiBasic.value).not.toContain('KPA/Objectives');
+    expect(aiBasic.value).not.toContain('(Note:');
+  });
+
   it('shows loading feedback while MMM data is still in flight', async () => {
     configureScenario({
       domainRows: [],
