@@ -15,14 +15,14 @@ describe('PIT W8.2 access decision helper', () => {
   });
 
   it('denies cross-organisation access before role evaluation', () => {
-    expect(evaluatePitAccess({ userId: 'user-1', orgId: 'org-b', role: 'platform_admin' }, target)).toEqual({
+    expect(evaluatePitAccess({ userId: 'user-1', orgId: 'org-b', role: 'cs2_admin' }, target)).toEqual({
       allowed: false,
       reason: 'cross_org_denied',
     });
   });
 
   it('denies same-org actors without an admin role', () => {
-    expect(evaluatePitAccess({ userId: 'user-1', orgId: 'org-a', role: 'member' }, target)).toEqual({
+    expect(evaluatePitAccess({ userId: 'user-1', orgId: 'org-a', role: 'contributor' }, target)).toEqual({
       allowed: false,
       reason: 'role_denied',
     });
