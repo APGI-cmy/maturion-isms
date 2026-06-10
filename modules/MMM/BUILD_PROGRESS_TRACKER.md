@@ -2,7 +2,7 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-06-08
+**Last Updated**: 2026-06-10
 **Updated By**: governance-liaison-isms-agent (wave: normalize-maturion-isms-directory-structure; wave: mmm-domainauditbuilder-legacy-harvest-red-recovery-20260521 — PR #1700 / PR #1711 parity failure recorded and recovery classification artifacts added); foreman-v2-agent (wave: mmm-stage1-cs2-approval, 2026-04-08; wave: mmm-stage2-ux-workflow-wiring-spec, 2026-04-13; wave: mmm-doc-normalization, 2026-04-13; wave: mmm-cs2-approval-fields, 2026-04-14; wave: mmm-stage3-frs, 2026-04-14; wave: mmm-stage4-trs, 2026-04-14; wave: mmm-stage6-qa-to-red-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17 — QP approval + Foreman sign-off; wave: mmm-tracker-reconciliation-20260421, 2026-04-21 — pre-build closure reconciliation; PR #1429 merged; wave: mmm-post-stage12-cdv-validation-20260422, 2026-04-22 — CDV staging validation document + SB-003-W3 static code evidence + tracker update, issue #1443; wave: mmm-post-stage12-backend-alignment-20260422, 2026-04-22 — backend deployment alignment: workflows renamed to MMM-era, deployment-alignment.md added, tracker updated, issue #1455; wave: mmm-operational-closure-tracker-update-20260422, 2026-04-22 — operational closure omissions recorded + future-build hard gate added, issue #1457; wave: mmm-storage-model-codification-20260422, 2026-04-23 — storage bucket model ADR + audio MIME fix + RLS hardening + Red QA tests, issue #1458; wave: mmm-deploy-strategy-oversight-20260426, 2026-04-26 — deployment strategy oversight recorded + §7.4 Deployment Execution Contract added to PRE_BUILD_STAGE_MODEL_CANON.md, issue #1468; wave: mmm-deploy-execution-strategy-20260426, 2026-04-26 — workflows realigned per §7.4: legacy migration trigger removed from vercel workflow, supabase db push adopted for MMM-native migrations, schema verification consolidated, deployment-execution-contract.md filed, live-validation-sequence.md filed, issue #1470; wave: mmm-ui-completeness-fix-20260428, 2026-04-28 — B3 UI completeness fix: global CSS stylesheet added (index.css), all pages styled, anti-regression test T-MMM-S6-021 added, CDV staging validation updated, issue #1496; wave: mmm-dashboard-ui-fix-20260430, 2026-04-30 — post-login dashboard UI fix: DashboardPage rebuilt with app shell/nav, empty state, permission/error state handling, CTA to /frameworks/upload; CSS sections 22–23 added; regression tests T-MMM-S6-177 through T-MMM-S6-180 added; build-process-improvement-register.md filed (OVS-001 through OVS-004), issue #1535; wave: mmm-governance-hardening-phase0-phase1-20260507, 2026-05-07 — OC-009 functional wiring blocker status update + fail-once tracker record + Phase 0 freeze; wave: record-red-align-mmm-artifacts, 2026-05-19 — NEW RED recorded for visible-but-incomplete `/assessment/framework` workspace and build-to-green block reaffirmed pending alignment merge PR #1688; wave: mmm-traceability-cleanup-build-to-green-20260527 — QA trace map activated, untraced runtime artifacts removed/quarantined, DMC click-failure class recorded and gated with T-MMM-DMC-008); mat-specialist (wave: mmm-stage5-architecture-20260414, 2026-04-14; wave: mmm-stage7-pbfag-20260415, 2026-04-15; wave: mmm-stage8-implementation-plan-20260417, 2026-04-17; wave: mmm-stage8-addendum-20260419, 2026-04-19 — Stage 8 convergence-governance addendum; wave: mmm-stage9-builder-checklist-20260419, 2026-04-19 — Stage 9 Builder Checklist COMPLETE; wave: mmm-stage11-builder-appointment-20260420, 2026-04-20 — Stage 11 Builder Appointment COMPLETE; wave: mmm-phase3-retrofit-20260507, 2026-05-07 — Phase 3 retrofit: all 12 pre-build artifacts retrofitted with Full Functional Delivery governance standard, PR #1565, issue #1564)
 
 > **Classification**: ACTIVE — RETROFIT NOW  
@@ -12,6 +12,22 @@
 > **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change. Stale tracker text is a governance defect (see `modules/MMM/_readiness/mmm-document-control-baseline.md`).
 
 ## Recent Failure Register (Live)
+
+- **2026-06-10 — Descriptor Included Verbatim Guidance Note As Evidence Requirement**
+  - **Observed Failure**: A maturity descriptor included a parenthetical `Note:` from the accepted verbatim criterion about Performance Management Scorecards, KPA/Objectives, HR consultation, and additional role-description review.
+  - **Evidence**: User screenshot highlighted the note text inside the generated Reactive descriptor and clarified that the note is guidance/reference for understanding the criterion, not part of the evidence requirement.
+  - **Root Cause**: Descriptor evidence-clause generation stripped generic source tags but did not remove explicit explanatory `Note:`/`Guidance:`/`Reference:` text before deriving the auditable evidence subject.
+  - **Prebuild/Architecture Update**: DMC architecture now states that explanatory notes remain visible in the accepted criterion but are excluded from descriptor evidence clauses.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-042` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor subject derivation now strips parenthetical/bracketed note/guidance/reference text before maturity descriptor construction, and the AI reconstruction prompt carries the same exclusion rule.
+
+- **2026-06-10 — Descriptor Edit Learning Was Not An Explicit AI Interaction**
+  - **Observed Failure**: Descriptor edits were saved and recorded for learning, but the UI did not make Maturion's learning behavior visible at the moment of correction.
+  - **Evidence**: User requested a Maturion pop-up after edits thanking the user for guidance, explaining that the correction can improve future accuracy, and asking whether to record it into the memory system.
+  - **Root Cause**: Learning capture was implemented as backend telemetry after save, not as a visible consented AI-learning UX step during editing.
+  - **Prebuild/Architecture Update**: DMC architecture now requires a first-edit learning prompt per criterion with explicit Yes/No consent.
+  - **QA-to-Red Gate**: Added `T-MMM-DMC-043` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
+  - **Build-to-Green Fix**: Descriptor editing now opens a Maturion learning prompt. `Yes` records changed levels as learning telemetry on save; `No` still persists descriptor text while omitting edited levels from memory capture for that criterion.
 
 - **2026-06-08 — Descriptor Lead-In Grammar Copied Source Capitalisation**
   - **Observed Failure**: Some maturity descriptors began with malformed text such as `Evidence that To...` or `Evidence that Where...` when the accepted verbatim criterion started with an infinitive or conditional phrase.
@@ -1523,3 +1539,25 @@ This tracker now serves as the active failure and traceability register for MMM 
      - Reopened saved criteria using a visible `Sequence` label and repaired drifted editable code drafts from MPS order.
    - QA-to-Red Trace:
      - `T-MMM-DMC-041` criterion codes and visible sequence must align per MPS.
+
+24. **Verbatim guidance note leaked into maturity descriptor**
+   - Failure Class: descriptor evidence-subject hygiene / verbatim guidance handling.
+   - Symptom: Parenthetical guidance text beginning with `Note:` was included inside the level descriptor evidence clause.
+   - Cause Class: Descriptor generation treated all accepted criterion text as evidence-bearing text and did not distinguish explanatory notes from the criterion requirement.
+   - Corrective Action:
+     - Added descriptor-only stripping for parenthetical/bracketed `Note:`, `Guidance:`, and `Reference:` text.
+     - Kept notes available in the main accepted criterion text for user context.
+     - Added B4 regression coverage for the Performance Management Scorecard / KPA note pattern.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-042` descriptor evidence clauses must exclude verbatim guidance notes.
+
+25. **Descriptor edit learning was hidden from the user**
+   - Failure Class: AI-learning UX / consented memory capture.
+   - Symptom: Descriptor edits were recorded for learning only after save, without an explicit Maturion interaction at the moment the user corrected the descriptor.
+   - Cause Class: Learning capture was handled as backend telemetry instead of a visible AI-learning prompt.
+   - Corrective Action:
+     - Added a first-edit Maturion learning prompt per criterion.
+     - Added Yes/No controls to decide whether changed descriptor levels are submitted as learning memory.
+     - Preserved descriptor save when the user declines learning capture.
+   - QA-to-Red Trace:
+     - `T-MMM-DMC-043` descriptor edits must ask for user learning consent.
