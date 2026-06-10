@@ -1432,6 +1432,8 @@ describe('T-MMM-DMC-044–048: Descriptor reconstruction, contextual grammar, an
     expect(basicEl.value).not.toMatch(/,\s*especially during/i);
     expect(basicEl.value).toMatch(/^Evidence that/i);
     expect(basicEl.value).toMatch(/absent|weak|informal|inconsistent/i);
+    // The contextual activity clause must still be present (content preserved, comma+especially stripped)
+    expect(basicEl.value).toMatch(/during high-risk or high-exposure/i);
 
     expect(compliantEl.value).toMatch(/^Evidence that/i);
     expect(compliantEl.value).toMatch(/current|complete|traceable|evidenced/i);

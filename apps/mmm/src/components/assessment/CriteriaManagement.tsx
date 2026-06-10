@@ -1846,7 +1846,10 @@ export function CriteriaManagement({
                                               second-level / final descriptor sign-off. Sign-off data is
                                               not yet wired in the data model; the button therefore remains
                                               always enabled. When sign-off is integrated, gate this button
-                                              with: disabled={isDescriptorSignedOff(criterion.id)} */}
+                                              with: disabled={isDescriptorSignedOff(criterion.id)}
+                                              TODO: implement isDescriptorSignedOff(criterionId) reading a
+                                              sign_off_state field from the mmm_level_descriptors or a
+                                              dedicated sign-off record once the data model is available. */}
                                           <button
                                             type="button"
                                             className="btn btn-outline btn-sm"
