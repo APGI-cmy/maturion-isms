@@ -35,7 +35,7 @@ describe('W5 Ask Maturion adapter', () => {
     })).toBe(true);
   });
 
-  it('returns educational public fallback when private context is unavailable', () => {
+  it('returns educational public preview when private context is unavailable', () => {
     const response = buildAskMaturionResponse({
       question: 'How do we improve resilience?',
       context: {
@@ -48,11 +48,11 @@ describe('W5 Ask Maturion adapter', () => {
     expect(response.audience).toBe('public');
     expect(response.allowedPrivateContext).toBe(false);
     expect(response.fallback).toBe(true);
-    expect(response.answer).toContain('Educational response');
+    expect(response.answer).toContain('Educational preview');
     expect(response.answer).not.toContain('Filtered context');
   });
 
-  it('returns entitled-context fallback with filtered context when allowed', () => {
+  it('returns entitled-context preview with filtered context when allowed', () => {
     const response = buildAskMaturionResponse({
       question: 'What is the next maturity step?',
       context: {
