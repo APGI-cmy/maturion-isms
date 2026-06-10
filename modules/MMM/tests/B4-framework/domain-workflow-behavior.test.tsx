@@ -524,6 +524,10 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
           'Evidence for policy approval and display is weak, person-dependent, and not retained in a repeatable audit trail.',
       },
     });
+    const learningPrompt = await screen.findByTestId('descriptor-learning-prompt');
+    expect(learningPrompt.textContent).toContain('Thank you for the guidance');
+    expect(learningPrompt.textContent).toContain('record this edit in my learning memory');
+    fireEvent.click(screen.getByTestId('descriptor-learning-yes'));
     fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
     fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
 
@@ -538,6 +542,36 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     ));
     const saveStatus = await screen.findByTestId('descriptor-save-status-criterion-1');
     expect(saveStatus.textContent).toMatch(/Saved 5 maturity descriptors.*Recorded 1 descriptor edit/i);
+  });
+
+  it('descriptor edit learning prompt can save without memory capture when declined', async () => {
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-1'));
+
+    const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
+    fireEvent.change(basicDescriptor, {
+      target: { value: 'Evidence that Workflow owner formally assigned is corrected by the user.' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-no'));
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
+
+    await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledWith(
+      'mmm-level-descriptor-save',
+      expect.objectContaining({
+        body: expect.objectContaining({
+          criterion_id: 'criterion-1',
+          edited_levels: [],
+        }),
+      }),
+    ));
+    const saveStatus = await screen.findByTestId('descriptor-save-status-criterion-1');
+    expect(saveStatus.textContent).toContain('without Maturion learning capture');
   });
 
   it('descriptor generation stays green when AI refinement returns non-2xx', async () => {
@@ -694,7 +728,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
         code: 'D001.MPS001.C006',
         sort_order: 7,
         name:
-          'Where possible and applicable, specific Security accountabilities and performance measures will be documented within role descriptions for those in high-risk diamond areas, security and management.',
+          'Where possible and applicable, specific Security accountabilities and performance measures will be documented within role descriptions for those in high-risk diamond areas, security and management. (Note: Within the current Performance Management Scorecard/System’s and approved Generic Objectives, reference is made to ‘Security’ and ‘Governance’ where KPA/Objectives and KPI/Measures are listed for those in a HOD and/or Superintendent role. Consultation will need to be held with HR to review any role descriptions for those in high-risk diamond areas / Security / Management and determine if additional security responsibilities are required to be included and/or enhanced)',
       },
     ];
 
@@ -752,6 +786,8 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const wherePossibleResilient = await screen.findByTestId('descriptor-input-criterion-where-possible-5') as HTMLTextAreaElement;
     expect(wherePossibleResilient.value).toMatch(/^Evidence that, where possible and applicable/i);
     expect(wherePossibleResilient.value).toContain('specific Security accountabilities and performance measures');
+    expect(wherePossibleResilient.value).not.toContain('Performance Management Scorecard');
+    expect(wherePossibleResilient.value).not.toContain('KPA/Objectives');
     expect(wherePossibleResilient.value).not.toMatch(/^Evidence that Where/i);
   });
 
