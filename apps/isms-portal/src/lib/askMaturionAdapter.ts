@@ -37,6 +37,25 @@ function createFilteredContext(context: AskMaturionContext): string {
   return parts.length > 0 ? parts.join('; ') : 'No private operating context supplied.';
 }
 
+function createEducationalAnswer(question: string): string {
+  return [
+    'Educational preview:',
+    'ISMS maturity work starts by understanding whether controls are repeatable, evidenced and resilient under pressure. A useful next step is to compare the organisation’s current operating state against the five maturity domains, then choose one or two improvements that would make control performance less dependent on individual effort.',
+    `Your question: ${question}`,
+    'W5 does not call a live AI provider. This is a deterministic local preview and keeps private operating context behind authentication and entitlement checks.',
+  ].join('\n\n');
+}
+
+function createFilteredContextAnswer(question: string, context: AskMaturionContext): string {
+  return [
+    'Filtered-context preview:',
+    'Based on the available ISMS context, focus first on the maturity domain that most directly supports the stated operating goal. Convert the goal into evidence-backed minimum performance expectations, identify the next maturity level, and define the controls, owners and review cadence needed to move toward resilience.',
+    `Filtered context: ${createFilteredContext(context)}`,
+    `Your question: ${question}`,
+    'W5 does not call a live AI provider or persist this prompt. Live provider integration, prompt logging, audit and persistence remain future governed work.',
+  ].join('\n\n');
+}
+
 export function canUsePrivateAskContext(context: AskMaturionContext): boolean {
   if (!context.isAuthenticated || !context.moduleKey) return false;
   return hasModuleEntitlement(context.entitlement, context.moduleKey);
@@ -51,7 +70,7 @@ export function buildAskMaturionResponse(request: AskMaturionRequest): AskMaturi
 
   if (!question) {
     return {
-      answer: 'Ask Maturion needs a question before it can respond. Try asking about maturity, risk, controls, evidence or resilience.',
+      answer: 'Ask Maturion needs a question before it can prepare a preview. Try asking about maturity, risk, controls, evidence or resilience.',
       audience,
       allowedPrivateContext,
       promptSeedTitle: seed.title,
@@ -61,7 +80,7 @@ export function buildAskMaturionResponse(request: AskMaturionRequest): AskMaturi
 
   if (!allowedPrivateContext) {
     return {
-      answer: `Educational response: ${seed.seed}\n\nYour question: ${question}\n\nW5 does not call a live AI provider. It prepares a safe public prompt seed and keeps private context behind authentication and entitlement checks.`,
+      answer: createEducationalAnswer(question),
       audience,
       allowedPrivateContext,
       promptSeedTitle: seed.title,
@@ -70,7 +89,7 @@ export function buildAskMaturionResponse(request: AskMaturionRequest): AskMaturi
   }
 
   return {
-    answer: `Entitled-context response draft: ${seed.seed}\n\nFiltered context: ${createFilteredContext(request.context)}\n\nYour question: ${question}\n\nW5 keeps this as a non-blocking adapter response. Live AI provider calls, persistence and audit logging remain future governed work.`,
+    answer: createFilteredContextAnswer(question, request.context),
     audience,
     allowedPrivateContext,
     promptSeedTitle: seed.title,
