@@ -1,5 +1,13 @@
 # Scope Declaration — Issue 1787 Descriptor Reconstruction
 
+PR_NUMBER: 1788
+ISSUE: 1787
+BRANCH: foreman/issue-1787-descriptor-reconstruction
+OWNER: Foreman orchestrated, Copilot runtime builder
+DATE_UTC: 2026-06-10
+FILES_CHANGED: 13
+OUT_OF_SCOPE: CS2 sign-off/merge recommendation; sign-off lock wiring beyond the current data model
+
 - **Repository**: `APGI-cmy/maturion-isms`
 - **Module**: `modules/MMM`
 - **Issue**: #1787
@@ -7,7 +15,6 @@
 - **Authority**: CS2 reported live DMC defect and authorized Foreman to proceed.
 - **Foreman Role**: foreman-v2 governed orchestration.
 - **Classification**: MMM DMC build-to-green correction; pre-build and QA-to-RED must be recorded before implementation.
-
 ## Scope
 
 This wave records and prepares the global rule that maturity descriptor generation must sentence-reconstruct accepted criteria into readable audit-evidence statements. The rule applies globally across all criteria, MPS rows, domains, source modes, and maturity levels.
