@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ClipboardCheck } from 'lucide-react';
+import { AskMaturionButton } from '@/components/AskMaturionButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { readMaturityRoadmapHandoff } from '@/lib/handoff';
@@ -10,11 +11,19 @@ const MaturitySetup = () => {
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold">Maturity roadmap setup</h1>
-        <p className="mt-2 text-muted-foreground">
-          W4 creates the protected handoff surface for the subscribed maturity roadmap. The full MMM execution engine remains future scope.
-        </p>
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 className="text-4xl font-bold">Maturity roadmap setup</h1>
+          <p className="mt-2 text-muted-foreground">
+            W5 adds a safe Ask Maturion preview for this protected handoff surface. The full MMM execution engine remains future scope.
+          </p>
+        </div>
+        <AskMaturionButton
+          moduleKey="maturity-roadmap"
+          organisationName={handoff?.organisationName}
+          sector={handoff?.sector}
+          primaryGoal={handoff?.primaryGoal}
+        />
       </div>
 
       <Card className="border-primary/30">
@@ -52,7 +61,7 @@ const MaturitySetup = () => {
           </div>
 
           <div className="rounded-lg bg-muted p-4 text-sm text-muted-foreground">
-            This is a W4 protected handoff preview. It does not invoke the private MMM engine, persist data to Supabase, emit audit events, or create production entitlements.
+            This is a W5 protected preview surface. Ask Maturion does not invoke a live AI provider, persist data to Supabase, emit audit events, bypass entitlements, or execute the private MMM engine.
           </div>
 
           <div className="flex flex-wrap gap-3">
