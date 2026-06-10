@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Lock, ShieldCheck } from 'lucide-react';
+import { AskMaturionButton } from '@/components/AskMaturionButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsms } from '@/context/IsmsContext';
@@ -71,12 +72,15 @@ const Dashboard = () => {
         <div>
           <h1 className="text-4xl font-bold">ISMS workspace</h1>
           <p className="mt-2 max-w-3xl text-muted-foreground">
-            W4 introduces the shared ISMS context and entitlement-aware private module entry. Entitlements are local mock state until W6 persistence is authorized.
+            W5 adds a safe Ask Maturion adapter preview. It can explain ISMS concepts and use filtered private context only when authentication and entitlement allow it.
           </p>
         </div>
-        <Button asChild variant="outline">
-          <Link to={ROUTES.SUBSCRIBE}>Manage subscription</Link>
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <AskMaturionButton moduleKey="maturity-roadmap" />
+          <Button asChild variant="outline">
+            <Link to={ROUTES.SUBSCRIBE}>Manage subscription</Link>
+          </Button>
+        </div>
       </div>
 
       <Card className="mb-6 border-primary/30">
