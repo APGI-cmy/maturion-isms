@@ -25,7 +25,7 @@
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | COMPLETE FOR W1-W4 ONLY | `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1-W4 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md` |
 | Stage 12 | W1 Build Execution & Evidence | MERGED — ACCEPTED FOR W1 SCOPE | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
 | Stage 12 | W2 Build Execution & Evidence | MERGED — ACCEPTED FOR W2 SCOPE | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
 | Stage 12 | W3 Build Execution & Evidence | MERGED — ACCEPTED FOR W3 SCOPE | `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` |
@@ -74,7 +74,9 @@ W3 delivered public subscribe selection, non-production checkout transition, moc
 **Runtime files changed by W4**:
 - `apps/isms-portal/src/context/IsmsContext.tsx`
 - `apps/isms-portal/src/lib/entitlements.ts`
+- `apps/isms-portal/src/lib/entitlements.test.ts`
 - `apps/isms-portal/src/lib/handoff.ts`
+- `apps/isms-portal/src/lib/handoff.test.ts`
 - `apps/isms-portal/src/pages/Dashboard.tsx`
 - `apps/isms-portal/src/pages/MaturitySetup.tsx`
 - `apps/isms-portal/src/App.tsx`
