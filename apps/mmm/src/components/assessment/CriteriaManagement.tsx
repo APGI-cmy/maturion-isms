@@ -499,6 +499,11 @@ function criterionRequirementSubject(criterionText: string): string {
     .replace(/\bshall be\b/gi, 'is')
     .replace(/\bmust be\b/gi, 'is')
     .replace(/\bwill\b/gi, '')
+    // T-MMM-DMC-045: integrate contextual qualifiers grammatically instead of
+    // pasting them as trailing fragments that create malformed evidence sentences
+    // (e.g. "…, especially during high-risk activities is absent" → removed comma+especially).
+    .replace(/,\s*especially\s+(?=\w)/gi, ' ')
+    .replace(/,\s*particularly\s+(?=\w)/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 
@@ -973,10 +978,13 @@ export function CriteriaManagement({
       if (drafts.length !== 5 || drafts.some((draft) => !draft.descriptor_text.trim())) {
         throw new Error('All five maturity level descriptors must be completed before saving.');
       }
-      const learningConsent = descriptorLearningConsentByCriterion[criterion.id] !== false;
-      const editedLevels = learningConsent
-        ? Array.from(descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>()).sort()
-        : [];
+      // T-MMM-DMC-046: compute edited_levels using per-level consent — only
+      // include a level in the learning payload when the user consented for
+      // that specific level (consent not explicitly declined).
+      const editedLevelSet = descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>();
+      const editedLevels = Array.from(editedLevelSet)
+        .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] !== false)
+        .sort();
       const headers = await getEdgeInvokeHeaders();
       const { data, error } = await supabase.functions.invoke('mmm-level-descriptor-save', {
         headers,
@@ -1018,10 +1026,14 @@ export function CriteriaManagement({
         });
         return next;
       });
-      const learningConsent = descriptorLearningConsentByCriterion[criterion.id] !== false;
-      const learningSuffix = result.learningEventRecorded && learningConsent
+      // T-MMM-DMC-046: compute learningSuffix based on per-level consent decisions.
+      const savedEditedLevelSet = descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>();
+      const consentedLevelCount = Array.from(savedEditedLevelSet)
+        .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] !== false)
+        .length;
+      const learningSuffix = result.learningEventRecorded && consentedLevelCount > 0
         ? ` Recorded ${result.changedCount} descriptor edit${result.changedCount === 1 ? '' : 's'} for Maturion learning.`
-        : learningConsent
+        : consentedLevelCount > 0
           ? ' No descriptor text edits were detected.'
           : ' Descriptor edits were saved without Maturion learning capture for this criterion.';
       setCriterionActionMessages((prev) => ({
@@ -1574,7 +1586,10 @@ export function CriteriaManagement({
         [criterionId]: edited,
       };
     });
-    if (descriptorLearningConsentByCriterion[criterionId] === undefined) {
+    // T-MMM-DMC-046: prompt per edited level, not once per criterion — each
+    // maturity level requires its own independent learning-consent decision.
+    const levelConsentKey = `${criterionId}:${level}`;
+    if (descriptorLearningConsentByCriterion[levelConsentKey] === undefined) {
       setDescriptorLearningPrompt((current) => current ?? { criterionId, level });
     }
   };
@@ -1589,9 +1604,12 @@ export function CriteriaManagement({
 
   const handleDescriptorLearningConsent = (consent: boolean) => {
     if (!descriptorLearningPrompt) return;
+    // T-MMM-DMC-046: store consent under criterionId:level so each maturity
+    // level tracks its own consent decision independently.
+    const levelConsentKey = `${descriptorLearningPrompt.criterionId}:${descriptorLearningPrompt.level}`;
     setDescriptorLearningConsentByCriterion((prev) => ({
       ...prev,
-      [descriptorLearningPrompt.criterionId]: consent,
+      [levelConsentKey]: consent,
     }));
     setDescriptorLearningPrompt(null);
   };
@@ -1816,6 +1834,11 @@ export function CriteriaManagement({
                                           <label htmlFor={`descriptor-${criterion.id}-${descriptor.level}`}>
                                             {descriptor.label}
                                           </label>
+                                          {/* T-MMM-DMC-048 sign-off seam: descriptor editing locks after
+                                              second-level / final descriptor sign-off. Sign-off data is
+                                              not yet wired in the data model; the button therefore remains
+                                              always enabled. When sign-off is integrated, gate this button
+                                              with: disabled={isDescriptorSignedOff(criterion.id)} */}
                                           <button
                                             type="button"
                                             className="btn btn-outline btn-sm"

@@ -1324,3 +1324,243 @@ describe('T-MMM-S6-AI-005: DomainAuditBuilder renders three card-based step item
   });
 });
 
+// ---------------------------------------------------------------------------
+// T-MMM-DMC-044/045/046/047/048 — Descriptor reconstruction and edit lifecycle
+// ---------------------------------------------------------------------------
+
+describe('T-MMM-DMC-044–048: Descriptor reconstruction, contextual grammar, and edit lifecycle', () => {
+  const contextualClauseCriteria: Scenario['criteriaRows'] = [
+    {
+      id: 'criterion-especially-during',
+      mps_id: 'mps-1',
+      code: 'D001.MPS001.C010',
+      sort_order: 1,
+      name: 'Leadership teams assess security culture and adherence to protocols, especially during high-risk or high-exposure activities.',
+    },
+    {
+      id: 'criterion-especially-when',
+      mps_id: 'mps-1',
+      code: 'D001.MPS001.C011',
+      sort_order: 2,
+      name: 'Security monitors are deployed to operational areas, especially when diamond production volumes are elevated.',
+    },
+  ];
+
+  const editLifecycleCriteria: Scenario['criteriaRows'] = [
+    {
+      id: 'criterion-edit-lifecycle',
+      mps_id: 'mps-1',
+      code: 'D001.MPS001.C020',
+      sort_order: 1,
+      name: 'Incident response plans are tested and reviewed regularly.',
+    },
+  ];
+
+  beforeEach(() => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: [] });
+  });
+  afterEach(() => { cleanup(); });
+
+  // T-MMM-DMC-044 / T-MMM-DMC-045 ─────────────────────────────────────────
+
+  it('T-MMM-DMC-044: descriptor text for every level does not match the criterion-copy+suffix pattern', async () => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: contextualClauseCriteria });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': contextualClauseCriteria },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-especially-during'));
+    const basicEl = await screen.findByTestId('descriptor-input-criterion-especially-during-1') as HTMLTextAreaElement;
+    const compliantEl = screen.getByTestId('descriptor-input-criterion-especially-during-3') as HTMLTextAreaElement;
+    const resilientEl = screen.getByTestId('descriptor-input-criterion-especially-during-5') as HTMLTextAreaElement;
+
+    // Must not be a verbatim copy of the criterion followed by a maturity-level label
+    // (the invalid "criterion-copy+level-suffix" pattern from the architecture addendum).
+    // A copied criterion would contain the raw ", especially during" fragment.
+    expect(basicEl.value).not.toMatch(/,\s*especially during/i);
+    expect(basicEl.value).toMatch(/^Evidence that/i);
+    expect(basicEl.value).toMatch(/absent|weak|informal|inconsistent/i);
+
+    expect(compliantEl.value).toMatch(/^Evidence that/i);
+    expect(compliantEl.value).toMatch(/current|complete|traceable|evidenced/i);
+
+    expect(resilientEl.value).toMatch(/^Evidence that/i);
+    expect(resilientEl.value).toMatch(/embedded|continuous|escalat|assurance/i);
+  });
+
+  it('T-MMM-DMC-045: "especially during" contextual clause is integrated grammatically — no "especially…is absent" fragment', async () => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: contextualClauseCriteria });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': contextualClauseCriteria },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-especially-during'));
+    const basicEl = await screen.findByTestId('descriptor-input-criterion-especially-during-1') as HTMLTextAreaElement;
+
+    // The contextual clause must NOT appear as "especially during X is absent/weak/…"
+    // which is the malformed fragment the architecture rule targets.
+    expect(basicEl.value).not.toMatch(/especially during.*\bis\b/i);
+    // The descriptor must still preserve the criterion's activity context
+    expect(basicEl.value).toMatch(/during high-risk or high-exposure/i);
+  });
+
+  it('T-MMM-DMC-045: "especially when" contextual clause produces a readable evidence sentence', async () => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: contextualClauseCriteria });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': contextualClauseCriteria },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-especially-when'));
+    const basicEl = await screen.findByTestId('descriptor-input-criterion-especially-when-1') as HTMLTextAreaElement;
+
+    // No "especially when X is absent" fragment
+    expect(basicEl.value).not.toMatch(/especially when.*\bis\b/i);
+    expect(basicEl.value).toMatch(/^Evidence that/i);
+  });
+
+  // T-MMM-DMC-046 ──────────────────────────────────────────────────────────
+
+  it('T-MMM-DMC-046: Reactive-level edit triggers a second learning prompt after Basic consent was already captured', async () => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: editLifecycleCriteria });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': editLifecycleCriteria },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-edit-lifecycle'));
+    await screen.findByTestId('level-descriptor-grid-criterion-edit-lifecycle');
+
+    // Edit Basic (level 1) — learning prompt should appear
+    const basicEl = screen.getByTestId('descriptor-input-criterion-edit-lifecycle-1') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-1'));
+    fireEvent.change(basicEl, { target: { value: 'Corrected Basic descriptor text.' } });
+
+    const firstPrompt = await screen.findByTestId('descriptor-learning-prompt');
+    expect(firstPrompt.textContent).toContain('record this edit in my learning memory');
+    fireEvent.click(screen.getByTestId('descriptor-learning-yes'));
+
+    // Learning prompt must be gone after first consent
+    await waitFor(() => expect(screen.queryByTestId('descriptor-learning-prompt')).toBeNull());
+
+    // Edit Reactive (level 2) — a NEW prompt must appear for this level
+    const reactiveEl = screen.getByTestId('descriptor-input-criterion-edit-lifecycle-2') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-2'));
+    fireEvent.change(reactiveEl, { target: { value: 'Corrected Reactive descriptor text.' } });
+
+    const secondPrompt = await screen.findByTestId('descriptor-learning-prompt');
+    expect(secondPrompt.textContent).toContain('record this edit in my learning memory');
+  });
+
+  it('T-MMM-DMC-046: edited_levels sent on save includes all levels with per-level consent given', async () => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: editLifecycleCriteria });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': editLifecycleCriteria },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-edit-lifecycle'));
+    await screen.findByTestId('level-descriptor-grid-criterion-edit-lifecycle');
+
+    // Edit Basic — give consent
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-1'));
+    fireEvent.change(
+      screen.getByTestId('descriptor-input-criterion-edit-lifecycle-1') as HTMLTextAreaElement,
+      { target: { value: 'Corrected Basic.' } },
+    );
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+
+    // Edit Reactive — decline consent
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-2'));
+    fireEvent.change(
+      screen.getByTestId('descriptor-input-criterion-edit-lifecycle-2') as HTMLTextAreaElement,
+      { target: { value: 'Corrected Reactive.' } },
+    );
+    fireEvent.click(await screen.findByTestId('descriptor-learning-no'));
+
+    // Save — only level 1 (Basic, consented) should be in edited_levels
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-edit-lifecycle'));
+
+    await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledWith(
+      'mmm-level-descriptor-save',
+      expect.objectContaining({
+        body: expect.objectContaining({
+          criterion_id: 'criterion-edit-lifecycle',
+          edited_levels: [1],
+        }),
+      }),
+    ));
+    const saveStatus = await screen.findByTestId('descriptor-save-status-criterion-edit-lifecycle');
+    expect(saveStatus.textContent).toMatch(/Saved 5 maturity descriptors.*Recorded 1 descriptor edit/i);
+  });
+
+  // T-MMM-DMC-047 ──────────────────────────────────────────────────────────
+
+  it('T-MMM-DMC-047: Edit descriptor button remains visible and functional after save', async () => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: editLifecycleCriteria });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': editLifecycleCriteria },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-edit-lifecycle'));
+    await screen.findByTestId('level-descriptor-grid-criterion-edit-lifecycle');
+
+    // First edit round
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-1'));
+    fireEvent.change(
+      screen.getByTestId('descriptor-input-criterion-edit-lifecycle-1') as HTMLTextAreaElement,
+      { target: { value: 'First edit of Basic.' } },
+    );
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-1'));
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-edit-lifecycle'));
+
+    await screen.findByTestId('descriptor-save-status-criterion-edit-lifecycle');
+
+    // After save, Edit descriptor button must still be present for all levels (T-MMM-DMC-047)
+    expect(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-1')).toBeTruthy();
+    expect(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-2')).toBeTruthy();
+    expect(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-3')).toBeTruthy();
+
+    // Second edit round on the same level must be possible
+    const basicEl = screen.getByTestId('descriptor-input-criterion-edit-lifecycle-1') as HTMLTextAreaElement;
+    expect(basicEl.readOnly).toBe(true); // starts read-only again
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-1'));
+    expect(basicEl.readOnly).toBe(false); // now editable
+    fireEvent.change(basicEl, { target: { value: 'Second edit of Basic.' } });
+    expect(basicEl.value).toBe('Second edit of Basic.');
+  });
+
+  // T-MMM-DMC-048 ──────────────────────────────────────────────────────────
+
+  it('T-MMM-DMC-048: No sign-off lock is applied before sign-off — edit buttons remain enabled after every save', async () => {
+    configureScenario({ mpsRows: baseMpsRowsForModal, criteriaRows: editLifecycleCriteria });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': editLifecycleCriteria },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-edit-lifecycle'));
+    await screen.findByTestId('level-descriptor-grid-criterion-edit-lifecycle');
+
+    // Edit, save once
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-edit-lifecycle-1'));
+    fireEvent.change(
+      screen.getByTestId('descriptor-input-criterion-edit-lifecycle-1') as HTMLTextAreaElement,
+      { target: { value: 'Edit for sign-off test.' } },
+    );
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-edit-lifecycle'));
+
+    await screen.findByTestId('descriptor-save-status-criterion-edit-lifecycle');
+
+    // T-MMM-DMC-048: No level should show a locked/sign-off state without explicit sign-off.
+    // Edit buttons must be present and not disabled for all five levels.
+    for (const level of [1, 2, 3, 4, 5]) {
+      const btn = screen.getByTestId(`edit-descriptor-btn-criterion-edit-lifecycle-${level}`) as HTMLButtonElement;
+      expect(btn).toBeTruthy();
+      expect(btn.disabled).toBe(false);
+    }
+    // Descriptors must not display a "locked" or "signed off" indicator without sign-off
+    expect(screen.queryByText(/locked/i)).toBeNull();
+    expect(screen.queryByText(/signed off/i)).toBeNull();
+  });
+});
+
+
