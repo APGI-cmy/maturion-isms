@@ -5,7 +5,7 @@
 **Last Updated**: 2026-06-10  
 **Updated By**: foreman-agent (wave: `isms-w5-ask-maturion-adapter`)
 
-> **Classification**: ACTIVE — W5 ASK MATURION ADAPTER OPENED  
+> **Classification**: ACTIVE — W5 ASK MATURION ADAPTER OPENED
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
