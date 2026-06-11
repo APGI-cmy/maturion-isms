@@ -44,11 +44,15 @@ const response = await fetch(bypassUrl.toString(), {
   redirect: 'manual',
 });
 
-const setCookieHeader = response.headers.get('set-cookie') || '';
-const cookieParts = setCookieHeader
-  .split(/,(?=\s*[^;=]+=[^;]+)/)
-  .map((part) => part.trim())
-  .filter(Boolean);
+// response.headers.getSetCookie() (Node.js 18+) returns an array of each
+// Set-Cookie header value individually, avoiding comma-ambiguity with
+// Expires= dates. Fall back to the regex-split approach for older runtimes.
+const cookieParts = typeof response.headers.getSetCookie === 'function'
+  ? response.headers.getSetCookie()
+  : (response.headers.get('set-cookie') || '')
+      .split(/,(?=\s*[^;=]+=[^;]+)/)
+      .map((part) => part.trim())
+      .filter(Boolean);
 
 for (const rawCookie of cookieParts) {
   const [nameValue, ...attrs] = rawCookie.split(';').map((part) => part.trim());
