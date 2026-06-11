@@ -1,9 +1,11 @@
 # MMM QA-to-Red Addendum — Issue 1797 Descriptor Reconstruction Restart
 
-Module: MMM
-Issue: #1797
-Wave: mmm-dmc-descriptor-reconstruction-restart-20260611
-Status: RED definition artifact
+- **Module**: MMM
+- **Stage**: 6 QA-to-Red Addendum
+- **Issue**: #1797
+- **Wave**: mmm-dmc-descriptor-reconstruction-restart-20260611
+- **Date**: 2026-06-11
+- **Status**: RED definition artifact
 
 ## Purpose
 
