@@ -1,4 +1,4 @@
-# MMM QA-to-RED Addendum — Issue 1797 Descriptor Reconstruction Restart
+# MMM QA-to-Red Addendum — Issue 1797 Descriptor Reconstruction Restart
 
 Module: MMM
 Issue: #1797
