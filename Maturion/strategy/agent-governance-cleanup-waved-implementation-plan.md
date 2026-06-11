@@ -86,6 +86,71 @@ If final merge requires CS2 override because existing gates cannot validate a tr
 - Explicit list of old gates expected to fail and why.
 - Explicit list of new gates expected to pass and why.
 
+### 3.5 Wave Scope Discipline
+
+Each wave may change only the files and behavior required by that wave's stated goal and exit criteria.
+
+Broader simplification, refactoring, wording cleanup, gate replacement, or agent-contract restructuring must wait for the wave where that work is explicitly scheduled. If a later-wave concern is discovered during an earlier wave, record it as drift or follow-up work instead of implementing it early.
+
+A wave is out of scope if it:
+
+- changes behavior unrelated to the wave goal;
+- removes controls without relocation or a documented risk note;
+- implements a later wave's planned cleanup early;
+- changes final assurance, merge-gate, ECAP, or delegation semantics when the current wave does not require it.
+
+### 3.6 No Control Deletion Without Relocation
+
+Any removed Tier 1 control must be moved to a named Tier 2 or Tier 3 artifact in the same wave, or explicitly deferred with a risk note.
+
+A valid relocation note must include:
+
+```yaml
+control_relocation:
+  removed_from: "<file/section>"
+  moved_to: "<file/section>"
+  control_id_or_summary: "<control>"
+  behavior_preserved: true
+```
+
+A valid deferral note must include:
+
+```yaml
+control_deferral:
+  removed_or_changed_control: "<control>"
+  reason: "<why it cannot be relocated in this wave>"
+  risk: "<operational risk>"
+  owner: "CS2 / named agent class"
+  target_wave: "<wave number>"
+  blocking_before_merge: true
+```
+
+No final merge may contain deferred control risks marked `blocking_before_merge: true` unless CS2 approves a transition override with an explicit rationale.
+
+### 3.7 Wave Review Gate
+
+Before starting the next wave, record a Wave Review Gate entry in the PR conversation or a PR-scoped strategy/evidence file.
+
+Minimum Wave Review Gate record:
+
+```yaml
+wave_review_gate:
+  wave: "<wave number and name>"
+  objective_met: true/false
+  exit_criteria_met: true/false
+  overreach_checked: true/false
+  overreach_found: true/false
+  unresolved_drift:
+    - "<item or none>"
+  control_deletions_relocated: true/false/not_applicable
+  rollback_or_correction_needed: true/false
+  next_wave_allowed: true/false
+  reviewer: "<person/agent>"
+  date: "YYYY-MM-DD"
+```
+
+The next wave must not begin unless `next_wave_allowed: true`.
+
 ---
 
 ## 4. Target Operating Model
@@ -178,6 +243,7 @@ Foreman may not enter Phase 4 handover or use completion language unless handove
 - Strategy file committed.
 - Draft PR open.
 - PR clearly marked as isolated cleanup branch.
+- Wave Review Gate recorded before Wave 1 starts.
 
 ---
 
@@ -186,6 +252,8 @@ Foreman may not enter Phase 4 handover or use completion language unless handove
 **Problem:** Foreman expects a rich IAA pre-brief, while IAA Phase 0 currently constrains pre-brief output to a smaller set. This mismatch creates loops and inconsistent expectations.
 
 **Goal:** Define one canonical pre-brief schema and align Foreman + IAA to it.
+
+**Scope discipline:** Wave 1 is pre-brief-only. It must not simplify final assurance, Foreman Tier 1 structure, ECAP semantics, delegation timing semantics, or merge-gate semantics except where a reference directly points to the pre-brief artifact/schema.
 
 **Likely files:**
 
@@ -215,6 +283,10 @@ IAA_PREFLIGHT_BRIEF:
 - Foreman and IAA describe the same pre-brief output.
 - Standalone pre-brief artifact creation remains prohibited unless deliberately reintroduced.
 - CI failure guidance points to `iaa-wave-record-*.md` with `## PRE-BRIEF`, not legacy standalone prebrief files.
+- Final-assurance behavior is not changed by Wave 1.
+- Merge-gate semantics are not changed by Wave 1 except for pre-brief schema/artifact references.
+- Any Tier 1 control changed or removed by Wave 1 is relocated to a named Tier 2/Tier 3 artifact or recorded in a blocking deferral note.
+- Wave Review Gate recorded with `overreach_checked: true` before Wave 2 starts.
 
 ---
 
@@ -248,6 +320,7 @@ IAA_PREFLIGHT_BRIEF:
 - Gate catches stale/missing handover allowance before final handover.
 - Gate is visible as a named required check candidate.
 - Foreman contract points to the gate before Phase 4 handover.
+- Wave Review Gate recorded before Wave 3 starts.
 
 ---
 
@@ -280,6 +353,7 @@ delegation_order:
 
 - CI checks that delegation evidence predates first implementation file change.
 - Retroactive delegation artifacts fail or warn with an explicit STOP-AND-FIX instruction.
+- Wave Review Gate recorded before Wave 4 starts.
 
 ---
 
@@ -319,6 +393,7 @@ ECAP may not:
 - ECAP output is smaller and validation-focused.
 - Foreman does not depend on ECAP to create the substantive delivery story.
 - IAA reviews ECAP validation as admin evidence, not as readiness authority.
+- Wave Review Gate recorded before Wave 5 starts.
 
 ---
 
@@ -351,6 +426,7 @@ ECAP may not:
 - Foreman contract becomes shorter and more executable.
 - No control is removed without a Tier 2 / Tier 3 home.
 - State machine is the primary operating model.
+- Wave Review Gate recorded before Wave 6 starts.
 
 ---
 
@@ -371,6 +447,7 @@ ECAP may not:
 - New pre-handover lane gate is included in required checks.
 - Old obsolete checks/messages are removed or mapped.
 - Required checks are named consistently across contract and workflow job names.
+- Wave Review Gate recorded before Wave 7 starts.
 
 ---
 
@@ -394,6 +471,7 @@ ECAP may not:
 - All intended pass scenarios pass.
 - All intended fail scenarios fail with clear guidance.
 - PR contains final transition note for CS2.
+- Final Wave Review Gate recorded with `next_wave_allowed: false` and final merge recommendation.
 
 ---
 
@@ -404,7 +482,8 @@ ECAP may not:
 1. Open draft PR from `strategy/agent-governance-cleanup-waves` to `main`.
 2. Commit waves sequentially.
 3. Keep PR as draft while gates are intentionally unstable.
-4. After Wave 7 validation, mark ready for review only if the branch is internally consistent.
+4. Before starting each next wave, complete the Wave Review Gate for the previous wave.
+5. After Wave 7 validation, mark ready for review only if the branch is internally consistent.
 
 ### Final merge decision
 
@@ -428,6 +507,8 @@ This cleanup is done only when:
 - CI checks match the intended operating model.
 - Admin artifacts are smaller and do not generate loops.
 - Governance alignment work is either completed or explicitly filed as Stage 2 with no contradictory live controls left in Stage 1.
+- Every wave has a Wave Review Gate record.
+- Every removed Tier 1 control is relocated or recorded as a resolved/approved deferral.
 
 ---
 
