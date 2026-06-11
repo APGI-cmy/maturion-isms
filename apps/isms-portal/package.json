@@ -10,7 +10,9 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:routes": "node scripts/verify-routes.mjs",
+    "ci:w7": "npm run lint && npm run test:run && npm run verify:routes && npm run build"
   },
   "dependencies": {
     "@maturion/ai-centre": "workspace:*",

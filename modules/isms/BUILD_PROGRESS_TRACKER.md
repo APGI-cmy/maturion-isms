@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-10  
-**Updated By**: foreman-agent (wave: `isms-w6-backend-persistence-audit`)
+**Last Updated**: 2026-06-11  
+**Updated By**: foreman-agent (wave: `isms-w7-deployment-runtime-hardening`)
 
-> **Classification**: ACTIVE — W6 BACKEND BOUNDARY, PERSISTENCE, SCHEMA/RLS, AUDIT OPENED  
+> **Classification**: ACTIVE — W7 DEPLOYMENT, RUNTIME, ENV, CI HARDENING OPENED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -25,13 +25,14 @@
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | COMPLETE FOR W1-W6 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w5-ask-maturion-adapter-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w6-backend-persistence-audit-builder-appointment.md` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1-W7 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w5-ask-maturion-adapter-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w6-backend-persistence-audit-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w7-deployment-runtime-hardening-builder-appointment.md` |
 | Stage 12 | W1 Build Execution & Evidence | MERGED — ACCEPTED FOR W1 SCOPE | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
 | Stage 12 | W2 Build Execution & Evidence | MERGED — ACCEPTED FOR W2 SCOPE | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
 | Stage 12 | W3 Build Execution & Evidence | MERGED — ACCEPTED FOR W3 SCOPE | `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` |
 | Stage 12 | W4 Build Execution & Evidence | MERGED — ACCEPTED FOR W4 SCOPE | `modules/isms/11-build/w4-context-entitlement-handoff-evidence.md` |
 | Stage 12 | W5 Build Execution & Evidence | MERGED — ACCEPTED FOR W5 SCOPE | `modules/isms/11-build/w5-ask-maturion-adapter-evidence.md` |
-| Stage 12 | W6 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` |
+| Stage 12 | W6 Build Execution & Evidence | MERGED — ACCEPTED FOR W6 SCOPE | `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` |
+| Stage 12 | W7 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
 
 ---
 
@@ -67,47 +68,57 @@
 ## Stage 12: W5 Ask Maturion Adapter
 
 **Status**: MERGED — ACCEPTED FOR W5 SCOPE  
-**Merged PR**: #1789 (`d7d3a2fbfb2861eb6190cbca6f8eb794c88f8775`)  
-**Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w5-ask-maturion-adapter-builder-appointment.md`
-- `modules/isms/11-build/w5-ask-maturion-adapter-evidence.md`
-- `.functional-delivery/pr-1789.md`
-- `.agent-admin/assurance/iaa-wave-record-pr1789-isms-w5-ask-maturion-adapter.md`
-- `.agent-workspace/foreman-v2/memory/session-1789-20260610.md`
-
-W5 delivered safe Ask Maturion adapter/prompt seed wiring and non-blocking deterministic previews. It does not claim W6-W8 delivery.
+**Merged PR**: #1789 (`d7d3a2fbfb2861eb6190cbca6f8eb794c88f8775`)
 
 ---
 
 ## Stage 12: W6 Backend Boundary, Persistence, Schema/RLS, Audit
 
-**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
-**Branch**: `foreman/isms-w6-backend-persistence-audit`  
+**Status**: MERGED — ACCEPTED FOR W6 SCOPE  
+**Merged PR**: #1792 (`ea12b4af23c6d40095da951ca24262818bdf142e`)  
 **Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w6-backend-persistence-audit-builder-appointment.md` — W6 appointment
-- `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` — W6 implementation evidence
+- `.agent-admin/builder-appointments/isms-stage11-w6-backend-persistence-audit-builder-appointment.md`
+- `modules/isms/11-build/w6-backend-persistence-audit-evidence.md`
+- `.functional-delivery/pr-1792.md`
+- `.agent-admin/assurance/iaa-wave-record-pr1792-isms-w6-backend-persistence-audit.md`
+- `.agent-workspace/foreman-v2/memory/session-1792-20260611.md`
 
-**Runtime/boundary files changed by W6**:
-- `modules/isms/04-architecture/edge-function-registry.md`
-- `supabase/migrations/20260610180000_isms_w6_persistence_audit.sql`
-- `apps/isms-portal/src/lib/persistenceBoundary.ts`
-- `apps/isms-portal/src/lib/persistenceBoundary.test.ts`
+W6 delivered backend boundary, schema/RLS and audit-boundary foundations. It does not claim W7-W8 delivery.
 
-**W6 scope**:
-- backend/edge boundary registry;
-- explicit no-edge-function decision for W6;
-- Supabase schema for assessment, onboarding profile, entitlement, maturity handoff and audit-event objects;
-- RLS enabled and user-scoped policies;
-- frontend persistence capability registry marked `schema_registered_only`;
-- no live persistence hook, Edge Function, audit writer invocation or live AI provider call.
+---
+
+## Stage 12: W7 Deployment, Runtime, Env, CI Hardening
+
+**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
+**Branch**: `foreman/isms-w7-deployment-runtime-hardening`  
+**Primary Evidence**:
+- `.agent-admin/builder-appointments/isms-stage11-w7-deployment-runtime-hardening-builder-appointment.md` — W7 appointment
+- `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` — W7 implementation evidence
+- `modules/isms/12-deployment/w7-deployment-runtime-runbook.md` — deployment runbook
+
+**Runtime/deployment files changed by W7**:
+- `apps/isms-portal/vercel.json`
+- `apps/isms-portal/.env.example`
+- `apps/isms-portal/scripts/verify-routes.mjs`
+- `apps/isms-portal/package.json`
+- `modules/isms/12-deployment/w7-deployment-runtime-runbook.md`
+
+**W7 scope**:
+- Vercel deployment target selection;
+- SPA fallback configuration;
+- env example/registry alignment;
+- route verification script;
+- package scripts for `verify:routes` and `ci:w7`;
+- rollback/redeploy documentation;
+- no W8 cumulative regression/PBFAG rerun or implementation handover.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: W6 PR preparation and CI gate inspection.  
+**Current Stage**: W7 PR preparation and CI gate inspection.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Open/review the W6 PR, inspect CI/review results, complete required evidence, and only then decide whether W6 can be accepted as complete.
+**Next Required Action**: Open/review the W7 PR, inspect CI/review results, complete required evidence, and only then decide whether W7 can be accepted as complete.
 
 ---
 
@@ -139,11 +150,13 @@ W5 delivered safe Ask Maturion adapter/prompt seed wiring and non-blocking deter
 - [x] Stage 11 W5 Builder Appointment complete
 - [x] Stage 12 W5 merged
 - [x] Stage 11 W6 Builder Appointment complete
-- [x] Stage 12 W6 implementation opened on branch
-- [ ] W6 PR opened
-- [ ] W6 CI passed
-- [ ] W6 review conversations resolved
-- [ ] W6 handover authorized
+- [x] Stage 12 W6 merged
+- [x] Stage 11 W7 Builder Appointment complete
+- [x] Stage 12 W7 implementation opened on branch
+- [ ] W7 PR opened
+- [ ] W7 CI passed
+- [ ] W7 review conversations resolved
+- [ ] W7 handover authorized
 
 ---
 
@@ -152,12 +165,11 @@ W5 delivered safe Ask Maturion adapter/prompt seed wiring and non-blocking deter
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- W6 PR must pass CI before W6 acceptance recommendation;
-- W6 review conversations must be resolved or dispositioned;
-- W7-W8 remain unappointed and unauthorized;
-- ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
-- implementation handover remains blocked until later gates are complete or explicitly waived.
+- W7 PR must pass CI before W7 acceptance recommendation;
+- W7 review conversations must be resolved or dispositioned;
+- W8 remains unappointed and unauthorized;
+- implementation handover remains blocked until W8/later gates are complete or explicitly waived.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-10
+**Last Tracker Reconciliation**: 2026-06-11
