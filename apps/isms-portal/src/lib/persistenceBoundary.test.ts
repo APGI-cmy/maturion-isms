@@ -31,15 +31,16 @@ describe('W6 ISMS persistence boundary registry', () => {
     expect(getPersistenceBoundary('audit-event').tableName).toBe('isms_audit_events');
   });
 
-  it('requires auth for private-state capabilities', () => {
-    expect(getPersistenceBoundary('free-assessment').requiresAuthenticatedUser).toBe(false);
+  it('requires auth for all schema-registered W6 client persistence capabilities', () => {
+    expect(getPersistenceBoundary('free-assessment').requiresAuthenticatedUser).toBe(true);
     expect(getPersistenceBoundary('onboarding-profile').requiresAuthenticatedUser).toBe(true);
     expect(getPersistenceBoundary('entitlement-state').requiresAuthenticatedUser).toBe(true);
     expect(getPersistenceBoundary('maturity-handoff').requiresAuthenticatedUser).toBe(true);
+    expect(getPersistenceBoundary('audit-event').requiresAuthenticatedUser).toBe(true);
   });
 
   it('guards against unregistered persistence capability lookups', () => {
     expect(() => getPersistenceBoundary('unknown' as PersistenceCapability)).toThrow('Unregistered ISMS persistence capability');
-    expect(assertPersistenceCapabilityRegistered('audit-event')).toBe(true);
+    expect(() => assertPersistenceCapabilityRegistered('audit-event')).not.toThrow();
   });
 });
