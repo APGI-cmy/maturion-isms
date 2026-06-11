@@ -125,19 +125,6 @@ jobs:
       - name: Prime Vercel bypass storage state
         run: node scripts/mmm-live-dashboard-diagnosis/prime-vercel-bypass.mjs
 
-      - name: Patch diagnosis script to use bypass storage state
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const file = 'scripts/mmm-live-dashboard-diagnosis/diagnose.mjs';
-          let s = fs.readFileSync(file, 'utf8');
-          const oldBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    // Forward the Vercel protection-bypass header on every request as a\n    // belt-and-braces measure in addition to the bypass cookie set via the\n    // navigation query params above.\n    extraHTTPHeaders: bypassSecret\n      ? { 'x-vercel-protection-bypass': bypassSecret }\n      : undefined,\n  });`;
-          const newBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    storageState: process.env.VERCEL_BYPASS_STORAGE_STATE || undefined,\n  });`;
-          if (!s.includes(oldBlock)) throw new Error('diagnose context block not found');
-          s = s.replace(oldBlock, newBlock);
-          fs.writeFileSync(file, s);
-          NODE
-
       - name: Run live dashboard diagnosis
         id: diagnose
         continue-on-error: true
@@ -281,19 +268,6 @@ jobs:
 
       - name: Prime Vercel bypass storage state
         run: node scripts/mmm-live-dashboard-diagnosis/prime-vercel-bypass.mjs
-
-      - name: Patch verification script to use bypass storage state
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const file = 'scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs';
-          let s = fs.readFileSync(file, 'utf8');
-          const oldBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    extraHTTPHeaders: bypassSecret\n      ? { 'x-vercel-protection-bypass': bypassSecret }\n      : undefined,\n  });`;
-          const newBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    storageState: process.env.VERCEL_BYPASS_STORAGE_STATE || undefined,\n  });`;
-          if (!s.includes(oldBlock)) throw new Error('verify context block not found');
-          s = s.replace(oldBlock, newBlock);
-          fs.writeFileSync(file, s);
-          NODE
 
       - name: Set up Supabase CLI
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''

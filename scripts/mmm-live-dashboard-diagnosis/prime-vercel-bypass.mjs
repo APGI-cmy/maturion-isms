@@ -32,12 +32,16 @@ if (!bypassSecret) {
   process.exit(0);
 }
 
-const response = await fetch(origin, {
+// Use the query-param approach documented by Vercel for Automation Bypass:
+// https://vercel.com/docs/security/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
+// Vercel validates the secret, sets the _vercel_jwt bypass cookie, and returns a
+// redirect response (3xx). With redirect:'manual' we capture that redirect response
+// and extract the Set-Cookie header — which is the actual bypass cookie.
+const bypassUrl = new URL(origin);
+bypassUrl.searchParams.set('x-vercel-protection-bypass', bypassSecret);
+bypassUrl.searchParams.set('x-vercel-set-bypass-cookie', 'samesitenone');
+const response = await fetch(bypassUrl.toString(), {
   redirect: 'manual',
-  headers: {
-    'x-vercel-protection-bypass': bypassSecret,
-    'x-vercel-set-bypass-cookie': 'true',
-  },
 });
 
 const setCookieHeader = response.headers.get('set-cookie') || '';

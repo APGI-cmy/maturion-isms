@@ -633,6 +633,10 @@ async function main() {
   const email = required('MMM_TEST_ADMIN_EMAIL');
   const password = required('MMM_TEST_ADMIN_PASSWORD');
   const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '').trim();
+  const storageStatePath = (process.env.VERCEL_BYPASS_STORAGE_STATE || '').trim();
+  // When a pre-primed storageState is available the bypass cookie is already in
+  // the browser context — no query params needed on navigation URLs.
+  const effectiveBypassSecret = storageStatePath ? '' : bypassSecret;
   const headless = (process.env.HEADLESS || 'true').toLowerCase() !== 'false';
 
   const sampleFilePath = path.resolve(
@@ -653,15 +657,19 @@ async function main() {
   const origin = previewURL.origin;
 
   // Login URL — navigate to the app root so auth redirects us to login
-  const loginUrl = withBypassParams(`${origin}/dashboard`, bypassSecret);
+  const loginUrl = withBypassParams(`${origin}/dashboard`, effectiveBypassSecret);
 
   const browser = await chromium.launch({ headless });
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     viewport: { width: 1366, height: 900 },
-    extraHTTPHeaders: bypassSecret
-      ? { 'x-vercel-protection-bypass': bypassSecret }
-      : undefined,
+    // Use a pre-primed storageState (bypass cookie) when available; otherwise
+    // forward the bypass header on every request as a belt-and-braces measure.
+    ...(storageStatePath
+      ? { storageState: storageStatePath }
+      : bypassSecret
+      ? { extraHTTPHeaders: { 'x-vercel-protection-bypass': bypassSecret } }
+      : {}),
   });
   await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
   const page = await context.newPage();
@@ -733,7 +741,7 @@ async function main() {
       );
       let provisioned = false;
       try {
-        provisioned = await bootstrapOrganisationIfMissing(page, origin, bypassSecret);
+        provisioned = await bootstrapOrganisationIfMissing(page, origin, effectiveBypassSecret);
       } catch (bootstrapErr) {
         try {
           await page.screenshot({ path: path.join(ARTIFACT_DIR, 'verify-onboarding-bootstrap-failed.png') });
@@ -761,7 +769,7 @@ async function main() {
 
     // --- Dashboard reflection check ---
     console.log('[verify-modes] === Dashboard Reflection ===');
-    await page.goto(withBypassParams(`${origin}/dashboard`, bypassSecret), {
+    await page.goto(withBypassParams(`${origin}/dashboard`, effectiveBypassSecret), {
       waitUntil: 'domcontentloaded',
       timeout: NAV_TIMEOUT,
     });

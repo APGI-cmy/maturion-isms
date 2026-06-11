@@ -70,6 +70,7 @@ async function main() {
   const email = required('MMM_TEST_ADMIN_EMAIL');
   const password = required('MMM_TEST_ADMIN_PASSWORD');
   const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '').trim();
+  const storageStatePath = (process.env.VERCEL_BYPASS_STORAGE_STATE || '').trim();
   const headless = (process.env.HEADLESS || 'true').toLowerCase() !== 'false';
 
   if (!existsSync(ARTIFACT_DIR)) {
@@ -88,7 +89,9 @@ async function main() {
     u.searchParams.set('x-vercel-set-bypass-cookie', 'samesitenone');
     return u.toString();
   }
-  const navigateUrl = withBypassParams(previewUrl);
+  // When a pre-primed storageState is available the bypass cookie is already in
+  // the browser context — no query params needed on the navigation URL.
+  const navigateUrl = storageStatePath ? previewUrl : withBypassParams(previewUrl);
 
   const consoleLogPath = path.join(ARTIFACT_DIR, 'console.log');
   const networkLogPath = path.join(ARTIFACT_DIR, 'network.log');
@@ -107,12 +110,13 @@ async function main() {
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     viewport: { width: 1366, height: 900 },
-    // Forward the Vercel protection-bypass header on every request as a
-    // belt-and-braces measure in addition to the bypass cookie set via the
-    // navigation query params above.
-    extraHTTPHeaders: bypassSecret
-      ? { 'x-vercel-protection-bypass': bypassSecret }
-      : undefined,
+    // Use a pre-primed storageState (bypass cookie) when available; otherwise
+    // forward the bypass header on every request as a belt-and-braces measure.
+    ...(storageStatePath
+      ? { storageState: storageStatePath }
+      : bypassSecret
+      ? { extraHTTPHeaders: { 'x-vercel-protection-bypass': bypassSecret } }
+      : {}),
   });
   await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
   const page = await context.newPage();
