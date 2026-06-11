@@ -27,13 +27,13 @@ Rationale:
 
 ## Registered backend capabilities
 
-| Capability | W6 status | Caller | Input | Output | Auth boundary | Deploy status |
-|---|---|---|---|---|---|---|
-| Free assessment persistence | Schema registered | Future hook | assessment context, answers, report summary | `isms_assessments` row | tenant/user scoped RLS | Migration only |
-| Onboarding profile persistence | Schema registered | Future hook | organisation profile | `isms_onboarding_profiles` row | tenant/user scoped RLS | Migration only |
-| Entitlement state persistence | Schema registered | Future hook | module key, source, status | `isms_entitlements` row | tenant/user scoped RLS | Migration only |
-| Maturity handoff persistence | Schema registered | Future hook | handoff payload | `isms_maturity_handoffs` row | tenant/user scoped RLS | Migration only |
-| Prompt audit logging | Schema registered | Future hook | prompt metadata, mode, status | `isms_audit_events` row | tenant/user scoped RLS | Migration only |
+| Capability | W6 status | Caller | Input | Output | Auth model | Error model | Deploy status |
+|---|---|---|---|---|---|---|---|
+| Free assessment persistence | Schema registered | Future hook | assessment context, answers, report summary | `isms_assessments` row | authenticated user scoped by RLS | Hook must fail closed if no authenticated user or insert/select policy denies access | Migration only |
+| Onboarding profile persistence | Schema registered | Future hook | organisation profile | `isms_onboarding_profiles` row | authenticated user scoped by RLS | Hook must fail closed if no authenticated user or policy denies access | Migration only |
+| Entitlement state persistence | Schema registered | Future hook | module key, source, status | `isms_entitlements` row | authenticated user scoped by RLS | Hook must fail closed if no authenticated user or policy denies access | Migration only |
+| Maturity handoff persistence | Schema registered | Future hook | handoff payload | `isms_maturity_handoffs` row | authenticated user scoped by RLS | Hook must fail closed if no authenticated user or policy denies access | Migration only |
+| Prompt audit logging | Schema registered | Future hook | prompt metadata, mode, status | `isms_audit_events` row | authenticated user scoped by RLS; append-only client policy | Hook must fail closed if insert policy denies access; no client update/delete path | Migration only |
 
 ---
 
