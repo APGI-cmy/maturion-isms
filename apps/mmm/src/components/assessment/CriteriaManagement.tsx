@@ -480,8 +480,73 @@ function firstCriterionClause(criterionText: string): string {
   return words.length > 18 ? words.slice(0, 18).join(' ') : source;
 }
 
+/**
+ * Matches sentence boundaries: [.!?] followed by whitespace + capital letter.
+ * Used both to split criteria into sentences and to strip residual secondary
+ * sentences from the final evidence lead.
+ */
+const SENTENCE_BOUNDARY_RE = /(?<=[.!?])\s+(?=[A-Z])/;
+
+/**
+ * Matches "This is especially/particularly important/relevant/critical [prep] X"
+ * and "This applies especially/particularly [prep] X" contextual-qualifier
+ * sentences that should be merged as an adverbial into the preceding clause.
+ *
+ * Group 1 — the preposition (during | when | in | for | at | across | under | throughout)
+ * Group 2 — the adverbial phrase that follows the preposition
+ */
+const CONTEXTUAL_QUALIFIER_RE =
+  /^this (?:is (?:especially|particularly) (?:important|relevant|critical)|applies (?:especially|particularly))\b.+?\b(during|when|in|for|at|across|under|throughout)\s+(.+)$/i;
+
+/**
+ * Merges "This is especially/particularly important/relevant during X"
+ * contextual-qualifier sentences into the preceding primary clause.
+ *
+ * Handles patterns like:
+ *   "X. This is especially important during Y."  →  "X during Y."
+ *   "X. This applies particularly when Y."       →  "X when Y."
+ *
+ * All other secondary sentences are left intact so that downstream merge
+ * patterns (e.g. `. A process will exist for recording that`) can still
+ * operate on them.  The final split-to-first-segment in
+ * `criterionRequirementSubject` acts as the last-resort safety net.
+ */
+function compressContextualQualifiers(criterionText: string): string {
+  const normalized = criterionText.replace(/\s+/g, ' ').trim();
+
+  // Split into sentences on [.!?] followed by whitespace + capital (lookbehind).
+  const sentences = normalized
+    .split(SENTENCE_BOUNDARY_RE)
+    .map((s) => s.replace(/[.!?]+$/, '').trim())
+    .filter(Boolean);
+
+  if (sentences.length <= 1) return normalized;
+
+  const merged: string[] = [sentences[0]];
+
+  for (const sentence of sentences.slice(1)) {
+    const contextualMatch = sentence.match(CONTEXTUAL_QUALIFIER_RE);
+    if (contextualMatch) {
+      // Merge adverbial into the previous clause (replace the trailing entry).
+      const adverbial = `${contextualMatch[1]} ${contextualMatch[2].replace(/[.!?;:,]+$/g, '').trim()}`;
+      merged[merged.length - 1] = `${merged[merged.length - 1]} ${adverbial}`;
+    } else {
+      // Leave unrecognised secondary sentences for downstream merge patterns.
+      merged.push(sentence);
+    }
+  }
+
+  // Re-join with ". " so that existing per-sentence replacements still match.
+  return merged.join('. ');
+}
+
 function criterionRequirementSubject(criterionText: string): string {
-  const clean = stripDescriptorGuidanceNotes(stripCriterionBoilerplate(criterionText))
+  // Compress multi-sentence criteria before stripping boilerplate so that
+  // contextual qualifiers ("This is especially important during X") are
+  // merged into the primary clause first.
+  const compressed = compressContextualQualifiers(criterionText);
+
+  const clean = stripDescriptorGuidanceNotes(stripCriterionBoilerplate(compressed))
     .replace(/\s+/g, ' ')
     .replace(/[.;:,]+$/g, '')
     .trim();
@@ -509,6 +574,14 @@ function criterionRequirementSubject(criterionText: string): string {
     .replace(/\bwill\b/gi, '')
     .replace(/\s+/g, ' ')
     .trim();
+
+  // Strip any secondary sentences still present after the merges above.
+  // Split on sentence boundaries and keep only the first segment so the
+  // evidence lead is always a single clean clause.
+  const firstSegment = subject.split(SENTENCE_BOUNDARY_RE)[0];
+  if (firstSegment) {
+    subject = firstSegment.replace(/[.;:,]+$/g, '').trim();
+  }
 
   if (!subject) {
     subject = firstCriterionClause(clean);
@@ -981,10 +1054,12 @@ export function CriteriaManagement({
       if (drafts.length !== 5 || drafts.some((draft) => !draft.descriptor_text.trim())) {
         throw new Error('All five maturity level descriptors must be completed before saving.');
       }
-      const learningConsent = descriptorLearningConsentByCriterion[criterion.id] !== false;
-      const editedLevels = learningConsent
-        ? Array.from(descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>()).sort()
-        : [];
+      // Per-level consent: only include edited levels where the user has not
+      // declined learning for that specific level. Undefined consent (not yet
+      // answered) defaults to inclusion so that new-session edits are captured.
+      const editedLevels = Array.from(descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>())
+        .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] !== false)
+        .sort();
       const headers = await getEdgeInvokeHeaders();
       const { data, error } = await supabase.functions.invoke('mmm-level-descriptor-save', {
         headers,
@@ -1026,12 +1101,18 @@ export function CriteriaManagement({
         });
         return next;
       });
-      const learningConsent = descriptorLearningConsentByCriterion[criterion.id] !== false;
-      const learningSuffix = result.learningEventRecorded && learningConsent
+      // Derive message suffix: any edited level with no-decline consent → learning captured.
+      const anyLevelWithConsent = Array.from(
+        descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>(),
+      ).some((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] !== false);
+      const anyLevelDeclined = Array.from(
+        descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>(),
+      ).some((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] === false);
+      const learningSuffix = result.learningEventRecorded && anyLevelWithConsent
         ? ` Recorded ${result.changedCount} descriptor edit${result.changedCount === 1 ? '' : 's'} for Maturion learning.`
-        : learningConsent
-          ? ' No descriptor text edits were detected.'
-          : ' Descriptor edits were saved without Maturion learning capture for this criterion.';
+        : anyLevelDeclined && !anyLevelWithConsent
+          ? ' Descriptor edits were saved without Maturion learning capture for this criterion.'
+          : ' No descriptor text edits were detected.';
       setCriterionActionMessages((prev) => ({
         ...prev,
         [criterion.id]: {
@@ -1582,7 +1663,7 @@ export function CriteriaManagement({
         [criterionId]: edited,
       };
     });
-    if (descriptorLearningConsentByCriterion[criterionId] === undefined) {
+    if (descriptorLearningConsentByCriterion[`${criterionId}:${level}`] === undefined) {
       setDescriptorLearningPrompt((current) => current ?? { criterionId, level });
     }
   };
@@ -1599,7 +1680,7 @@ export function CriteriaManagement({
     if (!descriptorLearningPrompt) return;
     setDescriptorLearningConsentByCriterion((prev) => ({
       ...prev,
-      [descriptorLearningPrompt.criterionId]: consent,
+      [`${descriptorLearningPrompt.criterionId}:${descriptorLearningPrompt.level}`]: consent,
     }));
     setDescriptorLearningPrompt(null);
   };
