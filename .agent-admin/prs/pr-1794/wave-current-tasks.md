@@ -10,11 +10,11 @@ Builder resource: Copilot
 Appointed builder for later verification work: pit-specialist
 Status: GOVERNANCE_ADMIN_BOOTSTRAP / BUILDER_EXECUTION_BLOCKED
 Date UTC: 2026-06-11
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage12-w82-final-verification-2026-06-11.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pit-stage12-w82-final-verification-2026-06-11.md
-IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-pit-stage12-w82-final-verification-2026-06-11.md
+iaa_wave_record_path: .agent-admin/assurance/iaa-prebrief-pit-stage12-w82-final-verification.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-prebrief-pit-stage12-w82-final-verification.md
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-prebrief-pit-stage12-w82-final-verification.md
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
-IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: current_head
+IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: CURRENT_HEAD
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 ecap_bundle_path: .agent-admin/ecap/pit-stage12-w82-final-verification-ecap.md

@@ -12,6 +12,7 @@
   "base_sha": "current_base",
   "scope": [
     ".admin/prs/pr-1794.json",
+    ".agent-admin/assurance/iaa-prebrief-pit-stage12-w82-final-verification.md",
     ".agent-admin/prs/pr-1794/wave-current-tasks.md",
     ".agent-admin/assurance/iaa-wave-record-pit-stage12-w82-final-verification-2026-06-11.md",
     ".agent-admin/builder-appointments/pit-stage12-w82-final-verification-builder-task.md",
