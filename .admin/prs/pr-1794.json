@@ -18,8 +18,7 @@
     ".agent-admin/builder-appointments/pit-stage12-w82-final-verification-builder-task.md",
     ".agent-admin/ecap/pit-stage12-w82-final-verification-ecap.md",
     ".agent-admin/scope-declarations/pit-stage12-w82-final-verification.md",
-    ".agent-admin/scope-declarations/pr-1794.md",
-    "modules/pit/12-build/w82-final-role-matrix-denied-path-evidence.md"
+    ".agent-admin/scope-declarations/pr-1794.md"
   ],
   "risk": "low",
   "requires_iaa": true,
@@ -29,7 +28,7 @@
     "Foreman QP review of PR #1794 diff",
     "IAA pre-brief wave record present before builder execution",
     "ECAP record pending builder handover",
-    "Evidence ledger remains TODO/NOT_READY until separate CS2 seed approval and later verification"
+    "W8.2 evidence ledger is deferred to a later verification PR after CS2 seed-plan approval"
   ],
   "merge_authority": "CS2",
   "non_overclaim": "Governance setup only. No Supabase seed, no implementation code, no W8.2 completion, no Stage 12 completion, no PIT FUNCTIONAL_PASS."
