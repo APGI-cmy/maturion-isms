@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/APGI-cmy/maturion-isms/.agent-admin/control/schemas/iaa-preflight-brief.schema.json",
+  "title": "IAA_PREFLIGHT_BRIEF Canonical Schema",
+  "description": "Canonical Wave 1 pre-brief schema. The pre-brief must live in .agent-admin/assurance/iaa-wave-record-*.md under ## PRE-BRIEF and must not be written as a standalone iaa-prebrief-*.md artifact.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "wave",
+    "pr",
+    "issue",
+    "branch",
+    "qualifying_tasks",
+    "required_build_gates",
+    "expected_qa_scope",
+    "high_risk_failure_modes",
+    "required_builder_evidence",
+    "required_foreman_qp_checks",
+    "ecap_required",
+    "final_iaa_focus",
+    "result"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "wave": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pr": {
+      "description": "PR number or PENDING when no PR exists yet.",
+      "oneOf": [
+        { "type": "integer", "minimum": 1 },
+        { "type": "string", "pattern": "^(PENDING|#[0-9]+|[0-9]+)$" }
+      ]
+    },
+    "issue": {
+      "description": "Issue number/title binding or PENDING.",
+      "type": "string",
+      "minLength": 1
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "qualifying_tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["task_id", "summary", "assurance_category"],
+        "properties": {
+          "task_id": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string", "minLength": 1 },
+          "assurance_category": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "required_build_gates": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "expected_qa_scope": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "high_risk_failure_modes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "required_builder_evidence": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "required_foreman_qp_checks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "ecap_required": {
+      "type": "boolean"
+    },
+    "ecap_expected_artifacts": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true,
+      "default": []
+    },
+    "final_iaa_focus": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "result": {
+      "type": "string",
+      "const": "PREFLIGHT_BRIEF_COMPLETE"
+    }
+  }
+}
