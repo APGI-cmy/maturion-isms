@@ -1,12 +1,15 @@
 {
   "pr": 1794,
   "issue": 1793,
-  "type": "governance-admin",
+  "type": "governance-change",
   "owner": "Copilot",
-  "foreman": "foreman-v2-agent",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "pit-specialist",
   "builder_resource": "Copilot",
   "appointed_builder": "pit-specialist",
   "branch": "copilot/pit-stage12-w82-final-verification-wave",
+  "head_sha": "current_head",
+  "base_sha": "current_base",
   "scope": [
     ".admin/prs/pr-1794.json",
     ".agent-admin/prs/pr-1794/wave-current-tasks.md",
@@ -20,7 +23,7 @@
   "risk": "low",
   "requires_iaa": true,
   "requires_ecap": true,
-  "execution_model": "copilot-builder-resource-under-foreman-supervision",
+  "execution_model": "foreman-orchestrated",
   "evidence_required": [
     "Foreman QP review of PR #1794 diff",
     "IAA pre-brief wave record present before builder execution",
