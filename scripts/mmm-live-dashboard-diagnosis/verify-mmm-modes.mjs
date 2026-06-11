@@ -634,9 +634,10 @@ async function main() {
   const password = required('MMM_TEST_ADMIN_PASSWORD');
   const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '').trim();
   const storageStatePath = (process.env.VERCEL_BYPASS_STORAGE_STATE || '').trim();
-  // When a pre-primed storageState is available the bypass cookie is already in
-  // the browser context — no query params needed on navigation URLs.
-  const effectiveBypassSecret = storageStatePath ? '' : bypassSecret;
+  // Always use bypass query params on navigation URLs when the secret is available.
+  // The pre-primed storageState cookie alone does not reliably bypass Vercel
+  // protection when loaded by Playwright (returns 401). See diagnose.mjs.
+  const effectiveBypassSecret = bypassSecret;
   const headless = (process.env.HEADLESS || 'true').toLowerCase() !== 'false';
 
   const sampleFilePath = path.resolve(

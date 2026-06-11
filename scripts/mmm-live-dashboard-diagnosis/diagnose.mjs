@@ -89,9 +89,15 @@ async function main() {
     u.searchParams.set('x-vercel-set-bypass-cookie', 'samesitenone');
     return u.toString();
   }
-  // When a pre-primed storageState is available the bypass cookie is already in
-  // the browser context — no query params needed on the navigation URL.
-  const navigateUrl = storageStatePath ? previewUrl : withBypassParams(previewUrl);
+  // Always use bypass query params on the first navigation when the secret is
+  // available. Relying solely on the pre-primed storageState cookie does not
+  // reliably bypass Vercel protection when the cookie is loaded by Playwright
+  // (navigate-to-preview still returns 401). The query-params approach causes
+  // Vercel to validate the secret, set the _vercel_jwt cookie directly in the
+  // browser context via a redirect, which is the reliable bypass path.
+  // The storageState (if present) is still loaded as belt-and-braces coverage
+  // for any requests that fire before the redirect completes.
+  const navigateUrl = bypassSecret ? withBypassParams(previewUrl) : previewUrl;
 
   const consoleLogPath = path.join(ARTIFACT_DIR, 'console.log');
   const networkLogPath = path.join(ARTIFACT_DIR, 'network.log');
