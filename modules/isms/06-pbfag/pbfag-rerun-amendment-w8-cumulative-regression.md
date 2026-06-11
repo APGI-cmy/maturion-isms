@@ -5,7 +5,7 @@
 | Product | ISMS - Integrated Security Management System |
 | Stage | Stage 7 / W8 Amendment |
 | Wave | W8 - Cumulative Regression and PBFAG Rerun |
-| Status | AMENDED PASS WITH CONDITIONS |
+| Status | ACCEPTED WITH CONDITIONS |
 | Date | 2026-06-11 |
 
 ---
