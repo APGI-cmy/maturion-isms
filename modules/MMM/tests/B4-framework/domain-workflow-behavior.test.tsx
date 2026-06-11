@@ -843,6 +843,121 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(aiBasic.value).not.toContain('(Note:');
   });
 
+  it('T-MMM-DMC-044: multi-sentence criterion with contextual qualifier reconstructs one grammatical evidence clause', async () => {
+    const contextualCriterion: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-contextual',
+        mps_id: 'mps-1',
+        code: 'D001.MPS004.C001',
+        sort_order: 1,
+        name:
+          'Leadership teams assess security culture and protocol adherence. This is especially important during high-risk or high-exposure activities.',
+      },
+    ];
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: contextualCriterion,
+    });
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': contextualCriterion },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-contextual'));
+    const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-contextual-1') as HTMLTextAreaElement;
+
+    // The contextual clause must be integrated — not copied as a separate sentence
+    expect(basicDescriptor.value).toMatch(/^Evidence that [Ll]eadership teams assess security culture/i);
+    expect(basicDescriptor.value).toContain('during high-risk or high-exposure activities');
+    expect(basicDescriptor.value).not.toMatch(/\.\s+This is especially important/i);
+    expect(basicDescriptor.value).not.toMatch(/activities\.\s+is absent/i);
+    expect(basicDescriptor.value).toMatch(/absent|weak|outdated|informal/i);
+  });
+
+  it('T-MMM-DMC-043: each maturity level triggers an independent per-level learning consent prompt', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-1'));
+
+    // Edit Basic (level 1) — learning prompt should appear
+    const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
+    fireEvent.change(basicDescriptor, {
+      target: { value: 'Evidence that Workflow owner formally assigned is edited for Basic level.' },
+    });
+    const basicPrompt = await screen.findByTestId('descriptor-learning-prompt');
+    expect(basicPrompt).toBeTruthy();
+    fireEvent.click(screen.getByTestId('descriptor-learning-yes'));
+
+    // Edit Reactive (level 2) — a fresh prompt must appear for this level
+    const reactiveDescriptor = screen.getByTestId('descriptor-input-criterion-1-2') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-2'));
+    fireEvent.change(reactiveDescriptor, {
+      target: { value: 'Evidence that Workflow owner formally assigned is edited for Reactive level.' },
+    });
+    const reactivePrompt = await screen.findByTestId('descriptor-learning-prompt');
+    expect(reactivePrompt).toBeTruthy();
+    expect(reactivePrompt.textContent).toContain('Thank you for the guidance');
+    fireEvent.click(screen.getByTestId('descriptor-learning-no'));
+
+    // Save — Basic consented; Reactive declined → edited_levels contains only level 1
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
+    await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledWith(
+      'mmm-level-descriptor-save',
+      expect.objectContaining({
+        body: expect.objectContaining({
+          criterion_id: 'criterion-1',
+          edited_levels: [1],
+        }),
+      }),
+    ));
+  });
+
+  it('T-MMM-DMC-043b: descriptor editing remains available after save without sign-off lock', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-1'));
+
+    // First edit and save
+    const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
+    fireEvent.change(basicDescriptor, {
+      target: { value: 'Evidence that Workflow owner formally assigned — first edit.' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
+    await screen.findByTestId('descriptor-save-status-criterion-1');
+
+    // After save the edit button must still be present and functional (second edit)
+    const editBtn = screen.getByTestId('edit-descriptor-btn-criterion-1-1');
+    expect(editBtn).toBeTruthy();
+    fireEvent.click(editBtn);
+    expect(basicDescriptor.readOnly).toBe(false);
+    fireEvent.change(basicDescriptor, {
+      target: { value: 'Evidence that Workflow owner formally assigned — second edit.' },
+    });
+    expect(basicDescriptor.value).toContain('second edit');
+
+    // Save again — second save must reach the invoke call
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
+    await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledTimes(2));
+  });
+
   it('shows loading feedback while MMM data is still in flight', async () => {
     configureScenario({
       domainRows: [],
