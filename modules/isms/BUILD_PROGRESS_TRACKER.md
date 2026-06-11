@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-10  
-**Updated By**: foreman-agent (wave: `isms-w4-context-entitlement-handoff`)
+**Updated By**: foreman-agent (wave: `isms-w5-ask-maturion-adapter`)
 
-> **Classification**: ACTIVE — W4 SHARED CONTEXT, ENTITLEMENT AND HANDOFF OPENED  
+> **Classification**: ACTIVE — W5 ASK MATURION ADAPTER OPENED
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -25,11 +25,12 @@
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
 | Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | COMPLETE FOR W1-W4 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1-W5 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w5-ask-maturion-adapter-builder-appointment.md` |
 | Stage 12 | W1 Build Execution & Evidence | MERGED — ACCEPTED FOR W1 SCOPE | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
 | Stage 12 | W2 Build Execution & Evidence | MERGED — ACCEPTED FOR W2 SCOPE | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
 | Stage 12 | W3 Build Execution & Evidence | MERGED — ACCEPTED FOR W3 SCOPE | `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` |
-| Stage 12 | W4 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w4-context-entitlement-handoff-evidence.md` |
+| Stage 12 | W4 Build Execution & Evidence | MERGED — ACCEPTED FOR W4 SCOPE | `modules/isms/11-build/w4-context-entitlement-handoff-evidence.md` |
+| Stage 12 | W5 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w5-ask-maturion-adapter-evidence.md` |
 
 ---
 
@@ -51,51 +52,56 @@
 ## Stage 12: W3 Subscribe, Checkout Mock, Auth, Onboarding
 
 **Status**: MERGED — ACCEPTED FOR W3 SCOPE  
-**Merged PR**: #1783 (`211f979ea2f43f1c130ae9b6317979a6f9eaacb2`)  
-**Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`
-- `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md`
-- `.functional-delivery/pr-1783.md`
-- `.agent-admin/assurance/iaa-wave-record-pr1783-isms-w3-subscribe-auth-onboarding.md`
-- `.agent-workspace/foreman-v2/memory/session-1783-20260608.md`
-
-W3 delivered public subscribe selection, non-production checkout transition, mock auth continuity and protected onboarding context capture. It does not claim W4-W8 delivery.
+**Merged PR**: #1783 (`211f979ea2f43f1c130ae9b6317979a6f9eaacb2`)
 
 ---
 
 ## Stage 12: W4 Shared Context, Entitlement, MMM Handoff
 
-**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
-**Branch**: `foreman/isms-w4-context-entitlement-handoff`  
+**Status**: MERGED — ACCEPTED FOR W4 SCOPE  
+**Merged PR**: #1786 (`d8f8bd749179c2174955b13f75378ba168c4721e`)  
 **Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md` — W4 appointment
-- `modules/isms/11-build/w4-context-entitlement-handoff-evidence.md` — W4 implementation evidence
+- `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md`
+- `modules/isms/11-build/w4-context-entitlement-handoff-evidence.md`
+- `.functional-delivery/pr-1786.md`
+- `.agent-admin/assurance/iaa-wave-record-pr1786-isms-w4-context-entitlement-handoff.md`
+- `.agent-workspace/foreman-v2/memory/session-1786-20260610.md`
 
-**Runtime files changed by W4**:
-- `apps/isms-portal/src/context/IsmsContext.tsx`
-- `apps/isms-portal/src/lib/entitlements.ts`
-- `apps/isms-portal/src/lib/entitlements.test.ts`
-- `apps/isms-portal/src/lib/handoff.ts`
-- `apps/isms-portal/src/lib/handoff.test.ts`
+W4 delivered shared ISMS context, local mock entitlement checks, entitlement-aware dashboard and protected maturity setup handoff. It does not claim W5-W8 delivery.
+
+---
+
+## Stage 12: W5 Ask Maturion Adapter
+
+**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
+**Branch**: `foreman/isms-w5-ask-maturion-adapter`  
+**Primary Evidence**:
+- `.agent-admin/builder-appointments/isms-stage11-w5-ask-maturion-adapter-builder-appointment.md` — W5 appointment
+- `modules/isms/11-build/w5-ask-maturion-adapter-evidence.md` — W5 implementation evidence
+
+**Runtime files changed by W5**:
+- `apps/isms-portal/src/lib/aiPromptSeeds.ts`
+- `apps/isms-portal/src/lib/askMaturionAdapter.ts`
+- `apps/isms-portal/src/lib/askMaturionAdapter.test.ts`
+- `apps/isms-portal/src/components/AskMaturionButton.tsx`
 - `apps/isms-portal/src/pages/Dashboard.tsx`
 - `apps/isms-portal/src/pages/MaturitySetup.tsx`
-- `apps/isms-portal/src/App.tsx`
 
-**W4 scope**:
-- shared ISMS context provider;
-- local mock entitlement interpretation from W3 checkout state;
-- private module entitlement checks;
-- unsubscribed module upgrade routing;
-- subscribed maturity roadmap handoff to `/maturity/setup`;
-- no backend persistence, RLS, audit writer, Ask Maturion adapter or live MMM execution.
+**W5 scope**:
+- safe Ask Maturion adapter contract;
+- public educational prompt seeds;
+- authenticated filtered-context prompt seeds;
+- entitlement-respecting private context check;
+- non-blocking fallback behavior without live provider calls;
+- no backend persistence, RLS, audit writer or live AI provider call.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: W4 PR preparation and CI gate inspection.  
+**Current Stage**: W5 PR preparation and CI gate inspection.  
 **Implementation Handover**: Not authorized.  
-**Next Required Action**: Open/review the W4 PR, inspect CI/review results, complete required evidence, and only then decide whether W4 can be accepted as complete.
+**Next Required Action**: Open/review the W5 PR, inspect CI/review results, complete required evidence, and only then decide whether W5 can be accepted as complete.
 
 ---
 
@@ -123,11 +129,13 @@ W3 delivered public subscribe selection, non-production checkout transition, moc
 - [x] Stage 11 W3 Builder Appointment complete
 - [x] Stage 12 W3 merged
 - [x] Stage 11 W4 Builder Appointment complete
-- [x] Stage 12 W4 implementation opened on branch
-- [ ] W4 PR opened
-- [ ] W4 CI passed
-- [ ] W4 review conversations resolved
-- [ ] W4 handover authorized
+- [x] Stage 12 W4 merged
+- [x] Stage 11 W5 Builder Appointment complete
+- [x] Stage 12 W5 implementation opened on branch
+- [ ] W5 PR opened
+- [ ] W5 CI passed
+- [ ] W5 review conversations resolved
+- [ ] W5 handover authorized
 
 ---
 
@@ -136,9 +144,9 @@ W3 delivered public subscribe selection, non-production checkout transition, moc
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- W4 PR must pass CI before W4 acceptance recommendation;
-- W4 review conversations must be resolved or dispositioned;
-- W5-W8 remain unappointed and unauthorized;
+- W5 PR must pass CI before W5 acceptance recommendation;
+- W5 review conversations must be resolved or dispositioned;
+- W6-W8 remain unappointed and unauthorized;
 - ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
 - implementation handover remains blocked until later gates are complete or explicitly waived.
 

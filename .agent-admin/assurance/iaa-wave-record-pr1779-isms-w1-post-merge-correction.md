@@ -4,7 +4,7 @@ PR: #1779
 Wave: ISMS W1 post-merge correction
 Related PR: #1776
 Status: PASS WITH CONDITIONS
-CURRENT_HEAD_SHA: CURRENT_HEAD
+CURRENT_HEAD_SHA: 33bf9f59cb39ebde6abab5ee8f759d08c7837bcb
 
 ---
 
