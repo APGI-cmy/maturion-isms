@@ -1,0 +1,53 @@
+name: IAA Pre-Brief Contract Alignment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  iaa-prebrief-contract-alignment:
+    name: "preflight/iaa-prebrief-contract-alignment"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Verify canonical pre-brief contract alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "=== IAA Pre-Brief Contract Alignment ==="
+          echo "Canonical artifact: .agent-admin/assurance/iaa-wave-record-*.md under ## PRE-BRIEF"
+          echo "Prohibited new artifact: .agent-admin/assurance/iaa-prebrief-*.md"
+          echo "Canonical schema: .agent-admin/control/schemas/iaa-preflight-brief.schema.json"
+          echo "Canonical protocol: .agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md"
+          echo ""
+
+          test -f .agent-admin/control/schemas/iaa-preflight-brief.schema.json
+          test -f .agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md
+
+          if grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/agents .github/workflows governance .agent-workspace 2>/dev/null; then
+            echo "::error::Legacy standalone iaa-prebrief generation instruction found. Wave 1 requires wave-record-only pre-brief output."
+            exit 1
+          fi
+
+          if grep -RIn "commit.*iaa-prebrief" .github/agents .github/workflows governance .agent-workspace 2>/dev/null; then
+            echo "::error::Legacy standalone iaa-prebrief commit instruction found. Wave 1 requires .agent-admin/assurance/iaa-wave-record-*.md only."
+            exit 1
+          fi
+
+          if grep -RIn "IAA_PREFLIGHT_BRIEF" .github/agents .agent-admin/control .github/workflows | grep -q .; then
+            echo "✅ Canonical IAA_PREFLIGHT_BRIEF references found."
+          else
+            echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found."
+            exit 1
+          fi
+
+          echo "✅ IAA pre-brief contract alignment gate completed."
