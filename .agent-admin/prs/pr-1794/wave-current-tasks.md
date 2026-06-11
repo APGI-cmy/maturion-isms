@@ -3,12 +3,15 @@
 Wave: pit-stage12-w82-final-verification
 PR: #1794
 Issue: #1793
+Branch: copilot/pit-stage12-w82-final-verification-wave
 Governing W8.2 issue: #1774
 Foreman: foreman-v2-agent
 Builder resource: Copilot
 Appointed builder for later verification work: pit-specialist
 Status: GOVERNANCE_ADMIN_BOOTSTRAP / BUILDER_EXECUTION_BLOCKED
 Date UTC: 2026-06-11
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pit-stage12-w82-final-verification-2026-06-11.md
+ecap_bundle_path: .agent-admin/ecap/pit-stage12-w82-final-verification-ecap.md
 
 ## Current task set
 
@@ -17,6 +20,7 @@ Date UTC: 2026-06-11
 - [x] Add per-PR admin bootstrap manifest.
 - [x] Add per-PR scope declaration required by merge gates.
 - [x] Add current wave task record.
+- [x] Bind wave-current-tasks to PR #1794, active branch, IAA artifact, and ECAP artifact.
 - [ ] Refresh current-head gate evidence after this admin correction.
 - [ ] Foreman/QP review of corrected diff.
 - [ ] Resolve review thread about per-PR scope declaration after verification.
