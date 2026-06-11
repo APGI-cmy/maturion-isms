@@ -19,10 +19,16 @@ Runtime app path:
 apps/isms-portal
 ```
 
+Package manager:
+
+```text
+pnpm@9.12.0
+```
+
 Build command:
 
 ```text
-npm run build
+pnpm run build
 ```
 
 Output directory:
@@ -34,8 +40,10 @@ dist
 Install command:
 
 ```text
-npm install
+pnpm install --frozen-lockfile
 ```
+
+Rationale: the repository is a pnpm workspace and the ISMS portal consumes workspace packages, so Vercel must use the workspace-aware package manager rather than `npm install` from the app directory.
 
 ---
 
@@ -79,7 +87,7 @@ The script verifies:
 Run locally from `apps/isms-portal`:
 
 ```text
-npm run verify:routes
+pnpm run verify:routes
 ```
 
 ---
@@ -89,13 +97,13 @@ npm run verify:routes
 W7 adds the package command:
 
 ```text
-npm run ci:w7
+pnpm run ci:w7
 ```
 
 This command runs:
 
 ```text
-npm run lint && npm run test:run && npm run verify:routes && npm run build
+pnpm run lint && pnpm run test:run && pnpm run verify:routes && pnpm run build
 ```
 
 ---
