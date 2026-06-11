@@ -16,7 +16,7 @@ create table if not exists public.isms_onboarding_profiles (
 
 create table if not exists public.isms_assessments (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete set null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   organisation_name text,
   sector text,
   overall_score numeric(3,1),
@@ -49,7 +49,7 @@ create table if not exists public.isms_maturity_handoffs (
 
 create table if not exists public.isms_audit_events (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete set null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   event_type text not null,
   surface text not null,
   metadata jsonb not null default '{}'::jsonb,
@@ -68,11 +68,26 @@ create policy "ISMS onboarding profiles are user scoped"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
-create policy "ISMS assessments are user scoped when authenticated"
+create policy "ISMS assessments can be inserted by owning user"
   on public.isms_assessments
-  for all
-  using (user_id is null or auth.uid() = user_id)
-  with check (user_id is null or auth.uid() = user_id);
+  for insert
+  with check (auth.uid() = user_id);
+
+create policy "ISMS assessments can be selected by owning user"
+  on public.isms_assessments
+  for select
+  using (auth.uid() = user_id);
+
+create policy "ISMS assessments can be updated by owning user"
+  on public.isms_assessments
+  for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "ISMS assessments can be deleted by owning user"
+  on public.isms_assessments
+  for delete
+  using (auth.uid() = user_id);
 
 create policy "ISMS entitlements are user scoped"
   on public.isms_entitlements
@@ -85,11 +100,15 @@ create policy "ISMS maturity handoffs are user scoped"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
-create policy "ISMS audit events are user scoped"
+create policy "ISMS audit events can be inserted by owning user"
   on public.isms_audit_events
-  for all
-  using (user_id is null or auth.uid() = user_id)
-  with check (user_id is null or auth.uid() = user_id);
+  for insert
+  with check (auth.uid() = user_id);
+
+create policy "ISMS audit events can be selected by owning user"
+  on public.isms_audit_events
+  for select
+  using (auth.uid() = user_id);
 
 create index if not exists isms_onboarding_profiles_user_idx on public.isms_onboarding_profiles(user_id);
 create index if not exists isms_assessments_user_idx on public.isms_assessments(user_id);
