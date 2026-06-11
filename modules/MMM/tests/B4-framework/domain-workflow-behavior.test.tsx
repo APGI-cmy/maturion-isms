@@ -866,7 +866,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-contextual-1') as HTMLTextAreaElement;
 
     // The contextual clause must be integrated — not copied as a separate sentence
-    expect(basicDescriptor.value).toMatch(/^Evidence that [Ll]eadership teams assess security culture/i);
+    expect(basicDescriptor.value).toMatch(/^Evidence that Leadership teams assess security culture/i);
     expect(basicDescriptor.value).toContain('during high-risk or high-exposure activities');
     expect(basicDescriptor.value).not.toMatch(/\.\s+This is especially important/i);
     expect(basicDescriptor.value).not.toMatch(/activities\.\s+is absent/i);

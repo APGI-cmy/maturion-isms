@@ -481,6 +481,24 @@ function firstCriterionClause(criterionText: string): string {
 }
 
 /**
+ * Matches sentence boundaries: [.!?] followed by whitespace + capital letter.
+ * Used both to split criteria into sentences and to strip residual secondary
+ * sentences from the final evidence lead.
+ */
+const SENTENCE_BOUNDARY_RE = /(?<=[.!?])\s+(?=[A-Z])/;
+
+/**
+ * Matches "This is especially/particularly important/relevant/critical [prep] X"
+ * and "This applies especially/particularly [prep] X" contextual-qualifier
+ * sentences that should be merged as an adverbial into the preceding clause.
+ *
+ * Group 1 — the preposition (during | when | in | for | at | across | under | throughout)
+ * Group 2 — the adverbial phrase that follows the preposition
+ */
+const CONTEXTUAL_QUALIFIER_RE =
+  /^this (?:is (?:especially|particularly) (?:important|relevant|critical)|applies (?:especially|particularly))\b.+?\b(during|when|in|for|at|across|under|throughout)\s+(.+)$/i;
+
+/**
  * Merges "This is especially/particularly important/relevant during X"
  * contextual-qualifier sentences into the preceding primary clause.
  *
@@ -498,7 +516,7 @@ function compressContextualQualifiers(criterionText: string): string {
 
   // Split into sentences on [.!?] followed by whitespace + capital (lookbehind).
   const sentences = normalized
-    .split(/(?<=[.!?])\s+(?=[A-Z])/)
+    .split(SENTENCE_BOUNDARY_RE)
     .map((s) => s.replace(/[.!?]+$/, '').trim())
     .filter(Boolean);
 
@@ -507,11 +525,7 @@ function compressContextualQualifiers(criterionText: string): string {
   const merged: string[] = [sentences[0]];
 
   for (const sentence of sentences.slice(1)) {
-    // "This is especially/particularly important/relevant/critical [prep] X"
-    // "This applies especially/particularly [prep] X"
-    const contextualMatch = sentence.match(
-      /^this (?:is (?:especially|particularly) (?:important|relevant|critical)|applies (?:especially|particularly))\b.+?\b(during|when|in|for|at|across|under|throughout)\s+(.+)$/i,
-    );
+    const contextualMatch = sentence.match(CONTEXTUAL_QUALIFIER_RE);
     if (contextualMatch) {
       // Merge adverbial into the previous clause (replace the trailing entry).
       const adverbial = `${contextualMatch[1]} ${contextualMatch[2].replace(/[.!?;:,]+$/g, '').trim()}`;
@@ -562,9 +576,9 @@ function criterionRequirementSubject(criterionText: string): string {
     .trim();
 
   // Strip any secondary sentences still present after the merges above.
-  // Split on [.!?] followed by whitespace and a capital letter and keep only
-  // the first segment so the evidence lead is always a single clean clause.
-  const firstSegment = subject.split(/[.!?]\s+(?=[A-Z])/)[0];
+  // Split on sentence boundaries and keep only the first segment so the
+  // evidence lead is always a single clean clause.
+  const firstSegment = subject.split(SENTENCE_BOUNDARY_RE)[0];
   if (firstSegment) {
     subject = firstSegment.replace(/[.;:,]+$/g, '').trim();
   }
