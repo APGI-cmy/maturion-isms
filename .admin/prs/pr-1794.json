@@ -1,0 +1,32 @@
+{
+  "pr": 1794,
+  "issue": 1793,
+  "type": "governance-admin",
+  "owner": "Copilot",
+  "foreman": "foreman-v2-agent",
+  "builder_resource": "Copilot",
+  "appointed_builder": "pit-specialist",
+  "branch": "copilot/pit-stage12-w82-final-verification-wave",
+  "scope": [
+    ".admin/prs/pr-1794.json",
+    ".agent-admin/prs/pr-1794/active-state.json",
+    ".agent-admin/prs/pr-1794/wave-current-tasks.md",
+    ".agent-admin/assurance/iaa-wave-record-pit-stage12-w82-final-verification-2026-06-11.md",
+    ".agent-admin/builder-appointments/pit-stage12-w82-final-verification-builder-task.md",
+    ".agent-admin/ecap/pit-stage12-w82-final-verification-ecap.md",
+    ".agent-admin/scope-declarations/pr-1794.md",
+    "modules/pit/12-build/w82-final-role-matrix-denied-path-evidence.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "copilot-builder-resource-under-foreman-supervision",
+  "evidence_required": [
+    "Foreman QP review of PR #1794 diff",
+    "IAA pre-brief wave record present before builder execution",
+    "ECAP record pending builder handover",
+    "Evidence ledger remains TODO/NOT_READY until separate CS2 seed approval and later verification"
+  ],
+  "merge_authority": "CS2",
+  "non_overclaim": "Governance setup only. No Supabase seed, no implementation code, no W8.2 completion, no Stage 12 completion, no PIT FUNCTIONAL_PASS."
+}
