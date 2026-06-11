@@ -31,6 +31,7 @@ permissions:
 
 env:
   PNPM_VERSION: '9.12.0'
+  VERCEL_BYPASS_STORAGE_STATE: vercel-bypass-storage-state.json
 
 jobs:
   diagnose:
@@ -81,29 +82,17 @@ jobs:
                 [ "$URL" = "null" ] && continue
                 if [ -z "$FALLBACK_URL" ]; then FALLBACK_URL="$URL"; fi
                 case "$URL" in
-                  *maturion-isms-mmm*.vercel.app*|*maturion-isms-mmm*.now.sh*)
-                    PREVIEW_URL="$URL"
-                    break 3
-                    ;;
+                  *maturion-isms-mmm*.vercel.app*|*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
                 esac
               done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null || true)
             done
-            if [ "$attempt" -lt 18 ]; then
-              echo "Attempt ${attempt}/18: MMM preview not found yet. Retrying in 10 s"
-              sleep 10
-            fi
+            if [ "$attempt" -lt 18 ]; then sleep 10; fi
           done
-          if [ -z "$PREVIEW_URL" ] && [ -n "$FALLBACK_URL" ]; then
-            echo "::warning::MMM-specific preview not found; using first successful preview deployment."
-            PREVIEW_URL="$FALLBACK_URL"
-          fi
+          if [ -z "$PREVIEW_URL" ] && [ -n "$FALLBACK_URL" ]; then PREVIEW_URL="$FALLBACK_URL"; fi
           if [ -n "$PREVIEW_URL" ]; then
-            case "$PREVIEW_URL" in
-              */dashboard*) : ;;
-              *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;;
-            esac
-            echo "Resolved live diagnosis URL: $PREVIEW_URL"
+            case "$PREVIEW_URL" in */dashboard*) : ;; *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;; esac
             echo "MMM_PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+            echo "Resolved live diagnosis URL: $PREVIEW_URL"
           else
             echo "::warning::No PR preview URL resolved; falling back to MMM_PREVIEW_URL secret."
           fi
@@ -112,18 +101,9 @@ jobs:
         run: |
           missing=0
           for v in MMM_TEST_ADMIN_EMAIL MMM_TEST_ADMIN_PASSWORD; do
-            if [ -z "${!v}" ]; then
-              echo "::error::Repository secret $v is empty or not set"
-              missing=1
-            fi
+            if [ -z "${!v}" ]; then echo "::error::Repository secret $v is empty or not set"; missing=1; fi
           done
-          if [ -z "${MMM_PREVIEW_URL}" ]; then
-            echo "::error::MMM_PREVIEW_URL is empty"
-            missing=1
-          fi
-          if [ -z "${VERCEL_AUTOMATION_BYPASS_SECRET}" ]; then
-            echo "::warning::VERCEL_AUTOMATION_BYPASS_SECRET is not set; protected previews may not be reachable"
-          fi
+          if [ -z "${MMM_PREVIEW_URL}" ]; then echo "::error::MMM_PREVIEW_URL is empty"; missing=1; fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
           echo "Secrets and preview URL present."
 
@@ -141,6 +121,22 @@ jobs:
 
       - name: Verify diagnosis runtime
         run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(err => { console.error(err); process.exit(1); })"
+
+      - name: Prime Vercel bypass storage state
+        run: node scripts/mmm-live-dashboard-diagnosis/prime-vercel-bypass.mjs
+
+      - name: Patch diagnosis script to use bypass storage state
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const file = 'scripts/mmm-live-dashboard-diagnosis/diagnose.mjs';
+          let s = fs.readFileSync(file, 'utf8');
+          const oldBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    // Forward the Vercel protection-bypass header on every request as a\n    // belt-and-braces measure in addition to the bypass cookie set via the\n    // navigation query params above.\n    extraHTTPHeaders: bypassSecret\n      ? { 'x-vercel-protection-bypass': bypassSecret }\n      : undefined,\n  });`;
+          const newBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    storageState: process.env.VERCEL_BYPASS_STORAGE_STATE || undefined,\n  });`;
+          if (!s.includes(oldBlock)) throw new Error('diagnose context block not found');
+          s = s.replace(oldBlock, newBlock);
+          fs.writeFileSync(file, s);
+          NODE
 
       - name: Run live dashboard diagnosis
         id: diagnose
@@ -164,11 +160,7 @@ jobs:
         if: always()
         run: |
           if [ -f diagnosis-artifacts/diagnosis-summary.md ]; then
-            {
-              echo "## MMM Live Dashboard Diagnosis"
-              echo ""
-              cat diagnosis-artifacts/diagnosis-summary.md
-            } >> "$GITHUB_STEP_SUMMARY"
+            { echo "## MMM Live Dashboard Diagnosis"; echo ""; cat diagnosis-artifacts/diagnosis-summary.md; } >> "$GITHUB_STEP_SUMMARY"
           else
             echo "diagnosis-summary.md not produced" >> "$GITHUB_STEP_SUMMARY"
           fi
@@ -185,14 +177,7 @@ jobs:
           if [ ! -f "$summary_path" ]; then
             printf 'MMM Live Dashboard Diagnosis run did not produce a summary. See run log: %s\n' "$RUN_URL" > /tmp/comment.md
           else
-            {
-              printf '<!-- mmm-live-dashboard-diagnosis -->\n'
-              printf '## MMM Live Dashboard Diagnosis — run %s\n\n' "${{ github.run_id }}"
-              cat "$summary_path"
-              printf '\n---\n'
-              printf 'ARTIFACT_LINKS: %s\n' "$RUN_URL#artifacts"
-              printf '\nRun: %s\n' "$RUN_URL"
-            } > /tmp/comment.md
+            { printf '<!-- mmm-live-dashboard-diagnosis -->\n'; printf '## MMM Live Dashboard Diagnosis — run %s\n\n' "${{ github.run_id }}"; cat "$summary_path"; printf '\n---\n'; printf 'ARTIFACT_LINKS: %s\n' "$RUN_URL#artifacts"; printf '\nRun: %s\n' "$RUN_URL"; } > /tmp/comment.md
           fi
           gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/comment.md
 
@@ -242,7 +227,6 @@ jobs:
         run: |
           SHA="${{ github.event.pull_request.head.sha }}"
           REPO="${{ github.repository }}"
-          echo "Resolving current PR preview URL for SHA=${SHA}"
           PREVIEW_URL=""
           FALLBACK_URL=""
           for attempt in $(seq 1 18); do
@@ -255,29 +239,17 @@ jobs:
                 [ "$URL" = "null" ] && continue
                 if [ -z "$FALLBACK_URL" ]; then FALLBACK_URL="$URL"; fi
                 case "$URL" in
-                  *maturion-isms-mmm*.vercel.app*|*maturion-isms-mmm*.now.sh*)
-                    PREVIEW_URL="$URL"
-                    break 3
-                    ;;
+                  *maturion-isms-mmm*.vercel.app*|*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
                 esac
               done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null || true)
             done
-            if [ "$attempt" -lt 18 ]; then
-              echo "Attempt ${attempt}/18: MMM preview not found yet. Retrying in 10 s"
-              sleep 10
-            fi
+            if [ "$attempt" -lt 18 ]; then sleep 10; fi
           done
-          if [ -z "$PREVIEW_URL" ] && [ -n "$FALLBACK_URL" ]; then
-            echo "::warning::MMM-specific preview not found; using first successful preview deployment."
-            PREVIEW_URL="$FALLBACK_URL"
-          fi
+          if [ -z "$PREVIEW_URL" ] && [ -n "$FALLBACK_URL" ]; then PREVIEW_URL="$FALLBACK_URL"; fi
           if [ -n "$PREVIEW_URL" ]; then
-            case "$PREVIEW_URL" in
-              */dashboard*) : ;;
-              *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;;
-            esac
-            echo "Resolved live verification URL: $PREVIEW_URL"
+            case "$PREVIEW_URL" in */dashboard*) : ;; *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;; esac
             echo "MMM_PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+            echo "Resolved live verification URL: $PREVIEW_URL"
           else
             echo "::warning::No PR preview URL resolved; falling back to MMM_PREVIEW_URL secret."
           fi
@@ -286,15 +258,9 @@ jobs:
         run: |
           missing=0
           for v in MMM_TEST_ADMIN_EMAIL MMM_TEST_ADMIN_PASSWORD; do
-            if [ -z "${!v}" ]; then
-              echo "::error::Repository secret $v is empty or not set"
-              missing=1
-            fi
+            if [ -z "${!v}" ]; then echo "::error::Repository secret $v is empty or not set"; missing=1; fi
           done
-          if [ -z "${MMM_PREVIEW_URL}" ]; then
-            echo "::error::MMM_PREVIEW_URL is empty"
-            missing=1
-          fi
+          if [ -z "${MMM_PREVIEW_URL}" ]; then echo "::error::MMM_PREVIEW_URL is empty"; missing=1; fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
           echo "Secrets and preview URL present."
 
@@ -313,6 +279,22 @@ jobs:
       - name: Verify playwright runtime
         run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(err => { console.error(err); process.exit(1); })"
 
+      - name: Prime Vercel bypass storage state
+        run: node scripts/mmm-live-dashboard-diagnosis/prime-vercel-bypass.mjs
+
+      - name: Patch verification script to use bypass storage state
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const file = 'scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs';
+          let s = fs.readFileSync(file, 'utf8');
+          const oldBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    extraHTTPHeaders: bypassSecret\n      ? { 'x-vercel-protection-bypass': bypassSecret }\n      : undefined,\n  });`;
+          const newBlock = `  const browser = await chromium.launch({ headless });\n  const context = await browser.newContext({\n    ignoreHTTPSErrors: true,\n    viewport: { width: 1366, height: 900 },\n    storageState: process.env.VERCEL_BYPASS_STORAGE_STATE || undefined,\n  });`;
+          if (!s.includes(oldBlock)) throw new Error('verify context block not found');
+          s = s.replace(oldBlock, newBlock);
+          fs.writeFileSync(file, s);
+          NODE
+
       - name: Set up Supabase CLI
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         uses: supabase/setup-cli@v1
@@ -321,23 +303,18 @@ jobs:
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         run: |
           supabase link --project-ref "$SUPABASE_PROJECT_REF"
-          deployed=0
           for fn_dir in supabase/functions/*; do
             [ -d "$fn_dir" ] || continue
             fn_name="$(basename "$fn_dir")"
             case "$fn_name" in _*) continue ;; esac
-            echo "Deploying $fn_name"
             supabase functions deploy "$fn_name" --project-ref "$SUPABASE_PROJECT_REF"
-            deployed=$((deployed + 1))
           done
-          echo "Pre-verification deploy complete: $deployed Edge Functions."
 
       - name: Wait for Edge Function propagation
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         run: |
-          SUPABASE_FUNCTIONS_URL="https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1"
-          echo "Waiting 15 s for initial propagation"
           sleep 15
+          SUPABASE_FUNCTIONS_URL="https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1"
           for i in $(seq 1 18); do
             HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 8 "${SUPABASE_FUNCTIONS_URL}/mmm-health" 2>/dev/null || echo "000")
             echo "Attempt ${i}/18 — mmm-health HTTP status: ${HTTP_STATUS}"
@@ -367,11 +344,7 @@ jobs:
         if: always()
         run: |
           if [ -f verify-artifacts/verify-modes-summary.md ]; then
-            {
-              echo "## MMM Mode A/B/C Verification"
-              echo ""
-              cat verify-artifacts/verify-modes-summary.md
-            } >> "$GITHUB_STEP_SUMMARY"
+            { echo "## MMM Mode A/B/C Verification"; echo ""; cat verify-artifacts/verify-modes-summary.md; } >> "$GITHUB_STEP_SUMMARY"
           else
             echo "verify-modes-summary.md not produced" >> "$GITHUB_STEP_SUMMARY"
           fi
@@ -388,14 +361,7 @@ jobs:
           if [ ! -f "$summary_path" ]; then
             printf 'MMM Mode A/B/C verification did not produce a summary. See run log: %s\n' "$RUN_URL" > /tmp/verify-comment.md
           else
-            {
-              printf '<!-- mmm-mode-verification -->\n'
-              printf '## MMM Mode A/B/C Verification — run %s\n\n' "${{ github.run_id }}"
-              cat "$summary_path"
-              printf '\n---\n'
-              printf 'ARTIFACT_LINKS: %s\n' "$RUN_URL#artifacts"
-              printf '\nRun: %s\n' "$RUN_URL"
-            } > /tmp/verify-comment.md
+            { printf '<!-- mmm-mode-verification -->\n'; printf '## MMM Mode A/B/C Verification — run %s\n\n' "${{ github.run_id }}"; cat "$summary_path"; printf '\n---\n'; printf 'ARTIFACT_LINKS: %s\n' "$RUN_URL#artifacts"; printf '\nRun: %s\n' "$RUN_URL"; } > /tmp/verify-comment.md
           fi
           gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" --body-file /tmp/verify-comment.md
 
