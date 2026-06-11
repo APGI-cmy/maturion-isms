@@ -9,8 +9,7 @@
   "scope": [
     ".admin/prs/pr-1788.json",
     ".agent-admin/assurance/iaa-prebrief-issue-1787-descriptor-reconstruction.md",
-    ".agent-admin/assurance/iaa-review-issue-1787-descriptor-reconstruction.md",
-    ".agent-admin/assurance/iaa-wave-record-issue-1787-descriptor-reconstruction-20260610.md",
+    ".agent-admin/assurance/iaa-wave-record-pr1788-issue-1787-descriptor-reconstruction.md",
     ".agent-admin/builder-appointments/issue-1787-descriptor-reconstruction-builder-contract.md",
     ".agent-admin/ecap/issue-1787-descriptor-reconstruction-ecap.md",
     ".agent-admin/prehandover/proof-pr-1788-issue-1787-descriptor-reconstruction-20260610.md",
