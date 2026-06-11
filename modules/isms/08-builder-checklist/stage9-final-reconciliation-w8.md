@@ -29,7 +29,7 @@ It does not add new runtime functionality.
 | B-INV-005 | Legacy source handling did not modify legacy source without authorization. |
 | B-INV-006 | Future wiring is labelled mock, boundary, preview, or future-gated as applicable. |
 | B-INV-007 | Ask Maturion remains inside deterministic adapter boundary; no live provider bypass. |
-| B-INV-008 | Supabase persistence was introduced only after W6 schema/RLS review. Runtime writes remain future-gated. |
+| B-INV-008 | Supabase schema/RLS boundary was introduced only after W6 review. Runtime writes remain future-gated. |
 | B-INV-009 | No edge/backend function invocation exists without registry entry. W6 records no-edge-function decision. |
 | B-INV-010 | Prior waves merged after gate/review disposition. |
 | B-INV-011 | Documentation-only and boundary-only work does not claim runtime production behavior. |
