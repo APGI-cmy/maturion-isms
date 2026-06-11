@@ -18,7 +18,7 @@ export const ismsPersistenceBoundary: PersistenceBoundaryRecord[] = [
     capability: 'free-assessment',
     tableName: 'isms_assessments',
     runtimeStatus: 'schema_registered_only',
-    requiresAuthenticatedUser: false,
+    requiresAuthenticatedUser: true,
     auditRequired: true,
   },
   {
@@ -46,7 +46,7 @@ export const ismsPersistenceBoundary: PersistenceBoundaryRecord[] = [
     capability: 'audit-event',
     tableName: 'isms_audit_events',
     runtimeStatus: 'schema_registered_only',
-    requiresAuthenticatedUser: false,
+    requiresAuthenticatedUser: true,
     auditRequired: false,
   },
 ];
@@ -61,6 +61,6 @@ export function getPersistenceBoundary(capability: PersistenceCapability): Persi
   return boundary;
 }
 
-export function assertPersistenceCapabilityRegistered(capability: PersistenceCapability): boolean {
-  return Boolean(getPersistenceBoundary(capability));
+export function assertPersistenceCapabilityRegistered(capability: PersistenceCapability): void {
+  getPersistenceBoundary(capability);
 }
