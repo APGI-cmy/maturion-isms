@@ -47,8 +47,8 @@
       "minLength": 1
     },
     "qualifying_tasks": {
+      "description": "May be empty only when IAA explicitly classifies the wave as having no qualifying assurance tasks; final assurance requirements are unchanged.",
       "type": "array",
-      "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
