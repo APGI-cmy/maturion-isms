@@ -48,7 +48,9 @@ The W8.2 schema/RLS migration is applied and policy inventory exists, but actor-
 | unauthenticated | no session/JWT | public-only routes | `/admin/*`, `/qa-dashboard` redirect to login or deny |
 | viewer | active membership + `viewer` role | own-org non-admin reads where future screens allow | admin surfaces, role writes, QA runs |
 | contributor | active membership + `contributor` role | own-org non-admin writes where future W8.3+ allows | admin surfaces, role writes, QA runs |
-| org_admin | active membership + `org_admin` role | own-org membership/role admin and audit read | cross-org role/membership access, QA runs unless cs2_admin |
+| team_leader | active membership + `team_leader` role | own-org team-scoped work where future W8.3+ allows | admin surfaces, role writes, QA runs |
+| project_manager | active membership + `project_manager` role | own-org project-scoped work where future W8.3+ allows | admin surfaces, role writes, QA runs |
+| org_admin | active membership + `org_admin` role | own-org membership/role admin and audit read | cross-org role/membership access, QA runs unless `cs2_admin` |
 | cs2_admin | global role grant with `org_id is null` | cross-org admin/QA visibility | spoofed actor/created_by writes remain denied by constraints |
 
 ## Denied-path verification required
@@ -64,9 +66,9 @@ Routes:
 Evidence required:
 
 - unauthenticated deployed direct-load outcome;
-- authenticated non-admin denied outcome;
-- org-admin QA dashboard denied outcome;
-- cs2-admin QA dashboard allowed outcome;
+- authenticated non-admin denied outcome for `viewer`, `contributor`, `team_leader`, and `project_manager`;
+- `org_admin` QA dashboard denied outcome;
+- `cs2_admin` QA dashboard allowed outcome;
 - screenshot/HAR/trace or equivalent browser output;
 - no protected data visible in denied DOM.
 
