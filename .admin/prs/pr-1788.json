@@ -25,7 +25,10 @@
     "governance/scope-declaration.md",
     "modules/MMM/04-architecture/issue-1787-descriptor-reconstruction-addendum.md",
     "modules/MMM/05-qa-to-red/issue-1787-descriptor-reconstruction-qa-to-red.md",
-    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
+    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx",
+    "scripts/mmm-live-dashboard-diagnosis/diagnose.mjs",
+    "scripts/mmm-live-dashboard-diagnosis/prime-vercel-bypass.mjs",
+    "scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs"
   ],
   "risk": "high",
   "requires_iaa": true,
