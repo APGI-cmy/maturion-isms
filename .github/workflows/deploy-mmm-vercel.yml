@@ -389,7 +389,7 @@ jobs:
           COOKIE_JAR="$(mktemp)"
           trap 'rm -f "$COOKIE_JAR"' EXIT
           if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
-            PRIME_URL="${PREVIEW_URL%/}/?x-vercel-protection-bypass=${VERCEL_AUTOMATION_BYPASS_SECRET}&x-vercel-set-bypass-cookie=true"
+            PRIME_URL="${PREVIEW_URL%/}/?x-vercel-protection-bypass=${VERCEL_AUTOMATION_BYPASS_SECRET}&x-vercel-set-bypass-cookie=samesitenone"
             curl -L -sS -o /dev/null \
               -c "$COOKIE_JAR" \
               -b "$COOKIE_JAR" \
