@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-11  
-**Updated By**: foreman-agent (wave: `isms-w8-cumulative-regression-pbfag`)
+**Last Updated**: 2026-06-15  
+**Updated By**: foreman-agent (wave: `isms-w8-closure-tracker-cleanup`)
 
-> **Classification**: ACTIVE — W8 CUMULATIVE REGRESSION AND PBFAG RERUN OPENED  
+> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — OWNER FINAL DECISION PENDING  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -33,7 +33,7 @@
 | Stage 12 | W5 Build Execution & Evidence | MERGED — ACCEPTED FOR W5 SCOPE | `modules/isms/11-build/w5-ask-maturion-adapter-evidence.md` |
 | Stage 12 | W6 Build Execution & Evidence | MERGED — ACCEPTED FOR W6 SCOPE | `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` |
 | Stage 12 | W7 Build Execution & Evidence | MERGED — ACCEPTED FOR W7 SCOPE | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
-| Stage 12 | W8 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
+| Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
 
 ---
 
@@ -48,21 +48,25 @@
 | W5 | MERGED — ACCEPTED FOR W5 SCOPE | #1789 |
 | W6 | MERGED — ACCEPTED FOR W6 SCOPE | #1792 |
 | W7 | MERGED — ACCEPTED FOR W7 SCOPE | #1796 (`29ed421fc7b286a4d18419ee8428c85191a78201`) |
+| W8 | MERGED — ACCEPTED FOR W8 SCOPE | #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`) |
 
 ---
 
 ## Stage 12: W8 Cumulative Regression and PBFAG Rerun
 
-**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
-**Branch**: `foreman/isms-w8-cumulative-regression-pbfag`  
+**Status**: MERGED — ACCEPTED FOR W8 SCOPE  
+**Merged PR**: #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`)  
 **Primary Evidence**:
 - `.agent-admin/builder-appointments/isms-stage11-w8-cumulative-regression-pbfag-builder-appointment.md` — W8 appointment
 - `modules/isms/11-build/w8-cumulative-qa-report.md` — cumulative QA report
 - `modules/isms/06-pbfag/pbfag-rerun-amendment-w8-cumulative-regression.md` — PBFAG amendment
 - `modules/isms/08-builder-checklist/stage9-final-reconciliation-w8.md` — final Stage 9 reconciliation
 - `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` — W8 implementation evidence
+- `.functional-delivery/pr-1801.md` — PR-scoped functional delivery evidence
+- `.agent-admin/assurance/iaa-wave-record-pr1801-isms-w8-cumulative-regression-pbfag.md` — IAA wave record
+- `.agent-workspace/foreman-v2/memory/session-1801-20260611.md` — Foreman session memory
 
-**W8 scope**:
+**W8 scope delivered**:
 - cumulative QA reconciliation for W1-W7;
 - architecture completeness and future-gated condition disposition;
 - PBFAG rerun/amendment;
@@ -74,9 +78,9 @@
 
 ## Current Stage Summary
 
-**Current Stage**: W8 PR preparation and CI gate inspection.  
-**Implementation Transfer**: Owner final decision required after W8 gate review.  
-**Next Required Action**: Open/review the W8 PR, inspect CI/review results, complete required evidence, and decide whether W8 can be accepted as complete.
+**Current Stage**: W1-W8 implementation waves complete for appointed scope.  
+**Implementation Transfer**: Owner final decision still required before any transfer or production-readiness claim.  
+**Next Required Action**: Record the owner final decision if the listed W8 conditions and future-gated limitations are accepted.
 
 ---
 
@@ -97,11 +101,10 @@
 - [x] Stage 10 IAA Pre-Brief filed
 - [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [x] Stage 11 W1-W8 Builder Appointments complete
-- [x] Stage 12 W1-W7 merged
-- [x] Stage 12 W8 implementation opened on branch
-- [ ] W8 PR opened
-- [ ] W8 CI passed
-- [ ] W8 review conversations resolved
+- [x] Stage 12 W1-W8 merged
+- [x] W8 PR opened
+- [x] W8 CI passed
+- [x] W8 review conversations resolved or dispositioned
 - [ ] W8 owner final decision recorded
 
 ---
@@ -111,11 +114,9 @@
 Remaining items:
 
 - canonical App Description path mismatch remains a governance cleanup item;
-- W8 PR must pass CI before W8 acceptance recommendation;
-- W8 review conversations must be resolved or dispositioned;
 - owner final decision is required before any implementation transfer claim;
 - future-gated items remain outside W1-W8 appointed scope: production auth/payment hardening, live AI provider, runtime persistence hooks, audit writer invocation, and external live deployment proof where not already available.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-11
+**Last Tracker Reconciliation**: 2026-06-15
