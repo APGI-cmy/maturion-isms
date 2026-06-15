@@ -33,12 +33,19 @@ and contains:
 ```yaml
 state: PRE_HANDOVER_GATE_PASS
 handover_allowed: true
-current_head_sha: <current HEAD>
+current_head_sha: <current PR head SHA>
 foreman_qp_pass: true
 iaa_prebrief_ready: true
 scope_current: true
 all_required_checks_green: true
 blocking_findings: []
+```
+
+If implementation files changed, the artifact must also contain:
+
+```yaml
+builder_delegation_verified: true
+delegation_precedes_implementation: true
 ```
 
 If `ecap_required: true`, then `ecap_admin_validated` must also be true.
@@ -57,11 +64,25 @@ Completion language includes:
 - released
 - done
 
-The CI gate checks for this language and fails if the handover control artifact is missing, stale, or false.
+The CI gate scans changed Foreman/ECAP handover artifacts for this language. It does not scan the entire repository and does not treat strategy/control documentation as a handover claim.
 
 ---
 
-## 4. Workflow and script
+## 4. Changed-file scope
+
+The gate is relevant only when the PR changes one or more of:
+
+- implementation files under `modules/*/src`, `apps/*/src`, `packages/*/src`, or `supabase/functions`;
+- test files matching `*.test.*`, `*.spec.*`, `tests/`, or `__tests__/`;
+- Foreman memory or PREHANDOVER artifacts under `.agent-workspace/foreman-v2/memory/`;
+- ECAP handover bundles under `.agent-workspace/execution-ceremony-admin-agent/bundles/`;
+- changed Foreman/ECAP handover artifacts containing completion language.
+
+If none of those changed-file conditions are true, the gate passes without requiring `handover-allowed.json`.
+
+---
+
+## 5. Workflow and script
 
 Named required-check candidate:
 
@@ -83,6 +104,6 @@ Script:
 
 ---
 
-## 5. Scope discipline
+## 6. Scope discipline
 
 This overlay intentionally does not rewrite the Foreman contract body. It is a Wave 2 scoped control overlay and may be integrated into Foreman Tier 1 during Wave 5, or into merge-gate inventory during Wave 6.
