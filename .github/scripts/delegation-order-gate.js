@@ -12,6 +12,13 @@ const controlPath = path.join(repoRoot, '.agent-admin/control/delegation-order.j
 
 const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/)/;
 const implementationTestPattern = /(^|\/)(__tests__|tests?)\/|\.(test|spec)\.(ts|tsx|js|jsx)$/;
+const stopAndFixGuidance = [
+  'STOP_AND_FIX: Delegation order could not be proven.',
+  'Required order: canonical IAA pre-brief commit -> builder appointment commit -> first implementation commit.',
+  'Same-commit proof is not accepted because it cannot prove delegation happened before implementation.',
+  'Record/commit IAA pre-brief and builder appointment before implementation, or obtain explicit CS2 waiver outside delegation-order.json.',
+  'Do not proceed to handover.'
+].join(' ');
 
 function fail(message) {
   console.error(`::error::${message}`);
@@ -80,6 +87,10 @@ function isAncestor(ancestor, descendant) {
   }
 }
 
+function isStrictAncestor(ancestor, descendant) {
+  return ancestor !== descendant && isAncestor(ancestor, descendant);
+}
+
 function firstImplementationCommit(implementationFiles) {
   if (!prBaseSha || !prHeadSha || implementationFiles.length === 0) return '';
   try {
@@ -138,19 +149,27 @@ function validateControl(control, firstImplCommit) {
     }
   }
 
+  if (control.prebrief_commit_sha === control.builder_appointment_commit_sha) {
+    errors.push('prebrief_commit_sha and builder_appointment_commit_sha must be different commits; same-commit proof is not accepted');
+  }
+
+  if (control.builder_appointment_commit_sha === control.first_implementation_commit_sha) {
+    errors.push('builder_appointment_commit_sha and first_implementation_commit_sha must be different commits; same-commit proof is not accepted');
+  }
+
   if (firstImplCommit && control.first_implementation_commit_sha !== firstImplCommit) {
     errors.push(`first_implementation_commit_sha must equal detected first implementation commit ${firstImplCommit}; got ${control.first_implementation_commit_sha}`);
   }
 
   if (control.prebrief_commit_sha && control.builder_appointment_commit_sha) {
-    if (!isAncestor(control.prebrief_commit_sha, control.builder_appointment_commit_sha)) {
-      errors.push('prebrief_commit_sha must be an ancestor of builder_appointment_commit_sha');
+    if (!isStrictAncestor(control.prebrief_commit_sha, control.builder_appointment_commit_sha)) {
+      errors.push('prebrief_commit_sha must be a strict ancestor of builder_appointment_commit_sha');
     }
   }
 
   if (control.builder_appointment_commit_sha && control.first_implementation_commit_sha) {
-    if (!isAncestor(control.builder_appointment_commit_sha, control.first_implementation_commit_sha)) {
-      errors.push('builder_appointment_commit_sha must be an ancestor of first_implementation_commit_sha');
+    if (!isStrictAncestor(control.builder_appointment_commit_sha, control.first_implementation_commit_sha)) {
+      errors.push('builder_appointment_commit_sha must be a strict ancestor of first_implementation_commit_sha');
     }
   }
 
@@ -161,6 +180,11 @@ function validateControl(control, firstImplCommit) {
   }
 
   return errors;
+}
+
+function exitWithStopAndFix(code = 1) {
+  console.error(`::error::${stopAndFixGuidance}`);
+  process.exit(code);
 }
 
 const changedFiles = getChangedFiles();
@@ -181,18 +205,18 @@ if (implementationFiles.length === 0) {
 const detectedFirstImplementationCommit = firstImplementationCommit(implementationFiles);
 if (!detectedFirstImplementationCommit) {
   fail('Implementation files changed but the first implementation commit could not be determined.');
-  process.exit(process.exitCode || 1);
+  exitWithStopAndFix(process.exitCode || 1);
 }
 
 if (!fs.existsSync(controlPath)) {
   fail('Missing .agent-admin/control/delegation-order.json while implementation files changed.');
   warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
   warn(`detected first implementation commit: ${detectedFirstImplementationCommit}`);
-  process.exit(process.exitCode || 1);
+  exitWithStopAndFix(process.exitCode || 1);
 }
 
 const control = readJson(controlPath);
-if (!control) process.exit(process.exitCode || 1);
+if (!control) exitWithStopAndFix(process.exitCode || 1);
 
 const errors = validateControl(control, detectedFirstImplementationCommit);
 if (errors.length > 0) {
@@ -200,7 +224,7 @@ if (errors.length > 0) {
   for (const error of errors) console.error(`- ${error}`);
   warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
   warn(`detected first implementation commit: ${detectedFirstImplementationCommit}`);
-  process.exit(1);
+  exitWithStopAndFix(1);
 }
 
 console.log('Delegation order gate passed.');
