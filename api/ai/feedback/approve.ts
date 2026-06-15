@@ -45,7 +45,7 @@ export function buildBearerValidator(): BearerValidator {
       const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
       if (!supabaseUrl || !supabaseAnonKey) return false;
       const authClient = createClient(supabaseUrl, supabaseAnonKey);
-      return verifyBearerWithSupabaseAuth(authClient.auth, token);
+      return await verifyBearerWithSupabaseAuth(authClient.auth, token);
     } catch {
       return false;
     }
