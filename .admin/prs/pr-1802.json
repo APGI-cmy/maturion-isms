@@ -19,8 +19,8 @@
     "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
   ],
   "risk": "low",
-  "requires_iaa": false,
-  "requires_ecap": false,
+  "requires_iaa": true,
+  "requires_ecap": true,
   "execution_model": "foreman-orchestrated",
   "evidence_required": [
     "CriteriaManagement.tsx implements DMC sentence boundary detection and contextual qualifier extraction per issue #1797",
