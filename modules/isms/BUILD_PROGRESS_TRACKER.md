@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-15  
-**Updated By**: foreman-v2-agent (wave: `isms-w8-closure-tracker-cleanup`)
+**Updated By**: foreman-v2-agent (wave: `isms-owner-decision-record`)
 
-> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — OWNER FINAL DECISION PENDING  
+> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — OWNER FINAL DECISION RECORDED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -65,6 +65,7 @@
 - `.functional-delivery/pr-1801.md` — PR-scoped functional delivery evidence
 - `.agent-admin/assurance/iaa-wave-record-pr1801-isms-w8-cumulative-regression-pbfag.md` — IAA wave record
 - `.agent-workspace/foreman-v2/memory/session-1801-20260611.md` — Foreman session memory
+- `.agent-admin/owner-decisions/isms-w8-owner-final-decision-20260615.md` — owner final decision record
 
 **W8 scope delivered**:
 - cumulative QA reconciliation for W1-W7;
@@ -76,11 +77,26 @@
 
 ---
 
+## Owner Final Decision
+
+**Status**: RECORDED — ACCEPTED WITH CONDITIONS  
+**Decision Record**: `.agent-admin/owner-decisions/isms-w8-owner-final-decision-20260615.md`
+
+Accepted conditions:
+- W1-W8 are complete for appointed scope only;
+- production auth/payment hardening remains future-gated;
+- live AI provider integration remains future-gated;
+- runtime persistence hooks remain future-gated;
+- audit writer invocation remains future-gated;
+- external live deployment proof remains future-gated or conditional.
+
+---
+
 ## Current Stage Summary
 
 **Current Stage**: W1-W8 implementation waves complete for appointed scope.  
-**Implementation Transfer**: Owner final decision still required before any transfer or production-readiness claim.  
-**Next Required Action**: Record the owner final decision if the listed W8 conditions and future-gated limitations are accepted.
+**Implementation Transfer**: Owner final decision recorded with conditions.  
+**Next Required Action**: Future work must be separately scoped for production auth/payment, live AI provider integration, runtime persistence hooks, audit writer invocation, and external live deployment proof.
 
 ---
 
@@ -105,17 +121,20 @@
 - [x] W8 PR opened
 - [x] W8 CI passed
 - [x] W8 review conversations resolved or dispositioned
-- [ ] W8 owner final decision recorded
+- [x] W8 owner final decision recorded
 
 ---
 
-## Open Conditions Carried Forward
+## Future-Gated Items
 
-Remaining items:
+The following remain outside W1-W8 appointed scope and require separate future authorization:
 
-- canonical App Description path mismatch remains a governance cleanup item;
-- owner final decision is required before any implementation transfer claim;
-- future-gated items remain outside W1-W8 appointed scope: production auth/payment hardening, live AI provider, runtime persistence hooks, audit writer invocation, and external live deployment proof where not already available.
+- production auth/payment hardening;
+- live AI provider integration;
+- runtime persistence hooks;
+- audit writer invocation;
+- external live deployment proof where not already available;
+- canonical App Description path mismatch cleanup.
 
 ---
 
