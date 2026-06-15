@@ -98,7 +98,7 @@ Before any seed is executed:
 
 2. **CS2 must supply confirmed org refs** — provide the actual UUID or name for `org_a` and `org_b` candidates.
 
-3. **CS2 must confirm current table counts** — run the read-only count query against `auth.users`, `organisations`, `user_org_memberships`, and `user_roles` to confirm no changes since PR #1791.
+3. **CS2 must confirm current table counts** — run the read-only count query against `auth.users`, `public.organisations`, `public.user_org_memberships`, and `public.user_roles` to confirm no changes since PR #1791.
 
 4. **CS2 must issue explicit seed-plan authorization** — per the builder task order in `.agent-admin/builder-appointments/pit-stage12-w82-final-verification-builder-task.md`, no Supabase seed may occur until this authorization is issued and referenced in the evidence ledger.
 
