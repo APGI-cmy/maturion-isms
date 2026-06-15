@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-08  
-**Updated By**: foreman-agent (wave: `isms-w3-subscribe-auth-onboarding`)
+**Last Updated**: 2026-06-15  
+**Updated By**: foreman-v2-agent (wave: `isms-owner-decision-record`)
 
-> **Classification**: ACTIVE — W3 SUBSCRIBE/CHECKOUT/AUTH/ONBOARDING OPENED  
+> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — OWNER FINAL DECISION RECORDED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -18,84 +18,85 @@
 | Stage 1 | App Description | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-app-description-v1.2.0-ai-cs2-proxy-signoff-20260529.md` |
 | Stage 2 | UX Workflow & Wiring Spec | COMPLETE — Approved with conditions | `modules/isms/01-ux-workflow-wiring-spec/ux-workflow-wiring-spec.md` |
 | Stage 3 | FRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-frs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
-| Stage 4 | TRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-trs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
+| Stage 4 | TRS | COMPLETE — Approved with conditions | `.agent-admin/signoffs/isms-frs-v0.1.0-ai-cs2-proxy-signoff-20260529.md` |
 | Stage 5 | Architecture | COMPLETE — Approved with conditions; remediation pack accepted for planning | `modules/isms/04-architecture/architecture-remediation-pack.md` |
 | Stage 6 | QA-to-Red | COMPLETE — RED catalog specified | `modules/isms/05-qa-to-red/qa-to-red-catalog.md` |
-| Stage 7 | PBFAG | COMPLETE — Amendment accepts remediation for Stage 8 planning only | `modules/isms/06-pbfag/pbfag-amendment-architecture-remediation-acceptance.md` |
+| Stage 7 | PBFAG | ACCEPTED WITH CONDITIONS | `modules/isms/06-pbfag/pbfag-rerun-amendment-w8-cumulative-regression.md` |
 | Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
-| Stage 9 | Builder Checklist | COMPLETE — Checklist artifact only | `modules/isms/08-builder-checklist/builder-checklist.md` |
+| Stage 9 | Builder Checklist | RECONCILED WITH CONDITIONS | `modules/isms/08-builder-checklist/stage9-final-reconciliation-w8.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | COMPLETE FOR W1, W2 AND W3 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1-W8 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w5-ask-maturion-adapter-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w6-backend-persistence-audit-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w7-deployment-runtime-hardening-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w8-cumulative-regression-pbfag-builder-appointment.md` |
 | Stage 12 | W1 Build Execution & Evidence | MERGED — ACCEPTED FOR W1 SCOPE | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
 | Stage 12 | W2 Build Execution & Evidence | MERGED — ACCEPTED FOR W2 SCOPE | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
-| Stage 12 | W3 Build Execution & Evidence | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` |
+| Stage 12 | W3 Build Execution & Evidence | MERGED — ACCEPTED FOR W3 SCOPE | `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` |
+| Stage 12 | W4 Build Execution & Evidence | MERGED — ACCEPTED FOR W4 SCOPE | `modules/isms/11-build/w4-context-entitlement-handoff-evidence.md` |
+| Stage 12 | W5 Build Execution & Evidence | MERGED — ACCEPTED FOR W5 SCOPE | `modules/isms/11-build/w5-ask-maturion-adapter-evidence.md` |
+| Stage 12 | W6 Build Execution & Evidence | MERGED — ACCEPTED FOR W6 SCOPE | `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` |
+| Stage 12 | W7 Build Execution & Evidence | MERGED — ACCEPTED FOR W7 SCOPE | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
+| Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
 
 ---
 
-## Stage 12: W1 Route Public Shell
+## Stage 12: Completed Wave Summary
 
-**Status**: MERGED — ACCEPTED FOR W1 SCOPE  
-**Merged PR**: #1776 (`20d226612f0be0f5c83488865d9d84b56e6204dd`)  
-**Correction PR**: #1779 (`3fe209365b26a5fdd35f34f40da441c96bed001f`)  
-**Primary Evidence**:
-- `modules/isms/11-build/w1-route-public-shell-evidence.md`
-- `.agent-admin/quality/isms-w1-route-public-shell-20260602-foreman-qp.md`
-- `.agent-admin/ecap/isms-w1-route-public-shell-20260602-ecap.md`
-- `.agent-admin/assurance/iaa-wave-record-isms-w1-route-public-shell-20260602.md`
-- `.agent-admin/assurance/iaa-token-isms-w1-route-public-shell-20260602.md`
-- `.functional-delivery/pr-1776.md`
-- `.functional-delivery/pr-1779.md`
-
----
-
-## Stage 12: W2 Free Assessment Result Flow
-
-**Status**: MERGED — ACCEPTED FOR W2 SCOPE  
-**Merged PR**: #1781 (`f7d592dfcd9caf3f748f78318eea629f95fe8174`)  
-**Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`
-- `modules/isms/11-build/w2-free-assessment-flow-evidence.md`
-- `.functional-delivery/pr-1781.md`
-- `.agent-admin/assurance/iaa-wave-record-pr1781-isms-w2-free-assessment-flow.md`
-- `.agent-workspace/foreman-v2/memory/session-1781-20260604.md`
-
-W2 delivered the public free assessment and report scope only. It does not claim W3-W8 delivery.
+| Wave | Status | Merged PR / evidence |
+|---|---|---|
+| W1 | MERGED — ACCEPTED FOR W1 SCOPE | #1776 plus correction #1779 |
+| W2 | MERGED — ACCEPTED FOR W2 SCOPE | #1781 |
+| W3 | MERGED — ACCEPTED FOR W3 SCOPE | #1783 |
+| W4 | MERGED — ACCEPTED FOR W4 SCOPE | #1786 |
+| W5 | MERGED — ACCEPTED FOR W5 SCOPE | #1789 |
+| W6 | MERGED — ACCEPTED FOR W6 SCOPE | #1792 |
+| W7 | MERGED — ACCEPTED FOR W7 SCOPE | #1796 (`29ed421fc7b286a4d18419ee8428c85191a78201`) |
+| W8 | MERGED — ACCEPTED FOR W8 SCOPE | #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`) |
 
 ---
 
-## Stage 12: W3 Subscribe, Checkout Mock, Auth, Onboarding
+## Stage 12: W8 Cumulative Regression and PBFAG Rerun
 
-**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
-**Branch**: `foreman/isms-w3-subscribe-auth-onboarding`  
+**Status**: MERGED — ACCEPTED FOR W8 SCOPE  
+**Merged PR**: #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`)  
 **Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md` — W3 appointment
-- `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` — W3 implementation evidence
+- `.agent-admin/builder-appointments/isms-stage11-w8-cumulative-regression-pbfag-builder-appointment.md` — W8 appointment
+- `modules/isms/11-build/w8-cumulative-qa-report.md` — cumulative QA report
+- `modules/isms/06-pbfag/pbfag-rerun-amendment-w8-cumulative-regression.md` — PBFAG amendment
+- `modules/isms/08-builder-checklist/stage9-final-reconciliation-w8.md` — final Stage 9 reconciliation
+- `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` — W8 implementation evidence
+- `.functional-delivery/pr-1801.md` — PR-scoped functional delivery evidence
+- `.agent-admin/assurance/iaa-wave-record-pr1801-isms-w8-cumulative-regression-pbfag.md` — IAA wave record
+- `.agent-workspace/foreman-v2/memory/session-1801-20260611.md` — Foreman session memory
+- `.agent-admin/owner-decisions/isms-w8-owner-final-decision-20260615.md` — owner final decision record
 
-**Runtime files changed by W3**:
-- `apps/isms-portal/src/lib/subscription.ts`
-- `apps/isms-portal/src/context/AuthContext.tsx`
-- `apps/isms-portal/src/components/auth/LoginForm.tsx`
-- `apps/isms-portal/src/pages/Onboarding.tsx`
-- `apps/isms-portal/src/App.tsx`
-- `apps/isms-portal/src/components/checkout/CheckoutForm.tsx`
-- `apps/isms-portal/src/components/checkout/EFTPaymentSection.tsx`
-- `apps/isms-portal/src/pages/SubscribeCheckout.tsx`
+**W8 scope delivered**:
+- cumulative QA reconciliation for W1-W7;
+- architecture completeness and future-gated condition disposition;
+- PBFAG rerun/amendment;
+- final Stage 9 checklist reconciliation;
+- owner final decision readiness recommendation;
+- no new runtime functionality.
 
-**W3 scope**:
-- checkout mock completion;
-- auth entry for unauthenticated checkout completion;
-- protected onboarding shell;
-- required onboarding fields;
-- onboarding completion route to protected dashboard placeholder;
-- W4 entitlement/MMM handoff remains out of scope.
+---
+
+## Owner Final Decision
+
+**Status**: RECORDED — ACCEPTED WITH CONDITIONS  
+**Decision Record**: `.agent-admin/owner-decisions/isms-w8-owner-final-decision-20260615.md`
+
+Accepted conditions:
+- W1-W8 are complete for appointed scope only;
+- production auth/payment hardening remains future-gated;
+- live AI provider integration remains future-gated;
+- runtime persistence hooks remain future-gated;
+- audit writer invocation remains future-gated;
+- external live deployment proof remains future-gated or conditional.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: W3 PR preparation and CI gate inspection.  
-**Implementation Handover**: Not authorized.  
-**Next Required Action**: Open/review the W3 PR, inspect CI/review results, complete required evidence, and only then decide whether W3 can be accepted as complete.
+**Current Stage**: W1-W8 implementation waves complete for appointed scope.  
+**Implementation Transfer**: Owner final decision recorded with conditions.  
+**Next Required Action**: Future work must be separately scoped for production auth/payment, live AI provider integration, runtime persistence hooks, audit writer invocation, and external live deployment proof.
 
 ---
 
@@ -109,37 +110,32 @@ W2 delivered the public free assessment and report scope only. It does not claim
 - [x] Architecture completeness gap analysis filed
 - [x] Architecture remediation pack created
 - [x] Stage 6 QA-to-Red catalog created
-- [x] Stage 7 PBFAG completed
-- [x] PBFAG amendment accepted remediation for Stage 8 planning
+- [x] Stage 7 PBFAG completed and W8 amendment filed
 - [x] Stage 8 Implementation Plan complete
 - [x] Wave evidence plan complete
-- [x] Stage 9 Builder Checklist complete
+- [x] Stage 9 Builder Checklist complete and W8 final reconciliation filed
 - [x] Stage 10 IAA Pre-Brief filed
 - [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
-- [x] Stage 11 W1 Builder Appointment complete
-- [x] Stage 12 W1 merged and corrected
-- [x] Stage 11 W2 Builder Appointment complete
-- [x] Stage 12 W2 merged
-- [x] Stage 11 W3 Builder Appointment complete
-- [x] Stage 12 W3 implementation opened on branch
-- [ ] W3 PR opened
-- [ ] W3 CI passed
-- [ ] W3 review conversations resolved
-- [ ] W3 handover authorized
+- [x] Stage 11 W1-W8 Builder Appointments complete
+- [x] Stage 12 W1-W8 merged
+- [x] W8 PR opened
+- [x] W8 CI passed
+- [x] W8 review conversations resolved or dispositioned
+- [x] W8 owner final decision recorded
 
 ---
 
-## Open Conditions Carried Forward
+## Future-Gated Items
 
-Remaining items:
+The following remain outside W1-W8 appointed scope and require separate future authorization:
 
-- canonical App Description path mismatch remains a governance cleanup item;
-- W3 PR must pass CI before W3 acceptance recommendation;
-- W3 review conversations must be resolved or dispositioned;
-- W4-W8 remain unappointed and unauthorized;
-- ISMS Vercel deployment workflow does not exist yet and is future-gated to W7 unless explicitly created earlier;
-- implementation handover remains blocked until later gates are complete or explicitly waived.
+- production auth/payment hardening;
+- live AI provider integration;
+- runtime persistence hooks;
+- audit writer invocation;
+- external live deployment proof where not already available;
+- canonical App Description path mismatch cleanup.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-08
+**Last Tracker Reconciliation**: 2026-06-15

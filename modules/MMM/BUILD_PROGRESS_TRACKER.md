@@ -14,12 +14,12 @@
 ## Recent Failure Register (Live)
 
 - **2026-06-10 — Descriptor Included Verbatim Guidance Note As Evidence Requirement**
-  - **Observed Failure**: A maturity descriptor included a parenthetical `Note:` from the accepted verbatim criterion about Performance Management Scorecards, KPA/Objectives, HR consultation, and additional role-description review.
-  - **Evidence**: User screenshot highlighted the note text inside the generated Reactive descriptor and clarified that the note is guidance/reference for understanding the criterion, not part of the evidence requirement.
-  - **Root Cause**: Descriptor evidence-clause generation stripped generic source tags but did not remove explicit explanatory `Note:`/`Guidance:`/`Reference:` text before deriving the auditable evidence subject.
+  - **Observed Failure**: A maturity descriptor included a parenthetical `Note:` from the accepted verbatim criterion about Performance Management Scorecards, KPA/Objectives, HR consultation, and additional role-description review. After the first fix, regenerated descriptors could still include the note when AI refinement returned it.
+  - **Evidence**: User screenshot and follow-up runtime text showed the note text inside the generated descriptor and clarified that the note is guidance/reference for understanding the criterion, not part of the evidence requirement.
+  - **Root Cause**: Descriptor evidence-clause generation stripped generic source tags but did not remove explicit explanatory `Note:`/`Guidance:`/`Reference:` text before deriving the auditable evidence subject. The first correction only protected deterministic fallback/prompting; AI-refined descriptors also needed sanitization at final validation.
   - **Prebuild/Architecture Update**: DMC architecture now states that explanatory notes remain visible in the accepted criterion but are excluded from descriptor evidence clauses.
   - **QA-to-Red Gate**: Added `T-MMM-DMC-042` in `05-qa-to-red/dmc-subject-knowledge-qa-to-red.md`.
-  - **Build-to-Green Fix**: Descriptor subject derivation now strips parenthetical/bracketed note/guidance/reference text before maturity descriptor construction, and the AI reconstruction prompt carries the same exclusion rule.
+  - **Build-to-Green Fix**: Descriptor subject derivation now strips parenthetical/bracketed note/guidance/reference text before maturity descriptor construction, the AI reconstruction prompt carries the same exclusion rule, and validated AI descriptor output is sanitized before display/save.
 
 - **2026-06-10 — Descriptor Edit Learning Was Not An Explicit AI Interaction**
   - **Observed Failure**: Descriptor edits were saved and recorded for learning, but the UI did not make Maturion's learning behavior visible at the moment of correction.
@@ -1543,11 +1543,12 @@ This tracker now serves as the active failure and traceability register for MMM 
 24. **Verbatim guidance note leaked into maturity descriptor**
    - Failure Class: descriptor evidence-subject hygiene / verbatim guidance handling.
    - Symptom: Parenthetical guidance text beginning with `Note:` was included inside the level descriptor evidence clause.
-   - Cause Class: Descriptor generation treated all accepted criterion text as evidence-bearing text and did not distinguish explanatory notes from the criterion requirement.
+   - Cause Class: Descriptor generation treated all accepted criterion text as evidence-bearing text and did not distinguish explanatory notes from the criterion requirement; AI-refined descriptor text also needed final sanitization because prompt-only rules are not an enforcement boundary.
    - Corrective Action:
      - Added descriptor-only stripping for parenthetical/bracketed `Note:`, `Guidance:`, and `Reference:` text.
      - Kept notes available in the main accepted criterion text for user context.
-     - Added B4 regression coverage for the Performance Management Scorecard / KPA note pattern.
+     - Added final descriptor-output sanitization for AI-refined drafts before display/save.
+     - Added B4 regression coverage for the Performance Management Scorecard / KPA note pattern, including an AI response that incorrectly echoes the note.
    - QA-to-Red Trace:
      - `T-MMM-DMC-042` descriptor evidence clauses must exclude verbatim guidance notes.
 

@@ -27,6 +27,8 @@ const Onboarding = () => {
   };
 
   const handleSubmit = (event: import('react').FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!isComplete) return;
 
     window.localStorage.setItem(
       ONBOARDING_PROFILE_STORAGE_KEY,
