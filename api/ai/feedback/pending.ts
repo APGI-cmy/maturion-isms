@@ -1,5 +1,5 @@
-/*
- * Vercel Serverless API Gateway - GET /api/ai/feedback/pending
+/**
+ * Vercel Serverless API Gateway — GET /api/ai/feedback/pending
  *
  * ARC (Adaptive Review Committee) endpoint that lists pending feedback events
  * for a given organisation. Requires either:
@@ -7,10 +7,17 @@
  *   - Authorization: Bearer <supabase-session-jwt> (Supabase-verified operator session)
  *     with organisationId provided as a query parameter.
  *
- * F-D3-002 remediation: Bearer tokens are verified via Supabase auth getUser.
+ * F-D3-002 remediation: Bearer tokens are verified via supabase.auth.getUser() —
+ * structural-only (3-part format) validation has been replaced with real Supabase
+ * JWT signature and expiry verification.
  *
  * Query parameters:
- *   organisationId - required; the organisation whose pending events are returned
+ *   organisationId — required; the organisation whose pending events are returned
+ *
+ * References:
+ *   ARCH_FREEZE-wave9-self-learning-loop-20260226.md §4.2 (API)
+ *   Issue #628 — Wave 9.4-FU authority: CS2 (@APGI-cmy)
+ *   GRS-011 | APS §10 | AAD §10.1
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { URL } from 'node:url';
