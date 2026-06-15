@@ -389,11 +389,15 @@ jobs:
           ROUTES=("/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload")
           FAIL=0
           for route in "${ROUTES[@]}"; do
+            route_url="$PREVIEW_URL$route"
+            if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              route_url="$route_url?x-vercel-protection-bypass=$VERCEL_AUTOMATION_BYPASS_SECRET&x-vercel-set-bypass-cookie=samesitenone"
+            fi
             http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
               --connect-timeout 10 \
               --max-time 30 \
               -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
-              "$PREVIEW_URL$route" 2>/dev/null || echo "000")
+              "$route_url" 2>/dev/null || echo "000")
             if [ "$http_code" = "404" ]; then
               echo "❌ FAIL: $route → HTTP $http_code (404 NOT_FOUND — SPA fallback likely broken)"
               FAIL=1

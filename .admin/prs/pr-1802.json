@@ -15,6 +15,8 @@
     ".agent-admin/scope-declarations/pr-1802.md",
     ".agent-workspace/foreman-v2/memory/session-pr-1802-mmm-dmc-runtime-builder-20260611.md",
     ".functional-delivery/pr-1802.md",
+    ".github/workflows/deploy-mmm-vercel.yml",
+    ".github/workflows/mmm-live-dashboard-diagnosis.yml",
     "apps/mmm/src/components/assessment/CriteriaManagement.tsx",
     "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
   ],
@@ -26,9 +28,11 @@
     "CriteriaManagement.tsx implements DMC sentence boundary detection and contextual qualifier extraction per issue #1797",
     "B4-framework regression tests T-MMM-DMC-044R through T-MMM-DMC-048R cover descriptor reconstruction scenarios",
     "All 276 B4 tests (271 existing + 5 new) pass without regression",
+    "MMM live diagnosis workflow uses pnpm 9.12.0 consistent with repository packageManager",
+    "Deploy Preview SPA smoke test sends Vercel bypass as query params so route checks validate app routing, not deployment protection",
     "Foreman session memory confirms builder delegation to ui-builder and qa-builder",
     "Functional delivery evidence confirms ADMIN_ONLY verdict pending live deployed preview"
   ],
   "merge_authority": "CS2",
-  "non_overclaim": "Runtime descriptor reconstruction only. No dashboard, deployment, workflow, PIT, or CodeQL file changes. Functional delivery is ADMIN_ONLY pending CS2 live preview confirmation."
+  "non_overclaim": "Runtime descriptor reconstruction plus CI harness alignment for MMM preview diagnosis/deploy smoke checks only. No dashboard, PIT, or CodeQL file changes. Functional delivery is ADMIN_ONLY pending CS2 live preview confirmation."
 }
