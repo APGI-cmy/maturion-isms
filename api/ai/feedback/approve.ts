@@ -1,21 +1,10 @@
-/**
- * Vercel Serverless API Gateway — POST /api/ai/feedback/approve
+/*
+ * Vercel Serverless API Gateway - POST /api/ai/feedback/approve
  *
  * ARC (Adaptive Review Committee) approval/rejection endpoint.
  * Accepts either:
  *   - x-arc-token header matching ARC_APPROVAL_TOKEN (CS2-gated direct access), or
  *   - Authorization: Bearer <supabase-session-jwt> (Supabase-verified operator session).
- *
- * F-D3-002 remediation: Bearer tokens are verified via supabase.auth.getUser() —
- * structural-only (3-part format) validation has been replaced with real Supabase
- * JWT signature and expiry verification.
- *
- * Request body: { eventId: string, decision: 'approved' | 'rejected', reviewedBy: string, notes?: string }
- *
- * References:
- *   ARCH_FREEZE-wave9-self-learning-loop-20260226.md §4.2 (API)
- *   Issue #613 — Wave 9.4 authority: CS2 (@APGI-cmy)
- *   GRS-011 | APS §10 | AAD §10.1
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
@@ -27,18 +16,28 @@ import type { FeedbackPipelineInterface } from '../../../packages/ai-centre/src/
 // Bearer validator (injectable for testing)
 // ---------------------------------------------------------------------------
 
-/**
- * A function that verifies a Bearer token is a valid, live Supabase session.
- * Returns true if the token is verified, false otherwise.
- * Injectable via createHandler to allow unit tests to run without a real Supabase instance.
- */
 export type BearerValidator = (token: string) => Promise<boolean>;
 
-/**
- * Build a BearerValidator backed by supabase.auth.getUser().
- * This performs real Supabase JWT signature and expiry verification — not structural-only.
- * F-D3-002 remediation: replaces the prior structural-only 3-part format check.
- */
+type SupabaseAuthUserResponse = {
+  data?: { user?: unknown | null };
+  error?: unknown | null;
+};
+
+type SupabaseAuthWithGetUser = {
+  getUser: (jwt?: string) => Promise<SupabaseAuthUserResponse>;
+};
+
+async function verifyBearerWithSupabaseAuth(auth: unknown, token: string): Promise<boolean> {
+  const authWithGetUser = auth as Partial<SupabaseAuthWithGetUser>;
+
+  if (typeof authWithGetUser.getUser !== 'function') {
+    return false;
+  }
+
+  const { data, error } = await authWithGetUser.getUser(token);
+  return !error && Boolean(data?.user);
+}
+
 export function buildBearerValidator(): BearerValidator {
   return async (token: string): Promise<boolean> => {
     try {
@@ -46,8 +45,7 @@ export function buildBearerValidator(): BearerValidator {
       const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
       if (!supabaseUrl || !supabaseAnonKey) return false;
       const authClient = createClient(supabaseUrl, supabaseAnonKey);
-      const { data, error } = await authClient.auth.getUser(token);
-      return !error && data.user !== null;
+      return verifyBearerWithSupabaseAuth(authClient.auth, token);
     } catch {
       return false;
     }
@@ -124,11 +122,6 @@ export function validateApproveBody(body: unknown): ApproveBody {
 // Handler
 // ---------------------------------------------------------------------------
 
-/**
- * Create a handler with an injectable FeedbackPipeline factory and optional BearerValidator.
- * The default export uses buildFeedbackPipeline() and buildBearerValidator().
- * Tests may inject mock implementations to avoid real Supabase calls.
- */
 export function createHandler(
   factory: FeedbackPipelineFactory = buildFeedbackPipeline,
   validateBearer: BearerValidator = buildBearerValidator(),
@@ -145,8 +138,6 @@ export function createHandler(
       return;
     }
 
-    // Authentication: x-arc-token (CS2-gated direct) or Supabase-verified Bearer token.
-    // F-D3-002 remediation: structural-only JWT checks are replaced with supabase.auth.getUser().
     const arcTokenHeader = (req.headers as Record<string, string | string[] | undefined>)['x-arc-token'];
     const authHeader = (req.headers as Record<string, string | string[] | undefined>)['authorization'];
     const expectedToken = process.env['ARC_APPROVAL_TOKEN'];
