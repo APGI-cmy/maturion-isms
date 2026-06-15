@@ -1,0 +1,34 @@
+{
+  "pr": 1802,
+  "issue": 1797,
+  "issue_title": "MMM DMC runtime descriptor reconstruction",
+  "type": "product-fix",
+  "owner": "Copilot",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "ui-builder",
+  "branch": "foreman/issue-1797-mmm-runtime-builder",
+  "head_sha": "current_head",
+  "base_sha": "current_base",
+  "scope": [
+    ".admin/prs/pr-1802.json",
+    ".agent-admin/assurance/iaa-wave-record-pr1802-mmm-dmc-descriptor-reconstruction.md",
+    ".agent-admin/scope-declarations/pr-1802.md",
+    ".agent-workspace/foreman-v2/memory/session-pr-1802-mmm-dmc-runtime-builder-20260611.md",
+    ".functional-delivery/pr-1802.md",
+    "apps/mmm/src/components/assessment/CriteriaManagement.tsx",
+    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
+  ],
+  "risk": "low",
+  "requires_iaa": false,
+  "requires_ecap": false,
+  "execution_model": "foreman-orchestrated",
+  "evidence_required": [
+    "CriteriaManagement.tsx implements DMC sentence boundary detection and contextual qualifier extraction per issue #1797",
+    "B4-framework regression tests T-MMM-DMC-044R through T-MMM-DMC-048R cover descriptor reconstruction scenarios",
+    "All 276 B4 tests (271 existing + 5 new) pass without regression",
+    "Foreman session memory confirms builder delegation to ui-builder and qa-builder",
+    "Functional delivery evidence confirms ADMIN_ONLY verdict pending live deployed preview"
+  ],
+  "merge_authority": "CS2",
+  "non_overclaim": "Runtime descriptor reconstruction only. No dashboard, deployment, workflow, PIT, or CodeQL file changes. Functional delivery is ADMIN_ONLY pending CS2 live preview confirmation."
+}
