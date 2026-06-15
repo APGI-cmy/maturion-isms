@@ -31,7 +31,7 @@ Allowed result language:
 ```text
 ADMIN_VALIDATED
 ADMIN_BLOCKED
-READY_FOR_FOREMAN_ADMIN_REVIEW
+ADMIN_READY_FOR_FOREMAN_REVIEW
 ```
 
 ---
@@ -49,7 +49,7 @@ ECAP may not:
 - issue or simulate a rejection package;
 - convert failed substantive work into an admin-complete handover.
 
-Forbidden result language includes:
+Forbidden result language examples:
 
 ```text
 ready for IAA
@@ -60,6 +60,8 @@ implementation complete
 assurance token
 rejection package
 ```
+
+These forbidden examples are documentation only. ECAP output artifacts must not use them as status claims.
 
 ---
 
@@ -77,7 +79,7 @@ and should conform to:
 .agent-admin/control/schemas/ecap-admin-validation.schema.json
 ```
 
-The artifact must explicitly report:
+The artifact must explicitly report, in YAML or JSON form:
 
 ```yaml
 substantive_readiness_judgment_made: false
@@ -88,7 +90,17 @@ admin_validation_result: ADMIN_VALIDATED | ADMIN_BLOCKED
 
 ---
 
-## 5. IAA treatment of ECAP evidence
+## 5. CI scanner scope
+
+The ECAP admin boundary gate applies different checks to different file classes:
+
+- ECAP output artifacts are scanned for forbidden readiness/assurance language.
+- ECAP output artifacts with an admin validation block must include the three boundary declarations above.
+- Control overlays, schemas, templates, checklists, and ECAP knowledge files are checked for admin-only boundary guidance, but their forbidden-language examples are not treated as ECAP output claims.
+
+---
+
+## 6. IAA treatment of ECAP evidence
 
 IAA must treat ECAP validation as administrative evidence only.
 
@@ -96,6 +108,6 @@ ECAP validation may support artifact/path/scope/commit-state checks. It must not
 
 ---
 
-## 6. Scope discipline
+## 7. Scope discipline
 
 This overlay intentionally does not rewrite ECAP, Foreman, or IAA contract bodies. Contract-body integration is deferred until Wave 5. Required-check inventory alignment is deferred until Wave 6.
