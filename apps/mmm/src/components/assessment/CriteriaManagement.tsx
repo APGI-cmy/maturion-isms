@@ -575,13 +575,9 @@ function criterionRequirementSubject(criterionText: string): string {
     .replace(/\s+/g, ' ')
     .trim();
 
-  // Strip any secondary sentences still present after the merges above.
-  // Split on sentence boundaries and keep only the first segment so the
-  // evidence lead is always a single clean clause.
-  const firstSegment = subject.split(SENTENCE_BOUNDARY_RE)[0];
-  if (firstSegment) {
-    subject = firstSegment.replace(/[.;:,]+$/g, '').trim();
-  }
+  // Keep non-qualifier follow-on requirement sentences so fallback descriptors
+  // preserve full criterion intent. Contextual qualifier second sentences are
+  // already merged by `compressContextualQualifiers`.
 
   if (!subject) {
     subject = firstCriterionClause(clean);
@@ -1663,7 +1659,8 @@ export function CriteriaManagement({
         [criterionId]: edited,
       };
     });
-    if (descriptorLearningConsentByCriterion[`${criterionId}:${level}`] === undefined) {
+    const consentKey = `${criterionId}:${level}`;
+    if (!Object.prototype.hasOwnProperty.call(descriptorLearningConsentByCriterion, consentKey)) {
       setDescriptorLearningPrompt((current) => current ?? { criterionId, level });
     }
   };
