@@ -36,9 +36,9 @@ Allowed result language:
 
 - `ADMIN_VALIDATED`
 - `ADMIN_BLOCKED`
-- `READY_FOR_FOREMAN_ADMIN_REVIEW`
+- `ADMIN_READY_FOR_FOREMAN_REVIEW`
 
-Forbidden result language:
+Forbidden result language examples:
 
 - `ready for IAA`
 - `ready for merge`
@@ -46,5 +46,7 @@ Forbidden result language:
 - `implementation complete`
 - `ASSURANCE-TOKEN`
 - `REJECTION-PACKAGE`
+
+These forbidden examples are documentation only. ECAP output artifacts must not use them as status claims.
 
 ECAP must not make substantive build-readiness, quality, merge-readiness, or final-assurance judgments.
