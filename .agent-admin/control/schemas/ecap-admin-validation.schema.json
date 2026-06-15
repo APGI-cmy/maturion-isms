@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/APGI-cmy/maturion-isms/.agent-admin/control/schemas/ecap-admin-validation.schema.json",
+  "title": "ECAP Administrative Validation Summary",
+  "description": "Machine-readable ECAP admin-only validation summary. ECAP validates ceremony/admin evidence only and must not decide substantive build readiness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "wave_id",
+    "pr_number",
+    "ecap_session_id",
+    "validation_scope",
+    "admin_checks",
+    "artifact_paths_resolved",
+    "scope_declaration_current",
+    "pr_admin_json_current",
+    "commit_state_verified",
+    "substantive_readiness_judgment_made",
+    "iaa_invoked_by_ecap",
+    "foreman_qp_judgment_rewritten",
+    "admin_validation_result",
+    "blocking_admin_findings"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "wave_id": { "type": "string", "minLength": 1 },
+    "pr_number": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1 },
+        { "type": "null" }
+      ]
+    },
+    "ecap_session_id": { "type": "string", "minLength": 1 },
+    "validation_scope": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "admin_checks": {
+      "type": "object",
+      "additionalProperties": { "type": "boolean" }
+    },
+    "artifact_paths_resolved": { "type": "boolean" },
+    "scope_declaration_current": { "type": "boolean" },
+    "pr_admin_json_current": { "type": "boolean" },
+    "commit_state_verified": { "type": "boolean" },
+    "substantive_readiness_judgment_made": { "type": "boolean", "const": false },
+    "iaa_invoked_by_ecap": { "type": "boolean", "const": false },
+    "foreman_qp_judgment_rewritten": { "type": "boolean", "const": false },
+    "admin_validation_result": {
+      "type": "string",
+      "enum": ["ADMIN_VALIDATED", "ADMIN_BLOCKED"]
+    },
+    "blocking_admin_findings": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
