@@ -71,7 +71,7 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 
 | Actor | Expected allowed behavior | Expected denied behavior |
 |---|---|---|
-| `actor_cs2_admin` | SELECT on all W8.2 tables via `pit_is_cs2_admin()`; `/qa-dashboard` route | Cannot write rows with spoofed `created_by` values (DB constraint). |
+| `actor_cs2_admin` | SELECT on all W8.2 tables via `pit_is_cs2_admin()`; `/qa-dashboard` route | Cannot spoof `created_by`/`actor_id` on authenticated writes due to RLS `WITH CHECK` policies (service role bypasses RLS). |
 | `actor_org_admin` | SELECT own-org memberships/roles; INSERT membership in `org_a`; SELECT `audit_log` for `org_a`; admin nav for `org_a` visible | `/qa-dashboard` (CS2-only); cross-org membership/role reads; role writes outside `org_a`. |
 | `actor_non_admin` | No positive W8.2 table access without membership. | All W8.2 admin routes (`/admin/org`, `/admin/users`, `/admin/settings`, `/admin/audit-log`, `/qa-dashboard`); all table SELECT via RLS. |
 
