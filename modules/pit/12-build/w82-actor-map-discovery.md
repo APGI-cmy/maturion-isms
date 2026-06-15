@@ -83,7 +83,7 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 |---|---|---|
 | `user_ref_A` | `actor_cs2_admin` | One of the three existing auth users; should be a CS2 or admin-level identity confirmed safe for test use. |
 | `user_ref_B` | `actor_org_admin` | One of the three existing auth users; should be a non-admin identity that can receive a scoped `org_admin` role in `org_a` for verification only. |
-| `user_ref_C` | `actor_non_admin` | One of the three existing auth users; should remain without any W8.2 role assignment so denied-path checks can be validated against a zero-role identity. |
+| `user_ref_C` | `actor_non_admin_rotation` | One of the three existing auth users; proposed reusable non-admin actor for sequential viewer, contributor, team_leader, and project_manager denied-path checks. |
 
 ### Candidate organisation refs
 
@@ -101,9 +101,23 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 |---|---|---|---|
 | `actor_cs2_admin` | `user_ref_A` | `user_roles` row: `role = 'cs2_admin'`, `org_id IS NULL`, `project_id IS NULL` | Global CS2 admin — cross-org visibility expected. |
 | `actor_org_admin` | `user_ref_B` | `user_org_memberships` row: `org_id = org_ref_1`, `status = 'active'`; `user_roles` row: `role = 'org_admin'`, `org_id = org_ref_1` | Org-scoped admin for `org_a` only. |
-| `actor_non_admin` | `user_ref_C` | No seed — zero membership, zero role assignment. | No role; denied-path verification subject. |
+| `actor_non_admin_rotation` | `user_ref_C` | `user_org_memberships` row: `org_id = org_ref_1`, `status = 'active'`; one `user_roles` row at a time, rotating through `viewer`, `contributor`, `team_leader`, and `project_manager` | Sequential non-admin denied-path evidence subject. |
+| `actor_no_membership_optional` | `user_ref_C` after non-admin role cleanup, or separate CS2-approved test user if available | No membership or role row | Optional missing-role/no-org-context denial check; not a substitute for the four non-admin role checks. |
 | `org_a` | `org_ref_1` | None — exists. | Primary test organisation. |
 | `org_b` | `org_ref_2` | None — exists. | Cross-org deny target. |
+
+### Non-admin role rotation requirement
+
+W8.2 final denied-path evidence must include authenticated non-admin checks for each lower role:
+
+| Rotation step | Actor handle | Membership required | Role under test | Expected admin/QA route result |
+|---|---|---|---|---|
+| 1 | `user_ref_C` | active membership in `org_a` | `viewer` | denied for `/admin/org`, `/admin/users`, `/admin/settings`, `/admin/audit-log`, `/qa-dashboard` |
+| 2 | `user_ref_C` | active membership in `org_a` | `contributor` | denied for `/admin/org`, `/admin/users`, `/admin/settings`, `/admin/audit-log`, `/qa-dashboard` |
+| 3 | `user_ref_C` | active membership in `org_a` | `team_leader` | denied for `/admin/org`, `/admin/users`, `/admin/settings`, `/admin/audit-log`, `/qa-dashboard` |
+| 4 | `user_ref_C` | active membership in `org_a` | `project_manager` | denied for `/admin/org`, `/admin/users`, `/admin/settings`, `/admin/audit-log`, `/qa-dashboard` |
+
+Only one non-admin role should be active for `user_ref_C` during each rotation step. The next role must replace the previous test role, or the evidence must clearly show the intended effective role set. This prevents the missing-role/no-org-context path from being mistaken for actual lower-role denied-path coverage.
 
 ---
 
@@ -113,7 +127,8 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 |---|---|---|
 | `actor_cs2_admin` | SELECT on all W8.2 tables via `pit_is_cs2_admin()`; `/qa-dashboard` route | Cannot spoof `created_by`/`actor_id` on authenticated writes due to RLS `WITH CHECK` policies (service role bypasses RLS). |
 | `actor_org_admin` | SELECT own-org memberships/roles; INSERT membership in `org_a`; SELECT `audit_log` for `org_a`; admin nav for `org_a` visible | `/qa-dashboard` (CS2-only); cross-org membership/role reads; role writes outside `org_a`. |
-| `actor_non_admin` | No positive W8.2 table access without membership. | All W8.2 admin routes (`/admin/org`, `/admin/users`, `/admin/settings`, `/admin/audit-log`, `/qa-dashboard`); all table SELECT via RLS. |
+| `actor_non_admin_rotation` | Authenticated own-org lower-role context for viewer/contributor/team_leader/project_manager, one role at a time | All W8.2 admin routes (`/admin/org`, `/admin/users`, `/admin/settings`, `/admin/audit-log`) and `/qa-dashboard`; unauthorized table writes; cross-org reads. |
+| `actor_no_membership_optional` | No positive W8.2 table access without membership | All W8.2 admin routes and all table SELECT via RLS. |
 
 ---
 
@@ -126,7 +141,8 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 | **ORG_IDENTITY_UNKNOWN** | High | Organisation names/UUIDs are not visible from code artifacts. CS2 must confirm which organisations are safe for test use. |
 | **PARTIAL_ROLE_CONTAMINATION** | Medium | If any of the three auth users already hold any membership or role rows outside of W8.2 scope, a targeted role assignment may produce unexpected RLS side-effects. Pre-seed count and role inspection is required. |
 | **SEED_REVERSIBILITY** | Medium | Any W8.2 seed must include a documented cleanup/rollback plan. Memberships and roles added only for verification should not persist as production access grants. |
-| **THIRD_USER_SCOPE** | Low | If only two users are clearly suitable for `actor_cs2_admin` and `actor_org_admin`, the third user may need to be a purpose-created test account. CS2 must decide whether an existing user or a new test account is preferred for `actor_non_admin`. |
+| **THIRD_USER_SCOPE** | Low | If only two users are clearly suitable for `actor_cs2_admin` and `actor_org_admin`, the third user may need to be a purpose-created test account. CS2 must decide whether an existing user or a new test account is preferred for `actor_non_admin_rotation`. |
+| **ROLE_ROTATION_AMBIGUITY** | Medium | If multiple non-admin roles are active at once, evidence must show the effective role set and avoid claiming each lower role was independently verified. Sequential single-role rotation is preferred. |
 
 ---
 
@@ -143,7 +159,7 @@ Recommended next decision: require one of the following before seed approval:
 
 Before any seed is executed:
 
-1. **CS2 must supply confirmed user refs** — provide the actual UUID or anonymised handle for each of the three auth users, confirming which is safe to assign as `actor_cs2_admin`, `actor_org_admin`, and `actor_non_admin`.
+1. **CS2 must supply confirmed user refs** — provide the actual UUID or anonymised handle for each of the three auth users, confirming which is safe to assign as `actor_cs2_admin`, `actor_org_admin`, and `actor_non_admin_rotation`.
 
 2. **CS2 must supply confirmed org refs** — provide the actual UUID or name for `org_a` and `org_b` candidates.
 
