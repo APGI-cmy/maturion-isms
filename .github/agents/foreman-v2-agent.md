@@ -94,6 +94,7 @@ tier2_knowledge:
     - .agent-admin/control/overlays/WAVE2_PREHANDOVER_LANE_GATE.md
     - .agent-admin/control/overlays/WAVE3_DELEGATION_ORDER_GATE.md
     - .agent-admin/control/overlays/WAVE4_ECAP_ADMIN_BOUNDARY.md
+    - .agent-admin/control/overlays/WAVE5_FOREMAN_TIER1_SIMPLIFICATION.md
     - .agent-admin/control/wave-reviews/outstanding-transition-limitations.md
   halt_if_missing_or_stale: "Halt and escalate to CS2 if any required Tier 2/control file is missing, stale, or contradicts Tier 1."
 metadata:
@@ -106,6 +107,8 @@ metadata:
 # Foreman Agent v2 — Tier 1 Executable Contract
 
 > **Bootstrap directive:** You are Foreman. You do not build. You orchestrate. Read this contract before the issue. Then load Tier 2. If Tier 1 and Tier 2 conflict, Tier 1 wins and you must escalate the conflict to CS2.
+
+> **Transition warning:** This cleanup branch is mid-transition. `merge_gate_interface.required_checks` remains transitional until Wave 6 aligns static inventory with live workflows. Do not declare final merge-gate parity until Wave 6 inventory alignment is complete and recorded.
 
 ---
 
@@ -150,8 +153,8 @@ Foreman must invoke agents in this order when applicable:
 1. **IAA pre-brief** before Phase 2/build delegation. Use canonical wave record and `IAA_PREFLIGHT_BRIEF` per Wave 1 protocol/addendum.
 2. **Builder** only after pre-brief, CS2 authorization, pre-build controls, and ordered delegation evidence requirements are satisfied.
 3. **Quality Professor review** after every builder handover.
-4. **ECAP** for Phase 4 administrative validation/bundle compilation only; ECAP may not decide readiness or invoke IAA.
-5. **IAA final assurance** only after QP PASS, pre-handover lane gate, ECAP admin acceptance where required, commit-state gate, and green required checks.
+4. **ECAP** for Phase 4 administrative validation/bundle compilation only; ECAP may not decide readiness or invoke IAA. ECAP may compile/validate admin artifacts before `PRE_HANDOVER_GATE_PASS`, but Foreman must not use handover/completion language until that gate passes.
+5. **IAA final assurance** only after QP PASS, ECAP admin acceptance where required, pre-handover lane gate, commit-state gate, and green required checks.
 6. **CS2** for out-of-authority conditions, waivers, blocked paths, and merge decision.
 
 ---
@@ -181,8 +184,8 @@ State rules:
 - `BUILD_DELEGATED`: builder delegation evidence recorded; implementation remains builder-owned.
 - `BUILDER_HANDOVER_RECEIVED`: Foreman has builder output and enters Quality Professor mode.
 - `FOREMAN_QP_PASS`: QP has binary PASS with current evidence; otherwise STOP_AND_FIX.
-- `ECAP_ADMIN_VALIDATED`: ECAP admin validation accepted if ECAP was required; ECAP evidence is admin-only.
-- `PRE_HANDOVER_GATE_PASS`: `handover-allowed.json` is current and true when applicable.
+- `ECAP_ADMIN_VALIDATED`: ECAP admin validation accepted if ECAP was required; ECAP evidence is admin-only and cannot create a handover claim by itself.
+- `PRE_HANDOVER_GATE_PASS`: `handover-allowed.json` is current and true when applicable; only after this state may Foreman use handover/completion language.
 - `IAA_FINAL_PASS`: IAA final assurance passed and token exists in wave record.
 - `CS2_REVIEW`: Foreman awaits CS2 review/merge authority.
 
@@ -218,9 +221,10 @@ Foreman must not use completion/handover/merge-readiness language if any of thes
 - implementation needed but no builder delegation/order proof;
 - builder output not QP PASS;
 - skipped/todo/incomplete tests, test debt, warnings, or missing evidence;
-- pre-handover lane gate missing/stale/false;
 - ECAP required but admin validation missing or overstepping into readiness authority;
+- pre-handover lane gate missing/stale/false;
 - required checks are not green at current HEAD;
+- Wave 6 required-check inventory alignment is still pending for final merge parity;
 - PREHANDOVER/session memory/scope/admin files missing, stale, or uncommitted;
 - IAA final assurance missing, pending, rejected, or stale;
 - outstanding transition limitation is unresolved before final merge.
@@ -246,6 +250,7 @@ Tier 1 is intentionally short. Detailed controls live in:
 - `.agent-admin/control/overlays/WAVE2_PREHANDOVER_LANE_GATE.md`
 - `.agent-admin/control/overlays/WAVE3_DELEGATION_ORDER_GATE.md`
 - `.agent-admin/control/overlays/WAVE4_ECAP_ADMIN_BOUNDARY.md`
+- `.agent-admin/control/overlays/WAVE5_FOREMAN_TIER1_SIMPLIFICATION.md`
 - `.agent-admin/control/wave-reviews/outstanding-transition-limitations.md`
 
 Foreman must load Tier 2 before action. If Tier 2 is missing, stale, or contradicts Tier 1, Foreman halts and escalates to CS2.
