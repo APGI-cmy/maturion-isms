@@ -84,27 +84,7 @@ PASS means Foreman may proceed to pre-handover checks. FAIL means Foreman must i
 
 ---
 
-## 5. Pre-handover lane controls
-
-Before handover language or completion claims, Foreman must satisfy `.agent-admin/control/overlays/WAVE2_PREHANDOVER_LANE_GATE.md`.
-
-When implementation files, Foreman handover artifacts, or ECAP handover artifacts are relevant, `.agent-admin/control/handover-allowed.json` must exist, match current PR head, and report:
-
-```yaml
-state: PRE_HANDOVER_GATE_PASS
-handover_allowed: true
-foreman_qp_pass: true
-iaa_prebrief_ready: true
-scope_current: true
-all_required_checks_green: true
-blocking_findings: []
-```
-
-If implementation files changed, builder delegation evidence must also be verified and predate implementation.
-
----
-
-## 6. ECAP administrative boundary controls
+## 5. ECAP administrative boundary controls
 
 ECAP is administrative only. Foreman may use ECAP for bundle compilation and admin validation, but Foreman must not depend on ECAP to create the substantive delivery story.
 
@@ -122,17 +102,39 @@ ECAP evidence is admin evidence only. IAA must not treat ECAP validation as read
 
 ---
 
+## 6. Pre-handover lane controls
+
+Before handover language or completion claims, Foreman must satisfy `.agent-admin/control/overlays/WAVE2_PREHANDOVER_LANE_GATE.md`.
+
+ECAP may compile or validate administrative bundle material before this gate, but Foreman must not use handover/completion/ready-for-review/merge-readiness language until this gate passes.
+
+When implementation files, Foreman handover artifacts, or ECAP handover artifacts are relevant, `.agent-admin/control/handover-allowed.json` must exist, match current PR head, and report:
+
+```yaml
+state: PRE_HANDOVER_GATE_PASS
+handover_allowed: true
+foreman_qp_pass: true
+iaa_prebrief_ready: true
+scope_current: true
+all_required_checks_green: true
+blocking_findings: []
+```
+
+If implementation files changed, builder delegation evidence must also be verified and predate implementation.
+
+---
+
 ## 7. Handover controls
 
-Foreman may enter handover only after:
+Foreman may enter final handover only after:
 
 1. QP PASS;
-2. pre-handover lane gate PASS;
-3. required checks are green at current HEAD;
-4. ECAP admin validation is accepted when ECAP is required;
+2. ECAP admin validation is accepted when ECAP is required;
+3. pre-handover lane gate PASS;
+4. required checks are green at current HEAD;
 5. PREHANDOVER and session memory are committed and path-stable;
 6. pre-IAA commit-state gate passes;
-7. IAA final assurance returns a valid PASS token in the wave record.
+7. IAA final assurance returns a valid pass marker in the wave record.
 
 Foreman must not release merge gate on PENDING, FAILED, MISSING, STALE, or unevidenced checks.
 
@@ -140,7 +142,21 @@ IAA STOP_AND_FIX returns to QP/remediation. IAA ESCALATE routes to CS2.
 
 ---
 
-## 8. HALT and escalation controls
+## 8. AGCFPP agent-contract change controls
+
+This Wave 5 rewrite changes `.github/agents/foreman-v2-agent.md`; therefore AGCFPP applies.
+
+Before Wave 5 is marked complete or this PR leaves draft state, the PR must record:
+
+- CodexAdvisor review or CS2-approved equivalent for the agent contract rewrite;
+- IAA review of the Foreman contract rewrite impact;
+- confirmation that the relocation map preserves controls rather than deleting them.
+
+Until those are recorded, the contract rewrite is allowed to remain in the draft cleanup branch but is not merge-ready.
+
+---
+
+## 9. HALT and escalation controls
 
 Foreman must halt for:
 
@@ -152,7 +168,7 @@ Foreman must halt for:
 - open FAIL-ONLY-ONCE breach;
 - missing or stale IAA pre-brief/wave record;
 - non-green required check before handover;
-- any attempt to self-certify IAA token;
+- any attempt to self-certify IAA assurance;
 - any attempt to push directly to main;
 - any attempt to weaken governance without a named Tier 2/Tier 3 relocation and CS2 approval.
 
