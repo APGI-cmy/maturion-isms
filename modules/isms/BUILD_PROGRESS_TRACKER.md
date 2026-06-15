@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-15  
-**Updated By**: foreman-v2-agent (slice: `isms-p1-external-deployment-proof`)
+**Updated By**: foreman-v2-agent (slice: `isms-p1-1-deployment-hygiene`)
 
-> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — P1 EXTERNAL DEPLOYMENT PROOF RECORDED  
+> **Classification**: W1-W8 COMPLETE — P1.1 DEPLOYMENT HYGIENE OPENED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -35,21 +35,7 @@
 | Stage 12 | W7 Build Execution & Evidence | MERGED — ACCEPTED FOR W7 SCOPE | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
 | Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
 | Post-W8 | P1 External Deployment Proof | VERIFIED WITH FOLLOW-UP FINDINGS | `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md` |
-
----
-
-## Stage 12: Completed Wave Summary
-
-| Wave | Status | Merged PR / evidence |
-|---|---|---|
-| W1 | MERGED — ACCEPTED FOR W1 SCOPE | #1776 plus correction #1779 |
-| W2 | MERGED — ACCEPTED FOR W2 SCOPE | #1781 |
-| W3 | MERGED — ACCEPTED FOR W3 SCOPE | #1783 |
-| W4 | MERGED — ACCEPTED FOR W4 SCOPE | #1786 |
-| W5 | MERGED — ACCEPTED FOR W5 SCOPE | #1789 |
-| W6 | MERGED — ACCEPTED FOR W6 SCOPE | #1792 |
-| W7 | MERGED — ACCEPTED FOR W7 SCOPE | #1796 (`29ed421fc7b286a4d18419ee8428c85191a78201`) |
-| W8 | MERGED — ACCEPTED FOR W8 SCOPE | #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`) |
+| Post-W8 | P1.1 Deployment Hygiene Cleanup | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
 
 ---
 
@@ -64,11 +50,19 @@
 - representative SPA deep links return HTTP 200;
 - runtime log query found no logs in the checked one-hour window.
 
-**Follow-up findings**:
-- project-level latest deployment currently points to a non-production branch deployment in `ERROR`;
-- Node and pnpm version alignment should be reviewed;
-- build logs include non-ISMS API TypeScript errors despite production deployment completion;
-- bundle-size warning should be reviewed.
+---
+
+## Post-W8: P1.1 Deployment Hygiene Cleanup
+
+**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
+**Branch**: `foreman/isms-p1-1-deployment-hygiene`  
+**Evidence**: `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md`
+
+**Scope**:
+- confirms stale PR #1795 is closed and unmerged;
+- bounds root Node engine to `>=20 <23`;
+- keeps pnpm package manager unchanged because lockfile is `lockfileVersion: '9.0'`;
+- patches non-ISMS API bearer validation TypeScript surface in `api/ai/feedback/pending.ts` and `api/ai/feedback/approve.ts`.
 
 ---
 
@@ -89,9 +83,9 @@ Accepted conditions:
 
 ## Current Stage Summary
 
-**Current Stage**: Post-W8 P1 external deployment proof recorded.  
+**Current Stage**: Post-W8 P1.1 deployment hygiene cleanup is open.  
 **Implementation Transfer**: Owner final decision recorded with conditions.  
-**Next Required Action**: Address P1 follow-up findings or separately scope the next productionization slice.
+**Next Required Action**: Inspect P1.1 PR CI/review gates, then decide whether to merge the hygiene cleanup.
 
 ---
 
@@ -115,6 +109,9 @@ Accepted conditions:
 - [x] Stage 12 W1-W8 merged
 - [x] W8 owner final decision recorded
 - [x] P1 external deployment proof recorded
+- [ ] P1.1 deployment hygiene PR opened
+- [ ] P1.1 deployment hygiene CI passed
+- [ ] P1.1 deployment hygiene review conversations resolved
 
 ---
 
@@ -126,9 +123,6 @@ The following remain outside W1-W8 appointed scope and require separate future a
 - live AI provider integration;
 - runtime persistence hooks;
 - audit writer invocation;
-- preview/latest-deployment cleanup;
-- Node/pnpm version alignment;
-- non-ISMS API TypeScript build-log cleanup;
 - bundle-size review;
 - canonical App Description path mismatch cleanup.
 
