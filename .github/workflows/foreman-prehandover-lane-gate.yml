@@ -1,0 +1,23 @@
+name: Foreman Pre-Handover Lane Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  foreman-prehandover-lane-gate:
+    name: "preflight/foreman-prehandover-lane-gate"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Run pre-handover lane gate
+        shell: bash
+        run: node .github/scripts/foreman-prehandover-lane-gate.js
