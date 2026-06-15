@@ -1,10 +1,21 @@
-/*
- * Vercel Serverless API Gateway - POST /api/ai/feedback/approve
+/**
+ * Vercel Serverless API Gateway — POST /api/ai/feedback/approve
  *
  * ARC (Adaptive Review Committee) approval/rejection endpoint.
  * Accepts either:
  *   - x-arc-token header matching ARC_APPROVAL_TOKEN (CS2-gated direct access), or
  *   - Authorization: Bearer <supabase-session-jwt> (Supabase-verified operator session).
+ *
+ * F-D3-002 remediation: Bearer tokens are verified via supabase.auth.getUser() —
+ * structural-only (3-part format) validation has been replaced with real Supabase
+ * JWT signature and expiry verification.
+ *
+ * Request body: { eventId: string, decision: 'approved' | 'rejected', reviewedBy: string, notes?: string }
+ *
+ * References:
+ *   ARCH_FREEZE-wave9-self-learning-loop-20260226.md §4.2 (API)
+ *   Issue #613 — Wave 9.4 authority: CS2 (@APGI-cmy)
+ *   GRS-011 | APS §10 | AAD §10.1
  */
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
