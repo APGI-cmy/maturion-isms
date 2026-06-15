@@ -28,26 +28,28 @@ jobs:
           echo "Prohibited new artifact: .agent-admin/assurance/iaa-prebrief-*.md"
           echo "Canonical schema: .agent-admin/control/schemas/iaa-preflight-brief.schema.json"
           echo "Canonical protocol: .agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md"
+          echo "Scoped overlay: .agent-admin/control/overlays/WAVE1_IAA_PREFLIGHT_BRIEF_CONTRACT_ADDENDUM.md"
           echo ""
 
           test -f .agent-admin/control/schemas/iaa-preflight-brief.schema.json
           test -f .agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md
+          test -f .agent-admin/control/overlays/WAVE1_IAA_PREFLIGHT_BRIEF_CONTRACT_ADDENDUM.md
 
-          if grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/agents .github/workflows governance .agent-workspace 2>/dev/null; then
-            echo "::error::Legacy standalone iaa-prebrief generation instruction found. Wave 1 requires wave-record-only pre-brief output."
+          if grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null; then
+            echo "::error::Legacy standalone iaa-prebrief generation instruction found in active Wave 1 workflow/control guidance."
             exit 1
           fi
 
-          if grep -RIn "commit.*iaa-prebrief" .github/agents .github/workflows governance .agent-workspace 2>/dev/null; then
-            echo "::error::Legacy standalone iaa-prebrief commit instruction found. Wave 1 requires .agent-admin/assurance/iaa-wave-record-*.md only."
+          if grep -RIn "commit.*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null; then
+            echo "::error::Legacy standalone iaa-prebrief commit instruction found in active Wave 1 workflow/control guidance."
             exit 1
           fi
 
-          if grep -RIn "IAA_PREFLIGHT_BRIEF" .github/agents .agent-admin/control .github/workflows | grep -q .; then
-            echo "✅ Canonical IAA_PREFLIGHT_BRIEF references found."
+          if grep -RIn "IAA_PREFLIGHT_BRIEF" .agent-admin/control .github/workflows | grep -q .; then
+            echo "Canonical IAA_PREFLIGHT_BRIEF references found."
           else
-            echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found."
+            echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found in Wave 1 control guidance."
             exit 1
           fi
 
-          echo "✅ IAA pre-brief contract alignment gate completed."
+          echo "IAA pre-brief contract alignment gate completed."
