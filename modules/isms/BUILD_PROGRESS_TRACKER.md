@@ -3,7 +3,7 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-15  
-**Updated By**: foreman-agent (wave: `isms-w8-closure-tracker-cleanup`)
+**Updated By**: foreman-v2-agent (wave: `isms-w8-closure-tracker-cleanup`)
 
 > **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — OWNER FINAL DECISION PENDING  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
