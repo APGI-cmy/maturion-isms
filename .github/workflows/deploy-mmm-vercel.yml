@@ -386,6 +386,18 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
           echo "Running SPA direct-route smoke test against: $PREVIEW_URL"
+          COOKIE_JAR="$(mktemp)"
+          trap 'rm -f "$COOKIE_JAR"' EXIT
+          if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+            PRIME_URL="${PREVIEW_URL%/}/?x-vercel-protection-bypass=${VERCEL_AUTOMATION_BYPASS_SECRET}&x-vercel-set-bypass-cookie=true"
+            curl -L -sS -o /dev/null \
+              -c "$COOKIE_JAR" \
+              -b "$COOKIE_JAR" \
+              -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+              --connect-timeout 10 \
+              --max-time 30 \
+              "$PRIME_URL" || true
+          fi
           ROUTES=("/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload")
           FAIL=0
           for route in "${ROUTES[@]}"; do
@@ -394,6 +406,8 @@ jobs:
               route_url="$route_url?x-vercel-protection-bypass=$VERCEL_AUTOMATION_BYPASS_SECRET&x-vercel-set-bypass-cookie=samesitenone"
             fi
             http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
+              -c "$COOKIE_JAR" \
+              -b "$COOKIE_JAR" \
               --connect-timeout 10 \
               --max-time 30 \
               -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
