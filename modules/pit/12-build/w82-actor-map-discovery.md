@@ -4,6 +4,7 @@ Issue: APGI-cmy/maturion-isms#1803
 Governing W8.2 issue: APGI-cmy/maturion-isms#1774
 Builder: pit-specialist (Copilot last-resort resource per Foreman delegation)
 Discovery date: 2026-06-15
+Foreman live-discovery retry date: 2026-06-15
 Status: DISCOVERY_ONLY — for CS2 review
 
 ## Purpose
@@ -13,6 +14,24 @@ Identify candidate existing test actors and organisations for later W8.2 verific
 This document contains no database writes, no seed execution, no auth-user creation, no code changes, and makes no W8.2 completion claim.
 
 Final posture: **W8.2_NOT_READY**
+
+---
+
+## Current discovery outcome
+
+Current-state Supabase discovery was attempted from the Foreman chat executor on 2026-06-15, but the executor did not return a usable result payload for the read-only count query.
+
+Therefore this artifact must not be treated as current live Supabase evidence.
+
+Outcome classification:
+
+```text
+ACTOR_MAP_DISCOVERY_BLOCKED
+SEED_PLAN_APPROVAL_BLOCKED
+W8.2_NOT_READY
+```
+
+This PR remains a planning/discovery scaffold only. It is not sufficient to authorize seed execution until CS2 or an approved builder captures fresh read-only Supabase counts and current actor/organisation refs.
 
 ---
 
@@ -33,9 +52,30 @@ Source: `modules/pit/12-build/w82-role-matrix-denied-path-verification.md` (capt
 
 ---
 
-## Candidate refs (anonymised)
+## Required fresh discovery before seed-plan approval
 
-The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three auth users and three organisations as of the last captured evidence. They are referenced here using anonymised handles only. Actual UUIDs and email addresses are not held in code artifacts and must be supplied by CS2 from the Supabase Auth admin panel.
+Before CS2 may approve any seed plan, an approved operator or builder must capture current read-only evidence from Supabase project `ujucvyyspfxlxlfdamda` showing:
+
+| Evidence item | Required before seed approval |
+|---|---|
+| Current `auth.users` count | yes |
+| Current `public.organisations` count | yes |
+| Current `public.user_org_memberships` count | yes |
+| Current `public.user_roles` count | yes |
+| Current `public.audit_log` count | yes |
+| Current `public.qa_runs` count | yes |
+| Current anonymised auth-user refs | yes |
+| Current anonymised organisation refs | yes |
+| Confirmation that selected users are safe test actors | yes |
+| Confirmation that selected organisations are safe test targets | yes |
+
+If current counts or actor refs cannot be captured, the correct CS2 decision is to keep seed approval blocked and choose either manual Supabase dashboard confirmation, dedicated test users, or a Supabase development branch.
+
+---
+
+## Candidate refs (anonymised, planning-only)
+
+The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three auth users and three organisations as of the last captured evidence. They are referenced here using anonymised handles only. Actual UUIDs and email addresses are not held in code artifacts and must be supplied by CS2 from the Supabase Auth admin panel or captured by an approved read-only builder run.
 
 ### Candidate user refs
 
@@ -55,7 +95,7 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 
 ---
 
-## Proposed actor map
+## Proposed actor map (planning-only)
 
 | Actor label | Candidate handle | Required seed | Proposed role assignment |
 |---|---|---|---|
@@ -81,7 +121,7 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 
 | Risk | Severity | Notes |
 |---|---|---|
-| **COUNTS_STALE** | Medium | Last-known counts are from PR #1791. They may be out of date. A fresh read-only query is required before any seed plan is actioned. |
+| **COUNTS_STALE** | High | Last-known counts are from PR #1791. Foreman retried current read-only discovery on 2026-06-15, but no usable result payload was returned by the executor. Current counts are still required. |
 | **USER_IDENTITY_UNKNOWN** | High | The actual identities (email, existing role state) of the three auth users are not visible from code artifacts. CS2 must confirm which users are safe for each actor role before any seed. |
 | **ORG_IDENTITY_UNKNOWN** | High | Organisation names/UUIDs are not visible from code artifacts. CS2 must confirm which organisations are safe for test use. |
 | **PARTIAL_ROLE_CONTAMINATION** | Medium | If any of the three auth users already hold any membership or role rows outside of W8.2 scope, a targeted role assignment may produce unexpected RLS side-effects. Pre-seed count and role inspection is required. |
@@ -91,6 +131,15 @@ The connected Supabase project (`ujucvyyspfxlxlfdamda`) contained exactly three 
 ---
 
 ## Recommendation for CS2 seed-plan decision
+
+CS2 should **not approve seed execution from this PR alone**.
+
+Recommended next decision: require one of the following before seed approval:
+
+1. **Manual CS2 confirmation** from the Supabase dashboard of current counts, selected user refs, selected org refs, and actor safety; or
+2. **Approved read-only builder run** that captures current counts and refs without writes; or
+3. **Dedicated test users** if existing users cannot be confirmed safe; or
+4. **Supabase development branch** if live-project seeding is not acceptable.
 
 Before any seed is executed:
 
