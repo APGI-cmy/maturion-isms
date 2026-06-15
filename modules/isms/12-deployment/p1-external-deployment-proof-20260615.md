@@ -1,6 +1,6 @@
 # P1 External Deployment Proof
 
-Status: PASS WITH FOLLOW-UP FINDINGS
+Status: VERIFIED WITH FOLLOW-UP FINDINGS
 
 Verified production Vercel project: maturion-isms-portal.
 
