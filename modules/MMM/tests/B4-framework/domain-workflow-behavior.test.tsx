@@ -672,7 +672,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(supportProactive.value).not.toMatch(/governance forum mandate/i);
   });
 
-  it('maturity descriptors begin with the actual criterion evidence requirement before level state', async () => {
+  it('T-MMM-DMC-044R: descriptor sentence reconstruction keeps requirement-led evidence wording before level state', async () => {
     const precisionCriteria: Scenario['criteriaRows'] = [
       {
         id: 'criterion-policy-display',
@@ -843,7 +843,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(aiBasic.value).not.toContain('(Note:');
   });
 
-  it('T-MMM-DMC-044: multi-sentence criterion with contextual qualifier reconstructs one grammatical evidence clause', async () => {
+  it('T-MMM-DMC-045R: contextual qualifier integration reconstructs one grammatical evidence clause', async () => {
     const contextualCriterion: Scenario['criteriaRows'] = [
       {
         id: 'criterion-contextual',
@@ -873,7 +873,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(basicDescriptor.value).toMatch(/absent|weak|outdated|informal/i);
   });
 
-  it('T-MMM-DMC-043: each maturity level triggers an independent per-level learning consent prompt', async () => {
+  it('T-MMM-DMC-046R: each maturity level triggers an independent per-level learning consent prompt', async () => {
     configureScenario({
       mpsRows: baseMpsRows,
       criteriaRows: baseCriteriaRows,
@@ -920,7 +920,7 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     ));
   });
 
-  it('T-MMM-DMC-043b: descriptor editing remains available after save without sign-off lock', async () => {
+  it('T-MMM-DMC-047R: descriptor editing remains available after save without sign-off lock', async () => {
     configureScenario({
       mpsRows: baseMpsRows,
       criteriaRows: baseCriteriaRows,
@@ -956,6 +956,32 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     // Save again — second save must reach the invoke call
     fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
     await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledTimes(2));
+  });
+
+  it('T-MMM-DMC-048R: all five level editors remain editable when no sign-off state exists', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-1'));
+    await screen.findByTestId('level-descriptor-grid-criterion-1');
+
+    for (const level of [1, 2, 3, 4, 5]) {
+      const editButton = await screen.findByTestId(`edit-descriptor-btn-criterion-1-${level}`);
+      expect(editButton).toBeTruthy();
+      const descriptorInput = screen.getByTestId(`descriptor-input-criterion-1-${level}`) as HTMLTextAreaElement;
+      expect(descriptorInput.readOnly).toBe(true);
+      fireEvent.click(editButton);
+      await waitFor(() => {
+        expect(descriptorInput.readOnly).toBe(false);
+      });
+    }
   });
 
   it('shows loading feedback while MMM data is still in flight', async () => {
@@ -1490,4 +1516,3 @@ describe('T-MMM-S6-AI-005: DomainAuditBuilder renders three card-based step item
     expect(stepCards[2].textContent).toContain('Create Criteria');
   });
 });
-
