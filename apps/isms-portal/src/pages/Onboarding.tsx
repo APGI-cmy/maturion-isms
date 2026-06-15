@@ -26,9 +26,7 @@ const Onboarding = () => {
     setProfile((current) => ({ ...current, [field]: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!isComplete) return;
+  const handleSubmit = (event: import('react').FormEvent<HTMLFormElement>) => {
 
     window.localStorage.setItem(
       ONBOARDING_PROFILE_STORAGE_KEY,
