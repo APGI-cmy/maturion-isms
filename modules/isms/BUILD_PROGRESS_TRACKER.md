@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-15  
-**Updated By**: foreman-v2-agent (wave: `isms-owner-decision-record`)
+**Updated By**: foreman-v2-agent (slice: `isms-p1-external-deployment-proof`)
 
-> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — OWNER FINAL DECISION RECORDED  
+> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — P1 EXTERNAL DEPLOYMENT PROOF RECORDED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -34,6 +34,7 @@
 | Stage 12 | W6 Build Execution & Evidence | MERGED — ACCEPTED FOR W6 SCOPE | `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` |
 | Stage 12 | W7 Build Execution & Evidence | MERGED — ACCEPTED FOR W7 SCOPE | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
 | Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
+| Post-W8 | P1 External Deployment Proof | VERIFIED WITH FOLLOW-UP FINDINGS | `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md` |
 
 ---
 
@@ -52,28 +53,22 @@
 
 ---
 
-## Stage 12: W8 Cumulative Regression and PBFAG Rerun
+## Post-W8: P1 External Deployment Proof
 
-**Status**: MERGED — ACCEPTED FOR W8 SCOPE  
-**Merged PR**: #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`)  
-**Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w8-cumulative-regression-pbfag-builder-appointment.md` — W8 appointment
-- `modules/isms/11-build/w8-cumulative-qa-report.md` — cumulative QA report
-- `modules/isms/06-pbfag/pbfag-rerun-amendment-w8-cumulative-regression.md` — PBFAG amendment
-- `modules/isms/08-builder-checklist/stage9-final-reconciliation-w8.md` — final Stage 9 reconciliation
-- `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` — W8 implementation evidence
-- `.functional-delivery/pr-1801.md` — PR-scoped functional delivery evidence
-- `.agent-admin/assurance/iaa-wave-record-pr1801-isms-w8-cumulative-regression-pbfag.md` — IAA wave record
-- `.agent-workspace/foreman-v2/memory/session-1801-20260611.md` — Foreman session memory
-- `.agent-admin/owner-decisions/isms-w8-owner-final-decision-20260615.md` — owner final decision record
+**Status**: VERIFIED WITH FOLLOW-UP FINDINGS  
+**Evidence**: `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md`
 
-**W8 scope delivered**:
-- cumulative QA reconciliation for W1-W7;
-- architecture completeness and future-gated condition disposition;
-- PBFAG rerun/amendment;
-- final Stage 9 checklist reconciliation;
-- owner final decision readiness recommendation;
-- no new runtime functionality.
+**Verified**:
+- production deployment `dpl_wwAYwu19XLPP1Kzm8cmvF2q1SqNC` is `READY`;
+- production domain `https://maturion-isms-portal.vercel.app` returns HTTP 200;
+- representative SPA deep links return HTTP 200;
+- runtime log query found no logs in the checked one-hour window.
+
+**Follow-up findings**:
+- project-level latest deployment currently points to a non-production branch deployment in `ERROR`;
+- Node and pnpm version alignment should be reviewed;
+- build logs include non-ISMS API TypeScript errors despite production deployment completion;
+- bundle-size warning should be reviewed.
 
 ---
 
@@ -94,9 +89,9 @@ Accepted conditions:
 
 ## Current Stage Summary
 
-**Current Stage**: W1-W8 implementation waves complete for appointed scope.  
+**Current Stage**: Post-W8 P1 external deployment proof recorded.  
 **Implementation Transfer**: Owner final decision recorded with conditions.  
-**Next Required Action**: Future work must be separately scoped for production auth/payment, live AI provider integration, runtime persistence hooks, audit writer invocation, and external live deployment proof.
+**Next Required Action**: Address P1 follow-up findings or separately scope the next productionization slice.
 
 ---
 
@@ -118,10 +113,8 @@ Accepted conditions:
 - [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [x] Stage 11 W1-W8 Builder Appointments complete
 - [x] Stage 12 W1-W8 merged
-- [x] W8 PR opened
-- [x] W8 CI passed
-- [x] W8 review conversations resolved or dispositioned
 - [x] W8 owner final decision recorded
+- [x] P1 external deployment proof recorded
 
 ---
 
@@ -133,7 +126,10 @@ The following remain outside W1-W8 appointed scope and require separate future a
 - live AI provider integration;
 - runtime persistence hooks;
 - audit writer invocation;
-- external live deployment proof where not already available;
+- preview/latest-deployment cleanup;
+- Node/pnpm version alignment;
+- non-ISMS API TypeScript build-log cleanup;
+- bundle-size review;
 - canonical App Description path mismatch cleanup.
 
 ---
