@@ -19,6 +19,8 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Run merge gate required checks alignment
+      - name: Run merge gate required checks alignment with CWT scenarios
         shell: bash
+        env:
+          WAVE6_ALIGNMENT_SELF_TEST: "1"
         run: node .github/scripts/merge-gate-required-checks-alignment.js
