@@ -169,23 +169,35 @@ jobs:
         run: |
           set -euo pipefail
           echo "Running ISMS smoke test against: $PREVIEW_URL"
+          if [ -n "${ISMS_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+            echo "Vercel automation bypass secret is configured for smoke testing."
+          else
+            echo "Vercel automation bypass secret is not configured; protected previews may return 401/403."
+          fi
+
           PUBLIC_ROUTES=("/" "/free-assessment" "/subscribe" "/modules/maturity-roadmap")
           PROTECTED_ROUTES=("/dashboard" "/maturity/setup")
           FAIL=0
 
           curl_status() {
             local route="$1"
+            local url="$PREVIEW_URL$route"
             if [ -n "${ISMS_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              if echo "$url" | grep -q '?'; then
+                url="$url&x-vercel-protection-bypass=$ISMS_VERCEL_AUTOMATION_BYPASS_SECRET"
+              else
+                url="$url?x-vercel-protection-bypass=$ISMS_VERCEL_AUTOMATION_BYPASS_SECRET"
+              fi
               curl -L -s -o /dev/null -w "%{http_code}" \
                 --connect-timeout 10 \
                 --max-time 30 \
                 -H "x-vercel-protection-bypass: $ISMS_VERCEL_AUTOMATION_BYPASS_SECRET" \
-                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+                "$url" 2>/dev/null || echo "000"
             else
               curl -L -s -o /dev/null -w "%{http_code}" \
                 --connect-timeout 10 \
                 --max-time 30 \
-                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+                "$url" 2>/dev/null || echo "000"
             fi
           }
 
