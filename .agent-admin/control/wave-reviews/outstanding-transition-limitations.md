@@ -8,10 +8,10 @@ outstanding_transition_limitations:
   applies_to_pr: 1800
   branch: "strategy/agent-governance-cleanup-waves"
   limitations:
-    - id: W1-CONTRACT-OVERLAY-NOT-BODY
+    - id: W1-IAA-CONTRACT-BODY-CONFIRMATION
       introduced_in_wave: 1
-      description: "Foreman/IAA pre-brief harmonization began as scoped overlay/protocol/schema artifacts. Wave 5 integrated the Foreman side into Tier 1/Tier 2; IAA contract-body integration still needs final review/confirmation before merge."
-      planned_resolution_wave: "5-review-or-7"
+      description: "Foreman/IAA pre-brief harmonization began as scoped overlay/protocol/schema artifacts. Wave 5 integrated the Foreman side into Tier 1/Tier 2; IAA contract-body confirmation remains part of final validation."
+      planned_resolution_wave: 7
       blocking_before_final_merge: true
     - id: W2-MERGE-GATE-INVENTORY-DEFERRED
       introduced_in_wave: 2
@@ -28,21 +28,23 @@ outstanding_transition_limitations:
       description: "ECAP scanner validates output claims and boundary declarations, but does not yet perform full JSON Schema validation of embedded ECAP admin validation YAML/JSON."
       planned_resolution_wave: "6-or-7"
       blocking_before_final_merge: true
-    - id: W4-CONTRACT-BODY-INTEGRATION-DEFERRED
+    - id: W4-IAA-ECAP-CONTRACT-BODY-CONFIRMATION
       introduced_in_wave: 4
-      description: "Wave 5 integrated ECAP admin-only treatment into the Foreman Tier 1/Tier 2 contract. IAA/ECAP contract-body confirmation still requires review before final merge."
-      planned_resolution_wave: "5-review-or-7"
+      description: "Wave 5 integrated ECAP admin-only treatment into the Foreman Tier 1/Tier 2 contract. IAA/ECAP contract-body confirmation remains part of final validation."
+      planned_resolution_wave: 7
       blocking_before_final_merge: true
+  resolved_for_wave_progression:
     - id: W5-AGCFPP-REVIEW-PENDING
-      introduced_in_wave: 5
-      description: "Foreman agent contract body was rewritten in Wave 5. CodexAdvisor review or CS2-approved equivalent, IAA impact review, and CS2 acceptance are required before this PR leaves draft or merges."
-      planned_resolution_wave: "5-review"
-      blocking_before_final_merge: true
+      resolved_by:
+        - ".agent-admin/control/wave-reviews/wave-5-foreman-contract-impact-review.md"
+        - ".agent-admin/control/wave-reviews/wave-5-cs2-acceptance-note.md"
+        - ".agent-admin/control/wave-reviews/wave-5-agent-contract-change-compliance-note.md"
+      resolution_scope: "Wave 5 progression only; not final merge approval."
     - id: W5-TIER1-CONTROL-FIDELITY-REVIEW-PENDING
-      introduced_in_wave: 5
-      description: "The relocation map now records fidelity levels, but Wave 5 still requires final review to confirm summarized controls preserve mandatory behavior."
-      planned_resolution_wave: "5-review"
-      blocking_before_final_merge: true
+      resolved_by:
+        - ".agent-workspace/foreman-v2/knowledge/foreman-control-relocation-map.md"
+        - ".agent-admin/control/wave-reviews/wave-5-foreman-contract-impact-review.md"
+      resolution_scope: "Wave 5 progression only; Wave 7 still validates end-to-end scenarios."
 ```
 
 ## Handling rule
