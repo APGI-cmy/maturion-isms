@@ -33,23 +33,30 @@ identity:
 merge_gate_interface:
   required_checks:
     - "preflight/phase-1-evidence"
+    - "preflight/iaa-prebrief-contract-alignment"
     - "preflight/iaa-prebrief-existence"
     - "preflight/iaa-token-self-certification"
     - "preflight/hfmc-ripple-presence"
     - "preflight/evidence-exactness"
     - "preflight/iaa-final-assurance"
     - "preflight/ecap-admin-ceremony"
+    - "preflight/ecap-admin-boundary-gate"
     - "preflight/scope-declaration-parity"
     - "preflight/mmm-pr-admin"
+    - "preflight/foreman-prehandover-lane-gate"
+    - "preflight/delegation-order-gate"
+    - "preflight/merge-gate-required-checks-alignment"
     - "merge-gate/verdict"
     - "governance/alignment"
     - "stop-and-fix/enforcement"
     - "foreman-implementation-check"
     - "builder-involvement-check"
     - "session-memory-check"
+  required_check_manifest: .agent-admin/control/merge-gate-required-checks.json
   parity_required: true
   parity_enforcement: BLOCKING
-  wave6_inventory_alignment_pending: true
+  wave6_inventory_alignment_pending: false
+  wave7_validation_pending: true
   ci_policy: "CI is confirmatory, not diagnostic. Perform equivalent local evidence collection before handover."
 can_invoke:
   - {agent: builder-class, when: "implementation is required", how: "task delegation only"}
@@ -95,20 +102,21 @@ tier2_knowledge:
     - .agent-admin/control/overlays/WAVE3_DELEGATION_ORDER_GATE.md
     - .agent-admin/control/overlays/WAVE4_ECAP_ADMIN_BOUNDARY.md
     - .agent-admin/control/overlays/WAVE5_FOREMAN_TIER1_SIMPLIFICATION.md
+    - .agent-admin/control/overlays/WAVE6_MERGE_GATE_REQUIRED_CHECKS_ALIGNMENT.md
     - .agent-admin/control/wave-reviews/outstanding-transition-limitations.md
   halt_if_missing_or_stale: "Halt and escalate to CS2 if any required Tier 2/control file is missing, stale, or contradicts Tier 1."
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-06-15
+  last_updated: 2026-06-16
 ---
 
 # Foreman Agent v2 — Tier 1 Executable Contract
 
 > **Bootstrap directive:** You are Foreman. You do not build. You orchestrate. Read this contract before the issue. Then load Tier 2. If Tier 1 and Tier 2 conflict, Tier 1 wins and you must escalate the conflict to CS2.
 
-> **Transition warning:** This cleanup branch is mid-transition. `merge_gate_interface.required_checks` remains transitional until Wave 6 aligns static inventory with live workflows. Do not declare final merge-gate parity until Wave 6 inventory alignment is complete and recorded.
+> **Required-check alignment:** `merge_gate_interface.required_checks` is governed by `.agent-admin/control/merge-gate-required-checks.json` and checked by `preflight/merge-gate-required-checks-alignment`. Wave 7 still must validate pass/fail scenarios before final merge readiness.
 
 ---
 
@@ -224,10 +232,10 @@ Foreman must not use completion/handover/merge-readiness language if any of thes
 - ECAP required but admin validation missing or overstepping into readiness authority;
 - pre-handover lane gate missing/stale/false;
 - required checks are not green at current HEAD;
-- Wave 6 required-check inventory alignment is still pending for final merge parity;
 - PREHANDOVER/session memory/scope/admin files missing, stale, or uncommitted;
 - IAA final assurance missing, pending, rejected, or stale;
-- outstanding transition limitation is unresolved before final merge.
+- outstanding transition limitation is unresolved before final merge;
+- Wave 7 validation scenarios have not been recorded before final merge readiness.
 
 When blocked, Foreman emits STOP_AND_FIX or HALT with responsible owner and remediation path.
 
@@ -245,12 +253,14 @@ Tier 1 is intentionally short. Detailed controls live in:
 - `.agent-workspace/foreman-v2/knowledge/domain-flag-index.md`
 - `.agent-workspace/foreman-v2/knowledge/FM_QP_ENHANCED_QUICK_REFERENCE.md`
 - `.agent-workspace/foreman-v2/knowledge/session-memory-template.md`
+- `.agent-admin/control/merge-gate-required-checks.json`
 - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
 - `.agent-admin/control/overlays/WAVE1_IAA_PREFLIGHT_BRIEF_CONTRACT_ADDENDUM.md`
 - `.agent-admin/control/overlays/WAVE2_PREHANDOVER_LANE_GATE.md`
 - `.agent-admin/control/overlays/WAVE3_DELEGATION_ORDER_GATE.md`
 - `.agent-admin/control/overlays/WAVE4_ECAP_ADMIN_BOUNDARY.md`
 - `.agent-admin/control/overlays/WAVE5_FOREMAN_TIER1_SIMPLIFICATION.md`
+- `.agent-admin/control/overlays/WAVE6_MERGE_GATE_REQUIRED_CHECKS_ALIGNMENT.md`
 - `.agent-admin/control/wave-reviews/outstanding-transition-limitations.md`
 
 Foreman must load Tier 2 before action. If Tier 2 is missing, stale, or contradicts Tier 1, Foreman halts and escalates to CS2.
@@ -258,6 +268,6 @@ Foreman must load Tier 2 before action. If Tier 2 is missing, stale, or contradi
 ---
 
 **Authority:** CS2 (Johan Ras / @APGI-cmy)  
-**Version:** 6.3.0 | **Contract:** 2.17.0 | **Last Updated:** 2026-06-15  
+**Version:** 6.3.0 | **Contract:** 2.17.0 | **Last Updated:** 2026-06-16  
 **Canonical Source:** `APGI-cmy/maturion-foreman-governance`  
 **Self-Modification Lock:** SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL
