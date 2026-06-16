@@ -1,7 +1,8 @@
 # ISMS P1.2 Vercel Workflow Split
 
-Status: IMPLEMENTED ON BRANCH - PR/CI PENDING
+Status: MERGED - ACCEPTED FOR P1.2 SCOPE
 Date: 2026-06-16
+Merged PR: #1812 (`50785d5b6084fd7a2100cad8e946b596ac8b89a6`)
 
 ## Scope
 
@@ -51,6 +52,33 @@ The workflow builds and verifies routes even if those secrets are not configured
 ISMS public routes fail on HTTP 404, 5xx, 401 or 403.
 
 ISMS protected routes fail on HTTP 404 or 5xx, but HTTP 401/403 is treated as protected/auth posture rather than SPA fallback failure.
+
+## Merge and gate result
+
+PR #1812 merged on 2026-06-16 at merge commit `50785d5b6084fd7a2100cad8e946b596ac8b89a6`.
+
+PR-scoped checks passed (selected), including:
+
+- `Evaluate Layer-Up Trigger`
+- `Scan for deprecated Actions versions`
+- `AIMC Compliance / routing-governance-check`
+- `Test Quality / stub-detection-check`
+- `preflight/phase-1-evidence`
+- `CodeQL`
+- `Build ISMS Portal`
+- `Deploy ISMS Preview`
+One automated review thread about frozen lockfile behaviour was resolved before merge. No unresolved P1.2 review thread remains.
+
+## Post-merge follow-up
+
+Actual ISMS Vercel preview deployment remains gated on app-specific repository secrets:
+
+- `ISMS_VERCEL_ORG_ID`
+- `ISMS_VERCEL_PROJECT_ID`
+- `ISMS_VERCEL_TOKEN`
+- optional `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`
+
+After secrets are configured, open an ISMS-only verification PR touching `apps/isms-portal/**` or `.github/workflows/deploy-isms-portal-vercel.yml` to prove a real preview deploy and ISMS smoke test.
 
 ## Coordination instructions
 
