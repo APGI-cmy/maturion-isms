@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-15  
-**Updated By**: foreman-v2-agent (slice: `isms-p1-1-deployment-hygiene`)
+**Last Updated**: 2026-06-16  
+**Updated By**: foreman-v2-agent (slice: `isms-p1-2-vercel-workflow-split`)
 
-> **Classification**: W1-W8 COMPLETE — P1.1 DEPLOYMENT HYGIENE OPENED  
+> **Classification**: W1-W8 COMPLETE — P1.2 ISMS VERCEL WORKFLOW SPLIT OPENED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -35,7 +35,8 @@
 | Stage 12 | W7 Build Execution & Evidence | MERGED — ACCEPTED FOR W7 SCOPE | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
 | Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
 | Post-W8 | P1 External Deployment Proof | VERIFIED WITH FOLLOW-UP FINDINGS | `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md` |
-| Post-W8 | P1.1 Deployment Hygiene Cleanup | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
+| Post-W8 | P1.1 Deployment Hygiene Cleanup | MERGED — ACCEPTED FOR P1.1 SCOPE | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
+| Post-W8 | P1.2 Vercel Workflow Split | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md` |
 
 ---
 
@@ -54,15 +55,30 @@
 
 ## Post-W8: P1.1 Deployment Hygiene Cleanup
 
-**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
-**Branch**: `foreman/isms-p1-1-deployment-hygiene`  
+**Status**: MERGED — ACCEPTED FOR P1.1 SCOPE  
+**Merged PR**: #1809 (`07535ab07f14ce3bb5b8238eecf6e5d9e04233b9`)  
 **Evidence**: `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md`
 
-**Scope**:
+**Scope delivered**:
 - confirms stale PR #1795 is closed and unmerged;
 - bounds root Node engine to `>=20 <23`;
 - keeps pnpm package manager unchanged because lockfile is `lockfileVersion: '9.0'`;
-- patches non-ISMS API bearer validation TypeScript surface in `api/ai/feedback/pending.ts` and `api/ai/feedback/approve.ts`.
+- patches API bearer validation TypeScript surface in `api/ai/feedback/pending.ts` and `api/ai/feedback/approve.ts`.
+
+---
+
+## Post-W8: P1.2 Vercel Workflow Split
+
+**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
+**Branch**: `foreman/isms-p1-2-vercel-workflow-split`  
+**Evidence**: `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md`
+
+**Scope**:
+- adds `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md` coordination artifact;
+- adds `.github/workflows/deploy-isms-portal-vercel.yml`;
+- scopes ISMS deploy workflow to `apps/isms-portal/**` and ISMS workflow/docs paths;
+- leaves MMM and PIT workflow implementation for their owning agents;
+- avoids broad `api/**` ownership in the ISMS workflow.
 
 ---
 
@@ -83,9 +99,9 @@ Accepted conditions:
 
 ## Current Stage Summary
 
-**Current Stage**: Post-W8 P1.1 deployment hygiene cleanup is open.  
+**Current Stage**: Post-W8 P1.2 Vercel workflow split is open.  
 **Implementation Transfer**: Owner final decision recorded with conditions.  
-**Next Required Action**: Inspect P1.1 PR CI/review gates, then decide whether to merge the hygiene cleanup.
+**Next Required Action**: Inspect P1.2 PR CI/review gates, then coordinate MMM/PIT workflow implementation with their owning agents.
 
 ---
 
@@ -109,9 +125,10 @@ Accepted conditions:
 - [x] Stage 12 W1-W8 merged
 - [x] W8 owner final decision recorded
 - [x] P1 external deployment proof recorded
-- [ ] P1.1 deployment hygiene PR opened
-- [ ] P1.1 deployment hygiene CI passed
-- [ ] P1.1 deployment hygiene review conversations resolved
+- [x] P1.1 deployment hygiene merged
+- [ ] P1.2 workflow split PR opened
+- [ ] P1.2 workflow split CI passed
+- [ ] P1.2 workflow split review conversations resolved
 
 ---
 
@@ -123,9 +140,11 @@ The following remain outside W1-W8 appointed scope and require separate future a
 - live AI provider integration;
 - runtime persistence hooks;
 - audit writer invocation;
+- MMM workflow split implementation by MMM agent;
+- PIT workflow split implementation by PIT agent;
 - bundle-size review;
 - canonical App Description path mismatch cleanup.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-15
+**Last Tracker Reconciliation**: 2026-06-16
