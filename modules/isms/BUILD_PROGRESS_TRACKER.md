@@ -82,7 +82,7 @@
 
 **Post-merge verification**:
 - PR #1812 was merged on 2026-06-16;
-- PR-scoped CI passed, including `Deploy ISMS Portal to Vercel`;
+- PR-scoped CI passed, including `Deploy ISMS Preview`;
 - actual Vercel deploy/smoke steps remain conditional on repository secrets: `ISMS_VERCEL_ORG_ID`, `ISMS_VERCEL_PROJECT_ID`, `ISMS_VERCEL_TOKEN`, and optional `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`.
 
 ---
