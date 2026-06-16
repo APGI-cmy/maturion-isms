@@ -57,17 +57,16 @@ ISMS protected routes fail on HTTP 404 or 5xx, but HTTP 401/403 is treated as pr
 
 PR #1812 merged on 2026-06-16 at merge commit `50785d5b6084fd7a2100cad8e946b596ac8b89a6`.
 
-PR-scoped checks passed, including:
+PR-scoped checks passed (selected), including:
 
-- `Layer-Up Trigger`
-- `Actions Deprecation Gate`
-- `Routing Governance Check`
-- `Stub Detection Check`
-- `Preflight Evidence Gate`
-- `POLC Boundary Validation`
+- `Evaluate Layer-Up Trigger`
+- `Scan for deprecated Actions versions`
+- `AIMC Compliance / routing-governance-check`
+- `Test Quality / stub-detection-check`
+- `preflight/phase-1-evidence`
 - `CodeQL`
-- `Deploy ISMS Portal to Vercel`
-
+- `Build ISMS Portal`
+- `Deploy ISMS Preview`
 One automated review thread about frozen lockfile behaviour was resolved before merge. No unresolved P1.2 review thread remains.
 
 ## Post-merge follow-up
