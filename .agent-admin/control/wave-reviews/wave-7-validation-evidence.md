@@ -31,12 +31,13 @@ The Wave 7 validation script now creates temporary fixture repositories/artifact
 | G1 | Valid ordered delegation proof | PASS | `.github/scripts/delegation-order-gate.js` |
 | G2 | Implementation change with missing delegation control | FAIL | `.github/scripts/delegation-order-gate.js` |
 | G3 | Retroactive/same-commit delegation proof | FAIL | `.github/scripts/delegation-order-gate.js` |
-| G4 | Handover language with missing `handover-allowed.json` | FAIL | `.github/scripts/foreman-prehandover-lane-gate.js` |
-| G5 | Handover language with stale `handover-allowed.json` | FAIL | `.github/scripts/foreman-prehandover-lane-gate.js` |
-| G6 | ECAP required but admin validation missing | FAIL | `.github/scripts/foreman-prehandover-lane-gate.js` |
-| G7 | Valid ECAP admin-only output | PASS | `.github/scripts/ecap-admin-boundary-gate.js` |
-| G8 | ECAP readiness/assurance overstep output | FAIL | `.github/scripts/ecap-admin-boundary-gate.js` |
-| G9 | Current branch required-check alignment | PASS | `.github/scripts/merge-gate-required-checks-alignment.js` |
+| G4 | Implementation-only change with no handover claim | PASS | `.github/scripts/foreman-prehandover-lane-gate.js` |
+| G5 | Handover language with missing `handover-allowed.json` | FAIL | `.github/scripts/foreman-prehandover-lane-gate.js` |
+| G6 | Handover language with stale `handover-allowed.json` | FAIL | `.github/scripts/foreman-prehandover-lane-gate.js` |
+| G7 | ECAP required but admin validation missing | FAIL | `.github/scripts/foreman-prehandover-lane-gate.js` |
+| G8 | Valid ECAP admin-only output | PASS | `.github/scripts/ecap-admin-boundary-gate.js` |
+| G9 | ECAP readiness/assurance overstep output | FAIL | `.github/scripts/ecap-admin-boundary-gate.js` |
+| G10 | Current branch required-check alignment | PASS | `.github/scripts/merge-gate-required-checks-alignment.js` |
 
 ## Test-count reconciliation
 
@@ -46,9 +47,9 @@ The Wave 7 validation script now creates temporary fixture repositories/artifact
 | Executed policy scenarios | 8 |
 | Expected policy PASS scenarios | 2 |
 | Expected policy FAIL scenarios | 6 |
-| Planned real-gate fixture scenarios | 9 |
-| Executed real-gate fixture scenarios | 9 |
-| Expected real-gate PASS scenarios | 3 |
+| Planned real-gate fixture scenarios | 10 |
+| Executed real-gate fixture scenarios | 10 |
+| Expected real-gate PASS scenarios | 4 |
 | Expected real-gate FAIL scenarios | 6 |
 | Unresolved scenario mismatches | 0 |
 
@@ -59,6 +60,7 @@ The validation harness verifies behavioral policy expectations and actual gate b
 - IAA pre-brief requirement;
 - builder delegation requirement;
 - delegation timing requirement;
+- implementation-only work is not blocked by pre-handover approval before handover is attempted;
 - handover language gating;
 - stale `handover-allowed.json` detection;
 - ECAP admin validation requirement;
