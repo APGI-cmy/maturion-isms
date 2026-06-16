@@ -28,6 +28,11 @@ outstanding_transition_limitations:
       description: "Wave 6 maps legacy/external required checks in the manifest. Wave 7 must validate behavioral pass/fail scenarios before final merge readiness."
       planned_resolution_wave: 7
       blocking_before_final_merge: true
+    - id: W6-BRANCH-PROTECTION-CONFIRMATION
+      introduced_in_wave: 6
+      description: "Wave 6 validates repository-file alignment, but does not query GitHub branch-protection required-check configuration. Branch protection confirmation is required before draft exit/final merge readiness."
+      planned_resolution_wave: 7
+      blocking_before_final_merge: true
   resolved_for_wave_progression:
     - id: W2-MERGE-GATE-INVENTORY-DEFERRED
       resolved_by:
@@ -43,6 +48,12 @@ outstanding_transition_limitations:
         - ".github/workflows/merge-gate-required-checks-alignment.yml"
         - ".github/agents/foreman-v2-agent.md"
       resolution_scope: "Wave 6 progression; Wave 7 still validates behavior."
+    - id: W6-CWT-EVIDENCE-MISSING
+      resolved_by:
+        - ".agent-admin/control/wave-reviews/wave-6-cwt-evidence.md"
+        - ".github/scripts/merge-gate-required-checks-alignment.js"
+        - ".github/workflows/merge-gate-required-checks-alignment.yml"
+      resolution_scope: "Wave 6 progression; Wave 7 still validates end-to-end behavior."
     - id: W5-AGCFPP-REVIEW-PENDING
       resolved_by:
         - ".agent-admin/control/wave-reviews/wave-5-foreman-contract-impact-review.md"
