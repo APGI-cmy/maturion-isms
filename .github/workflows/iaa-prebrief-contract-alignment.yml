@@ -47,10 +47,10 @@ jobs:
             exit 1
           fi
 
-          if grep -RIn "IAA_PREFLIGHT_BRIEF" .agent-admin/control .github/workflows | grep -q .; then
+          if grep -RIn "IAA_PREFLIGHT_BRIEF" .agent-admin/control .github/workflows 2>/dev/null | grep -v "${SELF_WORKFLOW}" | grep -q .; then
             echo "Canonical IAA_PREFLIGHT_BRIEF references found."
           else
-            echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found in Wave 1 control guidance."
+            echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found in Wave 1 control guidance (excluding this workflow)."
             exit 1
           fi
 
