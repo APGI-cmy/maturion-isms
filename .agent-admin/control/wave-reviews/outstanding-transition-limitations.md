@@ -4,7 +4,7 @@ This file tracks intentional limitations accepted during the waved governance cl
 
 ```yaml
 outstanding_transition_limitations:
-  updated: "2026-06-15"
+  updated: "2026-06-16"
   applies_to_pr: 1800
   branch: "strategy/agent-governance-cleanup-waves"
   limitations:
@@ -12,16 +12,6 @@ outstanding_transition_limitations:
       introduced_in_wave: 1
       description: "Foreman/IAA pre-brief harmonization began as scoped overlay/protocol/schema artifacts. Wave 5 integrated the Foreman side into Tier 1/Tier 2; IAA contract-body confirmation remains part of final validation."
       planned_resolution_wave: 7
-      blocking_before_final_merge: true
-    - id: W2-MERGE-GATE-INVENTORY-DEFERRED
-      introduced_in_wave: 2
-      description: "preflight/foreman-prehandover-lane-gate exists as a required-check candidate, but merge-gate required-check inventory alignment is deferred."
-      planned_resolution_wave: 6
-      blocking_before_final_merge: true
-    - id: W3-MERGE-GATE-INVENTORY-DEFERRED
-      introduced_in_wave: 3
-      description: "preflight/delegation-order-gate exists as a required-check candidate, but merge-gate required-check inventory alignment is deferred."
-      planned_resolution_wave: 6
       blocking_before_final_merge: true
     - id: W4-ECAP-SCHEMA-VALIDATION-NOT-FULLY-ENFORCED
       introduced_in_wave: 4
@@ -33,7 +23,26 @@ outstanding_transition_limitations:
       description: "Wave 5 integrated ECAP admin-only treatment into the Foreman Tier 1/Tier 2 contract. IAA/ECAP contract-body confirmation remains part of final validation."
       planned_resolution_wave: 7
       blocking_before_final_merge: true
+    - id: W6-LEGACY-EXTERNAL-CHECK-BEHAVIOR-VALIDATION
+      introduced_in_wave: 6
+      description: "Wave 6 maps legacy/external required checks in the manifest. Wave 7 must validate behavioral pass/fail scenarios before final merge readiness."
+      planned_resolution_wave: 7
+      blocking_before_final_merge: true
   resolved_for_wave_progression:
+    - id: W2-MERGE-GATE-INVENTORY-DEFERRED
+      resolved_by:
+        - ".agent-admin/control/merge-gate-required-checks.json"
+        - ".github/scripts/merge-gate-required-checks-alignment.js"
+        - ".github/workflows/merge-gate-required-checks-alignment.yml"
+        - ".github/agents/foreman-v2-agent.md"
+      resolution_scope: "Wave 6 progression; Wave 7 still validates behavior."
+    - id: W3-MERGE-GATE-INVENTORY-DEFERRED
+      resolved_by:
+        - ".agent-admin/control/merge-gate-required-checks.json"
+        - ".github/scripts/merge-gate-required-checks-alignment.js"
+        - ".github/workflows/merge-gate-required-checks-alignment.yml"
+        - ".github/agents/foreman-v2-agent.md"
+      resolution_scope: "Wave 6 progression; Wave 7 still validates behavior."
     - id: W5-AGCFPP-REVIEW-PENDING
       resolved_by:
         - ".agent-admin/control/wave-reviews/wave-5-foreman-contract-impact-review.md"
