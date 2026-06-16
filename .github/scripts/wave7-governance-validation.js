@@ -118,11 +118,11 @@ const policyScenarios = [
   { id: 'S1-foreman-only-governance-doc-change-no-implementation-files', expected: 'PASS', files_changed: ['.agent-admin/control/overlays/example.md'], claim_text: 'governance documentation update only', iaa_prebrief_ready: true, builder_delegation_recorded: false, delegation_precedes_implementation: false, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true },
   { id: 'S2-builder-implementation-change-valid-prebrief-and-ordered-delegation', expected: 'PASS', files_changed: ['modules/example/src/service.ts'], claim_text: 'implementation evidence recorded only', iaa_prebrief_ready: true, builder_delegation_recorded: true, delegation_precedes_implementation: true, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true },
   { id: 'S3-implementation-change-missing-builder-delegation', expected: 'FAIL', files_changed: ['modules/example/src/service.ts'], claim_text: 'implementation evidence recorded only', iaa_prebrief_ready: true, builder_delegation_recorded: false, delegation_precedes_implementation: false, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true },
-  { id: 'S4-implementation-change-retroactive-delegation', expected: 'FAIL', files_changed: ['modules/example/src/service.ts'], claim_text: 'implementation evidence recorded only', iaa_prebrief_ready: true, builder_delegation_recorded: true, delegation_precedes_implementation: false, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true }
+  { id: 'S4-implementation-change-retroactive-delegation', expected: 'FAIL', files_changed: ['modules/example/src/service.ts'], claim_text: 'implementation evidence recorded only', iaa_prebrief_ready: true, builder_delegation_recorded: true, delegation_precedes_implementation: false, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true },
   { id: 'S5-handover-language-without-handover-allowed-json', expected: 'FAIL', files_changed: ['.agent-workspace/foreman-v2/memory/PREHANDOVER-session-001.md'], claim_text: 'handover complete and ready-for-review', iaa_prebrief_ready: true, builder_delegation_recorded: false, delegation_precedes_implementation: false, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true },
   { id: 'S6-stale-handover-allowed-head-mismatch', expected: 'FAIL', files_changed: ['.agent-workspace/foreman-v2/memory/PREHANDOVER-session-001.md'], claim_text: 'handover complete and ready-for-review', iaa_prebrief_ready: true, builder_delegation_recorded: false, delegation_precedes_implementation: false, handover_allowed_exists: true, handover_allowed_head_matches: false, handover_allowed_true: true, ecap_required: false, ecap_admin_validated: false, required_checks_green: true },
   { id: 'S7-ecap-admin-validation-missing-while-required', expected: 'FAIL', files_changed: ['.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-001.md'], claim_text: 'admin bundle handover complete', iaa_prebrief_ready: true, builder_delegation_recorded: false, delegation_precedes_implementation: false, handover_allowed_exists: true, handover_allowed_head_matches: true, handover_allowed_true: true, ecap_required: true, ecap_admin_validated: false, required_checks_green: true },
-  { id: 'S8-iaa-prebrief-missing-for-implementation-change', expected: 'FAIL', files_changed: ['modules/example/src/service.ts'], claim_text: 'implementation evidence recorded only', iaa_prebrief_ready: false, builder_delegation_recorded: true, delegation_precedes_implementation: true, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true }
+  { id: 'S8-iaa-prebrief-missing-for-implementation-change', expected: 'FAIL', files_changed: ['modules/example/src/service.ts'], claim_text: 'implementation evidence recorded only', iaa_prebrief_ready: false, builder_delegation_recorded: true, delegation_precedes_implementation: true, handover_allowed_exists: false, handover_allowed_head_matches: false, handover_allowed_true: false, ecap_required: false, ecap_admin_validated: false, required_checks_green: true },
 ];
 
 function expectGate(id, commandResult, expected) {
@@ -201,6 +201,13 @@ function runPrehandoverFixture(id, mode, expected) {
   return expectGate(id, result, expected);
 }
 
+function runPrehandoverImplementationOnlyFixture(id, expected) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wave7-prehandover-implementation-only-'));
+  writeFile(dir, 'modules/example/src/service.ts', 'export const ok = true;\n');
+  const result = run('node', [scriptPaths.prehandover], { cwd: dir, env: { CHANGED_FILES: 'modules/example/src/service.ts', PR_HEAD_SHA: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' } });
+  return expectGate(id, result, expected);
+}
+
 function runEcapFixture(id, mode, expected) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wave7-ecap-fixture-'));
   const file = '.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-session-001.md';
@@ -236,12 +243,13 @@ const realGateRuns = [
   () => runDelegationFixture('G1-delegation-valid-ordered-proof', 'valid', 'PASS'),
   () => runDelegationFixture('G2-delegation-missing-control', 'missing-control', 'FAIL'),
   () => runDelegationFixture('G3-delegation-retroactive-proof', 'retroactive', 'FAIL'),
-  () => runPrehandoverFixture('G4-handover-missing-control', 'missing-control', 'FAIL'),
-  () => runPrehandoverFixture('G5-handover-stale-control', 'stale-control', 'FAIL'),
-  () => runPrehandoverFixture('G6-ecap-required-admin-validation-missing', 'ecap-missing', 'FAIL'),
-  () => runEcapFixture('G7-ecap-valid-admin-output', 'valid', 'PASS'),
-  () => runEcapFixture('G8-ecap-readiness-overstep-output', 'overstep', 'FAIL'),
-  () => expectGate('G9-merge-required-check-alignment-current-branch', run('node', [scriptPaths.mergeAlignment], { cwd: repoRoot, env: { WAVE6_ALIGNMENT_SELF_TEST: '1' } }), 'PASS'),
+  () => runPrehandoverImplementationOnlyFixture('G4-prehandover-implementation-only-no-claim', 'PASS'),
+  () => runPrehandoverFixture('G5-handover-missing-control', 'missing-control', 'FAIL'),
+  () => runPrehandoverFixture('G6-handover-stale-control', 'stale-control', 'FAIL'),
+  () => runPrehandoverFixture('G7-ecap-required-admin-validation-missing', 'ecap-missing', 'FAIL'),
+  () => runEcapFixture('G8-ecap-valid-admin-output', 'valid', 'PASS'),
+  () => runEcapFixture('G9-ecap-readiness-overstep-output', 'overstep', 'FAIL'),
+  () => expectGate('G10-merge-required-check-alignment-current-branch', run('node', [scriptPaths.mergeAlignment], { cwd: repoRoot, env: { WAVE6_ALIGNMENT_SELF_TEST: '1' } }), 'PASS'),
 ];
 
 for (const execute of realGateRuns) {
