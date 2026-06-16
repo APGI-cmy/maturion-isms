@@ -293,7 +293,7 @@ jobs:
               bypass_args=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}")
             fi
             code=$(curl -L -s -o /tmp/route-body -w "%{http_code}" -c "$cookie_jar" -b "$cookie_jar" \
-              "${bypass_args[@]}" --connect-timeout 10 --max-time 30 "$route_url" 2>/dev/null || echo "000")
+              ${bypass_args[@]+"${bypass_args[@]}"} --connect-timeout 10 --max-time 30 "$route_url" 2>/dev/null || echo "000")
             echo "$route -> HTTP $code"
             case "$code" in
               2*|3*) ;;
