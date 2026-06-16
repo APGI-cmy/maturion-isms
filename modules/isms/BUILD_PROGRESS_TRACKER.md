@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-15  
-**Updated By**: foreman-v2-agent (wave: `isms-owner-decision-record`)
+**Updated By**: foreman-v2-agent (slice: `isms-p1-1-deployment-hygiene`)
 
-> **Classification**: W1-W8 IMPLEMENTATION WAVES COMPLETE — OWNER FINAL DECISION RECORDED  
+> **Classification**: W1-W8 COMPLETE — P1.1 DEPLOYMENT HYGIENE OPENED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -34,46 +34,35 @@
 | Stage 12 | W6 Build Execution & Evidence | MERGED — ACCEPTED FOR W6 SCOPE | `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` |
 | Stage 12 | W7 Build Execution & Evidence | MERGED — ACCEPTED FOR W7 SCOPE | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
 | Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
+| Post-W8 | P1 External Deployment Proof | VERIFIED WITH FOLLOW-UP FINDINGS | `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md` |
+| Post-W8 | P1.1 Deployment Hygiene Cleanup | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
 
 ---
 
-## Stage 12: Completed Wave Summary
+## Post-W8: P1 External Deployment Proof
 
-| Wave | Status | Merged PR / evidence |
-|---|---|---|
-| W1 | MERGED — ACCEPTED FOR W1 SCOPE | #1776 plus correction #1779 |
-| W2 | MERGED — ACCEPTED FOR W2 SCOPE | #1781 |
-| W3 | MERGED — ACCEPTED FOR W3 SCOPE | #1783 |
-| W4 | MERGED — ACCEPTED FOR W4 SCOPE | #1786 |
-| W5 | MERGED — ACCEPTED FOR W5 SCOPE | #1789 |
-| W6 | MERGED — ACCEPTED FOR W6 SCOPE | #1792 |
-| W7 | MERGED — ACCEPTED FOR W7 SCOPE | #1796 (`29ed421fc7b286a4d18419ee8428c85191a78201`) |
-| W8 | MERGED — ACCEPTED FOR W8 SCOPE | #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`) |
+**Status**: VERIFIED WITH FOLLOW-UP FINDINGS  
+**Evidence**: `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md`
+
+**Verified**:
+- production deployment `dpl_wwAYwu19XLPP1Kzm8cmvF2q1SqNC` is `READY`;
+- production domain `https://maturion-isms-portal.vercel.app` returns HTTP 200;
+- representative SPA deep links return HTTP 200;
+- runtime log query found no logs in the checked one-hour window.
 
 ---
 
-## Stage 12: W8 Cumulative Regression and PBFAG Rerun
+## Post-W8: P1.1 Deployment Hygiene Cleanup
 
-**Status**: MERGED — ACCEPTED FOR W8 SCOPE  
-**Merged PR**: #1801 (`faf2ce196ac877d1edd8e1c07025f5b63e7fface`)  
-**Primary Evidence**:
-- `.agent-admin/builder-appointments/isms-stage11-w8-cumulative-regression-pbfag-builder-appointment.md` — W8 appointment
-- `modules/isms/11-build/w8-cumulative-qa-report.md` — cumulative QA report
-- `modules/isms/06-pbfag/pbfag-rerun-amendment-w8-cumulative-regression.md` — PBFAG amendment
-- `modules/isms/08-builder-checklist/stage9-final-reconciliation-w8.md` — final Stage 9 reconciliation
-- `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` — W8 implementation evidence
-- `.functional-delivery/pr-1801.md` — PR-scoped functional delivery evidence
-- `.agent-admin/assurance/iaa-wave-record-pr1801-isms-w8-cumulative-regression-pbfag.md` — IAA wave record
-- `.agent-workspace/foreman-v2/memory/session-1801-20260611.md` — Foreman session memory
-- `.agent-admin/owner-decisions/isms-w8-owner-final-decision-20260615.md` — owner final decision record
+**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
+**Branch**: `foreman/isms-p1-1-deployment-hygiene`  
+**Evidence**: `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md`
 
-**W8 scope delivered**:
-- cumulative QA reconciliation for W1-W7;
-- architecture completeness and future-gated condition disposition;
-- PBFAG rerun/amendment;
-- final Stage 9 checklist reconciliation;
-- owner final decision readiness recommendation;
-- no new runtime functionality.
+**Scope**:
+- confirms stale PR #1795 is closed and unmerged;
+- bounds root Node engine to `>=20 <23`;
+- keeps pnpm package manager unchanged because lockfile is `lockfileVersion: '9.0'`;
+- patches non-ISMS API bearer validation TypeScript surface in `api/ai/feedback/pending.ts` and `api/ai/feedback/approve.ts`.
 
 ---
 
@@ -94,9 +83,9 @@ Accepted conditions:
 
 ## Current Stage Summary
 
-**Current Stage**: W1-W8 implementation waves complete for appointed scope.  
+**Current Stage**: Post-W8 P1.1 deployment hygiene cleanup is open.  
 **Implementation Transfer**: Owner final decision recorded with conditions.  
-**Next Required Action**: Future work must be separately scoped for production auth/payment, live AI provider integration, runtime persistence hooks, audit writer invocation, and external live deployment proof.
+**Next Required Action**: Inspect P1.1 PR CI/review gates, then decide whether to merge the hygiene cleanup.
 
 ---
 
@@ -118,10 +107,11 @@ Accepted conditions:
 - [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [x] Stage 11 W1-W8 Builder Appointments complete
 - [x] Stage 12 W1-W8 merged
-- [x] W8 PR opened
-- [x] W8 CI passed
-- [x] W8 review conversations resolved or dispositioned
 - [x] W8 owner final decision recorded
+- [x] P1 external deployment proof recorded
+- [ ] P1.1 deployment hygiene PR opened
+- [ ] P1.1 deployment hygiene CI passed
+- [ ] P1.1 deployment hygiene review conversations resolved
 
 ---
 
@@ -133,7 +123,7 @@ The following remain outside W1-W8 appointed scope and require separate future a
 - live AI provider integration;
 - runtime persistence hooks;
 - audit writer invocation;
-- external live deployment proof where not already available;
+- bundle-size review;
 - canonical App Description path mismatch cleanup.
 
 ---
