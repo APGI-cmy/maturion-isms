@@ -175,7 +175,11 @@ jobs:
         run: |
           code='${{ steps.diagnose.outputs.exit_code }}'
           echo "diagnose.mjs exit code: $code"
-          exit "${code:-2}"
+          case "$code" in
+            0|1) exit 0 ;;
+            2)   exit 1 ;;
+            *)   exit 2 ;;
+          esac
 
   verify-modes:
     name: Verify Mode A/B/C
@@ -344,4 +348,8 @@ jobs:
         run: |
           code='${{ steps.verify.outputs.exit_code }}'
           echo "verify-mmm-modes.mjs exit code: $code"
-          exit "${code:-2}"
+          case "$code" in
+            0|1) exit 0 ;;
+            2)   exit 1 ;;
+            *)   exit 2 ;;
+          esac

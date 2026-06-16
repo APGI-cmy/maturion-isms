@@ -286,8 +286,14 @@ jobs:
           fi
           fail=0
           for route in /login /forgot-password /reset-password /onboarding /frameworks /frameworks/upload; do
-            url="${PREVIEW_URL%/}${route}"
-            code=$(curl -L -s -o /tmp/route-body -w "%{http_code}" -c "$cookie_jar" -b "$cookie_jar" --connect-timeout 10 --max-time 30 "$url" 2>/dev/null || echo "000")
+            route_url="${PREVIEW_URL%/}${route}"
+            bypass_args=()
+            if [ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              route_url="${route_url}?x-vercel-protection-bypass=${VERCEL_AUTOMATION_BYPASS_SECRET}&x-vercel-set-bypass-cookie=samesitenone"
+              bypass_args=(-H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}")
+            fi
+            code=$(curl -L -s -o /tmp/route-body -w "%{http_code}" -c "$cookie_jar" -b "$cookie_jar" \
+              "${bypass_args[@]}" --connect-timeout 10 --max-time 30 "$route_url" 2>/dev/null || echo "000")
             echo "$route -> HTTP $code"
             case "$code" in
               2*|3*) ;;
