@@ -1,0 +1,24 @@
+name: Merge Gate Required Checks Alignment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  merge-gate-required-checks-alignment:
+    name: "preflight/merge-gate-required-checks-alignment"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Run merge gate required checks alignment
+        shell: bash
+        run: node .github/scripts/merge-gate-required-checks-alignment.js
