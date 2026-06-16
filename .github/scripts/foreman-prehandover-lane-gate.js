@@ -14,7 +14,7 @@ const controlPath = path.join(repoRoot, '.agent-admin/control/handover-allowed.j
 const handoverLanguagePattern = /\b(complete|ready for review|ready-for-review|handover|merge-ready|released|done)\b/i;
 const foremanArtifactPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/|(^|\/)PREHANDOVER-session-|(^|\/)session-[0-9].*\.md$/i;
 const handoverLanguageScanPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/.*\.(md|txt|json|yml|yaml)$|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.*\.(md|txt|json|yml|yaml)$/i;
-const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/)/;
+const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/|api\/|lib\/)/;
 const implementationTestPattern = /(^|\/)(__tests__|tests?)\/|\.(test|spec)\.(ts|tsx|js|jsx)$/;
 
 function fail(message) {
