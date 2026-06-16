@@ -30,18 +30,28 @@ import type { FeedbackPipelineInterface } from '../../../packages/ai-centre/src/
 // Bearer validator (injectable for testing)
 // ---------------------------------------------------------------------------
 
-/**
- * A function that verifies a Bearer token is a valid, live Supabase session.
- * Returns true if the token is verified, false otherwise.
- * Injectable via createHandler to allow unit tests to run without a real Supabase instance.
- */
 export type BearerValidator = (token: string) => Promise<boolean>;
 
-/**
- * Build a BearerValidator backed by supabase.auth.getUser().
- * This performs real Supabase JWT signature and expiry verification — not structural-only.
- * F-D3-002 remediation: replaces the prior structural-only 3-part format check.
- */
+type SupabaseAuthUserResponse = {
+  data?: { user?: unknown | null };
+  error?: unknown | null;
+};
+
+type SupabaseAuthWithGetUser = {
+  getUser: (jwt?: string) => Promise<SupabaseAuthUserResponse>;
+};
+
+async function verifyBearerWithSupabaseAuth(auth: unknown, token: string): Promise<boolean> {
+  const authWithGetUser = auth as Partial<SupabaseAuthWithGetUser>;
+
+  if (typeof authWithGetUser.getUser !== 'function') {
+    return false;
+  }
+
+  const { data, error } = await authWithGetUser.getUser(token);
+  return !error && Boolean(data?.user);
+}
+
 export function buildBearerValidator(): BearerValidator {
   return async (token: string): Promise<boolean> => {
     try {
@@ -49,8 +59,7 @@ export function buildBearerValidator(): BearerValidator {
       const supabaseAnonKey = process.env['SUPABASE_ANON_KEY'] ?? '';
       if (!supabaseUrl || !supabaseAnonKey) return false;
       const authClient = createClient(supabaseUrl, supabaseAnonKey);
-      const { data, error } = await authClient.auth.getUser(token);
-      return !error && data.user !== null;
+      return await verifyBearerWithSupabaseAuth(authClient.auth, token);
     } catch {
       return false;
     }
@@ -63,15 +72,6 @@ export function buildBearerValidator(): BearerValidator {
 
 export type FeedbackPipelineFactory = () => FeedbackPipelineInterface;
 
-/**
- * Build a FeedbackPipeline instance for list (read-only) operations.
- * Uses the server-side service-role key because the ai_feedback_events SELECT
- * policy depends on session state (app.current_organisation_id) that this
- * handler does not establish on an anon client. Endpoint authz is enforced
- * before listPending() is called, so a privileged client is used here to make
- * the read path reliable across environments.
- * In tests, inject via createHandler(mockFactory).
- */
 export function buildFeedbackPipeline(): FeedbackPipelineInterface {
   const supabaseUrl = process.env['SUPABASE_URL'] ?? '';
   const supabaseServiceRoleKey = process.env['SUPABASE_SERVICE_ROLE_KEY'] ?? '';
@@ -86,11 +86,6 @@ export function buildFeedbackPipeline(): FeedbackPipelineInterface {
 // Handler
 // ---------------------------------------------------------------------------
 
-/**
- * Create a handler with an injectable FeedbackPipeline factory and optional BearerValidator.
- * The default export uses buildFeedbackPipeline() and buildBearerValidator().
- * Tests may inject mock implementations to avoid real Supabase calls.
- */
 export function createHandler(
   factory: FeedbackPipelineFactory = buildFeedbackPipeline,
   validateBearer: BearerValidator = buildBearerValidator(),
@@ -107,8 +102,6 @@ export function createHandler(
       return;
     }
 
-    // Authentication: x-arc-token (CS2-gated direct) or Supabase-verified Bearer token.
-    // F-D3-002 remediation: structural-only JWT checks are replaced with supabase.auth.getUser().
     const authHeader = (req.headers as Record<string, string | string[] | undefined>)['authorization'];
     const arcTokenHeader = (req.headers as Record<string, string | string[] | undefined>)['x-arc-token'];
     const expectedToken = process.env['ARC_APPROVAL_TOKEN'];
@@ -119,12 +112,9 @@ export function createHandler(
       typeof arcTokenHeader === 'string' && expectedToken && arcTokenHeader === expectedToken;
 
     if (isArcTokenAuth) {
-      // Server-side ARC token path: require organisationId query param
       const url = new URL(req.url ?? '/', 'http://localhost');
       organisationId = url.searchParams.get('organisationId');
     } else if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-      // Supabase session JWT path.
-      // F-D3-002 remediation: verify via supabase.auth.getUser() — not structural-only.
       const token = authHeader.slice(7);
       const isValidBearer = await validateBearer(token);
       if (!isValidBearer) {
@@ -132,7 +122,6 @@ export function createHandler(
         res.end(JSON.stringify({ error: 'Forbidden. Bearer token could not be verified.' }));
         return;
       }
-      // After successful Supabase verification, organisationId must be supplied as query param.
       const url = new URL(req.url ?? '/', 'http://localhost');
       organisationId = url.searchParams.get('organisationId');
     } else {
