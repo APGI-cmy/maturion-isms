@@ -151,7 +151,7 @@ const foremanArtifacts = changedFiles.filter((file) => foremanArtifactPattern.te
 const implementationFiles = changedFiles.filter((file) => implementationPathPattern.test(file) || implementationTestPattern.test(file));
 
 const implementationChanged = implementationFiles.length > 0;
-const laneGateRelevant = handoverHits.length > 0 || foremanArtifacts.length > 0 || implementationChanged;
+const handoverGateRelevant = handoverHits.length > 0 || foremanArtifacts.length > 0;
 
 console.log('=== Foreman Pre-Handover Lane Gate ===');
 console.log(`Event: ${eventName}`);
@@ -163,8 +163,12 @@ console.log(`Handover language hits in handover artifacts: ${handoverHits.length
 console.log(`Foreman/ECAP handover artifacts changed: ${foremanArtifacts.length}`);
 console.log(`Implementation files changed: ${implementationFiles.length}`);
 
-if (!laneGateRelevant) {
-  console.log('No changed implementation files, Foreman handover artifacts, or handover language in handover artifacts detected. Gate passes.');
+if (!handoverGateRelevant) {
+  if (implementationChanged) {
+    console.log('Implementation-like files changed, but no Foreman/ECAP handover artifact or handover/completion language was detected. Pre-handover lane gate is not yet applicable; delegation-order gate remains responsible for implementation-order enforcement.');
+  } else {
+    console.log('No Foreman handover artifacts or handover/completion language detected. Gate passes.');
+  }
   process.exit(0);
 }
 
