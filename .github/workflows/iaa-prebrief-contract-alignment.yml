@@ -35,12 +35,14 @@ jobs:
           test -f .agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md
           test -f .agent-admin/control/overlays/WAVE1_IAA_PREFLIGHT_BRIEF_CONTRACT_ADDENDUM.md
 
-          if grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null; then
+          SELF_WORKFLOW=".github/workflows/iaa-prebrief-contract-alignment.yml"
+
+          if grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}"; then
             echo "::error::Legacy standalone iaa-prebrief generation instruction found in active Wave 1 workflow/control guidance."
             exit 1
           fi
 
-          if grep -RIn "commit.*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null; then
+          if grep -RIn "commit.*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}"; then
             echo "::error::Legacy standalone iaa-prebrief commit instruction found in active Wave 1 workflow/control guidance."
             exit 1
           fi
