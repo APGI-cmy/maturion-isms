@@ -10,7 +10,7 @@ const prHeadSha = process.env.PR_HEAD_SHA || workflowSha;
 const prBaseSha = process.env.PR_BASE_SHA || '';
 const controlPath = path.join(repoRoot, '.agent-admin/control/delegation-order.json');
 
-const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/)/;
+const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/|api\/|lib\/)/;
 const implementationTestPattern = /(^|\/)(__tests__|tests?)\/|\.(test|spec)\.(ts|tsx|js|jsx)$/;
 const stopAndFixGuidance = [
   'STOP_AND_FIX: Delegation order could not be proven.',
