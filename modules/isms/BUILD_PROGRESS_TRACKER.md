@@ -3,9 +3,9 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-16  
-**Updated By**: foreman-v2-agent (slice: `isms-p1-2-vercel-workflow-split`)
+**Updated By**: foreman-v2-agent (slice: `isms-p1-2-post-merge-reconciliation`)
 
-> **Classification**: W1-W8 COMPLETE — P1.2 ISMS VERCEL WORKFLOW SPLIT OPENED  
+> **Classification**: W1-W8 COMPLETE — P1.2 ISMS VERCEL WORKFLOW SPLIT MERGED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
 
@@ -36,7 +36,7 @@
 | Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
 | Post-W8 | P1 External Deployment Proof | VERIFIED WITH FOLLOW-UP FINDINGS | `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md` |
 | Post-W8 | P1.1 Deployment Hygiene Cleanup | MERGED — ACCEPTED FOR P1.1 SCOPE | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
-| Post-W8 | P1.2 Vercel Workflow Split | IMPLEMENTED ON BRANCH — PR/CI PENDING | `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md` |
+| Post-W8 | P1.2 Vercel Workflow Split | MERGED — ACCEPTED FOR P1.2 SCOPE | `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md` |
 
 ---
 
@@ -69,16 +69,21 @@
 
 ## Post-W8: P1.2 Vercel Workflow Split
 
-**Status**: IMPLEMENTED ON BRANCH — PR/CI PENDING  
-**Branch**: `foreman/isms-p1-2-vercel-workflow-split`  
+**Status**: MERGED — ACCEPTED FOR P1.2 SCOPE  
+**Merged PR**: #1812 (`50785d5b6084fd7a2100cad8e946b596ac8b89a6`)  
 **Evidence**: `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md`
 
-**Scope**:
+**Scope delivered**:
 - adds `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md` coordination artifact;
 - adds `.github/workflows/deploy-isms-portal-vercel.yml`;
 - scopes ISMS deploy workflow to `apps/isms-portal/**` and ISMS workflow/docs paths;
 - leaves MMM and PIT workflow implementation for their owning agents;
 - avoids broad `api/**` ownership in the ISMS workflow.
+
+**Post-merge verification**:
+- PR #1812 was merged on 2026-06-16;
+- PR-scoped CI passed, including `Deploy ISMS Preview`;
+- actual Vercel deploy/smoke steps remain conditional on repository secrets: `ISMS_VERCEL_ORG_ID`, `ISMS_VERCEL_PROJECT_ID`, `ISMS_VERCEL_TOKEN`, and optional `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`.
 
 ---
 
@@ -99,9 +104,9 @@ Accepted conditions:
 
 ## Current Stage Summary
 
-**Current Stage**: Post-W8 P1.2 Vercel workflow split is open.  
+**Current Stage**: Post-W8 P1.2 Vercel workflow split is merged.  
 **Implementation Transfer**: Owner final decision recorded with conditions.  
-**Next Required Action**: Inspect P1.2 PR CI/review gates, then coordinate MMM/PIT workflow implementation with their owning agents.
+**Next Required Action**: Coordinate MMM/PIT workflow implementation with their owning agents, configure ISMS app-specific Vercel secrets, then open an ISMS-only verification PR to prove real preview deployment and smoke tests.
 
 ---
 
@@ -126,9 +131,9 @@ Accepted conditions:
 - [x] W8 owner final decision recorded
 - [x] P1 external deployment proof recorded
 - [x] P1.1 deployment hygiene merged
-- [ ] P1.2 workflow split PR opened
-- [ ] P1.2 workflow split CI passed
-- [ ] P1.2 workflow split review conversations resolved
+- [x] P1.2 workflow split PR opened
+- [x] P1.2 workflow split CI passed
+- [x] P1.2 workflow split review conversations resolved
 
 ---
 
@@ -143,7 +148,8 @@ The following remain outside W1-W8 appointed scope and require separate future a
 - MMM workflow split implementation by MMM agent;
 - PIT workflow split implementation by PIT agent;
 - bundle-size review;
-- canonical App Description path mismatch cleanup.
+- canonical App Description path mismatch cleanup;
+- ISMS real preview deploy verification after app-specific Vercel secrets are configured.
 
 ---
 
