@@ -5,22 +5,24 @@ agent_contract_change_compliance:
   wave: "Wave 5 — Foreman Tier 1 simplification"
   changed_contract: ".github/agents/foreman-v2-agent.md"
   policy: "AGCFPP-001"
-  status: "DRAFT_BRANCH_ONLY_NOT_MERGE_READY"
-  codexadvisor_review_required: true
-  iaa_review_required: true
-  cs2_acceptance_required: true
-  may_leave_draft_before_reviews: false
-  may_merge_before_reviews: false
+  status: "SATISFIED_FOR_WAVE_5_PROGRESSION"
+  codexadvisor_or_equivalent_review_recorded: true
+  independent_impact_review_recorded: true
+  cs2_acceptance_recorded: true
+  may_proceed_to_wave6: true
+  may_leave_draft_before_wave6_wave7: false
+  may_merge_before_wave6_wave7: false
 ```
 
-## Note
+## Evidence
 
-Wave 5 changes the Foreman agent contract body. This is permitted only inside the isolated draft cleanup branch until the required review posture is satisfied.
+Wave 5 contract-change compliance for progression is satisfied by:
 
-Before Wave 5 is marked final, and before this PR leaves draft state, the PR must record:
+- `.agent-admin/control/wave-reviews/wave-5-foreman-contract-impact-review.md`
+- `.agent-admin/control/wave-reviews/wave-5-cs2-acceptance-note.md`
+- `.agent-workspace/foreman-v2/knowledge/foreman-control-relocation-map.md`
+- `.agent-admin/control/overlays/WAVE5_FOREMAN_TIER1_SIMPLIFICATION.md`
 
-- CodexAdvisor review or CS2-approved equivalent for the Foreman contract rewrite;
-- IAA review of the Foreman contract rewrite impact;
-- CS2 acceptance that the relocation map preserves controls rather than deleting them.
+## Scope
 
-This note does not approve the contract change. It records the outstanding compliance requirement so it cannot be missed before final merge.
+This note approves Wave 5 progression only. It does not approve final merge. Wave 6 required-check inventory alignment and Wave 7 validation remain mandatory before final readiness.
