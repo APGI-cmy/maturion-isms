@@ -1,0 +1,323 @@
+name: Deploy ISMS Portal to Vercel
+
+# WORKFLOW OWNERSHIP BOUNDARY
+# This workflow owns the ISMS Portal deployment surface only.
+#
+# Authorised trigger paths:
+#   apps/isms-portal/**
+#   .github/workflows/deploy-isms-portal-vercel.yml
+#   MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
+#
+# Out of scope:
+#   apps/mmm/**
+#   PIT app paths
+#   broad api/** changes unless an ISMS-owned API boundary is explicitly introduced
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/isms-portal/**'
+      - '.github/workflows/deploy-isms-portal-vercel.yml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/isms-portal/**'
+      - '.github/workflows/deploy-isms-portal-vercel.yml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '9.12.0'
+
+jobs:
+  boundary-guard:
+    name: ISMS Workflow Boundary Guard
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Verify ISMS app config exists
+        run: |
+          set -euo pipefail
+          test -f apps/isms-portal/package.json
+          test -f apps/isms-portal/vercel.json
+          test -f apps/isms-portal/scripts/verify-routes.mjs
+          echo "ISMS portal deployment config is present."
+
+  build:
+    name: Build ISMS Portal
+    runs-on: ubuntu-latest
+    needs: [boundary-guard]
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Verify route registry
+        run: pnpm --filter isms-portal verify:routes
+
+      - name: Build ISMS portal
+        run: pnpm --filter isms-portal build
+
+      - name: Upload ISMS build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: isms-portal-dist
+          path: apps/isms-portal/dist/
+          retention-days: 7
+
+  deploy-preview:
+    name: Deploy ISMS Preview
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    environment:
+      name: isms-preview
+      url: ${{ steps.deploy.outputs.preview-url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Check ISMS Vercel secret configuration
+        id: secret_check
+        env:
+          ISMS_VERCEL_ORG_ID: ${{ secrets.ISMS_VERCEL_ORG_ID }}
+          ISMS_VERCEL_PROJECT_ID: ${{ secrets.ISMS_VERCEL_PROJECT_ID }}
+          ISMS_VERCEL_TOKEN: ${{ secrets.ISMS_VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${ISMS_VERCEL_ORG_ID:-}" ] && [ -n "${ISMS_VERCEL_PROJECT_ID:-}" ] && [ -n "${ISMS_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "ISMS Vercel secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "ISMS Vercel secrets are not fully configured. Build verification passed; deployment is skipped."
+          fi
+
+      - name: Configure ISMS Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          ISMS_VERCEL_ORG_ID: ${{ secrets.ISMS_VERCEL_ORG_ID }}
+          ISMS_VERCEL_PROJECT_ID: ${{ secrets.ISMS_VERCEL_PROJECT_ID }}
+        run: |
+          mkdir -p .vercel
+          printf '{"projectId":"%s","orgId":"%s"}\n' \
+            "$ISMS_VERCEL_PROJECT_ID" "$ISMS_VERCEL_ORG_ID" > .vercel/project.json
+
+      - name: Pull ISMS Vercel project settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.ISMS_VERCEL_TOKEN }}
+
+      - name: Build ISMS project artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --token=${{ secrets.ISMS_VERCEL_TOKEN }}
+
+      - name: Deploy ISMS preview to Vercel
+        if: steps.secret_check.outputs.configured == 'true'
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --token=${{ secrets.ISMS_VERCEL_TOKEN }})
+          echo "preview-url=$url" >> "$GITHUB_OUTPUT"
+          echo "Preview URL: $url"
+
+      - name: ISMS SPA smoke test
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
+          ISMS_VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.ISMS_VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          set -euo pipefail
+          echo "Running ISMS smoke test against: $PREVIEW_URL"
+          PUBLIC_ROUTES=("/" "/free-assessment" "/subscribe" "/modules/maturity-roadmap")
+          PROTECTED_ROUTES=("/dashboard" "/maturity/setup")
+          FAIL=0
+
+          curl_status() {
+            local route="$1"
+            if [ -n "${ISMS_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              curl -L -s -o /dev/null -w "%{http_code}" \
+                --connect-timeout 10 \
+                --max-time 30 \
+                -H "x-vercel-protection-bypass: $ISMS_VERCEL_AUTOMATION_BYPASS_SECRET" \
+                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            else
+              curl -L -s -o /dev/null -w "%{http_code}" \
+                --connect-timeout 10 \
+                --max-time 30 \
+                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            fi
+          }
+
+          for route in "${PUBLIC_ROUTES[@]}"; do
+            http_code=$(curl_status "$route")
+            if [ "$http_code" = "404" ] || echo "$http_code" | grep -qE '^5[0-9][0-9]$'; then
+              echo "FAIL: public route $route returned HTTP $http_code"
+              FAIL=1
+            elif [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
+              echo "FAIL: public route $route returned HTTP $http_code; preview protection may need bypass configuration"
+              FAIL=1
+            elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "PASS: public route $route returned HTTP $http_code"
+            else
+              echo "FAIL: public route $route returned unexpected HTTP $http_code"
+              FAIL=1
+            fi
+          done
+
+          for route in "${PROTECTED_ROUTES[@]}"; do
+            http_code=$(curl_status "$route")
+            if [ "$http_code" = "404" ] || echo "$http_code" | grep -qE '^5[0-9][0-9]$'; then
+              echo "FAIL: protected route $route returned HTTP $http_code"
+              FAIL=1
+            elif [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
+              echo "PROTECTED: route $route returned HTTP $http_code; not treated as SPA routing failure"
+            elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "PASS: protected route $route returned HTTP $http_code"
+            else
+              echo "FAIL: protected route $route returned unexpected HTTP $http_code"
+              FAIL=1
+            fi
+          done
+
+          if [ "$FAIL" -ne 0 ]; then
+            echo "ISMS SPA smoke test failed."
+            exit 1
+          fi
+          echo "ISMS SPA smoke test passed."
+
+      - name: Comment ISMS preview URL on PR
+        if: github.event_name == 'pull_request' && steps.secret_check.outputs.configured == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `ISMS preview deployment ready. Preview URL: ${{ steps.deploy.outputs.preview-url }}`
+            })
+
+      - name: Record skipped ISMS deployment
+        if: steps.secret_check.outputs.configured != 'true'
+        run: |
+          echo "ISMS preview deploy skipped because app-specific Vercel secrets are not fully configured."
+          echo "Required: ISMS_VERCEL_ORG_ID, ISMS_VERCEL_PROJECT_ID, ISMS_VERCEL_TOKEN."
+
+  deploy-production:
+    name: Deploy ISMS Production
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: >
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    permissions:
+      contents: read
+    environment:
+      name: isms-production
+      url: https://maturion-isms-portal.vercel.app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Check ISMS Vercel secret configuration
+        id: secret_check
+        env:
+          ISMS_VERCEL_ORG_ID: ${{ secrets.ISMS_VERCEL_ORG_ID }}
+          ISMS_VERCEL_PROJECT_ID: ${{ secrets.ISMS_VERCEL_PROJECT_ID }}
+          ISMS_VERCEL_TOKEN: ${{ secrets.ISMS_VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${ISMS_VERCEL_ORG_ID:-}" ] && [ -n "${ISMS_VERCEL_PROJECT_ID:-}" ] && [ -n "${ISMS_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "ISMS Vercel secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "ISMS Vercel secrets are not fully configured. Build verification passed; production deployment is skipped."
+          fi
+
+      - name: Configure ISMS Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          ISMS_VERCEL_ORG_ID: ${{ secrets.ISMS_VERCEL_ORG_ID }}
+          ISMS_VERCEL_PROJECT_ID: ${{ secrets.ISMS_VERCEL_PROJECT_ID }}
+        run: |
+          mkdir -p .vercel
+          printf '{"projectId":"%s","orgId":"%s"}\n' \
+            "$ISMS_VERCEL_PROJECT_ID" "$ISMS_VERCEL_ORG_ID" > .vercel/project.json
+
+      - name: Pull ISMS production settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=production --token=${{ secrets.ISMS_VERCEL_TOKEN }}
+
+      - name: Build ISMS production artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --prod --token=${{ secrets.ISMS_VERCEL_TOKEN }}
+
+      - name: Deploy ISMS production to Vercel
+        if: steps.secret_check.outputs.configured == 'true'
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.ISMS_VERCEL_TOKEN }})
+          echo "production-url=$url" >> "$GITHUB_OUTPUT"
+          echo "Production URL: $url"
+
+      - name: Record skipped ISMS production deployment
+        if: steps.secret_check.outputs.configured != 'true'
+        run: |
+          echo "ISMS production deploy skipped because app-specific Vercel secrets are not fully configured."
+          echo "Required: ISMS_VERCEL_ORG_ID, ISMS_VERCEL_PROJECT_ID, ISMS_VERCEL_TOKEN."
