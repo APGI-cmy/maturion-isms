@@ -14,6 +14,8 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   PROJECTS: '/projects',
   PROJECTS_NEW: '/projects/new',
+  PIT: '/pit',
+  PIT_TRACKER: '/pit/tracker',
   ONBOARDING: '/onboarding',
   ADMIN_ORG: '/admin/org',
   ADMIN_USERS: '/admin/users',
