@@ -87,6 +87,10 @@ Hard failures remain:
 
 This means P1.3 proves that the ISMS Vercel deploy path performs a real preview deployment and that the workflow can distinguish protected-preview access posture from route/runtime failure. It does not prove public unauthenticated access to protected Vercel preview URLs.
 
+## Governance gate note
+
+PR #1823 repaired the repo-wide `preflight/iaa-prebrief-contract-alignment` workflow after #1822 exposed a transition-era gate loop. This evidence refresh exists to force a new #1822 PR merge ref after #1823 landed on `main`.
+
 ## Monorepo caveat
 
 Vercel's GitHub integration still reported PIT preview activity on PR #1819, even though the ISMS-owned GitHub Actions workflow is path-scoped to ISMS.
