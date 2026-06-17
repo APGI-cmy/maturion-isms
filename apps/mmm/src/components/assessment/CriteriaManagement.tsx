@@ -1059,7 +1059,7 @@ export function CriteriaManagement({
       // answered) defaults to inclusion so that new-session edits are captured.
       const editedLevels = Array.from(descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>())
         .filter((lvl) => descriptorLearningConsentByCriterion[`${criterion.id}:${lvl}`] !== false)
-        .sort();
+        .sort((a, b) => a - b);
       const headers = await getEdgeInvokeHeaders();
       const { data, error } = await supabase.functions.invoke('mmm-level-descriptor-save', {
         headers,
