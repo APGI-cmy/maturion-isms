@@ -1,7 +1,7 @@
 # ISMS P1.3 Real Preview Deploy Verification
 
 Date: 2026-06-16
-Evidence PR: pending
+Evidence PR: #1822
 Verification PR: #1819
 Verification PR merge commit: `52606466798c5bf39509ae6c0fad136dff1d21f6`
 Governing issue: #1817
