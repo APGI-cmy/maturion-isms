@@ -37,22 +37,17 @@ jobs:
 
           SELF_WORKFLOW=".github/workflows/iaa-prebrief-contract-alignment.yml"
 
-          legacy_generation_matches=$(grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}" || true)
-          if [ -n "${legacy_generation_matches}" ]; then
-            printf '%s\n' "${legacy_generation_matches}"
+          if grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}"; then
             echo "::error::Legacy standalone iaa-prebrief generation instruction found in active Wave 1 workflow/control guidance."
             exit 1
           fi
 
-          legacy_commit_matches=$(grep -RIn "commit.*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}" || true)
-          if [ -n "${legacy_commit_matches}" ]; then
-            printf '%s\n' "${legacy_commit_matches}"
+          if grep -RIn "commit.*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}"; then
             echo "::error::Legacy standalone iaa-prebrief commit instruction found in active Wave 1 workflow/control guidance."
             exit 1
           fi
 
-          canonical_matches=$(grep -RIn "IAA_PREFLIGHT_BRIEF" .agent-admin/control .github/workflows 2>/dev/null | grep -v "${SELF_WORKFLOW}" || true)
-          if [ -n "${canonical_matches}" ]; then
+          if grep -RIn "IAA_PREFLIGHT_BRIEF" .agent-admin/control .github/workflows 2>/dev/null | grep -v "${SELF_WORKFLOW}" | grep -q .; then
             echo "Canonical IAA_PREFLIGHT_BRIEF references found."
           else
             echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found in Wave 1 control guidance (excluding this workflow)."
