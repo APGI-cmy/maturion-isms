@@ -188,7 +188,7 @@ const App = () => {
                   path={ROUTES.PIT_TRACKER}
                   element={privateShellRoute(
                     'PIT tracker',
-                    'Protected Process Integrity Testing operational entry for CS2/admin verification without billing or subscription fixture records.',
+                    'Protected Process Integrity Testing workspace entry for authenticated users.',
                   )}
                 />
                 <Route
