@@ -20,7 +20,7 @@ Owner configured the ISMS app-specific Vercel secrets before PR #1819 was verifi
 - `ISMS_VERCEL_ORG_ID`
 - `ISMS_VERCEL_PROJECT_ID`
 - `ISMS_VERCEL_TOKEN`
-- `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`
+- optional `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`
 
 ## Verification PR
 
