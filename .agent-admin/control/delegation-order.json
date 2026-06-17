@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-runtime-2026-06-17",
+  "pr_number": 1825,
+  "prebrief_commit_sha": "ed9c3bb161b53796b2e760952bfa30ffdb844aac",
+  "builder_appointment_timestamp": "2026-06-17T14:48:00Z",
+  "builder_appointment_commit_sha": "2c560837069c4963517cad86725947fc5403abed",
+  "builder_agent": "bounded-implementation-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-runtime-2026-06-17.md",
+  "first_implementation_commit_sha": "adbd65ee789777f6720eedf429bfacd2985eb9b8",
+  "qp_review_timestamp": "2026-06-17T14:51:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
