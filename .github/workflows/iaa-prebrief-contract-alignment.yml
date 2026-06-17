@@ -25,7 +25,7 @@ jobs:
 
           echo "=== IAA Pre-Brief Contract Alignment ==="
           echo "Canonical artifact: .agent-admin/assurance/iaa-wave-record-*.md under ## PRE-BRIEF"
-          echo "Prohibited new artifact: .agent-admin/assurance/iaa-prebrief-*.md"
+          echo "Prohibited new active instruction: create or commit standalone .agent-admin/assurance/iaa-prebrief-*.md"
           echo "Canonical schema: .agent-admin/control/schemas/iaa-preflight-brief.schema.json"
           echo "Canonical protocol: .agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md"
           echo "Scoped overlay: .agent-admin/control/overlays/WAVE1_IAA_PREFLIGHT_BRIEF_CONTRACT_ADDENDUM.md"
@@ -35,27 +35,65 @@ jobs:
           test -f .agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md
           test -f .agent-admin/control/overlays/WAVE1_IAA_PREFLIGHT_BRIEF_CONTRACT_ADDENDUM.md
 
+          # This gate is intentionally scoped to active instructions only.
+          # It must not fail on historical assurance artifacts, archives,
+          # wave-review narratives, test fixtures, PR review exports, or strategy notes.
+          ACTIVE_SCAN_ROOTS=(
+            ".github/workflows"
+            ".agent-admin/control/protocols"
+            ".agent-admin/control/overlays"
+            ".agent-admin/control/templates"
+            ".agent-admin/control/checklists"
+          )
+
+          existing_roots=()
+          for root in "${ACTIVE_SCAN_ROOTS[@]}"; do
+            if [ -d "$root" ]; then
+              existing_roots+=("$root")
+            fi
+          done
+
+          if [ "${#existing_roots[@]}" -eq 0 ]; then
+            echo "::error::No active IAA pre-brief guidance roots are present for alignment validation."
+            exit 1
+          fi
+
           SELF_WORKFLOW=".github/workflows/iaa-prebrief-contract-alignment.yml"
 
-          legacy_generation_matches=$(grep -RIn "Generate the Pre-Brief artifact at: .*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}" || true)
-          if [ -n "${legacy_generation_matches}" ]; then
-            printf '%s\n' "${legacy_generation_matches}"
-            echo "::error::Legacy standalone iaa-prebrief generation instruction found in active Wave 1 workflow/control guidance."
+          active_matches() {
+            local pattern="$1"
+            grep -RInE "$pattern" "${existing_roots[@]}" 2>/dev/null \
+              | grep -v "${SELF_WORKFLOW}" \
+              | grep -v "/wave-reviews/" \
+              | grep -v "/test-fixtures/" \
+              | grep -v "/archive/" \
+              || true
+          }
+
+          # Blocking only when active guidance instructs agents to create/commit
+          # legacy standalone iaa-prebrief artifacts. Historical references and
+          # explicit "do not create" examples are not failures.
+          legacy_creation_matches=$(active_matches "(Generate|Create|Write|Persist|File|Save).*(iaa-prebrief-[^[:space:]]*\\.md|iaa-prebrief-\\*)" \
+            | grep -viE "(do not|must not|prohibit|prohibited|legacy|example|archive)" || true)
+          if [ -n "${legacy_creation_matches}" ]; then
+            printf '%s\n' "${legacy_creation_matches}"
+            echo "::error::Active guidance still instructs agents to create standalone iaa-prebrief artifacts."
             exit 1
           fi
 
-          legacy_commit_matches=$(grep -RIn "commit.*iaa-prebrief" .github/workflows .agent-admin/control 2>/dev/null | grep -v "${SELF_WORKFLOW}" || true)
+          legacy_commit_matches=$(active_matches "commit.*(iaa-prebrief-[^[:space:]]*\\.md|iaa-prebrief-\\*)" \
+            | grep -viE "(do not|must not|prohibit|prohibited|legacy|example|archive)" || true)
           if [ -n "${legacy_commit_matches}" ]; then
             printf '%s\n' "${legacy_commit_matches}"
-            echo "::error::Legacy standalone iaa-prebrief commit instruction found in active Wave 1 workflow/control guidance."
+            echo "::error::Active guidance still instructs agents to commit standalone iaa-prebrief artifacts."
             exit 1
           fi
 
-          canonical_matches=$(grep -RIn "IAA_PREFLIGHT_BRIEF" .agent-admin/control .github/workflows 2>/dev/null | grep -v "${SELF_WORKFLOW}" || true)
+          canonical_matches=$(active_matches "IAA_PREFLIGHT_BRIEF")
           if [ -n "${canonical_matches}" ]; then
-            echo "Canonical IAA_PREFLIGHT_BRIEF references found."
+            echo "Canonical IAA_PREFLIGHT_BRIEF references found in active guidance."
           else
-            echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found in Wave 1 control guidance (excluding this workflow)."
+            echo "::error::No canonical IAA_PREFLIGHT_BRIEF references found in active guidance."
             exit 1
           fi
 
