@@ -183,6 +183,14 @@ const App = () => {
                 <Route path={ROUTES.MATURITY_SETUP} element={protectedMaturitySetupRoute} />
 
                 {/* PIT Stage 12 Slice 1 protected runtime routes */}
+                <Route path={ROUTES.PIT} element={<Navigate to={ROUTES.PIT_TRACKER} replace />} />
+                <Route
+                  path={ROUTES.PIT_TRACKER}
+                  element={privateShellRoute(
+                    'PIT tracker',
+                    'Protected Process Integrity Testing operational entry for CS2/admin verification without billing or subscription fixture records.',
+                  )}
+                />
                 <Route
                   path={ROUTES.PROJECTS}
                   element={privateShellRoute(
