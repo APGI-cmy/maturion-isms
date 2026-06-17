@@ -3,11 +3,11 @@
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
 **Last Updated**: 2026-06-16  
-**Updated By**: foreman-v2-agent (slice: `isms-p1-2-post-merge-reconciliation`)
+**Updated By**: foreman-v2-agent (slice: `isms-p1-3-preview-evidence`)
 
-> **Classification**: W1-W8 COMPLETE — P1.2 ISMS VERCEL WORKFLOW SPLIT MERGED  
+> **Classification**: W1-W8 COMPLETE — P1.3 REAL PREVIEW DEPLOY EVIDENCE RECORDED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
-> **Current Governance Model**: `FOREMAN_OPERATING_MODEL.md`
+> **Current Governance Model**: `AGENT_GATE_SYSTEM_TRANSITION_NOTICE.md` / PR #1800 gate model
 
 ---
 
@@ -37,6 +37,7 @@
 | Post-W8 | P1 External Deployment Proof | VERIFIED WITH FOLLOW-UP FINDINGS | `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md` |
 | Post-W8 | P1.1 Deployment Hygiene Cleanup | MERGED — ACCEPTED FOR P1.1 SCOPE | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
 | Post-W8 | P1.2 Vercel Workflow Split | MERGED — ACCEPTED FOR P1.2 SCOPE | `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md` |
+| Post-W8 | P1.3 Real Preview Deploy Verification | MERGED — EVIDENCE RECORDED FOR P1.3 SCOPE | `modules/isms/12-deployment/p1-3-real-preview-deploy-verification-20260616.md` |
 
 ---
 
@@ -83,7 +84,29 @@
 **Post-merge verification**:
 - PR #1812 was merged on 2026-06-16;
 - PR-scoped CI passed, including `Deploy ISMS Preview`;
-- actual Vercel deploy/smoke steps remain conditional on repository secrets: `ISMS_VERCEL_ORG_ID`, `ISMS_VERCEL_PROJECT_ID`, `ISMS_VERCEL_TOKEN`, and optional `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`.
+- actual Vercel deploy/smoke steps remained conditional on repository secrets: `ISMS_VERCEL_ORG_ID`, `ISMS_VERCEL_PROJECT_ID`, `ISMS_VERCEL_TOKEN`, and optional `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`.
+
+---
+
+## Post-W8: P1.3 Real Preview Deploy Verification
+
+**Status**: MERGED — EVIDENCE RECORDED FOR P1.3 SCOPE  
+**Merged PR**: #1819 (`52606466798c5bf39509ae6c0fad136dff1d21f6`)  
+**Evidence**: `modules/isms/12-deployment/p1-3-real-preview-deploy-verification-20260616.md`
+
+**Scope recorded**:
+- ISMS app-specific Vercel secrets were configured by the owner before verification;
+- PR #1819 triggered the ISMS-only Vercel workflow on an ISMS app path;
+- `Deploy ISMS Portal to Vercel` passed on the latest PR head before merge;
+- `Deploy ISMS Preview` performed a real Vercel preview deploy rather than the previous missing-secret skip path;
+- Vercel reported the ISMS project preview as `Ready`;
+- the workflow smoke step passed after treating Vercel preview `401/403` as protected-preview posture rather than SPA route failure.
+
+**Preview URL recorded**:
+- `https://maturion-isms-portal-git-foreman-ism-d5f042-rassie-ras-projects.vercel.app`
+
+**Caveat**:
+- Vercel's GitHub integration still reported PIT preview activity on the ISMS verification PR. MMM/PIT workflow ownership issues #1815 and #1816 remain active coordination work.
 
 ---
 
@@ -104,9 +127,9 @@ Accepted conditions:
 
 ## Current Stage Summary
 
-**Current Stage**: Post-W8 P1.2 Vercel workflow split is merged.  
-**Implementation Transfer**: Owner final decision recorded with conditions.  
-**Next Required Action**: Coordinate MMM/PIT workflow implementation with their owning agents, configure ISMS app-specific Vercel secrets, then open an ISMS-only verification PR to prove real preview deployment and smoke tests.
+**Current Stage**: Post-W8 P1.3 real preview deploy evidence has been recorded.  
+**Implementation Transfer**: Owner final decision remains recorded with conditions.  
+**Next Required Action**: Continue MMM/PIT workflow split coordination through issues #1815 and #1816, then choose the next separately authorized productionization lane.
 
 ---
 
@@ -134,6 +157,7 @@ Accepted conditions:
 - [x] P1.2 workflow split PR opened
 - [x] P1.2 workflow split CI passed
 - [x] P1.2 workflow split review conversations resolved
+- [x] P1.3 real preview deploy evidence recorded
 
 ---
 
@@ -148,8 +172,7 @@ The following remain outside W1-W8 appointed scope and require separate future a
 - MMM workflow split implementation by MMM agent;
 - PIT workflow split implementation by PIT agent;
 - bundle-size review;
-- canonical App Description path mismatch cleanup;
-- ISMS real preview deploy verification after app-specific Vercel secrets are configured.
+- canonical App Description path mismatch cleanup.
 
 ---
 
