@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/APGI-cmy/maturion-isms/.agent-admin/control/schemas/handover-allowed.schema.json",
+  "title": "Foreman Pre-Handover Lane Gate Control",
+  "description": "Machine-readable control artifact used to decide whether Foreman may use handover/completion language at the current HEAD.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "wave_id",
+    "pr_number",
+    "current_head_sha",
+    "state",
+    "handover_allowed",
+    "foreman_qp_pass",
+    "builder_delegation_verified",
+    "delegation_precedes_implementation",
+    "iaa_prebrief_ready",
+    "scope_current",
+    "ecap_required",
+    "ecap_admin_validated",
+    "all_required_checks_green",
+    "iaa_final_required",
+    "blocking_findings"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "wave_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pr_number": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1 },
+        { "type": "null" }
+      ]
+    },
+    "current_head_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "BOOTSTRAP",
+        "PREFLIGHT_LOCKED",
+        "IAA_PREBRIEF_READY",
+        "BUILD_DELEGATED",
+        "BUILDER_HANDOVER_RECEIVED",
+        "FOREMAN_QP_PASS",
+        "ECAP_ADMIN_VALIDATED",
+        "PRE_HANDOVER_GATE_PASS",
+        "IAA_FINAL_PASS",
+        "CS2_REVIEW"
+      ]
+    },
+    "handover_allowed": { "type": "boolean" },
+    "foreman_qp_pass": { "type": "boolean" },
+    "builder_delegation_verified": { "type": "boolean" },
+    "delegation_precedes_implementation": { "type": "boolean" },
+    "iaa_prebrief_ready": { "type": "boolean" },
+    "scope_current": { "type": "boolean" },
+    "ecap_required": { "type": "boolean" },
+    "ecap_admin_validated": { "type": "boolean" },
+    "all_required_checks_green": { "type": "boolean" },
+    "iaa_final_required": { "type": "boolean" },
+    "blocking_findings": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

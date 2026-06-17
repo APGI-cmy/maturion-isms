@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/APGI-cmy/maturion-isms/.agent-admin/control/schemas/delegation-order.schema.json",
+  "title": "Builder Delegation Order Evidence",
+  "description": "Machine-readable evidence proving that IAA pre-brief and builder appointment happened before the first implementation change in a PR.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "wave_id",
+    "pr_number",
+    "prebrief_commit_sha",
+    "builder_appointment_timestamp",
+    "builder_appointment_commit_sha",
+    "builder_agent",
+    "builder_task_ref",
+    "first_implementation_commit_sha",
+    "qp_review_timestamp",
+    "result"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "wave_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pr_number": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1 },
+        { "type": "null" }
+      ]
+    },
+    "prebrief_commit_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "builder_appointment_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "builder_appointment_commit_sha": {
+      "description": "Commit that records builder appointment/delegation evidence. Required so CI can prove ordering instead of trusting timestamps only.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "builder_agent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "builder_task_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "first_implementation_commit_sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "qp_review_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "result": {
+      "type": "string",
+      "const": "DELEGATION_ORDER_VERIFIED"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0.0",
+  "updated": "2026-06-16",
+  "purpose": "Wave 6 manifest aligning Foreman merge_gate_interface.required_checks with live workflow-backed gates and mapped legacy/external checks.",
+  "required_checks": [
+    "preflight/phase-1-evidence",
+    "preflight/iaa-prebrief-contract-alignment",
+    "preflight/iaa-prebrief-existence",
+    "preflight/iaa-token-self-certification",
+    "preflight/hfmc-ripple-presence",
+    "preflight/evidence-exactness",
+    "preflight/iaa-final-assurance",
+    "preflight/ecap-admin-ceremony",
+    "preflight/ecap-admin-boundary-gate",
+    "preflight/scope-declaration-parity",
+    "preflight/mmm-pr-admin",
+    "preflight/foreman-prehandover-lane-gate",
+    "preflight/delegation-order-gate",
+    "preflight/merge-gate-required-checks-alignment",
+    "merge-gate/verdict",
+    "governance/alignment",
+    "stop-and-fix/enforcement",
+    "foreman-implementation-check",
+    "builder-involvement-check",
+    "session-memory-check"
+  ],
+  "workflow_backed_required_checks": [
+    "preflight/phase-1-evidence",
+    "preflight/iaa-prebrief-contract-alignment",
+    "preflight/foreman-prehandover-lane-gate",
+    "preflight/delegation-order-gate",
+    "preflight/ecap-admin-boundary-gate",
+    "preflight/merge-gate-required-checks-alignment"
+  ],
+  "mapped_legacy_or_external_required_checks": {
+    "preflight/iaa-prebrief-existence": "Retained as legacy assurance gate name pending Wave 7 validation against existing assurance workflows.",
+    "preflight/iaa-token-self-certification": "Retained as legacy assurance self-certification guard pending Wave 7 validation.",
+    "preflight/hfmc-ripple-presence": "Retained as ripple evidence gate pending Wave 7 validation.",
+    "preflight/evidence-exactness": "Retained as evidence-exactness gate pending Wave 7 validation.",
+    "preflight/iaa-final-assurance": "Retained as final assurance gate pending Wave 7 validation.",
+    "preflight/ecap-admin-ceremony": "Retained as ECAP ceremony gate; Wave 4 added boundary gate alongside it.",
+    "preflight/scope-declaration-parity": "Retained as scope declaration parity gate pending Wave 7 validation.",
+    "preflight/mmm-pr-admin": "Retained as PR admin metadata gate pending Wave 7 validation.",
+    "merge-gate/verdict": "Retained as aggregate merge verdict gate.",
+    "governance/alignment": "Retained as governance alignment gate.",
+    "stop-and-fix/enforcement": "Retained as stop-and-fix enforcement gate.",
+    "foreman-implementation-check": "Retained from POLC boundary gate.",
+    "builder-involvement-check": "Retained from POLC boundary gate.",
+    "session-memory-check": "Retained from POLC boundary gate."
+  },
+  "wave6_added_required_checks": [
+    "preflight/iaa-prebrief-contract-alignment",
+    "preflight/foreman-prehandover-lane-gate",
+    "preflight/delegation-order-gate",
+    "preflight/ecap-admin-boundary-gate",
+    "preflight/merge-gate-required-checks-alignment"
+  ],
+  "wave7_validation_required": true
+}
