@@ -13,7 +13,7 @@ Scope record: `.agent-admin/scope-declarations/wave-issue-1815-mmm-vercel-owners
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "wave-issue-1815-mmm-vercel-ownership-2026-06-18"
-  pr: "pending"
+  pr: "1827"
   issue: "1815"
   branch: "foreman/issue-1815-mmm-vercel-clean"
   qualifying_tasks:
