@@ -5,6 +5,10 @@ on:
     branches:
       - main
     paths:
+      - 'apps/isms-portal/src/App.tsx'
+      - 'apps/isms-portal/src/lib/routes.ts'
+      - 'apps/isms-portal/src/lib/pitRoutes.ts'
+      - 'apps/isms-portal/src/lib/pitAccess.ts'
       - 'apps/isms-portal/src/pages/pit/**'
       - 'apps/isms-portal/src/pages/PITInfo.tsx'
       - 'modules/pit/**'
@@ -16,6 +20,10 @@ on:
     branches:
       - main
     paths:
+      - 'apps/isms-portal/src/App.tsx'
+      - 'apps/isms-portal/src/lib/routes.ts'
+      - 'apps/isms-portal/src/lib/pitRoutes.ts'
+      - 'apps/isms-portal/src/lib/pitAccess.ts'
       - 'apps/isms-portal/src/pages/pit/**'
       - 'apps/isms-portal/src/pages/PITInfo.tsx'
       - 'modules/pit/**'
@@ -86,13 +94,16 @@ jobs:
     if: github.event_name == 'pull_request'
     permissions:
       contents: read
-      pull-requests: write
     environment:
       name: pit-preview
       url: ${{ steps.deploy.outputs.preview-url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Check PIT Vercel secrets
@@ -149,9 +160,8 @@ jobs:
             local route="$1"
             local code
             code=$(curl_status "$route")
-            if [ "$code" = "404" ] || echo "$code" | grep -qE '^5[0-9][0-9]$'; then
-              echo "FAIL: public PIT route $route returned HTTP $code"
-              FAIL=1
+            if echo "$code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "PASS: public PIT route $route returned HTTP $code"
             elif [ "$code" = "401" ] || [ "$code" = "403" ]; then
               if [ -z "${PIT_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
                 echo "PROTECTED_PREVIEW: public PIT route $route returned HTTP $code without bypass secret"
@@ -160,18 +170,19 @@ jobs:
                 FAIL=1
               fi
             else
-              echo "PASS: public PIT route $route returned HTTP $code"
+              echo "FAIL: public PIT route $route returned HTTP $code"
+              FAIL=1
             fi
           }
           check_protected() {
             local route="$1"
             local code
             code=$(curl_status "$route")
-            if [ "$code" = "404" ] || echo "$code" | grep -qE '^5[0-9][0-9]$'; then
+            if echo "$code" | grep -qE '^[23][0-9][0-9]$' || [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              echo "PASS: protected PIT route $route returned HTTP $code"
+            else
               echo "FAIL: protected PIT route $route returned HTTP $code"
               FAIL=1
-            else
-              echo "PASS: protected PIT route $route returned HTTP $code"
             fi
           }
           check_public /marketing/project-implementation
@@ -195,6 +206,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       - name: Check PIT Vercel secrets
