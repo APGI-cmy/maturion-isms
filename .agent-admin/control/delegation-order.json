@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "pit-w82-protected-operational-route",
-  "pr_number": 1824,
-  "prebrief_commit_sha": "22ab9d55e78475c814878d90b1b35dc1e471d2ca",
-  "builder_appointment_timestamp": "2026-06-17T08:24:00Z",
-  "builder_appointment_commit_sha": "14cfc000c37fa2f00e022986e55bc0ee06a2a7eb",
-  "builder_agent": "pit-specialist",
-  "builder_task_ref": "#1810",
-  "first_implementation_commit_sha": "1a6fa4082c1cffe443427d75a2cb8bfcc63fce45",
-  "qp_review_timestamp": "2026-06-17T13:55:00Z",
+  "wave_id": "wave-mmm-descriptor-runtime-2026-06-17",
+  "pr_number": 1825,
+  "prebrief_commit_sha": "ed9c3bb161b53796b2e760952bfa30ffdb844aac",
+  "builder_appointment_timestamp": "2026-06-17T14:48:00Z",
+  "builder_appointment_commit_sha": "2c560837069c4963517cad86725947fc5403abed",
+  "builder_agent": "bounded-implementation-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-runtime-2026-06-17.md",
+  "first_implementation_commit_sha": "adbd65ee789777f6720eedf429bfacd2985eb9b8",
+  "qp_review_timestamp": "2026-06-17T14:51:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
