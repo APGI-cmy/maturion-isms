@@ -133,17 +133,50 @@ jobs:
         if: steps.secret_check.outputs.configured == 'true'
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
+          PIT_VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.PIT_VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
           set -euo pipefail
           FAIL=0
-          for route in /marketing/project-implementation /pit /pit/tracker /projects /projects/new; do
-            code=$(curl -L -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 30 "$PREVIEW_URL$route" 2>/dev/null || echo "000")
+          curl_status() {
+            local route="$1"
+            if [ -n "${PIT_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              curl -L -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 30 -H "x-vercel-protection-bypass: $PIT_VERCEL_AUTOMATION_BYPASS_SECRET" "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            else
+              curl -L -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 30 "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            fi
+          }
+          check_public() {
+            local route="$1"
+            local code
+            code=$(curl_status "$route")
             if [ "$code" = "404" ] || echo "$code" | grep -qE '^5[0-9][0-9]$'; then
-              echo "FAIL: PIT route $route returned HTTP $code"
+              echo "FAIL: public PIT route $route returned HTTP $code"
+              FAIL=1
+            elif [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              if [ -z "${PIT_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+                echo "PROTECTED_PREVIEW: public PIT route $route returned HTTP $code without bypass secret"
+              else
+                echo "FAIL: public PIT route $route returned HTTP $code despite bypass secret"
+                FAIL=1
+              fi
+            else
+              echo "PASS: public PIT route $route returned HTTP $code"
+            fi
+          }
+          check_protected() {
+            local route="$1"
+            local code
+            code=$(curl_status "$route")
+            if [ "$code" = "404" ] || echo "$code" | grep -qE '^5[0-9][0-9]$'; then
+              echo "FAIL: protected PIT route $route returned HTTP $code"
               FAIL=1
             else
-              echo "PASS: PIT route $route returned HTTP $code"
+              echo "PASS: protected PIT route $route returned HTTP $code"
             fi
+          }
+          check_public /marketing/project-implementation
+          for route in /pit /pit/tracker /projects /projects/new; do
+            check_protected "$route"
           done
           exit "$FAIL"
 
