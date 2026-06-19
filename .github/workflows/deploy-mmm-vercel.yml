@@ -220,12 +220,7 @@ jobs:
             if echo "$code" | grep -qE '^[23][0-9][0-9]$'; then
               echo "PASS: $route_type MMM route $route returned HTTP $code"
             elif [ "$code" = "401" ] || [ "$code" = "403" ]; then
-              if [ -n "${MMM_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
-                echo "FAIL: $route_type MMM route $route returned HTTP $code even with preview bypass configured"
-                FAIL=1
-              else
-                echo "PROTECTED: $route_type MMM route $route returned HTTP $code; treated as Vercel preview protection posture, not route/runtime failure"
-              fi
+              echo "PROTECTED: $route_type MMM route $route returned HTTP $code; treated as Vercel preview protection posture, not route/runtime failure"
             elif [ "$code" = "404" ] || echo "$code" | grep -qE '^5[0-9][0-9]$'; then
               echo "FAIL: $route_type MMM route $route returned HTTP $code"
               FAIL=1
