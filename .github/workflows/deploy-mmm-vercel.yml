@@ -63,7 +63,7 @@ jobs:
           test -d apps/mmm/src
           test -f MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
           test -f MONOREPO_VERCEL_DEPLOYMENT_MODEL.md
-          if grep -nE "^\s+- 'api/\*\*'|^\s+- 'packages/" .github/workflows/deploy-mmm-vercel.yml; then
+          if grep -nE "^[[:space:]]+- 'api/\*\*'|^[[:space:]]+- 'packages/" .github/workflows/deploy-mmm-vercel.yml; then
             echo "::error::MMM workflow must not trigger broad api/** or packages/** preview deployments without an explicit MMM-owned boundary."
             exit 1
           fi
@@ -132,11 +132,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -173,6 +168,16 @@ jobs:
       - name: Build MMM preview artifacts
         if: steps.secret_check.outputs.configured == 'true'
         run: vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
+
+      - name: Validate MMM preview bundle environment
+        if: steps.secret_check.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+            echo "::error::MMM preview bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
+            exit 1
+          fi
+          echo "MMM preview bundle environment validation passed."
 
       - name: Deploy MMM preview to Vercel
         if: steps.secret_check.outputs.configured == 'true'
@@ -260,11 +265,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -301,6 +301,16 @@ jobs:
       - name: Build MMM production artifacts
         if: steps.secret_check.outputs.configured == 'true'
         run: vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+
+      - name: Validate MMM production bundle environment
+        if: steps.secret_check.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+            echo "::error::MMM production bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
+            exit 1
+          fi
+          echo "MMM production bundle environment validation passed."
 
       - name: Deploy MMM production to Vercel
         if: steps.secret_check.outputs.configured == 'true'
