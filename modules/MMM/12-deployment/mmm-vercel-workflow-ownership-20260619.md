@@ -108,9 +108,10 @@ The MMM smoke test distinguishes route/runtime failures from preview-protection 
 - `2xx/3xx` passes;
 - `404` fails;
 - `5xx` fails;
-- `401/403` passes only as preview-protection posture when no MMM preview bypass secret is configured;
-- `401/403` fails when bypass is configured and the app should be reachable through the bypass;
+- `401/403` is treated as Vercel preview protection or auth posture, not route/runtime failure;
 - `000` or unexpected statuses fail.
+
+A `401/403` result does not prove route health behind preview protection. It proves that the deployment endpoint was reachable and protected before unauthenticated route inspection. Route/runtime health behind protection should be verified with a valid preview bypass or authenticated smoke test in a later hardening pass.
 
 ## 9. Acceptance mapping
 
@@ -119,7 +120,7 @@ The MMM smoke test distinguishes route/runtime failures from preview-protection 
 | MMM workflow owns only MMM deployment surface | Trigger paths are MMM-specific only. |
 | MMM-specific secret namespace | Uses `MMM_VERCEL_PROJECT_ID`, `MMM_VERCEL_ORG_ID`, `MMM_VERCEL_TOKEN`. |
 | MMM-only smoke routes | Smoke routes are MMM frontend routes only. |
-| Preview protection handled deliberately | 401/403 is separated from route/runtime failure depending on bypass posture. |
+| Preview protection handled deliberately | 401/403 is separated from route/runtime failure and recorded as protected/auth posture. |
 | Broad `api/**` not automatic deploy trigger | `api/**` removed from path filters. |
 | Broad `packages/**` not automatic deploy trigger | broad `packages/**` triggers omitted. |
 | ISMS/PIT workflows untouched | This issue changes only the MMM workflow and MMM evidence record. |
