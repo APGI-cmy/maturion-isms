@@ -68,7 +68,10 @@ jobs:
           fi
 
           active_path_regex='^(\.github/workflows/iaa-prebrief-contract-alignment\.yml|\.agent-admin/control/(protocols|overlays|templates|checklists)/)'
-          changed_active_guidance=false
+          SELF_WORKFLOW=".github/workflows/iaa-prebrief-contract-alignment.yml"
+          LEGACY_SUPPRESSION='(do not|must not|prohibit|prohibited|legacy|example|archive|older|supersedes|superseded|instead|not a standalone)'
+          legacy_scan_targets=()
+          run_full_scan=false
 
           if [ "${EVENT_NAME}" = "pull_request" ] && [ -n "${PR_BASE_SHA:-}" ] && [ -n "${PR_HEAD_SHA:-}" ]; then
             echo "Checking PR changed files for active IAA guidance changes: ${PR_BASE_SHA}...${PR_HEAD_SHA}"
@@ -79,30 +82,41 @@ jobs:
             else
               echo "No changed files detected by git diff."
             fi
+
             active_changed_files=$(printf '%s\n' "${changed_files}" | grep -E "${active_path_regex}" || true)
             if [ -n "${active_changed_files}" ]; then
-              changed_active_guidance=true
               echo "Active IAA guidance changed in this PR:"
               printf '%s\n' "${active_changed_files}"
+              while IFS= read -r file; do
+                [ -z "${file}" ] && continue
+                if [ "${file}" = "${SELF_WORKFLOW}" ]; then
+                  echo "Skipping self-workflow legacy text scan for ${file}."
+                elif [ -f "${file}" ]; then
+                  legacy_scan_targets+=("${file}")
+                fi
+              done <<< "${active_changed_files}"
             else
               echo "No active IAA pre-brief guidance changed in this PR."
             fi
           else
-            changed_active_guidance=true
+            run_full_scan=true
             echo "Non-PR or manual dispatch event; running full active-guidance alignment scan."
           fi
 
-          SELF_WORKFLOW=".github/workflows/iaa-prebrief-contract-alignment.yml"
-          LEGACY_SUPPRESSION='(do not|must not|prohibit|prohibited|legacy|example|archive|older|supersedes|superseded|instead|not a standalone)'
-
           active_matches() {
             local pattern="$1"
-            grep -RInE "$pattern" "${existing_roots[@]}" 2>/dev/null \
-              | grep -v "${SELF_WORKFLOW}" \
-              | grep -v "/wave-reviews/" \
-              | grep -v "/test-fixtures/" \
-              | grep -v "/archive/" \
-              || true
+            if [ "${run_full_scan}" = "true" ]; then
+              grep -RInE "$pattern" "${existing_roots[@]}" 2>/dev/null \
+                | grep -v "${SELF_WORKFLOW}" \
+                | grep -v "/wave-reviews/" \
+                | grep -v "/test-fixtures/" \
+                | grep -v "/archive/" \
+                || true
+            elif [ "${#legacy_scan_targets[@]}" -gt 0 ]; then
+              grep -InE "$pattern" "${legacy_scan_targets[@]}" 2>/dev/null || true
+            else
+              true
+            fi
           }
 
           report_blocking_matches() {
@@ -121,7 +135,7 @@ jobs:
             fi
           }
 
-          if [ "${changed_active_guidance}" = "true" ]; then
+          if [ "${run_full_scan}" = "true" ] || [ "${#legacy_scan_targets[@]}" -gt 0 ]; then
             legacy_creation_matches=$(active_matches "(Generate|Create|Write|Persist|File|Save).*(iaa-prebrief-[^[:space:]]*\\.md|iaa-prebrief-\\*)" \
               | grep -viE "${LEGACY_SUPPRESSION}" || true)
             report_blocking_matches "Active guidance still instructs agents to create standalone iaa-prebrief artifacts" "${legacy_creation_matches}"
@@ -130,10 +144,10 @@ jobs:
               | grep -viE "${LEGACY_SUPPRESSION}" || true)
             report_blocking_matches "Active guidance still instructs agents to commit standalone iaa-prebrief artifacts" "${legacy_commit_matches}"
           else
-            echo "Skipping legacy instruction scan because this PR does not change active IAA guidance."
+            echo "Skipping legacy instruction scan because this PR does not change non-self active IAA guidance."
           fi
 
-          canonical_matches=$(active_matches "IAA_PREFLIGHT_BRIEF")
+          canonical_matches=$(grep -RInE "IAA_PREFLIGHT_BRIEF" "${existing_roots[@]}" 2>/dev/null | grep -v "${SELF_WORKFLOW}" || true)
           if [ -n "${canonical_matches}" ]; then
             echo "Canonical IAA_PREFLIGHT_BRIEF references found in active guidance:"
             printf '%s\n' "${canonical_matches}" | head -n 20
