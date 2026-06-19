@@ -1,0 +1,226 @@
+name: Deploy PIT to Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/isms-portal/src/pages/pit/**'
+      - 'apps/isms-portal/src/pages/PITInfo.tsx'
+      - 'modules/pit/**'
+      - 'docs/governance/PIT_APP_DESCRIPTION.md'
+      - 'modules/pit/12-deployment/**'
+      - '.github/workflows/deploy-pit-vercel.yml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/isms-portal/src/pages/pit/**'
+      - 'apps/isms-portal/src/pages/PITInfo.tsx'
+      - 'modules/pit/**'
+      - 'docs/governance/PIT_APP_DESCRIPTION.md'
+      - 'modules/pit/12-deployment/**'
+      - '.github/workflows/deploy-pit-vercel.yml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '9.12.0'
+
+jobs:
+  boundary-guard:
+    name: PIT Workflow Boundary Guard
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Verify PIT deployment inputs
+        run: |
+          set -euo pipefail
+          test -f apps/isms-portal/package.json
+          test -d apps/isms-portal/src/pages/pit
+          test -f apps/isms-portal/src/pages/PITInfo.tsx
+          test -f docs/governance/PIT_APP_DESCRIPTION.md
+          echo "PIT deployment inputs are present."
+
+  build:
+    name: Build PIT Integrated Shell
+    runs-on: ubuntu-latest
+    needs: [boundary-guard]
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Verify route registry
+        run: pnpm --filter isms-portal verify:routes
+      - name: Build PIT integrated shell
+        run: pnpm --filter isms-portal build
+      - name: Upload PIT build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: pit-integrated-shell-dist
+          path: apps/isms-portal/dist/
+          retention-days: 7
+
+  deploy-preview:
+    name: Deploy PIT Preview
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+    environment:
+      name: pit-preview
+      url: ${{ steps.deploy.outputs.preview-url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Check PIT Vercel secrets
+        id: secret_check
+        env:
+          PIT_VERCEL_ORG_ID: ${{ secrets.PIT_VERCEL_ORG_ID }}
+          PIT_VERCEL_PROJECT_ID: ${{ secrets.PIT_VERCEL_PROJECT_ID }}
+          PIT_VERCEL_TOKEN: ${{ secrets.PIT_VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${PIT_VERCEL_ORG_ID:-}" ] && [ -n "${PIT_VERCEL_PROJECT_ID:-}" ] && [ -n "${PIT_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "PIT Vercel secrets are not fully configured; deploy skipped after build."
+          fi
+      - name: Configure PIT Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          PIT_VERCEL_ORG_ID: ${{ secrets.PIT_VERCEL_ORG_ID }}
+          PIT_VERCEL_PROJECT_ID: ${{ secrets.PIT_VERCEL_PROJECT_ID }}
+        run: |
+          mkdir -p .vercel
+          printf '{"projectId":"%s","orgId":"%s"}\n' "$PIT_VERCEL_PROJECT_ID" "$PIT_VERCEL_ORG_ID" > .vercel/project.json
+      - name: Pull PIT preview settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.PIT_VERCEL_TOKEN }}
+      - name: Build PIT preview artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --token=${{ secrets.PIT_VERCEL_TOKEN }}
+      - name: Deploy PIT preview
+        if: steps.secret_check.outputs.configured == 'true'
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --token=${{ secrets.PIT_VERCEL_TOKEN }})
+          echo "preview-url=$url" >> "$GITHUB_OUTPUT"
+      - name: PIT route smoke test
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
+          PIT_VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.PIT_VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          set -euo pipefail
+          FAIL=0
+          curl_status() {
+            local route="$1"
+            if [ -n "${PIT_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              curl -L -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 30 -H "x-vercel-protection-bypass: $PIT_VERCEL_AUTOMATION_BYPASS_SECRET" "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            else
+              curl -L -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 30 "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            fi
+          }
+          check_public() {
+            local route="$1"
+            local code
+            code=$(curl_status "$route")
+            if echo "$code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "PASS: public PIT route $route returned HTTP $code"
+            elif [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              echo "FAIL: public PIT route $route returned HTTP $code"
+              echo "      Configure PIT_VERCEL_AUTOMATION_BYPASS_SECRET for preview protection bypass."
+              FAIL=1
+            else
+              echo "FAIL: public PIT route $route returned HTTP $code"
+              FAIL=1
+            fi
+          }
+          check_protected() {
+            local route="$1"
+            local code
+            code=$(curl_status "$route")
+            if echo "$code" | grep -qE '^[23][0-9][0-9]$' || [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              echo "PASS: protected PIT route $route returned HTTP $code"
+            else
+              echo "FAIL: protected PIT route $route returned HTTP $code"
+              FAIL=1
+            fi
+          }
+          check_public /marketing/project-implementation
+          for route in /pit /pit/tracker /projects /projects/new; do
+            check_protected "$route"
+          done
+          exit "$FAIL"
+
+  deploy-production:
+    name: Deploy PIT Production
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: >
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    permissions:
+      contents: read
+    environment:
+      name: pit-production
+      url: https://maturion-pit.vercel.app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Check PIT Vercel secrets
+        id: secret_check
+        env:
+          PIT_VERCEL_ORG_ID: ${{ secrets.PIT_VERCEL_ORG_ID }}
+          PIT_VERCEL_PROJECT_ID: ${{ secrets.PIT_VERCEL_PROJECT_ID }}
+          PIT_VERCEL_TOKEN: ${{ secrets.PIT_VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${PIT_VERCEL_ORG_ID:-}" ] && [ -n "${PIT_VERCEL_PROJECT_ID:-}" ] && [ -n "${PIT_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "PIT Vercel secrets are not fully configured; production deploy skipped."
+          fi
+      - name: Configure PIT Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          PIT_VERCEL_ORG_ID: ${{ secrets.PIT_VERCEL_ORG_ID }}
+          PIT_VERCEL_PROJECT_ID: ${{ secrets.PIT_VERCEL_PROJECT_ID }}
+        run: |
+          mkdir -p .vercel
+          printf '{"projectId":"%s","orgId":"%s"}\n' "$PIT_VERCEL_PROJECT_ID" "$PIT_VERCEL_ORG_ID" > .vercel/project.json
+      - name: Pull PIT production settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=production --token=${{ secrets.PIT_VERCEL_TOKEN }}
+      - name: Build PIT production artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --prod --token=${{ secrets.PIT_VERCEL_TOKEN }}
+      - name: Deploy PIT production
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.PIT_VERCEL_TOKEN }}
