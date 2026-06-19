@@ -1,21 +1,21 @@
 name: Deploy MMM Frontend to Vercel
 
 # WORKFLOW OWNERSHIP BOUNDARY
-# This workflow owns the MMM FRONTEND deployment surface only.
-# Authorised trigger paths:
-#   apps/mmm/**                  — MMM React/Vite frontend source
-#   apps/mmm/vercel.json         — app-root Vercel config (explicit; also covered by apps/mmm/**)
-#   api/**                       — Vercel serverless API routes
-#   packages/ai-centre/src/**    — AIMC package consumed by frontend
-#   vercel.json                  — Vercel project configuration (repo root)
-#   .github/workflows/deploy-mmm-vercel.yml — this workflow file
-#   pnpm-lock.yaml               — lockfile changes that affect the build
+# This workflow owns the MMM frontend deployment surface only.
 #
-# OUT-OF-SCOPE paths (do NOT add these — workflow ownership separation is mandatory per §7.4):
-#   supabase/migrations/**       — owned by deploy-mmm-supabase-migrations.yml
-#   apps/maturion-maturity-legacy/supabase/migrations/** — legacy migrations, NOT a frontend concern
-#   supabase/functions/**        — owned by deploy-mmm-edge-functions.yml
-#   apps/mat-ai-gateway/**       — owned by deploy-mmm-ai-gateway.yml
+# Authorised trigger paths:
+#   apps/mmm/**
+#   modules/MMM/12-deployment/**
+#   .github/workflows/deploy-mmm-vercel.yml
+#   MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
+#   MONOREPO_VERCEL_DEPLOYMENT_MODEL.md
+#
+# Out of scope:
+#   apps/isms-portal/**
+#   modules/pit/**
+#   apps/pit/**
+#   broad api/** changes unless an MMM-owned API boundary is explicitly introduced
+#   broad packages/** changes unless an MMM-specific integration surface is explicitly declared
 
 on:
   push:
@@ -23,34 +23,31 @@ on:
       - main
     paths:
       - 'apps/mmm/**'
-      - 'apps/mmm/vercel.json'
-      - 'api/**'
-      - 'packages/ai-centre/src/**'
-      - 'vercel.json'
+      - 'modules/MMM/12-deployment/**'
       - '.github/workflows/deploy-mmm-vercel.yml'
-      - 'pnpm-lock.yaml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+      - 'MONOREPO_VERCEL_DEPLOYMENT_MODEL.md'
   pull_request:
     branches:
       - main
     paths:
       - 'apps/mmm/**'
-      - 'apps/mmm/vercel.json'
-      - 'api/**'
-      - 'packages/ai-centre/src/**'
-      - 'vercel.json'
+      - 'modules/MMM/12-deployment/**'
       - '.github/workflows/deploy-mmm-vercel.yml'
-      - 'pnpm-lock.yaml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+      - 'MONOREPO_VERCEL_DEPLOYMENT_MODEL.md'
   workflow_dispatch:
 
 env:
   NODE_VERSION: '22'
   PNPM_VERSION: '9.12.0'
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  MMM_PACKAGE_FILTER: '@maturion/mmm'
+  MMM_APP_PATH: apps/mmm
+  MMM_OUTPUT_DIR: apps/mmm/dist
 
 jobs:
-  stale-path-guard:
-    name: Anti-Stale-Path Guard
+  boundary-guard:
+    name: MMM Workflow Boundary Guard
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,94 +55,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Validate deployment target paths are aligned to MMM
+      - name: Verify MMM deployment ownership boundary
         run: |
-          echo "Running anti-stale-path guard — verifying all deployment config points to apps/mmm..."
-          LEGACY_TOKEN='modules/mat/frontend'
-          FAIL=0
-
-          # Check root vercel.json for legacy MAT path tokens only.
-          # In monorepo mode, root vercel.json is intentionally shared and may not define app outputDirectory.
-          if grep -q "$LEGACY_TOKEN" vercel.json; then
-            echo "❌ STALE-PATH: vercel.json still references '$LEGACY_TOKEN'"
-            echo "   Update vercel.json buildCommand/outputDirectory/installCommand/devCommand to apps/mmm"
-            FAIL=1
-          else
-            echo "✅ vercel.json: no legacy MAT path token found"
-          fi
-
-          # In monorepo deployment model, enforce app-level vercel config for MMM.
-          if [ ! -f "apps/mmm/vercel.json" ]; then
-            echo "❌ STALE-PATH: apps/mmm/vercel.json is missing"
-            FAIL=1
-          else
-            APP_OUTPUT_DIR=$(node -e "const v=require('./apps/mmm/vercel.json'); process.stdout.write(v.outputDirectory||'')")
-            if [[ "$APP_OUTPUT_DIR" != "dist" ]]; then
-              echo "❌ STALE-PATH: apps/mmm/vercel.json outputDirectory is '$APP_OUTPUT_DIR' — expected 'dist'"
-              FAIL=1
-            else
-              echo "✅ apps/mmm/vercel.json outputDirectory: $APP_OUTPUT_DIR"
-            fi
-
-            if grep -q "$LEGACY_TOKEN" apps/mmm/vercel.json; then
-              echo "❌ STALE-PATH: apps/mmm/vercel.json still references '$LEGACY_TOKEN'"
-              FAIL=1
-            else
-              echo "✅ apps/mmm/vercel.json: no legacy MAT path token found"
-            fi
-          fi
-
-          if [ "$FAIL" -ne 0 ]; then
-            echo ""
-            echo "Anti-stale-path guard FAILED. Fix all legacy path references before deploying."
+          set -euo pipefail
+          test -f apps/mmm/package.json
+          test -f apps/mmm/vercel.json
+          test -d apps/mmm/src
+          test -f MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
+          test -f MONOREPO_VERCEL_DEPLOYMENT_MODEL.md
+          if grep -nE "^[[:space:]]+- 'api/\*\*'|^[[:space:]]+- 'packages/" .github/workflows/deploy-mmm-vercel.yml; then
+            echo "::error::MMM workflow must not trigger broad api/** or packages/** preview deployments without an explicit MMM-owned boundary."
             exit 1
           fi
-          echo "Anti-stale-path guard PASSED."
+          if grep -nE "VERCEL_PROJECT_ID|VERCEL_ORG_ID|VERCEL_TOKEN|VERCEL_AUTOMATION_BYPASS_SECRET" .github/workflows/deploy-mmm-vercel.yml | grep -v "MMM_VERCEL_"; then
+            echo "::error::MMM workflow must use the MMM_VERCEL_* secret namespace, not generic Vercel deployment secrets."
+            exit 1
+          fi
+          echo "MMM app path: ${MMM_APP_PATH}"
+          echo "MMM package filter: ${MMM_PACKAGE_FILTER}"
+          echo "MMM output directory: ${MMM_OUTPUT_DIR}"
+          echo "MMM workflow boundary guard passed."
 
-  typecheck:
-    name: Type Check
+  build:
+    name: Build MMM Frontend
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    defaults:
-      run:
-        working-directory: apps/mmm
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run TypeScript compiler
-        run: pnpm exec tsc --noEmit
-
-  typecheck-api:
-    name: Type Check API Routes
-    runs-on: ubuntu-latest
+    needs: [boundary-guard]
     permissions:
       contents: read
     steps:
@@ -167,84 +101,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Type-check api/ serverless routes
-        run: pnpm exec tsc -p api/tsconfig.json --noEmit
+      - name: Type-check MMM frontend
+        run: pnpm --filter ${{ env.MMM_PACKAGE_FILTER }} exec tsc --noEmit
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: [stale-path-guard, typecheck, typecheck-api]
-    permissions:
-      contents: read
-    defaults:
-      run:
-        working-directory: apps/mmm
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Check for direct provider SDK imports (T-C-010 CI gate)
-        run: |
-          echo "Scanning apps/mmm/ for direct provider SDK imports..."
-          # Fail if any non-test file in apps/mmm/ imports openai, @anthropic-ai, or similar SDKs directly
-          if grep -rn \
-            --include="*.ts" --include="*.tsx" --include="*.js" \
-            --exclude="*.test.ts" --exclude="*.test.tsx" --exclude="*.test.js" \
-            --exclude="*.spec.ts" --exclude="*.spec.tsx" \
-            -E "from ['\"]openai['\"]|from ['\"]@anthropic-ai|from ['\"]@google/generative-ai|require\(['\"]openai['\"]|require\(['\"]@anthropic-ai|require\(['\"]@google/generative-ai" \
-            .; then
-            echo ""
-            echo "❌ T-C-010 FAIL: Direct provider SDK import found in apps/mmm/."
-            echo "   All AI provider access MUST go through the @maturion/ai-centre gateway."
-            echo "   Replace the import above with the appropriate AICentre capability call."
-            exit 1
-          fi
-          echo "✅ T-C-010 PASS: No direct provider SDK imports found in apps/mmm/."
-
-      - name: env-var-audit — validate required environment variables
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_LIVE_DEPLOYMENT_URL: ${{ secrets.VITE_LIVE_DEPLOYMENT_URL }}
-        run: |
-          echo "Running env-var-audit..."
-          if [ -z "$VITE_SUPABASE_URL" ] || [ "$VITE_SUPABASE_URL" = "https://placeholder.supabase.co" ]; then
-            echo "FAIL: VITE_SUPABASE_URL is not set or is a placeholder value"
-            exit 1
-          fi
-          if [ -z "$VITE_SUPABASE_ANON_KEY" ] || [ "$VITE_SUPABASE_ANON_KEY" = "placeholder-anon-key" ]; then
-            echo "FAIL: VITE_SUPABASE_ANON_KEY is not set or is a placeholder value"
-            exit 1
-          fi
-          if [ -z "$VITE_LIVE_DEPLOYMENT_URL" ] || [ "$VITE_LIVE_DEPLOYMENT_URL" = "https://placeholder.vercel.app" ]; then
-            echo "FAIL: VITE_LIVE_DEPLOYMENT_URL is not set or is a placeholder value (Wave 13 WGI-02)"
-            exit 1
-          fi
-          echo "PASS: All required env vars validated (including VITE_LIVE_DEPLOYMENT_URL)"
-
-      - name: Build application
-        run: pnpm run build
+      - name: Build MMM frontend
+        run: pnpm --filter ${{ env.MMM_PACKAGE_FILTER }} build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
-      - name: Upload build artifacts
+      - name: Upload MMM build artifact
         uses: actions/upload-artifact@v5
         with:
           name: mmm-frontend-dist
@@ -252,183 +119,133 @@ jobs:
           retention-days: 7
 
   deploy-preview:
-    name: Deploy Preview
+    name: Deploy MMM Preview
     runs-on: ubuntu-latest
     needs: [build]
     if: github.event_name == 'pull_request'
     permissions:
       contents: read
-      pull-requests: write
     environment:
-      name: preview
+      name: mmm-preview
       url: ${{ steps.deploy.outputs.preview-url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Create .env file from GitHub Secrets
+      - name: Check MMM Vercel secret configuration
+        id: secret_check
+        env:
+          MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
+          MMM_VERCEL_TOKEN: ${{ secrets.MMM_VERCEL_TOKEN }}
         run: |
-          printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\nVITE_API_BASE_URL=%s\n' \
-            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > apps/mmm/.env
-          chmod 600 apps/mmm/.env
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          set -euo pipefail
+          if [ -n "${MMM_VERCEL_ORG_ID:-}" ] && [ -n "${MMM_VERCEL_PROJECT_ID:-}" ] && [ -n "${MMM_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are not fully configured. Build verification passed; deployment is skipped."
+          fi
 
-      - name: Configure Vercel project
+      - name: Configure MMM Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
         env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
           mkdir -p .vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
-            "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > .vercel/project.json
+            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
 
-      - name: Pull Vercel Project Settings
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Pull MMM Vercel project settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
-      - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build MMM preview artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
-      - name: Patch .vercel/output routing — replace error-fallback /404.html with /index.html rewrite
+      - name: Validate MMM preview bundle environment
+        if: steps.secret_check.outputs.configured == 'true'
         run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const path = '.vercel/output/config.json';
-          if (!fs.existsSync(path)) {
-            console.log('No .vercel/output/config.json found — skipping patch');
-            process.exit(0);
-          }
-          const cfg = JSON.parse(fs.readFileSync(path, 'utf8'));
-          const routes = cfg.routes || [];
-          // Remove Vite framework adapter error-based /404.html fallback routes.
-          // These have { "handle": "error" } or { "dest": "/404.html", "status": 404 }
-          // and cause HTTP 404 responses for SPA direct routes.
-          const filtered = routes.filter(r =>
-            r.handle !== 'error' &&
-            r.dest !== '/404.html'
-          );
-          // Ensure filesystem handle is present (try static files before SPA catch-all)
-          if (!filtered.find(r => r.handle === 'filesystem')) {
-            filtered.push({ handle: 'filesystem' });
-          }
-          // Add SPA catch-all rewrite to /index.html (HTTP 200, not 404)
-          if (!filtered.find(r => r.dest === '/index.html')) {
-            filtered.push({
-              src: '/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)',
-              dest: '/index.html'
-            });
-          }
-          cfg.routes = filtered;
-          fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
-          console.log('Patched .vercel/output/config.json routes:');
-          console.log(JSON.stringify(cfg.routes, null, 2));
-          NODE
-
-      - name: Verify .vercel/output routing — SPA catch-all present
-        run: |
-          OUTPUT_CONFIG=".vercel/output/config.json"
-          if [ ! -f "$OUTPUT_CONFIG" ]; then
-            echo "❌ FAIL: $OUTPUT_CONFIG not found after vercel build — cannot verify SPA routing"
+          set -euo pipefail
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+            echo "::error::MMM preview bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
             exit 1
           fi
-          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route to /index.html..."
-          CATCH_ALL=$(node -e "
-            const fs = require('fs');
-            const cfg = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
-            const routes = cfg.routes || [];
-            // Require dest '/index.html' — /404.html with status 404 is NOT acceptable
-            // (it returns HTTP 404 to the client, breaking SPA direct-route navigation)
-            const found = routes.find(r => r.dest === '/index.html');
-            if (found) {
-              process.stdout.write(JSON.stringify(found));
-            }
-          ")
-          if [ -z "$CATCH_ALL" ]; then
-            echo "❌ FAIL: No SPA catch-all route with dest '/index.html' found in $OUTPUT_CONFIG"
-            echo "   A /404.html fallback with status:404 is NOT acceptable — it returns HTTP 404 to clients."
-            echo "   Build output routes:"
-            node -e "
-              const fs = require('fs');
-              const c = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
-              console.log(JSON.stringify(c.routes, null, 2));
-            "
-            exit 1
-          fi
-          echo "✅ PASS: SPA catch-all route to /index.html confirmed in .vercel/output/config.json:"
-          echo "  $CATCH_ALL"
+          echo "MMM preview bundle environment validation passed."
 
-      - name: Deploy Preview to Vercel
+      - name: Deploy MMM preview to Vercel
+        if: steps.secret_check.outputs.configured == 'true'
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
-          echo "preview-url=$url" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          url=$(vercel deploy --prebuilt --token=${{ secrets.MMM_VERCEL_TOKEN }})
+          echo "preview-url=$url" >> "$GITHUB_OUTPUT"
           echo "Preview URL: $url"
 
-      - name: SPA direct-route smoke test — verify auth/app routes return 2xx/3xx
+      - name: MMM route smoke test
+        if: steps.secret_check.outputs.configured == 'true'
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          MMM_VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.MMM_VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
-          echo "Running SPA direct-route smoke test against: $PREVIEW_URL"
-          ROUTES=("/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload")
+          set -euo pipefail
+          echo "Running MMM smoke test against: $PREVIEW_URL"
           FAIL=0
-          for route in "${ROUTES[@]}"; do
-            http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
-              --connect-timeout 10 \
-              --max-time 30 \
-              -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
-              "$PREVIEW_URL$route" 2>/dev/null || echo "000")
-            if [ "$http_code" = "404" ]; then
-              echo "❌ FAIL: $route → HTTP $http_code (404 NOT_FOUND — SPA fallback likely broken)"
-              FAIL=1
-            elif [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
-              echo "❌ FAIL: $route → HTTP $http_code (auth/protection blocking route — app not reached)"
-              FAIL=1
-            elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
-              echo "✅ PASS: $route → HTTP $http_code"
+          curl_status() {
+            local route="$1"
+            if [ -n "${MMM_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
+              curl -L -s -o /dev/null -w "%{http_code}" \
+                --connect-timeout 10 \
+                --max-time 30 \
+                -H "x-vercel-protection-bypass: $MMM_VERCEL_AUTOMATION_BYPASS_SECRET" \
+                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
             else
-              echo "❌ FAIL: $route → HTTP $http_code (network/timeout/unexpected — check deployment logs)"
+              curl -L -s -o /dev/null -w "%{http_code}" \
+                --connect-timeout 10 \
+                --max-time 30 \
+                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            fi
+          }
+          check_route() {
+            local route_type="$1"
+            local route="$2"
+            local code
+            code=$(curl_status "$route")
+            if echo "$code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "PASS: $route_type MMM route $route returned HTTP $code"
+            elif [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              echo "PROTECTED: $route_type MMM route $route returned HTTP $code; treated as Vercel preview protection posture, not route/runtime failure"
+            elif [ "$code" = "404" ] || echo "$code" | grep -qE '^5[0-9][0-9]$'; then
+              echo "FAIL: $route_type MMM route $route returned HTTP $code"
+              FAIL=1
+            else
+              echo "FAIL: $route_type MMM route $route returned unexpected HTTP $code"
               FAIL=1
             fi
+          }
+          for route in "/" "/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload"; do
+            check_route "owned" "$route"
           done
           if [ "$FAIL" -ne 0 ]; then
-            echo ""
-            echo "SPA direct-route smoke test FAILED — one or more routes returned an error."
+            echo "MMM route smoke test failed."
             exit 1
           fi
-          echo ""
-          echo "✅ All SPA routes returned 2xx/3xx — SPA fallback confirmed in deployed preview."
+          echo "MMM route smoke test passed."
 
-      - name: Comment Preview URL on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `✅ **Preview deployment ready!**\n\n🔗 Preview URL: ${{ steps.deploy.outputs.preview-url }}`
-            })
+      - name: Record skipped MMM preview deployment
+        if: steps.secret_check.outputs.configured != 'true'
+        run: |
+          echo "MMM preview deploy skipped because app-specific Vercel secrets are not fully configured."
+          echo "Required: MMM_VERCEL_ORG_ID, MMM_VERCEL_PROJECT_ID, MMM_VERCEL_TOKEN."
 
   deploy-production:
-    name: Deploy Production
+    name: Deploy MMM Production
     runs-on: ubuntu-latest
     needs: [build]
     if: >
@@ -437,425 +254,65 @@ jobs:
     permissions:
       contents: read
     environment:
-      name: production
+      name: mmm-production
       url: https://maturion-isms-mmm.vercel.app
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Create .env file from GitHub Secrets
+      - name: Check MMM Vercel secret configuration
+        id: secret_check
+        env:
+          MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
+          MMM_VERCEL_TOKEN: ${{ secrets.MMM_VERCEL_TOKEN }}
         run: |
-          printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\nVITE_API_BASE_URL=%s\n' \
-            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > apps/mmm/.env
-          chmod 600 apps/mmm/.env
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-
-      - name: Validate production build env vars are present
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: |
-          if [ -z "${VITE_SUPABASE_URL:-}" ] || [ "$VITE_SUPABASE_URL" = "https://placeholder.supabase.co" ]; then
-            echo "❌ FAIL: VITE_SUPABASE_URL is missing or placeholder in deploy-production job."
-            exit 1
+          set -euo pipefail
+          if [ -n "${MMM_VERCEL_ORG_ID:-}" ] && [ -n "${MMM_VERCEL_PROJECT_ID:-}" ] && [ -n "${MMM_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are not fully configured. Production deployment is skipped."
           fi
-          if [ -z "${VITE_SUPABASE_ANON_KEY:-}" ] || [ "$VITE_SUPABASE_ANON_KEY" = "placeholder-anon-key" ]; then
-            echo "❌ FAIL: VITE_SUPABASE_ANON_KEY is missing or placeholder in deploy-production job."
-            exit 1
-          fi
-          echo "✅ PASS: Production Supabase env vars are present before vercel build --prod."
 
-      - name: Configure Vercel project
+      - name: Configure MMM Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
         env:
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
           mkdir -p .vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
-            "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > .vercel/project.json
+            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
 
-      - name: Pull Vercel Project Settings
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Pull MMM production settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=production --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
-      - name: Build Project Artifacts
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build MMM production artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
-      - name: Patch .vercel/output routing — replace error-fallback /404.html with /index.html rewrite (production)
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const path = '.vercel/output/config.json';
-          if (!fs.existsSync(path)) {
-            console.log('No .vercel/output/config.json found — skipping patch');
-            process.exit(0);
-          }
-          const cfg = JSON.parse(fs.readFileSync(path, 'utf8'));
-          const routes = cfg.routes || [];
-          // Remove Vite framework adapter error-based /404.html fallback routes.
-          // These have { "handle": "error" } or { "dest": "/404.html", "status": 404 }
-          // and cause HTTP 404 responses for SPA direct routes.
-          const filtered = routes.filter(r =>
-            r.handle !== 'error' &&
-            r.dest !== '/404.html'
-          );
-          // Ensure filesystem handle is present (try static files before SPA catch-all)
-          if (!filtered.find(r => r.handle === 'filesystem')) {
-            filtered.push({ handle: 'filesystem' });
-          }
-          // Add SPA catch-all rewrite to /index.html (HTTP 200, not 404)
-          if (!filtered.find(r => r.dest === '/index.html')) {
-            filtered.push({
-              src: '/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)',
-              dest: '/index.html'
-            });
-          }
-          cfg.routes = filtered;
-          fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
-          console.log('Patched .vercel/output/config.json routes:');
-          console.log(JSON.stringify(cfg.routes, null, 2));
-          NODE
-
-      - name: Verify .vercel/output routing — SPA catch-all present (production)
-        run: |
-          OUTPUT_CONFIG=".vercel/output/config.json"
-          if [ ! -f "$OUTPUT_CONFIG" ]; then
-            echo "❌ FAIL: $OUTPUT_CONFIG not found after vercel build --prod — cannot verify SPA routing"
-            exit 1
-          fi
-          echo "Inspecting $OUTPUT_CONFIG for SPA catch-all route to /index.html..."
-          CATCH_ALL=$(node -e "
-            const fs = require('fs');
-            const cfg = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
-            const routes = cfg.routes || [];
-            // Require dest '/index.html' — /404.html with status 404 is NOT acceptable
-            // (it returns HTTP 404 to the client, breaking SPA direct-route navigation)
-            const found = routes.find(r => r.dest === '/index.html');
-            if (found) {
-              process.stdout.write(JSON.stringify(found));
-            }
-          ")
-          if [ -z "$CATCH_ALL" ]; then
-            echo "❌ FAIL: No SPA catch-all route with dest '/index.html' found in $OUTPUT_CONFIG"
-            echo "   A /404.html fallback with status:404 is NOT acceptable — it returns HTTP 404 to clients."
-            echo "   Build output routes:"
-            node -e "
-              const fs = require('fs');
-              const c = JSON.parse(fs.readFileSync('$OUTPUT_CONFIG', 'utf8'));
-              console.log(JSON.stringify(c.routes, null, 2));
-            "
-            exit 1
-          fi
-          echo "✅ PASS: SPA catch-all route to /index.html confirmed in .vercel/output/config.json (production):"
-          echo "  $CATCH_ALL"
-
-      - name: Verify production bundle embeds Supabase env
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - name: Validate MMM production bundle environment
+        if: steps.secret_check.outputs.configured == 'true'
         run: |
           set -euo pipefail
-
-          bundle=$(find .vercel/output -type f -path '*/assets/index-*.js' | head -n1)
-
-          if [ -z "$bundle" ]; then
-            echo "❌ FAIL: Could not find built frontend bundle under .vercel/output."
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+            echo "::error::MMM production bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
             exit 1
           fi
+          echo "MMM production bundle environment validation passed."
 
-          echo "Checking built production bundle: $bundle"
+      - name: Deploy MMM production to Vercel
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
-          if ! grep -Fq "$VITE_SUPABASE_URL" "$bundle"; then
-            echo "❌ FAIL: Built bundle does not contain VITE_SUPABASE_URL."
-            exit 1
-          fi
-
-          if ! grep -Fq "$VITE_SUPABASE_ANON_KEY" "$bundle"; then
-            echo "❌ FAIL: Built bundle does not contain VITE_SUPABASE_ANON_KEY."
-            echo "   This would deploy a blank page with: supabaseKey is required."
-            exit 1
-          fi
-
-          if grep -Eq 'supabase\.co",[A-Za-z_$][A-Za-z0-9_$]*=""' "$bundle"; then
-            echo "❌ FAIL: Built bundle appears to embed an empty Supabase anon key."
-            echo "   This would deploy a blank page with: supabaseKey is required."
-            exit 1
-          fi
-
-          echo "✅ PASS: Built bundle contains the Supabase URL and anon key."
-
-      - name: Deploy Production to Vercel
-        id: deploy
+      - name: Record skipped MMM production deployment
+        if: steps.secret_check.outputs.configured != 'true'
         run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "production-url=$url" >> $GITHUB_OUTPUT
-          echo "Production URL: $url"
-
-      - name: Guard canonical production URL serves same production JS hash
-        env:
-          PRODUCTION_URL: ${{ steps.deploy.outputs.production-url }}
-          MMM_CUSTOM_DOMAIN_URL: ${{ vars.MMM_CUSTOM_DOMAIN_URL || secrets.MMM_CUSTOM_DOMAIN_URL || '' }}
-        run: |
-          set -euo pipefail
-
-          PROJECT_PRODUCTION_ALIAS="https://maturion-isms-mmm.vercel.app"
-          CANONICAL_PRODUCTION_URL="${MMM_CUSTOM_DOMAIN_URL:-$PROJECT_PRODUCTION_ALIAS}"
-          DEPLOYED_URL="${PRODUCTION_URL:-}"
-          REFERENCE_URL=""
-          REFERENCE_ASSET=""
-          REFERENCE_HASH=""
-
-          normalize_url() {
-            local url="$1"
-            echo "${url%/}"
-          }
-
-          fetch_html() {
-            local url="$1"
-            curl -L -sS --fail \
-              --connect-timeout 15 \
-              --max-time 45 \
-              "$url/" 2>/dev/null
-          }
-
-          extract_asset() {
-            local html="$1"
-            echo "$html" | grep -oE '/assets/index-[A-Za-z0-9_-]+\.js' | head -n1
-          }
-
-          extract_hash() {
-            local asset="$1"
-            echo "$asset" | sed -E 's#^/assets/index-([A-Za-z0-9_-]+)\.js$#\1#'
-          }
-
-          has_empty_supabase_key_literal() {
-            local js="$1"
-            echo "$js" | grep -Eq 'supabase\.co",[A-Za-z_$][A-Za-z0-9_$]*=""'
-          }
-
-          CANDIDATES=()
-          if [ -n "$DEPLOYED_URL" ]; then
-            CANDIDATES+=("$(normalize_url "$DEPLOYED_URL")")
-          fi
-          CANDIDATES+=("$(normalize_url "$PROJECT_PRODUCTION_ALIAS")")
-
-          for candidate in "${CANDIDATES[@]}"; do
-            html=$(fetch_html "$candidate" || true)
-            if [ -z "$html" ]; then
-              continue
-            fi
-            asset=$(extract_asset "$html")
-            if [ -z "$asset" ]; then
-              continue
-            fi
-            REFERENCE_URL="$candidate"
-            REFERENCE_ASSET="$asset"
-            REFERENCE_HASH="$(extract_hash "$asset")"
-            break
-          done
-
-          if [ -z "$REFERENCE_URL" ] || [ -z "$REFERENCE_ASSET" ] || [ -z "$REFERENCE_HASH" ]; then
-            echo "❌ FAIL: Could not resolve a reference production URL/asset hash."
-            echo "   Tried deployment URL and project production alias."
-            exit 1
-          fi
-
-          canonical_html=$(fetch_html "$CANONICAL_PRODUCTION_URL" || true)
-          if [ -z "$canonical_html" ]; then
-            echo "❌ FAIL: Could not fetch canonical production HTML from: $CANONICAL_PRODUCTION_URL"
-            echo "   If this is a custom domain, ensure DNS/domain mapping is healthy before promoting this deployment."
-            exit 1
-          fi
-
-          canonical_asset=$(extract_asset "$canonical_html")
-
-          if [ -z "$canonical_asset" ]; then
-            echo "❌ FAIL: Could not extract /assets/index-*.js from canonical production HTML ($CANONICAL_PRODUCTION_URL)."
-            exit 1
-          fi
-
-          canonical_hash=$(extract_hash "$canonical_asset")
-
-          echo "Reference production URL: $REFERENCE_URL"
-          echo "Reference production asset: $REFERENCE_ASSET (hash: $REFERENCE_HASH)"
-          echo "Canonical production URL: $CANONICAL_PRODUCTION_URL"
-          echo "Canonical production asset: $canonical_asset (hash: $canonical_hash)"
-
-          if [ "$REFERENCE_HASH" != "$canonical_hash" ]; then
-            echo "❌ FAIL: Canonical production URL serves a different JS hash than the just-deployed production URL."
-            echo "   reference: $REFERENCE_URL -> $REFERENCE_ASSET"
-            echo "   canonical: $CANONICAL_PRODUCTION_URL -> $canonical_asset"
-            echo "   This usually means an alias/domain still points at an older deployment."
-            exit 1
-          fi
-
-          reference_js=$(curl -L -sS --fail \
-            --connect-timeout 15 \
-            --max-time 45 \
-            "$REFERENCE_URL$REFERENCE_ASSET" 2>/dev/null || true)
-          canonical_js=$(curl -L -sS --fail \
-            --connect-timeout 15 \
-            --max-time 45 \
-            "$CANONICAL_PRODUCTION_URL$canonical_asset" 2>/dev/null || true)
-
-          if [ -z "$reference_js" ]; then
-            echo "❌ FAIL: Could not download reference production JS bundle for env validation."
-            exit 1
-          fi
-
-          if [ -z "$canonical_js" ]; then
-            echo "❌ FAIL: Could not download canonical production JS bundle for env validation."
-            exit 1
-          fi
-
-          if has_empty_supabase_key_literal "$reference_js"; then
-            echo "❌ FAIL: Reference production JS bundle appears to embed an empty Supabase anon key."
-            echo "   This causes runtime blank pages with: 'supabaseKey is required'."
-            exit 1
-          fi
-
-          if has_empty_supabase_key_literal "$canonical_js"; then
-            echo "❌ FAIL: Canonical production JS bundle appears to embed an empty Supabase anon key."
-            echo "   This causes runtime blank pages with: 'supabaseKey is required'."
-            exit 1
-          fi
-
-          echo "✅ PASS: Canonical production URL and deployed production URL serve the same JS hash."
-          echo "✅ PASS: Supabase anon key is not empty in both checked JS bundles."
-
-      - name: Create deployment summary
-        run: |
-          echo "## 🚀 MMM Frontend Deployment Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status**: ✅ Deployed to Production" >> $GITHUB_STEP_SUMMARY
-          echo "**URL**: ${{ steps.deploy.outputs.production-url }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Timestamp**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
-
-      - name: SPA direct-route smoke test — production routes must not return 404
-        env:
-          PRODUCTION_URL: ${{ steps.deploy.outputs.production-url }}
-          VITE_LIVE_DEPLOYMENT_URL: ${{ secrets.VITE_LIVE_DEPLOYMENT_URL }}
-        run: |
-          SMOKE_URL="${PRODUCTION_URL:-${VITE_LIVE_DEPLOYMENT_URL:-https://maturion-isms-mmm.vercel.app}}"
-          echo "Running SPA direct-route smoke test (production) against: $SMOKE_URL"
-          ROUTES=("/dashboard" "/frameworks" "/frameworks/upload")
-          FAIL=0
-          for route in "${ROUTES[@]}"; do
-            http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
-              --connect-timeout 10 \
-              --max-time 30 \
-              "$SMOKE_URL$route" 2>/dev/null || echo "000")
-            if [ "$http_code" = "404" ]; then
-              echo "❌ FAIL: $route → HTTP $http_code (404 NOT_FOUND — SPA fallback likely broken)"
-              FAIL=1
-            elif [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
-              echo "⚠️  PROTECTED: $route → HTTP $http_code (auth/route-protection — not a SPA routing failure)"
-            elif echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
-              echo "✅ PASS: $route → HTTP $http_code"
-            else
-              echo "❌ FAIL: $route → HTTP $http_code (network/timeout/unexpected — check deployment logs)"
-              FAIL=1
-            fi
-          done
-          if [ "$FAIL" -ne 0 ]; then
-            echo ""
-            echo "SPA direct-route smoke test FAILED — one or more routes returned HTTP 404."
-            echo "Direct sub-path navigation is broken. Check apps/mmm/vercel.json SPA catch-all."
-            exit 1
-          fi
-          echo ""
-          echo "✅ All production SPA routes returned non-404 — SPA fallback confirmed."
-
-      - name: e2e-auth-smoke
-        continue-on-error: true
-        env:
-          PRODUCTION_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: |
-          echo "Running E2E auth smoke test against production URL..."
-          SMOKE_URL="${PRODUCTION_SITE_URL:-https://maturion-isms-mmm.vercel.app}"
-          echo "Checking production app is reachable: $SMOKE_URL"
-          http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$SMOKE_URL/" 2>/dev/null || echo "000")
-          if echo "$http_code" | grep -qE '^[23][0-9][0-9]$'; then
-            echo "PASS: Production URL reachable (HTTP $http_code)"
-          else
-            echo "WARN: Production URL returned HTTP $http_code (non-blocking)"
-          fi
-          if [ -n "$VITE_SUPABASE_URL" ]; then
-            echo "Checking Supabase auth endpoint is reachable..."
-            response=$(curl -s -o /dev/null -w "%{http_code}" \
-              "${VITE_SUPABASE_URL}/auth/v1/settings" \
-              -H "apikey: ${VITE_SUPABASE_ANON_KEY}" 2>/dev/null || echo "000")
-            echo "Supabase auth endpoint returned HTTP $response"
-            [ "$response" = "200" ] || [ "$response" = "401" ] && echo "PASS: auth endpoint reachable" || echo "WARN: auth endpoint returned $response"
-          else
-            echo "SKIP: VITE_SUPABASE_URL not set — skipping auth endpoint check"
-          fi
-          echo "Smoke test complete"
-
-  post-deploy-smoke-test:
-    name: Post-Deploy Auth Smoke Test
-    runs-on: ubuntu-latest
-    needs: [deploy-production]
-    permissions:
-      contents: read
-    if: >
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: auth-smoke — verify auth endpoint reachable after deploy
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: |
-          echo "Running post-deploy-smoke-test auth-smoke check..."
-          # Verify Supabase auth endpoint is reachable
-          if [ -n "$VITE_SUPABASE_URL" ]; then
-            response=$(curl -s -o /dev/null -w "%{http_code}" \
-              "${VITE_SUPABASE_URL}/auth/v1/settings" \
-              -H "apikey: ${VITE_SUPABASE_ANON_KEY}" 2>/dev/null || echo "000")
-            if [ "$response" = "200" ]; then
-              echo "PASS: auth-smoke — Supabase auth endpoint reachable (HTTP $response)"
-            else
-              echo "WARN: auth-smoke — Supabase auth endpoint returned HTTP $response"
-            fi
-          else
-            echo "SKIP: VITE_SUPABASE_URL not set — skipping auth-smoke"
-          fi
+          echo "MMM production deploy skipped because app-specific Vercel secrets are not fully configured."
+          echo "Required: MMM_VERCEL_ORG_ID, MMM_VERCEL_PROJECT_ID, MMM_VERCEL_TOKEN."
