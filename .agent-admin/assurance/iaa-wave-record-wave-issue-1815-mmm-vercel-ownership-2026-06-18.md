@@ -9,6 +9,34 @@ Scope record: `.agent-admin/scope-declarations/wave-issue-1815-mmm-vercel-owners
 
 ## PRE-BRIEF
 
+EXPECTED_QA_SCOPE:
+- Verify MMM workflow path filters are limited to MMM-owned deployment surfaces, workflow self-change, and lockfile changes.
+- Verify Vercel project configuration uses `MMM_VERCEL_PROJECT_ID` and `MMM_VERCEL_ORG_ID`.
+- Verify Vercel CLI commands use `MMM_VERCEL_TOKEN`.
+- Verify preview and production deployment paths validate required Supabase and Vercel secrets before Vercel build/deploy.
+- Verify smoke testing targets MMM routes only and handles protected preview HTTP 401/403 separately from route failure.
+
+EXPECTED_FAILURE_MODES:
+- Generic Vercel secrets deploy or smoke-test the wrong project.
+- Unrelated ISMS-only or shared hygiene PRs trigger MMM deployment.
+- Protected preview access returns HTTP 401/403 and is misreported as app route failure.
+- Missing Supabase env secrets allow a blank or broken frontend artifact to deploy.
+- Issue #1815 work is mixed with descriptor runtime or other product behavior.
+
+FOREMAN_INSTRUCTIONS:
+- Keep the implementation file scope limited to `.github/workflows/deploy-mmm-vercel.yml` plus issue #1815 evidence.
+- Do not edit `.github/workflows/deploy-isms-portal-vercel.yml`.
+- Do not edit PIT workflows, runtime code, Supabase migrations, CodeQL, or root app-specific Vercel settings.
+- Require builder evidence for secret namespace, trigger paths, smoke routes, protected-preview handling, and monorepo deployment model alignment.
+
+IAA_WILL_QA:
+- IAA will check workflow ownership boundary and secret namespace separation.
+- IAA will check that route smoke tests are MMM-only.
+- IAA will check that preview protection handling is explicit.
+- IAA will check that evidence records non-owned paths and the MMM Vercel project contract.
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
 ```yaml
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
