@@ -30,6 +30,9 @@ import { PitShell } from './pages/pit/PitShell';
 
 const queryClient = new QueryClient();
 
+const ADMIN_ROUTE_ROLES = ['org_admin', 'cs2_admin'] as const;
+const QA_ROUTE_ROLES = ['cs2_admin'] as const;
+
 const privateShellRoute = (title: string, description: string) => (
   <ProtectedRoute>
     <PitErrorBoundary>
@@ -62,8 +65,38 @@ const protectedMaturitySetupRoute = (
   </ProtectedRoute>
 );
 
+const roleAwareShellRoute = (
+  title: string,
+  description: string,
+  allowedRoles: ReadonlyArray<'org_admin' | 'cs2_admin'>,
+  deniedDescription: string,
+) => (
+  <ProtectedRoute
+    allowedRoles={[...allowedRoles]}
+    deniedTitle="Access denied"
+    deniedDescription={deniedDescription}
+  >
+    <PitErrorBoundary>
+      <PitShell title={title} description={description} />
+    </PitErrorBoundary>
+  </ProtectedRoute>
+);
+
 const adminShellRoute = (title: string, description: string) =>
-  privateShellRoute(title, `${description} Access policy: W8.2 admin/RLS-first denied-path foundation.`);
+  roleAwareShellRoute(
+    title,
+    `${description} Access policy: org_admin or cs2_admin required.`,
+    ADMIN_ROUTE_ROLES,
+    'This W8.2 admin route requires the org_admin or cs2_admin mock role.',
+  );
+
+const qaShellRoute = (title: string, description: string) =>
+  roleAwareShellRoute(
+    title,
+    `${description} Access policy: cs2_admin required.`,
+    QA_ROUTE_ROLES,
+    'This W8.2 QA dashboard route requires the cs2_admin mock role.',
+  );
 
 const App = () => {
   return (
@@ -237,7 +270,7 @@ const App = () => {
                 />
                 <Route
                   path={ROUTES.QA_DASHBOARD}
-                  element={adminShellRoute(
+                  element={qaShellRoute(
                     'QA dashboard',
                     'Protected QA dashboard shell for W8.2 admin visibility foundations.',
                   )}
