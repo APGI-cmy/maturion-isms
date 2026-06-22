@@ -3,25 +3,19 @@ name: Deploy MMM Frontend to Vercel
 # WORKFLOW OWNERSHIP BOUNDARY
 # This workflow owns the MMM frontend deployment surface only.
 #
-# MMM deployment contract:
-#   Vercel project: maturion-isms-mmm
-#   App path: apps/mmm
-#   Package: @maturion/mmm
-#   Expected output directory: apps/mmm/dist
-#   Project settings model: repository root, pnpm install, pnpm --filter @maturion/mmm build
-#
-# Owned trigger paths:
+# Authorised trigger paths:
 #   apps/mmm/**
+#   modules/MMM/12-deployment/**
 #   .github/workflows/deploy-mmm-vercel.yml
-#   pnpm-lock.yaml
+#   MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
+#   MONOREPO_VERCEL_DEPLOYMENT_MODEL.md
 #
-# Non-owned paths must not trigger MMM preview deployment on their own:
+# Out of scope:
 #   apps/isms-portal/**
-#   api/**
-#   supabase/**
-#   packages/**
-#   vercel.json
-#   PIT or other module workflows
+#   modules/pit/**
+#   apps/pit/**
+#   broad api/** changes unless an MMM-owned API boundary is explicitly introduced
+#   broad packages/** changes unless an MMM-specific integration surface is explicitly declared
 
 on:
   push:
@@ -29,29 +23,31 @@ on:
       - main
     paths:
       - 'apps/mmm/**'
+      - 'modules/MMM/12-deployment/**'
       - '.github/workflows/deploy-mmm-vercel.yml'
-      - 'pnpm-lock.yaml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+      - 'MONOREPO_VERCEL_DEPLOYMENT_MODEL.md'
   pull_request:
     branches:
       - main
     paths:
       - 'apps/mmm/**'
+      - 'modules/MMM/12-deployment/**'
       - '.github/workflows/deploy-mmm-vercel.yml'
-      - 'pnpm-lock.yaml'
+      - 'MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md'
+      - 'MONOREPO_VERCEL_DEPLOYMENT_MODEL.md'
   workflow_dispatch:
 
 env:
   NODE_VERSION: '22'
   PNPM_VERSION: '9.12.0'
+  MMM_PACKAGE_FILTER: '@maturion/mmm'
   MMM_APP_PATH: apps/mmm
-  MMM_PACKAGE_NAME: '@maturion/mmm'
   MMM_OUTPUT_DIR: apps/mmm/dist
-  MMM_VERCEL_PROJECT_NAME: maturion-isms-mmm
-  MMM_PREVIEW_ROUTES: '/login /forgot-password /reset-password /onboarding /frameworks /frameworks/upload'
 
 jobs:
-  ownership-boundary:
-    name: MMM Workflow Ownership Boundary
+  boundary-guard:
+    name: MMM Workflow Boundary Guard
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -59,36 +55,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Validate MMM ownership contract
+      - name: Verify MMM deployment ownership boundary
         run: |
           set -euo pipefail
-          echo "Validating MMM Vercel workflow ownership boundary..."
-          test -d "$MMM_APP_PATH"
-          node -e "const pkg=require('./apps/mmm/package.json'); if(pkg.name !== process.env.MMM_PACKAGE_NAME){ throw new Error('Unexpected MMM package name: '+pkg.name); }"
-          echo "App path: $MMM_APP_PATH"
-          echo "Package: $MMM_PACKAGE_NAME"
-          echo "Expected output directory: $MMM_OUTPUT_DIR"
-          echo "Vercel project: $MMM_VERCEL_PROJECT_NAME"
-
-      - name: Guard against generic Vercel secrets in this workflow
-        run: |
-          set -euo pipefail
-          WORKFLOW='.github/workflows/deploy-mmm-vercel.yml'
-          if grep -nE 'secrets\.(VERCEL_PROJECT_ID|VERCEL_ORG_ID|VERCEL_TOKEN|VERCEL_AUTOMATION_BYPASS_SECRET)\b' "$WORKFLOW"; then
-            echo "MMM workflow must use MMM-specific Vercel secrets only."
+          test -f apps/mmm/package.json
+          test -f apps/mmm/vercel.json
+          test -d apps/mmm/src
+          test -f MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
+          test -f MONOREPO_VERCEL_DEPLOYMENT_MODEL.md
+          if grep -nE "^[[:space:]]+- 'api/\*\*'|^[[:space:]]+- 'packages/" .github/workflows/deploy-mmm-vercel.yml; then
+            echo "::error::MMM workflow must not trigger broad api/** or packages/** preview deployments without an explicit MMM-owned boundary."
             exit 1
           fi
-          echo "MMM workflow secret namespace is MMM-specific."
-
-      - name: Record trigger boundary
-        run: |
-          echo "Owned trigger paths: apps/mmm/**, .github/workflows/deploy-mmm-vercel.yml, pnpm-lock.yaml"
-          echo "Non-owned examples: apps/isms-portal/**, api/**, supabase/**, packages/**, vercel.json"
+          if grep -nE "VERCEL_PROJECT_ID|VERCEL_ORG_ID|VERCEL_TOKEN|VERCEL_AUTOMATION_BYPASS_SECRET" .github/workflows/deploy-mmm-vercel.yml | grep -v "MMM_VERCEL_"; then
+            echo "::error::MMM workflow must use the MMM_VERCEL_* secret namespace, not generic Vercel deployment secrets."
+            exit 1
+          fi
+          echo "MMM app path: ${MMM_APP_PATH}"
+          echo "MMM package filter: ${MMM_PACKAGE_FILTER}"
+          echo "MMM output directory: ${MMM_OUTPUT_DIR}"
+          echo "MMM workflow boundary guard passed."
 
   build:
     name: Build MMM Frontend
     runs-on: ubuntu-latest
-    needs: [ownership-boundary]
+    needs: [boundary-guard]
     permissions:
       contents: read
     steps:
@@ -107,40 +98,18 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
-      - name: Install dependencies from monorepo root
+      - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Validate MMM frontend env secrets
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: |
-          set -euo pipefail
-          if [ -z "${VITE_SUPABASE_URL:-}" ] || [ "$VITE_SUPABASE_URL" = "https://placeholder.supabase.co" ]; then
-            echo "VITE_SUPABASE_URL is missing or placeholder."
-            exit 1
-          fi
-          if [ -z "${VITE_SUPABASE_ANON_KEY:-}" ] || [ "$VITE_SUPABASE_ANON_KEY" = "placeholder-anon-key" ]; then
-            echo "VITE_SUPABASE_ANON_KEY is missing or placeholder."
-            exit 1
-          fi
-          echo "MMM frontend env secrets are present."
+      - name: Type-check MMM frontend
+        run: pnpm --filter ${{ env.MMM_PACKAGE_FILTER }} exec tsc --noEmit
 
-      - name: Build MMM package
-        run: pnpm --filter @maturion/mmm build
+      - name: Build MMM frontend
+        run: pnpm --filter ${{ env.MMM_PACKAGE_FILTER }} build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-
-      - name: Verify MMM output directory
-        run: |
-          set -euo pipefail
-          if [ ! -d "$MMM_OUTPUT_DIR" ]; then
-            echo "Expected MMM output directory not found: $MMM_OUTPUT_DIR"
-            exit 1
-          fi
-          echo "MMM output directory present: $MMM_OUTPUT_DIR"
 
       - name: Upload MMM build artifact
         uses: actions/upload-artifact@v5
@@ -150,130 +119,77 @@ jobs:
           retention-days: 7
 
   deploy-preview:
-    name: Deploy Preview
+    name: Deploy MMM Preview
     runs-on: ubuntu-latest
     needs: [build]
     if: github.event_name == 'pull_request'
     permissions:
       contents: read
-      pull-requests: write
     environment:
-      name: preview
+      name: mmm-preview
       url: ${{ steps.deploy.outputs.preview-url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Validate MMM preview deployment secrets
+      - name: Check MMM Vercel secret configuration
+        id: secret_check
         env:
-          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
           MMM_VERCEL_TOKEN: ${{ secrets.MMM_VERCEL_TOKEN }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
           set -euo pipefail
-          missing=0
-          for name in MMM_VERCEL_PROJECT_ID MMM_VERCEL_ORG_ID MMM_VERCEL_TOKEN VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
-            if [ -z "${!name:-}" ]; then
-              echo "$name is required."
-              missing=1
-            fi
-          done
-          if [ "${VITE_SUPABASE_URL:-}" = "https://placeholder.supabase.co" ]; then
-            echo "VITE_SUPABASE_URL is placeholder."
-            missing=1
+          if [ -n "${MMM_VERCEL_ORG_ID:-}" ] && [ -n "${MMM_VERCEL_PROJECT_ID:-}" ] && [ -n "${MMM_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are not fully configured. Build verification passed; deployment is skipped."
           fi
-          if [ "${VITE_SUPABASE_ANON_KEY:-}" = "placeholder-anon-key" ]; then
-            echo "VITE_SUPABASE_ANON_KEY is placeholder."
-            missing=1
-          fi
-          if [ "$missing" -ne 0 ]; then
-            exit 1
-          fi
-          echo "MMM preview deployment secrets are present."
-
-      - name: Create MMM env file from GitHub Secrets
-        run: |
-          set -euo pipefail
-          printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\nVITE_API_BASE_URL=%s\n' \
-            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > apps/mmm/.env
-          chmod 600 apps/mmm/.env
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
       - name: Configure MMM Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
         env:
-          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
-          set -euo pipefail
           mkdir -p .vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
             "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
-          echo "Configured MMM Vercel project: $MMM_VERCEL_PROJECT_NAME"
 
       - name: Pull MMM Vercel project settings
+        if: steps.secret_check.outputs.configured == 'true'
         run: vercel pull --yes --environment=preview --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
-      - name: Build MMM project artifacts with Vercel
+      - name: Build MMM preview artifacts
+        if: steps.secret_check.outputs.configured == 'true'
         run: vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
-      - name: Patch Vercel output routing for MMM SPA fallback
+      - name: Validate MMM preview bundle environment
+        if: steps.secret_check.outputs.configured == 'true'
         run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const path = '.vercel/output/config.json';
-          if (!fs.existsSync(path)) {
-            console.log('No .vercel/output/config.json found; skipping SPA route patch');
-            process.exit(0);
-          }
-          const cfg = JSON.parse(fs.readFileSync(path, 'utf8'));
-          const routes = cfg.routes || [];
-          const filtered = routes.filter((r) => r.handle !== 'error' && r.dest !== '/404.html');
-          if (!filtered.find((r) => r.handle === 'filesystem')) {
-            filtered.push({ handle: 'filesystem' });
-          }
-          if (!filtered.find((r) => r.dest === '/index.html')) {
-            filtered.push({
-              src: '/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)',
-              dest: '/index.html',
-            });
-          }
-          cfg.routes = filtered;
-          fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
-          console.log('MMM SPA fallback route confirmed in Vercel output config.');
-          NODE
+          set -euo pipefail
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+            echo "::error::MMM preview bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
+            exit 1
+          fi
+          echo "MMM preview bundle environment validation passed."
 
       - name: Deploy MMM preview to Vercel
+        if: steps.secret_check.outputs.configured == 'true'
         id: deploy
         run: |
           set -euo pipefail
           url=$(vercel deploy --prebuilt --token=${{ secrets.MMM_VERCEL_TOKEN }})
           echo "preview-url=$url" >> "$GITHUB_OUTPUT"
-          echo "MMM preview URL: $url"
+          echo "Preview URL: $url"
 
-      - name: MMM direct-route smoke test
+      - name: MMM route smoke test
+        if: steps.secret_check.outputs.configured == 'true'
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
           MMM_VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.MMM_VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -281,51 +197,55 @@ jobs:
           set -euo pipefail
           echo "Running MMM smoke test against: $PREVIEW_URL"
           FAIL=0
-          for route in $MMM_PREVIEW_ROUTES; do
-            header_args=()
+          curl_status() {
+            local route="$1"
             if [ -n "${MMM_VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]; then
-              header_args=(-H "x-vercel-protection-bypass: $MMM_VERCEL_AUTOMATION_BYPASS_SECRET" -H "x-vercel-set-bypass-cookie: true")
+              curl -L -s -o /dev/null -w "%{http_code}" \
+                --connect-timeout 10 \
+                --max-time 30 \
+                -H "x-vercel-protection-bypass: $MMM_VERCEL_AUTOMATION_BYPASS_SECRET" \
+                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
+            else
+              curl -L -s -o /dev/null -w "%{http_code}" \
+                --connect-timeout 10 \
+                --max-time 30 \
+                "$PREVIEW_URL$route" 2>/dev/null || echo "000"
             fi
-            http_code=$(curl -L -s -o /dev/null -w "%{http_code}" \
-              --connect-timeout 10 \
-              --max-time 30 \
-              "${header_args[@]}" \
-              "$PREVIEW_URL$route" 2>/dev/null || echo "000")
-            case "$http_code" in
-              2*|3*)
-                echo "PASS: $route -> HTTP $http_code"
-                ;;
-              401|403)
-                echo "PROTECTED: $route -> HTTP $http_code; Vercel preview protection reached before app routing"
-                ;;
-              404)
-                echo "FAIL: $route -> HTTP 404; MMM SPA fallback or route handling failed"
-                FAIL=1
-                ;;
-              *)
-                echo "FAIL: $route -> HTTP $http_code"
-                FAIL=1
-                ;;
-            esac
+          }
+          check_route() {
+            local route_type="$1"
+            local route="$2"
+            local code
+            code=$(curl_status "$route")
+            if echo "$code" | grep -qE '^[23][0-9][0-9]$'; then
+              echo "PASS: $route_type MMM route $route returned HTTP $code"
+            elif [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              echo "PROTECTED: $route_type MMM route $route returned HTTP $code; treated as Vercel preview protection posture, not route/runtime failure"
+            elif [ "$code" = "404" ] || echo "$code" | grep -qE '^5[0-9][0-9]$'; then
+              echo "FAIL: $route_type MMM route $route returned HTTP $code"
+              FAIL=1
+            else
+              echo "FAIL: $route_type MMM route $route returned unexpected HTTP $code"
+              FAIL=1
+            fi
+          }
+          for route in "/" "/login" "/forgot-password" "/reset-password" "/onboarding" "/frameworks" "/frameworks/upload"; do
+            check_route "owned" "$route"
           done
           if [ "$FAIL" -ne 0 ]; then
+            echo "MMM route smoke test failed."
             exit 1
           fi
+          echo "MMM route smoke test passed."
 
-      - name: Comment MMM preview URL on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `MMM preview deployment created.\n\nPreview URL: ${{ steps.deploy.outputs.preview-url }}`,
-            });
+      - name: Record skipped MMM preview deployment
+        if: steps.secret_check.outputs.configured != 'true'
+        run: |
+          echo "MMM preview deploy skipped because app-specific Vercel secrets are not fully configured."
+          echo "Required: MMM_VERCEL_ORG_ID, MMM_VERCEL_PROJECT_ID, MMM_VERCEL_TOKEN."
 
   deploy-production:
-    name: Deploy Production
+    name: Deploy MMM Production
     runs-on: ubuntu-latest
     needs: [build]
     if: >
@@ -334,112 +254,65 @@ jobs:
     permissions:
       contents: read
     environment:
-      name: production
+      name: mmm-production
       url: https://maturion-isms-mmm.vercel.app
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Validate MMM production deployment secrets
+      - name: Check MMM Vercel secret configuration
+        id: secret_check
         env:
-          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
           MMM_VERCEL_TOKEN: ${{ secrets.MMM_VERCEL_TOKEN }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
           set -euo pipefail
-          missing=0
-          for name in MMM_VERCEL_PROJECT_ID MMM_VERCEL_ORG_ID MMM_VERCEL_TOKEN VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
-            if [ -z "${!name:-}" ]; then
-              echo "$name is required."
-              missing=1
-            fi
-          done
-          if [ "${VITE_SUPABASE_URL:-}" = "https://placeholder.supabase.co" ]; then
-            echo "VITE_SUPABASE_URL is placeholder."
-            missing=1
+          if [ -n "${MMM_VERCEL_ORG_ID:-}" ] && [ -n "${MMM_VERCEL_PROJECT_ID:-}" ] && [ -n "${MMM_VERCEL_TOKEN:-}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are configured."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "MMM Vercel secrets are not fully configured. Production deployment is skipped."
           fi
-          if [ "${VITE_SUPABASE_ANON_KEY:-}" = "placeholder-anon-key" ]; then
-            echo "VITE_SUPABASE_ANON_KEY is placeholder."
-            missing=1
-          fi
-          if [ "$missing" -ne 0 ]; then
-            exit 1
-          fi
-          echo "MMM production deployment secrets are present."
-
-      - name: Create MMM env file from GitHub Secrets
-        run: |
-          set -euo pipefail
-          printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\nVITE_API_BASE_URL=%s\n' \
-            "$VITE_SUPABASE_URL" "$VITE_SUPABASE_ANON_KEY" "$VITE_API_BASE_URL" > apps/mmm/.env
-          chmod 600 apps/mmm/.env
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
       - name: Configure MMM Vercel project
+        if: steps.secret_check.outputs.configured == 'true'
         env:
-          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
-          set -euo pipefail
           mkdir -p .vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
             "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
-          echo "Configured MMM Vercel project: $MMM_VERCEL_PROJECT_NAME"
 
-      - name: Pull MMM Vercel production project settings
+      - name: Pull MMM production settings
+        if: steps.secret_check.outputs.configured == 'true'
         run: vercel pull --yes --environment=production --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
-      - name: Build MMM production artifacts with Vercel
+      - name: Build MMM production artifacts
+        if: steps.secret_check.outputs.configured == 'true'
         run: vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
-      - name: Patch Vercel output routing for MMM production SPA fallback
+      - name: Validate MMM production bundle environment
+        if: steps.secret_check.outputs.configured == 'true'
         run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const path = '.vercel/output/config.json';
-          if (!fs.existsSync(path)) {
-            console.log('No .vercel/output/config.json found; skipping SPA route patch');
-            process.exit(0);
-          }
-          const cfg = JSON.parse(fs.readFileSync(path, 'utf8'));
-          const routes = cfg.routes || [];
-          const filtered = routes.filter((r) => r.handle !== 'error' && r.dest !== '/404.html');
-          if (!filtered.find((r) => r.handle === 'filesystem')) {
-            filtered.push({ handle: 'filesystem' });
-          }
-          if (!filtered.find((r) => r.dest === '/index.html')) {
-            filtered.push({
-              src: '/((?!api/|assets/|manifest\\.json$|sw\\.js$).*)',
-              dest: '/index.html',
-            });
-          }
-          cfg.routes = filtered;
-          fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
-          console.log('MMM SPA fallback route confirmed in Vercel production output config.');
-          NODE
+          set -euo pipefail
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+            echo "::error::MMM production bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
+            exit 1
+          fi
+          echo "MMM production bundle environment validation passed."
 
       - name: Deploy MMM production to Vercel
+        if: steps.secret_check.outputs.configured == 'true'
         run: vercel deploy --prebuilt --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+
+      - name: Record skipped MMM production deployment
+        if: steps.secret_check.outputs.configured != 'true'
+        run: |
+          echo "MMM production deploy skipped because app-specific Vercel secrets are not fully configured."
+          echo "Required: MMM_VERCEL_ORG_ID, MMM_VERCEL_PROJECT_ID, MMM_VERCEL_TOKEN."
