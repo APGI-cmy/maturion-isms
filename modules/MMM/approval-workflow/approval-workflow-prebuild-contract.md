@@ -93,6 +93,7 @@ Required domain approval states:
 - `level_2_partially_approved`
 - `level_2_approved`
 - `domain_locked_after_level_2`
+- `level_3_pending`
 - `level_3_changes_requested`
 - `final_approved`
 - `final_locked`
@@ -145,6 +146,7 @@ For level 2:
 For level 3:
 
 - final approval activates only after all required domains have level 2 approval;
+- domains enter `level_3_pending` while final approvers are invited and review is active;
 - all invited final approvers must sign off unless CS2 later defines a quorum model;
 - proposed changes from level 3 reopen affected items through the level 2 to level 1 loop.
 
