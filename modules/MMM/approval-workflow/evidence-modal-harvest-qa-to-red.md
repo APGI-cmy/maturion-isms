@@ -50,8 +50,8 @@ then tests must expect the source reference `modules/mat/frontend/src/components
 
 ### T-MMM-EVIDENCE-SOURCE-002 — MAT evidence type parity is required
 
-Given MAT supports evidence types for document/URL, photo/image, text/findings, video, spreadsheet/file, and voice note/audio,
-then the future MMM evidence modal test suite must include those evidence type expectations.
+Given MAT supports evidence types for document/URL, photo/image, text/findings, video, spreadsheet/file, voice note/audio, and interview recording,
+then the future MMM evidence modal test suite must include those evidence type expectations (or explicitly document any intentional exclusions).
 
 ### T-MMM-EVIDENCE-SOURCE-003 — MAT remove/replace parity is required
 
