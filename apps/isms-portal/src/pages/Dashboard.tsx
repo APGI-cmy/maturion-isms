@@ -20,7 +20,7 @@ const moduleLabels: Record<IsmsModuleKey, { title: string; description: string; 
     marketingRoute: ROUTES.MARKETING_RISK_MANAGEMENT,
   },
   'project-implementation': {
-    title: 'Project Implementation',
+    title: 'Project Implementation Tracker',
     description: 'Track security improvement projects and implementation evidence.',
     marketingRoute: ROUTES.MARKETING_PROJECT_IMPLEMENTATION,
   },
@@ -60,6 +60,11 @@ const Dashboard = () => {
       const handoff = createMaturityRoadmapHandoff(entitlement);
       storeMaturityRoadmapHandoff(handoff);
       navigate(ROUTES.MATURITY_SETUP);
+      return;
+    }
+
+    if (moduleKey === 'project-implementation') {
+      navigate(ROUTES.PIT_TRACKER);
       return;
     }
 
