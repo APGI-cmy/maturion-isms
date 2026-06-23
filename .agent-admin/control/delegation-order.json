@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "pit-w82-role-aware-route-authorization",
-  "pr_number": 1829,
-  "prebrief_commit_sha": "6ac2fb8b70f334005c45b6c619f1d74cc04ff78b",
-  "builder_appointment_timestamp": "2026-06-19T12:36:00Z",
-  "builder_appointment_commit_sha": "70c04a8a5777fb20435a59da1e3252e32c3cce33",
-  "builder_agent": "pit-specialist",
-  "builder_task_ref": "pit-w82-route-authorization",
-  "first_implementation_commit_sha": "2882f5cb8b4ff10e1792384fef7b2ccd8fafcc5d",
-  "qp_review_timestamp": "2026-06-22T07:40:00Z",
+  "wave_id": "isms-p2-runtime-supabase-persistence-hooks",
+  "pr_number": 1834,
+  "prebrief_commit_sha": "832a11a2148c09a451682132f7541656e10acb1a",
+  "builder_appointment_timestamp": "2026-06-23T10:00:00Z",
+  "builder_appointment_commit_sha": "d8e50cf342560b85f8c5275289b175ffc3b207a7",
+  "builder_agent": "isms-runtime-builder",
+  "builder_task_ref": "P2 runtime Supabase persistence hooks for onboarding profile and maturity-roadmap handoff",
+  "first_implementation_commit_sha": "bb2a1512eb07fa48b423a03418c594e025549009",
+  "qp_review_timestamp": "2026-06-23T10:45:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
