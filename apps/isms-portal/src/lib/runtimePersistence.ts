@@ -1,4 +1,3 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { EntitlementState } from './entitlements';
 import type { MaturityRoadmapHandoff } from './handoff';
 import {
@@ -8,7 +7,7 @@ import {
   type OnboardingProfile,
   type SubscriptionSelection,
 } from './subscription';
-import { getIsmsSupabaseClient } from './supabaseClient';
+import { getIsmsSupabaseRuntime, insertIsmsSupabaseRecord } from './supabaseClient';
 
 export type RuntimePersistenceCapability = 'onboarding-profile' | 'maturity-handoff' | 'entitlement-state';
 
@@ -27,9 +26,6 @@ export interface RuntimePersistenceResult {
   tableName: string | null;
   reason: string | null;
 }
-
-type SupabaseAuthUserResult = Awaited<ReturnType<SupabaseClient['auth']['getUser']>>;
-type SupabaseWriteResult = { error: { message?: string } | null };
 
 const capabilityLocalStorageKey: Record<RuntimePersistenceCapability, string> = {
   'onboarding-profile': ONBOARDING_PROFILE_STORAGE_KEY,
@@ -85,37 +81,26 @@ export function persistJsonLocal(storageKey: string, value: unknown): void {
   window.localStorage.setItem(storageKey, JSON.stringify(value));
 }
 
-async function getSupabaseUserId(client: SupabaseClient): Promise<string | null> {
-  const result: SupabaseAuthUserResult = await client.auth.getUser();
-
-  if (result.error) return null;
-  return result.data.user?.id ?? null;
-}
-
 async function persistWithSupabase(
   capability: RuntimePersistenceCapability,
-  write: (client: SupabaseClient, userId: string) => PromiseLike<SupabaseWriteResult>,
+  record: (userId: string) => Record<string, unknown>,
 ): Promise<RuntimePersistenceResult> {
-  const client = getIsmsSupabaseClient();
+  const runtime = getIsmsSupabaseRuntime();
 
-  if (!client) {
-    return unavailableResult(
-      capability,
-      'skipped_supabase_not_configured',
-      'VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are not configured for this runtime.',
-    );
-  }
-
-  const userId = await getSupabaseUserId(client);
-  if (!userId) {
+  if (!runtime) {
     return unavailableResult(
       capability,
       'skipped_supabase_auth_required',
-      'No authenticated Supabase user is available. Mock auth/local state remains the active fallback.',
+      'Supabase runtime writes require app env plus an appointed authenticated Supabase session boundary. Local fallback remains active.',
     );
   }
 
-  const result = await write(client, userId);
+  const result = await insertIsmsSupabaseRecord(
+    runtime,
+    capabilityTableName[capability] ?? capability,
+    record(runtime.userId),
+  );
+
   if (result.error) {
     return unavailableResult(
       capability,
@@ -133,16 +118,14 @@ export async function persistOnboardingProfile(
   const completedAt = profile.completedAt ?? new Date().toISOString();
   persistJsonLocal(ONBOARDING_PROFILE_STORAGE_KEY, { ...profile, completedAt });
 
-  return persistWithSupabase('onboarding-profile', (client, userId) =>
-    client.from('isms_onboarding_profiles').insert({
-      user_id: userId,
-      organisation_name: profile.organisationName,
-      sector: profile.sector,
-      primary_goal: profile.primaryGoal,
-      responsible_person: profile.responsiblePerson,
-      updated_at: completedAt,
-    }),
-  );
+  return persistWithSupabase('onboarding-profile', (userId) => ({
+    user_id: userId,
+    organisation_name: profile.organisationName,
+    sector: profile.sector,
+    primary_goal: profile.primaryGoal,
+    responsible_person: profile.responsiblePerson,
+    updated_at: completedAt,
+  }));
 }
 
 export async function persistMaturityRoadmapHandoff(
@@ -150,22 +133,18 @@ export async function persistMaturityRoadmapHandoff(
 ): Promise<RuntimePersistenceResult> {
   persistJsonLocal(MATURITY_HANDOFF_STORAGE_KEY, handoff);
 
-  return persistWithSupabase('maturity-handoff', (client, userId) =>
-    client.from('isms_maturity_handoffs').insert({
-      user_id: userId,
-      organisation_name: handoff.organisationName,
-      sector: handoff.sector,
-      primary_goal: handoff.primaryGoal,
-      responsible_person: handoff.responsiblePerson,
-      source: handoff.source,
-      created_at: handoff.createdAt,
-    }),
-  );
+  return persistWithSupabase('maturity-handoff', (userId) => ({
+    user_id: userId,
+    organisation_name: handoff.organisationName,
+    sector: handoff.sector,
+    primary_goal: handoff.primaryGoal,
+    responsible_person: handoff.responsiblePerson,
+    source: handoff.source,
+    created_at: handoff.createdAt,
+  }));
 }
 
-export async function persistEntitlementState(
-  entitlement: EntitlementState,
-): Promise<RuntimePersistenceResult> {
+export async function persistEntitlementState(entitlement: EntitlementState): Promise<RuntimePersistenceResult> {
   const existingSelection = readStoredSubscriptionSelection();
 
   persistJsonLocal(PENDING_CHECKOUT_STORAGE_KEY, {
