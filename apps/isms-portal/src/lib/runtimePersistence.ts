@@ -1,7 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { EntitlementState } from './entitlements';
 import type { MaturityRoadmapHandoff } from './handoff';
-import { MATURITY_HANDOFF_STORAGE_KEY } from './handoff';
 import {
   ONBOARDING_PROFILE_STORAGE_KEY,
   PENDING_CHECKOUT_STORAGE_KEY,
@@ -27,6 +26,8 @@ export interface RuntimePersistenceResult {
 }
 
 type SupabaseAuthUserResult = Awaited<ReturnType<SupabaseClient['auth']['getUser']>>;
+
+const MATURITY_HANDOFF_STORAGE_KEY = 'isms_maturity_handoff';
 
 const capabilityLocalStorageKey: Record<RuntimePersistenceCapability, string> = {
   'onboarding-profile': ONBOARDING_PROFILE_STORAGE_KEY,
