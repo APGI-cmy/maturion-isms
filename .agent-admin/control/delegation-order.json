@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "pit-w82-role-aware-route-authorization",
-  "pr_number": 1829,
-  "prebrief_commit_sha": "6ac2fb8b70f334005c45b6c619f1d74cc04ff78b",
-  "builder_appointment_timestamp": "2026-06-19T12:36:00Z",
-  "builder_appointment_commit_sha": "70c04a8a5777fb20435a59da1e3252e32c3cce33",
-  "builder_agent": "pit-specialist",
-  "builder_task_ref": "pit-w82-route-authorization",
-  "first_implementation_commit_sha": "2882f5cb8b4ff10e1792384fef7b2ccd8fafcc5d",
-  "qp_review_timestamp": "2026-06-22T07:40:00Z",
+  "wave_id": "maturion-public-chat-gateway-v01",
+  "pr_number": 1836,
+  "prebrief_commit_sha": "935e8ba2c7e7a37846db90dbde9da8f4b4af71e1",
+  "builder_appointment_timestamp": "2026-06-23T10:20:00Z",
+  "builder_appointment_commit_sha": "9cecde7af6d02a949c19b12f7d91658d00412a4c",
+  "builder_agent": "api-builder",
+  "builder_task_ref": "public-chat-gateway-v01",
+  "first_implementation_commit_sha": "006289fb9629183ab31dd22112f22ef3346d21b0",
+  "qp_review_timestamp": "2026-06-23T10:30:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
