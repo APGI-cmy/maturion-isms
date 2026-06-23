@@ -1,5 +1,24 @@
 name: Deploy PIT to Vercel
 
+# WORKFLOW OWNERSHIP BOUNDARY
+# This workflow owns the PIT deployment surface only.
+#
+# Current deployment mode: integrated shell.
+# PIT currently has no standalone apps/pit package. PIT routes are hosted by
+# the isms-portal package, so this workflow intentionally builds isms-portal
+# while triggering only on PIT-owned route/module/docs paths.
+#
+# When PIT becomes a standalone app, update this workflow to:
+#   app path: apps/pit/**
+#   build command: pnpm --filter <pit-package-name> build
+#   output directory: apps/pit/dist
+#
+# Out of scope:
+#   apps/mmm/**
+#   broad apps/isms-portal/** outside PIT route files
+#   broad api/** or packages/** changes unless a PIT-owned boundary is introduced
+#   ISMS or MMM smoke routes
+
 on:
   push:
     branches:
@@ -28,6 +47,9 @@ on:
 env:
   NODE_VERSION: '22'
   PNPM_VERSION: '9.12.0'
+  PIT_DEPLOYMENT_MODE: integrated-shell
+  PIT_HOST_PACKAGE_FILTER: isms-portal
+  PIT_HOST_OUTPUT_DIR: apps/isms-portal/dist
 
 jobs:
   boundary-guard:
@@ -38,14 +60,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-      - name: Verify PIT deployment inputs
+      - name: Verify PIT integrated-shell deployment inputs
         run: |
           set -euo pipefail
           test -f apps/isms-portal/package.json
           test -d apps/isms-portal/src/pages/pit
           test -f apps/isms-portal/src/pages/PITInfo.tsx
           test -f docs/governance/PIT_APP_DESCRIPTION.md
-          echo "PIT deployment inputs are present."
+          test -f MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
+          if [ -f apps/pit/package.json ]; then
+            echo "::error::apps/pit/package.json exists. PIT workflow is still in integrated-shell mode and must be migrated to standalone PIT app mode."
+            exit 1
+          fi
+          if grep -nE "^[[:space:]]+- 'api/\*\*'|^[[:space:]]+- 'packages/|^[[:space:]]+- 'apps/isms-portal/\*\*'" .github/workflows/deploy-pit-vercel.yml; then
+            echo "::error::PIT workflow must not trigger broad api/**, packages/**, or apps/isms-portal/** deployments without an explicit PIT-owned boundary."
+            exit 1
+          fi
+          if grep -nE "VERCEL_PROJECT_ID|VERCEL_ORG_ID|VERCEL_TOKEN|VERCEL_AUTOMATION_BYPASS_SECRET" .github/workflows/deploy-pit-vercel.yml | grep -v "PIT_VERCEL_"; then
+            echo "::error::PIT workflow must use the PIT_VERCEL_* secret namespace, not generic Vercel deployment secrets."
+            exit 1
+          fi
+          echo "PIT deployment mode: ${PIT_DEPLOYMENT_MODE}"
+          echo "PIT host package filter: ${PIT_HOST_PACKAGE_FILTER}"
+          echo "PIT host output directory: ${PIT_HOST_OUTPUT_DIR}"
+          echo "PIT integrated-shell deployment inputs are present."
 
   build:
     name: Build PIT Integrated Shell
@@ -69,14 +107,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
       - name: Verify route registry
-        run: pnpm --filter isms-portal verify:routes
+        run: pnpm --filter ${{ env.PIT_HOST_PACKAGE_FILTER }} verify:routes
       - name: Build PIT integrated shell
-        run: pnpm --filter isms-portal build
+        run: pnpm --filter ${{ env.PIT_HOST_PACKAGE_FILTER }} build
       - name: Upload PIT build artifact
         uses: actions/upload-artifact@v5
         with:
           name: pit-integrated-shell-dist
-          path: apps/isms-portal/dist/
+          path: ${{ env.PIT_HOST_OUTPUT_DIR }}/
           retention-days: 7
 
   deploy-preview:
