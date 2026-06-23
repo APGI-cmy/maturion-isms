@@ -2,10 +2,10 @@
 
 **Module**: ISMS Navigator  
 **Module Slug**: isms  
-**Last Updated**: 2026-06-16  
-**Updated By**: foreman-v2-agent (slice: `isms-p1-3-preview-evidence`)
+**Last Updated**: 2026-06-23  
+**Updated By**: foreman-v2-agent (slice: `isms-post-p1-3-tracker-reconciliation`)
 
-> **Classification**: W1-W8 COMPLETE — P1.3 REAL PREVIEW DEPLOY EVIDENCE RECORDED  
+> **Classification**: W1-W8 COMPLETE — P1.3 REAL PREVIEW DEPLOY EVIDENCE RECORDED; MMM/PIT WORKFLOW SPLITS RECONCILED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `AGENT_GATE_SYSTEM_TRANSITION_NOTICE.md` / PR #1800 gate model
 
@@ -38,6 +38,7 @@
 | Post-W8 | P1.1 Deployment Hygiene Cleanup | MERGED — ACCEPTED FOR P1.1 SCOPE | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
 | Post-W8 | P1.2 Vercel Workflow Split | MERGED — ACCEPTED FOR P1.2 SCOPE | `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md` |
 | Post-W8 | P1.3 Real Preview Deploy Verification | MERGED — EVIDENCE RECORDED FOR P1.3 SCOPE | `modules/isms/12-deployment/p1-3-real-preview-deploy-verification-20260616.md` |
+| Post-W8 | MMM/PIT Workflow Split Reconciliation | MERGED — NON-ISMS DEPLOYMENT COORDINATION RECORDED | `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md`; `modules/MMM/12-deployment/mmm-vercel-workflow-ownership-20260619.md`; `modules/pit/12-deployment/pit-vercel-workflow-ownership-20260617.md`; PR #1830 |
 
 ---
 
@@ -78,7 +79,6 @@
 - adds `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md` coordination artifact;
 - adds `.github/workflows/deploy-isms-portal-vercel.yml`;
 - scopes ISMS deploy workflow to `apps/isms-portal/**` and ISMS workflow/docs paths;
-- leaves MMM and PIT workflow implementation for their owning agents;
 - avoids broad `api/**` ownership in the ISMS workflow.
 
 **Post-merge verification**:
@@ -105,8 +105,22 @@
 **Preview URL recorded**:
 - `https://maturion-isms-portal-git-foreman-ism-d5f042-rassie-ras-projects.vercel.app`
 
-**Caveat**:
-- Vercel's GitHub integration still reported PIT preview activity on the ISMS verification PR. MMM/PIT workflow ownership issues #1815 and #1816 remain active coordination work.
+---
+
+## Post-W8: MMM/PIT Workflow Split Reconciliation
+
+**Status**: MERGED — NON-ISMS DEPLOYMENT COORDINATION RECORDED  
+**Merged PR**: #1830 (`6a7654309be18a1deca8ad48cfc300f646c4390e`)  
+**Evidence**:
+- `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md`
+- `modules/MMM/12-deployment/mmm-vercel-workflow-ownership-20260619.md`
+- `modules/pit/12-deployment/pit-vercel-workflow-ownership-20260617.md`
+
+**Scope recorded**:
+- MMM workflow ownership split issue #1815 was implemented and residual Vercel config risk was remediated;
+- PIT workflow ownership split issue #1816 was implemented and integrated-shell posture was made explicit;
+- app-specific Vercel secret namespaces are used by ISMS, MMM, and PIT workflows;
+- broad `api/**` and broad `packages/**` changes no longer automatically trigger unrelated app preview deployments.
 
 ---
 
@@ -120,16 +134,15 @@ Accepted conditions:
 - production auth/payment hardening remains future-gated;
 - live AI provider integration remains future-gated;
 - runtime persistence hooks remain future-gated;
-- audit writer invocation remains future-gated;
-- external live deployment proof remains future-gated or conditional.
+- audit writer invocation remains future-gated.
 
 ---
 
 ## Current Stage Summary
 
-**Current Stage**: Post-W8 P1.3 real preview deploy evidence has been recorded.  
+**Current Stage**: Post-W8 P1.3 real preview deploy evidence and MMM/PIT workflow split reconciliation have been recorded.  
 **Implementation Transfer**: Owner final decision remains recorded with conditions.  
-**Next Required Action**: Continue MMM/PIT workflow split coordination through issues #1815 and #1816, then choose the next separately authorized productionization lane.
+**Next Required Action**: Start P2 runtime Supabase persistence hooks as the next separately authorized ISMS productionization lane.
 
 ---
 
@@ -158,6 +171,7 @@ Accepted conditions:
 - [x] P1.2 workflow split CI passed
 - [x] P1.2 workflow split review conversations resolved
 - [x] P1.3 real preview deploy evidence recorded
+- [x] MMM/PIT workflow split reconciliation recorded after PR #1830
 
 ---
 
@@ -169,11 +183,9 @@ The following remain outside W1-W8 appointed scope and require separate future a
 - live AI provider integration;
 - runtime persistence hooks;
 - audit writer invocation;
-- MMM workflow split implementation by MMM agent;
-- PIT workflow split implementation by PIT agent;
 - bundle-size review;
 - canonical App Description path mismatch cleanup.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-16
+**Last Tracker Reconciliation**: 2026-06-23
