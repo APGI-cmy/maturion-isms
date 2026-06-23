@@ -2,39 +2,46 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/context/AuthContext';
+import { useIsms } from '@/context/IsmsContext';
+import { hasModuleEntitlement } from '@/lib/entitlements';
+import { ROUTES } from '@/lib/routes';
 import { Wrench, CheckCircle2, ArrowRight, Shield, Target, BarChart } from 'lucide-react';
 
 /**
- * Process Integrity Testing (PIT) - Marketing/Information Page
+ * Project Implementation Tracker (PIT) - Marketing/Information Page
  * Pre-subscription page explaining the PIT module
  */
 const PITInfo = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { entitlement } = useIsms();
+  const canOpenTracker = Boolean(user) && hasModuleEntitlement(entitlement, 'project-implementation');
 
   const features = [
-    "Automated process testing and validation",
+    "Project implementation tracking and validation",
     "Control effectiveness measurement",
-    "Continuous process monitoring",
+    "Continuous project evidence monitoring",
     "Integration with audit frameworks",
-    "Process deviation alerts",
+    "Implementation deviation alerts",
     "Compliance tracking and reporting"
   ];
 
   const benefits = [
     {
       icon: Shield,
-      title: "Process Assurance",
-      description: "Ensure your processes work as designed every time"
+      title: "Implementation Assurance",
+      description: "Ensure your security improvement projects work as designed"
     },
     {
       icon: Target,
       title: "Control Effectiveness",
-      description: "Measure and improve the effectiveness of your controls"
+      description: "Measure and improve the effectiveness of implementation controls"
     },
     {
       icon: BarChart,
       title: "Audit Readiness",
-      description: "Stay audit-ready with continuous process validation"
+      description: "Stay audit-ready with project evidence and implementation validation"
     }
   ];
 
@@ -48,9 +55,9 @@ const PITInfo = () => {
         <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 dark:bg-blue-900/20 rounded-full mb-6">
           <Wrench className="h-10 w-10 text-blue-600 dark:text-blue-400" />
         </div>
-        <h1 className="text-4xl font-bold mb-4">Process Integrity Testing (PIT)</h1>
+        <h1 className="text-4xl font-bold mb-4">Project Implementation Tracker (PIT)</h1>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Systematic workflows, quality controls, and operational consistency through continuous testing
+          Track security improvement projects, implementation evidence, and operational consistency
         </p>
       </div>
 
@@ -60,7 +67,7 @@ const PITInfo = () => {
           <CardHeader>
             <CardTitle>Key Features</CardTitle>
             <CardDescription>
-              Comprehensive process testing capabilities
+              Project implementation tracking capabilities
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -77,9 +84,9 @@ const PITInfo = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Why Process Integrity Testing?</CardTitle>
+            <CardTitle>Why Project Implementation Tracker?</CardTitle>
             <CardDescription>
-              Ensure operational excellence through systematic testing
+              Ensure operational excellence through systematic implementation tracking
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -103,16 +110,16 @@ const PITInfo = () => {
         <CardHeader>
           <CardTitle>How It Works</CardTitle>
           <CardDescription>
-            A systematic approach to process integrity validation
+            A systematic approach to project implementation validation
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { step: 1, title: "Define", desc: "Map your critical processes and controls" },
-              { step: 2, title: "Test", desc: "Execute automated and manual tests" },
-              { step: 3, title: "Monitor", desc: "Track process performance continuously" },
-              { step: 4, title: "Improve", desc: "Optimize based on test results" }
+              { step: 1, title: "Define", desc: "Map your critical projects and implementation controls" },
+              { step: 2, title: "Track", desc: "Capture implementation activity and evidence" },
+              { step: 3, title: "Monitor", desc: "Track project performance continuously" },
+              { step: 4, title: "Improve", desc: "Optimize based on implementation results" }
             ].map((item) => (
               <div key={item.step} className="text-center">
                 <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-3">
@@ -131,17 +138,21 @@ const PITInfo = () => {
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
-              <h3 className="text-xl font-bold mb-2">Ready to Get Started?</h3>
+              <h3 className="text-xl font-bold mb-2">
+                {canOpenTracker ? 'Open Project Implementation Tracker' : 'Ready to Get Started?'}
+              </h3>
               <p className="text-muted-foreground">
-                Subscribe to unlock Process Integrity Testing and ensure operational excellence
+                {canOpenTracker
+                  ? 'Open the protected Project Implementation Tracker workspace for your entitled module.'
+                  : 'Subscribe to unlock Project Implementation Tracker and manage implementation evidence'}
               </p>
             </div>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="flex-shrink-0"
-              onClick={() => navigate('/subscribe')}
+              onClick={() => navigate(canOpenTracker ? ROUTES.PIT_TRACKER : ROUTES.SUBSCRIBE)}
             >
-              Subscribe Now
+              {canOpenTracker ? 'Open Project Implementation Tracker' : 'Subscribe Now'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
