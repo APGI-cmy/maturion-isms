@@ -4,11 +4,13 @@ Wave: `wave-mmm-frs-trs-architecture-alignment-2026-06-23`
 Date: 2026-06-23
 Repository: `APGI-cmy/maturion-isms`
 Branch: `foreman/mmm-frs-trs-architecture-alignment`
+PR: #1845
+CURRENT_HEAD_SHA: 88d0395f261a83fd719b0aed082dc98659a82e6b
 Scope record: `.agent-admin/scope-declarations/wave-mmm-frs-trs-architecture-alignment-2026-06-23.md`
 
 ## PRE-BRIEF
 
-EXPECTED_ALIGNMENT_SCOPE:
+EXPECTED_QA_SCOPE:
 - Verify FRS addendum language covers approval workflow, published model, and evidence modal capabilities created by Steps 1-7.
 - Verify TRS addendum language covers required DB/API, typed client, notification, lock, audit, AI learning, evidence context, and read-only boundary expectations.
 - Verify Architecture addendum extends route-to-capability build authorization for Level 2, Level 3, change summary, published model, and evidence modal flows.
@@ -39,7 +41,8 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "wave-mmm-frs-trs-architecture-alignment-2026-06-23"
-  pr: "pending"
+  pr: "#1845"
+  current_head_sha: "88d0395f261a83fd719b0aed082dc98659a82e6b"
   branch: "foreman/mmm-frs-trs-architecture-alignment"
   qualifying_tasks:
     - "Create FRS/TRS/Architecture alignment addendum for Steps 1-7."
@@ -51,7 +54,7 @@ IAA_PREFLIGHT_BRIEF:
     - "No database migrations."
     - "No API implementation."
     - "No UI implementation."
-  expected_alignment_scope:
+  expected_qa_scope:
     - "FRS functional alignment."
     - "TRS technical alignment."
     - "Architecture route-to-capability alignment."
