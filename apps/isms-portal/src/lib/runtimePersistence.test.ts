@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { persistEntitlementState, persistMaturityRoadmapHandoff, persistOnboardingProfile } from './runtimePersistence';
-import { MATURITY_HANDOFF_STORAGE_KEY } from './handoff';
-import { ONBOARDING_PROFILE_STORAGE_KEY, PENDING_CHECKOUT_STORAGE_KEY } from './subscription';
+import { MATURITY_HANDOFF_STORAGE_KEY, ONBOARDING_PROFILE_STORAGE_KEY, PENDING_CHECKOUT_STORAGE_KEY } from './subscription';
 
 describe('ISMS runtime persistence hooks', () => {
   beforeEach(() => {
@@ -51,21 +50,36 @@ describe('ISMS runtime persistence hooks', () => {
     expect(result.outcome).toBe('skipped_supabase_not_configured');
   });
 
-  it('keeps entitlement persistence local until production entitlement authority is appointed', async () => {
+  it('keeps entitlement persistence local and preserves checkout metadata until authority is appointed', async () => {
+    window.localStorage.setItem(PENDING_CHECKOUT_STORAGE_KEY, JSON.stringify({
+      selectedModules: ['risk-management'],
+      isBundle: false,
+      isYearly: true,
+      source: 'checkout-mock',
+      paymentMethod: 'mock-card',
+      totalPrice: 199,
+    }));
+
     const result = await persistEntitlementState({
       isBundle: false,
       entitledModules: ['maturity-roadmap'],
-      source: 'checkout-mock',
+      source: 'dashboard-refresh',
       completedAt: '2026-06-23T09:02:00.000Z',
     });
 
     const stored = JSON.parse(window.localStorage.getItem(PENDING_CHECKOUT_STORAGE_KEY) ?? '{}') as {
       selectedModules?: string[];
+      isYearly?: boolean;
+      paymentMethod?: string;
+      totalPrice?: number;
     };
 
     expect(stored.selectedModules).toEqual(['maturity-roadmap']);
+    expect(stored.isYearly).toBe(true);
+    expect(stored.paymentMethod).toBe('mock-card');
+    expect(stored.totalPrice).toBe(199);
     expect(result.capability).toBe('entitlement-state');
-    expect(result.outcome).toBe('skipped_supabase_auth_required');
+    expect(result.outcome).toBe('skipped_supabase_write_blocked');
     expect(result.reason).toContain('production entitlement authority');
   });
 });
