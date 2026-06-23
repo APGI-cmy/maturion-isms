@@ -11,6 +11,7 @@ export interface PersistenceBoundaryRecord {
   runtimeStatus: 'schema_registered_only' | 'client_hook_ready' | 'disabled';
   requiresAuthenticatedUser: boolean;
   auditRequired: boolean;
+  runtimeNotes: string;
 }
 
 export const ismsPersistenceBoundary: PersistenceBoundaryRecord[] = [
@@ -20,13 +21,15 @@ export const ismsPersistenceBoundary: PersistenceBoundaryRecord[] = [
     runtimeStatus: 'schema_registered_only',
     requiresAuthenticatedUser: true,
     auditRequired: true,
+    runtimeNotes: 'Free-assessment persistence remains schema-only until a public/anonymous assessment storage policy is appointed.',
   },
   {
     capability: 'onboarding-profile',
     tableName: 'isms_onboarding_profiles',
-    runtimeStatus: 'schema_registered_only',
+    runtimeStatus: 'client_hook_ready',
     requiresAuthenticatedUser: true,
     auditRequired: true,
+    runtimeNotes: 'P2 adds a client persistence hook with local fallback and Supabase write when a real Supabase auth user is available.',
   },
   {
     capability: 'entitlement-state',
@@ -34,13 +37,15 @@ export const ismsPersistenceBoundary: PersistenceBoundaryRecord[] = [
     runtimeStatus: 'schema_registered_only',
     requiresAuthenticatedUser: true,
     auditRequired: true,
+    runtimeNotes: 'Entitlement writes remain blocked because production entitlement authority is not appointed and W6 RLS exposes select-only entitlement policy.',
   },
   {
     capability: 'maturity-handoff',
     tableName: 'isms_maturity_handoffs',
-    runtimeStatus: 'schema_registered_only',
+    runtimeStatus: 'client_hook_ready',
     requiresAuthenticatedUser: true,
     auditRequired: true,
+    runtimeNotes: 'P2 adds a client persistence hook with local fallback and Supabase write when a real Supabase auth user is available.',
   },
   {
     capability: 'audit-event',
@@ -48,6 +53,7 @@ export const ismsPersistenceBoundary: PersistenceBoundaryRecord[] = [
     runtimeStatus: 'schema_registered_only',
     requiresAuthenticatedUser: true,
     auditRequired: false,
+    runtimeNotes: 'Audit writer invocation remains future-gated and is not introduced by P2.',
   },
 ];
 
