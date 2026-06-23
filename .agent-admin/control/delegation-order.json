@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-issue-1815-mmm-vercel-ownership-2026-06-18",
-  "pr_number": 1827,
-  "prebrief_commit_sha": "c94d63e053840320711326558b2ca1810cb7076d",
-  "builder_appointment_timestamp": "2026-06-18T13:12:00Z",
-  "builder_appointment_commit_sha": "9b5d45f3df709b4b04e5d7f2d890ee045f0a3c75",
-  "builder_agent": "bounded-implementation-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-issue-1815-mmm-vercel-ownership-2026-06-18.md",
-  "first_implementation_commit_sha": "a87e694fc36eb0acc427fff652b0e0b28c915da3",
-  "qp_review_timestamp": "2026-06-18T13:24:30Z",
+  "wave_id": "pit-w82-role-aware-route-authorization",
+  "pr_number": 1829,
+  "prebrief_commit_sha": "6ac2fb8b70f334005c45b6c619f1d74cc04ff78b",
+  "builder_appointment_timestamp": "2026-06-19T12:36:00Z",
+  "builder_appointment_commit_sha": "70c04a8a5777fb20435a59da1e3252e32c3cce33",
+  "builder_agent": "pit-specialist",
+  "builder_task_ref": "pit-w82-route-authorization",
+  "first_implementation_commit_sha": "2882f5cb8b4ff10e1792384fef7b2ccd8fafcc5d",
+  "qp_review_timestamp": "2026-06-22T07:40:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
