@@ -1,9 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "installCommand": "corepack enable && pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm --filter @maturion/mmm build",
-  "outputDirectory": "apps/mmm/dist",
   "rewrites": [
     {
       "source": "/((?!assets/|manifest\\.json$|sw\\.js$).*)",
