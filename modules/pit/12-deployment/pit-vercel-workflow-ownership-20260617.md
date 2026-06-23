@@ -6,7 +6,7 @@
 | Artifact type | Deployment workflow ownership evidence |
 | Workflow | `.github/workflows/deploy-pit-vercel.yml` |
 | Module | PIT |
-| Status | IMPLEMENTED_FOR_REVIEW |
+| Status | IMPLEMENTED_FOR_REVIEW — INTEGRATED_SHELL_MODE_EXPLICIT |
 
 ## 1. Purpose
 
@@ -34,12 +34,15 @@ docs/governance/PIT_APP_DESCRIPTION.md
 
 The workflow builds the `isms-portal` package because that is the current deployable host for PIT routes. It does not take ownership of the ISMS Portal workflow.
 
+The workflow now declares this explicitly as `PIT_DEPLOYMENT_MODE=integrated-shell` and includes a boundary guard that fails if `apps/pit/package.json` appears before the workflow is migrated to standalone PIT app mode.
+
 ## 3. Vercel project target
 
 | Item | Value |
 |---|---|
 | Vercel production target | `https://maturion-pit.vercel.app` |
 | Workflow environment | `pit-preview`, `pit-production` |
+| Deployment mode | `integrated-shell` |
 | Build package | `isms-portal` |
 | Build command | `pnpm --filter isms-portal build` |
 | Route verification | `pnpm --filter isms-portal verify:routes` |
@@ -55,9 +58,13 @@ PIT_VERCEL_ORG_ID
 PIT_VERCEL_TOKEN
 ```
 
-No generic ambiguous Vercel project secrets are used.
+Optional preview-protection bypass:
 
-Optional preview-protection bypass is not required by the initial workflow. The route smoke test treats non-404/non-5xx responses as evidence that the PIT route reached the deployed app or expected auth/protection posture.
+```text
+PIT_VERCEL_AUTOMATION_BYPASS_SECRET
+```
+
+No generic ambiguous Vercel project secrets are used.
 
 ## 5. Trigger paths
 
@@ -72,6 +79,8 @@ modules/pit/12-deployment/**
 .github/workflows/deploy-pit-vercel.yml
 MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md
 ```
+
+The boundary guard rejects broad `apps/isms-portal/**`, `api/**`, and `packages/**` workflow triggers unless a future PR explicitly introduces and documents a PIT-owned boundary.
 
 ## 6. Smoke routes
 
@@ -110,6 +119,7 @@ packages/** unless a later PR explicitly introduces a PIT-owned package boundary
 | Cannot block ISMS-only or MMM-only PRs | Path filters exclude `apps/mmm/**` and broad `apps/isms-portal/**`. |
 | Shared API/packages not auto-deployed | `api/**` and `packages/**` are not workflow triggers. |
 | ISMS/MMM workflows untouched | This issue changes only the PIT workflow and PIT evidence record. |
+| Integrated-shell posture explicit | Workflow comments, env vars, and boundary guard identify integrated-shell mode. |
 
 ## 9. Residual note
 
