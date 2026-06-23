@@ -72,7 +72,7 @@ jobs:
             echo "::error::apps/pit/package.json exists. PIT workflow is still in integrated-shell mode and must be migrated to standalone PIT app mode."
             exit 1
           fi
-          if grep -nE "^[[:space:]]+- 'api/\*\*'|^[[:space:]]+- 'packages/|^[[:space:]]+- 'apps/isms-portal/\*\*'" .github/workflows/deploy-pit-vercel.yml; then
+          if grep -nE "^[[:space:]]+- 'api/\*\*'$|^[[:space:]]+- 'packages/\*\*'$|^[[:space:]]+- 'apps/isms-portal/\*\*'$" .github/workflows/deploy-pit-vercel.yml; then
             echo "::error::PIT workflow must not trigger broad api/**, packages/**, or apps/isms-portal/** deployments without an explicit PIT-owned boundary."
             exit 1
           fi
