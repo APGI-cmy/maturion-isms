@@ -1,7 +1,7 @@
 # ISMS P2 Runtime Supabase Persistence Hooks
 
 Date: 2026-06-23
-Evidence PR: pending
+Evidence PR: #1834
 Gate model: PR #1800 transition model; this artifact records implementation evidence and does not assert handover posture.
 
 ## Scope
