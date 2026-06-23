@@ -9,7 +9,8 @@ from __future__ import annotations
 
 from typing import Any, Union
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from openai import OpenAIError
 from pydantic import BaseModel, field_validator
 
 from services.image_analysis import ImageAnalyser
@@ -178,8 +179,14 @@ def analyse_image(request: AnalyseImageRequest) -> dict:
 @router.post("/public-chat")
 def public_chat(request: PublicChatRequest) -> dict:
     """Public Maturion chat endpoint for the APW public website."""
-    return _public_chat.answer(
-        message=request.message,
-        history=request.history,
-        context=request.context,
-    )
+    try:
+        return _public_chat.answer(
+            message=request.message,
+            history=request.history,
+            context=request.context,
+        )
+    except (OpenAIError, KeyError) as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="Maturion chat gateway unavailable",
+        ) from exc
