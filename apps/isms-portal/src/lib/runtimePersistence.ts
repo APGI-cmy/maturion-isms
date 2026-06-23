@@ -2,9 +2,11 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { EntitlementState } from './entitlements';
 import type { MaturityRoadmapHandoff } from './handoff';
 import {
+  MATURITY_HANDOFF_STORAGE_KEY,
   ONBOARDING_PROFILE_STORAGE_KEY,
   PENDING_CHECKOUT_STORAGE_KEY,
   type OnboardingProfile,
+  type SubscriptionSelection,
 } from './subscription';
 import { getIsmsSupabaseClient } from './supabaseClient';
 
@@ -15,6 +17,7 @@ export type RuntimePersistenceOutcome =
   | 'stored_supabase'
   | 'skipped_supabase_not_configured'
   | 'skipped_supabase_auth_required'
+  | 'skipped_supabase_write_blocked'
   | 'failed_supabase_write';
 
 export interface RuntimePersistenceResult {
@@ -27,8 +30,6 @@ export interface RuntimePersistenceResult {
 
 type SupabaseAuthUserResult = Awaited<ReturnType<SupabaseClient['auth']['getUser']>>;
 type SupabaseWriteResult = { error: { message?: string } | null };
-
-const MATURITY_HANDOFF_STORAGE_KEY = 'isms_maturity_handoff';
 
 const capabilityLocalStorageKey: Record<RuntimePersistenceCapability, string> = {
   'onboarding-profile': ONBOARDING_PROFILE_STORAGE_KEY,
@@ -64,6 +65,19 @@ function supabaseSuccessResult(capability: RuntimePersistenceCapability): Runtim
     tableName: capabilityTableName[capability],
     reason: null,
   };
+}
+
+function readStoredSubscriptionSelection(): Partial<SubscriptionSelection> & Record<string, unknown> {
+  if (typeof window === 'undefined') return {};
+
+  const stored = window.localStorage.getItem(PENDING_CHECKOUT_STORAGE_KEY);
+  if (!stored) return {};
+
+  try {
+    return JSON.parse(stored) as Partial<SubscriptionSelection> & Record<string, unknown>;
+  } catch {
+    return {};
+  }
 }
 
 export function persistJsonLocal(storageKey: string, value: unknown): void {
@@ -152,17 +166,20 @@ export async function persistMaturityRoadmapHandoff(
 export async function persistEntitlementState(
   entitlement: EntitlementState,
 ): Promise<RuntimePersistenceResult> {
+  const existingSelection = readStoredSubscriptionSelection();
+
   persistJsonLocal(PENDING_CHECKOUT_STORAGE_KEY, {
+    ...existingSelection,
     selectedModules: entitlement.entitledModules,
     isBundle: entitlement.isBundle,
-    isYearly: false,
-    source: entitlement.source,
+    isYearly: existingSelection.isYearly ?? false,
+    source: entitlement.source ?? existingSelection.source ?? null,
     completedAt: entitlement.completedAt,
   });
 
   return unavailableResult(
     'entitlement-state',
-    'skipped_supabase_auth_required',
+    'skipped_supabase_write_blocked',
     'The W6 entitlement table is select-only under RLS. Runtime entitlement writes remain blocked until production entitlement authority is appointed.',
   );
 }
