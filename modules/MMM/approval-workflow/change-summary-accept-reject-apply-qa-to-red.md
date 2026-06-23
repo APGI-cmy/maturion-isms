@@ -206,6 +206,26 @@ then active Level 2 approvers in the round must be able to view it according to 
 Given level 1 responds with comments only,
 then the system must allow comment submission without mutating canonical content.
 
+### T-MMM-L1-RESPONSE-017 — Request clarification creates audit event
+
+Given a level 1 user requests clarification,
+then an audit event must record actor, action `request_clarification`, approval round, proposed change or comment target, reason/comment body, and timestamp.
+
+### T-MMM-L1-RESPONSE-018 — Request clarification creates AI learning event
+
+Given a level 1 user requests clarification,
+then an AI learning event must capture organisation id, approval round id, object context, decision `clarification_requested`, reason/comment, actor role, and timestamp.
+
+### T-MMM-L1-RESPONSE-019 — Reply comment creates audit event
+
+Given a level 1 user adds a reply comment,
+then an audit event must record actor, action `reply_comment_added`, approval round, comment target, comment body or excerpt, visibility scope, and timestamp.
+
+### T-MMM-L1-RESPONSE-020 — Reply comment creates AI learning event
+
+Given a level 1 user adds a reply comment,
+then an AI learning event must capture organisation id, approval round id, object context where available, decision `comment_added`, comment body or excerpt, actor role, and timestamp.
+
 ## 10. Red tests — Resubmission to Level 2 approvers
 
 ### T-MMM-L1-RESUBMIT-001 — Resubmit notifies active Level 2 approvers
