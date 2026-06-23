@@ -2,18 +2,8 @@
 
 from __future__ import annotations
 
-from routers import ai_routes
 
-
-def test_public_chat_returns_answer(test_client, monkeypatch):
-    def fake_answer(message, history, context):
-        return {
-            "answer": f"Received: {message}",
-            "source": "test",
-        }
-
-    monkeypatch.setattr(ai_routes._public_chat, "answer", fake_answer)
-
+def test_public_chat_returns_answer(test_client):
     response = test_client.post(
         "/api/v1/public-chat",
         json={
@@ -23,8 +13,12 @@ def test_public_chat_returns_answer(test_client, monkeypatch):
         },
     )
 
+    body = response.json()
+
     assert response.status_code == 200
-    assert response.json()["answer"] == "Received: What does APGI do?"
+    assert "answer" in body
+    assert body["source"] == "maturion-public-chat"
+    assert body["received_length"] > 0
 
 
 def test_public_chat_rejects_empty_message(test_client):
