@@ -6,7 +6,7 @@ import {
   type PersistenceCapability,
 } from './persistenceBoundary';
 
-describe('W6 ISMS persistence boundary registry', () => {
+describe('ISMS persistence boundary registry', () => {
   it('registers the W6 persistence capabilities', () => {
     const capabilities = ismsPersistenceBoundary.map((record) => record.capability);
 
@@ -19,8 +19,12 @@ describe('W6 ISMS persistence boundary registry', () => {
     ]);
   });
 
-  it('keeps all W6 runtime surfaces schema-registered only', () => {
-    expect(ismsPersistenceBoundary.every((record) => record.runtimeStatus === 'schema_registered_only')).toBe(true);
+  it('marks only appointed P2 runtime hooks as client ready', () => {
+    expect(getPersistenceBoundary('onboarding-profile').runtimeStatus).toBe('client_hook_ready');
+    expect(getPersistenceBoundary('maturity-handoff').runtimeStatus).toBe('client_hook_ready');
+    expect(getPersistenceBoundary('free-assessment').runtimeStatus).toBe('schema_registered_only');
+    expect(getPersistenceBoundary('entitlement-state').runtimeStatus).toBe('schema_registered_only');
+    expect(getPersistenceBoundary('audit-event').runtimeStatus).toBe('schema_registered_only');
   });
 
   it('maps capabilities to concrete ISMS tables', () => {
@@ -31,12 +35,16 @@ describe('W6 ISMS persistence boundary registry', () => {
     expect(getPersistenceBoundary('audit-event').tableName).toBe('isms_audit_events');
   });
 
-  it('requires auth for all schema-registered W6 client persistence capabilities', () => {
+  it('requires auth for all schema-registered client persistence capabilities', () => {
     expect(getPersistenceBoundary('free-assessment').requiresAuthenticatedUser).toBe(true);
     expect(getPersistenceBoundary('onboarding-profile').requiresAuthenticatedUser).toBe(true);
     expect(getPersistenceBoundary('entitlement-state').requiresAuthenticatedUser).toBe(true);
     expect(getPersistenceBoundary('maturity-handoff').requiresAuthenticatedUser).toBe(true);
     expect(getPersistenceBoundary('audit-event').requiresAuthenticatedUser).toBe(true);
+  });
+
+  it('documents why entitlement writes remain blocked', () => {
+    expect(getPersistenceBoundary('entitlement-state').runtimeNotes).toContain('select-only entitlement policy');
   });
 
   it('guards against unregistered persistence capability lookups', () => {
