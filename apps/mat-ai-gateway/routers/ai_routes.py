@@ -7,13 +7,14 @@ Architecture reference: modules/mat/02-architecture/system-architecture.md §3.3
 
 from __future__ import annotations
 
-from typing import Union
+from typing import Any, Union
 
 from fastapi import APIRouter
 from pydantic import BaseModel, field_validator
 
 from services.image_analysis import ImageAnalyser
 from services.parsing import DocumentParser
+from services.public_chat import PublicChatService
 from services.reporting import ReportGenerator
 from services.scoring import MaturityScorer
 from services.transcription import AudioTranscriber
@@ -28,6 +29,7 @@ _scorer = MaturityScorer()
 _transcriber = AudioTranscriber()
 _generator = ReportGenerator()
 _analyser = ImageAnalyser()
+_public_chat = PublicChatService()
 
 
 # ---------------------------------------------------------------------------
@@ -73,6 +75,22 @@ class ReportRequest(BaseModel):
 class AnalyseImageRequest(BaseModel):
     image_url: str
     tenant_id: str
+
+
+class PublicChatRequest(BaseModel):
+    message: str
+    history: list[dict[str, Any]] | None = None
+    context: dict[str, Any] | None = None
+
+    @field_validator("message")
+    @classmethod
+    def validate_message(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("message is required")
+        if len(cleaned) > 1200:
+            raise ValueError("message must be 1200 characters or fewer")
+        return cleaned
 
 
 # ---------------------------------------------------------------------------
@@ -154,4 +172,14 @@ def analyse_image(request: AnalyseImageRequest) -> dict:
     return _analyser.analyse(
         image_url=request.image_url,
         tenant_id=request.tenant_id,
+    )
+
+
+@router.post("/public-chat")
+def public_chat(request: PublicChatRequest) -> dict:
+    """Public Maturion chat endpoint for the APW public website."""
+    return _public_chat.answer(
+        message=request.message,
+        history=request.history,
+        context=request.context,
     )
