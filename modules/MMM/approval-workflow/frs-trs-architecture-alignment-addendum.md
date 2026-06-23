@@ -232,6 +232,7 @@ Functional scope:
 - video;
 - spreadsheet/file;
 - voice note/audio;
+- interview recording;
 - remove/replace controls;
 - criterion-linked storage path context.
 
@@ -245,6 +246,7 @@ Functional scope:
 - mobile video capture expectation;
 - mobile voice note/audio capture expectation;
 - direct camera/photo/video capture expectation;
+- interview recording capture expectation;
 - AI evidence evaluation placeholder;
 - AI evidence re-evaluation placeholder;
 - PIT/risk/incident link placeholders.
@@ -307,18 +309,25 @@ Future implementation must enforce locks server-side:
 
 Future frontend implementation must call approval behavior through a typed integration client, not ad-hoc fetch calls.
 
+The typed client must expose testable methods that bind to the canonical approval function names from `approval-workflow-db-api-contract.md` unless CS2 explicitly approves a change.
+
+Canonical approval function names:
+
+- `mmm-approval-round-create`;
+- `mmm-approval-invite-accept`;
+- `mmm-approval-proposed-changes-submit`;
+- `mmm-approval-decision-submit`;
+- `mmm-approval-level1-response-submit`;
+- `mmm-approval-lock-transition`.
+
 The typed client must expose testable methods for:
 
-- creating approval rounds;
-- inviting approvers;
-- reading approver workspace data;
-- submitting proposed changes;
-- responding to proposed changes;
-- requesting clarification;
-- adding comments;
-- approving Level 2 domain scope;
-- approving Level 3 final scope;
-- applying controlled unlock/lock transitions.
+- creating approval rounds through `mmm-approval-round-create`;
+- accepting invitation links through `mmm-approval-invite-accept`;
+- submitting proposed changes and approver comments through `mmm-approval-proposed-changes-submit`;
+- submitting Level 2 and Level 3 approval decisions through `mmm-approval-decision-submit`;
+- submitting Level 1 accept/reject/edit/clarification/comment responses through `mmm-approval-level1-response-submit`;
+- applying controlled lock/unlock transitions through `mmm-approval-lock-transition`.
 
 ### TR-PUB-001 — Published model API/client surface
 
@@ -342,6 +351,7 @@ The typed client must expose testable methods for:
 - fetching criterion evidence list;
 - creating document/URL evidence metadata;
 - creating file/media evidence metadata;
+- creating interview recording evidence metadata;
 - replacing evidence metadata;
 - removing evidence metadata;
 - preserving criterion-scoped context;
@@ -356,7 +366,7 @@ MAT storage patterns may be harvested, but MMM must adapt them to MMM canonical 
 
 ### TR-EVID-003 — Evidence runtime boundary
 
-Evidence upload, camera capture, audio capture, video capture, AI evaluation, and PIT/risk/incident integration runtime are not authorized merely by this addendum. They must be implemented only inside a later explicitly scoped build wave that first converts QA-to-red expectations into executable failing tests.
+Evidence upload, camera capture, audio capture, video capture, interview recording, AI evaluation, and PIT/risk/incident integration runtime are not authorized merely by this addendum. They must be implemented only inside a later explicitly scoped build wave that first converts QA-to-red expectations into executable failing tests.
 
 ## 6. Architecture alignment addendum
 
@@ -372,25 +382,28 @@ Direct ad-hoc `fetch('/api/...')` calls from UI/page/feature components remain p
 
 The following route/capability rows extend the MMM route-to-capability build authorization baseline for the implementation waves that follow this addendum.
 
+All approval rows below use canonical function names from `approval-workflow-db-api-contract.md`. Builders must not introduce alternate approval function names such as `mmm-proposed-change-create`, `mmm-proposed-change-respond`, `mmm-final-proposed-change-create`, or `mmm-final-approval-complete` unless CS2 first approves a contract revision.
+
 | Journey / Route Area | Backend Capability | Edge Function / Route Expectation | DB / Persistence Surface |
 |---|---|---|---|
-| Level 2 approval invite | `mmm-approval-round-create`, `mmm-approver-invite` | typed approval client; route finalized by implementation wave | approval rounds, approvers, notification events |
-| Level 2 approver workspace | `mmm-approval-workspace-read` | typed approval client | approval rounds, approvers, proposed changes, comments |
-| Level 2 proposed changes | `mmm-proposed-change-create` | typed approval client | proposed changes, comments, audit events, AI learning events |
-| Level 1 response loop | `mmm-proposed-change-respond` | typed approval client | proposed changes, model content changes, audit events, AI learning events |
-| Clarification/comment loop | `mmm-approval-comment-create` | typed approval client | comments, notification events, audit events, AI learning events |
-| Level 2 domain approval | `mmm-domain-level2-approve` | typed approval client | approval rounds, lock states, notification events |
-| Level 3 final approval invite | `mmm-final-approval-round-create`, `mmm-final-approver-invite` | typed approval client | approval rounds, approvers, notification events |
-| Level 3 final workspace | `mmm-final-approval-workspace-read` | typed approval client | roadmap/control standard scope, proposed changes, comments |
-| Level 3 proposed changes | `mmm-final-proposed-change-create` | typed approval client | proposed changes, copied correspondence, audit events, AI learning events |
-| Final approval completion | `mmm-final-approval-complete` | typed approval client | final lock state, notification events, audit events, AI learning events |
-| Published model view | `mmm-published-model-read` | typed published model client | published framework/model snapshot, domain/MPS/criteria/descriptors |
-| Published criterion detail | `mmm-published-criterion-read` | typed published model client | criterion, descriptors, current/next maturity data |
-| Evidence modal read | `mmm-evidence-list` | typed evidence client | evidence, evidence metadata |
-| Evidence metadata create | `mmm-evidence-create` | typed evidence client | evidence, evidence metadata, audit events |
-| Evidence replace/remove | `mmm-evidence-update`, `mmm-evidence-remove` | typed evidence client | evidence, evidence metadata, audit events |
-| Evidence AI placeholder | `mmm-evidence-ai-evaluation-prepare` | typed evidence/AIMC client boundary, runtime later | AI request intent/audit metadata |
-| PIT/risk/incident link placeholder | `mmm-evidence-link-prepare` | typed evidence client, integration runtime later | evidence link metadata |
+| Level 2 approval invite | `mmm-approval-round-create` | `POST /functions/v1/mmm-approval-round-create` | approval rounds, approvers, notification events |
+| Approval invitation acceptance | `mmm-approval-invite-accept` | `POST /functions/v1/mmm-approval-invite-accept` | approvers, scoped access grants, audit events |
+| Level 2 approver workspace | `mmm-approval-workspace-read` | `GET /functions/v1/mmm-approval-workspace-read?approval_round_id=:id` | approval rounds, approvers, proposed changes, comments |
+| Level 2 proposed changes | `mmm-approval-proposed-changes-submit` | `POST /functions/v1/mmm-approval-proposed-changes-submit` | proposed changes, comments, audit events, AI learning events |
+| Level 1 response loop | `mmm-approval-level1-response-submit` | `POST /functions/v1/mmm-approval-level1-response-submit` | proposed changes, model content changes, audit events, AI learning events |
+| Clarification/comment loop | `mmm-approval-level1-response-submit`, `mmm-approval-proposed-changes-submit` | `POST /functions/v1/mmm-approval-level1-response-submit` and `POST /functions/v1/mmm-approval-proposed-changes-submit` | comments, notification events, audit events, AI learning events |
+| Level 2 domain approval | `mmm-approval-decision-submit`, `mmm-approval-lock-transition` | `POST /functions/v1/mmm-approval-decision-submit`; internal `POST /functions/v1/mmm-approval-lock-transition` | approval rounds, lock states, notification events |
+| Level 3 final approval invite | `mmm-approval-round-create` | `POST /functions/v1/mmm-approval-round-create` with `approval_level=level_3` | approval rounds, approvers, notification events |
+| Level 3 final workspace | `mmm-approval-workspace-read` | `GET /functions/v1/mmm-approval-workspace-read?approval_round_id=:id` | roadmap/control standard scope, proposed changes, comments |
+| Level 3 proposed changes | `mmm-approval-proposed-changes-submit` | `POST /functions/v1/mmm-approval-proposed-changes-submit` with `approval_level=level_3` | proposed changes, copied correspondence, audit events, AI learning events |
+| Final approval completion | `mmm-approval-decision-submit`, `mmm-approval-lock-transition` | `POST /functions/v1/mmm-approval-decision-submit`; internal `POST /functions/v1/mmm-approval-lock-transition` | final lock state, notification events, audit events, AI learning events |
+| Published model view | `mmm-published-model-read` | `GET /functions/v1/mmm-published-model-read?framework_id=:id` | published framework/model snapshot, domain/MPS/criteria/descriptors |
+| Published criterion detail | `mmm-published-criterion-read` | `GET /functions/v1/mmm-published-criterion-read?criterion_id=:id` | criterion, descriptors, current/next maturity data |
+| Evidence modal read | `mmm-evidence-list` | `GET /functions/v1/mmm-evidence-list?criterion_id=:id` | evidence, evidence metadata |
+| Evidence metadata create | `mmm-evidence-create` | `POST /functions/v1/mmm-evidence-create` | evidence, evidence metadata, audit events |
+| Evidence replace/remove | `mmm-evidence-update`, `mmm-evidence-remove` | `POST /functions/v1/mmm-evidence-update`; `POST /functions/v1/mmm-evidence-remove` | evidence, evidence metadata, audit events |
+| Evidence AI placeholder | `mmm-evidence-ai-evaluation-prepare` | `POST /functions/v1/mmm-evidence-ai-evaluation-prepare` | AI request intent/audit metadata |
+| PIT/risk/incident link placeholder | `mmm-evidence-link-prepare` | `POST /functions/v1/mmm-evidence-link-prepare` | evidence link metadata |
 
 ### ARCH-AW-003 — Build authorization rule
 
