@@ -38,6 +38,11 @@ Pre-build alignment artifacts may be added under:
 
 - `modules/MMM/approval-workflow/`
 
+Required governance / assurance records for this wave may be added under:
+
+- `.agent-admin/scope-declarations/`
+- `.agent-admin/assurance/`
+
 No runtime app code, database migrations, edge functions, e-mail implementation, or UI component implementation is in scope for this wave.
 
 ## Output expectation
