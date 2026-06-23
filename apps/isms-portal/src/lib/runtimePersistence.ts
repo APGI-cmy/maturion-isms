@@ -26,6 +26,7 @@ export interface RuntimePersistenceResult {
 }
 
 type SupabaseAuthUserResult = Awaited<ReturnType<SupabaseClient['auth']['getUser']>>;
+type SupabaseWriteResult = { error: { message?: string } | null };
 
 const MATURITY_HANDOFF_STORAGE_KEY = 'isms_maturity_handoff';
 
@@ -79,7 +80,7 @@ async function getSupabaseUserId(client: SupabaseClient): Promise<string | null>
 
 async function persistWithSupabase(
   capability: RuntimePersistenceCapability,
-  write: (client: SupabaseClient, userId: string) => Promise<{ error: { message?: string } | null }>,
+  write: (client: SupabaseClient, userId: string) => PromiseLike<SupabaseWriteResult>,
 ): Promise<RuntimePersistenceResult> {
   const client = getIsmsSupabaseClient();
 
