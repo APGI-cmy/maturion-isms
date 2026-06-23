@@ -14,6 +14,7 @@ export interface OnboardingProfile {
 
 export const PENDING_CHECKOUT_STORAGE_KEY = 'isms_pending_checkout';
 export const ONBOARDING_PROFILE_STORAGE_KEY = 'isms_onboarding_profile';
+export const MATURITY_HANDOFF_STORAGE_KEY = 'isms_maturity_handoff';
 
 export function parseSubscriptionSelection(searchParams: URLSearchParams): SubscriptionSelection {
   const modules = searchParams.get('modules');
