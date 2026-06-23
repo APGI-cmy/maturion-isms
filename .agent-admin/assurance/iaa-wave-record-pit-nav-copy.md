@@ -9,11 +9,40 @@
 
 ## PRE-BRIEF
 
+PR: `#1841`
+WAVE: `pit-nav-copy`
+CURRENT_HEAD_SHA: `CURRENT_HEAD`
+WAVE_TASKS_PATH: `.agent-admin/assurance/iaa-wave-record-pit-nav-copy.md`
+
+EXPECTED_QA_SCOPE:
+- Entitled Project Implementation dashboard tile opens `/pit/tracker`.
+- Non-entitled Project Implementation users remain on the subscription upgrade path.
+- Direct `/pit/tracker` access requires Project Implementation entitlement.
+- PIT wording says Project Implementation Tracker.
+- Public marketing and subscription routes remain public.
+
+EXPECTED_FAILURE_MODES:
+- Entitled users loop back to marketing/subscription.
+- PIT acronym is expanded incorrectly.
+- Non-entitled users bypass the subscription path.
+- Direct `/pit/tracker` access bypasses entitlement.
+
+FOREMAN_INSTRUCTIONS:
+- Review this as a narrow product-routing and copy fix only.
+- Do not treat this as W8.2 completion evidence.
+- Confirm no Supabase, billing, or subscription fixture files changed.
+
+IAA_WILL_QA:
+- Dashboard routing for entitled and non-entitled Project Implementation users.
+- PIT marketing CTA behavior for entitled and non-entitled users.
+- Protected tracker shell wording.
+- Boundary language preventing W8.2 completion overclaim.
+
 ```yaml
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "pit-nav-copy"
-  pr: "PENDING"
+  pr: "#1841"
   issue: "#1810"
   branch: "nav-copy-clean-2"
   qualifying_tasks:
@@ -28,19 +57,23 @@ IAA_PREFLIGHT_BRIEF:
   expected_qa_scope:
     - "Entitled Project Implementation dashboard tile opens /pit/tracker."
     - "Non-entitled dashboard tile keeps subscription upgrade path."
+    - "Direct /pit/tracker access requires Project Implementation entitlement."
     - "PIT wording says Project Implementation Tracker."
     - "Public marketing/subscription routes remain public."
   high_risk_failure_modes:
     - "Entitled users loop back to marketing/subscription."
     - "PIT acronym is expanded incorrectly."
     - "Non-entitled users bypass subscription path."
+    - "Direct /pit/tracker access bypasses entitlement."
   required_builder_evidence:
     - "Dashboard routes entitled project-implementation users to ROUTES.PIT_TRACKER."
     - "PITInfo copy uses Project Implementation Tracker."
+    - "PIT tracker route checks Project Implementation entitlement before rendering."
     - "No Supabase, billing, or subscription fixture files are changed."
   required_foreman_qp_checks:
     - "Confirm dashboard routing behavior."
     - "Confirm PIT marketing CTA behavior."
+    - "Confirm tracker route entitlement behavior."
     - "Confirm no W8.2 completion claim is made."
   ecap_required: false
   ecap_expected_artifacts: []
