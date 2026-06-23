@@ -15,7 +15,7 @@ Create QA-to-red coverage for the Level 2 invite modal and Level 2 approval work
 - Submit-domain-for-approval entry point.
 - Multi-approver Level 2 invite modal.
 - Approver row add/remove behavior.
-- Name, e-mail, designation, approval level, and scope validation.
+- Name, e-mail, and designation validation (plus optional message/due date), with round-level `approval_level: "level_2"` and selected domain scope captured.
 - Duplicate e-mail blocking.
 - API contract expectations for `mmm-approval-round-create`.
 - Notification event expectations.
