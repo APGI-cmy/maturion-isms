@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "pit-nav-copy",
-  "pr_number": 1841,
-  "prebrief_commit_sha": "577787d4ff8adfd55ca475bf97f2b33c04f64c1d",
-  "builder_appointment_timestamp": "2026-06-23T12:35:00Z",
-  "builder_appointment_commit_sha": "e1da177bb94a054c1d1262e1f8839f81d0844734",
-  "builder_agent": "pit-specialist",
-  "builder_task_ref": "pit-nav-copy",
-  "first_implementation_commit_sha": "b8fdbc297841d33287813cd49da74e16c90667ee",
-  "qp_review_timestamp": "2026-06-23T12:45:00Z",
+  "wave_id": "wave-mmm-approval-foundation-build-green-2026-06-24",
+  "pr_number": 1846,
+  "prebrief_commit_sha": "4e400abff2f13c687675fce57d90f3359b3f77be",
+  "builder_appointment_timestamp": "2026-06-24T07:43:00Z",
+  "builder_appointment_commit_sha": "0fc9f7cd4cafc96f127c65f8f4e753fbc5dd2ed5",
+  "builder_agent": "approval-foundation-builder",
+  "builder_task_ref": "wave-mmm-approval-foundation-build-green-2026-06-24",
+  "first_implementation_commit_sha": "52a1b533dfedb1e8b03089ba23075aa5f78e8876",
+  "qp_review_timestamp": "2026-06-24T08:03:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
