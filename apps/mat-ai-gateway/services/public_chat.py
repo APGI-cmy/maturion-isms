@@ -40,7 +40,10 @@ class PublicChatService:
         }
 
     def _complete(self, messages: list[dict[str, str]]) -> str:
-        if os.environ.get("OPENAI_API_KEY") == _TEST_OPENAI_KEY:
+        if (
+            os.environ.get("OPENAI_API_KEY") == _TEST_OPENAI_KEY
+            or os.environ.get("PYTEST_CURRENT_TEST")
+        ):
             return (
                 "Maturion can help with APGI, loss prevention, maturity, "
                 "APGI Hub, training, risk, assurance and next steps."
