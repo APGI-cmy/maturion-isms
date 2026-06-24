@@ -34,17 +34,14 @@ const FORBIDDEN_ALIASES = [
 ];
 
 async function loadApprovalFoundation(): Promise<ApprovalFoundationModule> {
-  // RED first: this module must be implemented in the build-to-GREEN portion of
-  // the wave. Keeping this as a dynamic import makes the test executable while
-  // still failing clearly until the runtime contract exists.
   return import('../../../../apps/mmm/src/lib/approval/approvalFoundation');
 }
 
 describe('MMM approval foundation contract', () => {
-  it('T-MMM-APPROVAL-FOUNDATION-001 exposes the canonical approval function names only', async () => {
+  it('T-MMM-APPROVAL-FOUNDATION-001 exposes exactly the canonical approval function names', async () => {
     const approvalFoundation = await loadApprovalFoundation();
 
-    expect(approvalFoundation.APPROVAL_FUNCTIONS).toMatchObject(EXPECTED_CANONICAL_FUNCTIONS);
+    expect(approvalFoundation.APPROVAL_FUNCTIONS).toEqual(EXPECTED_CANONICAL_FUNCTIONS);
 
     for (const forbiddenAlias of FORBIDDEN_ALIASES) {
       expect(Object.values(approvalFoundation.APPROVAL_FUNCTIONS ?? {})).not.toContain(forbiddenAlias);
