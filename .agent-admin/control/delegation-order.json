@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "pit-nav-copy",
-  "pr_number": 1841,
-  "prebrief_commit_sha": "577787d4ff8adfd55ca475bf97f2b33c04f64c1d",
-  "builder_appointment_timestamp": "2026-06-23T12:35:00Z",
-  "builder_appointment_commit_sha": "e1da177bb94a054c1d1262e1f8839f81d0844734",
+  "wave_id": "pit-public-card-routing",
+  "pr_number": 1847,
+  "prebrief_commit_sha": "207cb17542de41a1345b933ee9190b8c0b3f6fc9",
+  "builder_appointment_timestamp": "2026-06-24T08:15:00Z",
+  "builder_appointment_commit_sha": "b022d69492d8bd3e190360eccb3f06ad85629a4b",
   "builder_agent": "pit-specialist",
-  "builder_task_ref": "pit-nav-copy",
-  "first_implementation_commit_sha": "b8fdbc297841d33287813cd49da74e16c90667ee",
-  "qp_review_timestamp": "2026-06-23T12:45:00Z",
+  "builder_task_ref": "pit-public-card-routing",
+  "first_implementation_commit_sha": "511b715a782539555130dfe074622c1c02e56030",
+  "qp_review_timestamp": "2026-06-24T08:25:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
