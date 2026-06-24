@@ -46,12 +46,15 @@ class PublicChatService:
                 "APGI Hub, training, risk, assurance and next steps."
             )
 
-        response = self._get_client().chat.completions.create(
-            model=self._model,
-            messages=messages,
-            temperature=0.3,
-            max_tokens=500,
-        )
+        try:
+            response = self._get_client().chat.completions.create(
+                model=self._model,
+                messages=messages,
+                temperature=0.3,
+                max_tokens=500,
+            )
+        except Exception as exc:
+            raise RuntimeError("public chat runtime unavailable") from exc
         content = response.choices[0].message.content or ""
         return content.strip() or (
             "Maturion could not generate a response just now."
