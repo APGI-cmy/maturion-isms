@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import Any, Union
 
 from fastapi import APIRouter, HTTPException
-from openai import OpenAIError
 from pydantic import BaseModel, field_validator
 
 from services.image_analysis import ImageAnalyser
@@ -185,7 +184,7 @@ def public_chat(request: PublicChatRequest) -> dict:
             history=request.history,
             context=request.context,
         )
-    except (OpenAIError, KeyError) as exc:
+    except (RuntimeError, KeyError) as exc:
         raise HTTPException(
             status_code=502,
             detail="Maturion chat gateway unavailable",
