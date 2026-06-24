@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "pit-nav-copy",
-  "pr_number": 1841,
-  "prebrief_commit_sha": "577787d4ff8adfd55ca475bf97f2b33c04f64c1d",
-  "builder_appointment_timestamp": "2026-06-23T12:35:00Z",
-  "builder_appointment_commit_sha": "e1da177bb94a054c1d1262e1f8839f81d0844734",
-  "builder_agent": "pit-specialist",
-  "builder_task_ref": "pit-nav-copy",
-  "first_implementation_commit_sha": "b8fdbc297841d33287813cd49da74e16c90667ee",
-  "qp_review_timestamp": "2026-06-23T12:45:00Z",
+  "wave_id": "maturion-public-chat-runtime-v02",
+  "pr_number": 1843,
+  "prebrief_commit_sha": "fac9554091a68d76e2804e719ea29a7b9c3e941d",
+  "builder_appointment_timestamp": "2026-06-23T14:05:00Z",
+  "builder_appointment_commit_sha": "4e21840bd18cc431e76716d49adc2be222e3e033",
+  "builder_agent": "api-builder",
+  "builder_task_ref": "public-chat-runtime-v02",
+  "first_implementation_commit_sha": "78c77476c09d413abcffa58f4d554c9f311ca6b3",
+  "qp_review_timestamp": "2026-06-23T14:15:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
