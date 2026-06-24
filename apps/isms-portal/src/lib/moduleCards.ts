@@ -53,9 +53,9 @@ export const ISMS_MODULE_CARDS: IsmsModuleCard[] = [
   },
   {
     id: 'project-implementation',
-    name: 'Project Implementation Tracking',
+    name: 'Project Implementation Tracker',
     shortName: 'PIT',
-    description: 'Automated process testing, control effectiveness, and continuous monitoring',
+    description: 'Track security improvement projects, implementation activity, and evidence readiness',
     icon: Settings,
     route: ROUTES.MARKETING_PROJECT_IMPLEMENTATION,
     gradient: 'from-blue-400 to-cyan-500',
