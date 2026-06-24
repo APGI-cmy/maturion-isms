@@ -40,10 +40,7 @@ class PublicChatService:
         }
 
     def _complete(self, messages: list[dict[str, str]]) -> str:
-        if (
-            os.environ.get("OPENAI_API_KEY") == _TEST_OPENAI_KEY
-            or os.environ.get("PYTEST_CURRENT_TEST")
-        ):
+        if self._use_static_ci_response():
             return (
                 "Maturion can help with APGI, loss prevention, maturity, "
                 "APGI Hub, training, risk, assurance and next steps."
@@ -58,6 +55,14 @@ class PublicChatService:
         content = response.choices[0].message.content or ""
         return content.strip() or (
             "Maturion could not generate a response just now."
+        )
+
+    @staticmethod
+    def _use_static_ci_response() -> bool:
+        return (
+            os.environ.get("OPENAI_API_KEY") == _TEST_OPENAI_KEY
+            or os.environ.get("PYTEST_CURRENT_TEST") is not None
+            or os.environ.get("CI") == "true"
         )
 
     def _get_client(self) -> OpenAI:
