@@ -4,8 +4,8 @@ Wave: `wave-mmm-approval-foundation-build-green-2026-06-24`
 Date: 2026-06-24
 Repository: `APGI-cmy/maturion-isms`
 Branch: `foreman/mmm-approval-foundation-build-green`
-PR: pending
-CURRENT_HEAD_SHA: pending
+PR: #1846
+CURRENT_HEAD_SHA: 52a1b533dfedb1e8b03089ba23075aa5f78e8876
 Scope record: `.agent-admin/scope-declarations/wave-mmm-approval-foundation-build-green-2026-06-24.md`
 
 ## PRE-BRIEF
@@ -44,8 +44,8 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "wave-mmm-approval-foundation-build-green-2026-06-24"
-  pr: "pending"
-  current_head_sha: "pending"
+  pr: "#1846"
+  current_head_sha: "52a1b533dfedb1e8b03089ba23075aa5f78e8876"
   branch: "foreman/mmm-approval-foundation-build-green"
   qualifying_tasks:
     - "Create executable failing tests for approval workflow foundation."
