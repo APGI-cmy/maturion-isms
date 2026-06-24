@@ -4,11 +4,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Users, Settings, ChevronRight, Lock } from 'lucide-react';
+import { useIsms } from '@/context/IsmsContext';
 import { ROUTES } from '@/lib/routes';
 import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
 
 const ModulesOverview: React.FC = () => {
   const navigate = useNavigate();
+  const { hasEntitlement } = useIsms();
+
+  const resolveModuleRoute = (moduleId: string, route: string) => {
+    if (moduleId === 'project-implementation' && hasEntitlement('project-implementation')) {
+      return ROUTES.PIT_TRACKER;
+    }
+
+    return route;
+  };
 
   const handleModuleKeyDown = (event: React.KeyboardEvent, route: string) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -54,16 +64,18 @@ const ModulesOverview: React.FC = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {ISMS_MODULE_CARDS.map((module) => {
             const IconComponent = module.icon;
+            const moduleRoute = resolveModuleRoute(module.id, module.route);
+            const isEntitledPit = module.id === 'project-implementation' && moduleRoute === ROUTES.PIT_TRACKER;
 
             return (
               <Card
                 key={module.id}
                 role="button"
                 tabIndex={0}
-                aria-label={`Open public overview for ${module.name}`}
+                aria-label={isEntitledPit ? `Open ${module.name}` : `Open public overview for ${module.name}`}
                 className={`relative cursor-pointer transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
-                onClick={() => navigate(module.route)}
-                onKeyDown={(event) => handleModuleKeyDown(event, module.route)}
+                onClick={() => navigate(moduleRoute)}
+                onKeyDown={(event) => handleModuleKeyDown(event, moduleRoute)}
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
@@ -89,11 +101,13 @@ const ModulesOverview: React.FC = () => {
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" className="text-muted-foreground">
-                      Public overview
+                      {isEntitledPit ? 'Open workspace' : 'Public overview'}
                     </Badge>
 
                     <div className="flex items-center">
-                      <span className="text-sm text-muted-foreground mr-2">Learn More</span>
+                      <span className="text-sm text-muted-foreground mr-2">
+                        {isEntitledPit ? 'Open Tracker' : 'Learn More'}
+                      </span>
                       <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </div>
                   </div>
