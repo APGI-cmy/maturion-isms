@@ -4,7 +4,8 @@ import { ArrowRight, Building2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
-import { ONBOARDING_PROFILE_STORAGE_KEY, type OnboardingProfile, isOnboardingProfileComplete } from '@/lib/subscription';
+import { storeOnboardingProfile } from '@/lib/runtimeLocalPersistence';
+import { type OnboardingProfile, isOnboardingProfileComplete } from '@/lib/subscription';
 import { ROUTES } from '@/lib/routes';
 
 const initialProfile: OnboardingProfile = {
@@ -30,10 +31,11 @@ const Onboarding = () => {
     event.preventDefault();
     if (!isComplete) return;
 
-    window.localStorage.setItem(
-      ONBOARDING_PROFILE_STORAGE_KEY,
-      JSON.stringify({ ...profile, email: user?.email ?? null, completedAt: new Date().toISOString() }),
-    );
+    storeOnboardingProfile({
+      ...profile,
+      email: user?.email ?? null,
+      completedAt: new Date().toISOString(),
+    });
     setSubmitted(true);
   };
 
@@ -50,7 +52,7 @@ const Onboarding = () => {
           </CardHeader>
           <CardContent className="space-y-4 text-center">
             <p className="text-muted-foreground">
-              W3 stops here by design. W4 will connect this context to entitlement checks and the private maturity setup handoff.
+              P2.1 routes this context through the runtime local persistence adapter while preserving the existing mock-session experience.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button variant="outline" onClick={() => navigate(ROUTES.HOME)}>
