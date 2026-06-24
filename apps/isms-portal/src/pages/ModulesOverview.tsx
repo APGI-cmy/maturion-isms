@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Users, Settings, ChevronRight, Lock } from 'lucide-react';
+import { Shield, Users, Settings, ChevronRight, Lock, Unlock } from 'lucide-react';
 import { useIsms } from '@/context/IsmsContext';
 import { ROUTES } from '@/lib/routes';
 import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
@@ -64,8 +64,9 @@ const ModulesOverview: React.FC = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {ISMS_MODULE_CARDS.map((module) => {
             const IconComponent = module.icon;
-            const moduleRoute = resolveModuleRoute(module.id, module.route);
             const isEntitledPit = module.id === 'project-implementation' && hasEntitlement('project-implementation');
+            const moduleRoute = resolveModuleRoute(module.id, module.route);
+            const AccessIcon = isEntitledPit ? Unlock : Lock;
 
             return (
               <Card
@@ -84,14 +85,16 @@ const ModulesOverview: React.FC = () => {
                     >
                       <IconComponent className="h-6 w-6" />
                     </div>
-                    <Lock
+                    <AccessIcon
                       className="h-5 w-5 text-muted-foreground"
-                      aria-label="Private workspace gated"
+                      aria-label={isEntitledPit ? 'Private workspace available' : 'Private workspace gated'}
                     />
                   </div>
                   <div className="flex items-center justify-between gap-3">
                     <CardTitle className="text-xl">{module.name}</CardTitle>
-                    <Badge variant={module.badgeVariant}>{module.badge}</Badge>
+                    <Badge variant={isEntitledPit ? 'default' : module.badgeVariant}>
+                      {isEntitledPit ? 'Active' : module.badge}
+                    </Badge>
                   </div>
                   <CardDescription className="text-base leading-relaxed">
                     {module.description}
