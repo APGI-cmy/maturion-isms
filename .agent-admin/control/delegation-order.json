@@ -1,4 +1,3 @@
-cat > .agent-admin/control/delegation-order.json <<'EOF'
 {
   "schema_version": "1.0.0",
   "wave_id": "wave-mmm-approval-foundation-build-green-2026-06-24",
@@ -9,11 +8,6 @@ cat > .agent-admin/control/delegation-order.json <<'EOF'
   "builder_agent": "approval-foundation-builder",
   "builder_task_ref": "wave-mmm-approval-foundation-build-green-2026-06-24",
   "first_implementation_commit_sha": "52a1b533dfedb1e8b03089ba23075aa5f78e8876",
-  "qp_review_timestamp": "2026-06-24T08:03:00Z",
+  "qp_review_timestamp": "2026-06-24T12:31:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
-EOF
-
-git add .agent-admin/control/delegation-order.json
-git commit -m "control: resolve approval foundation delegation order conflict"
-git push
