@@ -4,7 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
-import { IsmsProvider } from '@/context/IsmsContext';
+import { IsmsProvider, useIsms } from '@/context/IsmsContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { PitErrorBoundary } from '@/components/PitErrorBoundary';
@@ -40,6 +40,24 @@ const privateShellRoute = (title: string, description: string) => (
     </PitErrorBoundary>
   </ProtectedRoute>
 );
+
+const entitlementShellRoute = (title: string, description: string) => <EntitledPitShell title={title} description={description} />;
+
+const EntitledPitShell = ({ title, description }: { title: string; description: string }) => {
+  const { hasEntitlement } = useIsms();
+
+  if (!hasEntitlement('project-implementation')) {
+    return <Navigate to={`${ROUTES.SUBSCRIBE}?modules=project-implementation&source=direct-pit-tracker`} replace />;
+  }
+
+  return (
+    <ProtectedRoute>
+      <PitErrorBoundary>
+        <PitShell title={title} description={description} />
+      </PitErrorBoundary>
+    </ProtectedRoute>
+  );
+};
 
 const protectedOnboardingRoute = (
   <ProtectedRoute>
@@ -219,9 +237,9 @@ const App = () => {
                 <Route path={ROUTES.PIT} element={<Navigate to={ROUTES.PIT_TRACKER} replace />} />
                 <Route
                   path={ROUTES.PIT_TRACKER}
-                  element={privateShellRoute(
-                    'PIT tracker',
-                    'Protected Process Integrity Testing workspace entry for authenticated users.',
+                  element={entitlementShellRoute(
+                    'Project Implementation Tracker',
+                    'Protected Project Implementation Tracker workspace entry for entitled authenticated users.',
                   )}
                 />
                 <Route

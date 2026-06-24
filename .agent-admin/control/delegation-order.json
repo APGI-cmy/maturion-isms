@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "pit-w82-role-aware-route-authorization",
-  "pr_number": 1829,
-  "prebrief_commit_sha": "6ac2fb8b70f334005c45b6c619f1d74cc04ff78b",
-  "builder_appointment_timestamp": "2026-06-19T12:36:00Z",
-  "builder_appointment_commit_sha": "70c04a8a5777fb20435a59da1e3252e32c3cce33",
-  "builder_agent": "pit-specialist",
-  "builder_task_ref": "pit-w82-route-authorization",
-  "first_implementation_commit_sha": "2882f5cb8b4ff10e1792384fef7b2ccd8fafcc5d",
-  "qp_review_timestamp": "2026-06-22T07:40:00Z",
+  "wave_id": "wave-mmm-approval-foundation-build-green-2026-06-24",
+  "pr_number": 1846,
+  "prebrief_commit_sha": "4e400abff2f13c687675fce57d90f3359b3f77be",
+  "builder_appointment_timestamp": "2026-06-24T07:43:00Z",
+  "builder_appointment_commit_sha": "0fc9f7cd4cafc96f127c65f8f4e753fbc5dd2ed5",
+  "builder_agent": "approval-foundation-builder",
+  "builder_task_ref": "wave-mmm-approval-foundation-build-green-2026-06-24",
+  "first_implementation_commit_sha": "52a1b533dfedb1e8b03089ba23075aa5f78e8876",
+  "qp_review_timestamp": "2026-06-24T12:31:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
