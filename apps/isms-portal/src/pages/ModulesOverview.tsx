@@ -65,7 +65,7 @@ const ModulesOverview: React.FC = () => {
           {ISMS_MODULE_CARDS.map((module) => {
             const IconComponent = module.icon;
             const moduleRoute = resolveModuleRoute(module.id, module.route);
-            const isEntitledPit = module.id === 'project-implementation' && moduleRoute === ROUTES.PIT_TRACKER;
+            const isEntitledPit = module.id === 'project-implementation' && hasEntitlement('project-implementation');
 
             return (
               <Card
