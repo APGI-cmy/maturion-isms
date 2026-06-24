@@ -107,7 +107,7 @@ export const ISMS_MODULE_CARDS: IsmsModuleCard[] = [
     id: 'incident-intelligence',
     name: 'Incident & Intelligence Hub',
     shortName: 'Incidents',
-    description: 'Incident tracking, automated escalation, root cause analysis, and response intelligence',
+    description: '24/7 incident tracking, automated escalation, root cause analysis, and response intelligence',
     icon: AlertCircle,
     route: ROUTES.MARKETING_INCIDENT_INTELLIGENCE,
     gradient: 'from-red-400 to-pink-500',
