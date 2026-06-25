@@ -29,7 +29,7 @@ P2 runtime persistence, PIT/MMM/Risk/RADAM linkup, and future module-linkup impl
 | Stage artifact | Alignment addendum |
 |---|---|
 | App Description | `modules/isms/00-app-description/boundary-linkup-alignment-20260624.md` |
-| UX / Workflow / Wiring Spec | `modules/isms/01-ux-workflow-wiring-spec/boundary-linkup-alignment-20260624.md` |
+| UX / Workflow / Wiring Spec | `modules/isms/prebuild-harvest-package/stage2-ux-wiring-boundary-alignment-20260624.md` |
 | FRS | `modules/isms/02-frs/boundary-linkup-alignment-20260624.md` |
 | TRS | `modules/isms/03-trs/boundary-linkup-alignment-20260624.md` |
 | Architecture | `modules/isms/04-architecture/boundary-linkup-alignment-20260624.md` |
@@ -37,7 +37,7 @@ P2 runtime persistence, PIT/MMM/Risk/RADAM linkup, and future module-linkup impl
 | PBFAG | `modules/isms/06-pbfag/boundary-linkup-alignment-20260624.md` |
 | Implementation Plan | `modules/isms/07-implementation-plan/boundary-linkup-alignment-20260624.md` |
 | Builder Checklist | `modules/isms/08-builder-checklist/boundary-linkup-alignment-20260624.md` |
-| IAA Pre-Brief / record | `modules/isms/09-iaa-pre-brief/boundary-linkup-alignment-20260624.md` |
+| IAA Pre-Brief / record | `modules/isms/prebuild-harvest-package/stage10-iaa-boundary-alignment-20260624.md` |
 | Tracker | `modules/isms/BUILD_PROGRESS_TRACKER.md` |
 
 ## Result
