@@ -1,0 +1,23 @@
+{
+  "record_type": "GOVERNANCE_ALIGNMENT_INVENTORY_ADDENDUM",
+  "repository": "APGI-cmy/maturion-isms",
+  "layer_down_issue": 1851,
+  "source_repository": "APGI-cmy/maturion-foreman-governance",
+  "source_commit": "91ace34412e34836e3db5aa4373ea45409fff7c1",
+  "source_path": "governance/canon/MATURION_AGENT_NETWORK_ORGANIGRAM.md",
+  "artifact": {
+    "filename": "MATURION_AGENT_NETWORK_ORGANIGRAM.md",
+    "path": "governance/canon/MATURION_AGENT_NETWORK_ORGANIGRAM.md",
+    "canonical_version": "1.0.0",
+    "local_version": "1.0.0+consumer-awareness",
+    "canonical_hash_sha256": "702a6dc272c02b6741ada74e28ccfa05924c78b19465b6ac3dc9e42b13a83b92",
+    "local_hash_sha256": null,
+    "alignment_status": "LAYERED_DOWN_CONSUMER_AWARENESS",
+    "layer_down_status": "PUBLIC_API",
+    "last_verified": "2026-06-24T14:00:00Z",
+    "change_note": "Layer-down of Maturion agent-network organigram canon from governance commit 91ace344. Consumer copy records operative obligations for Maturion, AIMC, MMM, MAT, PIT and runtime specialist architecture. Full canonical text remains authoritative in governance repo."
+  },
+  "non_agent_change": true,
+  "requires_cs2_agent_contract_escalation": false,
+  "pre_handover_proof": ".agent-admin/prehandover/PREHANDOVER_PROOF_LAYER_DOWN_91ACE344_ISSUE_1851.md"
+}
