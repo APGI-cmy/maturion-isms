@@ -3,9 +3,9 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-06-24  
-**Updated By**: foreman-v2-agent (wave: mmm-approval-foundation-build-green-2026-06-24 — approval workflow Steps 1-8 pre-build/QA/alignment complete; first build-to-GREEN foundation wave opened in PR #1846)
+**Updated By**: foreman-v2-agent (wave: mmm-isms-boundary-prebuild-alignment-2026-06-24 — PR #1850 shared boundary authority adopted for MMM pre-build alignment)
 
-> **Classification**: ACTIVE — BUILD-TO-GREEN FOUNDATION WAVE
+> **Classification**: ACTIVE — PRE-BUILD BOUNDARY ALIGNMENT REQUIRED BEFORE LINKUP BUILD
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main live progress dashboard.
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
 > **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -15,11 +15,33 @@
 
 MMM approval workflow pre-build and QA-to-red work for Steps 1-8 is complete and merged to `main`.
 
-The module is now in the first implementation build-to-GREEN wave for approval workflow foundation only.
+PR #1850 introduced shared ISMS/module boundary authority that must now govern MMM linkup work before further MMM/ISMS public entry, free assessment, subscription, authentication, onboarding, dashboard, entitlement/journey-state handoff, or runtime navigation build work proceeds.
 
-Detailed evidence record:
+Current active governance wave:
+
+- Wave: `wave-mmm-isms-boundary-prebuild-alignment-2026-06-24`
+- Branch: `foreman/mmm-isms-boundary-prebuild-alignment`
+- Purpose: align MMM pre-build artifacts to `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md` and `modules/MMM/04-architecture/platform-module-boundary-linkup-strategy.md`.
+
+Detailed approval workflow evidence record remains:
 
 - `modules/MMM/BUILD_PROGRESS_TRACKER_APPROVAL_WORKFLOW_20260624.md`
+
+## Boundary Authority Now Adopted
+
+MMM must treat these artifacts as shared pre-build boundary authority:
+
+- `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md`
+- `modules/MMM/04-architecture/platform-module-boundary-linkup-strategy.md`
+
+Operating principle:
+
+- ISMS owns public landing, modules overview, public free-assessment entry, marketing routes, subscription, authentication, onboarding, dashboard, and entitlement/journey-state handoff.
+- MMM owns Maturity Roadmap runtime behavior only after approved ISMS handoff.
+- MMM may power assessment, scoring, roadmap logic, and module-specific runtime workflows, but it must not become the ISMS platform shell.
+- MMM agent must not build ISMS, PIT, Risk Management, RADAM / Systems Integration, or other module runtime.
+- ISMS agent must not build MMM runtime.
+- Cross-module linkup must be governed before build.
 
 ## Merged Approval Workflow Pre-Build / QA / Alignment Sequence
 
@@ -33,48 +55,50 @@ Detailed evidence record:
 | 6 | #1842 | Merged | Published maturity model view QA-to-red |
 | 7 | #1844 | Merged | Evidence modal harvest/adaptation from MAT QA-to-red |
 | 8 | #1845 | Merged | FRS/TRS/Architecture alignment addendum |
+| Boundary | #1850 | Merged | Shared ISMS/module boundary linkup authority |
 
-## Active Build-to-GREEN Wave
+## Boundary-Aligned Pre-Build References
 
-**PR**: #1846  
-**Branch**: `foreman/mmm-approval-foundation-build-green`  
-**Wave**: `wave-mmm-approval-foundation-build-green-2026-06-24`
+MMM boundary alignment is being recorded in addenda under:
 
-### Authorized First-Wave Scope
+- `modules/MMM/00-app-description/platform-boundary-linkup-app-description-addendum.md`
+- `modules/MMM/01-ux-workflow-wiring-spec/platform-boundary-linkup-ux-wiring-addendum.md`
+- `modules/MMM/02-frs/platform-boundary-linkup-frs-addendum.md`
+- `modules/MMM/03-trs/platform-boundary-linkup-trs-addendum.md`
+- `modules/MMM/04-architecture/platform-boundary-linkup-architecture-addendum.md`
+- `modules/MMM/05-qa-to-red/platform-boundary-linkup-qa-to-red.md`
+- `modules/MMM/06-pbfag/platform-boundary-linkup-pbfag-addendum.md`
+- `modules/MMM/07-implementation-plan/platform-boundary-linkup-implementation-addendum.md`
+- `modules/MMM/08-builder-checklist/platform-boundary-linkup-builder-checklist-addendum.md`
+- `modules/MMM/10-builder-appointment/platform-boundary-linkup-builder-contract-addendum.md`
 
-- executable tests for approval workflow foundation;
-- canonical approval function naming;
-- typed approval client contract surface;
-- approval round create request/response shape;
-- invitation accept request/response shape;
-- proposed changes submit request/response shape;
-- approval decision submit request/response shape;
-- Level 1 response submit request/response shape;
-- approval lock transition request/response shape;
-- notification, audit, and AI learning event shape helpers;
-- final-lock mutation guard.
+## Linkup QA-to-Red Obligations
 
-### Out of Scope for First Wave
+Future MMM/ISMS linkup QA-to-red must verify:
 
-- Level 2 invite modal runtime;
-- Level 2 approver workspace runtime;
-- Level 1 e-mail delivery/templates;
-- Level 3 final approval runtime;
-- published model runtime;
-- evidence modal runtime;
-- evidence upload runtime;
-- AI evidence evaluation runtime;
-- PIT/risk/incident integrations.
+1. ISMS public landing routes MMM-related entry points to the ISMS-owned public route or approved assessment entry.
+2. Public free assessment remains an ISMS-owned acquisition/trust surface unless CS2 explicitly delegates otherwise.
+3. Subscription, authentication, onboarding, and dashboard states are preserved where MMM handoff requires them.
+4. Eligible users reach MMM runtime/workflow without looping back to subscription, authentication, onboarding, or public assessment unexpectedly.
+5. Any MMM-specific host does not expose a duplicate public acquisition loop.
+6. Cross-origin local-storage assumptions are not used as proof of journey continuity.
+7. MMM runtime does not alter PIT, Risk Management, RADAM, or other module routes.
+8. MMM changes do not make MMM the ISMS platform shell by accident.
+
+## Active Build-to-GREEN Constraint
+
+The approval foundation build-to-GREEN wave may continue only inside its existing MMM approval foundation boundary.
+
+No MMM/ISMS public linkup, free assessment, subscription, auth, onboarding, dashboard, entitlement handoff, or runtime navigation implementation is authorized until this boundary alignment is reviewed and separately scoped for build.
+
+## Claim Restriction
+
+No completion, release, production-readiness, or fully functional claim may be made from PR #1850 or the MMM boundary artifact alone.
 
 ## Required Build Sequence
 
-1. Approval workflow foundation: persistence/contract helpers, typed client contract, state-machine/event scaffolding, executable tests.
-2. Level 2 invite modal and workspace runtime.
-3. Level 1 change-summary response runtime.
-4. Level 3 final approval runtime.
-5. Published maturity model view runtime.
-6. Evidence modal harvest/adaptation runtime.
-
-## Governance Note
-
-This tracker has been reset to the current live approval-workflow build status after Step 8 alignment merge. Earlier historical failure-register detail remains available in repository history prior to this tracker reset and in dedicated evidence artifacts.
+1. Complete pre-build boundary alignment to PR #1850 authority.
+2. Create boundary-specific QA-to-red for any future linkup work.
+3. Appoint builders only after QA-to-red exists.
+4. Build to green in the authorized module/runtime lane only.
+5. Capture canonical-host browser/runtime evidence.
