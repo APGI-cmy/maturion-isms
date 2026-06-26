@@ -56,7 +56,7 @@ Batch 1 defines this flow only. It does not implement it.
 
 ### 4.1 Required Envelope Fields
 
-Every runtime Maturion request must eventually carry a context envelope with these fields:
+Every runtime Maturion request must eventually carry a context envelope with these fields. Literal strings such as `string|null` and `boolean` indicate field type expectations, not fixed runtime values.
 
 ```json
 {
@@ -67,7 +67,7 @@ Every runtime Maturion request must eventually carry a context envelope with the
   "page_or_workflow": "string|null",
   "module": "string|null",
   "user": {
-    "authenticated": true,
+    "authenticated": "boolean",
     "id": "string|null",
     "role": "string|null",
     "organisation_id": "string|null",
@@ -76,11 +76,11 @@ Every runtime Maturion request must eventually carry a context envelope with the
   },
   "permission_scope": "public|authenticated|tenant_scoped|superuser|governance",
   "knowledge_scope": {
-    "subject_allowed": true,
-    "app_context_allowed": true,
-    "framework_context_allowed": false,
-    "tenant_context_allowed": false,
-    "memory_allowed": false
+    "subject_allowed": "boolean",
+    "app_context_allowed": "boolean",
+    "framework_context_allowed": "boolean",
+    "tenant_context_allowed": "boolean",
+    "memory_allowed": "boolean"
   },
   "trace": {
     "session_id": "string|null",
