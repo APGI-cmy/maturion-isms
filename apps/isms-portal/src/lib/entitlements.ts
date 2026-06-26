@@ -73,16 +73,30 @@ export function hasModuleEntitlement(state: EntitlementState, moduleKey: IsmsMod
   return state.isBundle || state.entitledModules.includes(moduleKey);
 }
 
-export function readStoredEntitlementState(): EntitlementState {
+type StoredEntitlementReadOptions = {
+  requireCompletedAt?: boolean;
+};
+
+export function readStoredEntitlementState(options: StoredEntitlementReadOptions = {}): EntitlementState {
   if (typeof window === 'undefined') return createEntitlementState();
 
   const stored = window.localStorage.getItem(PENDING_CHECKOUT_STORAGE_KEY);
   if (!stored) return createEntitlementState();
 
   try {
-    return createEntitlementState(JSON.parse(stored));
+    const selection = JSON.parse(stored) as Partial<SubscriptionSelection> & { completedAt?: string | null };
+
+    if (options.requireCompletedAt && !selection.completedAt) {
+      return createEntitlementState();
+    }
+
+    return createEntitlementState(selection);
   } catch {
     window.localStorage.removeItem(PENDING_CHECKOUT_STORAGE_KEY);
     return createEntitlementState();
   }
+}
+
+export function readCompletedEntitlementState(): EntitlementState {
+  return readStoredEntitlementState({ requireCompletedAt: true });
 }
