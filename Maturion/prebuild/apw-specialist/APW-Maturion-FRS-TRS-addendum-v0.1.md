@@ -65,7 +65,7 @@ APW Specialist must not approve, commit, quote pricing, bind APGI, act as CS2, c
 
 ### APW-TRS-001 — Context Envelope Preconditions
 
-A future APW Specialist route requires a validated context envelope equivalent to:
+A future APW Specialist route requires a validated context envelope equivalent to the Batch 1 public APW context envelope:
 
 ```json
 {
@@ -74,43 +74,62 @@ A future APW Specialist route requires a validated context envelope equivalent t
   "permission_scope": "public",
   "user": {
     "authenticated": false,
-    "tenant_id": null,
-    "organisation_id": null
+    "id": null,
+    "organisation_id": null,
+    "tenant_id": null
   },
   "knowledge_scope": {
-    "public_allowed": true,
+    "subject_allowed": true,
+    "app_context_allowed": true,
+    "framework_context_allowed": false,
     "tenant_context_allowed": false,
-    "memory_allowed": false,
-    "secret_allowed": false
+    "memory_allowed": false
   }
 }
 ```
 
-The values above describe the public APW baseline. Other embodiments require separate approval.
+The values above describe the public APW baseline. Other embodiments require separate approval. Secret, restricted, internal and tenant sources remain blocked by the Batch 2 metadata/filter rules rather than enabled through the public context envelope.
 
 ### APW-TRS-002 — Runtime Registry Preconditions
 
 APW Specialist may not be invoked until a future runtime registry record exists and permits invocation.
 
-Minimum future registry constraints:
+Minimum future registry constraints must use the Batch 1 registry field names and Batch 2 knowledge-plane vocabulary:
 
 ```json
 {
   "runtime_agent_id": "apw-specialist",
+  "display_name": "APW Specialist",
   "agent_class": "app_specialist",
   "status": "ACTIVE",
-  "orchestrator": "Maturion",
+  "orchestrator": "maturion",
   "allowed_apps": ["APW"],
   "allowed_embodiments": ["public-web"],
   "allowed_permission_scopes": ["public"],
-  "allowed_knowledge_planes": ["public_app_context", "public_subject", "current_session_user_supplied"],
-  "forbidden_knowledge_planes": ["tenant_context", "private_memory", "secret", "internal_governance"],
+  "allowed_knowledge_planes": ["subject", "app_context", "user_session"],
+  "forbidden_knowledge_planes": ["framework_context", "tenant_context", "memory"],
+  "forbidden_visibility": ["authenticated", "tenant", "restricted", "internal", "secret"],
+  "input_contract_ref": "Maturion/prebuild/apw-specialist/APW-Specialist-Scope-Contract-v0.1.md",
+  "output_contract_ref": "Maturion/prebuild/apw-specialist/APW-Specialist-Scope-Contract-v0.1.md#8-output-contract",
+  "guardrail_refs": [
+    "Maturion/prebuild/runtime-knowledge-grounding/MRKG-TRS-supabase-aimc-metadata-v0.1.md",
+    "Maturion/prebuild/apw-specialist/APW-QA-to-Red-specialist-routing-v0.1.md"
+  ],
+  "authority_limits": [
+    "no_cs2_authority",
+    "no_final_response_authority",
+    "no_tenant_context",
+    "no_direct_retrieval",
+    "no_supabase_mutation"
+  ],
   "final_response_authority": false,
-  "audit_required": true
+  "audit_required": true,
+  "owner": "CS2 — Johan Ras",
+  "last_reviewed": "date|null"
 }
 ```
 
-Batch 3 does not create this registry record.
+Batch 3 does not create this registry record. The example above is a future minimum constraint set only; later implementation must validate it against the current runtime registry schema before activation.
 
 ### APW-TRS-003 — Knowledge Filter Preconditions
 
@@ -137,7 +156,7 @@ Future implementation must record at least:
   "context_envelope_valid": "boolean",
   "public_filter_passed": "boolean",
   "blocked_reason": "string|null",
-  "final_synthesizer": "Maturion"
+  "final_synthesizer": "maturion"
 }
 ```
 
