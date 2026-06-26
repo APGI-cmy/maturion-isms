@@ -3,9 +3,11 @@
 **Wave ID**: MRAN-PREBUILD-V01  
 **Repository**: `APGI-cmy/maturion-isms`  
 **Date**: 2026-06-25  
-**Scope Declaration**: `.agent-admin/scope-declarations/maturion-runtime-agent-network-prebuild-v01.md`  
+**Scope Declaration**: `.agent-admin/scope-declarations/pr-1855.md`  
 **Related Artifacts**:
 
+- `.agent-admin/scope-declarations/maturion-runtime-agent-network-prebuild-v01.md`
+- `.agent-admin/scope-declarations/pr-1855.md`
 - `Maturion/prebuild/runtime-agent-network/MRAN-FRS-v0.1.md`
 - `Maturion/prebuild/runtime-agent-network/MRAN-TRS-context-envelope-runtime-registry-v0.1.md`
 - `Maturion/prebuild/runtime-agent-network/MRAN-QA-to-Red-v0.1.md`
@@ -14,38 +16,58 @@
 
 ## PRE-BRIEF
 
-### 1. Assurance Context
+IAA_PREFLIGHT_BRIEF
 
-This pre-brief asks IAA to review Batch 1 architecture prebuild artifacts for the Maturion runtime agent network.
+schema_version: 1.0.0
+result: PREFLIGHT_BRIEF_COMPLETE
+wave_id: MRAN-PREBUILD-V01
+pr_number: 1855
+repository: APGI-cmy/maturion-isms
+scope_summary: Batch 1 prebuild-only architecture artifacts for the Maturion Runtime Agent Network.
+authority: CS2 — Johan Ras
 
-The work is prebuild-only. It defines the runtime agent-network shape, context-envelope expectations, runtime registry architecture and QA-to-red expectations before any runtime implementation begins.
+### EXPECTED_QA_SCOPE
 
-### 2. Source Authority
+- Review the scope declaration, FRS, TRS, and QA-to-Red artifacts for architectural completeness.
+- Confirm the work is prebuild-only and does not implement runtime code, Supabase changes, registry activation, specialist activation, or `.github/agents` changes.
+- Confirm the artifacts preserve the canonised separation between builder/governance agents and runtime/onboard app agents.
+- Confirm Runtime Maturion remains the single user-facing interface and final synthesiser.
+- Confirm context-envelope and runtime-registry requirements are sufficient to prevent unsafe specialist invocation.
+- Confirm QA-to-Red expectations are adequate for a later builder implementation wave.
 
-IAA should review against:
+### EXPECTED_FAILURE_MODES
 
-- `FOREMAN_OPERATING_MODEL.md`;
-- `.github/agents/foreman-v2-agent.md`;
-- `governance/canon/MATURION_AGENT_NETWORK_ORGANIGRAM.md`;
-- `Maturion/strategy/Maturion_agent_network_organigram_strategy.md`;
-- existing Maturion/AIMC strategy and specialist-registry materials.
+- Batch 1 artifacts accidentally create or imply runtime specialist activation.
+- Strategy-named or `.github/agents` agents are treated as runtime-active without registry activation.
+- Context envelope fields are insufficient to distinguish public, authenticated, tenant-scoped, superuser, and governance contexts.
+- Runtime registry records do not enforce status, app, embodiment, permission-scope, knowledge-plane, authority-limit, and guardrail checks.
+- Public or unauthenticated context could access tenant/customer knowledge.
+- Maturion-as-CS2 authority could be inferred from architecture, runtime code, config, or app context without separate canon-backed evidence.
+- QA-to-Red cases do not fail closed when context, registry, authority, or knowledge boundaries are missing.
 
-### 3. Review Questions
+### FOREMAN_INSTRUCTIONS
 
-IAA should determine whether the Batch 1 artifacts:
+- Treat this wave as prebuild-only.
+- Do not appoint a builder from this wave.
+- Do not implement code, migrations, schemas, registry storage, runtime routing, retrieval, memory writes, or specialist activation.
+- Do not modify `.github/agents` files.
+- Use IAA findings to correct prebuild artifacts before any implementation wave is created.
+- Keep Batch 2 knowledge-grounding prebuild and Batch 3 APW-specialist prebuild as separate future waves.
 
-1. preserve the separation between builder/governance agents and runtime/onboard app agents;
-2. keep Maturion as the single user-facing runtime interface;
-3. prevent runtime specialists from being treated as active merely because they are named in strategy, canon, docs or `.github/agents`;
-4. define sufficient context-envelope requirements before routing;
-5. define sufficient runtime registry requirements before specialist invocation;
-6. define safe degradation when context, registry, permission, authority or knowledge-plane requirements are missing;
-7. prevent public/unauthenticated contexts from accessing tenant/customer knowledge;
-8. prevent Maturion-as-CS2 authority from being granted by runtime code or configuration alone;
-9. keep Batch 1 as prebuild-only, with no code, Supabase mutation, registry activation, specialist activation or `.github/agents` modification;
-10. provide adequate QA-to-red expectations for a later builder implementation wave.
+### IAA_WILL_QA
 
-### 4. Known Non-Implementation Boundary
+- IAA will compare the artifacts against `FOREMAN_OPERATING_MODEL.md`, `.github/agents/foreman-v2-agent.md`, `governance/canon/MATURION_AGENT_NETWORK_ORGANIGRAM.md`, and the Maturion Agent Network Organigram strategy.
+- IAA will check whether the active PR scope declaration matches the changed-file set.
+- IAA will check that the FRS contains explicit runtime behaviour, non-scope, lifecycle, and prohibited-behaviour requirements.
+- IAA will check that the TRS defines a sufficient context envelope and runtime registry model.
+- IAA will check that QA-to-Red includes failure cases for missing context, missing registry activation, public/tenant boundary violation, knowledge-plane leakage, build/runtime confusion, and improper Maturion-as-CS2 authority.
+- IAA will not issue final assurance inside this pre-brief block.
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
+---
+
+## NON-IMPLEMENTATION BOUNDARY
 
 This wave does not:
 
@@ -61,7 +83,9 @@ This wave does not:
 - implement memory writes;
 - grant Maturion CS2 authority.
 
-### 5. Requested IAA Output
+---
+
+## REQUESTED IAA OUTPUT
 
 IAA should provide a later independent assurance verdict or rejection package after reviewing the prebuild artifact set.
 
