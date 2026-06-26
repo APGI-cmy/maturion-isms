@@ -3,10 +3,11 @@
 **Wave ID**: MRKG-PREBUILD-V01  
 **Repository**: `APGI-cmy/maturion-isms`  
 **Date**: 2026-06-26  
-**Scope Declaration**: `.agent-admin/scope-declarations/maturion-runtime-knowledge-grounding-prebuild-v01.md`  
+**Scope Declaration**: `.agent-admin/scope-declarations/pr-1858.md`  
 **Related Artifacts**:
 
 - `.agent-admin/scope-declarations/maturion-runtime-knowledge-grounding-prebuild-v01.md`
+- `.agent-admin/scope-declarations/pr-1858.md`
 - `Maturion/prebuild/runtime-knowledge-grounding/MRKG-FRS-addendum-v0.1.md`
 - `Maturion/prebuild/runtime-knowledge-grounding/MRKG-TRS-supabase-aimc-metadata-v0.1.md`
 - `Maturion/prebuild/runtime-knowledge-grounding/MRKG-QA-to-Red-v0.1.md`
@@ -15,16 +16,18 @@
 
 ## PRE-BRIEF
 
-IAA_PREFLIGHT_BRIEF
+IAA_PREFLIGHT_BRIEF:
 
 schema_version: 1.0.0
 result: PREFLIGHT_BRIEF_COMPLETE
 wave_id: MRKG-PREBUILD-V01
 repository: APGI-cmy/maturion-isms
+PR: 1858
+CURRENT_HEAD_SHA: bad7e7ba35a44ca7a9c3d7db14afbafa070c6629
 scope_summary: Batch 2 prebuild-only knowledge-grounding artifacts for Runtime Maturion and governed specialists.
 authority: CS2 — Johan Ras
 
-### EXPECTED_QA_SCOPE
+EXPECTED_QA_SCOPE:
 
 - Review the FRS addendum, TRS addendum and QA-to-Red artifacts for Runtime Maturion knowledge grounding.
 - Confirm the work is prebuild-only and does not implement runtime code, Supabase changes, embeddings, retrieval services, metadata records, specialist activation or `.github/agents` changes.
@@ -35,7 +38,7 @@ authority: CS2 — Johan Ras
 - Confirm fallback behaviour avoids invented APGI facts and cross-tenant leakage.
 - Confirm QA-to-Red expectations are adequate for a later builder implementation wave.
 
-### EXPECTED_FAILURE_MODES
+EXPECTED_FAILURE_MODES:
 
 - Public Maturion can retrieve internal, restricted or tenant knowledge.
 - Tenant-scoped retrieval can cross tenant or organisation boundaries.
@@ -45,7 +48,7 @@ authority: CS2 — Johan Ras
 - Fallback behaviour silently uses another tenant, private memory, unrestricted vector search or general model knowledge as approved APGI fact.
 - Secret or restricted sources enter prompt context or audit traces without approved secret-handling architecture.
 
-### FOREMAN_INSTRUCTIONS
+FOREMAN_INSTRUCTIONS:
 
 - Treat this wave as prebuild-only.
 - Do not appoint a builder from this wave.
@@ -54,7 +57,7 @@ authority: CS2 — Johan Ras
 - Use IAA findings to correct prebuild artifacts before any implementation wave is created.
 - Keep Batch 3 APW Specialist Prebuild as a separate future wave.
 
-### IAA_WILL_QA
+IAA_WILL_QA:
 
 - IAA will compare the artifacts against Batch 1 runtime-agent-network prebuild artifacts and the layered-down Maturion Agent Network Organigram canon.
 - IAA will check that knowledge-plane separation aligns with context-envelope and runtime-registry requirements.
