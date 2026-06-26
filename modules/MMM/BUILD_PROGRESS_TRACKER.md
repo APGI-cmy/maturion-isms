@@ -2,10 +2,10 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-06-24  
-**Updated By**: foreman-v2-agent (wave: wave-mmm-isms-boundary-prebuild-alignment-2026-06-24 — PR #1850 shared boundary authority adopted for MMM pre-build alignment)
+**Last Updated**: 2026-06-26  
+**Updated By**: foreman-v2-agent (tracker reconciliation after PR #1854 merge — PR #1850 shared boundary authority adopted for MMM pre-build alignment)
 
-> **Classification**: ACTIVE — PRE-BUILD BOUNDARY ALIGNMENT REQUIRED BEFORE LINKUP BUILD
+> **Classification**: ACTIVE — BOUNDARY AUTHORITY ADOPTED; LINKUP BUILD STILL GATED
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main live progress dashboard.
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
 > **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
@@ -15,19 +15,22 @@
 
 MMM approval workflow pre-build and QA-to-red work for Steps 1-8 is complete and merged to `main`.
 
-PR #1850 introduced shared ISMS/module boundary authority that must now govern MMM linkup work before further MMM/ISMS public entry, free assessment, subscription, authentication, onboarding, dashboard, entitlement/journey-state handoff, or runtime navigation build work proceeds.
+PR #1850 introduced shared ISMS/module boundary authority that governs MMM linkup work before any further MMM/ISMS public entry, free assessment, subscription, authentication, onboarding, dashboard, entitlement/journey-state handoff, or runtime navigation build work proceeds.
 
-Current active governance wave:
+PR #1854 merged the MMM pre-build boundary alignment addenda to `main`.
+
+Boundary alignment wave now recorded as completed for pre-build alignment only:
 
 - Wave: `wave-mmm-isms-boundary-prebuild-alignment-2026-06-24`
 - Branch: `foreman/mmm-isms-boundary-prebuild-alignment`
+- PR: #1854 — merged
 - Purpose: align MMM pre-build artifacts to `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md` and `modules/MMM/04-architecture/platform-module-boundary-linkup-strategy.md`.
 
 Detailed approval workflow evidence record remains:
 
 - `modules/MMM/BUILD_PROGRESS_TRACKER_APPROVAL_WORKFLOW_20260624.md`
 
-## Boundary Authority Now Adopted
+## Boundary Authority Adopted
 
 MMM must treat these artifacts as shared pre-build boundary authority:
 
@@ -56,10 +59,11 @@ Operating principle:
 | 7 | #1844 | Merged | Evidence modal harvest/adaptation from MAT QA-to-red |
 | 8 | #1845 | Merged | FRS/TRS/Architecture alignment addendum |
 | Boundary | #1850 | Merged | Shared ISMS/module boundary linkup authority |
+| Boundary alignment | #1854 | Merged | MMM pre-build boundary alignment to PR #1850 / ISMS authority |
 
 ## Boundary-Aligned Pre-Build References
 
-MMM boundary alignment is being recorded in addenda under:
+MMM boundary alignment is recorded in addenda under:
 
 - `modules/MMM/00-app-description/platform-boundary-linkup-app-description-addendum.md`
 - `modules/MMM/01-ux-workflow-wiring-spec/platform-boundary-linkup-ux-wiring-addendum.md`
@@ -89,16 +93,16 @@ Future MMM/ISMS linkup QA-to-red must verify:
 
 The approval foundation build-to-GREEN wave may continue only inside its existing MMM approval foundation boundary.
 
-No MMM/ISMS public linkup, free assessment, subscription, auth, onboarding, dashboard, entitlement handoff, or runtime navigation implementation is authorized until this boundary alignment is reviewed and separately scoped for build.
+No MMM/ISMS public linkup, free assessment, subscription, auth, onboarding, dashboard, entitlement handoff, or runtime navigation implementation is authorized until a separate boundary-specific QA-to-red/build slice is scoped and appointed.
 
 ## Claim Restriction
 
-No completion, release, production-readiness, or fully functional claim may be made from PR #1850 or the MMM boundary artifact alone.
+No completion, release, production-readiness, or fully functional claim may be made from PR #1850, PR #1854, or the MMM boundary artifact alone.
 
 ## Required Build Sequence
 
-1. Complete pre-build boundary alignment to PR #1850 authority.
-2. Create boundary-specific QA-to-red for any future linkup work.
+1. Confirm PR #1854 boundary pre-build alignment is merged and adopted.
+2. Create boundary-specific QA-to-red for any future linkup implementation slice.
 3. Appoint builders only after QA-to-red exists.
 4. Build to green in the authorized module/runtime lane only.
 5. Capture canonical-host browser/runtime evidence.
