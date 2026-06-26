@@ -67,21 +67,70 @@ These fields describe required behaviour. Batch 2 does not implement storage.
 
 ---
 
-## 4. Source Hierarchy
+## 4. Scope-Specific Source Hierarchy
 
-Runtime retrieval must evaluate source hierarchy in this order unless a later canon overrides it:
+Runtime retrieval must evaluate source hierarchy by permission scope unless a later canon overrides it.
+
+### 4.1 Universal Authority Rule
+
+Canon / constitutional authority remains the highest applicable source for governance boundaries, authority, agent separation, activation rules, safety rules and non-negotiable controls.
+
+Higher-authority sources override lower-authority sources within their applicable scope. Public content must never override tenant-scoped records for tenant-specific answers.
+
+### 4.2 Public Scope Hierarchy
+
+For public or unauthenticated answers:
+
+1. Canon / constitutional authority, where public-safe to disclose.
+2. CS2-approved public strategy or public-safe prebuild artifacts.
+3. Public module authority documents.
+4. Approved public knowledge-base records.
+5. Public app or public website content.
+6. Current-session user-supplied content.
+7. General model knowledge as fallback only.
+8. External references only where explicitly allowed and cited/verified.
+
+### 4.3 Authenticated App Scope Hierarchy
+
+For authenticated app-context answers that are not tenant-private:
+
+1. Canon / constitutional authority.
+2. CS2-approved strategy or prebuild artifacts applicable to the app.
+3. Module authority documents.
+4. Approved authenticated knowledge-base records.
+5. Authenticated app context and current workflow/page state.
+6. Current-session user-supplied content.
+7. Public app or public website content as supplementary context only.
+8. General model knowledge as fallback only.
+9. External references only where explicitly allowed and cited/verified.
+
+### 4.4 Tenant Scope Hierarchy
+
+For tenant- or organisation-scoped answers:
+
+1. Canon / constitutional authority.
+2. CS2-approved strategy or prebuild artifacts applicable to tenant handling and safety.
+3. Tenant-owner approved tenant records and documents within the active scope.
+4. Module authority documents applicable to the tenant workflow.
+5. Approved tenant-scoped or organisation-scoped knowledge-base records.
+6. Current-session user-supplied content within the same tenant/session scope.
+7. Authenticated app context and current workflow/page state.
+8. Public app or public website content as supplementary context only, never as controlling authority over tenant records.
+9. General model knowledge as fallback only.
+10. External references only where explicitly allowed and cited/verified.
+
+### 4.5 Governance/Internal Scope Hierarchy
+
+For governance/internal reasoning:
 
 1. Canon / constitutional authority.
 2. CS2-approved strategy or prebuild artifacts.
 3. Module authority documents.
-4. Approved knowledge-base records.
-5. Public app or public website content.
-6. Tenant-owner approved tenant records.
-7. Current-session user-supplied content.
-8. General model knowledge as fallback only.
-9. External references only where explicitly allowed and cited/verified.
-
-Higher-authority sources override lower-authority sources within their applicable scope.
+4. Governance records and approved knowledge-base records.
+5. Current-session user-supplied content.
+6. Public content as supplementary context only.
+7. General model knowledge as fallback only.
+8. External references only where explicitly allowed and cited/verified.
 
 ---
 
@@ -97,7 +146,7 @@ A retrieval decision must consider:
 - requested task purpose;
 - specialist authority limits;
 - source metadata;
-- source hierarchy;
+- scope-specific source hierarchy;
 - expiry/supersession state;
 - guardrails and safety overlays.
 
@@ -123,6 +172,7 @@ Public retrieval may include a knowledge object only if:
 Authenticated retrieval may include a knowledge object only if:
 
 - user is authenticated;
+- `retrieval_allowed = true`;
 - object visibility allows authenticated access;
 - object app scope matches current app or is global;
 - role requirements are satisfied;
@@ -135,6 +185,7 @@ Authenticated mode alone does not permit tenant-private retrieval.
 Tenant retrieval may include a knowledge object only if:
 
 - user is authenticated;
+- `retrieval_allowed = true`;
 - context envelope includes tenant/organisation scope;
 - object `tenant_id` or `organisation_id` matches the active scope;
 - `requires_tenant_match = true` is satisfied;
@@ -144,7 +195,12 @@ Tenant retrieval may include a knowledge object only if:
 
 ### 6.4 Internal/Governance Filter
 
-Internal/governance retrieval may include internal governance records only where the context envelope allows governance scope and the runtime authority model permits the use.
+Internal/governance retrieval may include internal governance records only if:
+
+- `retrieval_allowed = true`;
+- the context envelope allows governance scope;
+- the runtime authority model permits the use;
+- object is not expired or superseded.
 
 Governance retrieval does not grant action authority. It only provides information for governed reasoning.
 
@@ -161,12 +217,14 @@ Batch 2 does not approve secret retrieval.
 If any required metadata field is missing, ambiguous or contradictory:
 
 - public retrieval must block the object;
+- authenticated retrieval must block the object;
 - tenant retrieval must block the object;
+- governance/internal retrieval must block the object unless the missing field is proven irrelevant by a later approved contract;
 - specialist retrieval must not receive the object;
 - audit trace must record missing metadata;
 - Maturion may answer only from other allowed sources or degrade.
 
-Missing metadata must never default to public-safe.
+Missing metadata must never default to public-safe, tenant-safe, authenticated-safe, governance-safe or retrieval-allowed.
 
 ---
 
@@ -191,9 +249,10 @@ Before a specialist receives knowledge, the orchestrator must check:
 1. specialist registry status permits invocation;
 2. specialist allowed knowledge planes include the candidate source;
 3. context envelope allows the knowledge plane;
-4. metadata filters allow the source;
-5. task purpose matches specialist mandate;
-6. audit trace can record the retrieval decision.
+4. source metadata has `retrieval_allowed = true`;
+5. metadata filters allow the source;
+6. task purpose matches specialist mandate;
+7. audit trace can record the retrieval decision.
 
 Specialists must not directly bypass the retrieval gate.
 
@@ -214,6 +273,7 @@ A future retrieval audit trace should record:
   "blocked_reason": "string|null",
   "fallback_used": "none|public_only|user_supplied|general_model|escalation",
   "metadata_complete": "boolean",
+  "retrieval_allowed": "boolean|null",
   "tenant_match": "boolean|null",
   "specialist_id": "string|null"
 }
@@ -229,12 +289,14 @@ Audit traces must avoid storing secrets, raw confidential documents or unnecessa
 |---|---|
 | Public request, public-safe source available | Use public-safe source. |
 | Public request, only private/tenant source available | Block private source; provide limitation or handoff. |
-| Authenticated request, app context available | Use authorised app context. |
+| Authenticated request, app context available and `retrieval_allowed = true` | Use authorised app context. |
+| Authenticated request, source has `retrieval_allowed = false` | Block source; use allowed fallback only. |
 | Authenticated request, tenant source requested but no tenant scope | Block tenant source; request proper context or escalate. |
-| Tenant request, matching tenant source available | Use source if role and metadata checks pass. |
+| Tenant request, matching tenant source available and `retrieval_allowed = true` | Use source if role and metadata checks pass. |
 | Tenant request, tenant mismatch | Block and record isolation event. |
 | Missing metadata | Block source; use allowed fallback only. |
-| Conflicting sources | Prefer highest authority; escalate if unresolved. |
+| Conflicting sources | Prefer highest authority within the active permission scope; escalate if unresolved. |
+| Public content conflicts with tenant-approved record in tenant scope | Tenant-approved record controls if tenant filter passes; public content may be supplementary only. |
 | Expired or superseded source | Block for current governed answer; mention as historical only if suitable. |
 
 ---
@@ -244,8 +306,9 @@ Audit traces must avoid storing secrets, raw confidential documents or unnecessa
 Batch 2 is technically acceptable if it defines:
 
 - minimum knowledge metadata;
-- source hierarchy;
+- scope-specific source hierarchy;
 - public, authenticated, tenant, governance and secret filters;
+- retrieval-allowed kill switch across all non-secret retrieval paths;
 - missing metadata behaviour;
 - supersession/staleness behaviour;
 - specialist retrieval contract;
