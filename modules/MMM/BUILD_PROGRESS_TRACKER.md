@@ -3,7 +3,7 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-06-24  
-**Updated By**: foreman-v2-agent (wave: mmm-isms-boundary-prebuild-alignment-2026-06-24 — PR #1850 shared boundary authority adopted for MMM pre-build alignment)
+**Updated By**: foreman-v2-agent (wave: wave-mmm-isms-boundary-prebuild-alignment-2026-06-24 — PR #1850 shared boundary authority adopted for MMM pre-build alignment)
 
 > **Classification**: ACTIVE — PRE-BUILD BOUNDARY ALIGNMENT REQUIRED BEFORE LINKUP BUILD
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main live progress dashboard.
