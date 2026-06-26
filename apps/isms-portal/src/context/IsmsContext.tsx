@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import {
   createEntitlementState,
   hasModuleEntitlement,
+  readCompletedEntitlementState,
   type EntitlementState,
   type IsmsModuleKey,
 } from '@/lib/entitlements';
@@ -31,35 +32,22 @@ function isSameEntitlementState(left: EntitlementState, right: EntitlementState)
   );
 }
 
-function readCompletedCheckoutEntitlement(): EntitlementState {
-  if (typeof window === 'undefined') return createEntitlementState();
-
-  const stored = window.localStorage.getItem(PENDING_CHECKOUT_STORAGE_KEY);
-  if (!stored) return createEntitlementState();
-
-  try {
-    const selection = JSON.parse(stored) as Partial<SubscriptionSelection> & { completedAt?: string | null };
-    return selection.completedAt ? createEntitlementState(selection) : createEntitlementState();
-  } catch {
-    window.localStorage.removeItem(PENDING_CHECKOUT_STORAGE_KEY);
-    return createEntitlementState();
-  }
-}
-
 export const IsmsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [entitlement, setEntitlement] = useState<EntitlementState>(() => readCompletedCheckoutEntitlement());
+  const [entitlement, setEntitlement] = useState<EntitlementState>(() => readCompletedEntitlementState());
 
   const refreshEntitlement = useCallback(() => {
     setEntitlement((current) => {
-      const next = readCompletedCheckoutEntitlement();
+      const next = readCompletedEntitlementState();
       return isSameEntitlementState(current, next) ? current : next;
     });
   }, []);
 
   useEffect(() => {
+    if (entitlement.completedAt) return undefined;
+
     const intervalId = window.setInterval(refreshEntitlement, 500);
     return () => window.clearInterval(intervalId);
-  }, [refreshEntitlement]);
+  }, [entitlement.completedAt, refreshEntitlement]);
 
   const grantMockEntitlement = useCallback((selection: Partial<SubscriptionSelection>) => {
     const nextSelection = { ...selection, completedAt: new Date().toISOString() };
