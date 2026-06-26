@@ -17,6 +17,7 @@ import {
   BarChart,
   Rocket,
 } from 'lucide-react';
+import { useIsms } from '@/context/IsmsContext';
 import { ROUTES } from '@/lib/routes';
 import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
 
@@ -97,8 +98,17 @@ const FEATURE_PROMISES = [
 
 const Index: React.FC = () => {
   const navigate = useNavigate();
+  const { hasEntitlement } = useIsms();
   const [hoveredDomain, setHoveredDomain] = useState<number | null>(null);
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+
+  const resolveModuleRoute = (moduleId: string, route: string) => {
+    if (moduleId === 'project-implementation' && hasEntitlement('project-implementation')) {
+      return ROUTES.PIT_TRACKER;
+    }
+
+    return route;
+  };
 
   const handleStartAssessment = () => {
     navigate(ROUTES.FREE_ASSESSMENT);
@@ -215,41 +225,46 @@ const Index: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {ISMS_MODULE_CARDS.map((module) => (
-              <Card
-                key={module.id}
-                role="button"
-                tabIndex={0}
-                aria-label={`Open public overview for ${module.name}`}
-                className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer group border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
-                onClick={() => navigate(module.route)}
-                onKeyDown={(event) => handleModuleKeyDown(event, module.route)}
-              >
-                <CardHeader className="text-center pb-4">
-                  <div className="flex justify-end mb-2">
-                    <Badge variant={module.badgeVariant} className="text-xs">
-                      {module.badge}
-                    </Badge>
-                  </div>
-                  <div
-                    className={`mx-auto mb-3 w-14 h-14 bg-gradient-to-r ${module.gradient} rounded-full flex items-center justify-center shadow-lg`}
-                  >
-                    <module.icon className="h-7 w-7 text-white" />
-                  </div>
-                  <CardTitle className="text-base font-semibold group-hover:scale-105 transition-transform">
-                    {module.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <CardDescription className="text-xs text-center leading-relaxed">
-                    {module.description}
-                  </CardDescription>
-                  <div className="flex items-center justify-center mt-3 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                    Learn More <ChevronRight className="h-3 w-3 ml-1" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {ISMS_MODULE_CARDS.map((module) => {
+              const moduleRoute = resolveModuleRoute(module.id, module.route);
+              const isEntitledPit = module.id === 'project-implementation' && hasEntitlement('project-implementation');
+
+              return (
+                <Card
+                  key={module.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={isEntitledPit ? `Open ${module.name}` : `Open public overview for ${module.name}`}
+                  className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer group border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
+                  onClick={() => navigate(moduleRoute)}
+                  onKeyDown={(event) => handleModuleKeyDown(event, moduleRoute)}
+                >
+                  <CardHeader className="text-center pb-4">
+                    <div className="flex justify-end mb-2">
+                      <Badge variant={isEntitledPit ? 'default' : module.badgeVariant} className="text-xs">
+                        {isEntitledPit ? 'Active' : module.badge}
+                      </Badge>
+                    </div>
+                    <div
+                      className={`mx-auto mb-3 w-14 h-14 bg-gradient-to-r ${module.gradient} rounded-full flex items-center justify-center shadow-lg`}
+                    >
+                      <module.icon className="h-7 w-7 text-white" />
+                    </div>
+                    <CardTitle className="text-base font-semibold group-hover:scale-105 transition-transform">
+                      {module.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <CardDescription className="text-xs text-center leading-relaxed">
+                      {module.description}
+                    </CardDescription>
+                    <div className="flex items-center justify-center mt-3 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      {isEntitledPit ? 'Open Tracker' : 'Learn More'} <ChevronRight className="h-3 w-3 ml-1" />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -260,15 +275,15 @@ const Index: React.FC = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Six Domains of Operational Excellence</h2>
             <p className="text-lg text-muted-foreground">
-              Comprehensive framework for organizational maturity and resilience
+              Maturion is built around six interconnected domains that define operational excellence.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {OPERATIONAL_DOMAINS.map((domain, index) => (
               <Card
                 key={index}
-                className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer group border-2 ${domain.borderColor} bg-gradient-to-br ${domain.bgGradient}`}
+                className={`relative cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 border-2 ${domain.borderColor} bg-gradient-to-br ${domain.bgGradient}`}
                 onMouseEnter={() => setHoveredDomain(index)}
                 onMouseLeave={() => setHoveredDomain(null)}
               >
@@ -278,51 +293,46 @@ const Index: React.FC = () => {
                   >
                     <domain.icon className="h-8 w-8 text-white" />
                   </div>
-                  <CardTitle className="text-lg font-semibold group-hover:scale-105 transition-transform">
-                    {domain.name}
-                  </CardTitle>
+                  <CardTitle className="text-xl">{domain.name}</CardTitle>
                 </CardHeader>
-                {hoveredDomain === index && (
-                  <CardContent className="pt-0">
-                    <CardDescription className="text-sm leading-relaxed">
-                      {domain.description}
-                    </CardDescription>
-                  </CardContent>
-                )}
+                <CardContent>
+                  <CardDescription className="text-center text-base leading-relaxed">
+                    {domain.description}
+                  </CardDescription>
+                  {hoveredDomain === index && (
+                    <div className="absolute inset-0 bg-background/95 backdrop-blur-sm rounded-lg flex items-center justify-center p-6">
+                      <p className="text-sm text-center text-muted-foreground">
+                        Click to explore {domain.name.toLowerCase()} capabilities
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4">Ready to Begin Your Journey?</h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Start with our free 15-minute assessment and discover your organization&#39;s current
-            maturity level across all six domains.
-          </p>
-          <div className="space-y-3">
-            <Button
-              size="lg"
-              onClick={handleStartAssessment}
-              className="text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0"
-            >
-              Start Your Free Assessment
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
-            <p className="text-sm text-muted-foreground">Powered by the Maturity Roadmap module</p>
-          </div>
-        </div>
+      {/* CTA Section */}
+      <section className="container mx-auto px-4 py-16">
+        <Card className="max-w-4xl mx-auto text-center bg-gradient-to-r from-blue-600 to-violet-600 text-white border-0">
+          <CardContent className="p-12">
+            <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Security Maturity?</h2>
+            <p className="text-xl mb-8 opacity-90">
+              Start with our free assessment and discover your organization&apos;s path to operational excellence.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" variant="secondary" onClick={handleStartAssessment}>
+                Start Free Assessment
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-blue-600" onClick={() => navigate(ROUTES.MODULES)}>
+                Explore Modules
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t bg-secondary/5 py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2024 Maturion. Complete transparency in your operational maturity journey.</p>
-        </div>
-      </footer>
     </div>
   );
 };
