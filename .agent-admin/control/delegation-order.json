@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-mmm-approval-foundation-build-green-2026-06-24",
-  "pr_number": 1846,
-  "prebrief_commit_sha": "4e400abff2f13c687675fce57d90f3359b3f77be",
-  "builder_appointment_timestamp": "2026-06-24T07:43:00Z",
-  "builder_appointment_commit_sha": "0fc9f7cd4cafc96f127c65f8f4e753fbc5dd2ed5",
-  "builder_agent": "approval-foundation-builder",
-  "builder_task_ref": "wave-mmm-approval-foundation-build-green-2026-06-24",
-  "first_implementation_commit_sha": "52a1b533dfedb1e8b03089ba23075aa5f78e8876",
-  "qp_review_timestamp": "2026-06-24T12:31:00Z",
+  "wave_id": "wave-isms-pit-entitlement-handoff-20260626",
+  "pr_number": 1861,
+  "prebrief_commit_sha": "802a016a133e733aef9115a8812f80d2847642b5",
+  "builder_appointment_timestamp": "2026-06-26T09:20:00Z",
+  "builder_appointment_commit_sha": "921c2b113a8d935f5b82705a0d0a1523381e4f42",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-isms-pit-entitlement-handoff-20260626.md",
+  "first_implementation_commit_sha": "593877ec0a70a9545a608eca0eeeac42cbc1e069",
+  "qp_review_timestamp": "2026-06-26T09:27:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }

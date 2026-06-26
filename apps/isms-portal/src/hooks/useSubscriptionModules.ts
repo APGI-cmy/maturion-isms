@@ -5,9 +5,18 @@ export interface SubscriptionModule {
   yearly_discount_percentage: number;
 }
 
+const STATIC_SUBSCRIPTION_MODULES: SubscriptionModule[] = [
+  {
+    id: 'project-implementation',
+    name: 'Project Implementation Tracker',
+    monthly_price: 150,
+    yearly_discount_percentage: 10,
+  },
+];
+
 export const useSubscriptionModules = () => {
   return {
-    modules: [] as SubscriptionModule[],
+    modules: STATIC_SUBSCRIPTION_MODULES,
     loading: false,
   };
 };

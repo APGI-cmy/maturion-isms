@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
 import { useIsms } from '@/context/IsmsContext';
 import { hasModuleEntitlement } from '@/lib/entitlements';
+import { createCheckoutSearch } from '@/lib/subscription';
 import { ROUTES } from '@/lib/routes';
 import { Wrench, CheckCircle2, ArrowRight, Shield, Target, BarChart } from 'lucide-react';
 
@@ -17,6 +18,12 @@ const PITInfo = () => {
   const { user } = useAuth();
   const { entitlement } = useIsms();
   const canOpenTracker = Boolean(user) && hasModuleEntitlement(entitlement, 'project-implementation');
+  const pitCheckoutSearch = createCheckoutSearch({
+    selectedModules: ['project-implementation'],
+    isBundle: false,
+    isYearly: false,
+    source: 'pit-marketing',
+  });
 
   const features = [
     "Project implementation tracking and validation",
@@ -150,7 +157,7 @@ const PITInfo = () => {
             <Button
               size="lg"
               className="flex-shrink-0"
-              onClick={() => navigate(canOpenTracker ? ROUTES.PIT_TRACKER : ROUTES.SUBSCRIBE)}
+              onClick={() => navigate(canOpenTracker ? ROUTES.PIT_TRACKER : `${ROUTES.SUBSCRIBE_CHECKOUT}?${pitCheckoutSearch}`)}
             >
               {canOpenTracker ? 'Open Project Implementation Tracker' : 'Subscribe Now'}
               <ArrowRight className="ml-2 h-4 w-4" />
