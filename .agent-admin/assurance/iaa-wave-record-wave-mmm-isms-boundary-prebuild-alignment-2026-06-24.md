@@ -5,7 +5,7 @@ Date: 2026-06-24
 Repository: `APGI-cmy/maturion-isms`
 Branch: `foreman/mmm-isms-boundary-prebuild-alignment`
 PR: #1854
-CURRENT_HEAD_SHA: 5f504541fa7c5586933d57ae02c48dcc8798e022
+CURRENT_HEAD_SHA: 109d543bf6fbe719d508e426b6208417f8c5d483
 Scope record: `.agent-admin/scope-declarations/wave-mmm-isms-boundary-prebuild-alignment-2026-06-24.md`
 
 ## PRE-BRIEF
@@ -44,7 +44,7 @@ IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "wave-mmm-isms-boundary-prebuild-alignment-2026-06-24"
   pr: "#1854"
-  current_head_sha: "5f504541fa7c5586933d57ae02c48dcc8798e022"
+  current_head_sha: "109d543bf6fbe719d508e426b6208417f8c5d483"
   branch: "foreman/mmm-isms-boundary-prebuild-alignment"
   qualifying_tasks:
     - "Align MMM pre-build artifacts to PR #1850 shared boundary authority."
