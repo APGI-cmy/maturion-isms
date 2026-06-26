@@ -39,6 +39,12 @@ No PIT runtime implementation was changed.
 3. ISMS entitlement context syncs from completed checkout storage.
 4. Regression tests cover PIT entitlement mapping and stored checkout state.
 
+## POLC gate disposition
+
+The PR carries the scoped `CS sign-off: approved` label from CS2 authority for this implementation-lane correction.
+
+Reason: the POLC workflow allows a scoped CS2 sign-off route where the required Foreman session-memory delegation evidence would otherwise trigger the separate pre-handover lane gate. This sign-off is limited to PR #1861 and does not create a general bypass.
+
 ## Verification expectation
 
 After deployment, browser evidence on the canonical ISMS host must show dashboard PIT entitlement and `/pit/tracker` access without subscription loopback.
