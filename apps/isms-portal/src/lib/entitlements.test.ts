@@ -4,6 +4,7 @@ import {
   createEntitlementState,
   hasModuleEntitlement,
   mapSubscriptionModule,
+  readCompletedEntitlementState,
   readStoredEntitlementState,
 } from './entitlements';
 import { PENDING_CHECKOUT_STORAGE_KEY } from './subscription';
@@ -68,6 +69,23 @@ describe('W4 entitlement helpers', () => {
     expect(window.localStorage.getItem(PENDING_CHECKOUT_STORAGE_KEY)).toBeNull();
   });
 
+  it('does not grant entitlement from captured-only checkout state', () => {
+    window.localStorage.setItem(
+      PENDING_CHECKOUT_STORAGE_KEY,
+      JSON.stringify({
+        selectedModules: ['project-implementation'],
+        isBundle: false,
+        isYearly: false,
+        source: 'pit-marketing',
+        capturedAt: '2026-06-26T00:00:00.000Z',
+      }),
+    );
+
+    const entitlement = readCompletedEntitlementState();
+
+    expect(hasModuleEntitlement(entitlement, 'project-implementation')).toBe(false);
+  });
+
   it('reads completed PIT selection from ISMS checkout storage', () => {
     window.localStorage.setItem(
       PENDING_CHECKOUT_STORAGE_KEY,
@@ -80,7 +98,7 @@ describe('W4 entitlement helpers', () => {
       }),
     );
 
-    const entitlement = readStoredEntitlementState();
+    const entitlement = readCompletedEntitlementState();
 
     expect(hasModuleEntitlement(entitlement, 'project-implementation')).toBe(true);
   });
