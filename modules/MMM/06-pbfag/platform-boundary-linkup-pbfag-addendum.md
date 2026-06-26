@@ -16,7 +16,7 @@ Before any MMM/ISMS linkup build wave, PBFAG must confirm:
 1. The work is classified as MMM runtime, ISMS platform shell, or governed cross-module linkup.
 2. ISMS ownership of public landing, modules overview, free assessment entry, marketing routes, subscription, auth, onboarding, dashboard, and handoff is preserved.
 3. MMM ownership is limited to Maturity Roadmap runtime after approved handoff.
-4. QA-to-red includes the eight MMM boundary obligations from `platform-boundary-linkup-qa-to-red.md`.
+4. QA-to-red includes the eight MMM boundary obligations from `modules/MMM/05-qa-to-red/platform-boundary-linkup-qa-to-red.md`.
 5. The implementation plan does not authorize MMM to build ISMS, PIT, Risk Management, RADAM, or other module runtime.
 6. No completion or production-readiness claim is made from pre-build boundary authority alone.
 
