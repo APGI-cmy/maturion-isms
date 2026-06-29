@@ -40,3 +40,11 @@ export function assertMmmHostPolicy(input: unknown) {
   if (record.exposesAcquisitionLoop === true) return { allowed: false, reason: 'mmm_host_must_not_duplicate_public_acquisition', allowedHostModels: [...allowedHostModels] };
   return { allowed: true, hostModel: approvedHostModel };
 }
+
+export function assertNoOtherModuleRouteMutation(input: unknown) {
+  const record = asRecord(input);
+  const changedRoutes = Array.isArray(record.changedRoutes) ? record.changedRoutes.map(String) : [];
+  const prohibitedRoutes = changedRoutes.filter((route) => route.startsWith('/pit') || route.startsWith('/risk') || route.startsWith('/radam'));
+  if (prohibitedRoutes.length > 0 && record.crossModuleAppointment !== true) return { allowed: false, prohibitedRoutes, reason: 'mmm_wave_may_not_mutate_other_module_routes' };
+  return { allowed: true, prohibitedRoutes: [] };
+}
