@@ -2,9 +2,15 @@ export { BOUNDARY_POLICY_ACTIVE, MODULE_BOUNDARY_OWNERS } from './boundaryConsta
 
 const freeAssessmentRoute = ['', 'free-assessment'].join('/');
 const marketingRoute = ['', 'marketing', 'maturity-roadmap'].join('/');
+const roadmapRoute = ['', 'mmm', 'roadmap'].join('/');
+const dashboardRoute = ['', 'dashboard'].join('/');
+
+function asRecord(input: unknown): Record<string, unknown> {
+  return input && typeof input === 'object' ? input as Record<string, unknown> : {};
+}
 
 export function resolveMmmPublicEntry(input: unknown) {
-  const record = input && typeof input === 'object' ? input as Record<string, unknown> : {};
+  const record = asRecord(input);
   if (record.intent === 'start-free-assessment') {
     return { ownerModule: 'ISMS', routeType: 'approved-assessment-entry', targetRoute: freeAssessmentRoute };
   }
@@ -12,9 +18,16 @@ export function resolveMmmPublicEntry(input: unknown) {
 }
 
 export function assertFreeAssessmentOwnership(input: unknown) {
-  const record = input && typeof input === 'object' ? input as Record<string, unknown> : {};
+  const record = asRecord(input);
   const ownerModule = typeof record.ownerModule === 'string' ? record.ownerModule : '';
   if (ownerModule === 'ISMS') return { allowed: true, requiredOwnerModule: 'ISMS' };
   if (record.cs2Delegated === true) return { allowed: true, requiredOwnerModule: ownerModule, delegatedBy: 'CS2' };
   return { allowed: false, requiredOwnerModule: 'ISMS', reason: 'public_free_assessment_is_isms_owned' };
+}
+
+export function resolveEligibleMmmRuntimeEntry(input: unknown) {
+  const record = asRecord(input);
+  const targetRoute = typeof record.requestedRuntimeRoute === 'string' ? record.requestedRuntimeRoute : roadmapRoute;
+  if (record.eligibility === 'eligible' && record.handoffState === 'approved') return { ownerModule: 'MMM', routeType: 'module-runtime', targetRoute, loopback: false };
+  return { ownerModule: 'ISMS', routeType: 'handoff-required', targetRoute: dashboardRoute, loopback: true };
 }
