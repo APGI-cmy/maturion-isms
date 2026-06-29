@@ -8,11 +8,13 @@ describe('PIT deployment host policy', () => {
   });
 
   it('creates a canonical URL while preserving route details', () => {
-    const result = createCanonicalIsmsUrl({ hostname: PIT_DEPLOYMENT_HOST, pathname: '/pit/tracker', search: '?x=1', hash: '#runtime' });
+    const result = createCanonicalIsmsUrl({
+      hostname: PIT_DEPLOYMENT_HOST,
+      pathname: '/pit/tracker',
+      search: '?x=1',
+      hash: '#runtime',
+    });
 
-    expect(result).toContain(CANONICAL_ISMS_HOST);
-    expect(result).toContain('/pit/tracker');
-    expect(result).toContain('x=1');
-    expect(result).toContain('#runtime');
+    expect(result).toBe(`https://${CANONICAL_ISMS_HOST}/pit/tracker?x=1#runtime`);
   });
 });
