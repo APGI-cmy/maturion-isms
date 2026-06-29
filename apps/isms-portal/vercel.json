@@ -15,6 +15,17 @@
       "statusCode": 308
     },
     {
+      "source": "/modules",
+      "has": [
+        {
+          "type": "host",
+          "value": "maturion-pit.vercel.app"
+        }
+      ],
+      "destination": "https://maturion-isms-portal.vercel.app/modules",
+      "statusCode": 308
+    },
+    {
       "source": "/marketing/project-implementation",
       "has": [
         {
@@ -34,6 +45,39 @@
         }
       ],
       "destination": "https://maturion-isms-portal.vercel.app/subscribe",
+      "statusCode": 308
+    },
+    {
+      "source": "/subscribe/checkout",
+      "has": [
+        {
+          "type": "host",
+          "value": "maturion-pit.vercel.app"
+        }
+      ],
+      "destination": "https://maturion-isms-portal.vercel.app/subscribe/checkout",
+      "statusCode": 308
+    },
+    {
+      "source": "/auth",
+      "has": [
+        {
+          "type": "host",
+          "value": "maturion-pit.vercel.app"
+        }
+      ],
+      "destination": "https://maturion-isms-portal.vercel.app/auth",
+      "statusCode": 308
+    },
+    {
+      "source": "/login",
+      "has": [
+        {
+          "type": "host",
+          "value": "maturion-pit.vercel.app"
+        }
+      ],
+      "destination": "https://maturion-isms-portal.vercel.app/login",
       "statusCode": 308
     }
   ],
