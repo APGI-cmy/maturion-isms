@@ -2,6 +2,19 @@
   "buildCommand": "pnpm run build",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --frozen-lockfile",
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "maturion-pit.vercel.app"
+        }
+      ],
+      "destination": "https://maturion-isms-portal.vercel.app",
+      "statusCode": 308
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
