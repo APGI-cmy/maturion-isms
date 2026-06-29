@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -9,6 +10,7 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { PitErrorBoundary } from '@/components/PitErrorBoundary';
 import { ROUTES } from '@/lib/routes';
+import { createCanonicalIsmsUrl, shouldRedirectPitDeploymentHost } from '@/lib/pitHostPolicy';
 import Index from './pages/Index';
 import ModulesOverview from './pages/ModulesOverview';
 import Journey from './pages/Journey';
@@ -116,7 +118,19 @@ const qaShellRoute = (title: string, description: string) =>
     'This W8.2 QA dashboard route requires the cs2_admin mock role.',
   );
 
+const PitDeploymentHostRedirect = () => {
+  useEffect(() => {
+    window.location.replace(createCanonicalIsmsUrl(window.location));
+  }, []);
+
+  return null;
+};
+
 const App = () => {
+  if (typeof window !== 'undefined' && shouldRedirectPitDeploymentHost(window.location)) {
+    return <PitDeploymentHostRedirect />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
