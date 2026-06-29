@@ -13,6 +13,28 @@
       ],
       "destination": "https://maturion-isms-portal.vercel.app",
       "statusCode": 308
+    },
+    {
+      "source": "/marketing/project-implementation",
+      "has": [
+        {
+          "type": "host",
+          "value": "maturion-pit.vercel.app"
+        }
+      ],
+      "destination": "https://maturion-isms-portal.vercel.app/marketing/project-implementation",
+      "statusCode": 308
+    },
+    {
+      "source": "/subscribe",
+      "has": [
+        {
+          "type": "host",
+          "value": "maturion-pit.vercel.app"
+        }
+      ],
+      "destination": "https://maturion-isms-portal.vercel.app/subscribe",
+      "statusCode": 308
     }
   ],
   "rewrites": [
