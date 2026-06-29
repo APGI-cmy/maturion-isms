@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-isms-pit-entitlement-handoff-20260626",
-  "pr_number": 1861,
-  "prebrief_commit_sha": "802a016a133e733aef9115a8812f80d2847642b5",
-  "builder_appointment_timestamp": "2026-06-26T09:20:00Z",
-  "builder_appointment_commit_sha": "921c2b113a8d935f5b82705a0d0a1523381e4f42",
-  "builder_agent": "ui-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-isms-pit-entitlement-handoff-20260626.md",
-  "first_implementation_commit_sha": "593877ec0a70a9545a608eca0eeeac42cbc1e069",
-  "qp_review_timestamp": "2026-06-26T09:27:00Z",
+  "wave_id": "wave-mmm-boundary-linkup-executable-qa-rebuild-2026-06-29",
+  "pr_number": "pending",
+  "prebrief_commit_sha": "4901c2efa5a7961375825e794d8017f019c88f46",
+  "builder_appointment_timestamp": "2026-06-29T07:45:00Z",
+  "builder_appointment_commit_sha": "2fa00582d9ce83cefaa302632004da4a9bf0adc3",
+  "builder_agent": "boundary-linkup-qa-builder",
+  "builder_task_ref": "wave-mmm-boundary-linkup-executable-qa-rebuild-2026-06-29",
+  "first_implementation_commit_sha": "0a8ca9c3ae0c03d33657c9dd93d3a3357055e646",
+  "qp_review_timestamp": "2026-06-29T07:55:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
