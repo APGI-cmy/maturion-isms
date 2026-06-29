@@ -5,6 +5,7 @@ const marketingRoute = ['', 'marketing', 'maturity-roadmap'].join('/');
 const roadmapRoute = ['', 'mmm', 'roadmap'].join('/');
 const dashboardRoute = ['', 'dashboard'].join('/');
 const allowedHostModels = ['redirect-only', 'deep-link-only', 'canonical-host-only', 'approved-standalone-runtime'] as const;
+const roadmapIds = ['maturity-roadmap', 'MMM'] as const;
 
 function asRecord(input: unknown): Record<string, unknown> {
   return input && typeof input === 'object' ? input as Record<string, unknown> : {};
@@ -24,6 +25,15 @@ export function assertFreeAssessmentOwnership(input: unknown) {
   if (ownerModule === 'ISMS') return { allowed: true, requiredOwnerModule: 'ISMS' };
   if (record.cs2Delegated === true) return { allowed: true, requiredOwnerModule: ownerModule, delegatedBy: 'CS2' };
   return { allowed: false, requiredOwnerModule: 'ISMS', reason: 'public_free_assessment_is_isms_owned' };
+}
+
+export function getDashboardMmmJourneyState(input: unknown) {
+  const record = asRecord(input);
+  const cards = Array.isArray(record.dashboardCards) ? record.dashboardCards : [];
+  const card = cards.find((item) => roadmapIds.includes(asRecord(item).moduleId as typeof roadmapIds[number]));
+  if (!card) return { moduleId: 'maturity-roadmap', entitlementState: 'missing', journeyState: 'not-visible' };
+  const item = asRecord(card);
+  return { moduleId: String(item.moduleId || 'maturity-roadmap'), entitlementState: String(item.entitlementState || ''), journeyState: String(item.journeyState || '') };
 }
 
 export function resolveEligibleMmmRuntimeEntry(input: unknown) {
@@ -47,4 +57,13 @@ export function assertNoOtherModuleRouteMutation(input: unknown) {
   const prohibitedRoutes = changedRoutes.filter((route) => route.startsWith('/pit') || route.startsWith('/risk') || route.startsWith('/radam'));
   if (prohibitedRoutes.length > 0 && record.crossModuleAppointment !== true) return { allowed: false, prohibitedRoutes, reason: 'mmm_wave_may_not_mutate_other_module_routes' };
   return { allowed: true, prohibitedRoutes: [] };
+}
+
+export function assertMmmIsNotPlatformShell(input: unknown) {
+  const record = asRecord(input);
+  const proposed = Array.isArray(record.proposedOwnedSurfaces) ? record.proposedOwnedSurfaces.map(String) : [];
+  const prohibitedSet = new Set(['public-landing', 'modules-overview', 'dashboard']);
+  const prohibitedSurfaces = proposed.filter((surface) => prohibitedSet.has(surface));
+  if (prohibitedSurfaces.length > 0) return { allowed: false, prohibitedSurfaces, reason: 'mmm_must_not_become_isms_platform_shell' };
+  return { allowed: true, prohibitedSurfaces: [] };
 }
