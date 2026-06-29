@@ -3,7 +3,7 @@
 **Scope ID**: MRAR-PREBUILD-V01  
 **Repository**: `APGI-cmy/maturion-isms`  
 **Wave**: Batch 4 — Runtime Activation Readiness Pack v0.1  
-**Date**: 2026-06-26  
+**Date**: 2026-06-29  
 **Authority**: CS2 — Johan Ras  
 **Operating Role**: Foreman-led governed delivery  
 **Task Type**: readiness consolidation and implementation-prep artifacts only  
@@ -53,8 +53,8 @@ This wave creates:
 3. `Maturion/prebuild/runtime-activation-readiness/MRAR-APW-Specialist-Implementation-TRS-v0.1.md`
 4. `Maturion/prebuild/runtime-activation-readiness/MRAR-QA-to-Red-Implementation-Test-Plan-v0.1.md`
 5. `.agent-admin/builder-appointments/apw-specialist-implementation-wave-active-builder-appointment-v0.1.md`
-6. `.agent-admin/assurance/iaa-wave-record-runtime-activation-readiness-v01-20260626.md`
-7. this scope declaration.
+6. `.agent-admin/assurance/iaa-wave-record-runtime-activation-readiness-v01-20260629.md`
+7. this wave scope declaration.
 
 ---
 
