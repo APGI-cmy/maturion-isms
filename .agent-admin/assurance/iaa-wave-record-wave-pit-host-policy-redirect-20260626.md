@@ -1,57 +1,40 @@
 # IAA Wave Record - PIT Host Policy Redirect
 
-Wave: `wave-pit-host-policy-redirect-20260626`
-Date: 2026-06-26
-Repository: `APGI-cmy/maturion-isms`
-Scope record: `.agent-admin/scope-declarations/wave-pit-host-policy-redirect-20260626.md`
+WAVE: wave-pit-host-policy-redirect-20260626
+PR: #1865
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+REPOSITORY: APGI-cmy/maturion-isms
+SCOPE_RECORD: .agent-admin/scope-declarations/wave-pit-host-policy-redirect-20260626.md
+BRANCH: foreman/pit-host-policy-redirect-governed
 
-## PRE-BRIEF
+IAA_PREFLIGHT_BRIEF:
 
-Schema version: `1.0.0`
+EXPECTED_QA_SCOPE:
+  - Verify that maturion-pit.vercel.app redirects to the canonical ISMS host instead of rendering a duplicate public acquisition surface.
+  - Verify that maturion-pit.vercel.app/pit/tracker redirects to maturion-isms-portal.vercel.app/pit/tracker while preserving route intent.
+  - Verify that the canonical ISMS host does not redirect away from itself.
+  - Verify that PR #1861 entitlement behavior remains intact after host-policy correction.
 
-Issue: PIT deployment host duplicates the ISMS public acquisition surface.
+EXPECTED_FAILURE_MODES:
+  - PIT deployment host continues rendering the duplicate ISMS public landing page.
+  - Canonical ISMS host enters a redirect loop or redirects away from itself.
+  - Runtime deep links lose path, query string, or hash during canonical-host redirect.
+  - Host-policy correction changes PIT runtime behavior instead of only routing to the canonical host.
 
-Branch: `foreman/pit-host-policy-redirect-governed`
+FOREMAN_INSTRUCTIONS:
+  - Treat this as a narrow PIT-RED-BND-007 host-policy correction only.
+  - Do not claim W8.2 closure from this PR alone.
+  - Require post-deployment browser evidence before marking the host-policy test green.
+  - Preserve the boundary that ISMS owns the public acquisition host and PIT runtime remains canonical under the ISMS host.
 
-Qualifying task:
+IAA_WILL_QA:
+  - Review the diff for host-policy scope containment.
+  - Confirm that no PIT runtime feature implementation is introduced.
+  - Confirm that no Supabase, billing, payment, pricing, or entitlement storage changes are introduced.
+  - Confirm that production evidence expectations remain explicit and non-completion wording is preserved.
 
-- Implement canonical-host redirect for the PIT deployment host.
-
-Required build gates:
-
-- Builder Delegation Order Gate
-- POLC Boundary Validation
-- Routing Governance Check
-
-Expected QA scope:
-
-- PIT deployment host redirects to the canonical ISMS host.
-- Canonical ISMS host does not redirect away from itself.
-- Path, query string, and hash are preserved during host redirect.
-
-High-risk failure modes:
-
-- PIT deployment host continues rendering duplicate ISMS landing.
-- Canonical ISMS host accidentally redirects or loops.
-- Runtime deep links lose path or query string during redirect.
-
-Required builder evidence:
-
-- Diff limited to declared host-policy files and evidence.
-- Regression tests cover host detection and canonical URL creation.
-
-Required Foreman/QP checks:
-
-- Verify no PIT runtime implementation.
-- Verify PIT-RED-BND-007 is addressed by host policy, not entitlement changes.
-
-ECAP required: no.
-
-Final IAA focus:
-
-- Boundary discipline and host policy evidence.
-
-Result: `PREFLIGHT_BRIEF_COMPLETE`
+RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ## FINAL ASSURANCE
 
