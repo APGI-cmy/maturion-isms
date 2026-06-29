@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "wave_id": "wave-pit-host-policy-redirect-20260626",
-  "pr_number": null,
+  "pr_number": 1865,
   "prebrief_commit_sha": "fa67e0e18f9d017381cf685b8654118ce8b51a3d",
   "builder_appointment_timestamp": "2026-06-26T00:00:00Z",
   "builder_appointment_commit_sha": "974eae0d739493e13fb5c49ee21307c01898cf17",
