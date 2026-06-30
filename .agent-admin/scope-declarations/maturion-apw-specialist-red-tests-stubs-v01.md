@@ -100,7 +100,7 @@ This wave succeeds when:
 4. tests prove draft output remains non-final;
 5. public chat endpoint remains unchanged;
 6. no production activation is introduced;
-7. PR-bound scope, delegation-order and IAA prebrief are present.
+7. PR-bound scope declaration, `.agent-admin/control/delegation-order.json` proof, and IAA prebrief are present.
 
 ---
 
