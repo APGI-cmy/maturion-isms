@@ -10,7 +10,7 @@
 | Predecessor evidence | W8.2 boundary and entitlement handoff evidence accepted |
 | Canonical host | `https://maturion-isms-portal.vercel.app` |
 | Runtime entry | `/pit/tracker` |
-| Initial runtime routes in scope for planning | `/projects`, `/projects/new` |
+| Initial additional runtime routes in scope for planning | `/projects`, `/projects/new` |
 
 ---
 
