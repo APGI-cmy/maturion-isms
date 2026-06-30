@@ -78,7 +78,6 @@ const ModulesOverview: React.FC = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {ISMS_MODULE_CARDS.map((module) => {
             const IconComponent = module.icon;
-            const isEntitled = hasEntitlement(module.id as never);
             const isEntitledPit = module.id === 'project-implementation' && hasEntitlement('project-implementation');
             const isEntitledMmm = module.id === 'maturity-roadmap' && hasEntitlement('maturity-roadmap');
             const moduleRoute = resolveModuleRoute(module.id, module.route);
