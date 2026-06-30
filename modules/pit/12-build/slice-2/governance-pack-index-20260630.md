@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
-| Stage | Stage 12 - Build Execution and Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Slice | Slice 2 - Project Workspace Foundation |
 | Issue | #1868 |
 | Date | 2026-06-30 |
