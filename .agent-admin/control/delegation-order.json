@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-pit-host-policy-redirect-20260626",
-  "pr_number": 1865,
-  "prebrief_commit_sha": "fa67e0e18f9d017381cf685b8654118ce8b51a3d",
-  "builder_appointment_timestamp": "2026-06-26T00:00:00Z",
-  "builder_appointment_commit_sha": "974eae0d739493e13fb5c49ee21307c01898cf17",
+  "wave_id": "wave-isms-mmm-routing-handoff-20260630",
+  "pr_number": 1876,
+  "prebrief_commit_sha": "2cf002b878935aa6fd09d0b8c455e133f8446c95",
+  "builder_appointment_timestamp": "2026-06-30T10:00:00Z",
+  "builder_appointment_commit_sha": "0d19b1fee3f43edefdeb7ee058623730418f4031",
   "builder_agent": "ui-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-pit-host-policy-redirect-20260626.md",
-  "first_implementation_commit_sha": "e0208b57fdb73eb7e37b39c3353877be7cddd09a",
-  "qp_review_timestamp": "2026-06-26T00:00:00Z",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-isms-mmm-routing-handoff-20260630.md",
+  "first_implementation_commit_sha": "216240b626ac78157965ef2a635e5c7e3eb09df2",
+  "qp_review_timestamp": "2026-06-30T10:05:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
