@@ -2,6 +2,7 @@
   "schema_version": "1.0.0",
   "wave_id": "wave-mmm-descriptor-grammar-runtime-clean-2026-06-30",
   "parent_wave_id": "wave-mmm-descriptor-grammar-closure-2026-06-30",
+  "pr_number": 1880,
   "issue_number": 1871,
   "prebrief_commit_sha": "1283cc0a9b9d526bdaecd5f1a93891d9ac56f082",
   "builder_appointment_timestamp": "2026-06-30T00:00:00Z",
@@ -9,6 +10,6 @@
   "builder_agent": "mmm-runtime-builder",
   "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-grammar-runtime-clean-2026-06-30.md",
   "first_implementation_commit_sha": "7a5960a798e3afd53ed764436438f65ea5936b58",
-  "qp_review_timestamp": null,
-  "result": "DELEGATION_ORDER_RECORDED"
+  "qp_review_timestamp": "2026-06-30T12:42:29Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
 }
