@@ -2,13 +2,6 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-_APP_PACKAGE_ROOT = str(Path(__file__).parent.parent.resolve())
-if _APP_PACKAGE_ROOT not in sys.path:
-    sys.path.insert(0, _APP_PACKAGE_ROOT)
-
 from services.apw_specialist_stubs import APWSpecialistRedTestStubs
 
 _MISSING = object()
