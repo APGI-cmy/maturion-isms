@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-pit-host-policy-redirect-20260626",
-  "pr_number": 1865,
-  "prebrief_commit_sha": "fa67e0e18f9d017381cf685b8654118ce8b51a3d",
-  "builder_appointment_timestamp": "2026-06-26T00:00:00Z",
-  "builder_appointment_commit_sha": "974eae0d739493e13fb5c49ee21307c01898cf17",
-  "builder_agent": "ui-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-pit-host-policy-redirect-20260626.md",
-  "first_implementation_commit_sha": "e0208b57fdb73eb7e37b39c3353877be7cddd09a",
-  "qp_review_timestamp": "2026-06-26T00:00:00Z",
+  "wave_id": "pit-stage12-slice2-project-workspace-foundation",
+  "pr_number": 1877,
+  "prebrief_commit_sha": "6fee9f3add21e1f263be9443d128807356d0da20",
+  "builder_appointment_timestamp": "2026-06-30T00:00:00Z",
+  "builder_appointment_commit_sha": "feafbee541ff49b8b7424a6a526c5b62e7dd4003",
+  "builder_agent": "pit-specialist",
+  "builder_task_ref": "modules/pit/12-build/slice-2/builder-reconfirmation-20260630.md",
+  "first_implementation_commit_sha": "decd0a652c5356365c9fc6ee629ec57a9b679537",
+  "qp_review_timestamp": "2026-06-30T00:00:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
