@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "APW-SPEC-RED-STUBS-V01",
-  "pr_number": 1875,
-  "prebrief_commit_sha": "c250f64d23cb454c4126ecb903a203341cecf29d",
-  "builder_appointment_timestamp": "2026-06-30T09:15:00Z",
-  "builder_appointment_commit_sha": "801ad75713793dbeba509c0b8ca90e82fcb88c3f",
-  "builder_agent": "apw-specialist-red-tests-stubs-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/apw-specialist-red-tests-stubs-builder-appointment-v0.1.md",
-  "first_implementation_commit_sha": "bf83d1a99cd7099f8ddadaddb74734b5bb3b870e",
-  "qp_review_timestamp": "2026-06-30T09:25:00Z",
+  "wave_id": "APW-SPEC-BUILD-GREEN-V01",
+  "pr_number": 1881,
+  "prebrief_commit_sha": "b4c02e81809569473eddf3685075b45a32af9a5b",
+  "builder_appointment_timestamp": "2026-06-30T12:55:00Z",
+  "builder_appointment_commit_sha": "dc408eb9eef55d276a9ab6212e674735746d8218",
+  "builder_agent": "apw-specialist-build-to-green-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-specialist-build-to-green-builder-appointment-v0.1.md",
+  "first_implementation_commit_sha": "3e4395837eaba7bfef8dfd366b11b3190c98c47c",
+  "qp_review_timestamp": "2026-06-30T13:05:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
