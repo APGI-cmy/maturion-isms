@@ -7,7 +7,7 @@
   "builder_appointment_commit_sha": "801ad75713793dbeba509c0b8ca90e82fcb88c3f",
   "builder_agent": "apw-specialist-red-tests-stubs-builder",
   "builder_task_ref": ".agent-admin/builder-appointments/apw-specialist-red-tests-stubs-builder-appointment-v0.1.md",
-  "first_implementation_commit_sha": "8793b3687ddc735c0d8ce4e3349fbf0c7b43b1ec",
+  "first_implementation_commit_sha": "bf83d1a99cd7099f8ddadaddb74734b5bb3b870e",
   "qp_review_timestamp": "2026-06-30T09:25:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
