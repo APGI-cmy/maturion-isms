@@ -83,7 +83,7 @@ Operating principle:
 | 8 | #1845 | Merged | FRS/TRS/Architecture alignment addendum |
 | Boundary | #1850 | Merged | Shared ISMS/module boundary linkup authority |
 | MMM Boundary | #1854 | Merged | MMM-side boundary pre-build alignment baseline |
-| Descriptor Grammar | #1871 | Active | Focused descriptor grammar closure before signoff route build |
+| Descriptor Grammar | Issue #1871 | Active | Focused descriptor grammar closure before signoff route build |
 
 ## Boundary-Aligned Pre-Build References
 
