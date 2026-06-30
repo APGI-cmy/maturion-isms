@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useIsms } from '@/context/IsmsContext';
 import { allIsmsModules, hasModuleEntitlement, type IsmsModuleKey } from '@/lib/entitlements';
 import { createMaturityRoadmapHandoff, storeMaturityRoadmapHandoff } from '@/lib/handoff';
+import { MMM_APP_URL } from '@/lib/moduleRuntimeRoutes';
 import { ROUTES } from '@/lib/routes';
 
 const moduleLabels: Record<IsmsModuleKey, { title: string; description: string; marketingRoute: string }> = {
@@ -59,7 +60,7 @@ const Dashboard = () => {
     if (moduleKey === 'maturity-roadmap') {
       const handoff = createMaturityRoadmapHandoff(entitlement);
       storeMaturityRoadmapHandoff(handoff);
-      navigate(ROUTES.MATURITY_SETUP);
+      window.location.assign(MMM_APP_URL);
       return;
     }
 
