@@ -6,7 +6,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import DomainWorkspacePage from '../../../../apps/mmm/src/pages/DomainWorkspacePage';
 import { MPSSelectionModal } from '../../../../apps/mmm/src/components/assessment/MPSSelectionModal';
 import { IntentCreator } from '../../../../apps/mmm/src/components/assessment/IntentCreator';
-import { CriteriaManagement } from '../../../../apps/mmm/src/components/assessment/CriteriaManagement';
+import {
+  CriteriaManagement,
+  normalizeDescriptorEvidenceGrammar,
+} from '../../../../apps/mmm/src/components/assessment/CriteriaManagement';
 
 type Scenario = {
   domainRows: Array<{
@@ -347,6 +350,50 @@ const baseCriteriaRows: Scenario['criteriaRows'] = [
   },
 ];
 
+
+describe('T-MMM-DGC-1871: Descriptor grammar closure', () => {
+  it('normalizes RACI requirement wording into an evidence-state descriptor', () => {
+    const descriptor = normalizeDescriptorEvidenceGrammar(
+      'Evidence that Security roles and responsibilities are to be clearly defined and presented in the form of a RACI chart is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.',
+    );
+
+    expect(descriptor).toContain(
+      'Evidence that Security roles and responsibilities are clearly defined and presented in the form of a RACI chart is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+    );
+    expect(descriptor).not.toContain('are to be clearly defined');
+  });
+
+  it('normalizes gerund incentive-scheme wording into an auditable evidence clause', () => {
+    const descriptor = normalizeDescriptorEvidenceGrammar(
+      'Evidence that Assessing incentive schemes and measures for their impact on Security is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.',
+    );
+
+    expect(descriptor).toContain(
+      'Evidence that incentive schemes and measures are assessed for their impact on Security is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+    );
+    expect(descriptor).not.toContain('Evidence that Assessing incentive schemes');
+  });
+
+  it('normalizes instruction words before maturity-state wording is attached', () => {
+    expect(
+      normalizeDescriptorEvidenceGrammar(
+        'Evidence that the policy should be displayed is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+      ),
+    ).toContain('Evidence that the policy is displayed is absent');
+
+    expect(
+      normalizeDescriptorEvidenceGrammar(
+        'Evidence that the procedure shall be reviewed is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+      ),
+    ).toContain('Evidence that the procedure is reviewed is absent');
+
+    expect(
+      normalizeDescriptorEvidenceGrammar(
+        'Evidence that the accountable person must be documented is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+      ),
+    ).toContain('Evidence that the accountable person is documented is absent');
+  });
+});
 describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   beforeEach(() => {
     configureScenario({

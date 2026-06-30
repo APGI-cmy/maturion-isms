@@ -810,6 +810,53 @@ async function invokeAiChatUserWithDiagnostics(
   }
 }
 
+
+function normalizeCriterionEvidenceClauseGrammar(value: string): string {
+  let text = value
+    .replace(/\s+/g, ' ')
+    .replace(/[.;:,]+$/g, '')
+    .trim();
+
+  text = text
+    .replace(/\bare\s+to\s+be\b/gi, 'are')
+    .replace(/\bis\s+to\s+be\b/gi, 'is')
+    .replace(/\bshould\s+be\b/gi, 'is')
+    .replace(/\bwill\s+be\b/gi, 'is')
+    .replace(/\bshall\s+be\b/gi, 'is')
+    .replace(/\bmust\s+be\b/gi, 'is')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  text = text.replace(
+    /^Assessing\s+(.+?)\s+for\s+their\s+impact\s+on\s+Security$/i,
+    (_match, subject: string) => `${subject} are assessed for their impact on Security`,
+  );
+
+  text = text.replace(
+    /^Assessing\s+(.+?)\s+for\s+its\s+impact\s+on\s+Security$/i,
+    (_match, subject: string) => `${subject} is assessed for its impact on Security`,
+  );
+
+  return text.replace(/[.;:,]+$/g, '').trim();
+}
+
+export function normalizeDescriptorEvidenceGrammar(descriptorText: string): string {
+  const text = descriptorText.replace(/\s+/g, ' ').trim();
+
+  const basicEvidenceMatch = text.match(
+    /^Evidence that\s+(.+?)\s+(is absent, weak, outdated, inconsistent, fragmented, or person-dependent\.)(.*)$/i,
+  );
+
+  if (!basicEvidenceMatch) {
+    return text;
+  }
+
+  const normalizedClause = normalizeCriterionEvidenceClauseGrammar(basicEvidenceMatch[1]);
+  return `Evidence that ${normalizedClause} is absent, weak, outdated, inconsistent, fragmented, or person-dependent.${basicEvidenceMatch[3] ?? ''}`
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function validateMaturityDescriptorDrafts(
   criterionText: string,
   drafts: LevelDescriptorDraft[],
@@ -825,7 +872,7 @@ function validateMaturityDescriptorDrafts(
     if (!draft?.descriptor_text.trim()) {
       throw new Error(`Descriptor generation omitted ${label}.`);
     }
-    const text = sanitizeDescriptorDraftText(draft.descriptor_text);
+    const text = normalizeDescriptorEvidenceGrammar(sanitizeDescriptorDraftText(draft.descriptor_text));
     if (normalizeDescriptorText(text) === normalizeDescriptorText(`${label}: ${normalizedCriterion}`)) {
       throw new Error('Descriptor generation copied the criterion instead of reconstructing maturity states.');
     }
