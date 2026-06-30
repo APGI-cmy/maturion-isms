@@ -9,7 +9,7 @@ CS2 Authority: Johan Ras
 
 ## Objective
 
-Route entitled Maturity Roadmap users from ISMS-owned dashboard, landing-card, and `/modules` entry points to the MMM app host.
+Route entitled Maturity Roadmap users from ISMS-owned dashboard and `/modules` entry points to the MMM app host.
 
 Target runtime host:
 
