@@ -25,6 +25,14 @@ The same runtime handoff behavior also needed to be available from the ISMS `/mo
 - No MMM runtime code, scoring, assessment, evidence, descriptor, or deployment behavior was changed.
 - PIT runtime and PIT routing were not changed.
 
+## POLC disposition
+
+The PR carries the scoped `CS sign-off: approved` label from CS2 authority for this implementation-lane routing correction.
+
+Reason: this is a bounded ISMS shell routing handoff change. The formal scope declaration, IAA pre-brief, builder appointment, and delegation-order record are present; no Foreman memory handover artifact is included because this is not a pre-handover lane.
+
+This sign-off is limited to PR #1879 and does not create a general bypass.
+
 ## QA-to-red coverage
 
 QA-to-red artifact:
