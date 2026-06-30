@@ -11,6 +11,8 @@ if _APP_PACKAGE_ROOT not in sys.path:
 
 from services.apw_specialist_stubs import APWSpecialistRedTestStubs
 
+_MISSING = object()
+
 
 VALID_PUBLIC_APW_CONTEXT = {
     "app": "APW",
@@ -53,12 +55,19 @@ PUBLIC_SAFE_SOURCE = {
 }
 
 
-def _decision(message="Explain APW onboarding.", context=None, registry=None, sources=None, **kwargs):
+def _decision(
+    message="Explain APW onboarding.",
+    context=None,
+    registry=_MISSING,
+    sources=None,
+    **kwargs,
+):
     stubs = APWSpecialistRedTestStubs()
+    registry_value = ACTIVE_REGISTRY_RECORD if registry is _MISSING else registry
     return stubs.classify_route(
         message,
         context or VALID_PUBLIC_APW_CONTEXT,
-        ACTIVE_REGISTRY_RECORD if registry is None else registry,
+        registry_value,
         [PUBLIC_SAFE_SOURCE] if sources is None else sources,
         **kwargs,
     )
@@ -151,7 +160,7 @@ def test_output_validation_requires_source_limitations() -> None:
     stubs = APWSpecialistRedTestStubs()
     decision = stubs.validate_specialist_output(
         {
-            "answer_points": ["APW can help visitors understand public pathways."],
+            "answer_points": ["APW can help visitors understand public APGI pathways."],
             "source_limitations": [],
             "safety_notes": ["public only"],
         }
