@@ -2,34 +2,60 @@
 
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-06-24  
-**Updated By**: foreman-v2-agent (wave: wave-mmm-isms-boundary-prebuild-alignment-2026-06-24 — PR #1850 shared boundary authority adopted for MMM pre-build alignment)
+**Last Updated**: 2026-06-30  
+**Updated By**: foreman-v2-agent (wave: wave-mmm-descriptor-grammar-closure-2026-06-30 — issue #1871 opened for focused descriptor grammar closure)
 
-> **Classification**: ACTIVE — PRE-BUILD BOUNDARY ALIGNMENT REQUIRED BEFORE LINKUP BUILD
+> **Classification**: ACTIVE — DESCRIPTOR GRAMMAR CLOSURE WAVE OPEN BEFORE SIGNOFF ROUTE IMPLEMENTATION
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main live progress dashboard.
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
-> **Issue**: [maturion-isms#1255](https://github.com/APGI-cmy/maturion-isms/issues/1255)
+> **Issue**: [maturion-isms#1871](https://github.com/APGI-cmy/maturion-isms/issues/1871)
 > **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change.
 
 ## Current Live Status
 
 MMM approval workflow pre-build and QA-to-red work for Steps 1-8 is complete and merged to `main`.
 
-PR #1850 introduced shared ISMS/module boundary authority that must now govern MMM linkup work before further MMM/ISMS public entry, free assessment, subscription, authentication, onboarding, dashboard, entitlement/journey-state handoff, or runtime navigation build work proceeds.
+PR #1850 introduced shared ISMS/module boundary authority. PR #1854 aligned MMM pre-build artifacts to that authority. Runtime public journey/linkup work remains ISMS/MMM boundary-governed and must not be mixed into MMM descriptor grammar closure.
 
-Current active governance wave:
+Current active MMM wave:
 
-- Wave: `wave-mmm-isms-boundary-prebuild-alignment-2026-06-24`
-- Branch: `foreman/mmm-isms-boundary-prebuild-alignment`
-- Purpose: align MMM pre-build artifacts to `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md` and `modules/MMM/04-architecture/platform-module-boundary-linkup-strategy.md`.
+- Wave: `wave-mmm-descriptor-grammar-closure-2026-06-30`
+- Branch: `foreman/mmm-descriptor-grammar-closure`
+- Issue: `#1871`
+- Purpose: close the remaining descriptor grammar gap where generated maturity descriptors preserve instruction wording or gerund starts instead of reconstructing criteria into clean auditable evidence clauses.
 
-Detailed approval workflow evidence record remains:
+## Descriptor Grammar Closure Authority
 
-- `modules/MMM/BUILD_PROGRESS_TRACKER_APPROVAL_WORKFLOW_20260624.md`
+Active wave artifacts:
 
-## Boundary Authority Now Adopted
+- `.agent-admin/scope-declarations/wave-mmm-descriptor-grammar-closure-2026-06-30.md`
+- `modules/MMM/05-qa-to-red/descriptor-grammar-closure-qa-to-red.md`
+- `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-grammar-closure-2026-06-30.md`
+- `.agent-admin/builder-appointments/wave-mmm-descriptor-grammar-closure-2026-06-30.md`
 
-MMM must treat these artifacts as shared pre-build boundary authority:
+Primary intended implementation files:
+
+- `apps/mmm/src/components/assessment/CriteriaManagement.tsx`
+- `modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx`
+
+Conditional extension only if justified:
+
+- Supabase edge-function or descriptor-learning retrieval logic related to reusable accepted descriptor corrections.
+
+## Descriptor Grammar Closure QA Obligations
+
+Future implementation under issue #1871 must verify:
+
+1. `are to be clearly defined` is normalized to `are clearly defined` in evidence clauses.
+2. `Assessing incentive schemes and measures for their impact on Security` is normalized to `incentive schemes and measures are assessed for their impact on Security`.
+3. Instruction wording such as `should be`, `will be`, `shall be`, and `must be` is converted into evidence-state phrasing before maturity-state text is attached.
+4. The criterion-specific actor/action/object remains visible and is not replaced with generic policy/control wording.
+5. Accepted user descriptor edits are used as future generation examples where learning records are available, or deterministic grammar normalization covers the observed examples until retrieval is separately wired.
+6. Descriptor editing remains available after save until a future explicit signoff lock exists.
+
+## Boundary Authority Still Adopted
+
+MMM must continue to treat these artifacts as shared pre-build boundary authority:
 
 - `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md`
 - `modules/MMM/04-architecture/platform-module-boundary-linkup-strategy.md`
@@ -56,10 +82,12 @@ Operating principle:
 | 7 | #1844 | Merged | Evidence modal harvest/adaptation from MAT QA-to-red |
 | 8 | #1845 | Merged | FRS/TRS/Architecture alignment addendum |
 | Boundary | #1850 | Merged | Shared ISMS/module boundary linkup authority |
+| MMM Boundary | #1854 | Merged | MMM-side boundary pre-build alignment baseline |
+| Descriptor Grammar | Issue #1871 | Active | Focused descriptor grammar closure before signoff route build |
 
 ## Boundary-Aligned Pre-Build References
 
-MMM boundary alignment is being recorded in addenda under:
+MMM boundary alignment is recorded in addenda under:
 
 - `modules/MMM/00-app-description/platform-boundary-linkup-app-description-addendum.md`
 - `modules/MMM/01-ux-workflow-wiring-spec/platform-boundary-linkup-ux-wiring-addendum.md`
@@ -87,18 +115,19 @@ Future MMM/ISMS linkup QA-to-red must verify:
 
 ## Active Build-to-GREEN Constraint
 
-The approval foundation build-to-GREEN wave may continue only inside its existing MMM approval foundation boundary.
+Issue #1871 may proceed only as a focused MMM descriptor grammar closure wave.
 
-No MMM/ISMS public linkup, free assessment, subscription, auth, onboarding, dashboard, entitlement handoff, or runtime navigation implementation is authorized until this boundary alignment is reviewed and separately scoped for build.
+No ISMS public journey, subscription, auth, onboarding, dashboard, entitlement handoff, signoff-route, Vercel workflow, PIT, Risk Management, RADAM, or other module implementation is authorized by the descriptor grammar closure wave.
 
 ## Claim Restriction
 
-No completion, release, production-readiness, or fully functional claim may be made from PR #1850 or the MMM boundary artifact alone.
+No completion, release, production-readiness, fully functional, handover, ready-for-review, or merge-ready claim may be made from the descriptor grammar closure setup artifacts alone.
 
 ## Required Build Sequence
 
-1. Complete pre-build boundary alignment to PR #1850 authority.
-2. Create boundary-specific QA-to-red for any future linkup work.
-3. Appoint builders only after QA-to-red exists.
-4. Build to green in the authorized module/runtime lane only.
-5. Capture canonical-host browser/runtime evidence.
+1. Keep issue #1871 bounded to descriptor grammar closure.
+2. Use the descriptor grammar QA-to-red artifact before implementation.
+3. Preserve IAA pre-brief -> builder appointment -> first implementation commit ordering.
+4. Build only the authorized MMM descriptor runtime grammar behavior to green.
+5. Capture Foreman QP after builder implementation.
+6. Invoke ECAP/IAA/CS2 review only in the appropriate lane and order.
