@@ -48,7 +48,8 @@ This wave creates:
 3. `.agent-admin/builder-appointments/apw-specialist-red-tests-stubs-builder-appointment-v0.1.md`
 4. `.agent-admin/scope-declarations/pr-1866.md`
 5. `.agent-admin/assurance/iaa-wave-record-apw-specialist-red-tests-stubs-v01-20260629.md`
-6. this wave scope declaration.
+6. `.agent-admin/control/delegation-order.json`
+7. this wave scope declaration.
 
 ---
 
@@ -99,7 +100,7 @@ This wave succeeds when:
 4. tests prove draft output remains non-final;
 5. public chat endpoint remains unchanged;
 6. no production activation is introduced;
-7. PR-bound scope and IAA prebrief are present.
+7. PR-bound scope, delegation-order and IAA prebrief are present.
 
 ---
 
