@@ -56,4 +56,5 @@ No ISMS public journey, subscription, checkout, onboarding, dashboard, entitleme
 
 ## Lane Note
 
-This is not handover, final assurance, production readiness, release readiness, or merge readiness.
+This is implementation-lane evidence only.
+

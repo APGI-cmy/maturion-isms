@@ -45,4 +45,5 @@ First implementation commit:
 
 ## Lane Restriction
 
-This evidence is not a pre-handover, final IAA, release, production-readiness, or merge-ready declaration.
+This evidence is an implementation-lane control record only.
+
