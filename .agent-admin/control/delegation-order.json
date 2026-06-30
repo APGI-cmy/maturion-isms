@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-pit-host-policy-redirect-20260626",
-  "pr_number": 1865,
-  "prebrief_commit_sha": "fa67e0e18f9d017381cf685b8654118ce8b51a3d",
-  "builder_appointment_timestamp": "2026-06-26T00:00:00Z",
-  "builder_appointment_commit_sha": "974eae0d739493e13fb5c49ee21307c01898cf17",
-  "builder_agent": "ui-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-pit-host-policy-redirect-20260626.md",
-  "first_implementation_commit_sha": "e0208b57fdb73eb7e37b39c3353877be7cddd09a",
-  "qp_review_timestamp": "2026-06-26T00:00:00Z",
+  "wave_id": "APW-SPEC-RED-STUBS-V01",
+  "pr_number": 1866,
+  "prebrief_commit_sha": "85e9331153c6e31a297a1ea4491dc6808e96a089",
+  "builder_appointment_timestamp": "2026-06-29T14:30:00Z",
+  "builder_appointment_commit_sha": "3e6652403d3e5885b4b124a5d4ad1d8c052d6ba1",
+  "builder_agent": "apw-specialist-red-tests-stubs-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-specialist-red-tests-stubs-builder-appointment-v0.1.md",
+  "first_implementation_commit_sha": "02953c2b5458816da01bd7f24a4df0ff47ef2563",
+  "qp_review_timestamp": "2026-06-29T14:45:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
