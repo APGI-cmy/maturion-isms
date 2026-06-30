@@ -1,13 +1,14 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-pit-host-policy-redirect-20260626",
-  "pr_number": 1865,
-  "prebrief_commit_sha": "fa67e0e18f9d017381cf685b8654118ce8b51a3d",
-  "builder_appointment_timestamp": "2026-06-26T00:00:00Z",
-  "builder_appointment_commit_sha": "974eae0d739493e13fb5c49ee21307c01898cf17",
-  "builder_agent": "ui-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-pit-host-policy-redirect-20260626.md",
-  "first_implementation_commit_sha": "e0208b57fdb73eb7e37b39c3353877be7cddd09a",
-  "qp_review_timestamp": "2026-06-26T00:00:00Z",
-  "result": "DELEGATION_ORDER_VERIFIED"
+  "wave_id": "wave-mmm-descriptor-grammar-closure-2026-06-30",
+  "issue_number": 1871,
+  "pr_number": 1878,
+  "prebrief_commit_sha": "798525c0898b64d51fc2e10ebb6550cccbfb6ff3",
+  "builder_appointment_timestamp": "2026-06-30T00:00:00Z",
+  "builder_appointment_commit_sha": "460af30eba19f391d2157b116b8a295c48274c39",
+  "builder_agent": "mmm-runtime-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-grammar-closure-2026-06-30.md",
+  "first_implementation_commit_sha": "917dc25e321ebe0358933251e0611b720a06c334",
+  "qp_review_timestamp": null,
+  "result": "DELEGATION_ORDER_RECORDED"
 }
