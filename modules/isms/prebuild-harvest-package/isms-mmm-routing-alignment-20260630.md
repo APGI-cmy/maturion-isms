@@ -16,6 +16,7 @@ ISMS owns the public platform shell, module cards, subscription, onboarding, das
 
 - Non-entitled users remain on ISMS-owned discovery, marketing, subscription, checkout, auth, onboarding, and dashboard routes.
 - Entitled users opening Maturity Roadmap from the ISMS dashboard must leave the internal ISMS preview route and land on the MMM app.
+- Entitled users opening Maturity Roadmap from the ISMS landing page module grid must land on the MMM app.
 - Entitled users opening Maturity Roadmap from the ISMS modules page must land on the MMM app.
 - ISMS must not implement MMM runtime behavior.
 
