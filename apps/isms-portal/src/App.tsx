@@ -4,7 +4,7 @@ import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider, type MockRouteRole } from '@/context/AuthContext';
 import { IsmsProvider, useIsms } from '@/context/IsmsContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
@@ -29,11 +29,15 @@ import IncidentManagementInfo from './pages/IncidentManagementInfo';
 import MaturityRoadmapInfo from './pages/MaturityRoadmapInfo';
 import NotFound from './pages/NotFound';
 import { PitShell } from './pages/pit/PitShell';
+import { PitWorkspaceHub } from './pages/pit/PitWorkspaceHub';
+import { ProjectRegisterFoundation } from './pages/pit/ProjectRegisterFoundation';
+import { CreateProjectFoundation } from './pages/pit/CreateProjectFoundation';
 
 const queryClient = new QueryClient();
 
 const ADMIN_ROUTE_ROLES = ['org_admin', 'cs2_admin'] as const;
 const QA_ROUTE_ROLES = ['cs2_admin'] as const;
+const PROJECT_CREATE_ROLES: MockRouteRole[] = ['contributor', 'team_leader', 'project_manager', 'org_admin', 'cs2_admin'];
 
 const privateShellRoute = (title: string, description: string) => (
   <ProtectedRoute>
@@ -43,9 +47,12 @@ const privateShellRoute = (title: string, description: string) => (
   </ProtectedRoute>
 );
 
-const entitlementShellRoute = (title: string, description: string) => <EntitledPitShell title={title} description={description} />;
+const entitledRuntimeRoute = (element: React.ReactNode) => <EntitledPitRuntime>{element}</EntitledPitRuntime>;
 
-const EntitledPitShell = ({ title, description }: { title: string; description: string }) => {
+const entitlementShellRoute = (title: string, description: string) =>
+  entitledRuntimeRoute(<PitShell title={title} description={description} />);
+
+const EntitledPitRuntime = ({ children }: { children: React.ReactNode }) => {
   const { hasEntitlement } = useIsms();
 
   if (!hasEntitlement('project-implementation')) {
@@ -54,9 +61,7 @@ const EntitledPitShell = ({ title, description }: { title: string; description: 
 
   return (
     <ProtectedRoute>
-      <PitErrorBoundary>
-        <PitShell title={title} description={description} />
-      </PitErrorBoundary>
+      <PitErrorBoundary>{children}</PitErrorBoundary>
     </ProtectedRoute>
   );
 };
@@ -101,6 +106,34 @@ const roleAwareShellRoute = (
     </PitErrorBoundary>
   </ProtectedRoute>
 );
+
+const entitledRoleAwareRoute = (
+  element: React.ReactNode,
+  allowedRoles: MockRouteRole[],
+  deniedDescription: string,
+) => <EntitledPitRoleRuntime allowedRoles={allowedRoles} deniedDescription={deniedDescription}>{element}</EntitledPitRoleRuntime>;
+
+const EntitledPitRoleRuntime = ({
+  children,
+  allowedRoles,
+  deniedDescription,
+}: {
+  children: React.ReactNode;
+  allowedRoles: MockRouteRole[];
+  deniedDescription: string;
+}) => {
+  const { hasEntitlement } = useIsms();
+
+  if (!hasEntitlement('project-implementation')) {
+    return <Navigate to={`${ROUTES.SUBSCRIBE}?modules=project-implementation&source=direct-pit-tracker`} replace />;
+  }
+
+  return (
+    <ProtectedRoute allowedRoles={allowedRoles} deniedTitle="PermissionDenied" deniedDescription={deniedDescription}>
+      <PitErrorBoundary>{children}</PitErrorBoundary>
+    </ProtectedRoute>
+  );
+};
 
 const adminShellRoute = (title: string, description: string) =>
   roleAwareShellRoute(
@@ -247,27 +280,22 @@ const App = () => {
                 <Route path={ROUTES.ONBOARDING} element={protectedOnboardingRoute} />
                 <Route path={ROUTES.MATURITY_SETUP} element={protectedMaturitySetupRoute} />
 
-                {/* PIT Stage 12 Slice 1 protected runtime routes */}
+                {/* PIT Stage 12 Slice 2 protected runtime routes */}
                 <Route path={ROUTES.PIT} element={<Navigate to={ROUTES.PIT_TRACKER} replace />} />
                 <Route
                   path={ROUTES.PIT_TRACKER}
-                  element={entitlementShellRoute(
-                    'Project Implementation Tracker',
-                    'Protected Project Implementation Tracker workspace entry for entitled authenticated users.',
-                  )}
+                  element={entitledRuntimeRoute(<PitWorkspaceHub />)}
                 />
                 <Route
                   path={ROUTES.PROJECTS}
-                  element={privateShellRoute(
-                    'PIT projects',
-                    'Protected project list shell for the Project Implementation Tracker runtime foundation.',
-                  )}
+                  element={entitledRuntimeRoute(<ProjectRegisterFoundation />)}
                 />
                 <Route
                   path={ROUTES.PROJECTS_NEW}
-                  element={privateShellRoute(
-                    'Create PIT project',
-                    'Protected project creation shell for the Project Implementation Tracker runtime foundation.',
+                  element={entitledRoleAwareRoute(
+                    <CreateProjectFoundation />,
+                    PROJECT_CREATE_ROLES,
+                    'This PIT project creation foundation requires a contributor, team_leader, project_manager, org_admin, or cs2_admin mock role.',
                   )}
                 />
 
