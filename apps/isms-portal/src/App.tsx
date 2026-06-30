@@ -121,13 +121,19 @@ const EntitledPitRoleRuntime = ({
 }) => {
   const { hasEntitlement } = useIsms();
 
-  if (!hasEntitlement('project-implementation')) {
-    return <Navigate to={`${ROUTES.SUBSCRIBE}?modules=project-implementation&source=direct-pit-tracker`} replace />;
-  }
-
   return (
-    <ProtectedRoute allowedRoles={allowedRoles} deniedTitle="PermissionDenied" deniedDescription={deniedDescription}>
-      <PitErrorBoundary>{children}</PitErrorBoundary>
+    <ProtectedRoute>
+      {hasEntitlement('project-implementation') ? (
+        <ProtectedRoute
+          allowedRoles={allowedRoles}
+          deniedTitle="PermissionDenied"
+          deniedDescription={deniedDescription}
+        >
+          <PitErrorBoundary>{children}</PitErrorBoundary>
+        </ProtectedRoute>
+      ) : (
+        <Navigate to={`${ROUTES.SUBSCRIBE}?modules=project-implementation&source=direct-pit-tracker`} replace />
+      )}
     </ProtectedRoute>
   );
 };
