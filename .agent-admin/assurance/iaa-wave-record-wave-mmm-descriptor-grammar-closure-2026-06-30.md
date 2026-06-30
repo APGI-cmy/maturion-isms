@@ -12,6 +12,38 @@
 
 IAA_PREFLIGHT_BRIEF
 
+EXPECTED_QA_SCOPE:
+- Verify that MMM descriptor generation reconstructs criterion wording into grammatically correct auditable evidence clauses before maturity-level state wording is attached.
+- Verify the two CS2-observed runtime examples: RACI wording normalization and incentive-scheme gerund normalization.
+- Verify instruction phrasing such as `are to be`, `should be`, `will be`, `shall be`, and `must be` is normalized into evidence-state phrasing.
+- Verify criterion-specific actor/action/object wording remains visible and is not collapsed into generic policy/control wording.
+- Verify accepted descriptor corrections are usable as generation examples where learning records are available, or deterministic grammar normalization covers the observed examples until retrieval is separately wired.
+- Verify descriptor editing remains available until a future explicit signoff lock exists.
+
+EXPECTED_FAILURE_MODES:
+- Descriptor output preserves mechanical criterion copy/paste such as `Evidence that ... are to be clearly defined ... is absent`.
+- Descriptor output begins with gerund wording such as `Evidence that Assessing incentive schemes...` instead of a reconstructed evidence clause.
+- Descriptor output strips specific criterion context and replaces it with generic policy/control wording.
+- Builder widens scope into ISMS public journey, subscription, onboarding, dashboard, entitlement handoff, signoff routes, Vercel workflows, PIT, Risk, RADAM, or other module runtime.
+- Builder records descriptor learning events but does not prove how they influence future generation or disclose the retrieval gap.
+- Builder reintroduces descriptor edit lockout before a future explicit signoff-lock state exists.
+
+FOREMAN_INSTRUCTIONS:
+- Keep this wave focused on issue #1871 and MMM descriptor grammar closure only.
+- Do not permit implementation before canonical pre-brief and builder appointment are present in strict commit order.
+- Require executable tests for the CS2 examples before accepting product runtime changes, unless the builder explicitly justifies a combined RED-to-GREEN commit for Foreman QP review.
+- Treat any Supabase edge-function or descriptor-learning retrieval change as conditional scope expansion that requires builder justification.
+- Do not use handover, complete, ready-for-review, merge-ready, released, or equivalent language until the relevant lane permits it.
+
+IAA_WILL_QA:
+- IAA will check that the wave remains inside MMM descriptor grammar closure scope.
+- IAA will check that the QA-to-red expectations are traceable to executable tests or explicit builder evidence.
+- IAA will check that descriptor grammar examples are corrected without losing criterion-specific meaning.
+- IAA will check that governance order remains pre-brief -> builder appointment -> first implementation commit.
+- IAA will check that any later implementation does not make signoff-route or ISMS boundary claims.
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
 ### Scope
 
 Focused MMM descriptor grammar closure before signoff-route implementation.
