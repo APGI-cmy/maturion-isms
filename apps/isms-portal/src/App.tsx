@@ -49,9 +49,6 @@ const privateShellRoute = (title: string, description: string) => (
 
 const entitledRuntimeRoute = (element: ReactNode) => <EntitledPitRuntime>{element}</EntitledPitRuntime>;
 
-const entitlementShellRoute = (title: string, description: string) =>
-  entitledRuntimeRoute(<PitShell title={title} description={description} />);
-
 const EntitledPitRuntime = ({ children }: { children: ReactNode }) => {
   const { hasEntitlement } = useIsms();
 
