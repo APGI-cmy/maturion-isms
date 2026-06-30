@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -47,12 +47,12 @@ const privateShellRoute = (title: string, description: string) => (
   </ProtectedRoute>
 );
 
-const entitledRuntimeRoute = (element: React.ReactNode) => <EntitledPitRuntime>{element}</EntitledPitRuntime>;
+const entitledRuntimeRoute = (element: ReactNode) => <EntitledPitRuntime>{element}</EntitledPitRuntime>;
 
 const entitlementShellRoute = (title: string, description: string) =>
   entitledRuntimeRoute(<PitShell title={title} description={description} />);
 
-const EntitledPitRuntime = ({ children }: { children: React.ReactNode }) => {
+const EntitledPitRuntime = ({ children }: { children: ReactNode }) => {
   const { hasEntitlement } = useIsms();
 
   if (!hasEntitlement('project-implementation')) {
@@ -108,7 +108,7 @@ const roleAwareShellRoute = (
 );
 
 const entitledRoleAwareRoute = (
-  element: React.ReactNode,
+  element: ReactNode,
   allowedRoles: MockRouteRole[],
   deniedDescription: string,
 ) => <EntitledPitRoleRuntime allowedRoles={allowedRoles} deniedDescription={deniedDescription}>{element}</EntitledPitRoleRuntime>;
@@ -118,7 +118,7 @@ const EntitledPitRoleRuntime = ({
   allowedRoles,
   deniedDescription,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   allowedRoles: MockRouteRole[];
   deniedDescription: string;
 }) => {
