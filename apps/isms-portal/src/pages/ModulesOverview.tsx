@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Users, Settings, ChevronRight, Lock, Unlock } from 'lucide-react';
 import { useIsms } from '@/context/IsmsContext';
+import { MMM_APP_URL, isExternalModuleRoute } from '@/lib/moduleRuntimeRoutes';
 import { ROUTES } from '@/lib/routes';
 import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
 
@@ -13,6 +14,10 @@ const ModulesOverview: React.FC = () => {
   const { hasEntitlement } = useIsms();
 
   const resolveModuleRoute = (moduleId: string, route: string) => {
+    if (moduleId === 'maturity-roadmap' && hasEntitlement('maturity-roadmap')) {
+      return MMM_APP_URL;
+    }
+
     if (moduleId === 'project-implementation' && hasEntitlement('project-implementation')) {
       return ROUTES.PIT_TRACKER;
     }
@@ -20,10 +25,19 @@ const ModulesOverview: React.FC = () => {
     return route;
   };
 
+  const openRoute = (route: string) => {
+    if (isExternalModuleRoute(route)) {
+      window.location.assign(route);
+      return;
+    }
+
+    navigate(route);
+  };
+
   const handleModuleKeyDown = (event: React.KeyboardEvent, route: string) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      navigate(route);
+      openRoute(route);
     }
   };
 
@@ -65,17 +79,18 @@ const ModulesOverview: React.FC = () => {
           {ISMS_MODULE_CARDS.map((module) => {
             const IconComponent = module.icon;
             const isEntitledPit = module.id === 'project-implementation' && hasEntitlement('project-implementation');
+            const isEntitledMmm = module.id === 'maturity-roadmap' && hasEntitlement('maturity-roadmap');
             const moduleRoute = resolveModuleRoute(module.id, module.route);
-            const AccessIcon = isEntitledPit ? Unlock : Lock;
+            const AccessIcon = isEntitledPit || isEntitledMmm ? Unlock : Lock;
 
             return (
               <Card
                 key={module.id}
                 role="button"
                 tabIndex={0}
-                aria-label={isEntitledPit ? `Open ${module.name}` : `Open public overview for ${module.name}`}
+                aria-label={isEntitledPit || isEntitledMmm ? `Open ${module.name}` : `Open public overview for ${module.name}`}
                 className={`relative cursor-pointer transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
-                onClick={() => navigate(moduleRoute)}
+                onClick={() => openRoute(moduleRoute)}
                 onKeyDown={(event) => handleModuleKeyDown(event, moduleRoute)}
               >
                 <CardHeader className="pb-4">
@@ -87,13 +102,13 @@ const ModulesOverview: React.FC = () => {
                     </div>
                     <AccessIcon
                       className="h-5 w-5 text-muted-foreground"
-                      aria-label={isEntitledPit ? 'Private workspace available' : 'Private workspace gated'}
+                      aria-label={isEntitledPit || isEntitledMmm ? 'Private workspace available' : 'Private workspace gated'}
                     />
                   </div>
                   <div className="flex items-center justify-between gap-3">
                     <CardTitle className="text-xl">{module.name}</CardTitle>
-                    <Badge variant={isEntitledPit ? 'default' : module.badgeVariant}>
-                      {isEntitledPit ? 'Active' : module.badge}
+                    <Badge variant={isEntitledPit || isEntitledMmm ? 'default' : module.badgeVariant}>
+                      {isEntitledPit || isEntitledMmm ? 'Active' : module.badge}
                     </Badge>
                   </div>
                   <CardDescription className="text-base leading-relaxed">
@@ -104,12 +119,12 @@ const ModulesOverview: React.FC = () => {
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" className="text-muted-foreground">
-                      {isEntitledPit ? 'Open workspace' : 'Public overview'}
+                      {isEntitledPit || isEntitledMmm ? 'Open workspace' : 'Public overview'}
                     </Badge>
 
                     <div className="flex items-center">
                       <span className="text-sm text-muted-foreground mr-2">
-                        {isEntitledPit ? 'Open Tracker' : 'Learn More'}
+                        {isEntitledPit ? 'Open Tracker' : isEntitledMmm ? 'Open MMM' : 'Learn More'}
                       </span>
                       <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </div>
