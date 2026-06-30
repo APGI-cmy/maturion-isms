@@ -825,7 +825,7 @@ function validateMaturityDescriptorDrafts(
     if (!draft?.descriptor_text.trim()) {
       throw new Error(`Descriptor generation omitted ${label}.`);
     }
-    const text = sanitizeDescriptorDraftText(draft.descriptor_text);
+    const text = normalizeDescriptorEvidenceGrammar(sanitizeDescriptorDraftText(draft.descriptor_text));
     if (normalizeDescriptorText(text) === normalizeDescriptorText(`${label}: ${normalizedCriterion}`)) {
       throw new Error('Descriptor generation copied the criterion instead of reconstructing maturity states.');
     }
