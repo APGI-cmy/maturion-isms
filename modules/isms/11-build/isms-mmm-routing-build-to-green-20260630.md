@@ -9,12 +9,13 @@ Status: Build-to-green evidence
 
 Entitled users opening Maturity Roadmap from the ISMS dashboard were routed to the internal ISMS preview route `/maturity/setup` instead of the MMM app landing at `https://maturion-isms-mmm.vercel.app`.
 
-The same runtime handoff behavior also needed to be available from the ISMS `/modules` page.
+The same runtime handoff behavior also needed to be available from the ISMS landing page module grid and the ISMS `/modules` page.
 
 ## Implementation summary
 
 - Added a shared MMM runtime URL helper.
 - Updated ISMS dashboard Maturity Roadmap handoff to store ISMS handoff context and then open the MMM app host.
+- Updated ISMS landing page module grid routing so entitled Maturity Roadmap users open the MMM app.
 - Updated ISMS `/modules` card routing so entitled Maturity Roadmap users open the MMM app.
 - Added regression tests for MMM external route classification.
 
@@ -53,5 +54,6 @@ After deployment, CS2 browser evidence should confirm:
 
 1. non-entitled Maturity Roadmap users remain on ISMS marketing/subscription paths;
 2. entitled dashboard Maturity Roadmap `Open module` routes to `https://maturion-isms-mmm.vercel.app`;
-3. entitled `/modules` Maturity Roadmap card routes to `https://maturion-isms-mmm.vercel.app`;
-4. MMM app host renders its own MMM landing/app shell.
+3. entitled ISMS landing page Maturity Roadmap card routes to `https://maturion-isms-mmm.vercel.app`;
+4. entitled `/modules` Maturity Roadmap card routes to `https://maturion-isms-mmm.vercel.app`;
+5. MMM app host renders its own MMM landing/app shell.
