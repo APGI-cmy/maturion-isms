@@ -22,6 +22,9 @@ Scope discipline and delegation-order chain verified against:
 - `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md`
 - `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md`
 
+Delegated builder evidence:
+- `ui-builder` appointed via `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md`
+
 ---
 
 ## §4.3 Merge Gate Parity
