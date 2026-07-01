@@ -52,8 +52,9 @@ class PublicChatService:
         apw_result: dict[str, Any] | None = None,
     ) -> str:
         if self._use_static_test_response():
-            if apw_result and apw_result.get("route") == "apw_specialist_internal_draft_candidate":
-                return self._static_apw_specialist_response(apw_result)
+            route = apw_result.get("route") if apw_result else None
+            if route == "apw_specialist_internal_draft_candidate":
+                return self._static_apw_specialist_response(apw_result or {})
             return (
                 "Maturion can help with APGI, loss prevention, maturity, "
                 "APGI Hub, training, risk, assurance and next steps."
@@ -235,7 +236,8 @@ class PublicChatService:
     def _apw_draft_context(apw_result: dict[str, Any]) -> str:
         draft = apw_result.get("draft") or {}
         points = "; ".join(str(item) for item in draft.get("answer_points", []))
-        limitations = "; ".join(str(item) for item in draft.get("source_limitations", []))
+        source_limitations = draft.get("source_limitations", [])
+        limitations = "; ".join(str(item) for item in source_limitations)
         notes = "; ".join(str(item) for item in draft.get("safety_notes", []))
         return (
             "Internal APW draft support for Maturion final synthesis: "
@@ -246,10 +248,12 @@ class PublicChatService:
     def _static_apw_specialist_response(apw_result: dict[str, Any]) -> str:
         draft = apw_result.get("draft") or {}
         points = draft.get("answer_points") or []
-        first_point = str(points[0]) if points else "APW can explain public APGI pathways."
+        fallback = "APW can explain public APGI pathways."
+        first_point = str(points[0]) if points else fallback
         return (
             f"Maturion final answer: {first_point} "
-            "This response is based on public APW information only and is not an activation decision."
+            "This response is based on public APW information only and is "
+            "not an activation decision."
         )
 
     @staticmethod
