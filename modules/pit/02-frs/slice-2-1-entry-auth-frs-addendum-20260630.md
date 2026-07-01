@@ -39,7 +39,7 @@ This addendum defines functional requirements for PIT integrated and standalone 
 
 ---
 
-## 3. Non-functional functional constraints
+## 3. Non-functional constraints
 
 - No separate PIT-only identity silo.
 - No duplicate generic ISMS public landing on PIT host.
