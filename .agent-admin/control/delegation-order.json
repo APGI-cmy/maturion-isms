@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-isms-mmm-routing-handoff-20260630",
-  "pr_number": 1879,
-  "prebrief_commit_sha": "2b050d311f7fbf68ac7ce237837971281cde3717",
-  "builder_appointment_timestamp": "2026-06-30T10:00:00Z",
-  "builder_appointment_commit_sha": "c9fc51923b23e63c5ad523bc758fc95af712bf95",
+  "wave_id": "wave-mmm-descriptor-generation-hardening-2026-07-01",
+  "pr_number": null,
+  "prebrief_commit_sha": "9d0be046c503072ec30f474143372c02b971c35a",
+  "builder_appointment_timestamp": "2026-07-01T10:17:00+02:00",
+  "builder_appointment_commit_sha": "e1293c7a27027151f314aabce5d3957b4fe86cd6",
   "builder_agent": "ui-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-isms-mmm-routing-handoff-20260630.md",
-  "first_implementation_commit_sha": "216240b626ac78157965ef2a635e5c7e3eb09df2",
-  "qp_review_timestamp": "2026-06-30T10:05:00Z",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md",
+  "first_implementation_commit_sha": "74b022f16414b9d42d1612b421635568753fb2d4",
+  "qp_review_timestamp": "2026-07-01T10:17:16+02:00",
   "result": "DELEGATION_ORDER_VERIFIED"
 }

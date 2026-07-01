@@ -26,9 +26,9 @@ ceremony_admin_appointed: REQUIRED_PENDING
 |---|------|---------|--------|---------------|
 | 1 | Prebuild artifact alignment (scope declaration, wave tracker, issue binding, gate inventory references) | foreman-v2-agent | 🟢 DONE | this file + `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` |
 | 2 | Canonical IAA pre-brief in wave record | independent-assurance-agent | 🟢 DONE | `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md` |
-| 3 | Builder appointment for hardening implementation scope | foreman-v2-agent | 🟡 IN PROGRESS | `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md` |
-| 4 | Hardening implementation (descriptor generation grounding + deterministic grammar normalization) | ui-builder | 🔴 PENDING | PR PENDING |
-| 5 | Foreman QP review, ECAP admin validation, IAA final assurance | foreman-v2-agent + execution-ceremony-admin-agent + independent-assurance-agent | 🔴 PENDING | PREHANDOVER + IAA token artifact |
+| 3 | Builder appointment for hardening implementation scope | foreman-v2-agent | 🟢 DONE | `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md` |
+| 4 | Hardening implementation (descriptor generation grounding + deterministic grammar normalization) | ui-builder | 🟢 DONE | commit `74b022f16414b9d42d1612b421635568753fb2d4` |
+| 5 | Foreman QP review, ECAP admin validation, IAA final assurance | foreman-v2-agent + execution-ceremony-admin-agent + independent-assurance-agent | 🟡 IN PROGRESS | PREHANDOVER + IAA token artifact |
 
 ## Wave Completion Gate
 
