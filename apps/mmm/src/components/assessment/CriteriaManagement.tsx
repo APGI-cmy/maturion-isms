@@ -827,6 +827,9 @@ function normalizeCriterionEvidenceClauseGrammar(value: string): string {
       const actor = actorGerund[1].trim();
       const verb = actorGerund[2].toLowerCase();
       const object = actorGerund[3].trim();
+      if (/\b(for|of|to|in|on|by|with|at|from)$/i.test(actor)) {
+        return text;
+      }
       if (verb === 'assessing') return `${actor} assesses ${object}`;
       if (verb === 'reviewing') return `${actor} reviews ${object}`;
     }
