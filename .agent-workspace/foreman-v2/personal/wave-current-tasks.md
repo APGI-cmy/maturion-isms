@@ -28,7 +28,7 @@ ceremony_admin_appointed: true
 | 2 | Canonical IAA pre-brief in wave record | independent-assurance-agent | 🟢 DONE | `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md` |
 | 3 | Builder appointment for hardening implementation scope | foreman-v2-agent | 🟢 DONE | `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md` |
 | 4 | Hardening implementation (descriptor generation grounding + deterministic grammar normalization) | ui-builder | 🟢 DONE | commit `74b022f16414b9d42d1612b421635568753fb2d4` / PR #1885 |
-| 5 | Foreman QP review, ECAP admin validation, IAA final assurance | foreman-v2-agent + execution-ceremony-admin-agent + independent-assurance-agent | 🟡 IN PROGRESS | PREHANDOVER + IAA token artifact |
+| 5 | Foreman QP review, ECAP admin validation, IAA final assurance | foreman-v2-agent + execution-ceremony-admin-agent + independent-assurance-agent | 🟡 IN PROGRESS | PREHANDOVER recorded; ECAP PASS recorded; IAA token pending |
 
 ## Wave Completion Gate
 
@@ -36,14 +36,14 @@ ceremony_admin_appointed: true
 - [x] Canonical IAA pre-brief completed before delegation
 - [x] Delegation order proven (pre-brief -> builder appointment -> first implementation commit)
 - [x] Builder implementation delivered to green with required MMM tests
-- [ ] Foreman QP PASS recorded
-- [ ] ECAP admin validation completed
+- [x] Foreman QP PASS recorded
+- [x] ECAP admin validation completed
 - [ ] IAA final assurance token recorded
 - [x] PR opened for this job
 
 ## Foreman readiness declarations (current HEAD)
 
-- QP PASS: Recorded for implementation scope at commit `55b4a4b46745d41b9817cb30e17e8601c343222b` pending final IAA verdict.
+- QP PASS: Recorded for implementation scope and reflected in PREHANDOVER artifact; pending IAA final assurance.
 - §4.3 merge-gate parity PASS: Declared against current PR head based on passing required checks as confirmed by CS2 instruction in-session.
 
 ## Pre-delegation hygiene certification

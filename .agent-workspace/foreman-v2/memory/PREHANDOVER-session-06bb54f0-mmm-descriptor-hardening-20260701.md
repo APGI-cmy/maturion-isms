@@ -5,7 +5,7 @@
 **Issue**: #1883  
 **PR**: #1885 (draft)  
 **Branch**: `apgi-cmy-fix-descriptor-gerund-normalization`  
-**Head SHA**: `833c72cbd77c982d09a1710617ab2b6e6aceb7b6`
+**Head SHA Reference**: `CURRENT_BRANCH_HEAD_AT_IAA_INVOCATION`
 
 ---
 

@@ -129,3 +129,26 @@ IAA_REJECTION_NOTICE:
 - RCA_REVIEW: REFER_BACK
 - HANDOVER_ALLOWED: no
 - RESULT: REJECTED_BACK_TO_PRODUCER
+
+### 2026-07-01 — IAA-RJ-PR1885-20260701-R2
+
+- PR: #1885
+- Head SHA: `5176eca4709d8de296c0b07493ad57c886d392be`
+PHASE_B_BLOCKING_TOKEN: IAA-RJ-PR1885-20260701-R2-FAIL
+- Finding summary:
+  1. Active-bundle head coherence is stale: PREHANDOVER and ECAP artifacts still declare `833c72cbd77c982d09a1710617ab2b6e6aceb7b6` while branch HEAD is `5176eca4709d8de296c0b07493ad57c886d392be`.
+  2. Active-bundle contradiction remains in wave tracker: task state/checklist still show IN PROGRESS and open `[ ]` items for Foreman QP + ECAP while PREHANDOVER declares `QP VERDICT: PASS` and `ecap_result: PASS`.
+  3. Final assurance token not yet recorded in active bundle (`wave-current-tasks.md` still open for IAA token), so complete-state coherence is not satisfied.
+- Fix required:
+  1. Reconcile active-bundle head reference fields to current HEAD across PREHANDOVER/ECAP/wave-state artifacts.
+  2. Resolve wave task-tracker contradictions so task/checklist status matches declared QP/ECAP state.
+  3. Re-run IAA only after active-bundle state is internally coherent at current HEAD.
+- Classification:
+  - F-005: Ceremony
+  - F-006: Ceremony
+  - F-007: Systemic (recurring active-bundle state coherence drift; prevention action: enforce active-bundle consistency gate before IAA re-invocation)
+
+IAA_REJECTION_NOTICE:
+- RCA_REVIEW: REFER_BACK
+- HANDOVER_ALLOWED: no
+- RESULT: REJECTED_BACK_TO_PRODUCER

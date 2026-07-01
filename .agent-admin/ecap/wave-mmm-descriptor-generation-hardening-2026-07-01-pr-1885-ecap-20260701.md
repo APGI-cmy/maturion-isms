@@ -8,7 +8,7 @@
 - issue: `#1883`
 - pr: `#1885` (draft)
 - branch: `apgi-cmy-fix-descriptor-gerund-normalization`
-- head_sha: `833c72cbd77c982d09a1710617ab2b6e6aceb7b6`
+- head_sha_reference: `CURRENT_BRANCH_HEAD_AT_ECAP_VALIDATION`
 - scope: admin-only validation (no implementation changes, no IAA token issuance, no verdict authority)
 
 ## Validation Result
@@ -49,4 +49,3 @@
 
 - ECAP boundary maintained: this artifact performs validation/reporting only.
 - No readiness authority overstep: no IAA verdict, no assurance token issuance, no merge release authorization asserted.
-
