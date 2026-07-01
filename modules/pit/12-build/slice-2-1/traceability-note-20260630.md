@@ -27,6 +27,7 @@ App Description addendum
   -> TRS addendum
   -> Architecture addendum
   -> QA-to-Red baseline
+  -> Traceability matrix
 ```
 
 ---
