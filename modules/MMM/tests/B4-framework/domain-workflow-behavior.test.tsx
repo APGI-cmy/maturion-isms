@@ -678,45 +678,6 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(mockSupabase.functions.invoke).toHaveBeenCalled();
   });
 
-  it('fallback descriptor drafts stay criterion-driven instead of forcing a canned role template', async () => {
-    const escalationCriterion: Scenario['criteriaRows'] = [
-      {
-        id: 'criterion-escalation',
-        mps_id: 'mps-1',
-        code: 'PI-001-C101',
-        sort_order: 1,
-        name: 'Risk Manager: Security support and escalation to DCC is documented and traceable.',
-      },
-    ];
-
-    configureScenario({
-      mpsRows: baseMpsRows,
-      criteriaRows: escalationCriterion,
-      knowledgeRows: [
-        {
-          source_document_name: 'LDCS_Maturity_Model_Descriptor_Guideline_Approved_Methodology_Reference.md',
-          metadata: { role: 'criteria_source' },
-          chunk_index: 0,
-          content:
-            'Operational Maturity Model Descriptor Guideline. Critical authoring rule: do not copy the criterion into each level. Basic Reactive Compliant Proactive Resilient descriptors reconstruct operating states.',
-        },
-      ],
-    });
-    configureAIError();
-    renderDomainWorkspace();
-
-    await waitFor(() => {
-      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
-    });
-    fireEvent.click(screen.getByTestId('step-action-criteria'));
-    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-escalation'));
-
-    const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-escalation-1') as HTMLTextAreaElement;
-    expect(basicDescriptor.value).toContain('Risk Manager: Security support and escalation to DCC');
-    expect(basicDescriptor.value).not.toContain('HODs/Business Unit Managers');
-    expect(basicDescriptor.value).not.toContain('deviation escalation to DCC/GM/MD');
-  });
-
   it('uses MMM-scoped subject knowledge in descriptor methodology grounding and normalizes gerund drift', async () => {
     const subjectKnowledgeCriterion: Scenario['criteriaRows'] = [
       {

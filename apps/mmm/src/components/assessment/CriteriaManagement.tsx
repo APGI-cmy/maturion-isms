@@ -173,6 +173,19 @@ interface DescriptorMethodologyRow {
   chunk_index?: unknown;
 }
 
+interface DescriptorControlObject {
+  key: string;
+  label: string;
+  keywords: string[];
+  objectPhrase: string;
+  minimumEvidence: string;
+  basic: string;
+  reactive: string;
+  compliant: string;
+  proactive: string;
+  resilient: string;
+}
+
 const MATURITY_LEVELS: Array<{ level: number; label: string; guidance: string }> = [
   {
     level: 1,
@@ -201,6 +214,209 @@ const MATURITY_LEVELS: Array<{ level: number; label: string; guidance: string }>
   },
 ];
 
+const DESCRIPTOR_CONTROL_OBJECTS: DescriptorControlObject[] = [
+  {
+    key: 'role_accountability',
+    label: 'Role Accountability',
+    keywords: [
+      'risk manager',
+      'security manager',
+      'accountable',
+      'accountability',
+      'delivery of security',
+      'co-ordination',
+      'coordination',
+      'on behalf of',
+      'in accordance with this standard',
+    ],
+    objectPhrase: 'role accountability, coordination, and standard-alignment control',
+    minimumEvidence: 'documented role accountability, standard-alignment evidence, coordination records, implementation involvement, and review evidence',
+    basic: 'is unclear, informal, or person-dependent; role alignment to the standard and delivery evidence are weak or not repeatable',
+    reactive: 'exists in some form, but role activity is visible mainly after incidents, audit pressure, or management intervention',
+    compliant: 'is documented, assigned, current, and evidenced through records showing the role fulfils the required standard-aligned responsibilities',
+    proactive: 'uses risk, implementation feedback, stakeholder review, and trend evidence to improve role effectiveness before failures recur',
+    resilient: 'is embedded into governance routines, handover, escalation, assurance, and continuity structures so accountability survives turnover or disruption',
+  },
+  {
+    key: 'direct_reporting',
+    label: 'Direct Reporting',
+    keywords: [
+      'report independently',
+      'report directly',
+      'directly to the most senior executive',
+      'senior executive',
+      'chief risk officer',
+      'managing director',
+      'meeting',
+      'meetings',
+      'reporting line',
+    ],
+    objectPhrase: 'independent reporting, executive access, meeting, and escalation control',
+    minimumEvidence: 'approved reporting line, meeting cadence, agendas/minutes, action logs, escalation records, and executive review evidence',
+    basic: 'is unclear, informal, or dependent on personal access; direct executive reporting and meeting evidence are weak or absent',
+    reactive: 'occurs mainly after incidents, findings, or management pressure; meetings and reporting records are inconsistent or not action-tracked',
+    compliant: 'has a defined reporting line and regular executive engagement evidenced by agendas, minutes, decisions, actions, and escalation records',
+    proactive: 'uses executive reporting, risk themes, trend data, and action review to resolve weak signals before failures recur',
+    resilient: 'is embedded into governance cadence, escalation triggers, delegated authority, continuity cover, and assurance so executive visibility survives disruption',
+  },
+  {
+    key: 'role_support_escalation',
+    label: 'Role Support / Escalation',
+    keywords: [
+      'support heads of department',
+      'heads of department',
+      'hod',
+      'business unit managers',
+      'support',
+      'deviate',
+      'deviation',
+      'escalate',
+      'escalation',
+      'dcc',
+      'general manager',
+      'md lucara',
+    ],
+    objectPhrase: 'role support, standard enforcement, deviation escalation, and closure control',
+    minimumEvidence: 'HOD support records, business-unit engagement evidence, deviation/escalation records, DCC/GM/MD decisions, assigned actions, and closure verification',
+    basic: 'is informal, personality-driven, or weakly evidenced; support to HODs and deviation escalation are not repeatable',
+    reactive: 'occurs mainly after incidents, disputes, audit findings, or visible non-conformance; closure evidence is inconsistent',
+    compliant: 'is defined and evidenced through support records, deviation decisions, escalation logs, assigned actions, and closure records',
+    proactive: 'uses risk, HOD feedback, recurring deviations, and trend evidence to strengthen support and prevent repeat escalation',
+    resilient: 'is embedded into governance routines, escalation workflows, action tracking, continuity cover, and assurance so support and enforcement survive disruption',
+  },
+  {
+    key: 'policy',
+    label: 'Policy',
+    keywords: ['policy', 'policies', 'displayed', 'communicated', 'signed', 'approved'],
+    objectPhrase: 'policy ownership, communication, display, and awareness control',
+    minimumEvidence: 'approved policy, communication/display evidence, owner, review record, and awareness evidence',
+    basic: 'is absent, outdated, inconsistently displayed, or dependent on one person remembering to communicate it; awareness evidence is weak, fragmented, or not repeatable',
+    reactive: 'exists in some form, but display, communication, updates, or awareness checks occur mainly after incidents, audits, management pressure, or visible non-conformance',
+    compliant: 'is approved by the accountable authority, displayed or made available where required, communicated to affected personnel, and supported by current evidence that the required communication occurred',
+    proactive: 'is reviewed using risk, incidents, site/process changes, awareness measures, and stakeholder input; owners can show that communication methods and content are improved before failures recur',
+    resilient: 'is embedded into onboarding, access/control routines, leadership cadence, digital channels, monitoring, and exception escalation so ownership and awareness survive staff turnover, disruption, and abnormal operations',
+  },
+  {
+    key: 'procedure',
+    label: 'Procedure',
+    keywords: ['procedure', 'procedures', 'sop', 'standard operating', 'process', 'work instruction'],
+    objectPhrase: 'procedure execution and control workflow',
+    minimumEvidence: 'approved procedure, communication/training evidence, current version, execution records, and review evidence',
+    basic: 'is informal, obsolete, inaccessible, or known mainly through individual experience; workarounds are common and evidence of consistent use is weak',
+    reactive: 'exists but is corrected or refreshed mainly after incidents, stoppages, complaints, audit findings, or operational failure; fixes treat symptoms more than root causes',
+    compliant: 'is approved, current, accessible, communicated, and evidenced through records showing that the required work is performed in accordance with it',
+    proactive: 'is owned, reviewed, and improved using risk assessments, incidents, deviations, task observations, trend data, and stakeholder feedback to verify control effectiveness',
+    resilient: 'is embedded into workflow or technical systems so execution, evidence capture, exception detection, escalation, and closure are automated where practicable and human steps are protected by oversight and dual accountability',
+  },
+  {
+    key: 'register_matrix',
+    label: 'Register / Matrix',
+    keywords: ['register', 'matrix', 'chain of custody', 'custody', 'raci', 'accountable manager', 'ownership'],
+    objectPhrase: 'register, matrix, ownership, and accountability control',
+    minimumEvidence: 'current register/matrix, named owners, version control, review evidence, and change-trigger records',
+    basic: 'is missing, incomplete, contested, or dependent on informal knowledge; ownership gaps are discovered through blame or confusion rather than controlled review',
+    reactive: 'exists but is updated mainly when challenged by personnel changes, incidents, audits, or confusion; accountability and control gaps are found by exception',
+    compliant: 'is current, version controlled, assigned to named accountable owners, and reviewed at the required cadence or after material changes',
+    proactive: 'is linked to risk assessments, RACI, incident trends, process changes, and stakeholder review so ownership gaps and control weaknesses trigger updates before failure',
+    resilient: 'is integrated into workflows, role profiles, access permissions, escalation rules, audit trails, and change events so ownership changes automatically trigger handover and control validation',
+  },
+  {
+    key: 'committee_governance',
+    label: 'Committee / Governance',
+    keywords: ['committee', 'governance', 'charter', 'meeting', 'minutes', 'leadership', 'heads of department', 'hod', 'accountability'],
+    objectPhrase: 'governance forum, decision, action, and accountability control',
+    minimumEvidence: 'charter or mandate, meeting cadence, minutes, action owners, escalation route, and closure records',
+    basic: 'has no clear forum, mandate, cadence, or accountable owner; decisions depend on personalities and issues are escalated only when they become visible',
+    reactive: 'meets or takes action mainly after incidents, audit findings, pressure, or operational failures; action tracking exists but is inconsistent or closure is weak',
+    compliant: 'has an approved mandate or charter, defined cadence, documented minutes, assigned actions, accountable owners, and evidence that required governance activities occur',
+    proactive: 'uses metrics, root causes, risk trends, weak signals, and cross-functional input to steer decisions, prioritise mitigation, and prevent recurrence',
+    resilient: 'is embedded through dashboards, escalation triggers, continuity of decision rights, delegated authority, and closure assurance so governance continues during disruption or personnel change',
+  },
+  {
+    key: 'training_competency',
+    label: 'Training / Competency',
+    keywords: ['training', 'competency', 'competence', 'induction', 'awareness', 'qualified', 'personnel'],
+    objectPhrase: 'training, competency, and awareness control',
+    minimumEvidence: 'training matrix, competency records, induction evidence, refresher cadence, and gap closure records',
+    basic: 'depends on experienced individuals, informal coaching, or undocumented awareness; competency gaps are unknown and evidence is anecdotal',
+    reactive: 'is delivered or corrected mainly after failures, findings, incidents, or new requirements; recurrence prevention and competency validation are weak',
+    compliant: 'is defined, delivered, recorded, and refreshed at the required cadence, with evidence that affected personnel completed the required training or induction',
+    proactive: 'uses role risk, incidents, observations, competency gaps, and performance data to tailor learning, verify effectiveness, and close capability gaps before failure',
+    resilient: 'is system-supported so unqualified deployment is prevented where practicable, refresher triggers and succession coverage are automated, and competence survives turnover or abnormal operations',
+  },
+  {
+    key: 'technical_control',
+    label: 'Technical Control',
+    keywords: ['technical', 'camera', 'surveillance', 'alarm', 'sensor', 'system', 'electronic', 'barrier', 'tamper', 'access control'],
+    objectPhrase: 'technical or physical control design, monitoring, and response mechanism',
+    minimumEvidence: 'design records, maintenance/test results, logs, exception reports, and response/closure records',
+    basic: 'is absent, bypassed, manually compensated, poorly maintained, or dependent on ad hoc human detection; failures may go unnoticed',
+    reactive: 'is repaired after faults, incidents, or audit findings, but failure trends, bypasses, and root causes are not consistently analysed',
+    compliant: 'is installed or implemented as required, documented, maintained, tested, and evidenced through records showing the control is operational',
+    proactive: 'is monitored for performance and failure trends, prioritised by risk, reviewed after incidents or changes, and improved to reduce residual exposure',
+    resilient: 'uses hard barriers or electronic enforcement where practicable, with redundancy, tamper alerts, self-checking, automated response, exception escalation, and tested recovery',
+  },
+  {
+    key: 'incident_rca',
+    label: 'Incident / RCA',
+    keywords: ['incident', 'root cause', 'rca', 'near miss', 'finding', 'corrective action', 'mro', 'learning'],
+    objectPhrase: 'incident, root-cause, corrective-action, and learning process',
+    minimumEvidence: 'incident records, classifications, investigations, root causes, action owners, closure evidence, and recurrence checks',
+    basic: 'is hidden, blamed, undocumented, or handled informally; lessons are not captured and evidence of closure is weak',
+    reactive: 'records significant events and corrective actions, but investigation quality, root-cause control, recurrence prevention, and action closure are inconsistent',
+    compliant: 'has a defined procedure, classification logic, investigation records, assigned actions, due dates, and evidence that required actions are tracked to closure',
+    proactive: 'uses near misses, trends, weak signals, root causes, and control failures to update risk registers, improve controls, and prevent recurrence',
+    resilient: 'is automated or system-supported for reporting, escalation, learning distribution, action closure, effectiveness verification, and continuity during abnormal operations',
+  },
+  {
+    key: 'access_authorisation',
+    label: 'Access / Authorisation',
+    keywords: ['access', 'authorisation', 'authorization', 'permission', 'entry', 'role-based', 'least privilege', 'segregation'],
+    objectPhrase: 'access, authorisation, segregation, and exception control',
+    minimumEvidence: 'authorisation records, access logs, role rules, review records, exception handling, and revocation evidence',
+    basic: 'is uncontrolled, personally negotiated, manually remembered, or poorly evidenced; inappropriate access may persist unnoticed',
+    reactive: 'is cleaned up mainly after breaches, audits, incidents, personnel changes, or visible exceptions; access reviews are inconsistent',
+    compliant: 'is role-based, approved, recorded, reviewed at the required cadence, and supported by evidence of grants, changes, and removals',
+    proactive: 'is reviewed using risk, patterns, exceptions, segregation conflicts, personnel changes, and incident learning to prevent inappropriate access',
+    resilient: 'is system-enforced through least privilege, automatic revocation triggers, anomaly detection, exception escalation, dual accountability, and audit trails',
+  },
+  {
+    key: 'continuity',
+    label: 'Continuity / DR',
+    keywords: ['continuity', 'disaster', 'recovery', 'backup', 'redundancy', 'failover', 'rto', 'rpo', 'disruption'],
+    objectPhrase: 'continuity, recovery, and disruption-survival control',
+    minimumEvidence: 'continuity plan, tested recovery results, roles, trigger-action-response rules, and improvement records',
+    basic: 'has no credible continuity arrangement, unclear recovery ownership, and weak evidence that the requirement can survive disruption or staff turnover',
+    reactive: 'is planned or repaired after outages, incidents, or management pressure; exercises and lessons are inconsistent or not closed',
+    compliant: 'has an approved and reviewed continuity arrangement with assigned roles, required records, and evidence that minimum review or test cadence is met',
+    proactive: 'is scenario-tested, risk-based, improved from exercises and incidents, and linked to critical risks, dependencies, and response triggers',
+    resilient: 'uses automated failover or recovery where practicable, tested RTO/RPO, redundancy, escalation, and recovery evidence showing minimal operational disruption',
+  },
+  {
+    key: 'monitoring_metrics',
+    label: 'Monitoring / Metrics',
+    keywords: ['monitor', 'monitoring', 'metric', 'measure', 'dashboard', 'kpi', 'performance', 'review', 'assess'],
+    objectPhrase: 'monitoring, measurement, and performance-review control',
+    minimumEvidence: 'defined measures, reports or dashboards, owners, review cadence, actions, and closure evidence',
+    basic: 'has no reliable monitoring, owner review, or repeatable performance evidence; issues are known only when someone notices or complains',
+    reactive: 'uses lagging reports or checks mainly after problems, findings, incidents, or management pressure; trends and causes are not reliably acted on',
+    compliant: 'completes required checks, reports, reviews, and records at the minimum cadence with evidence that results are reviewed by accountable owners',
+    proactive: 'uses leading indicators, trends, thresholds, risk triggers, and stakeholder review to prioritise action and improve control effectiveness',
+    resilient: 'uses continuous monitoring, automated exception queues, escalation, closure tracking, and independent assurance so weak signals are acted on before failure',
+  },
+  {
+    key: 'generic_control',
+    label: 'Control Requirement',
+    keywords: [],
+    objectPhrase: 'control requirement, ownership, evidence, and assurance mechanism',
+    minimumEvidence: 'defined requirement, accountable owner, implementation evidence, review record, and exception/action closure',
+    basic: 'is absent, informal, inconsistently applied, or dependent on individual effort; ownership and repeatable evidence are weak',
+    reactive: 'exists in some form, but action and correction occur mainly after incidents, audit findings, management pressure, or visible failure',
+    compliant: 'is defined, implemented, assigned to an accountable owner, and evidenced through records showing that the required action has been completed',
+    proactive: 'is reviewed using risk, performance information, incidents, stakeholder input, and trend data to improve control effectiveness before failures recur',
+    resilient: 'is embedded into routines, systems, monitoring, exception escalation, continuity arrangements, and ownership structures that survive staff turnover or disruption',
+  },
+];
 
 function dedupeCriteria(criteria: GeneratedCriterionItem[]): GeneratedCriterionItem[] {
   const seen = new Set<string>();
@@ -374,6 +590,22 @@ function criterionRequirementSubject(criterionText: string): string {
   return subject.replace(/[.;:,]+$/g, '').trim();
 }
 
+function evidenceClauseSubject(subject: string): string {
+  const trimmed = subject.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
+  if (!trimmed) return 'the accepted criterion requirement';
+  return trimmed
+    .replace(/^The Risk Manager: Security will support\b/i, 'the Risk Manager: Security provides Security support')
+    .replace(/^Risk Manager: Security support\b/i, 'the Risk Manager: Security provides Security support')
+    .replace(/^Risk Manager: Security accountability\b/i, 'the Risk Manager: Security is accountable')
+    .replace(/^Risk Manager: Security independent\/direct reporting\b/i, 'the Risk Manager: Security reports independently/directly')
+    .replace(/^A Security Policy\b/i, 'a Security Policy')
+    .replace(/^The Security Policy\b/i, 'the Security Policy')
+    .replace(/^A documented governance charter\b/i, 'a documented governance charter')
+    .replace(/^The Heads of Department\b/i, 'the Heads of Department')
+    .replace(/^A\b/, 'a')
+    .replace(/^The\b/, 'the');
+}
+
 function evidenceLeadFromClause(clause: string): string {
   const clean = clause.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
   if (!clean) return 'Evidence that the accepted criterion requirement';
@@ -400,17 +632,93 @@ function evidenceLeadFromClause(clause: string): string {
   return `Evidence that ${clean}`;
 }
 
+function identifyControlObject(criterionText: string): DescriptorControlObject {
+  const normalized = normalizeDescriptorText(criterionText);
+  const generic = DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'generic_control') ?? DESCRIPTOR_CONTROL_OBJECTS[0];
+  const hasRiskManagerActor =
+    normalized.includes('risk manager') || normalized.includes('security manager');
+  const supportEscalationTerms = [
+    'support',
+    'deviate',
+    'deviation',
+    'escalate',
+    'escalation',
+    'dcc',
+    'general manager',
+    'md lucara',
+    'business unit manager',
+  ];
+
+  if (
+    hasRiskManagerActor &&
+    (normalized.includes('accountable') ||
+      normalized.includes('delivery of security') ||
+      normalized.includes('coordination') ||
+      normalized.includes('co ordination'))
+  ) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'role_accountability') ?? generic;
+  }
+  if (
+    hasRiskManagerActor &&
+    (normalized.includes('report independently') ||
+      normalized.includes('report directly') ||
+      normalized.includes('senior executive') ||
+      normalized.includes('chief risk officer') ||
+      normalized.includes('managing director'))
+  ) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'direct_reporting') ?? generic;
+  }
+  if (hasRiskManagerActor && supportEscalationTerms.some((term) => normalized.includes(term))) {
+    return DESCRIPTOR_CONTROL_OBJECTS.find((item) => item.key === 'role_support_escalation') ?? generic;
+  }
+
+  let best = generic;
+  let bestScore = -1;
+  const roleSpecificKeys = new Set(['role_accountability', 'direct_reporting', 'role_support_escalation']);
+  for (const controlObject of DESCRIPTOR_CONTROL_OBJECTS.filter(
+    (item) => item.key !== 'generic_control' && !roleSpecificKeys.has(item.key),
+  )) {
+    const score = controlObject.keywords.reduce(
+      (total, keyword) => total + (normalized.includes(normalizeDescriptorText(keyword)) ? 1 : 0),
+      0,
+    );
+    if (score > bestScore) {
+      bestScore = score;
+      best = controlObject;
+    }
+  }
+  return bestScore > 0 ? best : generic;
+}
+
+function summariseEvidenceSubject(criterionText: string, controlObject: DescriptorControlObject): string {
+  const clean = stripCriterionBoilerplate(criterionText);
+  const lower = clean.toLowerCase();
+  if (controlObject.key === 'role_accountability') {
+    const siteScope = lower.includes('kdm') && lower.includes('dtp') ? ' at KDM and DTP' : '';
+    return `the Risk Manager: Security is accountable for delivery of security${siteScope}, coordination, and alignment with this standard`;
+  }
+  if (controlObject.key === 'direct_reporting') {
+    return 'the Risk Manager: Security reports independently/directly to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
+  }
+  if (controlObject.key === 'role_support_escalation') {
+    return 'the Risk Manager: Security provides Security support to HODs/Business Unit Managers through standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
+  }
+  return criterionRequirementSubject(clean) || controlObject.objectPhrase;
+}
+
 function buildFallbackMaturityDescriptorDrafts(criterion: DomainAuditCriterionRow): LevelDescriptorDraft[] {
   const criterionText = criterionEditSafeText(criterion);
-  const evidenceSubject = criterionRequirementSubject(criterionText);
-  const evidenceLead = evidenceLeadFromClause(evidenceSubject);
+  const controlObject = identifyControlObject(criterionText);
+  const evidenceSubject = summariseEvidenceSubject(criterionText, controlObject);
+  const evidenceClause = evidenceClauseSubject(evidenceSubject);
+  const evidenceLead = evidenceLeadFromClause(evidenceClause);
 
   const descriptions: Record<number, string> = {
-    1: `${evidenceLead} is absent, informal, person-dependent, weakly evidenced, or vulnerable to turnover and disruption.`,
-    2: `${evidenceLead} exists in partial form, but records show it is still mostly reactive, inconsistent, or dependent on intervention after issues arise.`,
-    3: `${evidenceLead} is approved, implemented, communicated, recorded, and evidenced at the minimum required standard.`,
-    4: `${evidenceLead} is risk-based, owner-led, measured for effectiveness, trend-informed, and improved through governance.`,
-    5: `${evidenceLead} is embedded into systems and routines, monitored continuously, escalated by exception, recoverable, and independent of single individuals.`,
+    1: `${evidenceLead} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`,
+    2: `${evidenceLead} exists in some form, but records show activity mainly after incidents, audits, management pressure, or visible non-conformance. Evidence supports response and correction, but not stable ownership, prevention, or sustained control.`,
+    3: `${evidenceLead} is current, complete, traceable, and available for auditor verification at the required minimum cadence. The evidence set includes ${controlObject.minimumEvidence} and shows the control is implemented as required.`,
+    4: `${evidenceLead} shows owner-led, risk-based review and improvement. Records include metrics or trends, incident or change learning, accountable actions, and evidence that control effectiveness is improved before failures recur.`,
+    5: `${evidenceLead} is embedded into routines, systems, monitoring, and escalation so the control remains effective during staff turnover, abnormal operations, or disruption. Records show continuity, exception escalation, automated or hard-barrier support where practicable, and independent assurance.`,
   };
 
   return MATURITY_LEVELS.map(({ level, label }) => ({
@@ -1376,7 +1684,10 @@ export function CriteriaManagement({
             `- Begin every descriptor with a grammatical evidence lead-in, normally "Evidence that ...", followed by the actual criterion evidence requirement restated as an auditable clause, then define the evidence state for that maturity level.\n` +
             `- Self-correct descriptor grammar before returning JSON: never emit "Evidence that To..." or "Evidence that Where..."; use "Evidence indicating..." for infinitive clauses and "Evidence that, where..." for conditional clauses.\n` +
             `- Treat parenthetical Note/Guidance/Reference text as explanatory context only; do not include those notes in descriptor evidence clauses.\n` +
-            `- Preserve the criterion-specific actor/action/object in every descriptor, but let the uploaded methodology and criterion text drive the structure instead of a canned role template.\n` +
+            `- Preserve the criterion-specific actor/action/object in every descriptor; the exact thing requested by the criterion must remain visible in the maturity evidence subject.\n` +
+            `- Do not replace role, reporting-line, support, escalation, or meeting criteria with generic policy/control wording.\n` +
+            `- For reporting-line criteria, describe evidence of direct access, regular meetings, agendas/minutes, decisions, actions, and escalation with the senior executive.\n` +
+            `- For support/escalation criteria, describe evidence of support provided to HODs/Business Unit Managers, deviations escalated, decisions made, actions assigned, and closure.\n` +
             `- Phrase each descriptor as the state of the evidence at that level; do not phrase descriptors as "must", "shall", or future requirements.\n` +
             `- Compliant is the neutral baseline where the requirement is approved, implemented, communicated, recorded, and evidenced.\n` +
             `- Proactive must include risk-based review, measurement/trends, ownership, and improvement.\n` +
