@@ -34,7 +34,8 @@
 - [ ] All tasks above show 🟢 DONE
 - [ ] All PRs have ASSURANCE-TOKEN
 - [ ] Session memory written
-- [ ] PREHANDOVER proof committed
+- [ ] PREHANDOVER proof committed (or BUILD-EVIDENCE PREHANDOVER_PROOF_SESSION committed)
+- [ ] ECAP reconciliation summary committed when ceremony_admin_appointed is true
 - [ ] CS2 notified for merge approval
 
 ---
