@@ -60,3 +60,72 @@ IAA_PREFLIGHT_BRIEF:
     - "ACR integrity pass for ECAP-involved handover bundle before token issuance"
   result: PREFLIGHT_BRIEF_COMPLETE
 ```
+
+## IAA Assurance Verdict
+
+Date: 2026-07-01  
+PR: #1885 — Harden MMM descriptor generation grammar and subject-knowledge grounding  
+Head SHA reviewed: `833c72cbd77c982d09a1710617ab2b6e6aceb7b6`  
+Invocation agent: foreman-v2-agent  
+Producing agent(s): ui-builder + foreman-v2-agent + execution-ceremony-admin-agent  
+Class: AAWP_MAT (product-facing BUILD/T2)  
+Ceremony-admin appointed: YES  
+STOP-AND-FIX: ACTIVE
+
+Independence: CONFIRMED (IAA did not produce implementation artifacts in this PR scope).
+
+### Check Summary
+
+- FAIL-ONLY-ONCE:
+  - A-001 invocation evidence present: PASS ✅ (canonical IAA pre-brief in this wave record)
+  - A-002 class-exemption violation: PASS ✅ (not an agent-contract PR)
+- CORE-020 Zero partial pass rule: FAIL ❌ (required handover evidence absent)
+- CORE-021 Zero-severity-tolerance: FAIL ❌ (blocking findings present)
+- BUILD_DELIVERABLE functional checks (sampled against changed scope + test execution): PASS ✅
+  - Deterministic gerund normalization implemented in `apps/mmm/src/components/assessment/CriteriaManagement.tsx`
+  - Criterion-scoped MMM subject knowledge grounding implemented
+  - `modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx` updated with regression coverage
+  - Local verification: `pnpm exec vitest run --config vitest.mmm-b4.config.ts modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx` → 56/56 PASS
+- Governance ordering / scope discipline:
+  - Delegation order proof coherent (`pre-brief -> builder appointment -> first implementation commit`): PASS ✅
+  - Changed files remain within declared implementation + governance control scope: PASS ✅
+- ACR auto-reject checks (ceremony-admin = YES):
+  - ACR-01 ECAP reconciliation summary in Tier 3 proof bundle: FAIL ❌ (no active PREHANDOVER proof bundle committed for this wave/PR)
+  - ACR-08 stale artifact path reference: FAIL ❌ (`.agent-admin/ecap/wave-mmm-descriptor-generation-hardening-2026-07-01-pr-1885-ecap-20260701.md` exists locally but is not tracked at current HEAD)
+  - ACR-09 gate set identified in proof bundle: FAIL ❌ (no `gate_set_checked` evidence in active bundle)
+  - ACR-16 PREHANDOVER `iaa_audit_token` / active-bundle coherence final-state linkage: FAIL ❌ (no active PREHANDOVER artifact with resolvable token field)
+
+MERGE GATE PARITY:
+- `merge-gate/verdict`: PASS ✅ (CI)
+- `governance/alignment`: PASS ✅ (CI)
+- `stop-and-fix/enforcement`: PASS ✅ (CI)
+- Local parity decision: FAIL ❌ (IAA blocking findings remain unresolved)
+
+Result: **REJECTION-PACKAGE**
+
+## REJECTION_HISTORY
+
+### 2026-07-01 — IAA-RJ-PR1885-20260701
+
+- PR: #1885
+- Head SHA: `833c72cbd77c982d09a1710617ab2b6e6aceb7b6`
+PHASE_B_BLOCKING_TOKEN: IAA-RJ-PR1885-20260701-FAIL
+- Finding summary:
+  1. Required active PREHANDOVER proof bundle for this wave/PR is not committed/resolvable.
+  2. ECAP artifact path is stale at current HEAD (`.agent-admin/ecap/wave-mmm-descriptor-generation-hardening-2026-07-01-pr-1885-ecap-20260701.md` is untracked).
+  3. ACR-01/08/09/16 evidence chain cannot be satisfied without active PREHANDOVER artifact fields (`gate_set_checked`, resolvable `iaa_audit_token`, active-bundle coherence linkage) and committed ECAP evidence.
+  4. Under CORE-020, missing mandatory evidence is a blocking fail.
+- Fix required:
+  1. Commit active PREHANDOVER proof artifact for PR #1885 and this wave with explicit gate inventory (`gate_set_checked`) and final-state coherence fields.
+  2. Commit the ECAP re-validation artifact on branch head (or replace with committed canonical path) and ensure reconciliation summary is linked in active bundle.
+  3. Re-invoke IAA at current head after artifact chain is complete.
+- Classification:
+  - F-001: Ceremony
+  - F-002: Ceremony
+  - F-003: Ceremony
+  - F-004: Systemic (preventable recurring ceremony-evidence completeness miss; upstream prevention action: template hardening + CI enforcement for required active-bundle PREHANDOVER and ECAP tracked-path checks)
+
+IAA_REJECTION_NOTICE:
+- RCA_REVIEW: REFER_BACK
+- HANDOVER_ALLOWED: no
+- RESULT: REJECTED_BACK_TO_PRODUCER
