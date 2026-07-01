@@ -36,14 +36,13 @@ ISMS public landing
 
 ```text
 PIT-branded entry route
-  -> sign in / create account / subscribe
-  -> PIT entitlement selection
-  -> signup/auth
+  -> signup/auth or sign in
+  -> PIT subscription/entitlement selection
   -> PIT-specific onboarding
   -> PIT workspace hub
 ```
 
-Both modes must use shared Maturion identity and entitlement logic.
+Both modes must use shared Maturion identity and entitlement logic. Entitlement selection may be presented before or after account creation in the commercial UX, but protected PIT runtime access must always evaluate authentication first, then entitlement, then role permission.
 
 ---
 
