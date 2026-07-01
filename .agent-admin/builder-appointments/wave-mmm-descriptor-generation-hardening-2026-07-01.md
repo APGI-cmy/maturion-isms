@@ -10,6 +10,8 @@ Status: appointed for bounded implementation after canonical pre-brief
 
 - iaa_wave_record_path: `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md`
 - prebrief_result: `PREFLIGHT_BRIEF_COMPLETE`
+- builder_appointment_timestamp: `2026-07-01T10:17:00+02:00`
+- order_proof_note: This appointment record is intentionally re-anchored in a dedicated commit after the pre-brief commit and before the first implementation commit.
 
 ## Assignment
 
