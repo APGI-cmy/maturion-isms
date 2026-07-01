@@ -170,6 +170,7 @@ interface DescriptorMethodologyRow {
   content?: unknown;
   source_document_name?: unknown;
   metadata?: unknown;
+  chunk_index?: unknown;
 }
 
 interface DescriptorControlObject {
@@ -812,6 +813,40 @@ async function invokeAiChatUserWithDiagnostics(
 
 
 function normalizeCriterionEvidenceClauseGrammar(value: string): string {
+  const inferPlural = (subject: string): boolean => {
+    const lower = subject.trim().toLowerCase();
+    if (!lower) return false;
+    if (/\b(and|\/)\b/.test(lower)) return true;
+    if (/\b(?:schemes?|measures?|procedures?|policies?|metrics?)\b/.test(lower)) return true;
+    return /\b(s|ies)\b/.test(lower.split(/\s+/).slice(-1)[0] ?? '');
+  };
+
+  const normalizeGerund = (text: string): string => {
+    const actorGerund = text.match(/^(.+?)\s+(Assessing|Reviewing)\s+(.+)$/i);
+    if (actorGerund) {
+      const actor = actorGerund[1].trim();
+      const verb = actorGerund[2].toLowerCase();
+      const object = actorGerund[3].trim();
+      if (verb === 'assessing') return `${actor} assesses ${object}`;
+      if (verb === 'reviewing') return `${actor} reviews ${object}`;
+    }
+
+    const leadingGerund = text.match(/^(Assessing|Reviewing)\s+(.+)$/i);
+    if (!leadingGerund) return text;
+
+    const verb = leadingGerund[1].toLowerCase();
+    const object = leadingGerund[2].trim();
+    const isPlural = inferPlural(object);
+
+    if (verb === 'assessing') {
+      return `${object} ${isPlural ? 'are' : 'is'} assessed`;
+    }
+    if (verb === 'reviewing') {
+      return `${object} ${isPlural ? 'are' : 'is'} reviewed`;
+    }
+    return text;
+  };
+
   let text = value
     .replace(/\s+/g, ' ')
     .replace(/[.;:,]+$/g, '')
@@ -836,6 +871,8 @@ function normalizeCriterionEvidenceClauseGrammar(value: string): string {
     /^Assessing\s+(.+?)\s+for\s+its\s+impact\s+on\s+Security$/i,
     (_match, subject: string) => `${subject} is assessed for its impact on Security`,
   );
+
+  text = normalizeGerund(text);
 
   return text.replace(/[.;:,]+$/g, '').trim();
 }
@@ -887,7 +924,20 @@ function validateMaturityDescriptorDrafts(
   });
 }
 
-function extractMethodologySnippet(rows: DescriptorMethodologyRow[]): string {
+function extractMethodologySnippet(
+  rows: DescriptorMethodologyRow[],
+  criterionText: string,
+  domainName: string,
+): string {
+  const criterionTokens = Array.from(
+    new Set(
+      normalizeDescriptorText(criterionText)
+        .split(/\s+/)
+        .filter((token) => token.length > 4),
+    ),
+  );
+  const normalizedDomainName = normalizeDescriptorText(domainName);
+
   const chunks = rows
     .filter((row) => {
       const content = String(row.content ?? '');
@@ -904,7 +954,48 @@ function extractMethodologySnippet(rows: DescriptorMethodologyRow[]): string {
     .map((row) => String(row.content ?? '').trim())
     .filter(Boolean);
 
-  return chunks.join('\n\n').slice(0, 12000);
+  const subjectKnowledgeChunks = rows
+    .map((row) => {
+      const content = String(row.content ?? '').trim();
+      if (!content) return null;
+      const sourceName = String(row.source_document_name ?? '');
+      const metadata = JSON.stringify(row.metadata ?? {});
+      const haystack = `${sourceName}\n${metadata}\n${content}`.toLowerCase();
+      const overlapScore = criterionTokens.reduce(
+        (score, token) => score + (haystack.includes(token) ? 1 : 0),
+        0,
+      );
+      const scopedToMmm =
+        haystack.includes('subject_knowledge') ||
+        haystack.includes('subject knowledge') ||
+        haystack.includes('mmm') ||
+        (normalizedDomainName.length > 0 && haystack.includes(normalizedDomainName));
+
+      if (!scopedToMmm || overlapScore === 0) return null;
+      return {
+        content,
+        score: overlapScore,
+        chunkIndex: Number(row.chunk_index ?? Number.MAX_SAFE_INTEGER),
+      };
+    })
+    .filter((item): item is { content: string; score: number; chunkIndex: number } => Boolean(item))
+    .sort((left, right) => {
+      if (right.score !== left.score) return right.score - left.score;
+      return left.chunkIndex - right.chunkIndex;
+    })
+    .slice(0, 3)
+    .map((item) => item.content);
+
+  const merged = [
+    chunks.join('\n\n').trim(),
+    subjectKnowledgeChunks.length > 0
+      ? `MMM Subject Knowledge (criterion-scoped):\n${subjectKnowledgeChunks.join('\n\n')}`
+      : '',
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
+  return merged.slice(0, 12000);
 }
 
 function descriptorCoverage(
@@ -1547,7 +1638,11 @@ export function CriteriaManagement({
         .from('ai_knowledge')
         .select('content,source_document_name,metadata,chunk_index')
         .order('chunk_index', { ascending: true });
-      const methodologySnippet = extractMethodologySnippet((methodologyRows ?? []) as DescriptorMethodologyRow[]);
+      const methodologySnippet = extractMethodologySnippet(
+        (methodologyRows ?? []) as DescriptorMethodologyRow[],
+        activeCriterionText,
+        domainName,
+      );
       const methodologyDrafts = validateMaturityDescriptorDrafts(
         activeCriterionText,
         buildFallbackMaturityDescriptorDrafts(criterionForFallback),
