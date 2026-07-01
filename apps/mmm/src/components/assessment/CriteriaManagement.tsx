@@ -986,16 +986,29 @@ function extractMethodologySnippet(
     .slice(0, 3)
     .map((item) => item.content);
 
-  const merged = [
-    chunks.join('\n\n').trim(),
+  const descriptorGuidelineText = chunks.join('\n\n').trim();
+  const subjectKnowledgeText =
     subjectKnowledgeChunks.length > 0
       ? `MMM Subject Knowledge (criterion-scoped):\n${subjectKnowledgeChunks.join('\n\n')}`
-      : '',
-  ]
-    .filter(Boolean)
-    .join('\n\n');
+      : '';
 
-  return merged.slice(0, 12000);
+  if (!subjectKnowledgeText) {
+    return descriptorGuidelineText.slice(0, 12000);
+  }
+
+  if (!descriptorGuidelineText) {
+    return subjectKnowledgeText.slice(0, 12000);
+  }
+
+  const separator = '\n\n';
+  const cappedSubjectKnowledge = subjectKnowledgeText.slice(0, 12000);
+  const descriptorBudget = 12000 - cappedSubjectKnowledge.length - separator.length;
+
+  if (descriptorBudget <= 0) {
+    return cappedSubjectKnowledge;
+  }
+
+  return `${descriptorGuidelineText.slice(0, descriptorBudget)}${separator}${cappedSubjectKnowledge}`;
 }
 
 function descriptorCoverage(

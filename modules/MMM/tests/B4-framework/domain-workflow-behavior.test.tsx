@@ -733,6 +733,67 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(payload.body?.message).toContain('Security department evidence expectations');
   });
 
+  it('keeps criterion-scoped subject knowledge when methodology grounding is capped', async () => {
+    const subjectKnowledgeCriterion: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-subject-knowledge-cap',
+        mps_id: 'mps-1',
+        code: 'PI-001-C100',
+        sort_order: 1,
+        name: 'The security department reviews policies and procedures and performance against security metrics.',
+      },
+    ];
+
+    const longGuidelineChunk = `Operational Maturity Model Descriptor Guideline. Critical authoring rule: do not copy the criterion into each level. Basic Reactive Compliant Proactive Resilient descriptors reconstruct operating states. ${'A'.repeat(14000)}`;
+
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: subjectKnowledgeCriterion,
+      knowledgeRows: [
+        {
+          source_document_name: 'LDCS_Maturity_Model_Descriptor_Guideline_Approved_Methodology_Reference.md',
+          metadata: { role: 'criteria_source' },
+          chunk_index: 0,
+          content: longGuidelineChunk,
+        },
+        {
+          source_document_name: 'mmm_subject_knowledge_security_department.md',
+          metadata: { role: 'subject_knowledge', scope: 'mmm' },
+          chunk_index: 1,
+          content:
+            'Security department evidence expectations: reviews policies and procedures and performance against security metrics with auditable records and periodic leadership reporting.',
+        },
+      ],
+    });
+    configureAIResponse({
+      reply: JSON.stringify([
+        {
+          level: 1,
+          label: 'Basic',
+          descriptor_text:
+            'Evidence that the security department reviews policies and procedures and performance against security metrics is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+        },
+        { level: 2, label: 'Reactive', descriptor_text: 'Evidence that the security department reviews policies and procedures and performance against security metrics exists in some form but remains mostly reactive.' },
+        { level: 3, label: 'Compliant', descriptor_text: 'Evidence that the security department reviews policies and procedures and performance against security metrics is current, complete, traceable, and available for auditor verification.' },
+        { level: 4, label: 'Proactive', descriptor_text: 'Evidence that the security department reviews policies and procedures and performance against security metrics includes risk-based review, trends, ownership, and improvement.' },
+        { level: 5, label: 'Resilient', descriptor_text: 'Evidence that the security department reviews policies and procedures and performance against security metrics is embedded into routines, monitoring, continuity, and exception escalation.' },
+      ]),
+    });
+
+    renderCriteriaManagement({
+      criteriaByMps: { 'mps-1': subjectKnowledgeCriterion },
+    });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-subject-knowledge-cap'));
+    await screen.findByTestId('descriptor-input-criterion-subject-knowledge-cap-1');
+
+    const aiCall = mockSupabase.functions.invoke.mock.calls.find((call: unknown[]) => call[0] === 'mmm-ai-chat-user');
+    expect(aiCall).toBeTruthy();
+    const payload = aiCall?.[1] as { body?: { message?: string } };
+    expect(payload.body?.message).toContain('MMM Subject Knowledge (criterion-scoped)');
+    expect(payload.body?.message).toContain('Security department evidence expectations');
+  });
+
   it('maturity descriptors preserve criterion-specific role, reporting, and support anchors', async () => {
     const riskManagerCriteria: Scenario['criteriaRows'] = [
       {
