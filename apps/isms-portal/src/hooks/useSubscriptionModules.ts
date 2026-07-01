@@ -7,6 +7,12 @@ export interface SubscriptionModule {
 
 const STATIC_SUBSCRIPTION_MODULES: SubscriptionModule[] = [
   {
+    id: 'maturity-roadmap',
+    name: 'Maturity Roadmap',
+    monthly_price: 250,
+    yearly_discount_percentage: 10,
+  },
+  {
     id: 'project-implementation',
     name: 'Project Implementation Tracker',
     monthly_price: 150,
