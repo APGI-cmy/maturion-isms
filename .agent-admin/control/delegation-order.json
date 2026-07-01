@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "wave-isms-mmm-routing-handoff-20260630",
-  "pr_number": 1879,
-  "prebrief_commit_sha": "2b050d311f7fbf68ac7ce237837971281cde3717",
-  "builder_appointment_timestamp": "2026-06-30T10:00:00Z",
-  "builder_appointment_commit_sha": "c9fc51923b23e63c5ad523bc758fc95af712bf95",
-  "builder_agent": "ui-builder",
-  "builder_task_ref": ".agent-admin/builder-appointments/wave-isms-mmm-routing-handoff-20260630.md",
-  "first_implementation_commit_sha": "216240b626ac78157965ef2a635e5c7e3eb09df2",
-  "qp_review_timestamp": "2026-06-30T10:05:00Z",
+  "wave_id": "APW-SPEC-BUILD-GREEN-V01",
+  "pr_number": 1881,
+  "prebrief_commit_sha": "b4c02e81809569473eddf3685075b45a32af9a5b",
+  "builder_appointment_timestamp": "2026-06-30T12:55:00Z",
+  "builder_appointment_commit_sha": "dc408eb9eef55d276a9ab6212e674735746d8218",
+  "builder_agent": "apw-specialist-build-to-green-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-specialist-build-to-green-builder-appointment-v0.1.md",
+  "first_implementation_commit_sha": "3e4395837eaba7bfef8dfd366b11b3190c98c47c",
+  "qp_review_timestamp": "2026-06-30T13:05:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }

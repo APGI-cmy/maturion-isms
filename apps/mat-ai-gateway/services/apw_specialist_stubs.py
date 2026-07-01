@@ -1,10 +1,8 @@
-"""APW Specialist red-test stubs.
+"""APW Specialist internal adapter.
 
-Batch 5 deliberately introduces non-activating implementation stubs for the
-APW Specialist routing path. These helpers are safe to test because they do
-not call OpenAI, Supabase, vector search, or any external service.
-
-The public chat endpoint is not wired to these stubs in this wave.
+Batch 6 turns the Batch 5 red-test stubs into an internal build-to-green
+adapter. It remains deterministic and local: no OpenAI, Supabase, vector
+search, public endpoint wiring, production registry mutation, or activation.
 """
 
 from __future__ import annotations
@@ -15,7 +13,7 @@ from typing import Any
 
 @dataclass(frozen=True)
 class RouteDecision:
-    """A minimal route decision used by APW Specialist red tests."""
+    """A minimal route decision used by APW Specialist tests."""
 
     route: str
     allowed: bool
@@ -25,7 +23,7 @@ class RouteDecision:
 
 
 class APWSpecialistRedTestStubs:
-    """Non-activating stubs for future APW Specialist routing."""
+    """Internal APW Specialist adapter for Batch 6 build-to-green."""
 
     specialist_id = "apw-specialist"
     final_synthesizer = "maturion"
@@ -37,9 +35,9 @@ class APWSpecialistRedTestStubs:
         registry_record: dict[str, Any] | None,
         candidate_sources: list[dict[str, Any]] | None,
         *,
-        activation_approved: bool = False,
+        internal_build_enabled: bool = False,
     ) -> RouteDecision:
-        """Classify a public APW request without invoking the specialist."""
+        """Classify a public APW request without public activation."""
 
         context_error = self._validate_public_apw_context(context_envelope)
         if context_error:
@@ -48,7 +46,7 @@ class APWSpecialistRedTestStubs:
         if self._requires_private_context(message):
             return self._blocked(
                 "blocked_private_context",
-                "request requires private, tenant, internal, secret or authority-bound context",
+                "request requires non-public APW context",
                 context_envelope,
             )
 
@@ -60,18 +58,66 @@ class APWSpecialistRedTestStubs:
         if filter_error:
             return self._blocked("blocked_unsafe_source", filter_error, context_envelope)
 
-        if not activation_approved:
+        if not internal_build_enabled:
             return self._blocked(
-                "blocked_activation",
-                "activation wave approval is required before specialist invocation",
+                "blocked_internal_build_disabled",
+                "internal build-to-green flag is required before draft support",
                 context_envelope,
             )
 
-        return self._blocked(
-            "blocked_stub_boundary",
-            "Batch 5 stubs never invoke APW Specialist",
-            context_envelope,
+        return RouteDecision(
+            route="apw_specialist_internal_draft_candidate",
+            allowed=True,
+            specialist_invoked=True,
+            reason="valid public APW request is eligible for internal draft support",
+            audit=self._audit(context_envelope),
         )
+
+    def build_internal_draft(
+        self,
+        message: str,
+        context_envelope: dict[str, Any],
+        registry_record: dict[str, Any] | None,
+        candidate_sources: list[dict[str, Any]] | None,
+    ) -> dict[str, Any]:
+        """Build deterministic internal draft support for Maturion."""
+
+        decision = self.classify_route(
+            message,
+            context_envelope,
+            registry_record,
+            candidate_sources,
+            internal_build_enabled=True,
+        )
+        if not decision.allowed:
+            return {
+                "route_decision": decision,
+                "draft": None,
+                "validation": None,
+            }
+
+        source_ids = [str(source.get("source_id")) for source in candidate_sources or []]
+        draft = {
+            "answer_points": [
+                "APW can explain public APGI pathways and onboarding steps.",
+                "APW can guide visitors to public information and approved handoff options.",
+            ],
+            "source_limitations": [
+                "Draft is limited to public APW context and approved public sources.",
+                "Tenant, account, audit and private records are outside this public path.",
+            ],
+            "safety_notes": [
+                "Maturion remains responsible for final synthesis.",
+                "This draft is not a commitment, approval, quote or activation decision.",
+            ],
+            "source_ids": source_ids,
+        }
+        validation = self.validate_specialist_output(draft)
+        return {
+            "route_decision": decision,
+            "draft": draft,
+            "validation": validation,
+        }
 
     def validate_specialist_output(self, output: dict[str, Any]) -> RouteDecision:
         """Validate proposed specialist output without returning it to users."""
@@ -105,7 +151,7 @@ class APWSpecialistRedTestStubs:
                 route="blocked_output_validation",
                 allowed=False,
                 specialist_invoked=False,
-                reason="source limitations are required in Batch 5 stub validation",
+                reason="source limitations are required in Batch 6 validation",
                 audit={"final_synthesizer": self.final_synthesizer},
             )
 
@@ -113,7 +159,7 @@ class APWSpecialistRedTestStubs:
             route="validated_draft_only",
             allowed=True,
             specialist_invoked=False,
-            reason="draft output passed stub validation but remains non-final",
+            reason="draft output passed validation but remains non-final",
             audit={"final_synthesizer": self.final_synthesizer},
         )
 
@@ -219,11 +265,15 @@ class APWSpecialistRedTestStubs:
             allowed=False,
             specialist_invoked=False,
             reason=reason,
-            audit={
-                "app": context_envelope.get("app"),
-                "embodiment": context_envelope.get("embodiment"),
-                "permission_scope": context_envelope.get("permission_scope"),
-                "specialist_id": self.specialist_id,
-                "final_synthesizer": self.final_synthesizer,
-            },
+            audit=self._audit(context_envelope),
         )
+
+    def _audit(self, context_envelope: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "app": context_envelope.get("app"),
+            "embodiment": context_envelope.get("embodiment"),
+            "permission_scope": context_envelope.get("permission_scope"),
+            "specialist_id": self.specialist_id,
+            "final_synthesizer": self.final_synthesizer,
+            "public_activation": False,
+        }

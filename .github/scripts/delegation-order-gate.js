@@ -8,7 +8,12 @@ const repoRoot = process.cwd();
 const workflowSha = process.env.GITHUB_SHA || '';
 const prHeadSha = process.env.PR_HEAD_SHA || workflowSha;
 const prBaseSha = process.env.PR_BASE_SHA || '';
-const controlPath = path.join(repoRoot, '.agent-admin/control/delegation-order.json');
+const prNumber = (process.env.PR_NUMBER || '').trim();
+
+const legacyControlRelPath = '.agent-admin/control/delegation-order.json';
+const scopedControlRelPath = prNumber ? `.agent-admin/control/delegation-orders/pr-${prNumber}.json` : '';
+const legacyControlPath = path.join(repoRoot, legacyControlRelPath);
+const scopedControlPath = scopedControlRelPath ? path.join(repoRoot, scopedControlRelPath) : '';
 
 const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/|api\/|lib\/)/;
 const implementationTestPattern = /(^|\/)(__tests__|tests?)\/|\.(test|spec)\.(ts|tsx|js|jsx)$/;
@@ -16,7 +21,9 @@ const stopAndFixGuidance = [
   'STOP_AND_FIX: Delegation order could not be proven.',
   'Required order: canonical IAA pre-brief commit -> builder appointment commit -> first implementation commit.',
   'Same-commit proof is not accepted because it cannot prove delegation happened before implementation.',
-  'Record/commit IAA pre-brief and builder appointment before implementation, or obtain explicit CS2 waiver outside delegation-order.json.',
+  'Implementation PRs must provide PR-scoped evidence at .agent-admin/control/delegation-orders/pr-<PR_NUMBER>.json.',
+  'Do not overwrite .agent-admin/control/delegation-order.json for product or implementation PRs.',
+  'Record/commit IAA pre-brief and builder appointment before implementation, or obtain explicit CS2 waiver outside delegation-order evidence.',
   'Do not proceed to handover.'
 ].join(' ');
 
@@ -109,7 +116,7 @@ function validIsoDateTime(value) {
   return Number.isFinite(time);
 }
 
-function validateControl(control, firstImplCommit) {
+function validateControl(control, firstImplCommit, sourceRelPath) {
   const errors = [];
   const required = [
     'schema_version',
@@ -133,6 +140,14 @@ function validateControl(control, firstImplCommit) {
   if (control.result !== 'DELEGATION_ORDER_VERIFIED') errors.push('result must be DELEGATION_ORDER_VERIFIED');
   if (!validIsoDateTime(control.builder_appointment_timestamp)) errors.push('builder_appointment_timestamp must be an ISO date-time string');
   if (!validIsoDateTime(control.qp_review_timestamp)) errors.push('qp_review_timestamp must be an ISO date-time string');
+
+  if (prNumber && String(control.pr_number) !== prNumber) {
+    errors.push(`pr_number must match current PR number ${prNumber}; got ${control.pr_number}`);
+  }
+
+  if (prNumber && sourceRelPath !== scopedControlRelPath) {
+    errors.push(`delegation evidence must be PR-scoped at ${scopedControlRelPath}; got ${sourceRelPath}`);
+  }
 
   const shaFields = [
     'prebrief_commit_sha',
@@ -182,6 +197,19 @@ function validateControl(control, firstImplCommit) {
   return errors;
 }
 
+function selectControlEvidence() {
+  if (scopedControlPath && fs.existsSync(scopedControlPath)) {
+    return { path: scopedControlPath, relPath: scopedControlRelPath };
+  }
+
+  if (!prNumber && fs.existsSync(legacyControlPath)) {
+    warn(`PR_NUMBER was not available; falling back to legacy singleton ${legacyControlRelPath}.`);
+    return { path: legacyControlPath, relPath: legacyControlRelPath };
+  }
+
+  return null;
+}
+
 function exitWithStopAndFix(code = 1) {
   console.error(`::error::${stopAndFixGuidance}`);
   process.exit(code);
@@ -189,17 +217,25 @@ function exitWithStopAndFix(code = 1) {
 
 const changedFiles = getChangedFiles();
 const implementationFiles = changedFiles.filter((file) => implementationPathPattern.test(file) || implementationTestPattern.test(file));
+const legacySingletonChanged = changedFiles.includes(legacyControlRelPath);
 
 console.log('=== Builder Delegation Order Gate ===');
 console.log(`Workflow SHA: ${workflowSha || 'unknown'}`);
+console.log(`PR number: ${prNumber || 'unknown'}`);
 console.log(`PR head SHA: ${prHeadSha || 'unknown'}`);
 console.log(`PR base SHA: ${prBaseSha || 'unknown'}`);
 console.log(`Changed files: ${changedFiles.length}`);
 console.log(`Implementation files changed: ${implementationFiles.length}`);
+console.log(`Expected PR-scoped evidence: ${scopedControlRelPath || 'unavailable because PR_NUMBER is missing'}`);
 
 if (implementationFiles.length === 0) {
   console.log('No implementation-like files changed. Delegation order gate passes.');
   process.exit(0);
+}
+
+if (legacySingletonChanged) {
+  fail(`Implementation PRs must not modify legacy singleton delegation evidence at ${legacyControlRelPath}. Use ${scopedControlRelPath || '.agent-admin/control/delegation-orders/pr-<PR_NUMBER>.json'} instead.`);
+  exitWithStopAndFix(1);
 }
 
 const detectedFirstImplementationCommit = firstImplementationCommit(implementationFiles);
@@ -208,17 +244,19 @@ if (!detectedFirstImplementationCommit) {
   exitWithStopAndFix(process.exitCode || 1);
 }
 
-if (!fs.existsSync(controlPath)) {
-  fail('Missing .agent-admin/control/delegation-order.json while implementation files changed.');
+const selectedControl = selectControlEvidence();
+if (!selectedControl) {
+  fail(`Missing PR-scoped delegation evidence while implementation files changed: ${scopedControlRelPath || '.agent-admin/control/delegation-orders/pr-<PR_NUMBER>.json'}`);
   warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
   warn(`detected first implementation commit: ${detectedFirstImplementationCommit}`);
   exitWithStopAndFix(process.exitCode || 1);
 }
 
-const control = readJson(controlPath);
+console.log(`Using delegation evidence: ${selectedControl.relPath}`);
+const control = readJson(selectedControl.path);
 if (!control) exitWithStopAndFix(process.exitCode || 1);
 
-const errors = validateControl(control, detectedFirstImplementationCommit);
+const errors = validateControl(control, detectedFirstImplementationCommit, selectedControl.relPath);
 if (errors.length > 0) {
   console.error('Delegation order gate failed:');
   for (const error of errors) console.error(`- ${error}`);
