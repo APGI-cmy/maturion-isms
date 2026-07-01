@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-isms-mmm-subscription-routing-20260701",
+  "pr_number": 1884,
+  "prebrief_commit_sha": "610a7b0430e2881eadd10518b654a69625f2457c",
+  "builder_appointment_timestamp": "2026-07-01T08:50:00Z",
+  "builder_appointment_commit_sha": "f470cec5cc66cb3870854d1863c1e00307ea661a",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-isms-mmm-subscription-routing-20260701.md",
+  "first_implementation_commit_sha": "e1c9d3bb96749d0460a1ca0e2a4b1cb441e244b1",
+  "qp_review_timestamp": "2026-07-01T08:55:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
