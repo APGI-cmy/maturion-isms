@@ -28,7 +28,7 @@ ceremony_admin_appointed: true
 | 2 | Canonical IAA pre-brief in wave record | independent-assurance-agent | 🟢 DONE | `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md` |
 | 3 | Builder appointment for hardening implementation scope | foreman-v2-agent | 🟢 DONE | `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md` |
 | 4 | Hardening implementation (descriptor generation grounding + deterministic grammar normalization) | ui-builder | 🟢 DONE | commit `74b022f16414b9d42d1612b421635568753fb2d4` / PR #1885 |
-| 5 | Foreman QP review, ECAP admin validation, IAA final assurance | foreman-v2-agent + execution-ceremony-admin-agent + independent-assurance-agent | 🟡 IN PROGRESS | PREHANDOVER recorded; ECAP PASS recorded; IAA token pending |
+| 5 | Foreman QP review, ECAP admin validation, IAA final assurance | foreman-v2-agent + execution-ceremony-admin-agent + independent-assurance-agent | 🟢 DONE | IAA-session-304-20260701-PASS |
 
 ## Wave Completion Gate
 
@@ -38,7 +38,7 @@ ceremony_admin_appointed: true
 - [x] Builder implementation delivered to green with required MMM tests
 - [x] Foreman QP PASS recorded
 - [x] ECAP admin validation completed
-- [ ] IAA final assurance token recorded
+- [x] IAA final assurance token recorded
 - [x] PR opened for this job
 
 ## Foreman readiness declarations (current HEAD)

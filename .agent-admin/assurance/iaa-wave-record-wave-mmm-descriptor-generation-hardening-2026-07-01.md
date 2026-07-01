@@ -152,3 +152,37 @@ IAA_REJECTION_NOTICE:
 - RCA_REVIEW: REFER_BACK
 - HANDOVER_ALLOWED: no
 - RESULT: REJECTED_BACK_TO_PRODUCER
+
+### 2026-07-01 — IAA-PR1885-20260701-R3-FINAL
+
+- PR: #1885
+- Head SHA: `64ad593ec83f7816d1e81655cd28d067e72e72ab`
+- Invocation: foreman-v2-agent
+- Produced by: ui-builder + foreman-v2-agent + execution-ceremony-admin-agent
+- Category: AAWP_MAT (product-facing BUILD/T2)
+- Ceremony-admin: YES
+- Independence: CONFIRMED
+
+Check outcomes:
+- FAIL-ONLY-ONCE A-001: PASS ✅
+- FAIL-ONLY-ONCE A-002: PASS ✅
+- CORE-020: PASS ✅
+- CORE-021: PASS ✅
+- BUILD_DELIVERABLE overlay: PASS ✅
+- ACR-01 through ACR-16 (ECAP-involved active bundle): PASS ✅
+- MERGE GATE PARITY: PASS ✅ (`merge-gate/verdict`, `governance/alignment`, `stop-and-fix/enforcement`)
+- Local verification: `pnpm exec vitest run --config vitest.mmm-b4.config.ts modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx` → PASS (56/56)
+
+Result: ASSURANCE-TOKEN
+
+## TOKEN
+
+### 2026-07-01 — IAA-PR1885-20260701-R3-FINAL
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-304-20260701-PASS
+
+- PR: #1885 — Harden MMM descriptor generation grammar and subject-knowledge grounding
+- Head SHA: `64ad593ec83f7816d1e81655cd28d067e72e72ab`
+- Merge gate parity: PASS
+- Verdict: ASSURANCE-TOKEN
+- Adoption phase: PHASE_B_BLOCKING
