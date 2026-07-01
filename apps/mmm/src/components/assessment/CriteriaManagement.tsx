@@ -981,10 +981,11 @@ function extractMethodologySnippet(
         (normalizedDomainName.length > 0 && haystack.includes(normalizedDomainName));
 
       if (!scopedToMmm || overlapScore === 0) return null;
+      const parsedChunkIndex = Number(row.chunk_index);
       return {
         content,
         score: overlapScore,
-        chunkIndex: Number(row.chunk_index ?? Number.MAX_SAFE_INTEGER),
+        chunkIndex: Number.isFinite(parsedChunkIndex) ? parsedChunkIndex : Number.MAX_SAFE_INTEGER,
       };
     })
     .filter((item): item is { content: string; score: number; chunkIndex: number } => Boolean(item))
