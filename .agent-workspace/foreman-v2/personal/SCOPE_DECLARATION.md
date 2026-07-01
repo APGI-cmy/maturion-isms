@@ -17,6 +17,7 @@
 | `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md` | Canonical IAA pre-brief/final assurance wave record (to be created by IAA) |
 | `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md` | Builder appointment artifact (post-prebrief) |
 | `.agent-admin/control/delegation-order.json` | Delegation ordering proof artifact |
+| `.agent-admin/ecap/wave-mmm-descriptor-generation-hardening-2026-07-01-pr-1885-ecap-20260701.md` | ECAP admin validation return artifact path |
 
 ## Planned Implementation Scope (builder-owned only after prebrief/delegation gates)
 

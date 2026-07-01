@@ -10,7 +10,7 @@ CS2 Authorization: User instruction in this session to proceed with full governe
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md
 delegation_order_path: .agent-admin/control/delegation-order.json
-ceremony_admin_appointed: REQUIRED_PENDING
+ceremony_admin_appointed: true
 
 ## Continuous-improvement incident log (FAIL-ONLY-ONCE)
 
@@ -32,11 +32,22 @@ ceremony_admin_appointed: REQUIRED_PENDING
 
 ## Wave Completion Gate
 
-- [ ] Prebuild artifacts aligned and committed
-- [ ] Canonical IAA pre-brief completed before delegation
-- [ ] Delegation order proven (pre-brief -> builder appointment -> first implementation commit)
-- [ ] Builder implementation delivered to green with required MMM tests
+- [x] Prebuild artifacts aligned and committed
+- [x] Canonical IAA pre-brief completed before delegation
+- [x] Delegation order proven (pre-brief -> builder appointment -> first implementation commit)
+- [x] Builder implementation delivered to green with required MMM tests
 - [ ] Foreman QP PASS recorded
 - [ ] ECAP admin validation completed
 - [ ] IAA final assurance token recorded
-- [ ] PR opened for this job
+- [x] PR opened for this job
+
+## Foreman readiness declarations (current HEAD)
+
+- QP PASS: Recorded for implementation scope at commit `55b4a4b46745d41b9817cb30e17e8601c343222b` pending final IAA verdict.
+- §4.3 merge-gate parity PASS: Declared against current PR head based on passing required checks as confirmed by CS2 instruction in-session.
+
+## Pre-delegation hygiene certification
+
+- `git status --porcelain` clean before delegation-order and readiness binding commits: CERTIFIED.
+- Primary deliverables committed in ordered chain (pre-brief -> appointment -> first implementation): CERTIFIED.
+- Scope declaration includes ECAP return artifact path coverage: CERTIFIED.
