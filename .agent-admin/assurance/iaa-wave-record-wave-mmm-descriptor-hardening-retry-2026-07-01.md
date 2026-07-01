@@ -5,8 +5,8 @@ date: 2026-07-01
 repository: APGI-cmy/maturion-isms
 branch: apgi-cmy-fix-descriptor-gerund-normalization
 issue: "#1883 — [Agent Task] MMM descriptor generation hardening with governed prebuild flow"
-pr: PENDING
-ceremony_admin_appointed: PENDING (determine post-QP)
+pr: "#1893"
+ceremony_admin_appointed: true
 
 ## PRE-BRIEF
 
@@ -14,7 +14,7 @@ ceremony_admin_appointed: PENDING (determine post-QP)
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "wave-mmm-descriptor-hardening-retry-2026-07-01"
-  pr: "PENDING"
+  pr: "#1893"
   issue: "#1883 — [Agent Task] MMM descriptor generation hardening with governed prebuild flow"
   branch: "apgi-cmy-fix-descriptor-gerund-normalization"
   qualifying_tasks:

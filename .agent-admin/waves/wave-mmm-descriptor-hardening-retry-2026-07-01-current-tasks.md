@@ -8,7 +8,7 @@
 **Date**: 2026-07-01  
 **CS2 Authorization**: CONFIRMED — issue #1883 opened by @APGI-cmy (CS2).  
 **IAA Wave Record Target**: `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-hardening-retry-2026-07-01.md`  
-**Status**: IAA_PREBRIEF_READY
+**Status**: BUILDER_HANDOVER_RECEIVED
 
 ---
 
@@ -19,9 +19,9 @@
 - [x] TASK-MMM-DHR-003 — QA-to-Red retry criteria committed
 - [x] TASK-MMM-DHR-004 — IAA PRE-BRIEF committed in wave record (required before builder execution)
 - [x] TASK-MMM-DHR-005 — Builder appointment package committed (execution blocked until TASK-MMM-DHR-004)
-- [ ] TASK-MMM-DHR-006 — PR opened for retry slice (PR number required for delegation-order path)
-- [ ] TASK-MMM-DHR-007 — Delegation order artifact committed (`.agent-admin/control/delegation-orders/pr-<PR_NUMBER>.json`)
-- [ ] TASK-MMM-DHR-008 — Builder execution delegated after order-gate prerequisites
+- [x] TASK-MMM-DHR-006 — PR opened for retry slice (#1893)
+- [x] TASK-MMM-DHR-007 — Delegation order artifact committed (`.agent-admin/control/delegation-orders/pr-1893.json`)
+- [x] TASK-MMM-DHR-008 — Builder execution delegated after order-gate prerequisites (implementation commit `df00d65a`)
 
 ---
 
