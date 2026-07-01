@@ -150,6 +150,9 @@ jobs:
           #   FOREMAN (strong):
           #     1. Added or modified Foreman session memory in .agent-workspace/foreman*/memory/
           #     2. Added or modified Foreman PREHANDOVER proof in .agent-workspace/foreman*/memory/
+          #     3. Added or modified PR-scoped delegation admin artifacts:
+          #        - .agent-admin/control/delegation-orders/pr-*.json
+          #        - .agent-admin/builder-appointments/*.md
           #   BUILDER (secondary — honored when no Foreman artifacts present):
           #     3. copilot-builder-role label (no Foreman artifacts detected)
           #   UNRESOLVED:
@@ -176,12 +179,23 @@ jobs:
             origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
             grep -E '^\.agent-workspace/foreman.*/memory/PREHANDOVER-.*\.md$' || true)
 
+          NEW_PR_DELEGATION_ORDER=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-admin/control/delegation-orders/pr-[0-9]+\.json$' || true)
+
+          NEW_BUILDER_APPOINTMENT=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-admin/builder-appointments/.*\.md$' || true)
+
           if [ -n "$NEW_FOREMAN_SESSION" ]; then
             GOVERNED_ROLE="FOREMAN"
             ROLE_EVIDENCE_SOURCE="foreman-session-memory"
           elif [ -n "$NEW_FOREMAN_PREHANDOVER" ]; then
             GOVERNED_ROLE="FOREMAN"
             ROLE_EVIDENCE_SOURCE="foreman-prehandover-proof"
+          elif [ -n "$NEW_PR_DELEGATION_ORDER" ] || [ -n "$NEW_BUILDER_APPOINTMENT" ]; then
+            GOVERNED_ROLE="FOREMAN"
+            ROLE_EVIDENCE_SOURCE="pr-scoped-admin-delegation-artifacts"
           elif [[ "$HAS_BUILDER_LABEL" == "true" ]]; then
             GOVERNED_ROLE="BUILDER"
             ROLE_EVIDENCE_SOURCE="copilot-builder-role-label"
@@ -230,16 +244,58 @@ jobs:
           # Delegation evidence proves implementation files are builder-produced,
           # not Foreman-produced — enabling the gate to PASS even when impl files exist.
           #
-          # Evidence sources (scoped to PR-changed Foreman artifacts, --diff-filter=AM):
-          #   1. agents_delegated_to: field in Foreman session memory (added or modified)
-          #   2. Builder agent references in Foreman PREHANDOVER proof (added or modified)
+          # Evidence sources (scoped to PR-changed artifacts, --diff-filter=AM):
+          #   1. PR-scoped delegation order JSON
+          #   2. PR-scoped builder appointment artifacts
+          #   3. agents_delegated_to: field in Foreman session memory (added or modified)
+          #   4. Builder agent references in Foreman PREHANDOVER proof (added or modified)
           DELEGATION_FOUND=false
           DELEGATION_SOURCE=""
 
           echo "--- Dimension 3: Delegation Evidence Validation ---"
           echo ""
 
-          # Primary: agents_delegated_to: in Foreman session memory (added or modified)
+          # Primary: PR-scoped delegation-order artifacts
+          CHANGED_DELEGATION_ORDER_FILES=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-admin/control/delegation-orders/pr-[0-9]+\.json$' || true)
+
+          if [[ "$DELEGATION_FOUND" == "false" && -n "$CHANGED_DELEGATION_ORDER_FILES" ]]; then
+            while IFS= read -r order_file; do
+              if [ -f "$order_file" ]; then
+                if grep -qE '"result"[[:space:]]*:[[:space:]]*"DELEGATION_ORDER_VERIFIED"' "$order_file" 2>/dev/null && \
+                   grep -qE '"builder_agent"[[:space:]]*:[[:space:]]*"[^"]+"' "$order_file" 2>/dev/null; then
+                  DELEGATION_FOUND=true
+                  DELEGATION_SOURCE="delegation-order: $order_file"
+                  echo "✅ Delegation evidence found in PR-scoped delegation order:"
+                  echo "   File: $order_file"
+                  break
+                fi
+              fi
+            done <<< "$CHANGED_DELEGATION_ORDER_FILES"
+          fi
+
+          # Secondary: PR-scoped builder appointment artifacts
+          CHANGED_BUILDER_APPOINTMENTS=$(git diff --name-only --diff-filter=AM \
+            origin/"$BASE_BRANCH"...HEAD 2>/dev/null | \
+            grep -E '^\.agent-admin/builder-appointments/.*\.md$' || true)
+
+          if [[ "$DELEGATION_FOUND" == "false" && -n "$CHANGED_BUILDER_APPOINTMENTS" ]]; then
+            while IFS= read -r appoint_file; do
+              if [ -f "$appoint_file" ]; then
+                if grep -qiE "(api-builder|ui-builder|qa-builder|schema-builder|integration-builder|mat-specialist|pit-specialist)" \
+                  "$appoint_file" 2>/dev/null; then
+                  DELEGATION_FOUND=true
+                  DELEGATION_SOURCE="builder-appointment: $appoint_file"
+                  echo "✅ Delegation evidence found in builder appointment artifact:"
+                  echo "   File: $appoint_file"
+                  break
+                fi
+              fi
+            done <<< "$CHANGED_BUILDER_APPOINTMENTS"
+          fi
+
+          # Tertiary: agents_delegated_to: in Foreman session memory (added or modified)
           if [ -n "$NEW_FOREMAN_SESSION" ]; then
             while IFS= read -r session_file; do
               if [ -f "$session_file" ]; then
@@ -277,7 +333,7 @@ jobs:
             done <<< "$NEW_FOREMAN_SESSION"
           fi
 
-          # Secondary: builder agent references in PREHANDOVER proof (added or modified)
+          # Quaternary: builder agent references in PREHANDOVER proof (added or modified)
           if [[ "$DELEGATION_FOUND" == "false" && -n "$NEW_FOREMAN_PREHANDOVER" ]]; then
             while IFS= read -r ph_file; do
               if [ -f "$ph_file" ]; then
@@ -636,14 +692,59 @@ jobs:
           echo "same copilot-swe-agent[bot] identity regardless of whether"
           echo "Foreman or a builder is the executing agent."
           echo "Builder delegation is now proven via governance evidence:"
-          echo "  1. agents_delegated_to: field in PR-changed session memory"
-          echo "  2. Delegated agents listed in PR-changed PREHANDOVER proof"
+          echo "  1. PR-scoped delegation-order artifacts"
+          echo "  2. PR-scoped builder appointment artifacts"
+          echo "  3. agents_delegated_to: field in PR-changed session memory"
+          echo "  4. Delegated agents listed in PR-changed PREHANDOVER proof"
           echo ""
 
           BUILDER_FOUND=false
           BUILDER_EVIDENCE_SOURCE=""
 
-          # Primary evidence: agents_delegated_to: field in session memory.
+          # Primary evidence: PR-scoped delegation-order artifacts.
+          CHANGED_DELEGATION_ORDER_FILES=$(git diff --name-only --diff-filter=AM \
+            origin/$BASE_BRANCH...HEAD 2>/dev/null | \
+            grep -E '^\.agent-admin/control/delegation-orders/pr-[0-9]+\.json$' \
+            || true)
+
+          if [ "$BUILDER_FOUND" = false ] && [ -n "$CHANGED_DELEGATION_ORDER_FILES" ]; then
+            while IFS= read -r order_file; do
+              if [ -f "$order_file" ]; then
+                if grep -qE '"result"[[:space:]]*:[[:space:]]*"DELEGATION_ORDER_VERIFIED"' "$order_file" 2>/dev/null && \
+                   grep -qE '"builder_agent"[[:space:]]*:[[:space:]]*"[^"]+"' "$order_file" 2>/dev/null; then
+                  BUILDER_FOUND=true
+                  BUILDER_EVIDENCE_SOURCE="delegation-order: $order_file"
+                  echo "✅ Builder delegation found in PR-scoped delegation order:"
+                  echo "   File: $order_file"
+                  break
+                fi
+              fi
+            done <<< "$CHANGED_DELEGATION_ORDER_FILES"
+          fi
+
+          # Secondary evidence: PR-scoped builder appointment artifacts.
+          CHANGED_BUILDER_APPOINTMENTS=$(git diff --name-only --diff-filter=AM \
+            origin/$BASE_BRANCH...HEAD 2>/dev/null | \
+            grep -E '^\.agent-admin/builder-appointments/.*\.md$' \
+            || true)
+
+          if [ "$BUILDER_FOUND" = false ] && [ -n "$CHANGED_BUILDER_APPOINTMENTS" ]; then
+            while IFS= read -r appoint_file; do
+              if [ -f "$appoint_file" ]; then
+                if grep -qiE \
+                  "(api-builder|ui-builder|qa-builder|schema-builder|integration-builder|mat-specialist|pit-specialist)" \
+                  "$appoint_file" 2>/dev/null; then
+                  BUILDER_FOUND=true
+                  BUILDER_EVIDENCE_SOURCE="builder-appointment: $appoint_file"
+                  echo "✅ Builder delegation found in builder appointment artifact:"
+                  echo "   File: $appoint_file"
+                  break
+                fi
+              fi
+            done <<< "$CHANGED_BUILDER_APPOINTMENTS"
+          fi
+
+          # Tertiary evidence: agents_delegated_to: field in session memory.
           # Use --diff-filter=AM (Added or Modified) to match the governed-role
           # classifier scope: a PR that modifies an existing session memory to
           # add/update agents_delegated_to: must also satisfy this evidence check.
@@ -693,7 +794,7 @@ jobs:
             done <<< "$CHANGED_SESSION_FILES"
           fi
 
-          # Secondary evidence: PREHANDOVER proof lists delegated agents.
+          # Quaternary evidence: PREHANDOVER proof lists delegated agents.
           # Use --diff-filter=AM to match the governed-role classifier scope.
           if [ "$BUILDER_FOUND" = false ]; then
             CHANGED_PREHANDOVER_FILES=$(git diff --name-only --diff-filter=AM \
@@ -731,9 +832,13 @@ jobs:
             echo "of builder delegation was found."
             echo ""
             echo "Checked:"
-            echo "  1. agents_delegated_to: field in PR-changed session memory"
+            echo "  1. PR-scoped delegation-order artifacts"
+            echo "     (.agent-admin/control/delegation-orders/pr-*.json)"
+            echo "  2. PR-scoped builder appointment artifacts"
+            echo "     (.agent-admin/builder-appointments/*.md)"
+            echo "  3. agents_delegated_to: field in PR-changed session memory"
             echo "     (.agent-workspace/foreman*/memory/session-*.md)"
-            echo "  2. Builder agent references in PR-changed PREHANDOVER proof"
+            echo "  4. Builder agent references in PR-changed PREHANDOVER proof"
             echo "     (.agent-workspace/foreman*/memory/PREHANDOVER-*.md)"
             echo ""
             echo "Per LIVING_AGENT_SYSTEM.md v6.2.0 and Foreman contract"
