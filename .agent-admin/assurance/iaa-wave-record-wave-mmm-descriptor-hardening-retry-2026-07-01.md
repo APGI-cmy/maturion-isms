@@ -90,3 +90,27 @@ CORE-026 PASS (7/7 criteria) | CORE-027 PASS (Q5=YES) | Order-gate PASS | SHA-in
 **Systemic prevention:** Add PREHANDOVER proof + ECAP reconciliation task to wave-current-tasks-template.md for all BUILD DELIVERABLE waves with ceremony_admin_appointed: true.
 
 **Re-invocation:** Create ECAP reconciliation summary, PREHANDOVER proof, session memory → commit → re-invoke IAA. No substantive code changes required.
+
+## TOKEN
+
+```yaml
+PHASE_B_BLOCKING_TOKEN: IAA-session-1282-wave-mmm-descriptor-hardening-retry-20260701-PASS
+session_id: session-1282
+pr: "#1893"
+wave: wave-mmm-descriptor-hardening-retry-2026-07-01
+branch: apgi-cmy-fix-descriptor-gerund-normalization
+date: 2026-07-01
+verdict: ASSURANCE-TOKEN
+checks_run: 24
+checks_pass: 24
+checks_fail: 0
+adoption_phase: PHASE_B_BLOCKING
+merge_gate_parity: PASS
+prior_blockers_resolved:
+  - ACR-01
+  - CERT-001
+  - CERT-002
+  - CERT-003
+  - CERT-004
+merge_authority: CS2
+```
