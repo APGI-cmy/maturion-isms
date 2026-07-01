@@ -22,10 +22,10 @@ This pack files the following artifacts:
 - `modules/pit/04-architecture/slice-2-1-entry-auth-architecture-addendum-20260630.md`
 - `modules/pit/06-qa-to-red/slice-2-1-entry-auth-standalone-red-tests-20260630.md`
 - `modules/pit/12-build/slice-2-1/traceability-note-20260630.md`
+- `modules/pit/12-build/slice-2-1/traceability-matrix-20260630.md`
 - `modules/pit/12-build/slice-2-1/iaa-prebrief-contract-20260630.md`
 - `modules/pit/12-build/slice-2-1/builder-hold-notice-20260630.md`
 - `modules/pit/12-build/slice-2-1/evidence-expectations-20260630.md`
-
 ---
 
 ## 2. Design decision
