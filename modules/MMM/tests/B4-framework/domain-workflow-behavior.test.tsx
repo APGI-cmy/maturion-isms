@@ -404,6 +404,14 @@ describe('T-MMM-DGC-1871: Descriptor grammar closure', () => {
       ),
     ).toContain('Evidence that the accountable person is documented is absent');
   });
+
+  it('treats generic plural nouns as plural in passive gerund rewrites', () => {
+    expect(
+      normalizeDescriptorEvidenceGrammar(
+        'Evidence that Reviewing controls is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+      ),
+    ).toContain('Evidence that controls are reviewed is absent');
+  });
 });
 describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   beforeEach(() => {

@@ -816,9 +816,15 @@ function normalizeCriterionEvidenceClauseGrammar(value: string): string {
   const inferPlural = (subject: string): boolean => {
     const lower = subject.trim().toLowerCase();
     if (!lower) return false;
-    if (/\b(and|\/)\b/.test(lower)) return true;
+    if (/\band\b|\/|,/.test(lower)) return true;
     if (/\b(?:schemes?|measures?|procedures?|policies?|metrics?)\b/.test(lower)) return true;
-    return /\b(s|ies)\b/.test(lower.split(/\s+/).slice(-1)[0] ?? '');
+    const lastToken = lower
+      .split(/\s+/)
+      .slice(-1)[0]
+      ?.replace(/[^a-z]/g, '') ?? '';
+    if (!lastToken) return false;
+    if (/(ss|us|is)$/.test(lastToken)) return false;
+    return /(ies|ses|xes|zes|ches|shes|s)$/.test(lastToken);
   };
 
   const normalizeGerund = (text: string): string => {
