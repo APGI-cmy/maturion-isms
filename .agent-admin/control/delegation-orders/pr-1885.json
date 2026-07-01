@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-generation-hardening-2026-07-01",
+  "pr_number": 1885,
+  "prebrief_commit_sha": "9d0be046c503072ec30f474143372c02b971c35a",
+  "builder_appointment_timestamp": "2026-07-01T10:17:00+02:00",
+  "builder_appointment_commit_sha": "e1293c7a27027151f314aabce5d3957b4fe86cd6",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md",
+  "first_implementation_commit_sha": "74b022f16414b9d42d1612b421635568753fb2d4",
+  "qp_review_timestamp": "2026-07-01T10:17:16+02:00",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
