@@ -1,4 +1,4 @@
-"""Red tests for APW Specialist routing stubs."""
+"""Tests for the APW Specialist internal adapter."""
 
 from __future__ import annotations
 
@@ -121,18 +121,52 @@ def test_blocks_private_mandate_request() -> None:
     assert decision.route == "blocked_private_context"
 
 
-def test_blocks_valid_route_until_later_approval() -> None:
+def test_valid_route_stays_blocked_until_internal_build_enabled() -> None:
     decision = _decision()
     assert decision.allowed is False
     assert decision.specialist_invoked is False
-    assert decision.route == "blocked_activation"
+    assert decision.route == "blocked_internal_build_disabled"
 
 
-def test_stub_never_invokes_even_when_flag_is_true() -> None:
-    decision = _decision(activation_approved=True)
-    assert decision.allowed is False
-    assert decision.specialist_invoked is False
-    assert decision.route == "blocked_stub_boundary"
+def test_valid_route_becomes_internal_draft_candidate() -> None:
+    decision = _decision(internal_build_enabled=True)
+    assert decision.allowed is True
+    assert decision.specialist_invoked is True
+    assert decision.route == "apw_specialist_internal_draft_candidate"
+    assert decision.audit["final_synthesizer"] == "maturion"
+    assert decision.audit["public_activation"] is False
+
+
+def test_build_internal_draft_returns_validated_non_final_draft() -> None:
+    stubs = APWSpecialistRedTestStubs()
+    result = stubs.build_internal_draft(
+        "Explain APW onboarding.",
+        VALID_PUBLIC_APW_CONTEXT,
+        ACTIVE_REGISTRY_RECORD,
+        [PUBLIC_SAFE_SOURCE],
+    )
+
+    assert result["route_decision"].allowed is True
+    assert result["route_decision"].specialist_invoked is True
+    assert result["draft"] is not None
+    assert result["draft"]["source_ids"] == ["apw-public-overview"]
+    assert result["validation"].allowed is True
+    assert result["validation"].specialist_invoked is False
+    assert result["validation"].route == "validated_draft_only"
+
+
+def test_build_internal_draft_returns_blocked_decision_without_draft() -> None:
+    stubs = APWSpecialistRedTestStubs()
+    result = stubs.build_internal_draft(
+        "Explain APW onboarding.",
+        {**VALID_PUBLIC_APW_CONTEXT, "app": "ISMS"},
+        ACTIVE_REGISTRY_RECORD,
+        [PUBLIC_SAFE_SOURCE],
+    )
+
+    assert result["route_decision"].allowed is False
+    assert result["draft"] is None
+    assert result["validation"] is None
 
 
 def test_output_validation_blocks_authority_claims() -> None:

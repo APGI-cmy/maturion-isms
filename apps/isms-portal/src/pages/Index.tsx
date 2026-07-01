@@ -18,6 +18,7 @@ import {
   Rocket,
 } from 'lucide-react';
 import { useIsms } from '@/context/IsmsContext';
+import { MMM_APP_URL, isExternalModuleRoute } from '@/lib/moduleRuntimeRoutes';
 import { ROUTES } from '@/lib/routes';
 import { ISMS_MODULE_CARDS } from '@/lib/moduleCards';
 
@@ -103,11 +104,24 @@ const Index: React.FC = () => {
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
   const resolveModuleRoute = (moduleId: string, route: string) => {
+    if (moduleId === 'maturity-roadmap' && hasEntitlement('maturity-roadmap')) {
+      return MMM_APP_URL;
+    }
+
     if (moduleId === 'project-implementation' && hasEntitlement('project-implementation')) {
       return ROUTES.PIT_TRACKER;
     }
 
     return route;
+  };
+
+  const openRoute = (route: string) => {
+    if (isExternalModuleRoute(route)) {
+      window.location.assign(route);
+      return;
+    }
+
+    navigate(route);
   };
 
   const handleStartAssessment = () => {
@@ -117,7 +131,7 @@ const Index: React.FC = () => {
   const handleModuleKeyDown = (event: React.KeyboardEvent, route: string) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      navigate(route);
+      openRoute(route);
     }
   };
 
@@ -228,21 +242,22 @@ const Index: React.FC = () => {
             {ISMS_MODULE_CARDS.map((module) => {
               const moduleRoute = resolveModuleRoute(module.id, module.route);
               const isEntitledPit = module.id === 'project-implementation' && hasEntitlement('project-implementation');
+              const isEntitledMmm = module.id === 'maturity-roadmap' && hasEntitlement('maturity-roadmap');
 
               return (
                 <Card
                   key={module.id}
                   role="button"
                   tabIndex={0}
-                  aria-label={isEntitledPit ? `Open ${module.name}` : `Open public overview for ${module.name}`}
+                  aria-label={isEntitledPit || isEntitledMmm ? `Open ${module.name}` : `Open public overview for ${module.name}`}
                   className={`relative transition-all duration-300 hover:shadow-xl hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer group border-2 ${module.borderColor} bg-gradient-to-br ${module.bgGradient}`}
-                  onClick={() => navigate(moduleRoute)}
+                  onClick={() => openRoute(moduleRoute)}
                   onKeyDown={(event) => handleModuleKeyDown(event, moduleRoute)}
                 >
                   <CardHeader className="text-center pb-4">
                     <div className="flex justify-end mb-2">
-                      <Badge variant={isEntitledPit ? 'default' : module.badgeVariant} className="text-xs">
-                        {isEntitledPit ? 'Active' : module.badge}
+                      <Badge variant={isEntitledPit || isEntitledMmm ? 'default' : module.badgeVariant} className="text-xs">
+                        {isEntitledPit || isEntitledMmm ? 'Active' : module.badge}
                       </Badge>
                     </div>
                     <div
@@ -259,7 +274,7 @@ const Index: React.FC = () => {
                       {module.description}
                     </CardDescription>
                     <div className="flex items-center justify-center mt-3 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      {isEntitledPit ? 'Open Tracker' : 'Learn More'} <ChevronRight className="h-3 w-3 ml-1" />
+                      {isEntitledPit ? 'Open Tracker' : isEntitledMmm ? 'Open MMM' : 'Learn More'} <ChevronRight className="h-3 w-3 ml-1" />
                     </div>
                   </CardContent>
                 </Card>
