@@ -572,6 +572,14 @@ function criterionRequirementSubject(criterionText: string): string {
     .replace(/\bshould be\b/gi, 'is')
     .replace(/\bshall be\b/gi, 'is')
     .replace(/\bmust be\b/gi, 'is')
+    // Conjugate "will + action-verb" to third-person singular (e.g. "will report" → "reports",
+    // "will support" → "supports") before the bare-will removal strips "will" and leaves an
+    // ungoverned infinitive ("report", "support") that reads as plural-imperative, not third-person.
+    // Exclusions guard auxiliary constructs ("will not", "will also", "will only", "will still").
+    .replace(
+      /\bwill\s+(?!not\b|also\b|only\b|still\b)([a-z][a-z-]+)/gi,
+      (_, verb: string) => verb + 's',
+    )
     .replace(/\bwill\b/gi, '')
     .replace(/\s+/g, ' ')
     .trim();
@@ -691,18 +699,11 @@ function identifyControlObject(criterionText: string): DescriptorControlObject {
 }
 
 function summariseEvidenceSubject(criterionText: string, controlObject: DescriptorControlObject): string {
+  // T-MMM-DHR-001: No criterion-identifier-specific hardcoded template mapping.
+  // Evidence subject is always derived from the criterion text via generalized grammar
+  // normalization (criterionRequirementSubject), with controlObject.objectPhrase as
+  // coherent fallback when the criterion text cannot be parsed into a usable clause.
   const clean = stripCriterionBoilerplate(criterionText);
-  const lower = clean.toLowerCase();
-  if (controlObject.key === 'role_accountability') {
-    const siteScope = lower.includes('kdm') && lower.includes('dtp') ? ' at KDM and DTP' : '';
-    return `the Risk Manager: Security is accountable for delivery of security${siteScope}, coordination, and alignment with this standard`;
-  }
-  if (controlObject.key === 'direct_reporting') {
-    return 'the Risk Manager: Security reports independently/directly to the most senior executive, including regular meeting cadence, reporting records, decisions, actions, and escalation';
-  }
-  if (controlObject.key === 'role_support_escalation') {
-    return 'the Risk Manager: Security provides Security support to HODs/Business Unit Managers through standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure';
-  }
   return criterionRequirementSubject(clean) || controlObject.objectPhrase;
 }
 
