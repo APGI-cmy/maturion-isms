@@ -35,7 +35,7 @@
 - `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md` — coherent with wave and includes ECAP artifact return path.
 - `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-generation-hardening-2026-07-01.md` — `## PRE-BRIEF` populated and resolvable.
 - `.agent-admin/builder-appointments/wave-mmm-descriptor-generation-hardening-2026-07-01.md` — appointment and authorized scope resolvable.
-- `.agent-admin/control/delegation-order.json` — ordered proof fields populated; sequence remains coherent.
+- `.agent-admin/control/delegation-orders/pr-1885.json` — ordered proof fields populated; sequence remains coherent.
 - prior ECAP artifact path — superseded by this re-run at current HEAD.
 
 ## Hygiene / Preflight Notes
