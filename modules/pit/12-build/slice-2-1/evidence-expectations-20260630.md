@@ -28,6 +28,7 @@ Slice 2.1 requires evidence that reviewers checked:
 - Architecture addendum;
 - QA-to-Red baseline;
 - traceability note;
+- traceability matrix;
 - IAA pre-brief contract;
 - builder hold notice.
 
