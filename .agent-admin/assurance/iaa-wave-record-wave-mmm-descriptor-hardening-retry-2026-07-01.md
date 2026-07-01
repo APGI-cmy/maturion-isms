@@ -62,3 +62,31 @@ IAA_PREFLIGHT_BRIEF:
 Qualifying tasks: TASK-MMM-DHR-004, TASK-MMM-DHR-008
 Applicable overlay: PRE_BUILD_STAGE_MODEL (+ PRODUCT_BUILD_ASSURANCE at final assurance)
 Anti-regression obligations: yes — FUNCTIONAL-BEHAVIOUR-REGISTRY mandatory for BUILD/product-facing implementation checks.
+
+## REJECTION_HISTORY
+
+### R1 — 2026-07-01 | IAA-session-1281-wave-mmm-descriptor-hardening-retry-20260701
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-07-01 |
+| IAA Session | IAA-session-1281-wave-mmm-descriptor-hardening-retry-20260701 |
+| PR | #1893 |
+| Head SHA at verdict | 89c914ad11dcb3616f4ee140b1cb41c2e66ab6fc |
+| Adoption phase | PHASE_B_BLOCKING |
+| Verdict | REJECTION-PACKAGE |
+
+**Findings (3 — all Ceremony):**
+
+| # | Check ID | Finding | Classification | Fix Required |
+|---|----------|---------|----------------|--------------|
+| 1 | ACR-01 AUTO-REJECT | ECAP reconciliation summary per `ECAP_RECONCILIATION_SUMMARY.template.md` absent. ECAP admin validation document present but uses non-template format; C1–C6 sections missing; shows "CONDITIONAL PASS" not "COMPLETE." | Ceremony / Systemic | Create `.agent-admin/prehandover/ecap-reconciliation-1893.md` using template, C1–C6 populated, `Final State: COMPLETE`. Commit. Re-invoke IAA. |
+| 2 | CERT-001 | No dedicated PREHANDOVER proof file in PR bundle. Wave task list (DHR-001–008) had no PREHANDOVER proof task. | Ceremony / Systemic | Create PREHANDOVER proof at `.agent-admin/build-evidence/session-mmm-descriptor-hardening-retry-20260701/PREHANDOVER_PROOF_SESSION.md` with `iaa_audit_token: IAA-session-1282-wave-mmm-descriptor-hardening-retry-20260701-PASS`. Commit. |
+| 3 | CERT-002 | No session memory for producing agent in PR bundle. | Ceremony | Create session memory for foreman/builder wave session. Commit. |
+
+**Substantive verdict (all PASS):**
+CORE-026 PASS (7/7 criteria) | CORE-027 PASS (Q5=YES) | Order-gate PASS | SHA-integrity PASS | Scope-compliance PASS | Implementation PASS | Tests 63/63 PASS | NBR-001–005 N/A | A-005 PASS
+
+**Systemic prevention:** Add PREHANDOVER proof + ECAP reconciliation task to wave-current-tasks-template.md for all BUILD DELIVERABLE waves with ceremony_admin_appointed: true.
+
+**Re-invocation:** Create ECAP reconciliation summary, PREHANDOVER proof, session memory → commit → re-invoke IAA. No substantive code changes required.
