@@ -49,11 +49,12 @@ This wave may update:
 3. `apps/mat-ai-gateway/tests/test_public_chat.py`
 4. `apps/mat-ai-gateway/tests/test_apw_specialist_red_stubs.py`
 5. `.agent-admin/builder-appointments/apw-public-integration-builder-appointment-v0.1.md`
-6. PR-bound scope declaration after PR number assignment;
-7. IAA prebrief after PR number assignment;
-8. this wave scope declaration.
+6. `.agent-admin/control/delegation-orders/pr-1887.json`
+7. PR-bound scope declaration after PR number assignment;
+8. IAA prebrief after PR number assignment;
+9. this wave scope declaration.
 
-This wave should avoid `.agent-admin/control/delegation-order.json` unless a required gate explicitly forces it, because that artifact has caused repeated admin-loop conflict.
+This wave uses PR-scoped delegation evidence. It does not change the legacy singleton `.agent-admin/control/delegation-order.json`.
 
 ---
 
@@ -66,7 +67,8 @@ Batch 7 may:
 - call the internal APW Specialist adapter only when the flag is enabled;
 - preserve existing public chat behaviour when the flag is disabled;
 - preserve Maturion final response authority;
-- add tests for flag-off, flag-on, and unsafe request behaviour.
+- add tests for flag-off, flag-on, and unsafe request behaviour;
+- provide PR-scoped delegation evidence required by the gate.
 
 ---
 
@@ -97,7 +99,7 @@ This wave succeeds when:
 4. unsafe/private/tenant requests remain blocked or safely degraded;
 5. no external calls or registry mutation are introduced;
 6. tests cover default-off, enabled, and blocked routes;
-7. PR-bound scope and IAA prebrief are present.
+7. PR-bound scope, PR-scoped delegation evidence and IAA prebrief are present.
 
 ---
 
