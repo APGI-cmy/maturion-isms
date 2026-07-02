@@ -18,8 +18,8 @@
     "qa:legacy": "node qa/legacy-scanner.js"
   },
   "dependencies": {
-    "@maturion/ai-centre": "workspace:*",
     "@hookform/resolvers": "^3.9.0",
+    "@maturion/ai-centre": "workspace:*",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -55,7 +55,7 @@
     "cmdk": "^1.0.0",
     "colord": "^2.9.3",
     "date-fns": "^3.6.0",
-    "dompurify": "^3.2.6",
+    "dompurify": "^3.4.11",
     "embla-carousel-react": "^8.3.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
@@ -88,7 +88,7 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "lovable-tagger": "^1.1.7",
-    "postcss": "^8.4.47",
+    "postcss": "^8.5.16",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
