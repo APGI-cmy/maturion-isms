@@ -31,7 +31,7 @@ CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
 - Confirm context-envelope and runtime-registry requirements are sufficient to prevent unsafe specialist invocation.
 - Confirm QA-to-Red expectations are adequate for a later builder implementation wave.
 
-### EXPECTED_FAILURE_MODES
+EXPECTED_FAILURE_MODES:
 
 - Batch 1 artifacts accidentally create or imply runtime specialist activation.
 - Strategy-named or `.github/agents` agents are treated as runtime-active without registry activation.
