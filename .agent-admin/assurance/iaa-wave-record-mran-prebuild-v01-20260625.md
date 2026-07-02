@@ -50,7 +50,7 @@ FOREMAN_INSTRUCTIONS:
 - Use IAA findings to correct prebuild artifacts before any implementation wave is created.
 - Keep Batch 2 knowledge-grounding prebuild and Batch 3 APW-specialist prebuild as separate future waves.
 
-### IAA_WILL_QA
+IAA_WILL_QA:
 
 - IAA will compare the artifacts against `FOREMAN_OPERATING_MODEL.md`, `.github/agents/foreman-v2-agent.md`, `governance/canon/MATURION_AGENT_NETWORK_ORGANIGRAM.md`, and the Maturion Agent Network Organigram strategy.
 - IAA will check whether the active PR scope declaration matches the changed-file set.
