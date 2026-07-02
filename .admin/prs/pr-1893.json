@@ -1,0 +1,34 @@
+{
+  "pr": 1893,
+  "issue": 1883,
+  "type": "product-fix",
+  "owner": "Copilot",
+  "scope": [
+    ".admin/prs/pr-1893.json",
+    ".agent-admin/scope-declarations/pr-1893.md",
+    ".agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-hardening-retry-2026-07-01.md",
+    ".agent-admin/builder-appointments/wave-mmm-descriptor-hardening-retry-2026-07-01.md",
+    ".agent-admin/control/delegation-orders/pr-1893.json",
+    ".agent-admin/ecap/wave-mmm-descriptor-hardening-retry-2026-07-01-ecap-admin-validation-20260701.md",
+    ".agent-admin/prehandover/ecap-reconciliation-1893.md",
+    ".agent-admin/build-evidence/session-mmm-descriptor-hardening-retry-20260701/PREHANDOVER_PROOF_SESSION.md",
+    ".agent-workspace/foreman-v2/memory/session-mmm-descriptor-hardening-retry-20260701.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks-template.md",
+    "apps/mmm/src/components/assessment/CriteriaManagement.tsx",
+    "modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "ui-builder",
+  "evidence_required": [
+    "Order gate enforced: prebrief -> builder appointment -> first implementation commit",
+    "MMM descriptor hardening implemented in CriteriaManagement.tsx and validated by B4 test suite",
+    "ECAP reconciliation summary committed with COMPLETE final state",
+    "PREHANDOVER proof committed with pre-populated iaa_audit_token",
+    "Foreman session memory committed for retry wave"
+  ],
+  "merge_authority": "CS2"
+}
