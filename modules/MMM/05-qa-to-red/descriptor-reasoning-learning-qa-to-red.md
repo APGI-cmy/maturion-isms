@@ -381,9 +381,11 @@ Minimum assertion:
 ```text
 retrievedLearningRecords.every(record =>
   record.organisation_id === currentOrganisationId ||
-  record.approved_for_reuse_scope in ["approved_global_methodology_pattern", "anonymised_global_pattern_candidate"] && record.review_status permits use
+  record.approved_for_reuse_scope === "approved_global_methodology_pattern" && record.review_status === "approved_global"
 )
 ```
+
+Candidate or pending anonymised global patterns must not pass this cross-tenant retrieval assertion. A learning record with `approved_for_reuse_scope === "anonymised_global_pattern_candidate"` remains review-stage material and must not be retrieved for another organisation until promoted to `approved_global_methodology_pattern`.
 
 ---
 
