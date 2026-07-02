@@ -17,14 +17,10 @@
 ## PRE-BRIEF
 
 IAA_PREFLIGHT_BRIEF
-
-schema_version: 1.0.0
-result: PREFLIGHT_BRIEF_COMPLETE
-wave_id: MRAN-PREBUILD-V01
-pr_number: 1855
-repository: APGI-cmy/maturion-isms
-scope_summary: Batch 1 prebuild-only architecture artifacts for the Maturion Runtime Agent Network.
-authority: CS2 — Johan Ras
+PR: #1855
+WAVE: MRAN-PREBUILD-V01
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
 
 ### EXPECTED_QA_SCOPE
 
