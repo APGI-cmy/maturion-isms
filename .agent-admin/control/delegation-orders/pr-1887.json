@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "APW-PUBLIC-INTEGRATION-V01",
+  "pr_number": 1887,
+  "prebrief_commit_sha": "a75528ae8b9b35a98c968ea26a9b5bdd6bc24bdc",
+  "builder_appointment_timestamp": "2026-07-01T10:05:00Z",
+  "builder_appointment_commit_sha": "0163f05703ef261816e933bb2b1c9cae5b74fb3c",
+  "builder_agent": "apw-public-integration-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-public-integration-builder-appointment-v0.1.md",
+  "first_implementation_commit_sha": "d36f0285ddce177029e366ff70faf23814acf09f",
+  "qp_review_timestamp": "2026-07-01T12:35:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
