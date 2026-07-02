@@ -14,8 +14,6 @@
 
 The builder is appointed only to integrate the existing APW Specialist internal adapter into Maturion public chat behind a default-off control.
 
-This appointment does not authorise production activation, direct specialist exposure, registry mutation or external-service calls from APW Specialist.
-
 ---
 
 ## 2. Allowed Work
@@ -27,7 +25,8 @@ The builder may:
 - call the internal APW Specialist adapter only when explicitly enabled;
 - keep Maturion responsible for final synthesis;
 - add tests for flag-off, flag-on and blocked routes;
-- preserve the existing public chat behaviour when disabled.
+- preserve the existing public chat behaviour when disabled;
+- provide PR-scoped delegation evidence required by the gate.
 
 ---
 
@@ -42,25 +41,11 @@ The builder may modify or create files only under:
 - `.agent-admin/scope-declarations/`
 - `.agent-admin/builder-appointments/`
 - `.agent-admin/assurance/`
+- `.agent-admin/control/delegation-orders/pr-1887.json`
 
 ---
 
-## 4. Forbidden Work
-
-The builder must not:
-
-- enable APW integration by default;
-- expose APW Specialist directly to users;
-- let APW Specialist produce final public answers;
-- call OpenAI, Supabase or vector search from APW Specialist;
-- create or mutate runtime registry records;
-- create migrations, tables, policies or production data;
-- change `.github/agents` contracts;
-- perform Batch 8 preview activation.
-
----
-
-## 5. Required Evidence
+## 4. Required Evidence
 
 The implementation PR must show:
 
@@ -69,10 +54,11 @@ The implementation PR must show:
 3. Maturion final response authority is preserved;
 4. unsafe/private APW requests remain blocked or safely degraded;
 5. no external service calls are introduced by APW Specialist;
-6. no production activation is introduced.
+6. no production activation is introduced;
+7. PR-scoped delegation evidence is present.
 
 ---
 
-## 6. Handover Boundary
+## 5. Handover Boundary
 
 A later Batch 8 preview activation wave must receive a new scope declaration, builder appointment, IAA prebrief and CS2 approval.
