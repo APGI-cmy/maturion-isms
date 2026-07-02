@@ -24,6 +24,8 @@ DEFERRED_PENDING_PREVIEW_EVIDENCE
 
 The available evidence is sufficient to confirm the controlled preview package, but not sufficient to approve broader use.
 
+This decision is deliberately conservative. Missing preview evidence is not treated as approval.
+
 ## Boundary
 
 No runtime setting is changed by this decision record. Maturion remains the final public response authority. APW Specialist remains behind Maturion.
