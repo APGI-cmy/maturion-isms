@@ -50,7 +50,8 @@
     "@babel/core": ">=7.29.6",
     "react-router": ">=6.30.4 <7",
     "react-router-dom": ">=6.30.4 <7",
-    "vitest": ">=3.2.6 <4"
+    "vitest": ">=3.2.6 <4",
+    "vite": ">=6.4.3 <7"
   },
   "pnpm": {
     "overrides": {
@@ -67,7 +68,8 @@
       "@babel/core": ">=7.29.6",
       "react-router": ">=6.30.4 <7",
       "react-router-dom": ">=6.30.4 <7",
-      "vitest": ">=3.2.6 <4"
+      "vitest": ">=3.2.6 <4",
+      "vite": ">=6.4.3 <7"
     }
   }
 }
