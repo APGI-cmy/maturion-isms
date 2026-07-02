@@ -46,7 +46,7 @@ This wave may create or update:
 1. `Maturion/prebuild/runtime-activation-readiness/APW-Controlled-Preview-Activation-Runbook-v0.1.md`
 2. `apps/mat-ai-gateway/tests/test_apw_preview_activation.py`
 3. `.agent-admin/builder-appointments/apw-preview-builder-appointment-v0.1.md`
-4. `.agent-admin/control/delegation-orders/pr-<PR>.json`
+4. `.agent-admin/control/delegation-orders/pr-<PR_NUMBER>.json` (after PR number assignment)
 5. PR-bound scope declaration after PR number assignment;
 6. IAA prebrief after PR number assignment;
 7. this wave scope declaration.
