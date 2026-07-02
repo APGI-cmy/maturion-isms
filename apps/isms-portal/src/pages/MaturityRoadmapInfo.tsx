@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, CheckCircle, ArrowLeft, ChevronRight } from 'lucide-react';
+import { createCheckoutSearch } from '@/lib/subscription';
 import { ROUTES } from '@/lib/routes';
 
 const features = [
@@ -35,6 +36,12 @@ const benefits = [
 
 const MaturityRoadmapInfo: React.FC = () => {
   const navigate = useNavigate();
+  const maturityCheckoutSearch = createCheckoutSearch({
+    selectedModules: ['maturity-roadmap'],
+    isBundle: false,
+    isYearly: false,
+    source: 'maturity-roadmap-marketing',
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
@@ -46,7 +53,7 @@ const MaturityRoadmapInfo: React.FC = () => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Home
             </Button>
-            <Button size="sm" onClick={() => navigate(ROUTES.SUBSCRIBE)}>
+            <Button size="sm" onClick={() => navigate(`${ROUTES.SUBSCRIBE_CHECKOUT}?${maturityCheckoutSearch}`)}>
               Get Started
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
@@ -76,7 +83,7 @@ const MaturityRoadmapInfo: React.FC = () => {
             <Button size="lg" onClick={() => navigate(ROUTES.FREE_ASSESSMENT)}>
               Start Free Assessment
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate(ROUTES.SUBSCRIBE)}>
+            <Button size="lg" variant="outline" onClick={() => navigate(`${ROUTES.SUBSCRIBE_CHECKOUT}?${maturityCheckoutSearch}`)}>
               View Plans
             </Button>
           </div>
@@ -130,7 +137,7 @@ const MaturityRoadmapInfo: React.FC = () => {
           <Button
             size="lg"
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={() => navigate(ROUTES.SUBSCRIBE)}
+            onClick={() => navigate(`${ROUTES.SUBSCRIBE_CHECKOUT}?${maturityCheckoutSearch}`)}
           >
             Subscribe to Maturity Roadmap
             <ChevronRight className="h-4 w-4 ml-2" />
