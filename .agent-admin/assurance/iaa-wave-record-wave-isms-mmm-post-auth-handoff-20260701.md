@@ -2,11 +2,12 @@
 
 Wave: `wave-isms-mmm-post-auth-handoff-20260701`
 Date: 2026-07-01
-PR: pending
+PR: #1899
 Scope record: `.agent-admin/scope-declarations/wave-isms-mmm-post-auth-handoff-20260701.md`
 
 ## PRE-BRIEF
 
+PR: #1899
 WAVE: wave-isms-mmm-post-auth-handoff-20260701
 BRANCH: isms-mmm-post-auth-handoff-clean
 ISSUE: Maturity Roadmap checkout reaches the correct checkout selection but mock sign-in continues to generic ISMS onboarding instead of the MMM app host.
