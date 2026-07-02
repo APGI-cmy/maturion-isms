@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
-| Stage | Stage 12 - Build Execution and Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Slice | Slice 2.2 - Entry, Signup, Auth Implementation Planning |
 | Issue | #1891 |
 | Date | 2026-07-01 |
@@ -56,7 +56,7 @@ The builder must treat the following as future implementation tasks only:
 ```text
 Recommended builder for the later implementation slice: pit-specialist
 Status for this PR: planning-only reconfirmation
-Runtime implementation: prohibited
+Runtime implementation: not authorized
 ```
 
 ---
