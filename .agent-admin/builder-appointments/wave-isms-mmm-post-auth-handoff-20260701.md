@@ -3,7 +3,7 @@
 Wave: `wave-isms-mmm-post-auth-handoff-20260701`
 Date: 2026-07-01
 Repository: `APGI-cmy/maturion-isms`
-PR: pending
+PR: #1899
 CS2 Authority: Johan Ras
 Appointed builder: `ui-builder`
 Appointment status: `APPOINTED`
