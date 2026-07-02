@@ -3,6 +3,7 @@
 Wave: `wave-isms-mmm-post-auth-handoff-20260701`
 Date: 2026-07-01
 Repository: `APGI-cmy/maturion-isms`
+PR: #1899
 Module lane: ISMS platform shell
 Runtime owner: MMM
 CS2 Authority: Johan Ras
@@ -24,7 +25,7 @@ Fix the ISMS post-checkout and mock sign-in route for the Maturity Roadmap journ
 - `modules/isms/prebuild-harvest-package/isms-mmm-post-auth-handoff-alignment-20260701.md`
 - `modules/isms/05-qa-to-red/isms-mmm-post-auth-handoff-qa-to-red-20260701.md`
 - `modules/isms/11-build/isms-mmm-post-auth-handoff-build-to-green-20260701.md`
-- `.agent-admin/control/delegation-orders/pr-1885.json`
+- `.agent-admin/control/delegation-orders/pr-1899.json`
 - `.agent-admin/scope-declarations/wave-isms-mmm-post-auth-handoff-20260701.md`
 - `.agent-admin/assurance/iaa-wave-record-wave-isms-mmm-post-auth-handoff-20260701.md`
 - `.agent-admin/builder-appointments/wave-isms-mmm-post-auth-handoff-20260701.md`
