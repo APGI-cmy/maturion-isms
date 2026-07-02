@@ -41,7 +41,7 @@ EXPECTED_FAILURE_MODES:
 - Maturion-as-CS2 authority could be inferred from architecture, runtime code, config, or app context without separate canon-backed evidence.
 - QA-to-Red cases do not fail closed when context, registry, authority, or knowledge boundaries are missing.
 
-### FOREMAN_INSTRUCTIONS
+FOREMAN_INSTRUCTIONS:
 
 - Treat this wave as prebuild-only.
 - Do not appoint a builder from this wave.
