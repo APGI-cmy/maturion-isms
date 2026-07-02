@@ -66,8 +66,8 @@ Conditional extension only if justified:
 
 Future implementation under issue #1871 or a successor descriptor-reasoning issue must verify:
 
-1. `are to be clearly defined` is normalized to `are clearly defined` in evidence clauses.
-2. `Assessing incentive schemes and measures for their impact on Security` is normalized to `incentive schemes and measures are assessed for their impact on Security`.
+1. `are to be clearly defined` is normalised to `are clearly defined` in evidence clauses.
+2. `Assessing incentive schemes and measures for their impact on Security` is normalised to `incentive schemes and measures are assessed for their impact on Security`.
 3. Instruction wording such as `should be`, `will be`, `shall be`, and `must be` is converted into evidence-state phrasing before maturity-state text is attached.
 4. The criterion-specific actor/action/object remains visible and is not replaced with generic policy/control wording.
 5. Accepted user descriptor edits are used as future generation examples where learning records are available, or deterministic grammar normalization covers the observed examples until retrieval is separately wired.
