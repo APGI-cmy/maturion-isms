@@ -413,6 +413,116 @@ describe('T-MMM-DGC-1871: Descriptor grammar closure', () => {
     ).toContain('Evidence that controls are reviewed is absent');
   });
 });
+
+// ---------------------------------------------------------------------------
+// T-MMM-DHR: Descriptor hardening retry — generalized normalization regression
+// ---------------------------------------------------------------------------
+describe('T-MMM-DHR: Descriptor hardening retry — generalized normalization', () => {
+  beforeEach(() => {
+    configureScenario({ mpsRows: baseMpsRows, criteriaRows: [] });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  // T-MMM-DHR-003 unit coverage (reachable without DOM rendering)
+  it('T-MMM-DHR-003: gerund-led "Assessing X" normalizes without "Evidence that Assessing" drift', () => {
+    const result = normalizeDescriptorEvidenceGrammar(
+      'Evidence that Assessing incentive schemes for their impact on Security is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+    );
+expect(result).not.toContain('Evidence that Assessing');
+expect(result).toContain('incentive schemes');
+expect(result).toContain('are assessed for their impact on Security');
+  });
+
+  it('T-MMM-DHR-003: actor-gerund "Actor Reviewing X" normalizes to "Actor reviews X" without drift', () => {
+    const result = normalizeDescriptorEvidenceGrammar(
+      'Evidence that the security department Reviewing policies and procedures is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+    );
+    expect(result).not.toContain('the security department Reviewing');
+    expect(result).toContain('the security department reviews');
+  });
+
+  // T-MMM-DHR-001 + DHR-002: fallback for role-accountability criterion uses generalized path
+  it('T-MMM-DHR-001/DHR-002: role-accountability criterion uses criterion-derived evidence lead, not hardcoded template', async () => {
+    const criteria: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-dhr-accountability',
+        mps_id: 'mps-1',
+        code: 'D001.MPS003.C006',
+        sort_order: 1,
+        name: 'The Risk Manager: Security is the person who will be accountable for the delivery of security at the operations (both KDM and DTP) and co-ordination of security on behalf of the General Manager in accordance with this standard, laws rules and regulations and applicable Lucara Policies.',
+      },
+    ];
+    configureScenario({ mpsRows: baseMpsRows, criteriaRows: criteria });
+    renderCriteriaManagement({ criteriaByMps: { 'mps-1': criteria } });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-dhr-accountability'));
+    const basic = await screen.findByTestId('descriptor-input-criterion-dhr-accountability-1') as HTMLTextAreaElement;
+
+    // T-MMM-DHR-001: output is derived from criterion text, not from a hardcoded template string.
+    // The hardcoded form was "...is accountable for delivery of security at KDM and DTP, coordination,
+    // and alignment with this standard". The generalized form preserves "is the person who is accountable".
+    expect(basic.value).toMatch(/^Evidence that the Risk Manager: Security/i);
+    expect(basic.value).toContain('accountable');
+    expect(basic.value).toContain('delivery of security');
+    // T-MMM-DHR-001: hardcoded template included "/directly" slash; generalized output does NOT
+    expect(basic.value).not.toMatch(/reports independently\/directly/i);
+    // T-MMM-DHR-002: coherent fallback — not generic policy boilerplate
+    expect(basic.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
+  });
+
+  // T-MMM-DHR-001 + DHR-002: fallback for direct-reporting criterion uses generalized path
+  it('T-MMM-DHR-001/DHR-002: direct-reporting criterion produces "reports … and directly" from criterion text, not hardcoded "/directly" slash', async () => {
+    const criteria: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-dhr-reporting',
+        mps_id: 'mps-1',
+        code: 'D001.MPS003.C007',
+        sort_order: 2,
+        name: 'The Risk Manager: Security will report independently and directly to the most senior executive of the operation.',
+      },
+    ];
+    configureScenario({ mpsRows: baseMpsRows, criteriaRows: criteria });
+    renderCriteriaManagement({ criteriaByMps: { 'mps-1': criteria } });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-dhr-reporting'));
+    const compliant = await screen.findByTestId('descriptor-input-criterion-dhr-reporting-3') as HTMLTextAreaElement;
+
+    // T-MMM-DHR-002: "will report" is gerund-normalized to "reports" (not bare "report")
+    expect(compliant.value).toMatch(/^Evidence that the Risk Manager: Security reports independently and directly/i);
+    expect(compliant.value).toMatch(/most senior executive/i);
+    // T-MMM-DHR-001: hardcoded template used "/directly" slash; generalized path uses criterion's "and directly"
+    expect(compliant.value).not.toContain('independently/directly');
+  });
+
+  // T-MMM-DHR-001 + DHR-002: fallback for HOD-support criterion uses generalized path
+  it('T-MMM-DHR-001/DHR-002: HOD-support criterion produces criterion-derived evidence lead; second sentence not injected', async () => {
+    const criteria: Scenario['criteriaRows'] = [
+      {
+        id: 'criterion-dhr-support',
+        mps_id: 'mps-1',
+        code: 'D001.MPS003.C008',
+        sort_order: 3,
+        name: 'The Risk Manager: Security will support Heads of Department (HOD) / Business Unit Managers in achieving Security in their areas through enforcing the intent of this standard.',
+      },
+    ];
+    configureScenario({ mpsRows: baseMpsRows, criteriaRows: criteria });
+    renderCriteriaManagement({ criteriaByMps: { 'mps-1': criteria } });
+
+    fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-dhr-support'));
+    const basic = await screen.findByTestId('descriptor-input-criterion-dhr-support-1') as HTMLTextAreaElement;
+
+    // T-MMM-DHR-002: "will support" → "supports" via verb conjugation; actor/action/object preserved
+    expect(basic.value).toMatch(/^Evidence that the Risk Manager: Security supports Heads of Department/i);
+    expect(basic.value).toContain('achieving Security');
+    // T-MMM-DHR-001: hardcoded template injected "provides Security support to HODs/Business Unit Managers
+    // through standard enforcement, deviation escalation to DCC/GM/MD, assigned actions, and closure".
+    // Generalized path does not inject the hardcoded DCC/closure string.
+    expect(basic.value).not.toMatch(/provides Security support to HODs\/Business Unit Managers through standard enforcement/i);
+  });
+});
 describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
   beforeEach(() => {
     configureScenario({
@@ -842,23 +952,33 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-role-accountability'));
     const roleBasic = await screen.findByTestId('descriptor-input-criterion-role-accountability-1') as HTMLTextAreaElement;
-    expect(roleBasic.value).toMatch(/^Evidence that the Risk Manager: Security is accountable/);
+    // T-MMM-DHR-001: output is derived from criterion text via generalized normalization,
+    // NOT from a hardcoded role-specific template. "is the person who is accountable" preserves
+    // the criterion wording; the hardcoded string ("is accountable for delivery of security...
+    // coordination, and alignment") is no longer emitted.
+    expect(roleBasic.value).toMatch(/^Evidence that the Risk Manager: Security/i);
+    expect(roleBasic.value).toContain('accountable');
     expect(roleBasic.value).toContain('delivery of security');
     expect(roleBasic.value).toContain('this standard');
     expect(roleBasic.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-direct-reporting'));
     const reportingCompliant = await screen.findByTestId('descriptor-input-criterion-direct-reporting-3') as HTMLTextAreaElement;
-    expect(reportingCompliant.value).toMatch(/^Evidence that the Risk Manager: Security reports independently\/directly/);
+    // T-MMM-DHR-001: "and directly" is from the criterion text; the hardcoded "/directly"
+    // (slash separator) is gone. Verb conjugation produces "reports" (not bare "report").
+    expect(reportingCompliant.value).toMatch(/^Evidence that the Risk Manager: Security reports independently and directly/);
     expect(reportingCompliant.value).toMatch(/most senior executive/i);
     expect(reportingCompliant.value).toMatch(/meeting cadence|agendas\/minutes|action logs/i);
     expect(reportingCompliant.value).not.toMatch(/policy ownership, communication, display, and awareness/i);
 
     fireEvent.click(await screen.findByTestId('generate-descriptors-btn-criterion-hod-support'));
     const supportProactive = await screen.findByTestId('descriptor-input-criterion-hod-support-4') as HTMLTextAreaElement;
-    expect(supportProactive.value).toMatch(/^Evidence that the Risk Manager: Security provides Security support/);
-    expect(supportProactive.value).toMatch(/deviation escalation|DCC\/GM\/MD/i);
-    expect(supportProactive.value).toMatch(/closure/i);
+    // T-MMM-DHR-001/DHR-002: output is derived from the first sentence of the criterion text
+    // via generalized normalization. Secondary sentence information (DCC/GM/MD, deviation
+    // escalation) is not present in the Proactive level because it came from the hardcoded
+    // template, not from the criterion's first clause. Actor/action/object are preserved.
+    expect(supportProactive.value).toMatch(/^Evidence that the Risk Manager: Security supports Heads of Department/i);
+    expect(supportProactive.value).toContain('achieving Security');
     expect(supportProactive.value).not.toMatch(/governance forum mandate/i);
   });
 
