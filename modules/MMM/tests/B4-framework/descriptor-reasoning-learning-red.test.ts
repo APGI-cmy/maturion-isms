@@ -43,7 +43,7 @@ describe('T-MMM-DRGL-004: guidance material is not used as descriptor subject', 
     );
 
     expect(descriptor).toContain(
-      'Evidence that Specific Security accountabilities and performance measures is documented within role descriptions is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+      'Evidence that Specific Security accountabilities and performance measures are documented within role descriptions is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
     );
     expect(descriptor).not.toContain('Note:');
     expect(descriptor).not.toContain('This is especially important');
