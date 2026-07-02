@@ -12,7 +12,7 @@ const eventName = process.env.GITHUB_EVENT_NAME || '';
 const controlPath = path.join(repoRoot, '.agent-admin/control/handover-allowed.json');
 
 const handoverLanguagePattern = /\b(complete|ready for review|ready-for-review|handover|merge-ready|released|done)\b/i;
-const foremanArtifactPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/|(^|\/)PREHANDOVER-session-|(^|\/)session-[0-9].*\.md$/i;
+const laneIntentPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.*\.md$|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/PREHANDOVER-.*\.md$|(^|\/)\.agent-admin\/control\/handover-allowed\.json$/i;
 const handoverLanguageScanPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/.*\.(md|txt|json|yml|yaml)$|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.*\.(md|txt|json|yml|yaml)$/i;
 const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/|api\/|lib\/)/;
 const implementationTestPattern = /(^|\/)(__tests__|tests?)\/|\.(test|spec)\.(ts|tsx|js|jsx)$/;
@@ -147,11 +147,11 @@ function validateControl(control, implementationChanged) {
 
 const changedFiles = getChangedFiles();
 const handoverHits = hasHandoverLanguage(changedFiles);
-const foremanArtifacts = changedFiles.filter((file) => foremanArtifactPattern.test(file));
+const laneIntentFiles = changedFiles.filter((file) => laneIntentPattern.test(file));
 const implementationFiles = changedFiles.filter((file) => implementationPathPattern.test(file) || implementationTestPattern.test(file));
 
 const implementationChanged = implementationFiles.length > 0;
-const handoverGateRelevant = handoverHits.length > 0 || foremanArtifacts.length > 0;
+const handoverGateRelevant = handoverHits.length > 0 || laneIntentFiles.length > 0;
 
 console.log('=== Foreman Pre-Handover Lane Gate ===');
 console.log(`Event: ${eventName}`);
@@ -160,7 +160,7 @@ console.log(`PR head SHA: ${prHeadSha || 'unknown'}`);
 console.log(`PR base SHA: ${prBaseSha || 'unknown'}`);
 console.log(`Changed files: ${changedFiles.length}`);
 console.log(`Handover language hits in handover artifacts: ${handoverHits.length}`);
-console.log(`Foreman/ECAP handover artifacts changed: ${foremanArtifacts.length}`);
+console.log(`Explicit pre-handover lane intent files changed: ${laneIntentFiles.length}`);
 console.log(`Implementation files changed: ${implementationFiles.length}`);
 
 if (!handoverGateRelevant) {
@@ -175,7 +175,7 @@ if (!handoverGateRelevant) {
 if (!fs.existsSync(controlPath)) {
   fail('Missing .agent-admin/control/handover-allowed.json while pre-handover lane gate is relevant.');
   if (implementationFiles.length) warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
-  if (foremanArtifacts.length) warn(`handover artifacts changed: ${foremanArtifacts.slice(0, 20).join(', ')}`);
+  if (laneIntentFiles.length) warn(`pre-handover lane intent files changed: ${laneIntentFiles.slice(0, 20).join(', ')}`);
   if (handoverHits.length) warn(`handover/completion language appears in: ${handoverHits.slice(0, 20).join(', ')}`);
   process.exit(process.exitCode || 1);
 }
@@ -189,7 +189,7 @@ if (errors.length > 0) {
   console.error('Pre-handover lane gate failed:');
   for (const error of errors) console.error(`- ${error}`);
   if (implementationFiles.length) warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
-  if (foremanArtifacts.length) warn(`handover artifacts changed: ${foremanArtifacts.slice(0, 20).join(', ')}`);
+  if (laneIntentFiles.length) warn(`pre-handover lane intent files changed: ${laneIntentFiles.slice(0, 20).join(', ')}`);
   if (handoverHits.length) warn(`handover/completion language appears in: ${handoverHits.slice(0, 20).join(', ')}`);
   process.exit(1);
 }

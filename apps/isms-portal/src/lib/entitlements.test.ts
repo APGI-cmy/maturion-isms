@@ -4,6 +4,7 @@ import {
   createEntitlementState,
   hasModuleEntitlement,
   mapSubscriptionModule,
+  readCompletedEntitlementState,
   readStoredEntitlementState,
 } from './entitlements';
 import { PENDING_CHECKOUT_STORAGE_KEY } from './subscription';
@@ -17,6 +18,8 @@ describe('W4 entitlement helpers', () => {
     expect(mapSubscriptionModule('maturity-roadmap')).toBe('maturity-roadmap');
     expect(mapSubscriptionModule('Maturion Core Platform')).toBe('maturity-roadmap');
     expect(mapSubscriptionModule('risk management')).toBe('risk-management');
+    expect(mapSubscriptionModule('pit')).toBe('project-implementation');
+    expect(mapSubscriptionModule('project implementation')).toBe('project-implementation');
     expect(mapSubscriptionModule('unknown-module')).toBeNull();
   });
 
@@ -32,6 +35,16 @@ describe('W4 entitlement helpers', () => {
     expect(entitlement.source).toBe('dashboard-upgrade');
     expect(hasModuleEntitlement(entitlement, 'maturity-roadmap')).toBe(true);
     expect(hasModuleEntitlement(entitlement, 'skills-development')).toBe(false);
+  });
+
+  it('creates PIT entitlement from the canonical project implementation selection', () => {
+    const entitlement = createEntitlementState({
+      selectedModules: ['project-implementation'],
+      isBundle: false,
+      source: 'pit-marketing',
+    });
+
+    expect(hasModuleEntitlement(entitlement, 'project-implementation')).toBe(true);
   });
 
   it('copies the bundle module list rather than returning the shared exported array', () => {
@@ -54,5 +67,39 @@ describe('W4 entitlement helpers', () => {
       completedAt: null,
     });
     expect(window.localStorage.getItem(PENDING_CHECKOUT_STORAGE_KEY)).toBeNull();
+  });
+
+  it('does not grant entitlement from captured-only checkout state', () => {
+    window.localStorage.setItem(
+      PENDING_CHECKOUT_STORAGE_KEY,
+      JSON.stringify({
+        selectedModules: ['project-implementation'],
+        isBundle: false,
+        isYearly: false,
+        source: 'pit-marketing',
+        capturedAt: '2026-06-26T00:00:00.000Z',
+      }),
+    );
+
+    const entitlement = readCompletedEntitlementState();
+
+    expect(hasModuleEntitlement(entitlement, 'project-implementation')).toBe(false);
+  });
+
+  it('reads completed PIT selection from ISMS checkout storage', () => {
+    window.localStorage.setItem(
+      PENDING_CHECKOUT_STORAGE_KEY,
+      JSON.stringify({
+        selectedModules: ['project-implementation'],
+        isBundle: false,
+        isYearly: false,
+        source: 'pit-marketing',
+        completedAt: '2026-06-26T00:00:00.000Z',
+      }),
+    );
+
+    const entitlement = readCompletedEntitlementState();
+
+    expect(hasModuleEntitlement(entitlement, 'project-implementation')).toBe(true);
   });
 });

@@ -1,13 +1,77 @@
 # BUILD PROGRESS TRACKER
 
 **Module**: ISMS Navigator  
-**Module Slug**: isms  
-**Last Updated**: 2026-06-23  
-**Updated By**: foreman-v2-agent (slice: `isms-post-p1-3-tracker-reconciliation`)
+**Module Slug**: `isms`  
+**Last Updated**: 2026-06-29  
+**Updated By**: foreman-v2-agent (tracker reconciliation after PR #1857, PR #1861 and PR #1865)
 
-> **Classification**: W1-W8 COMPLETE — P1.3 REAL PREVIEW DEPLOY EVIDENCE RECORDED; MMM/PIT WORKFLOW SPLITS RECONCILED  
+> **Classification**: W1-W8 COMPLETE FOR APPOINTED ISMS SCOPE — BOUNDARY ALIGNMENT MERGED; ISMS -> PIT HANDOFF IMPLEMENTED; FUTURE PRODUCTIONIZATION REMAINS SEPARATELY GATED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0  
 > **Current Governance Model**: `AGENT_GATE_SYSTEM_TRANSITION_NOTICE.md` / PR #1800 gate model
+
+---
+
+## Current Stage Summary
+
+**Current Stage**: ISMS W1-W8 appointed implementation scope complete, with post-W8 boundary reconciliation recorded.  
+**Implementation Transfer**: Owner final decision remains recorded with conditions.  
+**Current Next Action**: No additional ISMS runtime build is active unless CS2 opens a new separately scoped future-gated slice.
+
+ISMS pre-build boundary alignment is no longer the active blocker. PR #1857 merged the ISMS-side alignment to PR #1850.
+
+The canonical ISMS -> PIT entitlement handoff defect has also been addressed in the ISMS-owned platform shell by PR #1861. PIT deployment-host canonical redirect behavior was addressed by PR #1865. PIT runtime and PIT W8.2 onward remain PIT-agent/module scope unless CS2 explicitly appoints ISMS participation.
+
+---
+
+## Boundary Authority Status
+
+PR #1850 remains the controlling shared pre-build authority for ISMS/module linkup strategy.
+
+Authority artifact:
+
+- `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md`
+
+ISMS-side alignment record:
+
+- `modules/isms/prebuild-harvest-package/isms-prebuild-boundary-alignment-20260626.md`
+
+Related module-side alignments:
+
+- PIT PR #1853 — PIT-side pre-build alignment to PR #1850.
+- MMM PR #1854 — MMM-side pre-build alignment to PR #1850.
+- ISMS PR #1857 — ISMS-side pre-build boundary alignment to PR #1850.
+
+Operating principle:
+
+- ISMS owns public landing, `/modules`, public free-assessment entry, marketing routes, subscription, checkout, authentication, onboarding, dashboard, entitlement summary, entitlement/journey-state handoff, shared platform shell, and cross-module governance framing.
+- PIT owns `/pit/tracker` runtime after entitled ISMS handoff.
+- MMM owns Maturity Roadmap runtime after approved ISMS handoff.
+- Risk Management, RADAM / Systems Integration, and future modules own their runtime surfaces only after governed ISMS handoff.
+- The canonical evidence host is `https://maturion-isms-portal.vercel.app` unless CS2 approves another host model.
+- `maturion-pit.vercel.app` must not act as a duplicate public acquisition journey unless explicitly governed.
+
+---
+
+## ISMS -> PIT Boundary Correction Status
+
+The prior ISMS -> PIT entitlement loop was:
+
+```text
+ISMS landing/card
+  -> PIT marketing
+  -> subscription/checkout
+  -> auth/onboarding
+  -> dashboard still shows no PIT entitlement
+  -> clicking PIT returns to subscription
+```
+
+Current disposition:
+
+- PR #1861 implemented the ISMS-owned entitlement handoff correction.
+- PR #1865 implemented the PIT deployment-host canonical redirect policy while preserving ISMS as the canonical public host.
+- Production evidence provided by CS2 showed canonical ISMS host and `/pit/tracker` behavior operating as intended.
+
+This tracker does not claim PIT runtime completion. PIT runtime work remains PIT-agent/module scope.
 
 ---
 
@@ -22,105 +86,22 @@
 | Stage 5 | Architecture | COMPLETE — Approved with conditions; remediation pack accepted for planning | `modules/isms/04-architecture/architecture-remediation-pack.md` |
 | Stage 6 | QA-to-Red | COMPLETE — RED catalog specified | `modules/isms/05-qa-to-red/qa-to-red-catalog.md` |
 | Stage 7 | PBFAG | ACCEPTED WITH CONDITIONS | `modules/isms/06-pbfag/pbfag-rerun-amendment-w8-cumulative-regression.md` |
-| Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md` |
+| Stage 8 | Implementation Plan | COMPLETE — Planning artifact only | `modules/isms/07-implementation-plan/implementation-plan.md`; `modules/isms/07-implementation-plan/wave-evidence-plan.md` |
 | Stage 9 | Builder Checklist | RECONCILED WITH CONDITIONS | `modules/isms/08-builder-checklist/stage9-final-reconciliation-w8.md` |
 | Stage 10 | IAA Pre-Brief + Acknowledgements | CLOSED WITH CONDITIONS | `modules/isms/09-iaa-pre-brief/iaa-pre-brief-acknowledgements.md` |
-| Stage 11 | Builder Appointment | COMPLETE FOR W1-W8 ONLY | `.agent-admin/builder-appointments/isms-stage11-w1-route-public-shell-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w2-free-assessment-flow-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w3-subscribe-auth-onboarding-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w4-context-entitlement-handoff-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w5-ask-maturion-adapter-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w6-backend-persistence-audit-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w7-deployment-runtime-hardening-builder-appointment.md`; `.agent-admin/builder-appointments/isms-stage11-w8-cumulative-regression-pbfag-builder-appointment.md` |
-| Stage 12 | W1 Build Execution & Evidence | MERGED — ACCEPTED FOR W1 SCOPE | `modules/isms/11-build/w1-route-public-shell-evidence.md` |
-| Stage 12 | W2 Build Execution & Evidence | MERGED — ACCEPTED FOR W2 SCOPE | `modules/isms/11-build/w2-free-assessment-flow-evidence.md` |
-| Stage 12 | W3 Build Execution & Evidence | MERGED — ACCEPTED FOR W3 SCOPE | `modules/isms/11-build/w3-subscribe-auth-onboarding-evidence.md` |
-| Stage 12 | W4 Build Execution & Evidence | MERGED — ACCEPTED FOR W4 SCOPE | `modules/isms/11-build/w4-context-entitlement-handoff-evidence.md` |
-| Stage 12 | W5 Build Execution & Evidence | MERGED — ACCEPTED FOR W5 SCOPE | `modules/isms/11-build/w5-ask-maturion-adapter-evidence.md` |
-| Stage 12 | W6 Build Execution & Evidence | MERGED — ACCEPTED FOR W6 SCOPE | `modules/isms/11-build/w6-backend-persistence-audit-evidence.md` |
-| Stage 12 | W7 Build Execution & Evidence | MERGED — ACCEPTED FOR W7 SCOPE | `modules/isms/11-build/w7-deployment-runtime-hardening-evidence.md` |
-| Stage 12 | W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W8 SCOPE | `modules/isms/11-build/w8-cumulative-regression-pbfag-evidence.md` |
+| Stage 11 | Builder Appointment | COMPLETE FOR W1-W8 ONLY | W1-W8 builder appointments |
+| Stage 12 | W1-W8 Build Execution & Evidence | MERGED — ACCEPTED FOR W1-W8 APPOINTED SCOPE | `modules/isms/11-build/` |
 | Post-W8 | P1 External Deployment Proof | VERIFIED WITH FOLLOW-UP FINDINGS | `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md` |
 | Post-W8 | P1.1 Deployment Hygiene Cleanup | MERGED — ACCEPTED FOR P1.1 SCOPE | `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md` |
 | Post-W8 | P1.2 Vercel Workflow Split | MERGED — ACCEPTED FOR P1.2 SCOPE | `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md` |
 | Post-W8 | P1.3 Real Preview Deploy Verification | MERGED — EVIDENCE RECORDED FOR P1.3 SCOPE | `modules/isms/12-deployment/p1-3-real-preview-deploy-verification-20260616.md` |
-| Post-W8 | MMM/PIT Workflow Split Reconciliation | MERGED — NON-ISMS DEPLOYMENT COORDINATION RECORDED | `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md`; `modules/MMM/12-deployment/mmm-vercel-workflow-ownership-20260619.md`; `modules/pit/12-deployment/pit-vercel-workflow-ownership-20260617.md`; PR #1830 |
-
----
-
-## Post-W8: P1 External Deployment Proof
-
-**Status**: VERIFIED WITH FOLLOW-UP FINDINGS  
-**Evidence**: `modules/isms/12-deployment/p1-external-deployment-proof-20260615.md`
-
-**Verified**:
-- production deployment `dpl_wwAYwu19XLPP1Kzm8cmvF2q1SqNC` is `READY`;
-- production domain `https://maturion-isms-portal.vercel.app` returns HTTP 200;
-- representative SPA deep links return HTTP 200;
-- runtime log query found no logs in the checked one-hour window.
-
----
-
-## Post-W8: P1.1 Deployment Hygiene Cleanup
-
-**Status**: MERGED — ACCEPTED FOR P1.1 SCOPE  
-**Merged PR**: #1809 (`07535ab07f14ce3bb5b8238eecf6e5d9e04233b9`)  
-**Evidence**: `modules/isms/12-deployment/p1-1-deployment-hygiene-cleanup-20260615.md`
-
-**Scope delivered**:
-- confirms stale PR #1795 is closed and unmerged;
-- bounds root Node engine to `>=20 <23`;
-- keeps pnpm package manager unchanged because lockfile is `lockfileVersion: '9.0'`;
-- patches API bearer validation TypeScript surface in `api/ai/feedback/pending.ts` and `api/ai/feedback/approve.ts`.
-
----
-
-## Post-W8: P1.2 Vercel Workflow Split
-
-**Status**: MERGED — ACCEPTED FOR P1.2 SCOPE  
-**Merged PR**: #1812 (`50785d5b6084fd7a2100cad8e946b596ac8b89a6`)  
-**Evidence**: `modules/isms/12-deployment/p1-2-vercel-workflow-split-20260616.md`
-
-**Scope delivered**:
-- adds `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md` coordination artifact;
-- adds `.github/workflows/deploy-isms-portal-vercel.yml`;
-- scopes ISMS deploy workflow to `apps/isms-portal/**` and ISMS workflow/docs paths;
-- avoids broad `api/**` ownership in the ISMS workflow.
-
-**Post-merge verification**:
-- PR #1812 was merged on 2026-06-16;
-- PR-scoped CI passed, including `Deploy ISMS Preview`;
-- actual Vercel deploy/smoke steps remained conditional on repository secrets: `ISMS_VERCEL_ORG_ID`, `ISMS_VERCEL_PROJECT_ID`, `ISMS_VERCEL_TOKEN`, and optional `ISMS_VERCEL_AUTOMATION_BYPASS_SECRET`.
-
----
-
-## Post-W8: P1.3 Real Preview Deploy Verification
-
-**Status**: MERGED — EVIDENCE RECORDED FOR P1.3 SCOPE  
-**Merged PR**: #1819 (`52606466798c5bf39509ae6c0fad136dff1d21f6`)  
-**Evidence**: `modules/isms/12-deployment/p1-3-real-preview-deploy-verification-20260616.md`
-
-**Scope recorded**:
-- ISMS app-specific Vercel secrets were configured by the owner before verification;
-- PR #1819 triggered the ISMS-only Vercel workflow on an ISMS app path;
-- `Deploy ISMS Portal to Vercel` passed on the latest PR head before merge;
-- `Deploy ISMS Preview` performed a real Vercel preview deploy rather than the previous missing-secret skip path;
-- Vercel reported the ISMS project preview as `Ready`;
-- the workflow smoke step passed after treating Vercel preview `401/403` as protected-preview posture rather than SPA route failure.
-
-**Preview URL recorded**:
-- `https://maturion-isms-portal-git-foreman-ism-d5f042-rassie-ras-projects.vercel.app`
-
----
-
-## Post-W8: MMM/PIT Workflow Split Reconciliation
-
-**Status**: MERGED — NON-ISMS DEPLOYMENT COORDINATION RECORDED  
-**Merged PR**: #1830 (`6a7654309be18a1deca8ad48cfc300f646c4390e`)  
-**Evidence**:
-- `MONOREPO_VERCEL_WORKFLOW_OWNERSHIP_SPLIT.md`
-- `modules/MMM/12-deployment/mmm-vercel-workflow-ownership-20260619.md`
-- `modules/pit/12-deployment/pit-vercel-workflow-ownership-20260617.md`
-
-**Scope recorded**:
-- MMM workflow ownership split issue #1815 was implemented and residual Vercel config risk was remediated;
-- PIT workflow ownership split issue #1816 was implemented and integrated-shell posture was made explicit;
-- app-specific Vercel secret namespaces are used by ISMS, MMM, and PIT workflows;
-- broad `api/**` and broad `packages/**` changes no longer automatically trigger unrelated app preview deployments.
+| Post-W8 | MMM/PIT Workflow Split Reconciliation | MERGED — NON-ISMS DEPLOYMENT COORDINATION RECORDED | PR #1830 |
+| Boundary | PR #1850 Shared Boundary Authority | MERGED — CONTROLLING PRE-BUILD AUTHORITY | `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md` |
+| Boundary | PIT Pre-Build Boundary Alignment | MERGED — PIT-SIDE ALIGNMENT RECORDED | PR #1853 |
+| Boundary | MMM Pre-Build Boundary Alignment | MERGED — MMM-SIDE ALIGNMENT RECORDED | PR #1854 |
+| Boundary | ISMS Pre-Build Boundary Alignment | MERGED — ISMS-SIDE ALIGNMENT RECORDED | PR #1857 |
+| Boundary Build | ISMS -> PIT Entitlement Handoff | MERGED — ISMS-OWNED HANDOFF CORRECTION | PR #1861 |
+| Boundary Build | PIT Deployment Host Canonical Redirect | MERGED — CANONICAL HOST POLICY IMPLEMENTED | PR #1865 |
 
 ---
 
@@ -130,19 +111,12 @@
 **Decision Record**: `.agent-admin/owner-decisions/isms-w8-owner-final-decision-20260615.md`
 
 Accepted conditions:
+
 - W1-W8 are complete for appointed scope only;
 - production auth/payment hardening remains future-gated;
 - live AI provider integration remains future-gated;
 - runtime persistence hooks remain future-gated;
 - audit writer invocation remains future-gated.
-
----
-
-## Current Stage Summary
-
-**Current Stage**: Post-W8 P1.3 real preview deploy evidence and MMM/PIT workflow split reconciliation have been recorded.  
-**Implementation Transfer**: Owner final decision remains recorded with conditions.  
-**Next Required Action**: Start P2 runtime Supabase persistence hooks as the next separately authorized ISMS productionization lane.
 
 ---
 
@@ -153,39 +127,62 @@ Accepted conditions:
 - [x] Stage 3 FRS approved with conditions
 - [x] Stage 4 TRS approved with conditions
 - [x] Stage 5 Architecture reconciled to TRS and approved with conditions
-- [x] Architecture completeness gap analysis filed
-- [x] Architecture remediation pack created
 - [x] Stage 6 QA-to-Red catalog created
 - [x] Stage 7 PBFAG completed and W8 amendment filed
 - [x] Stage 8 Implementation Plan complete
-- [x] Wave evidence plan complete
+- [x] Stage 8 Wave Evidence Plan complete
 - [x] Stage 9 Builder Checklist complete and W8 final reconciliation filed
 - [x] Stage 10 IAA Pre-Brief filed
-- [x] Stage 10 acknowledgements recorded or explicitly waived with binding Stage 11 condition
 - [x] Stage 11 W1-W8 Builder Appointments complete
-- [x] Stage 12 W1-W8 merged
-- [x] W8 owner final decision recorded
-- [x] P1 external deployment proof recorded
-- [x] P1.1 deployment hygiene merged
-- [x] P1.2 workflow split PR opened
-- [x] P1.2 workflow split CI passed
-- [x] P1.2 workflow split review conversations resolved
+- [x] Stage 12 W1-W8 merged for appointed ISMS scope
 - [x] P1.3 real preview deploy evidence recorded
-- [x] MMM/PIT workflow split reconciliation recorded after PR #1830
+- [x] PR #1850 shared ISMS/module boundary authority merged
+- [x] PIT-side boundary alignment merged in PR #1853
+- [x] MMM-side boundary alignment merged in PR #1854
+- [x] ISMS-side boundary alignment merged in PR #1857
+- [x] ISMS-owned PIT entitlement handoff correction merged in PR #1861
+- [x] PIT host canonical redirect policy merged in PR #1865
 
 ---
 
 ## Future-Gated Items
 
-The following remain outside W1-W8 appointed scope and require separate future authorization:
+The following remain outside W1-W8 appointed scope and require separate future authorization. They must not be treated as unfinished W1-W8 work:
 
 - production auth/payment hardening;
 - live AI provider integration;
 - runtime persistence hooks;
 - audit writer invocation;
 - bundle-size review;
-- canonical App Description path mismatch cleanup.
+- canonical App Description path mismatch cleanup;
+- MMM runtime/linkup implementation beyond approved ISMS handoff;
+- Risk Management linkup/runtime implementation;
+- RADAM / Systems Integration linkup/runtime implementation;
+- future module linkup/runtime implementation;
+- Supabase runtime persistence hooks;
+- workflow/deployment changes that alter app or module ownership.
+
+PIT runtime work, PIT W8.2 disposition, and PIT Stage 12 Slice 2 planning are PIT-agent/module scope unless CS2 explicitly appoints ISMS participation.
 
 ---
 
-**Last Tracker Reconciliation**: 2026-06-23
+## Claim Restriction
+
+This tracker supports the statement that ISMS W1-W8 is complete for the appointed implementation scope and that ISMS-side boundary alignment has been reconciled.
+
+It does not claim:
+
+- full production billing readiness;
+- live AI provider readiness;
+- Supabase persistence readiness;
+- audit writer production readiness;
+- PIT runtime completion;
+- MMM runtime completion;
+- Risk/RADAM/future module completion;
+- unrestricted production-release readiness.
+
+Future implementation requires a separately scoped QA-to-red/build wave, builder appointment, build-to-green work, and canonical-host evidence.
+
+---
+
+**Last Tracker Reconciliation**: 2026-06-29

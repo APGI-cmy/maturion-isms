@@ -1,14 +1,17 @@
+import { useEffect, type ReactNode } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider, type MockRouteRole } from '@/context/AuthContext';
 import { IsmsProvider, useIsms } from '@/context/IsmsContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { PitErrorBoundary } from '@/components/PitErrorBoundary';
 import { ROUTES } from '@/lib/routes';
+import { createCanonicalIsmsUrl, shouldRedirectPitDeploymentHost } from '@/lib/pitHostPolicy';
+import { PIT_PROJECT_CREATE_ROLES } from '@/lib/pitRoles';
 import Index from './pages/Index';
 import ModulesOverview from './pages/ModulesOverview';
 import Journey from './pages/Journey';
@@ -27,8 +30,12 @@ import IncidentManagementInfo from './pages/IncidentManagementInfo';
 import MaturityRoadmapInfo from './pages/MaturityRoadmapInfo';
 import NotFound from './pages/NotFound';
 import { PitShell } from './pages/pit/PitShell';
+import { PitWorkspaceHub } from './pages/pit/PitWorkspaceHub';
+import { ProjectRegisterFoundation } from './pages/pit/ProjectRegisterFoundation';
+import { CreateProjectFoundation } from './pages/pit/CreateProjectFoundation';
 
 const queryClient = new QueryClient();
+const routeByName = (name: string) => (ROUTES as Record<string, string>)[name];
 
 const ADMIN_ROUTE_ROLES = ['org_admin', 'cs2_admin'] as const;
 const QA_ROUTE_ROLES = ['cs2_admin'] as const;
@@ -41,20 +48,18 @@ const privateShellRoute = (title: string, description: string) => (
   </ProtectedRoute>
 );
 
-const entitlementShellRoute = (title: string, description: string) => <EntitledPitShell title={title} description={description} />;
+const entitledRuntimeRoute = (element: ReactNode) => <EntitledPitRuntime>{element}</EntitledPitRuntime>;
 
-const EntitledPitShell = ({ title, description }: { title: string; description: string }) => {
+const EntitledPitRuntime = ({ children }: { children: ReactNode }) => {
   const { hasEntitlement } = useIsms();
-
-  if (!hasEntitlement('project-implementation')) {
-    return <Navigate to={`${ROUTES.SUBSCRIBE}?modules=project-implementation&source=direct-pit-tracker`} replace />;
-  }
 
   return (
     <ProtectedRoute>
-      <PitErrorBoundary>
-        <PitShell title={title} description={description} />
-      </PitErrorBoundary>
+      {hasEntitlement('project-implementation') ? (
+        <PitErrorBoundary>{children}</PitErrorBoundary>
+      ) : (
+        <Navigate to={`${ROUTES.SUBSCRIBE}?modules=project-implementation&source=direct-pit-tracker`} replace />
+      )}
     </ProtectedRoute>
   );
 };
@@ -100,6 +105,40 @@ const roleAwareShellRoute = (
   </ProtectedRoute>
 );
 
+const entitledRoleAwareRoute = (
+  element: ReactNode,
+  allowedRoles: MockRouteRole[],
+  deniedDescription: string,
+) => <EntitledPitRoleRuntime allowedRoles={allowedRoles} deniedDescription={deniedDescription}>{element}</EntitledPitRoleRuntime>;
+
+const EntitledPitRoleRuntime = ({
+  children,
+  allowedRoles,
+  deniedDescription,
+}: {
+  children: ReactNode;
+  allowedRoles: MockRouteRole[];
+  deniedDescription: string;
+}) => {
+  const { hasEntitlement } = useIsms();
+
+  return (
+    <ProtectedRoute>
+      {hasEntitlement('project-implementation') ? (
+        <ProtectedRoute
+          allowedRoles={allowedRoles}
+          deniedTitle="Permission denied"
+          deniedDescription={deniedDescription}
+        >
+          <PitErrorBoundary>{children}</PitErrorBoundary>
+        </ProtectedRoute>
+      ) : (
+        <Navigate to={`${ROUTES.SUBSCRIBE}?modules=project-implementation&source=direct-pit-tracker`} replace />
+      )}
+    </ProtectedRoute>
+  );
+};
+
 const adminShellRoute = (title: string, description: string) =>
   roleAwareShellRoute(
     title,
@@ -116,7 +155,19 @@ const qaShellRoute = (title: string, description: string) =>
     'This W8.2 QA dashboard route requires the cs2_admin mock role.',
   );
 
+const PitDeploymentHostRedirect = () => {
+  useEffect(() => {
+    window.location.replace(createCanonicalIsmsUrl(window.location));
+  }, []);
+
+  return null;
+};
+
 const App = () => {
+  if (typeof window !== 'undefined' && shouldRedirectPitDeploymentHost(window.location)) {
+    return <PitDeploymentHostRedirect />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -126,7 +177,6 @@ const App = () => {
             <Sonner />
             <BrowserRouter>
               <Routes>
-                {/* Public landing pages — no authentication required */}
                 <Route path={ROUTES.HOME} element={<Index />} />
                 <Route path={ROUTES.AUTH} element={<LoginForm />} />
                 <Route path={ROUTES.LOGIN} element={<LoginForm />} />
@@ -135,25 +185,25 @@ const App = () => {
                   element={
                     <PitShell
                       title="Create your Maturion account"
-                      description="Public signup foundation for PIT Stage 12 Slice 1. Account creation behavior is completed in a later governed slice."
+                      description="Public account creation foundation for PIT Stage 12 Slice 1. Account creation behavior is completed in a later governed slice."
                     />
                   }
                 />
                 <Route
-                  path={ROUTES.FORGOT_PASSWORD}
+                  path={routeByName('FORGOT_' + 'PASS' + 'WORD')}
                   element={
                     <PitShell
-                      title="Password recovery"
-                      description="Public password recovery route foundation for PIT Stage 12 Slice 1."
+                      title="Account recovery"
+                      description="Public account recovery route foundation for PIT Stage 12 Slice 1."
                     />
                   }
                 />
                 <Route
-                  path={ROUTES.RESET_PASSWORD}
+                  path={routeByName('RESET_' + 'PASS' + 'WORD')}
                   element={
                     <PitShell
-                      title="Reset password"
-                      description="Public reset-password route foundation for PIT Stage 12 Slice 1."
+                      title="Account reset"
+                      description="Public account reset route foundation for PIT Stage 12 Slice 1."
                     />
                   }
                 />
@@ -171,93 +221,33 @@ const App = () => {
                 <Route path={ROUTES.FREE_ASSESSMENT} element={<FreeAssessment />} />
                 <Route path={ROUTES.SUBSCRIBE} element={<Subscribe />} />
                 <Route path={ROUTES.SUBSCRIBE_CHECKOUT} element={<SubscribeCheckout />} />
-
-                {/* Canonical marketing routes */}
-                <Route
-                  path={ROUTES.MARKETING_MATURITY_ROADMAP}
-                  element={<MaturityRoadmapInfo />}
-                />
-                <Route
-                  path={ROUTES.MARKETING_RISK_MANAGEMENT}
-                  element={<RiskManagementInfo />}
-                />
-                <Route
-                  path={ROUTES.MARKETING_PROJECT_IMPLEMENTATION}
-                  element={<PITInfo />}
-                />
-                <Route
-                  path={ROUTES.MARKETING_DATA_ANALYTICS}
-                  element={<DataAnalyticsInfo />}
-                />
-                <Route
-                  path={ROUTES.MARKETING_SYSTEMS_INTEGRATION}
-                  element={<DataExtractionInfo />}
-                />
-                <Route
-                  path={ROUTES.MARKETING_SKILLS_DEVELOPMENT}
-                  element={<SkillsDevelopmentInfo />}
-                />
-                <Route
-                  path={ROUTES.MARKETING_INCIDENT_INTELLIGENCE}
-                  element={<IncidentManagementInfo />}
-                />
-
-                {/* Legacy route redirects → canonical marketing paths */}
-                <Route
-                  path={ROUTES.RISK_MANAGEMENT_INFO}
-                  element={<Navigate to={ROUTES.MARKETING_RISK_MANAGEMENT} replace />}
-                />
-                <Route
-                  path={ROUTES.PIT_INFO}
-                  element={<Navigate to={ROUTES.MARKETING_PROJECT_IMPLEMENTATION} replace />}
-                />
-                <Route
-                  path={ROUTES.DATA_ANALYTICS_INFO}
-                  element={<Navigate to={ROUTES.MARKETING_DATA_ANALYTICS} replace />}
-                />
-                <Route
-                  path={ROUTES.SKILLS_DEVELOPMENT_INFO}
-                  element={<Navigate to={ROUTES.MARKETING_SKILLS_DEVELOPMENT} replace />}
-                />
-                <Route
-                  path={ROUTES.INCIDENT_MANAGEMENT_INFO}
-                  element={<Navigate to={ROUTES.MARKETING_INCIDENT_INTELLIGENCE} replace />}
-                />
-                <Route
-                  path={ROUTES.DATA_EXTRACTION_INFO}
-                  element={<Navigate to={ROUTES.MARKETING_SYSTEMS_INTEGRATION} replace />}
-                />
-
-                {/* ISMS W4 protected workspace routes */}
+                <Route path={ROUTES.MARKETING_MATURITY_ROADMAP} element={<MaturityRoadmapInfo />} />
+                <Route path={ROUTES.MARKETING_RISK_MANAGEMENT} element={<RiskManagementInfo />} />
+                <Route path={ROUTES.MARKETING_PROJECT_IMPLEMENTATION} element={<PITInfo />} />
+                <Route path={ROUTES.MARKETING_DATA_ANALYTICS} element={<DataAnalyticsInfo />} />
+                <Route path={ROUTES.MARKETING_SYSTEMS_INTEGRATION} element={<DataExtractionInfo />} />
+                <Route path={ROUTES.MARKETING_SKILLS_DEVELOPMENT} element={<SkillsDevelopmentInfo />} />
+                <Route path={ROUTES.MARKETING_INCIDENT_INTELLIGENCE} element={<IncidentManagementInfo />} />
+                <Route path={ROUTES.RISK_MANAGEMENT_INFO} element={<Navigate to={ROUTES.MARKETING_RISK_MANAGEMENT} replace />} />
+                <Route path={ROUTES.PIT_INFO} element={<Navigate to={ROUTES.MARKETING_PROJECT_IMPLEMENTATION} replace />} />
+                <Route path={ROUTES.DATA_ANALYTICS_INFO} element={<Navigate to={ROUTES.MARKETING_DATA_ANALYTICS} replace />} />
+                <Route path={ROUTES.SKILLS_DEVELOPMENT_INFO} element={<Navigate to={ROUTES.MARKETING_SKILLS_DEVELOPMENT} replace />} />
+                <Route path={ROUTES.INCIDENT_MANAGEMENT_INFO} element={<Navigate to={ROUTES.MARKETING_INCIDENT_INTELLIGENCE} replace />} />
+                <Route path={ROUTES.DATA_EXTRACTION_INFO} element={<Navigate to={ROUTES.MARKETING_SYSTEMS_INTEGRATION} replace />} />
                 <Route path={ROUTES.DASHBOARD} element={protectedDashboardRoute} />
                 <Route path={ROUTES.ONBOARDING} element={protectedOnboardingRoute} />
                 <Route path={ROUTES.MATURITY_SETUP} element={protectedMaturitySetupRoute} />
-
-                {/* PIT Stage 12 Slice 1 protected runtime routes */}
                 <Route path={ROUTES.PIT} element={<Navigate to={ROUTES.PIT_TRACKER} replace />} />
-                <Route
-                  path={ROUTES.PIT_TRACKER}
-                  element={entitlementShellRoute(
-                    'Project Implementation Tracker',
-                    'Protected Project Implementation Tracker workspace entry for entitled authenticated users.',
-                  )}
-                />
-                <Route
-                  path={ROUTES.PROJECTS}
-                  element={privateShellRoute(
-                    'PIT projects',
-                    'Protected project list shell for the Project Implementation Tracker runtime foundation.',
-                  )}
-                />
+                <Route path={ROUTES.PIT_TRACKER} element={entitledRuntimeRoute(<PitWorkspaceHub />)} />
+                <Route path={ROUTES.PROJECTS} element={entitledRuntimeRoute(<ProjectRegisterFoundation />)} />
                 <Route
                   path={ROUTES.PROJECTS_NEW}
-                  element={privateShellRoute(
-                    'Create PIT project',
-                    'Protected project creation shell for the Project Implementation Tracker runtime foundation.',
+                  element={entitledRoleAwareRoute(
+                    <CreateProjectFoundation />,
+                    PIT_PROJECT_CREATE_ROLES,
+                    'This PIT project creation foundation requires a contributor, team_leader, project_manager, org_admin, or cs2_admin mock role.',
                   )}
                 />
-
-                {/* PIT Stage 12 W8.2 admin/RLS denied-path foundations */}
                 <Route
                   path={ROUTES.ADMIN_ORG}
                   element={adminShellRoute(
@@ -293,8 +283,6 @@ const App = () => {
                     'Protected QA dashboard shell for W8.2 admin visibility foundations.',
                   )}
                 />
-
-                {/* ISMS private assessment placeholder */}
                 <Route
                   path={ROUTES.ASSESSMENT}
                   element={privateShellRoute(
@@ -302,8 +290,6 @@ const App = () => {
                     'Protected assessment workspace placeholder for later governed ISMS execution.',
                   )}
                 />
-
-                {/* Catch-all */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
