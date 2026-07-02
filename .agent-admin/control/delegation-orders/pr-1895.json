@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "APW-PREVIEW-V01",
+  "pr_number": 1895,
+  "prebrief_commit_sha": "ad41d779bf684f01b60717f20d5d5d22ed110867",
+  "builder_appointment_timestamp": "2026-07-02T08:00:00Z",
+  "builder_appointment_commit_sha": "236a6ca886863ac15620014de92a8d2a91bca0d3",
+  "builder_agent": "apw-preview-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-preview-builder-appointment-v0.1.md",
+  "first_implementation_commit_sha": "783f89ec1159212744a816ff075533472fd730ce",
+  "qp_review_timestamp": "2026-07-02T08:15:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
