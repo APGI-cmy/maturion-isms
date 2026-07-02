@@ -10,7 +10,7 @@ Branch: apgi-cmy-fix-descriptor-gerund-normalization
 
 ## Objective
 
-Retry MMM descriptor hardening under governed sequence after reverting a prior regression, then complete preflight -> builder -> ECAP -> IAA gates.
+Retry MMM descriptor hardening under governed sequence after reverting a prior regression, then run preflight -> builder -> ECAP -> IAA gates.
 
 ## Delivery chronology
 

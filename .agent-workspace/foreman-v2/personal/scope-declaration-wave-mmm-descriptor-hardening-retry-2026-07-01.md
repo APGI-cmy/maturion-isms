@@ -28,3 +28,12 @@
 - `apps/mmm/src/components/assessment/CriteriaManagement.tsx`
 - `modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx`
 
+## Approved Artifact Paths
+
+- `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
+- `.agent-workspace/foreman-v2/personal/SCOPE_DECLARATION.md`
+- `.agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-descriptor-hardening-retry-2026-07-01.md`
+- `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-hardening-retry-2026-07-01.md`
+- `.agent-admin/builder-appointments/wave-mmm-descriptor-hardening-retry-2026-07-01.md`
+- `.agent-admin/waves/wave-mmm-descriptor-hardening-retry-2026-07-01-current-tasks.md`
+- `modules/MMM/05-qa-to-red/descriptor-hardening-retry-qa-to-red-2026-07-01.md`
