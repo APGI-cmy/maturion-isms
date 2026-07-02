@@ -3,7 +3,7 @@
 **Module**: MMM (Maturity Management Module)  
 **Module Slug**: MMM  
 **Last Updated**: 2026-07-02  
-**Updated By**: ChatGPT Foreman support (wave: wave-mmm-descriptor-reasoning-learning-prebuild-2026-07-02 — CS2-requested pre-build/QA expansion for descriptor reasoning and governed learning retrieval)
+**Updated By**: foreman-v2-agent (wave: wave-mmm-descriptor-reasoning-learning-prebuild-2026-07-02 — CS2-requested pre-build/QA expansion for descriptor reasoning and governed learning retrieval)
 
 > **Classification**: ACTIVE — DESCRIPTOR REASONING AND GOVERNED LEARNING RETRIEVAL PRE-BUILD / QA EXPANSION OPEN BEFORE RUNTIME IMPLEMENTATION
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main live progress dashboard.
