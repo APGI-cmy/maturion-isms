@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   normalizeDescriptorEvidenceGrammar,
 } from '../../../../apps/mmm/src/components/assessment/CriteriaManagement';
+import {
+  canUseDescriptorLearningRecordForTenant,
+  type DescriptorLearningRecord,
+} from '../../../../apps/mmm/src/lib/descriptorLearningRetrieval';
 
 // -----------------------------------------------------------------------------
 // Issue #1900 / PR #1898 QA-to-RED expansion
@@ -37,7 +41,7 @@ describe('T-MMM-DRGL-001: verbatim nominal phrase descriptor reasoning', () => {
 });
 
 describe('T-MMM-DRGL-004: guidance material is not used as descriptor subject', () => {
-  it('strips Note/Guidance/Reference content from evidence leads', () => {
+  it('strips Note/Guidance/Reference content from evidence leads while preserving plural grammar', () => {
     const descriptor = normalizeDescriptorEvidenceGrammar(
       'Evidence that Specific Security accountabilities and performance measures should be documented within role descriptions. (Note: This is especially important during high-risk diamond handling activities.) is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
     );
@@ -51,37 +55,33 @@ describe('T-MMM-DRGL-004: guidance material is not used as descriptor subject', 
 });
 
 describe('T-MMM-DRGL-013: tenant isolation learning retrieval guardrail', () => {
-  type LearningRecord = {
-    organisation_id: string;
-    approved_for_reuse_scope: string;
-    review_status: string;
-  };
-
-  const canUseLearningRecordForOrganisation = (
-    record: LearningRecord,
-    currentOrganisationId: string,
-  ) =>
-    record.organisation_id === currentOrganisationId ||
-    (record.approved_for_reuse_scope === 'approved_global_methodology_pattern' &&
-      record.review_status === 'approved_global');
-
-  it('excludes anonymised global candidates from cross-tenant descriptor retrieval', () => {
-    const record: LearningRecord = {
-      organisation_id: 'organisation-a',
-      approved_for_reuse_scope: 'anonymised_global_pattern_candidate',
-      review_status: 'candidate',
+  it('excludes anonymised global candidates from cross-tenant descriptor retrieval through the production guardrail', () => {
+    const record: DescriptorLearningRecord = {
+      tenantId: 'tenant-a',
+      reuseScope: 'anonymised_global_pattern_candidate',
+      reviewStatus: 'candidate',
     };
 
-    expect(canUseLearningRecordForOrganisation(record, 'organisation-b')).toBe(false);
+    expect(canUseDescriptorLearningRecordForTenant(record, 'tenant-b')).toBe(false);
   });
 
-  it('allows only approved global methodology records across tenants', () => {
-    const record: LearningRecord = {
-      organisation_id: 'organisation-a',
-      approved_for_reuse_scope: 'approved_global_methodology_pattern',
-      review_status: 'approved_global',
+  it('allows only approved global methodology records across tenants through the production guardrail', () => {
+    const record: DescriptorLearningRecord = {
+      tenantId: 'tenant-a',
+      reuseScope: 'approved_global_methodology_pattern',
+      reviewStatus: 'approved_global',
     };
 
-    expect(canUseLearningRecordForOrganisation(record, 'organisation-b')).toBe(true);
+    expect(canUseDescriptorLearningRecordForTenant(record, 'tenant-b')).toBe(true);
+  });
+
+  it('continues to allow tenant-specific learning for the same tenant', () => {
+    const record: DescriptorLearningRecord = {
+      tenantId: 'tenant-a',
+      reuseScope: 'tenant_specific_pattern',
+      reviewStatus: 'active',
+    };
+
+    expect(canUseDescriptorLearningRecordForTenant(record, 'tenant-a')).toBe(true);
   });
 });
