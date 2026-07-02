@@ -8,7 +8,7 @@
 > **Classification**: ACTIVE — DESCRIPTOR REASONING AND GOVERNED LEARNING RETRIEVAL PRE-BUILD / QA EXPANSION OPEN BEFORE RUNTIME IMPLEMENTATION
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main live progress dashboard.
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
-> **Issue**: [maturion-isms#1871](https://github.com/APGI-cmy/maturion-isms/issues/1871)
+> **Baseline Issue**: [maturion-isms#1871](https://github.com/APGI-cmy/maturion-isms/issues/1871) — original descriptor grammar closure issue; the DRGL lane is a CS2-requested successor pre-build scope and should receive a successor implementation issue before runtime build work starts.
 > **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change.
 
 ## Current Live Status
@@ -21,7 +21,8 @@ Current active MMM descriptor lane:
 
 - Wave: `wave-mmm-descriptor-reasoning-learning-prebuild-2026-07-02`
 - Branch: `foreman/mmm-descriptor-reasoning-learning`
-- Builds on: `wave-mmm-descriptor-grammar-closure-2026-06-30` / issue `#1871`
+- Builds on: `wave-mmm-descriptor-grammar-closure-2026-06-30` / baseline issue `#1871`
+- Tracking note: `#1871` remains the baseline descriptor grammar closure issue. The descriptor reasoning and governed learning retrieval lane is a successor pre-build scope; open a successor issue before any runtime implementation is appointed.
 - Purpose: extend the descriptor grammar closure lane into a governed descriptor reasoning and learning retrieval design so Maturion reasons over verbatim source criteria, consults consented descriptor-learning records, and avoids repeating corrected failures.
 - Status: pre-build artifact and QA-to-red expansion only; no runtime implementation claim.
 
@@ -64,13 +65,13 @@ Conditional extension only if justified:
 
 ## Descriptor Grammar / Reasoning QA Obligations
 
-Future implementation under issue #1871 or a successor descriptor-reasoning issue must verify:
+Future implementation under the baseline issue #1871 or a successor descriptor-reasoning issue must verify:
 
 1. `are to be clearly defined` is normalised to `are clearly defined` in evidence clauses.
 2. `Assessing incentive schemes and measures for their impact on Security` is normalised to `incentive schemes and measures are assessed for their impact on Security`.
 3. Instruction wording such as `should be`, `will be`, `shall be`, and `must be` is converted into evidence-state phrasing before maturity-state text is attached.
 4. The criterion-specific actor/action/object remains visible and is not replaced with generic policy/control wording.
-5. Accepted user descriptor edits are used as future generation examples where learning records are available, or deterministic grammar normalization covers the observed examples until retrieval is separately wired.
+5. Accepted user descriptor edits are used as future generation examples where learning records are available, or deterministic grammar normalisation covers the observed examples until retrieval is separately wired.
 6. Descriptor editing remains available after save until a future explicit signoff lock exists.
 7. Verbatim nominal phrases such as `Review and approval of facility design changes...` are reconstructed as `facility design changes are reviewed and approved...`.
 8. Learning is not recorded unless the user consents.
