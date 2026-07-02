@@ -431,9 +431,9 @@ describe('T-MMM-DHR: Descriptor hardening retry — generalized normalization', 
     const result = normalizeDescriptorEvidenceGrammar(
       'Evidence that Assessing incentive schemes for their impact on Security is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
     );
-    expect(result).not.toContain('Evidence that Assessing');
-    expect(result).toContain('incentive schemes');
-    expect(result).toMatch(/are assessed|is assessed/i);
+expect(result).not.toContain('Evidence that Assessing');
+expect(result).toContain('incentive schemes');
+expect(result).toContain('are assessed for their impact on Security');
   });
 
   it('T-MMM-DHR-003: actor-gerund "Actor Reviewing X" normalizes to "Actor reviews X" without drift', () => {
