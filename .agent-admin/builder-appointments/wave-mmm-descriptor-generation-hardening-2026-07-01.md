@@ -38,4 +38,4 @@ Implement hardening for MMM descriptor generation so output grammar is determini
 
 ## Order gate intent
 
-This appointment must be committed after canonical pre-brief evidence and before the first implementation commit. Delegation order proof will be recorded in `.agent-admin/control/delegation-order.json`.
+This appointment must be committed after canonical pre-brief evidence and before the first implementation commit. Delegation order proof will be recorded in `.agent-admin/control/delegation-orders/pr-1885.json`.
