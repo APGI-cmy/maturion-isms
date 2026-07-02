@@ -576,10 +576,27 @@ function criterionRequirementSubject(criterionText: string): string {
     // "will support" → "supports") before the bare-will removal strips "will" and leaves an
     // ungoverned infinitive ("report", "support") that reads as plural-imperative, not third-person.
     // Exclusions guard auxiliary constructs ("will not", "will also", "will only", "will still").
-    .replace(
-      /\bwill\s+(?!not\b|also\b|only\b|still\b)([a-z][a-z-]+)/gi,
-      (_, verb: string) => verb + 's',
-    )
+.replace(
+  /\bwill\s+(?!not\b|also\b|only\b|still\b)([a-z][a-z-]+)/gi,
+  (_match, rawVerb: string) => {
+    const preserveCase = (value: string) =>
+      rawVerb[0] === rawVerb[0].toUpperCase() ? value[0].toUpperCase() + value.slice(1) : value;
+
+    const parts = rawVerb.toLowerCase().split('-');
+    const base = parts.pop() ?? '';
+
+    const conjugated = base === 'have'
+      ? 'has'
+      : base.endsWith('y') && !/[aeiou]y$/.test(base)
+      ? `${base.slice(0, -1)}ies`
+      : /(s|x|z|ch|sh|o)$/.test(base)
+      ? `${base}es`
+      : `${base}s`;
+
+    parts.push(conjugated);
+    return preserveCase(parts.join('-'));
+  },
+)
     .replace(/\bwill\b/gi, '')
     .replace(/\s+/g, ' ')
     .trim();
