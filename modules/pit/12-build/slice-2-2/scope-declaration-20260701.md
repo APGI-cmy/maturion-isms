@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
-| Stage | Stage 12 - Build Execution and Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Slice | Slice 2.2 - Entry, Signup, Auth Implementation Planning |
 | Issue | #1891 |
 | Date | 2026-07-01 |
