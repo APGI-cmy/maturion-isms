@@ -41,7 +41,7 @@ Controlling rules:
 |---|---|---|
 | Stage 12 kickoff | Authorized to start / incomplete | Issue #1767, PR #1768 |
 | Slice 1 / W8.2 boundary evidence | Evidence accepted for boundary/linkup only | PR #1869 |
-| Slice 2 - Project Workspace Foundation | Implemented and merged | PR #1877 |
+| Slice 2 - Project Workspace Foundation | Implemented and merged; formal browser evidence package still pending | PR #1877 |
 | Slice 2.1 - Entry, Signup and Standalone Journey Specification | Specification baseline merged | PR #1888 |
 | Slice 2.2 - Entry Implementation Planning | Planning/control baseline merged | PR #1894 |
 | Slice 2.3 - Entry Journey Implementation | Opened as next implementation slice | Issue #1896 |
@@ -58,7 +58,7 @@ Controlling rules:
 | Reconfirm or appoint the builder | Done for Slice 2 and planning-level reconfirmed for Slice 2.2; Slice 2.3 still needs current builder appointment/delegation evidence before build |
 | Define QA-to-Green mapped to RED baseline | Done for Slice 2.2 against PIT-RED-ENTRY-001 through PIT-RED-ENTRY-020 |
 | Only then implement Slice 2 | Slice 2 implemented via PR #1877; Slice 2.3 implementation not yet delegated or built |
-| Deploy and capture browser evidence | Partly done for Slice 2 positive runtime; still required for Slice 2.3 entry journey |
+| Deploy and capture browser evidence | Formal Slice 2 browser evidence package remains pending; Slice 2.3 entry journey evidence is still required after implementation |
 | Update Stage 12 evidence tracker | This addendum updates the current slice tracker position |
 
 ---
