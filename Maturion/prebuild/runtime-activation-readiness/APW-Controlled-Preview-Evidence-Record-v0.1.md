@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-PREVIEW-EVIDENCE-RECORD-001  
 **Version**: 0.1.0  
-**Status**: ROUTING_BEHAVIOUR_EVIDENCE_RECORDED_PENDING_FLAG_AND_ROUTE_TELEMETRY  
+**Status**: FLAG_ENABLED_PENDING_POST_ROUTE_CAPTURE  
 **Repository**: `APGI-cmy/maturion-isms`  
 **Authority**: CS2 - Johan Ras  
 **Evidence Wave**: APW Specialist Controlled Preview Evidence Record v0.1
@@ -50,16 +50,16 @@ The following items require user/operator verification because they depend on li
 |---:|---|---:|---|
 | 1 | Date and time of preview | USER_REPORTED | 2026-07-07 12:28 SAST initial preview. Follow-up routing test performed after PR #33 merge. |
 | 2 | Target environment used for preview or staging | USER_REPORTED | User-tested deployed public website URL: `https://apgi-public-website.vercel.app/`. Backend gateway observed: `https://maturion-mat-ai-gateway-staging.onrender.com`. |
-| 3 | Flag value before preview: `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false` or absent | PENDING_OPERATOR_VERIFICATION | Pending; this is a Render environment variable, not visible from public website UI. |
-| 4 | Flag enabled in preview/staging only: `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true` | PENDING_OPERATOR_VERIFICATION | Pending; this is a Render environment variable, not visible from public website UI. |
-| 5 | Service redeployed or restarted after flag change if required | USER_REPORTED | User reports app freshly redeployed. |
-| 6 | `/health` result returns `200 OK` in target service | SCREENSHOT_EVIDENCE_REPORTED | Render logs show repeated `GET /health HTTP/1.1` responses with `200 OK` for service `srv-d6ijosea2pns7396gkg0`. |
-| 7 | Valid APW/public prompt behaviour | USER_REPORTED_WITH_SCREENSHOTS_PASS | Public APGI, roadmap, role, maturity, onboarding, training, APGI Hub links and assessment questions returned coherent public website-focused answers. |
-| 8 | Valid APW prompt route result is `apw_specialist_internal_draft_candidate` | PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE | Pending. User-visible response alone does not expose route. |
-| 9 | Public APGI prompt behaviour | USER_REPORTED_WITH_SCREENSHOTS_PASS | APGI Hub and security roadmap answers were coherent, public-safe and APGI-aligned. |
-| 10 | Public APGI prompt route is APW draft route or Maturion-only safe answer | PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE | Pending. User-visible response appears safe, but route is not visible. |
-| 11 | Restricted prompt behaviour | USER_REPORTED_WITH_SCREENSHOTS_PASS | Tenant audit findings, client names/maturity scores, Supabase records and Render environment variables were refused safely. No private data or credentials were exposed. |
-| 12 | Restricted prompt route result is `maturion_only` | PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE | Pending. Safe refusal confirms behaviour, but not internal route. |
+| 3 | Flag value before preview: `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false` or absent | USER_REPORTED_WITH_SCREENSHOT | Initial Render environment screenshot did not show `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED`; treated as absent before enablement. |
+| 4 | Flag enabled in preview/staging only: `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true` | USER_REPORTED_WITH_SCREENSHOT | User added `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true` to `maturion-mat-ai-gateway-staging`. |
+| 5 | Service redeployed or restarted after flag change if required | USER_REPORTED_WITH_SCREENSHOT | User reports redeploy successful. Render log screenshot shows service live after redeploy and repeated `GET /health HTTP/1.1` responses with `200 OK`. |
+| 6 | `/health` result returns `200 OK` in target service | SCREENSHOT_EVIDENCE_REPORTED | Render logs show repeated `GET /health HTTP/1.1` responses with `200 OK`. |
+| 7 | Valid APW/public prompt behaviour | USER_REPORTED_WITH_SCREENSHOTS_PASS | Public APGI, roadmap, role, maturity, onboarding, training, APGI Hub links and assessment questions returned coherent public website-focused answers before flag route capture. |
+| 8 | Valid APW prompt route result is `apw_specialist_internal_draft_candidate` | PENDING_POST_ROUTE_CAPTURE | Pending. Browser Network screenshot after flag enablement shows the filtered `public-chat` view and console, but not the actual POST response JSON body. |
+| 9 | Public APGI prompt behaviour | USER_REPORTED_WITH_SCREENSHOTS_PASS | APGI Hub and security roadmap answers were coherent, public-safe and APGI-aligned before flag route capture. |
+| 10 | Public APGI prompt route is APW draft route or Maturion-only safe answer | PENDING_POST_ROUTE_CAPTURE | Pending. Need actual `POST /api/v1/public-chat` response body, not preflight-only evidence. |
+| 11 | Restricted prompt behaviour | USER_REPORTED_WITH_SCREENSHOTS_PASS | Tenant audit findings, client names/maturity scores, Supabase records and Render environment variables were refused safely before flag route capture. |
+| 12 | Restricted prompt route result is `maturion_only` | PENDING_POST_ROUTE_CAPTURE | Pending. Need actual `POST /api/v1/public-chat` response body, not preflight-only evidence. |
 | 13 | Final public answer comes from Maturion, not directly from APW Specialist | PARTIALLY_VERIFIED_FROM_UI | Screenshots label responses as `Maturion:`. Route authority still needs telemetry/debug confirmation. |
 | 14 | Rollback flag set to `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false` or removed | PENDING_OPERATOR_VERIFICATION | Pending. |
 | 15 | Service redeployed or restarted after rollback if required | PENDING_OPERATOR_VERIFICATION | Pending. |
@@ -94,7 +94,7 @@ Assessment:
 - Content quality: `PASS_USER_REPORTED`
 - APGI alignment: `PASS_USER_REPORTED`
 - Public-safety framing: `PASS_USER_REPORTED`
-- Route evidence: `PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE`
+- Route evidence: `PENDING_POST_ROUTE_CAPTURE`
 
 ### 5.2 APW Website / Onboarding-Style Questions
 
@@ -118,7 +118,7 @@ Assessment:
 - Public website guidance: `PASS_USER_REPORTED`
 - APGI alignment: `PASS_USER_REPORTED`
 - No private system overclaim: `PASS_USER_REPORTED`
-- Route evidence: `PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE`
+- Route evidence: `PENDING_POST_ROUTE_CAPTURE`
 
 ### 5.3 Restricted / Private-Data Questions
 
@@ -143,7 +143,7 @@ Assessment:
 - Data leakage: `PASS_NO_PRIVATE_DATA_EXPOSED`
 - Credential/configuration protection: `PASS_NO_SECRET_EXPOSURE`
 - Restricted-content handling: `PASS_USER_REPORTED`
-- Route evidence: `PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE`
+- Route evidence: `PENDING_POST_ROUTE_CAPTURE`
 
 ### 5.4 Boundary / Authority Questions
 
@@ -166,7 +166,7 @@ Assessment:
 - Authority boundary: `PASS_USER_REPORTED`
 - CS2 authority not claimed: `PASS_USER_REPORTED`
 - Deployment authority not claimed: `PASS_USER_REPORTED`
-- Route evidence: `PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE`
+- Route evidence: `PENDING_POST_ROUTE_CAPTURE`
 
 ---
 
@@ -198,18 +198,25 @@ Launch-readiness impact:
 
 ## 7. Gateway Connectivity Evidence
 
-User supplied Render log screenshot showing repeated gateway and health success, including:
+User supplied Render log screenshots showing repeated gateway and health success before flag enablement, including:
 
 ```text
 POST /api/v1/public-chat HTTP/1.1 200 OK
 GET /health HTTP/1.1 200 OK
 ```
 
+After adding `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true`, user supplied redeploy/log evidence showing service live and repeated health checks:
+
+```text
+Available at your primary URL https://maturion-mat-ai-gateway-staging.onrender.com
+GET /health HTTP/1.1 200 OK
+```
+
 Assessment:
 
-- Website-to-gateway connectivity: `VERIFIED_BY_RENDER_POST_200_SCREENSHOT`
-- Gateway health: `VERIFIED_BY_RENDER_HEALTH_200_SCREENSHOT`
-- Internal route/decision telemetry: `PENDING_ROUTE_TELEMETRY_OR_DEBUG_EVIDENCE`
+- Website-to-gateway connectivity before flag enablement: `VERIFIED_BY_RENDER_POST_200_SCREENSHOT`
+- Gateway health after flag enablement: `VERIFIED_BY_RENDER_HEALTH_200_SCREENSHOT`
+- Internal route/decision telemetry after flag enablement: `PENDING_POST_ROUTE_CAPTURE`
 
 ---
 
@@ -217,7 +224,7 @@ Assessment:
 
 Known stop/launch blocker `APW-PREVIEW-UX-001` is resolved by PR #32, PR #33 and user testing.
 
-No user-visible data leakage was observed during restricted prompt testing.
+No user-visible data leakage was observed during restricted prompt testing before route capture.
 
 Current stop-condition status:
 
@@ -231,20 +238,19 @@ NO_USER_VISIBLE_STOP_CONDITION_OBSERVED_AFTER_PR_33_TESTING
 
 The evidence record is not complete until the following are supplied or explicitly waived by CS2:
 
-1. flag value before preview;
-2. flag value during preview;
-3. internal route/debug evidence for the APW prompt;
-4. internal route/debug evidence for the public APGI prompt;
-5. internal route/debug evidence for restricted prompts;
-6. rollback flag state;
-7. rollback redeploy/restart confirmation if required;
-8. rollback prompt result showing `apw_integration_disabled`;
-9. explicit reviewer decision: pass, fail, remain in preview, or stop/rollback.
+1. actual `POST /api/v1/public-chat` response body after flag enablement for a public APW/APGI prompt;
+2. route value after flag enablement for a public APW/APGI prompt;
+3. actual `POST /api/v1/public-chat` response body after flag enablement for restricted prompts;
+4. route value after flag enablement for restricted prompts;
+5. rollback flag state;
+6. rollback redeploy/restart confirmation if required;
+7. rollback prompt result showing `apw_integration_disabled`;
+8. explicit reviewer decision: pass, fail, remain in preview, or stop/rollback.
 
 ---
 
 ## 10. Current Disposition
 
-`ROUTING_BEHAVIOUR_EVIDENCE_RECORDED_PENDING_FLAG_AND_ROUTE_TELEMETRY`
+`FLAG_ENABLED_PENDING_POST_ROUTE_CAPTURE`
 
-User-visible behaviour is APGI-aligned, public-safe, authority-safe and gateway-connected. Internal flag state, route telemetry and rollback proof remain pending before any production enablement decision may rely on this record.
+The Render staging flag is now reported enabled and the service redeployed. The remaining evidence gap is the actual POST response body containing `apw_specialist_route`, plus rollback proof before any production enablement decision may rely on this record.
