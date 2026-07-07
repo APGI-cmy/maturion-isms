@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-isms-mmm-post-auth-handoff-20260701",
+  "pr_number": 1899,
+  "prebrief_commit_sha": "20b888dfd522dcd04237fd0974cf4578ed9120c2",
+  "builder_appointment_timestamp": "2026-07-01T09:15:00Z",
+  "builder_appointment_commit_sha": "8200eb3ea95b87fd7d1c6fc3b43b593794e7f84d",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-isms-mmm-post-auth-handoff-20260701.md",
+  "first_implementation_commit_sha": "4ecf0eb385e1a23d88c0705ebd2144580b5073f4",
+  "qp_review_timestamp": "2026-07-01T09:20:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

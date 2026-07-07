@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
+import { isExternalModuleRoute } from '@/lib/moduleRuntimeRoutes';
 import { ROUTES } from '@/lib/routes';
 
 type LoginLocationState = {
@@ -23,6 +24,12 @@ const LoginForm: React.FC = () => {
     if (!email.trim()) return;
 
     signIn(email.trim());
+
+    if (isExternalModuleRoute(from)) {
+      window.location.assign(from);
+      return;
+    }
+
     navigate(from, { replace: true });
   };
 

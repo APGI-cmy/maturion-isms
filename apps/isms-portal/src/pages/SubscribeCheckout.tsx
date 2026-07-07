@@ -9,8 +9,13 @@ import { useSubscriptionModules } from '@/hooks/useSubscriptionModules';
 import { CheckoutForm } from '@/components/checkout/CheckoutForm';
 import { EFTPaymentSection } from '@/components/checkout/EFTPaymentSection';
 import { useAuth } from '@/context/AuthContext';
-import { PENDING_CHECKOUT_STORAGE_KEY, parseSubscriptionSelection } from '@/lib/subscription';
+import { MMM_APP_URL } from '@/lib/moduleRuntimeRoutes';
+import { PENDING_CHECKOUT_STORAGE_KEY, parseSubscriptionSelection, type SubscriptionSelection } from '@/lib/subscription';
 import { ROUTES } from '@/lib/routes';
+
+function isMaturityRoadmapOnlySelection(selection: SubscriptionSelection): boolean {
+  return !selection.isBundle && selection.selectedModules.length === 1 && selection.selectedModules[0] === 'maturity-roadmap';
+}
 
 const SubscribeCheckout = () => {
   const navigate = useNavigate();
@@ -23,6 +28,8 @@ const SubscribeCheckout = () => {
   const selectedModules = selection.selectedModules;
   const isBundle = selection.isBundle;
   const isYearly = selection.isYearly;
+  const isMaturityRoadmapOnly = isMaturityRoadmapOnlySelection(selection);
+  const postCheckoutRoute = isMaturityRoadmapOnly ? MMM_APP_URL : ROUTES.ONBOARDING;
 
   useEffect(() => {
     window.localStorage.setItem(PENDING_CHECKOUT_STORAGE_KEY, JSON.stringify({ ...selection, capturedAt: new Date().toISOString() }));
@@ -56,11 +63,16 @@ const SubscribeCheckout = () => {
     );
 
     if (user) {
+      if (isMaturityRoadmapOnly) {
+        window.location.assign(MMM_APP_URL);
+        return;
+      }
+
       navigate(ROUTES.ONBOARDING);
       return;
     }
 
-    navigate(ROUTES.AUTH, { state: { from: ROUTES.ONBOARDING }, replace: true });
+    navigate(ROUTES.AUTH, { state: { from: postCheckoutRoute }, replace: true });
   };
 
   if (loading) {
