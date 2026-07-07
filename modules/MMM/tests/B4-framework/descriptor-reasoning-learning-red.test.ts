@@ -46,6 +46,30 @@ describe('T-MMM-DRGL-001: verbatim nominal phrase descriptor reasoning', () => {
   });
 });
 
+describe('T-MMM-DUIR-002: DCC evidence bundle preservation', () => {
+  it('preserves minutes, actions, decisions, accountability, and delivery traceability', () => {
+    const result = generateDescriptorReasoningResult({
+      tenantId: 'tenant-a',
+      frameworkId: 'framework-1',
+      criterionId: 'D001.MPS002.C017',
+      criterionText:
+        'The DCC will meet at least four times a year. Minutes will be taken of these meetings, actions agreed, decisions recorded, and individuals made accountable for their delivery.',
+      sourceMode: 'verbatim_source',
+    });
+
+    expect(result.grammarShape).toBe('evidence_bundle_minutes_actions_decisions');
+    expect(result.evidenceStateClause).toContain('the DCC meets at least four times a year');
+    expect(result.evidenceStateClause).toContain('minutes are taken');
+    expect(result.evidenceStateClause).toContain('actions are agreed');
+    expect(result.evidenceStateClause).toContain('decisions are recorded');
+    expect(result.evidenceStateClause).toContain('individuals are made accountable');
+    expect(result.evidenceStateClause).toContain('delivery or implementation is traceable');
+    expect(result.descriptors[0].descriptorText).not.toBe(
+      'Evidence that the DCC meets at least four times a year is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.',
+    );
+  });
+});
+
 describe('T-MMM-DRGL-003 and T-MMM-DRGL-014: source mode and fallback reporting', () => {
   it('includes source mode and reports deterministic fallback when learning is unavailable', () => {
     const result = generateDescriptorReasoningResult({
