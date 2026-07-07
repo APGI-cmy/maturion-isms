@@ -1,7 +1,7 @@
 # Maturion Ecosystem Orchestrator and Agent File System Strategy
 
-**Status:** Draft strategy authority for CS2 review  
-**Version:** 0.1.0  
+**Status:** Proposed strategy authority for CS2 review. This document must not be treated as approved Class 1 strategy authority while the PR remains unmerged. It becomes approved strategy authority only after explicit CS2 approval and merge.  
+**Version:** 0.1.1  
 **Date:** 2026-07-01  
 **Authority:** CS2 / Johan Ras  
 **Scope:** Maturion ecosystem orchestration, AIMC alignment, runtime specialist invocation, and agent file-system governance  
@@ -29,7 +29,7 @@ This is a strategy / pre-build authority artifact only. It does not itself modif
 
 Maturion is not app-bound.
 
-Maturion is the APGI ecosystem intelligence. He may be embodied in different apps, pages, workflows, and operational modes, but the user must experience one Maturion with one identity, one memory architecture, one ethical framework, one governance frame, and one orchestration model.
+Maturion is the APGI ecosystem intelligence. Maturion may be embodied in different apps, pages, workflows, and operational modes, but the user must experience one Maturion with one identity, one memory architecture, one ethical framework, one governance frame, and one orchestration model.
 
 The ecosystem model is:
 
@@ -60,7 +60,7 @@ Apps may embody Maturion, but they may not fork Maturion.
 
 ## 3. Central philosophy
 
-### 3.1 Maturion is the head, specialists are the hands
+### 3.1 Maturion is the head; specialists are the hands
 
 Maturion owns:
 
@@ -136,7 +136,7 @@ The app should not decide the full AI answer independently. It should provide co
 
 ## 4. Agent file-system model
 
-### 4.1 The 3-tier agent knowledge structure
+### 4.1 The three-tier agent knowledge structure
 
 The Living Agent System uses a three-tier agent knowledge model:
 
@@ -159,7 +159,9 @@ Tier 3: Session domain knowledge
 
 This strategy applies that model to Maturion and every specialist agent.
 
-### 4.2 Maturion agent bundle
+### 4.2 Target Maturion agent bundle
+
+This section describes the **target bundle** to be completed through the waved implementation plan. It must not be read as confirmation that every file listed already exists in the current repository.
 
 Maturion should have:
 
@@ -190,7 +192,7 @@ Maturion should have:
 
 The contract must remain thin. It must not become the place where every app rule, specialist behavior, scoring method, or module description is embedded.
 
-### 4.3 Specialist agent bundle
+### 4.3 Target specialist agent bundle
 
 Every specialist agent must have the complete creation bundle before it is considered active:
 
@@ -210,7 +212,7 @@ A contract alone is not an active agent. A contract without Tier 2 files, regist
 
 ## 5. Runtime Maturion decision loop
 
-When Maturion is invoked by a user, he must follow this loop.
+When Maturion is invoked by a user, Maturion must follow this loop.
 
 ### Step 1: Establish embodiment and context
 
@@ -346,7 +348,7 @@ Learning does not automatically update Tier 1 or Tier 2. Promotion must follow g
 
 Maturion acts as public-safe guide and marketing/education assistant.
 
-He may:
+Maturion may:
 
 - explain APGI services;
 - answer public-safe subject questions;
@@ -354,7 +356,7 @@ He may:
 - detect public marketing opportunities;
 - use approved public/subject knowledge only.
 
-He may not:
+Maturion may not:
 
 - use tenant/private context;
 - expose internal operations;
@@ -365,7 +367,7 @@ He may not:
 
 Maturion acts as platform navigator, subscription/entitlement-aware guide, and authenticated workspace assistant.
 
-He may:
+Maturion may:
 
 - help users navigate modules;
 - explain module purpose and dependencies;
@@ -397,7 +399,7 @@ Maturion should invoke specialists for deep criteria generation, evidence parsin
 
 Maturion acts as implementation-work translator and project packaging assistant.
 
-He may:
+Maturion may:
 
 - convert maturity shortcomings into implementation tasks;
 - package criteria gaps into projects or work entities;
@@ -410,7 +412,7 @@ He may:
 
 Maturion acts as risk management expert and orchestrator.
 
-He may invoke:
+Maturion may invoke:
 
 - ISO 31000 specialist;
 - NIST specialist;
@@ -424,7 +426,7 @@ He may invoke:
 
 Maturion acts as incident workflow and assurance guide.
 
-He may support:
+Maturion may support:
 
 - incident classification;
 - incident workflow explanation;
@@ -437,7 +439,7 @@ He may support:
 
 Maturion acts as analytics and assurance interpreter.
 
-He may invoke:
+Maturion may invoke:
 
 - data analytics specialist;
 - remote assurance specialist;
@@ -594,7 +596,7 @@ Builder agents may not:
 
 ### 8.5 General ChatGPT, Copilot, and platform agent boundaries
 
-Because CS2 uses multiple AI platforms, including Codex, ChatGPT, Copilot, and other agents, the following boundary applies across platforms:
+Because CS2 uses multiple AI platforms, including Codex, ChatGPT, Copilot, and other agents, the following boundary applies across platforms.
 
 General agents may:
 
@@ -686,7 +688,7 @@ In MMM, Maturion must support at least these task classes:
 - PIT work package generation;
 - marketing opportunity detection.
 
-Maturion should not embed all of this domain logic directly. He should invoke specialists such as:
+Maturion should not embed all of this domain logic directly. Maturion should invoke specialists such as:
 
 - document-parser specialist;
 - criteria-generator specialist;
@@ -918,7 +920,7 @@ Each stage requires explicit CS2 approval and maturity evidence.
 2. Create a current-state audit issue for Maturion and existing agent files.
 3. Assign CodexAdvisor to audit agent file-system readiness.
 4. Prevent all other agents from changing `.github/agents`, `.agent-workspace/<agent>/knowledge`, or governance canon unless explicitly authorised by CS2.
-5. Use this strategy as the reference when APW, ISMS, MMM, PIT, Risk, Incident, RADAM, Training, Marketing, or AMC agents propose Maturion work.
+5. Use this strategy as the reference when APW, ISMS, MMM, PIT, Risk, Incident, RADAM, Training, Marketing, or AMC agents propose Maturion work after CS2 approval.
 
 ---
 
