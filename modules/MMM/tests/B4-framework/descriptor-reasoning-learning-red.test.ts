@@ -214,3 +214,41 @@ describe('T-MMM-DRGL-015: maturity levels remain distinct operating states', () 
     expect(new Set(result.descriptors.map((descriptor) => descriptor.descriptorText)).size).toBe(5);
   });
 });
+
+describe('T-MMM-DUIR-003: descriptor reasoning adapter yields ordered level drafts', () => {
+  it('maps reasoning output into Basic→Resilient level drafts (1-5)', () => {
+    const LEVEL_BY_LABEL = {
+      Basic: 1,
+      Reactive: 2,
+      Compliant: 3,
+      Proactive: 4,
+      Resilient: 5,
+    } as const;
+    const result = generateDescriptorReasoningResult({
+      tenantId: 'tenant-a',
+      criterionText: 'Review and approval of facility design changes for adequate Security measures.',
+      sourceMode: 'verbatim_source',
+    });
+
+    const drafts = ['Basic', 'Reactive', 'Compliant', 'Proactive', 'Resilient'].map((label) => {
+      const descriptor = result.descriptors.find((item) => item.level === label);
+      return {
+        level: LEVEL_BY_LABEL[label as keyof typeof LEVEL_BY_LABEL],
+        label,
+        descriptor_text: descriptor?.descriptorText ?? '',
+      };
+    });
+    expect(drafts).toHaveLength(5);
+    expect(drafts.map((draft) => draft.level)).toEqual([1, 2, 3, 4, 5]);
+    expect(drafts.map((draft) => draft.label)).toEqual([
+      'Basic',
+      'Reactive',
+      'Compliant',
+      'Proactive',
+      'Resilient',
+    ]);
+    drafts.forEach((draft) => {
+      expect(draft.descriptor_text.length).toBeGreaterThan(0);
+    });
+  });
+});
