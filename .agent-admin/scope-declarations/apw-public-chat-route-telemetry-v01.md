@@ -1,9 +1,9 @@
 SCOPE_SCHEMA_VERSION: v2
-PR_NUMBER: PENDING
-ISSUE: APW public chat route telemetry
+PR_NUMBER: 1913
+ISSUE: #1913 - Add safe public chat route telemetry
 BRANCH: apw-public-chat-route-telemetry-v01
 OWNER: chatgpt-cs2-proxy
-DATE_UTC: 2026-07-07T15:10:00Z
+DATE_UTC: 2026-07-08T10:10:00Z
 
 # Scope Declaration - APW Public Chat Route Telemetry v0.1
 
@@ -37,8 +37,9 @@ OUT_OF_SCOPE:
 
 ## FILES_CHANGED
 
-FILES_CHANGED: 3
+FILES_CHANGED: 4
 - `.agent-admin/scope-declarations/apw-public-chat-route-telemetry-v01.md`
+- `.agent-admin/scope-declarations/pr-1913.md`
 - `apps/mat-ai-gateway/routers/ai_routes.py`
 - `apps/mat-ai-gateway/tests/test_public_chat.py`
 
