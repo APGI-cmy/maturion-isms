@@ -134,7 +134,7 @@ function preserveEvidenceBundle(criterionText: string): string | null {
     .replace(/,\s*decisions\s+recorded/gi, ', decisions are recorded')
     .replace(/,\s*and\s+individuals\s+made\s+accountable/gi, ', and individuals are made accountable');
 
-  return `${primary} supported by ${secondary}, with delivery or implementation traceable`;
+  return `${primary} supported by ${secondary}, and delivery or implementation is traceable`;
 }
 
 export function classifyDescriptorGrammarShape(criterionText: string): string {
