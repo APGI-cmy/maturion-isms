@@ -127,6 +127,17 @@ describe('T-MMM-S6-213: Intent and Criteria AI linkage use shared mode-source co
   });
 });
 
+describe('T-MMM-DUIR-004: Descriptor generation uses production reasoning before AI fallback', () => {
+  it('CriteriaManagement wires descriptor reasoning source mode and draft adapter as primary path', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('generateDescriptorReasoningResult');
+    expect(src).toContain('toDescriptorSourceMode');
+    expect(src).toContain('descriptorReasoningDraftsFromResult');
+    expect(src).toContain('Maturity descriptors created from the approved methodology reference and Maturion descriptor learning.');
+    expect(src).toContain('Maturity descriptors created from the approved methodology reference.');
+  });
+});
+
 describe('T-MMM-S6-220: Verbatim intent generation resolves from processed organisation source chunks first', () => {
   it('useIntentGeneration reads ai_knowledge for VERBATIM-tagged mode source documents before proposed fallback mapping', () => {
     const src = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
