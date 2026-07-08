@@ -78,7 +78,7 @@ def test_public_chat_does_not_use_apw_route_for_private_request(test_client, mon
 
 def test_public_chat_logs_safe_route_telemetry(test_client, monkeypatch, caplog):
     monkeypatch.setenv(APW_FLAG, "true")
-    caplog.set_level(logging.INFO, logger="apps.mat-ai-gateway.routers.ai_routes")
+    caplog.set_level(logging.INFO, logger="routers.ai_routes")
 
     response = test_client.post(
         "/api/v1/public-chat",
