@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-ui-runtime-learning-replay-2026-07-07",
+  "pr_number": 1909,
+  "prebrief_commit_sha": "2cec9518c51123cd6d745877f363f237d2a4e1c7",
+  "builder_appointment_timestamp": "2026-07-07T11:15:17Z",
+  "builder_appointment_commit_sha": "d1f3adc6b0ca60896c0498f0cdbbb6ab1a9dfb68",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-ui-runtime-learning-replay-2026-07-07.md",
+  "first_implementation_commit_sha": "43805555cfb60712cfbc5de284389de5f63e7baa",
+  "qp_review_timestamp": "2026-07-07T14:59:30Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
