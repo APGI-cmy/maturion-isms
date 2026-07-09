@@ -30,7 +30,7 @@ Wave 2 may define:
 - target Maturion bundle repair map;
 - target Maturity Roadmap specialist creation plan;
 - target AIMC dependency map;
-- target QA-to-red for the screenshot defect;
+- target QA-to-red for the roadmap-domain screenshot defect;
 - future wave sequence and acceptance gates.
 
 ### 2.2 Prohibited in Wave 2
@@ -157,7 +157,7 @@ CodexAdvisor must apply the following checklist before drafting or changing any 
 - [ ] `routing-rules.md` or equivalent defines invocation decision points.
 - [ ] `knowledge-source-map.md` defines approved knowledge sources.
 - [ ] `response-review-checklist.md` defines quality checks before Maturion responds.
-- [ ] `degraded-mode-rules.md` defines fallback language.
+- [ ] `graceful-degradation-rules.md` defines fallback language.
 - [ ] `memory-and-learning-rules.md` defines what can be learned and where.
 - [ ] `marketing-opportunity-triggers.md` exists if the domain has marketing relevance.
 
@@ -176,7 +176,7 @@ CodexAdvisor must apply the following checklist before drafting or changing any 
 - [ ] At least one red test reproduces the live defect.
 - [ ] Tests prove correct answer using approved knowledge.
 - [ ] Tests prove specialist status transparency.
-- [ ] Tests prove degraded-mode behaviour if specialist is unavailable.
+- [ ] Tests prove graceful-degradation behaviour if specialist is unavailable.
 - [ ] Tests prove no stale six-domain answer leaks into the five-domain roadmap context.
 - [ ] Tests prove Maturion can distinguish knowledge, functionality, workflow, build/governance, risk/control, evidence/scoring, and marketing questions.
 
@@ -219,7 +219,7 @@ Target correction:
 - Maturion may invoke approved registered specialists through AIMC/governed routing.
 - Maturion may not invent specialists.
 - Maturion may not modify specialist files.
-- Maturion must disclose degraded mode if the required specialist is planned, stubbed, or unavailable.
+- Maturion must disclose graceful-degradation mode if the required specialist is planned, stubbed, or unavailable.
 
 ### 6.3 Target Maturion Tier 2 files
 
@@ -233,7 +233,7 @@ The Maturion Tier 2 bundle should include, at minimum:
 - `specialist-registry.md`
 - `domain-flag-index.md`
 - `response-review-checklist.md`
-- `degraded-mode-rules.md`
+- `graceful-degradation-rules.md`
 - `user-context-and-industry-calibration.md`
 - `evidence-evaluation-routing.md`
 - `marketing-opportunity-triggers.md`
@@ -333,7 +333,9 @@ The following require later implementation design:
 
 ---
 
-## 9. QA-to-red: Maturion roadmap-domain defect
+## 9. QA-to-red: Maturion roadmap-domain screenshot defect
+
+This QA-to-red section treats the production screenshot defect and the roadmap-domain defect as the same defect: Maturion gave a stale/generic answer to an APGI Maturity Roadmap domain question and could not transparently report a governed roadmap specialist status.
 
 ### Test ID: MATURION-RED-MMM-001
 
@@ -356,7 +358,7 @@ The following require later implementation design:
 **Name:** Specialist availability transparency
 
 **Given:** A user asks whether Maturion has access to a roadmap specialist agent  
-**When:** no active `maturity-roadmap-specialist` is registered  
+**When:** there is no active `maturity-roadmap-specialist` registered  
 **Then:** Maturion must say that the specialist is not yet active, explain that it can answer from approved roadmap knowledge where available, and not claim to have consulted the specialist.
 
 ### Test ID: MATURION-RED-MMM-003
@@ -387,31 +389,36 @@ The following require later implementation design:
 
 ## 10. Future wave sequence
 
-### Wave 3 — CodexAdvisor self/process alignment review
+This section preserves the controlling sequence from `Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md`. Wave 2 adds CodexAdvisor runtime-specialist bundle controls, but it does not supersede the adopted strategy sequence.
+
+### Wave 3 — Maturion thin-core contract correction proposal
 
 Purpose:
 
-- verify CodexAdvisor itself is fit to create runtime specialist bundles;
-- identify whether its own contract/Tier 2 checklist needs update;
-- produce CS2 decision point before CodexAdvisor edits any agent files.
+- prepare the Maturion contract correction package;
+- resolve the `can_invoke` / orchestration contradiction;
+- add AIMC runtime specialist registry dependency references;
+- add ecosystem decision-loop pointers;
+- add marketing opportunity detector pointers;
+- distinguish runtime Maturion from Builder/AMC Maturion-as-CS2;
+- verify CodexAdvisor is fit to apply this process before any agent files are changed.
 
 Allowed:
 
 - audit/report artifacts;
-- proposed diff plan.
+- proposed diff package;
+- CS2 decision point.
 
 Not allowed:
 
 - actual `.github/agents` or `.agent-workspace` edits unless CS2 explicitly expands the wave.
 
-### Wave 4 — Maturion orchestrator bundle repair
+### Wave 4 — Maturion Tier 2 expansion
 
 Purpose:
 
-- update Maturion contract and Tier 2 bundle through CodexAdvisor;
-- align Maturion with the adopted ecosystem strategy;
-- repair the invocation contradiction;
-- add app/context/knowledge/routing/review/degraded-mode files.
+- create/update Maturion operational knowledge files through CodexAdvisor;
+- align routing, app context, knowledge planes, specialist invocation, response review, graceful degradation, memory, and marketing triggers to the adopted strategy.
 
 Requires:
 
@@ -420,38 +427,22 @@ Requires:
 - IAA/QP review;
 - QA-to-red for Maturion routing defects.
 
-### Wave 5 — Maturity Roadmap specialist creation
+### Wave 5 — AIMC runtime registry and adapter strategy
 
 Purpose:
 
-- create and register `maturity-roadmap-specialist`;
-- add Tier 2 knowledge source map and response review checklist;
-- add routing entries;
-- prove specialist invocation/degraded-mode behavior.
-
-Requires:
-
-- CS2 authorisation;
-- CodexAdvisor execution;
-- complete specialist bundle;
-- pre-handover proof;
-- IAA/QP review.
-
-### Wave 6 — AIMC runtime registry and retrieval design
-
-Purpose:
-
+- define how runtime apps call Maturion/AIMC and how Maturion calls specialists;
 - define the runtime AIMC schema and adapter model;
 - decide whether implementation belongs in `app_management_centre`, `maturion-isms`, or a shared package;
 - define central vs app-local responsibilities.
 
-### Wave 7 — Build-to-green runtime implementation
+### Wave 6 — First runtime slice
 
 Purpose:
 
-- connect UI/runtime Maturion to approved knowledge and specialist routing;
-- prove the screenshot defect is green;
-- avoid app-local AI silos.
+- implement the smallest safe runtime Maturion/AIMC slice;
+- connect ISMS Ask Maturion to app/user/context detection and a governed AIMC knowledge adapter stub;
+- avoid uncontrolled provider calls, memory writes, or autonomous actions.
 
 Requires:
 
@@ -459,6 +450,43 @@ Requires:
 - QA-to-red;
 - separate build appointment;
 - runtime tests/evidence.
+
+### Wave 7 — MMM criteria/descriptors/evidence specialist path
+
+Purpose:
+
+- implement the first real specialist invocation path;
+- prepare the future `maturity-roadmap-specialist` / MMM criteria specialist bundle only after CS2 authorises the relevant CodexAdvisor execution wave;
+- prove specialist invocation and graceful-degradation behavior.
+
+Requires:
+
+- CS2 authorisation;
+- CodexAdvisor execution for agent-file-system changes;
+- complete specialist bundle;
+- pre-handover proof;
+- IAA/QP review.
+
+### Wave 8 — PIT work-package bridge
+
+Purpose:
+
+- allow maturity gaps, risk actions, and incident actions to be packaged into PIT work entities;
+- keep PIT integration separate from the Maturion agent-file-system work until runtime pre-build artifacts exist.
+
+### Wave 9 — Risk, Incident, RADAM, Training, and Marketing expansion
+
+Purpose:
+
+- expand specialist coverage in governed slices;
+- ensure each module receives strategy/prebuild alignment, QA-to-red, specialist contract/Tier 2 bundle where needed, app adapter, test evidence, and CS2 closure.
+
+### Wave 10 — AMC / Maturion-as-CS2 progression
+
+Purpose:
+
+- define and progressively implement Maturion-as-CS2 capabilities in AMC;
+- keep all CS2 delegation stages explicitly gated.
 
 ---
 
