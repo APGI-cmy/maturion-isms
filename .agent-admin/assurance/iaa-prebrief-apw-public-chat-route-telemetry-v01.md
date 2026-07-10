@@ -1,7 +1,7 @@
 # IAA Prebrief - APW Public Chat Route Telemetry v0.1
 
 Wave ID: APW-PUBLIC-CHAT-ROUTE-TELEMETRY-V01
-PR: #1913
+PR: TBD (superseding PR replacing #1913)
 Repository: APGI-cmy/maturion-isms
 Authority: CS2 - Johan Ras
 Date: 2026-07-10
