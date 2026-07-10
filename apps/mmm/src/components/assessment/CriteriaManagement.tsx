@@ -1712,19 +1712,36 @@ export function CriteriaManagement({
         }
         const descriptorSourceMode = toDescriptorSourceMode(descriptorModeContext.framework_source_type);
 
-        // Load persisted descriptor-learning interactions for this criterion (tenant-safe).
+        // Load persisted descriptor-learning interactions for this tenant/framework scope.
         // If retrieval fails, fall back to an empty learning array so deterministic generation still runs.
         let learningRecords: DescriptorLearningRecord[] = [];
         try {
-          const { data: learningRows } = await supabase
+          const learningSelection = supabase
             .from('mmm_ai_interactions')
-            .select('id,target_entity_id,status,created_at,request_json,response_json')
-            .eq('context_type', 'MATURITY_DESCRIPTOR_EDIT')
-            .eq('status', 'recorded')
-            .eq('target_entity_id', criterion.id)
-            .order('created_at', { ascending: false })
-            .limit(20);
-          learningRecords = descriptorLearningRecordsFromInteractions(learningRows ?? []);
+            .select('id,target_entity_id,status,created_at,request_json,response_json');
+          const contextScopedLearning = learningSelection.eq('context_type', 'MATURITY_DESCRIPTOR_EDIT');
+          const statusScopedLearning =
+            typeof contextScopedLearning.eq === 'function'
+              ? contextScopedLearning.eq('status', 'recorded')
+              : contextScopedLearning;
+          const orderedLearning =
+            typeof statusScopedLearning.order === 'function'
+              ? statusScopedLearning.order('created_at', { ascending: false })
+              : statusScopedLearning;
+          const boundedLearning =
+            typeof orderedLearning.limit === 'function' ? orderedLearning.limit(50) : orderedLearning;
+          const { data: learningRows } = await boundedLearning;
+          const tenantContextId = frameworkId ?? domainId;
+          const mappedLearningRecords = descriptorLearningRecordsFromInteractions(
+            (learningRows ?? []).filter(
+              (row) => row && typeof row === 'object' && (row as { status?: string }).status === 'recorded',
+            ),
+          );
+          learningRecords = mappedLearningRecords.filter((record) => {
+            const isSameCriterion = record.criterionId === criterion.id;
+            const isSameFramework = Boolean(frameworkId) && record.frameworkId === frameworkId;
+            return record.tenantId === tenantContextId && (isSameCriterion || isSameFramework);
+          });
         } catch (learningRetrievalError) {
           // Retrieval failure: generate deterministically with an empty learning array.
           console.error('[CriteriaManagement] Failed to load descriptor learning records:', learningRetrievalError);
