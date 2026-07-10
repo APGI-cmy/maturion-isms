@@ -31,6 +31,7 @@ import {
 } from '../../lib/verbatimCriteriaExtraction';
 import { generateDescriptorReasoningResult } from '../../lib/descriptorReasoning';
 import type { DescriptorLearningRecord, DescriptorSourceMode } from '../../lib/descriptorLearningRetrieval';
+import { descriptorLearningRecordsFromInteractions } from '../../lib/descriptorLearningPersistence';
 
 export interface GeneratedCriterionItem {
   code: string;
@@ -241,12 +242,6 @@ export function descriptorReasoningDraftsFromResult(
       descriptor_text: descriptor?.descriptorText ?? '',
     };
   });
-}
-
-function buildDescriptorLearningRecordsForCriterion(): DescriptorLearningRecord[] {
-  // Descriptor learning retrieval is not yet loaded in this component state.
-  // Keep the adapter typed so runtime learning replay can be wired once records are available.
-  return [];
 }
 
 const DESCRIPTOR_CONTROL_OBJECTS: DescriptorControlObject[] = [
@@ -1716,6 +1711,25 @@ export function CriteriaManagement({
           descriptorModeContext = await resolveModeSourceContext(frameworkId);
         }
         const descriptorSourceMode = toDescriptorSourceMode(descriptorModeContext.framework_source_type);
+
+        // Load persisted descriptor-learning interactions for this criterion (tenant-safe).
+        // If retrieval fails, fall back to an empty learning array so deterministic generation still runs.
+        let learningRecords: DescriptorLearningRecord[] = [];
+        try {
+          const { data: learningRows } = await supabase
+            .from('mmm_ai_interactions')
+            .select('id,target_entity_id,status,created_at,request_json,response_json')
+            .eq('context_type', 'MATURITY_DESCRIPTOR_EDIT')
+            .eq('status', 'recorded')
+            .eq('target_entity_id', criterion.id)
+            .order('created_at', { ascending: false })
+            .limit(20);
+          learningRecords = descriptorLearningRecordsFromInteractions(learningRows ?? []);
+        } catch (learningRetrievalError) {
+          // Retrieval failure: generate deterministically with an empty learning array.
+          console.error('[CriteriaManagement] Failed to load descriptor learning records:', learningRetrievalError);
+        }
+
         const reasoningResult = generateDescriptorReasoningResult({
           // In MMM descriptor UI flow, framework/domain scope currently acts as the tenant-bound context key.
           // When no framework exists yet, domainId keeps descriptor learning retrieval scoped to the same active tenant workspace.
@@ -1726,7 +1740,7 @@ export function CriteriaManagement({
           criterionText: activeCriterionText,
           domainName,
           sourceMode: descriptorSourceMode,
-          learningRecords: buildDescriptorLearningRecordsForCriterion(),
+          learningRecords,
         });
         const reasoningDrafts = validateMaturityDescriptorDrafts(
           activeCriterionText,

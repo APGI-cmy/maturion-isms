@@ -48,6 +48,53 @@ function changedDescriptors(
   });
 }
 
+function extractEvidenceSubject(descriptorText: string): string | null {
+  const text = descriptorText.replace(/\s+/g, ' ').trim();
+  const patterns = [
+    /^Evidence that\s+(.+?)\s+is absent, weak, outdated, inconsistent, fragmented, or person-dependent\b/i,
+    /^Evidence that\s+(.+?)\s+exists in some form\b/i,
+    /^Evidence that\s+(.+?)\s+is current, complete, traceable\b/i,
+    /^Evidence that\s+(.+?)\s+shows owner-led\b/i,
+    /^Evidence that\s+(.+?)\s+is embedded\b/i,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match?.[1]) return match[1].trim().replace(/[.;:,]+$/g, '');
+  }
+  return null;
+}
+
+function inferCorrectionCategory(beforeText: string, afterText: string): string {
+  const beforeSubject = extractEvidenceSubject(beforeText) ?? '';
+  const afterSubject = extractEvidenceSubject(afterText) ?? '';
+  if (afterSubject.length > beforeSubject.length + 24) return 'evidence_bundle_preservation';
+  if (/\bminutes\b|\bactions\b|\bdecisions\b|\baccountable\b/i.test(afterSubject)) return 'multi_object_evidence_preservation';
+  if (beforeSubject !== afterSubject) return 'evidence_subject_reconstruction';
+  return 'descriptor_wording_refinement';
+}
+
+function buildPatternCandidate(criterionText: string, correctedDescriptorText: string): string {
+  const correctedSubject = extractEvidenceSubject(correctedDescriptorText);
+  const criterionTokens = criterionText.toLowerCase();
+  const patternParts: string[] = [];
+
+  if (/\bminutes\b/.test(criterionTokens)) patternParts.push('preserve minutes as evidence');
+  if (/\bactions?\b/.test(criterionTokens)) patternParts.push('preserve agreed actions as evidence');
+  if (/\bdecisions?\b/.test(criterionTokens)) patternParts.push('preserve recorded decisions as evidence');
+  if (/\baccountab/.test(criterionTokens)) patternParts.push('preserve accountable individuals or owners as evidence');
+  if (/\bdeliver/.test(criterionTokens) || /\bimplement/.test(criterionTokens)) patternParts.push('preserve delivery or implementation traceability');
+
+  if (patternParts.length > 0) {
+    return `For similar criteria, do not reduce the criterion to the first clause. ${patternParts.join('; ')} across all maturity levels.`;
+  }
+
+  if (correctedSubject) {
+    return `For similar criteria, preserve the corrected evidence subject structure: ${correctedSubject}.`;
+  }
+
+  return 'For similar criteria, use the corrected descriptor as a reasoning pattern and preserve criterion-specific evidence objects.';
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders() });
   if (req.method !== 'POST') return jsonResponse({ error: 'Method not allowed' }, 405);
@@ -107,7 +154,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: framework, error: frameworkError } = await supabase
     .from('mmm_frameworks')
-    .select('id, organisation_id')
+    .select('id, organisation_id, source_type')
     .eq('id', domain.framework_id)
     .single();
   if (frameworkError || !framework) {
@@ -171,6 +218,27 @@ Deno.serve(async (req: Request) => {
   });
 
   if (userEditedDescriptors.length > 0) {
+    const beforeByLevel = new Map(
+      ((beforeRows ?? []) as Array<{ level: number; descriptor_text: string }>).map((row) => [row.level, row.descriptor_text]),
+    );
+    const criterionText = body.criterion_text ?? criterion.name;
+    const learningEvents = userEditedDescriptors.map((descriptor) => {
+      const originalGeneratedDescriptorText = beforeByLevel.get(descriptor.level) ?? '';
+      const userCorrectedDescriptorText = descriptor.descriptor_text;
+      const learnedEvidenceSubject = extractEvidenceSubject(userCorrectedDescriptorText);
+      const correctionCategory = inferCorrectionCategory(originalGeneratedDescriptorText, userCorrectedDescriptorText);
+      return {
+        level: descriptor.level,
+        label: descriptor.label,
+        original_generated_descriptor_text: originalGeneratedDescriptorText,
+        user_corrected_descriptor_text: userCorrectedDescriptorText,
+        learned_evidence_subject: learnedEvidenceSubject,
+        correction_category: correctionCategory,
+        transformation_summary: `User corrected level ${descriptor.level} descriptor; category=${correctionCategory}.`,
+        reusable_pattern_candidate_text: buildPatternCandidate(criterionText, userCorrectedDescriptorText),
+      };
+    });
+
     await supabase.from('mmm_ai_interactions').insert({
       actor_id: claims.userId,
       action_type: 'USER_PREFERENCE_CAPTURE',
@@ -179,20 +247,31 @@ Deno.serve(async (req: Request) => {
       status: 'recorded',
       request_json: {
         workflow_stage: 'criteria_maturity_descriptor_edit',
+        tenant_id: claims.orgId,
+        organisation_id: claims.orgId,
+        framework_id: framework.id,
+        source_mode: framework.source_type ?? null,
         domain_id: domain.id,
         domain_name: body.domain_name ?? domain.name,
         mps_id: mps.id,
         mps_code: mps.code,
         criterion_id: body.criterion_id,
         criterion_code: body.criterion_code ?? criterion.code,
+        criterion_text: criterionText,
         edited_levels: editedLevels,
         before_descriptors: beforeRows ?? [],
         after_descriptors: descriptors,
         changed_descriptors: userEditedDescriptors,
+        learning_events: learningEvents,
       },
       response_json: {
         captured: true,
         learning_scope: 'descriptor_authoring',
+        reuse_scope: 'tenant_specific_pattern',
+        review_status: 'validated',
+        conflict_status: 'none',
+        lifecycle_status: 'active',
+        consented_at: new Date().toISOString(),
       },
     });
   }
