@@ -1716,27 +1716,15 @@ export function CriteriaManagement({
         // If retrieval fails, fall back to an empty learning array so deterministic generation still runs.
         let learningRecords: DescriptorLearningRecord[] = [];
         try {
-          const learningSelection = supabase
+          const { data: learningRows } = await supabase
             .from('mmm_ai_interactions')
-            .select('id,target_entity_id,status,created_at,request_json,response_json');
-          const contextScopedLearning = learningSelection.eq('context_type', 'MATURITY_DESCRIPTOR_EDIT');
-          const statusScopedLearning =
-            typeof contextScopedLearning.eq === 'function'
-              ? contextScopedLearning.eq('status', 'recorded')
-              : contextScopedLearning;
-          const orderedLearning =
-            typeof statusScopedLearning.order === 'function'
-              ? statusScopedLearning.order('created_at', { ascending: false })
-              : statusScopedLearning;
-          const boundedLearning =
-            typeof orderedLearning.limit === 'function' ? orderedLearning.limit(50) : orderedLearning;
-          const { data: learningRows } = await boundedLearning;
+            .select('id,target_entity_id,status,created_at,request_json,response_json')
+            .eq('context_type', 'MATURITY_DESCRIPTOR_EDIT')
+            .eq('status', 'recorded')
+            .order('created_at', { ascending: false })
+            .limit(50);
           const tenantContextId = frameworkId ?? domainId;
-          const mappedLearningRecords = descriptorLearningRecordsFromInteractions(
-            (learningRows ?? []).filter(
-              (row) => row && typeof row === 'object' && (row as { status?: string }).status === 'recorded',
-            ),
-          );
+          const mappedLearningRecords = descriptorLearningRecordsFromInteractions(learningRows ?? []);
           learningRecords = mappedLearningRecords.filter((record) => {
             const isSameCriterion = record.criterionId === criterion.id;
             const isSameFramework = Boolean(frameworkId) && record.frameworkId === frameworkId;
