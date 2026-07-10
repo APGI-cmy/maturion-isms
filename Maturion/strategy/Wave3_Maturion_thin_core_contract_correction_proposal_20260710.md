@@ -293,7 +293,7 @@ It does not list:
 - router;
 - advisor.
 
-The Tier 2 index also reports an older CodexAdvisor contract version and does not reference the Wave 2 runtime-specialist bundle process artifact.
+The Tier 2 index also reports an older CodexAdvisor contract version (index: 2.1.0 vs contract: 4.1.0) and does not reference the Wave 2 runtime-specialist bundle process artifact.
 
 The current non-negotiables checklist hard-codes `four_phase_canonical` as the required contract pattern, while the current Maturion contract declares `thin_core_living`. This must be reconciled before CodexAdvisor can safely certify the proposed Maturion contract change.
 
