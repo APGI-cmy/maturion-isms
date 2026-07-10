@@ -136,6 +136,17 @@ describe('T-MMM-DUIR-004: Descriptor generation uses production reasoning before
     expect(src).toContain('Maturity descriptors created from the approved methodology reference and Maturion descriptor learning.');
     expect(src).toContain('Maturity descriptors created from the approved methodology reference.');
   });
+
+  it('CriteriaManagement loads bounded framework-scoped descriptor learning records before ranking', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain(".from('mmm_ai_interactions')");
+    expect(src).toContain(".eq('context_type', 'MATURITY_DESCRIPTOR_EDIT')");
+    expect(src).toContain(".eq('status', 'recorded')");
+    expect(src).toContain(".limit(50)");
+    expect(src).not.toContain(".eq('target_entity_id', criterion.id)");
+    expect(src).toContain('record.criterionId === criterion.id');
+    expect(src).toContain('record.frameworkId === frameworkId');
+  });
 });
 
 describe('T-MMM-S6-220: Verbatim intent generation resolves from processed organisation source chunks first', () => {
