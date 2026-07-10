@@ -30,6 +30,7 @@ import IncidentManagementInfo from './pages/IncidentManagementInfo';
 import MaturityRoadmapInfo from './pages/MaturityRoadmapInfo';
 import NotFound from './pages/NotFound';
 import { PitShell } from './pages/pit/PitShell';
+import { PitStandaloneEntry } from './pages/pit/PitStandaloneEntry';
 import { PitWorkspaceHub } from './pages/pit/PitWorkspaceHub';
 import { ProjectRegisterFoundation } from './pages/pit/ProjectRegisterFoundation';
 import { CreateProjectFoundation } from './pages/pit/CreateProjectFoundation';
@@ -237,7 +238,7 @@ const App = () => {
                 <Route path={ROUTES.DASHBOARD} element={protectedDashboardRoute} />
                 <Route path={ROUTES.ONBOARDING} element={protectedOnboardingRoute} />
                 <Route path={ROUTES.MATURITY_SETUP} element={protectedMaturitySetupRoute} />
-                <Route path={ROUTES.PIT} element={<Navigate to={ROUTES.PIT_TRACKER} replace />} />
+                <Route path={ROUTES.PIT} element={<PitStandaloneEntry />} />
                 <Route path={ROUTES.PIT_TRACKER} element={entitledRuntimeRoute(<PitWorkspaceHub />)} />
                 <Route path={ROUTES.PROJECTS} element={entitledRuntimeRoute(<ProjectRegisterFoundation />)} />
                 <Route
