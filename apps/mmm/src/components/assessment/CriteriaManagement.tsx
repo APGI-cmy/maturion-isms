@@ -29,6 +29,8 @@ import {
   mergeOverlappingTextChunks,
   normalizeVerbatimLookup,
 } from '../../lib/verbatimCriteriaExtraction';
+import { generateDescriptorReasoningResult } from '../../lib/descriptorReasoning';
+import type { DescriptorLearningRecord, DescriptorSourceMode } from '../../lib/descriptorLearningRetrieval';
 
 export interface GeneratedCriterionItem {
   code: string;
@@ -213,6 +215,39 @@ const MATURITY_LEVELS: Array<{ level: number; label: string; guidance: string }>
     guidance: 'embedded into systems and routines, monitored continuously, escalated by exception, recoverable, and independent of single individuals',
   },
 ];
+
+const LEVEL_BY_LABEL = {
+  Basic: 1,
+  Reactive: 2,
+  Compliant: 3,
+  Proactive: 4,
+  Resilient: 5,
+} as const;
+
+function toDescriptorSourceMode(frameworkSourceType?: string | null): DescriptorSourceMode {
+  if (frameworkSourceType === 'VERBATIM') return 'verbatim_source';
+  if (frameworkSourceType === 'HYBRID') return 'hybrid_source';
+  return 'new_generation_context';
+}
+
+export function descriptorReasoningDraftsFromResult(
+  result: ReturnType<typeof generateDescriptorReasoningResult>,
+): LevelDescriptorDraft[] {
+  return MATURITY_LEVELS.map(({ label }) => {
+    const descriptor = result.descriptors.find((item) => item.level === label);
+    return {
+      level: LEVEL_BY_LABEL[label as keyof typeof LEVEL_BY_LABEL],
+      label,
+      descriptor_text: descriptor?.descriptorText ?? '',
+    };
+  });
+}
+
+function buildDescriptorLearningRecordsForCriterion(): DescriptorLearningRecord[] {
+  // Descriptor learning retrieval is not yet loaded in this component state.
+  // Keep the adapter typed so runtime learning replay can be wired once records are available.
+  return [];
+}
 
 const DESCRIPTOR_CONTROL_OBJECTS: DescriptorControlObject[] = [
   {
@@ -1675,6 +1710,59 @@ export function CriteriaManagement({
     });
 
     try {
+      try {
+        let descriptorModeContext = defaultModeSourceContext(null);
+        if (frameworkId) {
+          descriptorModeContext = await resolveModeSourceContext(frameworkId);
+        }
+        const descriptorSourceMode = toDescriptorSourceMode(descriptorModeContext.framework_source_type);
+        const reasoningResult = generateDescriptorReasoningResult({
+          // In MMM descriptor UI flow, framework/domain scope currently acts as the tenant-bound context key.
+          // When no framework exists yet, domainId keeps descriptor learning retrieval scoped to the same active tenant workspace.
+          tenantId: frameworkId ?? domainId,
+          frameworkId: frameworkId ?? null,
+          criterionId: criterion.id,
+          criterionCode: criterionEditDrafts[criterion.id]?.code ?? criterion.code,
+          criterionText: activeCriterionText,
+          domainName,
+          sourceMode: descriptorSourceMode,
+          learningRecords: buildDescriptorLearningRecordsForCriterion(),
+        });
+        const reasoningDrafts = validateMaturityDescriptorDrafts(
+          activeCriterionText,
+          descriptorReasoningDraftsFromResult(reasoningResult),
+        );
+        setDescriptorDraftsByCriterion((prev) => ({
+          ...prev,
+          [criterion.id]: reasoningDrafts,
+        }));
+        setDescriptorEditedLevelsByCriterion((prev) => {
+          const next = { ...prev };
+          delete next[criterion.id];
+          return next;
+        });
+        setDescriptorEditingByKey((prev) => {
+          const next = { ...prev };
+          MATURITY_LEVELS.forEach(({ level }) => {
+            delete next[`${criterion.id}:${level}`];
+          });
+          return next;
+        });
+        setCriterionActionMessages((prev) => ({
+          ...prev,
+          [criterion.id]: {
+            type: 'success',
+            text: reasoningResult.learningApplied
+              ? 'Maturity descriptors created from the approved methodology reference and Maturion descriptor learning.'
+              : 'Maturity descriptors created from the approved methodology reference.',
+          },
+        }));
+        return;
+      } catch (reasoningError) {
+        console.warn('[CriteriaManagement] Descriptor reasoning fallback triggered:', reasoningError);
+        // Fall through to existing methodology/AI fallback path.
+      }
+
       const { data: methodologyRows } = await supabase
         .from('ai_knowledge')
         .select('content,source_document_name,metadata,chunk_index')
