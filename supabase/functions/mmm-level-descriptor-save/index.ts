@@ -247,7 +247,7 @@ Deno.serve(async (req: Request) => {
       status: 'recorded',
       request_json: {
         workflow_stage: 'criteria_maturity_descriptor_edit',
-        tenant_id: claims.orgId,
+        tenant_id: framework.id,
         organisation_id: claims.orgId,
         framework_id: framework.id,
         source_mode: framework.source_type ?? null,
