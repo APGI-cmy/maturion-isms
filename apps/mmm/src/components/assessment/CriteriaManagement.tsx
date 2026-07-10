@@ -1712,7 +1712,7 @@ export function CriteriaManagement({
         }
         const descriptorSourceMode = toDescriptorSourceMode(descriptorModeContext.framework_source_type);
 
-        // Load persisted descriptor-learning interactions for this tenant/framework scope.
+        // Load persisted descriptor-learning interactions for this framework/domain scoped context.
         // If retrieval fails, fall back to an empty learning array so deterministic generation still runs.
         let learningRecords: DescriptorLearningRecord[] = [];
         try {
@@ -1723,12 +1723,12 @@ export function CriteriaManagement({
             .eq('status', 'recorded')
             .order('created_at', { ascending: false })
             .limit(50);
-          const tenantContextId = frameworkId ?? domainId;
+          const contextScopeId = frameworkId ?? domainId;
           const mappedLearningRecords = descriptorLearningRecordsFromInteractions(learningRows ?? []);
           learningRecords = mappedLearningRecords.filter((record) => {
             const isSameCriterion = record.criterionId === criterion.id;
             const isSameFramework = Boolean(frameworkId) && record.frameworkId === frameworkId;
-            return record.tenantId === tenantContextId && (isSameCriterion || isSameFramework);
+            return record.tenantId === contextScopeId && (isSameCriterion || isSameFramework);
           });
         } catch (learningRetrievalError) {
           // Retrieval failure: generate deterministically with an empty learning array.
