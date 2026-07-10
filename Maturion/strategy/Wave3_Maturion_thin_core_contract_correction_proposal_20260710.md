@@ -86,7 +86,7 @@ The current contract still primarily names MAT, PIT, XDETECT, Maturity Roadmap, 
 The adopted ecosystem strategy requires Maturion to operate as one intelligence across:
 
 - APGI public website;
-- ISMS portal shell;
+- ISMS;
 - MMM / Maturity Roadmap;
 - PIT;
 - Risk Management;
