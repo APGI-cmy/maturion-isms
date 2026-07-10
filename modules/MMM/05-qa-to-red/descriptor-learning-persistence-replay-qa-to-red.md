@@ -190,7 +190,7 @@ A second fixture with different nouns but the same evidence structure must also 
 
 Learning created by Organisation A must not be retrieved by Organisation B unless it has been reviewed and promoted to an approved global methodology pattern.
 
-Records with `anonymised_global_pattern_candidate` may not be reused across tenants.
+Records with `approved_for_reuse_scope === "anonymised_global_pattern_candidate"` may not be reused across tenants until promoted to `approved_global_methodology_pattern`.
 
 ---
 
