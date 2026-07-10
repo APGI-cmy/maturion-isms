@@ -7,7 +7,7 @@
 | Slice | Slice 2.3 - Entry Journey Implementation Governance Pack |
 | Issue | #1896 |
 | Date | 2026-07-02 |
-| Status | GOVERNANCE PACK FILED - RETROSPECTIVE IAA RECONCILIATION REQUESTED |
+| Status | GOVERNANCE PACK FILED |
 | Runtime implementation | Not authorized by this artifact |
 
 ---
