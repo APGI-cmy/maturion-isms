@@ -78,7 +78,7 @@ def test_public_chat_does_not_use_apw_route_for_private_request(test_client, mon
 
 def test_public_chat_logs_safe_route_telemetry(test_client, monkeypatch, caplog):
     monkeypatch.setenv(APW_FLAG, "true")
-    caplog.set_level(logging.INFO, logger="routers.ai_routes")
+    caplog.set_level(logging.INFO, logger="uvicorn.error")
 
     response = test_client.post(
         "/api/v1/public-chat",
@@ -94,5 +94,6 @@ def test_public_chat_logs_safe_route_telemetry(test_client, monkeypatch, caplog)
     assert "public_chat_route" in log_text
     assert "apw_specialist_internal_draft_candidate" in log_text
     assert "page=/apw" in log_text
+    assert "history_count=0" in log_text
     assert "How does APW onboarding work?" not in log_text
     assert response.json()["answer"] not in log_text
