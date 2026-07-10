@@ -218,7 +218,7 @@ The adopted/current APGI Maturity Roadmap source describes five primary domains:
 
 ---
 
-### Finding 7 — Agent creation canon requires complete bundles, but current repository search did not confirm a global `governance/AGENT_REGISTRY.json` file
+### Finding 7 — Agent creation canon requires complete bundles; `governance/AGENT_REGISTRY.json` exists but appears empty
 
 The agent creation canon requires all new agents to have:
 
@@ -228,9 +228,9 @@ The agent creation canon requires all new agents to have:
 4. routing update;
 5. pre-handover proof.
 
-The audit found the canon and architecture references, but repository search did not confirm the expected `governance/AGENT_REGISTRY.json` file itself.
+The repository does contain `governance/AGENT_REGISTRY.json`, but it currently reports an empty registry (`"total_agents": 0`, `"agents": []`).
 
-**Impact:** Specialist activation may be blocked or inconsistent if the global registry is missing, relocated, or not layer-down aligned.
+**Impact:** Specialist activation may be blocked or inconsistent if the global registry is empty, stale, or not wired into the runtime layer-down path.
 
 **Disposition:** REQUIRED follow-up verification by CodexAdvisor or governance audit wave.
 
