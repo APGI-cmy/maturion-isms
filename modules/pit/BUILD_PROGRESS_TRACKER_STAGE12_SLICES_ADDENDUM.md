@@ -3,9 +3,11 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
+| Artifact type | Stage 12 slice tracker reconciliation addendum |
 | Stage | Stage 12 - Build Execution & Evidence |
 | Date | 2026-07-10 |
-| Status | POST-#1910 TRACKER RECONCILIATION FILED |
+| Status | ACTIVE ADDENDUM - POST-#1910 RECONCILIATION FILED |
+| Applies to | `modules/pit/BUILD_PROGRESS_TRACKER.md` until incorporated into a later direct tracker revision |
 
 ---
 
@@ -43,8 +45,8 @@ Controlling rules:
 | Slice 1 / W8.2 boundary evidence | Evidence accepted for boundary/linkup only | PR #1869 |
 | Slice 2 - Project Workspace Foundation | Implemented and merged; formal browser evidence package still pending | PR #1877 |
 | Slice 2.1 - Entry, Signup and Standalone Journey Specification | Specification baseline merged | PR #1888 |
-| Slice 2.2 - Entry Implementation Planning | Planning/control baseline merged | PR #1894 |
-| Slice 2.3 - Entry Journey Implementation | Implemented and merged as the entry-journey baseline; formal browser evidence remains required where not yet captured | Issue #1896, PR #1910, merge commit `8a03650cac2098ece2a496813a6aa3c384673c03` |
+| Slice 2.2 - Entry Implementation Planning | Planning/control baseline merged; post-merge review findings reconciled in a later documentation-only corrective PR | PR #1894 |
+| Slice 2.3 - Entry Journey Implementation | Implemented and merged as the entry-journey baseline; formal browser evidence remains required where not yet captured; retrospective IAA reconciliation requested for the historical pre-brief format | Issue #1896, PR #1910, merge commit `8a03650cac2098ece2a496813a6aa3c384673c03` |
 
 Slice 2.3 delivered the governed entry-journey baseline only. Its merged scope includes the standalone `/pit` entry surface, signed-out and signed-in entitlement outcomes, role-aware workspace navigation, viewer-role Create Project CTA hiding, and preservation of the direct `/projects/new` role guard.
 
@@ -56,12 +58,12 @@ Slice 2.3 delivered the governed entry-journey baseline only. Its merged scope i
 |---|---|
 | Confirm Slice 2 scope in Issue #1868 | Done |
 | File Slice 2 scope declaration | Done |
-| File Slice 2 IAA pre-brief contract | Done for Slice 2; future implementation slices must use the current wave-record pre-brief pattern |
+| File Slice 2 IAA pre-brief contract | Done for Slice 2; the historical Slice 2.3 record is under transparent retrospective IAA reconciliation and must not be treated as a canonical precedent |
 | Reconfirm or appoint the builder | Done for Slice 2 and Slice 2.3; future implementation slices require current builder appointment and delegation evidence before build |
-| Define QA-to-Green mapped to RED baseline | Done for Slice 2.2 against PIT-RED-ENTRY-001 through PIT-RED-ENTRY-020 and used as the Slice 2.3 implementation baseline |
+| Define QA-to-Green mapped to RED baseline | Done for Slice 2.2 against PIT-RED-ENTRY-001 through PIT-RED-ENTRY-020 and used as the Slice 2.3 implementation baseline; unauthenticated direct-route evidence is now explicit in the controlling documentation |
 | Only then implement the authorized slice | Slice 2 implemented via PR #1877; Slice 2.3 implemented and merged via PR #1910 |
 | Deploy and capture browser evidence | Formal Slice 2 browser evidence remains pending; Slice 2.3 browser evidence remains required where not yet formally captured |
-| Update Stage 12 evidence tracker | Reconciled after the PR #1910 merge through this addendum update |
+| Update Stage 12 evidence tracker | Reconciled after the PR #1910 merge through PR #1921; the corrective documentation PR records the duplicate-review findings and IAA reconciliation request |
 
 ---
 
@@ -80,10 +82,12 @@ That governance pack should define, at minimum:
 
 This reconciliation does not open, authorize, or begin Slice 3 runtime implementation. No Slice 3 runtime work may begin before the required governance pack and implementation controls are in place.
 
+The Slice 3 governance pack must use a current canonical IAA pre-brief. It must not rely on the historical Slice 2.3 pre-brief format as precedent.
+
 ---
 
 ## 6. Non-completion notice
 
 PIT Stage 12 remains incomplete.
 
-This addendum does not claim full PIT completion, Stage 12 completion, production readiness, release readiness, functional pass, handover completion, formal browser-evidence completion, or Slice 3 implementation authorization.
+This addendum does not claim full PIT completion, Stage 12 completion, production readiness, release readiness, functional pass, handover completion, formal browser-evidence completion, retrospective IAA acceptance, or Slice 3 implementation authorization.
