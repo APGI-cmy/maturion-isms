@@ -1,7 +1,7 @@
 """
-routers/ai_routes.py - AI Gateway route definitions.
+routers/ai_routes.py — AI Gateway route definitions.
 
-Architecture reference: modules/mat/02-architecture/system-architecture.md section 3.3
+Architecture reference: modules/mat/02-architecture/system-architecture.md §3.3
   Five AI service endpoints exposed by the MAT AI Gateway.
 """
 
@@ -20,11 +20,11 @@ from services.reporting import ReportGenerator
 from services.scoring import MaturityScorer
 from services.transcription import AudioTranscriber
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("uvicorn.error")
 router = APIRouter(prefix="/api/v1", tags=["AI Services"])
 
 # ---------------------------------------------------------------------------
-# Module-level service singletons instantiated once and shared across requests
+# Module-level service singletons — instantiated once, shared across requests
 # ---------------------------------------------------------------------------
 _parser = DocumentParser()
 _scorer = MaturityScorer()
@@ -48,7 +48,7 @@ class ParseRequest(BaseModel):
     def escape_user_instructions(cls, v: str | None) -> str | None:
         """
         Escape angle brackets in user_instructions to prevent breaking
-        surrounding instructions wrappers downstream.
+        surrounding <instructions>...</instructions> wrappers downstream.
         """
         if v is None:
             return v
@@ -102,9 +102,9 @@ class PublicChatRequest(BaseModel):
 @router.post("/parse")
 def parse_document(request: ParseRequest) -> dict:
     """
-    Document Parsing: converts PDF/DOCX criteria into structured JSON.
+    Document Parsing — converts PDF/DOCX criteria into structured JSON.
 
-    Architecture: system-architecture.md section 3.4
+    Architecture: system-architecture.md §3.4
     """
     return _parser.parse(
         document_url=request.document_url,
@@ -116,9 +116,9 @@ def parse_document(request: ParseRequest) -> dict:
 @router.post("/score")
 def score_maturity(request: ScoreRequest) -> dict:
     """
-    Maturity Scoring: derives maturity level from evidence and criteria.
+    Maturity Scoring — derives maturity level from evidence and criteria.
 
-    Architecture: system-architecture.md section 3.4
+    Architecture: system-architecture.md §3.4
     """
     if request.evidence is None:
         evidence: list[Union[str, dict]] = []
@@ -139,9 +139,9 @@ def score_maturity(request: ScoreRequest) -> dict:
 @router.post("/transcribe")
 def transcribe_audio(request: TranscribeRequest) -> dict:
     """
-    Audio Transcription: converts audio recording to timestamped transcript.
+    Audio Transcription — converts audio recording to timestamped transcript.
 
-    Architecture: system-architecture.md section 3.4
+    Architecture: system-architecture.md §3.4
     """
     return _transcriber.transcribe(
         audio_url=request.audio_url,
@@ -152,9 +152,9 @@ def transcribe_audio(request: TranscribeRequest) -> dict:
 @router.post("/report")
 def generate_report(request: ReportRequest) -> dict:
     """
-    Report Generation: produces DOCX/PDF/JSON audit report.
+    Report Generation — produces DOCX/PDF/JSON audit report.
 
-    Architecture: system-architecture.md section 3.4
+    Architecture: system-architecture.md §3.4
     """
     audit_data = request.audit_data or {"audit_id": request.audit_id}
     return _generator.generate(
@@ -167,9 +167,9 @@ def generate_report(request: ReportRequest) -> dict:
 @router.post("/analyse-image")
 def analyse_image(request: AnalyseImageRequest) -> dict:
     """
-    Image Analysis: extracts compliance description from photo evidence.
+    Image Analysis — extracts compliance description from photo evidence.
 
-    Architecture: system-architecture.md section 3.4
+    Architecture: system-architecture.md §3.4
     """
     return _analyser.analyse(
         image_url=request.image_url,
