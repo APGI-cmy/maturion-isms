@@ -7,6 +7,7 @@ Architecture reference: modules/mat/02-architecture/system-architecture.md §3.3
 
 from __future__ import annotations
 
+import logging
 from typing import Any, Union
 
 from fastapi import APIRouter, HTTPException
@@ -19,6 +20,7 @@ from services.reporting import ReportGenerator
 from services.scoring import MaturityScorer
 from services.transcription import AudioTranscriber
 
+logger = logging.getLogger("uvicorn.error")
 router = APIRouter(prefix="/api/v1", tags=["AI Services"])
 
 # ---------------------------------------------------------------------------
@@ -179,11 +181,18 @@ def analyse_image(request: AnalyseImageRequest) -> dict:
 def public_chat(request: PublicChatRequest) -> dict:
     """Public Maturion chat endpoint for the APW public website."""
     try:
-        return _public_chat.answer(
+        result = _public_chat.answer(
             message=request.message,
             history=request.history,
             context=request.context,
         )
+        logger.info(
+            "public_chat_route route=%s page=%s history_count=%s",
+            result.get("apw_specialist_route"),
+            result.get("page"),
+            result.get("history_count"),
+        )
+        return result
     except (RuntimeError, KeyError) as exc:
         raise HTTPException(
             status_code=502,
