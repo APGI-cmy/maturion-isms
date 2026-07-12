@@ -7,7 +7,6 @@ import re
 from typing import Any
 
 from openai import OpenAI
-
 from services.apw_specialist_stubs import APWSpecialistRedTestStubs
 
 
@@ -178,7 +177,18 @@ class PublicChatService:
             "incident evidence",
             "investigation record",
             "internal governance",
+            "environment variable",
+            "environment variables",
+            "credential",
+            "credentials",
+            "api key",
+            "api keys",
+            "access token",
+            "service token",
+            "password",
             "secret",
+            "internal configuration",
+            "configuration detail",
             "cs2 approval",
             "runtime registry internals",
         )
@@ -258,17 +268,16 @@ class PublicChatService:
 
     @staticmethod
     def _safe_page(context: dict[str, Any]) -> str:
-        page = str(context.get("page") or "/")[:120]
-        return page if _SAFE_PAGE_PATTERN.match(page) else "/"
+        value = str(context.get("page", "/"))
+        return value if _SAFE_PAGE_PATTERN.fullmatch(value) else "/"
 
     @staticmethod
     def _safe_history(history: list[dict[str, Any]]) -> list[dict[str, str]]:
         safe: list[dict[str, str]] = []
         for item in history[-8:]:
-            role = item.get("role")
-            content = str(item.get("content") or "").strip()
+            role = str(item.get("role", "")).lower()
+            content = str(item.get("content", "")).strip()
             if role not in {"user", "assistant"} or not content:
                 continue
-            label = "visitor" if role == "user" else "previous reply"
-            safe.append({"role": "user", "content": f"{label}: {content[:1200]}"})
+            safe.append({"role": role, "content": content[:1200]})
         return safe
