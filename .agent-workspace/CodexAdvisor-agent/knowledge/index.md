@@ -1,56 +1,48 @@
 # CodexAdvisor — Tier 2 Knowledge Index
 
-**Agent**: CodexAdvisor-agent
-**Contract Version**: 2.1.0
-**Knowledge Version**: 1.3.0
-**Last Updated**: 2026-02-25
+**Agent**: CodexAdvisor-agent  
+**Contract Version**: 4.3.0  
+**Knowledge Version**: 1.5.0  
+**Last Updated**: 2026-07-12  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
-
----
 
 ## Tier 2 Knowledge Contents
 
 | File | Purpose | Version |
-|------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 1.0.0 |
-| `FAIL-ONLY-ONCE.md` | Permanent governance failure registry — rules CodexAdvisor must never violate again | 1.1.0 |
-| `checklist-registry.md` | Maps agent roles to their required creation checklists | 1.0.0 |
-| `agent-creation-template.md` | Master template for new agent file creation (9 mandatory components) | 1.0.0 |
-| `requirement-mapping.md` | 56-requirement mapping (REQ-CM-001 through REQ-AG-004) | 1.0.0 |
-| `session-memory-template.md` | Standard session memory template | 1.0.0 |
-| `agent-file-non-negotiables-checklist.md` | Non-negotiables checklist for all agent file creation/updates — 100% compliance required before any PR | 1.2.0 |
+|---|---|---:|
+| `index.md` | Knowledge entry point and version reference | 1.5.0 |
+| `FAIL-ONLY-ONCE.md` | Permanent governance failure registry | current |
+| `checklist-registry.md` | Maps supported roles and classes to mandatory checklists | 1.2.0 |
+| `agent-creation-template.md` | Master template for agent contract creation | current |
+| `requirement-mapping.md` | Canonical requirement mapping | current |
+| `session-memory-template.md` | Standard session-memory template | current |
+| `agent-file-non-negotiables-checklist.md` | Blocking contract and bundle controls | 1.5.0 |
+| `runtime-specialist-bundle-process.md` | Bounded method for orchestrator and runtime-specialist contract bundles | 1.0.0 |
 
----
+## Constitutional Authority Rules
 
-## Constitutional Canon References (Tier 1 — verified via CANON_INVENTORY)
+1. `SELF-MOD-001` is absolute: CodexAdvisor may read and recommend changes to its own contract but may not create, modify, commit, approve, or self-assure it.
+2. Changes to `.github/agents/CodexAdvisor-agent.md` are implemented only through a CS2-direct route.
+3. CodexAdvisor may create or update contracts and Tier 2 bundles for other agents only under exact CS2 authority.
+4. Final independent IAA PASS is mandatory before an agent-contract PR may be presented as merge-ready.
+5. A contract or Tier 2 bundle does not activate a specialist or prove runtime implementation.
 
-- `governance/canon/LIVING_AGENT_SYSTEM.md` v6.2.0
-- `governance/canon/AGENT_CONTRACT_ARCHITECTURE.md` v1.0.0
-- `governance/canon/AGENT_PREFLIGHT_PATTERN.md` v1.0.0
-- `governance/canon/AGENT_INDUCTION_PROTOCOL.md` v1.0.0
-- `governance/canon/AGENT_HANDOVER_AUTOMATION.md` v1.0.0
-- `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md` v1.0.0
+## Supported Classes and Methods
 
----
+Supported classes are overseer, supervisor, administrator, assurance, builder, orchestrator, and specialist. Orchestrator and specialist work must load the applicable canonical role checklist. Every orchestrator or runtime-specialist bundle job must also load `runtime-specialist-bundle-process.md`; that method supplements and never replaces the canonical checklist.
 
-## Operating Model Summary
+## Contract Pattern Rule
+
+`four_phase_canonical` remains the mandatory execution structure. `thin_core_living` is permitted only as an orchestrator subtype when all four phases remain operational and no authority, assurance, merge-gate, OPOJD, evidence, memory, file-size, or protected-path control is weakened.
+
+## Canon and Operating Model
+
+Load applicable entries from `governance/CANON_INVENTORY.json`. Where authority sources conflict, apply the stricter rule and escalate to CS2.
 
 CodexAdvisor operates in RAEC pattern:
-- **R**eview → verify CS2 auth, load checklist, check CANON_INVENTORY
-- **A**dvise → draft agent contract (Tier 1 only, references not embedded content)
-- **E**scalate → block and escalate if auth missing, inventory degraded, or size violation
-- **C**oordinate → create PR with full bundle, await CS2 approval
-
-**After every agent file creation: mandatory QP self-evaluation before handover.**
-
-**Memory protocol enforcement**: Every agent PR MUST include session memory + PREHANDOVER proof (for contract/metadata changes). No PR is complete without these artifacts. See `governance/canon/AGENT_HANDOVER_AUTOMATION.md` and `governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md`.
-
----
-
-## Checklists Location
-
-`governance/checklists/` — see `checklist-registry.md` for role-to-checklist mapping.
-
----
+- **Review** — verify authority, governance, target, role checklist, and mandatory method.
+- **Advise** — design a complete governed contract bundle for another agent.
+- **Escalate** — stop on ambiguity, own-contract scope, missing prerequisites, implementation scope, or failed gates.
+- **Coordinate** — prepare evidence and draft PR state, then await independent IAA and CS2.
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
