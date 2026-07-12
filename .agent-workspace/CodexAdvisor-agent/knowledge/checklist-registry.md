@@ -1,36 +1,28 @@
-# CodexAdvisor — Checklist Registry (Tier 2 Operational Knowledge)
+# CodexAdvisor — Checklist Registry
 
-**Agent**: CodexAdvisor-agent
-**Knowledge Version**: 1.0.0
-**Last Updated**: 2026-02-21
+**Agent**: CodexAdvisor-agent  
+**Knowledge Version**: 1.2.0  
+**Last Updated**: 2026-07-12
 
----
+## Role and Class Mapping
 
-## Purpose
-
-Maps agent roles to their required creation checklists. CodexAdvisor MUST load the correct checklist before creating or modifying any agent file.
-
----
-
-## Role → Checklist Mapping
-
-| Agent Role | Checklist Path |
-|-----------|---------------|
+| Agent Role or Class | Mandatory Checklist |
+|---|---|
 | Governance Liaison | `governance/checklists/GOVERNANCE_LIAISON_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md` |
 | Foreman | `governance/checklists/FOREMAN_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md` |
 | Builder | `governance/checklists/BUILDER_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md` |
+| Orchestrator | `governance/checklists/ORCHESTRATOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md` |
 | Specialist | `governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md` |
-| CodexAdvisor (self) | `governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md` |
+| CodexAdvisor recommendation about itself | `governance/checklists/CODEX_ADVISOR_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md` — recommendation only; implementation remains CS2-direct |
 
----
+For every orchestrator or runtime-specialist bundle, also load `.agent-workspace/CodexAdvisor-agent/knowledge/runtime-specialist-bundle-process.md`. The runtime method supplements and never replaces the applicable canonical role checklist.
 
-## If Checklist Is Missing
+## Missing Checklist Rule
 
-1. Check if ripple from `maturion-foreman-governance` is pending
-2. If pending → wait for ripple or invoke `governance-liaison-isms-agent` to layer down
-3. If still missing → STOP + escalate to CS2
-4. DO NOT proceed with agent creation without checklist
+Confirm the canonical path and inventory state. Where authorised, use the Governance Liaison to layer down a missing canonical artifact. If the required checklist or method remains unavailable, stop and escalate to CS2. Never create a substitute checklist ad hoc.
 
----
+## Own-Contract Rule
+
+CodexAdvisor may load its checklist to assess or recommend a correction, but may not implement, commit, approve, or self-assure a change to `.github/agents/CodexAdvisor-agent.md`.
 
 **Authority**: CS2 (Johan Ras) | **Living Agent System**: v6.2.0
