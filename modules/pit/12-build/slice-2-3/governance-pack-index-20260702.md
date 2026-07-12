@@ -14,7 +14,7 @@
 
 ## 1. Purpose
 
-This index lists the Slice 2.3 governance pack artifacts filed before builder work begins and records the later retrospective assurance-reconciliation control.
+This index lists the Slice 2.3 governance pack artifacts filed before builder work begins and records the later retrospective reconciliation control.
 
 ---
 
@@ -28,7 +28,7 @@ This index lists the Slice 2.3 governance pack artifacts filed before builder wo
 | Implementation checklist | `modules/pit/12-build/slice-2-3/implementation-checklist-20260702.md` | Filed |
 | Evidence expectations | `modules/pit/12-build/slice-2-3/evidence-expectations-20260702.md` | Filed |
 | Governance pack index | `modules/pit/12-build/slice-2-3/governance-pack-index-20260702.md` | Filed |
-| Retrospective IAA reconciliation request | `modules/pit/12-build/slice-2-3/iaa-retrospective-reconciliation-request-20260710.md` | Requested; independent disposition pending |
+| Retrospective reconciliation disposition | `modules/pit/12-build/slice-2-3/iaa-retrospective-reconciliation-request-20260710.md` | `RECONCILED WITH RESIDUAL GAP` via CS2 Direct Review on 2026-07-12 |
 
 ---
 
@@ -52,7 +52,7 @@ The implementation baseline was:
 - Issue #1896 Slice 2.3 implementation issue;
 - this Slice 2.3 governance pack.
 
-The historical IAA wave record must remain unchanged as historical evidence. It is not to be represented as a current canonical pre-brief precedent.
+The historical IAA wave record remains unchanged as historical evidence. It must not be represented as a current canonical pre-brief precedent.
 
 ---
 
@@ -60,7 +60,11 @@ The historical IAA wave record must remain unchanged as historical evidence. It 
 
 Review findings on closed duplicate PR #1917 identified that the historical IAA wave record did not use the current canonical structured `IAA_PREFLIGHT_BRIEF:` schema.
 
-The corrective action is a transparent, current IAA retrospective reconciliation. The request does not itself issue assurance, validate the historical format, or retroactively alter the original record.
+The corrective documentation was reviewed through the canonical CS2 Direct Review track because PR #1925 is a T6 documentation/admin PR. The retrospective disposition is:
+
+`RECONCILED WITH RESIDUAL GAP`
+
+The residual gap is historical and cannot be retroactively cured: the original Slice 2.3 pre-brief remains noncanonical. This does not invalidate the already merged Slice 2.3 implementation boundary, but it cannot be used as precedent.
 
 Before Slice 3 builder appointment or runtime implementation, the Slice 3 governance pack must contain its own current canonical IAA pre-brief.
 
@@ -68,4 +72,4 @@ Before Slice 3 builder appointment or runtime implementation, the Slice 3 govern
 
 ## 6. Non-completion notice
 
-This governance pack does not claim full PIT completion, Stage 12 completion, formal browser-evidence completion, retrospective IAA acceptance, production readiness, release readiness, functional pass or handover completion.
+This governance pack does not claim full PIT completion, Stage 12 completion, formal browser-evidence completion, production readiness, release readiness, functional pass or handover completion.
