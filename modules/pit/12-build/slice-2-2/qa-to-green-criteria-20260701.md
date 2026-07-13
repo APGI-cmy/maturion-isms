@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
-| Stage | Stage 12 - Build Execution and Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Slice | Slice 2.2 - Entry, Signup, Auth Implementation Planning |
 | Issue | #1891 |
 | Date | 2026-07-01 |
@@ -57,6 +57,7 @@ A later implementation PR must provide:
 - existing sign-in evidence;
 - PIT-only entitlement evidence;
 - full-bundle entitlement evidence;
+- unauthenticated direct-route evidence for a protected PIT route, proving authentication is evaluated before entitlement and role permission;
 - authenticated but non-entitled evidence;
 - entitled but unauthorized evidence;
 - entitled and authorized evidence;
