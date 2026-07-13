@@ -94,22 +94,27 @@ const { mockSupabase, configureScenario, supabaseCalls, configureAIResponse, con
       eq: (column: string, value: unknown) => {
         calls.push({ table, operator: 'eq', column, value });
 
-        if (table === 'mmm_maturity_process_steps' && column === 'domain_id') {
-          return {
-            order: () => queryResult(table, scenario.mpsRows),
-          };
-        }
-
-        if (table === 'mmm_domains' && column === 'framework_id') {
-          return {
-            order: () => queryResult(table, scenario.domainRows),
-          };
-        }
-
-        return {
-          order: () => queryResult(table, []),
-          single: () => queryResult(table, []),
+        const rows =
+          table === 'mmm_maturity_process_steps' && column === 'domain_id'
+            ? scenario.mpsRows
+            : table === 'mmm_domains' && column === 'framework_id'
+              ? scenario.domainRows
+              : [];
+        const orderedResult = queryResult(table, rows);
+        const chainedOrderResult = Object.assign(orderedResult, {
+          limit: () => orderedResult,
+        });
+        const chainedResponse = {
+          eq: (nextColumn: string, nextValue: unknown) => {
+            calls.push({ table, operator: 'eq', column: nextColumn, value: nextValue });
+            return chainedResponse;
+          },
+          order: () => chainedOrderResult,
+          single: () => queryResult(table, rows),
+          limit: () => orderedResult,
         };
+
+        return chainedResponse;
       },
       in: (column: string, value: unknown[]) => {
         calls.push({ table, operator: 'in', column, value });

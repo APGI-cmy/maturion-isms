@@ -1,4 +1,5 @@
 import {
+  getLearnedEvidenceSubject,
   retrieveDescriptorLearningRecords,
   type DescriptorLearningRecord,
   type DescriptorLearningRetrievalContext,
@@ -198,15 +199,28 @@ function buildRetrievalContext(context: DescriptorGenerationContext): Descriptor
     tenantId: context.tenantId,
     frameworkId: context.frameworkId ?? null,
     criterionId: context.criterionId ?? null,
+    criterionCode: context.criterionCode ?? null,
     sourceMode: context.sourceMode,
     grammarShape: classifyDescriptorGrammarShape(context.criterionText),
+    criterionText: context.criterionText,
   };
+}
+
+function applyLearnedEvidenceSubject(
+  fallbackEvidenceStateClause: string,
+  retrievedLearningRecords: RankedDescriptorLearningRecord[],
+): string {
+  const learned = retrievedLearningRecords
+    .map((record) => getLearnedEvidenceSubject(record))
+    .find((subject): subject is string => Boolean(subject?.trim()));
+
+  return learned ?? fallbackEvidenceStateClause;
 }
 
 export function generateDescriptorReasoningResult(context: DescriptorGenerationContext): DescriptorReasoningResult {
   const grammarShape = classifyDescriptorGrammarShape(context.criterionText);
   const cleanedActionableClause = cleanCriterionForDescriptorReasoning(context.criterionText);
-  const evidenceStateClause = reconstructEvidenceStateClause(context.criterionText);
+  const fallbackEvidenceStateClause = reconstructEvidenceStateClause(context.criterionText);
   const retrievedLearningRecords = retrieveDescriptorLearningRecords(
     context.learningRecords ?? [],
     buildRetrievalContext(context),
@@ -214,6 +228,7 @@ export function generateDescriptorReasoningResult(context: DescriptorGenerationC
   );
 
   const learningApplied = retrievedLearningRecords.length > 0;
+  const evidenceStateClause = applyLearnedEvidenceSubject(fallbackEvidenceStateClause, retrievedLearningRecords);
 
   return {
     sourceMode: context.sourceMode,
