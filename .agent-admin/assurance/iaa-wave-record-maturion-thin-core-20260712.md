@@ -66,7 +66,7 @@ EXPECTED_QA_SCOPE:
 EXPECTED_FAILURE_MODES:
 - Detect authority drift, path drift, stale evidence, false readiness, or premature handover.
 FOREMAN_INSTRUCTIONS:
-- Keep PR #1933 in draft while final independent review and hosted checks remain outstanding.
+- Keep PR #1933 in draft while final independent review remains outstanding.
 - Use the Issue #1932 administrative bundle waiver and do not enter the handover lane.
 - Reject product, runtime, Tier 2, deployment, schema, activation, or workflow expansion.
 IAA_WILL_QA:
@@ -84,14 +84,20 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 - Scope declaration: `.agent-admin/scope-declarations/pr-1933.md`
 - Wave tasks: `.agent-admin/prs/pr-1933/wave-current-tasks.md`
 - Administrative waiver proof: `.agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md`
-- Final review status: PENDING
+- Invocation head: `6ff0aff8163221098b6722c9bdaab1c056806713`
+- Hosted checks observed at invocation head: successful.
+- Final review status: HALT-001 — separate reviewer required.
 
 ## TOKEN
 
 PHASE_B_BLOCKING_TOKEN: PENDING
-Verdict: PENDING
-Reviewed head: PENDING
+Verdict: HALT-001
+Reviewed head: NOT REVIEWED
+
+No final assurance verdict was issued.
 
 ## REJECTION_HISTORY
 
-None.
+### HALT-001 — 2026-07-13
+
+The reviewer had previously contributed to PR #1933 remediation. The IAA contract prohibits reviewing contributed work. Review stopped during independence preflight. PR #1933 remains draft and requires a separate IAA reviewer who has not contributed to the branch.
