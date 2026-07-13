@@ -1,0 +1,35 @@
+{
+  "pr": 1933,
+  "issue": 1932,
+  "type": "agent-contract-change",
+  "owner": "CodexAdvisor-agent",
+  "branch": "codexadvisor-issue-1932-maturion-thin-core",
+  "head_sha": "CURRENT_HEAD",
+  "base_sha": "CURRENT_BASE",
+  "scope": [
+    ".github/agents/maturion-agent.md",
+    ".agent-admin/governance/agent-contract-diffs/diff-20260712-maturion-agent-thin-core.md",
+    ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-064-20260712.md",
+    ".agent-workspace/CodexAdvisor-agent/memory/session-064-20260712.md",
+    ".agent-admin/assurance/iaa-wave-record-maturion-thin-core-20260712.md",
+    ".admin/prs/pr-1933.json",
+    ".agent-admin/scope-declarations/pr-1933.md",
+    ".agent-admin/prs/pr-1933/wave-current-tasks.md",
+    ".agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "Issue #1932 exact CS2 authority and gate-remediation amendment",
+    "Maturion contract YAML and four-phase structure validation",
+    "Protected-file diff record and immutable PREHANDOVER proof",
+    "PR-scoped manifest, scope declaration, and wave task identity binding",
+    "ECAP PREHANDOVER proof and bundle with identity parity",
+    "Independent IAA final verdict against the unchanged assured head",
+    "All required hosted checks pass"
+  ],
+  "merge_authority": "CS2",
+  "implementing_agent": "CodexAdvisor-agent"
+}
