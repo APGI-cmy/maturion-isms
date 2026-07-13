@@ -1,20 +1,20 @@
-# PREHANDOVER PROOF — PR #1933 Maturion Thin-Core Contract Correction
+# PR-SCOPED ADMIN PROOF — PR #1933 Maturion Thin-Core Contract Correction
 
 PR: #1933
 ISSUE: #1932
 BRANCH: codexadvisor-issue-1932-maturion-thin-core
 WAVE: maturion-thin-core-20260713
-PRODUCING_ROLE: execution-ceremony-admin-agent
+PRODUCING_ROLE: CS2-directed administration
 DATE_UTC: 2026-07-13T06:40:00Z
 
 ## Administrative Ceremony Evidence
 
 protected_path_touched: true
 ecap_required: true
-ecap_invoked: true
-ceremony_admin_appointed: execution-ceremony-admin-agent
-ecap_verdict: PASS
-ecap_bundle: .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md
+ecap_invoked: false
+ceremony_admin_appointed: false
+ecap_verdict: PASS_WITH_CS2_WAIVER
+ecap_waiver_ref: Issue #1932 — CS2 contract-only draft gate remediation
 
 ECAP_IDENTITY_BINDING_CHECK:
 PR_MATCH: yes
@@ -24,17 +24,16 @@ WAVE_MATCH: yes
 SCOPE_MATCH: yes
 ALL_MATCH: yes
 
-## Role Boundary
+## Waiver Boundary
 
-- ECAP performed administrative evidence assembly only.
-- ECAP did not modify `.github/agents/maturion-agent.md` or any implementation artifact.
-- ECAP did not make the substantive CodexAdvisor readiness judgment.
-- ECAP did not invoke IAA and did not issue an assurance token.
-- Independent IAA remains mandatory and pending.
+- The waiver applies only to the separate ECAP bundle artifact whose reserved filename would incorrectly signal Foreman handover while independent IAA remains pending.
+- The PR-scoped manifest, scope declaration, canonical pre-brief, protected-file evidence, hosted checks, and independent IAA remain mandatory.
+- No `.agent-admin/control/handover-allowed.json` record is created because this draft PR is not entering the handover lane.
+- No substantive Maturion contract change was made during gate remediation.
 
 ## Authoritative References
 
-- Exact authority: Issue #1932 and its CS2 gate-remediation amendment.
+- Exact authority: Issue #1932 and its CS2 gate-remediation amendments.
 - Protected implementation: `.github/agents/maturion-agent.md`.
 - Protected-file commit: `dbdf1d41b759fb2333903d3f13c371d96c525959`.
 - Contract blob: `cace19f9c9fd28ada324e39258a3d03fd0cfbca1`.
@@ -60,7 +59,7 @@ ALL_MATCH: yes
 
 ## Changed Files Reconciliation
 
-FILES_CHANGED: 10
+FILES_CHANGED: 9
 
 1. `.github/agents/maturion-agent.md`
 2. `.agent-admin/governance/agent-contract-diffs/diff-20260712-maturion-agent-thin-core.md`
@@ -71,9 +70,8 @@ FILES_CHANGED: 10
 7. `.agent-admin/scope-declarations/pr-1933.md`
 8. `.agent-admin/prs/pr-1933/wave-current-tasks.md`
 9. `.agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md`
-10. `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md`
 
 SCOPE_PARITY: PASS
-ADMIN_CEREMONY_COMPLIANCE: PASS
+ADMIN_WAIVER_RECORDED: PASS
 MERGE_AUTHORITY: CS2
 FINAL_STATE: PENDING_INDEPENDENT_IAA_AND_HOSTED_CHECKS
