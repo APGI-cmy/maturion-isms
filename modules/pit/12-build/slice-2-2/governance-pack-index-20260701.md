@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
-| Stage | Stage 12 - Build Execution and Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Slice | Slice 2.2 - Entry, Signup, Auth Implementation Planning |
 | Issue | #1891 |
 | Date | 2026-07-01 |
@@ -41,7 +41,7 @@ This pack prepares a later implementation slice by defining:
 - builder reconfirmation;
 - QA-to-Green mapping for PIT-RED-ENTRY-001 through PIT-RED-ENTRY-020;
 - future implementation checklist;
-- future evidence expectations.
+- future evidence expectations, including unauthenticated direct-route proof of the authentication -> entitlement -> role guard sequence.
 
 ---
 
@@ -60,6 +60,14 @@ After this planning/control pack is reviewed and merged, open a later implementa
 
 ---
 
-## 6. Non-completion notice
+## 6. Post-merge review reconciliation
+
+On 2026-07-10, duplicate PR review findings were reconciled against the merged pack. The deterministic corrections normalize the Stage 12 label and make unauthenticated protected-route evidence explicit across the QA-to-Green, implementation-checklist and evidence-expectation artifacts.
+
+This reconciliation does not rewrite the historical merge decision or claim that later runtime browser evidence has been completed.
+
+---
+
+## 7. Non-completion notice
 
 This governance pack does not claim PIT completion, Slice 2.2 implementation completion, Stage 12 completion, production readiness, release readiness, functional pass or handover completion.
