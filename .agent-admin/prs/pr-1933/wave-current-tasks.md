@@ -14,17 +14,16 @@ IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-07-13T06:25:00Z
 FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
 BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 
-ceremony_admin_appointed: true
+ceremony_admin_appointed: false
 appointment_timestamp: 2026-07-13T06:35:00Z
-assigned_scope: PR #1933 administrative gate remediation and ECAP evidence for the protected Maturion Tier 1 contract correction
+assigned_scope: PR #1933 PR-scoped evidence reconciliation under the CS2 ECAP bundle waiver
 expected_return_artifact_paths:
 - .agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md
-- .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md
 
 | Task ID | Description | Owner | Status |
 |---|---|---|---|
 | MAT-T1-1933 | Correct Maturion Tier 1 contract under Issue #1932 | CodexAdvisor-agent | COMPLETE |
-| ADMIN-1933 | Add PR-scoped manifest, scope, and wave-task bindings | execution-ceremony-admin-agent | COMPLETE |
-| ECAP-1933 | Prepare ECAP PREHANDOVER proof and bundle | execution-ceremony-admin-agent | COMPLETE |
+| ADMIN-1933 | Add PR-scoped manifest, scope, and wave-task bindings | CodexAdvisor-agent | COMPLETE |
+| ECAP-1933 | Record CS2 ECAP bundle waiver in the PR-scoped proof | CS2-directed administration | COMPLETE |
 | IAA-1933 | Perform genuinely independent final assurance | independent-assurance-agent | PENDING |
 | HOSTED-1933 | Complete all required hosted checks | GitHub Actions | IN_PROGRESS |
