@@ -43,6 +43,11 @@ describe('PIT Stage 12 Slice 3 project persistence', () => {
     expect(listPitProjects(storage)).toEqual([]);
   });
 
+  it('rejects impossible calendar dates without writing', () => {
+    expect(() => createPitProject({ ...validInput, startDate: '2026-02-31' }, actor, storage)).toThrow('Start date must be a valid date');
+    expect(listPitProjects(storage)).toEqual([]);
+  });
+
   it('rejects viewer writes', () => {
     expect(() => createPitProject(validInput, { ...actor, role: 'viewer' }, storage)).toThrow('not permitted');
     expect(listPitProjects(storage)).toEqual([]);
