@@ -6,30 +6,30 @@ IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "maturion-thin-core-20260713"
   pr: 1933
-  issue: "#1932 — CS2-authorised CodexAdvisor layer-down — Maturion thin-core orchestrator contract correction"
+  issue: "#1932 — Maturion thin-core orchestrator contract correction"
   branch: "codexadvisor-issue-1932-maturion-thin-core"
   qualifying_tasks:
     - task_id: "MAT-T1-1933"
       summary: "Protected Maturion Tier 1 orchestrator contract correction"
       assurance_category: "agent-contract-change"
   required_build_gates:
-    - "Agent contract YAML and four-phase structure validation"
-    - "PR-scoped scope, manifest, and identity binding"
-    - "ECAP administrative ceremony evidence"
-    - "Protected-file actor and authority validation"
+    - "Contract structure validation"
+    - "PR-scoped identity validation"
+    - "Administrative waiver proof validation"
+    - "Protected-file authority validation"
     - "Hosted required checks"
   expected_qa_scope:
-    - "Verify exact Issue #1932 authority and authorised path parity"
-    - "Verify bounded specialist invocation and mandatory Maturion output review"
+    - "Verify Issue #1932 authority and changed-path parity"
+    - "Verify bounded specialist invocation and Maturion output review"
     - "Verify runtime Maturion remains separate from Maturion-as-CS2"
-    - "Verify missing Wave 4 dependencies are represented as unavailable"
-    - "Verify no runtime, Tier 2, deployment, schema, or activation work entered scope"
+    - "Verify missing Wave 4 dependencies remain unavailable"
+    - "Verify no runtime or Tier 2 expansion"
   high_risk_failure_modes:
-    - "Unbounded specialist invocation or self-registration authority"
-    - "Silent expansion of runtime Maturion into CS2 or production-write authority"
-    - "False runtime-readiness claim for missing Tier 2 dependencies"
-    - "Protected-path change without PR-scoped ECAP, scope, or manifest evidence"
-    - "Self-review or non-independent final IAA verdict"
+    - "Unbounded invocation authority"
+    - "Runtime authority expansion"
+    - "False readiness for missing dependencies"
+    - "Path or evidence drift"
+    - "Premature handover signal"
   required_builder_evidence:
     - ".agent-admin/governance/agent-contract-diffs/diff-20260712-maturion-agent-thin-core.md"
     - ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-064-20260712.md"
@@ -38,23 +38,22 @@ IAA_PREFLIGHT_BRIEF:
     - ".agent-admin/scope-declarations/pr-1933.md"
     - ".agent-admin/prs/pr-1933/wave-current-tasks.md"
     - ".agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md"
-    - ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md"
   required_foreman_qp_checks:
-    - "Issue-to-diff and authorised-path parity"
-    - "CodexAdvisor protected-owner and execution-identity compliance"
-    - "Four mandatory phases and SELF-MOD-MATURION-001 preservation"
-    - "No runtime or Tier 2 scope expansion"
-    - "Hosted gate completion against the current PR head"
+    - "Authority and changed-path parity"
+    - "Protected-owner compliance"
+    - "Four-phase structure preservation"
+    - "No runtime or Tier 2 expansion"
+    - "No premature handover signal"
+    - "Hosted checks against current head"
   ecap_required: true
   ecap_expected_artifacts:
     - ".agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md"
-    - ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md"
   final_iaa_focus:
-    - "Exact Issue #1932 authority and changed-path parity"
-    - "Maturion and CodexAdvisor separation of duties"
-    - "Bounded invocation, mandatory response review, and truthful degradation"
-    - "Runtime-versus-CS2 authority boundary"
-    - "Evidence coherence and hosted checks"
+    - "Issue authority and scope parity"
+    - "Role separation"
+    - "Bounded invocation and response review"
+    - "Runtime-versus-CS2 boundary"
+    - "Evidence coherence"
   result: PREFLIGHT_BRIEF_COMPLETE
 
 PR: #1933
@@ -63,38 +62,35 @@ WAVE: maturion-thin-core-20260713
 WAVE_TASKS_PATH: .agent-admin/prs/pr-1933/wave-current-tasks.md
 CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
 EXPECTED_QA_SCOPE:
-- Verify exact authority, path parity, bounded invocation, response review, runtime/CS2 separation, and unavailable Wave 4 dependencies.
+- Verify authority, scope, bounded invocation, response review, runtime boundary, and unavailable dependencies.
 EXPECTED_FAILURE_MODES:
-- Detect authority drift, path drift, stale evidence, false readiness, unbounded invocation, or non-independent assurance.
+- Detect authority drift, path drift, stale evidence, false readiness, or premature handover.
 FOREMAN_INSTRUCTIONS:
-- Keep PR #1933 draft until a genuinely independent IAA verdict and all required hosted checks are complete.
-- Treat the original pre-brief commit as the pre-implementation control point; this revision only adds canonical machine-readable fields and PR-scoped bindings.
-- Reject any product, runtime, Tier 2, deployment, schema, activation, or CI scope expansion.
+- Keep PR #1933 in draft while final independent review and hosted checks remain outstanding.
+- Use the Issue #1932 administrative bundle waiver and do not enter the handover lane.
+- Reject product, runtime, Tier 2, deployment, schema, activation, or workflow expansion.
 IAA_WILL_QA:
-- Review the unchanged protected contract implementation and all PR-scoped evidence against Issue #1932.
-- Issue only an ASSURANCE-TOKEN, REJECTION-PACKAGE, or constitutional HALT.
+- Review the protected contract and PR-scoped evidence against Issue #1932.
+- Record the final result in this wave record after independent review.
 RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ## PREHANDOVER_EMBEDDED
 
 - Protected implementation: `.github/agents/maturion-agent.md`
-- Exact diff record: `.agent-admin/governance/agent-contract-diffs/diff-20260712-maturion-agent-thin-core.md`
-- Immutable implementer proof: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-064-20260712.md`
-- Implementer session memory: `.agent-workspace/CodexAdvisor-agent/memory/session-064-20260712.md`
-- PR-scoped manifest: `.admin/prs/pr-1933.json`
-- PR-scoped scope declaration: `.agent-admin/scope-declarations/pr-1933.md`
-- PR-scoped wave tasks: `.agent-admin/prs/pr-1933/wave-current-tasks.md`
-- ECAP proof: `.agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md`
-- ECAP bundle: `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md`
-- Final IAA status: PENDING — independent identity required.
+- Diff record: `.agent-admin/governance/agent-contract-diffs/diff-20260712-maturion-agent-thin-core.md`
+- Implementer proof: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-064-20260712.md`
+- Session memory: `.agent-workspace/CodexAdvisor-agent/memory/session-064-20260712.md`
+- Manifest: `.admin/prs/pr-1933.json`
+- Scope declaration: `.agent-admin/scope-declarations/pr-1933.md`
+- Wave tasks: `.agent-admin/prs/pr-1933/wave-current-tasks.md`
+- Administrative waiver proof: `.agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md`
+- Final review status: PENDING
 
 ## TOKEN
 
 PHASE_B_BLOCKING_TOKEN: PENDING
 Verdict: PENDING
 Reviewed head: PENDING
-
-No assurance token has been issued. The implementation role must not populate this section.
 
 ## REJECTION_HISTORY
 
