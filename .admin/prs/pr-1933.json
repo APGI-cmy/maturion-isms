@@ -15,18 +15,17 @@
     ".admin/prs/pr-1933.json",
     ".agent-admin/scope-declarations/pr-1933.md",
     ".agent-admin/prs/pr-1933/wave-current-tasks.md",
-    ".agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md",
-    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-1933-maturion-thin-core-20260713.md"
+    ".agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md"
   ],
   "risk": "high",
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
-    "Issue #1932 exact CS2 authority and gate-remediation amendment",
+    "Issue #1932 exact CS2 authority and gate-remediation amendments",
     "Maturion contract YAML and four-phase structure validation",
     "Protected-file diff record and immutable PREHANDOVER proof",
     "PR-scoped manifest, scope declaration, and wave task identity binding",
-    "ECAP PREHANDOVER proof and bundle with identity parity",
+    "ECAP waiver proof for the contract-only draft state",
     "Independent IAA final verdict against the unchanged assured head",
     "All required hosted checks pass"
   ],
