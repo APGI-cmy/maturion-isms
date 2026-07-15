@@ -231,9 +231,7 @@ Decision authority: Johan Ras / CS2
 
 Decision:
 
-```text
-CONTROLLED_PREVIEW_EVIDENCE_ACCEPTED
-```
+    PENDING_USER_VERIFICATION
 
 Rationale:
 
