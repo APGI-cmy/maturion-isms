@@ -252,6 +252,6 @@ This decision accepts the controlled-preview evidence record. It does not indepe
 
 ## 10. Final Disposition
 
-`CONTROLLED_PREVIEW_EVIDENCE_COMPLETE_AND_ACCEPTED`
+`PENDING_USER_VERIFICATION`
 
-The APW Specialist controlled-preview evidence is complete. Public routing, restricted routing, public answer authority, UI behaviour, gateway connectivity, telemetry, and rollback have all been verified in staging.
+The APW Specialist controlled-preview evidence record has been created. Live preview checks are pending user/operator verification before this record can be treated as complete.
