@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
-| Stage | Stage 12 - Build Execution and Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Slice | Slice 2.2 - Entry, Signup, Auth Implementation Planning |
 | Issue | #1891 |
 | Date | 2026-07-01 |
@@ -44,9 +44,9 @@ The later implementation slice should proceed in this order:
 6. Enforce authentication before entitlement before role permission.
 7. Enforce PIT-only and full-bundle entitlement behavior.
 8. Enforce role-aware navigation and route outcomes.
-9. Add or update tests mapped to PIT-RED-ENTRY-001 through PIT-RED-ENTRY-020.
+9. Add or update tests mapped to PIT-RED-ENTRY-001 through PIT-RED-ENTRY-020, including an unauthenticated direct-route test proving the guard sequence.
 10. Deploy preview environment.
-11. Capture browser evidence.
+11. Capture browser evidence, including the unauthenticated protected-route outcome.
 12. Update Stage 12 evidence tracker with slice-specific evidence only.
 
 ---
@@ -72,6 +72,7 @@ The later implementation slice may be considered for merge only when:
 - checks are green;
 - browser evidence is captured;
 - QA-to-Green rows are addressed;
+- unauthenticated direct-route guard order is proven;
 - role and entitlement negative paths are proven;
 - host boundary is preserved;
 - Stage 12 evidence tracker is updated;

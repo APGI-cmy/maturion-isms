@@ -1,4 +1,5 @@
 import {
+  getLearnedEvidenceSubject,
   retrieveDescriptorLearningRecords,
   type DescriptorLearningRecord,
   type DescriptorLearningRetrievalContext,
@@ -92,9 +93,55 @@ function inferPlural(subject: string): boolean {
   return /(ies|ses|xes|zes|ches|shes|s)$/.test(lastToken);
 }
 
+function splitCriterionSentences(value: string): string[] {
+  return value
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.replace(/[.!?]+$/g, '').trim())
+    .filter(Boolean);
+}
+
+function normaliseEvidenceBearingSentence(sentence: string): string {
+  let text = sentence.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
+
+  text = text.replace(/^Minutes\s+will\s+be\s+taken\s+of\s+these\s+meetings/i, 'minutes are taken of these meetings');
+  text = text.replace(/^actions\s+agreed/i, 'actions are agreed');
+  text = text.replace(/^decisions\s+recorded/i, 'decisions are recorded');
+  text = text.replace(/^individuals\s+made\s+accountable\s+for\s+their\s+delivery/i, 'individuals are made accountable for their delivery');
+  text = text.replace(/\bwill\s+meet\b/gi, 'meets');
+  text = text.replace(/\bwill\s+be\s+taken\b/gi, 'are taken');
+  text = text.replace(/\bwill\s+be\b/gi, 'is');
+  text = text.replace(/\bshould\s+be\b/gi, 'is');
+  text = text.replace(/\bshall\s+be\b/gi, 'is');
+  text = text.replace(/\bmust\s+be\b/gi, 'is');
+
+  return text.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
+}
+
+function preserveEvidenceBundle(criterionText: string): string | null {
+  const clean = cleanCriterionForDescriptorReasoning(criterionText);
+  const lower = clean.toLowerCase();
+  if (!(lower.includes('minutes') && lower.includes('actions') && lower.includes('decisions') && lower.includes('accountable'))) {
+    return null;
+  }
+
+  const sentences = splitCriterionSentences(clean);
+  if (sentences.length < 2) return null;
+
+  const primary = normaliseEvidenceBearingSentence(sentences[0])
+    .replace(/^The\s+DCC\s+/i, 'the DCC ')
+    .replace(/\bwill\s+meet\b/i, 'meets');
+  const secondary = normaliseEvidenceBearingSentence(sentences.slice(1).join(', '))
+    .replace(/,\s*actions\s+agreed/gi, ', actions are agreed')
+    .replace(/,\s*decisions\s+recorded/gi, ', decisions are recorded')
+    .replace(/,\s*and\s+individuals\s+made\s+accountable/gi, ', and individuals are made accountable');
+
+  return `${primary} supported by ${secondary}, and delivery or implementation is traceable`;
+}
+
 export function classifyDescriptorGrammarShape(criterionText: string): string {
   const clean = stripCriterionBoilerplate(stripDescriptorGuidanceNotes(criterionText));
   if (/^Review and approval of\b/i.test(clean)) return 'nominal_review_and_approval';
+  if (/\bminutes\b/i.test(clean) && /\bactions\b/i.test(clean) && /\bdecisions\b/i.test(clean)) return 'evidence_bundle_minutes_actions_decisions';
   if (/^(Assessing|Reviewing)\b/i.test(clean)) return 'leading_gerund';
   if (/\b(?:are|is)\s+to\s+be\b/i.test(clean)) return 'passive_instruction_state';
   if (/\b(?:should|will|shall|must)\s+be\b/i.test(clean)) return 'instruction_word_state';
@@ -107,6 +154,9 @@ export function cleanCriterionForDescriptorReasoning(criterionText: string): str
 }
 
 export function reconstructEvidenceStateClause(criterionText: string): string {
+  const evidenceBundle = preserveEvidenceBundle(criterionText);
+  if (evidenceBundle) return evidenceBundle;
+
   let text = cleanCriterionForDescriptorReasoning(criterionText);
 
   text = text.replace(/^Review and approval of\s+(.+?)\s+for\s+(.+)$/i, (_match, object: string, qualifier: string) => {
@@ -124,19 +174,19 @@ export function reconstructEvidenceStateClause(criterionText: string): string {
 
   text = text.replace(/\bare\s+to\s+be\b/gi, 'are');
   text = text.replace(/\bis\s+to\s+be\b/gi, 'is');
-  text = text.replace(/\bshould\s+be\b/gi, (match, offset: number, full: string) => {
+  text = text.replace(/\bshould\s+be\b/gi, (_match, offset: number, full: string) => {
     const before = full.slice(0, offset).trim();
     return inferPlural(before) ? 'are' : 'is';
   });
-  text = text.replace(/\bwill\s+be\b/gi, (match, offset: number, full: string) => {
+  text = text.replace(/\bwill\s+be\b/gi, (_match, offset: number, full: string) => {
     const before = full.slice(0, offset).trim();
     return inferPlural(before) ? 'are' : 'is';
   });
-  text = text.replace(/\bshall\s+be\b/gi, (match, offset: number, full: string) => {
+  text = text.replace(/\bshall\s+be\b/gi, (_match, offset: number, full: string) => {
     const before = full.slice(0, offset).trim();
     return inferPlural(before) ? 'are' : 'is';
   });
-  text = text.replace(/\bmust\s+be\b/gi, (match, offset: number, full: string) => {
+  text = text.replace(/\bmust\s+be\b/gi, (_match, offset: number, full: string) => {
     const before = full.slice(0, offset).trim();
     return inferPlural(before) ? 'are' : 'is';
   });
@@ -149,15 +199,28 @@ function buildRetrievalContext(context: DescriptorGenerationContext): Descriptor
     tenantId: context.tenantId,
     frameworkId: context.frameworkId ?? null,
     criterionId: context.criterionId ?? null,
+    criterionCode: context.criterionCode ?? null,
     sourceMode: context.sourceMode,
     grammarShape: classifyDescriptorGrammarShape(context.criterionText),
+    criterionText: context.criterionText,
   };
+}
+
+function applyLearnedEvidenceSubject(
+  fallbackEvidenceStateClause: string,
+  retrievedLearningRecords: RankedDescriptorLearningRecord[],
+): string {
+  const learned = retrievedLearningRecords
+    .map((record) => getLearnedEvidenceSubject(record))
+    .find((subject): subject is string => Boolean(subject?.trim()));
+
+  return learned ?? fallbackEvidenceStateClause;
 }
 
 export function generateDescriptorReasoningResult(context: DescriptorGenerationContext): DescriptorReasoningResult {
   const grammarShape = classifyDescriptorGrammarShape(context.criterionText);
   const cleanedActionableClause = cleanCriterionForDescriptorReasoning(context.criterionText);
-  const evidenceStateClause = reconstructEvidenceStateClause(context.criterionText);
+  const fallbackEvidenceStateClause = reconstructEvidenceStateClause(context.criterionText);
   const retrievedLearningRecords = retrieveDescriptorLearningRecords(
     context.learningRecords ?? [],
     buildRetrievalContext(context),
@@ -165,6 +228,7 @@ export function generateDescriptorReasoningResult(context: DescriptorGenerationC
   );
 
   const learningApplied = retrievedLearningRecords.length > 0;
+  const evidenceStateClause = applyLearnedEvidenceSubject(fallbackEvidenceStateClause, retrievedLearningRecords);
 
   return {
     sourceMode: context.sourceMode,

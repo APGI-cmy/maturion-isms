@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   canUseDescriptorLearningRecordForTenant,
+  extractEvidenceSubjectFromDescriptor,
   retrieveDescriptorLearningRecords,
   type DescriptorLearningRecord,
 } from '../../../../apps/mmm/src/lib/descriptorLearningRetrieval';
+import { descriptorLearningRecordsFromInteractions } from '../../../../apps/mmm/src/lib/descriptorLearningPersistence';
 import {
   cleanCriterionForDescriptorReasoning,
   classifyDescriptorGrammarShape,
@@ -12,8 +14,8 @@ import {
 } from '../../../../apps/mmm/src/lib/descriptorReasoning';
 
 // -----------------------------------------------------------------------------
-// Issue #1900 / PR #1898 QA-to-RED expansion
-// MMM Descriptor Reasoning + Governed Learning Retrieval
+// Issue #1900 / #1914 QA-to-RED expansion
+// MMM Descriptor Reasoning + Governed Learning Retrieval/Persistence
 // -----------------------------------------------------------------------------
 
 describe('T-MMM-DRGL-001: verbatim nominal phrase descriptor reasoning', () => {
@@ -43,6 +45,30 @@ describe('T-MMM-DRGL-001: verbatim nominal phrase descriptor reasoning', () => {
         'Review and approval of emergency response changes for adequate Security measures.',
       ),
     ).toBe('emergency response changes are reviewed and approved for adequate Security measures');
+  });
+});
+
+describe('T-MMM-DUIR-002: DCC evidence bundle preservation', () => {
+  it('preserves minutes, actions, decisions, accountability, and delivery traceability', () => {
+    const result = generateDescriptorReasoningResult({
+      tenantId: 'tenant-a',
+      frameworkId: 'framework-1',
+      criterionId: 'D001.MPS002.C017',
+      criterionText:
+        'The DCC will meet at least four times a year. Minutes will be taken of these meetings, actions agreed, decisions recorded, and individuals made accountable for their delivery.',
+      sourceMode: 'verbatim_source',
+    });
+
+    expect(result.grammarShape).toBe('evidence_bundle_minutes_actions_decisions');
+    expect(result.evidenceStateClause).toContain('the DCC meets at least four times a year');
+    expect(result.evidenceStateClause).toContain('minutes are taken');
+    expect(result.evidenceStateClause).toContain('actions are agreed');
+    expect(result.evidenceStateClause).toContain('decisions are recorded');
+    expect(result.evidenceStateClause).toContain('individuals are made accountable');
+    expect(result.evidenceStateClause).toContain('delivery or implementation is traceable');
+    expect(result.descriptors[0].descriptorText).not.toBe(
+      'Evidence that the DCC meets at least four times a year is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.',
+    );
   });
 });
 
@@ -188,5 +214,164 @@ describe('T-MMM-DRGL-015: maturity levels remain distinct operating states', () 
 
     expect(result.descriptors).toHaveLength(5);
     expect(new Set(result.descriptors.map((descriptor) => descriptor.descriptorText)).size).toBe(5);
+  });
+});
+
+describe('T-MMM-DLPR: persisted descriptor learning replay', () => {
+  it('extracts corrected evidence subjects from user-corrected descriptors', () => {
+    expect(
+      extractEvidenceSubjectFromDescriptor(
+        'Evidence that the committee meets quarterly, minutes record actions, decisions, accountable owners, and delivery status is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+      ),
+    ).toBe('the committee meets quarterly, minutes record actions, decisions, accountable owners, and delivery status');
+  });
+
+  it('maps persisted consented interactions into tenant-scoped learning records', () => {
+    const records = descriptorLearningRecordsFromInteractions([
+      {
+        id: 'interaction-1',
+        target_entity_id: 'criterion-1',
+        status: 'recorded',
+        created_at: '2026-07-08T10:00:00Z',
+        request_json: {
+          tenant_id: 'tenant-a',
+          framework_id: 'framework-1',
+          source_mode: 'verbatim_source',
+          criterion_id: 'criterion-1',
+          criterion_code: 'D001.MPS002.C017',
+          criterion_text:
+            'The DCC will meet at least four times a year. Minutes will be taken of these meetings, actions agreed, decisions recorded, and individuals made accountable for their delivery.',
+          learning_events: [
+            {
+              level: 1,
+              original_generated_descriptor_text: 'Evidence that the DCC meets at least four times a year is absent...',
+              user_corrected_descriptor_text:
+                'Evidence that the DCC meets at least four times a year, minutes record actions, decisions, accountable individuals, and delivery status is absent, weak, outdated, inconsistent, fragmented, or person-dependent.',
+              learned_evidence_subject:
+                'the DCC meets at least four times a year, minutes record actions, decisions, accountable individuals, and delivery status',
+              correction_category: 'evidence_bundle_preservation',
+              reusable_pattern_candidate_text:
+                'Preserve meeting cadence, minutes, actions, decisions, accountability and delivery evidence.',
+            },
+          ],
+        },
+        response_json: {
+          reuse_scope: 'tenant_specific_pattern',
+          review_status: 'validated',
+          conflict_status: 'none',
+          consented_at: '2026-07-08T10:00:00Z',
+        },
+      },
+    ]);
+
+    expect(records).toHaveLength(1);
+    expect(records[0]).toMatchObject({
+      tenantId: 'tenant-a',
+      frameworkId: 'framework-1',
+      criterionId: 'criterion-1',
+      reuseScope: 'tenant_specific_pattern',
+      reviewStatus: 'validated',
+      conflictStatus: 'none',
+      correctionCategory: 'evidence_bundle_preservation',
+    });
+  });
+
+  it('replays learned evidence subject across all five maturity levels without copying one level', () => {
+    const result = generateDescriptorReasoningResult({
+      tenantId: 'tenant-a',
+      frameworkId: 'framework-1',
+      criterionId: 'criterion-1',
+      criterionCode: 'D001.MPS002.C017',
+      sourceMode: 'verbatim_source',
+      criterionText:
+        'The DCC will meet at least four times a year. Minutes will be taken of these meetings, actions agreed, decisions recorded, and individuals made accountable for their delivery.',
+      learningRecords: [
+        {
+          tenantId: 'tenant-a',
+          frameworkId: 'framework-1',
+          criterionId: 'criterion-1',
+          criterionCode: 'D001.MPS002.C017',
+          reuseScope: 'tenant_specific_pattern',
+          reviewStatus: 'validated',
+          conflictStatus: 'none',
+          sourceMode: 'verbatim_source',
+          grammarShape: 'evidence_bundle_minutes_actions_decisions',
+          originalCriterionText:
+            'The DCC will meet at least four times a year. Minutes will be taken of these meetings, actions agreed, decisions recorded, and individuals made accountable for their delivery.',
+          learnedEvidenceSubject:
+            'the DCC meets at least four times a year, minutes record actions, decisions, accountable individuals, and delivery status',
+        },
+      ],
+    });
+
+    expect(result.learningApplied).toBe(true);
+    expect(result.evidenceStateClause).toContain('minutes record actions');
+    expect(result.descriptors).toHaveLength(5);
+    expect(new Set(result.descriptors.map((descriptor) => descriptor.descriptorText)).size).toBe(5);
+    result.descriptors.forEach((descriptor) => {
+      expect(descriptor.descriptorText).toContain('minutes record actions');
+      expect(descriptor.descriptorText).toContain('accountable individuals');
+      expect(descriptor.descriptorText).toContain('delivery status');
+    });
+  });
+
+  it('uses similar-criterion reasoning patterns without hard-coding DCC or criterion code', () => {
+    const result = generateDescriptorReasoningResult({
+      tenantId: 'tenant-a',
+      frameworkId: 'framework-1',
+      criterionId: 'criterion-2',
+      criterionCode: 'D999.MPS888.C777',
+      sourceMode: 'verbatim_source',
+      criterionText:
+        'The governance forum will meet monthly. Minutes will be taken of these meetings, actions agreed, decisions recorded, and owners made accountable for their delivery.',
+      learningRecords: [
+        {
+          tenantId: 'tenant-a',
+          frameworkId: 'framework-1',
+          criterionId: 'criterion-1',
+          criterionCode: 'D001.MPS002.C017',
+          reuseScope: 'tenant_specific_pattern',
+          reviewStatus: 'validated',
+          sourceMode: 'verbatim_source',
+          grammarShape: 'evidence_bundle_minutes_actions_decisions',
+          originalCriterionText:
+            'The committee will meet monthly. Minutes will be taken of these meetings, actions agreed, decisions recorded, and owners made accountable for their delivery.',
+          learnedEvidenceSubject:
+            'meeting cadence, minutes, agreed actions, recorded decisions, accountable owners, and delivery status are traceable',
+        },
+      ],
+    });
+
+    expect(result.learningApplied).toBe(true);
+    expect(result.evidenceStateClause).toContain('meeting cadence');
+    expect(result.evidenceStateClause).not.toContain('DCC');
+    expect(result.evidenceStateClause).not.toContain('D001.MPS002.C017');
+  });
+});
+
+describe('T-MMM-DUIR-003: descriptor reasoning adapter yields ordered level drafts', () => {
+  it('maps reasoning output into Basic→Resilient level drafts (1-5)', async () => {
+    const { descriptorReasoningDraftsFromResult } = await import(
+      '../../../../apps/mmm/src/components/assessment/CriteriaManagement'
+    );
+    const result = generateDescriptorReasoningResult({
+      tenantId: 'tenant-a',
+      criterionText: 'Review and approval of facility design changes for adequate Security measures.',
+      sourceMode: 'verbatim_source',
+    });
+
+    const drafts = descriptorReasoningDraftsFromResult(result);
+    expect(drafts).toHaveLength(5);
+    expect(drafts.map((draft) => draft.level)).toEqual([1, 2, 3, 4, 5]);
+    expect(drafts.map((draft) => draft.label)).toEqual([
+      'Basic',
+      'Reactive',
+      'Compliant',
+      'Proactive',
+      'Resilient',
+    ]);
+    drafts.forEach((draft) => {
+      expect(draft.descriptor_text.length).toBeGreaterThan(0);
+    });
   });
 });

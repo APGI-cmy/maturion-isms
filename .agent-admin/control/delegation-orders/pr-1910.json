@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "pit-stage12-slice2-3",
+  "pr_number": 1910,
+  "prebrief_commit_sha": "2cec9518c51123cd6d745877f363f237d2a4e1c7",
+  "builder_appointment_timestamp": "2026-07-07T12:52:50Z",
+  "builder_appointment_commit_sha": "6cea995d88a83b7cbcd72ba164cc26707acd191c",
+  "builder_agent": "pit-specialist",
+  "builder_task_ref": "Issue #1896 / PR #1910 / PIT Stage 12 Slice 2.3 Entry Journey Implementation",
+  "first_implementation_commit_sha": "2242883c8819aa9e71738a9dfdaa0f42df8e207f",
+  "qp_review_timestamp": "2026-07-08T10:12:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

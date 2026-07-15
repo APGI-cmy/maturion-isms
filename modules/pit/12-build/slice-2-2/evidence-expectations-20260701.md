@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Module | PIT - Project Implementation Tracker |
-| Stage | Stage 12 - Build Execution and Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Slice | Slice 2.2 - Entry, Signup, Auth Implementation Planning |
 | Issue | #1891 |
 | Date | 2026-07-01 |
@@ -32,6 +32,7 @@ The later implementation slice must capture evidence for:
 | Existing user sign-in | Existing user can sign in and reach appropriate post-auth state. |
 | PIT-only entitlement | PIT-only user can access PIT runtime without full ISMS bundle. |
 | Full-bundle entitlement | Full-bundle user can access PIT runtime without separate PIT purchase. |
+| Unauthenticated protected-route access | Signed-out direct navigation to a protected PIT route proves authentication is evaluated before entitlement and role permission. |
 | Authenticated non-entitled state | User is routed to subscribe/entitlement, not runtime. |
 | Entitled unauthorized state | User sees permission denied, not subscribe redirect. |
 | Entitled authorized state | User reaches PIT runtime page. |
@@ -63,7 +64,7 @@ The later implementation slice must not rely only on happy-path evidence.
 
 It must include negative path evidence for:
 
-- signed-out user;
+- signed-out user directly navigating to a protected PIT route;
 - signed-in but non-entitled user;
 - entitled viewer/non-creator user;
 - unsupported or invalid route state;

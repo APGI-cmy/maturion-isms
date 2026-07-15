@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-learning-persistence-replay-2026-07-09",
+  "pr_number": 1918,
+  "prebrief_commit_sha": "8a03650cac2098ece2a496813a6aa3c384673c03",
+  "builder_appointment_timestamp": "2026-07-10T10:26:22Z",
+  "builder_appointment_commit_sha": "333665b5b734496090e8359a093bcb3046861e4c",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-learning-persistence-replay-2026-07-09.md",
+  "first_implementation_commit_sha": "b396dc30c2b07fc51305b900d5949cfd922f4961",
+  "qp_review_timestamp": "2026-07-10T12:22:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

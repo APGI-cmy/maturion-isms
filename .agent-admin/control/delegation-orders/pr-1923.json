@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "APW-PUBLIC-CHAT-ROUTE-TELEMETRY-V01",
+  "pr_number": 1923,
+  "prebrief_commit_sha": "aa33c01a30bfa6d21426c683ee373854b4f7b595",
+  "builder_appointment_timestamp": "2026-07-10T12:20:00Z",
+  "builder_appointment_commit_sha": "06dd282ce37507858f1a7c89154d1631e2eee194",
+  "builder_agent": "apw-public-chat-route-telemetry-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-public-chat-route-telemetry-builder-v0.1.md",
+  "first_implementation_commit_sha": "4866fdf27051b0d33d2d67187ea04e7b40bf88f5",
+  "qp_review_timestamp": "2026-07-10T13:12:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
