@@ -15,20 +15,16 @@
     ".admin/prs/pr-1933.json",
     ".agent-admin/scope-declarations/pr-1933.md",
     ".agent-admin/prs/pr-1933/wave-current-tasks.md",
-    ".agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md"
+    ".agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1283-20260720.md",
+    ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-065-20260720.md"
   ],
   "risk": "high",
   "requires_iaa": true,
   "requires_ecap": true,
-  "evidence_required": [
-    "Issue #1932 exact CS2 authority and gate-remediation amendments",
-    "Maturion contract YAML and four-phase structure validation",
-    "Protected-file diff record and immutable PREHANDOVER proof",
-    "PR-scoped manifest, scope declaration, and wave task identity binding",
-    "ECAP waiver proof for the contract-only draft state",
-    "Independent IAA final verdict against the unchanged assured head",
-    "All required hosted checks pass"
-  ],
+  "current_substantive_protected_commit": "213f5cb5b94461b19cbd860a706a99e5bdb45042",
+  "current_protected_blob": "c6a6a086d192eee2e0c872ec268eee767a407637",
+  "evidence_required": ["current protected identity", "current immutable PREHANDOVER", "corrected ECAP proof", "prior IAA rejection", "fresh independent final verdict", "green hosted checks"],
   "merge_authority": "CS2",
   "implementing_agent": "CodexAdvisor-agent"
 }
