@@ -109,10 +109,34 @@ REJECTION-PACKAGE
 PR: #1933 — CodexAdvisor: correct Maturion thin-core orchestrator contract
 4 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
 FAILURES:
-  RP-1933-01 — Assured-head drift: PR evidence binds protected state to commit `dbdf1d41b759fb2333903d3f13c371d96c525959` and blob `cace19f9c9fd28ada324e39258a3d03fd0cfbca1`, but live review head is `213f5cb5b94461b19cbd860a706a99e5bdb45042` and current protected blob is `c6a6a086d192eee2e0c872ec268eee767a407637`. — Fix required: regenerate authoritative diff/proof artifacts against the current substantive head or restore the declared assured state. — Classification: Substantive
-  RP-1933-02 — PREHANDOVER immutability breach: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-064-20260712.md` states later implementation changes require a new PREHANDOVER + renewed assurance, but subsequent protected-file commits (`f90c88c...`, `213f5cb...`) occurred without a new PREHANDOVER artifact. — Fix required: create a new immutable PREHANDOVER for the actual substantive head and re-run independent assurance. — Classification: Ceremony
-  RP-1933-03 — ECAP waiver proof contradiction: `.agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md` declares “No substantive Maturion contract change was made during gate remediation,” contradicted by two later protected-contract commits modifying `.github/agents/maturion-agent.md`. — Fix required: correct proof claims to match git history and re-attest scope truthfully. — Classification: Systemic
-  RP-1933-04 — Hosted-check completion not yet evidenced at final review point: PR task binding still records `HOSTED-1933` as `IN_PROGRESS`, and current check run set includes an in-progress job (`copilot`). — Fix required: complete hosted checks and provide final green required-check evidence at reviewed head. — Classification: Ceremony
+  RP-1933-01 — Assured-head drift
+    - Detail: PR evidence binds protected state to commit `dbdf1d41b759fb2333903d3f13c371d96c525959`
+      and blob `cace19f9c9fd28ada324e39258a3d03fd0cfbca1`, but live review head is
+      `213f5cb5b94461b19cbd860a706a99e5bdb45042` and current protected blob is
+      `c6a6a086d192eee2e0c872ec268eee767a407637`.
+    - Fix required: regenerate authoritative diff/proof artifacts against the current substantive head
+      or restore the declared assured state.
+    - Classification: Substantive
+  RP-1933-02 — PREHANDOVER immutability breach
+    - Detail: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-064-20260712.md`
+      states later implementation changes require a new PREHANDOVER + renewed assurance, but
+      subsequent protected-file commits (`f90c88c...`, `213f5cb...`) occurred without a new
+      PREHANDOVER artifact.
+    - Fix required: create a new immutable PREHANDOVER for the actual substantive head and
+      re-run independent assurance.
+    - Classification: Ceremony
+  RP-1933-03 — ECAP waiver proof contradiction
+    - Detail: `.agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md` declares
+      “No substantive Maturion contract change was made during gate remediation,” contradicted by
+      two later protected-contract commits modifying `.github/agents/maturion-agent.md`.
+    - Fix required: correct proof claims to match git history and re-attest scope truthfully.
+    - Classification: Systemic
+  RP-1933-04 — Hosted-check completion not yet evidenced at final review point
+    - Detail: PR task binding still records `HOSTED-1933` as `IN_PROGRESS`, and current check run
+      set includes an in-progress job (`copilot`).
+    - Fix required: complete hosted checks and provide final green required-check evidence at
+      reviewed head.
+    - Classification: Ceremony
 This PR must not be opened until all failures are resolved and IAA re-invoked.
 Adoption phase: PHASE_B_BLOCKING
 ═══════════════════════════════════════
