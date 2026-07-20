@@ -1,65 +1,42 @@
-# PR-SCOPED ADMIN PROOF — PR #1933 Maturion Thin-Core Contract Correction
+# PR-SCOPED ADMIN PROOF — PR #1933
 
 PR: #1933
 ISSUE: #1932
 BRANCH: codexadvisor-issue-1932-maturion-thin-core
 WAVE: maturion-thin-core-20260713
-PRODUCING_ROLE: CS2-directed administration
-DATE_UTC: 2026-07-13T06:40:00Z
+STATUS: DRAFT_STOP_AND_FIX
 
-## Administrative Ceremony Evidence
+## ECAP waiver
 
 protected_path_touched: true
 ecap_required: true
 ecap_invoked: false
 ceremony_admin_appointed: false
 ecap_verdict: PASS_WITH_CS2_WAIVER
-ecap_waiver_ref: Issue #1932 — CS2 contract-only draft gate remediation
+ecap_waiver_ref: Issue #1932 contract-only draft gate remediation
 
-ECAP_IDENTITY_BINDING_CHECK:
-PR_MATCH: yes
-ISSUE_MATCH: yes
-BRANCH_MATCH: yes
-WAVE_MATCH: yes
-SCOPE_MATCH: yes
-ALL_MATCH: yes
+The waiver applies only to the separate ECAP bundle artifact. It does not waive current-state evidence, hosted checks, or independent IAA.
 
-## Waiver Boundary
+## Corrected protected state
 
-- The waiver applies only to the separate ECAP bundle artifact whose reserved filename would incorrectly signal Foreman handover while independent IAA remains pending.
-- The PR-scoped manifest, scope declaration, canonical pre-brief, protected-file evidence, hosted checks, and independent IAA remain mandatory.
-- No `.agent-admin/control/handover-allowed.json` record is created because this draft PR is not entering the handover lane.
-- No substantive Maturion contract change was made during gate remediation.
+The Maturion contract was changed after the original proof to satisfy active contract-format requirements. Those changes are substantive and are now included in this evidence.
 
-## Authoritative References
+- Current substantive protected-file commit: `213f5cb5b94461b19cbd860a706a99e5bdb45042`
+- Current protected contract blob: `c6a6a086d192eee2e0c872ec268eee767a407637`
+- Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-065-20260720.md`
+- Prior IAA result: REJECTION-PACKAGE in session 1283
+- Fresh independent IAA: REQUIRED after hosted checks pass on the frozen head
 
-- Exact authority: Issue #1932 and its CS2 gate-remediation amendments.
-- Protected implementation: `.github/agents/maturion-agent.md`.
-- Protected-file commit: `dbdf1d41b759fb2333903d3f13c371d96c525959`.
-- Contract blob: `cace19f9c9fd28ada324e39258a3d03fd0cfbca1`.
-- IAA wave record: `.agent-admin/assurance/iaa-wave-record-maturion-thin-core-20260712.md`.
-- Scope declaration: `.agent-admin/scope-declarations/pr-1933.md`.
-- Admin manifest: `.admin/prs/pr-1933.json`.
-- Wave tasks: `.agent-admin/prs/pr-1933/wave-current-tasks.md`.
+## Rejection remediation
 
-## QP and OPOJD Administrative Reconciliation
+- RP-1933-01: current protected commit/blob recorded.
+- RP-1933-02: new immutable PREHANDOVER created.
+- RP-1933-03: prior contradictory no-change statement removed.
+- RP-1933-04: hosted checks must complete against the frozen post-remediation head.
 
-- Exact issue authority recorded: PASS
-- Protected contract owner route: PASS
-- Changed-path scope declared: PASS
-- Four mandatory contract phases preserved: PASS
-- SELF-MOD-MATURION-001 preserved: PASS
-- Runtime-versus-CS2 boundary present: PASS
-- Bounded invocation and response-review controls present: PASS
-- Missing Wave 4 dependencies represented as unavailable: PASS
-- Product/runtime/Tier 2/deployment scope excluded: PASS
-- PR-scoped manifest, scope, and wave bindings present: PASS
-- Independent final IAA: PENDING
-- Hosted checks: TO BE CONFIRMED AGAINST CURRENT HEAD
+## Scope
 
-## Changed Files Reconciliation
-
-FILES_CHANGED: 9
+FILES_CHANGED: 11
 
 1. `.github/agents/maturion-agent.md`
 2. `.agent-admin/governance/agent-contract-diffs/diff-20260712-maturion-agent-thin-core.md`
@@ -70,8 +47,12 @@ FILES_CHANGED: 9
 7. `.agent-admin/scope-declarations/pr-1933.md`
 8. `.agent-admin/prs/pr-1933/wave-current-tasks.md`
 9. `.agent-admin/prehandover/proof-pr-1933-maturion-thin-core-20260713.md`
+10. `.agent-workspace/independent-assurance-agent/memory/session-1283-20260720.md`
+11. `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-065-20260720.md`
 
-SCOPE_PARITY: PASS
-ADMIN_WAIVER_RECORDED: PASS
+No runtime, Tier 2, schema, migration, provider, Supabase, Vercel, or deployment change is included.
+
+SCOPE_PARITY: RECONCILED
+HANDOVER_ALLOWED: no
 MERGE_AUTHORITY: CS2
-FINAL_STATE: PENDING_INDEPENDENT_IAA_AND_HOSTED_CHECKS
+FINAL_STATE: PENDING_HOSTED_CHECKS_AND_FRESH_INDEPENDENT_IAA
