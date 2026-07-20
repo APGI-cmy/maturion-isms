@@ -1686,6 +1686,24 @@ export function CriteriaManagement({
   };
 
   const handleGenerateDescriptors = async (criterion: DomainAuditCriterionRow) => {
+    const pendingEditedLevels = descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>();
+    if (pendingEditedLevels.size > 0) {
+      setCriterionActionMessages((prev) => ({
+        ...prev,
+        [criterion.id]: {
+          type: 'error',
+          text: 'Save maturity descriptors before regenerating. Unsaved descriptor edits would otherwise be overwritten before Maturion can record the learning.',
+        },
+      }));
+      setDescriptorSaveMessages((prev) => ({
+        ...prev,
+        [criterion.id]: {
+          type: 'error',
+          text: 'Save maturity descriptors before regenerating so Maturion can record this learning.',
+        },
+      }));
+      return;
+    }
     const activeCriterionText = stripCriterionBoilerplate(
       criterionEditDrafts[criterion.id]?.name ?? criterion.name,
     );
@@ -2226,8 +2244,8 @@ export function CriteriaManagement({
                                           data-testid={`descriptor-input-${criterion.id}-${descriptor.level}`}
                                         />
                                         <p className="level-descriptor-card__hint">
-                                          Use Edit descriptor to adjust this level. Saved changes are recorded for
-                                          Maturion learning and audit traceability.
+                                          Use Edit descriptor to adjust this level. Click Save maturity descriptors
+                                          before regenerating so Maturion can record the learning and audit trail.
                                         </p>
                                       </div>
                                     ))}
