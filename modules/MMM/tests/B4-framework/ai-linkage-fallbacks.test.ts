@@ -158,3 +158,41 @@ describe('T-MMM-S6-220: Verbatim intent generation resolves from processed organ
     expect(src).toContain('no source-faithful intent text could be extracted');
   });
 });
+
+describe('T-MMM-DUIR-005: Descriptor regeneration is blocked when unsaved descriptor edits exist', () => {
+  it('handleGenerateDescriptors checks descriptorEditedLevelsByCriterion for pending edits before generation', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>()');
+    expect(src).toContain('pendingEditedLevels.size > 0');
+  });
+
+  it('guard sets save-before-regenerate error messages when pending edited levels exist', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('Save maturity descriptors before regenerating. Unsaved descriptor edits would otherwise be overwritten before Maturion can record the learning.');
+    expect(src).toContain('Save maturity descriptors before regenerating so Maturion can record this learning.');
+  });
+
+  it('guard returns early so generation does not proceed when pending edits exist', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    // The early-return guard must appear before setDescriptorGeneratingByCriterion within handleGenerateDescriptors
+    const guardIndex = src.indexOf('pendingEditedLevels.size > 0');
+    const generatingIndex = src.indexOf('setDescriptorGeneratingByCriterion((prev) => ({ ...prev, [criterion.id]: true }))');
+    expect(guardIndex).toBeGreaterThan(-1);
+    expect(generatingIndex).toBeGreaterThan(-1);
+    expect(guardIndex).toBeLessThan(generatingIndex);
+  });
+
+  it('generation remains available when no pending edited levels exist', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    // After the guard, normal generation state still proceeds
+    expect(src).toContain('setDescriptorGeneratingByCriterion((prev) => ({ ...prev, [criterion.id]: true }))');
+    expect(src).toContain('Creating maturity descriptors from the approved methodology reference...');
+  });
+
+  it('descriptor hint does not imply Done editing saves or records learning', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('Click Save maturity descriptors');
+    expect(src).toContain('before regenerating so Maturion can record the learning and audit trail');
+    expect(src).not.toContain('Saved changes are recorded for');
+  });
+});
