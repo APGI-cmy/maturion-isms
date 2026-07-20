@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-edit-save-learning-replay-hotfix-2026-07-12",
+  "pr_number": 1931,
+  "prebrief_commit_sha": "236c3bc9d91d6e42083f62b41103dfc63305c212",
+  "builder_appointment_timestamp": "2026-07-20T08:00:00+02:00",
+  "builder_appointment_commit_sha": "c423b30e40ed28f07d9634f08af96ef2436aec87",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-edit-save-learning-replay-hotfix-2026-07-12.md",
+  "first_implementation_commit_sha": "1f108931ab23f910a0cca45f494439ed79311997",
+  "qp_review_timestamp": "2026-07-20T08:15:00+02:00",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
