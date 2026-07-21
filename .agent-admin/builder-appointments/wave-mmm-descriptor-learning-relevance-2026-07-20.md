@@ -7,4 +7,4 @@ Status: appointed for bounded implementation
 
 ## Scope
 
-Correct descriptor-learning relevance so unrelated criteria cannot inherit a previously
+Correct descriptor-learning relevance so unrelated criteria cannot inherit a previously learned evidence subject merely because they share a
