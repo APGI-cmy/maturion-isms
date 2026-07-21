@@ -90,11 +90,11 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING
-Verdict: HALT-001
-Reviewed head: NOT REVIEWED
+PHASE_B_BLOCKING_TOKEN: IAA-session-1284-20260721-REJECT
+Verdict: REJECTION-PACKAGE
+Reviewed head: 09bde7c60f3897479de2a805d302aaffcec097d1
 
-No final assurance verdict was issued.
+Historical HALT-001 record retained below; latest final outcome is in the most recent REJECTION-PACKAGE section.
 
 ## REJECTION_HISTORY
 
@@ -139,6 +139,43 @@ FAILURES:
     - Classification: Ceremony
 This PR must not be opened until all failures are resolved and IAA re-invoked.
 Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+
+IAA_REJECTION_NOTICE
+- RCA_REVIEW: REFER_BACK
+- HANDOVER_ALLOWED: no
+- RESULT: REJECTED_BACK_TO_PRODUCER
+
+## REJECTION-PACKAGE — FINAL (2026-07-21)
+
+═══════════════════════════════════════
+REJECTION-PACKAGE
+PR: #1933 — CodexAdvisor: correct Maturion thin-core orchestrator contract
+Reviewed head: 09bde7c60f3897479de2a805d302aaffcec097d1
+Protected contract commit (latest substantive): 6ad1a892dbb47f758e036c99cc29a0e8df402e40
+Protected contract blob at head: 4c060b890074b79fa293dcd66c9b3f9987200e47
+FILES_CHANGED reviewed: 16
+4 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
+FAILURES:
+  RP-1933-R4-01 — Wake-up protocol does not enforce canonical provenance degradation
+    - Finding: `.github/scripts/wake-up-protocol.sh` validates hash shape only and does not fail on missing canonical commit SHA provenance; `governance/canon/CANON_INVENTORY_INTEGRITY_REQUIREMENTS.md` §4 requires degraded/block behavior for missing canonical commit SHA.
+    - Fix required: enforce provenance-field validation in wake-up protocol and fail nonzero when canonical commit SHA is missing.
+    - Classification: Substantive
+  RP-1933-R4-02 — Session-closure accepts supplied check evidence without HEAD SHA binding
+    - Finding: `.github/scripts/session-closure.sh` validates check name/status but does not require supplied check evidence SHA/head_sha to match current HEAD, allowing stale green evidence reuse.
+    - Fix required: require SHA/head_sha parity between supplied evidence and current HEAD before PASS.
+    - Classification: Substantive
+  RP-1933-R4-03 — Unresolved review threads remain open
+    - Finding: PR review-thread state includes 2 unresolved threads (`#discussion_r3623792789`, `#discussion_r3623792800`) at reviewed head.
+    - Fix required: resolve all review threads with implemented fixes and re-run assurance on unchanged head.
+    - Classification: Ceremony
+  RP-1933-R4-04 — Hosted checks not fully complete at assurance point
+    - Finding: check run `copilot` remains `in_progress` on reviewed head while final assurance is requested.
+    - Fix required: complete hosted checks and re-invoke IAA on frozen unchanged head.
+    - Classification: Ceremony
+This PR must not be opened until all failures are resolved and IAA re-invoked.
+Adoption phase: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-1284-20260721-REJECT
 ═══════════════════════════════════════
 
 IAA_REJECTION_NOTICE

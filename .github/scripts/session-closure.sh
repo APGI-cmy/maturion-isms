@@ -217,6 +217,7 @@ validate_required_merge_checks() {
     local result_file="/tmp/session-closure-required-checks-${AGENT_ID}-${SESSION_DATE}.json"
     RESULT_FILE="$result_file" \
     AGENT_CONTRACT_FILE="$AGENT_CONTRACT_FILE" \
+    CURRENT_HEAD_SHA="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || true)}" \
     CHECK_RUNS_PATH="${CHECK_RUNS_PATH:-}" \
     CHECK_RUNS_JSON="${CHECK_RUNS_JSON:-}" \
     COMMIT_STATUSES_PATH="${COMMIT_STATUSES_PATH:-}" \
@@ -230,6 +231,7 @@ import sys
 
 result_file = os.environ["RESULT_FILE"]
 contract_path = os.environ["AGENT_CONTRACT_FILE"]
+current_head_sha = os.environ.get("CURRENT_HEAD_SHA", "").strip().lower()
 
 def emit(payload):
     with open(result_file, "w", encoding="utf-8") as fh:
@@ -242,6 +244,9 @@ def fail(reason):
 
 if not os.path.exists(contract_path):
     fail(f"Agent contract not found: {contract_path}")
+
+if not re.fullmatch(r"[0-9a-f]{40}", current_head_sha):
+    fail(f"Cannot verify required checks: unresolved or invalid current HEAD SHA '{current_head_sha or 'missing'}'.")
 
 contract_text = open(contract_path, "r", encoding="utf-8").read()
 frontmatter_match = re.search(r"\A\s*---\r?\n(.*?)\r?\n---\r?\n", contract_text, re.S)
@@ -334,8 +339,17 @@ for run in check_runs:
     if not isinstance(run, dict):
         continue
     name = text_or_empty(run.get("name"))
+    evidence_head_sha = text_or_empty(run.get("head_sha")).lower()
+    if not evidence_head_sha and isinstance(run.get("check_suite"), dict):
+        evidence_head_sha = text_or_empty(run.get("check_suite", {}).get("head_sha")).lower()
     status = text_or_empty(run.get("status")).lower()
     conclusion = text_or_empty(run.get("conclusion")).lower()
+    if not evidence_head_sha:
+        add(name, "failed", "check_run missing head_sha evidence")
+        continue
+    if evidence_head_sha != current_head_sha:
+        add(name, "failed", f"check_run head_sha mismatch ({evidence_head_sha} != {current_head_sha})")
+        continue
     # GitHub check-run pending lifecycle states (not final conclusions).
     if status in {"queued", "in_progress", "waiting", "requested", "pending"}:
         add(name, "pending", f"check_run status={status}")
@@ -351,7 +365,14 @@ for status_row in commit_statuses:
     if not isinstance(status_row, dict):
         continue
     context = text_or_empty(status_row.get("context"))
+    evidence_sha = text_or_empty(status_row.get("sha")).lower()
     state = text_or_empty(status_row.get("state")).lower()
+    if not evidence_sha:
+        add(context, "failed", "commit_status missing sha evidence")
+        continue
+    if evidence_sha != current_head_sha:
+        add(context, "failed", f"commit_status sha mismatch ({evidence_sha} != {current_head_sha})")
+        continue
     if state == "success":
         add(context, "success", "commit_status state=success")
     elif state == "pending":

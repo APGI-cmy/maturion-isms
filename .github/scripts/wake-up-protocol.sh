@@ -62,6 +62,35 @@ count_invalid_inventory_hashes() {
     ' "$inventory_file"
 }
 
+# Counts entries missing canonical commit SHA provenance in CANON_INVENTORY.json.
+count_missing_inventory_commit_provenance() {
+    local inventory_file="$1"
+    jq -r '
+      def missing_commit:
+        . == null
+        or (type != "string")
+        or (length != 40)
+        or (test("^[0-9a-fA-F]{40}$") | not);
+      def commit_field:
+        .canonical_commit_sha
+        // .canonical_commit
+        // .canonical_commit_sha1
+        // .commit_sha
+        // .source_commit_sha
+        // .commit;
+      if (.canons? | type) == "array" then
+        [ .canons[]? | (if type == "object" then commit_field else null end) | select(missing_commit) ] | length
+      elif (.artifacts? | type) == "object" then
+        [ .artifacts[]?
+          | (if type == "object" then commit_field else null end)
+          | select(missing_commit)
+        ] | length
+      else
+        0
+      end
+    ' "$inventory_file"
+}
+
 # Output files
 WORKING_CONTRACT="${WORKSPACE_DIR}/working-contract.md"
 ENVIRONMENT_HEALTH="${WORKSPACE_DIR}/environment-health.json"
@@ -197,10 +226,16 @@ if [ -f "$CANON_INVENTORY" ]; then
         echo "  - Total artifacts: ${CANON_COUNT}"
         if agent_requires_placeholder_hash_enforcement; then
             INVALID_HASH_COUNT=$(count_invalid_inventory_hashes "$CANON_INVENTORY")
+            MISSING_PROVENANCE_COUNT=$(count_missing_inventory_commit_provenance "$CANON_INVENTORY")
             echo "  - Placeholder-hash enforcement: ENABLED"
             echo "  - Invalid/placeholder hashes: ${INVALID_HASH_COUNT}"
+            echo "  - Missing canonical commit SHA provenance: ${MISSING_PROVENANCE_COUNT}"
             if [ "${INVALID_HASH_COUNT}" -gt 0 ]; then
                 echo -e "${RED}❌ CANON_INVENTORY.json is degraded (invalid/placeholder hashes detected)${NC}"
+                PHASE3_STATUS="FAIL"
+            fi
+            if [ "${MISSING_PROVENANCE_COUNT}" -gt 0 ]; then
+                echo -e "${RED}❌ CANON_INVENTORY.json is degraded (missing canonical commit SHA provenance)${NC}"
                 PHASE3_STATUS="FAIL"
             fi
         else
