@@ -23,8 +23,177 @@ WORKSPACE_DIR="${REPO_ROOT}/.agent-workspace/${AGENT_ID}"
 MEMORY_DIR="${WORKSPACE_DIR}/memory"
 PERSONAL_DIR="${WORKSPACE_DIR}/personal"
 ESCALATION_DIR="${WORKSPACE_DIR}/escalation-inbox"
+AGENT_CONTRACT_FILE="${REPO_ROOT}/.github/agents/${AGENT_ID}-agent.md"
+if [ ! -f "$AGENT_CONTRACT_FILE" ]; then
+    AGENT_CONTRACT_FILE="${REPO_ROOT}/.github/agents/${AGENT_ID}.md"
+fi
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 SESSION_DATE=$(date -u +"%Y%m%d")
+
+validate_required_merge_checks() {
+    local result_file="/tmp/session-closure-required-checks-${AGENT_ID}-${SESSION_DATE}.json"
+    RESULT_FILE="$result_file" \
+    AGENT_CONTRACT_FILE="$AGENT_CONTRACT_FILE" \
+    CHECK_RUNS_PATH="${CHECK_RUNS_PATH:-}" \
+    CHECK_RUNS_JSON="${CHECK_RUNS_JSON:-}" \
+    COMMIT_STATUSES_PATH="${COMMIT_STATUSES_PATH:-}" \
+    COMMIT_STATUSES_JSON="${COMMIT_STATUSES_JSON:-}" \
+    python3 <<'PY'
+import json
+import os
+import re
+import sys
+
+result_file = os.environ["RESULT_FILE"]
+contract_path = os.environ["AGENT_CONTRACT_FILE"]
+
+def emit(payload):
+    with open(result_file, "w", encoding="utf-8") as fh:
+        json.dump(payload, fh, indent=2)
+
+def fail(reason):
+    emit({"ok": False, "reason": reason, "failures": [], "required_checks": []})
+    print(reason)
+    sys.exit(1)
+
+if not os.path.exists(contract_path):
+    fail(f"Agent contract not found: {contract_path}")
+
+contract_text = open(contract_path, "r", encoding="utf-8").read()
+frontmatter_match = re.search(r"^---\n(.*?)\n---\n", contract_text, re.S | re.M)
+if not frontmatter_match:
+    fail("Contract YAML frontmatter is missing.")
+frontmatter = frontmatter_match.group(1)
+lines = frontmatter.splitlines()
+
+mg_start = None
+for idx, line in enumerate(lines):
+    if line.strip() == "merge_gate_interface:":
+        mg_start = idx
+        break
+if mg_start is None:
+    fail("merge_gate_interface block missing from contract frontmatter.")
+
+required_checks = []
+required_start = None
+for idx in range(mg_start + 1, len(lines)):
+    line = lines[idx]
+    if line and not line.startswith((" ", "\t")):
+        break
+    if line.strip() == "required_checks:":
+        required_start = idx
+        break
+if required_start is None:
+    fail("merge_gate_interface.required_checks missing from contract frontmatter.")
+
+for idx in range(required_start + 1, len(lines)):
+    line = lines[idx]
+    if line and not line.startswith((" ", "\t")):
+        break
+    stripped = line.strip()
+    if not stripped:
+        continue
+    if not stripped.startswith("- "):
+        if required_checks:
+            break
+        continue
+    entry = stripped[2:].strip()
+    if (entry.startswith('"') and entry.endswith('"')) or (entry.startswith("'") and entry.endswith("'")):
+        entry = entry[1:-1]
+    if entry:
+        required_checks.append(entry)
+
+required_checks = [c for c in required_checks if c]
+if not required_checks:
+    fail("merge_gate_interface.required_checks is empty.")
+
+def load_json(path_key, json_key):
+    path_val = os.environ.get(path_key, "").strip()
+    if path_val:
+        with open(path_val, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+    raw = os.environ.get(json_key, "").strip()
+    if raw:
+        return json.loads(raw)
+    return None
+
+try:
+    check_runs_payload = load_json("CHECK_RUNS_PATH", "CHECK_RUNS_JSON")
+    commit_statuses_payload = load_json("COMMIT_STATUSES_PATH", "COMMIT_STATUSES_JSON")
+except Exception as exc:
+    fail(f"Could not parse check status evidence: {exc}")
+
+if check_runs_payload is None and commit_statuses_payload is None:
+    fail("Cannot verify required checks: no check-runs or commit-status evidence provided.")
+
+check_runs = check_runs_payload.get("check_runs", []) if isinstance(check_runs_payload, dict) else (check_runs_payload or [])
+commit_statuses = commit_statuses_payload.get("statuses", []) if isinstance(commit_statuses_payload, dict) else (commit_statuses_payload or [])
+
+observed = {}
+def add(name, state, detail):
+    if not name:
+        return
+    observed.setdefault(name, []).append({"state": state, "detail": detail})
+
+for run in check_runs:
+    if not isinstance(run, dict):
+        continue
+    name = str(run.get("name", "")).strip()
+    status = str(run.get("status", "")).strip().lower()
+    conclusion = str(run.get("conclusion", "")).strip().lower()
+    if status in {"queued", "in_progress", "waiting", "requested", "pending"}:
+        add(name, "pending", f"check_run status={status}")
+    elif status == "completed":
+        if conclusion == "success":
+            add(name, "success", f"check_run conclusion={conclusion}")
+        else:
+            add(name, "failed", f"check_run conclusion={conclusion or 'unknown'}")
+    else:
+        add(name, "pending", f"check_run status={status or 'unknown'}")
+
+for status_row in commit_statuses:
+    if not isinstance(status_row, dict):
+        continue
+    context = str(status_row.get("context", "")).strip()
+    state = str(status_row.get("state", "")).strip().lower()
+    if state == "success":
+        add(context, "success", "commit_status state=success")
+    elif state == "pending":
+        add(context, "pending", "commit_status state=pending")
+    elif state:
+        add(context, "failed", f"commit_status state={state}")
+    else:
+        add(context, "pending", "commit_status state=unknown")
+
+failures = []
+for check in required_checks:
+    states = [entry["state"] for entry in observed.get(check, [])]
+    if not states:
+        failures.append({"check": check, "status": "missing", "detail": "required check not observed"})
+    elif "pending" in states:
+        failures.append({"check": check, "status": "pending", "detail": "required check is pending/in-progress"})
+    elif "failed" in states:
+        failures.append({"check": check, "status": "failed", "detail": "required check failed"})
+    elif "success" in states:
+        continue
+    else:
+        failures.append({"check": check, "status": "unverified", "detail": "required check state cannot be verified"})
+
+ok = len(failures) == 0
+payload = {
+    "ok": ok,
+    "reason": "all required checks verified as success" if ok else "one or more required checks are not green",
+    "required_checks": required_checks,
+    "failures": failures,
+}
+emit(payload)
+if not ok:
+    for item in failures:
+        print(f"{item['check']}: {item['status']} ({item['detail']})")
+    sys.exit(1)
+print("All merge_gate_interface.required_checks entries verified as success.")
+PY
+}
 
 # Validation
 if [ -z "$AGENT_ID" ]; then
@@ -320,7 +489,18 @@ if [ -f "$CANON_INVENTORY" ]; then
         echo -e "${GREEN}  ✓ CANON_INVENTORY.json valid${NC}"
     else
         echo -e "${RED}  ❌ CANON_INVENTORY.json invalid${NC}"
+        DRIFT_STATUS="INVALID_CANON_INVENTORY"
     fi
+fi
+
+echo "  - Validating merge_gate_interface.required_checks..."
+REQUIRED_CHECKS_RESULT_FILE="/tmp/session-closure-required-checks-${AGENT_ID}-${SESSION_DATE}.json"
+if validate_required_merge_checks; then
+    echo -e "${GREEN}  ✓ Required merge checks verified (all green)${NC}"
+    REQUIRED_CHECKS_STATUS="PASS"
+else
+    echo -e "${RED}  ❌ Required merge check validation failed${NC}"
+    REQUIRED_CHECKS_STATUS="FAIL"
 fi
 
 echo -e "${GREEN}✓ Step 6: COMPLETE${NC}"
@@ -339,6 +519,8 @@ if [ "$UNRESOLVED_ESCALATIONS" -gt 0 ]; then
     OUTCOME="❌ ESCALATED"
 elif [ "$MODIFIED_COUNT" -eq 0 ]; then
     OUTCOME="⚠️ PARTIAL"
+elif [ "${REQUIRED_CHECKS_STATUS:-FAIL}" != "PASS" ]; then
+    OUTCOME="❌ ESCALATED"
 fi
 
 echo "  - Session outcome: ${OUTCOME}"
@@ -368,6 +550,12 @@ echo "  1. Agent should fill in session details in: ${SESSION_FILE}"
 echo "  2. Agent should update lessons in: ${LESSONS_FILE}"
 echo "  3. Agent should review escalations: ${ESCALATION_DIR}"
 echo ""
+if [ "${REQUIRED_CHECKS_STATUS:-FAIL}" != "PASS" ]; then
+    echo -e "${RED}❌ Session closure failed: required merge checks are not fully green or could not be verified${NC}"
+    echo "  - Evidence file: ${REQUIRED_CHECKS_RESULT_FILE}"
+    exit 1
+fi
+
 echo -e "${GREEN}✅ Session closure protocol completed successfully${NC}"
 
 exit 0

@@ -22,6 +22,12 @@ governance:
     - governance/canon/MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md
   degraded_on_placeholder_hashes: true
 
+execution_identity:
+  name: "Maturion Bot"
+  secret_env_var: MATURION_BOT_TOKEN
+  never_push_main: true
+  write_via_pr_by_default: true
+
 identity:
   role: "APGI ecosystem intelligence and governed thin-core orchestrator"
   mission: "Coordinate approved specialist capabilities across authorised APGI contexts while preserving evidence, tenant isolation, constitutional controls, truthful capability status, and human accountability."
