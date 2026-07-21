@@ -49,6 +49,7 @@ const STOP_TOKENS = new Set([
   'source', 'hybrid', 'evidence', 'documented', 'process', 'policy', 'criteria', 'criterion',
 ]);
 
+export const EVIDENCE_BUNDLE_MIN_TOKEN_OVERLAP = 0.25;
 export const SIMILAR_CRITERION_MIN_TOKEN_OVERLAP = 0.34;
 export const STRONG_SIMILAR_CRITERION_MIN_TOKEN_OVERLAP = 0.55;
 
@@ -151,7 +152,7 @@ function resolveMatchType(
   const evidenceBundleGrammar = context.grammarShape === 'evidence_bundle_minutes_actions_decisions';
 
   if (sameGrammar && similarity >= SIMILAR_CRITERION_MIN_TOKEN_OVERLAP) return 'similar_pattern';
-  if (evidenceBundleGrammar && sameGrammar && similarity >= 0.25) return 'similar_pattern';
+  if (evidenceBundleGrammar && sameGrammar && similarity >= EVIDENCE_BUNDLE_MIN_TOKEN_OVERLAP) return 'similar_pattern';
   if (similarity >= STRONG_SIMILAR_CRITERION_MIN_TOKEN_OVERLAP) return 'similar_pattern';
 
   return null;
