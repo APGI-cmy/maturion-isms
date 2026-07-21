@@ -120,7 +120,7 @@ check_runs_tmp = os.environ["CHECK_RUNS_TMP"]
 commit_statuses_tmp = os.environ["COMMIT_STATUSES_TMP"]
 
 if "/" not in repo:
-    raise RuntimeError(f"Invalid repository slug: {repo}")
+    raise RuntimeError(f"Invalid repository slug: expected owner/repo, got '{repo}'")
 
 api_root = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
 headers = {
@@ -144,7 +144,8 @@ def fetch_json(url):
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=30) as response:
         body = response.read()
-        payload = json.loads(body.decode("utf-8") or "{}")
+        decoded = body.decode("utf-8") if body else "{}"
+        payload = json.loads(decoded or "{}")
         link = response.headers.get("Link", "")
         return payload, next_link(link)
 
@@ -759,7 +760,16 @@ if [ "${REQUIRED_CHECKS_STATUS:-FAIL}" = "PASS" ] && [ "${CANON_STATUS:-FAIL}" =
 EOF
     fi
 
-    if grep -F "| ${METRICS_ENTRY_ID} |" "$METRICS_FILE" >/dev/null 2>&1; then
+    if awk -F'|' -v entry_id="${METRICS_ENTRY_ID}" '
+        NR > 2 {
+            key=$2
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
+            if (key == entry_id) {
+                found=1
+            }
+        }
+        END { exit(found ? 0 : 1) }
+    ' "$METRICS_FILE"; then
         echo "  - Metrics entry already exists for ${METRICS_ENTRY_ID}; skipping duplicate."
     else
         printf '| %s | %s | %s | %s | %s | %s | %s | %s | %s |\n' \
@@ -807,7 +817,7 @@ if [ "${REQUIRED_CHECKS_STATUS:-FAIL}" != "PASS" ]; then
 fi
 
 if [ "${CANON_STATUS:-FAIL}" != "PASS" ]; then
-    echo -e "${RED}❌ Session closure failed: canonical validation is blocking (${CANON_FAILURE_REASON:-unknown reason})${NC}"
+    echo -e "${RED}❌ Session closure failed: canonical validation failed - ${CANON_FAILURE_REASON:-unknown reason}${NC}"
     exit 1
 fi
 
