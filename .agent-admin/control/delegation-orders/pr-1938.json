@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "APW-BATCH9-FINAL-PRODUCTION-ACTIVATION-V01",
+  "pr_number": 1938,
+  "prebrief_commit_sha": "f6c62cf745d196daf7b19eead4ce4ff1cbacfbdf",
+  "builder_appointment_timestamp": "2026-07-21T07:00:00Z",
+  "builder_appointment_commit_sha": "4d73c215a825da7218af1622a24278bea06151c8",
+  "builder_agent": "apw-batch9-final-production-activation-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-batch9-final-production-activation-builder-v0.1.md",
+  "first_implementation_commit_sha": "d53cb00d38d9e8f3a93b904a04ae0f7e25c281cc",
+  "qp_review_timestamp": "2026-07-21T07:06:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
