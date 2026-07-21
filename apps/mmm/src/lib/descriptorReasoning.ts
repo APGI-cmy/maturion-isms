@@ -103,6 +103,7 @@ function splitCriterionSentences(value: string): string[] {
 function normaliseEvidenceBearingSentence(sentence: string): string {
   let text = sentence.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
 
+  text = text.replace(/^The\s+/, 'the ');
   text = text.replace(/^Minutes\s+will\s+be\s+taken\s+of\s+these\s+meetings/i, 'minutes are taken of these meetings');
   text = text.replace(/^actions\s+agreed/i, 'actions are agreed');
   text = text.replace(/^decisions\s+recorded/i, 'decisions are recorded');
@@ -204,26 +205,32 @@ function buildRetrievalContext(context: DescriptorGenerationContext): Descriptor
   };
 }
 
+type AppliedLearningResult = {
+  evidenceStateClause: string;
+  learningApplied: boolean;
+};
+
 function applyRelevantLearning(
   fallbackEvidenceStateClause: string,
   grammarShape: string,
   retrievedLearningRecords: RankedDescriptorLearningRecord[],
-): string {
+): AppliedLearningResult {
   const directRecord = retrievedLearningRecords.find((record) => record.matchType === 'same_criterion');
   const directSubject = directRecord ? getLearnedEvidenceSubject(directRecord) : null;
-  if (directSubject) return directSubject;
-
-  const similarRecord = retrievedLearningRecords.find((record) => record.matchType === 'similar_pattern');
-  if (!similarRecord) return fallbackEvidenceStateClause;
-
-  if (
-    grammarShape === 'evidence_bundle_minutes_actions_decisions' &&
-    similarRecord.grammarShape === grammarShape
-  ) {
-    return fallbackEvidenceStateClause;
+  if (directSubject) {
+    return { evidenceStateClause: directSubject, learningApplied: true };
   }
 
-  return fallbackEvidenceStateClause;
+  const applicableSimilarRecord = retrievedLearningRecords.find((record) =>
+    record.matchType === 'similar_pattern' &&
+    grammarShape === 'evidence_bundle_minutes_actions_decisions' &&
+    record.grammarShape === grammarShape,
+  );
+  if (applicableSimilarRecord) {
+    return { evidenceStateClause: fallbackEvidenceStateClause, learningApplied: true };
+  }
+
+  return { evidenceStateClause: fallbackEvidenceStateClause, learningApplied: false };
 }
 
 export function generateDescriptorReasoningResult(context: DescriptorGenerationContext): DescriptorReasoningResult {
@@ -236,28 +243,24 @@ export function generateDescriptorReasoningResult(context: DescriptorGenerationC
     7,
   );
 
-  const evidenceStateClause = applyRelevantLearning(
+  const appliedLearning = applyRelevantLearning(
     fallbackEvidenceStateClause,
     grammarShape,
     retrievedLearningRecords,
-  );
-  const learningApplied = retrievedLearningRecords.some((record) =>
-    record.matchType === 'same_criterion' ||
-    (record.matchType === 'similar_pattern' && grammarShape === 'evidence_bundle_minutes_actions_decisions'),
   );
 
   return {
     sourceMode: context.sourceMode,
     originalCriterionText: context.criterionText,
     cleanedActionableClause,
-    evidenceStateClause,
+    evidenceStateClause: appliedLearning.evidenceStateClause,
     grammarShape,
-    learningApplied,
-    fallbackMethodologyApplied: !learningApplied,
+    learningApplied: appliedLearning.learningApplied,
+    fallbackMethodologyApplied: !appliedLearning.learningApplied,
     retrievedLearningRecords,
     descriptors: MATURITY_STATES.map(({ level, suffix }) => ({
       level,
-      descriptorText: `Evidence that ${evidenceStateClause} ${suffix}`,
+      descriptorText: `Evidence that ${appliedLearning.evidenceStateClause} ${suffix}`,
     })),
   };
 }
