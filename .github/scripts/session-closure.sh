@@ -320,6 +320,8 @@ def add(name, state, detail):
     if not name:
         return
     observed.setdefault(name, []).append({"state": state, "detail": detail})
+    if " / " in name:
+        observed.setdefault(name.split(" / ", 1)[1].strip(), []).append({"state": state, "detail": detail})
 
 def text_or_empty(value):
     if value is None:
@@ -361,7 +363,14 @@ for status_row in commit_statuses:
 
 failures = []
 for check in required_checks:
-    states = [entry["state"] for entry in observed.get(check, [])]
+    candidate_names = [check]
+    if " / " in check:
+        candidate_names.append(check.split(" / ", 1)[1].strip())
+    states = [
+        entry["state"]
+        for candidate in candidate_names
+        for entry in observed.get(candidate, [])
+    ]
     if not states:
         failures.append({"check": check, "status": "missing", "detail": "required check not observed"})
     elif "pending" in states:
