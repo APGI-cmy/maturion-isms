@@ -132,7 +132,7 @@ api_root = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/"
 # Optional override for slower environments; default chosen for normal GitHub API latency.
 timeout_seconds = float(os.environ.get("GITHUB_API_TIMEOUT_SECONDS", "60"))
 if timeout_seconds < 1 or timeout_seconds > 300:
-    raise RuntimeError(f"GITHUB_API_TIMEOUT_SECONDS out of range (1-300): {timeout_seconds}")
+    raise RuntimeError(f"GITHUB_API_TIMEOUT_SECONDS out of range (inclusive 1..300): {timeout_seconds}")
 headers = {
     "Accept": "application/vnd.github+json",
     "Authorization": "Bearer " + token,
@@ -157,6 +157,10 @@ def fetch_json(url):
         body = response.read()
         if not body:
             if status_code == 204:
+                if "/check-runs" in url:
+                    return {"check_runs": []}, None
+                if "/statuses" in url:
+                    return {"statuses": []}, None
                 return {}, None
             raise RuntimeError(f"GitHub API returned empty response body for {url} (status={status_code})")
         decoded = body.decode("utf-8")
@@ -716,7 +720,7 @@ fi
 ENV_HEALTH_STATUS="PASS"
 DRIFT_NORMALIZED="$(echo "${DRIFT_STATUS:-UNKNOWN}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')"
 case "$DRIFT_NORMALIZED" in
-    # Treat explicit drift/failure/degraded states as blocking.
+    # Treat explicit drift/failure/degraded status values as blocking.
     yes|true|drift|drifted|degraded|fail|failed|invalid|invalidcanoninventory|invalid_canon_inventory|misaligned|notaligned)
         ENV_HEALTH_STATUS="FAIL"
         echo -e "${RED}  ❌ Environment health indicates drift/degradation (Drift status: ${DRIFT_STATUS})${NC}"
