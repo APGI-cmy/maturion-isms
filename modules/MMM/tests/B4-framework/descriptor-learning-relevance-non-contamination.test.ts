@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  EVIDENCE_BUNDLE_MIN_TOKEN_OVERLAP,
   SIMILAR_CRITERION_MIN_TOKEN_OVERLAP,
   descriptorCriterionTokenOverlap,
   retrieveDescriptorLearningRecords,
@@ -26,14 +27,16 @@ const learnedMeetingRecord: DescriptorLearningRecord = {
 };
 
 describe('T-MMM-DLRN-001: explicit descriptor-learning relevance threshold', () => {
-  it('exports and applies an explicit similar-criterion token-overlap threshold', () => {
+  it('exports and applies explicit similar-criterion and evidence-bundle overlap thresholds', () => {
+    expect(EVIDENCE_BUNDLE_MIN_TOKEN_OVERLAP).toBeGreaterThan(0);
+    expect(EVIDENCE_BUNDLE_MIN_TOKEN_OVERLAP).toBeLessThan(SIMILAR_CRITERION_MIN_TOKEN_OVERLAP);
     expect(SIMILAR_CRITERION_MIN_TOKEN_OVERLAP).toBeGreaterThan(0);
     expect(
       descriptorCriterionTokenOverlap(
         learnedMeetingRecord.originalCriterionText,
         'A documented governance charter defines leadership responsibilities and decision authority.',
       ),
-    ).toBeLessThan(SIMILAR_CRITERION_MIN_TOKEN_OVERLAP);
+    ).toBeLessThan(EVIDENCE_BUNDLE_MIN_TOKEN_OVERLAP);
   });
 
   it('does not retrieve learning merely because tenant, framework, and source mode match', () => {
@@ -93,6 +96,37 @@ describe('T-MMM-DLRN-003: similar criteria use a pattern, not old wording', () =
     expect(result.evidenceStateClause).not.toContain('the committee meets monthly');
     expect(result.evidenceStateClause).not.toContain('DCC');
     expect(result.evidenceStateClause).not.toContain('with the meeting cadence and related evidence bundle preserved for this criterion');
+  });
+
+  it('does not claim learning was applied when only a mismatched-grammar similar record is retrieved', () => {
+    const mismatchedGrammarRecord: DescriptorLearningRecord = {
+      ...learnedMeetingRecord,
+      id: 'standard-clause-learning',
+      criterionId: 'criterion-standard',
+      criterionCode: 'D010.MPS010.C010',
+      grammarShape: 'standard_clause',
+      originalCriterionText:
+        'The governance forum meets monthly and records minutes, actions, decisions and accountable owners for delivery.',
+    };
+
+    const criterionText =
+      'The assurance forum will meet monthly. Minutes will be taken of these meetings, actions agreed, decisions recorded, and owners made accountable for their delivery.';
+    const result = generateDescriptorReasoningResult({
+      tenantId: 'framework-1',
+      frameworkId: 'framework-1',
+      criterionId: 'criterion-assurance-forum',
+      criterionCode: 'D020.MPS020.C020',
+      sourceMode: 'hybrid_source',
+      criterionText,
+      learningRecords: [mismatchedGrammarRecord],
+    });
+
+    expect(result.retrievedLearningRecords[0]?.matchType).toBe('similar_pattern');
+    expect(result.retrievedLearningRecords[0]?.grammarShape).toBe('standard_clause');
+    expect(result.learningApplied).toBe(false);
+    expect(result.fallbackMethodologyApplied).toBe(true);
+    expect(result.evidenceStateClause).toContain('assurance forum');
+    expect(result.evidenceStateClause).not.toContain('committee');
   });
 });
 
