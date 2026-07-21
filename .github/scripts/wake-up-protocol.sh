@@ -33,6 +33,7 @@ agent_requires_placeholder_hash_enforcement() {
     if [ ! -f "$AGENT_CONTRACT_FILE" ]; then
         return 1
     fi
+    # Support both canonical naming variants used across governed contracts.
     grep -Eq '^[[:space:]]*(degraded_on_placeholder_hashes|degraded_on_reserved_hash_markers):[[:space:]]*true([[:space:]]|$)' "$AGENT_CONTRACT_FILE"
 }
 

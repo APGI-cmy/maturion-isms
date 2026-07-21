@@ -60,7 +60,7 @@ if not os.path.exists(contract_path):
     fail(f"Agent contract not found: {contract_path}")
 
 contract_text = open(contract_path, "r", encoding="utf-8").read()
-frontmatter_match = re.search(r"\A\s*---\n(.*?)\n---\n", contract_text, re.S)
+frontmatter_match = re.search(r"\A\s*---\r?\n(.*?)\r?\n---\r?\n", contract_text, re.S)
 if not frontmatter_match:
     fail("Contract YAML frontmatter is missing.")
 frontmatter = frontmatter_match.group(1)
@@ -136,7 +136,11 @@ def add(name, state, detail):
     observed.setdefault(name, []).append({"state": state, "detail": detail})
 
 def text_or_empty(value):
-    return "" if value is None else str(value).strip()
+    if value is None:
+        return ""
+    if isinstance(value, (str, int, float, bool)):
+        return str(value).strip()
+    return ""
 
 for run in check_runs:
     if not isinstance(run, dict):
