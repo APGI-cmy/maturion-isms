@@ -71,7 +71,7 @@ describe('T-MMM-DLRN-002: same-criterion replay remains direct', () => {
 });
 
 describe('T-MMM-DLRN-003: similar criteria use a pattern, not old wording', () => {
-  it('preserves the new criterion actor and evidence objects without pasting the old committee subject', () => {
+  it('preserves the new criterion actor and evidence objects without pasting old or generic wording', () => {
     const result = generateDescriptorReasoningResult({
       tenantId: 'framework-1',
       frameworkId: 'framework-1',
@@ -92,6 +92,7 @@ describe('T-MMM-DLRN-003: similar criteria use a pattern, not old wording', () =
     expect(result.evidenceStateClause).toContain('accountable');
     expect(result.evidenceStateClause).not.toContain('the committee meets monthly');
     expect(result.evidenceStateClause).not.toContain('DCC');
+    expect(result.evidenceStateClause).not.toContain('with the meeting cadence and related evidence bundle preserved for this criterion');
   });
 });
 
