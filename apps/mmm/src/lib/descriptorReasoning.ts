@@ -103,6 +103,7 @@ function splitCriterionSentences(value: string): string[] {
 function normaliseEvidenceBearingSentence(sentence: string): string {
   let text = sentence.replace(/\s+/g, ' ').replace(/[.;:,]+$/g, '').trim();
 
+  text = text.replace(/^The\s+/, 'the ');
   text = text.replace(/^Minutes\s+will\s+be\s+taken\s+of\s+these\s+meetings/i, 'minutes are taken of these meetings');
   text = text.replace(/^actions\s+agreed/i, 'actions are agreed');
   text = text.replace(/^decisions\s+recorded/i, 'decisions are recorded');
@@ -127,9 +128,7 @@ function preserveEvidenceBundle(criterionText: string): string | null {
   const sentences = splitCriterionSentences(clean);
   if (sentences.length < 2) return null;
 
-  const primary = normaliseEvidenceBearingSentence(sentences[0])
-    .replace(/^The\s+DCC\s+/i, 'the DCC ')
-    .replace(/\bwill\s+meet\b/i, 'meets');
+  const primary = normaliseEvidenceBearingSentence(sentences[0]);
   const secondary = normaliseEvidenceBearingSentence(sentences.slice(1).join(', '))
     .replace(/,\s*actions\s+agreed/gi, ', actions are agreed')
     .replace(/,\s*decisions\s+recorded/gi, ', decisions are recorded')
@@ -206,15 +205,35 @@ function buildRetrievalContext(context: DescriptorGenerationContext): Descriptor
   };
 }
 
-function applyLearnedEvidenceSubject(
-  fallbackEvidenceStateClause: string,
-  retrievedLearningRecords: RankedDescriptorLearningRecord[],
-): string {
-  const learned = retrievedLearningRecords
-    .map((record) => getLearnedEvidenceSubject(record))
-    .find((subject): subject is string => Boolean(subject?.trim()));
+type AppliedLearningResult = {
+  evidenceStateClause: string;
+  learningApplied: boolean;
+};
 
-  return learned ?? fallbackEvidenceStateClause;
+function applyRelevantLearning(
+  fallbackEvidenceStateClause: string,
+  grammarShape: string,
+  retrievedLearningRecords: RankedDescriptorLearningRecord[],
+): AppliedLearningResult {
+  const directRecord = retrievedLearningRecords.find((record) => record.matchType === 'same_criterion');
+  if (directRecord) {
+    const directSubject = getLearnedEvidenceSubject(directRecord);
+    return {
+      evidenceStateClause: directSubject ?? fallbackEvidenceStateClause,
+      learningApplied: true,
+    };
+  }
+
+  const applicableSimilarRecord = retrievedLearningRecords.find((record) =>
+    record.matchType === 'similar_pattern' &&
+    grammarShape === 'evidence_bundle_minutes_actions_decisions' &&
+    record.grammarShape === grammarShape,
+  );
+  if (applicableSimilarRecord) {
+    return { evidenceStateClause: fallbackEvidenceStateClause, learningApplied: true };
+  }
+
+  return { evidenceStateClause: fallbackEvidenceStateClause, learningApplied: false };
 }
 
 export function generateDescriptorReasoningResult(context: DescriptorGenerationContext): DescriptorReasoningResult {
@@ -227,21 +246,24 @@ export function generateDescriptorReasoningResult(context: DescriptorGenerationC
     7,
   );
 
-  const learningApplied = retrievedLearningRecords.length > 0;
-  const evidenceStateClause = applyLearnedEvidenceSubject(fallbackEvidenceStateClause, retrievedLearningRecords);
+  const appliedLearning = applyRelevantLearning(
+    fallbackEvidenceStateClause,
+    grammarShape,
+    retrievedLearningRecords,
+  );
 
   return {
     sourceMode: context.sourceMode,
     originalCriterionText: context.criterionText,
     cleanedActionableClause,
-    evidenceStateClause,
+    evidenceStateClause: appliedLearning.evidenceStateClause,
     grammarShape,
-    learningApplied,
-    fallbackMethodologyApplied: !learningApplied,
+    learningApplied: appliedLearning.learningApplied,
+    fallbackMethodologyApplied: !appliedLearning.learningApplied,
     retrievedLearningRecords,
     descriptors: MATURITY_STATES.map(({ level, suffix }) => ({
       level,
-      descriptorText: `Evidence that ${evidenceStateClause} ${suffix}`,
+      descriptorText: `Evidence that ${appliedLearning.evidenceStateClause} ${suffix}`,
     })),
   };
 }

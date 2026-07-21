@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "pit-stage12-slice3-project-persistence-foundation",
+  "pr_number": 1935,
+  "prebrief_commit_sha": "9c4736681b3a2632f0577cf9871214b399e002ba",
+  "builder_appointment_timestamp": "2026-07-13T15:43:00+02:00",
+  "builder_appointment_commit_sha": "a24e4e21dac0b1905d9bcc70c7b396073e7c439a",
+  "builder_agent": "pit-specialist",
+  "builder_task_ref": "Issue #1934 / PIT Stage 12 Slice 3",
+  "first_implementation_commit_sha": "f458433d0f8d0786c9333d7bdd5815695cd1977e",
+  "qp_review_timestamp": "2026-07-13T15:55:00+02:00",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
