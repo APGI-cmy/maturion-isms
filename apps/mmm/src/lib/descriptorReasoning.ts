@@ -220,7 +220,7 @@ function applyRelevantLearning(
     grammarShape === 'evidence_bundle_minutes_actions_decisions' &&
     similarRecord.grammarShape === grammarShape
   ) {
-    return `${fallbackEvidenceStateClause}, with the meeting cadence and related evidence bundle preserved for this criterion`;
+    return fallbackEvidenceStateClause;
   }
 
   return fallbackEvidenceStateClause;
