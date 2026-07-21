@@ -34,10 +34,23 @@ export type DescriptorLearningRetrievalContext = {
   criterionText?: string | null;
 };
 
+export type DescriptorLearningMatchType = 'same_criterion' | 'similar_pattern';
+
 export type RankedDescriptorLearningRecord = DescriptorLearningRecord & {
   retrievalScore: number;
   retrievalReason: string;
+  matchType: DescriptorLearningMatchType;
+  criterionSimilarity: number;
 };
+
+const STOP_TOKENS = new Set([
+  'that', 'this', 'these', 'those', 'with', 'from', 'into', 'will', 'shall', 'should', 'must',
+  'have', 'has', 'been', 'being', 'their', 'there', 'where', 'which', 'within', 'through', 'including',
+  'source', 'hybrid', 'evidence', 'documented', 'process', 'policy', 'criteria', 'criterion',
+]);
+
+export const SIMILAR_CRITERION_MIN_TOKEN_OVERLAP = 0.34;
+export const STRONG_SIMILAR_CRITERION_MIN_TOKEN_OVERLAP = 0.55;
 
 function tokenize(value?: string | null): Set<string> {
   return new Set(
@@ -45,11 +58,11 @@ function tokenize(value?: string | null): Set<string> {
       .toLowerCase()
       .replace(/[^a-z0-9\s]+/g, ' ')
       .split(/\s+/)
-      .filter((token) => token.length > 3),
+      .filter((token) => token.length > 3 && !STOP_TOKENS.has(token)),
   );
 }
 
-function tokenOverlap(left?: string | null, right?: string | null): number {
+export function descriptorCriterionTokenOverlap(left?: string | null, right?: string | null): number {
   const leftTokens = tokenize(left);
   const rightTokens = tokenize(right);
   if (leftTokens.size === 0 || rightTokens.size === 0) return 0;
@@ -119,6 +132,31 @@ function freshnessScore(createdAt?: string | null): number {
   return 0;
 }
 
+function resolveMatchType(
+  record: DescriptorLearningRecord,
+  context: DescriptorLearningRetrievalContext,
+  similarity: number,
+): DescriptorLearningMatchType | null {
+  const sameCriterion = Boolean(
+    record.criterionId && context.criterionId && record.criterionId === context.criterionId,
+  );
+  const sameCriterionCode = Boolean(
+    record.criterionCode && context.criterionCode && record.criterionCode === context.criterionCode,
+  );
+  if (sameCriterion || sameCriterionCode) return 'same_criterion';
+
+  const sameGrammar = Boolean(
+    record.grammarShape && context.grammarShape && record.grammarShape === context.grammarShape,
+  );
+  const evidenceBundleGrammar = context.grammarShape === 'evidence_bundle_minutes_actions_decisions';
+
+  if (sameGrammar && similarity >= SIMILAR_CRITERION_MIN_TOKEN_OVERLAP) return 'similar_pattern';
+  if (evidenceBundleGrammar && sameGrammar && similarity >= 0.25) return 'similar_pattern';
+  if (similarity >= STRONG_SIMILAR_CRITERION_MIN_TOKEN_OVERLAP) return 'similar_pattern';
+
+  return null;
+}
+
 export function rankDescriptorLearningRecord(
   record: DescriptorLearningRecord,
   context: DescriptorLearningRetrievalContext,
@@ -126,60 +164,55 @@ export function rankDescriptorLearningRecord(
   if (!canUseDescriptorLearningRecordForTenant(record, context.tenantId)) return null;
   if (!lifecycleAllowsRetrieval(record)) return null;
 
-  let retrievalScore = 0;
-  const reasons: string[] = [];
+  const similarity = descriptorCriterionTokenOverlap(record.originalCriterionText, context.criterionText);
+  const matchType = resolveMatchType(record, context, similarity);
+  if (!matchType) return null;
+
+  let retrievalScore = matchType === 'same_criterion' ? 100 : 40;
+  const reasons: string[] = [matchType === 'same_criterion' ? 'same-criterion' : 'relevance-threshold-met'];
 
   if (record.tenantId === context.tenantId) {
-    retrievalScore += 50;
+    retrievalScore += 10;
     reasons.push('same-tenant');
   } else {
-    retrievalScore += 10;
+    retrievalScore += 2;
     reasons.push('approved-global');
   }
 
-  if (record.criterionId && context.criterionId && record.criterionId === context.criterionId) {
-    retrievalScore += 40;
-    reasons.push('same-criterion');
-  }
-
-  if (record.criterionCode && context.criterionCode && record.criterionCode === context.criterionCode) {
-    retrievalScore += 20;
-    reasons.push('same-criterion-code');
-  }
-
   if (record.frameworkId && context.frameworkId && record.frameworkId === context.frameworkId) {
-    retrievalScore += 25;
+    retrievalScore += 5;
     reasons.push('same-framework');
   }
 
   if (record.sourceMode === context.sourceMode) {
-    retrievalScore += 20;
+    retrievalScore += 3;
     reasons.push('same-source-mode');
   }
 
   if (record.grammarShape && context.grammarShape && record.grammarShape === context.grammarShape) {
-    retrievalScore += 20;
+    retrievalScore += 10;
     reasons.push('same-grammar-shape');
   }
 
-  const similarity = tokenOverlap(record.originalCriterionText, context.criterionText);
-  if (similarity >= 0.34) {
+  if (similarity > 0) {
     retrievalScore += Math.round(similarity * 30);
-    reasons.push('criterion-similarity');
+    reasons.push(`criterion-similarity:${similarity.toFixed(2)}`);
   }
 
   if (getLearnedEvidenceSubject(record)) {
-    retrievalScore += 12;
+    retrievalScore += 2;
     reasons.push('learned-evidence-subject');
   }
 
-  retrievalScore += Math.min(record.reuseSuccessCount ?? 0, 10);
+  retrievalScore += Math.min(record.reuseSuccessCount ?? 0, 5);
   retrievalScore += freshnessScore(record.createdAt ?? record.consentedAt);
 
   return {
     ...record,
     retrievalScore,
-    retrievalReason: reasons.join(', ') || 'permitted-fallback',
+    retrievalReason: reasons.join(', '),
+    matchType,
+    criterionSimilarity: similarity,
   };
 }
 
@@ -194,6 +227,7 @@ export function retrieveDescriptorLearningRecords(
     .map((record) => rankDescriptorLearningRecord(record, context))
     .filter((record): record is RankedDescriptorLearningRecord => Boolean(record))
     .sort((left, right) => {
+      if (left.matchType !== right.matchType) return left.matchType === 'same_criterion' ? -1 : 1;
       if (right.retrievalScore !== left.retrievalScore) return right.retrievalScore - left.retrievalScore;
       return (right.reuseSuccessCount ?? 0) - (left.reuseSuccessCount ?? 0);
     })
