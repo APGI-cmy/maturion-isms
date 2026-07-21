@@ -216,9 +216,12 @@ function applyRelevantLearning(
   retrievedLearningRecords: RankedDescriptorLearningRecord[],
 ): AppliedLearningResult {
   const directRecord = retrievedLearningRecords.find((record) => record.matchType === 'same_criterion');
-  const directSubject = directRecord ? getLearnedEvidenceSubject(directRecord) : null;
-  if (directSubject) {
-    return { evidenceStateClause: directSubject, learningApplied: true };
+  if (directRecord) {
+    const directSubject = getLearnedEvidenceSubject(directRecord);
+    return {
+      evidenceStateClause: directSubject ?? fallbackEvidenceStateClause,
+      learningApplied: true,
+    };
   }
 
   const applicableSimilarRecord = retrievedLearningRecords.find((record) =>
