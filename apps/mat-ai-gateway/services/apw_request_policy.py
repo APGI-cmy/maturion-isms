@@ -115,7 +115,12 @@ def requires_private_context(message: str) -> bool:
 
     if has_private_qualifier and (has_access_intent or has_holding_intent):
         return True
-    if has_holding_intent and has_protected_subject and has_protected_object:
+    if (
+        has_holding_intent
+        and has_protected_subject
+        and has_protected_object
+        and not has_public_safe_context
+    ):
         return True
     if has_access_intent and has_protected_phrase and not has_public_safe_context:
         return True
