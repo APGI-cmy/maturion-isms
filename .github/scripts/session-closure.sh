@@ -148,6 +148,7 @@ for run in check_runs:
     name = text_or_empty(run.get("name"))
     status = text_or_empty(run.get("status")).lower()
     conclusion = text_or_empty(run.get("conclusion")).lower()
+    # GitHub check-run pending lifecycle states (not final conclusions).
     if status in {"queued", "in_progress", "waiting", "requested", "pending"}:
         add(name, "pending", f"check_run status={status}")
     elif status == "completed":
