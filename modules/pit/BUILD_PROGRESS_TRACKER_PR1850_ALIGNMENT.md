@@ -2,32 +2,30 @@
 
 | Field | Value |
 |---|---|
-| Module | PIT - Project Implementation Tracker |
-| Artifact type | Tracker alignment addendum |
-| Status | ACTIVE ADDENDUM - W8.2 NOT_READY |
+| Module | PIT — Project Implementation Tracker |
+| Artifact type | Historical tracker alignment addendum |
+| Status | SUPERSEDED — RETAINED FOR AUDIT HISTORY |
 | Date | 2026-06-24 |
 | Trigger | PR #1850 merged and post-PR #1847 production evidence failed canonical ISMS/PIT linkup expectations |
-| Applies to | `modules/pit/BUILD_PROGRESS_TRACKER.md` on next tracker revision |
+| Superseded by | `BUILD_PROGRESS_TRACKER_W8_2_DISPOSITION_ADDENDUM.md`, then `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` reconciliation dated 2026-07-21 |
 
----
+## Supersession notice
 
-## 1. Tracker interpretation
+This file records the W8.2 position as it existed on 2026-06-24. Its `W8.2 NOT_READY` instruction is no longer the current execution position and must not block later accepted slices. Current Stage 12 interpretation comes from `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md`.
 
-The main tracker currently records PIT Stage 12 as authorized to start and incomplete. That remains true.
+## Historical tracker interpretation
 
-This addendum records a narrower W8.2 disposition:
+At the time of this record, the main tracker recorded PIT Stage 12 as authorised to start and incomplete. That remained true.
+
+This addendum recorded the narrower historical W8.2 disposition:
 
 ```text
 W8.2 remains NOT_READY.
 ```
 
-PR #1850 boundary alignment does not reverse Stage 12 authorization. It constrains the W8.2 correction path before further build-to-green claims may be made.
+PR #1850 boundary alignment did not reverse Stage 12 authorisation. It constrained the W8.2 correction path before further build-to-GREEN claims could be made.
 
----
-
-## 2. Alignment artifacts filed in this wave
-
-The following PIT pre-build alignment addenda must be treated as active references until incorporated into the main stage artifacts:
+## Historical alignment artifacts filed
 
 - `modules/pit/00-app-description/pr1850-boundary-alignment-addendum.md`
 - `modules/pit/01-ux-workflow-wiring-spec/pr1850-boundary-alignment-addendum.md`
@@ -41,23 +39,10 @@ The following PIT pre-build alignment addenda must be treated as active referenc
 - `modules/pit/10-iaa-pre-brief/pr1850-boundary-iaa-alignment-note.md`
 - `modules/pit/12-build/pr1850-w8-2-evidence-disposition.md`
 
----
+## Historical build and evidence posture
 
-## 3. Build and evidence posture
+At this point in time, no PIT W8.2 completion, Stage 12 completion, production readiness, functional pass or RLS final pass was supported. The next build activity was required to wait for correct defect classification and builder appointment.
 
-No PIT W8.2 completion, Stage 12 completion, production readiness, functional pass, or RLS final pass is supported by the current evidence.
+## Non-completion boundary
 
-The next build activity must wait until the defect is classified as PIT-only or cross-module and the correct builder appointment is issued.
-
----
-
-## 4. Next tracker revision obligation
-
-The next direct edit to `modules/pit/BUILD_PROGRESS_TRACKER.md` should incorporate this addendum and record:
-
-- PR #1850 boundary strategy adopted;
-- PR #1847 production evidence failed canonical linkup expectations;
-- PIT W8.2 remains NOT_READY;
-- boundary RED tests filed;
-- ISMS agent alignment required before cross-module build;
-- no completion/readiness claim.
+Nothing in this historical record supports a current claim of full PIT, Stage 12, production or release completion.
