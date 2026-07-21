@@ -65,7 +65,7 @@ Current-head verification completed successfully before merge, including:
 
 All inline review conversations were checked before merge. No unresolved review conversation remained.
 
-Post-merge deployment status for the merge commit was successful for the PIT, ISMS Portal and MMM Vercel deployments.
+Post-merge status verification for merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd` confirmed successful Vercel statuses for the PIT and ISMS Portal projects. No MMM deployment is attributed to PR #1935 because its changed paths did not match the MMM deployment workflow filters.
 
 ## Outstanding evidence debt
 
