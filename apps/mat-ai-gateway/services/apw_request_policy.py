@@ -106,6 +106,12 @@ _ALWAYS_RESTRICTED_TERMS = (
     "runtime registry internals",
 )
 
+_NATURAL_LANGUAGE_HOLDING_QUERY = re.compile(
+    r"\bwhat\b.{0,80}\b(information|data|records?|details?|files?|documents?|"
+    r"profiles?|history|evidence)\b.{0,50}\b(do you|does apw|can you|can apw)\b"
+    r".{0,30}\b(hold|have|store|retain|access|keep)\b"
+)
+
 
 def requires_private_context(message: str) -> bool:
     """Return True when a public request needs non-public context.
@@ -116,6 +122,8 @@ def requires_private_context(message: str) -> bool:
 
     lower = " ".join(message.lower().split())
     if any(term in lower for term in _ALWAYS_RESTRICTED_TERMS):
+        return True
+    if _NATURAL_LANGUAGE_HOLDING_QUERY.search(lower):
         return True
 
     has_access_intent = any(term in lower for term in _ACCESS_OR_DISCLOSURE_TERMS)
