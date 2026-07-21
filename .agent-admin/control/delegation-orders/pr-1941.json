@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-edit-memory-preservation-2026-07-21",
+  "pr_number": 1941,
+  "prebrief_commit_sha": "bd62891784f2b0398e61e09ffc72ea1775d20fb9",
+  "builder_appointment_timestamp": "2026-07-21T13:40:00Z",
+  "builder_appointment_commit_sha": "6bea2c5699b5e26165b11034bfb3b9e2afefdace",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder
