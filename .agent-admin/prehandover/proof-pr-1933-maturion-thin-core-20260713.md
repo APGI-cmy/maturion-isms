@@ -17,9 +17,9 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 
 ## Current protected state
 
-- Current substantive protected-file commit: `f90d7e6478dc623a1e1adb76c25c966c1dd1b3b5`
-- Current protected contract blob: `e1bf73d2e3e278d8d9a8afb17077c67a9b7af2c5`
-- Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md`
+- Current substantive protected-file commit: `6ad1a892dbb47f758e036c99cc29a0e8df402e40`
+- Current protected contract blob: `4c060b890074b79fa293dcd66c9b3f9987200e47`
+- Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md`
 - Prior IAA result: REJECTION-PACKAGE in session 1283
 - Fresh independent IAA: REQUIRED after hosted checks pass on the frozen head
 
@@ -28,6 +28,7 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 - Prior assured-head drift reconciled.
 - New immutable PREHANDOVER created for each substantive protected change.
 - Contradictory no-change statement removed.
+- Mandatory `execution_identity` block restored with explicit push-safety controls.
 - Executable Phase 2 induction restored.
 - Automated Phase 4 closure restored.
 - Both latest Codex review conversations resolved after implementation.
@@ -35,9 +36,9 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 
 ## Scope
 
-FILES_CHANGED: 13
+FILES_CHANGED: 16
 
-The authoritative 13-path inventory is recorded in `.admin/prs/pr-1933.json` and `.agent-admin/scope-declarations/pr-1933.md`.
+The authoritative 16-path inventory is recorded in `.admin/prs/pr-1933.json` and `.agent-admin/scope-declarations/pr-1933.md`.
 
 No runtime, Tier 2, product code, test, schema, migration, provider, CI workflow, Supabase, Vercel or deployment change is included.
 

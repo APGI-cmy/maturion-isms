@@ -4,10 +4,12 @@
   "type": "agent-contract-change",
   "owner": "CodexAdvisor-agent",
   "branch": "codexadvisor-issue-1932-maturion-thin-core",
-  "head_sha": "f90d7e6478dc623a1e1adb76c25c966c1dd1b3b5",
+  "head_sha": "6ad1a892dbb47f758e036c99cc29a0e8df402e40",
   "base_sha": "CURRENT_BASE",
   "scope": [
     ".github/agents/maturion-agent.md",
+    ".github/scripts/wake-up-protocol.sh",
+    ".github/scripts/session-closure.sh",
     ".agent-admin/governance/agent-contract-diffs/diff-20260712-maturion-agent-thin-core.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-064-20260712.md",
     ".agent-workspace/CodexAdvisor-agent/memory/session-064-20260712.md",
@@ -19,14 +21,15 @@
     ".agent-workspace/independent-assurance-agent/memory/session-1283-20260720.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-065-20260720.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-066-20260721.md",
-    ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md"
+    ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md",
+    ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md"
   ],
   "risk": "high",
   "requires_iaa": true,
   "requires_ecap": true,
-  "current_substantive_protected_commit": "f90d7e6478dc623a1e1adb76c25c966c1dd1b3b5",
-  "current_protected_blob": "e1bf73d2e3e278d8d9a8afb17077c67a9b7af2c5",
-  "current_prehandover": ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md",
+  "current_substantive_protected_commit": "6ad1a892dbb47f758e036c99cc29a0e8df402e40",
+  "current_protected_blob": "4c060b890074b79fa293dcd66c9b3f9987200e47",
+  "current_prehandover": ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md",
   "evidence_required": ["current protected identity", "current immutable PREHANDOVER", "corrected ECAP proof", "prior IAA rejection", "fresh independent final verdict", "green hosted checks", "resolved review threads"],
   "merge_authority": "CS2",
   "implementing_agent": "CodexAdvisor-agent"

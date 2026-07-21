@@ -10,10 +10,10 @@
 ## Current protected implementation
 
 - Base branch: `main`
-- Current substantive protected-file commit: `f90d7e6478dc623a1e1adb76c25c966c1dd1b3b5`
-- Current protected contract blob: `e1bf73d2e3e278d8d9a8afb17077c67a9b7af2c5`
+- Current substantive protected-file commit: `6ad1a892dbb47f758e036c99cc29a0e8df402e40`
+- Current protected contract blob: `4c060b890074b79fa293dcd66c9b3f9987200e47`
 - Contract version: `2.1.0`
-- Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md`
+- Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md`
 
 ## Substantive corrections present
 
@@ -26,11 +26,14 @@
 7. Phase 2 loading of the last five sessions, canonical integrity, environment health, merge-gate readiness and working-contract output.
 8. Mandatory Phase 4 executable closure through `.github/scripts/session-closure.sh maturion-agent`.
 9. Phase 4 evidence generation, memory capture/rotation, environment-health verification and learning capture.
-10. Orchestrator class, thin-core pattern, four phases, RAEC, scope boundaries and independent IAA retained.
+10. Restored mandatory `execution_identity` block with bot identity and explicit `never_push_main` / `write_via_pr_by_default` controls.
+11. Phase 2 executable wake-up now fails nonzero when `governance/CANON_INVENTORY.json` is missing, invalid, or degraded under placeholder-hash enforcement.
+12. Phase 4 executable closure now validates every `merge_gate_interface.required_checks` entry from runtime check evidence and fails nonzero on missing, failed, pending, or unverifiable checks.
+13. Orchestrator class, thin-core pattern, four phases, RAEC, scope boundaries and independent IAA retained.
 
 ## Current PR scope
 
-The PR inventory contains 13 authorised paths: the previously reconciled 12 paths plus `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md`.
+The PR inventory contains 16 authorised paths: prior reconciled governance evidence paths plus `.github/scripts/wake-up-protocol.sh`, `.github/scripts/session-closure.sh`, and `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md`.
 
 No product code, runtime adapter, schema, migration, test, CI workflow, Tier 2 expansion, AIMC implementation, Supabase, Vercel, deployment, registry, routing or specialist activation change is included.
 
@@ -43,7 +46,7 @@ No product code, runtime adapter, schema, migration, test, CI workflow, Tier 2 e
 - Executable closure binding: PASS
 - Current protected commit/blob recorded: PASS
 - Current immutable PREHANDOVER: PASS
-- Scope comparison: 13 paths declared
+- Scope comparison: 16 paths declared
 - Fresh independent IAA: REQUIRED after hosted checks
 
 ## Merge boundary
