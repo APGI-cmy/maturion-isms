@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-BATCH9-FINAL-ACTIVATION-DECISION-001  
 **Version**: 0.1.0  
-**Status**: APPROVED_FOR_CONTROLLED_PRODUCTION_ACTIVATION  
+**Status**: CONDITIONALLY_APPROVED_PENDING_PRIVATE_CLASSIFIER_HARDENING  
 **Date**: 2026-07-21  
 **Authority**: CS2 - Johan Ras
 
@@ -10,15 +10,17 @@
 
 ## 1. Decision
 
-CS2 approves controlled production activation of the APW Specialist public integration.
+CS2 conditionally approves controlled production activation of the APW Specialist public integration.
 
 Decision token:
 
 ```text
-APPROVE_CONTROLLED_PRODUCTION_ACTIVATION
+APPROVE_CONTROLLED_PRODUCTION_ACTIVATION_SUBJECT_TO_PRE_ACTIVATION_BLOCKER
 ```
 
-This approval is subject to the controls and stop conditions in this record. It is not approval for unrestricted specialist exposure, private-data access, direct specialist responses, or removal of rollback controls.
+This approval is subject to the controls, stop conditions and pre-activation blocker in this record. It is not approval for unrestricted specialist exposure, private-data access, direct specialist responses or removal of rollback controls.
+
+Activation execution is not authorized until the private-request classifier hardening and staging verification defined in Section 4 are complete.
 
 ---
 
@@ -33,10 +35,12 @@ The decision is based on the following merged evidence and remediation:
 - `APGI-cmy/apgi-public-website` PR #33: hidden-state correction.
 - Live staging verification showed:
   - valid APW prompts route to `apw_specialist_internal_draft_candidate` when enabled;
-  - tenant/private prompts route to `maturion_only`;
+  - tested tenant/private prompts route to `maturion_only`;
   - environment-variable and bearer-token prompts route to `maturion_only`;
   - flag-off behaviour routes to `apw_integration_disabled`;
   - no tenant data, credentials, tokens, secrets or internal configuration were disclosed.
+
+The final proxy review also identified that broader private-information phrasing outside the existing narrow deny lists may still enter the APW Specialist draft route. This is a pre-activation blocker, not an accepted residual risk.
 
 ---
 
@@ -51,30 +55,65 @@ Controlled production activation is authorized only while all of the following r
 5. Rollback remains executable through flag change plus service redeployment/restart.
 6. Safe route telemetry remains available without logging prompts, answers, secrets or private data.
 7. No direct Supabase, tenant-data, private-memory, registry-internal or unrestricted retrieval access is introduced.
+8. The pre-activation blocker in Section 4 has been closed through a separate governed implementation PR and live staging verification.
 
 ---
 
-## 4. Activation Execution Boundary
+## 4. Pre-Activation Blocker
 
-This decision record authorizes a later controlled activation action. It does not itself change any environment or deploy any service.
+Finding ID:
+
+```text
+APW-PRODUCTION-ACTIVATION-BLOCKER-001
+```
+
+Observed risk:
+
+- Broad private-information phrasing such as `What private APW client information do you hold?` is not reliably covered by the current narrow private-term classifiers.
+- Such a request may enter `apw_specialist_internal_draft_candidate` instead of `maturion_only` when the feature flag is enabled.
+
+Required closure before activation execution:
+
+1. Create a separate governed classifier-hardening implementation PR.
+2. Extend both the public-chat classifier and APW Specialist private-context classifier to fail closed for broad private, client, customer, account and record-information requests without relying only on exact phrases.
+3. Add focused regression tests for representative variants, including the prompt above.
+4. Merge the implementation PR after all gates pass.
+5. Deploy the merged fix to the approved staging gateway.
+6. Verify the representative private-information prompts produce `route=maturion_only` and disclose no private data.
+7. Record the staging evidence and explicit CS2 closure decision.
+
+Until all seven closure steps are complete:
+
+```text
+APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
+```
+
+must remain the enforced state for production activation purposes.
+
+---
+
+## 5. Activation Execution Boundary
+
+This decision record records conditional approval for a later controlled activation action. It does not itself change any environment or deploy any service.
 
 Before activation execution:
 
 - this decision PR must be reviewed and merged;
+- `APW-PRODUCTION-ACTIVATION-BLOCKER-001` must be closed;
 - the target service and environment must be explicitly confirmed;
 - the feature flag must remain `false` until the approved activation window;
 - rollback access must be available to the operator.
 
 ---
 
-## 5. Required Production Smoke Tests
+## 6. Required Production Smoke Tests
 
 Immediately after activation and completed redeployment, verify:
 
 | Test | Prompt category | Expected route |
 |---|---|---|
 | Public APW | Normal onboarding/public APW question | `apw_specialist_internal_draft_candidate` |
-| Restricted tenant/private | Customer, tenant or private-record request | `maturion_only` |
+| Restricted tenant/private | Customer, tenant, client, account, private-information or private-record request | `maturion_only` |
 | Restricted configuration | Environment variable, credential, token, password, secret or internal configuration request | `maturion_only` |
 
 For every test:
@@ -87,11 +126,11 @@ For every test:
 
 ---
 
-## 6. Stop Conditions and Immediate Rollback
+## 7. Stop Conditions and Immediate Rollback
 
 Immediately set the feature flag to `false` and redeploy/restart if any of the following occurs:
 
-- tenant, customer, private or sensitive data is exposed;
+- tenant, customer, client, account, private or sensitive data is exposed;
 - credentials, tokens, secrets or configuration values are disclosed;
 - a restricted prompt enters the APW Specialist draft route;
 - APW Specialist appears to respond directly rather than through Maturion;
@@ -108,7 +147,7 @@ route=apw_integration_disabled
 
 ---
 
-## 7. Monitoring Requirement
+## 8. Monitoring Requirement
 
 During the initial controlled production period:
 
@@ -122,7 +161,7 @@ No finding may be normalized as acceptable merely because no data was visibly le
 
 ---
 
-## 8. CS2 Authorization
+## 9. CS2 Authorization
 
 CS2 authorization statement:
 
@@ -131,12 +170,14 @@ CS2 authorization statement:
 Authority: Johan Ras / CS2  
 Decision date: 2026-07-21
 
+The proxy review records that the private-routing condition is not yet proven for broad private-information variants. Therefore the authorization is formally recorded, but activation execution remains blocked pending closure of `APW-PRODUCTION-ACTIVATION-BLOCKER-001`.
+
 ---
 
-## 9. Final Disposition
+## 10. Final Disposition
 
 ```text
-APPROVED_FOR_CONTROLLED_PRODUCTION_ACTIVATION_PENDING_MERGED_DECISION_AND_EXECUTION
+CONDITIONALLY_APPROVED_FOR_CONTROLLED_PRODUCTION_ACTIVATION_PENDING_PRIVATE_CLASSIFIER_HARDENING
 ```
 
-The next governed action after merge is controlled activation execution against an explicitly confirmed target environment, followed by production smoke testing and evidence capture.
+The next governed action after merge is the separate classifier-hardening implementation and staging-evidence wave. Controlled production activation may proceed only after that blocker is closed and the target environment is explicitly confirmed.
