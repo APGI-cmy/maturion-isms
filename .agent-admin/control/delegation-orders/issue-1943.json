@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "pit-stage12-slice4-supabase-project-persistence",
+  "issue_number": 1943,
+  "prebuild_pr_number": 1945,
+  "baseline_issue_number": 1767,
+  "builder_appointment_timestamp": "2026-07-21T17:03:00+02:00",
+  "builder_appointment_commit_sha": "fee39bd8c15bae0da1de275e82b02a2a2c6e438f",
+  "builder_agent": "pit-specialist",
+  "builder_task_ref": "modules/pit/12-build/slice-4/builder-appointment-delegation-20260721.md",
+  "first_implementation_commit_sha": null,
+  "qp_review_timestamp": null,
+  "result": "DELEGATION_ORDER_OPEN_PENDING_IMPLEMENTATION"
+}
