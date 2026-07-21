@@ -4,10 +4,6 @@ from __future__ import annotations
 
 import re
 
-
-# Broad confidentiality/data nouns are intentionally evaluated together with
-# request/access verbs. This catches natural wording without blocking public
-# descriptions such as "How does APW protect client information?".
 _PRIVATE_QUALIFIERS = (
     "private",
     "confidential",
@@ -16,42 +12,6 @@ _PRIVATE_QUALIFIERS = (
     "nonpublic",
     "internal",
     "sensitive",
-)
-
-_PROTECTED_SUBJECTS = (
-    "customer",
-    "client",
-    "tenant",
-    "account",
-    "user",
-    "employee",
-    "personnel",
-    "organisation",
-    "organization",
-)
-
-_PROTECTED_OBJECTS = (
-    "information",
-    "data",
-    "record",
-    "records",
-    "detail",
-    "details",
-    "file",
-    "files",
-    "document",
-    "documents",
-    "profile",
-    "profiles",
-    "history",
-    "audit",
-    "finding",
-    "findings",
-    "evidence",
-    "investigation",
-    "incident",
-    "configuration",
-    "memory",
 )
 
 _ACCESS_OR_DISCLOSURE_TERMS = (
@@ -75,11 +35,36 @@ _ACCESS_OR_DISCLOSURE_TERMS = (
     "find",
     "lookup",
     "look up",
-    "what do you hold",
-    "what information do you hold",
-    "what data do you hold",
-    "what records do you hold",
-    "what can you access",
+)
+
+_HOLDING_OR_EXISTENCE_TERMS = (
+    "have",
+    "hold",
+    "holds",
+    "store",
+    "stores",
+    "retain",
+    "retains",
+    "keep",
+    "keeps",
+    "possess",
+    "possesses",
+    "can access",
+    "do you hold",
+    "does apw hold",
+    "do you have",
+    "does apw have",
+)
+
+_PUBLIC_SAFE_CONTEXT_TERMS = (
+    "public",
+    "onboarding",
+    "public website",
+    "published",
+    "brochure",
+    "marketing",
+    "documentation",
+    "help page",
 )
 
 _ALWAYS_RESTRICTED_TERMS = (
@@ -106,44 +91,40 @@ _ALWAYS_RESTRICTED_TERMS = (
     "runtime registry internals",
 )
 
+_PROTECTED_PHRASE = re.compile(
+    r"\b(customer|customers|client|clients|tenant|tenants|account|accounts|"
+    r"user|users|employee|employees|personnel|organisation|organization)"
+    r"(?:'s|s')?\s+"
+    r"(information|info|data|record|records|detail|details|file|files|document|"
+    r"documents|profile|profiles|history|audit|finding|findings|evidence|incident|"
+    r"investigation|configuration|memory)\b"
+)
+
 _NATURAL_LANGUAGE_HOLDING_QUERY = re.compile(
-    r"\bwhat\b.{0,80}\b(information|data|records?|details?|files?|documents?|"
-    r"profiles?|history|evidence)\b.{0,50}\b(do you|does apw|can you|can apw)\b"
-    r".{0,30}\b(hold|have|store|retain|access|keep)\b"
+    r"\b(does|do|can|what)\b.{0,80}\b(apw|you)\b.{0,50}"
+    r"\b(have|hold|holds|store|stores|retain|retains|keep|keeps|possess|possesses|access)\b"
 )
 
 
 def requires_private_context(message: str) -> bool:
-    """Return True when a public request needs non-public context.
-
-    The policy fails closed for explicit confidentiality language and for
-    disclosure/access requests involving protected people or protected data.
-    """
+    """Return True when a public request needs non-public context."""
 
     lower = " ".join(message.lower().split())
     if any(term in lower for term in _ALWAYS_RESTRICTED_TERMS):
         return True
-    if _NATURAL_LANGUAGE_HOLDING_QUERY.search(lower):
-        return True
 
-    has_access_intent = any(term in lower for term in _ACCESS_OR_DISCLOSURE_TERMS)
     has_private_qualifier = any(term in lower for term in _PRIVATE_QUALIFIERS)
-    has_protected_subject = any(term in lower for term in _PROTECTED_SUBJECTS)
-    has_protected_object = any(term in lower for term in _PROTECTED_OBJECTS)
+    has_access_intent = any(term in lower for term in _ACCESS_OR_DISCLOSURE_TERMS)
+    has_holding_intent = any(term in lower for term in _HOLDING_OR_EXISTENCE_TERMS)
+    has_public_safe_context = any(term in lower for term in _PUBLIC_SAFE_CONTEXT_TERMS)
+    protected_phrase = _PROTECTED_PHRASE.search(lower) is not None
+    natural_holding_query = _NATURAL_LANGUAGE_HOLDING_QUERY.search(lower) is not None
 
-    if has_access_intent and has_private_qualifier:
+    if has_private_qualifier and (has_access_intent or has_holding_intent):
         return True
-    if has_access_intent and has_protected_subject and has_protected_object:
+    if natural_holding_query and (has_private_qualifier or protected_phrase):
+        return True
+    if has_access_intent and protected_phrase and not has_public_safe_context:
         return True
 
-    # Catch possessive/plural natural-language variants such as
-    # "client records", "customers' data" and "account details".
-    protected_phrase = re.compile(
-        r"\b(customer|customers|client|clients|tenant|tenants|account|accounts|"
-        r"user|users|employee|employees|personnel|organisation|organization)"
-        r"(?:'s|s')?\s+"
-        r"(information|data|record|records|detail|details|file|files|document|"
-        r"documents|profile|profiles|history|audit|findings|evidence|incident|"
-        r"investigation|configuration|memory)\b"
-    )
-    return bool(has_access_intent and protected_phrase.search(lower))
+    return False
