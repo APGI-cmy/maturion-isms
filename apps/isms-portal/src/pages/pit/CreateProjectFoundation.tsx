@@ -27,6 +27,7 @@ export const CreateProjectFoundation: React.FC = () => {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<CreatePitProjectInput>(initialForm);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const permitted = user ? canCreatePitProject(user.role) : false;
 
   if (!user || !permitted) {
@@ -57,11 +58,17 @@ export const CreateProjectFoundation: React.FC = () => {
   };
 
   const submit = () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
     try {
       const created = createPitProject(form, { id: user.id, email: user.email, role: user.role, orgId: 'mock-org' });
       navigate(ROUTES.PROJECTS, { replace: true, state: { createdProjectId: created.id } });
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'The project could not be created.');
+      setIsSubmitting(false);
     }
   };
 
@@ -108,7 +115,7 @@ export const CreateProjectFoundation: React.FC = () => {
           {step === 4 && <div className="space-y-4"><div className="flex items-center gap-3"><CheckCircle2 className="h-6 w-6 text-emerald-700" /><h2 className="text-xl font-semibold">Review before creating</h2></div><dl className="grid gap-4 rounded-xl bg-slate-50 p-5 sm:grid-cols-2"><div><dt className="text-xs uppercase text-slate-500">Project</dt><dd className="font-medium">{form.name}</dd></div><div><dt className="text-xs uppercase text-slate-500">Type</dt><dd>{form.type}</dd></div><div><dt className="text-xs uppercase text-slate-500">Leader</dt><dd>{form.projectLeaderLabel}</dd></div><div><dt className="text-xs uppercase text-slate-500">Dates</dt><dd>{form.startDate} to {form.endDate}</dd></div><div><dt className="text-xs uppercase text-slate-500">Source</dt><dd>{form.sourceType}{form.sourceRef ? ` — ${form.sourceRef}` : ''}</dd></div><div><dt className="text-xs uppercase text-slate-500">Delivery</dt><dd>{form.quickWinType}</dd></div></dl></div>}
 
           {error && <div role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-900">{error}</div>}
-          <div className="mt-6 flex justify-between"><button type="button" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))} className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 disabled:opacity-40"><ArrowLeft className="h-4 w-4" />Back</button>{step < 4 ? <button type="button" onClick={continueFlow} className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-3 font-semibold text-white">Continue<ArrowRight className="h-4 w-4" /></button> : <button type="button" onClick={submit} className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-3 font-semibold text-white">Create project<CheckCircle2 className="h-4 w-4" /></button>}</div>
+          <div className="mt-6 flex justify-between"><button type="button" disabled={step === 0 || isSubmitting} onClick={() => setStep((value) => Math.max(0, value - 1))} className="inline-flex items-center gap-2 rounded-lg border px-4 py-3 disabled:opacity-40"><ArrowLeft className="h-4 w-4" />Back</button>{step < 4 ? <button type="button" onClick={continueFlow} className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-3 font-semibold text-white">Continue<ArrowRight className="h-4 w-4" /></button> : <button type="button" onClick={submit} disabled={isSubmitting} className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? 'Creating project…' : 'Create project'}<CheckCircle2 className="h-4 w-4" /></button>}</div>
         </section>
 
         <div className="flex gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950"><Database className="h-5 w-5 shrink-0" /><p><strong>Persistence boundary:</strong> projects remain in this browser for the current mock-auth workspace. Production Supabase persistence and RLS require a later governed slice.</p></div>
