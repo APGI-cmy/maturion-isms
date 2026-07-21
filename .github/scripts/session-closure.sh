@@ -131,6 +131,8 @@ if "/" not in repo:
 api_root = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
 # Optional override for slower environments; default chosen for normal GitHub API latency.
 timeout_seconds = float(os.environ.get("GITHUB_API_TIMEOUT_SECONDS", "60"))
+if timeout_seconds < 1 or timeout_seconds > 300:
+    raise RuntimeError(f"GITHUB_API_TIMEOUT_SECONDS out of range (1-300): {timeout_seconds}")
 headers = {
     "Accept": "application/vnd.github+json",
     "Authorization": "Bearer " + token,
@@ -151,9 +153,12 @@ def next_link(link_header):
 def fetch_json(url):
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
+        status_code = getattr(response, "status", None)
         body = response.read()
         if not body:
-            raise RuntimeError(f"GitHub API returned empty response body for {url}")
+            if status_code == 204:
+                return {}, None
+            raise RuntimeError(f"GitHub API returned empty response body for {url} (status={status_code})")
         decoded = body.decode("utf-8")
         payload = json.loads(decoded)
         link = response.headers.get("Link", "")
@@ -774,12 +779,14 @@ if [ "${REQUIRED_CHECKS_STATUS:-FAIL}" = "PASS" ] && [ "${CANON_STATUS:-FAIL}" =
 EOF
     fi
 
-    if ! grep -Fq '| entry_id |' "$METRICS_FILE"; then
-        echo -e "${RED}  ❌ Metrics file schema invalid: missing entry_id header${NC}"
+    METRICS_HEADER='| entry_id | timestamp | session | head_sha | outcome | required_checks | canonical_health | environment_health | modified_files |'
+    if ! grep -Fq "$METRICS_HEADER" "$METRICS_FILE"; then
+        echo -e "${RED}  ❌ Metrics file schema invalid: expected canonical header row${NC}"
         exit 1
     fi
 
     if awk -F'|' -v entry_id="${METRICS_ENTRY_ID}" '
+        BEGIN { found=0 }
         NR > 2 {
             key=$2
             gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
