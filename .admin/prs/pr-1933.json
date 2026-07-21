@@ -4,7 +4,7 @@
   "type": "agent-contract-change",
   "owner": "CodexAdvisor-agent",
   "branch": "codexadvisor-issue-1932-maturion-thin-core",
-  "head_sha": "6ad1a892dbb47f758e036c99cc29a0e8df402e40",
+  "head_sha": "57ac10afdf1ca63f44382fb9264b21fc814fd17a",
   "base_sha": "CURRENT_BASE",
   "scope": [
     ".github/agents/maturion-agent.md",

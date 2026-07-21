@@ -20,8 +20,8 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 - Current substantive protected-file commit: `6ad1a892dbb47f758e036c99cc29a0e8df402e40`
 - Current protected contract blob: `4c060b890074b79fa293dcd66c9b3f9987200e47`
 - Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md`
-- Prior IAA result: REJECTION-PACKAGE in session 1283
-- Fresh independent IAA: REQUIRED after hosted checks pass on the frozen head
+- Prior IAA result: REJECTION-PACKAGE in session 1284
+- Fresh independent IAA: REQUIRED after hosted checks pass on the latest STOP_AND_FIX head
 
 ## STOP_AND_FIX remediation
 
@@ -31,8 +31,10 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 - Mandatory `execution_identity` block restored with explicit push-safety controls.
 - Executable Phase 2 induction restored.
 - Automated Phase 4 closure restored.
+- IAA session 1284 REJECTION-PACKAGE retained as immutable history.
+- Exact substantive STOP_AND_FIX applied for canonical provenance blocking and required-check evidence SHA binding.
 - Both latest Codex review conversations resolved after implementation.
-- Hosted checks must complete against the frozen post-fix head.
+- Hosted checks must complete against the current post-fix head before renewed independent IAA.
 
 ## Scope
 
@@ -45,4 +47,4 @@ No runtime, Tier 2, product code, test, schema, migration, provider, CI workflow
 SCOPE_PARITY: RECONCILED
 HANDOVER_ALLOWED: no
 MERGE_AUTHORITY: CS2
-FINAL_STATE: PENDING_HOSTED_CHECKS_AND_FRESH_INDEPENDENT_IAA
+FINAL_STATE: PENDING_HOSTED_CHECKS_AND_RENEWED_INDEPENDENT_IAA

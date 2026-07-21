@@ -30,6 +30,8 @@
 11. Phase 2 executable wake-up now fails nonzero when `governance/CANON_INVENTORY.json` is missing, invalid, or degraded under placeholder-hash enforcement.
 12. Phase 4 executable closure now validates every `merge_gate_interface.required_checks` entry from runtime check evidence and fails nonzero on missing, failed, pending, or unverifiable checks.
 13. Orchestrator class, thin-core pattern, four phases, RAEC, scope boundaries and independent IAA retained.
+14. Phase 3 wake-up now degrades and blocks when canonical commit SHA provenance is absent in `governance/CANON_INVENTORY.json` under placeholder-hash enforcement.
+15. Phase 4 closure now binds supplied check evidence (`head_sha` / `sha`) to current HEAD and rejects stale or unverifiable evidence.
 
 ## Current PR scope
 
@@ -47,7 +49,8 @@ No product code, runtime adapter, schema, migration, test, CI workflow, Tier 2 e
 - Current protected commit/blob recorded: PASS
 - Current immutable PREHANDOVER: PASS
 - Scope comparison: 16 paths declared
-- Fresh independent IAA: REQUIRED after hosted checks
+- Fresh independent IAA (session 1284): REJECTION-PACKAGE on frozen head `09bde7c60f3897479de2a805d302aaffcec097d1`
+- Renewed independent IAA: REQUIRED after hosted checks on latest STOP_AND_FIX head
 
 ## Merge boundary
 
