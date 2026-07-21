@@ -7,7 +7,7 @@
   "builder_appointment_commit_sha": "1ebe3ca8be30eeb7abf2294f3ac6842e3cd78823",
   "builder_agent": "apw-private-request-classifier-hardening-builder",
   "builder_task_ref": ".agent-admin/builder-appointments/apw-private-request-classifier-hardening-builder-v0.1.md",
-  "first_implementation_commit_sha": "30127ad35a6d5aa53bb30efd4b1f004031775270",
-  "qp_review_timestamp": "2026-07-21T14:50:00Z",
+  "first_implementation_commit_sha": "fd42e52278316dcad12bc5c96ae7febc3ebecafe",
+  "qp_review_timestamp": "2026-07-21T15:05:00Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
