@@ -56,10 +56,15 @@ PRIVATE_REQUEST_VARIANTS = [
     "List the account details held by APW.",
     "Provide customer data from the APW platform.",
     "Reveal a tenant's records.",
+    "Reveal a tenant’s records.",
     "Can I view employee files in APW?",
     "What sensitive user data does APW retain?",
     "Does APW have confidential customer data?",
     "Does APW hold private account information?",
+    "Which client records are held by APW?",
+    "What records does APW keep for customers?",
+    "Does APW store data about clients?",
+    "Can I access my account?",
 ]
 
 PUBLIC_REQUEST_VARIANTS = [
@@ -68,6 +73,9 @@ PUBLIC_REQUEST_VARIANTS = [
     "How does APW protect client information?",
     "What public services does APGI offer?",
     "How can clients access APW onboarding documents?",
+    "Show me customer onboarding documents.",
+    "Where can clients find the public APW brochure?",
+    "How do I open an APW account?",
 ]
 
 CONFIGURATION_AND_TOKEN_VARIANTS = [
