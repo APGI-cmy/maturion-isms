@@ -120,9 +120,13 @@ check_runs_tmp = os.environ["CHECK_RUNS_TMP"]
 commit_statuses_tmp = os.environ["COMMIT_STATUSES_TMP"]
 
 if "/" not in repo:
-    raise RuntimeError(f"Invalid repository slug: expected owner/repo, got '{repo}'")
+    raise RuntimeError(
+        f"Invalid repository slug (from GITHUB_REPOSITORY or remote.origin.url): "
+        f"expected owner/repo, got '{repo}'"
+    )
 
 api_root = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
+timeout_seconds = float(os.environ.get("GITHUB_API_TIMEOUT_SECONDS", "60"))
 headers = {
     "Accept": "application/vnd.github+json",
     "Authorization": "Bearer " + token,
@@ -142,10 +146,12 @@ def next_link(link_header):
 
 def fetch_json(url):
     req = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(req, timeout=30) as response:
+    with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
         body = response.read()
-        decoded = body.decode("utf-8") if body else "{}"
-        payload = json.loads(decoded or "{}")
+        if not body:
+            raise RuntimeError(f"GitHub API returned empty response body for {url}")
+        decoded = body.decode("utf-8")
+        payload = json.loads(decoded)
         link = response.headers.get("Link", "")
         return payload, next_link(link)
 
@@ -698,7 +704,7 @@ fi
 ENV_HEALTH_STATUS="PASS"
 DRIFT_NORMALIZED="$(echo "${DRIFT_STATUS:-UNKNOWN}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')"
 case "$DRIFT_NORMALIZED" in
-    yes|true|drift|drifted|degraded|fail|failed|invalid*|misaligned|notaligned)
+    yes|true|drift|drifted|degraded|fail|failed|invalid|invalidcanoninventory|invalid_canon_inventory|misaligned|notaligned)
         ENV_HEALTH_STATUS="FAIL"
         echo -e "${RED}  ❌ Environment health indicates drift/degradation (Drift status: ${DRIFT_STATUS})${NC}"
         ;;
@@ -766,6 +772,7 @@ EOF
             gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
             if (key == entry_id) {
                 found=1
+                exit 0
             }
         }
         END { exit(found ? 0 : 1) }
