@@ -5,8 +5,8 @@
 | Module | PIT - Project Implementation Tracker |
 | Artifact type | Stage 12 slice tracker reconciliation addendum |
 | Stage | Stage 12 - Build Execution & Evidence |
-| Date | 2026-07-13 |
-| Status | ACTIVE ADDENDUM - SLICE 3 IMPLEMENTATION IN REVIEW |
+| Date | 2026-07-21 |
+| Status | ACTIVE ADDENDUM - SLICE 3 IMPLEMENTED AND MERGED |
 | Applies to | `modules/pit/BUILD_PROGRESS_TRACKER.md` until incorporated into a later direct tracker revision |
 
 ## Operating controls
@@ -27,25 +27,74 @@
 | Slice 2.1 - Entry journey specification | Specification merged | PR #1888 |
 | Slice 2.2 - Entry planning | Completed and issue closed | Issue #1891, PR #1894, PR #1925 |
 | Slice 2.3 - Entry implementation | Completed for authorised boundary and issue closed; uncaptured browser evidence remains outstanding | Issue #1896, PR #1910, PR #1925 |
-| Slice 3 - Project Register / Project Creation Persistence Foundation | Implemented in PR #1935; current-head CI, browser evidence and final review pending | Issue #1934, PR #1935 |
+| Slice 3 - Project Register / Project Creation Persistence Foundation | Implemented and merged for the authorised browser-local boundary; formal authenticated browser evidence remains outstanding | Issue #1934, PR #1935, merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd` |
 
 ## Slice 3 delivered boundary
 
-PR #1935 implements a typed browser-local project persistence adapter, validated creator-only project creation, and a persisted Project Register in the current mock-auth portal.
+PR #1935 delivered:
 
-It does not deliver or claim production Supabase persistence, RLS, shared organisation data, cross-device synchronisation, later project hierarchy, full PIT completion or release readiness.
+- a typed browser-local PIT project persistence adapter;
+- validated creator-only project creation;
+- project classification, timeline, source and optional financial-context retention;
+- Project Register loading from persisted records after navigation or reload;
+- safe malformed-storage handling;
+- duplicate-submission protection on the final create action;
+- automated tests for the authorised persistence and validation boundary.
 
-## Current controlled action
+The reviewed PR head was `40ed171c1a97b964e07c8a13a5b99f3d1b93fc4a`. PR #1935 was merged on 2026-07-21 through merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd`.
 
-Complete current-head verification and review for PR #1935:
+## Slice 3 verification and review closure
 
-- tests and TypeScript/Vite build;
-- governance, POLC, routing, CodeQL and deployment checks;
-- open review-conversation resolution;
-- truthful implementation evidence update;
-- final assurance or canonical CS2 Direct Review;
-- formal browser evidence capture or explicit outstanding status.
+The final CS2 proxy/direct review recorded `CS2_PROXY_REVIEW_PASS` and `MERGE_RECOMMENDED` against the reviewed head SHA.
 
-## Non-completion notice
+Current-head verification completed successfully before merge, including:
 
-PIT Stage 12 remains incomplete. This addendum does not authorize merge or claim production readiness, release readiness, Supabase persistence, formal browser-evidence completion or final functional pass.
+- Preflight Evidence Gate;
+- Foreman Pre-Handover Lane Gate;
+- Merge Gate Required Checks Alignment;
+- IAA Pre-Brief Contract Alignment;
+- Wave 7 Governance Validation;
+- ECAP Admin Boundary Gate;
+- Builder Delegation Order Gate;
+- Stub Detection Check;
+- Routing Governance Check;
+- POLC Boundary Validation;
+- CodeQL;
+- Deploy ISMS Portal to Vercel;
+- Deploy PIT to Vercel.
+
+All inline review conversations were checked before merge. No unresolved review conversation remained.
+
+Post-merge deployment status for the merge commit was successful for the PIT, ISMS Portal and MMM Vercel deployments.
+
+## Outstanding evidence debt
+
+Formal authenticated browser evidence remains uncaptured for the Slice 3 journey. This is retained as explicit, non-concealed evidence debt and should be completed through a later controlled evidence-capture action.
+
+The outstanding browser evidence should demonstrate, at minimum:
+
+1. a creator-capable actor completing the Create Project journey;
+2. exactly one project being created per submission;
+3. the new record appearing in the Project Register;
+4. persistence after browser reload;
+5. rejection of invalid required fields and invalid date ordering;
+6. denial of the positive create path for viewer/non-creator roles.
+
+This evidence debt does not reopen the merged Slice 3 implementation scope and does not invalidate the accepted browser-local foundation.
+
+## Boundary and non-completion notice
+
+Slice 3 does not deliver or claim:
+
+- production Supabase persistence;
+- organisation-scoped RLS;
+- provider-backed authentication;
+- shared organisation data;
+- cross-device or multi-user synchronisation;
+- milestones, deliverables, tasks, evidence, approvals, reporting or full project lifecycle;
+- full PIT completion;
+- Stage 12 completion;
+- production or release readiness;
+- formal browser-evidence completion or final functional pass.
+
+PIT Stage 12 remains incomplete. The next governed implementation slice requires a separate issue, scope declaration, delegation, QA-to-Red mapping and current-head verification.
