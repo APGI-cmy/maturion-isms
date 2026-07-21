@@ -39,6 +39,7 @@ agent_requires_placeholder_hash_enforcement() {
 
 count_invalid_inventory_hashes() {
     local inventory_file="$1"
+    # Canon inventory hashes are SHA-256 and must be 64 hex chars.
     jq -r '
       def invalid_hash:
         . == null
@@ -105,7 +106,9 @@ auto_populate_check_evidence() {
     local check_runs_tmp="/tmp/session-closure-check-runs-${AGENT_ID}-${SESSION_DATE}.json"
     local commit_statuses_tmp="/tmp/session-closure-commit-statuses-${AGENT_ID}-${SESSION_DATE}.json"
 
-    if ! REPOSITORY_SLUG="$repository_slug" HEAD_SHA="$head_sha" GITHUB_TOKEN="$token" CHECK_RUNS_TMP="$check_runs_tmp" COMMIT_STATUSES_TMP="$commit_statuses_tmp" python3 <<'PY'
+    local auto_fetch_output
+    if ! auto_fetch_output="$(
+        REPOSITORY_SLUG="$repository_slug" HEAD_SHA="$head_sha" GITHUB_TOKEN="$token" CHECK_RUNS_TMP="$check_runs_tmp" COMMIT_STATUSES_TMP="$commit_statuses_tmp" python3 <<'PY' 2>&1
 import json
 import os
 import re
@@ -126,6 +129,7 @@ if "/" not in repo:
     )
 
 api_root = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
+# Optional override for slower environments; default chosen for normal GitHub API latency.
 timeout_seconds = float(os.environ.get("GITHUB_API_TIMEOUT_SECONDS", "60"))
 headers = {
     "Accept": "application/vnd.github+json",
@@ -177,9 +181,12 @@ with open(commit_statuses_tmp, "w", encoding="utf-8") as fh:
 
 print(f"Auto-fetched check evidence for {repo}@{head_sha}: check_runs={len(check_runs)} commit_statuses={len(statuses)}")
 PY
-    then
-        AUTO_FETCH_FAILURE_REASON="GitHub API evidence acquisition failed."
+    )"; then
+        AUTO_FETCH_FAILURE_REASON="GitHub API evidence acquisition failed: ${auto_fetch_output}"
         return 1
+    fi
+    if [ -n "$auto_fetch_output" ]; then
+        echo "$auto_fetch_output"
     fi
 
     export CHECK_RUNS_PATH="$check_runs_tmp"
@@ -704,6 +711,7 @@ fi
 ENV_HEALTH_STATUS="PASS"
 DRIFT_NORMALIZED="$(echo "${DRIFT_STATUS:-UNKNOWN}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')"
 case "$DRIFT_NORMALIZED" in
+    # Treat explicit drift/failure/degraded states as blocking.
     yes|true|drift|drifted|degraded|fail|failed|invalid|invalidcanoninventory|invalid_canon_inventory|misaligned|notaligned)
         ENV_HEALTH_STATUS="FAIL"
         echo -e "${RED}  ❌ Environment health indicates drift/degradation (Drift status: ${DRIFT_STATUS})${NC}"
@@ -764,6 +772,11 @@ if [ "${REQUIRED_CHECKS_STATUS:-FAIL}" = "PASS" ] && [ "${CANON_STATUS:-FAIL}" =
 | entry_id | timestamp | session | head_sha | outcome | required_checks | canonical_health | environment_health | modified_files |
 |---|---|---|---|---|---|---|---|---|
 EOF
+    fi
+
+    if ! grep -Fq '| entry_id |' "$METRICS_FILE"; then
+        echo -e "${RED}  ❌ Metrics file schema invalid: missing entry_id header${NC}"
+        exit 1
     fi
 
     if awk -F'|' -v entry_id="${METRICS_ENTRY_ID}" '
