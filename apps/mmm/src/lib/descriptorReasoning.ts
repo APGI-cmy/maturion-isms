@@ -127,9 +127,7 @@ function preserveEvidenceBundle(criterionText: string): string | null {
   const sentences = splitCriterionSentences(clean);
   if (sentences.length < 2) return null;
 
-  const primary = normaliseEvidenceBearingSentence(sentences[0])
-    .replace(/^The\s+DCC\s+/i, 'the DCC ')
-    .replace(/\bwill\s+meet\b/i, 'meets');
+  const primary = normaliseEvidenceBearingSentence(sentences[0]);
   const secondary = normaliseEvidenceBearingSentence(sentences.slice(1).join(', '))
     .replace(/,\s*actions\s+agreed/gi, ', actions are agreed')
     .replace(/,\s*decisions\s+recorded/gi, ', decisions are recorded')
@@ -206,15 +204,26 @@ function buildRetrievalContext(context: DescriptorGenerationContext): Descriptor
   };
 }
 
-function applyLearnedEvidenceSubject(
+function applyRelevantLearning(
   fallbackEvidenceStateClause: string,
+  grammarShape: string,
   retrievedLearningRecords: RankedDescriptorLearningRecord[],
 ): string {
-  const learned = retrievedLearningRecords
-    .map((record) => getLearnedEvidenceSubject(record))
-    .find((subject): subject is string => Boolean(subject?.trim()));
+  const directRecord = retrievedLearningRecords.find((record) => record.matchType === 'same_criterion');
+  const directSubject = directRecord ? getLearnedEvidenceSubject(directRecord) : null;
+  if (directSubject) return directSubject;
 
-  return learned ?? fallbackEvidenceStateClause;
+  const similarRecord = retrievedLearningRecords.find((record) => record.matchType === 'similar_pattern');
+  if (!similarRecord) return fallbackEvidenceStateClause;
+
+  if (
+    grammarShape === 'evidence_bundle_minutes_actions_decisions' &&
+    similarRecord.grammarShape === grammarShape
+  ) {
+    return `${fallbackEvidenceStateClause}, with the meeting cadence and related evidence bundle preserved for this criterion`;
+  }
+
+  return fallbackEvidenceStateClause;
 }
 
 export function generateDescriptorReasoningResult(context: DescriptorGenerationContext): DescriptorReasoningResult {
@@ -227,8 +236,15 @@ export function generateDescriptorReasoningResult(context: DescriptorGenerationC
     7,
   );
 
-  const learningApplied = retrievedLearningRecords.length > 0;
-  const evidenceStateClause = applyLearnedEvidenceSubject(fallbackEvidenceStateClause, retrievedLearningRecords);
+  const evidenceStateClause = applyRelevantLearning(
+    fallbackEvidenceStateClause,
+    grammarShape,
+    retrievedLearningRecords,
+  );
+  const learningApplied = retrievedLearningRecords.some((record) =>
+    record.matchType === 'same_criterion' ||
+    (record.matchType === 'similar_pattern' && grammarShape === 'evidence_bundle_minutes_actions_decisions'),
+  );
 
   return {
     sourceMode: context.sourceMode,
