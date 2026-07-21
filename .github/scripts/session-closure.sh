@@ -30,7 +30,167 @@ fi
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 SESSION_DATE=$(date -u +"%Y%m%d")
 
+agent_requires_placeholder_hash_enforcement() {
+    if [ ! -f "$AGENT_CONTRACT_FILE" ]; then
+        return 1
+    fi
+    grep -Eq '^[[:space:]]*(degraded_on_placeholder_hashes|degraded_on_reserved_hash_markers):[[:space:]]*true([[:space:]]|$)' "$AGENT_CONTRACT_FILE"
+}
+
+count_invalid_inventory_hashes() {
+    local inventory_file="$1"
+    jq -r '
+      def invalid_hash:
+        . == null
+        or (type != "string")
+        or (length == 0)
+        or test("^0+$")
+        or (length < 64);
+      if (.canons? | type) == "array" then
+        [ .canons[]? | (.file_hash_sha256 // .file_hash) | select(invalid_hash) ] | length
+      elif (.artifacts? | type) == "object" then
+        [ .artifacts[]?
+          | (if type == "object" then (.sha256 // .file_hash_sha256 // .file_hash) else . end)
+          | select(invalid_hash)
+        ] | length
+      else
+        0
+      end
+    ' "$inventory_file"
+}
+
+resolve_repository_slug() {
+    if [ -n "${GITHUB_REPOSITORY:-}" ]; then
+        echo "$GITHUB_REPOSITORY"
+        return 0
+    fi
+    local origin_url
+    origin_url="$(git config --get remote.origin.url 2>/dev/null || true)"
+    if [ -z "$origin_url" ]; then
+        return 1
+    fi
+    origin_url="${origin_url%.git}"
+    if [[ "$origin_url" =~ github\.com[:/]([^/]+/[^/]+)$ ]]; then
+        echo "${BASH_REMATCH[1]}"
+        return 0
+    fi
+    return 1
+}
+
+auto_populate_check_evidence() {
+    if [ -n "${CHECK_RUNS_PATH:-}" ] || [ -n "${CHECK_RUNS_JSON:-}" ] || [ -n "${COMMIT_STATUSES_PATH:-}" ] || [ -n "${COMMIT_STATUSES_JSON:-}" ]; then
+        return 0
+    fi
+
+    local token="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+    if [ -z "$token" ]; then
+        AUTO_FETCH_FAILURE_REASON="GITHUB_TOKEN/GH_TOKEN is not available."
+        return 1
+    fi
+
+    local repository_slug
+    repository_slug="$(resolve_repository_slug || true)"
+    if [ -z "$repository_slug" ]; then
+        AUTO_FETCH_FAILURE_REASON="Could not resolve owner/repo from GITHUB_REPOSITORY or git remote.origin.url."
+        return 1
+    fi
+
+    local head_sha
+    head_sha="${HEAD_SHA:-$(git rev-parse HEAD 2>/dev/null || true)}"
+    if [ -z "$head_sha" ]; then
+        AUTO_FETCH_FAILURE_REASON="Could not resolve HEAD SHA from git."
+        return 1
+    fi
+
+    local check_runs_tmp="/tmp/session-closure-check-runs-${AGENT_ID}-${SESSION_DATE}.json"
+    local commit_statuses_tmp="/tmp/session-closure-commit-statuses-${AGENT_ID}-${SESSION_DATE}.json"
+
+    if ! REPOSITORY_SLUG="$repository_slug" HEAD_SHA="$head_sha" GITHUB_TOKEN="$token" CHECK_RUNS_TMP="$check_runs_tmp" COMMIT_STATUSES_TMP="$commit_statuses_tmp" python3 <<'PY'
+import json
+import os
+import re
+import sys
+import urllib.error
+import urllib.request
+
+repo = os.environ["REPOSITORY_SLUG"].strip()
+head_sha = os.environ["HEAD_SHA"].strip()
+token = os.environ["GITHUB_TOKEN"].strip()
+check_runs_tmp = os.environ["CHECK_RUNS_TMP"]
+commit_statuses_tmp = os.environ["COMMIT_STATUSES_TMP"]
+
+if "/" not in repo:
+    raise RuntimeError(f"Invalid repository slug: {repo}")
+
+api_root = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
+headers = {
+    "Accept": "application/vnd.github+json",
+    "Authorization": "Bearer " + token,
+    "X-GitHub-Api-Version": "2022-11-28",
+    "User-Agent": "maturion-session-closure",
+}
+
+def next_link(link_header):
+    if not link_header:
+        return None
+    for part in link_header.split(","):
+        part = part.strip()
+        match = re.match(r"<([^>]+)>;\s*rel=\"([^\"]+)\"", part)
+        if match and match.group(2) == "next":
+            return match.group(1)
+    return None
+
+def fetch_json(url):
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=30) as response:
+        body = response.read()
+        payload = json.loads(body.decode("utf-8") or "{}")
+        link = response.headers.get("Link", "")
+        return payload, next_link(link)
+
+check_runs = []
+url = f"{api_root}/repos/{repo}/commits/{head_sha}/check-runs?per_page=100"
+while url:
+    payload, url = fetch_json(url)
+    check_runs.extend(payload.get("check_runs", []) if isinstance(payload, dict) else [])
+
+statuses = []
+url = f"{api_root}/repos/{repo}/commits/{head_sha}/statuses?per_page=100"
+while url:
+    payload, url = fetch_json(url)
+    if isinstance(payload, list):
+        statuses.extend(payload)
+    elif isinstance(payload, dict):
+        statuses.extend(payload.get("statuses", []))
+
+with open(check_runs_tmp, "w", encoding="utf-8") as fh:
+    json.dump({"check_runs": check_runs}, fh)
+with open(commit_statuses_tmp, "w", encoding="utf-8") as fh:
+    json.dump({"statuses": statuses}, fh)
+
+print(f"Auto-fetched check evidence for {repo}@{head_sha}: check_runs={len(check_runs)} commit_statuses={len(statuses)}")
+PY
+    then
+        AUTO_FETCH_FAILURE_REASON="GitHub API evidence acquisition failed."
+        return 1
+    fi
+
+    export CHECK_RUNS_PATH="$check_runs_tmp"
+    export COMMIT_STATUSES_PATH="$commit_statuses_tmp"
+    return 0
+}
+
 validate_required_merge_checks() {
+    AUTO_FETCH_FAILURE_REASON=""
+    if [ -z "${CHECK_RUNS_PATH:-}" ] && [ -z "${CHECK_RUNS_JSON:-}" ] && [ -z "${COMMIT_STATUSES_PATH:-}" ] && [ -z "${COMMIT_STATUSES_JSON:-}" ]; then
+        echo "  - No injected check evidence provided; acquiring check evidence from GitHub API..."
+        if auto_populate_check_evidence; then
+            echo "  - Check evidence acquired automatically."
+        else
+            echo "  - Automatic check evidence acquisition unavailable: ${AUTO_FETCH_FAILURE_REASON}"
+        fi
+    fi
+
     local result_file="/tmp/session-closure-required-checks-${AGENT_ID}-${SESSION_DATE}.json"
     RESULT_FILE="$result_file" \
     AGENT_CONTRACT_FILE="$AGENT_CONTRACT_FILE" \
@@ -38,6 +198,7 @@ validate_required_merge_checks() {
     CHECK_RUNS_JSON="${CHECK_RUNS_JSON:-}" \
     COMMIT_STATUSES_PATH="${COMMIT_STATUSES_PATH:-}" \
     COMMIT_STATUSES_JSON="${COMMIT_STATUSES_JSON:-}" \
+    AUTO_FETCH_FAILURE_REASON="${AUTO_FETCH_FAILURE_REASON:-}" \
     python3 <<'PY'
 import json
 import os
@@ -124,7 +285,9 @@ except Exception as exc:
     fail(f"Could not parse check status evidence: {exc}")
 
 if check_runs_payload is None and commit_statuses_payload is None:
-    fail("Cannot verify required checks: no check-runs or commit-status evidence provided.")
+    auto_reason = os.environ.get("AUTO_FETCH_FAILURE_REASON", "").strip()
+    suffix = f" Auto-fetch detail: {auto_reason}" if auto_reason else ""
+    fail("Cannot verify required checks: no check-runs or commit-status evidence provided." + suffix)
 
 check_runs = check_runs_payload.get("check_runs", []) if isinstance(check_runs_payload, dict) else (check_runs_payload or [])
 commit_statuses = commit_statuses_payload.get("statuses", []) if isinstance(commit_statuses_payload, dict) else (commit_statuses_payload or [])
@@ -511,6 +674,37 @@ else
     REQUIRED_CHECKS_STATUS="FAIL"
 fi
 
+CANON_STATUS="PASS"
+CANON_FAILURE_REASON=""
+if [ ! -f "$CANON_INVENTORY" ]; then
+    echo -e "${RED}  ❌ CANON_INVENTORY.json missing${NC}"
+    CANON_STATUS="FAIL"
+    CANON_FAILURE_REASON="missing CANON_INVENTORY.json"
+elif ! jq empty "$CANON_INVENTORY" 2>/dev/null; then
+    echo -e "${RED}  ❌ CANON_INVENTORY.json malformed${NC}"
+    CANON_STATUS="FAIL"
+    CANON_FAILURE_REASON="malformed CANON_INVENTORY.json"
+elif agent_requires_placeholder_hash_enforcement; then
+    INVALID_HASH_COUNT=$(count_invalid_inventory_hashes "$CANON_INVENTORY")
+    echo "  - Canon invalid/placeholder hashes: ${INVALID_HASH_COUNT}"
+    if [ "${INVALID_HASH_COUNT}" -gt 0 ]; then
+        echo -e "${RED}  ❌ CANON_INVENTORY degraded under placeholder-hash enforcement${NC}"
+        CANON_STATUS="FAIL"
+        CANON_FAILURE_REASON="degraded CANON_INVENTORY hashes"
+    fi
+fi
+
+ENV_HEALTH_STATUS="PASS"
+DRIFT_NORMALIZED="$(echo "${DRIFT_STATUS:-UNKNOWN}" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')"
+case "$DRIFT_NORMALIZED" in
+    yes|true|drift|drifted|degraded|fail|failed|invalid*|misaligned|notaligned)
+        ENV_HEALTH_STATUS="FAIL"
+        echo -e "${RED}  ❌ Environment health indicates drift/degradation (Drift status: ${DRIFT_STATUS})${NC}"
+        ;;
+    *)
+        ;;
+esac
+
 echo -e "${GREEN}✓ Step 6: COMPLETE${NC}"
 echo ""
 
@@ -529,6 +723,10 @@ elif [ "$MODIFIED_COUNT" -eq 0 ]; then
     OUTCOME="⚠️ PARTIAL"
 elif [ "${REQUIRED_CHECKS_STATUS:-FAIL}" != "PASS" ]; then
     OUTCOME="❌ ESCALATED"
+elif [ "${CANON_STATUS:-FAIL}" != "PASS" ]; then
+    OUTCOME="❌ ESCALATED"
+elif [ "${ENV_HEALTH_STATUS:-FAIL}" != "PASS" ]; then
+    OUTCOME="❌ ESCALATED"
 fi
 
 echo "  - Session outcome: ${OUTCOME}"
@@ -537,6 +735,50 @@ echo "  - Session outcome: ${OUTCOME}"
 sed -i "s#\[✅ COMPLETE | ⚠️ PARTIAL | ❌ ESCALATED\]#${OUTCOME}#" "$SESSION_FILE"
 
 echo -e "${GREEN}✓ Step 7: COMPLETE${NC}"
+echo ""
+
+# ==============================================================================
+# Step 8: Metrics Update
+# ==============================================================================
+echo -e "${BLUE}Step 8: Metrics Update${NC}"
+echo "------------------------------"
+
+HEAD_SHA_CURRENT="$(git rev-parse HEAD 2>/dev/null || echo "unknown")"
+METRICS_DIR="${WORKSPACE_DIR}/knowledge"
+METRICS_FILE="${METRICS_DIR}/metrics.md"
+METRICS_ENTRY_ID="session-${SESSION_NUM_PADDED}-${SESSION_DATE}@${HEAD_SHA_CURRENT}"
+
+if [ "${REQUIRED_CHECKS_STATUS:-FAIL}" = "PASS" ] && [ "${CANON_STATUS:-FAIL}" = "PASS" ] && [ "${ENV_HEALTH_STATUS:-FAIL}" = "PASS" ]; then
+    mkdir -p "$METRICS_DIR"
+    if [ ! -f "$METRICS_FILE" ]; then
+        cat > "$METRICS_FILE" <<EOF
+# ${AGENT_ID} Quality Metrics
+
+| entry_id | timestamp | session | head_sha | outcome | required_checks | canonical_health | environment_health | modified_files |
+|---|---|---|---|---|---|---|---|---|
+EOF
+    fi
+
+    if grep -F "| ${METRICS_ENTRY_ID} |" "$METRICS_FILE" >/dev/null 2>&1; then
+        echo "  - Metrics entry already exists for ${METRICS_ENTRY_ID}; skipping duplicate."
+    else
+        printf '| %s | %s | %s | %s | %s | %s | %s | %s | %s |\n' \
+            "${METRICS_ENTRY_ID}" \
+            "${TIMESTAMP}" \
+            "session-${SESSION_NUM_PADDED}" \
+            "${HEAD_SHA_CURRENT}" \
+            "${OUTCOME}" \
+            "${REQUIRED_CHECKS_STATUS:-FAIL}" \
+            "${CANON_STATUS:-FAIL}" \
+            "${ENV_HEALTH_STATUS:-FAIL}" \
+            "${MODIFIED_COUNT}" >> "$METRICS_FILE"
+        echo -e "${GREEN}  ✓ Metrics updated: ${METRICS_FILE}${NC}"
+    fi
+else
+    echo "  - Metrics update skipped because closure status is blocking."
+fi
+
+echo -e "${GREEN}✓ Step 8: COMPLETE${NC}"
 echo ""
 
 # ==============================================================================
@@ -561,6 +803,16 @@ echo ""
 if [ "${REQUIRED_CHECKS_STATUS:-FAIL}" != "PASS" ]; then
     echo -e "${RED}❌ Session closure failed: required merge checks are not fully green or could not be verified${NC}"
     echo "  - Evidence file: ${REQUIRED_CHECKS_RESULT_FILE}"
+    exit 1
+fi
+
+if [ "${CANON_STATUS:-FAIL}" != "PASS" ]; then
+    echo -e "${RED}❌ Session closure failed: canonical validation is blocking (${CANON_FAILURE_REASON:-unknown reason})${NC}"
+    exit 1
+fi
+
+if [ "${ENV_HEALTH_STATUS:-FAIL}" != "PASS" ]; then
+    echo -e "${RED}❌ Session closure failed: environment health is blocking final closure${NC}"
     exit 1
 fi
 
