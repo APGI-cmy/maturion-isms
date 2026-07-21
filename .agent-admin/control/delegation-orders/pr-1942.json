@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "APW-PRIVATE-REQUEST-CLASSIFIER-HARDENING-V01",
+  "pr_number": 1942,
+  "prebrief_commit_sha": "f4bd0dd92c7b0fe5271b3b54141a9c0ddfec1b11",
+  "builder_appointment_timestamp": "2026-07-21T14:40:00Z",
+  "builder_appointment_commit_sha": "1ebe3ca8be30eeb7abf2294f3ac6842e3cd78823",
+  "builder_agent": "apw-private-request-classifier-hardening-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-private-request-classifier-hardening-builder-v0.1.md",
+  "first_implementation_commit_sha": "30127ad35a6d5aa53bb30efd4b1f004031775270",
+  "qp_review_timestamp": "2026-07-21T14:50:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
