@@ -10,10 +10,10 @@
 ## Current protected implementation
 
 - Base branch: `main`
-- Current substantive protected-file commit: `2ef4f98546a7b95ab613ed623ea43d4a1addd7d2`
-- Current protected contract blob: `e7182c9d47e4bf453aba641a8cb61e313debc342`
+- Current substantive protected-file commit: `f90d7e6478dc623a1e1adb76c25c966c1dd1b3b5`
+- Current protected contract blob: `e1bf73d2e3e278d8d9a8afb17077c67a9b7af2c5`
 - Contract version: `2.1.0`
-- Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-066-20260721.md`
+- Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md`
 
 ## Substantive corrections present
 
@@ -30,7 +30,7 @@
 
 ## Current PR scope
 
-The PR inventory contains 12 authorised paths: the previously reconciled 11 paths plus `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-066-20260721.md`.
+The PR inventory contains 13 authorised paths: the previously reconciled 12 paths plus `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md`.
 
 No product code, runtime adapter, schema, migration, test, CI workflow, Tier 2 expansion, AIMC implementation, Supabase, Vercel, deployment, registry, routing or specialist activation change is included.
 
@@ -43,7 +43,7 @@ No product code, runtime adapter, schema, migration, test, CI workflow, Tier 2 e
 - Executable closure binding: PASS
 - Current protected commit/blob recorded: PASS
 - Current immutable PREHANDOVER: PASS
-- Scope comparison: 12 paths declared
+- Scope comparison: 13 paths declared
 - Fresh independent IAA: REQUIRED after hosted checks
 
 ## Merge boundary
