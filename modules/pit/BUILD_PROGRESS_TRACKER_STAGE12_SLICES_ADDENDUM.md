@@ -5,90 +5,47 @@
 | Module | PIT - Project Implementation Tracker |
 | Artifact type | Stage 12 slice tracker reconciliation addendum |
 | Stage | Stage 12 - Build Execution & Evidence |
-| Date | 2026-07-12 |
-| Status | ACTIVE ADDENDUM - RETROSPECTIVE RECONCILIATION COMPLETE |
+| Date | 2026-07-13 |
+| Status | ACTIVE ADDENDUM - SLICE 3 IMPLEMENTATION IN REVIEW |
 | Applies to | `modules/pit/BUILD_PROGRESS_TRACKER.md` until incorporated into a later direct tracker revision |
 
----
-
-## 1. Purpose
-
-This addendum reconciles the PIT Stage 12 build progress tracker after the Slice 2.3 entry-journey implementation was merged through PR #1910.
-
-It records the current Stage 12 slice position, preserves the existing `modules/pit/BUILD_PROGRESS_TRACKER.md` non-completion controls, and identifies the next controlled governance action without authorizing further runtime implementation.
-
----
-
-## 2. Operating model re-anchor
-
-PIT Stage 12 continues under Foreman-led governed delivery.
-
-Controlling rules:
+## Operating controls
 
 - CS2 authority remains Johan Ras.
-- Foreman orchestrates, plans, delegates, verifies and controls.
-- Foreman does not build.
-- Builders build only after appointment and only within delegated scope.
+- Foreman orchestrates, delegates, verifies and controls; appointed builders implement.
 - No QA-to-Red means no build.
-- Corrections update the affected pre-build artifact range before implementation.
-- ECAP is administrative only and may not decide readiness.
-- IAA remains required for qualifying T1/T2 work.
-- T6 documentation/admin PRs may use the canonical CS2 Direct Review track.
-- CS2 remains final merge authority.
+- ECAP remains administrative only.
+- Final assurance and CS2 merge authority remain separate from builder output.
 
----
-
-## 3. Current Stage 12 slice status
+## Current Stage 12 slice status
 
 | Slice | Status | Reference |
 |---|---|---|
-| Stage 12 kickoff | Authorized to start / incomplete | Issue #1767, PR #1768 |
-| Slice 1 / W8.2 boundary evidence | Evidence accepted for boundary/linkup only | PR #1869 |
-| Slice 2 - Project Workspace Foundation | Implemented and merged; formal browser evidence package still pending | PR #1877 |
-| Slice 2.1 - Entry, Signup and Standalone Journey Specification | Specification baseline merged | PR #1888 |
-| Slice 2.2 - Entry Implementation Planning | Planning/control baseline merged; post-merge review findings reconciled in PR #1925 | PR #1894, PR #1925 |
-| Slice 2.3 - Entry Journey Implementation | Implemented and merged as the entry-journey baseline; formal browser evidence remains required where not yet captured; historical pre-brief reconciled with residual gap through CS2 Direct Review | Issue #1896, PR #1910, PR #1925, merge commit `8a03650cac2098ece2a496813a6aa3c384673c03` |
+| Stage 12 kickoff | Authorized / incomplete | Issue #1767, PR #1768 |
+| Slice 1 / W8.2 boundary evidence | Accepted for boundary/linkup only | PR #1869 |
+| Slice 2 - Project Workspace Foundation | Implemented and merged; formal browser evidence still pending | PR #1877 |
+| Slice 2.1 - Entry journey specification | Specification merged | PR #1888 |
+| Slice 2.2 - Entry planning | Completed and issue closed | Issue #1891, PR #1894, PR #1925 |
+| Slice 2.3 - Entry implementation | Completed for authorised boundary and issue closed; uncaptured browser evidence remains outstanding | Issue #1896, PR #1910, PR #1925 |
+| Slice 3 - Project Register / Project Creation Persistence Foundation | Implemented in PR #1935; current-head CI, browser evidence and final review pending | Issue #1934, PR #1935 |
 
-Slice 2.3 delivered the governed entry-journey baseline only. Its merged scope includes the standalone `/pit` entry surface, signed-out and signed-in entitlement outcomes, role-aware workspace navigation, viewer-role Create Project CTA hiding, and preservation of the direct `/projects/new` role guard.
+## Slice 3 delivered boundary
 
----
+PR #1935 implements a typed browser-local project persistence adapter, validated creator-only project creation, and a persisted Project Register in the current mock-auth portal.
 
-## 4. Updated checklist disposition
+It does not deliver or claim production Supabase persistence, RLS, shared organisation data, cross-device synchronisation, later project hierarchy, full PIT completion or release readiness.
 
-| Checklist item | Disposition |
-|---|---|
-| Confirm Slice 2 scope in Issue #1868 | Done |
-| File Slice 2 scope declaration | Done |
-| File Slice 2 IAA pre-brief contract | Historical record preserved; retrospectively classified `RECONCILED WITH RESIDUAL GAP`; it must not be treated as canonical precedent |
-| Reconfirm or appoint the builder | Done for Slice 2 and Slice 2.3; future implementation slices require current builder appointment and delegation evidence before build |
-| Define QA-to-Green mapped to RED baseline | Done for Slice 2.2 against PIT-RED-ENTRY-001 through PIT-RED-ENTRY-020 and used as the Slice 2.3 implementation baseline; unauthenticated direct-route evidence is now explicit in the controlling documentation |
-| Only then implement the authorized slice | Slice 2 implemented via PR #1877; Slice 2.3 implemented and merged via PR #1910 |
-| Deploy and capture browser evidence | Formal Slice 2 browser evidence remains pending; Slice 2.3 browser evidence remains required where not yet formally captured |
-| Update Stage 12 evidence tracker | Reconciled after the PR #1910 merge through PR #1921; PR #1925 completes the duplicate-review documentation reconciliation |
+## Current controlled action
 
----
+Complete current-head verification and review for PR #1935:
 
-## 5. Next controlled action
+- tests and TypeScript/Vite build;
+- governance, POLC, routing, CodeQL and deployment checks;
+- open review-conversation resolution;
+- truthful implementation evidence update;
+- final assurance or canonical CS2 Direct Review;
+- formal browser evidence capture or explicit outstanding status.
 
-The next controlled action is to open the Slice 3 governance pack for **Project Register / Project Creation Persistence Foundation**.
+## Non-completion notice
 
-That governance pack should define, at minimum:
-
-- the Slice 3 scope and explicit exclusions;
-- the applicable QA-to-Red / QA-to-Green mapping;
-- the current canonical IAA pre-brief;
-- builder appointment and delegation-order evidence;
-- the implementation checklist; and
-- the evidence expectations for project creation state, the project register data model, ownership/accountability fields, persistence foundations, and role-aware access.
-
-This reconciliation does not open, authorize, or begin Slice 3 runtime implementation. No Slice 3 runtime work may begin before the required governance pack and implementation controls are in place.
-
-The Slice 3 governance pack must use a current canonical IAA pre-brief. It must not rely on the historical Slice 2.3 pre-brief format as precedent.
-
----
-
-## 6. Non-completion notice
-
-PIT Stage 12 remains incomplete.
-
-This addendum does not claim full PIT completion, Stage 12 completion, production readiness, release readiness, functional pass, handover completion, formal browser-evidence completion, or Slice 3 implementation authorization.
+PIT Stage 12 remains incomplete. This addendum does not authorize merge or claim production readiness, release readiness, Supabase persistence, formal browser-evidence completion or final functional pass.
