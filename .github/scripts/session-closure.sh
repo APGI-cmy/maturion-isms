@@ -60,7 +60,7 @@ if not os.path.exists(contract_path):
     fail(f"Agent contract not found: {contract_path}")
 
 contract_text = open(contract_path, "r", encoding="utf-8").read()
-frontmatter_match = re.search(r"^---\n(.*?)\n---\n", contract_text, re.S | re.M)
+frontmatter_match = re.search(r"\A\s*---\n(.*?)\n---\n", contract_text, re.S)
 if not frontmatter_match:
     fail("Contract YAML frontmatter is missing.")
 frontmatter = frontmatter_match.group(1)
@@ -135,12 +135,15 @@ def add(name, state, detail):
         return
     observed.setdefault(name, []).append({"state": state, "detail": detail})
 
+def text_or_empty(value):
+    return "" if value is None else str(value).strip()
+
 for run in check_runs:
     if not isinstance(run, dict):
         continue
-    name = str(run.get("name", "")).strip()
-    status = str(run.get("status", "")).strip().lower()
-    conclusion = str(run.get("conclusion", "")).strip().lower()
+    name = text_or_empty(run.get("name"))
+    status = text_or_empty(run.get("status")).lower()
+    conclusion = text_or_empty(run.get("conclusion")).lower()
     if status in {"queued", "in_progress", "waiting", "requested", "pending"}:
         add(name, "pending", f"check_run status={status}")
     elif status == "completed":
@@ -154,8 +157,8 @@ for run in check_runs:
 for status_row in commit_statuses:
     if not isinstance(status_row, dict):
         continue
-    context = str(status_row.get("context", "")).strip()
-    state = str(status_row.get("state", "")).strip().lower()
+    context = text_or_empty(status_row.get("context"))
+    state = text_or_empty(status_row.get("state")).lower()
     if state == "success":
         add(context, "success", "commit_status state=success")
     elif state == "pending":

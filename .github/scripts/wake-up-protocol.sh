@@ -186,6 +186,9 @@ if [ -f "$CANON_INVENTORY" ]; then
     # Validate JSON
     if jq empty "$CANON_INVENTORY" 2>/dev/null; then
         CANON_COUNT=$(jq '.total_artifacts // .total_canons // (.canons | length? // 0)' "$CANON_INVENTORY")
+        if ! jq -e 'has("total_artifacts") or has("total_canons")' "$CANON_INVENTORY" >/dev/null 2>&1; then
+            echo -e "${YELLOW}⚠️  CANON_INVENTORY.json missing total_artifacts/total_canons; using canons array length fallback${NC}"
+        fi
         CANON_VERSION=$(jq -r '.version // "unknown"' "$CANON_INVENTORY")
         echo "  - Canon version: ${CANON_VERSION}"
         echo "  - Total artifacts: ${CANON_COUNT}"
