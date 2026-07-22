@@ -18,6 +18,8 @@ jobs:
       SUPABASE_URL: https://ujucvyyspfxlxlfdamda.supabase.co
       SUPABASE_KEY: sb_publishable_ZUKVt9ixujFGVpI3JVzGEw_MIQYm2np
       PREVIEW_URL: https://maturion-isms-portal-git-pit-stage12-1a1797-rassie-ras-projects.vercel.app
+      LFV_EMAIL: ${{ secrets.PIT_TEST_PROJECT_MANAGER_EMAIL }}
+      LFV_PASSWORD: ${{ secrets.PIT_TEST_PROJECT_MANAGER_PASSWORD }}
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -31,46 +33,31 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
-      - name: Register disposable Supabase identity
+      - name: Validate governed LFV identity
         shell: bash
         run: |
           set -euo pipefail
-          EMAIL="pit-s4-lfv-${GITHUB_RUN_ID}@example.com"
-          PASSWORD="PIT-LFV-${GITHUB_RUN_ID}-${GITHUB_SHA:0:8}!"
+          if [ -z "$LFV_EMAIL" ] || [ -z "$LFV_PASSWORD" ]; then
+            echo 'Required governed secrets PIT_TEST_PROJECT_MANAGER_EMAIL and PIT_TEST_PROJECT_MANAGER_PASSWORD are not configured.' >&2
+            exit 1
+          fi
           PROJECT_NAME="PIT Slice 4 LFV ${GITHUB_RUN_ID}"
-          printf 'LFV_EMAIL=%s\nLFV_PASSWORD=%s\nLFV_PROJECT_NAME=%s\n' "$EMAIL" "$PASSWORD" "$PROJECT_NAME" >> "$GITHUB_ENV"
-          curl --fail-with-body --silent --show-error \
-            -X POST "$SUPABASE_URL/auth/v1/signup" \
+          printf 'LFV_PROJECT_NAME=%s\n' "$PROJECT_NAME" >> "$GITHUB_ENV"
+          RESPONSE=$(curl --fail-with-body --silent --show-error \
+            -X POST "$SUPABASE_URL/auth/v1/token?grant_type=password" \
             -H "apikey: $SUPABASE_KEY" \
             -H 'Content-Type: application/json' \
-            --data "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"data\":{\"full_name\":\"PIT Slice 4 LFV\"}}" \
-            > signup-response.json
-          node -e "const r=require('./signup-response.json'); if(!r.user?.id) throw new Error(JSON.stringify(r)); console.log('LFV_USER_ID='+r.user.id); require('fs').appendFileSync(process.env.GITHUB_ENV, 'LFV_USER_ID='+r.user.id+'\\n')"
-          printf 'email=%s\nproject_name=%s\n' "$EMAIL" "$PROJECT_NAME" > lfv-fixture.txt
-      - name: Wait for governed membership fixture
-        shell: bash
-        run: |
-          set -euo pipefail
-          for attempt in $(seq 1 120); do
-            RESPONSE=$(curl --silent --show-error \
-              -X POST "$SUPABASE_URL/auth/v1/token?grant_type=password" \
-              -H "apikey: $SUPABASE_KEY" \
-              -H 'Content-Type: application/json' \
-              --data "{\"email\":\"$LFV_EMAIL\",\"password\":\"$LFV_PASSWORD\"}")
-            TOKEN=$(printf '%s' "$RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{process.stdout.write(JSON.parse(d).access_token||'')}catch{}})")
-            if [ -n "$TOKEN" ]; then
-              CHECK=$(curl --silent --show-error "$SUPABASE_URL/rest/v1/user_org_memberships?select=org_id,status&user_id=eq.$LFV_USER_ID&status=eq.active" -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $TOKEN")
-              COUNT=$(printf '%s' "$CHECK" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{process.stdout.write(String(JSON.parse(d).length))}catch{process.stdout.write('0')}})")
-              if [ "$COUNT" = "1" ]; then
-                printf 'LFV_ACCESS_TOKEN=%s\n' "$TOKEN" >> "$GITHUB_ENV"
-                exit 0
-              fi
-            fi
-            echo "Waiting for temporary user confirmation and membership fixture ($attempt/120)"
-            sleep 5
-          done
-          echo 'Temporary LFV identity was not confirmed and bound in time.' >&2
-          exit 1
+            --data "{\"email\":\"$LFV_EMAIL\",\"password\":\"$LFV_PASSWORD\"}")
+          TOKEN=$(printf '%s' "$RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);if(!r.access_token)throw new Error(JSON.stringify(r));process.stdout.write(r.access_token)})")
+          USER_ID=$(printf '%s' "$RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);if(!r.user?.id)throw new Error(JSON.stringify(r));process.stdout.write(r.user.id)})")
+          printf 'LFV_ACCESS_TOKEN=%s\nLFV_USER_ID=%s\n' "$TOKEN" "$USER_ID" >> "$GITHUB_ENV"
+          CHECK=$(curl --fail-with-body --silent --show-error "$SUPABASE_URL/rest/v1/user_org_memberships?select=org_id,status&user_id=eq.$USER_ID&status=eq.active" -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $TOKEN")
+          COUNT=$(printf '%s' "$CHECK" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>process.stdout.write(String(JSON.parse(d).length)))")
+          if [ "$COUNT" != "1" ]; then
+            echo "Governed LFV identity must have exactly one active organisation membership; found $COUNT." >&2
+            exit 1
+          fi
+          printf 'user_id=%s\nproject_name=%s\n' "$USER_ID" "$PROJECT_NAME" > lfv-fixture.txt
       - name: Run authenticated deployed browser journey
         shell: bash
         run: |
@@ -96,10 +83,8 @@ jobs:
             await page.goto(`${base}/login`, { waitUntil: 'networkidle' });
             await page.getByLabel('Work email').fill(process.env.LFV_EMAIL);
             await page.getByLabel('Password').fill(process.env.LFV_PASSWORD);
-            await Promise.all([
-              page.waitForLoadState('networkidle'),
-              page.getByRole('button', { name: 'Continue' }).click(),
-            ]);
+            await page.getByRole('button', { name: 'Continue' }).click();
+            await page.waitForTimeout(1500);
             await page.goto(`${base}/projects/new`, { waitUntil: 'networkidle' });
             await page.getByTestId('pit-create-project').waitFor();
             await page.getByLabel('Project name').fill(process.env.LFV_PROJECT_NAME);
@@ -143,6 +128,7 @@ jobs:
               projectId,
               projectName: updatedName,
               previewUrl: base,
+              headSha: process.env.GITHUB_SHA,
             }, null, 2));
             await browser.close();
           })().catch((error) => { console.error(error); process.exit(1); });
@@ -154,4 +140,3 @@ jobs:
           path: |
             lfv-artifacts
             lfv-fixture.txt
-            signup-response.json
