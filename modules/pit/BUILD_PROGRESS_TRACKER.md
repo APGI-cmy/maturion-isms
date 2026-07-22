@@ -2,12 +2,13 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-06-01  
-**Updated By**: Stage 12 kickoff authorization review follow-up (issue #1767; PR #1768; appointed builder: `pit-specialist`; Stage 12 authorized to start, not complete)  
-> **Classification**: ACTIVE — STAGES 1–11 COMPLETE/GATE-PASSED — BUILD AUTHORIZATION CLEARED BY CS2 — STAGE 12 AUTHORIZED_TO_START / INCOMPLETE  
+**Last Updated**: 2026-07-21  
+**Updated By**: Stage 12 Slice 4 tracker reconciliation (issue #1946; PR #1947; governance baseline PR #1945 merged; Slice 4 implementation not started)  
+> **Classification**: ACTIVE — STAGES 1–11 COMPLETE/GATE-PASSED — BUILD AUTHORIZATION CLEARED BY CS2 — STAGE 12 AUTHORIZED_TO_START / INCOMPLETE — SLICE 4 GOVERNANCE BASELINE MERGED  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: maturion-isms#1255  
 > **Stage 12 Authorization Issue**: maturion-isms#1767  
+> **Active Stage 12 Slice Tracker**: `modules/pit/BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md`  
 > **Retrofit Issue**: maturion-isms#1575 — PIT pre-build functional delivery retrofit (PR #1576)
 
 ---
@@ -51,6 +52,8 @@ Stage 12 kickoff artifact: `modules/pit/12-build/stage12-kickoff-authorization.m
 
 **Current Stage**:
 - Stage 12 Build Execution & Evidence **AUTHORIZED_TO_START / INCOMPLETE** (issue #1767; builder: `pit-specialist`; 147 RED baseline binding; no `FUNCTIONAL_PASS` claim)
+- Stage 12 Slice 4 governance baseline **MERGED / IMPLEMENTATION NOT STARTED** (issue #1943; PR #1945; merge commit `4fc92c4cdcf7e0392516c7a28279c5f68049c7d5`)
+- Slice 3 authenticated browser evidence **OPEN EVIDENCE DEBT** (issue #1944; no runtime expansion authorized)
 - Stage 11 Builder Appointment **GATE_PASSED — BUILDER_APPOINTED** (maturion-isms#1729 / PR #1730; `pit-specialist` appointed)
 - Stage 10 IAA Pre-Brief **GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED**
 - Stage 9 Builder Checklist **GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED**
@@ -65,9 +68,10 @@ Stage 12 kickoff artifact: `modules/pit/12-build/stage12-kickoff-authorization.m
 - Stage 1 App Description **CS2_APPROVED_AUTHORITATIVE**
 
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576.  
-**Overall Progress**: Pre-build Stages 1–11 are complete/gate-passed. Stage 12 is authorized to start but remains incomplete. No percentage-complete claim is made until Stage 12 implementation evidence exists.  
-**Build Authorization**: **CLEARED** — explicitly cleared by CS2 in tracker update PR #1738 and reaffirmed by issue #1767 after Stage 9/10/11 evidence verification and 147 RED baseline reconciliation confirmation. Appointed builder is `pit-specialist`.  
-**Blockers**: No Stage 1–11 governance blocker remains. Stage 12 closure remains blocked until implementation code, tests, deployed LFV evidence, CS2 L3 verification, handover documentation, and zero unresolved P0/P1 gaps are complete.
+**Overall Progress**: Pre-build Stages 1–11 are complete/gate-passed. Stage 12 is authorized to start and has delivered controlled slices through the merged Slice 4 governance baseline, but remains incomplete. Slice 4 runtime, Supabase persistence, RLS, project-detail workspace, browser evidence and closure evidence remain outstanding. No percentage-complete claim is made.  
+**Build Authorization**: **CLEARED** — explicitly cleared by CS2 in tracker update PR #1738 and reaffirmed by issue #1767. Slice 4 implementation authority is issue #1943 under the governance baseline merged in PR #1945.  
+**Current Execution Boundary**: The controlled branch `pit-stage12-slice4-supabase-project-persistence` was aligned to PR #1945 merge commit before runtime work. The first implementation action must be a QA-to-RED failing-test commit. No Supabase schema or RLS write is authorized until the target project and existing authentication/organisation-membership contract are explicitly confirmed.  
+**Blockers**: No Stage 1–11 governance blocker remains. Slice 4 implementation remains pending. Stage 12 closure remains blocked until implementation code, tests, deployed LFV evidence, CS2 L3 verification, handover documentation, and zero unresolved P0/P1 gaps are complete.
 
 ---
 
@@ -247,7 +251,11 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 **Location**: `modules/pit/12-build/`  
 **Key Artifacts**:
 - [x] `stage12-kickoff-authorization.md` — authorization to enter Stage 12 (issue #1767; no functional completion claim)
-- [ ] Implementation code in `apps/` or `packages/`
+- [x] `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` — authoritative slice status through merged Slice 4 governance baseline
+- [x] Slice 4 QA-to-RED, prebrief and builder/delegation governance baseline — PR #1945
+- [ ] Slice 4 QA-to-RED failing implementation tests
+- [ ] Slice 4 Supabase schema, RLS and repository implementation
+- [ ] Slice 4 project detail workspace and route-state implementation
 - [ ] Test evidence (QA-to-Green per wave)
 - [ ] QA validation results
 - [ ] Build completion evidence
@@ -265,7 +273,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [ ] L1/L2/L3 closure status declared
 - [ ] No unresolved critical P0/P1 functional gaps
 
-**Notes**: Stage 12 is authorized to start under issue #1767 but remains incomplete. Existing AIMC wiring/persona artifacts are integration context only and do not count as Stage 12 build completion evidence.
+**Notes**: Stage 12 is authorized to start under issue #1767 but remains incomplete. Slice 3 browser evidence remains open under issue #1944. Slice 4 governance controls are merged under PR #1945, while implementation remains open under issue #1943. Existing AIMC wiring/persona artifacts are integration context only and do not count as Stage 12 build completion evidence.
 
 ---
 
@@ -285,6 +293,9 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [x] Stage 11 Builder Appointment: GATE_PASSED; `pit-specialist` appointed
 - [x] Build Authorization: CLEARED by CS2 tracker statement and reaffirmed in issue #1767
 - [x] Stage 12: AUTHORIZED_TO_START / INCOMPLETE; no `FUNCTIONAL_PASS` claim
+- [x] Slice 4 governance baseline: MERGED in PR #1945; implementation not started
+- [ ] Slice 3 authenticated browser evidence: open under issue #1944
+- [ ] Slice 4 implementation and evidence: open under issue #1943
 
 ---
 
