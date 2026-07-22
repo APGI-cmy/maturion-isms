@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       preview_url:
-        description: 'Full dashboard URL. If empty, resolve the PR preview URL, then fall back to MMM_PREVIEW_URL.'
+        description: 'Full MMM dashboard preview URL. If empty, resolve the PR preview URL.'
         required: false
         type: string
         default: ''
@@ -53,19 +53,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           package-manager-cache: false
-
       - name: Enable pnpm through Corepack
         run: |
           corepack enable
           corepack prepare pnpm@${PNPM_VERSION} --activate
           pnpm --version
-
       - name: Resolve Vercel PR preview URL
         if: github.event_name == 'pull_request'
         env:
@@ -74,8 +71,7 @@ jobs:
           SHA='${{ github.event.pull_request.head.sha }}'
           REPO='${{ github.repository }}'
           PREVIEW_URL=''
-          FALLBACK_URL=''
-          echo "Resolving Vercel preview for SHA=${SHA}"
+          echo "Resolving MMM Vercel preview for SHA=${SHA}"
           for attempt in $(seq 1 18); do
             DEPS=$(gh api "repos/$REPO/deployments?sha=${SHA}&per_page=100" 2>/dev/null || echo '[]')
             DEP_IDS=$(printf '%s' "$DEPS" | jq -r '.[] | select(.environment | test("Preview|preview"; "i")) | .id' 2>/dev/null || true)
@@ -84,23 +80,20 @@ jobs:
               while IFS= read -r URL; do
                 [ -n "$URL" ] || continue
                 [ "$URL" = 'null' ] && continue
-                if [ -z "$FALLBACK_URL" ]; then FALLBACK_URL="$URL"; fi
                 case "$URL" in
-                  *maturion-isms-mmm*.vercel.app*|*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
+                  https://*maturion-isms-mmm*.vercel.app*|https://*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
                 esac
               done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null || true)
             done
             if [ "$attempt" -lt 18 ]; then sleep 10; fi
           done
-          if [ -z "$PREVIEW_URL" ] && [ -n "$FALLBACK_URL" ]; then PREVIEW_URL="$FALLBACK_URL"; fi
-          if [ -n "$PREVIEW_URL" ]; then
-            case "$PREVIEW_URL" in */dashboard*) : ;; *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;; esac
-            echo "MMM_PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
-            echo "Resolved diagnosis URL: $PREVIEW_URL"
-          else
-            echo 'No PR preview URL resolved; falling back to MMM_PREVIEW_URL secret.'
+          if [ -z "$PREVIEW_URL" ]; then
+            echo "::error::No valid MMM PR preview URL resolved for SHA=${SHA}; refusing secret or Vercel-dashboard fallback"
+            exit 1
           fi
-
+          case "$PREVIEW_URL" in */dashboard*) : ;; *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;; esac
+          echo "MMM_PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+          echo "Resolved diagnosis URL: $PREVIEW_URL"
       - name: Verify required secrets
         run: |
           missing=0
@@ -110,7 +103,10 @@ jobs:
           if [ -z "${MMM_PREVIEW_URL}" ]; then echo '::error::MMM_PREVIEW_URL is empty'; missing=1; fi
           if [ -z "${VERCEL_AUTOMATION_BYPASS_SECRET}" ]; then echo '::warning::VERCEL_AUTOMATION_BYPASS_SECRET is not set; protected previews may fail'; fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
-
+      - name: Test preview URL validation contract
+        run: node --test scripts/mmm-live-dashboard-diagnosis/validate-preview-url.test.mjs
+      - name: Validate MMM preview origin
+        run: node scripts/mmm-live-dashboard-diagnosis/validate-preview-url.mjs
       - name: Install Playwright package and browsers
         run: |
           mkdir -p /tmp/pw
@@ -123,10 +119,8 @@ jobs:
           else
             ln -sf /tmp/pw/node_modules node_modules
           fi
-
       - name: Verify diagnosis runtime
         run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(err => { console.error(err); process.exit(1); })"
-
       - name: Run live dashboard diagnosis
         id: diagnose
         continue-on-error: true
@@ -135,7 +129,6 @@ jobs:
           set +e
           node scripts/mmm-live-dashboard-diagnosis/diagnose.mjs
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
-
       - name: Upload diagnosis artifacts
         if: always()
         uses: actions/upload-artifact@v5
@@ -144,7 +137,6 @@ jobs:
           path: diagnosis-artifacts/
           if-no-files-found: warn
           retention-days: 14
-
       - name: Print summary to job log
         if: always()
         run: |
@@ -153,7 +145,6 @@ jobs:
           else
             echo 'diagnosis-summary.md not produced' >> "$GITHUB_STEP_SUMMARY"
           fi
-
       - name: Comment diagnosis on PR
         if: always() && (inputs.pr_number != '' || github.event_name == 'pull_request')
         env:
@@ -169,7 +160,6 @@ jobs:
             { printf '<!-- mmm-live-dashboard-diagnosis -->\n'; printf '## MMM Live Dashboard Diagnosis - run %s\n\n' '${{ github.run_id }}'; cat "$summary_path"; printf '\n---\n'; printf 'ARTIFACT_LINKS: %s\n' "$RUN_URL#artifacts"; printf '\nRun: %s\n' "$RUN_URL"; } > /tmp/comment.md
           fi
           gh pr comment "$PR_NUMBER" --repo '${{ github.repository }}' --body-file /tmp/comment.md
-
       - name: Re-emit diagnosis script exit code
         if: always()
         run: |
@@ -200,19 +190,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           package-manager-cache: false
-
       - name: Enable pnpm through Corepack
         run: |
           corepack enable
           corepack prepare pnpm@${PNPM_VERSION} --activate
           pnpm --version
-
       - name: Resolve Vercel PR preview URL
         if: github.event_name == 'pull_request'
         env:
@@ -221,8 +208,7 @@ jobs:
           SHA='${{ github.event.pull_request.head.sha }}'
           REPO='${{ github.repository }}'
           PREVIEW_URL=''
-          FALLBACK_URL=''
-          echo "Resolving Vercel preview for SHA=${SHA}"
+          echo "Resolving MMM Vercel preview for SHA=${SHA}"
           for attempt in $(seq 1 18); do
             DEPS=$(gh api "repos/$REPO/deployments?sha=${SHA}&per_page=100" 2>/dev/null || echo '[]')
             DEP_IDS=$(printf '%s' "$DEPS" | jq -r '.[] | select(.environment | test("Preview|preview"; "i")) | .id' 2>/dev/null || true)
@@ -231,23 +217,20 @@ jobs:
               while IFS= read -r URL; do
                 [ -n "$URL" ] || continue
                 [ "$URL" = 'null' ] && continue
-                if [ -z "$FALLBACK_URL" ]; then FALLBACK_URL="$URL"; fi
                 case "$URL" in
-                  *maturion-isms-mmm*.vercel.app*|*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
+                  https://*maturion-isms-mmm*.vercel.app*|https://*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
                 esac
               done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null || true)
             done
             if [ "$attempt" -lt 18 ]; then sleep 10; fi
           done
-          if [ -z "$PREVIEW_URL" ] && [ -n "$FALLBACK_URL" ]; then PREVIEW_URL="$FALLBACK_URL"; fi
-          if [ -n "$PREVIEW_URL" ]; then
-            case "$PREVIEW_URL" in */dashboard*) : ;; *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;; esac
-            echo "MMM_PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
-            echo "Resolved verification URL: $PREVIEW_URL"
-          else
-            echo 'No PR preview URL resolved; falling back to MMM_PREVIEW_URL secret.'
+          if [ -z "$PREVIEW_URL" ]; then
+            echo "::error::No valid MMM PR preview URL resolved for SHA=${SHA}; refusing secret or Vercel-dashboard fallback"
+            exit 1
           fi
-
+          case "$PREVIEW_URL" in */dashboard*) : ;; *) PREVIEW_URL="${PREVIEW_URL%/}/dashboard" ;; esac
+          echo "MMM_PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+          echo "Resolved verification URL: $PREVIEW_URL"
       - name: Verify required secrets
         run: |
           missing=0
@@ -256,7 +239,10 @@ jobs:
           done
           if [ -z "${MMM_PREVIEW_URL}" ]; then echo '::error::MMM_PREVIEW_URL is empty'; missing=1; fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
-
+      - name: Test preview URL validation contract
+        run: node --test scripts/mmm-live-dashboard-diagnosis/validate-preview-url.test.mjs
+      - name: Validate MMM preview origin
+        run: node scripts/mmm-live-dashboard-diagnosis/validate-preview-url.mjs
       - name: Install Playwright package and browsers
         run: |
           mkdir -p /tmp/pw
@@ -269,14 +255,11 @@ jobs:
           else
             ln -sf /tmp/pw/node_modules node_modules
           fi
-
       - name: Verify playwright runtime
         run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(err => { console.error(err); process.exit(1); })"
-
       - name: Set up Supabase CLI
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         uses: supabase/setup-cli@v1
-
       - name: Deploy MMM Edge Functions before verification
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         run: |
@@ -287,7 +270,6 @@ jobs:
             case "$fn_name" in _*) continue ;; esac
             supabase functions deploy "$fn_name" --project-ref "$SUPABASE_PROJECT_REF"
           done
-
       - name: Wait for Edge Function propagation
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_PROJECT_REF != ''
         run: |
@@ -299,7 +281,6 @@ jobs:
             if [ "$HTTP_STATUS" != '000' ]; then break; fi
             if [ "$i" -lt 18 ]; then sleep 10; fi
           done
-
       - name: Run Mode A/B/C verification
         id: verify
         continue-on-error: true
@@ -308,7 +289,6 @@ jobs:
           set +e
           node scripts/mmm-live-dashboard-diagnosis/verify-mmm-modes.mjs
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
-
       - name: Upload verification artifacts
         if: always()
         uses: actions/upload-artifact@v5
@@ -317,7 +297,6 @@ jobs:
           path: verify-artifacts/
           if-no-files-found: warn
           retention-days: 14
-
       - name: Print summary to job log
         if: always()
         run: |
@@ -326,7 +305,6 @@ jobs:
           else
             echo 'verify-modes-summary.md not produced' >> "$GITHUB_STEP_SUMMARY"
           fi
-
       - name: Comment verification results on PR
         if: always() && (inputs.pr_number != '' || github.event_name == 'pull_request')
         env:
@@ -342,14 +320,13 @@ jobs:
             { printf '<!-- mmm-mode-verification -->\n'; printf '## MMM Mode A/B/C Verification - run %s\n\n' '${{ github.run_id }}'; cat "$summary_path"; printf '\n---\n'; printf 'ARTIFACT_LINKS: %s\n' "$RUN_URL#artifacts"; printf '\nRun: %s\n' "$RUN_URL"; } > /tmp/verify-comment.md
           fi
           gh pr comment "$PR_NUMBER" --repo '${{ github.repository }}' --body-file /tmp/verify-comment.md
-
       - name: Re-emit verification exit code
         if: always()
         run: |
           code='${{ steps.verify.outputs.exit_code }}'
           echo "verify-mmm-modes.mjs exit code: $code"
           case "$code" in
-            0|1) exit 0 ;;
-            2)   exit 1 ;;
+            0)   exit 0 ;;
+            1|2) exit 1 ;;
             *)   exit 2 ;;
           esac
