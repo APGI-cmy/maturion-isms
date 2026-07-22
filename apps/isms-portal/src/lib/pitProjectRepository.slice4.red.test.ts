@@ -67,9 +67,7 @@ describe('PIT Stage 12 Slice 4 QA-to-RED repository contract', () => {
   it('PIT-S4-RED-REPO-001 creates exactly one Supabase project', async () => {
     const client = controlledClient();
     const repository = createSupabasePitProjectRepository(client);
-
     const created = await repository.create(validInput);
-
     expect(created.id).toBe(record.id);
     expect(client.createProject).toHaveBeenCalledTimes(1);
     expect(client.createProject).toHaveBeenCalledWith(validInput, creator);
@@ -78,7 +76,6 @@ describe('PIT Stage 12 Slice 4 QA-to-RED repository contract', () => {
   it('PIT-S4-RED-REPO-002 lists only organisation-scoped Supabase projects', async () => {
     const client = controlledClient();
     const repository = createSupabasePitProjectRepository(client);
-
     await expect(repository.list()).resolves.toEqual([record]);
     expect(client.listProjects).toHaveBeenCalledWith(creator);
   });
@@ -86,7 +83,6 @@ describe('PIT Stage 12 Slice 4 QA-to-RED repository contract', () => {
   it('PIT-S4-RED-REPO-003 loads a permitted project detail record', async () => {
     const client = controlledClient();
     const repository = createSupabasePitProjectRepository(client);
-
     await expect(repository.getById(record.id)).resolves.toEqual(record);
     expect(client.getProject).toHaveBeenCalledWith(record.id, creator);
   });
@@ -95,7 +91,6 @@ describe('PIT Stage 12 Slice 4 QA-to-RED repository contract', () => {
     const updated = { ...record, name: 'Updated project', updatedAt: '2026-07-22T09:00:00.000Z' };
     const client = controlledClient({ updateProject: vi.fn(async () => updated) });
     const repository = createSupabasePitProjectRepository(client);
-
     await expect(repository.update(record.id, { name: updated.name })).resolves.toEqual(updated);
     expect(client.updateProject).toHaveBeenCalledWith(record.id, { name: updated.name }, creator);
   });
@@ -103,9 +98,7 @@ describe('PIT Stage 12 Slice 4 QA-to-RED repository contract', () => {
   it('PIT-S4-RED-VALID-001 rejects invalid date order before any write', async () => {
     const client = controlledClient();
     const repository = createSupabasePitProjectRepository(client);
-
-    await expect(repository.create({ ...validInput, startDate: '2026-09-01', endDate: '2026-08-31' }))
-      .rejects.toThrow('End date');
+    await expect(repository.create({ ...validInput, startDate: '2026-09-01', endDate: '2026-08-31' })).rejects.toThrow('End date');
     expect(client.createProject).not.toHaveBeenCalled();
   });
 
@@ -116,17 +109,14 @@ describe('PIT Stage 12 Slice 4 QA-to-RED repository contract', () => {
   it('PIT-S4-RED-AUTH-001 fails closed without an authenticated membership context', async () => {
     const client = controlledClient({ resolveAuthContext: vi.fn(async () => null) });
     const repository = createSupabasePitProjectRepository(client);
-
     await expect(repository.list()).rejects.toThrow('authenticated');
     expect(client.listProjects).not.toHaveBeenCalled();
   });
 
   it('PIT-S4-RED-RLS-004 blocks viewer mutations before the database call', async () => {
-    const client = controlledClient({
-      resolveAuthContext: vi.fn(async () => ({ ...creator, role: 'viewer' })),
-    });
+    const viewerContext: PitProjectAuthContext = { ...creator, role: 'viewer' };
+    const client = controlledClient({ resolveAuthContext: vi.fn(async () => viewerContext) });
     const repository = createSupabasePitProjectRepository(client);
-
     await expect(repository.create(validInput)).rejects.toThrow('not permitted');
     expect(client.createProject).not.toHaveBeenCalled();
   });
