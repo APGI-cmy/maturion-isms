@@ -13,7 +13,7 @@
   "builder_task_ref": "modules/pit/12-build/slice-4/builder-appointment-delegation-20260721.md",
   "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1952.md",
   "supabase_contract_ref": "modules/pit/12-build/slice-4/supabase-target-and-auth-contract-20260722.md",
-  "first_implementation_commit_sha": null,
+  "first_implementation_commit_sha": "4f31c3a1648357aee6c45f3e6e286eeab3f1a46a",
   "qp_review_timestamp": null,
-  "result": "DELEGATION_ORDER_OPEN_PENDING_RED_IMPLEMENTATION_COMMIT"
+  "result": "DELEGATION_ORDER_ACTIVE_RED_COMMIT_RECORDED"
 }
