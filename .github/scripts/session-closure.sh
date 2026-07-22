@@ -39,20 +39,48 @@ agent_requires_placeholder_hash_enforcement() {
 
 count_invalid_inventory_hashes() {
     local inventory_file="$1"
-    # Canon inventory hashes are SHA-256 and must be 64 hex chars.
     jq -r '
       def invalid_hash:
-        . == null
-        or (type != "string")
-        or (length == 0)
-        or test("^0+$")
-        or (length < 64);
+        if type != "string" then
+          true
+        else
+          (test("^[0-9a-fA-F]{64}$") | not)
+          or test("^0{64}$")
+        end;
       if (.canons? | type) == "array" then
         [ .canons[]? | (.file_hash_sha256 // .file_hash) | select(invalid_hash) ] | length
       elif (.artifacts? | type) == "object" then
         [ .artifacts[]?
           | (if type == "object" then (.sha256 // .file_hash_sha256 // .file_hash) else . end)
           | select(invalid_hash)
+        ] | length
+      else
+        0
+      end
+    ' "$inventory_file"
+}
+
+count_missing_inventory_commit_provenance() {
+    local inventory_file="$1"
+    jq -r '
+      def missing_commit:
+        . == null
+        or (type != "string")
+        or (length != 40)
+        or (test("^[0-9a-fA-F]{40}$") | not);
+      def commit_field:
+        .canonical_commit_sha
+        // .canonical_commit
+        // .canonical_commit_sha1
+        // .commit_sha
+        // .source_commit_sha
+        // .commit;
+      if (.canons? | type) == "array" then
+        [ .canons[]? | (if type == "object" then commit_field else null end) | select(missing_commit) ] | length
+      elif (.artifacts? | type) == "object" then
+        [ .artifacts[]?
+          | (if type == "object" then commit_field else null end)
+          | select(missing_commit)
         ] | length
       else
         0
@@ -739,11 +767,18 @@ elif ! jq empty "$CANON_INVENTORY" 2>/dev/null; then
     CANON_FAILURE_REASON="malformed CANON_INVENTORY.json"
 elif agent_requires_placeholder_hash_enforcement; then
     INVALID_HASH_COUNT=$(count_invalid_inventory_hashes "$CANON_INVENTORY")
+    MISSING_PROVENANCE_COUNT=$(count_missing_inventory_commit_provenance "$CANON_INVENTORY")
     echo "  - Canon invalid/placeholder hashes: ${INVALID_HASH_COUNT}"
+    echo "  - Missing canonical commit SHA provenance: ${MISSING_PROVENANCE_COUNT}"
     if [ "${INVALID_HASH_COUNT}" -gt 0 ]; then
         echo -e "${RED}  ❌ CANON_INVENTORY degraded under placeholder-hash enforcement${NC}"
         CANON_STATUS="FAIL"
         CANON_FAILURE_REASON="degraded CANON_INVENTORY hashes"
+    fi
+    if [ "${MISSING_PROVENANCE_COUNT}" -gt 0 ]; then
+        echo -e "${RED}  ❌ CANON_INVENTORY degraded: missing canonical commit SHA provenance${NC}"
+        CANON_STATUS="FAIL"
+        CANON_FAILURE_REASON="missing canonical commit SHA provenance"
     fi
 fi
 

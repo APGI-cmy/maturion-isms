@@ -44,11 +44,12 @@ count_invalid_inventory_hashes() {
     local inventory_file="$1"
     jq -r '
       def invalid_hash:
-        . == null
-        or (type != "string")
-        or (length == 0)
-        or test("^0+$")
-        or (length < 64);
+        if type != "string" then
+          true
+        else
+          (test("^[0-9a-fA-F]{64}$") | not)
+          or test("^0{64}$")
+        end;
       if (.canons? | type) == "array" then
         [ .canons[]? | (.file_hash_sha256 // .file_hash) | select(invalid_hash) ] | length
       elif (.artifacts? | type) == "object" then
