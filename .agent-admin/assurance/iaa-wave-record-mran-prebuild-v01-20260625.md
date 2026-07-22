@@ -22,7 +22,7 @@ WAVE: MRAN-PREBUILD-V01
 WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
 
-### EXPECTED_QA_SCOPE
+EXPECTED_QA_SCOPE:
 
 - Review the scope declaration, FRS, TRS, and QA-to-Red artifacts for architectural completeness.
 - Confirm the work is prebuild-only and does not implement runtime code, Supabase changes, registry activation, specialist activation, or `.github/agents` changes.
