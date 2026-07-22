@@ -22,7 +22,7 @@ handover_allowed: no
 | CODEX-P1 | Restore executable induction protocol | CodexAdvisor-agent | COMPLETE |
 | CODEX-P2 | Restore automated closure protocol | CodexAdvisor-agent | COMPLETE |
 | CODEX-P3 | Restore mandatory execution identity block and push-safety controls | CodexAdvisor-agent | COMPLETE |
-| ADMIN-1933 | Reconcile manifest, scope, tasks and PR body to 17 paths (including session-1285 memory artifact) | CodexAdvisor-agent | COMPLETE |
+| ADMIN-1933 | Reconcile manifest, scope, tasks and PR body to 18 paths (including pre-authorised session-1286 memory artifact) | CodexAdvisor-agent | COMPLETE |
 | HOSTED-1933 | Complete hosted checks on current STOP_AND_FIX head | GitHub Actions | COMPLETE |
 | IAA-1933-R4 | Perform independent final assurance on frozen head `09bde7c60f3897479de2a805d302aaffcec097d1` | independent-assurance-agent | COMPLETE_REJECTED |
 | STOPFIX-R4 | Implement exact substantive fixes from IAA session 1284 | CodexAdvisor-agent | COMPLETE |
