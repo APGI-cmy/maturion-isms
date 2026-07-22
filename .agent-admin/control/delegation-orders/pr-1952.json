@@ -3,7 +3,7 @@
   "wave_id": "pit-stage12-slice4-supabase-project-persistence",
   "issue_number": 1943,
   "pr_number": 1952,
-  "prebrief_commit_sha": "419d42df7f6cdfe50767d8fda3f26e0753e05f6d",
+  "prebrief_commit_sha": "419d42df55b6419f6ae49dea7d14158a21c2cbb9",
   "builder_appointment_timestamp": "2026-07-21T17:03:00+02:00",
   "builder_appointment_commit_sha": "fee39bd8c15bae0da1de275e82b02a2a2c6e438f",
   "builder_agent": "pit-specialist",
