@@ -4,7 +4,7 @@
   "type": "agent-contract-change",
   "owner": "CodexAdvisor-agent",
   "branch": "codexadvisor-issue-1932-maturion-thin-core",
-  "head_sha": "57ac10afdf1ca63f44382fb9264b21fc814fd17a",
+  "head_sha": "7008c54b959266f78dfcc2237b72518d8b0547f1",
   "base_sha": "CURRENT_BASE",
   "scope": [
     ".github/agents/maturion-agent.md",
@@ -22,7 +22,8 @@
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-065-20260720.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-066-20260721.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-067-20260721.md",
-    ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md"
+    ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1285-20260722.md"
   ],
   "risk": "high",
   "requires_iaa": true,

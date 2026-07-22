@@ -20,8 +20,8 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 - Current substantive protected-file commit: `6ad1a892dbb47f758e036c99cc29a0e8df402e40`
 - Current protected contract blob: `4c060b890074b79fa293dcd66c9b3f9987200e47`
 - Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md`
-- Prior IAA result: REJECTION-PACKAGE in session 1284
-- Fresh independent IAA: REQUIRED after hosted checks pass on the latest STOP_AND_FIX head
+- Prior IAA result: REJECTION-PACKAGE in session 1285
+- Fresh independent IAA: REQUIRED after RP-1933-R5 admin reconciliation on unchanged substantive baseline
 
 ## STOP_AND_FIX remediation
 
@@ -31,20 +31,20 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 - Mandatory `execution_identity` block restored with explicit push-safety controls.
 - Executable Phase 2 induction restored.
 - Automated Phase 4 closure restored.
-- IAA session 1284 REJECTION-PACKAGE retained as immutable history.
+- IAA sessions 1284 and 1285 REJECTION-PACKAGE history retained as immutable records.
 - Exact substantive STOP_AND_FIX applied for canonical provenance blocking and required-check evidence SHA binding.
 - Both latest Codex review conversations resolved after implementation.
-- Hosted checks must complete against the current post-fix head before renewed independent IAA.
+- Hosted checks are green on current head; renewed independent IAA is still required.
 
 ## Scope
 
-FILES_CHANGED: 16
+FILES_CHANGED: 17
 
-The authoritative 16-path inventory is recorded in `.admin/prs/pr-1933.json` and `.agent-admin/scope-declarations/pr-1933.md`.
+The authoritative 17-path inventory is recorded in `.admin/prs/pr-1933.json` and `.agent-admin/scope-declarations/pr-1933.md`.
 
 No runtime, Tier 2, product code, test, schema, migration, provider, CI workflow, Supabase, Vercel or deployment change is included.
 
 SCOPE_PARITY: RECONCILED
 HANDOVER_ALLOWED: no
 MERGE_AUTHORITY: CS2
-FINAL_STATE: PENDING_HOSTED_CHECKS_AND_RENEWED_INDEPENDENT_IAA
+FINAL_STATE: PENDING_RENEWED_INDEPENDENT_IAA
