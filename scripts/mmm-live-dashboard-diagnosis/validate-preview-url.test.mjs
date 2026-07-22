@@ -7,28 +7,36 @@ import {
   validateConfiguredPreviewUrl,
 } from './validate-preview-url.mjs';
 
-test('accepts the MMM Vercel preview host', () => {
+test('accepts exact MMM production and preview hosts', () => {
+  assert.equal(isAllowedMmmPreviewHost('maturion-isms-mmm.vercel.app'), true);
   assert.equal(
-    isAllowedMmmPreviewHost('maturion-isms-mmm-git-example-rassie-ras-projects.vercel.app'),
+    isAllowedMmmPreviewHost(
+      'maturion-isms-mmm-git-example-rassie-ras-projects.vercel.app',
+    ),
     true,
   );
   assert.equal(
     validateConfiguredPreviewUrl(
-      'https://maturion-isms-mmm-git-example-rassie-ras-projects.vercel.app/dashboard',
+      '  https://maturion-isms-mmm-git-example-rassie-ras-projects.vercel.app/dashboard  ',
     ).hostname,
     'maturion-isms-mmm-git-example-rassie-ras-projects.vercel.app',
   );
 });
 
-test('rejects Vercel login and unrelated Vercel apps', () => {
-  assert.throws(
-    () => validateConfiguredPreviewUrl('https://vercel.com/login'),
-    /must target the MMM Vercel preview host/,
-  );
-  assert.throws(
-    () => validateConfiguredPreviewUrl('https://unrelated-project.vercel.app/dashboard'),
-    /must target the MMM Vercel preview host/,
-  );
+test('rejects Vercel login, unrelated apps, and lookalike project hosts', () => {
+  const rejectedUrls = [
+    'https://vercel.com/login',
+    'https://unrelated-project.vercel.app/dashboard',
+    'https://unrelated-maturion-isms-mmm.vercel.app/dashboard',
+    'https://maturion-isms-mmm-evil.vercel.app/dashboard',
+  ];
+
+  for (const rejectedUrl of rejectedUrls) {
+    assert.throws(
+      () => validateConfiguredPreviewUrl(rejectedUrl),
+      /must target the MMM Vercel preview host/,
+    );
+  }
 });
 
 test('rejects redirect away from the expected MMM application host', () => {
