@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Module | PIT — Project Implementation Tracker |
+| Module | PIT - Project Implementation Tracker |
 | Artifact type | Authoritative Stage 12 slice-status addendum |
-| Stage | Stage 12 — Build Execution & Evidence |
+| Stage | Stage 12 - Build Execution & Evidence |
 | Date | 2026-07-21 |
 | Status | ACTIVE — RECONCILED THROUGH SLICE 4 GOVERNANCE MERGE |
 | Reconciliation authority | Issue #1946 |
@@ -23,14 +23,14 @@
 
 | Slice | Status | Reference |
 |---|---|---|
-| Stage 12 kickoff | Authorised / incomplete | Issue #1767, PR #1768 |
+| Stage 12 kickoff | Authorized / incomplete | Issue #1767, PR #1768 |
 | Slice 1 / W8.2 boundary evidence | Accepted for boundary/linkup only | PR #1869 |
 | Slice 2 — Project Workspace Foundation | Implemented and merged; formal browser evidence still pending | PR #1877 |
 | Slice 2.1 — Entry journey specification | Specification merged | PR #1888 |
 | Slice 2.2 — Entry planning | Completed and issue closed | Issue #1891, PR #1894, PR #1925 |
-| Slice 2.3 — Entry implementation | Completed for authorised boundary and issue closed; uncaptured browser evidence remains outstanding | Issue #1896, PR #1910, PR #1925 |
-| Slice 3 — Project Register / Project Creation Persistence Foundation | Implemented and merged for the authorised browser-local boundary; formal authenticated browser evidence remains outstanding | Issue #1934, PR #1935, merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd` |
-| Slice 3 browser evidence | Open evidence-only action; no runtime expansion authorised | Issue #1944 |
+| Slice 2.3 — Entry implementation | Completed for authorized boundary and issue closed; uncaptured browser evidence remains outstanding | Issue #1896, PR #1910, PR #1925 |
+| Slice 3 — Project Register / Project Creation Persistence Foundation | Implemented and merged for the authorized browser-local boundary; formal authenticated browser evidence remains outstanding | Issue #1934, PR #1935, merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd` |
+| Slice 3 browser evidence | Open evidence-only action; no runtime expansion authorized | Issue #1944 |
 | Slice 4 — Supabase Project Persistence and Project Detail Workspace Foundation | Governance baseline merged; implementation open and not started | Issue #1943, PR #1945, merge commit `4fc92c4cdcf7e0392516c7a28279c5f68049c7d5` |
 
 ## Slice 4 governance baseline delivered
@@ -65,7 +65,7 @@ Read-only inspection on 2026-07-21 found three healthy Supabase projects:
 - `AMC` — no public tables at inspection time;
 - `APGI-cmy's Project` (`ujucvyyspfxlxlfdamda`) — shared ISMS/MMM-style schema containing RLS-enabled organisations, profiles, user organisation memberships, user roles, audit and QA tables.
 
-No PIT `projects` or `source_links` tables existed in the inspected shared environment. The shared environment is the leading candidate only; no schema write is authorised until its identity is explicitly confirmed for PIT.
+No PIT `projects` or `source_links` tables existed in the inspected shared environment. The shared environment is the leading candidate only; no schema write is authorized until its identity is explicitly confirmed for PIT.
 
 ## Outstanding evidence and implementation debt
 
@@ -78,8 +78,8 @@ No PIT `projects` or `source_links` tables existed in the inspected shared envir
 
 The following W8.2 addenda remain preserved for audit history but are superseded for current-state interpretation by this addendum:
 
-- `BUILD_PROGRESS_TRACKER_PR1850_ALIGNMENT.md`;
-- `BUILD_PROGRESS_TRACKER_W8_2_DISPOSITION_ADDENDUM.md`.
+- `modules/pit/BUILD_PROGRESS_TRACKER_PR1850_ALIGNMENT.md`;
+- `modules/pit/BUILD_PROGRESS_TRACKER_W8_2_DISPOSITION_ADDENDUM.md`.
 
 ## Non-completion notice
 
@@ -94,4 +94,4 @@ This addendum does not claim:
 - browser-evidence completion;
 - handover completion.
 
-PIT Stage 12 remains **AUTHORISED_TO_START / INCOMPLETE**.
+PIT Stage 12 remains **AUTHORIZED_TO_START / INCOMPLETE**.
