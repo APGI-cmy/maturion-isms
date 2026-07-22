@@ -182,3 +182,33 @@ IAA_REJECTION_NOTICE
 - RCA_REVIEW: REFER_BACK
 - HANDOVER_ALLOWED: no
 - RESULT: REJECTED_BACK_TO_PRODUCER
+
+## REJECTION-PACKAGE — FINAL (2026-07-22)
+
+═══════════════════════════════════════
+REJECTION-PACKAGE
+PR: #1933 — CodexAdvisor: correct Maturion thin-core orchestrator contract
+Reviewed head: 7008c54b959266f78dfcc2237b72518d8b0547f1
+Protected contract commit (latest substantive): 6ad1a892dbb47f758e036c99cc29a0e8df402e40
+Protected contract blob at head: 4c060b890074b79fa293dcd66c9b3f9987200e47
+FILES_CHANGED reviewed: 16
+2 check(s) FAILED. Merge blocked. STOP-AND-FIX required.
+FAILURES:
+  RP-1933-R5-01 — Hosted checks not fully complete at assurance point
+    - Finding: current-head checks still include `copilot` with `status: in_progress`; hosted checks are not fully terminal-green at the assurance point.
+    - Fix required: wait for all hosted checks on head `7008c54b959266f78dfcc2237b72518d8b0547f1` to reach completed/success (or approved skipped state where applicable), then re-invoke IAA on unchanged head.
+    - Classification: Ceremony
+  RP-1933-R5-02 — PR manifest head SHA is stale versus frozen reviewed head
+    - Finding: `.admin/prs/pr-1933.json` records `head_sha: 57ac10afdf1ca63f44382fb9264b21fc814fd17a` while this invocation is explicitly frozen and reviewed at `7008c54b959266f78dfcc2237b72518d8b0547f1`.
+    - Fix required: reconcile PR manifest head binding to the actual frozen reviewed head before final PASS invocation.
+    - Classification: Systemic
+    - Prevention action (NO-REPEAT-PREVENTABLE-001): add a CI parity gate enforcing `.admin/prs/pr-<id>.json head_sha == current PR head` at IAA invocation time.
+This PR must not be opened until all failures are resolved and IAA re-invoked.
+Adoption phase: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-1285-20260722-REJECT
+═══════════════════════════════════════
+
+IAA_REJECTION_NOTICE
+- RCA_REVIEW: REFER_BACK
+- HANDOVER_ALLOWED: no
+- RESULT: REJECTED_BACK_TO_PRODUCER
