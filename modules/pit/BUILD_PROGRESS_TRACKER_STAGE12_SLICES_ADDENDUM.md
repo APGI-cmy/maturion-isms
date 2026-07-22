@@ -6,7 +6,7 @@
 | Artifact type | Authoritative Stage 12 slice-status addendum |
 | Stage | Stage 12 - Build Execution & Evidence |
 | Date | 2026-07-22 |
-| Status | ACTIVE — SLICE 4 CODE/DATABASE GREEN / DEPLOYED LFV OPEN |
+| Status | ACTIVE — SLICE 4 IMPLEMENTATION/GATES/DEPLOYMENT GREEN / AUTHENTICATED LFV EXTERNALLY BLOCKED |
 | Reconciliation authority | Issue #1946; implementation Issue #1943 |
 | Applies to | `modules/pit/BUILD_PROGRESS_TRACKER.md` until incorporated into a later direct tracker revision |
 
@@ -31,23 +31,20 @@
 | Slice 2.3 — Entry implementation | Completed for authorized boundary and issue closed; uncaptured browser evidence remains outstanding | Issue #1896, PR #1910, PR #1925 |
 | Slice 3 — Project Register / Project Creation Persistence Foundation | Implemented and merged for the authorized browser-local boundary; formal authenticated browser evidence remains outstanding | Issue #1934, PR #1935, merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd` |
 | Slice 3 browser evidence | Open evidence-only action; no runtime expansion authorized | Issue #1944 |
-| Slice 4 — Supabase Project Persistence and Project Detail Workspace Foundation | Implementation PR active; QA-to-RED satisfied; code/database/RLS GREEN; final deployment, authenticated browser LFV and review open | Issue #1943, PR #1952 |
+| Slice 4 — Supabase Project Persistence and Project Detail Workspace Foundation | Runtime, database, RLS, governance, CodeQL and preview deployment GREEN; authenticated browser LFV blocked by missing governed identity seed and Action secrets | Issue #1943, draft PR #1952 |
 
 ## Slice 4 governance and implementation ordering
 
-The canonical ordering is recorded as:
+The active PR history now proves:
 
-1. governance wave task declaration;
-2. QA-to-RED and Supabase/RLS contract;
-3. canonical IAA preflight brief;
-4. `pit-specialist` appointment and delegation;
-5. PR-scoped delegation record;
-6. first implementation/RED commit `4f31c3a1648357aee6c45f3e6e286eeab3f1a46a`;
-7. Build-to-GREEN implementation;
-8. applied migration and RLS verification;
-9. deployed browser LFV and final review, still open.
+1. PR-specific prebrief `80a3a5b911f6a41f0a0885dd666758a9d5595493`;
+2. `pit-specialist` appointment `8f8c1662f9aee3c2aa1b6ac1e5ac08a6e3880585`;
+3. first implementation/QA-to-RED commit `155b42e141c78a9fcd28ee9beefca0d104271d34`;
+4. Build-to-GREEN implementation;
+5. applied migration and RLS verification;
+6. current-head governance, CodeQL and deployment verification.
 
-The controlled implementation branch was aligned to PR #1947 merge commit `eb2348fd317bcdc513c5398b646e596c4a0cf56e` before implementation.
+The Builder Delegation Order Gate passes. The pre-repair branch state is preserved at `backup/pr-1952-before-delegation-history-repair`.
 
 ## Supabase target and delivered database boundary
 
@@ -87,22 +84,45 @@ Transactional RLS verification returned:
 
 Completed:
 
-- QA-to-RED commit and delegation proof;
+- strict PR-specific delegation ancestry and gate proof;
+- QA-to-RED commit;
 - repository/validation tests GREEN;
 - TypeScript compiler exit `0`, empty diagnostics;
 - migrations applied;
 - RLS and privilege verification;
 - RED-to-GREEN evidence filed;
-- implementation-plan alignment filed.
+- implementation-plan alignment filed;
+- all current-head governance and security gates GREEN;
+- CodeQL GREEN;
+- ISMS Portal and PIT preview deployment/smoke GREEN;
+- review-thread inventory complete with no threads or submitted reviews.
 
-Outstanding:
+## Authenticated LFV dependency
+
+The canonical LFV package requires a seeded PIT test organisation and confirmed role identities before browser execution. Current verification found:
+
+- `PIT_TEST_PROJECT_MANAGER_EMAIL` and `PIT_TEST_PROJECT_MANAGER_PASSWORD` are not configured in the GitHub Actions environment;
+- the documented design identity `pit.pm@test.maturion.dev` is not present in the bound Supabase Auth project;
+- public signup cannot be used as a substitute because Supabase confirmation-email delivery returns `unexpected_failure: Error sending confirmation email`;
+- no credential was invented, committed or bypassed.
+
+Required administrator actions:
+
+1. seed or confirm the governed project-manager test identity;
+2. assign exactly one active organisation membership and `project_manager` role;
+3. configure the two canonical Action secrets;
+4. execute and evidence create → detail → update → register LFV;
+5. clean up the LFV-created project.
+
+This is the sole Slice 4 merge-readiness blocker and is environment/secret administration rather than remaining product implementation.
+
+## Outstanding
 
 - Issue #1944 formal authenticated browser evidence for Slice 3;
-- final current-head deployment and route-smoke evidence for PR #1952;
-- authenticated Slice 4 browser create → register → detail → update trace;
-- final review-conversation closure and independent/proxy review;
+- Slice 4 governed identity/secret provisioning and authenticated browser LFV;
+- final proxy/IAA review after LFV;
 - merge, post-merge verification and Issue #1943 closure;
-- Stage 12 closure evidence, full route coverage, LFV closure, CS2 L3 verification and handover.
+- broader Stage 12 closure evidence, full route coverage, CS2 L3 verification and handover.
 
 ## Supersession notice
 
@@ -113,13 +133,6 @@ The W8.2 addenda remain preserved for audit history but are superseded for curre
 
 ## Non-completion notice
 
-This addendum does not claim:
-
-- Slice 4 deployed browser LFV completion;
-- PR #1952 merge readiness before final checks/review;
-- full PIT or Stage 12 completion;
-- production or release readiness;
-- `FUNCTIONAL_PASS`;
-- handover completion.
+This addendum does not claim authenticated browser LFV completion, PR #1952 merge readiness, full PIT or Stage 12 completion, production/release readiness, `FUNCTIONAL_PASS` or handover completion.
 
 PIT Stage 12 remains **AUTHORIZED_TO_START / INCOMPLETE**.
