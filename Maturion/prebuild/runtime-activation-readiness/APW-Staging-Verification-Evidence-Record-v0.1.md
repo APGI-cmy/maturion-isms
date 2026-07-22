@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-STAGING-VERIFICATION-EVIDENCE-001  
 **Version**: 0.1.0  
-**Status**: EXECUTION_NOT_STARTED  
+**Status**: EXECUTION_PRECONDITIONS_CONFIRMED  
 **Authority**: CS2 — Johan Ras  
 **Finding**: `APW-PRODUCTION-ACTIVATION-BLOCKER-001`  
 **Wave**: APW Staging Verification and Blocker Closure v0.1
@@ -22,7 +22,7 @@ APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
 - Gateway: `https://maturion-mat-ai-gateway-staging.onrender.com`
 - Health endpoint: `/health`
 - Public chat endpoint: `/api/v1/public-chat`
-- Staging flag before execution: `PENDING_OPERATOR_CONFIRMATION`
+- Staging flag before execution: `false` — operator-confirmed
 - Staging flag during verification: `PENDING`
 - Staging flag after verification: `PENDING`
 
@@ -30,10 +30,10 @@ APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
 
 | Item | Status | Evidence |
 |---|---|---|
-| Verification date/time | PENDING | — |
-| Named operator | PENDING | — |
-| Health before enablement | PENDING | — |
-| Staging flag initially false | PENDING | — |
+| Verification date/time | IN_PROGRESS | Started 2026-07-22 10:24 SAST |
+| Named operator | CONFIRMED | Johan Ras / CS2 |
+| Health before enablement | PASS | Operator screenshot showed `{"status":"ok"}` at the approved staging `/health` endpoint |
+| Staging flag initially false | PASS | Operator screenshot showed `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false` on the staging service |
 | Staging flag enabled | PENDING | — |
 | Staging redeploy/restart completed | PENDING | — |
 | Health after enablement | PENDING | — |
@@ -72,7 +72,7 @@ Add redacted safe route telemetry here during execution. Do not include secrets,
 
 ## 6. Stop-condition review
 
-Status: `PENDING`
+Status: `NO_STOP_CONDITION_AT_PRECONDITION_CHECK`
 
 ## 7. CS2 blocker decision
 
@@ -95,5 +95,5 @@ KEEP_BLOCKER_OPEN_AND_REMEDIATE
 ## 8. Final disposition
 
 ```text
-STAGING_VERIFICATION_NOT_YET_EXECUTED
+STAGING_VERIFICATION_PRECONDITIONS_CONFIRMED_EXECUTION_IN_PROGRESS
 ```
