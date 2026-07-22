@@ -20,8 +20,8 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 - Current substantive protected-file commit: `6ad1a892dbb47f758e036c99cc29a0e8df402e40`
 - Current protected contract blob: `4c060b890074b79fa293dcd66c9b3f9987200e47`
 - Current immutable PREHANDOVER: `.agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md`
-- Prior IAA result: REJECTION-PACKAGE in session 1286
-- Fresh independent IAA: REQUIRED after RP-1933-R6 evidence-parity reconciliation on unchanged substantive baseline
+- Prior IAA result: ASSURANCE-TOKEN in session 1287
+- Fresh independent IAA: COMPLETE on unchanged substantive baseline after RP-1933-R6 reconciliation
 
 ## STOP_AND_FIX remediation
 
@@ -34,7 +34,7 @@ The waiver applies only to the separate ECAP bundle artifact. It does not waive 
 - IAA sessions 1284, 1285 and 1286 REJECTION-PACKAGE history retained as immutable records.
 - Exact substantive STOP_AND_FIX applied for canonical provenance blocking and required-check evidence SHA binding.
 - Both latest Codex review conversations resolved after implementation.
-- Hosted checks are green on current head; renewed independent IAA is still required.
+- Hosted checks are green on current head; renewed independent IAA PASS has been obtained.
 
 ## Scope
 
@@ -45,6 +45,6 @@ The authoritative 19-path inventory is recorded in `.admin/prs/pr-1933.json` and
 No runtime, Tier 2, product code, test, schema, migration, provider, CI workflow, Supabase, Vercel or deployment change is included.
 
 SCOPE_PARITY: RECONCILED
-HANDOVER_ALLOWED: no
+HANDOVER_ALLOWED: yes
 MERGE_AUTHORITY: CS2
-FINAL_STATE: PENDING_RENEWED_INDEPENDENT_IAA
+FINAL_STATE: READY_FOR_CS2_REVIEW

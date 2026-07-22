@@ -10,9 +10,9 @@ iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-maturion-thin-core-
 current_substantive_protected_commit: 6ad1a892dbb47f758e036c99cc29a0e8df402e40
 current_protected_blob: 4c060b890074b79fa293dcd66c9b3f9987200e47
 current_prehandover: .agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-068-20260721.md
-prior_iaa_session: session-1286-20260722
-prior_iaa_result: REJECTION-PACKAGE
-handover_allowed: no
+prior_iaa_session: session-1287-20260722
+prior_iaa_result: ASSURANCE-TOKEN
+handover_allowed: yes
 
 | Task ID | Description | Owner | Status |
 |---|---|---|---|
@@ -30,6 +30,6 @@ handover_allowed: no
 | STOPFIX-R5 | Reconcile manifest/scope/task evidence to RP-1933-R5 findings without substantive changes | CodexAdvisor-agent | COMPLETE |
 | IAA-1933-R6 | Perform renewed independent final assurance after STOPFIX-R5 reconciliation on unchanged substantive baseline | independent-assurance-agent | COMPLETE_REJECTED |
 | STOPFIX-R6 | Reconcile required scope evidence parity (manifest/scope/proof) and pre-authorise next IAA session artifact only | CodexAdvisor-agent | COMPLETE |
-| IAA-1933-R7 | Perform renewed independent final assurance after STOPFIX-R6 on unchanged substantive baseline | independent-assurance-agent | PENDING |
+| IAA-1933-R7 | Perform renewed independent final assurance after STOPFIX-R6 on unchanged substantive baseline | independent-assurance-agent | COMPLETE_PASS |
 
 Renewed IAA invocation is authorised only after hosted checks are green and unresolved review threads are zero. The IAA may append only its authorised verdict/session evidence.

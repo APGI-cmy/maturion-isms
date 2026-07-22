@@ -117,6 +117,22 @@ IAA_REJECTION_NOTICE
 - HANDOVER_ALLOWED: no
 - RESULT: REJECTED_BACK_TO_PRODUCER
 
+## ASSURANCE-TOKEN — FINAL (2026-07-22) — SESSION 1287
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1933 — CodexAdvisor: correct Maturion thin-core orchestrator contract
+Reviewed head: c9bd5c7735664f461ec953ec95d2c09414aa62c6
+Frozen substantive baseline reviewed: 7008c54b959266f78dfcc2237b72518d8b0547f1
+Protected contract commit (latest substantive): 6ad1a892dbb47f758e036c99cc29a0e8df402e40
+Protected contract blob at head: 4c060b890074b79fa293dcd66c9b3f9987200e47
+FILES_CHANGED reviewed: 19 (includes prospective IAA session-1287 memory path)
+All checks PASS. Scope parity reconciled across manifest/scope/proof (19/19/19). No substantive drift after baseline. Current-head hosted checks terminal green (CodeQL + Vercel x3). Unresolved review conversations: 0.
+Merge permitted (subject to CS2 approval).
+Adoption phase: PHASE_B_BLOCKING
+PHASE_B_BLOCKING_TOKEN: IAA-session-1287-20260722-PASS
+═══════════════════════════════════════
+
 PHASE_B_BLOCKING_TOKEN: IAA-session-1284-20260721-REJECT
 Verdict: REJECTION-PACKAGE
 Reviewed head: 09bde7c60f3897479de2a805d302aaffcec097d1
