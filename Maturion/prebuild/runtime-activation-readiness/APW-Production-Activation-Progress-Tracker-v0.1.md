@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-PRODUCTION-ACTIVATION-TRACKER-001  
 **Version**: 0.1.0  
-**Status**: ACTIVE — STAGING VERIFICATION AND BLOCKER CLOSURE  
+**Status**: ACTIVE — STAGING VERIFICATION WAVE OPEN  
 **Authority**: CS2 — Johan Ras  
 **Last Updated**: 2026-07-22  
 **Repository**: `APGI-cmy/maturion-isms`
@@ -16,7 +16,13 @@
 
 The APW Specialist controlled production activation decision has been conditionally approved, but production activation remains blocked until `APW-PRODUCTION-ACTIVATION-BLOCKER-001` is closed through governed staging verification and an explicit CS2 closure decision.
 
-The classifier-hardening implementation has been completed and merged through PR #1942. The production feature flag must remain:
+The classifier-hardening implementation has been completed and merged through PR #1942. The APW Staging Verification and Blocker Closure Evidence Wave is now open on branch:
+
+```text
+apw-staging-verification-blocker-closure-v01
+```
+
+The production feature flag must remain:
 
 ```text
 APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
@@ -25,7 +31,7 @@ APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
 Current phase:
 
 ```text
-STAGING_VERIFICATION_AND_BLOCKER_CLOSURE
+STAGING_VERIFICATION_WAVE_OPEN_AWAITING_OPERATOR_EXECUTION
 ```
 
 ---
@@ -39,15 +45,16 @@ STAGING_VERIFICATION_AND_BLOCKER_CLOSURE
 | 3 | Restricted configuration routing fix | COMPLETE | PR #1928 merged |
 | 4 | Final controlled production activation decision | COMPLETE — CONDITIONAL | PR #1938 merged |
 | 5 | Private-request classifier hardening implementation | COMPLETE | PR #1942 merged; merge commit `63cb273855ae21b5aad263d9aaad1c48437500ab` |
-| 6 | Deploy merged classifier hardening to approved staging gateway | NEXT | Pending governed staging verification wave |
-| 7 | Verify broad private/confidential/client/account/record variants route to `maturion_only` | PENDING | Live staging evidence required |
-| 8 | Verify valid public APW onboarding routes to `apw_specialist_internal_draft_candidate` | PENDING | Live staging evidence required |
-| 9 | Verify configuration/token restrictions remain `maturion_only` | PENDING | Live staging evidence required |
-| 10 | Verify flag-off rollback routes to `apw_integration_disabled` | PENDING | Live staging evidence required |
-| 11 | Record staging evidence and explicit CS2 blocker-closure decision | PENDING | Separate governed evidence/decision PR required |
-| 12 | Confirm target production service and activation window | BLOCKED | Requires blocker closure first |
-| 13 | Controlled production activation | BLOCKED | Requires steps 6–12 complete |
-| 14 | Production smoke tests and initial monitoring | BLOCKED | Follows controlled activation |
+| 6 | Open governed staging verification and blocker-closure wave | COMPLETE | Branch `apw-staging-verification-blocker-closure-v01`; evidence scaffolding created |
+| 7 | Deploy merged classifier hardening to approved staging gateway | READY FOR OPERATOR | Staging target and operator boundary recorded |
+| 8 | Verify broad private/confidential/client/account/record variants route to `maturion_only` | PENDING | Live staging evidence required |
+| 9 | Verify valid public APW onboarding routes to `apw_specialist_internal_draft_candidate` | PENDING | Live staging evidence required |
+| 10 | Verify configuration/token restrictions remain `maturion_only` | PENDING | Live staging evidence required |
+| 11 | Verify flag-off rollback routes to `apw_integration_disabled` | PENDING | Live staging evidence required |
+| 12 | Record staging evidence and explicit CS2 blocker-closure decision | PENDING | Current draft evidence PR |
+| 13 | Confirm target production service and activation window | BLOCKED | Requires blocker closure first |
+| 14 | Controlled production activation | BLOCKED | Requires steps 7–13 complete |
+| 15 | Production smoke tests and initial monitoring | BLOCKED | Follows controlled activation |
 
 ---
 
@@ -100,24 +107,29 @@ Every test must also confirm:
 
 ---
 
-## 5. Immediate Next Governed Wave
+## 5. Active Governed Wave
 
-Create the **APW Staging Verification and Blocker Closure Evidence Wave**.
+The **APW Staging Verification and Blocker Closure Evidence Wave** is open.
 
-Required outputs:
+Current wave artifacts:
 
-1. IAA prebrief for live staging verification.
-2. Explicit approved staging target and operator boundary.
-3. Temporary staging-only flag enablement and redeployment.
-4. Complete execution of the verification matrix.
-5. Safe telemetry and output evidence.
-6. Restoration of the staging flag to `false` after testing unless separately authorized.
-7. Evidence record stating pass/fail for every test.
-8. Explicit CS2 decision to either:
+1. `.agent-admin/assurance/iaa-prebrief-apw-staging-verification-blocker-closure-v01.md`
+2. `Maturion/prebuild/runtime-activation-readiness/APW-Staging-Verification-Target-and-Operator-Boundary-v0.1.md`
+3. `Maturion/prebuild/runtime-activation-readiness/APW-Staging-Verification-Evidence-Record-v0.1.md`
+4. This live progress tracker.
+
+Remaining execution outputs:
+
+1. Temporary staging-only flag enablement and redeployment.
+2. Complete execution of the verification matrix.
+3. Safe telemetry and output evidence.
+4. Restoration of the staging flag to `false` after testing.
+5. Evidence record stating pass/fail for every test.
+6. Explicit CS2 decision to either:
    - `CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001`, or
    - `KEEP_BLOCKER_OPEN_AND_REMEDIATE`.
 
-No production activation is included in this next wave.
+No production activation is included in this wave.
 
 ---
 
@@ -136,5 +148,5 @@ Production activation remains prohibited until:
 ## 7. Next Action
 
 ```text
-OPEN_APW_STAGING_VERIFICATION_AND_BLOCKER_CLOSURE_EVIDENCE_WAVE
+OPERATOR_CONFIRM_STAGING_FLAG_FALSE_AND_HEALTH_200
 ```
