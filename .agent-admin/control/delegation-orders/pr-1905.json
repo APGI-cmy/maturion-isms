@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-reasoning-learning-build-2026-07-02",
+  "pr_number": 1905,
+  "prebrief_commit_sha": "a09ca21856dbfca291b569746a7bd09222f5f0d8",
+  "builder_appointment_timestamp": "2026-07-02T11:13:00+02:00",
+  "builder_appointment_commit_sha": "d364be9bd12327a61475f7b7889c21ca5c1962d6",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-reasoning-learning-build-2026-07-02.md",
+  "first_implementation_commit_sha": "b0faa1ab6af2778065a83e22b64b2adf5b9c5d32",
+  "qp_review_timestamp": "2026-07-02T13:18:00+02:00",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "APW-RESTRICTED-CONFIG-ROUTING-V01",
+  "pr_number": 1928,
+  "prebrief_commit_sha": "fdd61d39f8268baf507f658879c4c15ce2efaef0",
+  "builder_appointment_timestamp": "2026-07-12T12:10:00Z",
+  "builder_appointment_commit_sha": "96ee9abade6d9b275366792295657ccf668a5040",
+  "builder_agent": "apw-restricted-config-routing-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-restricted-config-routing-builder-v0.1.md",
+  "first_implementation_commit_sha": "a209b5080a5103fbfd4c9e78028b044e2d2114af",
+  "qp_review_timestamp": "2026-07-12T12:16:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "wave-mmm-descriptor-learning-relevance-2026-07-20",
+  "pr_number": 1937,
+  "prebrief_commit_sha": "a77eee29fd110404e913c290048a901ab329d0a9",
+  "builder_appointment_timestamp": "2026-07-21T06:15:00Z",
+  "builder_appointment_commit_sha": "6b49a4ccbac373dea9b2813d894ae8ed3a9f7ba2",
+  "builder_agent": "ui-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/wave-mmm-descriptor-learning-relevance-2026-07-20.md",
+  "first_implementation_commit_sha": "d232431c0ed0fcf7bff911732efe073c12b86502",
+  "qp_review_timestamp": "2026-07-21T06:25:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

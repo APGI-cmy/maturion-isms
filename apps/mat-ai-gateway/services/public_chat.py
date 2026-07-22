@@ -8,6 +8,7 @@ from typing import Any
 
 from openai import OpenAI
 
+from services.apw_request_policy import requires_private_context
 from services.apw_specialist_stubs import APWSpecialistRedTestStubs
 
 
@@ -172,18 +173,8 @@ class PublicChatService:
             "hub",
             "maturion",
         )
-        private_terms = (
-            "tenant audit",
-            "customer configuration",
-            "incident evidence",
-            "investigation record",
-            "internal governance",
-            "secret",
-            "cs2 approval",
-            "runtime registry internals",
-        )
-        return any(term in lower for term in public_terms) and not any(
-            term in lower for term in private_terms
+        return any(term in lower for term in public_terms) and not requires_private_context(
+            message
         )
 
     @staticmethod

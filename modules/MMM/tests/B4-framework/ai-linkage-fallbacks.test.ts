@@ -127,6 +127,28 @@ describe('T-MMM-S6-213: Intent and Criteria AI linkage use shared mode-source co
   });
 });
 
+describe('T-MMM-DUIR-004: Descriptor generation uses production reasoning before AI fallback', () => {
+  it('CriteriaManagement wires descriptor reasoning source mode and draft adapter as primary path', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('generateDescriptorReasoningResult');
+    expect(src).toContain('toDescriptorSourceMode');
+    expect(src).toContain('descriptorReasoningDraftsFromResult');
+    expect(src).toContain('Maturity descriptors created from the approved methodology reference and Maturion descriptor learning.');
+    expect(src).toContain('Maturity descriptors created from the approved methodology reference.');
+  });
+
+  it('CriteriaManagement loads bounded framework-scoped descriptor learning records before ranking', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain(".from('mmm_ai_interactions')");
+    expect(src).toContain(".eq('context_type', 'MATURITY_DESCRIPTOR_EDIT')");
+    expect(src).toContain(".eq('status', 'recorded')");
+    expect(src).toContain(".limit(50)");
+    expect(src).not.toContain(".eq('target_entity_id', criterion.id)");
+    expect(src).toContain('record.criterionId === criterion.id');
+    expect(src).toContain('record.frameworkId === frameworkId');
+  });
+});
+
 describe('T-MMM-S6-220: Verbatim intent generation resolves from processed organisation source chunks first', () => {
   it('useIntentGeneration reads ai_knowledge for VERBATIM-tagged mode source documents before proposed fallback mapping', () => {
     const src = readFile('apps/mmm/src/hooks/useIntentGeneration.ts');
@@ -134,5 +156,43 @@ describe('T-MMM-S6-220: Verbatim intent generation resolves from processed organ
     expect(src).toContain(".from('ai_knowledge')");
     expect(src).toContain('pickVerbatimIntentFromKnowledge');
     expect(src).toContain('no source-faithful intent text could be extracted');
+  });
+});
+
+describe('T-MMM-DUIR-005: Descriptor regeneration is blocked when unsaved descriptor edits exist', () => {
+  it('handleGenerateDescriptors checks descriptorEditedLevelsByCriterion for pending edits before generation', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>()');
+    expect(src).toContain('pendingEditedLevels.size > 0');
+  });
+
+  it('guard sets save-before-regenerate error messages when pending edited levels exist', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('Save maturity descriptors before regenerating. Unsaved descriptor edits would otherwise be overwritten before Maturion can record the learning.');
+    expect(src).toContain('Save maturity descriptors before regenerating so Maturion can record this learning.');
+  });
+
+  it('guard returns early so generation does not proceed when pending edits exist', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    // The early-return guard must appear before setDescriptorGeneratingByCriterion within handleGenerateDescriptors
+    const guardIndex = src.indexOf('pendingEditedLevels.size > 0');
+    const generatingIndex = src.indexOf('setDescriptorGeneratingByCriterion((prev) => ({ ...prev, [criterion.id]: true }))');
+    expect(guardIndex).toBeGreaterThan(-1);
+    expect(generatingIndex).toBeGreaterThan(-1);
+    expect(guardIndex).toBeLessThan(generatingIndex);
+  });
+
+  it('generation remains available when no pending edited levels exist', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    // After the guard, normal generation state still proceeds
+    expect(src).toContain('setDescriptorGeneratingByCriterion((prev) => ({ ...prev, [criterion.id]: true }))');
+    expect(src).toContain('Creating maturity descriptors from the approved methodology reference...');
+  });
+
+  it('descriptor hint does not imply Done editing saves or records learning', () => {
+    const src = readFile('apps/mmm/src/components/assessment/CriteriaManagement.tsx');
+    expect(src).toContain('Click Save maturity descriptors');
+    expect(src).toContain('before regenerating so Maturion can record the learning and audit trail');
+    expect(src).not.toContain('Saved changes are recorded for');
   });
 });
