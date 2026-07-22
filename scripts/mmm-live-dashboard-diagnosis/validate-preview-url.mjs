@@ -92,9 +92,15 @@ export async function verifyEffectivePreviewOrigin(rawUrl, bypassSecret = '') {
 async function main() {
   const rawUrl = String(process.env.MMM_PREVIEW_URL || '').trim();
   if (!rawUrl) throw new Error('MMM_PREVIEW_URL is empty');
-  await verifyEffectivePreviewOrigin(
-    rawUrl,
-    process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '',
+
+  // The CLI is a configuration contract check only. Protected preview access is
+  // verified inside the Playwright browser session, which supports Vercel's
+  // documented bypass headers and cookie flow. A standalone Node fetch can lose
+  // that browser session across Vercel protection redirects and create a false
+  // negative before the real functional verification starts.
+  const configured = validateConfiguredPreviewUrl(rawUrl);
+  console.log(
+    `[preview-config] validated MMM preview URL ${configured.origin}${configured.pathname}`,
   );
 }
 
