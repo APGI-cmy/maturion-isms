@@ -10,6 +10,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from services.apw_request_policy import requires_private_context
+
 
 @dataclass(frozen=True)
 class RouteDecision:
@@ -43,7 +45,7 @@ class APWSpecialistRedTestStubs:
         if context_error:
             return self._blocked("blocked_context", context_error, context_envelope)
 
-        if self._requires_private_context(message):
+        if requires_private_context(message):
             return self._blocked(
                 "blocked_private_context",
                 "request requires non-public APW context",
@@ -237,22 +239,6 @@ class APWSpecialistRedTestStubs:
             if source.get("status") in {"expired", "superseded"}:
                 return "source is expired or superseded"
         return None
-
-    @staticmethod
-    def _requires_private_context(message: str) -> bool:
-        lower = message.lower()
-        private_terms = (
-            "tenant audit",
-            "customer configuration",
-            "incident evidence",
-            "investigation record",
-            "internal governance",
-            "secret",
-            "cs2 approval",
-            "sign off",
-            "runtime registry internals",
-        )
-        return any(term in lower for term in private_terms)
 
     def _blocked(
         self,
