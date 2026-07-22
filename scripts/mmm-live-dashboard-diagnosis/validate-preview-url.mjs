@@ -57,25 +57,29 @@ export function assertEffectivePreviewUrl(expectedUrl, effectiveUrl) {
   return effective;
 }
 
+export function buildVercelBypassHeaders(bypassSecret = '') {
+  const secret = String(bypassSecret || '').trim();
+  if (!secret) return undefined;
+  return {
+    'x-vercel-protection-bypass': secret,
+    'x-vercel-set-bypass-cookie': 'true',
+  };
+}
+
 export async function verifyEffectivePreviewOrigin(rawUrl, bypassSecret = '') {
   const expected = validateConfiguredPreviewUrl(rawUrl);
-  const requestUrl = new URL(expected);
-  const trimmedBypassSecret = String(bypassSecret || '').trim();
-  if (trimmedBypassSecret) {
-    requestUrl.searchParams.set('x-vercel-protection-bypass', trimmedBypassSecret);
-    requestUrl.searchParams.set('x-vercel-set-bypass-cookie', 'samesitenone');
-  }
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    const response = await fetch(requestUrl, {
+    const response = await fetch(expected, {
       method: 'GET',
       redirect: 'follow',
       signal: controller.signal,
-      headers: trimmedBypassSecret
-        ? { 'x-vercel-protection-bypass': trimmedBypassSecret }
-        : undefined,
+      headers: buildVercelBypassHeaders(bypassSecret),
     });
+    console.log(
+      `[preview-preflight] response status=${response.status} effectiveUrl=${response.url}`,
+    );
     const effective = assertEffectivePreviewUrl(expected.toString(), response.url);
     console.log(
       `[preview-preflight] verified MMM preview origin ${effective.origin} (HTTP ${response.status})`,
