@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Module | PIT — Project Implementation Tracker |
+| Module | PIT - Project Implementation Tracker |
 | Artifact type | Historical tracker disposition addendum |
 | Date | 2026-06-29 |
 | Status | SUPERSEDED — RETAINED FOR AUDIT HISTORY |
-| Superseded by | `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` reconciliation dated 2026-07-21 |
+| Superseded by | `modules/pit/BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` reconciliation dated 2026-07-21 |
 
 ## Supersession notice
 
-This file preserves the accepted W8.2 evidence disposition as it existed on 2026-06-29. It no longer serves as the current Stage 12 status record. Current slice status is governed by `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md`.
+This file preserves the accepted W8.2 evidence disposition as it existed on 2026-06-29. It no longer serves as the current Stage 12 status record. Current slice status is governed by `modules/pit/BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md`.
 
 ## Historical purpose
 
@@ -36,7 +36,7 @@ Evidence accepted:
 Stage 12 remained:
 
 ```text
-AUTHORISED_TO_START / INCOMPLETE
+AUTHORIZED_TO_START / INCOMPLETE
 ```
 
 The tracker could additionally record at that time:
