@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
   assertEffectivePreviewUrl,
+  buildVercelBypassHeaders,
   isAllowedMmmPreviewHost,
   validateConfiguredPreviewUrl,
 } from './validate-preview-url.mjs';
@@ -56,4 +57,12 @@ test('accepts an effective URL on the same MMM preview host', () => {
     'https://maturion-isms-mmm-git-example-rassie-ras-projects.vercel.app/login',
   );
   assert.equal(effective.hostname, new URL(expected).hostname);
+});
+
+test('builds the documented Vercel automation bypass header pair', () => {
+  assert.deepEqual(buildVercelBypassHeaders('  secret-value  '), {
+    'x-vercel-protection-bypass': 'secret-value',
+    'x-vercel-set-bypass-cookie': 'true',
+  });
+  assert.equal(buildVercelBypassHeaders('   '), undefined);
 });
