@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-STAGING-VERIFICATION-EVIDENCE-001  
 **Version**: 0.1.0  
-**Status**: EXECUTION_PRECONDITIONS_CONFIRMED  
+**Status**: STAGING_ENABLED_AND_HEALTHY — MATRIX_EXECUTION_IN_PROGRESS  
 **Authority**: CS2 — Johan Ras  
 **Finding**: `APW-PRODUCTION-ACTIVATION-BLOCKER-001`  
 **Wave**: APW Staging Verification and Blocker Closure v0.1
@@ -23,21 +23,21 @@ APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
 - Health endpoint: `/health`
 - Public chat endpoint: `/api/v1/public-chat`
 - Staging flag before execution: `false` — operator-confirmed
-- Staging flag during verification: `PENDING`
+- Staging flag during verification: `true` — operator-confirmed after redeployment
 - Staging flag after verification: `PENDING`
 
 ## 3. Execution record
 
 | Item | Status | Evidence |
 |---|---|---|
-| Verification date/time | IN_PROGRESS | Started 2026-07-22 10:24 SAST |
+| Verification date/time | IN_PROGRESS | Started 2026-07-22 10:24 SAST; enabled deployment confirmed at approximately 12:33 SAST |
 | Named operator | CONFIRMED | Johan Ras / CS2 |
 | Health before enablement | PASS | Operator screenshot showed `{"status":"ok"}` at the approved staging `/health` endpoint |
 | Staging flag initially false | PASS | Operator screenshot showed `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false` on the staging service |
-| Staging flag enabled | PENDING | — |
-| Staging redeploy/restart completed | PENDING | — |
-| Health after enablement | PENDING | — |
-| Verification matrix completed | PENDING | — |
+| Staging flag enabled | PASS | Operator confirmed staging-only flag changed to `true` |
+| Staging redeploy/restart completed | PASS | Operator confirmed redeployment completed |
+| Health after enablement | PASS | Operator screenshot showed `{"status":"ok"}` after enabled staging redeployment |
+| Verification matrix completed | IN_PROGRESS | Awaiting live route tests |
 | Staging flag restored to false | PENDING | — |
 | Rollback redeploy/restart completed | PENDING | — |
 | Rollback route proven | PENDING | — |
@@ -72,7 +72,7 @@ Add redacted safe route telemetry here during execution. Do not include secrets,
 
 ## 6. Stop-condition review
 
-Status: `NO_STOP_CONDITION_AT_PRECONDITION_CHECK`
+Status: `NO_STOP_CONDITION_AT_ENABLED_HEALTH_CHECK`
 
 ## 7. CS2 blocker decision
 
@@ -95,5 +95,5 @@ KEEP_BLOCKER_OPEN_AND_REMEDIATE
 ## 8. Final disposition
 
 ```text
-STAGING_VERIFICATION_PRECONDITIONS_CONFIRMED_EXECUTION_IN_PROGRESS
+STAGING_ENABLED_HEALTHY_MATRIX_EXECUTION_IN_PROGRESS
 ```
