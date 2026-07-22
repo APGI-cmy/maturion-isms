@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       preview_url:
-        description: 'Full MMM dashboard preview URL. If empty, resolve the PR preview URL.'
+        description: 'Full MMM dashboard preview URL. On PRs it is resolved automatically; on manual runs leave empty to use the MMM_PREVIEW_URL secret.'
         required: false
         type: string
         default: ''
@@ -81,9 +81,9 @@ jobs:
                 [ -n "$URL" ] || continue
                 [ "$URL" = 'null' ] && continue
                 case "$URL" in
-                  https://*maturion-isms-mmm*.vercel.app*|https://*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
+                  https://maturion-isms-mmm.vercel.app*|https://maturion-isms-mmm-git-*.vercel.app*|https://maturion-isms-mmm.now.sh*|https://maturion-isms-mmm-git-*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
                 esac
-              done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null || true)
+              done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // .target_url // empty' 2>/dev/null || true)
             done
             if [ "$attempt" -lt 18 ]; then sleep 10; fi
           done
@@ -218,9 +218,9 @@ jobs:
                 [ -n "$URL" ] || continue
                 [ "$URL" = 'null' ] && continue
                 case "$URL" in
-                  https://*maturion-isms-mmm*.vercel.app*|https://*maturion-isms-mmm*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
+                  https://maturion-isms-mmm.vercel.app*|https://maturion-isms-mmm-git-*.vercel.app*|https://maturion-isms-mmm.now.sh*|https://maturion-isms-mmm-git-*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
                 esac
-              done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null || true)
+              done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // .target_url // empty' 2>/dev/null || true)
             done
             if [ "$attempt" -lt 18 ]; then sleep 10; fi
           done
