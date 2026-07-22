@@ -20,7 +20,7 @@ IAA_PREFLIGHT_BRIEF:
   wave: "pit-stage12-slice4-supabase-project-persistence"
   pr: "1952"
   issue: "#1943 - PIT Stage 12 Slice 4 Supabase Project Persistence and Project Detail Workspace Foundation"
-  branch: "repair/pr-1952-delegation-history"
+  branch: "pit-stage12-slice4-supabase-project-persistence"
   qualifying_tasks:
     - task_id: "PIT-S4-001"
       summary: "Implement Supabase-backed projects and source-links persistence"

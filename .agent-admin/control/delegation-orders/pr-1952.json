@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "pit-stage12-slice4-supabase-project-persistence",
+  "issue_number": 1943,
+  "pr_number": 1952,
+  "prebrief_commit_sha": "80a3a5b911f6a41f0a0885dd666758a9d5595493",
+  "builder_appointment_timestamp": "2026-07-22T13:00:00+02:00",
+  "builder_appointment_commit_sha": "8f8c1662f9aee3c2aa1b6ac1e5ac08a6e3880585",
+  "builder_agent": "pit-specialist",
+  "builder_task_ref": "modules/pit/12-build/slice-4/pr1952-builder-appointment-20260722.md",
+  "first_implementation_commit_sha": "155b42e141c78a9fcd28ee9beefca0d104271d34",
+  "qp_review_timestamp": "2026-07-22T13:10:00+02:00",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "governed_baseline_commit_sha": "eb2348fd317bcdc513c5398b646e596c4a0cf56e",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1952.md",
+  "supabase_contract_ref": "modules/pit/12-build/slice-4/supabase-target-and-auth-contract-20260722.md"
+}
