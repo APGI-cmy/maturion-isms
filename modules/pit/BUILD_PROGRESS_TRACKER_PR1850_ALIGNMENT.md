@@ -2,20 +2,20 @@
 
 | Field | Value |
 |---|---|
-| Module | PIT — Project Implementation Tracker |
+| Module | PIT - Project Implementation Tracker |
 | Artifact type | Historical tracker alignment addendum |
 | Status | SUPERSEDED — RETAINED FOR AUDIT HISTORY |
 | Date | 2026-06-24 |
 | Trigger | PR #1850 merged and post-PR #1847 production evidence failed canonical ISMS/PIT linkup expectations |
-| Superseded by | `BUILD_PROGRESS_TRACKER_W8_2_DISPOSITION_ADDENDUM.md`, then `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` reconciliation dated 2026-07-21 |
+| Superseded by | `modules/pit/BUILD_PROGRESS_TRACKER_W8_2_DISPOSITION_ADDENDUM.md`, then `modules/pit/BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` reconciliation dated 2026-07-21 |
 
 ## Supersession notice
 
-This file records the W8.2 position as it existed on 2026-06-24. Its `W8.2 NOT_READY` instruction is no longer the current execution position and must not block later accepted slices. Current Stage 12 interpretation comes from `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md`.
+This file records the W8.2 position as it existed on 2026-06-24. Its `W8.2 NOT_READY` instruction is no longer the current execution position and must not block later accepted slices. Current Stage 12 interpretation comes from `modules/pit/BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md`.
 
 ## Historical tracker interpretation
 
-At the time of this record, the main tracker recorded PIT Stage 12 as authorised to start and incomplete. That remained true.
+At the time of this record, the main tracker recorded PIT Stage 12 as authorized to start and incomplete. That remained true.
 
 This addendum recorded the narrower historical W8.2 disposition:
 
@@ -23,7 +23,7 @@ This addendum recorded the narrower historical W8.2 disposition:
 W8.2 remains NOT_READY.
 ```
 
-PR #1850 boundary alignment did not reverse Stage 12 authorisation. It constrained the W8.2 correction path before further build-to-GREEN claims could be made.
+PR #1850 boundary alignment did not reverse Stage 12 authorization. It constrained the W8.2 correction path before further build-to-GREEN claims could be made.
 
 ## Historical alignment artifacts filed
 
