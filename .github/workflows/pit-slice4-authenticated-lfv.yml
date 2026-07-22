@@ -1,0 +1,157 @@
+name: PIT Slice 4 Authenticated LFV
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/pit-slice4-authenticated-lfv.yml'
+      - 'apps/isms-portal/**'
+      - 'supabase/migrations/**'
+
+permissions:
+  contents: read
+
+jobs:
+  authenticated-lfv:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      SUPABASE_URL: https://ujucvyyspfxlxlfdamda.supabase.co
+      SUPABASE_KEY: sb_publishable_ZUKVt9ixujFGVpI3JVzGEw_MIQYm2np
+      PREVIEW_URL: https://maturion-isms-portal-git-pit-stage12-1a1797-rassie-ras-projects.vercel.app
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Register disposable Supabase identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          EMAIL="pit-s4-lfv-${GITHUB_RUN_ID}@example.com"
+          PASSWORD="PIT-LFV-${GITHUB_RUN_ID}-${GITHUB_SHA:0:8}!"
+          PROJECT_NAME="PIT Slice 4 LFV ${GITHUB_RUN_ID}"
+          printf 'LFV_EMAIL=%s\nLFV_PASSWORD=%s\nLFV_PROJECT_NAME=%s\n' "$EMAIL" "$PASSWORD" "$PROJECT_NAME" >> "$GITHUB_ENV"
+          curl --fail-with-body --silent --show-error \
+            -X POST "$SUPABASE_URL/auth/v1/signup" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H 'Content-Type: application/json' \
+            --data "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"data\":{\"full_name\":\"PIT Slice 4 LFV\"}}" \
+            > signup-response.json
+          node -e "const r=require('./signup-response.json'); if(!r.user?.id) throw new Error(JSON.stringify(r)); console.log('LFV_USER_ID='+r.user.id); require('fs').appendFileSync(process.env.GITHUB_ENV, 'LFV_USER_ID='+r.user.id+'\\n')"
+          printf 'email=%s\nproject_name=%s\n' "$EMAIL" "$PROJECT_NAME" > lfv-fixture.txt
+      - name: Wait for governed membership fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 120); do
+            RESPONSE=$(curl --silent --show-error \
+              -X POST "$SUPABASE_URL/auth/v1/token?grant_type=password" \
+              -H "apikey: $SUPABASE_KEY" \
+              -H 'Content-Type: application/json' \
+              --data "{\"email\":\"$LFV_EMAIL\",\"password\":\"$LFV_PASSWORD\"}")
+            TOKEN=$(printf '%s' "$RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{process.stdout.write(JSON.parse(d).access_token||'')}catch{}})")
+            if [ -n "$TOKEN" ]; then
+              CHECK=$(curl --silent --show-error "$SUPABASE_URL/rest/v1/user_org_memberships?select=org_id,status&user_id=eq.$LFV_USER_ID&status=eq.active" -H "apikey: $SUPABASE_KEY" -H "Authorization: Bearer $TOKEN")
+              COUNT=$(printf '%s' "$CHECK" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{process.stdout.write(String(JSON.parse(d).length))}catch{process.stdout.write('0')}})")
+              if [ "$COUNT" = "1" ]; then
+                printf 'LFV_ACCESS_TOKEN=%s\n' "$TOKEN" >> "$GITHUB_ENV"
+                exit 0
+              fi
+            fi
+            echo "Waiting for temporary user confirmation and membership fixture ($attempt/120)"
+            sleep 5
+          done
+          echo 'Temporary LFV identity was not confirmed and bound in time.' >&2
+          exit 1
+      - name: Run authenticated deployed browser journey
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p lfv-artifacts
+          node <<'NODE'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+            await context.addInitScript(() => {
+              localStorage.setItem('isms_pending_checkout', JSON.stringify({
+                selectedModules: ['project-implementation'],
+                isBundle: false,
+                isYearly: true,
+                source: 'pit-slice4-lfv',
+                completedAt: new Date().toISOString(),
+              }));
+            });
+            const page = await context.newPage();
+            const base = process.env.PREVIEW_URL;
+            await page.goto(`${base}/login`, { waitUntil: 'networkidle' });
+            await page.getByLabel('Work email').fill(process.env.LFV_EMAIL);
+            await page.getByLabel('Password').fill(process.env.LFV_PASSWORD);
+            await Promise.all([
+              page.waitForLoadState('networkidle'),
+              page.getByRole('button', { name: 'Continue' }).click(),
+            ]);
+            await page.goto(`${base}/projects/new`, { waitUntil: 'networkidle' });
+            await page.getByTestId('pit-create-project').waitFor();
+            await page.getByLabel('Project name').fill(process.env.LFV_PROJECT_NAME);
+            await page.getByLabel('Project type').selectOption('improvement');
+            await page.getByLabel('Delivery classification').selectOption('quick_win');
+            await page.getByLabel('Description').fill('Authenticated deployed Slice 4 LFV project.');
+            await page.getByLabel('Responsible person').fill('PIT Slice 4 LFV');
+            await page.getByLabel('Start date').fill('2026-07-22');
+            await page.getByLabel('End date').fill('2026-08-31');
+            await page.getByLabel('Source type').selectOption('risk');
+            await page.getByLabel('Source reference').fill(`LFV-${process.env.GITHUB_RUN_ID}`);
+            await page.screenshot({ path: 'lfv-artifacts/01-create-project.png', fullPage: true });
+            await page.getByRole('button', { name: 'Create project' }).click();
+            await page.waitForURL(/\/projects\/[0-9a-f-]{36}$/);
+            await page.getByTestId('pit-detail-data').waitFor();
+            const projectId = page.url().split('/').pop();
+            fs.appendFileSync('lfv-fixture.txt', `project_id=${projectId}\n`);
+            await page.screenshot({ path: 'lfv-artifacts/02-created-detail.png', fullPage: true });
+            const updatedName = `${process.env.LFV_PROJECT_NAME} Updated`;
+            await page.getByLabel('Project name').fill(updatedName);
+            await page.getByLabel('Description').fill('Authenticated deployed Slice 4 LFV update persisted.');
+            await page.getByRole('button', { name: 'Save changes' }).click();
+            await page.getByText('Project saved.').waitFor();
+            await page.reload({ waitUntil: 'networkidle' });
+            if ((await page.getByLabel('Project name').inputValue()) !== updatedName) throw new Error('Updated project name did not survive reload');
+            await page.screenshot({ path: 'lfv-artifacts/03-updated-detail.png', fullPage: true });
+            await page.goto(`${base}/projects`, { waitUntil: 'networkidle' });
+            await page.getByText(updatedName).waitFor();
+            await page.screenshot({ path: 'lfv-artifacts/04-project-register.png', fullPage: true });
+            const api = await fetch(`${process.env.SUPABASE_URL}/rest/v1/projects?id=eq.${projectId}&select=id,name,org_id,status`, {
+              headers: { apikey: process.env.SUPABASE_KEY, Authorization: `Bearer ${process.env.LFV_ACCESS_TOKEN}` },
+            });
+            const rows = await api.json();
+            if (!api.ok || rows.length !== 1 || rows[0].name !== updatedName) throw new Error(`Supabase verification failed: ${JSON.stringify(rows)}`);
+            fs.writeFileSync('lfv-artifacts/result.json', JSON.stringify({
+              authenticated: true,
+              create: true,
+              detail: true,
+              updateSurvivedReload: true,
+              register: true,
+              projectId,
+              projectName: updatedName,
+              previewUrl: base,
+            }, null, 2));
+            await browser.close();
+          })().catch((error) => { console.error(error); process.exit(1); });
+          NODE
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: pit-slice4-authenticated-lfv
+          path: |
+            lfv-artifacts
+            lfv-fixture.txt
+            signup-response.json
