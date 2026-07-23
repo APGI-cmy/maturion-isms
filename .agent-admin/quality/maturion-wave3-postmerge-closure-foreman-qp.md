@@ -55,9 +55,7 @@
 | Ecosystem strategy Wave 0–3 progress states updated with actual PRs and merge identities | PASS |
 | Ecosystem strategy Wave 4–10 states marked NOT AUTHORISED/NOT STARTED | PASS |
 | Ecosystem strategy next actions updated to reflect post-Wave-3 programme state | PASS |
-| Wave 3 proposal section 0 (execution record) added with actual authorisation/merge identities | PASS |
-| Wave 3 proposal completion criteria updated to historical record | PASS |
-| Wave 3 proposal historical text (sections 1–8) preserved unchanged | PASS |
+| Wave 3 proposal Section 0 (execution record) added with actual authorisation/merge identities; sections 1–8 historical text preserved exactly | PASS |
 | Tracker, strategy and proposal tell one coherent programme truth | PASS |
 
 ## 5. Runtime QA state

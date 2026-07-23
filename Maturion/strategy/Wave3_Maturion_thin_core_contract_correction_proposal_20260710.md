@@ -431,14 +431,14 @@ The proposed contract correction does not by itself turn these tests green. Runt
 
 ---
 
-## 8. Completion criteria (historical record)
+## 8. Completion criteria
 
-Wave 3 proposal work was declared complete when:
+Wave 3 proposal work is complete when:
 
-- this artifact was reviewed by CS2;
-- CodexAdvisor fitness was accepted as `NOT FIT YET` pending exact remediation;
-- the Maturion contract correction specification was approved at specification level;
-- no protected agent contract or Tier 2 file was modified by the proposal;
-- the next layer-down issue was chosen by CS2 (Issue #1922 for CodexAdvisor fitness; Issue #1932 for Maturion correction).
+- this artifact is reviewed by CS2;
+- CodexAdvisor fitness is accepted as `NOT FIT` pending exact remediation;
+- the Maturion contract correction is approved, amended, or rejected at specification level;
+- no protected agent contract or Tier 2 file was modified;
+- the next layer-down issue is explicitly chosen by CS2.
 
-**Wave 3 historical status:** PROPOSAL DELIVERED / EXECUTION COMPLETE / POST-MERGE CLOSURE IN PROGRESS (see Section 0 for execution record).
+**Wave 3 status:** PROPOSAL PREPARED / CODEXADVISOR PREREQUISITE IDENTIFIED / PROTECTED EXECUTION NOT YET AUTHORISED
