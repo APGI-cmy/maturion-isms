@@ -7,7 +7,7 @@
 **Owner:** foreman-v2-agent  
 **Builder:** bounded documentation/evidence builder  
 **Date:** 2026-07-23  
-**State:** BUILDER_COMPLETE — FOREMAN_QP_PASS — ECAP_PASS — PENDING_IAA
+**State:** CLOSED — POST-MERGE IAA PASS — READY FOR CS2 MERGE
 
 ---
 
@@ -15,41 +15,47 @@
 
 Close the Maturion Wave 3 programme record after merge of PR #1933 by aligning documentation, establishing an authoritative tracker, preserving historical evidence, and obtaining independent post-merge assurance.
 
-## Exact baseline
+## Exact baseline and assurance chain
 
 - Merge commit under assurance: `fc3556f391a1a3a854d16008e17099026c5d5992`
-- Merged PR head: `fe97ee74c272fb496b19371a585762930dd6822a`
+- Merged PR #1933 head: `fe97ee74c272fb496b19371a585762930dd6822a`
 - Maturion contract blob: `4c060b890074b79fa293dcd66c9b3f9987200e47`
 - Wake-up protocol blob: `b9bc497aba37e31214e99887f40cf617c8af7799`
 - Session-closure protocol blob: `6718b21b7547aae4bd0bb112e91a8f1ac12aead1`
+- Independent IAA reviewed head: `23906460c6661d30b1516c1a9d7a49640dc37704`
+- IAA token/session ceremony head: `54987bfcb32f6043226fc004dcfd311d8422060b`
+- Handover ceremony head: `25c5da8a8cea43ddf5ce62927233b56787fcc6c3`
+- Final assurance token: `IAA-maturion-wave3-postmerge-closure-20260723-PASS`
 
-## In scope
+The live PR head is resolved by GitHub. It is not embedded self-referentially in this file. Changes after the IAA-reviewed head are limited to the authorised assurance and administrative handover records.
 
-- `Maturion/BUILD_PROGRESS_TRACKER.md`
-- `Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md`
-- `Maturion/strategy/Wave3_Maturion_thin_core_contract_correction_proposal_20260710.md`
-- `Maturion/prebuild/wave3-postmerge-closure/MW3-PMC-prebuild-and-QA-to-Red-v0.1.md`
-- `.agent-admin/scope-declarations/maturion-wave3-postmerge-closure-20260723.md`
-- `.agent-admin/assurance/iaa-wave-record-maturion-wave3-postmerge-closure-20260723.md`
-- `.agent-admin/builder-appointments/maturion-wave3-postmerge-closure-documentation-builder-20260723.md`
-- `.admin/prs/pr-1954.json`
-- `.agent-admin/prs/pr-1954/wave-current-tasks.md`
-- `.agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md`
-- `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
-- `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
-- one current-wave Foreman PREHANDOVER/session-memory record if required by active gates
-- one final CS2/proxy signoff after IAA PASS
-- one exact independent-IAA session-memory artifact pre-authorised before final IAA
+## Final authorised path inventory — 15 paths
+
+1. `.admin/prs/pr-1954.json`
+2. `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
+3. `.agent-admin/assurance/iaa-wave-record-maturion-wave3-postmerge-closure-20260723.md`
+4. `.agent-admin/builder-appointments/maturion-wave3-postmerge-closure-documentation-builder-20260723.md`
+5. `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
+6. `.agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md`
+7. `.agent-admin/prs/pr-1954/wave-current-tasks.md`
+8. `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
+9. `.agent-admin/scope-declarations/maturion-wave3-postmerge-closure-20260723.md`
+10. `.agent-admin/signoffs/maturion-wave3-postmerge-closure-cs2-proxy.md`
+11. `.agent-workspace/independent-assurance-agent/memory/session-IAA-maturion-wave3-postmerge-closure-20260723.md`
+12. `Maturion/BUILD_PROGRESS_TRACKER.md`
+13. `Maturion/prebuild/wave3-postmerge-closure/MW3-PMC-prebuild-and-QA-to-Red-v0.1.md`
+14. `Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md`
+15. `Maturion/strategy/Wave3_Maturion_thin_core_contract_correction_proposal_20260710.md`
+
+`FILES_CHANGED: 15`
 
 ## Out of scope
 
 - any `.github/agents/*` file;
 - any `.agent-workspace/<agent>/knowledge/*` file;
-- governance canon;
-- `governance/CANON_INVENTORY.json`;
+- governance canon or `governance/CANON_INVENTORY.json`;
 - any PR #1933 artifact;
-- runtime/application code;
-- tests or test configuration;
+- runtime/application code or tests;
 - schema, migration, RLS or database change;
 - CI/workflow or gate-logic change;
 - Supabase, Vercel, deployment or production state;
@@ -59,29 +65,22 @@ Close the Maturion Wave 3 programme record after merge of PR #1933 by aligning d
 
 ## QA-to-RED binding
 
-The builder must make the current-wave documentation conditions `MW3-PMC-RED-001` through `MW3-PMC-RED-004`, `MW3-PMC-RED-007`, `MW3-PMC-RED-008` and `MW3-PMC-RED-009` green.
-
-`MW3-PMC-RED-005` becomes green only through independent IAA.
-
-Runtime QA obligations and canon provenance remain explicitly RED/BLOCKED because their implementation is outside this issue.
+The documentation/evidence closure conditions are GREEN. `MATURION-RED-MMM-001` through `005` remain RED specified and not executable. Canon inventory provenance remains `ACTIVATION_BLOCKED`. Wave 4 remains unauthorised.
 
 ## Historical evidence rule
 
-All evidence created for PR #1933 is immutable history for this wave. It must be cited, not edited.
+All evidence created for PR #1933 is immutable history for this wave. It is cited, not edited.
 
-## Final path parity
+## Handover disposition
 
-The exact final path inventory will be frozen once the independent IAA session path is known. No unlisted substantive or protected path is authorised.
+- Builder evidence: COMPLETE
+- Foreman QP: PASS
+- ECAP: PASS
+- Independent IAA: PASS
+- Post-IAA delta: ADMIN/ASSURANCE ONLY
+- CS2/proxy disposition: RECORDED
+- Final unresolved review-thread requirement: `0`
+- Live hosted checks requirement: terminal green before ready transition
 
-## Handover rule
-
-Handover is prohibited until:
-
-- builder evidence is complete;
-- Foreman QP is PASS;
-- ECAP admin validation is PASS;
-- hosted checks are terminal green;
-- unresolved review conversations are zero;
-- independent IAA issues an `ASSURANCE-TOKEN`;
-- post-token drift is administrative/assurance-only;
-- CS2 disposition is recorded.
+`HANDOVER_ALLOWED: YES`  
+`MERGE DECISION RESERVED FOR CS2`
