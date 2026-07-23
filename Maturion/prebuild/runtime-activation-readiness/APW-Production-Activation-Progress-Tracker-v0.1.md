@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-PRODUCTION-ACTIVATION-TRACKER-001  
 **Version**: 0.1.0  
-**Status**: ACTIVE — STAGING VERIFICATION COMPLETE, CS2 DECISION PENDING  
+**Status**: ACTIVE — STAGING BLOCKER CLOSED, PRODUCTION ACTIVATION PREPARATION  
 **Authority**: CS2 — Johan Ras  
 **Last Updated**: 2026-07-23  
 **Repository**: `APGI-cmy/maturion-isms`
@@ -16,13 +16,15 @@
 
 The governed staging-verification matrix is complete. All eleven route tests passed, the staging flag was restored to `false`, the staging gateway remained healthy, and flag-off rollback returned `apw_integration_disabled` as required.
 
-The technical evidence supports closure of:
+CS2 has explicitly approved:
 
 ```text
-APW-PRODUCTION-ACTIVATION-BLOCKER-001
+CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001
 ```
 
-The blocker remains formally open only until CS2 records an explicit decision in PR #1951.
+The staging-verification blocker is therefore closed, subject to review and merge of PR #1951.
+
+This decision does **not** authorize production activation.
 
 The production feature flag remains:
 
@@ -33,7 +35,7 @@ APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
 Current phase:
 
 ```text
-STAGING_VERIFICATION_COMPLETE_AWAITING_EXPLICIT_CS2_BLOCKER_DECISION
+PRODUCTION_ACTIVATION_PREPARATION_PENDING_PR_1951_MERGE
 ```
 
 ---
@@ -54,10 +56,13 @@ STAGING_VERIFICATION_COMPLETE_AWAITING_EXPLICIT_CS2_BLOCKER_DECISION
 | 10 | Verify valid public APW onboarding and documentation routes | COMPLETE | Tests 9–10 returned `apw_specialist_internal_draft_candidate` |
 | 11 | Restore flag to false and verify rollback route | COMPLETE | Test 11 returned `apw_integration_disabled`; health remained OK |
 | 12 | Record staging evidence | COMPLETE | `APW-Staging-Verification-Evidence-Record-v0.1.md` completed in PR #1951 |
-| 13 | Explicit CS2 blocker-closure decision | AWAITING CS2 | Choose `CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001` or `KEEP_BLOCKER_OPEN_AND_REMEDIATE` |
-| 14 | Confirm target production service and activation window | BLOCKED | Requires blocker closure and merge of PR #1951 |
-| 15 | Controlled production activation | BLOCKED | Requires step 14 |
-| 16 | Production smoke tests and initial monitoring | BLOCKED | Follows controlled activation |
+| 13 | Explicit CS2 blocker-closure decision | COMPLETE | `CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001` approved on 2026-07-23 |
+| 14 | Review and merge PR #1951 | NEXT | Formal repository ratification required |
+| 15 | Confirm exact production service and environment | BLOCKED | Begins after PR #1951 merge |
+| 16 | Confirm immediate rollback access | BLOCKED | Begins after PR #1951 merge |
+| 17 | Approve controlled activation window | BLOCKED | Requires production target and rollback confirmation |
+| 18 | Execute controlled production activation | BLOCKED | Requires steps 14–17 complete |
+| 19 | Production smoke tests and initial monitoring | BLOCKED | Follows controlled activation |
 
 ---
 
@@ -111,7 +116,7 @@ No private data, secrets, credentials, tokens or internal configuration were dis
 
 ---
 
-## 4. Current Blocker Decision
+## 4. Blocker Decision
 
 **Finding ID**: `APW-PRODUCTION-ACTIVATION-BLOCKER-001`
 
@@ -121,35 +126,29 @@ Technical evidence status:
 PASS_RECOMMEND_CLOSE
 ```
 
-Formal status:
-
-```text
-OPEN_AWAITING_EXPLICIT_CS2_DECISION
-```
-
-Permitted CS2 decisions:
+Formal CS2 decision:
 
 ```text
 CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001
 ```
 
-or
+Repository status:
 
 ```text
-KEEP_BLOCKER_OPEN_AND_REMEDIATE
+CLOSED_PENDING_PR_1951_MERGE_RATIFICATION
 ```
 
 ---
 
-## 5. Activation Boundary
+## 5. Production Activation Boundary
 
 Production activation remains prohibited until:
 
-- CS2 explicitly closes `APW-PRODUCTION-ACTIVATION-BLOCKER-001`;
 - PR #1951 is reviewed and merged;
-- the target production service and environment are confirmed;
+- the exact production target service and environment are confirmed;
 - rollback access is confirmed;
-- the controlled activation window is approved.
+- the controlled activation window is approved;
+- the production smoke-test and initial-monitoring plan is approved.
 
 No production flag or deployment change is included in PR #1951.
 
@@ -158,5 +157,5 @@ No production flag or deployment change is included in PR #1951.
 ## 6. Next Action
 
 ```text
-CS2_RECORD_EXPLICIT_BLOCKER_CLOSURE_DECISION_IN_PR_1951
+REVIEW_AND_MERGE_PR_1951_THEN_OPEN_PRODUCTION_TARGET_AND_ACTIVATION_WINDOW_WAVE
 ```
