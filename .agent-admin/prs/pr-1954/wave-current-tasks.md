@@ -48,7 +48,8 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 | `MW3-PMC-009` | Perform Foreman Quality Professor review | Foreman | COMPLETE |
 | `MW3-PMC-010` | Perform ECAP administrative validation | ECAP | COMPLETE |
 | `MW3-PMC-011` | Freeze exact pre-IAA head and terminal-green hosted checks | Foreman | IN_PROGRESS |
-| `MW3-PMC-012` | Perform genuinely independent final assurance | independent-assurance-agent | PENDING |
+| `STOPFIX-R1` | Restore Section 8 original text; correct Foreman QP contradictory rows | Foreman | COMPLETE |
+| `MW3-PMC-012` | Perform genuinely independent final assurance (R2 after STOPFIX-R1) | independent-assurance-agent | IN_PROGRESS |
 | `MW3-PMC-013` | Record final CS2/proxy disposition after IAA PASS | CS2 proxy | BLOCKED_ON_IAA |
 | `MW3-PMC-014` | Mark PR ready and hand back to CS2 | Foreman | BLOCKED_ON_IAA |
 
