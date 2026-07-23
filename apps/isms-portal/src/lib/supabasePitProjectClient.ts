@@ -73,6 +73,20 @@ function errorMessage(error: { message?: string } | null, fallback: string): str
   return error?.message || fallback;
 }
 
+function browserSupabaseConfiguration(): { url: string; key: string } {
+  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+  const key = (
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+    ?? import.meta.env.VITE_SUPABASE_ANON_KEY
+  ) as string | undefined;
+
+  if (!url || !key) {
+    throw new Error('PIT Supabase is not configured for this deployment');
+  }
+
+  return { url, key };
+}
+
 class SupabasePitProjectDatabaseClient implements PitProjectDatabaseClient {
   constructor(private readonly supabase: SupabaseClient) {}
 
@@ -167,25 +181,22 @@ export function getPitProjectRepository(): PitProjectRepository {
   if (repository) return repository;
   if (configurationError) throw configurationError;
 
-  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-  const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
-  if (!url || !publishableKey) {
-    configurationError = new Error('PIT Supabase is not configured for this deployment');
+  try {
+    const { url, key } = browserSupabaseConfiguration();
+    const supabase = createClient(url, key, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+    });
+    repository = createSupabasePitProjectRepository(new SupabasePitProjectDatabaseClient(supabase));
+    return repository;
+  } catch (error) {
+    configurationError = error instanceof Error ? error : new Error('PIT Supabase is not configured for this deployment');
     throw configurationError;
   }
-
-  const supabase = createClient(url, publishableKey, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
-  });
-  repository = createSupabasePitProjectRepository(new SupabasePitProjectDatabaseClient(supabase));
-  return repository;
 }
 
 export function createPitSupabaseClient(): SupabaseClient {
-  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-  const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
-  if (!url || !publishableKey) throw new Error('PIT Supabase is not configured for this deployment');
-  return createClient(url, publishableKey, {
+  const { url, key } = browserSupabaseConfiguration();
+  return createClient(url, key, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
   });
 }
