@@ -21,7 +21,7 @@ jobs:
       PREVIEW_URL: https://maturion-isms-portal-git-pit-stage12-1a1797-rassie-ras-projects.vercel.app
       LFV_EMAIL: ${{ secrets.PIT_TEST_PROJECT_MANAGER_EMAIL }}
       LFV_PASSWORD: ${{ secrets.PIT_TEST_PROJECT_MANAGER_PASSWORD }}
-      VERCEL_BYPASS_TOKEN: ${{ secrets.PIT_VERCEL_AUTOMATION_BYPASS_SECRET }}
+      VERCEL_BYPASS_TOKEN: ${{ secrets.ISMS_VERCEL_AUTOMATION_BYPASS_SECRET || secrets.PIT_VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -44,7 +44,7 @@ jobs:
             exit 1
           fi
           if [ -z "$VERCEL_BYPASS_TOKEN" ]; then
-            echo 'Required PIT_VERCEL_AUTOMATION_BYPASS_SECRET is not configured.' >&2
+            echo 'Required ISMS portal Vercel automation bypass secret is not configured.' >&2
             exit 1
           fi
           PROJECT_NAME="PIT Slice 4 LFV ${GITHUB_RUN_ID}"
@@ -66,6 +66,26 @@ jobs:
             exit 1
           fi
           printf 'user_id=%s\norg_id=%s\nproject_name=%s\n' "$USER_ID" "$ORG_ID" "$PROJECT_NAME" > lfv-fixture.txt
+      - name: Verify ISMS preview protection bypass
+        shell: bash
+        run: |
+          set -euo pipefail
+          headers=$(mktemp)
+          status=$(curl --silent --show-error --dump-header "$headers" --output /dev/null --write-out '%{http_code}' \
+            --connect-timeout 10 --max-time 30 \
+            -H "x-vercel-protection-bypass: $VERCEL_BYPASS_TOKEN" \
+            -H 'x-vercel-set-bypass-cookie: true' \
+            "$PREVIEW_URL/login")
+          location=$(awk 'BEGIN{IGNORECASE=1} /^location:/ {sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit}' "$headers")
+          echo "ISMS preview bypass probe returned HTTP $status."
+          if [ "$status" = "401" ] || [ "$status" = "403" ] || printf '%s' "$location" | grep -qi '^https://vercel.com/login'; then
+            echo 'ISMS preview protection bypass was rejected for the portal deployment.' >&2
+            exit 1
+          fi
+          if ! printf '%s' "$status" | grep -qE '^[23][0-9][0-9]$'; then
+            echo "Unexpected preview response HTTP $status." >&2
+            exit 1
+          fi
       - name: Run authenticated deployed browser journey
         shell: bash
         run: |
