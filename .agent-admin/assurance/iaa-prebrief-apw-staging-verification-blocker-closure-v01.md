@@ -1,7 +1,8 @@
 # IAA Pre-Flight Brief — APW Staging Verification and Blocker Closure v0.1
 
 IAA_PREFLIGHT_BRIEF
-PR: PENDING
+PR: #1951
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
 FINDING: APW-PRODUCTION-ACTIVATION-BLOCKER-001
 WAVE: APW-STAGING-VERIFICATION-BLOCKER-CLOSURE-V01
 AUTHORITY: CS2 — Johan Ras
@@ -14,6 +15,7 @@ EXPECTED_QA_SCOPE:
 - Confirm valid public onboarding and documentation requests route to `apw_specialist_internal_draft_candidate` while enabled.
 - Confirm flag-off rollback routes to `apw_integration_disabled`.
 - Confirm Maturion remains the visible final public response authority.
+- Confirm live route telemetry contains route-safe metadata only and no prompt or answer content.
 
 APPROVED_TARGET:
 - Environment: staging only
@@ -29,7 +31,19 @@ EXPECTED_FAILURE_MODES:
 - Rollback does not produce `apw_integration_disabled`.
 
 STOP_CONDITIONS:
-- Stop immediately and restore the staging flag to `false` if any expected route fails, any unsafe disclosure occurs, health degrades, or Maturion ceases to be the final visible authority.
+- Stop immediately and restore the staging flag to `false` if any expected route fails, any unsafe disclosure occurs, telemetry contains prompt or answer content, health degrades, or Maturion ceases to be the final visible authority.
+
+FOREMAN_INSTRUCTIONS:
+- Keep the wave limited to staging verification, redacted telemetry inspection, rollback proof, evidence capture and blocker-decision governance.
+- Do not alter any production flag, production Render service, Vercel configuration or Supabase configuration.
+- Do not claim blocker closure as repository-ratified until every required evidence item is complete and PR #1951 is merged.
+
+IAA_WILL_QA:
+- Verify all eleven route tests and HTTP outcomes against the approved matrix.
+- Verify Maturion remained the visible final public response authority.
+- Verify the staging flag was restored to `false`, health remained OK and rollback returned `apw_integration_disabled`.
+- Verify redacted live telemetry shows route-safe metadata only and contains no prompt or answer content.
+- Verify the final blocker status and tracker do not overclaim production authorization.
 
 BOUNDARIES:
 - No production flag or production environment change.
