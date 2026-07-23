@@ -1,163 +1,238 @@
 # BUILD PROGRESS TRACKER
 
-**Module**: MMM (Maturity Management Module)  
+**Module**: MMM (Maturity Model Management)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-07-02  
-**Updated By**: foreman-v2-agent (wave: wave-mmm-descriptor-reasoning-learning-prebuild-2026-07-02 — CS2-requested pre-build/QA expansion for descriptor reasoning and governed learning retrieval)
+**Last Updated**: 2026-07-23  
+**Updated By**: CS2 proxy reconciliation under issue #1955
 
-> **Classification**: ACTIVE — DESCRIPTOR REASONING AND GOVERNED LEARNING RETRIEVAL PRE-BUILD / QA EXPANSION OPEN BEFORE RUNTIME IMPLEMENTATION
-> **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main live progress dashboard.
-> **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.0.0
-> **Baseline Issue**: [maturion-isms#1871](https://github.com/APGI-cmy/maturion-isms/issues/1871) — original descriptor grammar closure issue; the DRGL lane is a CS2-requested successor pre-build scope and should receive a successor implementation issue before runtime build work starts.
-> **Update Rule**: This document MUST be updated immediately after every MMM stage issue, wave completion, approval, or readiness/blocker change.
+> **Classification**: ACTIVE — DESCRIPTOR RUNTIME IMPLEMENTED; CS2 LIVE CLOSURE VALIDATION PENDING; APPROVAL FOUNDATION RUNTIME IS NEXT
+> **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main MMM progress dashboard.
+> **Frozen Implementation Authority**: `modules/MMM/07-implementation-plan/implementation-plan.md` v1.0.0
+> **Execution Alignment Addendum**: `modules/MMM/07-implementation-plan/descriptor-runtime-approval-execution-alignment-addendum-2026-07-23.md`
+> **Update Rule**: Update this tracker immediately after every MMM stage issue, implementation wave, live-validation disposition, approval, or readiness/blocker change.
 
-## Current Live Status
+## 1. Current Executive Status
 
-MMM approval workflow pre-build and QA-to-red work for Steps 1-8 is complete and merged to `main`.
+The MMM descriptor reasoning and governed-learning lane has progressed beyond pre-build and has been implemented in the live Criteria Management runtime through PR #1941.
 
-PR #1850 introduced shared ISMS/module boundary authority. PR #1854 aligned MMM pre-build artifacts to that authority. Runtime public journey/linkup work remains ISMS/MMM boundary-governed and must not be mixed into MMM descriptor grammar closure.
+Current state:
 
-Current active MMM descriptor lane:
+- descriptor reasoning and evidence-state reconstruction are implemented;
+- Criteria Management invokes the reasoning pipeline;
+- consented descriptor-learning persistence and replay are implemented;
+- save-before-regenerate protection is implemented;
+- unrelated-criterion learning contamination is prevented through explicit relevance controls;
+- editing one maturity descriptor preserves the other persisted maturity levels;
+- incomplete historical descriptor sets can regenerate only missing levels while retaining non-empty and edited levels;
+- MMM live verification now uses the MMM-specific Vercel boundary and reports functional failure honestly;
+- CS2 live validation of the merged #1941 behavior remains the final closure gate for the descriptor issue chain.
 
-- Wave: `wave-mmm-descriptor-reasoning-learning-prebuild-2026-07-02`
-- Branch: `foreman/mmm-descriptor-reasoning-learning`
-- Builds on: `wave-mmm-descriptor-grammar-closure-2026-06-30` / baseline issue `#1871`
-- Tracking note: `#1871` remains the baseline descriptor grammar closure issue. The descriptor reasoning and governed learning retrieval lane is a successor pre-build scope; open a successor issue before any runtime implementation is appointed.
-- Purpose: extend the descriptor grammar closure lane into a governed descriptor reasoning and learning retrieval design so Maturion reasons over verbatim source criteria, consults consented descriptor-learning records, and avoids repeating corrected failures.
-- Status: pre-build artifact and QA-to-red expansion only; no runtime implementation claim.
+The descriptor work is a partial Stage 12 Wave B4 implementation slice. It does **not** complete the full B4 Framework Lifecycle wave, which also includes complete ingestion, compile, publication, three-tier approval, versioning, and related executable test obligations.
 
-## Descriptor Reasoning + Governed Learning Retrieval Authority
+## 2. Stage 8 Implementation Plan Alignment
 
-Active pre-build / QA artifacts added for CS2 review:
+The Stage 8 implementation plan remains frozen and authoritative. This tracker records execution against it; it does not rewrite its historical scope.
+
+Relevant canonical waves:
+
+| Wave | Canonical Scope | Current MMM Position |
+|---|---|---|
+| B1 | Schema, RLS, migrations | Existing platform foundation; no completion claim made by this reconciliation |
+| B2 | Core API, auth, health, organisations, invitations | Existing platform foundation; no completion claim made by this reconciliation |
+| B3 | Core UI and onboarding journeys | Existing runtime foundation; no completion claim made by this reconciliation |
+| B4 | Framework lifecycle: ingestion, creation, review, approval, activation | **Partially implemented**: descriptor reasoning/learning runtime is merged; approval workflow runtime remains incomplete |
+| B5 | Assessment execution, evidence, scoring | Not advanced by the descriptor hotfix lane |
+| B6 | Findings, recommendations, reporting | Not advanced by the descriptor hotfix lane |
+| B7 | AIMC, PIT, KUC boundary integrations | Not advanced by the descriptor hotfix lane |
+| B8 | Cross-cutting performance, security, governance | Verification/gate hardening improved, but no full B8 completion claim |
+| B9 | Golden-path integration verification | Not complete |
+
+## 3. Descriptor Reasoning and Learning Authority
+
+The following pre-build and QA authorities remain binding:
 
 - `modules/MMM/02-frs/descriptor-reasoning-learning-frs-addendum.md`
-- `modules/MMM/05-qa-to-red/descriptor-reasoning-learning-qa-to-red.md`
-
-These artifacts expand the descriptor grammar closure lane from string-level grammar correction into a reasoning pipeline:
-
-1. detect source mode (`verbatim_source`, `hybrid_source`, `new_generation_context`);
-2. preserve raw verbatim criteria while deriving clean descriptor subjects;
-3. strip `Note:`, `Guidance:`, and `Reference:` material from the descriptor evidence subject while preserving it as context;
-4. reconstruct nominal, gerund, passive, and instruction-style criteria into evidence-state clauses;
-5. retrieve consented descriptor-learning records before generation where a governed learning store is available;
-6. rank and bound retrieved learning examples;
-7. prevent tenant-specific learning from bleeding into other organisations;
-8. prevent uncontrolled globalisation of customer-specific corrections;
-9. keep descriptor editing available after save until a future explicit signoff lock exists.
-
-## Descriptor Grammar Closure Authority
-
-Previously active wave artifacts:
-
-- `.agent-admin/scope-declarations/wave-mmm-descriptor-grammar-closure-2026-06-30.md`
 - `modules/MMM/05-qa-to-red/descriptor-grammar-closure-qa-to-red.md`
-- `.agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-grammar-closure-2026-06-30.md`
-- `.agent-admin/builder-appointments/wave-mmm-descriptor-grammar-closure-2026-06-30.md`
+- `modules/MMM/05-qa-to-red/descriptor-reasoning-learning-qa-to-red.md`
+- `modules/MMM/05-qa-to-red/descriptor-learning-persistence-replay-qa-to-red.md`
+- `modules/MMM/05-qa-to-red/descriptor-edit-save-learning-replay-hotfix-qa-to-red.md`
+- `modules/MMM/05-qa-to-red/descriptor-edit-memory-preservation-incomplete-recovery-qa-to-red.md`
 
-Primary intended implementation files remain:
+Core rules remain:
 
-- `apps/mmm/src/components/assessment/CriteriaManagement.tsx`
-- `modules/MMM/tests/B4-framework/domain-workflow-behavior.test.tsx`
+1. Do not copy the criterion into each maturity level.
+2. Reconstruct the criterion into an observable evidence-state clause before applying Basic, Reactive, Compliant, Proactive, and Resilient operating states.
+3. Preserve criterion-specific actor, action, object, qualifiers, and evidence-bearing secondary clauses.
+4. Record reusable learning only with explicit user consent.
+5. Apply same-criterion learning directly only where scope and lifecycle allow.
+6. Apply similar-criterion learning only when relevance is positively proven; transform the pattern onto the new criterion rather than copying old wording.
+7. Prevent cross-tenant reuse except for explicitly approved global methodology patterns.
+8. Exclude candidate-global, conflict-flagged, rejected, retired, and otherwise ineligible records.
+9. Use deterministic methodology fallback when learning is unavailable or below threshold, and do not claim learning was applied.
+10. Keep descriptor editing available until an explicit approval/signoff lock exists.
 
-Conditional extension only if justified:
+## 4. Merged Descriptor Runtime Sequence
 
-- Supabase edge-function or descriptor-learning retrieval logic related to reusable accepted descriptor corrections.
+| PR | Classification | Result |
+|---:|---|---|
+| #1898 | Pre-build / QA authority | Descriptor reasoning and governed-learning FRS/QA expansion merged |
+| #1902 | Builder appointment | Descriptor runtime builder authority and delegation sequence merged |
+| #1905 | Runtime helper layer | Descriptor reasoning and retrieval helper layer implemented |
+| #1909 | Runtime UI wiring | Criteria Management invokes descriptor reasoning visibly |
+| #1915 | QA-to-red authority | Learning persistence and replay QA contract merged |
+| #1918 | Runtime persistence/replay | Descriptor-learning persistence, retrieval, and replay implemented |
+| #1930 | QA-to-red hotfix authority | Save/regenerate workflow protection contract merged |
+| #1931 | Runtime hotfix | Unsaved descriptor edits protected; save/learning workflow corrected |
+| #1937 | Runtime hotfix | Explicit relevance threshold and non-contamination behavior implemented |
+| #1941 | Runtime hotfix | First-edit preservation and incomplete-level recovery implemented |
+| #1949 | Verification/boundary hotfix | MMM-specific Vercel secret boundary and honest live verification merged |
 
-## Descriptor Grammar / Reasoning QA Obligations
+## 5. Descriptor Closure Gate
 
-Future implementation under the baseline issue #1871 or a successor descriptor-reasoning issue must verify:
+The descriptor lane is implemented but not administratively closed until CS2 completes live validation of #1941.
 
-1. `are to be clearly defined` is normalised to `are clearly defined` in evidence clauses.
-2. `Assessing incentive schemes and measures for their impact on Security` is normalised to `incentive schemes and measures are assessed for their impact on Security`.
-3. Instruction wording such as `should be`, `will be`, `shall be`, and `must be` is converted into evidence-state phrasing before maturity-state text is attached.
-4. The criterion-specific actor/action/object remains visible and is not replaced with generic policy/control wording.
-5. Accepted user descriptor edits are used as future generation examples where learning records are available, or deterministic grammar normalisation covers the observed examples until retrieval is separately wired.
-6. Descriptor editing remains available after save until a future explicit signoff lock exists.
-7. Verbatim nominal phrases such as `Review and approval of facility design changes...` are reconstructed as `facility design changes are reviewed and approved...`.
-8. Learning is not recorded unless the user consents.
-9. Descriptor-learning records store the transformation pattern, before/after text, correction category, scope, lifecycle, and consent metadata.
-10. Learning retrieval is scoped, ranked, bounded, and tenant-safe.
-11. Conflicting descriptor-learning records are not silently merged.
-12. If learning retrieval is unavailable, Maturion uses deterministic methodology fallback and does not claim learning was applied.
+Required live proof:
 
-## Boundary Authority Still Adopted
+1. Open an incomplete historical criterion such as the previously observed `D001.MPS002.C006` case.
+2. Edit one populated maturity descriptor.
+3. Accept or decline Maturion learning.
+4. Confirm that the other persisted maturity descriptor values do not disappear.
+5. Regenerate while the set is incomplete.
+6. Confirm only missing/empty levels are populated.
+7. Confirm the edited and other non-empty levels remain unchanged.
+8. Save all five levels.
+9. Reload and confirm all five levels remain persisted.
+10. Confirm complete five-level sets with unsaved edits still block destructive regeneration.
 
-MMM must continue to treat these artifacts as shared pre-build boundary authority:
+After successful evidence is recorded, disposition these issues as completed or superseded as appropriate:
+
+- #1940 — Descriptor Edit Memory Preservation and Incomplete-Level Recovery Hotfix
+- #1936 — Descriptor Learning Relevance and Non-Contamination Hotfix
+- #1929 — Descriptor Edit Save and Learning Replay Hotfix
+- #1914 — Descriptor Learning Persistence and Replay
+- #1900 — Descriptor Reasoning + Governed Learning Retrieval Build to Green
+- #1871 — baseline descriptor grammar closure, subject to final traceability review
+
+## 6. Boundary Authority
+
+MMM continues to adopt the shared platform/module boundary authority:
 
 - `modules/isms/prebuild-harvest-package/platform-module-boundary-linkup-strategy.md`
 - `modules/MMM/04-architecture/platform-module-boundary-linkup-strategy.md`
+- MMM boundary addenda under Stages 1–11
 
-Operating principle:
+Operating boundary:
 
-- ISMS owns public landing, modules overview, public free-assessment entry, marketing routes, subscription, authentication, onboarding, dashboard, and entitlement/journey-state handoff.
-- MMM owns Maturity Roadmap runtime behavior only after approved ISMS handoff.
-- MMM may power assessment, scoring, roadmap logic, and module-specific runtime workflows, but it must not become the ISMS platform shell.
-- MMM agent must not build ISMS, PIT, Risk Management, RADAM / Systems Integration, or other module runtime.
-- ISMS agent must not build MMM runtime.
-- Cross-module linkup must be governed before build.
+- ISMS owns the public acquisition shell, subscription, authentication, onboarding, platform dashboard, entitlement, and journey-state handoff.
+- MMM owns Maturity Model Management runtime behavior after the approved ISMS handoff.
+- PIT remains a separate application and Vercel project with its own routes, secrets, and implementation boundary.
+- MMM workflows must use the MMM-specific Vercel secret namespace and must not consume generic or PIT/Portal secrets.
+- Cross-module functionality requires explicit boundary authority before implementation.
 
-## Merged Approval Workflow Pre-Build / QA / Alignment Sequence
+## 7. Approval Workflow Pre-Build Alignment
+
+Approval workflow Steps 1–8 are complete and aligned to the formal FRS, TRS, and Architecture baselines.
+
+Merged sequence:
 
 | Step | PR | Status | Output |
-|---:|---|---|---|
-| 1 | #1831 | Merged | Approval workflow gap analysis / pre-build alignment |
-| 2 | #1833 | Merged | DB/API, notification, lock, audit, and AI learning contract |
-| 3 | #1837 | Merged | Level 2 invite modal and approver workspace QA-to-red |
-| 4 | #1838 | Merged | Change-summary e-mail and Level 1 response QA-to-red |
+|---:|---:|---|---|
+| 1 | #1831 | Merged | Approval workflow gap analysis and pre-build contract |
+| 2 | #1833 | Merged | DB/API, notification, lock, audit, and AI learning contracts |
+| 3 | #1837 | Merged | Level 2 invitation and approver workspace QA-to-red |
+| 4 | #1838 | Merged | Change summary and Level 1 response QA-to-red |
 | 5 | #1840 | Merged | Level 3 approval expansion QA-to-red |
 | 6 | #1842 | Merged | Published maturity model view QA-to-red |
-| 7 | #1844 | Merged | Evidence modal harvest/adaptation from MAT QA-to-red |
+| 7 | #1844 | Merged | Evidence modal harvest/adaptation QA-to-red |
 | 8 | #1845 | Merged | FRS/TRS/Architecture alignment addendum |
-| Boundary | #1850 | Merged | Shared ISMS/module boundary linkup authority |
-| MMM Boundary | #1854 | Merged | MMM-side boundary pre-build alignment baseline |
-| Descriptor Grammar | Issue #1871 | Active | Focused descriptor grammar closure before signoff route build |
-| Descriptor Reasoning + Learning | Pre-build branch | Open | CS2-requested reasoning pipeline and governed learning retrieval expansion |
+| Foundation contract | #1846 | Merged | Canonical approval request builders, event shapes, lock guard, and focused contract tests |
 
-## Boundary-Aligned Pre-Build References
+Authoritative approval artifacts:
 
-MMM boundary alignment is recorded in addenda under:
+- `modules/MMM/approval-workflow/approval-workflow-gap-analysis.md`
+- `modules/MMM/approval-workflow/approval-workflow-prebuild-contract.md`
+- `modules/MMM/approval-workflow/approval-workflow-db-api-contract.md`
+- `modules/MMM/approval-workflow/approval-workflow-notification-lock-contract.md`
+- `modules/MMM/approval-workflow/approval-workflow-qa-to-red.md`
+- `modules/MMM/approval-workflow/level2-invite-workspace-qa-to-red.md`
+- `modules/MMM/approval-workflow/change-summary-accept-reject-apply-qa-to-red.md`
+- `modules/MMM/approval-workflow/level3-approval-expansion-qa-to-red.md`
+- `modules/MMM/approval-workflow/published-model-view-qa-to-red.md`
+- `modules/MMM/approval-workflow/evidence-modal-harvest-qa-to-red.md`
+- `modules/MMM/approval-workflow/frs-trs-architecture-alignment-addendum.md`
 
-- `modules/MMM/00-app-description/platform-boundary-linkup-app-description-addendum.md`
-- `modules/MMM/01-ux-workflow-wiring-spec/platform-boundary-linkup-ux-wiring-addendum.md`
-- `modules/MMM/02-frs/platform-boundary-linkup-frs-addendum.md`
-- `modules/MMM/03-trs/platform-boundary-linkup-trs-addendum.md`
-- `modules/MMM/04-architecture/platform-boundary-linkup-architecture-addendum.md`
-- `modules/MMM/05-qa-to-red/platform-boundary-linkup-qa-to-red.md`
-- `modules/MMM/06-pbfag/platform-boundary-linkup-pbfag-addendum.md`
-- `modules/MMM/07-implementation-plan/platform-boundary-linkup-implementation-addendum.md`
-- `modules/MMM/08-builder-checklist/platform-boundary-linkup-builder-checklist-addendum.md`
-- `modules/MMM/10-builder-appointment/platform-boundary-linkup-builder-contract-addendum.md`
+## 8. Approval Runtime Status
 
-## Linkup QA-to-Red Obligations
+PR #1846 established the approval foundation contract surface only. It implemented:
 
-Future MMM/ISMS linkup QA-to-red must verify:
+- canonical approval function-name constants;
+- request payload builders;
+- notification, audit, and AI-learning event-shape builders;
+- a final-lock mutation guard;
+- executable contract tests.
 
-1. ISMS public landing routes MMM-related entry points to the ISMS-owned public route or approved assessment entry.
-2. Public free assessment remains an ISMS-owned acquisition/trust surface unless CS2 explicitly delegates otherwise.
-3. Subscription, authentication, onboarding, and dashboard states are preserved where MMM handoff requires them.
-4. Eligible users reach MMM runtime/workflow without looping back to subscription, authentication, onboarding, or public assessment unexpectedly.
-5. Any MMM-specific host does not expose a duplicate public acquisition loop.
-6. Cross-origin local-storage assumptions are not used as proof of journey continuity.
-7. MMM runtime does not alter PIT, Risk Management, RADAM, or other module routes.
-8. MMM changes do not make MMM the ISMS platform shell by accident.
+PR #1846 did **not** implement:
 
-## Active Build-to-GREEN Constraint
+- durable approval-round, approver, proposed-change, comment, notification, audit, learning-event, or lock persistence;
+- operational approval Edge Functions;
+- a server-enforced approval state machine;
+- a production typed Supabase integration client;
+- Level 2 invitation/workspace UI;
+- Level 1 response UI or correspondence delivery;
+- Level 3 final approval runtime;
+- published-model runtime;
+- evidence-modal runtime.
 
-Descriptor reasoning and learning retrieval may proceed only as a focused MMM descriptor runtime lane after pre-build / QA-to-red alignment.
+No approval workflow completion claim is permitted from #1846 alone.
 
-No ISMS public journey, subscription, auth, onboarding, dashboard, entitlement handoff, signoff-route, Vercel workflow, PIT, Risk Management, RADAM, or other module implementation is authorized by the descriptor reasoning / learning expansion.
+## 9. Next Governed Runtime Wave
 
-## Claim Restriction
+After the descriptor live-closure evidence is recorded and issue #1955 is merged, the next MMM product lane is:
 
-No completion, release, production-readiness, fully functional, handover, ready-for-review, or merge-ready claim may be made from the descriptor reasoning / learning setup artifacts alone.
+### Approval Workflow Foundation Runtime
 
-## Required Build Sequence
+Required first-wave scope:
 
-1. Keep the current lane bounded to MMM descriptor reasoning and governed learning retrieval.
-2. Use both descriptor QA-to-red artifacts before implementation:
-   - `modules/MMM/05-qa-to-red/descriptor-grammar-closure-qa-to-red.md`
-   - `modules/MMM/05-qa-to-red/descriptor-reasoning-learning-qa-to-red.md`
-3. Preserve IAA pre-brief -> builder appointment -> first implementation commit ordering.
-4. Build only the authorized MMM descriptor runtime behaviour to green.
-5. Capture Foreman QP after builder implementation.
-6. Invoke ECAP/IAA/CS2 review only in the appropriate lane and order.
+1. Create a fresh implementation issue and scope declaration.
+2. Create IAA pre-brief and builder appointment before the first implementation commit.
+3. Convert the relevant approval QA-to-red expectations into executable failing tests.
+4. Implement durable persistence for approval rounds, approvers, proposed changes, comments, lock state, notification events, audit events, and AI-learning events.
+5. Implement the canonical server-side approval state machine.
+6. Implement the canonical Edge Functions:
+   - `mmm-approval-round-create`
+   - `mmm-approval-invite-accept`
+   - `mmm-approval-proposed-changes-submit`
+   - `mmm-approval-decision-submit`
+   - `mmm-approval-level1-response-submit`
+   - `mmm-approval-lock-transition`
+   - `mmm-approval-workspace-read` where required by the approved route map
+7. Replace contract-only helpers with or wrap them in a typed integration client that calls the canonical runtime.
+8. Persist notification, audit, and organisation-scoped AI-learning events transactionally or with honest partial-failure reporting.
+9. Enforce Level 1 non-locking, all-Level-2 domain lock, affected-item temporary unlock, and final-lock mutation prevention server-side.
+10. Provide preview/live evidence and keep the wave bounded to the approval foundation.
+
+Explicitly out of scope for the first runtime wave unless separately authorised:
+
+- full Level 2 workspace UI;
+- e-mail template rendering or delivery;
+- Level 3 UI;
+- published model view;
+- evidence modal runtime;
+- PIT, Risk, Incident, RADAM, or other module integration.
+
+## 10. Subsequent Approved Sequence
+
+After the approval foundation runtime is green:
+
+1. Level 2 invite modal and scoped approver workspace runtime.
+2. Level 1 change-summary response runtime.
+3. Level 3 final approval runtime.
+4. Published maturity model view runtime.
+5. Evidence modal harvest/adaptation runtime.
+6. Later assessment, reporting, and boundary-integration waves according to the frozen Stage 8 plan.
+
+## 11. Claim Restriction
+
+Do not claim full B4 completion, approval workflow completion, Stage 12 completion, production readiness, or full MMM handover from the descriptor runtime sequence, #1846 contract helpers, or pre-build artifacts alone.
+
+Completion claims require the corresponding executable tests, operational backend and frontend wiring, preview/live evidence, governance gates, and CS2 acceptance for the specific wave.
