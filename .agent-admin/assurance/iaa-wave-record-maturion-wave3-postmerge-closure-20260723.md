@@ -11,20 +11,20 @@ IAA_PREFLIGHT_BRIEF:
   reviewed_merge_baseline: "fc3556f391a1a3a854d16008e17099026c5d5992"
   qualifying_tasks:
     - task_id: "MW3-PMC-001"
-    summary: "Establish authoritative Maturion Wave 0–10 progress tracker"
-    assurance_category: "programme-control"
+      summary: "Establish authoritative Maturion Wave 0–10 progress tracker"
+      assurance_category: "programme-control"
     - task_id: "MW3-PMC-002"
-    summary: "Create closure pre-build and QA-to-RED baseline"
+      summary: "Create closure pre-build and QA-to-RED baseline"
       assurance_category: "programme-control"
     - task_id: "MW3-PMC-003"
-    summary: "Reconcile Maturion ecosystem strategy status and programme progress"
-    assurance_category: "documentation-governance-closure"
-  - task_id: "MW3-PMC-004"
-    summary: "Reconcile Wave 3 proposal to actual authorisation, implementation and merge history"
-    assurance_category: "documentation-governance-closure"
-  - task_id: "MW3-PMC-005"
-    summary: "Reconcile PR manifest, scope, task record, PR body and final path inventory"
-    assurance_category: "documentation-governance-closure"
+      summary: "Reconcile Maturion ecosystem strategy status and programme progress"
+      assurance_category: "documentation-governance-closure"
+    - task_id: "MW3-PMC-004"
+      summary: "Reconcile Wave 3 proposal to actual authorisation, implementation and merge history"
+      assurance_category: "documentation-governance-closure"
+    - task_id: "MW3-PMC-005"
+      summary: "Reconcile PR manifest, scope, task record, PR body and final path inventory"
+      assurance_category: "documentation-governance-closure"
   required_build_gates:
     - "Exact Issue #1953 authority and path-scope parity"
     - "No agent-contract, Tier 2, canon, inventory, runtime, test, schema, workflow, deployment, registry, routing or activation change"
@@ -121,7 +121,7 @@ FOREMAN_INSTRUCTIONS:
 - Keep PR #1954 in draft until all documentation conditions are green, all review conversations are resolved, and an independent IAA issues an ASSURANCE-TOKEN.
 - Reject any scope expansion beyond Issue #1953 documentation/evidence authorisation.
 - Ensure QP and ECAP are issued before IAA invocation.
-- Record one pre-authorised exact IAA session artifact path before freezing the head.
+- Record one pre-authorised exact IAA session-memory path before freezing the head.
 IAA_WILL_QA:
 - Review merge baseline fc3556f391a1a3a854d16008e17099026c5d5992 plus the documentation-only closure delta.
 - Verify changed-path parity, strategy/proposal/tracker coherence, and persistent RED/BLOCKED disclosures.
@@ -145,8 +145,9 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 - Prehandover proof: `.agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md`
 - Foreman QP: PASS — `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
 - ECAP: PASS — `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
-- Frozen pre-IAA head: to be confirmed from CI on current branch head
-- Pre-authorised independent IAA session artifact: `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
+- Frozen pre-IAA head reviewed by IAA R2: `23906460c6661d30b1516c1a9d7a49640dc37704`
+- IAA verdict artifact: `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
+- Independent IAA session memory: `.agent-workspace/independent-assurance-agent/memory/session-IAA-maturion-wave3-postmerge-closure-20260723.md`
 - CS2/proxy disposition: `.agent-admin/signoffs/maturion-wave3-postmerge-closure-cs2-proxy.md`
 
 ## TOKEN
@@ -168,6 +169,15 @@ Token reference: IAA-maturion-wave3-postmerge-closure-20260723-PASS
 PHASE_B_BLOCKING_TOKEN: IAA-maturion-wave3-postmerge-closure-20260723-PASS
 Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
 ═══════════════════════════════════════
+
+## POST-TOKEN ADMINISTRATIVE RECONCILIATION
+
+- IAA reviewed the frozen documentation/evidence head `23906460c6661d30b1516c1a9d7a49640dc37704`.
+- The token/session ceremony was committed through `54987bfcb32f6043226fc004dcfd311d8422060b`.
+- The subsequent handover ceremony at `25c5da8a8cea43ddf5ce62927233b56787fcc6c3` changed only the tracker, wave task record, prehandover proof and CS2/proxy disposition.
+- Final PR scope is 15 documentation/governance paths, including the independent IAA session-memory artifact.
+- No agent contract, Tier 2, canon, inventory, runtime, test, schema, workflow, deployment, registry, routing or activation file changed after the reviewed head.
+- The R2 token remains the final assurance result; this section corrects administrative path and reference parity only and does not alter the IAA verdict.
 
 ## REJECTION_HISTORY
 
