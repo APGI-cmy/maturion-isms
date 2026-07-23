@@ -14,6 +14,7 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   PROJECTS: '/projects',
   PROJECTS_NEW: '/projects/new',
+  PROJECT_DETAIL: '/projects/:id',
   PIT: '/pit',
   PIT_TRACKER: '/pit/tracker',
   ONBOARDING: '/onboarding',

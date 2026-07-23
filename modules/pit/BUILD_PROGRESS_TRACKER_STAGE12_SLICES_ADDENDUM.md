@@ -5,9 +5,9 @@
 | Module | PIT - Project Implementation Tracker |
 | Artifact type | Authoritative Stage 12 slice-status addendum |
 | Stage | Stage 12 - Build Execution & Evidence |
-| Date | 2026-07-21 |
-| Status | ACTIVE — RECONCILED THROUGH SLICE 4 GOVERNANCE MERGE |
-| Reconciliation authority | Issue #1946 |
+| Date | 2026-07-23 |
+| Status | ACTIVE — SLICE 4 IMPLEMENTATION / DATABASE / RLS / DEPLOYMENT / AUTHENTICATED LFV GREEN — FINAL REVIEW OPEN |
+| Reconciliation authority | Issue #1946; implementation Issue #1943 |
 | Applies to | `modules/pit/BUILD_PROGRESS_TRACKER.md` until incorporated into a later direct tracker revision |
 
 ## Operating controls
@@ -31,67 +31,95 @@
 | Slice 2.3 — Entry implementation | Completed for authorized boundary and issue closed; uncaptured browser evidence remains outstanding | Issue #1896, PR #1910, PR #1925 |
 | Slice 3 — Project Register / Project Creation Persistence Foundation | Implemented and merged for the authorized browser-local boundary; formal authenticated browser evidence remains outstanding | Issue #1934, PR #1935, merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd` |
 | Slice 3 browser evidence | Open evidence-only action; no runtime expansion authorized | Issue #1944 |
-| Slice 4 — Supabase Project Persistence and Project Detail Workspace Foundation | Governance baseline merged; implementation open and not started | Issue #1943, PR #1945, merge commit `4fc92c4cdcf7e0392516c7a28279c5f68049c7d5` |
+| Slice 4 — Supabase Project Persistence and Project Detail Workspace Foundation | Runtime, database, RLS, deployment and authenticated LFV GREEN; final current-head review, merge and post-merge verification open | Issue #1943, PR #1952 |
 
-## Slice 4 governance baseline delivered
+## Slice 4 governance and implementation ordering
 
-PR #1945 established, in canonical order:
+The active PR history proves:
 
-1. PR-scoped wave task declaration;
-2. Slice 4 QA-to-RED and Supabase/RLS contract;
-3. canonical `IAA_PREFLIGHT_BRIEF` in the assurance wave record;
-4. `pit-specialist` appointment and delegation;
-5. issue-scoped open delegation record pending the later implementation PR.
+1. PR-specific prebrief `80a3a5b911f6a41f0a0885dd666758a9d5595493`;
+2. `pit-specialist` appointment `8f8c1662f9aee3c2aa1b6ac1e5ac08a6e3880585`;
+3. first implementation/QA-to-RED commit `155b42e141c78a9fcd28ee9beefca0d104271d34`;
+4. Build-to-GREEN implementation;
+5. applied migration, privilege hardening and RLS verification;
+6. deployed authenticated LFV;
+7. fixture cleanup and temporary workflow removal.
 
-The reviewed governance head was `d0cec29778f709252bd4619fd6e7d0a9739ad69e`. PR #1945 merged on 2026-07-21 through merge commit `4fc92c4cdcf7e0392516c7a28279c5f68049c7d5`.
+The Builder Delegation Order Gate passes. The pre-repair branch state remains preserved at `backup/pr-1952-before-delegation-history-repair`.
 
-This baseline contains no application runtime, database migration, RLS policy or deployment configuration implementation.
+## Supabase target and delivered database boundary
 
-## Slice 4 implementation readiness position
+Slice 4 is bound to `APGI-cmy's Project` (`ujucvyyspfxlxlfdamda`).
 
-The controlled implementation branch is:
+Delivered and applied:
 
-`pit-stage12-slice4-supabase-project-persistence`
+- `projects` and `source_links` tables;
+- transactional `pit_create_project` and `pit_update_project` functions;
+- organisation-member read policies;
+- creator-capable insert policies;
+- authorised update policies;
+- parent-constrained source-link access;
+- anonymous denial;
+- authenticated privilege hardening to `SELECT`, `INSERT`, `UPDATE` only.
 
-It has been realigned to merge commit `4fc92c4cdcf7e0392516c7a28279c5f68049c7d5` before any implementation commit.
+Transactional RLS verification returned:
 
-The first implementation action remains a QA-to-RED failing-test commit. Schema, RLS and runtime work may follow only after the target Supabase project and the existing authentication/organisation-membership contract are explicitly recorded.
+```json
+{"creator_project_persisted":true,"viewer_denied":true,"cross_org_visible":0,"residual_projects":0}
+```
 
-## Supabase baseline discovery
+## Delivered application boundary
 
-Read-only inspection on 2026-07-21 found three healthy Supabase projects:
+- real Supabase password session restoration;
+- single active organisation membership and role resolution;
+- stable asynchronous PIT project repository;
+- validation and fail-closed authentication behavior;
+- Supabase Project Register;
+- transactional Create Project route;
+- `/projects/:id` overview/update workspace;
+- deterministic loading, denied, error, not-found and data states;
+- truthful non-migration treatment of browser-local records;
+- publishable browser credential only; no service-role client boundary;
+- app-owned cross-platform build launcher providing the governed public client configuration when deployment variables are absent.
 
-- `apgi-learning-portal` — learning-specific schema;
-- `AMC` — no public tables at inspection time;
-- `APGI-cmy's Project` (`ujucvyyspfxlxlfdamda`) — shared ISMS/MMM-style schema containing RLS-enabled organisations, profiles, user organisation memberships, user roles, audit and QA tables.
+## Evidence and implementation status
 
-No PIT `projects` or `source_links` tables existed in the inspected shared environment. The shared environment is the leading candidate only; no schema write is authorized until its identity is explicitly confirmed for PIT.
+Completed:
 
-## Outstanding evidence and implementation debt
+- strict PR-specific delegation ancestry and gate proof;
+- QA-to-RED commit;
+- repository/validation tests GREEN;
+- TypeScript compiler exit `0`, empty diagnostics;
+- migrations applied;
+- RLS and privilege verification;
+- RED-to-GREEN evidence filed;
+- implementation-plan alignment filed;
+- governance and security gates reached GREEN;
+- CodeQL reached GREEN;
+- ISMS Portal and PIT preview deployment/smoke reached GREEN;
+- authenticated LFV workflow run `30006074390` PASS;
+- create → detail → update → reload → register and API verification PASS;
+- LFV evidence filed at `modules/pit/12-build/slice-4/authenticated-deployed-lfv-evidence-20260723.md`;
+- LFV project and source-link fixture removed with zero residual rows;
+- PR-specific LFV workflow removed after evidence capture.
 
-- Issue #1944: formal authenticated browser evidence for Slice 3 remains open.
-- Issue #1943: Slice 4 implementation remains open.
-- No Slice 4 RED tests, migration, RLS policy, repository implementation or `/projects/:id` runtime implementation has yet been committed.
-- Stage 12 completion evidence, full route coverage, full GREEN baseline, LFV closure, CS2 L3 verification and handover remain outstanding.
+## Outstanding
+
+- final current-head governance, CodeQL and deployment checks after evidence/workflow cleanup;
+- final review-thread inventory and proxy/IAA disposition;
+- CS2 merge, post-merge verification and Issue #1943 closure;
+- Issue #1944 formal authenticated browser evidence for Slice 3;
+- broader Stage 12 implementation and closure evidence, full route coverage, CS2 L3 verification and handover.
 
 ## Supersession notice
 
-The following W8.2 addenda remain preserved for audit history but are superseded for current-state interpretation by this addendum:
+The W8.2 addenda remain preserved for audit history but are superseded for current-state interpretation by this addendum:
 
 - `modules/pit/BUILD_PROGRESS_TRACKER_PR1850_ALIGNMENT.md`;
 - `modules/pit/BUILD_PROGRESS_TRACKER_W8_2_DISPOSITION_ADDENDUM.md`.
 
 ## Non-completion notice
 
-This addendum does not claim:
-
-- Slice 4 implementation completion;
-- production Supabase persistence;
-- completed organisation-scoped RLS;
-- full PIT or Stage 12 completion;
-- production or release readiness;
-- `CODE_PASS` or `FUNCTIONAL_PASS`;
-- browser-evidence completion;
-- handover completion.
+This addendum records Slice 4 implementation and authenticated LFV GREEN. It does not claim PR #1952 merged, full PIT or Stage 12 completion, production/release readiness, `FUNCTIONAL_PASS`, handover completion or Issue #1944 completion.
 
 PIT Stage 12 remains **AUTHORIZED_TO_START / INCOMPLETE**.
