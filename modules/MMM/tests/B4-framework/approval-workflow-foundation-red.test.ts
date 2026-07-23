@@ -14,7 +14,7 @@ function readFile(relPath: string): string {
   return readFileSync(absolutePath, 'utf-8');
 }
 
-const STATE_MACHINE_PATH = 'apps/mmm/src/lib/approvalWorkflowStateMachine.ts';
+const STATE_MACHINE_PATH = 'apps/mmm/src/lib/approval/approvalWorkflowStateMachine.ts';
 const DOMAIN_ACTION_PATH = 'supabase/functions/mmm-domain-approval-action/index.ts';
 const FRAMEWORK_ACTION_PATH = 'supabase/functions/mmm-framework-approval-action/index.ts';
 
@@ -28,7 +28,7 @@ describe('MMM Approval Workflow Foundation QA-to-RED — issue #1961', () => {
     expect(source).toMatch(/approved_l2/);
     expect(source).toMatch(/expected(?:State|_state)/);
     expect(source).toMatch(/expected(?:Version|_version)/);
-    expect(source).toMatch(/complete|completeness/);
+    expect(source).toMatch(/\bcomplete\b|\bcompleteness\b/i);
   });
 
   it('T-MMM-AWF-003/006/007/008: domain action enforces immutable, reasoned and idempotent transitions', () => {
@@ -89,9 +89,11 @@ describe('MMM Approval Workflow Foundation QA-to-RED — issue #1961', () => {
     expect(fileExists(hardeningPath)).toBe(true);
     const hardening = readFile(hardeningPath);
     expect(hardening).toMatch(/CREATE OR REPLACE FUNCTION app_private\.mmm_current_user_org_id/i);
+    expect(hardening).toMatch(/CREATE OR REPLACE FUNCTION app_private\.mmm_current_user_role/i);
     expect(hardening).toMatch(/GRANT EXECUTE ON FUNCTION app_private\.mmm_current_user_org_id\(\) TO authenticated, service_role/i);
+    expect(hardening).toMatch(/GRANT EXECUTE ON FUNCTION app_private\.mmm_current_user_role\(\) TO authenticated, service_role/i);
     expect(hardening).toMatch(/REVOKE EXECUTE ON FUNCTION public\.mmm_current_user_org_id\(\) FROM PUBLIC, anon, authenticated/i);
-    expect(hardening).toMatch(/app_private\.mmm_current_user_org_id\(\)/i);
+    expect(hardening).toMatch(/REVOKE EXECUTE ON FUNCTION public\.mmm_current_user_role\(\) FROM PUBLIC, anon, authenticated/i);
     expect(hardening).not.toMatch(/DISABLE ROW LEVEL SECURITY/i);
     expect(hardening).not.toMatch(/GRANT .*service_role.*authenticated/i);
   });
