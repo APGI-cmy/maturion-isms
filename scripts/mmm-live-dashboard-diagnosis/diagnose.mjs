@@ -1,60 +1,32 @@
 #!/usr/bin/env node
 /**
- * MMM Live Dashboard Diagnosis (PR #1590)
+ * MMM live dashboard diagnosis.
  *
- * Drives the live Vercel protected-preview deployment with Playwright,
- * logs in as the configured test admin, opens /dashboard, and captures:
- *
- *   - screenshot of the dashboard route
- *   - browser console messages
- *   - all network requests/responses (URL, method, status, body for failing calls)
- *   - the Playwright trace (zip)
- *   - a diagnosis-summary.md file with the standard PR response fields
- *
- * The script exits non-zero (after writing artifacts) when the dashboard
- * shows the "Unable to load dashboard data." error banner OR when the
- * mmm-qiw-status (or any dashboard-related) network call fails.
- *
- * Required environment variables:
- *   MMM_PREVIEW_URL                 Full URL pointing at /dashboard
- *   MMM_TEST_ADMIN_EMAIL            Test admin email
- *   MMM_TEST_ADMIN_PASSWORD         Test admin password
- *
- * Optional:
- *   VERCEL_AUTOMATION_BYPASS_SECRET Vercel Deployment Protection bypass secret.
- *                                   When set, the script appends
- *                                   `x-vercel-protection-bypass=<secret>` and
- *                                   `x-vercel-set-bypass-cookie=samesitenone`
- *                                   to the first navigation so subsequent
- *                                   requests carry the protection-bypass
- *                                   cookie.
- *   MMM_TEST_ADMIN_USER_ID          (recorded into summary only)
- *   MMM_TEST_ORGANISATION_ID        (recorded into summary only)
- *   ARTIFACT_DIR                    Output directory (default ./diagnosis-artifacts)
- *   HEADLESS                        "false" to run headed (default headless)
+ * Verifies the protected MMM Vercel preview with Playwright, authenticates the
+ * configured test administrator, confirms that the dashboard renders, and
+ * records dashboard/API evidence. Expected 3xx navigation responses used by
+ * Vercel to establish the automation-bypass cookie are diagnostic only and do
+ * not represent application failures.
  */
 
 import { chromium } from 'playwright';
-import { mkdir, writeFile, appendFile } from 'node:fs/promises';
+import { appendFile, mkdir, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
-const DASHBOARD_ERROR_TEXT =
-  'Unable to load dashboard data. Please check your connection and try again.';
 const QIW_STATUS_HINT = 'mmm-qiw-status';
-
 const ARTIFACT_DIR = path.resolve(
   process.env.ARTIFACT_DIR || 'diagnosis-artifacts',
 );
 
 function required(name) {
-  const v = process.env[name];
-  if (!v || !v.trim()) {
+  const value = process.env[name];
+  if (!value || !value.trim()) {
     console.error(`[diagnose] missing required env var: ${name}`);
     process.exit(2);
   }
-  return v;
+  return value.trim();
 }
 
 function safeJson(value) {
@@ -65,30 +37,40 @@ function safeJson(value) {
   }
 }
 
+function withBypassParams(rawUrl, bypassSecret) {
+  if (!bypassSecret) return rawUrl;
+  const url = new URL(rawUrl);
+  url.searchParams.set('x-vercel-protection-bypass', bypassSecret);
+  url.searchParams.set('x-vercel-set-bypass-cookie', 'samesitenone');
+  return url.toString();
+}
+
+function isHttpFailure(entry) {
+  return (
+    entry.phase === 'response' &&
+    typeof entry.status === 'number' &&
+    entry.status >= 400
+  );
+}
+
+function isDashboardRelated(entry) {
+  return (
+    entry.url.includes(QIW_STATUS_HINT) ||
+    entry.url.includes('/functions/v1/')
+  );
+}
+
 async function main() {
   const previewUrl = required('MMM_PREVIEW_URL');
   const email = required('MMM_TEST_ADMIN_EMAIL');
   const password = required('MMM_TEST_ADMIN_PASSWORD');
-  const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '').trim();
-  const headless = (process.env.HEADLESS || 'true').toLowerCase() !== 'false';
+  const bypassSecret = (
+    process.env.VERCEL_AUTOMATION_BYPASS_SECRET || ''
+  ).trim();
+  const headless =
+    (process.env.HEADLESS || 'true').toLowerCase() !== 'false';
 
-  if (!existsSync(ARTIFACT_DIR)) {
-    await mkdir(ARTIFACT_DIR, { recursive: true });
-  }
-
-  // If a Vercel Deployment Protection bypass secret is supplied, attach it to
-  // the first navigation URL so Vercel sets the bypass cookie for the rest of
-  // the session. Both query params are required by Vercel's documented
-  // "Automation Bypass" flow.
-  // See: https://vercel.com/docs/security/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation
-  function withBypassParams(rawUrl) {
-    if (!bypassSecret) return rawUrl;
-    const u = new URL(rawUrl);
-    u.searchParams.set('x-vercel-protection-bypass', bypassSecret);
-    u.searchParams.set('x-vercel-set-bypass-cookie', 'samesitenone');
-    return u.toString();
-  }
-  const navigateUrl = withBypassParams(previewUrl);
+  await mkdir(ARTIFACT_DIR, { recursive: true });
 
   const consoleLogPath = path.join(ARTIFACT_DIR, 'console.log');
   const networkLogPath = path.join(ARTIFACT_DIR, 'network.log');
@@ -100,87 +82,95 @@ async function main() {
   await writeFile(consoleLogPath, '');
   await writeFile(networkLogPath, '');
 
-  const previewURL = new URL(previewUrl);
-  const origin = previewURL.origin;
+  const configuredUrl = new URL(previewUrl);
+  const navigateUrl = withBypassParams(previewUrl, bypassSecret);
 
   const browser = await chromium.launch({ headless });
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     viewport: { width: 1366, height: 900 },
-    // Forward the Vercel protection-bypass header on every request as a
-    // belt-and-braces measure in addition to the bypass cookie set via the
-    // navigation query params above.
     extraHTTPHeaders: bypassSecret
-      ? { 'x-vercel-protection-bypass': bypassSecret }
+      ? {
+          'x-vercel-protection-bypass': bypassSecret,
+          'x-vercel-set-bypass-cookie': 'true',
+        }
       : undefined,
   });
-  await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
+  await context.tracing.start({
+    screenshots: true,
+    snapshots: true,
+    sources: true,
+  });
+
   const page = await context.newPage();
-
   const consoleEntries = [];
-  page.on('console', (msg) => {
-    const line = `[${new Date().toISOString()}] ${msg.type().toUpperCase()} ${msg.text()}`;
-    consoleEntries.push(line);
-    appendFile(consoleLogPath, line + '\n').catch(() => {});
-  });
-  page.on('pageerror', (err) => {
-    const line = `[${new Date().toISOString()}] PAGEERROR ${err.message}`;
-    consoleEntries.push(line);
-    appendFile(consoleLogPath, line + '\n').catch(() => {});
-  });
-
-  /** @type {Array<{url:string,method:string,status?:number,ok?:boolean,contentType?:string,body?:string,error?:string,phase:string,ts:string}>} */
   const networkEntries = [];
+  const steps = [];
 
-  page.on('request', (req) => {
+  page.on('console', (message) => {
+    const line = `[${new Date().toISOString()}] ${message
+      .type()
+      .toUpperCase()} ${message.text()}`;
+    consoleEntries.push(line);
+    appendFile(consoleLogPath, `${line}\n`).catch(() => {});
+  });
+
+  page.on('pageerror', (error) => {
+    const line = `[${new Date().toISOString()}] PAGEERROR ${error.message}`;
+    consoleEntries.push(line);
+    appendFile(consoleLogPath, `${line}\n`).catch(() => {});
+  });
+
+  page.on('request', (request) => {
     networkEntries.push({
-      url: req.url(),
-      method: req.method(),
+      url: request.url(),
+      method: request.method(),
       phase: 'request',
       ts: new Date().toISOString(),
     });
   });
 
-  page.on('requestfailed', (req) => {
+  page.on('requestfailed', (request) => {
     networkEntries.push({
-      url: req.url(),
-      method: req.method(),
+      url: request.url(),
+      method: request.method(),
       phase: 'failed',
-      error: req.failure()?.errorText || 'unknown',
+      error: request.failure()?.errorText || 'unknown',
       ts: new Date().toISOString(),
     });
   });
 
-  page.on('response', async (resp) => {
-    const req = resp.request();
-    const url = resp.url();
-    const status = resp.status();
-    const ok = resp.ok();
+  page.on('response', async (response) => {
+    const request = response.request();
+    const status = response.status();
+    const url = response.url();
     let body;
     let contentType = '';
+
     try {
-      const headers = resp.headers();
-      contentType = headers['content-type'] || '';
+      contentType = response.headers()['content-type'] || '';
     } catch {
-      /* noop */
+      // Diagnostic metadata only.
     }
-    // Capture body for non-2xx OR mmm-qiw-status calls (any status) OR any /functions/v1/ call
-    const isQiw = url.includes(QIW_STATUS_HINT);
-    const isFunctionsCall = url.includes('/functions/v1/');
-    const capture = !ok || isQiw || isFunctionsCall;
-    if (capture) {
+
+    const captureBody =
+      status >= 400 ||
+      url.includes(QIW_STATUS_HINT) ||
+      url.includes('/functions/v1/');
+
+    if (captureBody && status < 300) {
       try {
-        const buf = await resp.body();
-        body = buf.toString('utf8').slice(0, 8000);
-      } catch (e) {
-        body = `(failed to read body: ${e?.message || e})`;
+        body = (await response.body()).toString('utf8').slice(0, 8000);
+      } catch (error) {
+        body = `(failed to read body: ${error?.message || error})`;
       }
     }
+
     networkEntries.push({
       url,
-      method: req.method(),
+      method: request.method(),
       status,
-      ok,
+      ok: status < 400,
       contentType,
       body,
       phase: 'response',
@@ -188,208 +178,197 @@ async function main() {
     });
   });
 
-  /** @type {{step:string,detail?:string,ok:boolean}[]} */
-  const steps = [];
   let deploymentAccess = false;
   let loginSuccess = false;
   let dashboardLoaded = false;
   let dashboardErrorVisible = false;
+  let permissionErrorVisible = false;
 
-  async function step(name, fn) {
+  async function step(name, operation) {
     try {
-      const detail = await fn();
+      const detail = await operation();
       steps.push({ step: name, ok: true, detail });
       console.log(`[diagnose] ✓ ${name}${detail ? ` — ${detail}` : ''}`);
-    } catch (err) {
-      const msg = err?.message || String(err);
-      steps.push({ step: name, ok: false, detail: msg });
-      console.log(`[diagnose] ✗ ${name} — ${msg}`);
-      throw err;
+    } catch (error) {
+      const detail = error?.message || String(error);
+      steps.push({ step: name, ok: false, detail });
+      console.error(`[diagnose] ✗ ${name} — ${detail}`);
+      throw error;
     }
   }
 
   try {
     await step('navigate-to-preview', async () => {
-      const resp = await page.goto(navigateUrl, {
+      const response = await page.goto(navigateUrl, {
         waitUntil: 'domcontentloaded',
         timeout: 60_000,
       });
-      const s = resp?.status();
-      deploymentAccess = !!resp && s !== undefined && s < 400;
-      return `status=${s ?? 'n/a'}${bypassSecret ? ' (vercel-bypass=applied)' : ''}`;
+      const status = response?.status();
+      deploymentAccess =
+        Boolean(response) && typeof status === 'number' && status < 400;
+      if (!deploymentAccess) {
+        throw new Error(`preview navigation failed with status ${status ?? 'n/a'}`);
+      }
+      return `status=${status}${bypassSecret ? ' (vercel-bypass=applied)' : ''}`;
     });
 
-    // The MMM SPA redirects unauthenticated users to /login. Detect and log in.
-    await step('detect-login-form', async () => {
-      // Wait briefly for SPA to render. Either email field or dashboard renders.
-      await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
-      const loginEmail = page.locator('#login-email');
-      const dashErr = page.getByTestId('dashboard-error');
-      const visible = await Promise.race([
-        loginEmail
-          .waitFor({ state: 'visible', timeout: 20_000 })
-          .then(() => 'login')
-          .catch(() => null),
-        dashErr
-          .waitFor({ state: 'visible', timeout: 20_000 })
-          .then(() => 'dashboard-error')
-          .catch(() => null),
-      ]);
-      return `first-visible=${visible || 'unknown'}`;
-    });
+    await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
 
-    const onLogin = await page.locator('#login-email').isVisible().catch(() => false);
+    const loginEmail = page.locator('#login-email');
+    const onLogin = await loginEmail
+      .waitFor({ state: 'visible', timeout: 20_000 })
+      .then(() => true)
+      .catch(() => false);
+
     if (onLogin) {
-      await step('fill-login', async () => {
+      await step('submit-login', async () => {
         await page.fill('#login-email', email);
         await page.fill('#login-password', password);
-        return 'credentials entered';
-      });
-      await step('submit-login', async () => {
         await Promise.all([
           page
             .waitForURL(/\/dashboard/, { timeout: 30_000 })
             .catch(() => null),
           page.click('button[type="submit"]'),
         ]);
-        const url = page.url();
-        loginSuccess = url.includes('/dashboard');
+
+        const currentUrl = page.url();
+        loginSuccess = currentUrl.includes('/dashboard');
         if (!loginSuccess) {
-          // Check for visible login error
-          const errText = await page
+          const alert = await page
             .locator('.alert.alert-error')
             .first()
             .innerText()
             .catch(() => '');
           throw new Error(
-            `login did not navigate to /dashboard, currentUrl=${url} alert=${errText || '(none)'}`,
+            `login did not reach /dashboard; currentUrl=${currentUrl} alert=${
+              alert || '(none)'
+            }`,
           );
         }
-        return `currentUrl=${url}`;
+        return `currentUrl=${currentUrl}`;
       });
     } else {
-      // Already on dashboard route somehow (e.g. existing session). Treat as logged in.
       loginSuccess = page.url().includes('/dashboard');
     }
 
     await step('wait-for-dashboard-render', async () => {
       await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
-      // Wait up to 20s for either the dashboard pipeline section or the error banner.
-      const errorLocator = page.getByTestId('dashboard-error');
-      const permLocator = page.getByTestId('dashboard-permission-error');
-      const headingLocator = page.getByRole('heading', { name: /Maturity Dashboard/i });
 
-      // Give either outcome time to render
+      const dashboardError = page.getByTestId('dashboard-error');
+      const permissionError = page.getByTestId('dashboard-permission-error');
+      const heading = page.getByRole('heading', {
+        name: /Maturity Dashboard/i,
+      });
+
       await Promise.race([
-        errorLocator.waitFor({ state: 'visible', timeout: 30_000 }).catch(() => null),
-        permLocator.waitFor({ state: 'visible', timeout: 30_000 }).catch(() => null),
-        headingLocator.waitFor({ state: 'visible', timeout: 30_000 }).catch(() => null),
+        dashboardError
+          .waitFor({ state: 'visible', timeout: 30_000 })
+          .catch(() => null),
+        permissionError
+          .waitFor({ state: 'visible', timeout: 30_000 })
+          .catch(() => null),
+        heading
+          .waitFor({ state: 'visible', timeout: 30_000 })
+          .catch(() => null),
       ]);
 
-      dashboardErrorVisible = await errorLocator.isVisible().catch(() => false);
-      const permVisible = await permLocator.isVisible().catch(() => false);
-      dashboardLoaded = !dashboardErrorVisible && !permVisible;
-      return `errorVisible=${dashboardErrorVisible} permissionErrorVisible=${permVisible} loaded=${dashboardLoaded}`;
+      dashboardErrorVisible = await dashboardError
+        .isVisible()
+        .catch(() => false);
+      permissionErrorVisible = await permissionError
+        .isVisible()
+        .catch(() => false);
+      const headingVisible = await heading.isVisible().catch(() => false);
+      dashboardLoaded =
+        headingVisible && !dashboardErrorVisible && !permissionErrorVisible;
+
+      if (!dashboardLoaded) {
+        throw new Error(
+          `dashboard did not render successfully: heading=${headingVisible} dashboardError=${dashboardErrorVisible} permissionError=${permissionErrorVisible}`,
+        );
+      }
+
+      return 'dashboard heading visible with no error banner';
     });
-  } catch (err) {
-    console.error('[diagnose] flow halted:', err?.message || err);
+  } catch (error) {
+    console.error('[diagnose] flow halted:', error?.message || error);
   }
 
-  // Always capture screenshot + trace
   try {
     await page.screenshot({ path: screenshotPath, fullPage: true });
-  } catch (e) {
-    console.error('[diagnose] screenshot failed:', e?.message || e);
+  } catch (error) {
+    console.error('[diagnose] screenshot failed:', error?.message || error);
   }
+
   try {
     await context.tracing.stop({ path: tracePath });
-  } catch (e) {
-    console.error('[diagnose] trace stop failed:', e?.message || e);
+  } catch (error) {
+    console.error('[diagnose] trace stop failed:', error?.message || error);
   }
+
   await browser.close().catch(() => {});
 
-  // Persist network logs
   await writeFile(networkJsonPath, safeJson(networkEntries));
-  const netLines = networkEntries.map((e) => {
-    const base = `[${e.ts}] ${e.phase.toUpperCase()} ${e.method} ${e.url}`;
-    if (e.phase === 'response')
-      return `${base} -> ${e.status}${e.ok ? '' : ' (NOT OK)'} ct=${e.contentType || '-'}${
-        e.body ? `\n    body: ${e.body.replace(/\n/g, ' ').slice(0, 1200)}` : ''
+  const networkLines = networkEntries.map((entry) => {
+    const base = `[${entry.ts}] ${entry.phase.toUpperCase()} ${entry.method} ${entry.url}`;
+    if (entry.phase === 'response') {
+      return `${base} -> ${entry.status}${
+        isHttpFailure(entry) ? ' (NOT OK)' : ''
+      } ct=${entry.contentType || '-'}${
+        entry.body
+          ? `\n    body: ${entry.body.replace(/\n/g, ' ').slice(0, 1200)}`
+          : ''
       }`;
-    if (e.phase === 'failed') return `${base} -> FAILED ${e.error}`;
+    }
+    if (entry.phase === 'failed') return `${base} -> FAILED ${entry.error}`;
     return base;
   });
-  await writeFile(networkLogPath, netLines.join('\n') + '\n');
-
-  // Diagnose root cause from network log
-  const failingDashboardCall = networkEntries
-    .filter((e) => e.phase === 'response' && e.ok === false)
-    .find((e) => e.url.includes(QIW_STATUS_HINT)) ||
-    networkEntries
-      .filter((e) => e.phase === 'response' && e.ok === false)
-      .find((e) => e.url.includes('/functions/v1/')) ||
-    networkEntries.find((e) => e.phase === 'failed' && e.url.includes(QIW_STATUS_HINT)) ||
-    networkEntries
-      .filter((e) => e.phase === 'response' && e.ok === false)
-      .pop();
+  await writeFile(networkLogPath, `${networkLines.join('\n')}\n`);
 
   const qiwResponses = networkEntries.filter(
-    (e) => e.phase === 'response' && e.url.includes(QIW_STATUS_HINT),
+    (entry) =>
+      entry.phase === 'response' && entry.url.includes(QIW_STATUS_HINT),
   );
 
-  let likelyRootCause = 'unknown';
-  let nextFix = 'Review captured artifacts; see network.log and dashboard.png.';
-  if (failingDashboardCall) {
-    const s = failingDashboardCall.status;
-    if (failingDashboardCall.phase === 'failed') {
-      likelyRootCause = 'network/CORS — request never received a response';
-      nextFix =
-        'Verify the edge function is deployed and CORS allows the preview origin. Check `supabase/functions/mmm-qiw-status` ALLOWED_ORIGINS / Access-Control-Allow-Origin.';
-    } else if (s === 401 || s === 403) {
-      likelyRootCause = `auth/RLS — ${s} returned from edge function`;
-      nextFix =
-        'Confirm Authorization header is being forwarded by supabase.functions.invoke (session present), and that the edge function authorises ADMIN/LEAD_AUDITOR via profile.role. Check RLS policies on tables read by the function.';
-    } else if (s === 404) {
-      likelyRootCause = 'missing function — mmm-qiw-status not deployed on the project';
-      nextFix =
-        'Re-run deploy-mmm-edge-functions workflow against the production/preview Supabase project, then retest.';
-    } else if (s === 500 || s === 502 || s === 503) {
-      likelyRootCause = 'edge function runtime error or downstream Supabase failure';
-      nextFix =
-        'Inspect Supabase edge function logs for mmm-qiw-status and the captured response body for the failing reason. Likely missing env var, bad schema query, or migration drift.';
-    } else if (s && s >= 400) {
-      likelyRootCause = `HTTP ${s} from dashboard call — response-shape or validation`;
-      nextFix =
-        'Inspect captured response body (network.log) for the failing reason and align client expectation in apps/mmm/src/pages/DashboardPage.tsx with the function response schema.';
-    }
-  } else if (dashboardErrorVisible && qiwResponses.length === 0) {
-    likelyRootCause =
-      'no mmm-qiw-status call observed — VITE_SUPABASE_URL/ANON_KEY may be empty in the preview build';
+  const failingDashboardCall =
+    networkEntries.find(
+      (entry) => isDashboardRelated(entry) && isHttpFailure(entry),
+    ) ||
+    networkEntries.find(
+      (entry) =>
+        isDashboardRelated(entry) && entry.phase === 'failed',
+    );
+
+  let likelyRootCause = 'none — live dashboard verification passed';
+  let nextFix = 'No corrective action required.';
+
+  if (failingDashboardCall?.phase === 'failed') {
+    likelyRootCause = 'network/CORS — dashboard request received no response';
     nextFix =
-      'Verify Vercel preview env vars VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are populated and rebuild.';
-  } else if (dashboardErrorVisible) {
-    likelyRootCause =
-      'dashboard error banner visible but no failing HTTP response captured — response-shape mismatch (function returned 200 with unexpected shape)';
+      'Verify the edge function deployment and allowed preview origin.';
+  } else if (failingDashboardCall) {
+    likelyRootCause = `dashboard/API HTTP ${failingDashboardCall.status}`;
     nextFix =
-      'Inspect mmm-qiw-status response body and DashboardPage.tsx parsing; the function likely returned a payload that surfaced as a thrown error in queryFn.';
-  } else if (!dashboardLoaded && !loginSuccess) {
+      'Inspect the captured response body and corresponding Supabase function logs.';
+  } else if (dashboardErrorVisible || permissionErrorVisible) {
+    likelyRootCause = 'dashboard rendered an application or permission error';
+    nextFix = 'Inspect the dashboard screenshot and network evidence.';
+  } else if (!loginSuccess) {
     likelyRootCause = 'login flow did not reach /dashboard';
-    nextFix =
-      'Check credentials (MMM_TEST_ADMIN_EMAIL / MMM_TEST_ADMIN_PASSWORD), Supabase auth status, and that the preview URL points at the same Supabase project where the test user exists.';
+    nextFix = 'Verify the configured test administrator credentials and profile.';
   } else if (!deploymentAccess) {
-    likelyRootCause = 'preview URL not reachable (Vercel share token expired or 401)';
-    nextFix = 'Generate a fresh ?_vercel_share=... token and re-run.';
+    likelyRootCause = 'protected preview was not reachable';
+    nextFix = 'Verify the MMM preview URL and automation-bypass secret.';
   }
 
-  const failingReq = failingDashboardCall
+  const failingRequest = failingDashboardCall
     ? `${failingDashboardCall.method} ${failingDashboardCall.url}`
-    : '(no failing dashboard request captured)';
-  const failingStatus = failingDashboardCall?.status ?? failingDashboardCall?.error ?? '(n/a)';
-  const failingBody = failingDashboardCall?.body
-    ? failingDashboardCall.body.slice(0, 4000)
-    : '(no body captured)';
+    : '(none)';
+  const failingStatus =
+    failingDashboardCall?.status || failingDashboardCall?.error || '(n/a)';
+  const failingBody = failingDashboardCall?.body || '(no failing body captured)';
   const consoleErrors = consoleEntries
-    .filter((l) => /ERROR|PAGEERROR/.test(l))
+    .filter((entry) => /ERROR|PAGEERROR/.test(entry))
     .slice(-25)
     .join('\n');
 
@@ -398,7 +377,7 @@ async function main() {
 DEPLOYMENT_ACCESS: ${deploymentAccess ? 'yes' : 'no'}
 LOGIN_SUCCESS: ${loginSuccess ? 'yes' : 'no'}
 DASHBOARD_LOAD: ${dashboardLoaded ? 'pass' : 'fail'}
-FAILING_REQUEST: ${failingReq}
+FAILING_REQUEST: ${failingRequest}
 HTTP_STATUS: ${failingStatus}
 RESPONSE_BODY:
 \`\`\`
@@ -415,44 +394,57 @@ NEXT_FIX: ${nextFix}
 
 ## Run context
 
-- Preview URL: ${origin}${previewURL.pathname}${previewURL.search ? ' (with query params)' : ''}
-- Vercel protection bypass: ${bypassSecret ? 'applied (VERCEL_AUTOMATION_BYPASS_SECRET present)' : 'not applied'}
+- Preview URL: ${configuredUrl.origin}${configuredUrl.pathname}
+- Vercel protection bypass: ${
+    bypassSecret ? 'applied' : 'not applied'
+  }
 - Steps:
-${steps.map((s) => `  - ${s.ok ? '✓' : '✗'} ${s.step}${s.detail ? ` — ${s.detail}` : ''}`).join('\n')}
+${steps
+  .map(
+    (entry) =>
+      `  - ${entry.ok ? '✓' : '✗'} ${entry.step}${
+        entry.detail ? ` — ${entry.detail}` : ''
+      }`,
+  )
+  .join('\n')}
 
 ## mmm-qiw-status calls observed
 ${
-  qiwResponses.length === 0
-    ? '(none)'
-    : qiwResponses
-        .map((r) => `- ${r.method} ${r.url} → ${r.status} ${r.ok ? 'OK' : 'NOT OK'}`)
+  qiwResponses.length
+    ? qiwResponses
+        .map(
+          (entry) =>
+            `- ${entry.method} ${entry.url} → ${entry.status} ${
+              isHttpFailure(entry) ? 'NOT OK' : 'OK'
+            }`,
+        )
         .join('\n')
+    : '(none)'
 }
 
 ## Artifacts
-- dashboard.png (screenshot, full page)
-- console.log (browser console + page errors)
-- network.log (human-readable request/response log)
-- network.json (machine-readable network entries)
-- trace.zip (Playwright trace, open with: npx playwright show-trace trace.zip)
+- dashboard.png
+- console.log
+- network.log
+- network.json
+- trace.zip
 `;
 
   await writeFile(summaryPath, summary);
-  // NOTE: do not echo the full summary to stdout. The summary file is uploaded
-  // as a workflow artifact and mirrored to $GITHUB_STEP_SUMMARY by the workflow.
-  // We avoid echoing the full body (which may include env-derived identifiers
-  // or response bodies) into the public runner log. Print only a short marker.
-  console.log(`\n[diagnose] wrote diagnosis-summary.md (${summary.length} bytes)`);
+  console.log(`[diagnose] wrote diagnosis-summary.md (${summary.length} bytes)`);
 
-  // Exit non-zero when the live dashboard failure is reproduced or no diagnosis possible.
-  const reproduced = dashboardErrorVisible || !!failingDashboardCall;
-  if (reproduced || !dashboardLoaded) {
-    process.exit(1);
-  }
-  process.exit(0);
+  const failed =
+    !deploymentAccess ||
+    !loginSuccess ||
+    !dashboardLoaded ||
+    dashboardErrorVisible ||
+    permissionErrorVisible ||
+    Boolean(failingDashboardCall);
+
+  process.exit(failed ? 1 : 0);
 }
 
-main().catch((err) => {
-  console.error('[diagnose] fatal:', err?.stack || err?.message || err);
+main().catch((error) => {
+  console.error('[diagnose] fatal:', error?.stack || error?.message || error);
   process.exit(2);
 });
