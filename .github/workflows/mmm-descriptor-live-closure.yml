@@ -37,6 +37,7 @@ concurrency:
 jobs:
   verify-descriptor-closure:
     name: Verify descriptor closure
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -112,6 +113,9 @@ jobs:
           fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
 
+      - name: Validate MMM preview origin
+        run: node scripts/mmm-live-dashboard-diagnosis/validate-preview-url.mjs
+
       - name: Install Playwright and Chromium
         run: |
           mkdir -p /tmp/pw
@@ -136,6 +140,20 @@ jobs:
           set +e
           node scripts/mmm-live-dashboard-diagnosis/verify-descriptor-closure.mjs
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Validate raw persistence invariant
+        if: always() && steps.closure.outputs.exit_code == '0'
+        run: |
+          set -euo pipefail
+          json='descriptor-closure-artifacts/descriptor-closure.json'
+          [ -f "$json" ] || { echo '::error::Descriptor closure JSON evidence is missing'; exit 1; }
+          jq -e '
+            (.before | to_entries | map(select(.value | length > 0)) | first.key) as $edited_level
+            | .afterReload[$edited_level] == .before[$edited_level]
+          ' "$json" >/dev/null || {
+            echo '::error::The whitespace-only edit persisted or the edited descriptor changed after reload'
+            exit 1
+          }
 
       - name: Upload descriptor closure artifacts
         if: always()
