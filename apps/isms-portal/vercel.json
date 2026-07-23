@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "VITE_SUPABASE_URL=https://ujucvyyspfxlxlfdamda.supabase.co VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_ZUKVt9ixujFGVpI3JVzGEw_MIQYm2np pnpm run build",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
