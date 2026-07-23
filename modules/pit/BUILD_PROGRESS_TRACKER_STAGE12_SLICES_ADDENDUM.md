@@ -6,8 +6,8 @@
 | Artifact type | Authoritative Stage 12 slice-status addendum |
 | Stage | Stage 12 - Build Execution & Evidence |
 | Date | 2026-07-23 |
-| Status | ACTIVE — SLICE 4 IMPLEMENTATION / DATABASE / RLS / DEPLOYMENT / AUTHENTICATED LFV GREEN — FINAL REVIEW OPEN |
-| Reconciliation authority | Issue #1946; implementation Issue #1943 |
+| Status | ACTIVE — SLICE 4 MERGED / POST-MERGE VERIFIED / AUTHORISED BOUNDARY COMPLETE — STAGE 12 INCOMPLETE |
+| Reconciliation authority | Issue #1964; implementation Issue #1943 |
 | Applies to | `modules/pit/BUILD_PROGRESS_TRACKER.md` until incorporated into a later direct tracker revision |
 
 ## Operating controls
@@ -31,21 +31,24 @@
 | Slice 2.3 — Entry implementation | Completed for authorized boundary and issue closed; uncaptured browser evidence remains outstanding | Issue #1896, PR #1910, PR #1925 |
 | Slice 3 — Project Register / Project Creation Persistence Foundation | Implemented and merged for the authorized browser-local boundary; formal authenticated browser evidence remains outstanding | Issue #1934, PR #1935, merge commit `bd2c35545e1884bf5a450e892f46689e1c5570bd` |
 | Slice 3 browser evidence | Open evidence-only action; no runtime expansion authorized | Issue #1944 |
-| Slice 4 — Supabase Project Persistence and Project Detail Workspace Foundation | Runtime, database, RLS, deployment and authenticated LFV GREEN; final current-head review, merge and post-merge verification open | Issue #1943, PR #1952 |
+| Slice 4 — Supabase Project Persistence and Project Detail Workspace Foundation | **MERGED / POST-MERGE VERIFIED / AUTHORISED BOUNDARY COMPLETE** | Issue #1943, PR #1952, merge `61ef3795d953ae11e0c153705729bff52aa3dc9f`, reconciliation #1964 |
+| Next product wave — W8.3 Project Hierarchy | Not started; new governed scope required | Project → Milestones → Deliverables → Tasks / Action Items |
 
 ## Slice 4 governance and implementation ordering
 
-The active PR history proves:
+The merged PR history proves:
 
 1. PR-specific prebrief `80a3a5b911f6a41f0a0885dd666758a9d5595493`;
 2. `pit-specialist` appointment `8f8c1662f9aee3c2aa1b6ac1e5ac08a6e3880585`;
 3. first implementation/QA-to-RED commit `155b42e141c78a9fcd28ee9beefca0d104271d34`;
 4. Build-to-GREEN implementation;
-5. applied migration, privilege hardening and RLS verification;
-6. deployed authenticated LFV;
-7. fixture cleanup and temporary workflow removal.
+5. applied schema, privilege hardening and RPC-only mutation boundary;
+6. authenticated deployed LFV;
+7. fixture cleanup and temporary workflow removal;
+8. final review closure and CS2 merge;
+9. post-merge deployment verification.
 
-The Builder Delegation Order Gate passes. The pre-repair branch state remains preserved at `backup/pr-1952-before-delegation-history-repair`.
+The Builder Delegation Order Gate passed. The pre-repair branch state remains preserved at `backup/pr-1952-before-delegation-history-repair`.
 
 ## Supabase target and delivered database boundary
 
@@ -55,18 +58,14 @@ Delivered and applied:
 
 - `projects` and `source_links` tables;
 - transactional `pit_create_project` and `pit_update_project` functions;
-- organisation-member read policies;
-- creator-capable insert policies;
-- authorised update policies;
-- parent-constrained source-link access;
+- organisation-member authenticated read policies;
 - anonymous denial;
-- authenticated privilege hardening to `SELECT`, `INSERT`, `UPDATE` only.
+- authenticated table privileges restricted to `SELECT`;
+- no authenticated direct `INSERT`, `UPDATE`, `DELETE` or `TRUNCATE` table path;
+- mutation available only through checked `SECURITY DEFINER` RPCs;
+- actor, active membership, role and immutable organisation/audit binding enforced in the mutation contract.
 
-Transactional RLS verification returned:
-
-```json
-{"creator_project_persisted":true,"viewer_denied":true,"cross_org_visible":0,"residual_projects":0}
-```
+Transactional verification returned creator persistence, viewer denial, zero cross-organisation visibility and zero residual test projects.
 
 ## Delivered application boundary
 
@@ -79,10 +78,10 @@ Transactional RLS verification returned:
 - `/projects/:id` overview/update workspace;
 - deterministic loading, denied, error, not-found and data states;
 - truthful non-migration treatment of browser-local records;
-- publishable browser credential only; no service-role client boundary;
-- app-owned cross-platform build launcher providing the governed public client configuration when deployment variables are absent.
+- publishable/anonymous browser credential compatibility only; no service-role client boundary;
+- app-owned cross-platform build launcher providing governed public client configuration when deployment variables are absent.
 
-## Evidence and implementation status
+## Evidence and closure status
 
 Completed:
 
@@ -90,26 +89,28 @@ Completed:
 - QA-to-RED commit;
 - repository/validation tests GREEN;
 - TypeScript compiler exit `0`, empty diagnostics;
-- migrations applied;
+- three migrations applied, ending with RPC-only hardening;
 - RLS and privilege verification;
-- RED-to-GREEN evidence filed;
-- implementation-plan alignment filed;
-- governance and security gates reached GREEN;
-- CodeQL reached GREEN;
-- ISMS Portal and PIT preview deployment/smoke reached GREEN;
-- authenticated LFV workflow run `30006074390` PASS;
+- RED-to-GREEN evidence;
+- implementation-plan alignment;
+- governance, security and CodeQL GREEN;
+- ISMS Portal and PIT deployment/smoke GREEN;
+- authenticated LFV run `30006074390` PASS;
 - create → detail → update → reload → register and API verification PASS;
-- LFV evidence filed at `modules/pit/12-build/slice-4/authenticated-deployed-lfv-evidence-20260723.md`;
+- LFV evidence at `modules/pit/12-build/slice-4/authenticated-deployed-lfv-evidence-20260723.md`;
 - LFV project and source-link fixture removed with zero residual rows;
-- PR-specific LFV workflow removed after evidence capture.
+- PR-specific LFV workflow removed after evidence capture;
+- PR #1952 merged at `61ef3795d953ae11e0c153705729bff52aa3dc9f`;
+- post-merge deployment statuses GREEN;
+- closure record at `modules/pit/12-build/slice-4/post-merge-verification-and-closure-20260723.md`.
 
-## Outstanding
+## Outstanding programme work
 
-- final current-head governance, CodeQL and deployment checks after evidence/workflow cleanup;
-- final review-thread inventory and proxy/IAA disposition;
-- CS2 merge, post-merge verification and Issue #1943 closure;
+- merge this reconciliation PR and close Issues #1964 and #1943;
 - Issue #1944 formal authenticated browser evidence for Slice 3;
-- broader Stage 12 implementation and closure evidence, full route coverage, CS2 L3 verification and handover.
+- next W8.3 hierarchy wave for milestones, deliverables and tasks/action items;
+- later assignments, evidence, timeline, roll-up, reporting, notifications and AIMC waves;
+- broader Stage 12 route/evidence coverage, CS2 L3 verification, handover and closure evidence.
 
 ## Supersession notice
 
@@ -120,6 +121,6 @@ The W8.2 addenda remain preserved for audit history but are superseded for curre
 
 ## Non-completion notice
 
-This addendum records Slice 4 implementation and authenticated LFV GREEN. It does not claim PR #1952 merged, full PIT or Stage 12 completion, production/release readiness, `FUNCTIONAL_PASS`, handover completion or Issue #1944 completion.
+Slice 4 is complete only for its authorised boundary. This addendum does not claim full PIT or Stage 12 completion, production/release readiness, `FUNCTIONAL_PASS`, handover completion or Issue #1944 completion.
 
 PIT Stage 12 remains **AUTHORIZED_TO_START / INCOMPLETE**.
