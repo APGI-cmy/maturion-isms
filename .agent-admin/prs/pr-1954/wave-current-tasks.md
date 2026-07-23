@@ -7,6 +7,13 @@
 **Status:** BUILD_ACTIVE  
 **Handover allowed:** no
 
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-maturion-wave3-postmerge-closure-20260723.md
+IAA_PREFLIGHT_BRIEF_REVIEWED: yes
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-wave-record-maturion-wave3-postmerge-closure-20260723.md
+IAA_PREFLIGHT_BRIEF_SHA_OR_TIMESTAMP: 2026-07-23T09:00:00Z
+FOREMAN_CONSUMED_PREFLIGHT_BEFORE_IMPLEMENTATION: yes
+BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
+
 ## Binding records
 
 - Scope: `.agent-admin/scope-declarations/maturion-wave3-postmerge-closure-20260723.md`
@@ -30,17 +37,17 @@
 
 | Task ID | Description | Owner | Status |
 |---|---|---|---|
-| `MW3-PMC-001` | Establish authoritative Maturion Wave 0–10 progress tracker | documentation/evidence builder | COMPLETE_INITIAL / FINAL_REVIEW_PENDING |
+| `MW3-PMC-001` | Establish authoritative Maturion Wave 0–10 progress tracker | documentation/evidence builder | COMPLETE |
 | `MW3-PMC-002` | Create closure pre-build and QA-to-RED baseline | Foreman | COMPLETE |
-| `MW3-PMC-003` | Reconcile Maturion ecosystem strategy status and programme progress | documentation/evidence builder | PENDING |
-| `MW3-PMC-004` | Reconcile Wave 3 proposal to actual authorisation, implementation and merge history | documentation/evidence builder | PENDING |
-| `MW3-PMC-005` | Reconcile PR manifest, scope, task record, PR body and final path inventory | Foreman | IN_PROGRESS |
-| `MW3-PMC-006` | Verify no PR #1933 historical artifact changed | Foreman QP | PENDING |
-| `MW3-PMC-007` | Verify runtime QA remains RED/not executable | Foreman QP | PENDING |
-| `MW3-PMC-008` | Verify canon provenance remains blocked/unwaived | Foreman QP | PENDING |
-| `MW3-PMC-009` | Perform Foreman Quality Professor review | Foreman | PENDING |
-| `MW3-PMC-010` | Perform ECAP administrative validation | ECAP | PENDING |
-| `MW3-PMC-011` | Freeze exact pre-IAA head and terminal-green hosted checks | Foreman | PENDING |
+| `MW3-PMC-003` | Reconcile Maturion ecosystem strategy status and programme progress | documentation/evidence builder | COMPLETE |
+| `MW3-PMC-004` | Reconcile Wave 3 proposal to actual authorisation, implementation and merge history | documentation/evidence builder | COMPLETE |
+| `MW3-PMC-005` | Reconcile PR manifest, scope, task record, PR body and final path inventory | Foreman | COMPLETE |
+| `MW3-PMC-006` | Verify no PR #1933 historical artifact changed | Foreman QP | COMPLETE |
+| `MW3-PMC-007` | Verify runtime QA remains RED/not executable | Foreman QP | COMPLETE |
+| `MW3-PMC-008` | Verify canon provenance remains blocked/unwaived | Foreman QP | COMPLETE |
+| `MW3-PMC-009` | Perform Foreman Quality Professor review | Foreman | COMPLETE |
+| `MW3-PMC-010` | Perform ECAP administrative validation | ECAP | COMPLETE |
+| `MW3-PMC-011` | Freeze exact pre-IAA head and terminal-green hosted checks | Foreman | IN_PROGRESS |
 | `MW3-PMC-012` | Perform genuinely independent final assurance | independent-assurance-agent | PENDING |
 | `MW3-PMC-013` | Record final CS2/proxy disposition after IAA PASS | CS2 proxy | BLOCKED_ON_IAA |
 | `MW3-PMC-014` | Mark PR ready and hand back to CS2 | Foreman | BLOCKED_ON_IAA |

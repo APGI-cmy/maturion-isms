@@ -1,11 +1,79 @@
 # Wave 3 Maturion Thin-Core Contract Correction Proposal
 
-**Status:** Wave 3 proposal / protected-file change not yet authorised  
-**Date:** 2026-07-10  
+**Status:** PROPOSAL DELIVERED — EXECUTION COMPLETE — POST-MERGE CLOSURE IN PROGRESS  
+**Proposal date:** 2026-07-10  
+**Authorisation date:** 2026-07-13 (Issue #1932 opened; CodexAdvisor fitness confirmed Issue #1922/PR #1927)  
+**Merge date:** 2026-07-23 (PR #1933, merge commit `fc3556f391a1a3a854d16008e17099026c5d5992`)  
+**Post-merge closure:** Issue #1953 / PR #1954  
 **Authority:** CS2 / Johan Ras  
-**Issue:** #1919  
-**Preceded by:** Wave 0 ecosystem strategy, Wave 1 current-state audit, and Wave 2 CodexAdvisor runtime-specialist bundle process upgrade  
-**Scope:** Proposal, exact diff specification, CodexAdvisor fitness assessment, and CS2 decision point only
+**Proposal issue:** #1919  
+**Execution issue:** #1932  
+**Preceded by:** Wave 0 ecosystem strategy, Wave 1 current-state audit, Wave 2 CodexAdvisor runtime-specialist bundle process upgrade  
+**Scope:** Proposal, exact diff specification, CodexAdvisor fitness assessment, CS2 decision point, and post-merge execution record
+
+---
+
+## 0. Execution and merge record (added post-merge)
+
+This section records what actually occurred, complementing the proposal below. The proposal
+text from sections 1–8 is preserved as historical evidence and must not be edited.
+
+### 0.1 Authorisation sequence
+
+| Step | Authority | Outcome |
+|---|---|---|
+| Wave 3 proposal reviewed | CS2 Issue #1919 | Approved — CodexAdvisor prerequisite identified |
+| CodexAdvisor fitness prerequisite | CS2 Issue #1922 / PR #1927 | CodexAdvisor v4.3.0 declared fit for bounded correction |
+| Wave 3 Tier 1 correction authorised | CS2 Issue #1932 | Maturion contract correction authorised; CodexAdvisor appointed |
+| Protected-file correction executed | CodexAdvisor — PR #1933 | `.github/agents/maturion-agent.md` corrected to v2.1.0 |
+| PR #1933 merged | CS2 merge | Merge commit `fc3556f391a1a3a854d16008e17099026c5d5992` |
+
+### 0.2 Final merged identities
+
+| Artifact | Identity |
+|---|---|
+| Execution issue | #1932 |
+| Merged PR | #1933 |
+| PR #1933 head | `fe97ee74c272fb496b19371a585762930dd6822a` |
+| Merge commit on `main` | `fc3556f391a1a3a854d16008e17099026c5d5992` |
+| `.github/agents/maturion-agent.md` blob | `4c060b890074b79fa293dcd66c9b3f9987200e47` |
+| `.github/scripts/wake-up-protocol.sh` blob | `b9bc497aba37e31214e99887f40cf617c8af7799` |
+| `.github/scripts/session-closure.sh` blob | `6718b21b7547aae4bd0bb112e91a8f1ac12aead1` |
+| Maturion contract version | `2.1.0` |
+
+### 0.3 What the merge delivered
+
+The merged thin-core contract now records:
+
+- one Maturion identity across approved APGI contexts;
+- bounded invocation of approved and registered specialists, reviewers, parsers, scorers, routers and advisors;
+- mandatory bounded task context and Maturion output review;
+- truthful planned, unavailable and degraded-capability disclosure;
+- separation of Runtime Maturion from Maturion-as-CS2;
+- protected execution identity and PR-only write controls;
+- executable Phase 2 induction through `wake-up-protocol.sh`;
+- executable Phase 4 closure through `session-closure.sh`.
+
+### 0.4 What the merge did not deliver
+
+The merge did not implement:
+
+- Maturion Tier 2 runtime operating bundle (Wave 4 — not authorised);
+- runtime specialist routing or activation;
+- AIMC schema, Supabase, deployment or production behaviour.
+
+### 0.5 Persistent open items after merge
+
+- **Runtime QA:** `MATURION-RED-MMM-001` through `005` remain RED specified and not executable. No runtime builder may be appointed until those executable tests exist.
+- **Six-domain runtime advisor defect:** `packages/ai-centre/src/agents/maturion-advisor.md` still references six domains. Open defect; not corrected by this merge.
+- **Canon inventory provenance:** `governance/CANON_INVENTORY.json` lacks canonical commit provenance. Activation blocker; requires separate governance remediation.
+- **Wave 4:** Not authorised. Requires separate CS2 authority, QA-to-RED package, and independent IAA.
+
+### 0.6 Post-merge closure
+
+Wave 3 is not administratively CLOSED until Issue #1953 / PR #1954 obtains independent IAA
+PASS and CS2 disposition. This proposal file is historical evidence for that closure wave and
+must not be further modified.
 
 ---
 
@@ -363,14 +431,14 @@ The proposed contract correction does not by itself turn these tests green. Runt
 
 ---
 
-## 8. Completion criteria
+## 8. Completion criteria (historical record)
 
-Wave 3 proposal work is complete when:
+Wave 3 proposal work was declared complete when:
 
-- this artifact is reviewed by CS2;
-- CodexAdvisor fitness is accepted as `NOT FIT` pending exact remediation;
-- the Maturion contract correction is approved, amended, or rejected at specification level;
-- no protected agent contract or Tier 2 file was modified;
-- the next layer-down issue is explicitly chosen by CS2.
+- this artifact was reviewed by CS2;
+- CodexAdvisor fitness was accepted as `NOT FIT YET` pending exact remediation;
+- the Maturion contract correction specification was approved at specification level;
+- no protected agent contract or Tier 2 file was modified by the proposal;
+- the next layer-down issue was chosen by CS2 (Issue #1922 for CodexAdvisor fitness; Issue #1932 for Maturion correction).
 
-**Wave 3 status:** PROPOSAL PREPARED / CODEXADVISOR PREREQUISITE IDENTIFIED / PROTECTED EXECUTION NOT YET AUTHORISED
+**Wave 3 historical status:** PROPOSAL DELIVERED / EXECUTION COMPLETE / POST-MERGE CLOSURE IN PROGRESS (see Section 0 for execution record).

@@ -11,14 +11,20 @@ IAA_PREFLIGHT_BRIEF:
   reviewed_merge_baseline: "fc3556f391a1a3a854d16008e17099026c5d5992"
   qualifying_tasks:
     - task_id: "MW3-PMC-001"
-      summary: "Reconcile Maturion strategy and Wave 0–10 programme state"
-      assurance_category: "documentation-governance-closure"
+    summary: "Establish authoritative Maturion Wave 0–10 progress tracker"
+    assurance_category: "programme-control"
     - task_id: "MW3-PMC-002"
-      summary: "Establish authoritative Maturion build progress tracker"
+    summary: "Create closure pre-build and QA-to-RED baseline"
       assurance_category: "programme-control"
     - task_id: "MW3-PMC-003"
-      summary: "Assure final merged PR #1933 identities and evidence continuity"
-      assurance_category: "post-merge-assurance"
+    summary: "Reconcile Maturion ecosystem strategy status and programme progress"
+    assurance_category: "documentation-governance-closure"
+  - task_id: "MW3-PMC-004"
+    summary: "Reconcile Wave 3 proposal to actual authorisation, implementation and merge history"
+    assurance_category: "documentation-governance-closure"
+  - task_id: "MW3-PMC-005"
+    summary: "Reconcile PR manifest, scope, task record, PR body and final path inventory"
+    assurance_category: "documentation-governance-closure"
   required_build_gates:
     - "Exact Issue #1953 authority and path-scope parity"
     - "No agent-contract, Tier 2, canon, inventory, runtime, test, schema, workflow, deployment, registry, routing or activation change"
@@ -89,6 +95,40 @@ IAA_PREFLIGHT_BRIEF:
     - "No post-review substantive drift"
   result: PREFLIGHT_BRIEF_COMPLETE
 
+PR: #1954
+ISSUE: #1953
+WAVE: maturion-wave3-postmerge-closure-20260723
+WAVE_TASKS_PATH: .agent-admin/prs/pr-1954/wave-current-tasks.md
+CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
+EXPECTED_QA_SCOPE:
+- Verify merge commit fc3556f391a1a3a854d16008e17099026c5d5992 is the exact PR #1933 merged baseline and contract/script blobs are verified.
+- Verify documentation-only delta: strategy, proposal, tracker, prebuild and all PR #1954 governance artifacts tell one coherent programme truth.
+- Verify runtime five-domain QA remains RED specified and not executable; no executable test committed.
+- Verify stale six-domain runtime advisor is disclosed as an open defect and not patched.
+- Verify canonical inventory provenance remains an activation blocker and is not waived.
+- Verify Wave 4 and runtime implementation remain unauthorised.
+- Verify no PR #1933 historical artifact changed.
+EXPECTED_FAILURE_MODES:
+- Rewriting PR #1933 historical evidence.
+- Treating historical IAA PASS as coverage of the final merged lifecycle-script corrections.
+- Falsely declaring runtime QA green or tests executable.
+- Silently waiving canonical inventory provenance.
+- Implicitly authorising Wave 4 or runtime work.
+- Path-count or evidence drift after scope freeze.
+- Foreman, builder, ECAP or IAA role collapse.
+- Premature Wave 3 closure or handover claim.
+FOREMAN_INSTRUCTIONS:
+- Keep PR #1954 in draft until all documentation conditions are green, all review conversations are resolved, and an independent IAA issues an ASSURANCE-TOKEN.
+- Reject any scope expansion beyond Issue #1953 documentation/evidence authorisation.
+- Ensure QP and ECAP are issued before IAA invocation.
+- Record one pre-authorised exact IAA session artifact path before freezing the head.
+IAA_WILL_QA:
+- Review merge baseline fc3556f391a1a3a854d16008e17099026c5d5992 plus the documentation-only closure delta.
+- Verify changed-path parity, strategy/proposal/tracker coherence, and persistent RED/BLOCKED disclosures.
+- Confirm QP and ECAP artifacts are present and complete.
+- Issue exactly one binary result (ASSURANCE-TOKEN or REJECTION-PACKAGE).
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
 ## PREHANDOVER_EMBEDDED
 
 - Issue authority: `#1953`
@@ -103,10 +143,11 @@ IAA_PREFLIGHT_BRIEF:
 - PR manifest: `.admin/prs/pr-1954.json`
 - Wave tasks: `.agent-admin/prs/pr-1954/wave-current-tasks.md`
 - Prehandover proof: `.agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md`
-- Foreman QP: pending
-- ECAP: pending
-- Frozen pre-IAA head: pending
-- Independent IAA session path: pending exact pre-authorisation
+- Foreman QP: PASS — `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
+- ECAP: PASS — `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
+- Frozen pre-IAA head: to be confirmed from CI on current branch head
+- Pre-authorised independent IAA session artifact: `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
+- CS2/proxy disposition: `.agent-admin/signoffs/maturion-wave3-postmerge-closure-cs2-proxy.md`
 
 ## TOKEN
 

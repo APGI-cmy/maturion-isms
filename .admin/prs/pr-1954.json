@@ -7,7 +7,7 @@
   "builder": "bounded-documentation-evidence-builder",
   "branch": "foreman/maturion-wave3-postmerge-closure",
   "base_sha": "fc3556f391a1a3a854d16008e17099026c5d5992",
-  "head_sha": "31847a01cd51a33f27463867748743c605007959",
+  "head_sha": "edb9e40cb109488dc775b413f115e943f5a0498c",
   "reviewed_merge_baseline": "fc3556f391a1a3a854d16008e17099026c5d5992",
   "scope": [
     "Maturion/BUILD_PROGRESS_TRACKER.md",
@@ -22,9 +22,10 @@
     ".agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md",
     ".agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md",
     ".agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md",
+    ".agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md",
     ".agent-admin/signoffs/maturion-wave3-postmerge-closure-cs2-proxy.md"
   ],
-  "prospective_iaa_session_path": "PENDING_EXACT_PREAUTHORIZATION",
+  "prospective_iaa_session_path": ".agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md",
   "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,

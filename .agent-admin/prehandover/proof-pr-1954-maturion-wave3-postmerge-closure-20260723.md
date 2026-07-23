@@ -4,7 +4,7 @@
 **PR:** #1954  
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
 **Wave:** maturion-wave3-postmerge-closure-20260723  
-**State:** BUILD_ACTIVE — HANDOVER NOT YET ALLOWED  
+**State:** FOREMAN_QP_PASS — ECAP_PASS — PENDING_IAA  
 **Date:** 2026-07-23
 
 ---
@@ -34,8 +34,9 @@
 - Builder appointment: `.agent-admin/builder-appointments/maturion-wave3-postmerge-closure-documentation-builder-20260723.md`
 - Manifest: `.admin/prs/pr-1954.json`
 - Wave tasks: `.agent-admin/prs/pr-1954/wave-current-tasks.md`
-- QP: pending
-- ECAP: pending
+- QP: PASS — `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
+- ECAP: PASS — `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
+- Pre-authorised IAA session artifact: `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
 - Final IAA: pending
 - CS2/proxy disposition: pending
 
@@ -58,16 +59,16 @@ Every PR #1933 artifact is historical and read-only for this wave.
 | Gate | State |
 |---|---|
 | Scope declaration | PASS — current-wave scope declared |
-| IAA pre-brief | PASS — canonical pre-brief present |
+| IAA pre-brief | PASS — canonical pre-brief present with gate-compatible fields |
 | Builder appointment | PASS — bounded builder appointed |
-| Strategy reconciliation | PENDING |
-| Wave 3 proposal reconciliation | PENDING |
-| Final path parity | PENDING |
-| Foreman QP | PENDING |
-| ECAP | PENDING |
-| Hosted checks on frozen head | PENDING |
-| Review conversations | PENDING |
-| Independent IAA | PENDING |
+| Strategy reconciliation | PASS — ecosystem strategy updated to v1.0.0 (APPROVED) |
+| Wave 3 proposal reconciliation | PASS — execution record added (Section 0) |
+| Final path parity | PASS — 12 paths within scope, QP/ECAP paths added |
+| Foreman QP | PASS — `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md` |
+| ECAP | PASS — `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md` |
+| Hosted checks on frozen head | PENDING — awaiting CI completion on current branch head |
+| Review conversations | PENDING — reviewer thread to be resolved after IAA wave record verified |
+| Independent IAA | PENDING — session path pre-authorised |
 | CS2 disposition | PENDING |
 
 ## 7. Handover prohibition

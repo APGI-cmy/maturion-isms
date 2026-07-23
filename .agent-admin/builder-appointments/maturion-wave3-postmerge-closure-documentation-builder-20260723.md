@@ -6,7 +6,7 @@
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
 **Appointing authority:** foreman-v2-agent under CS2 Issue #1953  
 **Builder role:** bounded documentation/evidence builder  
-**Appointment state:** ACTIVE  
+**Appointment state:** BUILDER_COMPLETE  
 **Date:** 2026-07-23
 
 ---
