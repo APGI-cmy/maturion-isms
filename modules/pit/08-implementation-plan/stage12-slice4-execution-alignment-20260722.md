@@ -7,8 +7,8 @@
 | Parent plan | `modules/pit/08-implementation-plan/implementation-plan.md` |
 | Governance baseline | PR #1945 |
 | Tracker baseline | PR #1947 |
-| Date | 2026-07-22 |
-| Status | IMPLEMENTATION, GOVERNANCE AND DEPLOYMENT GREEN — AUTHENTICATED LFV EXTERNALLY BLOCKED |
+| Date | 2026-07-23 |
+| Status | IMPLEMENTATION, DATABASE, RLS, DEPLOYMENT AND AUTHENTICATED LFV GREEN — FINAL CURRENT-HEAD REVIEW OPEN |
 
 ## Purpose
 
@@ -26,10 +26,12 @@ This execution addendum narrows the broader W8.3 hierarchy plan to the authorise
 | 6 | Add Supabase tables, RPCs and RLS | two applied Slice 4 migrations |
 | 7 | Wire authenticated session and organisation role context | `AuthContext.tsx`, `LoginForm.tsx`, Supabase client |
 | 8 | Wire create/register/detail surfaces | `/projects/new`, `/projects`, `/projects/:id` |
-| 9 | Prove compiler, RLS and current-head gates GREEN | `red-to-green-and-rls-evidence-20260722.md` |
-| 10 | Deploy and smoke-test current head | ISMS Portal and PIT deployment workflows GREEN |
-| 11 | Complete deployed authenticated LFV | BLOCKED: canonical Action secrets empty; documented identity unseeded; public signup email delivery failing |
-| 12 | Final assurance, merge and post-merge verification | waits for Step 11 and CS2 action |
+| 9 | Prove compiler, RLS and Build-to-GREEN evidence | `red-to-green-and-rls-evidence-20260722.md` |
+| 10 | Deploy and smoke-test | ISMS Portal and PIT deployment workflows GREEN |
+| 11 | Complete deployed authenticated LFV | workflow run `30006074390` PASS; durable evidence filed |
+| 12 | Remove LFV fixture and temporary runner | zero project/source-link residue; PR-specific workflow removed |
+| 13 | Final assurance and merge disposition | current-head checks and review inventory pending |
+| 14 | Post-merge verification | waits for CS2 merge authority |
 
 ## Delivered scope
 
@@ -41,19 +43,25 @@ This execution addendum narrows the broader W8.3 hierarchy plan to the authorise
 - deterministic detail states;
 - browser-local compatibility boundary without false migration claims;
 - strict delegation ancestry repaired and verified;
-- current-head governance, CodeQL, deployment and route-smoke evidence.
+- deployed public Supabase client configuration through the app-owned build launcher;
+- authenticated create → detail → update → reload → register LFV.
 
-## External LFV dependency
+## Authenticated deployed LFV result
 
-The canonical LFV package requires the PIT test organisation and confirmed role identities to be seeded before execution. For the project-manager happy path, an authorised administrator must:
+The governed `project_manager` identity passed the complete protected-preview journey:
 
-1. seed or confirm a Supabase Auth user for the governed project-manager test identity;
-2. give it exactly one active organisation membership and `project_manager` role in the bound project;
-3. configure `PIT_TEST_PROJECT_MANAGER_EMAIL` and `PIT_TEST_PROJECT_MANAGER_PASSWORD` as GitHub Actions secrets;
-4. execute the authenticated create → detail → update → register browser journey;
-5. remove the LFV-created project after evidence capture.
+- authentication;
+- valid project creation;
+- Supabase persistence;
+- project-detail rendering;
+- authorised update;
+- update survival after reload;
+- Project Register visibility;
+- authenticated API verification.
 
-This is environment administration and secret provisioning, not remaining product implementation. Credentials may not be invented, committed or bypassed.
+Evidence: `modules/pit/12-build/slice-4/authenticated-deployed-lfv-evidence-20260723.md`.
+
+The generated project `ae89ddd2-1656-4dd0-a1bc-dc8743a9b723` and its source link were deleted after capture, with zero residual rows verified.
 
 ## Explicit exclusions retained
 
@@ -68,13 +76,11 @@ This is environment administration and secret provisioning, not remaining produc
 
 ## Remaining exit criteria
 
-- governed LFV identity and Action secrets provisioned;
-- authenticated browser journey evidence completed and fixture cleaned;
-- final proxy/IAA review;
-- CS2 merge and post-merge verification.
-
-No inline review threads or submitted reviews currently exist.
+- final current-head governance, security, CodeQL and deployment checks GREEN after evidence/workflow cleanup;
+- final review-thread inventory and proxy/IAA disposition;
+- CS2 merge;
+- post-merge verification and Issue #1943 closure.
 
 ## Non-completion notice
 
-This addendum aligns execution progress only. It does not claim authenticated browser LFV, merge readiness, `FUNCTIONAL_PASS`, Stage 12 completion, PIT completion or release readiness.
+This addendum records Slice 4 execution and LFV progress only. It does not claim merge completion, `FUNCTIONAL_PASS`, Stage 12 completion, PIT completion, release readiness or completion of separate Issue #1944.
