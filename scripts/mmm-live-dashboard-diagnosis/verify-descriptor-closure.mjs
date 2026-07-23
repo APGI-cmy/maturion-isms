@@ -27,23 +27,17 @@ function withBypass(rawUrl, secret) {
 }
 
 function safeJson(value) {
-  try {
-    return JSON.stringify(value, null, 2);
-  } catch {
-    return String(value);
-  }
+  try { return JSON.stringify(value, null, 2); } catch { return String(value); }
 }
 
 async function login(page, origin, email, password, bypassSecret) {
   await page.goto(withBypass(`${origin}/dashboard`, bypassSecret), {
-    waitUntil: 'domcontentloaded',
-    timeout: NAV_TIMEOUT,
+    waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT,
   });
   await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
   const emailInput = page.locator('#login-email');
   const onLogin = await emailInput.waitFor({ state: 'visible', timeout: 15_000 })
-    .then(() => true)
-    .catch(() => false);
+    .then(() => true).catch(() => false);
   if (onLogin) {
     await emailInput.fill(email);
     await page.locator('#login-password').fill(password);
@@ -70,7 +64,7 @@ function captureSupabasePublicConfig(page) {
       resolved = true;
       resolveConfig({ origin: new URL(request.url()).origin, apikey: headers.apikey });
     } catch {
-      // Wait for another request.
+      // Continue listening.
     }
   });
   return async () => Promise.race([
@@ -92,7 +86,7 @@ async function readBrowserAccessToken(page) {
         const candidate = stored?.access_token || stored?.currentSession?.access_token || stored?.session?.access_token;
         if (typeof candidate === 'string' && candidate.split('.').length === 3) return candidate;
       } catch {
-        // Ignore unrelated local-storage values.
+        // Ignore unrelated values.
       }
     }
     return '';
@@ -101,29 +95,34 @@ async function readBrowserAccessToken(page) {
   return token;
 }
 
-async function queryTable(page, config, accessToken, table, select) {
-  return page.evaluate(async ({ config, accessToken, table, select }) => {
+async function rest(page, config, accessToken, method, table, { select = '', body, filters = {} } = {}) {
+  return page.evaluate(async ({ config, accessToken, method, table, select, body, filters }) => {
     const url = new URL(`${config.origin}/rest/v1/${table}`);
-    url.searchParams.set('select', select);
+    if (select) url.searchParams.set('select', select);
+    Object.entries(filters).forEach(([key, value]) => url.searchParams.set(key, String(value)));
     const response = await fetch(url.toString(), {
+      method,
       headers: {
         apikey: config.apikey,
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Prefer: method === 'POST' ? 'return=representation' : 'return=minimal',
       },
+      body: body === undefined ? undefined : JSON.stringify(body),
     });
     const text = await response.text();
-    if (!response.ok) throw new Error(`${table} query failed (${response.status}): ${text.slice(0, 500)}`);
+    if (!response.ok) throw new Error(`${method} ${table} failed (${response.status}): ${text.slice(0, 500)}`);
     return text ? JSON.parse(text) : [];
-  }, { config, accessToken, table, select });
+  }, { config, accessToken, method, table, select, body, filters });
 }
 
-async function findTarget(page, config, accessToken) {
+async function findOrSeedTarget(page, config, accessToken) {
   const [criteria, descriptors, mpsRows, domains] = await Promise.all([
-    queryTable(page, config, accessToken, 'mmm_criteria', 'id,code,name,mps_id'),
-    queryTable(page, config, accessToken, 'mmm_level_descriptors', 'criterion_id,level,descriptor_text'),
-    queryTable(page, config, accessToken, 'mmm_maturity_process_steps', 'id,code,name,domain_id'),
-    queryTable(page, config, accessToken, 'mmm_domains', 'id,name,framework_id'),
+    rest(page, config, accessToken, 'GET', 'mmm_criteria', { select: 'id,code,name,mps_id' }),
+    rest(page, config, accessToken, 'GET', 'mmm_level_descriptors', { select: 'criterion_id,level,descriptor_text' }),
+    rest(page, config, accessToken, 'GET', 'mmm_maturity_process_steps', { select: 'id,code,name,domain_id' }),
+    rest(page, config, accessToken, 'GET', 'mmm_domains', { select: 'id,name,framework_id' }),
   ]);
   const descriptorMap = new Map();
   for (const row of descriptors) {
@@ -133,24 +132,34 @@ async function findTarget(page, config, accessToken) {
   }
   const mpsMap = new Map(mpsRows.map((row) => [row.id, row]));
   const domainMap = new Map(domains.map((row) => [row.id, row]));
-  const candidates = criteria.map((criterion) => {
+  const joined = criteria.map((criterion) => {
     const criterionDescriptors = descriptorMap.get(criterion.id) || [];
-    const populatedCount = criterionDescriptors.filter(
-      (row) => String(row.descriptor_text || '').trim(),
-    ).length;
+    const populatedCount = criterionDescriptors.filter((row) => String(row.descriptor_text || '').trim()).length;
     const mps = mpsMap.get(criterion.mps_id);
     const domain = mps ? domainMap.get(mps.domain_id) : null;
     return { criterion, populatedCount, mps, domain };
-  }).filter((item) =>
-    item.populatedCount > 0 && item.populatedCount < 5 && item.mps && item.domain?.framework_id,
-  ).sort((left, right) => {
-    const preference = Number(right.criterion.code === PREFERRED_CODE) - Number(left.criterion.code === PREFERRED_CODE);
-    return preference || left.populatedCount - right.populatedCount;
-  });
-  if (!candidates.length) {
-    throw new Error('No organisation-scoped criterion with between one and four populated maturity descriptors was found.');
+  }).filter((item) => item.mps && item.domain?.framework_id);
+
+  const incomplete = joined.filter((item) => item.populatedCount > 0 && item.populatedCount < 5)
+    .sort((left, right) => {
+      const preference = Number(right.criterion.code === PREFERRED_CODE) - Number(left.criterion.code === PREFERRED_CODE);
+      return preference || left.populatedCount - right.populatedCount;
+    });
+  if (incomplete.length) return { ...incomplete[0], seeded: false };
+
+  const zeroDescriptorTarget = joined.find((item) => item.populatedCount === 0);
+  if (!zeroDescriptorTarget) {
+    throw new Error('No incomplete or zero-descriptor criterion exists in the authenticated CI tenant.');
   }
-  return candidates[0];
+  const seedText = `Evidence that ${String(zeroDescriptorTarget.criterion.name).trim()} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`;
+  await rest(page, config, accessToken, 'POST', 'mmm_level_descriptors', {
+    body: {
+      criterion_id: zeroDescriptorTarget.criterion.id,
+      level: 1,
+      descriptor_text: seedText,
+    },
+  });
+  return { ...zeroDescriptorTarget, populatedCount: 1, seeded: true };
 }
 
 async function openCriteria(page, origin, target, bypassSecret) {
@@ -159,8 +168,7 @@ async function openCriteria(page, origin, target, bypassSecret) {
   route.searchParams.set('source_domain_id', target.domain.id);
   route.searchParams.set('domain_name', target.domain.name || target.domain.id);
   await page.goto(withBypass(route.toString(), bypassSecret), {
-    waitUntil: 'domcontentloaded',
-    timeout: NAV_TIMEOUT,
+    waitUntil: 'domcontentloaded', timeout: NAV_TIMEOUT,
   });
   await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
   const error = page.getByTestId('domain-audit-error');
@@ -179,9 +187,7 @@ async function values(page, criterionId) {
 }
 
 function populatedLevels(descriptors) {
-  return Object.entries(descriptors)
-    .filter(([, text]) => String(text).trim())
-    .map(([level]) => Number(level));
+  return Object.entries(descriptors).filter(([, text]) => String(text).trim()).map(([level]) => Number(level));
 }
 
 function assertExistingPreserved(before, after, editedLevel) {
@@ -205,6 +211,7 @@ async function main() {
   const result = {
     functionalPass: false,
     selectedCriterion: null,
+    seededCiDescriptor: false,
     steps: [],
     before: null,
     afterConsent: null,
@@ -227,10 +234,11 @@ async function main() {
 
   async function step(name, operation) {
     try {
-      const detail = await operation();
-      result.steps.push({ name, ok: true, detail: typeof detail === 'string' ? detail : '' });
-      console.log(`[descriptor-closure] PASS ${name}${typeof detail === 'string' && detail ? ` — ${detail}` : ''}`);
-      return detail;
+      const outcome = await operation();
+      const detail = typeof outcome === 'string' ? outcome : '';
+      result.steps.push({ name, ok: true, detail });
+      console.log(`[descriptor-closure] PASS ${name}${detail ? ` — ${detail}` : ''}`);
+      return outcome;
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
       result.steps.push({ name, ok: false, detail });
@@ -245,9 +253,13 @@ async function main() {
     });
     await page.waitForLoadState('networkidle', { timeout: WAIT_TIMEOUT }).catch(() => {});
     const publicConfig = await step('capture-supabase-public-config', waitForPublicConfig);
-    const accessToken = await step('read-authenticated-browser-session', () => readBrowserAccessToken(page));
-    const target = await step('locate-incomplete-criterion', async () => {
-      const found = await findTarget(page, publicConfig, accessToken);
+    const accessToken = await readBrowserAccessToken(page);
+    result.steps.push({ name: 'read-authenticated-browser-session', ok: true, detail: 'authenticated session present' });
+    console.log('[descriptor-closure] PASS read-authenticated-browser-session — authenticated session present');
+
+    const target = await step('locate-or-seed-incomplete-ci-criterion', async () => {
+      const found = await findOrSeedTarget(page, publicConfig, accessToken);
+      result.seededCiDescriptor = found.seeded;
       result.selectedCriterion = {
         id: found.criterion.id,
         code: found.criterion.code,
@@ -349,7 +361,7 @@ async function main() {
     await browser.close().catch(() => {});
   }
 
-  const summary = `# MMM Descriptor Runtime Live Closure\n\nFUNCTIONAL_PASS: ${result.functionalPass ? 'yes' : 'no'}\nSELECTED_CRITERION: ${result.selectedCriterion?.code || '(none)'}\nSELECTED_CRITERION_ID: ${result.selectedCriterion?.id || '(none)'}\nINITIAL_DESCRIPTOR_COVERAGE: ${result.selectedCriterion?.populatedCount ?? '(n/a)'}/5\nLEARNING_CAPTURE: declined for validation\nDATA_MUTATION: whitespace-only edit; saved text trims to original wording; missing levels may be completed\nERROR: ${result.error || '(none)'}\n\n## Steps\n\n${result.steps.map((item) => `- ${item.ok ? 'PASS' : 'FAIL'} — ${item.name}${item.detail ? `: ${item.detail}` : ''}`).join('\n')}\n\n## Artifacts\n\n- descriptor-closure.json\n- descriptor-closure.png\n- descriptor-closure-trace.zip\n`;
+  const summary = `# MMM Descriptor Runtime Live Closure\n\nFUNCTIONAL_PASS: ${result.functionalPass ? 'yes' : 'no'}\nSELECTED_CRITERION: ${result.selectedCriterion?.code || '(none)'}\nSELECTED_CRITERION_ID: ${result.selectedCriterion?.id || '(none)'}\nINITIAL_DESCRIPTOR_COVERAGE: ${result.selectedCriterion?.populatedCount ?? '(n/a)'}/5\nCI_DESCRIPTOR_SEEDED: ${result.seededCiDescriptor ? 'yes' : 'no'}\nLEARNING_CAPTURE: declined for validation\nDATA_MUTATION: CI tenant only; whitespace-only edit; missing levels completed\nERROR: ${result.error || '(none)'}\n\n## Steps\n\n${result.steps.map((item) => `- ${item.ok ? 'PASS' : 'FAIL'} — ${item.name}${item.detail ? `: ${item.detail}` : ''}`).join('\n')}\n\n## Artifacts\n\n- descriptor-closure.json\n- descriptor-closure.png\n- descriptor-closure-trace.zip\n`;
   await writeFile(path.join(ARTIFACT_DIR, 'descriptor-closure-summary.md'), summary);
   await writeFile(path.join(ARTIFACT_DIR, 'descriptor-closure.json'), safeJson(result));
   console.log(summary);
