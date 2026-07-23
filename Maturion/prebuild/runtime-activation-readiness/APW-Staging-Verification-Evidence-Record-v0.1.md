@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-STAGING-VERIFICATION-EVIDENCE-001  
 **Version**: 0.1.0  
-**Status**: TECHNICAL_VERIFICATION_COMPLETE — CS2_DECISION_PENDING  
+**Status**: ACCEPTED — BLOCKER CLOSED  
 **Authority**: CS2 — Johan Ras  
 **Finding**: `APW-PRODUCTION-ACTIVATION-BLOCKER-001`  
 **Wave**: APW Staging Verification and Blocker Closure v0.1
@@ -42,6 +42,7 @@ APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
 | Rollback redeploy/restart completed | PASS | Operator confirmed staging redeployment completed after restoring the flag |
 | Health after rollback | PASS | Operator screenshot showed `{"status":"ok"}` after rollback redeployment |
 | Rollback route proven | PASS | Test 11 returned `apw_integration_disabled` with a safe Maturion answer |
+| Explicit CS2 blocker decision | ACCEPTED | Johan Ras / CS2 approved `CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001` on 2026-07-23 |
 
 ## 4. Verification matrix
 
@@ -121,28 +122,31 @@ RECOMMEND_CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001
 
 ## 8. CS2 blocker decision
 
-Decision authority: Johan Ras / CS2
+Decision authority: Johan Ras / CS2  
+Decision date: 2026-07-23
 
-Decision status:
-
-```text
-AWAITING_EXPLICIT_CS2_DECISION
-```
-
-Permitted decision values:
+Decision:
 
 ```text
 CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001
 ```
 
-or
+Decision statement:
+
+> As CS2, I accept the completed APW staging-verification and rollback evidence and approve `CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001`. This decision closes the staging-verification blocker only and does not itself authorize production activation. Production activation remains subject to confirmation of the production target, rollback access, an approved activation window, and controlled production smoke testing.
+
+## 9. Remaining production-activation conditions
+
+Production activation remains prohibited until all of the following are separately confirmed:
+
+1. the exact production target service and environment;
+2. operator access to immediate rollback through the feature flag and redeployment;
+3. an approved controlled activation window;
+4. a production smoke-test and initial-monitoring plan;
+5. review and merge of PR #1951.
+
+## 10. Final disposition
 
 ```text
-KEEP_BLOCKER_OPEN_AND_REMEDIATE
-```
-
-## 9. Final disposition
-
-```text
-STAGING_VERIFICATION_COMPLETE_ROLLBACK_PROVEN_CS2_DECISION_PENDING
+APW_PRODUCTION_ACTIVATION_BLOCKER_001_CLOSED_STAGING_SAFE_PRODUCTION_ACTIVATION_NOT_YET_AUTHORIZED
 ```
