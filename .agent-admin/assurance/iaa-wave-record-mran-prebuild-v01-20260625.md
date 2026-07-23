@@ -17,16 +17,12 @@
 ## PRE-BRIEF
 
 IAA_PREFLIGHT_BRIEF
+PR: #1855
+WAVE: MRAN-PREBUILD-V01
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
 
-schema_version: 1.0.0
-result: PREFLIGHT_BRIEF_COMPLETE
-wave_id: MRAN-PREBUILD-V01
-pr_number: 1855
-repository: APGI-cmy/maturion-isms
-scope_summary: Batch 1 prebuild-only architecture artifacts for the Maturion Runtime Agent Network.
-authority: CS2 — Johan Ras
-
-### EXPECTED_QA_SCOPE
+EXPECTED_QA_SCOPE:
 
 - Review the scope declaration, FRS, TRS, and QA-to-Red artifacts for architectural completeness.
 - Confirm the work is prebuild-only and does not implement runtime code, Supabase changes, registry activation, specialist activation, or `.github/agents` changes.
@@ -35,7 +31,7 @@ authority: CS2 — Johan Ras
 - Confirm context-envelope and runtime-registry requirements are sufficient to prevent unsafe specialist invocation.
 - Confirm QA-to-Red expectations are adequate for a later builder implementation wave.
 
-### EXPECTED_FAILURE_MODES
+EXPECTED_FAILURE_MODES:
 
 - Batch 1 artifacts accidentally create or imply runtime specialist activation.
 - Strategy-named or `.github/agents` agents are treated as runtime-active without registry activation.
@@ -45,7 +41,7 @@ authority: CS2 — Johan Ras
 - Maturion-as-CS2 authority could be inferred from architecture, runtime code, config, or app context without separate canon-backed evidence.
 - QA-to-Red cases do not fail closed when context, registry, authority, or knowledge boundaries are missing.
 
-### FOREMAN_INSTRUCTIONS
+FOREMAN_INSTRUCTIONS:
 
 - Treat this wave as prebuild-only.
 - Do not appoint a builder from this wave.
@@ -54,7 +50,7 @@ authority: CS2 — Johan Ras
 - Use IAA findings to correct prebuild artifacts before any implementation wave is created.
 - Keep Batch 2 knowledge-grounding prebuild and Batch 3 APW-specialist prebuild as separate future waves.
 
-### IAA_WILL_QA
+IAA_WILL_QA:
 
 - IAA will compare the artifacts against `FOREMAN_OPERATING_MODEL.md`, `.github/agents/foreman-v2-agent.md`, `governance/canon/MATURION_AGENT_NETWORK_ORGANIGRAM.md`, and the Maturion Agent Network Organigram strategy.
 - IAA will check whether the active PR scope declaration matches the changed-file set.
