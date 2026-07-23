@@ -155,8 +155,24 @@ PHASE_B_BLOCKING_TOKEN: PENDING
 Verdict: PENDING
 Reviewed head: PENDING
 
-No assurance verdict has been issued. Wave 3 remains in post-merge closure until an independent IAA appends exactly one final binary outcome.
+No assurance token issued. REJECTION-PACKAGE was issued — see REJECTION_HISTORY below.
 
 ## REJECTION_HISTORY
 
-None for this closure wave at pre-brief creation.
+### Rejection 1 — 2026-07-23
+
+**IAA session:** IAA-maturion-wave3-postmerge-closure-20260723  
+**Reviewed HEAD:** `6793e168eda0c3fce1b8d726ebf864ca88b71c08`  
+**Session artifact:** `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
+
+**F-001 — Section 8 modified (Ceremony)**  
+`Maturion/strategy/Wave3_Maturion_thin_core_contract_correction_proposal_20260710.md` Section 8 was modified in at least six ways (title, tense throughout, criterion 2 wording, criterion 3 scope, criterion 5 content, final status line). Violates assurance requirement "historical sections 1–8 are unchanged" and Section 0.6 "must not be further modified." No CS2 waiver documented.  
+**Fix:** Restore Section 8 to exact baseline text at `fc3556f391a1a3a854d16008e17099026c5d5992`, OR obtain explicit documented CS2 waiver and update the assurance scope accordingly.
+
+**F-002 — Foreman QP false certification (Ceremony)**  
+QP row 60 "Wave 3 proposal historical text (sections 1–8) preserved unchanged | PASS" directly contradicts QP row 59 "Wave 3 proposal completion criteria updated to historical record | PASS." These two rows cannot both be true.  
+**Fix:** Correct QP row 60 to accurately reflect what occurred.
+
+**Total checks run:** 13 | **PASS:** 11 | **FAIL:** 2  
+**HANDOVER_ALLOWED:** no  
+**RESULT:** REJECTED_BACK_TO_PRODUCER
