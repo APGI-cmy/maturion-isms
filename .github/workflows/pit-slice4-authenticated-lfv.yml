@@ -20,6 +20,7 @@ jobs:
       PREVIEW_URL: https://maturion-isms-portal-git-pit-stage12-1a1797-rassie-ras-projects.vercel.app
       LFV_EMAIL: ${{ secrets.PIT_TEST_PROJECT_MANAGER_EMAIL }}
       LFV_PASSWORD: ${{ secrets.PIT_TEST_PROJECT_MANAGER_PASSWORD }}
+      VERCEL_BYPASS_TOKEN: ${{ secrets.PIT_VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -39,6 +40,10 @@ jobs:
           set -euo pipefail
           if [ -z "$LFV_EMAIL" ] || [ -z "$LFV_PASSWORD" ]; then
             echo 'Required governed PIT project-manager secrets are not configured.' >&2
+            exit 1
+          fi
+          if [ -z "$VERCEL_BYPASS_TOKEN" ]; then
+            echo 'Required PIT_VERCEL_AUTOMATION_BYPASS_SECRET is not configured.' >&2
             exit 1
           fi
           PROJECT_NAME="PIT Slice 4 LFV ${GITHUB_RUN_ID}"
@@ -87,8 +92,9 @@ jobs:
             page.on('console', message => console.log(`[browser:${message.type()}] ${message.text()}`));
             page.on('pageerror', error => console.error(`[browser-pageerror] ${error.message}`));
             const base = process.env.PREVIEW_URL;
-            checkpoint = 'login-page';
-            await page.goto(`${base}/login`, { waitUntil: 'networkidle' });
+            const bypass = encodeURIComponent(process.env.VERCEL_BYPASS_TOKEN);
+            checkpoint = 'vercel-bypass';
+            await page.goto(`${base}/login?x-vercel-protection-bypass=${bypass}&x-vercel-set-bypass-cookie=samesitenone`, { waitUntil: 'networkidle' });
             await page.screenshot({ path: 'lfv-artifacts/00-login.png', fullPage: true });
             checkpoint = 'login-submit';
             await page.getByLabel('Work email').fill(process.env.LFV_EMAIL);
