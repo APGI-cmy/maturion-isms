@@ -1,0 +1,191 @@
+name: MMM Descriptor Live Closure
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/mmm-descriptor-live-closure.yml'
+      - 'scripts/mmm-live-dashboard-diagnosis/verify-descriptor-closure.mjs'
+  workflow_dispatch:
+    inputs:
+      preview_url:
+        description: 'Full MMM preview URL; leave empty to use MMM_PREVIEW_URL.'
+        required: false
+        type: string
+        default: ''
+      pr_number:
+        description: 'Optional PR number for evidence comment.'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  deployments: read
+  statuses: read
+
+env:
+  NODE_VERSION: '22'
+
+concurrency:
+  group: mmm-descriptor-live-closure-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-descriptor-closure:
+    name: Verify descriptor closure
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MMM_PREVIEW_URL: ${{ inputs.preview_url != '' && inputs.preview_url || secrets.MMM_PREVIEW_URL }}
+      MMM_TEST_ADMIN_EMAIL: ${{ secrets.MMM_TEST_ADMIN_EMAIL }}
+      MMM_TEST_ADMIN_PASSWORD: ${{ secrets.MMM_TEST_ADMIN_PASSWORD }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.MMM_VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ARTIFACT_DIR: descriptor-closure-artifacts
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Resolve MMM PR preview URL
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SHA='${{ github.event.pull_request.head.sha }}'
+          REPO='${{ github.repository }}'
+          PR_NUMBER='${{ github.event.pull_request.number }}'
+          PREVIEW_URL=''
+          echo "Resolving MMM Vercel preview for SHA=${SHA} PR=${PR_NUMBER}"
+
+          for attempt in $(seq 1 18); do
+            DEPS=$(gh api "repos/$REPO/deployments?sha=${SHA}&per_page=100" 2>/dev/null || echo '[]')
+            DEP_IDS=$(printf '%s' "$DEPS" | jq -r '.[] | select(.environment | test("Preview|preview"; "i")) | .id' 2>/dev/null || true)
+            for DEP_ID in $DEP_IDS; do
+              STATUSES=$(gh api "repos/$REPO/deployments/${DEP_ID}/statuses?per_page=10" 2>/dev/null || echo '[]')
+              while IFS= read -r URL; do
+                [ -n "$URL" ] || continue
+                [ "$URL" = 'null' ] && continue
+                case "$URL" in
+                  https://maturion-isms-mmm.vercel.app*|https://maturion-isms-mmm-git-*.vercel.app*|https://maturion-isms-mmm.now.sh*|https://maturion-isms-mmm-git-*.now.sh*) PREVIEW_URL="$URL"; break 3 ;;
+                esac
+              done < <(printf '%s' "$STATUSES" | jq -r '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null || true)
+            done
+
+            COMMENTS=$(gh api "repos/$REPO/issues/${PR_NUMBER}/comments?per_page=100" 2>/dev/null || echo '[]')
+            PREVIEW_URL=$(printf '%s' "$COMMENTS" \
+              | jq -r '.[] | select(.user.login == "vercel[bot]") | .body // empty' 2>/dev/null \
+              | grep -Eo 'https://maturion-isms-mmm(-git-[A-Za-z0-9-]+)?\.(vercel\.app|now\.sh)' \
+              | tail -n 1 || true)
+            if [ -n "$PREVIEW_URL" ]; then break; fi
+            if [ "$attempt" -lt 18 ]; then sleep 10; fi
+          done
+
+          if [ -z "$PREVIEW_URL" ]; then
+            echo "::error::No valid MMM preview URL resolved for PR ${PR_NUMBER}"
+            exit 1
+          fi
+          echo "MMM_PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+          echo "Resolved descriptor validation URL: $PREVIEW_URL"
+
+      - name: Verify required configuration
+        run: |
+          set -euo pipefail
+          missing=0
+          for variable in MMM_PREVIEW_URL MMM_TEST_ADMIN_EMAIL MMM_TEST_ADMIN_PASSWORD; do
+            if [ -z "${!variable}" ]; then
+              echo "::error::$variable is empty or unavailable"
+              missing=1
+            fi
+          done
+          if [ -z "${VERCEL_AUTOMATION_BYPASS_SECRET}" ]; then
+            echo '::warning::MMM_VERCEL_AUTOMATION_BYPASS_SECRET is not set; protected preview access may fail'
+          fi
+          if [ "$missing" -ne 0 ]; then exit 1; fi
+
+      - name: Install Playwright and Chromium
+        run: |
+          mkdir -p /tmp/pw
+          echo '{"name":"pw-install","version":"1.0.0"}' > /tmp/pw/package.json
+          npm install --prefix /tmp/pw --no-audit --no-fund playwright@1.48.2
+          /tmp/pw/node_modules/.bin/playwright install --with-deps chromium
+          if [ -d node_modules ] && [ ! -L node_modules ]; then
+            mkdir -p node_modules
+            ln -sf /tmp/pw/node_modules/playwright node_modules/playwright
+          else
+            ln -sf /tmp/pw/node_modules node_modules
+          fi
+
+      - name: Verify Playwright runtime
+        run: node -e "import('playwright').then(() => console.log('playwright ok')).catch(error => { console.error(error); process.exit(1); })"
+
+      - name: Run descriptor live closure validation
+        id: closure
+        continue-on-error: true
+        run: |
+          mkdir -p "$ARTIFACT_DIR"
+          set +e
+          node scripts/mmm-live-dashboard-diagnosis/verify-descriptor-closure.mjs
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Upload descriptor closure artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: mmm-descriptor-live-closure
+          path: descriptor-closure-artifacts/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish job summary
+        if: always()
+        run: |
+          if [ -f descriptor-closure-artifacts/descriptor-closure-summary.md ]; then
+            cat descriptor-closure-artifacts/descriptor-closure-summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Descriptor closure summary was not produced.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Comment evidence on PR
+        if: always() && (github.event_name == 'pull_request' || inputs.pr_number != '')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ -f descriptor-closure-artifacts/descriptor-closure-summary.md ]; then
+            {
+              echo '<!-- mmm-descriptor-live-closure -->'
+              echo '## MMM Descriptor Live Closure'
+              echo
+              cat descriptor-closure-artifacts/descriptor-closure-summary.md
+              echo
+              echo "Artifacts: ${RUN_URL}#artifacts"
+              echo "Run: ${RUN_URL}"
+            } > /tmp/descriptor-closure-comment.md
+          else
+            printf 'MMM Descriptor Live Closure did not produce a summary. Run: %s\n' "$RUN_URL" > /tmp/descriptor-closure-comment.md
+          fi
+          gh pr comment "$PR_NUMBER" --repo '${{ github.repository }}' --body-file /tmp/descriptor-closure-comment.md
+
+      - name: Re-emit validation exit code
+        if: always()
+        run: |
+          code='${{ steps.closure.outputs.exit_code }}'
+          echo "verify-descriptor-closure.mjs exit code: $code"
+          case "$code" in
+            '') echo 'Validation script did not run; preserving the earlier job failure'; exit 0 ;;
+            0) exit 0 ;;
+            1|2) exit 1 ;;
+            *) exit 2 ;;
+          esac
