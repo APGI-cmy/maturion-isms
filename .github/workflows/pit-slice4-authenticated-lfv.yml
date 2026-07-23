@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   authenticated-lfv:
+    # PR #1952 governed deployed browser verification.
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
