@@ -4,8 +4,8 @@
 **Issue:** #1953  
 **PR:** #1954  
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
-**Status:** BUILD_ACTIVE  
-**Handover allowed:** no
+**Status:** CLOSED — POST-MERGE IAA PASS  
+**Handover allowed:** yes
 
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-maturion-wave3-postmerge-closure-20260723.md
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
@@ -24,6 +24,9 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 - Prehandover proof: `.agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md`
 - QP: `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
 - ECAP: `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
+- IAA session artifact: `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
+- IAA token: `IAA-maturion-wave3-postmerge-closure-20260723-PASS`
+- CS2/proxy disposition: `.agent-admin/signoffs/maturion-wave3-postmerge-closure-cs2-proxy.md`
 
 ## Exact baseline
 
@@ -47,11 +50,11 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 | `MW3-PMC-008` | Verify canon provenance remains blocked/unwaived | Foreman QP | COMPLETE |
 | `MW3-PMC-009` | Perform Foreman Quality Professor review | Foreman | COMPLETE |
 | `MW3-PMC-010` | Perform ECAP administrative validation | ECAP | COMPLETE |
-| `MW3-PMC-011` | Freeze exact pre-IAA head and terminal-green hosted checks | Foreman | IN_PROGRESS |
+| `MW3-PMC-011` | Freeze exact pre-IAA head and terminal-green hosted checks | Foreman | COMPLETE |
 | `STOPFIX-R1` | Restore Section 8 original text; correct Foreman QP contradictory rows | Foreman | COMPLETE |
-| `MW3-PMC-012` | Perform genuinely independent final assurance (R2 after STOPFIX-R1) | independent-assurance-agent | IN_PROGRESS |
-| `MW3-PMC-013` | Record final CS2/proxy disposition after IAA PASS | CS2 proxy | BLOCKED_ON_IAA |
-| `MW3-PMC-014` | Mark PR ready and hand back to CS2 | Foreman | BLOCKED_ON_IAA |
+| `MW3-PMC-012` | Perform genuinely independent final assurance (R2 after STOPFIX-R1) | independent-assurance-agent | COMPLETE_PASS |
+| `MW3-PMC-013` | Record final CS2/proxy disposition after IAA PASS | CS2 proxy | COMPLETE |
+| `MW3-PMC-014` | Mark PR ready and hand back to CS2 | Foreman | COMPLETE |
 
 ## Persistent RED/BLOCKED conditions outside this build
 

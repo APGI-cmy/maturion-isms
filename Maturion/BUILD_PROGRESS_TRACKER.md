@@ -33,7 +33,7 @@
 | Wave 2 — CodexAdvisor runtime-specialist bundle process upgrade | **COMPLETE** | `Maturion/strategy/Wave2_CodexAdvisor_runtime_specialist_bundle_process_upgrade_20260701.md`; PR #1916. |
 | CodexAdvisor fitness correction for orchestrator work | **COMPLETE** | Issue #1922 and PR #1927. CodexAdvisor v4.3.0 was declared fit for the bounded Maturion correction. |
 | Wave 3 — thin-core correction proposal | **COMPLETE** | `Maturion/strategy/Wave3_Maturion_thin_core_contract_correction_proposal_20260710.md`; PR #1920. |
-| Wave 3 — Maturion Tier 1 thin-core correction | **MERGED — POST-MERGE CLOSURE IN PROGRESS** | Issue #1932; PR #1933; merge commit `fc3556f391a1a3a854d16008e17099026c5d5992`. Wave 3 is not CLOSED until Issue #1953 obtains final independent IAA PASS and CS2 disposition. |
+| Wave 3 — Maturion Tier 1 thin-core correction | **CLOSED — POST-MERGE IAA PASS** | Issue #1932; PR #1933; merge commit `fc3556f391a1a3a854d16008e17099026c5d5992`. Post-merge closure: Issue #1953 / PR #1954; IAA PASS at head `54987bfcb32f6043226fc004dcfd311d8422060b`; token: `IAA-maturion-wave3-postmerge-closure-20260723-PASS`. CS2 disposition pending. |
 | Wave 4 — Maturion Tier 2 ecosystem operating bundle | **NOT AUTHORISED / NOT STARTED** | Requires a separate exact CS2-authorised CodexAdvisor layer-down issue, QA-to-RED traceability and independent IAA. |
 | Wave 5 — AIMC runtime registry and adapter strategy | **NOT STARTED** | No runtime schema, storage or adapter implementation is authorised by this tracker. |
 | Wave 6 — first safe runtime Maturion/AIMC slice | **NOT STARTED** | Requires complete pre-build, executable QA-to-RED, builder appointment and build-to-GREEN evidence. |
@@ -125,20 +125,20 @@ Required handling:
 **Wave name:** Maturion Wave 3 post-merge closure — assurance, pre-build alignment and ecosystem progress tracker  
 **Issue:** #1953  
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
-**State:** `IN_PROGRESS`
+**State:** `CLOSED — POST-MERGE IAA PASS`
 
 The closure wave must:
 
-1. establish this tracker;
-2. reconcile strategy status and Wave 0–10 progress;
-3. reconcile the Wave 3 proposal to merged history;
-4. record the exact final merged identities;
-5. preserve PR #1933 evidence as history;
-6. retain runtime QA as RED/not executable;
-7. retain canonical provenance as a blocking gap;
-8. pass Foreman QP and ECAP admin validation;
-9. obtain independent IAA against merge commit `fc3556f391a1a3a854d16008e17099026c5d5992` plus the documentation-only closure delta;
-10. receive CS2 disposition.
+1. establish this tracker; ✅ COMPLETE
+2. reconcile strategy status and Wave 0–10 progress; ✅ COMPLETE
+3. reconcile the Wave 3 proposal to merged history; ✅ COMPLETE
+4. record the exact final merged identities; ✅ COMPLETE
+5. preserve PR #1933 evidence as history; ✅ COMPLETE
+6. retain runtime QA as RED/not executable; ✅ COMPLETE
+7. retain canonical provenance as a blocking gap; ✅ COMPLETE
+8. pass Foreman QP and ECAP admin validation; ✅ COMPLETE
+9. obtain independent IAA against merge commit `fc3556f391a1a3a854d16008e17099026c5d5992` plus the documentation-only closure delta; ✅ COMPLETE — ASSURANCE-TOKEN issued
+10. receive CS2 disposition. ✅ PENDING — recorded in `.agent-admin/signoffs/maturion-wave3-postmerge-closure-cs2-proxy.md`
 
 ### Wave 3 closure rule
 

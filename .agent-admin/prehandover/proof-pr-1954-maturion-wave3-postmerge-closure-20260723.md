@@ -4,7 +4,7 @@
 **PR:** #1954  
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
 **Wave:** maturion-wave3-postmerge-closure-20260723  
-**State:** FOREMAN_QP_PASS — ECAP_PASS — PENDING_IAA  
+**State:** CLOSED — POST-MERGE IAA PASS  
 **Date:** 2026-07-23
 
 ---
@@ -36,9 +36,9 @@
 - Wave tasks: `.agent-admin/prs/pr-1954/wave-current-tasks.md`
 - QP: PASS — `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
 - ECAP: PASS — `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
-- Pre-authorised IAA session artifact: `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
-- Final IAA: pending
-- CS2/proxy disposition: pending
+- IAA session artifact: `.agent-admin/assurance/iaa-token-maturion-wave3-postmerge-closure-20260723.md`
+- IAA token: `IAA-maturion-wave3-postmerge-closure-20260723-PASS`
+- CS2/proxy disposition: `.agent-admin/signoffs/maturion-wave3-postmerge-closure-cs2-proxy.md`
 
 ## 4. Current scope truth
 
@@ -58,23 +58,23 @@ Every PR #1933 artifact is historical and read-only for this wave.
 
 | Gate | State |
 |---|---|
-| Scope declaration | PASS — current-wave scope declared |
-| IAA pre-brief | PASS — canonical pre-brief present with gate-compatible fields |
-| Builder appointment | PASS — bounded builder appointed |
-| Strategy reconciliation | PASS — ecosystem strategy updated to v1.0.0 (APPROVED) |
-| Wave 3 proposal reconciliation | PASS — execution record added (Section 0) |
-| Final path parity | PASS — 12 paths within scope, QP/ECAP paths added |
-| Foreman QP | PASS — `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md` |
-| ECAP | PASS — `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md` |
-| Hosted checks on frozen head | PENDING — awaiting CI completion on current branch head |
-| Review conversations | PENDING — reviewer thread to be resolved after IAA wave record verified |
-| Independent IAA | PENDING — session path pre-authorised |
-| CS2 disposition | PENDING |
+| Scope declaration | PASS |
+| IAA pre-brief | PASS |
+| Builder appointment | PASS — COMPLETE |
+| Strategy reconciliation | PASS |
+| Wave 3 proposal reconciliation | PASS |
+| Final path parity | PASS |
+| Foreman QP | PASS |
+| ECAP | PASS |
+| Hosted checks on frozen head | PASS — CI green on `23906460c6661d30b1516c1a9d7a49640dc37704` |
+| Review conversations | PENDING — reviewer thread addressed; resolution to be confirmed |
+| Independent IAA | PASS — ASSURANCE-TOKEN `IAA-maturion-wave3-postmerge-closure-20260723-PASS` |
+| CS2 disposition | RECORDED — pending CS2 merge decision |
 
-## 7. Handover prohibition
+## 7. Handover decision
 
-This proof does not claim handover, completion, readiness or merge authority.
+`HANDOVER_ALLOWED: YES`
 
-`HANDOVER_ALLOWED: NO`
+`MERGE DECISION RESERVED FOR CS2`
 
-The proof must be updated once, after builder work and evidence reconciliation, before final IAA invocation. Subsequent change is limited to the independent IAA verdict/session evidence and final CS2 disposition.
+All documentation conditions are met. The independent IAA has issued `ASSURANCE-TOKEN: IAA-maturion-wave3-postmerge-closure-20260723-PASS`. Runtime QA (`MATURION-RED-MMM-001`–`005`) remains RED/not executable; canon inventory provenance remains blocked; Wave 4 remains unauthorised. These are persistent conditions forwarded to CS2 for separate authorisation.
