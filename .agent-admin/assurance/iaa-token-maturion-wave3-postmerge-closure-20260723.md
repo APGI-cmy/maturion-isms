@@ -4,11 +4,71 @@
 **PR:** #1954  
 **Issue:** #1953  
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
-**Reviewed HEAD:** `6793e168eda0c3fce1b8d726ebf864ca88b71c08`  
+**Reviewed HEAD (R2 — final):** `23906460c6661d30b1516c1a9d7a49640dc37704`  
+**Reviewed HEAD (R1 — rejected):** `6793e168eda0c3fce1b8d726ebf864ca88b71c08`  
 **Merge baseline:** `fc3556f391a1a3a854d16008e17099026c5d5992`  
 **Date:** 2026-07-23  
 **IAA:** independent-assurance-agent  
-**Verdict:** REJECTION-PACKAGE
+**Final verdict:** ASSURANCE-TOKEN (R2 after STOPFIX-R1)
+
+---
+
+## R2 Final Verdict
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1954 — Maturion Wave 3 post-merge closure
+Reviewed head: 23906460c6661d30b1516c1a9d7a49640dc37704
+Merge baseline reviewed: fc3556f391a1a3a854d16008e17099026c5d5992
+All 13 checks PASS. Documentation-only delta verified.
+STOPFIX-R1 verified: F-001 and F-002 both resolved.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-maturion-wave3-postmerge-closure-20260723-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-maturion-wave3-postmerge-closure-20260723-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
+
+---
+
+## R2 Evidence summary
+
+**F-001 RESOLVED ✅**: `git diff fc3556f..HEAD -- Maturion/strategy/Wave3_Maturion_thin_core_contract_correction_proposal_20260710.md | grep "^-[^-]"` returns exactly 5 header-line removals — the original Status, Date, Issue, Preceded-by, and Scope header fields (replaced by the updated header and new Section 0). Section 8 body is byte-identical to baseline: `## 8. Completion criteria`, `Wave 3 proposal work is complete when:`, `` `NOT FIT` `` (not "NOT FIT YET"), criteria 3–5 exact original wording, `**Wave 3 status:** PROPOSAL PREPARED / CODEXADVISOR PREREQUISITE IDENTIFIED / PROTECTED EXECUTION NOT YET AUTHORISED`. Section 0.6 "must not be further modified" constraint is now satisfied.
+
+**F-002 RESOLVED ✅**: Foreman QP row 58 now reads "Wave 3 proposal Section 0 (execution record) added with actual authorisation/merge identities; sections 1–8 historical text preserved exactly | PASS" — a single, internally consistent row that truthfully records both the addition of Section 0 and the preservation of sections 1–8. The self-contradiction between the former rows 59 and 60 is eliminated.
+
+---
+
+## R2 Full check tally (all 13 re-verified at HEAD 23906460)
+
+| # | Check | Verdict |
+|---|---|---|
+| 1 | Merge baseline integrity — merge commit + 3 blob identities | PASS ✅ |
+| 2 | Documentation-only delta — 13 files, all governance/documentation | PASS ✅ |
+| 3 | Strategy APPROVED status, version 1.0.0, Wave 0–3 states with actual identities | PASS ✅ |
+| 4 | Proposal Section 0 execution record — authorisation sequence, merged identities, 3 blob SHAs | PASS ✅ |
+| 5 | Proposal historical sections 1–8 unchanged (F-001 RESOLVED) | PASS ✅ |
+| 6 | Foreman QP internal consistency (F-002 RESOLVED) | PASS ✅ |
+| 7 | Persistent RED/BLOCKED disclosures — RED-001–005, six-domain defect, canon provenance, Wave 4 not authorised | PASS ✅ |
+| 8 | Historical PR #1933 evidence unchanged | PASS ✅ |
+| 9 | QP PASS present; ECAP PASS present | PASS ✅ |
+| 10 | IAA wave record gate-compatible fields all present | PASS ✅ |
+| 11 | wave-current-tasks.md preflight consumption fields all present | PASS ✅ |
+| 12 | CORE-020 — no assumed passes; all certifications backed by evidence | PASS ✅ |
+| 13 | CORE-021 — zero-severity-tolerance applied; no findings outstanding | PASS ✅ |
+
+**Total: 13/13 PASS**
+
+---
+
+## FAIL-ONLY-ONCE promotion
+
+Pattern recorded: "If a governance document contains an internal 'must not be modified' assertion over a named section range, IAA must independently verify via `git diff <baseline> -- <file>` that the protected range is byte-identical to baseline — not rely on QP human-assertion certification alone. QP rows that acknowledge a modification and simultaneously certify unchanged status are self-contradictory and constitute a false certification."
+
+---
+
+## R1 record (preserved)
+
+R1 REJECTION-PACKAGE issued at HEAD `6793e168eda0c3fce1b8d726ebf864ca88b71c08`. See the R1 evidence below.
 
 ---
 

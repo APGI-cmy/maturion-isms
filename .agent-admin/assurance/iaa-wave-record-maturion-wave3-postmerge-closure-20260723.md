@@ -151,11 +151,23 @@ RESULT: PREFLIGHT_BRIEF_COMPLETE
 
 ## TOKEN
 
-PHASE_B_BLOCKING_TOKEN: PENDING
-Verdict: PENDING
-Reviewed head: PENDING
+PHASE_B_BLOCKING_TOKEN: IAA-maturion-wave3-postmerge-closure-20260723-PASS
+Verdict: ASSURANCE-TOKEN
+Reviewed head: 23906460c6661d30b1516c1a9d7a49640dc37704
+Merge baseline: fc3556f391a1a3a854d16008e17099026c5d5992
 
-No assurance token issued. REJECTION-PACKAGE was issued — see REJECTION_HISTORY below.
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1954 — Maturion Wave 3 post-merge closure
+Reviewed head: 23906460c6661d30b1516c1a9d7a49640dc37704
+Merge baseline reviewed: fc3556f391a1a3a854d16008e17099026c5d5992
+All 13 checks PASS. Documentation-only delta verified.
+STOPFIX-R1 verified: F-001 and F-002 both resolved.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-maturion-wave3-postmerge-closure-20260723-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-maturion-wave3-postmerge-closure-20260723-PASS
+Adoption phase: PHASE_B_BLOCKING — hard gate ACTIVE
+═══════════════════════════════════════
 
 ## REJECTION_HISTORY
 
