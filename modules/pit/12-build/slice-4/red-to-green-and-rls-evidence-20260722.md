@@ -8,58 +8,64 @@
 | PR-specific prebrief commit | `80a3a5b911f6a41f0a0885dd666758a9d5595493` |
 | Builder appointment commit | `8f8c1662f9aee3c2aa1b6ac1e5ac08a6e3880585` |
 | First implementation commit | `155b42e141c78a9fcd28ee9beefca0d104271d34` |
-| Date | 2026-07-22 |
-| Status | CODE, DATABASE, RLS, GOVERNANCE AND DEPLOYMENT GREEN — AUTHENTICATED BROWSER LFV BLOCKED BY MISSING TEST IDENTITY SECRETS/SEED |
+| Date | 2026-07-22; reconciled 2026-07-23 |
+| Status | CODE, DATABASE, RLS, GOVERNANCE, DEPLOYMENT AND AUTHENTICATED LFV GREEN — FINAL CURRENT-HEAD REVIEW OPEN |
 
 ## QA-to-RED ordering
 
-The branch history was repaired after the earlier governance baseline had been squash-merged. The active PR now proves a strict PR-specific sequence:
+The active PR history proves:
 
 1. prebrief `80a3a5b911f6a41f0a0885dd666758a9d5595493`;
 2. builder appointment `8f8c1662f9aee3c2aa1b6ac1e5ac08a6e3880585`;
 3. first implementation-like QA-to-RED test commit `155b42e141c78a9fcd28ee9beefca0d104271d34`;
-4. reviewed GREEN implementation tree.
+4. reviewed GREEN implementation.
 
-The Builder Delegation Order Gate passes on this ancestry. The original branch state remains preserved at `backup/pr-1952-before-delegation-history-repair` for audit recovery.
+The earlier pre-repair branch is preserved at `backup/pr-1952-before-delegation-history-repair`.
 
 ## GREEN implementation delivered
 
-- stable asynchronous `PitProjectRepository` interface;
-- input/date/source/financial validation before writes;
-- Supabase database adapter and transactional create/update RPCs;
-- authenticated session, single active organisation membership and role resolution;
-- organisation-bound `projects` and `source_links` tables;
-- RLS helper reuse without parallel tenancy logic;
-- creator-capable create enforcement;
-- viewer mutation denial;
-- authorised update enforcement;
-- Project Register Supabase loading states;
-- transactional Create Project route;
-- `/projects/:id` loading, denied, error, not-found and data states;
-- permitted project overview updates;
-- truthful read-only browser-local compatibility notice;
-- public publishable credential boundary only.
+- stable asynchronous project repository;
+- Supabase session, active membership and role resolution;
+- organisation-scoped project/source-link reads;
+- transactional checked create/update RPCs;
+- RPC-only mutation boundary;
+- immutable organisation and audit binding;
+- creator-capable creation and viewer denial;
+- Project Register, Create Project and `/projects/:id` workspace;
+- deterministic route states;
+- truthful browser-local compatibility boundary;
+- publishable/anonymous browser credential compatibility.
 
 ## Applied migrations
 
-1. `20260722090000_pit_stage12_slice4_project_persistence.sql`
-2. `20260722105000_pit_slice4_privilege_hardening.sql`
+1. `20260722090000_pit_stage12_slice4_project_persistence.sql`;
+2. `20260722105000_pit_slice4_privilege_hardening.sql`;
+3. `20260723130000_pit_slice4_rpc_only_mutation_boundary.sql`.
 
-Both were applied successfully to the bound project.
+All three were applied successfully to the bound project.
 
-## Privilege verification
+## Final privilege verification
 
-Post-hardening inspection confirms:
+Live inspection after the final migration confirms:
 
-- `authenticated`: `SELECT`, `INSERT`, `UPDATE` only on `projects` and `source_links`;
-- `anon`: no table privileges;
-- no authenticated `DELETE` or `TRUNCATE` privilege remains;
-- RLS is enabled on both tables;
-- six authenticated policies exist for member read, creator insert and authorised update across project and source records.
+```json
+{
+  "projects_select": true,
+  "projects_insert": false,
+  "projects_update": false,
+  "projects_delete": false,
+  "source_links_select": true,
+  "source_links_insert": false,
+  "source_links_update": false,
+  "source_links_delete": false,
+  "anon_any_projects": false,
+  "anon_any_source_links": false
+}
+```
+
+Both mutation RPCs are `SECURITY DEFINER`, have fixed search paths, execute active membership/role checks internally, and are executable only by `authenticated` and `service_role` in addition to their owner. Direct authenticated table writes cannot create orphan projects or alter immutable binding/audit columns.
 
 ## Transactional RLS scenario
-
-A self-cleaning database scenario used synthetic users and two synthetic organisations, then removed all fixtures.
 
 ```json
 {
@@ -70,54 +76,42 @@ A self-cleaning database scenario used synthetic users and two synthetic organis
 }
 ```
 
-This proves creator persistence, viewer denial, cross-organisation isolation and zero residual test projects.
+## Authenticated deployed LFV
 
-## Compiler and current-head gate evidence
+Protected-preview workflow run `30006074390` passed:
 
-- TypeScript exit code: `0`; diagnostics empty.
-- Builder Delegation Order Gate: GREEN.
-- POLC Boundary Validation: GREEN.
-- CodeQL: GREEN.
-- Preflight Evidence, IAA alignment, ECAP, routing, Wave 7, stub detection and merge-check alignment: GREEN.
-- ISMS Portal preview build/deployment and SPA smoke: GREEN.
-- PIT preview build/deployment: GREEN.
+- governed identity validation;
+- ISMS Vercel protection bypass;
+- password authentication;
+- project creation;
+- project detail load;
+- update and save;
+- update persistence after reload;
+- Project Register visibility;
+- direct Supabase API verification.
 
-## Security boundary
+The generated project `ae89ddd2-1656-4dd0-a1bc-dc8743a9b723` and its source link were removed after evidence capture. Verification returned zero residual rows.
 
-- Browser runtime uses `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` only.
-- No service-role key is committed or required by the frontend.
-- `org_id`, `created_by`, `updated_by` and project-leader actor binding derive from the authenticated session/database contract rather than editable form inputs.
+The temporary PR-specific LFV workflow was removed after the durable evidence file `authenticated-deployed-lfv-evidence-20260723.md` was committed. No permanent hard-coded preview workflow remains.
 
-## Authenticated browser LFV attempts and blocker
+## Client environment compatibility
 
-A temporary Playwright workflow was used only to diagnose the remaining deployed LFV control and was removed afterward to prevent permanent failing workflow debt.
+The portal accepts:
 
-Observed controls:
+- `VITE_SUPABASE_URL`;
+- preferred `VITE_SUPABASE_PUBLISHABLE_KEY`;
+- established `VITE_SUPABASE_ANON_KEY` as a backward-compatible browser-safe fallback.
 
-1. Public Supabase signup reached Auth but failed with `unexpected_failure: Error sending confirmation email`; no disposable identity was created.
-2. The canonical LFV matrix requires `PIT_TEST_PROJECT_MANAGER_EMAIL` and `PIT_TEST_PROJECT_MANAGER_PASSWORD` in GitHub Actions.
-3. Both canonical secrets resolve as empty in the PR workflow environment.
-4. The documented design identity `pit.pm@test.maturion.dev` is not present in the bound Supabase Auth project.
-5. The LFV matrix itself requires the test organisation and six confirmed test users to be seeded before LFV.
+The app-owned build launcher supplies the governed public configuration for the current portal deployment. No service-role key is present in the client boundary.
 
-Consequently, authenticated create → detail → update → register browser evidence cannot be truthfully completed from this PR until an authorised administrator:
+## Compiler and gate evidence
 
-- seeds or confirms the governed PIT test organisation and project-manager identity in Supabase Auth;
-- assigns exactly one active organisation membership and the `project_manager` role; and
-- configures `PIT_TEST_PROJECT_MANAGER_EMAIL` and `PIT_TEST_PROJECT_MANAGER_PASSWORD` as repository/action secrets.
+Before final review fixes, TypeScript, delegation, POLC, CodeQL, routing, ECAP, Wave 7, merge-check alignment, ISMS Portal deployment/smoke and PIT deployment were GREEN. All final-head checks must be re-read after the review-hardening commits before merge recommendation.
 
-No credential was guessed, exposed or bypassed.
+## Review reconciliation
 
-## Review state
-
-- Inline review threads: none.
-- Review submissions: none.
-- Product and governance implementation review can proceed, but merge recommendation remains blocked by authenticated deployed LFV.
-
-## Remaining external control
-
-The sole Slice 4 merge-readiness blocker is the governed LFV identity/secret seed followed by one authenticated browser run. Post-merge verification and Issue #1943 closure remain later actions.
+Review findings concerning direct table mutation, immutable-column updates, environment-key compatibility and evidence inconsistencies were accepted and corrected. Final thread resolution is recorded on PR #1952.
 
 ## Non-completion notice
 
-This evidence does not claim full PIT, Stage 12, production readiness, release readiness, browser LFV completion, `FUNCTIONAL_PASS`, merge readiness or handover completion.
+This evidence supports Slice 4 merge-readiness review only. It does not claim Stage 12 completion, full PIT completion, release readiness, `FUNCTIONAL_PASS` or handover completion.
