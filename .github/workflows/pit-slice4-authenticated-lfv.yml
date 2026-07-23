@@ -83,6 +83,7 @@ jobs:
               viewport: { width: 1440, height: 1000 },
               extraHTTPHeaders: {
                 'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_TOKEN,
+                'x-vercel-set-bypass-cookie': 'true',
               },
             });
             await context.addInitScript(() => {
@@ -99,7 +100,7 @@ jobs:
             page.on('pageerror', error => console.error(`[browser-pageerror] ${error.message}`));
             const base = process.env.PREVIEW_URL;
             checkpoint = 'vercel-bypass';
-            await page.goto(`${base}/login?x-vercel-set-bypass-cookie=samesitenone`, { waitUntil: 'networkidle' });
+            await page.goto(`${base}/login`, { waitUntil: 'networkidle' });
             await page.screenshot({ path: 'lfv-artifacts/00-login.png', fullPage: true });
             checkpoint = 'login-submit';
             await page.getByLabel('Work email').fill(process.env.LFV_EMAIL);
