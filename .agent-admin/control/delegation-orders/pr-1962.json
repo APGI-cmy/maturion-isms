@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "pull_request_number": 1962,
+  "issue_number": 1961,
+  "repository": "APGI-cmy/maturion-isms",
+  "branch": "qa/issue-1961-approval-workflow-foundation-red",
+  "authority": {
+    "frs_authority_commit": "7ba38474082bf0d3e8d054f45127cc3549a3165a",
+    "iaa_prebrief_commit": "0ace85a0ccce08cc4d68c15cb8792125b31c9063",
+    "builder_appointment_commit": "6630aa9c3a084c00de0dd16e6fe0436c52b3006b",
+    "first_qa_to_red_commit": "74e1ea3fdcbb75da3f55040471053ff482942d63",
+    "first_executable_test_commit": "81e6b77cd91978a1b7e7a0f0ccc5bde66039ee7b"
+  },
+  "sequence": [
+    "frs_authority",
+    "iaa_prebrief",
+    "builder_appointment",
+    "qa_to_red_specification",
+    "executable_red_tests",
+    "pr_scoped_delegation_evidence"
+  ],
+  "authorised_paths": [
+    "modules/MMM/02-frs/approval-workflow-foundation-frs-addendum.md",
+    ".agent-admin/assurance/iaa-prebrief-mmm-approval-workflow-foundation-20260723.md",
+    ".agent-admin/builder-appointments/wave-mmm-approval-workflow-foundation-20260723.md",
+    "modules/MMM/05-qa-to-red/approval-workflow-foundation-qa-to-red.md",
+    "modules/MMM/tests/B4-framework/approval-workflow-foundation-red.test.ts",
+    ".agent-admin/control/delegation-orders/pr-1962.json"
+  ],
+  "prohibitions": [
+    "No production approval runtime implementation in this PR",
+    "No RLS weakening or service-role browser exposure",
+    "No self-approval or UI-only authorisation assumptions",
+    "No descriptor-generation changes",
+    "No ISMS Portal, PIT or unrelated module changes",
+    "No deleting or weakening red assertions to obtain green"
+  ]
+}
