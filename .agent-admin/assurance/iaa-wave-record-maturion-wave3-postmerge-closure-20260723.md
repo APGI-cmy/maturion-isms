@@ -6,7 +6,7 @@ IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "maturion-wave3-postmerge-closure-20260723"
   issue: "#1953 — Maturion Wave 3 post-merge closure — assurance, pre-build alignment and ecosystem progress tracker"
-  pr: "PENDING"
+  pr: 1954
   branch: "foreman/maturion-wave3-postmerge-closure"
   reviewed_merge_baseline: "fc3556f391a1a3a854d16008e17099026c5d5992"
   qualifying_tasks:
@@ -59,6 +59,9 @@ IAA_PREFLIGHT_BRIEF:
     - "Maturion/prebuild/wave3-postmerge-closure/MW3-PMC-prebuild-and-QA-to-Red-v0.1.md"
     - ".agent-admin/scope-declarations/maturion-wave3-postmerge-closure-20260723.md"
     - ".agent-admin/builder-appointments/maturion-wave3-postmerge-closure-documentation-builder-20260723.md"
+    - ".admin/prs/pr-1954.json"
+    - ".agent-admin/prs/pr-1954/wave-current-tasks.md"
+    - ".agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md"
     - ".agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md"
     - ".agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md"
   required_foreman_qp_checks:
@@ -73,7 +76,9 @@ IAA_PREFLIGHT_BRIEF:
   ecap_required: true
   ecap_expected_artifacts:
     - ".agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md"
-    - "PR-scoped manifest and wave task record if required by active gates"
+    - ".admin/prs/pr-1954.json"
+    - ".agent-admin/prs/pr-1954/wave-current-tasks.md"
+    - ".agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md"
   final_iaa_focus:
     - "Independent review of merge baseline plus documentation-only closure delta"
     - "Scope and evidence coherence"
@@ -87,16 +92,19 @@ IAA_PREFLIGHT_BRIEF:
 ## PREHANDOVER_EMBEDDED
 
 - Issue authority: `#1953`
+- PR: `#1954`
 - Prior implementation authority: `#1932`
 - Prior merged PR: `#1933`
 - Exact merged baseline: `fc3556f391a1a3a854d16008e17099026c5d5992`
 - Current scope: `.agent-admin/scope-declarations/maturion-wave3-postmerge-closure-20260723.md`
 - Pre-build/QA: `Maturion/prebuild/wave3-postmerge-closure/MW3-PMC-prebuild-and-QA-to-Red-v0.1.md`
 - Progress tracker: `Maturion/BUILD_PROGRESS_TRACKER.md`
-- Builder appointment: pending
+- Builder appointment: `.agent-admin/builder-appointments/maturion-wave3-postmerge-closure-documentation-builder-20260723.md`
+- PR manifest: `.admin/prs/pr-1954.json`
+- Wave tasks: `.agent-admin/prs/pr-1954/wave-current-tasks.md`
+- Prehandover proof: `.agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md`
 - Foreman QP: pending
 - ECAP: pending
-- PR number: pending
 - Frozen pre-IAA head: pending
 - Independent IAA session path: pending exact pre-authorisation
 
