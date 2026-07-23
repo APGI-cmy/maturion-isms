@@ -28,7 +28,7 @@ Prove that the current partial domain-approval surface is not yet a complete gov
 | T-MMM-AWF-014 | stale expected state/version rejected | optimistic concurrency contract absent |
 | T-MMM-AWF-015 | reviewer reassignment authorised/audited | reassignment transition absent |
 | T-MMM-AWF-016 | UI reload projects server status/locks/actions | full server-truth projection absent |
-| T-MMM-AWF-017 | RLS helper execution works without broadening access | issue #1959 open |
+| T-MMM-AWF-017 | private RLS helper/policy execution works without public RPC exposure or broader access | issue #1959 open; current deployment/policy alignment must be verified |
 | T-MMM-AWF-018 | descriptor regression remains green | must run existing descriptor suites unchanged |
 
 ## First executable contract
@@ -44,15 +44,17 @@ The initial red test is intentionally file/contract based. It requires:
 7. idempotency keys;
 8. immutable transition/audit persistence;
 9. revision-required handling after signed mutation;
-10. minimum execute-grant migration evidence for the MMM identity helper dependency.
+10. preservation of the hardened `app_private` identity-helper model, with authenticated policy evaluation working while direct public RPC execution remains revoked.
 
-The current repository is expected to fail these assertions. A red result is valid only when failures identify missing production contracts rather than syntax, path or fixture defects.
+The current repository is expected to fail these assertions. A red result is valid only when failures identify missing production contracts rather than syntax, discovery, path or fixture defects.
 
 ## Required command
 
 ```bash
-pnpm vitest run modules/MMM/tests/B4-framework/approval-workflow-foundation-red.test.ts
+pnpm vitest run --config modules/MMM/tests/vitest.approval-workflow-foundation.config.ts
 ```
+
+The dedicated config exists so this B4 contract is always discovered without widening the repository-wide Vitest include list.
 
 ## Build-to-green boundary
 
