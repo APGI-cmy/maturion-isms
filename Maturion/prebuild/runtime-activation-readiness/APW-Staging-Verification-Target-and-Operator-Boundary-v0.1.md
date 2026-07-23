@@ -21,7 +21,7 @@ The operator may:
 
 1. Confirm the staging health endpoint returns `200 OK`.
 2. Set the staging-only feature flag to `true`.
-3. redeploy or restart the staging service.
+3. Redeploy or restart the staging service.
 4. Execute the approved verification matrix.
 5. Inspect safe route telemetry and public-safe outputs.
 6. Restore the staging-only feature flag to `false`.
