@@ -79,7 +79,12 @@ jobs:
           let checkpoint = 'startup';
           (async () => {
             browser = await chromium.launch({ headless: true });
-            const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+            const context = await browser.newContext({
+              viewport: { width: 1440, height: 1000 },
+              extraHTTPHeaders: {
+                'x-vercel-protection-bypass': process.env.VERCEL_BYPASS_TOKEN,
+              },
+            });
             await context.addInitScript(() => {
               localStorage.setItem('isms_pending_checkout', JSON.stringify({
                 selectedModules: ['project-implementation'],
@@ -93,9 +98,8 @@ jobs:
             page.on('console', message => console.log(`[browser:${message.type()}] ${message.text()}`));
             page.on('pageerror', error => console.error(`[browser-pageerror] ${error.message}`));
             const base = process.env.PREVIEW_URL;
-            const bypass = encodeURIComponent(process.env.VERCEL_BYPASS_TOKEN);
             checkpoint = 'vercel-bypass';
-            await page.goto(`${base}/login?x-vercel-protection-bypass=${bypass}&x-vercel-set-bypass-cookie=samesitenone`, { waitUntil: 'networkidle' });
+            await page.goto(`${base}/login?x-vercel-set-bypass-cookie=samesitenone`, { waitUntil: 'networkidle' });
             await page.screenshot({ path: 'lfv-artifacts/00-login.png', fullPage: true });
             checkpoint = 'login-submit';
             await page.getByLabel('Work email').fill(process.env.LFV_EMAIL);
@@ -159,10 +163,9 @@ jobs:
             await browser.close();
           })().catch(async (error) => {
             console.error(`LFV failed at checkpoint ${checkpoint}:`, error);
-            fs.writeFileSync('lfv-artifacts/failure.json', JSON.stringify({ checkpoint, message: error.message, stack: error.stack, url: page ? page.url() : null }, null, 2));
+            fs.writeFileSync('lfv-artifacts/failure.json', JSON.stringify({ checkpoint, message: error.message, stack: error.stack, url: page ? page.url().replace(/([?&]x-vercel-protection-bypass=)[^&]+/i, '$1[REDACTED]') : null }, null, 2));
             if (page) {
               try { await page.screenshot({ path: 'lfv-artifacts/failure.png', fullPage: true }); } catch {}
-              try { fs.writeFileSync('lfv-artifacts/failure.html', await page.content()); } catch {}
             }
             if (browser) await browser.close().catch(() => undefined);
             process.exit(1);
