@@ -2,7 +2,7 @@
 
 **Artifact ID**: APW-PRODUCTION-ACTIVATION-TRACKER-001  
 **Version**: 0.1.0  
-**Status**: ACTIVE — STAGING ROUTE VERIFICATION COMPLETE, TELEMETRY INSPECTION PENDING  
+**Status**: ACTIVE — STAGING BLOCKER CLOSED, PR #1951 READY FOR MERGE REVIEW  
 **Authority**: CS2 — Johan Ras  
 **Last Updated**: 2026-07-23  
 **Repository**: `APGI-cmy/maturion-isms`
@@ -14,17 +14,23 @@
 
 ## 1. Current Live Status
 
-The governed staging route-verification matrix is complete. All eleven route tests passed, the staging flag was restored to `false`, the staging gateway remained healthy, and flag-off rollback returned `apw_integration_disabled` as required.
+The governed staging verification is complete. All eleven route tests passed, the staging flag was restored to `false`, the staging gateway remained healthy, flag-off rollback returned `apw_integration_disabled`, and the Render staging logs were inspected directly.
 
-CS2 has recorded the decision:
+The redacted telemetry sample contained route-safe metadata only:
+
+```text
+public_chat_route route=apw_integration_disabled page=/ history_count=0
+```
+
+No prompt text, answer text, private data, secrets, credentials, tokens or environment values were present in the route telemetry.
+
+CS2 has approved:
 
 ```text
 CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001
 ```
 
-During proxy review, one remaining evidence requirement was identified: the Render staging logs for the governed verification window must be inspected directly and recorded as containing route-safe metadata only, with no prompt or answer content.
-
-The blocker decision is therefore recorded, but repository ratification and merge of PR #1951 remain pending that telemetry inspection.
+The blocker is closed, subject to repository ratification through review and merge of PR #1951.
 
 This does **not** authorize production activation.
 
@@ -37,7 +43,7 @@ APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
 Current phase:
 
 ```text
-STAGING_TELEMETRY_CONTENT_INSPECTION_PENDING
+PR_1951_FINAL_REVIEW_AND_MERGE
 ```
 
 ---
@@ -58,10 +64,10 @@ STAGING_TELEMETRY_CONTENT_INSPECTION_PENDING
 | 10 | Verify valid public APW onboarding and documentation routes | COMPLETE | Tests 9–10 returned `apw_specialist_internal_draft_candidate` |
 | 11 | Restore flag to false and verify rollback route | COMPLETE | Test 11 returned `apw_integration_disabled`; health remained OK |
 | 12 | Record route, response, health and rollback evidence | COMPLETE | `APW-Staging-Verification-Evidence-Record-v0.1.md` updated in PR #1951 |
-| 13 | Explicit CS2 blocker-closure decision | RECORDED | `CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001` approved on 2026-07-23 |
-| 14 | Inspect redacted Render staging route telemetry | NEXT — REQUIRED | Confirm route-safe metadata only; no prompt or answer content |
-| 15 | Final proxy review and merge recommendation | BLOCKED | Requires step 14 |
-| 16 | Merge PR #1951 | BLOCKED | Requires green checks and merge recommendation |
+| 13 | Explicit CS2 blocker-closure decision | COMPLETE | `CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001` approved on 2026-07-23 |
+| 14 | Inspect redacted Render staging route telemetry | COMPLETE | Safe metadata-only sample captured; no prompt or answer content |
+| 15 | Final proxy review and merge recommendation | IN PROGRESS | Awaiting refreshed final-head checks and conversation closure |
+| 16 | Merge PR #1951 | NEXT | CS2 merge action after merge recommendation |
 | 17 | Confirm exact production service and environment | BLOCKED | Begins after PR #1951 merge |
 | 18 | Confirm immediate rollback access | BLOCKED | Begins after PR #1951 merge |
 | 19 | Approve controlled activation window | BLOCKED | Requires production target and rollback confirmation |
@@ -116,17 +122,21 @@ The health endpoint remained:
 {"status":"ok"}
 ```
 
-No private data, secrets, credentials, tokens or internal configuration were disclosed in the public responses during the governed staging window.
+### Telemetry-content proof
 
-### Outstanding telemetry-content inspection
-
-Inspect the Render staging logs for the governed verification window and record a redacted sample showing only route-safe metadata, for example:
+The Render staging logs showed:
 
 ```text
-public_chat_route route=maturion_only page=/apw history_count=0
+public_chat_route route=apw_integration_disabled page=/ history_count=0
 ```
 
-The inspection must confirm that the logs contain no prompt text, answer text, secrets, credentials, private data or environment values.
+Inspection result:
+
+```text
+PASS_ROUTE_SAFE_METADATA_ONLY
+```
+
+No prompt text, answer text, private data, secrets, credentials, tokens or environment values were present.
 
 ---
 
@@ -134,7 +144,7 @@ The inspection must confirm that the logs contain no prompt text, answer text, s
 
 **Finding ID**: `APW-PRODUCTION-ACTIVATION-BLOCKER-001`
 
-Route, response, health and rollback evidence status:
+Technical evidence status:
 
 ```text
 PASS
@@ -146,10 +156,10 @@ Formal CS2 decision:
 CLOSE_APW_PRODUCTION_ACTIVATION_BLOCKER_001
 ```
 
-Repository ratification status:
+Repository status:
 
 ```text
-PENDING_TELEMETRY_CONTENT_INSPECTION_AND_PR_1951_MERGE
+CLOSED_PENDING_PR_1951_MERGE_RATIFICATION
 ```
 
 ---
@@ -158,7 +168,6 @@ PENDING_TELEMETRY_CONTENT_INSPECTION_AND_PR_1951_MERGE
 
 Production activation remains prohibited until:
 
-- redacted Render staging telemetry inspection confirms no prompt or answer content is logged;
 - PR #1951 is reviewed and merged;
 - the exact production target service and environment are confirmed;
 - rollback access is confirmed;
@@ -172,5 +181,5 @@ No production flag or deployment change is included in PR #1951.
 ## 6. Next Action
 
 ```text
-INSPECT_RENDER_STAGING_ROUTE_TELEMETRY_AND_RECORD_REDACTED_PASS
+COMPLETE_FINAL_PROXY_REVIEW_POST_MERGE_RECOMMENDATION_AND_MERGE_PR_1951
 ```
