@@ -68,8 +68,11 @@ jobs:
           node <<'NODE'
           const { chromium } = require('playwright');
           const fs = require('fs');
+          let browser;
+          let page;
+          let checkpoint = 'startup';
           (async () => {
-            const browser = await chromium.launch({ headless: true });
+            browser = await chromium.launch({ headless: true });
             const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
             await context.addInitScript(() => {
               localStorage.setItem('isms_pending_checkout', JSON.stringify({
@@ -80,15 +83,24 @@ jobs:
                 completedAt: new Date().toISOString(),
               }));
             });
-            const page = await context.newPage();
+            page = await context.newPage();
+            page.on('console', message => console.log(`[browser:${message.type()}] ${message.text()}`));
+            page.on('pageerror', error => console.error(`[browser-pageerror] ${error.message}`));
             const base = process.env.PREVIEW_URL;
+            checkpoint = 'login-page';
             await page.goto(`${base}/login`, { waitUntil: 'networkidle' });
+            await page.screenshot({ path: 'lfv-artifacts/00-login.png', fullPage: true });
+            checkpoint = 'login-submit';
             await page.getByLabel('Work email').fill(process.env.LFV_EMAIL);
             await page.getByLabel('Password').fill(process.env.LFV_PASSWORD);
             await page.getByRole('button', { name: 'Continue' }).click();
-            await page.waitForTimeout(1500);
+            await page.waitForTimeout(2000);
+            await page.screenshot({ path: 'lfv-artifacts/00-after-login.png', fullPage: true });
+            checkpoint = 'create-route';
             await page.goto(`${base}/projects/new`, { waitUntil: 'networkidle' });
-            await page.getByTestId('pit-create-project').waitFor();
+            await page.screenshot({ path: 'lfv-artifacts/00-create-route.png', fullPage: true });
+            await page.getByTestId('pit-create-project').waitFor({ timeout: 15000 });
+            checkpoint = 'create-form';
             await page.getByLabel('Project name').fill(process.env.LFV_PROJECT_NAME);
             await page.getByLabel('Project type').selectOption('improvement');
             await page.getByLabel('Delivery classification').selectOption('quick_win');
@@ -99,23 +111,28 @@ jobs:
             await page.getByLabel('Source type').selectOption('risk');
             await page.getByLabel('Source reference').fill(`LFV-${process.env.GITHUB_RUN_ID}`);
             await page.screenshot({ path: 'lfv-artifacts/01-create-project.png', fullPage: true });
+            checkpoint = 'create-submit';
             await page.getByRole('button', { name: 'Create project' }).click();
-            await page.waitForURL(/\/projects\/[0-9a-f-]{36}$/);
-            await page.getByTestId('pit-detail-data').waitFor();
+            await page.waitForURL(/\/projects\/[0-9a-f-]{36}$/, { timeout: 20000 });
+            await page.getByTestId('pit-detail-data').waitFor({ timeout: 15000 });
             const projectId = page.url().split('/').pop();
             fs.appendFileSync('lfv-fixture.txt', `project_id=${projectId}\n`);
             await page.screenshot({ path: 'lfv-artifacts/02-created-detail.png', fullPage: true });
+            checkpoint = 'update-submit';
             const updatedName = `${process.env.LFV_PROJECT_NAME} Updated`;
             await page.getByLabel('Project name').fill(updatedName);
             await page.getByLabel('Description').fill('Authenticated deployed Slice 4 LFV update persisted.');
             await page.getByRole('button', { name: 'Save changes' }).click();
-            await page.getByText('Project saved.').waitFor();
+            await page.getByText('Project saved.').waitFor({ timeout: 15000 });
+            checkpoint = 'update-reload';
             await page.reload({ waitUntil: 'networkidle' });
             if ((await page.getByLabel('Project name').inputValue()) !== updatedName) throw new Error('Updated project name did not survive reload');
             await page.screenshot({ path: 'lfv-artifacts/03-updated-detail.png', fullPage: true });
+            checkpoint = 'register';
             await page.goto(`${base}/projects`, { waitUntil: 'networkidle' });
-            await page.getByText(updatedName).waitFor();
+            await page.getByText(updatedName).waitFor({ timeout: 15000 });
             await page.screenshot({ path: 'lfv-artifacts/04-project-register.png', fullPage: true });
+            checkpoint = 'api-verification';
             const api = await fetch(`${process.env.SUPABASE_URL}/rest/v1/projects?id=eq.${projectId}&select=id,name,org_id,status`, {
               headers: { apikey: process.env.SUPABASE_KEY, Authorization: `Bearer ${process.env.LFV_ACCESS_TOKEN}` },
             });
@@ -133,7 +150,16 @@ jobs:
               headSha: process.env.GITHUB_SHA,
             }, null, 2));
             await browser.close();
-          })().catch((error) => { console.error(error); process.exit(1); });
+          })().catch(async (error) => {
+            console.error(`LFV failed at checkpoint ${checkpoint}:`, error);
+            fs.writeFileSync('lfv-artifacts/failure.json', JSON.stringify({ checkpoint, message: error.message, stack: error.stack, url: page ? page.url() : null }, null, 2));
+            if (page) {
+              try { await page.screenshot({ path: 'lfv-artifacts/failure.png', fullPage: true }); } catch {}
+              try { fs.writeFileSync('lfv-artifacts/failure.html', await page.content()); } catch {}
+            }
+            if (browser) await browser.close().catch(() => undefined);
+            process.exit(1);
+          });
           NODE
       - uses: actions/upload-artifact@v5
         if: always()
