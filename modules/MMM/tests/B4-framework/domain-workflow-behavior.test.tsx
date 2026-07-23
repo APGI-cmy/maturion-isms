@@ -755,6 +755,202 @@ describe('T-MMM-S6-190: Domain workflow renders real MMM data', () => {
     expect(saveStatus.textContent).toContain('without Maturion learning capture');
   });
 
+  it('first descriptor edit seeds from persisted rows and preserves non-edited persisted levels', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+      levelDescriptorRows: [
+        { id: 'descriptor-1', criterion_id: 'criterion-1', level: 1, descriptor_text: 'Persisted level 1' },
+        { id: 'descriptor-2', criterion_id: 'criterion-1', level: 2, descriptor_text: 'Persisted level 2' },
+        { id: 'descriptor-3', criterion_id: 'criterion-1', level: 3, descriptor_text: 'Persisted level 3' },
+        { id: 'descriptor-4', criterion_id: 'criterion-1', level: 4, descriptor_text: 'Persisted level 4' },
+        { id: 'descriptor-5', criterion_id: 'criterion-1', level: 5, descriptor_text: 'Persisted level 5' },
+      ],
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    const reactiveDescriptor = await screen.findByTestId('descriptor-input-criterion-1-2') as HTMLTextAreaElement;
+    const compliantDescriptor = screen.getByTestId('descriptor-input-criterion-1-3') as HTMLTextAreaElement;
+    const resilientDescriptor = screen.getByTestId('descriptor-input-criterion-1-5') as HTMLTextAreaElement;
+
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-2'));
+    fireEvent.change(reactiveDescriptor, {
+      target: { value: 'User edited level 2 descriptor' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+
+    expect(reactiveDescriptor.value).toBe('User edited level 2 descriptor');
+    expect(compliantDescriptor.value).toBe('Persisted level 3');
+    expect(resilientDescriptor.value).toBe('Persisted level 5');
+  });
+
+  it('learning consent yes/no does not alter descriptor text values', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+      levelDescriptorRows: [
+        { id: 'descriptor-1', criterion_id: 'criterion-1', level: 1, descriptor_text: 'Persisted level 1' },
+        { id: 'descriptor-2', criterion_id: 'criterion-1', level: 2, descriptor_text: 'Persisted level 2' },
+        { id: 'descriptor-3', criterion_id: 'criterion-1', level: 3, descriptor_text: 'Persisted level 3' },
+        { id: 'descriptor-4', criterion_id: 'criterion-1', level: 4, descriptor_text: 'Persisted level 4' },
+        { id: 'descriptor-5', criterion_id: 'criterion-1', level: 5, descriptor_text: 'Persisted level 5' },
+      ],
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
+    fireEvent.change(basicDescriptor, {
+      target: { value: 'Edited level 1 for consent yes check' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+    expect(basicDescriptor.value).toBe('Edited level 1 for consent yes check');
+
+    const reactiveDescriptor = screen.getByTestId('descriptor-input-criterion-1-2') as HTMLTextAreaElement;
+    const compliantDescriptor = screen.getByTestId('descriptor-input-criterion-1-3') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-2'));
+    fireEvent.change(reactiveDescriptor, {
+      target: { value: 'Edited level 2 for consent no check' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-no'));
+    expect(reactiveDescriptor.value).toBe('Edited level 2 for consent no check');
+    expect(compliantDescriptor.value).toBe('Persisted level 3');
+  });
+
+  it('complete five-level descriptor set with unsaved edit still blocks regeneration', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+      levelDescriptorRows: [
+        { id: 'descriptor-1', criterion_id: 'criterion-1', level: 1, descriptor_text: 'Persisted level 1' },
+        { id: 'descriptor-2', criterion_id: 'criterion-1', level: 2, descriptor_text: 'Persisted level 2' },
+        { id: 'descriptor-3', criterion_id: 'criterion-1', level: 3, descriptor_text: 'Persisted level 3' },
+        { id: 'descriptor-4', criterion_id: 'criterion-1', level: 4, descriptor_text: 'Persisted level 4' },
+        { id: 'descriptor-5', criterion_id: 'criterion-1', level: 5, descriptor_text: 'Persisted level 5' },
+      ],
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    const basicDescriptor = await screen.findByTestId('descriptor-input-criterion-1-1') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-1'));
+    fireEvent.change(basicDescriptor, {
+      target: { value: 'Unsaved edited level 1 descriptor' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+
+    fireEvent.click(screen.getByTestId('generate-descriptors-btn-criterion-1'));
+
+    expect(
+      await screen.findByText(/Save maturity descriptors before regenerating\./i),
+    ).toBeTruthy();
+    expect(basicDescriptor.value).toBe('Unsaved edited level 1 descriptor');
+  });
+
+  it('incomplete historical descriptor set with unsaved edit regenerates only missing levels and preserves edited level', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+      levelDescriptorRows: [
+        { id: 'descriptor-1', criterion_id: 'criterion-1', level: 1, descriptor_text: 'Persisted level 1' },
+        { id: 'descriptor-2', criterion_id: 'criterion-1', level: 2, descriptor_text: 'Persisted level 2' },
+        { id: 'descriptor-4', criterion_id: 'criterion-1', level: 4, descriptor_text: 'Persisted level 4' },
+        { id: 'descriptor-5', criterion_id: 'criterion-1', level: 5, descriptor_text: '' },
+      ],
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    const reactiveDescriptor = await screen.findByTestId('descriptor-input-criterion-1-2') as HTMLTextAreaElement;
+    const compliantDescriptor = screen.getByTestId('descriptor-input-criterion-1-3') as HTMLTextAreaElement;
+    const resilientDescriptor = screen.getByTestId('descriptor-input-criterion-1-5') as HTMLTextAreaElement;
+
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-2'));
+    fireEvent.change(reactiveDescriptor, {
+      target: { value: 'User edited level 2 before recovery generation' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+    expect(compliantDescriptor.value).toBe('');
+    expect(resilientDescriptor.value).toBe('');
+
+    fireEvent.click(screen.getByTestId('generate-descriptors-btn-criterion-1'));
+
+    await waitFor(() => {
+      expect(compliantDescriptor.value.trim().length).toBeGreaterThan(0);
+      expect(resilientDescriptor.value.trim().length).toBeGreaterThan(0);
+    });
+    expect(reactiveDescriptor.value).toBe('User edited level 2 before recovery generation');
+  });
+
+  it('recovered descriptor set saves five populated levels and submits only the consented edited level', async () => {
+    configureScenario({
+      mpsRows: baseMpsRows,
+      criteriaRows: baseCriteriaRows,
+      levelDescriptorRows: [
+        { id: 'descriptor-1', criterion_id: 'criterion-1', level: 1, descriptor_text: 'Persisted level 1' },
+        { id: 'descriptor-2', criterion_id: 'criterion-1', level: 2, descriptor_text: 'Persisted level 2' },
+        { id: 'descriptor-4', criterion_id: 'criterion-1', level: 4, descriptor_text: 'Persisted level 4' },
+        { id: 'descriptor-5', criterion_id: 'criterion-1', level: 5, descriptor_text: '' },
+      ],
+    });
+    renderDomainWorkspace();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-action-criteria').hasAttribute('disabled')).toBe(false);
+    });
+    fireEvent.click(screen.getByTestId('step-action-criteria'));
+
+    const reactiveDescriptor = await screen.findByTestId('descriptor-input-criterion-1-2') as HTMLTextAreaElement;
+    fireEvent.click(screen.getByTestId('edit-descriptor-btn-criterion-1-2'));
+    fireEvent.change(reactiveDescriptor, {
+      target: { value: 'User edited level 2 descriptor for save' },
+    });
+    fireEvent.click(await screen.findByTestId('descriptor-learning-yes'));
+
+    fireEvent.click(screen.getByTestId('generate-descriptors-btn-criterion-1'));
+    await waitFor(() => {
+      const descriptorFive = screen.getByTestId('descriptor-input-criterion-1-5') as HTMLTextAreaElement;
+      expect(descriptorFive.value.trim().length).toBeGreaterThan(0);
+    });
+
+    fireEvent.click(screen.getByTestId('save-descriptors-btn-criterion-1'));
+    await waitFor(() => expect(mockSupabase.functions.invoke).toHaveBeenCalledWith(
+      'mmm-level-descriptor-save',
+      expect.objectContaining({
+        body: expect.objectContaining({
+          criterion_id: 'criterion-1',
+          edited_levels: [2],
+        }),
+      }),
+    ));
+
+    const savePayload = (mockSupabase.functions.invoke.mock.calls.find(
+      (call: unknown[]) => call[0] === 'mmm-level-descriptor-save',
+    )?.[1] as { body?: { descriptors?: Array<{ descriptor_text: string }> } } | undefined)?.body;
+    expect(savePayload).toBeTruthy();
+    const descriptors = savePayload?.descriptors ?? [];
+    expect(descriptors).toHaveLength(5);
+    expect(descriptors.every((descriptor) => descriptor.descriptor_text.trim().length > 0)).toBe(true);
+  });
+
   it('descriptor generation stays green when AI refinement returns non-2xx', async () => {
     configureScenario({
       mpsRows: baseMpsRows,

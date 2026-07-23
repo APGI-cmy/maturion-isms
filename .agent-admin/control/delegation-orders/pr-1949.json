@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "pull_request_number": 1949,
+  "issue_number": 1948,
+  "repository": "APGI-cmy/maturion-isms",
+  "branch": "builder/issue-1948-mmm-verification-false-green",
+  "authority": {
+    "qa_prebrief_commit": "f4fc36afbce1b605c7f0bc9414f33f0bbe5e8b3d",
+    "builder_appointment_commit": "f2447425190cb494c8bcd081f6c203e6d0789497",
+    "first_implementation_commit": "7273934546af147fa86557d90d281dca0195c1d8"
+  },
+  "sequence": [
+    "builder_appointment",
+    "qa_to_red",
+    "implementation",
+    "pr_scoped_delegation_evidence"
+  ],
+  "authorised_paths": [
+    ".github/workflows/mmm-live-dashboard-diagnosis.yml",
+    "scripts/mmm-live-dashboard-diagnosis/validate-preview-url.mjs",
+    "scripts/mmm-live-dashboard-diagnosis/validate-preview-url.test.mjs",
+    "modules/MMM/05-qa-to-red/mmm-mode-verification-false-green-qa-to-red.md",
+    ".agent-admin/builder-appointments/wave-mmm-mode-verification-false-green-2026-07-22.md",
+    ".agent-admin/control/delegation-orders/pr-1949.json"
+  ],
+  "prohibitions": [
+    "No product-runtime changes",
+    "No required-check weakening",
+    "No functional-failure-to-success mapping",
+    "No Vercel project-setting or secret changes"
+  ]
+}

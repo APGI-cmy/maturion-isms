@@ -1,8 +1,8 @@
 # Maturion Ecosystem Orchestrator and Agent File System Strategy
 
-**Status:** Proposed strategy authority for CS2 review. This document must not be treated as approved Class 1 strategy authority while the PR remains unmerged. It becomes approved strategy authority only after explicit CS2 approval and merge.  
-**Version:** 0.1.1  
-**Date:** 2026-07-01  
+**Status:** APPROVED — Class 1 strategy authority. Adopted through CS2 approval and PR #1906 (Wave 0). Wave 3 Tier 1 contract correction merged through Issue #1932 / PR #1933 (merge commit `fc3556f391a1a3a854d16008e17099026c5d5992`). Post-merge closure in progress under Issue #1953 / PR #1954.  
+**Version:** 1.0.0  
+**Date:** 2026-07-01 (approved and adopted); Wave 3 merged: 2026-07-23  
 **Authority:** CS2 / Johan Ras  
 **Scope:** Maturion ecosystem orchestration, AIMC alignment, runtime specialist invocation, and agent file-system governance  
 
@@ -734,6 +734,8 @@ Learning capture must be tier-aware:
 
 ### Wave 0: Strategy adoption
 
+**State: COMPLETE — PR #1906**
+
 **Goal:** Approve this strategy as the controlling model before changing contracts or Tier 2 files.
 
 Deliverables:
@@ -750,6 +752,8 @@ Out of scope:
 - no AIMC schema changes.
 
 ### Wave 1: Current-state audit
+
+**State: COMPLETE — PR #1912**
 
 **Goal:** Audit current Maturion and agent file-system readiness.
 
@@ -775,6 +779,8 @@ Output:
 
 ### Wave 2: CodexAdvisor process upgrade
 
+**State: COMPLETE — PR #1916**
+
 **Goal:** Ensure CodexAdvisor can create and maintain full agent bundles for runtime specialists.
 
 Deliverables:
@@ -788,25 +794,41 @@ Boundary:
 
 - only CodexAdvisor may implement the actual agent file-system changes after CS2 approval.
 
-### Wave 3: Maturion thin-core contract correction proposal
+### Wave 3: Maturion thin-core contract correction
 
-**Goal:** Prepare, but do not yet implement, changes required in `maturion-agent.md`.
+**State: MERGED — POST-MERGE CLOSURE IN PROGRESS (Issue #1953 / PR #1954)**
 
-Expected corrections:
+Wave 3 proceeded through two sub-stages:
 
-- update ecosystem scope;
-- resolve `can_invoke` contradiction;
-- add AIMC runtime specialist registry dependency;
-- add ecosystem decision loop pointer;
-- add marketing opportunity detector pointer;
-- distinguish runtime Maturion from Builder/AMC Maturion-as-CS2;
-- keep contract thin.
+**Wave 3a — proposal (PR #1920):** Prepared the correction specification and confirmed CodexAdvisor
+fitness prerequisites. No protected file was modified.
 
-Output:
+**Wave 3b — CodexAdvisor fitness prerequisite (Issue #1922 / PR #1927):** CodexAdvisor v4.3.0
+was declared fit for the bounded Maturion Tier 1 correction.
 
-- proposed diff package for CodexAdvisor/CS2 review.
+**Wave 3c — Tier 1 correction execution (Issue #1932 / PR #1933):** CodexAdvisor corrected
+`.github/agents/maturion-agent.md` to v2.1.0 (thin-core living contract). Merge commit:
+`fc3556f391a1a3a854d16008e17099026c5d5992`. Contract blob: `4c060b890074b79fa293dcd66c9b3f9987200e47`.
+
+The merged contract now records:
+
+- one Maturion identity across approved APGI contexts;
+- bounded invocation authority for approved and registered specialists;
+- mandatory bounded task context and Maturion output review;
+- truthful planned, unavailable and degraded-capability disclosure;
+- separation of Runtime Maturion from Maturion-as-CS2;
+- executable induction/closure lifecycle via `wake-up-protocol.sh` and `session-closure.sh`.
+
+**Wave 3 post-merge closure** (Issue #1953 / PR #1954) aligns documentation/evidence and
+obtains independent post-merge assurance. Wave 3 is not CLOSED until that assurance token is
+issued. Runtime QA obligations (`MATURION-RED-MMM-001` through `005`) remain RED/not
+executable. Canon inventory provenance remains an activation blocker.
 
 ### Wave 4: Maturion Tier 2 expansion
+
+**State: NOT AUTHORISED / NOT STARTED**
+
+Requires a separate CS2-authorised CodexAdvisor layer-down issue, QA-to-RED traceability and independent IAA.
 
 **Goal:** Create/update Maturion operational knowledge files.
 
@@ -827,6 +849,8 @@ Boundary:
 
 ### Wave 5: AIMC runtime registry and adapter strategy
 
+**State: NOT STARTED**
+
 **Goal:** Define how runtime apps call Maturion/AIMC and how Maturion calls specialists.
 
 Deliverables:
@@ -840,6 +864,8 @@ Deliverables:
 - app adapter rules for APW, ISMS, MMM, PIT, Risk, Incident, RADAM, Training, AMC.
 
 ### Wave 6: First runtime slice
+
+**State: NOT STARTED**
 
 **Goal:** Implement the smallest safe runtime Maturion/AIMC slice.
 
@@ -858,6 +884,8 @@ No live provider, memory write, or autonomous action until authorised.
 
 ### Wave 7: MMM criteria/descriptors/evidence specialist path
 
+**State: NOT STARTED**
+
 **Goal:** Implement the first real specialist invocation path.
 
 Candidate:
@@ -871,6 +899,8 @@ MMM criteria request
 ```
 
 ### Wave 8: PIT work-package bridge
+
+**State: NOT STARTED**
 
 **Goal:** Allow maturity gaps, risk actions, and incident actions to be packaged into PIT work entities.
 
@@ -887,6 +917,8 @@ Maturity gap or evidence shortfall
 
 ### Wave 9: Risk, Incident, RADAM, Training, and Marketing expansion
 
+**State: NOT STARTED**
+
 **Goal:** Expand specialist coverage in governed slices.
 
 Each module must receive:
@@ -899,6 +931,8 @@ Each module must receive:
 - CS2 closure.
 
 ### Wave 10: AMC / Maturion-as-CS2 progression
+
+**State: NOT STARTED**
 
 **Goal:** Define and progressively implement Maturion-as-CS2 capabilities in AMC.
 
@@ -914,13 +948,33 @@ Each stage requires explicit CS2 approval and maturity evidence.
 
 ---
 
-## 13. Immediate next actions
+## 13. Current programme state and next actions
 
-1. Review and approve or amend this strategy.
-2. Create a current-state audit issue for Maturion and existing agent files.
-3. Assign CodexAdvisor to audit agent file-system readiness.
-4. Prevent all other agents from changing `.github/agents`, `.agent-workspace/<agent>/knowledge`, or governance canon unless explicitly authorised by CS2.
-5. Use this strategy as the reference when APW, ISMS, MMM, PIT, Risk, Incident, RADAM, Training, Marketing, or AMC agents propose Maturion work after CS2 approval.
+**Programme state as of 2026-07-23:**
+
+- Wave 0 through Wave 3 (proposal, CodexAdvisor fitness, Tier 1 correction): **COMPLETE/MERGED**.
+- Wave 3 post-merge closure (Issue #1953 / PR #1954): **IN PROGRESS** — independent assurance pending.
+- Wave 4 through Wave 10: **NOT AUTHORISED**.
+
+**Runtime QA state:** `MATURION-RED-MMM-001` through `005` remain RED specified and not
+executable. Runtime implementation is not authorised until those tests exist and a builder is
+appointed to build them GREEN.
+
+**Canon inventory provenance:** `governance/CANON_INVENTORY.json` lacks canonical commit
+provenance on sampled entries. This is an activation blocker. Requires a separate
+governance-authorised remediation wave. Do not weaken or bypass lifecycle scripts.
+
+**Six-domain runtime advisor defect:** `packages/ai-centre/src/agents/maturion-advisor.md`
+still references six domains. This is an open runtime defect. It is recorded and disclosed;
+it does not block Wave 3 closure.
+
+**Immediate next actions:**
+
+1. Complete Wave 3 post-merge closure (Issue #1953 / PR #1954): Foreman QP → ECAP → independent IAA → CS2 disposition.
+2. After Wave 3 closes, CS2 must separately authorise a canonical inventory provenance remediation wave.
+3. CS2 must then separately authorise Wave 4 (Maturion Tier 2 expansion through CodexAdvisor) with a full QA-to-RED package.
+4. No runtime implementation begins until Wave 4 is closed and executable QA-to-RED evidence exists.
+5. Enforce this strategy as the controlling reference for all Maturion-related work across all apps and agents.
 
 ---
 
