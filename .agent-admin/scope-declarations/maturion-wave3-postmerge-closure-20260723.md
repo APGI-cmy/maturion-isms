@@ -2,12 +2,12 @@
 
 **Scope ID:** MATURION-W3-POSTMERGE-CLOSURE-20260723  
 **Issue:** #1953  
-**PR:** PENDING  
+**PR:** #1954  
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
 **Owner:** foreman-v2-agent  
 **Builder:** bounded documentation/evidence builder  
 **Date:** 2026-07-23  
-**State:** PREBUILD_ACTIVE
+**State:** BUILD_ACTIVE
 
 ---
 
@@ -29,15 +29,17 @@ Close the Maturion Wave 3 programme record after merge of PR #1933 by aligning d
 - `Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md`
 - `Maturion/strategy/Wave3_Maturion_thin_core_contract_correction_proposal_20260710.md`
 - `Maturion/prebuild/wave3-postmerge-closure/MW3-PMC-prebuild-and-QA-to-Red-v0.1.md`
-- this scope declaration
-- current-wave builder appointment
-- current-wave IAA wave record
-- current-wave QP record
-- current-wave ECAP record
-- one current-wave prehandover proof and Foreman session/PREHANDOVER record if required by active gates
+- `.agent-admin/scope-declarations/maturion-wave3-postmerge-closure-20260723.md`
+- `.agent-admin/assurance/iaa-wave-record-maturion-wave3-postmerge-closure-20260723.md`
+- `.agent-admin/builder-appointments/maturion-wave3-postmerge-closure-documentation-builder-20260723.md`
+- `.admin/prs/pr-1954.json`
+- `.agent-admin/prs/pr-1954/wave-current-tasks.md`
+- `.agent-admin/prehandover/proof-pr-1954-maturion-wave3-postmerge-closure-20260723.md`
+- `.agent-admin/quality/maturion-wave3-postmerge-closure-foreman-qp.md`
+- `.agent-admin/ecap/maturion-wave3-postmerge-closure-ecap.md`
+- one current-wave Foreman PREHANDOVER/session-memory record if required by active gates
 - one final CS2/proxy signoff after IAA PASS
-- one exact independent-IAA session-memory artifact
-- minimal PR manifest and wave-current-task records if required by active gates after PR creation
+- one exact independent-IAA session-memory artifact pre-authorised before final IAA
 
 ## Out of scope
 
@@ -69,7 +71,7 @@ All evidence created for PR #1933 is immutable history for this wave. It must be
 
 ## Final path parity
 
-The exact final path inventory will be frozen after the PR number and independent IAA session path are known. It must include only the path classes authorised by Issue #1953 and its CS2 clarification.
+The exact final path inventory will be frozen once the independent IAA session path is known. No unlisted substantive or protected path is authorised.
 
 ## Handover rule
 
