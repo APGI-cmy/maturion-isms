@@ -84,14 +84,16 @@ describe('MMM Approval Workflow Foundation QA-to-RED — issue #1961', () => {
     expect(frameworkUi).toMatch(/approved_l3/);
   });
 
-  it('T-MMM-AWF-017: migration grants minimum helper execute permission without RLS bypass', () => {
-    const migrationPath = 'supabase/migrations/20260723000001_mmm_rls_helper_execute_grants.sql';
-    expect(fileExists(migrationPath)).toBe(true);
-    const migration = readFile(migrationPath);
-    expect(migration).toMatch(/GRANT EXECUTE ON FUNCTION public\.mmm_current_user_org_id/i);
-    expect(migration).toMatch(/authenticated/i);
-    expect(migration).not.toMatch(/DISABLE ROW LEVEL SECURITY/i);
-    expect(migration).not.toMatch(/GRANT .*service_role.*authenticated/i);
+  it('T-MMM-AWF-017: private RLS helper model remains hardened while authenticated policy execution is supported', () => {
+    const hardeningPath = 'supabase/migrations/20260530000003_mmm_function_search_path_hardening.sql';
+    expect(fileExists(hardeningPath)).toBe(true);
+    const hardening = readFile(hardeningPath);
+    expect(hardening).toMatch(/CREATE OR REPLACE FUNCTION app_private\.mmm_current_user_org_id/i);
+    expect(hardening).toMatch(/GRANT EXECUTE ON FUNCTION app_private\.mmm_current_user_org_id\(\) TO authenticated, service_role/i);
+    expect(hardening).toMatch(/REVOKE EXECUTE ON FUNCTION public\.mmm_current_user_org_id\(\) FROM PUBLIC, anon, authenticated/i);
+    expect(hardening).toMatch(/app_private\.mmm_current_user_org_id\(\)/i);
+    expect(hardening).not.toMatch(/DISABLE ROW LEVEL SECURITY/i);
+    expect(hardening).not.toMatch(/GRANT .*service_role.*authenticated/i);
   });
 
   it('T-MMM-AWF-018: descriptor regression authority remains present', () => {
