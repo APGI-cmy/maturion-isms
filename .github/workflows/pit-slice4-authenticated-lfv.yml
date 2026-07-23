@@ -125,7 +125,7 @@ jobs:
             checkpoint = 'login-submit';
             await page.getByLabel('Work email').fill(process.env.LFV_EMAIL);
             await page.getByLabel('Password').fill(process.env.LFV_PASSWORD);
-            await page.getByRole('button', { name: 'Continue' }).click();
+            await page.getByRole('button', { name: 'Sign in' }).click();
             await page.waitForTimeout(2000);
             await page.screenshot({ path: 'lfv-artifacts/00-after-login.png', fullPage: true });
             checkpoint = 'create-route';
