@@ -2,7 +2,7 @@
 
 **Appointment ID:** MATURION-W3-PMC-DOC-BUILDER-20260723  
 **Issue:** #1953  
-**PR:** PENDING  
+**PR:** #1954  
 **Branch:** `foreman/maturion-wave3-postmerge-closure`  
 **Appointing authority:** foreman-v2-agent under CS2 Issue #1953  
 **Builder role:** bounded documentation/evidence builder  
@@ -20,6 +20,7 @@ The builder does not decide readiness, assurance, Wave 3 closure, successor-wave
 ## 2. Governing inputs
 
 - Issue #1953 and its CS2 authority clarification;
+- PR #1954;
 - `FOREMAN_OPERATING_MODEL.md`;
 - `Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md`;
 - `Maturion/strategy/Wave3_Maturion_thin_core_contract_correction_proposal_20260710.md`;
