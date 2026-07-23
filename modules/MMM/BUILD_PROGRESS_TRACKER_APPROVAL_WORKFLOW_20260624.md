@@ -4,7 +4,7 @@ Date: 2026-06-24
 Reconciled: 2026-07-23 under issue #1955  
 Repository: `APGI-cmy/maturion-isms`  
 Original branch: `foreman/mmm-approval-foundation-build-green`  
-Tracker role: historical append-only approval-workflow readiness record  
+Tracker role: historical approval-workflow readiness record (reconciled 2026-07-23)  
 CS2 Authority: Johan Ras
 
 > **Live-control notice**: This file preserves the 2026-06-24 approval-foundation readiness decision. It is not the primary current progress tracker. Current execution status is controlled by `modules/MMM/BUILD_PROGRESS_TRACKER.md` and `modules/MMM/07-implementation-plan/descriptor-runtime-approval-execution-alignment-addendum-2026-07-23.md`.
