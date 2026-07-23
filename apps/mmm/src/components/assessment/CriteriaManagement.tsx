@@ -176,6 +176,17 @@ interface DescriptorMethodologyRow {
   chunk_index?: unknown;
 }
 
+function buildFiveLevelDescriptorDrafts(
+  persistedRows: DomainAuditLevelDescriptorRow[] | undefined,
+): LevelDescriptorDraft[] {
+  const persistedByLevel = new Map((persistedRows ?? []).map((row) => [row.level, row]));
+  return MATURITY_LEVELS.map(({ level, label }) => ({
+    level,
+    label,
+    descriptor_text: persistedByLevel.get(level)?.descriptor_text ?? '',
+  }));
+}
+
 interface DescriptorControlObject {
   key: string;
   label: string;
@@ -1255,11 +1266,7 @@ export function CriteriaManagement({
   const saveDescriptorMutation = useMutation({
     mutationFn: async (criterion: DomainAuditCriterionRow) => {
       const drafts = descriptorDraftsByCriterion[criterion.id] ??
-        (levelDescriptorsByCriterion[criterion.id] ?? []).map((descriptor) => ({
-          level: descriptor.level,
-          label: MATURITY_LEVELS.find((item) => item.level === descriptor.level)?.label ?? `Level ${descriptor.level}`,
-          descriptor_text: descriptor.descriptor_text,
-        }));
+        buildFiveLevelDescriptorDrafts(levelDescriptorsByCriterion[criterion.id]);
       if (drafts.length !== 5 || drafts.some((draft) => !draft.descriptor_text.trim())) {
         throw new Error('All five maturity level descriptors must be completed before saving.');
       }
@@ -1673,21 +1680,21 @@ export function CriteriaManagement({
     if (activeDrafts) return activeDrafts;
     const storedDescriptors = levelDescriptorsByCriterion[criterion.id] ?? [];
     if (storedDescriptors.length > 0) {
-      return MATURITY_LEVELS.map(({ level, label }) => {
-        const stored = storedDescriptors.find((descriptor) => descriptor.level === level);
-        return {
-          level,
-          label,
-          descriptor_text: stored?.descriptor_text ?? '',
-        };
-      });
+      return buildFiveLevelDescriptorDrafts(storedDescriptors);
     }
     return [];
   };
 
   const handleGenerateDescriptors = async (criterion: DomainAuditCriterionRow) => {
     const pendingEditedLevels = descriptorEditedLevelsByCriterion[criterion.id] ?? new Set<number>();
-    if (pendingEditedLevels.size > 0) {
+    const effectiveDescriptorDrafts =
+      descriptorDraftsByCriterion[criterion.id] ??
+      buildFiveLevelDescriptorDrafts(levelDescriptorsByCriterion[criterion.id]);
+    const hasCompleteEffectiveSet =
+      effectiveDescriptorDrafts.length === MATURITY_LEVELS.length &&
+      effectiveDescriptorDrafts.every((draft) => draft.descriptor_text.trim().length > 0);
+    const isIncompleteRecoveryGeneration = pendingEditedLevels.size > 0 && !hasCompleteEffectiveSet;
+    if (pendingEditedLevels.size > 0 && hasCompleteEffectiveSet) {
       setCriterionActionMessages((prev) => ({
         ...prev,
         [criterion.id]: {
@@ -1704,6 +1711,48 @@ export function CriteriaManagement({
       }));
       return;
     }
+    const mergeRecoveryDrafts = (generatedDrafts: LevelDescriptorDraft[]): LevelDescriptorDraft[] => {
+      if (!isIncompleteRecoveryGeneration) return generatedDrafts;
+      const generatedByLevel = new Map(generatedDrafts.map((draft) => [draft.level, draft]));
+      const currentByLevel = new Map(effectiveDescriptorDrafts.map((draft) => [draft.level, draft]));
+      return MATURITY_LEVELS.map(({ level, label }) => {
+        const currentDraft = currentByLevel.get(level);
+        if (currentDraft?.descriptor_text.trim()) {
+          return {
+            level,
+            label,
+            descriptor_text: currentDraft.descriptor_text,
+          };
+        }
+        const generatedDraft = generatedByLevel.get(level);
+        return {
+          level,
+          label,
+          descriptor_text: generatedDraft?.descriptor_text ?? '',
+        };
+      });
+    };
+    const applyGeneratedDrafts = (generatedDrafts: LevelDescriptorDraft[]) => {
+      const nextDrafts = mergeRecoveryDrafts(generatedDrafts);
+      setDescriptorDraftsByCriterion((prev) => ({
+        ...prev,
+        [criterion.id]: nextDrafts,
+      }));
+      if (!isIncompleteRecoveryGeneration) {
+        setDescriptorEditedLevelsByCriterion((prev) => {
+          const next = { ...prev };
+          delete next[criterion.id];
+          return next;
+        });
+        setDescriptorEditingByKey((prev) => {
+          const next = { ...prev };
+          MATURITY_LEVELS.forEach(({ level }) => {
+            delete next[`${criterion.id}:${level}`];
+          });
+          return next;
+        });
+      }
+    };
     const activeCriterionText = stripCriterionBoilerplate(
       criterionEditDrafts[criterion.id]?.name ?? criterion.name,
     );
@@ -1769,22 +1818,7 @@ export function CriteriaManagement({
           activeCriterionText,
           descriptorReasoningDraftsFromResult(reasoningResult),
         );
-        setDescriptorDraftsByCriterion((prev) => ({
-          ...prev,
-          [criterion.id]: reasoningDrafts,
-        }));
-        setDescriptorEditedLevelsByCriterion((prev) => {
-          const next = { ...prev };
-          delete next[criterion.id];
-          return next;
-        });
-        setDescriptorEditingByKey((prev) => {
-          const next = { ...prev };
-          MATURITY_LEVELS.forEach(({ level }) => {
-            delete next[`${criterion.id}:${level}`];
-          });
-          return next;
-        });
+        applyGeneratedDrafts(reasoningDrafts);
         setCriterionActionMessages((prev) => ({
           ...prev,
           [criterion.id]: {
@@ -1855,22 +1889,7 @@ export function CriteriaManagement({
           );
           const parsed = parseDescriptorArrayFromReply((data as { reply: string }).reply);
           const validated = validateMaturityDescriptorDrafts(activeCriterionText, parsed);
-          setDescriptorDraftsByCriterion((prev) => ({
-            ...prev,
-            [criterion.id]: validated,
-          }));
-          setDescriptorEditedLevelsByCriterion((prev) => {
-            const next = { ...prev };
-            delete next[criterion.id];
-            return next;
-          });
-          setDescriptorEditingByKey((prev) => {
-            const next = { ...prev };
-            MATURITY_LEVELS.forEach(({ level }) => {
-              delete next[`${criterion.id}:${level}`];
-            });
-            return next;
-          });
+          applyGeneratedDrafts(validated);
           setCriterionActionMessages((prev) => ({
             ...prev,
             [criterion.id]: {
@@ -1880,22 +1899,7 @@ export function CriteriaManagement({
           }));
           return;
         } catch (aiError) {
-          setDescriptorDraftsByCriterion((prev) => ({
-            ...prev,
-            [criterion.id]: methodologyDrafts,
-          }));
-          setDescriptorEditedLevelsByCriterion((prev) => {
-            const next = { ...prev };
-            delete next[criterion.id];
-            return next;
-          });
-          setDescriptorEditingByKey((prev) => {
-            const next = { ...prev };
-            MATURITY_LEVELS.forEach(({ level }) => {
-              delete next[`${criterion.id}:${level}`];
-            });
-            return next;
-          });
+          applyGeneratedDrafts(methodologyDrafts);
           setCriterionActionMessages((prev) => ({
             ...prev,
             [criterion.id]: {
@@ -1907,22 +1911,7 @@ export function CriteriaManagement({
         }
       }
 
-      setDescriptorDraftsByCriterion((prev) => ({
-        ...prev,
-        [criterion.id]: methodologyDrafts,
-      }));
-      setDescriptorEditedLevelsByCriterion((prev) => {
-        const next = { ...prev };
-        delete next[criterion.id];
-        return next;
-      });
-      setDescriptorEditingByKey((prev) => {
-        const next = { ...prev };
-        MATURITY_LEVELS.forEach(({ level }) => {
-          delete next[`${criterion.id}:${level}`];
-        });
-        return next;
-      });
+      applyGeneratedDrafts(methodologyDrafts);
       setCriterionActionMessages((prev) => ({
         ...prev,
         [criterion.id]: {
@@ -1951,11 +1940,7 @@ export function CriteriaManagement({
     setDescriptorDraftsByCriterion((prev) => {
       const existing =
         prev[criterionId] ??
-        MATURITY_LEVELS.map(({ level: itemLevel, label }) => ({
-          level: itemLevel,
-          label,
-          descriptor_text: '',
-        }));
+        buildFiveLevelDescriptorDrafts(levelDescriptorsByCriterion[criterionId]);
       return {
         ...prev,
         [criterionId]: existing.map((draft) =>

@@ -28,6 +28,70 @@ fi
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 SESSION_DATE=$(date -u +"%Y%m%d")
 
+# Returns 0 when the agent contract explicitly enables placeholder-hash degraded mode.
+agent_requires_placeholder_hash_enforcement() {
+    if [ ! -f "$AGENT_CONTRACT_FILE" ]; then
+        return 1
+    fi
+    # Support both governance key variants for backward compatibility across contracts:
+    # - degraded_on_placeholder_hashes (current)
+    # - degraded_on_reserved_hash_markers (legacy synonym)
+    grep -Eq '^[[:space:]]*(degraded_on_placeholder_hashes|degraded_on_reserved_hash_markers):[[:space:]]*true([[:space:]]|$)' "$AGENT_CONTRACT_FILE"
+}
+
+# Counts invalid/placeholder hashes in CANON_INVENTORY.json across supported layouts.
+count_invalid_inventory_hashes() {
+    local inventory_file="$1"
+    jq -r '
+      def invalid_hash:
+        if type != "string" then
+          true
+        else
+          (test("^[0-9a-fA-F]{64}$") | not)
+          or test("^0{64}$")
+        end;
+      if (.canons? | type) == "array" then
+        [ .canons[]? | (.file_hash_sha256 // .file_hash) | select(invalid_hash) ] | length
+      elif (.artifacts? | type) == "object" then
+        [ .artifacts[]?
+          | (if type == "object" then (.sha256 // .file_hash_sha256 // .file_hash) else . end)
+          | select(invalid_hash)
+        ] | length
+      else
+        0
+      end
+    ' "$inventory_file"
+}
+
+# Counts entries missing canonical commit SHA provenance in CANON_INVENTORY.json.
+count_missing_inventory_commit_provenance() {
+    local inventory_file="$1"
+    jq -r '
+      def missing_commit:
+        . == null
+        or (type != "string")
+        or (length != 40)
+        or (test("^[0-9a-fA-F]{40}$") | not);
+      def commit_field:
+        .canonical_commit_sha
+        // .canonical_commit
+        // .canonical_commit_sha1
+        // .commit_sha
+        // .source_commit_sha
+        // .commit;
+      if (.canons? | type) == "array" then
+        [ .canons[]? | (if type == "object" then commit_field else null end) | select(missing_commit) ] | length
+      elif (.artifacts? | type) == "object" then
+        [ .artifacts[]?
+          | (if type == "object" then commit_field else null end)
+          | select(missing_commit)
+        ] | length
+      else
+        0
+      end
+    ' "$inventory_file"
+}
+
 # Output files
 WORKING_CONTRACT="${WORKSPACE_DIR}/working-contract.md"
 ENVIRONMENT_HEALTH="${WORKSPACE_DIR}/environment-health.json"
@@ -154,19 +218,37 @@ if [ -f "$CANON_INVENTORY" ]; then
     
     # Validate JSON
     if jq empty "$CANON_INVENTORY" 2>/dev/null; then
-        CANON_COUNT=$(jq '.total_artifacts // 0' "$CANON_INVENTORY")
+        CANON_COUNT=$(jq '.total_artifacts // .total_canons // (.canons | length? // 0)' "$CANON_INVENTORY")
+        if ! jq -e 'has("total_artifacts") or has("total_canons")' "$CANON_INVENTORY" >/dev/null 2>&1; then
+            echo -e "${YELLOW}⚠️  CANON_INVENTORY.json missing total_artifacts/total_canons; using canons array length fallback${NC}"
+        fi
         CANON_VERSION=$(jq -r '.version // "unknown"' "$CANON_INVENTORY")
         echo "  - Canon version: ${CANON_VERSION}"
         echo "  - Total artifacts: ${CANON_COUNT}"
+        if agent_requires_placeholder_hash_enforcement; then
+            INVALID_HASH_COUNT=$(count_invalid_inventory_hashes "$CANON_INVENTORY")
+            MISSING_PROVENANCE_COUNT=$(count_missing_inventory_commit_provenance "$CANON_INVENTORY")
+            echo "  - Placeholder-hash enforcement: ENABLED"
+            echo "  - Invalid/placeholder hashes: ${INVALID_HASH_COUNT}"
+            echo "  - Missing canonical commit SHA provenance: ${MISSING_PROVENANCE_COUNT}"
+            if [ "${INVALID_HASH_COUNT}" -gt 0 ]; then
+                echo -e "${RED}❌ CANON_INVENTORY.json is degraded (invalid/placeholder hashes detected)${NC}"
+                PHASE3_STATUS="FAIL"
+            fi
+            if [ "${MISSING_PROVENANCE_COUNT}" -gt 0 ]; then
+                echo -e "${RED}❌ CANON_INVENTORY.json is degraded (missing canonical commit SHA provenance)${NC}"
+                PHASE3_STATUS="FAIL"
+            fi
+        else
+            echo "  - Placeholder-hash enforcement: DISABLED"
+        fi
     else
         echo -e "${RED}❌ CANON_INVENTORY.json is invalid JSON${NC}"
         PHASE3_STATUS="FAIL"
     fi
 else
-    echo -e "${YELLOW}⚠️  CANON_INVENTORY.json not found${NC}"
-    echo "  - Scanning governance/canon/ directory as fallback..."
-    CANON_COUNT=$(find "${REPO_ROOT}/governance/canon" -name "*.md" 2>/dev/null | wc -l || echo "0")
-    echo "  - Canon files found: ${CANON_COUNT}"
+    echo -e "${RED}❌ CANON_INVENTORY.json not found${NC}"
+    PHASE3_STATUS="FAIL"
 fi
 
 # Check governance inventory
@@ -177,7 +259,11 @@ else
     echo -e "${YELLOW}⚠️  GOVERNANCE_ARTIFACT_INVENTORY.md not found${NC}"
 fi
 
-echo -e "${GREEN}✓ Phase 3: PASSED${NC}"
+if [ "$PHASE3_STATUS" = "PASS" ]; then
+    echo -e "${GREEN}✓ Phase 3: PASSED${NC}"
+else
+    echo -e "${RED}✗ Phase 3: FAILED${NC}"
+fi
 echo ""
 
 # ==============================================================================
