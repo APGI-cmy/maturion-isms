@@ -1,18 +1,21 @@
 # MMM Build Progress Tracker Update — Approval Workflow Build-to-GREEN Readiness
 
-Date: 2026-06-24
-Repository: `APGI-cmy/maturion-isms`
-Branch: `foreman/mmm-approval-foundation-build-green`
-Tracker role: append-only progress tracker update for MMM approval workflow build readiness
+Date: 2026-06-24  
+Reconciled: 2026-07-23 under issue #1955  
+Repository: `APGI-cmy/maturion-isms`  
+Original branch: `foreman/mmm-approval-foundation-build-green`  
+Tracker role: historical approval-workflow readiness record (reconciled 2026-07-23)  
 CS2 Authority: Johan Ras
 
-## 1. Current status
+> **Live-control notice**: This file preserves the 2026-06-24 approval-foundation readiness decision. It is not the primary current progress tracker. Current execution status is controlled by `modules/MMM/BUILD_PROGRESS_TRACKER.md` and `modules/MMM/07-implementation-plan/descriptor-runtime-approval-execution-alignment-addendum-2026-07-23.md`.
 
-MMM approval workflow pre-build and QA-to-red work for Steps 1-8 is complete and merged to `main`.
+## 1. Original Readiness Decision
 
-The module is now ready to start the first separate implementation build-to-GREEN wave, provided each implementation wave converts the relevant QA-to-red expectations into executable failing tests before runtime code.
+MMM approval workflow pre-build and QA-to-red work for Steps 1–8 was complete and merged to `main` by 2026-06-24.
 
-## 2. Merged pre-build / QA-to-red / alignment sequence
+The module was authorised to start the first separate implementation build-to-GREEN wave, provided every implementation wave converted the relevant QA-to-red expectations into executable failing tests before runtime code.
+
+## 2. Merged Pre-Build / QA-to-Red / Alignment Sequence
 
 | Step | PR | Status | Output |
 |---:|---|---|---|
@@ -24,8 +27,9 @@ The module is now ready to start the first separate implementation build-to-GREE
 | 6 | #1842 | Merged | Published maturity model view QA-to-red |
 | 7 | #1844 | Merged | Evidence modal harvest/adaptation from MAT QA-to-red |
 | 8 | #1845 | Merged | FRS/TRS/Architecture alignment addendum |
+| Foundation contract | #1846 | Merged | Canonical approval request/event contract helpers and executable contract tests |
 
-## 3. Pre-build artifacts now available
+## 3. Pre-Build Artifacts Available
 
 ### Approval workflow baseline
 
@@ -47,18 +51,16 @@ The module is now ready to start the first separate implementation build-to-GREE
 
 - `modules/MMM/approval-workflow/frs-trs-architecture-alignment-addendum.md`
 
-## 4. Build-to-GREEN authorization boundary
+## 4. Original Build-to-GREEN Authorization Boundary
 
-Runtime implementation may now begin one wave at a time.
-
-The first implementation wave is authorized to scope the approval workflow foundation only:
+The first implementation wave was authorised to scope the approval workflow foundation only:
 
 - persistence model proposals or migrations for approval rounds, approvers, proposed changes, comments, notifications, locks, audit events, and AI learning events;
 - typed client contract for canonical approval functions;
 - executable tests for state transitions, canonical function naming, typed client routing, notification/audit/AI event recording, and lock/unlock rules;
 - minimal runtime implementation needed to turn that first executable test suite green.
 
-Not authorized in the first wave unless explicitly scoped:
+Not authorised in the first wave unless explicitly scoped:
 
 - Level 2 workspace UI;
 - Level 1 e-mail template rendering/delivery;
@@ -68,17 +70,44 @@ Not authorized in the first wave unless explicitly scoped:
 - AI evidence evaluation runtime;
 - PIT/risk/incident integrations.
 
-## 5. Required build sequence
+## 5. Reconciled Interpretation of PR #1846
 
-1. Approval workflow foundation: persistence, typed client contract, state machine, notification/audit/AI event stubs, executable tests.
-2. Level 2 invite modal and workspace runtime.
+PR #1846 delivered the contract foundation, including:
+
+- canonical function-name constants;
+- request payload builders;
+- notification, audit, and AI-learning event shapes;
+- a final-lock mutation guard;
+- focused executable contract tests.
+
+PR #1846 did not complete the operational foundation. The following remain outstanding:
+
+- durable database persistence;
+- RLS and role enforcement;
+- canonical Edge Functions;
+- server-side approval state machine;
+- production typed Supabase integration client;
+- transactional notification/audit/learning-event persistence;
+- complete approval user journeys and live evidence.
+
+Accordingly, the correct current status is:
+
+> **Approval pre-build and contract foundation aligned; operational approval foundation runtime remains the next governed product wave.**
+
+## 6. Required Build Sequence
+
+1. Approval workflow foundation runtime: persistence, canonical Edge Functions, typed client, state machine, notification/audit/AI-learning events, locks, executable tests and live proof.
+2. Level 2 invite modal and scoped approver workspace runtime.
 3. Level 1 change-summary response runtime.
 4. Level 3 final approval runtime.
 5. Published maturity model view runtime.
 6. Evidence modal harvest/adaptation runtime.
 
-## 6. Tracker conclusion
+## 7. Current Control Reference
 
-The pre-build artifact set is complete for the approval workflow sequence.
+For current status, descriptor closure conditions, Stage 12 wave mapping, and next-action authority, use:
 
-The active status changes from pre-build artifact creation to build-to-GREEN foundation implementation.
+- `modules/MMM/BUILD_PROGRESS_TRACKER.md`
+- `modules/MMM/07-implementation-plan/descriptor-runtime-approval-execution-alignment-addendum-2026-07-23.md`
+
+This historical tracker must not be used to claim approval workflow completion or full Wave B4 completion.
