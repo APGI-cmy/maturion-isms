@@ -95,34 +95,29 @@ async function readBrowserAccessToken(page) {
   return token;
 }
 
-async function rest(page, config, accessToken, method, table, { select = '', body, filters = {} } = {}) {
-  return page.evaluate(async ({ config, accessToken, method, table, select, body, filters }) => {
+async function query(page, config, accessToken, table, select) {
+  return page.evaluate(async ({ config, accessToken, table, select }) => {
     const url = new URL(`${config.origin}/rest/v1/${table}`);
-    if (select) url.searchParams.set('select', select);
-    Object.entries(filters).forEach(([key, value]) => url.searchParams.set(key, String(value)));
+    url.searchParams.set('select', select);
     const response = await fetch(url.toString(), {
-      method,
       headers: {
         apikey: config.apikey,
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Prefer: method === 'POST' ? 'return=representation' : 'return=minimal',
       },
-      body: body === undefined ? undefined : JSON.stringify(body),
     });
     const text = await response.text();
-    if (!response.ok) throw new Error(`${method} ${table} failed (${response.status}): ${text.slice(0, 500)}`);
+    if (!response.ok) throw new Error(`${table} query failed (${response.status}): ${text.slice(0, 500)}`);
     return text ? JSON.parse(text) : [];
-  }, { config, accessToken, method, table, select, body, filters });
+  }, { config, accessToken, table, select });
 }
 
-async function findOrSeedTarget(page, config, accessToken) {
+async function findTarget(page, config, accessToken) {
   const [criteria, descriptors, mpsRows, domains] = await Promise.all([
-    rest(page, config, accessToken, 'GET', 'mmm_criteria', { select: 'id,code,name,mps_id' }),
-    rest(page, config, accessToken, 'GET', 'mmm_level_descriptors', { select: 'criterion_id,level,descriptor_text' }),
-    rest(page, config, accessToken, 'GET', 'mmm_maturity_process_steps', { select: 'id,code,name,domain_id' }),
-    rest(page, config, accessToken, 'GET', 'mmm_domains', { select: 'id,name,framework_id' }),
+    query(page, config, accessToken, 'mmm_criteria', 'id,code,name,mps_id'),
+    query(page, config, accessToken, 'mmm_level_descriptors', 'criterion_id,level,descriptor_text'),
+    query(page, config, accessToken, 'mmm_maturity_process_steps', 'id,code,name,domain_id'),
+    query(page, config, accessToken, 'mmm_domains', 'id,name,framework_id'),
   ]);
   const descriptorMap = new Map();
   for (const row of descriptors) {
@@ -138,28 +133,19 @@ async function findOrSeedTarget(page, config, accessToken) {
     const mps = mpsMap.get(criterion.mps_id);
     const domain = mps ? domainMap.get(mps.domain_id) : null;
     return { criterion, populatedCount, mps, domain };
-  }).filter((item) => item.mps && item.domain?.framework_id);
+  }).filter((item) => item.populatedCount > 0 && item.mps && item.domain?.framework_id);
 
-  const incomplete = joined.filter((item) => item.populatedCount > 0 && item.populatedCount < 5)
+  const incomplete = joined.filter((item) => item.populatedCount < 5)
     .sort((left, right) => {
       const preference = Number(right.criterion.code === PREFERRED_CODE) - Number(left.criterion.code === PREFERRED_CODE);
       return preference || left.populatedCount - right.populatedCount;
     });
-  if (incomplete.length) return { ...incomplete[0], seeded: false };
+  if (incomplete.length) return { ...incomplete[0], simulatedIncomplete: false };
 
-  const zeroDescriptorTarget = joined.find((item) => item.populatedCount === 0);
-  if (!zeroDescriptorTarget) {
-    throw new Error('No incomplete or zero-descriptor criterion exists in the authenticated CI tenant.');
-  }
-  const seedText = `Evidence that ${String(zeroDescriptorTarget.criterion.name).trim()} is absent, weak, outdated, inconsistent, fragmented, or person-dependent. Records do not yet show repeatable ownership, communication, execution, review, or reliable evidence retention.`;
-  await rest(page, config, accessToken, 'POST', 'mmm_level_descriptors', {
-    body: {
-      criterion_id: zeroDescriptorTarget.criterion.id,
-      level: 1,
-      descriptor_text: seedText,
-    },
-  });
-  return { ...zeroDescriptorTarget, populatedCount: 1, seeded: true };
+  const complete = joined.filter((item) => item.populatedCount === 5)
+    .sort((left, right) => left.criterion.code.localeCompare(right.criterion.code));
+  if (!complete.length) throw new Error('No criterion with persisted descriptors exists in the authenticated CI tenant.');
+  return { ...complete[0], simulatedIncomplete: true };
 }
 
 async function openCriteria(page, origin, target, bypassSecret) {
@@ -190,14 +176,20 @@ function populatedLevels(descriptors) {
   return Object.entries(descriptors).filter(([, text]) => String(text).trim()).map(([level]) => Number(level));
 }
 
-function assertExistingPreserved(before, after, editedLevel) {
-  for (const level of populatedLevels(before)) {
-    const expected = String(before[level]);
-    const actual = String(after[level]);
-    if (level === editedLevel ? actual.trim() !== expected.trim() : actual !== expected) {
-      throw new Error(`Previously populated level ${level} changed unexpectedly.`);
+function assertLevelsPreserved(expected, actual, levels, whitespaceLevel = null) {
+  for (const level of levels) {
+    const expectedText = String(expected[level]);
+    const actualText = String(actual[level]);
+    if (level === whitespaceLevel ? actualText.trim() !== expectedText.trim() : actualText !== expectedText) {
+      throw new Error(`Level ${level} changed unexpectedly.`);
     }
   }
+}
+
+async function declinePrompt(page) {
+  await page.getByTestId('descriptor-learning-prompt').waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
+  await page.getByTestId('descriptor-learning-no').click();
+  await page.getByTestId('descriptor-learning-prompt').waitFor({ state: 'hidden', timeout: WAIT_TIMEOUT });
 }
 
 async function main() {
@@ -211,10 +203,11 @@ async function main() {
   const result = {
     functionalPass: false,
     selectedCriterion: null,
-    seededCiDescriptor: false,
+    simulatedIncompleteDraft: false,
     steps: [],
     before: null,
-    afterConsent: null,
+    afterFirstEdit: null,
+    beforeRecovery: null,
     afterRecovery: null,
     afterReload: null,
     error: null,
@@ -257,9 +250,9 @@ async function main() {
     result.steps.push({ name: 'read-authenticated-browser-session', ok: true, detail: 'authenticated session present' });
     console.log('[descriptor-closure] PASS read-authenticated-browser-session — authenticated session present');
 
-    const target = await step('locate-or-seed-incomplete-ci-criterion', async () => {
-      const found = await findOrSeedTarget(page, publicConfig, accessToken);
-      result.seededCiDescriptor = found.seeded;
+    const target = await step('locate-descriptor-validation-criterion', async () => {
+      const found = await findTarget(page, publicConfig, accessToken);
+      result.simulatedIncompleteDraft = found.simulatedIncomplete;
       result.selectedCriterion = {
         id: found.criterion.id,
         code: found.criterion.code,
@@ -275,24 +268,44 @@ async function main() {
     const criterionId = target.criterion.id;
     const before = await values(page, criterionId);
     result.before = before;
-    const initiallyPopulated = populatedLevels(before);
-    if (!initiallyPopulated.length || initiallyPopulated.length >= 5) {
-      throw new Error(`Selected criterion is not incomplete: ${initiallyPopulated.length}/5.`);
-    }
-    const editedLevel = initiallyPopulated[0];
+    const initialLevels = populatedLevels(before);
+    if (!initialLevels.length) throw new Error('Selected criterion has no populated descriptor.');
+    const editedLevel = initialLevels[0];
 
-    await step('whitespace-only-edit-and-decline-learning', async () => {
+    await step('first-edit-seeds-and-preserves-persisted-set', async () => {
       await page.getByTestId(`edit-descriptor-btn-${criterionId}-${editedLevel}`).click();
       await page.getByTestId(`descriptor-input-${criterionId}-${editedLevel}`).fill(`${before[editedLevel]} `);
-      await page.getByTestId('descriptor-learning-prompt').waitFor({ state: 'visible', timeout: WAIT_TIMEOUT });
-      await page.getByTestId('descriptor-learning-no').click();
-      await page.getByTestId('descriptor-learning-prompt').waitFor({ state: 'hidden', timeout: WAIT_TIMEOUT });
+      await declinePrompt(page);
       const after = await values(page, criterionId);
-      result.afterConsent = after;
-      assertExistingPreserved(before, after, editedLevel);
-      return `level=${editedLevel}; learning declined; ${initiallyPopulated.length}/5 existing levels preserved`;
+      result.afterFirstEdit = after;
+      assertLevelsPreserved(before, after, initialLevels, editedLevel);
+      return `level=${editedLevel}; learning declined; ${initialLevels.length}/5 persisted levels preserved after first edit`;
     });
 
+    if (target.simulatedIncomplete) {
+      await step('create-unsaved-incomplete-local-draft', async () => {
+        const levelsToClear = [1, 2, 3, 4, 5].filter((level) => level !== editedLevel);
+        for (const level of levelsToClear) {
+          await page.getByTestId(`edit-descriptor-btn-${criterionId}-${level}`).click();
+          await page.getByTestId(`descriptor-input-${criterionId}-${level}`).fill('');
+          await declinePrompt(page);
+        }
+        const incomplete = await values(page, criterionId);
+        result.beforeRecovery = incomplete;
+        if (populatedLevels(incomplete).length !== 1) {
+          throw new Error(`Expected one populated local level before recovery, found ${populatedLevels(incomplete).length}.`);
+        }
+        if (String(incomplete[editedLevel]).trim() !== String(before[editedLevel]).trim()) {
+          throw new Error('Edited level was not preserved while creating the incomplete local draft.');
+        }
+        return 'complete persisted set reduced only in unsaved local state; database not changed';
+      });
+    } else {
+      result.beforeRecovery = await values(page, criterionId);
+    }
+
+    const beforeRecovery = result.beforeRecovery;
+    const levelsToPreserve = populatedLevels(beforeRecovery);
     await step('recover-only-missing-levels', async () => {
       await page.getByTestId(`generate-descriptors-btn-${criterionId}`).click();
       await page.waitForFunction(({ criterionId }) => {
@@ -305,9 +318,9 @@ async function main() {
       }, { criterionId }, { timeout: GENERATION_TIMEOUT });
       const after = await values(page, criterionId);
       result.afterRecovery = after;
-      assertExistingPreserved(before, after, editedLevel);
+      assertLevelsPreserved(beforeRecovery, after, levelsToPreserve, editedLevel);
       if (populatedLevels(after).length !== 5) throw new Error('Recovery did not populate all five levels.');
-      return 'missing levels filled and every prior non-empty level preserved';
+      return 'missing levels filled and every pre-recovery non-empty level preserved';
     });
 
     await step('complete-dirty-set-blocks-regeneration', async () => {
@@ -342,10 +355,8 @@ async function main() {
       const after = await values(page, criterionId);
       result.afterReload = after;
       if (populatedLevels(after).length !== 5) throw new Error('Reload did not retain five populated levels.');
-      for (const level of initiallyPopulated) {
-        if (String(after[level]).trim() !== String(before[level]).trim()) {
-          throw new Error(`Reload changed original level ${level}.`);
-        }
+      if (String(after[editedLevel]).trim() !== String(before[editedLevel]).trim()) {
+        throw new Error(`Reload changed the preserved edited level ${editedLevel}.`);
       }
       return 'all five descriptors persisted after reload';
     });
@@ -361,7 +372,7 @@ async function main() {
     await browser.close().catch(() => {});
   }
 
-  const summary = `# MMM Descriptor Runtime Live Closure\n\nFUNCTIONAL_PASS: ${result.functionalPass ? 'yes' : 'no'}\nSELECTED_CRITERION: ${result.selectedCriterion?.code || '(none)'}\nSELECTED_CRITERION_ID: ${result.selectedCriterion?.id || '(none)'}\nINITIAL_DESCRIPTOR_COVERAGE: ${result.selectedCriterion?.populatedCount ?? '(n/a)'}/5\nCI_DESCRIPTOR_SEEDED: ${result.seededCiDescriptor ? 'yes' : 'no'}\nLEARNING_CAPTURE: declined for validation\nDATA_MUTATION: CI tenant only; whitespace-only edit; missing levels completed\nERROR: ${result.error || '(none)'}\n\n## Steps\n\n${result.steps.map((item) => `- ${item.ok ? 'PASS' : 'FAIL'} — ${item.name}${item.detail ? `: ${item.detail}` : ''}`).join('\n')}\n\n## Artifacts\n\n- descriptor-closure.json\n- descriptor-closure.png\n- descriptor-closure-trace.zip\n`;
+  const summary = `# MMM Descriptor Runtime Live Closure\n\nFUNCTIONAL_PASS: ${result.functionalPass ? 'yes' : 'no'}\nSELECTED_CRITERION: ${result.selectedCriterion?.code || '(none)'}\nSELECTED_CRITERION_ID: ${result.selectedCriterion?.id || '(none)'}\nINITIAL_DESCRIPTOR_COVERAGE: ${result.selectedCriterion?.populatedCount ?? '(n/a)'}/5\nSIMULATED_INCOMPLETE_LOCAL_DRAFT: ${result.simulatedIncompleteDraft ? 'yes' : 'no'}\nLEARNING_CAPTURE: declined for validation\nDATA_MUTATION: CI tenant only; no direct table writes; final five-level save uses normal Edge Function\nERROR: ${result.error || '(none)'}\n\n## Steps\n\n${result.steps.map((item) => `- ${item.ok ? 'PASS' : 'FAIL'} — ${item.name}${item.detail ? `: ${item.detail}` : ''}`).join('\n')}\n\n## Artifacts\n\n- descriptor-closure.json\n- descriptor-closure.png\n- descriptor-closure-trace.zip\n`;
   await writeFile(path.join(ARTIFACT_DIR, 'descriptor-closure-summary.md'), summary);
   await writeFile(path.join(ARTIFACT_DIR, 'descriptor-closure.json'), safeJson(result));
   console.log(summary);
