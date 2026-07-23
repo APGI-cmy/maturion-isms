@@ -20,6 +20,7 @@
     ".agent-admin/builder-appointments/wave-mmm-approval-workflow-foundation-20260723.md",
     "modules/MMM/05-qa-to-red/approval-workflow-foundation-qa-to-red.md",
     "modules/MMM/tests/B4-framework/approval-workflow-foundation-red.test.ts",
+    "modules/MMM/tests/vitest.approval-workflow-foundation.config.ts",
     ".agent-admin/control/delegation-orders/pr-1962.json"
   ],
   "prohibitions": [
