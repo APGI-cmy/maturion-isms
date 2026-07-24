@@ -34,7 +34,7 @@ This execution addendum narrows the broader W8.3 project-hierarchy plan to the c
 | 12 | Remove LFV fixture and temporary runner | zero project/source-link residue; PR-specific workflow removed |
 | 13 | Complete final assurance and review | all review threads resolved; governance, CodeQL and deployments GREEN |
 | 14 | CS2 merge | PR #1952 merged at `61ef3795d953ae11e0c153705729bff52aa3dc9f` |
-| 15 | Post-merge verification | `post-merge-verification-and-closure-20260723.md` |
+| 15 | Post-merge verification | `modules/pit/12-build/slice-4/post-merge-verification-and-closure-20260723.md` |
 
 ## Delivered scope
 
