@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "apw-ai-cost-containment-governed-replay-v01",
+  "pr_number": 1967,
+  "prebrief_commit_sha": "64cf00df21d90c4d2941ba1d8491f72ccbca0256",
+  "builder_appointment_timestamp": "2026-07-26T13:56:00+02:00",
+  "builder_appointment_commit_sha": "f7e35f2044e11fe578bd5f4b992a79d12f95561c",
+  "builder_agent": "apw-public-chat-cost-containment-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-ai-cost-containment-governed-replay-v0.1.md",
+  "first_implementation_commit_sha": "3bd367f103063bf6337d22d6d5e4c6f5f9ea19b3",
+  "qp_review_timestamp": "2026-07-26T14:28:00+02:00",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1967.md",
+  "remediation_record_ref": "Maturion/prebuild/runtime-activation-readiness/APW-AI-Cost-Containment-and-Model-Routing-Remediation-v0.1.md"
+}
