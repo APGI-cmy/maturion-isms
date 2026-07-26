@@ -5,7 +5,7 @@
 **PR:** #1970  
 **Branch:** `agent/foreman-bootstrap-fail-closed-1969`  
 **Base SHA:** `36c7f42a1a9d23fe4fd9d9f7f12a7ef7beada919`  
-**Status:** STOP-AND-FIX CORRECTED / QP R2 PASS / ECAP R2 COMPLETE / PREHANDOVER, EXACT-HEAD CI AND FINAL IAA PENDING
+**Status:** CS2-EXTENDED STOP-AND-FIX / PREHANDOVER DEADLOCK REPAIR AUTHORIZED / IMPLEMENTATION PENDING
 **CS2:** Johan Ras
 
 ## Qualifying tasks
@@ -17,6 +17,7 @@
 | GOV-1969-03 | Add executable happy-path, populated-memory, missing-control and absent-list compatibility regression coverage | GOVERNANCE_QA | COMPLETE — 4 focused scenarios PASS; Wave 7 10/10 policy and 13/13 real gates PASS |
 | GOV-1969-04 | Bind QP, ECAP, CI and independent final IAA evidence to the frozen PR head | ASSURANCE | IN PROGRESS — QP R2 PASS; ECAP R2 ADMIN_VALIDATED; PREHANDOVER, exact-head CI and final IAA R2 pending |
 | GOV-1969-05 | After CS2 closure, resume #1959 without weakening the private-helper model | SUCCESSOR_CONTROL | BLOCKED BY THIS WAVE |
+| GOV-1969-06 | Repair prehandover false-positive detection without weakening positive-claim enforcement | CI_WORKFLOW / GOVERNANCE_CONTROL_REPAIR | AUTHORIZED — CS2 extension recorded 2026-07-26; implementation and regression pending |
 
 ## Acceptance tests
 
@@ -28,10 +29,13 @@
 6. The focused regression command is run by CI when the validator, Foreman contract/index/template, regression script, or workflow changes.
 7. No `.github/agents/*.md`, product/runtime, MMM, Supabase or Vercel files change.
 8. Independent IAA reviews the exact final head and returns PASS; otherwise the wave remains blocked.
+9. An ordinary session memory containing `handover_allowed: false` and `final_iaa_verdict: PENDING` does not activate the prehandover lane.
+10. Explicit PREHANDOVER paths and actual positive readiness/handover claims still require a valid current-head `handover-allowed.json`.
+11. The semantic boundary is exercised by hosted real-gate fixtures.
 
 ## Required order
 
-`scope commit 88c0994… -> task carrier -> canonical IAA pre-brief -> bounded appointment -> implementation -> QP R1 -> ECAP R1 -> IAA R1 rejection c7e28382… -> corrective implementation ef8c628c… -> QP R2 -> ECAP R2 -> immutable PREHANDOVER/session memory -> final IAA R2 -> CS2 merge`
+`scope commit 88c0994… -> task carrier -> canonical IAA pre-brief -> bounded appointment -> implementation -> QP R1 -> ECAP R1 -> IAA R1 rejection c7e28382… -> corrective implementation ef8c628c… -> QP R2 -> ECAP R2 -> session memory/deadlock discovery -> CS2 extension -> prehandover gate correction -> refreshed QP/ECAP -> frozen-head final IAA -> CS2 merge`
 
 ## Stop conditions
 
@@ -41,5 +45,7 @@
 - Validator trusts index prose rather than the active contract's declared list.
 - Missing path is not reported.
 - Existing bootstrap behavior regresses for contracts without Tier 2 lists.
+- Truthful negative/pending session evidence activates the prehandover lane.
+- Explicit PREHANDOVER or positive readiness claims evade the existing current-head control.
 - CI/frozen-head evidence is incomplete.
 - IAA rejects or remains pending.

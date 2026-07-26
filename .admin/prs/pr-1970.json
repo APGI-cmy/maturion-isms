@@ -15,6 +15,7 @@
     ".agent-admin/scope-declarations/pr-1970.md",
     ".agent-workspace/foreman-v2/knowledge/session-memory-template.md",
     ".agent-workspace/foreman-v2/memory/session-foreman-bootstrap-repair-1969-20260726.md",
+    ".github/scripts/foreman-prehandover-lane-gate.js",
     ".github/scripts/wake-up-protocol.sh",
     ".github/scripts/wake-up-protocol.test.sh",
     ".github/scripts/wave7-governance-validation.js"
@@ -28,6 +29,8 @@
     "Foreman QP R1 carrier is committed at ed15a811b6e617bcb2c8b30a0ec37ac4053c128d",
     "IAA R1 rejection is committed at c7e283827bf0610be8e963d4bfb57fa5ae1e2d2b",
     "Corrective populated-memory implementation is committed at ef8c628ca3bca433fbe084055c5dded1f13036f8",
+    "CS2 scope extension on 2026-07-26 authorizes the bounded prehandover false-positive/deadlock repair before its implementation",
+    "Ordinary session memory with handover_allowed false and final_iaa_verdict PENDING does not activate the lane, while explicit PREHANDOVER artifacts and positive readiness claims remain fail-closed",
     "Focused bootstrap regression, repeated real-agent bootstraps and governance validation pass",
     "QP R2, ECAP R2, immutable PREHANDOVER proof and Foreman session memory are committed before independent final IAA R2"
   ],
