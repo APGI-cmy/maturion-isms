@@ -11,7 +11,14 @@ const prBaseSha = process.env.PR_BASE_SHA || '';
 const eventName = process.env.GITHUB_EVENT_NAME || '';
 const controlPath = path.join(repoRoot, '.agent-admin/control/handover-allowed.json');
 
-const handoverLanguagePattern = /\b(complete|ready for review|ready-for-review|handover|merge-ready|released|done)\b/i;
+const positiveStructuredClaimPatterns = [
+  /^\s*(?:[-*]\s*)?(?:handover_allowed|handover-allowed)\s*:\s*(?:true|yes)\b/im,
+  /^\s*(?:[-*]\s*)?(?:final_iaa_verdict|final-iaa-verdict)\s*:\s*(?:pass|approved|final_assurance_pass)\b/im,
+  /^\s*(?:[-*]\s*)?(?:state|final_state|handover_state)\s*:\s*(?:PRE_HANDOVER_GATE_PASS|IAA_FINAL_PASS|CS2_REVIEW|READY_FOR_REVIEW|MERGE_READY|HANDOVER_ALLOWED)\b/im,
+];
+const positiveNarrativeClaimPattern = /\b(?:ready[- ]for[- ]review|merge[- ]ready|handover[- ](?:ready|allowed|approved|authori[sz]ed)|handover\s+(?:is\s+)?(?:allowed|approved|authori[sz]ed)|ready\s+to\s+hand\s+over|work\s+(?:is\s+)?(?:complete|done|released))\b/ig;
+const negativeValueAfterClaimPattern = /^\s*[:=]\s*(?:false|no|pending|blocked|not[_ -]?allowed)\b/i;
+const negationBeforeClaimPattern = /\b(?:no|not|never|without|pending|blocked|prohibited|cannot|can't|must\s+not|does\s+not|do\s+not)\b[^.!?;]{0,64}$/i;
 const laneIntentPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.*\.md$|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/PREHANDOVER-.*\.md$|(^|\/)\.agent-admin\/control\/handover-allowed\.json$/i;
 const handoverLanguageScanPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/.*\.(md|txt|json|yml|yaml)$|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.*\.(md|txt|json|yml|yaml)$/i;
 const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/|api\/|lib\/)/;
@@ -66,13 +73,31 @@ function readJson(filePath) {
   }
 }
 
-function hasHandoverLanguage(files) {
+function lineHasPositiveNarrativeClaim(line) {
+  positiveNarrativeClaimPattern.lastIndex = 0;
+  let match;
+  while ((match = positiveNarrativeClaimPattern.exec(line)) !== null) {
+    const before = line.slice(0, match.index);
+    const after = line.slice(match.index + match[0].length);
+    if (!negationBeforeClaimPattern.test(before) && !negativeValueAfterClaimPattern.test(after)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function bodyHasPositiveHandoverClaim(body) {
+  if (positiveStructuredClaimPatterns.some((pattern) => pattern.test(body))) return true;
+  return body.split(/\r?\n/).some(lineHasPositiveNarrativeClaim);
+}
+
+function findPositiveHandoverClaims(files) {
   const candidates = files.filter((file) => handoverLanguageScanPattern.test(file));
   const hits = [];
   for (const file of candidates) {
     try {
       const body = fs.readFileSync(path.join(repoRoot, file), 'utf8');
-      if (handoverLanguagePattern.test(body)) hits.push(file);
+      if (bodyHasPositiveHandoverClaim(body)) hits.push(file);
     } catch (error) {
       warn(`Could not inspect ${file}: ${error.message}`);
     }
@@ -146,7 +171,7 @@ function validateControl(control, implementationChanged) {
 }
 
 const changedFiles = getChangedFiles();
-const handoverHits = hasHandoverLanguage(changedFiles);
+const handoverHits = findPositiveHandoverClaims(changedFiles);
 const laneIntentFiles = changedFiles.filter((file) => laneIntentPattern.test(file));
 const implementationFiles = changedFiles.filter((file) => implementationPathPattern.test(file) || implementationTestPattern.test(file));
 
@@ -159,7 +184,7 @@ console.log(`Workflow SHA: ${workflowSha || 'unknown'}`);
 console.log(`PR head SHA: ${prHeadSha || 'unknown'}`);
 console.log(`PR base SHA: ${prBaseSha || 'unknown'}`);
 console.log(`Changed files: ${changedFiles.length}`);
-console.log(`Handover language hits in handover artifacts: ${handoverHits.length}`);
+console.log(`Positive handover/readiness claim hits in scanned artifacts: ${handoverHits.length}`);
 console.log(`Explicit pre-handover lane intent files changed: ${laneIntentFiles.length}`);
 console.log(`Implementation files changed: ${implementationFiles.length}`);
 
@@ -176,7 +201,7 @@ if (!fs.existsSync(controlPath)) {
   fail('Missing .agent-admin/control/handover-allowed.json while pre-handover lane gate is relevant.');
   if (implementationFiles.length) warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
   if (laneIntentFiles.length) warn(`pre-handover lane intent files changed: ${laneIntentFiles.slice(0, 20).join(', ')}`);
-  if (handoverHits.length) warn(`handover/completion language appears in: ${handoverHits.slice(0, 20).join(', ')}`);
+  if (handoverHits.length) warn(`positive handover/readiness claim appears in: ${handoverHits.slice(0, 20).join(', ')}`);
   process.exit(process.exitCode || 1);
 }
 
@@ -190,7 +215,7 @@ if (errors.length > 0) {
   for (const error of errors) console.error(`- ${error}`);
   if (implementationFiles.length) warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
   if (laneIntentFiles.length) warn(`pre-handover lane intent files changed: ${laneIntentFiles.slice(0, 20).join(', ')}`);
-  if (handoverHits.length) warn(`handover/completion language appears in: ${handoverHits.slice(0, 20).join(', ')}`);
+  if (handoverHits.length) warn(`positive handover/readiness claim appears in: ${handoverHits.slice(0, 20).join(', ')}`);
   process.exit(1);
 }
 
