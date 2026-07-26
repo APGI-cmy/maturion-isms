@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "mmm-approval-workflow-foundation-qa-red",
+  "pr_number": 1962,
+  "prebrief_commit_sha": "0ace85a0ccce08cc4d68c15cb8792125b31c9063",
+  "builder_appointment_timestamp": "2026-07-23T14:25:00Z",
+  "builder_appointment_commit_sha": "6630aa9c3a084c00de0dd16e6fe0436c52b3006b",
+  "builder_agent": "qa-builder",
+  "builder_task_ref": "issue-1961-approval-workflow-foundation-qa-to-red",
+  "first_implementation_commit_sha": "81e6b77cd91978a1b7e7a0f0ccc5bde66039ee7b",
+  "qp_review_timestamp": "2026-07-23T14:29:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "repository": "APGI-cmy/maturion-isms",
+  "branch": "qa/issue-1961-approval-workflow-foundation-red",
+  "frs_authority_commit_sha": "7ba38474082bf0d3e8d054f45127cc3549a3165a",
+  "qa_trace_commit_sha": "74e1ea3fdcbb75da3f55040471053ff482942d63",
+  "authorised_paths": [
+    "modules/MMM/02-frs/approval-workflow-foundation-frs-addendum.md",
+    ".agent-admin/assurance/iaa-prebrief-mmm-approval-workflow-foundation-20260723.md",
+    ".agent-admin/builder-appointments/wave-mmm-approval-workflow-foundation-20260723.md",
+    "modules/MMM/05-qa-to-red/approval-workflow-foundation-qa-to-red.md",
+    "modules/MMM/tests/B4-framework/approval-workflow-foundation-red.test.ts",
+    "modules/MMM/tests/vitest.approval-workflow-foundation.config.ts",
+    ".agent-admin/control/delegation-orders/pr-1962.json"
+  ],
+  "prohibitions": [
+    "No production approval runtime implementation in this PR",
+    "No RLS weakening or service-role browser exposure",
+    "No self-approval or UI-only authorisation assumptions",
+    "No descriptor-generation changes",
+    "No ISMS Portal, PIT or unrelated module changes",
+    "No deleting or weakening red assertions to obtain green"
+  ]
+}
