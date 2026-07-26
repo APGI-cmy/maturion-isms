@@ -644,3 +644,107 @@ The ordered lineage is:
 - `RESULT: AWAITING_INDEPENDENT_IAA_R2`
 
 No merge, handover, #1969 closure, or #1959 execution is authorized by this PREHANDOVER proof.
+
+## TOKEN
+
+### Final Assurance Invocation R4 — 2026-07-26
+
+**IAA appointment timestamp:** `2026-07-26T14:49:22Z`
+**IAA session:** `session-220` / R4 re-invocation
+**PR:** #1970 — Governance: fail closed on missing Foreman Tier 2 controls
+**Issue:** #1969
+**Reviewed exact HEAD:** `e4f2af5a35ed39d12fa20c1335476c2c608c84ec`
+**Producer correction:** `ff14631489e24988c985b441520397184e7a40e6`
+**Foreman QP:** R5 PASS at `f4f010c351a75ffc05a5c2eaf5b3941e8449f959`
+**ECAP:** R5 `ADMIN_VALIDATED` at `0651ea3f932805c0f33531fa699b54d232c2246b`
+**Independence:** CONFIRMED — this IAA did not produce or contribute to the reviewed correction
+**Adoption phase:** `PHASE_B_BLOCKING`
+**Verdict:** `ASSURANCE-TOKEN`
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-1970-R2-20260726-PASS
+
+#### Token-reference coherence
+
+`IAA-session-1970-R2-20260726-PASS` is the immutable expected token handle declared in the committed PREHANDOVER proof. R2 and R3 issued only rejection packages and never issued that handle. R4 is the fourth independent invocation and the first PASS; this R4 section is therefore the sole issuance event for the predeclared handle. The `R2` component identifies the immutable expected reference, not a prior PASS verdict. No prior rejection is changed, invalidated, or represented as a PASS.
+
+#### Finding closure
+
+| Finding | Independent R4 evidence | Final state |
+|---|---|---|
+| F-001 — populated-memory bootstrap flake | Focused suite 4/4; real `foreman-v2` 20/20 and `independent-assurance` 12/12 repeated bootstraps pass | CLOSED |
+| F-002 — missing final ceremony evidence | Embedded immutable PREHANDOVER proof, source session memory, and correction addendum are committed | CLOSED |
+| F-003 — stale active task carrier | Tracker records IAA R3 rejection, F-005 correction, QP R5 PASS, ECAP R5 `ADMIN_VALIDATED`, and final IAA pending before this IAA-only append | CLOSED |
+| F-004 — IAA append authority excluded | PR scope expressly authorizes only independently invoked IAA to append this binary result to the canonical wave record | CLOSED |
+| F-005 — structured positive-claim bypass | JSON, Markdown, optional-pipe Markdown, YAML-like, narrative, explicit PREHANDOVER, negative/pending, and valid-current-head-control boundaries all match required behavior | CLOSED |
+
+#### Acceptance-Criteria Evidence Matrix
+
+| # | Governing Issue #1969 criterion | Independent evidence | Verdict |
+|---|---|---|---|
+| 1 | Required Foreman template exists with mandatory fields | Committed template contains the named identity, bootstrap, continuity, delegation, blocker, QP/ECAP/IAA, tracker, CI, next-action, and close fields | PASS |
+| 2 | Wake-up fails nonzero when any declared Tier 2 required file is absent | Focused fixture removes `beta.md`, exits nonzero, and names the missing file; validator iterates the active contract list | PASS |
+| 3 | No ready working contract after Tier 2 validation failure | Negative fixture proves no readiness output and no `working-contract.md` | PASS |
+| 4 | Focused bootstrap happy/negative regressions pass | Local 4/4; real repeated bootstraps 20/20 and 12/12; hosted G13 PASS | PASS |
+| 5 | Negative/pending ordinary memory passes without control | G14, G22, G23, G26, G27, and independent JSON/YAML/Markdown/narrative boundary challenges PASS | PASS |
+| 6 | Explicit PREHANDOVER or positive readiness/handover claim fails without valid control | Explicit paths plus YAML-like, narrative, recursive JSON, canonical Markdown, leading/no-trailing-pipe Markdown, and no-edge-pipe Markdown all fail without control | PASS |
+| 7 | Valid positive claim with exact-current-head control passes | G21 and independent Markdown/JSON valid-control fixtures PASS | PASS |
+| 8 | Frozen-head PR checks are green | Ten exact-head GitHub workflows and three Vercel statuses succeed at `e4f2af5a…`; review threads are zero | PASS |
+| 9 | Independent IAA issues PASS or wave remains blocked | This R4 invocation issues the sole valid PASS token below | PASS |
+| 10 | #1959 remains unmodified until closure | Exact 16-path diff contains no #1959, MMM, product, database, deployment, or infrastructure implementation | PASS |
+
+**Matrix status:** COMPLETE — 10/10 governing criteria independently verified.
+
+#### Exact-head and parity evidence
+
+- Actual and declared diff parity: 16/16; no missing, extra, duplicated, or prohibited path.
+- Shell and Node syntax: PASS.
+- Focused bootstrap suite: 4/4 PASS.
+- Wave 7 local policy/real-gate matrix: 11/11 and 27/27 PASS.
+- Independent structured-boundary matrix: 18/18 expected outcomes matched.
+- Real repeated bootstrap: Foreman 20/20 and IAA 12/12 PASS.
+- Scope-to-diff validator: PASS.
+- Required-check alignment: 7/7 self-tests PASS; manifest, Foreman contract, and workflow-backed checks align.
+- Hosted Wave 7 job `89806286564` checked out `e4f2af5a…` and passed G24–G27 plus the full matrix.
+- Exact-head GitHub workflows all succeeded: `30206838655`, `30206838670`, `30206838652`, `30206838689`, `30206838659`, `30206838681`, `30206838649`, `30206838639`, `30206838647`, `30206838688`.
+- Vercel statuses: 3/3 success.
+- Unresolved review threads: 0.
+- Canon inventory: 203 `file_hash_sha256` fields inspected; zero invalid values.
+- `CORE-020`, `CORE-021`, `CORE-026`, `CORE-027`: PASS.
+- `CERT-001` through `CERT-004`: PASS.
+- `OVL-CI-001` through `OVL-CI-005`: PASS.
+- `OVL-KG-001` through `OVL-KG-004` and `OVL-KG-ADM-001` through `OVL-KG-ADM-003`: PASS.
+- `OVL-GE-001` through `OVL-GE-004`: PASS.
+- `OVL-SAA-001` through `OVL-SAA-008`: PASS.
+- `ACR-01` through `ACR-16`: PASS; immutable PREHANDOVER and prior rejection records are historical sources, while this IAA-only token append establishes the active post-verdict state.
+- `OVL-SMP-001 ADMIN_PASS`: yes.
+- `OVL-SMP-002 JOB_PASS`: yes.
+- `OVL-SMP-003 NO_UNRESOLVED_DEFECTS`: yes.
+- `MERGE_READY`: yes, subject exclusively to CS2 review and merge authority.
+
+**Total:** 57 checks; 57 PASS; 0 FAIL.
+
+#### Independent Risk Challenge
+
+1. **What could still fail after merge?** The principal residual risks were a missing contract-declared Tier 2 file passing bootstrap, populated-memory `pipefail` termination, false activation on negative/pending evidence, and positive-claim bypass through structured carrier variants.
+2. **What evidence proves those risks are controlled?** Executable missing-file/output-integrity/working-contract fixtures; repeated real-agent bootstraps; G14–G27; independent JSON, Markdown, YAML-like, narrative, explicit-path, negative/pending, and valid-control challenges; and exact-head hosted execution.
+3. **Is that evidence present?** Yes. Every required local and hosted evidence class is present and matched its expected outcome.
+4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?** No. The repair fails closed on missing Tier 2 controls and positive handover claims, remains open for truthful pending evidence, preserves role separation, and excludes #1959/product/infrastructure work.
+5. **Would a reasonable production owner accept this as merge-ready?** Yes, for CS2 review. The substantive repair, structural regressions, ceremony, exact-head CI, and independent counterexamples are complete.
+
+**Independent Risk Challenge:** COMPLETE.
+
+```text
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #1970 — Governance: fail closed on missing Foreman Tier 2 controls
+Reviewed HEAD: e4f2af5a35ed39d12fa20c1335476c2c608c84ec
+All 57 checks PASS. Merge gate parity: PASS.
+PHASE_B_BLOCKING_TOKEN: IAA-session-1970-R2-20260726-PASS
+HANDOVER_ALLOWED: yes — to CS2 review
+MERGE_AUTHORITY: CS2_ONLY
+RESULT: FINAL_ASSURANCE_PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+This token permits handover to CS2 for review. It does not merge PR #1970, close Issue #1969, perform post-merge verification, or start Issue #1959.
