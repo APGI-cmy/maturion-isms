@@ -14,6 +14,7 @@
     ".agent-admin/scope-declarations/issue-1969.md",
     ".agent-admin/scope-declarations/pr-1970.md",
     ".agent-workspace/foreman-v2/knowledge/session-memory-template.md",
+    ".agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-session-foreman-bootstrap-repair-1969-prehandover-deadlock-20260726.md",
     ".agent-workspace/foreman-v2/memory/session-foreman-bootstrap-repair-1969-20260726.md",
     ".github/scripts/foreman-prehandover-lane-gate.js",
     ".github/scripts/wake-up-protocol.sh",
@@ -32,7 +33,7 @@
     "CS2 scope extension on 2026-07-26 authorizes the bounded prehandover false-positive/deadlock repair before its implementation",
     "Ordinary session memory with handover_allowed false and final_iaa_verdict PENDING does not activate the lane, while explicit PREHANDOVER artifacts and positive readiness claims remain fail-closed",
     "Focused bootstrap regression, repeated real-agent bootstraps and governance validation pass",
-    "QP R2, ECAP R2, immutable PREHANDOVER proof and Foreman session memory are committed before independent final IAA R2"
+    "QP R3 and ECAP R3 are committed before the immutable embedded PREHANDOVER proof and Foreman correction-addendum carrier are frozen for independent final IAA"
   ],
   "merge_authority": "CS2",
   "execution_model": "foreman-orchestrated",
