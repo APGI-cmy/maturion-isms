@@ -207,3 +207,85 @@ In the same final-carrier reconciliation, `.agent-admin/prs/pr-1970/wave-current
 R3 administrative result: `ADMIN_VALIDATED`.
 
 `HANDOVER_ALLOWED: no` — final PREHANDOVER/session-memory carrier reconciliation and independent IAA remain pending.
+
+---
+
+## ECAP R4 — IAA R2 F-005 correction administration
+
+```yaml
+ecap_admin_validation_r4:
+  reviewed_head_sha: d59723ae7f23dc08df2a9e290f5466e217a1f0a7
+  ceremony_admin_appointment_timestamp: "2026-07-26T14:15:00Z"
+  iaa_r2_rejection_commit_sha: 19c2b69b023f3ce6744bec2dc55e775640a4de29
+  f005_corrective_implementation_head_sha: 719c5e7628d173805d0ab568ff387331d57c0316
+  qp_r4_carrier_head_sha: d59723ae7f23dc08df2a9e290f5466e217a1f0a7
+  admin_validation_result: ADMIN_VALIDATED
+  declared_scope_paths: 16
+  actual_diff_paths: 16
+  scope_parity: "16/16"
+  current_head_github_workflows: "10/10 success"
+  current_head_vercel_statuses: "3/3 success"
+  unresolved_review_threads: 0
+  substantive_readiness_judgment_made: false
+  iaa_invoked_by_ecap: false
+  iaa_token_or_verdict_written_by_ecap: false
+  immutable_prehand_over_or_memory_edited: false
+  final_iaa_status: pending
+  handover_allowed: false
+  merge_allowed: false
+```
+
+### R4 identity and 16-path reconciliation
+
+The live identity is #1969 / #1970 / `foreman-bootstrap-repair-1969` / `agent/foreman-bootstrap-fail-closed-1969`. GitHub reports PR head `d59723ae7f23dc08df2a9e290f5466e217a1f0a7`, base `main` at `82246cd4110cda801e4b4a5b60da9dadfef19909`, open, draft, and mergeable.
+
+The PR-scoped admin manifest and scope declaration each contain the same 16 paths. The effective diff against current `main` contains exactly those 16 paths, with no missing, extra, duplicated, or undeclared path. The correction addendum is separately declared and committed; the immutable source session memory remains unmodified.
+
+The effective diff contains no `.github/agents/**`, product/runtime, MMM, Supabase, Vercel configuration, infrastructure, deployment, secret, or Issue #1959 implementation path. The protected-path classification remains governance evidence, Foreman knowledge, and governance script/test surfaces only; ECAP is appointed and its PR-scoped carrier is present.
+
+### R2 rejection and corrective lineage
+
+The relevant append-only lineage is committed in strict order:
+
+1. IAA R2 rejection `19c2b69b023f3ce6744bec2dc55e775640a4de29` records R1 F-001 through F-004 as closed and identifies the new systemic F-005 structured-carrier bypass;
+2. corrective implementation `719c5e7628d173805d0ab568ff387331d57c0316` changes only `.github/scripts/foreman-prehandover-lane-gate.js` and `.github/scripts/wave7-governance-validation.js`;
+3. QP R4 carrier `d59723ae7f23dc08df2a9e290f5466e217a1f0a7` records `FOREMAN_QP_R4_PASS` for the corrective implementation;
+4. the active tracker records the R2 rejection, F-005 correction, QP R4 PASS, and ECAP R4/final IAA as pending at the reviewed head.
+
+IAA R2's binary rejection remains immutable historical assurance evidence. ECAP has not reclassified that verdict, closed F-005 substantively, or substituted its administrative review for QP or independent IAA. Administratively, the required producer correction and QP R4 carriers exist, are ordered, and remain inside the declared scope.
+
+### Exact-head administrative gate inventory
+
+All ten pull-request-triggered workflows returned `success` at the reviewed head:
+
+| Workflow | Run ID | Administrative state |
+|---|---:|---|
+| Wave 7 Governance Validation | `30205619366` | success |
+| POLC Boundary Validation | `30205619365` | success |
+| Preflight Evidence Gate | `30205619538` | success |
+| IAA Pre-Brief Contract Alignment | `30205619342` | success |
+| Merge Gate Required Checks Alignment | `30205619354` | success |
+| Stub Detection Check | `30205619388` | success |
+| Builder Delegation Order Gate | `30205619348` | success |
+| ECAP Admin Boundary Gate | `30205619400` | success |
+| Foreman Pre-Handover Lane Gate | `30205619352` | success |
+| CodeQL | `30205619349` | success |
+
+The three Vercel commit statuses are `success`, and GitHub reports zero review threads. These are administrative current-head facts for `d59723ae7f23dc08df2a9e290f5466e217a1f0a7`; they do not constitute an ECAP quality verdict, final assurance, handover authorization, or merge authorization.
+
+### R4 boundary and pending-state result
+
+- ECAP modified no implementation, test, CI, agent-contract, QP, IAA wave record, PREHANDOVER proof, session memory, correction addendum, product, infrastructure, or Issue #1959 artifact in this review.
+- The embedded PREHANDOVER proof, immutable source memory, correction addendum, IAA R1 rejection, and IAA R2 rejection remain unchanged.
+- `FOREMAN_QP_R4_PASS` remains the Foreman/QP judgment and is not rewritten by ECAP.
+- Only independently invoked IAA may append the next binary verdict/token to the canonical wave record.
+- The tracker must be normalized from “ECAP R4 pending” after this R4 carrier is committed, while final IAA, handover, CS2 merge, #1969 closure, and #1959 resumption remain blocked.
+- The commit that records this R4 administration will create a later head. Its required workflows and statuses must be checked non-mutatively before Foreman invokes independent IAA.
+
+R4 administrative result: `ADMIN_VALIDATED`.
+
+`HANDOVER_ALLOWED: no`
+
+`MERGE_ALLOWED: no`
+
+`FINAL_IAA_STATUS: PENDING`
