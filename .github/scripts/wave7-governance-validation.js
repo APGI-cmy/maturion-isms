@@ -260,15 +260,37 @@ function runPrehandoverDelegationEvidenceOnlyFixture(id, expected) {
   return expectGate(id, result, expected);
 }
 
-function runPrehandoverOrdinarySessionFixture(id, body, expected) {
+function runPrehandoverOrdinarySessionFixture(id, body, expected, options = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wave7-prehandover-ordinary-session-'));
-  const file = '.agent-workspace/foreman-v2/memory/session-wave7-fixture.md';
+  const extension = options.extension || 'md';
+  const file = `.agent-workspace/foreman-v2/memory/session-wave7-fixture.${extension}`;
+  const head = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
   writeFile(dir, file, body);
+  if (options.withValidControl) {
+    writeFile(dir, '.agent-admin/control/handover-allowed.json', JSON.stringify({
+      schema_version: '1.0.0',
+      wave_id: 'wave7-fixture',
+      pr_number: 1800,
+      current_head_sha: head,
+      state: 'PRE_HANDOVER_GATE_PASS',
+      handover_allowed: true,
+      foreman_qp_pass: true,
+      builder_delegation_verified: true,
+      delegation_precedes_implementation: true,
+      iaa_prebrief_ready: true,
+      scope_current: true,
+      ecap_required: true,
+      ecap_admin_validated: true,
+      all_required_checks_green: true,
+      iaa_final_required: true,
+      blocking_findings: [],
+    }, null, 2));
+  }
   const result = run('node', [scriptPaths.prehandover], {
     cwd: dir,
     env: {
       CHANGED_FILES: file,
-      PR_HEAD_SHA: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      PR_HEAD_SHA: head,
     },
   });
   return expectGate(id, result, expected);
@@ -338,6 +360,40 @@ const realGateRuns = [
     'G17-positive-delivery-completion-claim-requires-control',
     'Delivery is complete and ready to merge.\n',
     'FAIL',
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G18-positive-json-handover-claim-requires-control',
+    '{"handover_allowed": true}\n',
+    'FAIL',
+    { extension: 'json' },
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G19-positive-json-iaa-verdict-requires-control',
+    '{"final_iaa_verdict": "PASS"}\n',
+    'FAIL',
+    { extension: 'json' },
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G20-positive-markdown-table-claim-requires-control',
+    '| field | value |\n|---|---|\n| handover_allowed | true |\n',
+    'FAIL',
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G21-positive-json-claim-with-valid-current-head-control',
+    '{"handover_allowed": true}\n',
+    'PASS',
+    { extension: 'json', withValidControl: true },
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G22-negative-json-evidence-does-not-activate-lane',
+    '{"handover_allowed": false, "final_iaa_verdict": "PENDING"}\n',
+    'PASS',
+    { extension: 'json' },
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G23-negative-markdown-table-evidence-does-not-activate-lane',
+    '| field | value |\n|---|---|\n| handover_allowed | false |\n| final_iaa_verdict | PENDING |\n',
+    'PASS',
   ),
 ];
 

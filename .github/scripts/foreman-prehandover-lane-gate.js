@@ -16,6 +16,14 @@ const positiveStructuredClaimPatterns = [
   /^\s*(?:[-*]\s*)?(?:final_iaa_verdict|final-iaa-verdict)\s*:\s*(?:pass|approved|final_assurance_pass)\b/im,
   /^\s*(?:[-*]\s*)?(?:state|final_state|handover_state)\s*:\s*(?:PRE_HANDOVER_GATE_PASS|IAA_FINAL_PASS|CS2_REVIEW|READY_FOR_REVIEW|MERGE_READY|HANDOVER_ALLOWED)\b/im,
 ];
+const positiveHandoverStates = new Set([
+  'pre_handover_gate_pass',
+  'iaa_final_pass',
+  'cs2_review',
+  'ready_for_review',
+  'merge_ready',
+  'handover_allowed',
+]);
 const positiveNarrativeClaimPattern = /\b(?:ready[- ]for[- ]review|review[- ]ready|merge[- ]ready|ready[- ]to[- ]merge|release[- ]ready|production[- ]ready|handover[- ](?:ready|allowed|approved|authori[sz]ed)|handover\s+(?:is\s+)?(?:allowed|approved|authori[sz]ed)|ready\s+to\s+hand\s+over|(?:work|delivery|wave|job)\s+(?:is\s+)?(?:complete|done|released))\b/ig;
 const negativeValueAfterClaimPattern = /^\s*[:=]\s*(?:false|no|pending|blocked|not[_ -]?allowed)\b/i;
 const negationBeforeClaimPattern = /\b(?:no|not|never|without|pending|blocked|prohibited|cannot|can't|must\s+not|does\s+not|do\s+not)\b[^.!?;]{0,64}$/i;
@@ -86,9 +94,67 @@ function lineHasPositiveNarrativeClaim(line) {
   return false;
 }
 
+function normalizeStructuredToken(value) {
+  return String(value)
+    .trim()
+    .replace(/^[\s"'`*_]+|[\s"'`*_,}]+$/g, '')
+    .toLowerCase()
+    .replace(/[\s-]+/g, '_');
+}
+
+function structuredKeyValueIsPositive(key, value) {
+  const normalizedKey = normalizeStructuredToken(key);
+  const normalizedValue = normalizeStructuredToken(value);
+  if (normalizedKey === 'handover_allowed') return normalizedValue === 'true' || normalizedValue === 'yes';
+  if (normalizedKey === 'final_iaa_verdict') {
+    return normalizedValue === 'pass' || normalizedValue === 'approved' || normalizedValue === 'final_assurance_pass';
+  }
+  if (normalizedKey === 'state' || normalizedKey === 'final_state' || normalizedKey === 'handover_state') {
+    return positiveHandoverStates.has(normalizedValue);
+  }
+  return false;
+}
+
+function jsonValueHasPositiveHandoverClaim(value) {
+  if (Array.isArray(value)) return value.some(jsonValueHasPositiveHandoverClaim);
+  if (!value || typeof value !== 'object') return false;
+  return Object.entries(value).some(([key, child]) => (
+    structuredKeyValueIsPositive(key, child)
+    || jsonValueHasPositiveHandoverClaim(child)
+  ));
+}
+
+function bodyHasPositiveJsonClaim(body) {
+  try {
+    return jsonValueHasPositiveHandoverClaim(JSON.parse(body));
+  } catch {
+    return false;
+  }
+}
+
+function lineHasPositiveStructuredClaim(line) {
+  const trimmed = line.trim();
+  if (trimmed.startsWith('|')) {
+    const cells = trimmed
+      .split('|')
+      .slice(1, -1)
+      .map((cell) => cell.trim());
+    for (let index = 0; index < cells.length - 1; index += 1) {
+      if (structuredKeyValueIsPositive(cells[index], cells[index + 1])) return true;
+    }
+  }
+
+  const keyValue = trimmed.match(/^(?:[-*]\s*)?["']?([A-Za-z0-9_-]+)["']?\s*:\s*(.+?)\s*$/);
+  return Boolean(keyValue && structuredKeyValueIsPositive(keyValue[1], keyValue[2]));
+}
+
 function bodyHasPositiveHandoverClaim(body) {
   if (positiveStructuredClaimPatterns.some((pattern) => pattern.test(body))) return true;
-  return body.split(/\r?\n/).some(lineHasPositiveNarrativeClaim);
+  if (bodyHasPositiveJsonClaim(body)) return true;
+  return body.split(/\r?\n/).some((line) => (
+    lineHasPositiveStructuredClaim(line)
+    || lineHasPositiveNarrativeClaim(line)
+  ));
 }
 
 function findPositiveHandoverClaims(files) {
