@@ -216,3 +216,61 @@ All three Vercel statuses are successful, and the effective PR diff remains the 
 `FOREMAN_QP_R4_PASS` for corrective implementation head `719c5e7628d173805d0ab568ff387331d57c0316`.
 
 F-005 is corrected at the producer/QP layer. ECAP R4 administrative refresh, final frozen-head independent IAA, token-head checks, and CS2 merge authority remain separate.
+
+---
+
+## QP R5 — IAA R3 F-005 optional-pipe Markdown correction
+
+**Reviewed corrective implementation head:** `ff14631489e24988c985b441520397184e7a40e6`
+**Trigger:** IAA R3 finding F-005 in rejection commit `d560c0ef359cdf15ff98914e0018e5482b8eeccf`
+**Binary verdict:** **PASS**
+**Final IAA / merge disposition:** PENDING — this QP result does not issue assurance or authorize merge
+
+### Corrective delta reviewed
+
+| File | Correction | QP result |
+|---|---|---|
+| `.github/scripts/foreman-prehandover-lane-gate.js` | Parse Markdown table rows with optional leading and trailing edge pipes before applying the closed structured-key/value policy | PASS |
+| `.github/scripts/wave7-governance-validation.js` | Add real production-gate fixtures G24–G27 for both positive and negative/pending optional-pipe variants | PASS |
+
+The parser now removes an edge cell only when that cell is actually empty. It therefore evaluates both valid GFM forms reproduced by IAA R3:
+
+- leading pipe without a trailing pipe;
+- no leading or trailing edge pipe.
+
+The normalized key set and positive-value set are unchanged. Scan paths, explicit PREHANDOVER handling, JSON recursion, YAML-like structured claims, narrative claims, and valid-current-head control validation are unchanged.
+
+### R5 commands and results
+
+```text
+node --check .github/scripts/foreman-prehandover-lane-gate.js
+node --check .github/scripts/wave7-governance-validation.js
+node .github/scripts/wave7-governance-validation.js
+bash .github/scripts/wake-up-protocol.test.sh
+CHANGED_FILES="<16-path PR diff>" PR_HEAD_SHA="d560c0ef359cdf15ff98914e0018e5482b8eeccf" PR_BASE_SHA="82246cd4110cda801e4b4a5b60da9dadfef19909" GITHUB_EVENT_NAME="pull_request" node .github/scripts/foreman-prehandover-lane-gate.js
+git diff --check
+```
+
+- policy scenarios: 11/11 matched;
+- real production-gate fixtures: 27/27 matched;
+- focused bootstrap scenarios: 4/4 passed;
+- positive leading-pipe/no-trailing-pipe row: fails without control;
+- positive no-edge-pipe row: fails without control;
+- equivalent negative/pending rows: pass without control;
+- actual 16-path PR scan: zero false positive handover/readiness hits;
+- skipped/todo/incomplete: 0;
+- syntax failures: 0.
+
+### Hosted exact-head evidence
+
+All ten pull-request workflows completed successfully at `ff14631489e24988c985b441520397184e7a40e6`:
+
+`30206373183`, `30206373172`, `30206373214`, `30206373152`, `30206373145`, `30206373233`, `30206373165`, `30206373148`, `30206373143`, `30206373198`.
+
+All three Vercel statuses are successful, unresolved review threads are zero, and the effective PR diff remains the same 16 declared paths with no protected agent contract, product/runtime, MMM, Supabase, Vercel configuration, infrastructure, deployment, or Issue #1959 implementation path.
+
+### QP R5 disposition
+
+`FOREMAN_QP_R5_PASS` for corrective implementation head `ff14631489e24988c985b441520397184e7a40e6`.
+
+F-005 is corrected at the producer/QP layer across canonical and optional-pipe Markdown renderings. ECAP R5 administrative refresh, final frozen-head independent IAA, token-head checks, and CS2 merge authority remain separate.
