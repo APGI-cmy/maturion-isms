@@ -98,7 +98,7 @@ function hasPositiveHandoverClaim(text) {
   ];
   if (structuredPatterns.some((pattern) => pattern.test(body))) return true;
 
-  const positivePattern = /\b(?:ready[- ]for[- ]review|merge[- ]ready|handover[- ](?:ready|allowed|approved|authori[sz]ed)|handover\s+(?:is\s+)?(?:allowed|approved|authori[sz]ed)|ready\s+to\s+hand\s+over|work\s+(?:is\s+)?(?:complete|done|released))\b/ig;
+  const positivePattern = /\b(?:ready[- ]for[- ]review|review[- ]ready|merge[- ]ready|ready[- ]to[- ]merge|release[- ]ready|production[- ]ready|handover[- ](?:ready|allowed|approved|authori[sz]ed)|handover\s+(?:is\s+)?(?:allowed|approved|authori[sz]ed)|ready\s+to\s+hand\s+over|(?:work|delivery|wave|job)\s+(?:is\s+)?(?:complete|done|released))\b/ig;
   const negativeValuePattern = /^\s*[:=]\s*(?:false|no|pending|blocked|not[_ -]?allowed)\b/i;
   const negationPattern = /\b(?:no|not|never|without|pending|blocked|prohibited|cannot|can't|must\s+not|does\s+not|do\s+not)\b[^.!?;]{0,64}$/i;
 
@@ -332,6 +332,11 @@ const realGateRuns = [
   () => runPrehandoverOrdinarySessionFixture(
     'G16-positive-narrative-session-claim-requires-control',
     'Quality checks passed. Work is merge-ready.\n',
+    'FAIL',
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G17-positive-delivery-completion-claim-requires-control',
+    'Delivery is complete and ready to merge.\n',
     'FAIL',
   ),
 ];
