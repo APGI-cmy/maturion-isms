@@ -4,13 +4,15 @@
 |---|---|
 | Wave | `pit-stage12-slice4-supabase-project-persistence` |
 | Issue | #1943 |
+| Reconciliation issue | #1964 |
 | Implementation PR | #1952 |
+| Merge commit | `61ef3795d953ae11e0c153705729bff52aa3dc9f` |
 | Date | 2026-07-22 |
 | Classification | T2 product-facing persistence, authentication and access-control build |
 | Preparation authority | CS2-directed Foreman control |
-| Final assurance | Pending current-head review after implementation and deployed LFV |
+| Final assurance | PASSED — MERGED AND POST-MERGE VERIFIED |
 
-> This is the PR-specific preflight brief committed before builder appointment and before any implementation or QA-to-RED test commit.
+> The YAML below remains the immutable PR-specific preflight brief committed before builder appointment and before any implementation or QA-to-RED test commit. The closure linkage is recorded after the original brief.
 
 ## IAA_PREFLIGHT_BRIEF
 
@@ -54,4 +56,11 @@ IAA_PREFLIGHT_BRIEF:
   result: PREFLIGHT_BRIEF_COMPLETE
 ```
 
-No implementation, completion, merge or final-assurance claim is made by this artifact.
+## Closure linkage
+
+- Final PR disposition: `CS2_PROXY_REVIEW_PASS / MERGE_RECOMMENDED`.
+- CS2 merge: PR #1952 at `61ef3795d953ae11e0c153705729bff52aa3dc9f`.
+- Authenticated LFV: `modules/pit/12-build/slice-4/authenticated-deployed-lfv-evidence-20260723.md`.
+- Post-merge verification: `modules/pit/12-build/slice-4/post-merge-verification-and-closure-20260723.md`.
+
+This assurance record closes Slice 4 only. It does not claim `FUNCTIONAL_PASS`, Stage 12 completion, PIT completion, release readiness or Issue #1944 completion.
