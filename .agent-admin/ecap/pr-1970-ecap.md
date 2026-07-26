@@ -289,3 +289,87 @@ R4 administrative result: `ADMIN_VALIDATED`.
 `MERGE_ALLOWED: no`
 
 `FINAL_IAA_STATUS: PENDING`
+
+---
+
+## ECAP R5 — IAA R3 F-005 optional-pipe correction administration
+
+```yaml
+ecap_admin_validation_r5:
+  reviewed_head_sha: f4f010c351a75ffc05a5c2eaf5b3941e8449f959
+  ceremony_admin_appointment_timestamp: "2026-07-26T14:43:02Z"
+  iaa_r3_rejection_commit_sha: d560c0ef359cdf15ff98914e0018e5482b8eeccf
+  f005_optional_pipe_corrective_head_sha: ff14631489e24988c985b441520397184e7a40e6
+  qp_r5_carrier_head_sha: f4f010c351a75ffc05a5c2eaf5b3941e8449f959
+  admin_validation_result: ADMIN_VALIDATED
+  declared_scope_paths: 16
+  actual_diff_paths: 16
+  scope_parity: "16/16"
+  current_head_github_workflows: "10/10 success"
+  current_head_vercel_statuses: "3/3 success"
+  unresolved_review_threads: 0
+  substantive_readiness_judgment_made: false
+  iaa_invoked_by_ecap: false
+  iaa_token_or_verdict_written_by_ecap: false
+  prior_iaa_entries_modified: false
+  immutable_prehandover_or_memory_edited: false
+  final_iaa_status: pending
+  handover_allowed: false
+  merge_allowed: false
+```
+
+### R5 identity and 16-path reconciliation
+
+The reviewed identity is Issue #1969 / PR #1970 / wave `foreman-bootstrap-repair-1969` / branch `agent/foreman-bootstrap-fail-closed-1969`. The frozen local and remote branch head is `f4f010c351a75ffc05a5c2eaf5b3941e8449f959`; its merge base with `main` is `82246cd4110cda801e4b4a5b60da9dadfef19909`.
+
+The PR-scoped admin manifest and scope declaration each list the same 16 paths, and the effective diff contains exactly those 16 paths. No path is missing, extra, duplicated, or undeclared. The diff includes no `.github/agents/**`, product/runtime, MMM, Supabase, Vercel configuration, infrastructure, deployment, secret, or Issue #1959 implementation path.
+
+The protected paths remain limited to the already-declared governance evidence, Foreman knowledge, and governance script/test surfaces. ECAP is explicitly appointed for this R5 administrative refresh, and this PR-scoped ECAP carrier is already inside the declared diff.
+
+### R3 rejection and R5 corrective lineage
+
+The append-only administrative lineage is ordered and committed:
+
+1. IAA R3 rejection `d560c0ef359cdf15ff98914e0018e5482b8eeccf` leaves F-005 open for valid Markdown table rows with optional edge pipes and issues no assurance token;
+2. producer correction `ff14631489e24988c985b441520397184e7a40e6` changes only `.github/scripts/foreman-prehandover-lane-gate.js` and `.github/scripts/wave7-governance-validation.js`;
+3. reviewed head `f4f010c351a75ffc05a5c2eaf5b3941e8449f959` adds only the active tracker normalization and QP R5 carrier;
+4. the QP carrier records `FOREMAN_QP_R5_PASS` for corrective head `ff14631489e24988c985b441520397184e7a40e6`;
+5. the active tracker records IAA R3 rejection, the optional-pipe correction, QP R5 PASS, and ECAP R5/final IAA as pending.
+
+IAA R3 remains immutable historical assurance evidence. ECAP has not reclassified its rejection, closed F-005 substantively, repeated the producer's tests, or substituted administrative validation for Foreman QP or independent IAA. ECAP confirms only that the rejection, correction, QP, tracker, scope, and identity carriers are present and ordered.
+
+### Exact-head administrative gate inventory
+
+GitHub reports all ten pull-request-triggered workflows completed successfully at the reviewed head:
+
+| Workflow | Run ID | Administrative state |
+|---|---:|---|
+| Builder Delegation Order Gate | `30206522664` | success |
+| Preflight Evidence Gate | `30206522626` | success |
+| ECAP Admin Boundary Gate | `30206522634` | success |
+| Wave 7 Governance Validation | `30206522635` | success |
+| IAA Pre-Brief Contract Alignment | `30206522595` | success |
+| Merge Gate Required Checks Alignment | `30206522617` | success |
+| Stub Detection Check | `30206522597` | success |
+| POLC Boundary Validation | `30206522590` | success |
+| Foreman Pre-Handover Lane Gate | `30206522619` | success |
+| CodeQL | `30206522592` | success |
+
+The three Vercel commit statuses are `success`, and GitHub reports zero review threads. These are exact-head administrative facts only; they are not an ECAP quality verdict, final assurance, handover authorization, or merge authorization.
+
+### R5 boundary and pending-state result
+
+- ECAP changed no implementation, test, CI, agent contract, QP, IAA wave record, PREHANDOVER proof, session memory, correction addendum, product, infrastructure, deployment, or Issue #1959 artifact.
+- The embedded PREHANDOVER proof, immutable source memory, correction addendum, and all prior IAA and ECAP entries remain unchanged.
+- Only Foreman may invoke independent IAA; only IAA may append the next binary verdict or token to the canonical wave record.
+- After this R5 carrier is committed, the active tracker must be normalized from “ECAP R5 pending” before independent IAA is invoked.
+- The R5 carrier commit and any later tracker-normalization commit create later heads. Required workflows and commit statuses must be rechecked non-mutatively against the final frozen head.
+- Final IAA, handover, CS2 merge, Issue #1969 closure, and Issue #1959 resumption remain blocked.
+
+R5 administrative result: `ADMIN_VALIDATED`.
+
+`HANDOVER_ALLOWED: no`
+
+`MERGE_ALLOWED: no`
+
+`FINAL_IAA_STATUS: PENDING`
