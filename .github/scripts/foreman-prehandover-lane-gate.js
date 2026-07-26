@@ -134,11 +134,12 @@ function bodyHasPositiveJsonClaim(body) {
 
 function lineHasPositiveStructuredClaim(line) {
   const trimmed = line.trim();
-  if (trimmed.startsWith('|')) {
+  if (trimmed.includes('|')) {
     const cells = trimmed
       .split('|')
-      .slice(1, -1)
       .map((cell) => cell.trim());
+    if (cells[0] === '') cells.shift();
+    if (cells[cells.length - 1] === '') cells.pop();
     for (let index = 0; index < cells.length - 1; index += 1) {
       if (structuredKeyValueIsPositive(cells[index], cells[index + 1])) return true;
     }

@@ -395,6 +395,26 @@ const realGateRuns = [
     '| field | value |\n|---|---|\n| handover_allowed | false |\n| final_iaa_verdict | PENDING |\n',
     'PASS',
   ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G24-positive-markdown-leading-pipe-without-trailing-pipe-requires-control',
+    '| field | value\n|---|---\n| handover_allowed | true\n',
+    'FAIL',
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G25-positive-markdown-without-edge-pipes-requires-control',
+    'field | value\n---|---\nhandover_allowed | true\n',
+    'FAIL',
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G26-negative-markdown-leading-pipe-without-trailing-pipe-does-not-activate-lane',
+    '| field | value\n|---|---\n| handover_allowed | false\n| final_iaa_verdict | PENDING\n',
+    'PASS',
+  ),
+  () => runPrehandoverOrdinarySessionFixture(
+    'G27-negative-markdown-without-edge-pipes-does-not-activate-lane',
+    'field | value\n---|---\nhandover_allowed | false\nfinal_iaa_verdict | PENDING\n',
+    'PASS',
+  ),
 ];
 
 for (const execute of realGateRuns) {
