@@ -124,3 +124,43 @@ No protected agent contract, product/runtime, MMM, Supabase, Vercel, infrastruct
 `FOREMAN_QP_R2_PASS` for corrective implementation head `ef8c628ca3bca433fbe084055c5dded1f13036f8`.
 
 ECAP R2, immutable PREHANDOVER/session-memory evidence, fresh hosted exact-head checks, independent IAA R2 and CS2 merge authority remain separate and pending.
+
+---
+
+## QP R3 — CS2-authorized prehandover deadlock correction
+
+**Reviewed corrective head:** `57bcf199cfb729318e1d9736040a0ce2b8010fba`
+**Trigger:** The committed ordinary Foreman session memory contained mandatory truthful fields such as `handover_allowed: false` and `final_iaa_verdict: PENDING`, but the prehandover gate treated their field names and generic completion words as a positive handover claim.
+**CS2 extension:** Issue #1969, 2026-07-26
+**Binary verdict:** **PASS**
+**Final IAA / merge disposition:** PENDING — this QP result does not issue assurance or authorize merge
+
+### Corrective lineage and effective scope
+
+1. CS2 extension carriers: `3cb551de56362b88985c10e7d9c074db82821537`.
+2. Semantic gate correction: `a1baaaa8d89fdc4355392fb974e7af3cbe3e6869`.
+3. Current `main` integration: `6a2d51317ad6903b81cef5a04f863e32d11f6743`, incorporating unrelated merged PR #1967 without changing PR #1970's effective 15-file diff.
+4. Positive delivery-claim regression extension: reviewed head `57bcf199cfb729318e1d9736040a0ce2b8010fba`.
+
+The effective PR diff against current `main` contains exactly the 15 declared paths. It contains no `.github/agents/**`, product/runtime, MMM, Supabase, Vercel, deployment, infrastructure, or Issue #1959 implementation path.
+
+### Acceptance and risk review
+
+| Obligation | Evidence | Result |
+|---|---|---|
+| Truthful negative/pending session evidence must not activate the lane | G14 passes for ordinary session memory with `handover_allowed: false`, `final_iaa_verdict: PENDING`, and a blocked pre-handover state; direct execution against the committed PR #1970 session memory also exits 0 without a control artifact | PASS |
+| Positive structured claims remain fail-closed | G15 proves `handover_allowed: true` in an ordinary session memory fails without `handover-allowed.json` | PASS |
+| Positive narrative claims remain fail-closed | G16 proves `Work is merge-ready` fails; G17 proves `Delivery is complete and ready to merge` fails | PASS |
+| Explicit PREHANDOVER paths remain lane intent | G5 still fails without the control; G6 rejects a stale head; G11 passes only with a valid current-head control | PASS |
+| Negative language is not mistaken for a positive claim | S11 and G14 include pending/blocked/no-claim text and pass | PASS |
+| Original bootstrap repair remains stable | Focused bootstrap suite: 4/4; real Foreman wake-up: 20/20; real IAA wake-up: 12/12 | PASS |
+| No test weakening or debt | Wave 7: 11/11 policy scenarios and 17/17 real-gate fixtures; zero skipped, todo, incomplete, vacuous `expect(true)`, or stub assertions found | PASS |
+| Current-head hosted checks | All ten PR-triggered GitHub workflows passed, including Foreman Pre-Handover Lane Gate run `30204151276`, Wave 7 run `30204151323`, and CodeQL run `30204151294`; all three Vercel commit statuses passed | PASS |
+| Temporal and evidence-type audit | All new factual evidence is dated 2026-07-26; command/CI claims are labelled and supported by CI_TEST or hosted run evidence; no deployment/live-runtime claim is made | PASS |
+| Canon integrity | `governance/CANON_INVENTORY.json` parses; 406 hash-named fields were inspected with zero null, blank, pending, or zeroed values | PASS |
+
+### QP R3 disposition
+
+`FOREMAN_QP_R3_PASS` for corrective head `57bcf199cfb729318e1d9736040a0ce2b8010fba`.
+
+The prehandover false-positive deadlock is corrected without removing the current-head control from explicit PREHANDOVER artifacts or positive readiness claims. ECAP R3, immutable prehandover evidence, final independent IAA, and CS2 merge authority remain separate.
