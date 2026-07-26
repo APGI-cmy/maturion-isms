@@ -99,6 +99,38 @@ else
     record_fail "complete declared Tier 2 set passes" "$(cat "$happy_output")"
 fi
 
+mkdir -p "$fixture/.agent-workspace/test-agent/memory"
+for session_number in $(seq -w 1 400); do
+    printf '# Fixture session %s\n' "$session_number" \
+        >"$fixture/.agent-workspace/test-agent/memory/session-${session_number}-20260726.md"
+done
+
+populated_memory_failed=0
+populated_memory_failure_detail=""
+for attempt in $(seq 1 12); do
+    populated_output="${TEST_ROOT}/populated-${attempt}.out"
+    if ! run_protocol "$fixture" "test-agent" "$populated_output"; then
+        populated_memory_failed=1
+        populated_memory_failure_detail="attempt=${attempt}; $(tail -20 "$populated_output")"
+        break
+    fi
+    if grep -q "Broken pipe" "$populated_output" \
+        || [ "$(grep -c '^    • session-' "$populated_output")" -ne 5 ] \
+        || ! grep -q "All health checks PASSED" "$populated_output"; then
+        populated_memory_failed=1
+        populated_memory_failure_detail="attempt=${attempt}; $(tail -20 "$populated_output")"
+        break
+    fi
+done
+
+if [ "$populated_memory_failed" -eq 0 ]; then
+    record_pass "populated memory history passes 12 repeated complete-manifest bootstraps"
+else
+    record_fail \
+        "populated memory history passes 12 repeated complete-manifest bootstraps" \
+        "$populated_memory_failure_detail"
+fi
+
 rm -f \
     "$fixture/.agent-workspace/test-agent/working-contract.md" \
     "$fixture/.agent-workspace/test-agent/environment-health.json" \

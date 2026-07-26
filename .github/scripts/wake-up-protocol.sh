@@ -357,9 +357,23 @@ echo "  - Previous sessions found: ${MEMORY_COUNT}"
 
 if [ "$MEMORY_COUNT" -gt 0 ]; then
     echo "  - Recent sessions:"
-    find "$MEMORY_DIR" -name "session-*.md" -type f | sort -r | head -5 | while read -r session_file; do
+    RECENT_SESSIONS_FILE="$(mktemp "${TMPDIR:-/tmp}/wake-up-recent-sessions.XXXXXX")"
+    if ! find "$MEMORY_DIR" -name "session-*.md" -type f -print0 | sort -zr >"$RECENT_SESSIONS_FILE"; then
+        rm -f "$RECENT_SESSIONS_FILE"
+        echo -e "${RED}❌ Unable to enumerate recent session memories${NC}"
+        echo -e "${RED}✗ Phase 2: FAILED${NC}"
+        exit 1
+    fi
+
+    RECENT_SESSION_COUNT=0
+    while IFS= read -r -d '' session_file; do
         echo "    • $(basename "$session_file")"
-    done
+        RECENT_SESSION_COUNT=$((RECENT_SESSION_COUNT + 1))
+        if [ "$RECENT_SESSION_COUNT" -ge 5 ]; then
+            break
+        fi
+    done <"$RECENT_SESSIONS_FILE"
+    rm -f "$RECENT_SESSIONS_FILE"
 fi
 
 # Check escalation inbox
