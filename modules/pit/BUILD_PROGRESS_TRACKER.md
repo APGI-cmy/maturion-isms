@@ -2,9 +2,9 @@
 
 **Module**: PIT (Project Implementation Tracker)  
 **Module Slug**: pit  
-**Last Updated**: 2026-07-22  
-**Updated By**: Stage 12 Slice 4 implementation progress (issue #1943; PR #1952; QA-to-RED satisfied; code, database and RLS GREEN; deployed authenticated browser LFV and final review open)  
-> **Classification**: ACTIVE — STAGES 1–11 COMPLETE/GATE-PASSED — BUILD AUTHORIZATION CLEARED BY CS2 — STAGE 12 AUTHORIZED_TO_START / INCOMPLETE — SLICE 4 CODE/DATABASE GREEN / DEPLOYED LFV OPEN  
+**Last Updated**: 2026-07-23  
+**Updated By**: Slice 4 post-merge reconciliation (Issue #1964; implementation Issue #1943; PR #1952 merged and post-merge verified)  
+> **Classification**: ACTIVE — STAGES 1–11 COMPLETE/GATE-PASSED — BUILD AUTHORIZATION CLEARED BY CS2 — STAGE 12 AUTHORIZED_TO_START / INCOMPLETE — SLICE 4 AUTHORISED BOUNDARY COMPLETE  
 > **Canon Reference**: `PRE_BUILD_STAGE_MODEL_CANON.md` v1.1.0 (effective 2026-04-05)  
 > **Governing Issue**: maturion-isms#1255  
 > **Stage 12 Authorization Issue**: maturion-isms#1767  
@@ -42,7 +42,7 @@ This tracker was migrated from the legacy 6-stage format to the canonical 12-sta
 
 PIT is approved to enter Stage 12 under issue #1767.
 
-This approval means Stage 12 build execution may begin under the appointed builder `pit-specialist` and the reconciled 147-test RED baseline. It does **not** mean PIT is built, deployed, functionally complete, or ready for handover. `FUNCTIONAL_PASS` remains not claimable until deployed LFV evidence, CS2 L3 verification, Stage 12 closure evidence, handover documentation, and zero unresolved P0/P1 functional gaps exist.
+This approval means Stage 12 build execution may proceed under the appointed builder `pit-specialist` and the reconciled 147-test RED baseline. It does **not** mean PIT is fully built, deployed, functionally complete, or ready for handover. `FUNCTIONAL_PASS` remains not claimable until full deployed LFV evidence, CS2 L3 verification, Stage 12 closure evidence, handover documentation, and zero unresolved P0/P1 functional gaps exist.
 
 Stage 12 kickoff artifact: `modules/pit/12-build/stage12-kickoff-authorization.md`.
 
@@ -52,8 +52,9 @@ Stage 12 kickoff artifact: `modules/pit/12-build/stage12-kickoff-authorization.m
 
 **Current Stage**:
 - Stage 12 Build Execution & Evidence **AUTHORIZED_TO_START / INCOMPLETE** (issue #1767; builder: `pit-specialist`; 147 RED baseline binding; no `FUNCTIONAL_PASS` claim)
-- Stage 12 Slice 4 implementation **CODE/DATABASE/RLS GREEN — DEPLOYED AUTHENTICATED BROWSER LFV AND FINAL REVIEW OPEN** (issue #1943; draft PR #1952; first implementation commit `4f31c3a1648357aee6c45f3e6e286eeab3f1a46a`)
+- Stage 12 Slice 4 **MERGED / POST-MERGE VERIFIED / AUTHORISED BOUNDARY COMPLETE** (Issue #1943; PR #1952; merge `61ef3795d953ae11e0c153705729bff52aa3dc9f`; reconciliation Issue #1964)
 - Slice 3 authenticated browser evidence **OPEN EVIDENCE DEBT** (issue #1944; no runtime expansion authorized)
+- Next product wave **W8.3 PROJECT HIERARCHY — NOT STARTED** (`Project → Milestones → Deliverables → Tasks / Action Items`)
 - Stage 11 Builder Appointment **GATE_PASSED — BUILDER_APPOINTED** (maturion-isms#1729 / PR #1730; `pit-specialist` appointed)
 - Stage 10 IAA Pre-Brief **GATE_PASSED — IAA_PRE_BRIEF_ACCEPTED**
 - Stage 9 Builder Checklist **GATE_PASSED — BUILDER_CHECKLIST_COMPLETE_AND_APPROVED**
@@ -68,10 +69,10 @@ Stage 12 kickoff artifact: `modules/pit/12-build/stage12-kickoff-authorization.m
 - Stage 1 App Description **CS2_APPROVED_AUTHORITATIVE**
 
 **Retrofit Status**: COMPLETE — maturion-isms#1575 / PR #1576.  
-**Overall Progress**: Pre-build Stages 1–11 are complete/gate-passed. Stage 12 is authorized to start and remains incomplete. Slice 4 has reached QA-to-RED satisfaction and code/database/RLS GREEN in draft PR #1952, but deployed authenticated browser LFV, final current-head assurance, merge and post-merge verification remain outstanding. No percentage-complete claim is made.  
-**Build Authorization**: **CLEARED** — explicitly cleared by CS2 in tracker update PR #1738 and reaffirmed by issue #1767. Slice 4 implementation authority is issue #1943 under the governance baseline merged in PR #1945.  
-**Current Execution Boundary**: Supabase target `ujucvyyspfxlxlfdamda` is bound. `projects`, `source_links`, transactional RPCs, organisation-scoped RLS, privilege hardening, the stable repository, Project Register, Create Project and `/projects/:id` workspace are implemented. The remaining authorised work is final current-head deployment verification, authenticated browser LFV, review closure and post-merge verification.  
-**Blockers**: No Stage 1–11 governance blocker remains. Slice 4 merge recommendation remains blocked by authenticated deployed browser LFV and final current-head review. Stage 12 closure remains blocked until broader implementation code, tests, deployed LFV evidence, CS2 L3 verification, handover documentation, and zero unresolved P0/P1 gaps are complete.
+**Overall Progress**: Pre-build Stages 1–11 are complete/gate-passed. Stage 12 remains authorised and incomplete. Slice 4 has completed its authorised Supabase project-persistence and project-detail foundation, including QA-to-RED, RPC-only database hardening, authenticated LFV, final review, merge and post-merge deployment verification. No percentage-complete claim is made.  
+**Build Authorization**: **CLEARED** — explicitly cleared by CS2 in tracker update PR #1738 and reaffirmed by issue #1767. Slice 4 authority was Issue #1943 under the governance baseline merged in PR #1945.  
+**Current Execution Boundary**: Supabase target `ujucvyyspfxlxlfdamda` is bound. `projects`, `source_links`, checked transactional RPCs, organisation-scoped authenticated reads, the stable repository, Project Register, Create Project and `/projects/:id` workspace are merged. The next product boundary is W8.3 hierarchy below the project; Issue #1944 remains a separate evidence-only action.  
+**Blockers**: No Stage 1–11 governance blocker remains. Slice 4 has no remaining implementation blocker after reconciliation. Stage 12 closure remains blocked by the remaining hierarchy and later implementation waves, full evidence/route coverage, CS2 L3 verification, handover documentation, and zero unresolved P0/P1 gaps.
 
 ---
 
@@ -182,7 +183,7 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [x] `route-screen-state-acceptance-matrix.md`
 - [x] `wave-definition-of-done-template.md`
 - [x] `builder-execution-responsibility-model.md`
-- [x] `stage12-slice4-execution-alignment-20260722.md` — Slice 4 execution alignment through code/database GREEN
+- [x] `stage12-slice4-execution-alignment-20260722.md` — Slice 4 execution alignment through merge and post-merge verification
 
 **Functional-Delivery Guardrails**:
 - [x] Work sequenced by functional slices
@@ -252,30 +253,31 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 **Location**: `modules/pit/12-build/`  
 **Key Artifacts**:
 - [x] `stage12-kickoff-authorization.md` — authorization to enter Stage 12 (issue #1767; no functional completion claim)
-- [x] `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` — authoritative active slice status through Slice 4 code/database GREEN
+- [x] `BUILD_PROGRESS_TRACKER_STAGE12_SLICES_ADDENDUM.md` — authoritative active slice status through Slice 4 merge and post-merge verification
 - [x] Slice 4 QA-to-RED, prebrief and builder/delegation governance baseline — PR #1945
-- [x] Slice 4 QA-to-RED implementation tests — first implementation commit `4f31c3a1648357aee6c45f3e6e286eeab3f1a46a`
-- [x] Slice 4 Supabase schema, privilege hardening, RLS and repository implementation — draft PR #1952
-- [x] Slice 4 project detail workspace and route-state implementation — draft PR #1952
+- [x] Slice 4 QA-to-RED implementation tests — first implementation commit `155b42e141c78a9fcd28ee9beefca0d104271d34`
+- [x] Slice 4 Supabase schema, RPC-only mutation hardening, RLS and repository implementation — merged PR #1952
+- [x] Slice 4 project detail workspace and route-state implementation — merged PR #1952
 - [x] Slice 4 RED-to-GREEN, compiler and transactional RLS evidence — `modules/pit/12-build/slice-4/red-to-green-and-rls-evidence-20260722.md`
-- [ ] Slice 4 deployed authenticated browser LFV
-- [ ] Final current-head assurance and review closure
-- [ ] Build completion evidence
+- [x] Slice 4 deployed authenticated browser LFV — workflow run `30006074390`
+- [x] Slice 4 final current-head assurance, review closure, merge and post-merge deployment verification
+- [x] Slice 4 post-merge closure record — `modules/pit/12-build/slice-4/post-merge-verification-and-closure-20260723.md`
+- [ ] Broader Stage 12 build completion evidence
 - [ ] Handover documentation
 
 **Functional-Delivery Guardrails (mandatory for Stage 12 completion)**:
-- [ ] GREEN test evidence: 100% passing tests with zero failures, zero skipped, zero todo, and no placeholder tests
-- [ ] Visual runtime evidence in deployed environment
-- [ ] Deployed URL evidence
+- [ ] GREEN test evidence: 100% passing tests with zero failures, zero skipped, zero todo, and no placeholder tests across the complete Stage 12 scope
+- [x] Slice 4 visual runtime evidence in deployed environment
+- [x] Slice 4 deployed URL evidence
 - [x] Slice 4 role/permission and RLS evidence at repository/database layers
 - [ ] Route coverage evidence for all 27 routes
 - [ ] Evidence/report/notification/audit evidence
 - [ ] Accessibility smoke evidence
-- [ ] CS2 live verification pack
-- [ ] L1/L2/L3 closure status declared
-- [ ] No unresolved critical P0/P1 functional gaps
+- [ ] CS2 live verification pack for the complete Stage 12 scope
+- [ ] L1/L2/L3 closure status declared for Stage 12
+- [ ] No unresolved critical P0/P1 functional gaps across Stage 12
 
-**Notes**: Stage 12 is authorized to start under issue #1767 but remains incomplete. Slice 3 browser evidence remains open under issue #1944. Slice 4 is code/database/RLS GREEN in draft PR #1952, while deployed authenticated browser LFV, final review, merge and post-merge verification remain open under issue #1943. Existing AIMC wiring/persona artifacts are integration context only and do not count as Stage 12 build completion evidence.
+**Notes**: Stage 12 is authorized under issue #1767 but remains incomplete. Slice 3 browser evidence remains open under issue #1944. Slice 4 is merged and post-merge verified for its authorised project-persistence/detail boundary under PR #1952 and reconciliation Issue #1964. The next governed product boundary is W8.3 project hierarchy. Existing AIMC wiring/persona artifacts are integration context only and do not count as Stage 12 build completion evidence.
 
 ---
 
@@ -296,9 +298,9 @@ Track the progression through the canonical module lifecycle stages per `PRE_BUI
 - [x] Build Authorization: CLEARED by CS2 tracker statement and reaffirmed in issue #1767
 - [x] Stage 12: AUTHORIZED_TO_START / INCOMPLETE; no `FUNCTIONAL_PASS` claim
 - [x] Slice 4 governance baseline: MERGED in PR #1945
-- [x] Slice 4 QA-to-RED and code/database/RLS GREEN: active draft PR #1952
+- [x] Slice 4 QA-to-RED, implementation, authenticated LFV, review, merge and post-merge verification: COMPLETE for the authorised boundary in PR #1952 / Issue #1964
 - [ ] Slice 3 authenticated browser evidence: open under issue #1944
-- [ ] Slice 4 deployed authenticated browser LFV, final assurance and merge: open under issue #1943
+- [ ] Remaining Stage 12 implementation, evidence and closure waves
 
 ---
 
