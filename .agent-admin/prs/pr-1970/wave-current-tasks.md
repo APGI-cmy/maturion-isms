@@ -5,7 +5,7 @@
 **PR:** #1970  
 **Branch:** `agent/foreman-bootstrap-fail-closed-1969`  
 **Base SHA:** `36c7f42a1a9d23fe4fd9d9f7f12a7ef7beada919`  
-**Status:** PREHANDOVER DEADLOCK REPAIR COMPLETE / QP R3 PASS / ECAP R3 AND FINAL IAA PENDING
+**Status:** PREHANDOVER CARRIER COMPLETE / QP R3 PASS / ECAP R3 ADMIN_VALIDATED / FINAL IAA PENDING
 **CS2:** Johan Ras
 
 ## Qualifying tasks
@@ -14,8 +14,8 @@
 |---|---|---|---|
 | GOV-1969-01 | Restore the missing Foreman Tier 2 session-memory template | GOVERNANCE_CONTROL_REPAIR | COMPLETE — implementation `7cac621b…`; QP R1 PASS |
 | GOV-1969-02 | Make wake-up validation fail closed on every declared Tier 2 required file | BOOTSTRAP_ENFORCEMENT | COMPLETE — implementation `7cac621b…`; R1 populated-memory correction `ef8c628c…`; QP R2 PASS |
-| GOV-1969-03 | Add executable happy-path, populated-memory, missing-control and absent-list compatibility regression coverage | GOVERNANCE_QA | COMPLETE — 4 focused scenarios PASS; Wave 7 10/10 policy and 13/13 real gates PASS |
-| GOV-1969-04 | Bind QP, ECAP, CI and independent final IAA evidence to the frozen PR head | ASSURANCE | IN PROGRESS — QP R3 PASS at `57bcf199…`; ECAP R3, immutable PREHANDOVER and final IAA pending |
+| GOV-1969-03 | Add executable happy-path, populated-memory, missing-control and absent-list compatibility regression coverage | GOVERNANCE_QA | COMPLETE — 4 focused scenarios PASS; Wave 7 11/11 policy and 17/17 real gates PASS |
+| GOV-1969-04 | Bind QP, ECAP, CI and independent final IAA evidence to the frozen PR head | ASSURANCE | IN PROGRESS — QP R3 PASS; ECAP R3 ADMIN_VALIDATED; embedded PREHANDOVER and memory correction addendum committed; final IAA pending |
 | GOV-1969-05 | After CS2 closure, resume #1959 without weakening the private-helper model | SUCCESSOR_CONTROL | BLOCKED BY THIS WAVE |
 | GOV-1969-06 | Repair prehandover false-positive detection without weakening positive-claim enforcement | CI_WORKFLOW / GOVERNANCE_CONTROL_REPAIR | COMPLETE — semantic correction at `a1baaaa8…`; positive-claim coverage at `57bcf199…`; QP R3 PASS |
 

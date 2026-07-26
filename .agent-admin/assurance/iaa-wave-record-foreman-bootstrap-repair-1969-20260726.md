@@ -249,3 +249,119 @@ No ASSURANCE-TOKEN issued.
 ```
 
 Re-invoke independent IAA only after all four findings are corrected and the new exact head is frozen.
+
+## 2. PREHANDOVER Proof
+
+### 2.1 Identity and scope
+
+- Wave: `foreman-bootstrap-repair-1969`
+- Issue: #1969
+- PR: #1970
+- Branch: `agent/foreman-bootstrap-fail-closed-1969`
+- Producing role: `CodexAdvisor-agent` under the bounded appointment at `f6b081c8014f235543815de185958ba8f2a01ab2`
+- Invoking role: `foreman-v2-agent`
+- Ceremony administrator: `execution-ceremony-admin-agent`
+- Frozen evidence head: `3211472c165db0bb4e5c44baedc80be540d80579`
+- Scope authority parent: `9d813b9e8d5b37b9d999074d01d41d32fda35977`
+- Declared and effective scope: 16 paths
+- Immutable source memory: `.agent-workspace/foreman-v2/memory/session-foreman-bootstrap-repair-1969-20260726.md`
+- Current correction addendum: `.agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-session-foreman-bootstrap-repair-1969-prehandover-deadlock-20260726.md`
+
+### 2.2 Corrected delivery state
+
+| Obligation | Evidence | State |
+|---|---|---|
+| Restore the required Tier 2 session-memory template | committed implementation `7cac621b9e04d83ed3149f1923051b0a4bddb0cf` | COMPLETE |
+| Fail closed on missing contract-declared Tier 2 controls | focused missing-file fixture; no false success/readiness or working-contract output | COMPLETE |
+| Remove populated-memory bootstrap flake | correction `ef8c628ca3bca433fbe084055c5dded1f13036f8`; Foreman 20/20 and IAA 12/12 | COMPLETE |
+| Distinguish negative/pending evidence from positive readiness | semantic correction `a1baaaa8d89fdc4355392fb974e7af3cbe3e6869`; G14–G17 | COMPLETE |
+| Preserve explicit PREHANDOVER and positive-claim enforcement | existing current-head control remains mandatory; positive fixtures fail without it | COMPLETE |
+| Foreman QP | QP R3 carrier `e3aa19c7b6b92c2868067bb27b303cbfc5b59018` | PASS |
+| ECAP administration | R3 carrier `3211472c165db0bb4e5c44baedc80be540d80579` | ADMIN_VALIDATED |
+| Independent final IAA | IAA-only append to this wave record | PENDING |
+
+### 2.3 Test and anti-regression evidence
+
+- `bash .github/scripts/wake-up-protocol.test.sh`: 4/4 scenarios passed.
+- `node .github/scripts/wave7-governance-validation.js`: 11/11 policy scenarios and 17/17 real-gate fixtures matched.
+- Real `foreman-v2` bootstrap: 20/20 passes.
+- Real `independent-assurance` bootstrap: 12/12 passes.
+- Negative missing-file fixture exits nonzero, names the missing path, emits no readiness text, and creates no working contract.
+- G14 permits truthful `handover_allowed: false` / `final_iaa_verdict: PENDING` ordinary session evidence.
+- G15–G17 keep positive structured, merge-ready, and delivery-complete claims fail-closed.
+- Explicit PREHANDOVER paths remain lane intent.
+- No `.skip`, `.todo`, incomplete, vacuous, or stub assertion is introduced.
+
+### 2.4 Gate inventory at the frozen evidence head
+
+`gate_set_checked:`
+
+| Gate | Run | State |
+|---|---:|---|
+| Preflight Evidence Gate | `30204655917` | GREEN |
+| Foreman Pre-Handover Lane Gate | `30204655886` | GREEN |
+| IAA Pre-Brief Contract Alignment | `30204655902` | GREEN |
+| Stub Detection Check | `30204655885` | GREEN |
+| Builder Delegation Order Gate | `30204655898` | GREEN |
+| ECAP Admin Boundary Gate | `30204655887` | GREEN |
+| Wave 7 Governance Validation | `30204655883` | GREEN |
+| Merge Gate Required Checks Alignment | `30204655907` | GREEN |
+| POLC Boundary Validation | `30204655889` | GREEN |
+| CodeQL | `30204655869` | GREEN |
+
+- GitHub workflows: 10/10 success.
+- Vercel commit statuses: 3/3 success.
+- Unresolved review threads: 0.
+- PR state: open, draft, mergeable.
+- `merge_gate_parity: PASS` at the frozen evidence head.
+- The final carrier head must be rechecked non-mutatively before IAA R2.
+
+### 2.5 Delegation and role separation
+
+The ordered lineage is:
+
+`e1a9b9a9… pre-brief → f6b081c8… appointment → 7cac621b… implementation → c7e28382… IAA R1 rejection → ef8c628c… correction → 610d4a4a… QP R2 → 781a7b62… ECAP R2 → 6ea18311… immutable source memory → 3cb551de… CS2 extension → a1baaaa8… semantic gate correction → 57bcf199… positive-claim coverage → e3aa19c7… QP R3 → 3211472c… ECAP R3 → 9d813b9e… addendum scope authority → final carrier`.
+
+- Foreman made the QP judgment and did not implement the repair.
+- ECAP made only administrative findings and did not invoke IAA.
+- The producer, Foreman, and ECAP have not written a final assurance verdict or token.
+- Independent IAA may append only its binary R2 verdict under this canonical wave record.
+- Merge authority remains CS2-only.
+
+### 2.6 Scope, security, and ripple assessment
+
+- The effective 16-path diff is entirely within the PR-scoped manifest/declaration.
+- No protected `.github/agents/**`, product/runtime, MMM, Supabase, Vercel, deployment, infrastructure, secret, or Issue #1959 implementation path is changed.
+- Deployment surface enumeration: NOT APPLICABLE — governance bootstrap scripts and evidence only; no deployment workflow is modified.
+
+| Agent or system | Impact | Conclusion |
+|---|---|---|
+| `foreman-v2-agent` | required Tier 2 validation and populated-memory bootstrap | IMPACTED — fail-closed and deterministic |
+| `independent-assurance-agent` | same shared wake-up path | IMPACTED — repeated bootstrap verified |
+| Prehandover governance gate | evidence/claim classification | IMPACTED — false positives removed; positive claims remain controlled |
+| MMM product and Supabase/Vercel runtime | no changed paths or mutation | NO IMPACT |
+
+### 2.7 ECAP reconciliation summary
+
+| Field | Reconciled value |
+|---|---|
+| Issue / PR / wave / branch | `#1969` / `#1970` / `foreman-bootstrap-repair-1969` / `agent/foreman-bootstrap-fail-closed-1969` |
+| ECAP record | `.agent-admin/ecap/pr-1970-ecap.md` — R3 `ADMIN_VALIDATED` |
+| QP record | `.agent-admin/quality/pr-1970-foreman-qp.md` — R3 PASS |
+| Scope | 16 declared paths; final carrier is contained in those paths |
+| Session evidence | immutable source memory plus separately declared correction addendum |
+| Ripple | governance bootstrap only; no PUBLIC_API/product ripple |
+| Identity binding | PR, issue, branch, wave, manifest, scope, tracker, and wave record agree |
+| Role boundary | Foreman/QP, ECAP administration, and IAA verdict authority remain separate |
+| Admin-compliance result | PASS for final IAA invocation preparation |
+
+### 2.8 Final assurance reference and stop state
+
+- `iaa_audit_token: IAA-session-1970-R2-20260726-PASS` — expected reference only; not a producer-issued token.
+- `iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-foreman-bootstrap-repair-1969-20260726.md`
+- `final_iaa_verdict: PENDING`
+- `handover_allowed: false`
+- `HANDOVER_ALLOWED: no`
+- `RESULT: AWAITING_INDEPENDENT_IAA_R2`
+
+No merge, handover, #1969 closure, or #1959 execution is authorized by this PREHANDOVER proof.
