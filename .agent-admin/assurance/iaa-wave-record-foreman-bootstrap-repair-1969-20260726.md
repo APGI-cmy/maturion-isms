@@ -390,6 +390,145 @@ No ASSURANCE-TOKEN issued.
 
 Re-invoke independent IAA only after F-005 is corrected, QP/ECAP are refreshed, and the new exact head is frozen.
 
+### Final Assurance Invocation R3 — 2026-07-26
+
+**IAA session:** `session-219` / `IAA-session-1970-R3-20260726`
+**PR:** #1970 — Governance: fail closed on missing Foreman Tier 2 controls
+**Issue:** #1969
+**Branch:** `agent/foreman-bootstrap-fail-closed-1969`
+**Reviewed HEAD:** `cdf6b5d5fc3640fef8f13134f7283f1bf5c1d92d`
+**Produced by:** `CodexAdvisor-agent`; F-005 correction `719c5e7628d173805d0ab568ff387331d57c0316`
+**Invoked by:** `foreman-v2-agent`
+**Ceremony-admin:** YES — ECAP R4 `ADMIN_VALIDATED`
+**Independence:** CONFIRMED — this IAA did not produce or contribute to the correction
+**Diff-derived category:** MIXED — `CI_WORKFLOW` + `KNOWLEDGE_GOVERNANCE` + `GOVERNANCE_EVIDENCE` / `SIMPLIFIED_ADMIN_ASSURANCE`
+**Adoption phase:** `PHASE_B_BLOCKING`
+**Verdict:** `REJECTION-PACKAGE`
+**RCA_REVIEW:** `REFER_BACK`
+**HANDOVER_ALLOWED:** no
+**RESULT:** `REJECTED_BACK_TO_PRODUCER`
+
+#### Prior-finding closure mapping
+
+| Finding | Independent R3 evidence | R3 state |
+|---|---|---|
+| F-001 — populated-memory bootstrap flake | Focused suite 4/4; real `foreman-v2` 20/20 and `independent-assurance` 12/12 repeated bootstraps pass | CLOSED |
+| F-002 — missing final ceremony evidence | Embedded immutable PREHANDOVER proof, source memory, and correction addendum remain committed | CLOSED |
+| F-003 — stale task carrier | Active tracker truthfully records QP R4 PASS, ECAP R4 `ADMIN_VALIDATED`, and final IAA pending | CLOSED |
+| F-004 — IAA append authority excluded | PR scope permits only independent IAA to append its binary result to this wave record | CLOSED |
+| F-005 — structured positive-claim bypass | Nested and alternate-key JSON, trailing-pipe Markdown, and negative/pending boundaries pass independent challenges; valid Markdown tables with an omitted trailing pipe or omitted edge pipes still bypass the control | **OPEN** |
+
+#### Exact-head evidence independently verified
+
+- Live Issue #1969 acceptance criteria were fetched directly from GitHub.
+- Live PR #1970 is open and has the exact 16 filenames declared in `.agent-admin/scope-declarations/pr-1970.md` and `.admin/prs/pr-1970.json`.
+- No `.github/agents/**`, product/runtime, MMM, Supabase, Vercel configuration, infrastructure, deployment, or Issue #1959 implementation path is in the diff.
+- Shell and Node syntax checks pass.
+- `bash .github/scripts/wake-up-protocol.test.sh`: 4/4 scenarios pass.
+- `node .github/scripts/wave7-governance-validation.js`: 11/11 policy scenarios and 23/23 real-gate fixtures match.
+- Real repeated bootstrap: `foreman-v2` 20/20 and `independent-assurance` 12/12 pass.
+- `PR_NUMBER=1970 bash .github/scripts/validate-scope-to-diff.sh`: exact 16/16 parity PASS.
+- `WAVE6_ALIGNMENT_SELF_TEST=1 node .github/scripts/merge-gate-required-checks-alignment.js`: 7/7 self-tests and required-check alignment PASS.
+- All ten exact-head GitHub workflow runs succeeded: `30205926596`, `30205926599`, `30205926614`, `30205926605`, `30205926602`, `30205926616`, `30205926622`, `30205926595`, `30205926619`, and `30205926590`.
+- Hosted Wave 7 job `89803848670` checked out exact head `cdf6b5d5…` and executed G1–G23 successfully.
+- Three Vercel statuses are successful; unresolved review threads are zero.
+- `governance/CANON_INVENTORY.json`: 203 `file_hash_sha256` fields inspected; zero invalid values.
+
+#### Acceptance-Criteria Evidence Matrix
+
+| # | Governing Issue #1969 criterion | Independent evidence | Verdict |
+|---|---|---|---|
+| 1 | Required Foreman template exists with mandatory fields | Committed template contains the named identity, bootstrap, continuity, delegation, blocker, QP/ECAP/IAA, tracker, CI, next-action, and close fields | PASS |
+| 2 | Wake-up fails nonzero when any required Tier 2 file is absent | Focused missing-file fixture exits nonzero and names `beta.md`; validator iterates the active contract list | PASS |
+| 3 | No ready working contract after Tier 2 failure | Negative fixture proves no readiness output and no `working-contract.md` | PASS |
+| 4 | Focused bootstrap happy/negative regressions pass | Local 4/4; real repeated bootstraps 20/20 and 12/12; hosted G13 PASS | PASS |
+| 5 | Negative/pending ordinary memory passes without control | G14, G22, G23, and independent JSON/Markdown boundary challenges PASS | PASS |
+| 6 | Explicit PREHANDOVER or any positive readiness/handover claim fails without valid current-head control | Explicit paths, YAML, narrative, JSON, nested JSON, and trailing-pipe Markdown fail correctly; valid no-trailing-pipe and no-edge-pipe Markdown table claims pass without control | **FAIL** |
+| 7 | Valid positive claim with current-head control passes | G21 and independent exact-head control fixture PASS | PASS |
+| 8 | Frozen-head PR checks are green | Ten GitHub workflows and three Vercel statuses succeed at `cdf6b5d5…` | PASS |
+| 9 | Independent IAA PASS or wave remains blocked | This invocation rejects; no token is issued and the wave remains blocked | BLOCKED |
+| 10 | #1959 remains unmodified | Exact 16-path diff contains no #1959, MMM, product, database, or infrastructure implementation | PASS |
+
+**Matrix status:** INCOMPLETE — criterion 6 fails; criterion 9 remains on its blocking branch.
+
+#### Core, overlay, ACR, and parity results
+
+- `FAIL-ONLY-ONCE` A-001 and A-002: PASS.
+- `CORE-020`, `CORE-021`: PASS.
+- `CORE-026`, `CORE-027`: FAIL — criterion 6 remains incomplete and the independent risk challenge reproduces a post-merge bypass.
+- `CERT-001` through `CERT-004`: PASS.
+- `OVL-CI-001`, `OVL-CI-003`: FAIL — advertised Markdown carrier enforcement remains syntax-dependent and silently takes the no-claim path.
+- `OVL-CI-002`, `OVL-CI-004`, `OVL-CI-005`: PASS.
+- `OVL-KG-001` through `OVL-KG-004` and `OVL-KG-ADM-001` through `OVL-KG-ADM-003`: PASS.
+- `OVL-GE-001` through `OVL-GE-003`: PASS; `OVL-GE-004`: FAIL.
+- `OVL-SAA-001` through `OVL-SAA-007`: PASS; `OVL-SAA-008`: FAIL because the active risk record does not include the alternate valid Markdown-table bypass.
+- `ACR-01` through `ACR-16`: PASS for the active pre-verdict bundle; immutable PREHANDOVER and prior rejection history are correctly treated as historical sources.
+- `OVL-SMP-001 ADMIN_PASS`: yes.
+- `OVL-SMP-002 JOB_PASS`: no — F-005 is not fully corrected.
+- `OVL-SMP-003 NO_UNRESOLVED_DEFECTS`: no — F-005 remains open.
+- Required local merge-gate interfaces and exact-head hosted gates pass mechanically; substantive policy parity fails.
+
+**Total:** 57 checks; 49 PASS; 8 FAIL.
+
+#### F-005 — Markdown table positive claims remain syntax-dependent (Substantive / Systemic)
+
+The F-005 correction detects JSON recursively and detects a Markdown row only when the trimmed line starts with `|` and the value survives `.split('|').slice(1, -1)`. Both of these valid GitHub-Flavored Markdown table forms therefore exit 0 without `.agent-admin/control/handover-allowed.json`:
+
+```text
+| field | value
+|---|---
+| handover_allowed | true
+```
+
+```text
+field | value
+---|---
+handover_allowed | true
+```
+
+The gate reports zero positive claim hits and follows the no-claim pass path. The same independent suite confirms nested JSON, arrays, `handover-allowed`, `final_state`, quoted/bold values, and negative/pending near-miss boundaries behave correctly. The defect is limited to an incomplete Markdown-table parser, but it leaves Issue #1969 criterion 6 and the systemic prevention required by R2 F-005 unsatisfied.
+
+**Required fix:**
+
+1. Parse Markdown table rows with optional leading and trailing pipes.
+2. Add real production-gate fixtures for positive rows without a trailing pipe and without edge pipes.
+3. Preserve the existing negative/pending JSON/table, explicit PREHANDOVER, JSON, YAML, narrative, and valid-control behaviors.
+4. Refresh QP, ECAP, exact-head hosted evidence, and independent IAA.
+
+**Structural prevention:** the real-gate matrix must exercise syntactic variants admitted by the governed structured format, rather than only one canonical rendering.
+
+#### Token-coherence review
+
+The immutable PREHANDOVER reference `IAA-session-1970-R2-20260726-PASS` remains an expected handle only and is not an issued token. R3 denotes the third independent assurance invocation after the R2 rejection; it does not authorize retroactive reuse or fabrication of the R2 expected handle. Because F-005 remains open, neither that handle nor an R3 PASS token is issued.
+
+#### Independent Risk Challenge
+
+1. **What could still fail after merge?** A positive handover/readiness field in a valid Markdown table lacking a trailing pipe or edge pipes can bypass current-head control enforcement.
+2. **What evidence would prove it does not fail?** Format-aware production parsing plus real-gate fixtures for both optional-pipe forms, while retaining all positive, negative, pending, and valid-control cases.
+3. **Is that evidence present?** No. Independent production-gate fixtures reproduce both bypasses.
+4. **Is there a contradiction between issue intent, architecture requirements, and PR evidence?** Yes. Issue #1969 requires every actual positive claim to remain fail-closed, while current behavior depends on one Markdown rendering.
+5. **Would a reasonable production owner accept this as merge-ready?** No. The repaired governance boundary remains bypassable through valid syntax in a carrier format the gate explicitly scans.
+
+**Independent Risk Challenge:** COMPLETE; its answers require rejection.
+
+#### Binary verdict
+
+```text
+═══════════════════════════════════════
+REJECTION-PACKAGE
+PR: #1970 — Governance: fail closed on missing Foreman Tier 2 controls
+Reviewed HEAD: cdf6b5d5fc3640fef8f13134f7283f1bf5c1d92d
+F-005 remains open. Merge blocked. STOP-AND-FIX required.
+RCA_REVIEW: REFER_BACK
+HANDOVER_ALLOWED: no
+RESULT: REJECTED_BACK_TO_PRODUCER
+Adoption phase: PHASE_B_BLOCKING
+No ASSURANCE-TOKEN issued.
+═══════════════════════════════════════
+```
+
+Re-invoke independent IAA only after F-005 is fully corrected, QP/ECAP are refreshed, and the new exact head is frozen.
+
 ## 2. PREHANDOVER Proof
 
 ### 2.1 Identity and scope
