@@ -79,3 +79,48 @@ Result: exit 0; Tier 2 index found; 7 declared; 0 missing; Tier 2 validation PAS
 `FOREMAN_QP_PASS` for the implementation at `7cac621b9e04d83ed3149f1923051b0a4bddb0cf`.
 
 This PASS is substantive quality evidence only. ECAP administrative validation, exact-current-head CI reconciliation, pre-handover controls where applicable, independent final IAA assurance, and CS2 merge authority remain separate and unsatisfied by this document.
+
+---
+
+## QP R2 — IAA R1 STOP-AND-FIX correction
+
+**Reviewed corrective implementation head:** `ef8c628ca3bca433fbe084055c5dded1f13036f8`
+**Trigger:** IAA R1 finding F-001 in rejection commit `c7e283827bf0610be8e963d4bfb57fa5ae1e2d2b`
+**Binary verdict:** **PASS**
+**Final IAA / merge disposition:** PENDING — this QP result does not close IAA R1 findings F-002 through F-004, issue an assurance token, or authorize merge
+
+### Corrective delta reviewed
+
+| File | Correction | QP result |
+|---|---|---|
+| `.github/scripts/wake-up-protocol.sh` | Replace the early-closing `find \| sort \| head` pipeline with a checked full sort into a temporary file, followed by a bounded read of five entries | PASS |
+| `.github/scripts/wake-up-protocol.test.sh` | Add 400 populated memory records and require 12 consecutive complete-manifest bootstrap passes, exactly five displayed sessions, no broken-pipe output and final health success | PASS |
+
+The new Phase 2 path retains `set -euo pipefail`. The `find | sort` pipeline is executed to completion and checked explicitly; a genuine enumeration or sort failure exits nonzero. Only the subsequent read is bounded, so it cannot terminate `sort` with SIGPIPE.
+
+### R2 commands and results
+
+```text
+bash -n .github/scripts/wake-up-protocol.sh
+bash -n .github/scripts/wake-up-protocol.test.sh
+bash .github/scripts/wake-up-protocol.test.sh
+node .github/scripts/wave7-governance-validation.js
+```
+
+- focused fixtures: 4 passed, 0 failed;
+- populated-memory fixture: 400 records, 12/12 repeated passes;
+- policy scenarios: 10/10 matched;
+- real-gate fixtures: 13/13 matched;
+- skipped/todo/incomplete: 0;
+- syntax failures: 0.
+
+Repeated real-repository bootstrap on a fresh clone of `ef8c628ca3bca433fbe084055c5dded1f13036f8`:
+
+- `foreman-v2`: 20/20 passes, 0 failures;
+- `independent-assurance`: 12/12 passes, 0 failures.
+
+No protected agent contract, product/runtime, MMM, Supabase, Vercel, infrastructure or #1959 implementation path changed in the corrective delta.
+
+`FOREMAN_QP_R2_PASS` for corrective implementation head `ef8c628ca3bca433fbe084055c5dded1f13036f8`.
+
+ECAP R2, immutable PREHANDOVER/session-memory evidence, fresh hosted exact-head checks, independent IAA R2 and CS2 merge authority remain separate and pending.
