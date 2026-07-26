@@ -164,3 +164,55 @@ The effective PR diff against current `main` contains exactly the 15 declared pa
 `FOREMAN_QP_R3_PASS` for corrective head `57bcf199cfb729318e1d9736040a0ce2b8010fba`.
 
 The prehandover false-positive deadlock is corrected without removing the current-head control from explicit PREHANDOVER artifacts or positive readiness claims. ECAP R3, immutable prehandover evidence, final independent IAA, and CS2 merge authority remain separate.
+
+---
+
+## QP R4 — IAA R2 F-005 structured-carrier correction
+
+**Reviewed corrective implementation head:** `719c5e7628d173805d0ab568ff387331d57c0316`
+**Trigger:** IAA R2 systemic finding F-005 in rejection commit `19c2b69b023f3ce6744bec2dc55e775640a4de29`
+**Binary verdict:** **PASS**
+**Final IAA / merge disposition:** PENDING — this QP result does not issue assurance or authorize merge
+
+### Corrective delta reviewed
+
+| File | Correction | QP result |
+|---|---|---|
+| `.github/scripts/foreman-prehandover-lane-gate.js` | Add format-aware structured-key evaluation, recursive JSON object/array inspection, and Markdown-table key/value inspection while preserving negative/pending semantics | PASS |
+| `.github/scripts/wave7-governance-validation.js` | Add real production-gate fixtures G18–G23 for positive JSON, positive Markdown tables, valid-current-head control, and negative JSON/table evidence | PASS |
+
+The correction does not widen the scan path or relax explicit PREHANDOVER handling. It normalizes only the governed structured keys `handover_allowed`, `final_iaa_verdict`, `state`, `final_state`, and `handover_state`, with a closed positive-value set. JSON recursion evaluates nested objects and arrays. Markdown-table evaluation inspects adjacent cells after stripping harmless formatting.
+
+### R4 commands and results
+
+```text
+node --check .github/scripts/foreman-prehandover-lane-gate.js
+node --check .github/scripts/wave7-governance-validation.js
+node .github/scripts/wave7-governance-validation.js
+bash .github/scripts/wake-up-protocol.test.sh
+```
+
+- policy scenarios: 11/11 matched;
+- real production-gate fixtures: 23/23 matched;
+- focused bootstrap scenarios: 4/4 passed;
+- positive JSON `handover_allowed: true`: fails without control;
+- positive JSON `final_iaa_verdict: PASS`: fails without control;
+- positive Markdown table: fails without control;
+- positive JSON with valid exact-current-head control: passes;
+- negative/pending JSON and Markdown-table evidence: passes without control;
+- skipped/todo/incomplete: 0;
+- syntax failures: 0.
+
+### Hosted exact-head evidence
+
+All ten pull-request workflows completed successfully at `719c5e7628d173805d0ab568ff387331d57c0316`:
+
+`30205511718`, `30205511720`, `30205511706`, `30205511723`, `30205511729`, `30205511734`, `30205511725`, `30205511737`, `30205511747`, `30205511746`.
+
+All three Vercel statuses are successful, and the effective PR diff remains the same 16 declared paths with no protected agent contract, product/runtime, MMM, Supabase, Vercel configuration, infrastructure, deployment, or Issue #1959 implementation path.
+
+### QP R4 disposition
+
+`FOREMAN_QP_R4_PASS` for corrective implementation head `719c5e7628d173805d0ab568ff387331d57c0316`.
+
+F-005 is corrected at the producer/QP layer. ECAP R4 administrative refresh, final frozen-head independent IAA, token-head checks, and CS2 merge authority remain separate.
