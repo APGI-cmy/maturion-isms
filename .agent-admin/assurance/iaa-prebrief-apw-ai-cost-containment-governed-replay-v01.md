@@ -1,8 +1,11 @@
 # IAA Pre-Flight Brief — APW AI Cost Containment Governed Replay v0.1
 
 IAA_PREFLIGHT_BRIEF
+PR: #1967
 WAVE: APW-AI-COST-CONTAINMENT-GOVERNED-REPLAY-V01
 BRANCH: apw-ai-cost-containment-governed-replay-v01
+WAVE_TASKS_PATH: .agent-admin/prs/pr-1967/wave-current-tasks.md
+CURRENT_HEAD_SHA: GITHUB_PR_HEAD_SHA
 AUTHORITY: CS2 — Johan Ras
 DATE: 2026-07-26
 
