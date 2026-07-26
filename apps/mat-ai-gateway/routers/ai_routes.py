@@ -23,9 +23,6 @@ from services.transcription import AudioTranscriber
 logger = logging.getLogger("uvicorn.error")
 router = APIRouter(prefix="/api/v1", tags=["AI Services"])
 
-# ---------------------------------------------------------------------------
-# Module-level service singletons — instantiated once, shared across requests
-# ---------------------------------------------------------------------------
 _parser = DocumentParser()
 _scorer = MaturityScorer()
 _transcriber = AudioTranscriber()
@@ -33,10 +30,6 @@ _generator = ReportGenerator()
 _analyser = ImageAnalyser()
 _public_chat = PublicChatService()
 
-
-# ---------------------------------------------------------------------------
-# Request models
-# ---------------------------------------------------------------------------
 
 class ParseRequest(BaseModel):
     document_url: str
@@ -46,10 +39,7 @@ class ParseRequest(BaseModel):
     @field_validator("user_instructions")
     @classmethod
     def escape_user_instructions(cls, v: str | None) -> str | None:
-        """
-        Escape angle brackets in user_instructions to prevent breaking
-        surrounding <instructions>...</instructions> wrappers downstream.
-        """
+        """Escape angle brackets before downstream instruction wrapping."""
         if v is None:
             return v
         return v.replace("<", "&lt;").replace(">", "&gt;")
@@ -95,17 +85,9 @@ class PublicChatRequest(BaseModel):
         return cleaned
 
 
-# ---------------------------------------------------------------------------
-# Routes
-# ---------------------------------------------------------------------------
-
 @router.post("/parse")
 def parse_document(request: ParseRequest) -> dict:
-    """
-    Document Parsing — converts PDF/DOCX criteria into structured JSON.
-
-    Architecture: system-architecture.md §3.4
-    """
+    """Convert a source document into structured content."""
     return _parser.parse(
         document_url=request.document_url,
         tenant_id=request.tenant_id,
@@ -115,11 +97,7 @@ def parse_document(request: ParseRequest) -> dict:
 
 @router.post("/score")
 def score_maturity(request: ScoreRequest) -> dict:
-    """
-    Maturity Scoring — derives maturity level from evidence and criteria.
-
-    Architecture: system-architecture.md §3.4
-    """
+    """Derive maturity scoring from evidence and criteria."""
     if request.evidence is None:
         evidence: list[Union[str, dict]] = []
     elif isinstance(request.evidence, list):
@@ -138,11 +116,7 @@ def score_maturity(request: ScoreRequest) -> dict:
 
 @router.post("/transcribe")
 def transcribe_audio(request: TranscribeRequest) -> dict:
-    """
-    Audio Transcription — converts audio recording to timestamped transcript.
-
-    Architecture: system-architecture.md §3.4
-    """
+    """Transcribe audio evidence."""
     return _transcriber.transcribe(
         audio_url=request.audio_url,
         tenant_id=request.tenant_id,
@@ -151,11 +125,7 @@ def transcribe_audio(request: TranscribeRequest) -> dict:
 
 @router.post("/report")
 def generate_report(request: ReportRequest) -> dict:
-    """
-    Report Generation — produces DOCX/PDF/JSON audit report.
-
-    Architecture: system-architecture.md §3.4
-    """
+    """Generate a governed report."""
     audit_data = request.audit_data or {"audit_id": request.audit_id}
     return _generator.generate(
         audit_data=audit_data,
@@ -166,11 +136,7 @@ def generate_report(request: ReportRequest) -> dict:
 
 @router.post("/analyse-image")
 def analyse_image(request: AnalyseImageRequest) -> dict:
-    """
-    Image Analysis — extracts compliance description from photo evidence.
-
-    Architecture: system-architecture.md §3.4
-    """
+    """Analyse image evidence."""
     return _analyser.analyse(
         image_url=request.image_url,
         tenant_id=request.tenant_id,
@@ -187,10 +153,18 @@ def public_chat(request: PublicChatRequest) -> dict:
             context=request.context,
         )
         logger.info(
-            "public_chat_route route=%s page=%s history_count=%s",
+            "public_chat_route route=%s page=%s history_count=%s "
+            "response_mode=%s containment_reason=%s model=%s "
+            "prompt_tokens=%s completion_tokens=%s total_tokens=%s",
             result.get("apw_specialist_route"),
             result.get("page"),
             result.get("history_count"),
+            result.get("response_mode"),
+            result.get("containment_reason"),
+            result.get("model"),
+            result.get("prompt_tokens"),
+            result.get("completion_tokens"),
+            result.get("total_tokens"),
         )
         return result
     except (RuntimeError, KeyError) as exc:

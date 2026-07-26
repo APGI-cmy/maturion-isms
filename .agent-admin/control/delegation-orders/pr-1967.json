@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "apw-ai-cost-containment-governed-replay-v01",
+  "pr_number": 1967,
+  "prebrief_commit_sha": "64cf00df21d90c4d2941ba1d8491f72ccbca0256",
+  "builder_appointment_timestamp": "2026-07-26T13:56:00+02:00",
+  "builder_appointment_commit_sha": "f7e35f2044e11fe578bd5f4b992a79d12f95561c",
+  "builder_agent": "apw-public-chat-cost-containment-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-ai-cost-containment-governed-replay-v0.1.md",
+  "first_implementation_commit_sha": "4f6b53c2e3016620e8015e5a6bebdf7a1678b60d",
+  "qp_review_timestamp": "2026-07-26T14:28:00+02:00",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1967.md",
+  "remediation_record_ref": "Maturion/prebuild/runtime-activation-readiness/APW-AI-Cost-Containment-and-Model-Routing-Remediation-v0.1.md",
+  "implementation_note": "The delegation gate classifies apps/mat-ai-gateway/tests as the first implementation-like path; runtime service commits 3bd367f1 and b7d83cce remain after the appointment and before the gate-detected test commit."
+}
