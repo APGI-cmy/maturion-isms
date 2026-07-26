@@ -16,6 +16,7 @@ const requiredFiles = [
   '.github/scripts/delegation-order-gate.js',
   '.github/scripts/ecap-admin-boundary-gate.js',
   '.github/scripts/merge-gate-required-checks-alignment.js',
+  '.github/scripts/wake-up-protocol.test.sh',
 ];
 
 const scriptPaths = {
@@ -23,6 +24,7 @@ const scriptPaths = {
   prehandover: path.join(repoRoot, '.github/scripts/foreman-prehandover-lane-gate.js'),
   ecap: path.join(repoRoot, '.github/scripts/ecap-admin-boundary-gate.js'),
   mergeAlignment: path.join(repoRoot, '.github/scripts/merge-gate-required-checks-alignment.js'),
+  wakeUpProtocolTest: path.join(repoRoot, '.github/scripts/wake-up-protocol.test.sh'),
 };
 
 function fail(message) {
@@ -280,6 +282,7 @@ const realGateRuns = [
   () => runPrehandoverDelegationEvidenceOnlyFixture('G10-delegation-evidence-only-lane-skipped', 'PASS'),
   () => runPrehandoverFixture('G11-explicit-prehandover-with-valid-token', 'valid', 'PASS'),
   () => expectGate('G12-merge-required-check-alignment-current-branch', run('node', [scriptPaths.mergeAlignment], { cwd: repoRoot, env: { WAVE6_ALIGNMENT_SELF_TEST: '1' } }), 'PASS'),
+  () => expectGate('G13-wake-up-tier2-required-files-fail-closed', run('bash', [scriptPaths.wakeUpProtocolTest], { cwd: repoRoot }), 'PASS'),
 ];
 
 for (const execute of realGateRuns) {
