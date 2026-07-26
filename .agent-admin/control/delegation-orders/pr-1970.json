@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "foreman-bootstrap-repair-1969",
+  "pr_number": 1970,
+  "prebrief_commit_sha": "e1a9b9a95a9ef712a7d3e6f92e1aeb1327dad167",
+  "builder_appointment_timestamp": "2026-07-26T12:29:08Z",
+  "builder_appointment_commit_sha": "f6b081c8014f235543815de185958ba8f2a01ab2",
+  "builder_agent": "CodexAdvisor-agent",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-1969-codexadvisor-governance-repair.md",
+  "first_implementation_commit_sha": "7cac621b9e04d83ed3149f1923051b0a4bddb0cf",
+  "qp_review_timestamp": "2026-07-26T12:36:46Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

@@ -92,6 +92,171 @@ count_missing_inventory_commit_provenance() {
     ' "$inventory_file"
 }
 
+# Prints every Tier 2 required-file entry declared inside the top-level
+# tier2_knowledge YAML block. Supports block lists and inline YAML arrays
+# without adding a YAML parser dependency to the bootstrap path.
+extract_tier2_required_files() {
+    awk '
+      function trim(value) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
+        gsub(/^["'"'"']|["'"'"']$/, "", value)
+        return value
+      }
+      BEGIN {
+        in_tier2 = 0
+        in_required_list = 0
+        required_indent = -1
+      }
+      /^tier2_knowledge:[[:space:]]*$/ {
+        in_tier2 = 1
+        next
+      }
+      in_tier2 && /^[^[:space:]]/ {
+        exit
+      }
+      in_tier2 {
+        current_indent = match($0, /[^[:space:]]/) - 1
+
+        if (in_required_list) {
+          if ($0 ~ /^[[:space:]]*$/) {
+            next
+          }
+          if (current_indent > required_indent && $0 ~ /^[[:space:]]*-[[:space:]]+/) {
+            value = $0
+            sub(/^[[:space:]]*-[[:space:]]+/, "", value)
+            value = trim(value)
+            if (value != "") print value
+            next
+          }
+          if (current_indent <= required_indent) {
+            in_required_list = 0
+          }
+        }
+
+        if ($0 ~ /^[[:space:]]+required_files:[[:space:]]*\[/) {
+          value = $0
+          sub(/^[^[]*\[/, "", value)
+          sub(/\].*$/, "", value)
+          count = split(value, entries, ",")
+          for (i = 1; i <= count; i++) {
+            entry = trim(entries[i])
+            if (entry != "") print entry
+          }
+          next
+        }
+
+        if ($0 ~ /^[[:space:]]+required_files:[[:space:]]*$/) {
+          required_indent = current_indent
+          in_required_list = 1
+        }
+      }
+    ' "$AGENT_CONTRACT_FILE"
+}
+
+# Prints the Tier 2 index path declared inside the top-level tier2_knowledge
+# YAML block, if the active contract has one.
+extract_tier2_index_path() {
+    awk '
+      function trim(value) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
+        gsub(/^["'"'"']|["'"'"']$/, "", value)
+        return value
+      }
+      /^tier2_knowledge:[[:space:]]*$/ {
+        in_tier2 = 1
+        next
+      }
+      in_tier2 && /^[^[:space:]]/ {
+        exit
+      }
+      in_tier2 && /^[[:space:]]+index:[[:space:]]*/ {
+        value = $0
+        sub(/^[[:space:]]+index:[[:space:]]*/, "", value)
+        print trim(value)
+        exit
+      }
+    ' "$AGENT_CONTRACT_FILE"
+}
+
+# Fails closed when the active contract declares a Tier 2 index or required
+# files that cannot be resolved. Bare filenames resolve beside the index;
+# repository-qualified paths resolve from the repository root.
+validate_tier2_required_files() {
+    local tier2_index
+    local tier2_index_abs
+    local tier2_index_dir
+    local required_file
+    local index_candidate
+    local repo_candidate
+    local resolved_candidate
+    local missing_count=0
+    local required_count=0
+    local -a tier2_required_files=()
+
+    tier2_index="$(extract_tier2_index_path)"
+    mapfile -t tier2_required_files < <(extract_tier2_required_files)
+
+    if [ -z "$tier2_index" ] && [ "${#tier2_required_files[@]}" -eq 0 ]; then
+        echo "  - Tier 2 required-file manifest: NOT DECLARED"
+        return 0
+    fi
+
+    if [ -z "$tier2_index" ]; then
+        echo -e "${RED}❌ Tier 2 required files are declared but tier2_knowledge.index is missing${NC}"
+        return 1
+    fi
+
+    if [[ "$tier2_index" = /* ]]; then
+        echo -e "${RED}❌ Tier 2 index must be repository-relative: ${tier2_index}${NC}"
+        return 1
+    fi
+
+    tier2_index_abs="${REPO_ROOT}/${tier2_index#./}"
+    if [ ! -f "$tier2_index_abs" ]; then
+        echo -e "${RED}❌ Required Tier 2 knowledge index missing: ${tier2_index}${NC}"
+        return 1
+    fi
+
+    tier2_index_dir="$(dirname "$tier2_index_abs")"
+    echo -e "${GREEN}✓ Tier 2 knowledge index found: ${tier2_index}${NC}"
+
+    for required_file in "${tier2_required_files[@]}"; do
+        [ -z "$required_file" ] && continue
+        required_count=$((required_count + 1))
+
+        if [[ "$required_file" = /* ]]; then
+            echo -e "${RED}❌ Tier 2 required file must be repository-relative: ${required_file}${NC}"
+            missing_count=$((missing_count + 1))
+            continue
+        fi
+
+        index_candidate="${tier2_index_dir}/${required_file#./}"
+        repo_candidate="${REPO_ROOT}/${required_file#./}"
+        resolved_candidate="$index_candidate"
+
+        if [ -f "$index_candidate" ]; then
+            resolved_candidate="$index_candidate"
+        elif [ -f "$repo_candidate" ]; then
+            resolved_candidate="$repo_candidate"
+        fi
+
+        if [ ! -f "$resolved_candidate" ]; then
+            echo -e "${RED}❌ Required Tier 2 file missing: ${required_file} (index: ${tier2_index})${NC}"
+            missing_count=$((missing_count + 1))
+        fi
+    done
+
+    echo "  - Tier 2 required files declared: ${required_count}"
+    echo "  - Tier 2 required files missing: ${missing_count}"
+
+    if [ "$missing_count" -gt 0 ]; then
+        return 1
+    fi
+
+    echo -e "${GREEN}✓ Tier 2 required-file validation passed${NC}"
+    return 0
+}
+
 # Output files
 WORKING_CONTRACT="${WORKSPACE_DIR}/working-contract.md"
 ENVIRONMENT_HEALTH="${WORKSPACE_DIR}/environment-health.json"
@@ -164,6 +329,14 @@ AGENT_VERSION=$(grep -A 50 "^agent:" "$AGENT_CONTRACT_FILE" | grep "version:" | 
 
 echo "  - Class: ${AGENT_CLASS}"
 echo "  - Version: ${AGENT_VERSION}"
+
+if ! validate_tier2_required_files; then
+    PHASE1_STATUS="FAIL"
+    echo -e "${RED}✗ Phase 1: FAILED - Required Tier 2 controls are incomplete${NC}"
+    echo "Agent bootstrap halted before memory scan and working-contract generation."
+    exit 1
+fi
+
 echo -e "${GREEN}✓ Phase 1: PASSED${NC}"
 echo ""
 
@@ -184,9 +357,23 @@ echo "  - Previous sessions found: ${MEMORY_COUNT}"
 
 if [ "$MEMORY_COUNT" -gt 0 ]; then
     echo "  - Recent sessions:"
-    find "$MEMORY_DIR" -name "session-*.md" -type f | sort -r | head -5 | while read -r session_file; do
+    RECENT_SESSIONS_FILE="$(mktemp "${TMPDIR:-/tmp}/wake-up-recent-sessions.XXXXXX")"
+    if ! find "$MEMORY_DIR" -name "session-*.md" -type f -print0 | sort -zr >"$RECENT_SESSIONS_FILE"; then
+        rm -f "$RECENT_SESSIONS_FILE"
+        echo -e "${RED}❌ Unable to enumerate recent session memories${NC}"
+        echo -e "${RED}✗ Phase 2: FAILED${NC}"
+        exit 1
+    fi
+
+    RECENT_SESSION_COUNT=0
+    while IFS= read -r -d '' session_file; do
         echo "    • $(basename "$session_file")"
-    done
+        RECENT_SESSION_COUNT=$((RECENT_SESSION_COUNT + 1))
+        if [ "$RECENT_SESSION_COUNT" -ge 5 ]; then
+            break
+        fi
+    done <"$RECENT_SESSIONS_FILE"
+    rm -f "$RECENT_SESSIONS_FILE"
 fi
 
 # Check escalation inbox
