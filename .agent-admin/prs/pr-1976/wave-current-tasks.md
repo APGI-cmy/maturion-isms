@@ -2,10 +2,20 @@
 
 PR: #1976
 WAVE: APW-PAID-CALL-QA-TO-RED-READINESS-V01
-STATUS: CS2_AUTHORISED — IAA_PREFLIGHT_PREPARATION
+STATUS: QA_TO_RED_COMMITTED — RED_AND_GREEN_EVIDENCE_PENDING
 CS2_AUTHORITY: Johan Ras
 CS2_DECISION: AUTHORISE_APW_PAID_CALL_QA_TO_RED_READINESS_WAVE
 DATE: 2026-07-27
+
+IAA_PREFLIGHT_BRIEF_REVIEWED: yes
+IAA_PREFLIGHT_BRIEF_PATH: .agent-admin/assurance/iaa-prebrief-apw-paid-call-qa-to-red-readiness-v01.md
+IAA_PREFLIGHT_BRIEF_COMMIT: 9a3d9c784875c7546cfccc3b3d6cb2808230ea8f
+FOREMAN_CONSUMED_PREFLIGHT_BEFORE_QA: yes
+BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
+BUILDER_APPOINTMENT_PATH: .agent-admin/builder-appointments/apw-paid-call-qa-to-red-readiness-v0.1.md
+BUILDER_APPOINTMENT_COMMIT: 26950a0a80326937f2070e2e5be41a5299964758
+RED_INVENTORY_COMMIT: 44a4e437b46da3679e1c65b431a725f60cf32daf
+FIRST_EXECUTABLE_RED_COMMIT: 3ebdb5439240942162e019ec871bf1d7ded6c906
 
 ## Authorised sequence
 
@@ -24,9 +34,9 @@ DATE: 2026-07-27
 - [x] Record explicit CS2 authorisation.
 - [x] Confirm production remains active in zero-cost mode.
 - [x] Confirm `MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false` remains mandatory.
-- [ ] Commit canonical IAA prebrief.
-- [ ] Appoint bounded QA builder.
-- [ ] Commit one-to-one RED inventory and executable tests.
+- [x] Commit canonical IAA prebrief.
+- [x] Appoint bounded QA builder.
+- [x] Commit one-to-one 16-case RED inventory and executable tests.
 - [ ] Capture intended RED output with zero harness failures.
 - [ ] Re-run existing GREEN regression suite.
 - [ ] Complete QP and ECAP.
