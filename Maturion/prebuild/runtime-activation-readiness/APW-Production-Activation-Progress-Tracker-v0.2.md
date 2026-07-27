@@ -1,37 +1,34 @@
 # APW Production Activation Progress Tracker v0.2
 
 **Artifact ID**: APW-PRODUCTION-ACTIVATION-TRACKER-002  
-**Status**: ACTIVE — PRODUCTION TARGET CONFIRMED, AWAITING EXPLICIT CS2 GO  
+**Status**: ZERO-COST PRODUCTION ACTIVATION VERIFIED — PAID CALLS DISABLED  
 **Authority**: CS2 — Johan Ras  
-**Updated**: 2026-07-26
+**Updated**: 2026-07-27
 
 ## Current state
 
 - PR #1951 merged: staging verification and rollback evidence ratified.
 - PR #1967 merged at `82246cd4110cda801e4b4a5b60da9dadfef19909`: AI cost containment and model restrictions ratified.
-- Exact production MAT AI gateway confirmed:
+- Production target confirmed as `maturion-isms` running `apps/mat-ai-gateway` from `main`.
+- Production deployment is `Live` and `/health` returns `{"status":"ok"}`.
+- CS2 approved:
 
 ```text
-Service: maturion-isms
-URL: https://maturion-isms.onrender.com
-Repository: APGI-cmy/maturion-isms
-Branch: main
-Root directory: apps/mat-ai-gateway
-Health: {"status":"ok"}
-Deployment: Live
+GO_CONTROLLED_APW_PRODUCTION_ACTIVATION_WITH_PAID_CALLS_DISABLED
 ```
 
-- Production safeguards confirmed and deployed:
+- Verified production state:
 
 ```text
-APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
+APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true
 MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
 MATURION_PUBLIC_CHAT_MODEL=gpt-4o-mini
 MATURION_PUBLIC_CHAT_MAX_OUTPUT_TOKENS=300
 MATURION_PUBLIC_CHAT_DAILY_CALL_LIMIT=25
 ```
 
-- Operator access to edit variables, redeploy, observe Live status, inspect logs and execute rollback is confirmed.
+- Public and restricted production smoke tests both returned static containment with `model=none` and zero tokens.
+- Production telemetry contained route-safe metadata only and no prompt or answer content, private data, credentials, tokens, secrets or environment values.
 
 ## Progress
 
@@ -42,35 +39,52 @@ MATURION_PUBLIC_CHAT_DAILY_CALL_LIMIT=25
 | 3 | COMPLETE | Staging verification and rollback proof merged in PR #1951 |
 | 4 | COMPLETE | Cost containment and low-cost model enforcement merged in PR #1967 |
 | 5 | COMPLETE | Production target identified as `maturion-isms` |
-| 6 | COMPLETE | Production health confirmed |
-| 7 | COMPLETE | Production containment variables installed with both switches false |
-| 8 | COMPLETE | Rollback, redeploy and log access confirmed |
-| 9 | READY | Explicit CS2 decision for zero-cost activation |
-| 10 | BLOCKED | Enable APW integration only and redeploy |
-| 11 | BLOCKED | Production zero-token smoke tests and telemetry inspection |
-| 12 | BLOCKED | Separate decision on bounded paid-call enablement |
+| 6 | COMPLETE | Production health and rollback access confirmed |
+| 7 | COMPLETE | Production safeguards installed |
+| 8 | COMPLETE | Explicit CS2 zero-cost activation decision recorded |
+| 9 | COMPLETE | APW integration enabled while paid calls remained disabled |
+| 10 | COMPLETE | Public route zero-token smoke test passed |
+| 11 | COMPLETE | Restricted route zero-token smoke test passed |
+| 12 | COMPLETE | Production route-safe telemetry and zero-token proof captured |
+| 13 | IN PROGRESS | Final review and merge of PR #1971 |
+| 14 | BLOCKED | Any bounded paid-call enablement decision |
 
-## Decision now required
+## Verified production outcome
+
+### Public APW route
 
 ```text
-GO_CONTROLLED_APW_PRODUCTION_ACTIVATION_WITH_PAID_CALLS_DISABLED
+route=apw_specialist_internal_draft_candidate
+response_mode=static_containment
+containment_reason=paid_calls_disabled
+model=none
+total_tokens=0
 ```
 
-This authorises only:
+### Restricted route
 
 ```text
-APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true
+route=maturion_only
+response_mode=static_containment
+containment_reason=restricted_request_static_response
+model=none
+total_tokens=0
+```
+
+## Current decision boundary
+
+The APW public integration is active in zero-cost mode.
+
+Paid model calls remain prohibited:
+
+```text
 MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
 ```
 
-It does not authorise any paid model call.
+A separate governed wave and explicit CS2 approval are required before that value may change.
 
-Alternative:
+## Next action
 
 ```text
-NO_GO_KEEP_APW_PRODUCTION_DISABLED
+REVIEW_AND_MERGE_PR_1971_THEN_KEEP_PAID_CALLS_DISABLED
 ```
-
-## Next action after GO
-
-Change only the APW integration flag to `true`, redeploy production, verify health, then run the two governed zero-token smoke tests and inspect safe telemetry.
