@@ -1,9 +1,11 @@
 # APW Production Activation Progress Tracker v0.2
 
 **Artifact ID**: APW-PRODUCTION-ACTIVATION-TRACKER-002  
-**Status**: ZERO-COST PRODUCTION ACTIVATION VERIFIED — PAID CALLS DISABLED  
+**Version**: 0.2.0  
+**Status**: APW ZERO-COST PRODUCTION ACTIVATION VERIFIED — PAID CALLS DISABLED  
 **Authority**: CS2 — Johan Ras  
-**Updated**: 2026-07-27
+**Repository**: `APGI-cmy/maturion-isms`  
+**Last Updated**: 2026-07-27
 
 ## Current state
 
