@@ -1,9 +1,11 @@
 # APW Production Target, Rollback and Activation Window Readiness v0.2
 
 **Artifact ID**: APW-PRODUCTION-TARGET-WINDOW-READINESS-002  
+**Version**: 0.2.0  
 **Status**: ZERO-COST APW PRODUCTION ACTIVATION VERIFIED  
 **Authority**: CS2 — Johan Ras  
-**Updated**: 2026-07-27
+**Repository**: `APGI-cmy/maturion-isms`  
+**Last Updated**: 2026-07-27
 
 ## 1. Current governed baseline
 
@@ -147,11 +149,26 @@ MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
 
 Then save, redeploy, confirm `Live`, confirm health, and prove route `apw_integration_disabled` if any stop condition occurs.
 
-## 9. Remaining boundary
+## 9. Stop conditions
+
+Immediate rollback is mandatory if any of the following occurs:
+
+- the production health endpoint degrades or stops returning `{"status":"ok"}`;
+- a public onboarding request does not return `apw_specialist_internal_draft_candidate` in static containment;
+- a private or restricted request does not return `maturion_only` in static containment;
+- `model` is anything other than `none` while paid calls remain disabled;
+- `prompt_tokens`, `completion_tokens` or `total_tokens` is non-zero;
+- telemetry contains prompt text, answer text, private data, credentials, tokens, secrets or environment values;
+- private, client, customer, account, record, credential, token, secret or internal-configuration information is exposed;
+- Maturion ceases to be the final visible public-response authority;
+- an unapproved data source or retrieval path is used;
+- CS2 directs rollback.
+
+## 10. Remaining boundary
 
 Changing `MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED` to `true` requires a separate governed wave, explicit CS2 approval, bounded budget, call ceiling, observation window and rollback plan.
 
-## 10. Final disposition
+## 11. Final disposition
 
 ```text
 ZERO_COST_APW_PRODUCTION_ACTIVATION_VERIFIED_PAID_CALLS_REMAIN_PROHIBITED
