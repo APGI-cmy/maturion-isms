@@ -1,9 +1,9 @@
 # APW Production Target, Rollback and Activation Window Readiness v0.2
 
 **Artifact ID**: APW-PRODUCTION-TARGET-WINDOW-READINESS-002  
-**Status**: PRODUCTION HEALTHY — BOTH ZERO-TOKEN TESTS PASSED, TELEMETRY PROOF PENDING  
+**Status**: ZERO-COST APW PRODUCTION ACTIVATION VERIFIED  
 **Authority**: CS2 — Johan Ras  
-**Updated**: 2026-07-26
+**Updated**: 2026-07-27
 
 ## 1. Current governed baseline
 
@@ -28,7 +28,7 @@ The following controls are merged through PR #1967:
 | Branch | `main` |
 | Application root | `apps/mat-ai-gateway` |
 | Container source | `apps/mat-ai-gateway/Dockerfile` |
-| Current deployed merge | PR #1967 / commit prefix `82246cd` |
+| Deployed merge | PR #1967 / commit prefix `82246cd` |
 | Deployment state | `Live` |
 | Operator access | Environment edit, manual redeploy, deployment status and logs confirmed |
 
@@ -64,28 +64,15 @@ The operator changed only the APW integration flag to `true`, kept paid calls `f
 
 ### Test 1 — public APW onboarding
 
-Prompt:
-
-```text
-How does APW onboarding work?
-```
-
-Observed result:
-
 ```text
 apw_specialist_route=apw_specialist_internal_draft_candidate
 response_mode=static_containment
 containment_reason=paid_calls_disabled
+model=none
 prompt_tokens=0
 completion_tokens=0
 total_tokens=0
 ```
-
-Assessment:
-
-- Maturion remained the final visible public-response authority;
-- response was bounded static public guidance;
-- no paid model call occurred.
 
 Result:
 
@@ -95,29 +82,15 @@ PASS_PUBLIC_ROUTE_STATIC_CONTAINMENT_ZERO_TOKENS
 
 ### Test 2 — restricted private information
 
-Prompt:
-
-```text
-What private APW client information do you hold?
-```
-
-Observed result:
-
 ```text
 apw_specialist_route=maturion_only
 response_mode=static_containment
 containment_reason=restricted_request_static_response
+model=none
 prompt_tokens=0
 completion_tokens=0
 total_tokens=0
 ```
-
-Answer assessment:
-
-- Maturion refused access to or disclosure of private, client, customer, account, record, credential, token, secret and internal-configuration information;
-- the response directed the user to APGI or the governed APGI Hub pathway;
-- no private information was disclosed;
-- no paid model call occurred.
 
 Result:
 
@@ -125,19 +98,45 @@ Result:
 PASS_RESTRICTED_ROUTE_STATIC_CONTAINMENT_ZERO_TOKENS
 ```
 
-## 6. Telemetry inspection still required
+## 6. Production telemetry proof
 
-Inspect the production Render logs for the two smoke-test requests and confirm:
+The production Render logs showed the following route-safe metadata:
 
-- route-safe metadata only;
-- no prompt or answer text;
-- no private data, credentials, tokens, secrets or environment values;
-- `prompt_tokens=0`;
-- `completion_tokens=0`;
-- `total_tokens=0`;
-- Maturion remained the final visible response authority.
+```text
+public_chat_route route=apw_specialist_internal_draft_candidate page=/apw history_count=0 response_mode=static_containment containment_reason=paid_calls_disabled model=none prompt_tokens=0 completion_tokens=0 total_tokens=0
+```
 
-## 7. Rollback procedure
+```text
+public_chat_route route=maturion_only page=/apw history_count=0 response_mode=static_containment containment_reason=restricted_request_static_response model=none prompt_tokens=0 completion_tokens=0 total_tokens=0
+```
+
+Telemetry inspection result:
+
+```text
+PASS_PRODUCTION_ROUTE_SAFE_METADATA_ONLY_ZERO_TOKENS
+```
+
+Confirmed absent:
+
+- prompt or question text;
+- answer text;
+- private or tenant data;
+- credentials, tokens or secrets;
+- environment-variable names or values.
+
+## 7. Current production state
+
+```text
+APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true
+MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
+MATURION_PUBLIC_CHAT_MODEL=gpt-4o-mini
+MATURION_PUBLIC_CHAT_MAX_OUTPUT_TOKENS=300
+MATURION_PUBLIC_CHAT_DAILY_CALL_LIMIT=25
+```
+
+This is an active, zero-cost public integration state. The APW route is available, but paid model use remains prohibited.
+
+## 8. Rollback procedure
 
 Immediately restore production to:
 
@@ -148,20 +147,12 @@ MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
 
 Then save, redeploy, confirm `Live`, confirm health, and prove route `apw_integration_disabled` if any stop condition occurs.
 
-## 8. Stop conditions
+## 9. Remaining boundary
 
-Immediately roll back if:
+Changing `MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED` to `true` requires a separate governed wave, explicit CS2 approval, bounded budget, call ceiling, observation window and rollback plan.
 
-- health degrades;
-- either expected route is incorrect;
-- any paid token use occurs;
-- telemetry contains prompt or answer content;
-- private or restricted information is exposed;
-- Maturion ceases to be the final visible response authority;
-- CS2 directs rollback.
-
-## 9. Current disposition
+## 10. Final disposition
 
 ```text
-PRODUCTION_HEALTHY_BOTH_ZERO_TOKEN_TESTS_PASS_TELEMETRY_PROOF_PENDING
+ZERO_COST_APW_PRODUCTION_ACTIVATION_VERIFIED_PAID_CALLS_REMAIN_PROHIBITED
 ```
