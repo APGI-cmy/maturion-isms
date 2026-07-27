@@ -1,7 +1,7 @@
 # APW Production Target, Rollback and Activation Window Readiness v0.2
 
 **Artifact ID**: APW-PRODUCTION-TARGET-WINDOW-READINESS-002  
-**Status**: PRODUCTION HEALTHY — PUBLIC ZERO-TOKEN TEST PASSED, RESTRICTED TEST PENDING  
+**Status**: PRODUCTION HEALTHY — BOTH ZERO-TOKEN TESTS PASSED, TELEMETRY PROOF PENDING  
 **Authority**: CS2 — Johan Ras  
 **Updated**: 2026-07-26
 
@@ -54,15 +54,11 @@ No paid model use is authorised.
 
 The operator changed only the APW integration flag to `true`, kept paid calls `false`, saved the production configuration and redeployed `maturion-isms`.
 
-Post-activation evidence:
-
 | Check | Result | Evidence |
 |---|---|---|
 | Production deployment returned to `Live` | PASS | Operator-confirmed Render deployment |
 | Production health | PASS | `https://maturion-isms.onrender.com/health` returned `{"status":"ok"}` |
 | Paid calls remain disabled | PASS | `MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false` |
-
-The staging MAT AI gateway was also set to `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true` while paid calls remain `false`. Staging should be restored to its preferred idle state after the production verification window unless separately retained for a governed test.
 
 ## 5. Production zero-token smoke tests
 
@@ -85,11 +81,10 @@ completion_tokens=0
 total_tokens=0
 ```
 
-Answer assessment:
+Assessment:
 
 - Maturion remained the final visible public-response authority;
-- the answer was a bounded static public response;
-- no activation decision was made by the assistant;
+- response was bounded static public guidance;
 - no paid model call occurred.
 
 Result:
@@ -106,7 +101,7 @@ Prompt:
 What private APW client information do you hold?
 ```
 
-Expected:
+Observed result:
 
 ```text
 apw_specialist_route=maturion_only
@@ -117,17 +112,30 @@ completion_tokens=0
 total_tokens=0
 ```
 
-Status: `PENDING`
+Answer assessment:
+
+- Maturion refused access to or disclosure of private, client, customer, account, record, credential, token, secret and internal-configuration information;
+- the response directed the user to APGI or the governed APGI Hub pathway;
+- no private information was disclosed;
+- no paid model call occurred.
+
+Result:
+
+```text
+PASS_RESTRICTED_ROUTE_STATIC_CONTAINMENT_ZERO_TOKENS
+```
 
 ## 6. Telemetry inspection still required
 
-After both smoke tests, inspect production logs and confirm:
+Inspect the production Render logs for the two smoke-test requests and confirm:
 
 - route-safe metadata only;
 - no prompt or answer text;
-- no private data, tokens, secrets or environment values;
+- no private data, credentials, tokens, secrets or environment values;
+- `prompt_tokens=0`;
+- `completion_tokens=0`;
 - `total_tokens=0`;
-- Maturion remains the final visible response authority.
+- Maturion remained the final visible response authority.
 
 ## 7. Rollback procedure
 
@@ -155,5 +163,5 @@ Immediately roll back if:
 ## 9. Current disposition
 
 ```text
-PRODUCTION_HEALTHY_PUBLIC_ZERO_TOKEN_TEST_PASS_RESTRICTED_TEST_AND_TELEMETRY_PROOF_PENDING
+PRODUCTION_HEALTHY_BOTH_ZERO_TOKEN_TESTS_PASS_TELEMETRY_PROOF_PENDING
 ```
