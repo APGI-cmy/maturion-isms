@@ -1,0 +1,30 @@
+{
+  "pr": 1973,
+  "issue": 1959,
+  "type": "security-change",
+  "owner": "foreman-v2-agent",
+  "scope": [
+    ".admin/prs/pr-1973.json",
+    ".agent-admin/prs/pr-1973/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/issue-1959.md",
+    ".agent-admin/scope-declarations/pr-1973.md"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "PR-scoped task set committed before the canonical IAA pre-brief",
+    "Canonical IAA pre-brief committed before schema-builder appointment",
+    "Schema-builder appointment committed before any migration or test implementation",
+    "Exactly seven named RLS policies align to app_private.mmm_current_user_org_id()",
+    "Same-organisation authenticated paths succeed without 42501 while cross-organisation and anonymous paths remain denied",
+    "Legacy public helper EXECUTE grants remain revoked for anon and authenticated",
+    "Frozen-head QP, ECAP, CI and independent IAA evidence precede CS2 merge",
+    "Governed post-merge deployment and read-only live verification precede Issue #1959 closure"
+  ],
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "schema-builder",
+  "implementation_status": "NOT_APPOINTED"
+}
