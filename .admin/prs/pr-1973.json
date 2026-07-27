@@ -5,6 +5,7 @@
   "owner": "foreman-v2-agent",
   "scope": [
     ".admin/prs/pr-1973.json",
+    ".agent-admin/assurance/iaa-wave-record-mmm-private-helper-policy-alignment-1959-20260727.md",
     ".agent-admin/prs/pr-1973/wave-current-tasks.md",
     ".agent-admin/scope-declarations/issue-1959.md",
     ".agent-admin/scope-declarations/pr-1973.md"
