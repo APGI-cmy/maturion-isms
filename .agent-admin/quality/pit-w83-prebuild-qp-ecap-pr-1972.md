@@ -166,3 +166,111 @@ harness errors, validates 0 passes, and uploads the raw RED log as an artifact.
 ### Recommendation
 
 `QA-TO-RED INVENTORY COMPLETE — 36/36 IDs EXECUTABLE AND RED — REGRESSION GREEN — SUBMIT FROZEN HEAD TO IAA`
+
+---
+
+## Harness Correction Addendum — Foreman QP-W83-001
+
+### Authority
+
+- Foreman QP finding: `QP-W83-001` (`.agent-admin/quality/pr-1975-foreman-qp.md`)
+- Correction instruction: PR #1975 comment from @APGI-cmy (2026-07-27)
+- QA builder continues under Issue #1974 appointment (`e18eb8c`)
+
+### Correction scope
+
+The Foreman QP-W83-001 finding required:
+
+1. Supabase integration harness for RPC/RLS/transaction/rollback/stale-version/audit/tenant-isolation paths
+2. Browser/component harness for route states, wizards, invitation/approval surfaces, role-denied controls
+3. Reconciliation of all 36 IDs to their actual harness (Tier 3a/3b)
+4. Retention of static supplemental sentinels (Tier 2)
+
+### New files delivered
+
+- `modules/pit/06-qa-to-red/executable/pit-w83-supabase.red.test.mjs` — 27 Supabase integration tests
+- `modules/pit/06-qa-to-red/executable/pit-w83-browser.red.test.mjs` — 11 browser/component tests
+
+### Updated files
+
+- `modules/pit/06-qa-to-red/w83-executable-inventory-map.md` — reconciled 36 IDs to Tier 3a/3b harnesses
+- `.github/workflows/pit-w83-prebuild-evidence.yml` — added `qa-to-red-supabase` and `qa-to-red-browser` jobs
+- `.agent-admin/quality/pit-w83-prebuild-qp-ecap-pr-1972.md` — this addendum
+
+### RED evidence — Supabase integration harness
+
+Command: `node --test modules/pit/06-qa-to-red/executable/pit-w83-supabase.red.test.mjs`
+
+```text
+Tests: 27
+Pass:  0
+Fail:  27
+Harness errors: 0
+```
+
+Failure type: `assert.equal(result.error, null, ...)` — mock returns PG 42883 (RPC absent)
+or PG 42P01 (table absent). Each failure message names the specific W8.3 RPC/table/service.
+
+### RED evidence — Browser/component harness
+
+Command: `node --test modules/pit/06-qa-to-red/executable/pit-w83-browser.red.test.mjs`
+
+```text
+Tests: 11
+Pass:  0
+Fail:  11
+Harness errors: 0
+```
+
+Failure type: `assert.ok(existsSync(path), ...)` — component file absent.
+Each failure message names the specific W8.3 component and its expected rendered behaviour.
+
+### RED evidence — static contract (preserved, unchanged)
+
+Command: `node --test modules/pit/06-qa-to-red/executable/pit-w83-red-contract.test.mjs`
+
+```text
+Tests: 36
+Pass:  0
+Fail:  36
+Harness errors: 0
+```
+
+### RED evidence — sentinel (preserved, unchanged)
+
+Command: `node --test modules/pit/06-qa-to-red/executable/pit-w83-prebuild.red.test.mjs`
+
+```text
+Tests: 8
+Pass:  0
+Fail:  8
+Harness errors: 0
+```
+
+### GREEN regression (verified)
+
+Command: `pnpm --filter isms-portal test:run`
+
+```text
+Test Files: 15 passed (15)
+Tests:      127 passed (127)
+```
+
+No regression introduced by harness corrections.
+
+### Corrected ECAP checks
+
+| Check | Result |
+|---|---|
+| 36-case static supplemental inventory preserved | PASS |
+| Supabase integration harness (27 tests, 0 passes, 0 harness errors) | PASS |
+| Browser/component harness (11 tests, 0 passes, 0 harness errors) | PASS |
+| All 36 IDs reconciled to Tier 3a or Tier 3b primary harness | PASS |
+| Static supplemental sentinels retained per QP | PASS |
+| CI workflow covers sentinel, contract, Supabase, and browser jobs | PASS |
+| Existing 127-test regression GREEN | PASS |
+| Implementation builder appointment withheld | PASS |
+
+### Recommendation
+
+`HARNESS CORRECTION COMPLETE — SUPABASE + BROWSER HARNESSES ADDED — ALL 36 IDs RECONCILED — REGRESSION GREEN — SUBMIT CORRECTED FROZEN HEAD TO IAA`

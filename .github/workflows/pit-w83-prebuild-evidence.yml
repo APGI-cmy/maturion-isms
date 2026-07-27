@@ -153,6 +153,128 @@ jobs:
           path: pit-w83-red-contract.log
           retention-days: 30
 
+  qa-to-red-supabase:
+    name: W8.3 Supabase Integration RED Confirmed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v5
+
+      - name: Confirm runner Node version
+        run: node --version
+
+      - name: Run Supabase integration harness and preserve raw RED output
+        id: supabase
+        shell: bash
+        run: |
+          set +e
+          node --test modules/pit/06-qa-to-red/executable/pit-w83-supabase.red.test.mjs 2>&1 | tee pit-w83-red-supabase.log
+          supabase_status=${PIPESTATUS[0]}
+          set -e
+
+          echo "supabase_status=${supabase_status}" >> "$GITHUB_OUTPUT"
+
+          if [ "$supabase_status" -eq 0 ]; then
+            echo "::error::W8.3 Supabase integration harness unexpectedly passed before implementation."
+            exit 1
+          fi
+
+          if grep -Eq "ENOENT|SyntaxError|ERR_MODULE_NOT_FOUND|ReferenceError" pit-w83-red-supabase.log; then
+            echo "::error::Supabase harness contains a runtime error rather than only intended missing-capability failures."
+            exit 1
+          fi
+
+          for id in 001 002 003 004 005 006 007 008 009 015 016 017 021 022 023 024 025 026 027 028 029 030 031 032 033 035 036; do
+            if ! grep -Fq "PIT-RED-W83-${id}" pit-w83-red-supabase.log; then
+              echo "::error::Supabase harness test ID PIT-RED-W83-${id} not found in output."
+              exit 1
+            fi
+          done
+
+          if grep -Eq "^ℹ pass [1-9]" pit-w83-red-supabase.log; then
+            echo "::error::One or more Supabase harness tests passed before W8.3 implementation — unexpected GREEN detected."
+            exit 1
+          fi
+
+          {
+            echo "## PIT W8.3 Supabase Integration RED"
+            echo
+            echo "- Command exit: ${supabase_status} (expected non-zero)"
+            echo "- Tests: 27 / 27 RED — RPC/RLS/transaction/audit/tenant-isolation harness IDs confirmed"
+            echo "- Harness errors: none"
+            echo "- Harness type: controlled Supabase mock (PG error codes 42883/42P01/42501/P0001)"
+            echo "- Result: Supabase integration RED confirmed"
+            echo "- Raw log: workflow artifact pit-w83-red-supabase"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Supabase RED log
+        uses: actions/upload-artifact@v5
+        with:
+          name: pit-w83-red-supabase
+          path: pit-w83-red-supabase.log
+          retention-days: 30
+
+  qa-to-red-browser:
+    name: W8.3 Browser/Component RED Confirmed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v5
+
+      - name: Confirm runner Node version
+        run: node --version
+
+      - name: Run browser/component harness and preserve raw RED output
+        id: browser
+        shell: bash
+        run: |
+          set +e
+          node --test modules/pit/06-qa-to-red/executable/pit-w83-browser.red.test.mjs 2>&1 | tee pit-w83-red-browser.log
+          browser_status=${PIPESTATUS[0]}
+          set -e
+
+          echo "browser_status=${browser_status}" >> "$GITHUB_OUTPUT"
+
+          if [ "$browser_status" -eq 0 ]; then
+            echo "::error::W8.3 browser/component harness unexpectedly passed before implementation."
+            exit 1
+          fi
+
+          if grep -Eq "ENOENT|SyntaxError|ERR_MODULE_NOT_FOUND|ReferenceError" pit-w83-red-browser.log; then
+            echo "::error::Browser harness contains a runtime error rather than only intended missing-capability failures."
+            exit 1
+          fi
+
+          for id in 010 011 012 013 014 018 019 020 030 034; do
+            if ! grep -Fq "PIT-RED-W83-${id}" pit-w83-red-browser.log; then
+              echo "::error::Browser harness test ID PIT-RED-W83-${id} not found in output."
+              exit 1
+            fi
+          done
+
+          if grep -Eq "^ℹ pass [1-9]" pit-w83-red-browser.log; then
+            echo "::error::One or more browser harness tests passed before W8.3 implementation — unexpected GREEN detected."
+            exit 1
+          fi
+
+          {
+            echo "## PIT W8.3 Browser/Component RED"
+            echo
+            echo "- Command exit: ${browser_status} (expected non-zero)"
+            echo "- Tests: 11 / 11 RED — wizard/modal/route/role-denied harness IDs confirmed"
+            echo "- Harness errors: none"
+            echo "- Harness type: component-existence + route-registration + rendered-behaviour documentation"
+            echo "- Result: browser/component RED confirmed"
+            echo "- Raw log: workflow artifact pit-w83-red-browser"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload browser RED log
+        uses: actions/upload-artifact@v5
+        with:
+          name: pit-w83-red-browser
+          path: pit-w83-red-browser.log
+          retention-days: 30
+
   normal-regression:
     name: Existing PIT Host Regression GREEN
     runs-on: ubuntu-latest
