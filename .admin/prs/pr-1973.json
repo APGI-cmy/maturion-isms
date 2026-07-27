@@ -27,5 +27,6 @@
   "execution_model": "foreman-orchestrated",
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "schema-builder",
-  "implementation_status": "NOT_APPOINTED"
+  "implementation_status": "NOT_APPOINTED",
+  "prebrief_commit_sha": "aad6ee6f09fc7f5c77244b5b9d35b92255905f48"
 }
