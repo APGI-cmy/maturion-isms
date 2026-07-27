@@ -8,7 +8,7 @@
 **Base SHA:** `f6454c00719181cca7f31aff0e0909a63772750d`  
 **Supabase target:** `ujucvyyspfxlxlfdamda`  
 **CS2:** Johan Ras  
-**Status:** TASK SET COMMITTED / IAA PRE-BRIEF COMPLETE at `aad6ee6f…` WITH TIMING CORRECTION `70cef205…` / SCHEMA BUILDER APPOINTED at `4b0f36bd…` / IMPLEMENTATION NOT STARTED
+**Status:** TASK SET COMMITTED / IAA PRE-BRIEF COMPLETE at `aad6ee6f…` WITH TIMING CORRECTION `70cef205…` / SCHEMA BUILDER APPOINTED at `4b0f36bd…` / PREFLIGHT BLOCKED BY CANON PROVENANCE / IMPLEMENTATION NOT STARTED
 
 ## Frozen-contract preflight
 
@@ -18,6 +18,10 @@
 - The automated PR comment copied the stale PR #1893 descriptor-hardening task list. It is explicitly non-authoritative for this wave and is superseded by this PR-scoped file.
 - Independent IAA reviewed this task set at `f394cc44…` and committed the canonical pre-brief at `aad6ee6f…` using the live protocol/schema.
 - No migration, test implementation or database mutation exists or is authorized yet.
+- The appointed schema-builder wake-up was run at PR head `d4f7753c…` and
+  halted because all 203 CANON inventory entries lack canonical commit-SHA
+  provenance. The blocker and mandatory sequencing disclosure are recorded in
+  the schema-builder workspace. Supabase CLI migration generation did not run.
 
 ## Qualifying task set
 
@@ -27,9 +31,9 @@
 | RLS-1959-02 | Create PR-scoped manifest, scope and active task carriers | GOVERNANCE_EVIDENCE | COMPLETE |
 | RLS-1959-03 | Independent IAA classifies the wave and writes the canonical pre-brief into the declared wave record | SECURITY_ASSURANCE / GOVERNANCE_EVIDENCE | COMPLETE — pre-brief `aad6ee6f…`; timing correction `70cef205…` |
 | RLS-1959-04 | Foreman records a bounded schema-builder appointment before implementation; the schema-valid PR-scoped machine proof follows the first implementation commit | DELEGATION / GOVERNANCE_EVIDENCE | APPOINTMENT COMPLETE `4b0f36bd…`; machine proof pending first implementation SHA |
-| RLS-1959-05 | Schema builder authors one idempotent migration that recreates only the seven named policies with `app_private.mmm_current_user_org_id()` | DATABASE_SCHEMA / RLS_SECURITY | READY — NOT STARTED |
-| RLS-1959-06 | Schema builder implements structural tests for seven private-helper references and unchanged hardened helper grants | DATABASE_QA / SECURITY_QA | READY — NOT STARTED |
-| RLS-1959-07 | Schema builder implements authenticated same-org, cross-org and anonymous criteria/descriptor/storage path tests without `service_role` masking | RLS_SECURITY / TENANT_ISOLATION | READY — NOT STARTED |
+| RLS-1959-05 | Schema builder authors one idempotent migration that recreates only the seven named policies with `app_private.mmm_current_user_org_id()` | DATABASE_SCHEMA / RLS_SECURITY | BLOCKED — canonical builder wake-up failed before CLI generation |
+| RLS-1959-06 | Schema builder implements structural tests for seven private-helper references and unchanged hardened helper grants | DATABASE_QA / SECURITY_QA | BLOCKED — canonical builder wake-up failed |
+| RLS-1959-07 | Schema builder implements authenticated same-org, cross-org and anonymous criteria/descriptor/storage path tests without `service_role` masking | RLS_SECURITY / TENANT_ISOLATION | BLOCKED — canonical builder wake-up failed |
 | RLS-1959-08 | Run focused and regression suites; Foreman QP; ECAP; freeze current head; obtain independent final IAA | QUALITY / ADMINISTRATION / INDEPENDENT_ASSURANCE | BLOCKED BY RLS-1959-05..07 |
 | RLS-1959-09 | CS2 review and merge, governed migration deployment, read-only live verification, Issue #1959 closure | MERGE / DEPLOYMENT_ASSURANCE | BLOCKED BY RLS-1959-08 |
 | RLS-1959-10 | Reconcile the MMM tracker for PRs #1958/#1962 and prepare the separate #1961 build-to-GREEN lane | SUCCESSOR_CONTROL | BLOCKED BY RLS-1959-09; OUTSIDE PR #1973 IMPLEMENTATION |
