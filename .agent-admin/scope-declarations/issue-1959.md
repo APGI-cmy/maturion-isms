@@ -32,7 +32,7 @@ This first commit creates only the bounded issue scope needed to open a draft PR
 - `.admin/prs/pr-<PR_NUMBER>.json` — PR-scoped manifest.
 - `.agent-admin/scope-declarations/pr-<PR_NUMBER>.md` — exact PR scope.
 - `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` — active task and acceptance register.
-- `.agent-admin/assurance/iaa-wave-record-mmm-private-helper-policy-alignment-1959-20260726.md` — canonical pre-brief and final assurance carrier.
+- `.agent-admin/assurance/iaa-wave-record-mmm-private-helper-policy-alignment-1959-20260727.md` — canonical pre-brief and final assurance carrier.
 - `.agent-admin/builder-appointments/issue-1959-schema-builder.md` and `.agent-admin/control/delegation-orders/pr-<PR_NUMBER>.json` — ordered bounded appointment evidence.
 - One new Supabase migration generated through the repository/Supabase CLI convention after appointment; it may alter only the seven named policies and preserve existing helper grants.
 - Focused executable schema/security tests proving private-helper references, same-org success, cross-org denial, anonymous denial, and no public-helper grant.
