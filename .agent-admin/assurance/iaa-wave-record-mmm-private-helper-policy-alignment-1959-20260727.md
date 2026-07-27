@@ -137,3 +137,36 @@ IAA_PREFLIGHT_BRIEF:
     - "Confirm no direct database mutation, premature deployment, self-assurance or unauthorized successor-work implementation occurred."
     - "Preserve CS2-only merge authority and require governed post-merge deployment and read-only live verification before Issue #1959 closure."
   result: PREFLIGHT_BRIEF_COMPLETE
+
+
+### IAA PRE-BRIEF CORRECTION ADDENDUM — Delegation-order artifact timing
+
+**Scope of correction:** Sequencing of the PR-scoped machine delegation-order artifact only.  
+**Authority checked:** `.agent-admin/control/schemas/delegation-order.schema.json` and `.agent-admin/control/overlays/WAVE3_DELEGATION_ORDER_GATE.md`.
+
+The earlier wording requiring both the bounded appointment and the finalized PR-scoped delegation-order JSON before implementation is superseded only to the following extent:
+
+1. The canonical IAA pre-brief must be committed first.
+2. The bounded schema-builder appointment must be recorded in its own later commit.
+3. The first migration or test implementation must occur in a distinct commit strictly after the appointment commit.
+4. Only after that first implementation commit exists may `.agent-admin/control/delegation-orders/pr-1973.json` be finalized and committed.
+5. The machine delegation-order artifact must record:
+   - the exact 40-hex pre-brief commit SHA;
+   - the exact 40-hex builder-appointment commit SHA;
+   - the exact 40-hex first implementation commit SHA detected from the implementation-like changed files;
+   - the remaining schema-required fields.
+6. The machine proof must demonstrate:
+   - `prebrief_commit_sha` is a strict ancestor of `builder_appointment_commit_sha`;
+   - `builder_appointment_commit_sha` is a strict ancestor of `first_implementation_commit_sha`;
+   - all three SHAs are distinct;
+   - `first_implementation_commit_sha` equals the gate-detected first implementation commit;
+   - `first_implementation_commit_sha` is an ancestor of the current PR head.
+7. The finalized machine delegation-order proof must be committed after the first implementation commit and before Foreman QP or handover.
+8. Same-commit pre-brief/appointment, appointment/implementation, placeholder SHAs, synthetic SHAs, and retrospective appointment evidence remain prohibited.
+
+For RLS-1959-04, “appointment and delegation” must therefore be interpreted as two ordered controls:
+
+- the human-readable bounded appointment/delegation instruction is committed before implementation; and
+- the schema-valid machine delegation-order proof is committed after the first implementation commit becomes identifiable.
+
+No other qualifying-task classification, build gate, QA obligation, evidence requirement, ECAP requirement or final-IAA focus is changed by this addendum.
