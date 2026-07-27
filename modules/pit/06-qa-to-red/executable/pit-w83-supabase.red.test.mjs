@@ -159,15 +159,15 @@ function createPreW83Client(actor = { userId: null, orgId: null, role: 'unauthen
 
 // ─── Actor personas ──────────────────────────────────────────────────────────
 
-const UNAUTHENTICATED = { userId: null, orgId: null, role: 'unauthenticated' };
-const VIEWER           = { userId: '00000000-0000-4000-8001-000000000001', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'viewer' };
-const CONTRIBUTOR      = { userId: '00000000-0000-4000-8001-000000000002', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'contributor' };
-const MILESTONE_OWNER  = { userId: '00000000-0000-4000-8001-000000000003', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
-const DELIVERABLE_OWNER= { userId: '00000000-0000-4000-8001-000000000004', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
-const TASK_OWNER       = { userId: '00000000-0000-4000-8001-000000000005', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'contributor' };
-const PROJECT_LEADER   = { userId: '00000000-0000-4000-8001-000000000010', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'project_manager' };
-const CROSS_TENANT     = { userId: '00000000-0000-4000-8002-000000000001', orgId: '00000000-0000-4000-8000-bbb000000002', role: 'project_manager' };
-const SIBLING_OWNER    = { userId: '00000000-0000-4000-8001-000000000006', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
+const UNAUTHENTICATED    = { userId: null, orgId: null, role: 'unauthenticated' };
+const VIEWER             = { userId: '00000000-0000-4000-8001-000000000001', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'viewer' };
+const CONTRIBUTOR        = { userId: '00000000-0000-4000-8001-000000000002', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'contributor' };
+const MILESTONE_OWNER    = { userId: '00000000-0000-4000-8001-000000000003', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
+const DELIVERABLE_OWNER  = { userId: '00000000-0000-4000-8001-000000000004', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
+const TASK_OWNER         = { userId: '00000000-0000-4000-8001-000000000005', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'contributor' };
+const PROJECT_LEADER     = { userId: '00000000-0000-4000-8001-000000000010', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'project_manager' };
+const CROSS_TENANT       = { userId: '00000000-0000-4000-8002-000000000001', orgId: '00000000-0000-4000-8000-bbb000000002', role: 'project_manager' };
+const SIBLING_OWNER      = { userId: '00000000-0000-4000-8001-000000000006', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
 
 // ─── Common RPC arguments ───────────────────────────────────────────────────
 
@@ -179,6 +179,9 @@ const TASK_ARGS = {
   p_start_date: '2026-08-01',
   p_end_date: '2026-09-30',
 };
+
+// Task ID used for update/mutation tests (distinct from the deliverable ID in TASK_ARGS)
+const TASK_ID = '00000000-0000-4000-8040-000000000001';
 
 const DELIVERABLE_ARGS = {
   p_org_id: '00000000-0000-4000-8000-aaa000000001',
@@ -326,7 +329,7 @@ test('PIT-RED-W83-008 [supabase] pitDeliverableRepository denies deliverable own
 test('PIT-RED-W83-009 [supabase] pitTaskRepository denies task owner changing parent structure', async () => {
   const client = createPreW83Client(TASK_OWNER);
   const result = await client.rpc('pit_update_task', {
-    p_task_id: TASK_ARGS.p_deliverable_id,
+    p_task_id: TASK_ID,
     p_actor_id: TASK_OWNER.userId,
     p_patch: { deliverable_id: '00000000-0000-4000-8030-000000000099' }, // parent change
   });
@@ -374,7 +377,7 @@ test('PIT-RED-W83-016 [supabase] pitDateExceptionService requires confirmation f
 
 test('PIT-RED-W83-017 [supabase] pit_date_exceptions table stores confirmed date-range exceptions', async () => {
   const client = createPreW83Client(DELIVERABLE_OWNER);
-  const result = await client.from('pit_date_exceptions').select('*').eq('deliverable_id', DELIVERABLE_ARGS.p_deliverable_id ?? 'none');
+  const result = await client.from('pit_date_exceptions').select('*').eq('deliverable_id', DELIVERABLE_ARGS.p_deliverable_id ?? '00000000-0000-4000-8030-000000000001');
   assert.equal(
     result.error,
     null,
