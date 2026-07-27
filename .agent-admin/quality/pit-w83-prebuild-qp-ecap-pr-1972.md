@@ -86,3 +86,83 @@ ECAP confirms only administrative completeness and does not substitute for indep
 ## Current recommendation
 
 `PRE-BUILD ALIGNMENT SUBSTANTIVELY COMPLETE — QA CONTRACT COMPLETE — EXECUTABLE RED RUN AND FINAL IAA PENDING — IMPLEMENTATION BUILDER APPOINTMENT NO-GO`
+
+---
+
+## QA Builder Completion Addendum — Issue #1974
+
+**QA builder**: `qa-builder` (appointed `e18eb8c`, Issue #1974)
+**Addendum date**: 2026-07-27
+**Branch head at addendum**: see commit pushed to `copilot/pit-w83-complete-executable-qa-to-red-inventory`
+
+### Executable inventory completion
+
+The QA builder has converted all 36 `PIT-RED-W83-001..036` contract IDs to executable RED tests.
+
+| File | Tests | Status |
+|---|---|---|
+| `modules/pit/06-qa-to-red/executable/pit-w83-prebuild.red.test.mjs` | 8 sentinels | All RED — no harness errors |
+| `modules/pit/06-qa-to-red/executable/pit-w83-red-contract.test.mjs` | 36 contract tests | All RED — no harness errors |
+| `modules/pit/06-qa-to-red/executable/pit-w83-fixtures.mjs` | Fixtures | Actor identities, org/project stubs, MMM source, proposals |
+
+### RED evidence — contract file
+
+Command: `node --test modules/pit/06-qa-to-red/executable/pit-w83-red-contract.test.mjs`
+
+```text
+Tests: 36
+Pass:  0
+Fail:  36
+```
+
+Every failure names the unmet W8.3 capability.  No ENOENT, SyntaxError,
+ERR_MODULE_NOT_FOUND or ReferenceError in output.
+
+### RED evidence — sentinel file (preserved)
+
+Command: `node --test modules/pit/06-qa-to-red/executable/pit-w83-prebuild.red.test.mjs`
+
+```text
+Tests: 8
+Pass:  0
+Fail:  8
+```
+
+### GREEN regression evidence
+
+Command: `pnpm --filter isms-portal test:run`
+
+```text
+Test Files: 15 passed (15)
+Tests:      127 passed (127)
+```
+
+No regression introduced.
+
+### Inventory map
+
+`modules/pit/06-qa-to-red/w83-executable-inventory-map.md` — one-to-one mapping of
+all 36 contract IDs to executable tests with failing reason for each.
+
+### CI workflow updated
+
+`.github/workflows/pit-w83-prebuild-evidence.yml` — added `qa-to-red-contract` job
+that runs the 36-case file, verifies all 36 IDs are present, checks for zero
+harness errors, validates 0 passes, and uploads the raw RED log as an artifact.
+
+### Updated ECAP checks
+
+| Check | Result |
+|---|---|
+| 36-case executable inventory present | PASS |
+| All 36 tests RED for intended missing capability | PASS |
+| Zero harness/fixture/syntax failures | PASS |
+| Existing 127-test regression GREEN | PASS |
+| Inventory map document with one-to-one ID mapping | PASS |
+| QP/ECAP updated with exact commands and results | PASS |
+| CI workflow covers both sentinel and contract files | PASS |
+| Implementation builder appointment withheld | PASS |
+
+### Recommendation
+
+`QA-TO-RED INVENTORY COMPLETE — 36/36 IDs EXECUTABLE AND RED — REGRESSION GREEN — SUBMIT FROZEN HEAD TO IAA`

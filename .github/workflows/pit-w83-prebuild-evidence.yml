@@ -86,6 +86,73 @@ jobs:
           path: pit-w83-red-sentinel.log
           retention-days: 30
 
+  qa-to-red-contract:
+    name: W8.3 Contract RED Confirmed (001–036)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v5
+
+      - name: Confirm runner Node version
+        run: node --version
+
+      - name: Run 36-case contract inventory and preserve raw RED output
+        id: contract
+        shell: bash
+        run: |
+          set +e
+          node --test modules/pit/06-qa-to-red/executable/pit-w83-red-contract.test.mjs 2>&1 | tee pit-w83-red-contract.log
+          contract_status=${PIPESTATUS[0]}
+          set -e
+
+          echo "contract_status=${contract_status}" >> "$GITHUB_OUTPUT"
+
+          if [ "$contract_status" -eq 0 ]; then
+            echo "::error::W8.3 contract inventory unexpectedly passed before implementation."
+            exit 1
+          fi
+
+          # Count tests and failures
+          test_count=$(grep -c "^✖" pit-w83-red-contract.log || true)
+          total_line=$(grep "^ℹ tests" pit-w83-red-contract.log || true)
+
+          # Verify no harness errors
+          if grep -Eq "ENOENT|SyntaxError|ERR_MODULE_NOT_FOUND|ReferenceError" pit-w83-red-contract.log; then
+            echo "::error::Contract test contains a harness/runtime error rather than only intended missing-capability failures."
+            exit 1
+          fi
+
+          # Verify all 36 IDs are present
+          for i in $(seq -f "%03g" 1 36); do
+            if ! grep -Fq "PIT-RED-W83-${i}" pit-w83-red-contract.log; then
+              echo "::error::Contract test ID PIT-RED-W83-${i} not found in output."
+              exit 1
+            fi
+          done
+
+          # Verify all 36 fail (pass count must be 0)
+          if grep -Eq "^ℹ pass [1-9]" pit-w83-red-contract.log; then
+            echo "::error::One or more contract tests passed before W8.3 implementation — unexpected GREEN detected."
+            exit 1
+          fi
+
+          {
+            echo "## PIT W8.3 Contract RED (001–036)"
+            echo
+            echo "- Command exit: ${contract_status} (expected non-zero)"
+            echo "- Tests: 36 / 36 RED — all 36 IDs present"
+            echo "- Harness errors: none"
+            echo "- Result: full contract inventory RED confirmed"
+            echo "- Raw log: workflow artifact pit-w83-red-contract"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload contract RED log
+        uses: actions/upload-artifact@v5
+        with:
+          name: pit-w83-red-contract
+          path: pit-w83-red-contract.log
+          retention-days: 30
+
   normal-regression:
     name: Existing PIT Host Regression GREEN
     runs-on: ubuntu-latest
