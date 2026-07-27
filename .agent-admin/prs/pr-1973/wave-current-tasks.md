@@ -8,7 +8,7 @@
 **Base SHA:** `f6454c00719181cca7f31aff0e0909a63772750d`  
 **Supabase target:** `ujucvyyspfxlxlfdamda`  
 **CS2:** Johan Ras  
-**Status:** TASK SET COMMITTED / IAA PRE-BRIEF PENDING / SCHEMA BUILDER NOT APPOINTED / IMPLEMENTATION BLOCKED
+**Status:** TASK SET COMMITTED / IAA PRE-BRIEF COMPLETE at `aad6ee6f…` / SCHEMA BUILDER NOT APPOINTED / IMPLEMENTATION BLOCKED
 
 ## Frozen-contract preflight
 
@@ -16,7 +16,7 @@
 - PR head before this task set was `2275f5b7ef4605a040ec091ce49f62b1156223bc`, containing only the Issue #1959 scope carrier.
 - Issue #1959 and PR #1973 agree on the same seven deployed policy targets and preserve the private-helper model.
 - The automated PR comment copied the stale PR #1893 descriptor-hardening task list. It is explicitly non-authoritative for this wave and is superseded by this PR-scoped file.
-- The canonical IAA pre-brief must use this task set and the live protocol/schema.
+- Independent IAA reviewed this task set at `f394cc44…` and committed the canonical pre-brief at `aad6ee6f…` using the live protocol/schema.
 - No migration, test implementation or database mutation exists or is authorized yet.
 
 ## Qualifying task set
@@ -25,8 +25,8 @@
 |---|---|---|---|
 | RLS-1959-01 | Freeze the seven-policy inventory, private-helper grant boundary and exact non-scope | SECURITY_ARCHITECTURE / GOVERNANCE_EVIDENCE | COMPLETE |
 | RLS-1959-02 | Create PR-scoped manifest, scope and active task carriers | GOVERNANCE_EVIDENCE | COMPLETE |
-| RLS-1959-03 | Independent IAA classifies the wave and writes the canonical pre-brief into the declared wave record | SECURITY_ASSURANCE / GOVERNANCE_EVIDENCE | PENDING — MUST PRECEDE APPOINTMENT |
-| RLS-1959-04 | Foreman records a bounded schema-builder appointment and PR-scoped delegation order | DELEGATION / GOVERNANCE_EVIDENCE | BLOCKED BY RLS-1959-03 |
+| RLS-1959-03 | Independent IAA classifies the wave and writes the canonical pre-brief into the declared wave record | SECURITY_ASSURANCE / GOVERNANCE_EVIDENCE | COMPLETE — pre-brief `aad6ee6f…` |
+| RLS-1959-04 | Foreman records a bounded schema-builder appointment and PR-scoped delegation order | DELEGATION / GOVERNANCE_EVIDENCE | READY — implementation remains blocked until appointment |
 | RLS-1959-05 | Schema builder authors one idempotent migration that recreates only the seven named policies with `app_private.mmm_current_user_org_id()` | DATABASE_SCHEMA / RLS_SECURITY | BLOCKED BY RLS-1959-04 |
 | RLS-1959-06 | Schema builder implements structural tests for seven private-helper references and unchanged hardened helper grants | DATABASE_QA / SECURITY_QA | BLOCKED BY RLS-1959-04 |
 | RLS-1959-07 | Schema builder implements authenticated same-org, cross-org and anonymous criteria/descriptor/storage path tests without `service_role` masking | RLS_SECURITY / TENANT_ISOLATION | BLOCKED BY RLS-1959-04 |
@@ -66,7 +66,7 @@ The intended replacement is the already-deployed `app_private.mmm_current_user_o
 
 ## Required order
 
-`scope 2275f5b7… -> PR task/manifest/scope carriers -> canonical IAA pre-brief -> schema-builder appointment/delegation -> first migration/test implementation -> QP -> ECAP -> frozen-head final IAA -> CS2 merge -> governed deployment -> live verification -> #1959 closure`
+`scope 2275f5b7… -> task set f394cc44… -> canonical IAA pre-brief aad6ee6f… -> schema-builder appointment/delegation -> first migration/test implementation -> QP -> ECAP -> frozen-head final IAA -> CS2 merge -> governed deployment -> live verification -> #1959 closure`
 
 ## Appointment constraints
 
