@@ -1,0 +1,42 @@
+{
+  "pr": 1970,
+  "issue": 1969,
+  "type": "governance-change",
+  "owner": "foreman-v2-agent",
+  "scope": [
+    ".admin/prs/pr-1970.json",
+    ".agent-admin/assurance/iaa-wave-record-foreman-bootstrap-repair-1969-20260726.md",
+    ".agent-admin/builder-appointments/issue-1969-codexadvisor-governance-repair.md",
+    ".agent-admin/control/delegation-orders/pr-1970.json",
+    ".agent-admin/ecap/pr-1970-ecap.md",
+    ".agent-admin/prs/pr-1970/wave-current-tasks.md",
+    ".agent-admin/quality/pr-1970-foreman-qp.md",
+    ".agent-admin/scope-declarations/issue-1969.md",
+    ".agent-admin/scope-declarations/pr-1970.md",
+    ".agent-workspace/foreman-v2/knowledge/session-memory-template.md",
+    ".agent-workspace/foreman-v2/memory/CORRECTION-ADDENDUM-session-foreman-bootstrap-repair-1969-prehandover-deadlock-20260726.md",
+    ".agent-workspace/foreman-v2/memory/session-foreman-bootstrap-repair-1969-20260726.md",
+    ".github/scripts/foreman-prehandover-lane-gate.js",
+    ".github/scripts/wake-up-protocol.sh",
+    ".github/scripts/wake-up-protocol.test.sh",
+    ".github/scripts/wave7-governance-validation.js"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "Pre-brief commit e1a9b9a95a9ef712a7d3e6f92e1aeb1327dad167 precedes appointment commit f6b081c8014f235543815de185958ba8f2a01ab2",
+    "Appointment commit f6b081c8014f235543815de185958ba8f2a01ab2 precedes first implementation commit 7cac621b9e04d83ed3149f1923051b0a4bddb0cf",
+    "Foreman QP R1 carrier is committed at ed15a811b6e617bcb2c8b30a0ec37ac4053c128d",
+    "IAA R1 rejection is committed at c7e283827bf0610be8e963d4bfb57fa5ae1e2d2b",
+    "Corrective populated-memory implementation is committed at ef8c628ca3bca433fbe084055c5dded1f13036f8",
+    "CS2 scope extension on 2026-07-26 authorizes the bounded prehandover false-positive/deadlock repair before its implementation",
+    "Ordinary session memory with handover_allowed false and final_iaa_verdict PENDING does not activate the lane, while explicit PREHANDOVER artifacts and positive readiness claims remain fail-closed",
+    "Focused bootstrap regression, repeated real-agent bootstraps and governance validation pass",
+    "QP R3 and ECAP R3 are committed before the immutable embedded PREHANDOVER proof and Foreman correction-addendum carrier are frozen for independent final IAA"
+  ],
+  "merge_authority": "CS2",
+  "execution_model": "foreman-orchestrated",
+  "orchestrating_agent": "foreman-v2-agent",
+  "implementing_agent": "CodexAdvisor-agent"
+}
