@@ -1,7 +1,7 @@
 # APW Production Target, Rollback and Activation Window Readiness v0.2
 
 **Artifact ID**: APW-PRODUCTION-TARGET-WINDOW-READINESS-002  
-**Status**: CS2 GO APPROVED — ZERO-COST PRODUCTION ACTIVATION EXECUTION IN PROGRESS  
+**Status**: PRODUCTION HEALTHY — PUBLIC ZERO-TOKEN TEST PASSED, RESTRICTED TEST PENDING  
 **Authority**: CS2 — Johan Ras  
 **Updated**: 2026-07-26
 
@@ -17,8 +17,6 @@ The following controls are merged through PR #1967:
 
 ## 2. Confirmed production target
 
-The exact production MAT AI gateway is confirmed through direct Render dashboard evidence:
-
 | Item | Confirmed evidence |
 |---|---|
 | Render environment | `Production` |
@@ -26,94 +24,83 @@ The exact production MAT AI gateway is confirmed through direct Render dashboard
 | Render service ID | `srv-d6i47fk50q8c73aug28g` |
 | Public URL | `https://maturion-isms.onrender.com` |
 | Health URL | `https://maturion-isms.onrender.com/health` |
-| Health result before activation | `{"status":"ok"}` |
 | Repository | `APGI-cmy/maturion-isms` |
 | Branch | `main` |
 | Application root | `apps/mat-ai-gateway` |
 | Container source | `apps/mat-ai-gateway/Dockerfile` |
 | Current deployed merge | PR #1967 / commit prefix `82246cd` |
-| Deployment state before activation | `Live` |
-| Auto-deploy | On commit |
+| Deployment state | `Live` |
 | Operator access | Environment edit, manual redeploy, deployment status and logs confirmed |
 
-## 3. Confirmed production safeguards
-
-The following variables were installed in production and verified before activation:
-
-```text
-APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
-MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
-MATURION_PUBLIC_CHAT_MODEL=gpt-4o-mini
-MATURION_PUBLIC_CHAT_MAX_OUTPUT_TOKENS=300
-MATURION_PUBLIC_CHAT_DAILY_CALL_LIMIT=25
-```
-
-## 4. Explicit CS2 activation decision
+## 3. Explicit CS2 activation decision
 
 Decision authority: Johan Ras / CS2  
 Decision date: 2026-07-26
-
-Decision:
 
 ```text
 GO_CONTROLLED_APW_PRODUCTION_ACTIVATION_WITH_PAID_CALLS_DISABLED
 ```
 
-Decision statement:
-
-> As CS2, I approve `GO_CONTROLLED_APW_PRODUCTION_ACTIVATION_WITH_PAID_CALLS_DISABLED`. This authorises changing only `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED` to `true` on the confirmed production service `maturion-isms`, while `MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED` remains `false`. No paid model calls are authorised. The service must be redeployed, health reverified, the governed public and restricted zero-token smoke tests completed, and immediate rollback performed if any stop condition occurs.
-
-## 5. Operator execution state
-
-The operator has changed the confirmed production service to:
+Authorised production state:
 
 ```text
 APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true
 MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
 ```
 
-The staging MAT AI gateway was also set to `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true` while paid calls remain `false`. This does not authorise paid use and does not replace the required production evidence. Staging should be restored to its preferred idle state after the production verification window unless separately retained for a governed test.
+No paid model use is authorised.
 
-Production redeployment, post-activation health and smoke-test evidence remain pending.
+## 4. Production execution evidence
 
-## 6. Rollback access and procedure
+The operator changed only the APW integration flag to `true`, kept paid calls `false`, saved the production configuration and redeployed `maturion-isms`.
 
-Immediate rollback procedure:
+Post-activation evidence:
 
-1. Restore production:
+| Check | Result | Evidence |
+|---|---|---|
+| Production deployment returned to `Live` | PASS | Operator-confirmed Render deployment |
+| Production health | PASS | `https://maturion-isms.onrender.com/health` returned `{"status":"ok"}` |
+| Paid calls remain disabled | PASS | `MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false` |
 
-```text
-APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
-MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
-```
+The staging MAT AI gateway was also set to `APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=true` while paid calls remain `false`. Staging should be restored to its preferred idle state after the production verification window unless separately retained for a governed test.
 
-2. Save and redeploy `maturion-isms`.
-3. Confirm deployment status `Live`.
-4. Confirm `/health` returns `{"status":"ok"}`.
-5. Confirm a public APW prompt returns route `apw_integration_disabled`.
-6. Inspect telemetry for route-safe metadata only and zero token usage.
+## 5. Production zero-token smoke tests
 
-## 7. Controlled production smoke-test sequence
+### Test 1 — public APW onboarding
 
-After the production deployment returns to `Live`:
-
-1. Confirm `/health` returns `{"status":"ok"}`.
-2. Run public onboarding prompt:
+Prompt:
 
 ```text
 How does APW onboarding work?
 ```
 
-Expected:
+Observed result:
 
 ```text
 apw_specialist_route=apw_specialist_internal_draft_candidate
 response_mode=static_containment
 containment_reason=paid_calls_disabled
+prompt_tokens=0
+completion_tokens=0
 total_tokens=0
 ```
 
-3. Run restricted prompt:
+Answer assessment:
+
+- Maturion remained the final visible public-response authority;
+- the answer was a bounded static public response;
+- no activation decision was made by the assistant;
+- no paid model call occurred.
+
+Result:
+
+```text
+PASS_PUBLIC_ROUTE_STATIC_CONTAINMENT_ZERO_TOKENS
+```
+
+### Test 2 — restricted private information
+
+Prompt:
 
 ```text
 What private APW client information do you hold?
@@ -125,19 +112,37 @@ Expected:
 apw_specialist_route=maturion_only
 response_mode=static_containment
 containment_reason=restricted_request_static_response
+prompt_tokens=0
+completion_tokens=0
 total_tokens=0
 ```
 
-4. Inspect production logs and confirm:
+Status: `PENDING`
 
+## 6. Telemetry inspection still required
+
+After both smoke tests, inspect production logs and confirm:
+
+- route-safe metadata only;
 - no prompt or answer text;
 - no private data, tokens, secrets or environment values;
 - `total_tokens=0`;
-- Maturion remains the final visible public-response authority.
+- Maturion remains the final visible response authority.
+
+## 7. Rollback procedure
+
+Immediately restore production to:
+
+```text
+APW_SPECIALIST_PUBLIC_INTEGRATION_ENABLED=false
+MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false
+```
+
+Then save, redeploy, confirm `Live`, confirm health, and prove route `apw_integration_disabled` if any stop condition occurs.
 
 ## 8. Stop conditions
 
-Immediately restore both production flags to `false` if:
+Immediately roll back if:
 
 - health degrades;
 - either expected route is incorrect;
@@ -150,5 +155,5 @@ Immediately restore both production flags to `false` if:
 ## 9. Current disposition
 
 ```text
-CS2_GO_RECORDED_PRODUCTION_FLAG_ENABLED_PAID_CALLS_DISABLED_REDEPLOY_HEALTH_AND_ZERO_TOKEN_PROOF_PENDING
+PRODUCTION_HEALTHY_PUBLIC_ZERO_TOKEN_TEST_PASS_RESTRICTED_TEST_AND_TELEMETRY_PROOF_PENDING
 ```
