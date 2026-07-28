@@ -87,9 +87,8 @@ const browserCases = [
     run: async ({ page, state }) => {
       await page.goto(`${state.config.appUrl}/projects/demo/milestones`, { waitUntil: 'domcontentloaded' });
       await page.getByTestId('pit-milestone-row-sibling').getByRole('button', { name: /edit/i }).click();
-      await assert.rejects(
+      await assert.doesNotReject(
         page.getByText(/unauthori[sz]ed|permission denied/i).waitFor({ timeout: 4_000 }),
-        /.+/,
         'Expected explicit role-denial messaging for sibling milestone edit attempt',
       );
     },
@@ -100,9 +99,8 @@ const browserCases = [
     run: async ({ page, state }) => {
       await page.goto(`${state.config.appUrl}/projects/demo/deliverables`, { waitUntil: 'domcontentloaded' });
       await page.getByTestId('pit-deliverable-row-sibling').getByRole('button', { name: /edit/i }).click();
-      await assert.rejects(
+      await assert.doesNotReject(
         page.getByText(/unauthori[sz]ed|permission denied/i).waitFor({ timeout: 4_000 }),
-        /.+/,
         'Expected explicit role-denial messaging for sibling deliverable edit attempt',
       );
     },

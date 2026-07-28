@@ -13,13 +13,11 @@ async function loadCreateClient() {
 }
 
 export function resolveHarnessConfig(t) {
-  const envless = process.env.PIT_W83_ALLOW_ENVLESS === '1';
   const config = {
     supabaseUrl: process.env.PIT_W83_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
     anonKey: process.env.PIT_W83_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY,
     serviceRoleKey: process.env.PIT_W83_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
     appUrl: process.env.PIT_W83_APP_URL || process.env.VITE_PIT_APP_URL || 'http://127.0.0.1:4173',
-    envless,
   };
 
   const missing = [];
@@ -29,10 +27,6 @@ export function resolveHarnessConfig(t) {
 
   if (missing.length > 0) {
     const message = `Missing required Supabase harness env vars: ${missing.join(', ')}.`;
-    if (envless && t?.skip) {
-      t.skip(`${message} Set PIT_W83_ALLOW_ENVLESS=0 to hard-fail instead of skipping.`);
-      return null;
-    }
     assert.fail(`${message} Configure disposable/local Supabase credentials for PIT W8.3 RED execution.`);
   }
 

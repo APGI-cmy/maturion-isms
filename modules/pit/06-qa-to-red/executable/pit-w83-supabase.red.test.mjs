@@ -40,6 +40,7 @@ async function runRpcCase(t, role, rpcName, payload, expectation) {
 
   const result = await callRpcWithToken(state.config, rpcName, payload, token);
   assertGreenExpectation(result, expectation);
+  return result;
 }
 
 async function runRestCase(t, role, path, method, payload, expectation) {
@@ -51,6 +52,7 @@ async function runRestCase(t, role, path, method, payload, expectation) {
 
   const result = await callRestMutation(state.config, path, method, payload, token);
   assertGreenExpectation(result, expectation);
+  return result;
 }
 
 test('PIT-RED-W83-HARNESS-001: Supabase REST endpoint reachable', async (t) => {
@@ -153,7 +155,24 @@ const supabaseCases = [
   {
     id: 'PIT-RED-W83-027',
     title: 'successful transfer audit trail is append-only and queryable',
-    run: (t) => runRestCase(t, 'project_leader', 'pit_transfer_audit_log?select=proposal_id,decision,moved_children,cancelled_node,created_at&limit=1', 'GET', null, 'success'),
+    run: async (t) => {
+      const result = await runRestCase(
+        t,
+        'project_leader',
+        'pit_transfer_audit_log?select=proposal_id,decision,moved_children,cancelled_node,created_at&limit=1',
+        'GET',
+        null,
+        'success',
+      );
+      assert.ok(Array.isArray(result.body), 'Expected transfer audit query to return an array body');
+      assert.ok(result.body.length > 0, 'Expected at least one audit row for append-only verification');
+      const [row] = result.body;
+      assert.ok(row.created_at, 'Expected append-only audit row to expose created_at');
+      assert.ok(Object.hasOwn(row, 'proposal_id'), 'Expected audit row to include proposal_id');
+      assert.ok(Object.hasOwn(row, 'decision'), 'Expected audit row to include decision');
+      assert.ok(Object.hasOwn(row, 'moved_children'), 'Expected audit row to include moved_children');
+      assert.ok(Object.hasOwn(row, 'cancelled_node'), 'Expected audit row to include cancelled_node');
+    },
   },
   {
     id: 'PIT-RED-W83-028',
@@ -178,7 +197,9 @@ const supabaseCases = [
     title: 'declined learning path stores no memory preference record',
     run: async (t) => {
       await runRpcCase(t, 'contributor', 'pit_finalize_suggestion', { suggestion_id: 'suggestion-a', accepted: false, persist_preference: false }, 'success');
-      await runRestCase(t, 'contributor', 'pit_preference_memory?select=id&suggestion_id=eq.suggestion-a', 'GET', null, 'no-write');
+      const result = await runRestCase(t, 'contributor', 'pit_preference_memory?select=id&suggestion_id=eq.suggestion-a', 'GET', null, 'success');
+      assert.ok(Array.isArray(result.body), 'Expected preference query to return an array body');
+      assert.equal(result.body.length, 0, 'Expected no preference-memory record for declined suggestion');
     },
   },
   {
@@ -186,19 +207,49 @@ const supabaseCases = [
     title: 'opt-in preference record is isolated to authorized actor and removable',
     run: async (t) => {
       await runRpcCase(t, 'contributor', 'pit_finalize_suggestion', { suggestion_id: 'suggestion-opt-in', accepted: true, persist_preference: true }, 'success');
-      await runRestCase(t, 'contributor', 'pit_preference_memory?select=id,scope&limit=1', 'GET', null, 'success');
-      await runRestCase(t, 'contributor', 'pit_preference_memory?id=eq.pref-opt-in-row', 'DELETE', null, 'success');
+      const listResult = await runRestCase(
+        t,
+        'contributor',
+        'pit_preference_memory?select=id,scope,suggestion_id&suggestion_id=eq.suggestion-opt-in&limit=1',
+        'GET',
+        null,
+        'success',
+      );
+      assert.ok(Array.isArray(listResult.body), 'Expected opt-in preference query to return an array body');
+      assert.equal(listResult.body.length, 1, 'Expected one opt-in preference row to be created');
+      const [row] = listResult.body;
+      assert.ok(row.id, 'Expected opt-in preference row to include id');
+      assert.equal(row.suggestion_id, 'suggestion-opt-in', 'Expected preference record to be linked to opt-in suggestion');
+
+      await runRestCase(t, 'contributor', `pit_preference_memory?id=eq.${encodeURIComponent(row.id)}`, 'DELETE', null, 'success');
+
+      const postDelete = await runRestCase(
+        t,
+        'contributor',
+        `pit_preference_memory?select=id&suggestion_id=eq.${encodeURIComponent('suggestion-opt-in')}`,
+        'GET',
+        null,
+        'success',
+      );
+      assert.ok(Array.isArray(postDelete.body), 'Expected post-delete preference query to return an array body');
+      assert.equal(postDelete.body.length, 0, 'Expected opt-in preference record to be removable by authorized actor');
     },
   },
   {
     id: 'PIT-RED-W83-036',
     title: 'task creation preserves integration reservation fields without IWMS side effects',
-    run: (t) => runRestCase(t, 'deliverable_owner', 'pit_tasks', 'POST', {
-      title: 'W8.3 reserved integration task',
-      deliverable_id: 'deliverable-a',
-      integration_status: 'reserved',
-      integration_reference: null,
-    }, 'success'),
+    run: async (t) => {
+      const result = await runRestCase(t, 'deliverable_owner', 'pit_tasks', 'POST', {
+        title: 'W8.3 reserved integration task',
+        deliverable_id: 'deliverable-a',
+        integration_status: 'reserved',
+        integration_reference: null,
+      }, 'success');
+      const [row] = Array.isArray(result.body) ? result.body : [result.body];
+      assert.ok(row, 'Expected created task payload in response body');
+      assert.equal(row.integration_status, 'reserved', 'Expected integration_status to remain reserved');
+      assert.equal(row.integration_reference ?? null, null, 'Expected integration_reference to remain null when reserved');
+    },
   },
 ];
 
@@ -209,13 +260,39 @@ for (const scenario of supabaseCases) {
 }
 
 test('PIT-RED-W83-035: evidence evaluation stores proposal without automatic canonical progress mutation', async (t) => {
+  const before = await runRestCase(
+    t,
+    'project_leader',
+    'pit_tasks?id=eq.task-evidence-a&select=id,progress_state,canonical_status',
+    'GET',
+    null,
+    'success',
+  );
+  const beforeRow = Array.isArray(before.body) ? before.body[0] : null;
+
   await runRpcCase(t, 'project_leader', 'pit_evaluate_task_evidence', {
     task_id: 'task-evidence-a',
     evidence_id: 'evidence-a',
     evaluator: 'shared-assurance-service',
   }, 'success');
 
-  await runRestCase(t, 'project_leader', 'pit_tasks?id=eq.task-evidence-a&select=id,progress_state,canonical_status', 'GET', null, 'success');
+  const after = await runRestCase(
+    t,
+    'project_leader',
+    'pit_tasks?id=eq.task-evidence-a&select=id,progress_state,canonical_status',
+    'GET',
+    null,
+    'success',
+  );
+  const afterRow = Array.isArray(after.body) ? after.body[0] : null;
+  assert.ok(afterRow, 'Expected task row to be queryable after evidence evaluation');
+  if (beforeRow?.canonical_status !== undefined) {
+    assert.equal(
+      afterRow.canonical_status,
+      beforeRow.canonical_status,
+      'Expected canonical_status to remain unchanged until explicit approval',
+    );
+  }
 });
 
 test.after(async () => {

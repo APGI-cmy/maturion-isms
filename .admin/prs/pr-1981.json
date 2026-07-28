@@ -3,7 +3,7 @@
   "pr": 1981,
   "issue": 1974,
   "type": "governance-change",
-  "status": "ADMIN_NORMALIZATION_IN_PROGRESS",
+  "status": "QA_BUILDER_CORRECTION_2_CONTINUATION_ACTIVE",
   "owner": "copilot",
   "branch": "copilot/pit-w83-pre-build-strategy-alignment",
   "base_pr": 1972,
@@ -15,18 +15,26 @@
   "existing_builder_appointment_authority": ".agent-admin/builder-appointments/pit-w83-qa-to-red-completion-issue-1974.md",
   "scope": [
     ".admin/prs/pr-1981.json",
-    ".agent-admin/assurance/iaa-prebrief-pit-w83-qa-to-red-correction-2-pr-1981.md",
     ".agent-admin/prs/pr-1981/active-state.json",
     ".agent-admin/prs/pr-1981/wave-current-tasks.md",
-    ".agent-admin/scope-declarations/pr-1981.md"
+    ".agent-admin/scope-declarations/pr-1981.md",
+    "modules/pit/06-qa-to-red/executable/pit-w83-prebuild.red.test.mjs",
+    "modules/pit/06-qa-to-red/executable/harness/pit-w83-supabase-harness.mjs",
+    "modules/pit/06-qa-to-red/executable/pit-w83-browser.red.test.mjs",
+    "modules/pit/06-qa-to-red/executable/pit-w83-contract.red.test.mjs",
+    "modules/pit/06-qa-to-red/executable/pit-w83-supabase.red.test.mjs",
+    "modules/pit/06-qa-to-red/executable/w83-executable-inventory-map.md"
   ],
-  "risk": "low",
+  "risk": "medium",
   "requires_iaa": true,
   "requires_ecap": true,
   "evidence_required": [
     "PR-scoped admin manifest, scope, active-state, and wave-task artifacts bound to PR #1981 and Issue #1974",
-    "Resolver output selecting PR-scoped PIT W8.3 correction-2 identity over legacy MMM wave",
-    "Admin/preflight gate outputs proving bootstrap/identity/preflight contracts are valid without runtime changes"
+    "One-to-one executable PIT-RED-W83-001..036 mapping across contract/supabase/browser harnesses",
+    "Disposable/local Supabase harness execution evidence with real auth personas and deterministic cleanup",
+    "Browser harness execution evidence against running app personas and RED assertions tied to missing W8.3 capabilities"
   ],
-  "merge_authority": "CS2"
+  "merge_authority": "CS2",
+  "execution_model": "builder-governed",
+  "implementing_agent": "qa-builder"
 }
