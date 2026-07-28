@@ -6,11 +6,17 @@
 **Authority**: CS2 — Johan Ras  
 **PR**: #1976  
 **Repository**: `APGI-cmy/maturion-isms`  
-**Last Updated**: 2026-07-27
+**Last Updated**: 2026-07-28
 
 ## Contract boundary
 
 These tests specify the missing durable safeguards required before paid APW public-chat calls may be considered. They do not authorise implementation, infrastructure changes or paid calls.
+
+The executable RED file is intentionally isolated from the ordinary GREEN pytest discovery path:
+
+```text
+.agent-admin/qa-to-red/pr-1976/test_public_chat_durable_spend_red.py
+```
 
 ## One-to-one executable inventory
 
