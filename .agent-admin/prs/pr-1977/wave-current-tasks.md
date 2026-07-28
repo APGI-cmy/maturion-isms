@@ -2,10 +2,18 @@
 
 PR: #1977
 WAVE: APW-DURABLE-PAID-CALL-RUNTIME-IMPLEMENTATION-V01
-STATUS: CS2_AUTHORISED — IAA_PREFLIGHT_PREPARATION
+STATUS: IMPLEMENTED_TO_GREEN — QP_ECAP_PASS — FINAL_IAA_PENDING
 CS2_AUTHORITY: Johan Ras
 CS2_DECISION: AUTHORISE_APW_DURABLE_PAID_CALL_RUNTIME_IMPLEMENTATION_WAVE
 DATE: 2026-07-28
+
+IAA_PREFLIGHT_PATH: .agent-admin/assurance/iaa-prebrief-apw-durable-paid-call-runtime-v01.md
+IAA_PREFLIGHT_COMMIT: 47b9ef55322fcfbf68be31fe972e976ce25bb552
+BUILDER_APPOINTMENT_PATH: .agent-admin/builder-appointments/apw-durable-paid-call-runtime-v0.1.md
+BUILDER_APPOINTMENT_COMMIT: 53ed397d3af85325e9ed544ec48b922474b5648c
+RUNTIME_CORE_COMMIT: 648a61977e03b3908c5515b10717e5618b93f0a0
+GATE_DETECTED_FIRST_IMPLEMENTATION_COMMIT: ed54be17febbc14b8f8dcef41706fe4c3c8066b8
+QP_ECAP_COMMIT: 5f78b1c84bd91688d2eecc0dc4729ca748a0a2fb
 
 ## Authorised sequence
 
@@ -26,15 +34,15 @@ DATE: 2026-07-28
 - [x] Confirm PR #1976 merged with final IAA PASS.
 - [x] Confirm production remains in zero-cost containment mode.
 - [x] Confirm `MATURION_PUBLIC_CHAT_PAID_CALLS_ENABLED=false` remains mandatory.
-- [ ] Commit canonical independent IAA prebrief.
-- [ ] Appoint bounded runtime builder.
-- [ ] Implement shared persistent usage authority and atomic reservation flow.
-- [ ] Implement privacy-safe per-client limiter and shared fail-closed circuit breaker.
-- [ ] Implement provider-failure reconciliation and route-safe telemetry.
-- [ ] Add unapplied database migration and operator configuration contract.
-- [ ] Build APW-RED-PAID-001..016 to GREEN.
-- [ ] Run the full existing gateway regression suite.
-- [ ] Complete QP and ECAP.
+- [x] Commit canonical independent IAA prebrief.
+- [x] Appoint bounded runtime builder.
+- [x] Implement shared persistent usage authority and atomic reservation flow.
+- [x] Implement privacy-safe per-client limiter and shared fail-closed circuit breaker.
+- [x] Implement provider-failure reconciliation and route-safe telemetry.
+- [x] Add unapplied database migration and operator configuration contract.
+- [x] Build APW-RED-PAID-001..016 to GREEN.
+- [x] Run the full existing gateway regression suite.
+- [x] Complete QP and ECAP.
 - [ ] Obtain independent final IAA.
 
 ## Runtime delivery requirements
