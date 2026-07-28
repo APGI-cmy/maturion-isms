@@ -13,6 +13,33 @@ The automated PR comment carrying the task set from PR #1893 is stale, unrelated
 
 ## PRE-BRIEF
 
+PR: #1973
+WAVE: mmm-private-helper-policy-alignment-1959
+CURRENT_HEAD_SHA: CURRENT_HEAD
+WAVE_TASKS_PATH: .agent-admin/prs/pr-1973/wave-current-tasks.md
+
+EXPECTED_QA_SCOPE:
+- Prove exactly seven intended policies change and no other policy, helper body, helper grant or generic privilege changes.
+- Prove each resulting policy calls app_private.mmm_current_user_org_id() and no resulting policy calls an unqualified or public helper.
+- Prove same-organisation authenticated success, cross-organisation denial and anonymous denial using real RLS identities without service_role masking.
+
+EXPECTED_FAILURE_MODES:
+- The stale PR #1893 task injection is treated as authority for PR #1973.
+- A migration broadens helper grants, generic privileges, policy actions, bucket predicates, path predicates or same-organisation semantics.
+- Tests are skipped, vacuous, non-executable or rely on service_role to prove tenant-path behavior.
+
+FOREMAN_INSTRUCTIONS:
+- Treat this wave as a bounded Issue #1959 security change for the seven named policies only.
+- Require QA-to-Red before migration implementation and preserve the appointment-before-implementation ordering.
+- Keep live Supabase deployment blocked until CS2 merge and separate governed deployment authority.
+
+IAA_WILL_QA:
+- Challenge exact seven-policy parity, helper qualification, grant preservation and absence of unrelated schema changes.
+- Challenge authenticated same-organisation success plus cross-organisation and anonymous denial evidence across criteria, descriptors and storage paths.
+- Challenge QP, ECAP, hosted checks, frozen-head evidence and the no-live-mutation boundary before final assurance.
+
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "mmm-private-helper-policy-alignment-1959"
@@ -144,7 +171,7 @@ IAA_PREFLIGHT_BRIEF:
 **Scope of correction:** Sequencing of the PR-scoped machine delegation-order artifact only.  
 **Authority checked:** `.agent-admin/control/schemas/delegation-order.schema.json` and `.agent-admin/control/overlays/WAVE3_DELEGATION_ORDER_GATE.md`.
 
-The earlier wording requiring both the bounded appointment and the finalized PR-scoped delegation-order JSON before implementation is superseded only to the following extent:
+The earlier wording requiring both the bounded appointment and the finalized PR-scoped delegation-order JSON before implementation is replaced only to the following extent:
 
 1. The canonical IAA pre-brief must be committed first.
 2. The bounded schema-builder appointment must be recorded in its own later commit.
