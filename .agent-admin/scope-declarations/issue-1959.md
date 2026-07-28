@@ -1,6 +1,6 @@
 # Scope Declaration — Issue #1959 MMM Private-Helper RLS Policy Alignment
 
-**Status:** AUTHORIZED / ACTIVE / SCHEMA BUILDER APPOINTED / IMPLEMENTATION NOT STARTED  
+**Status:** AUTHORIZED / ACTIVE / SCHEMA BUILDER APPOINTED / REPOSITORY RED-TO-GREEN COMPLETE / TENANT WRITE-PATH TEST PENDING
 **CS2 authority:** Johan Ras, 2026-07-26  
 **Base SHA:** `f6454c00719181cca7f31aff0e0909a63772750d`  
 **Branch:** `fix/issue-1959-private-helper-policy-alignment`  
@@ -24,7 +24,7 @@ On 2026-07-26, connected project inspection confirmed:
 
 ## Initial carrier
 
-This first commit creates only the bounded issue scope needed to open a draft PR and obtain a stable PR number. The PR-scoped task carrier and canonical IAA pre-brief are committed; the schema-builder appointment is committed at `4b0f36bd…`. Migration and test implementation, QP, ECAP, prehandover, final IAA, merge, deployment, and live verification must follow in governed order.
+This first commit created only the bounded issue scope needed to open a draft PR and obtain a stable PR number. The PR-scoped task carrier and canonical IAA pre-brief are committed; the schema-builder appointment is committed at `4b0f36bd…`. Focused QA committed RED at `0ad269f8…`, the seven-policy migration committed GREEN at `313a2daf…`, and root Vitest discoverability was corrected so the focused guard is included by the normal suite. Tenant write-path testing, QP, ECAP, prehandover, final IAA, merge, deployment, and post-merge live verification must follow in governed order.
 
 ## Planned file scope
 
