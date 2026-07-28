@@ -3,47 +3,55 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-06-01T07:19:20Z",
-    "session_id": "align-20260601-071920",
+    "timestamp": "2026-07-28T08:45:58Z",
+    "session_id": "align-20260728-084558",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
-    "canonical_inventory_date": "2026-03-04",
-    "total_canons_synced": 2,
-    "sync_method": "layer-down-automated",
+    "canonical_inventory_date": "2026-05-23",
+    "total_canons_synced": 203,
+    "sync_method": "layer-down-automated-with-corrective-review",
     "sync_status": "SUCCESS",
-    "canonical_commit": "bc161506a3ee0c834d7a0aa5c54ba0f3abad9a17",
+    "canonical_commit": "52ce157bb5b2971256cbe5e4123c576dc65fabbb",
     "files_layered_down": [
-      "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
-      "governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md"
+      "governance/CANON_INVENTORY.json"
     ],
-    "upstream_ripple_pr": "1289",
-    "followup_pr": "1290",
-    "ripple_pr": "1758"
+    "upstream_ripple_pr": "1375",
+    "followup_pr": "1984",
+    "ripple_pr": "1983",
+    "source_issue": "1982"
   },
   "alignment_status": {
     "overall": "ALIGNED",
     "canon_files": {
-      "total": 190,
-      "aligned": 190,
-      "sha256_variance": 0,
+      "total": 203,
+      "aligned": 202,
+      "sha256_variance": 1,
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-06-01T07:19:20Z"
+    "last_drift_check": "2026-07-28T08:45:58Z",
+    "documented_exclusions": [
+      {
+        "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+        "layer_down_status": "INTERNAL",
+        "canonical_hash_sha256": "1502ca98c65323ed5ea297ad26583fa932647f77ad4f0d94e9867cd06ed51a6a",
+        "local_hash_sha256": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05",
+        "disposition": "NOT_LAYERED_BY_CS2_SCOPE",
+        "authority": "Issue #1982"
+      }
+    ]
   },
   "integrity": {
-    "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
-    "alignment_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log",
-    "session_contract": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313.md",
-    "sha256_verified": 96,
+    "evidence_log": ".agent-admin/governance/drift-report-align-20260728-084558.md",
+    "alignment_log": ".agent-admin/governance/ripple-log.json",
+    "session_contract": ".agent-admin/ripple/layer-down-received-20260728T084603Z.json",
+    "sha256_verified": 202,
     "sha256_variance_files": [
-      "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
-      "governance/canon/MERGE_GATE_PHILOSOPHY.md",
-      "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
-      "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
-      "governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md",
-      "governance/coordination/CROSS_AGENT_COORDINATION_PROTOCOL.md"
-    ]
+      "governance/canon/GOVERNANCE_CANON_MANIFEST.md"
+    ],
+    "inventory_entries_validated": 203,
+    "canonical_commit_provenance_validated": 203,
+    "inventory_blob": "5cdbe8cca2ea2fa68b6291c39b0afc83a2a5fd18"
   },
   "sync_schedule": {
     "model": "event-driven-plus-scheduled",
