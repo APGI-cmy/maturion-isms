@@ -3,17 +3,18 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-06-01",
-  "last_ripple_commit": "8684f42b39d1a1927b34cd9c64c3c3dc85a986ad",
-  "last_ripple_timestamp": "2026-05-11T16:06:20Z",
+  "last_updated": "2026-07-28",
+  "last_ripple_commit": "52ce157bb5b2971256cbe5e4123c576dc65fabbb",
+  "last_ripple_timestamp": "2026-07-28T08:45:58Z",
   "alignment_summary": {
     "total_artifacts": 58,
-    "aligned": 49,
+    "aligned": 48,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
     "not_tracked": 1,
-    "overall_status": "PARTIAL — AGENT CONTRACT FILES ESCALATED TO CS2"
+    "pending_review": 5,
+    "overall_status": "PARTIAL — INTERNAL MANIFEST NOT LAYERED; AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
     {
@@ -181,13 +182,13 @@
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
-      "canonical_hash_sha256": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05",
+      "canonical_hash_sha256": "1502ca98c65323ed5ea297ad26583fa932647f77ad4f0d94e9867cd06ed51a6a",
       "local_hash_sha256": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05",
-      "alignment_status": "ALIGNED",
+      "alignment_status": "INTERNAL_NOT_LAYERED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-05-12T06:24:04Z",
-      "change_note": "Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad — Stage 5 checklist gate upgrade layered down via ripple PR #1615.",
-      "canonical_commit": "8684f42b39d1a1927b34cd9c64c3c3dc85a986ad",
+      "last_verified": "2026-07-28T08:45:58Z",
+      "change_note": "Canonical hash and content-producing commit recorded from governance PR #1375. The consumer retains its pre-PR #1983 manifest because this artifact is INTERNAL and issue #1982 authorizes inventory provenance only; the variance is intentional and is not a PUBLIC_API drift.",
+      "canonical_commit": "6028fe8604e4a8bf0eff8d612b210fc51e157adc",
       "canonical_source_repo": "APGI-cmy/maturion-foreman-governance",
       "canonical_source_path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md"
     },
@@ -731,5 +732,5 @@
     "last_updated_by": "governance-liaison-isms wave-layer-down-governance-changes-2026-05-07-4e200025",
     "local_extension_versioning": "When local governance text intentionally extends canonical content, `local_version` appends `+isms.N` while preserving canonical base version."
   },
-  "last_ripple_pr": 1569
+  "last_ripple_pr": 1983
 }
