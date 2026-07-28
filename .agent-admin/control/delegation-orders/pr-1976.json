@@ -7,10 +7,10 @@
   "builder_appointment_commit_sha": "26950a0a80326937f2070e2e5be41a5299964758",
   "builder_agent": "apw-paid-call-durable-spend-qa-builder",
   "builder_task_ref": ".agent-admin/builder-appointments/apw-paid-call-qa-to-red-readiness-v0.1.md",
-  "first_implementation_commit_sha": "3ebdb5439240942162e019ec871bf1d7ded6c906",
+  "first_implementation_commit_sha": "44a4e437b46da3679e1c65b431a725f60cf32daf",
   "qp_review_timestamp": "2026-07-28T07:00:00Z",
   "result": "DELEGATION_ORDER_VERIFIED",
   "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1976.md",
   "remediation_record_ref": "Maturion/prebuild/runtime-activation-readiness/APW-Paid-Call-Readiness-and-Spend-Control-v0.1.md",
-  "implementation_note": "The first implementation-like path is the post-appointment executable QA-to-RED test contract. No runtime, schema, infrastructure or environment implementation is included. The intentional RED test is isolated from ordinary GREEN test discovery and executed through a dedicated evidence workflow."
+  "implementation_note": "The gate classifies the post-appointment RED inventory path under apps/mat-ai-gateway/tests as the first implementation-like QA artifact. The executable RED Python contract follows in a later commit. No runtime, schema, infrastructure or environment implementation is included."
 }
