@@ -112,3 +112,6 @@ verify_jwt = true
 
 [functions.mmm-domain-approval-comment]
 verify_jwt = true
+
+[functions.mmm-framework-approval-action]
+verify_jwt = true
