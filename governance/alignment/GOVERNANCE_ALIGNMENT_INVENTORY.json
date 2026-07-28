@@ -13,6 +13,7 @@
     "missing": 0,
     "escalated": 4,
     "not_tracked": 1,
+    "pending_review": 5,
     "overall_status": "PARTIAL — INTERNAL MANIFEST NOT LAYERED; AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
