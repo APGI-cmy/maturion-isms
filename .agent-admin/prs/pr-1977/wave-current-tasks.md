@@ -17,9 +17,9 @@ QP_ECAP_COMMIT: 5f78b1c84bd91688d2eecc0dc4729ca748a0a2fb
 FINAL_IAA_COMMIT: f8bbf983e703a13163c4d8e24f0b5093fc26c0af
 FINAL_IAA_PATH: .agent-admin/assurance/iaa-wave-record-apw-durable-paid-call-runtime-pr-1977-final-20260728.md
 FINAL_IAA_TOKEN: IAA-APW-DURABLE-PAID-CALL-RUNTIME-1977-20260728-PASS
-REVIEW_REMEDIATION_IAA_PATH: .agent-admin/assurance/iaa-wave-record-apw-durable-paid-call-runtime-pr-1977-review-remediation-20260728.md
+REVIEW_REMEDIATION_IAA_PATH: .agent-admin/assurance/iaa-token-apw-durable-paid-call-runtime-pr-1977-review-remediation-20260728.md
 REVIEW_REMEDIATION_IAA_TOKEN: IAA-APW-DURABLE-PAID-CALL-RUNTIME-1977-REVIEW-20260728-PASS
-GOVERNANCE_ARTIFACT_PATH_REPAIR: c047ac40e55d7fcfaa3ff8dc09a9c052108d68cc
+GOVERNANCE_ARTIFACT_PATH_REPAIR: 74e32f42b8b812c12450116d8e5c78b64535303b
 
 ## Authorised sequence
 
@@ -51,7 +51,8 @@ GOVERNANCE_ARTIFACT_PATH_REPAIR: c047ac40e55d7fcfaa3ff8dc09a9c052108d68cc
 - [x] Run the full existing gateway regression suite.
 - [x] Complete QP and ECAP.
 - [x] Obtain independent final IAA.
-- [x] Normalize final and review-remediation IAA evidence into approved `iaa-wave-record-*` assurance paths.
+- [x] Normalize final IAA evidence into one approved `iaa-wave-record-*` path.
+- [x] Normalize review-remediation IAA evidence into an approved `iaa-token-*` path.
 - [ ] Rerun exact-head merge gates after governance artifact path repair.
 
 ## Runtime delivery requirements
