@@ -18,7 +18,8 @@ import { chromium } from 'playwright';
  */
 
 const REPO_ROOT = new URL('../../../../', import.meta.url).pathname;
-const BASE_URL = process.env.PIT_W83_BROWSER_BASE_URL ?? 'http://127.0.0.1:4173';
+const DEFAULT_PORT = '4173';
+const BASE_URL = process.env.PIT_W83_BROWSER_BASE_URL ?? `http://127.0.0.1:${DEFAULT_PORT}`;
 const MANAGE_LOCAL_DEV_SERVER = !process.env.PIT_W83_BROWSER_BASE_URL;
 
 const ROUTES = {
@@ -53,7 +54,7 @@ async function waitForServer(url, timeoutMs = 90_000) {
 }
 
 function spawnLocalAppServer() {
-  return spawn('pnpm', ['--filter', 'isms-portal', 'dev', '--host', '127.0.0.1', '--port', '4173', '--strictPort'], {
+  return spawn('pnpm', ['--filter', 'isms-portal', 'dev', '--host', '127.0.0.1', '--port', DEFAULT_PORT, '--strictPort'], {
     cwd: REPO_ROOT,
     stdio: 'ignore',
     env: { ...process.env, CI: '1' },
@@ -63,7 +64,7 @@ function spawnLocalAppServer() {
 async function captureRoute(name, routePath) {
   const target = new URL(routePath, BASE_URL).toString();
   try {
-    const response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    const response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 10_000 });
     const html = await page.content();
     snapshots.set(name, {
       url: page.url(),

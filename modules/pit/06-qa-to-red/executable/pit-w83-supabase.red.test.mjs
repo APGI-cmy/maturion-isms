@@ -50,30 +50,30 @@ function requireHarnessEnv() {
 
 async function assertHarnessConnectivity() {
   requireHarnessEnv();
-  const probe = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const { error } = await probe.from('information_schema.tables').select('table_name').limit(1);
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+    method: 'GET',
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+    },
+  });
   assert.ok(
-    !error || error.code === '42501' || error.code === '42P01',
-    `Supabase harness connectivity failed: ${error?.message ?? 'unknown error'}`,
+    response.ok || response.status === 401 || response.status === 403,
+    `Supabase harness connectivity failed: unexpected REST status ${response.status}`,
   );
 }
 
 function bearerForRole(role) {
   if (role === 'unauthenticated') return null;
-  const token =
-    role === 'viewer'
-      ? REQUIRED_PERSONA_TOKENS.viewer
-      : role === 'contributor'
-      ? REQUIRED_PERSONA_TOKENS.contributor
-      : role === 'project_manager'
-      ? REQUIRED_PERSONA_TOKENS.project_manager
-      : role === 'team_leader'
-      ? REQUIRED_PERSONA_TOKENS.team_leader
-      : role === 'sibling_owner'
-      ? REQUIRED_PERSONA_TOKENS.sibling_owner
-      : role === 'cross_tenant'
-      ? REQUIRED_PERSONA_TOKENS.cross_tenant
-      : '';
+  const roleTokenMap = {
+    viewer: REQUIRED_PERSONA_TOKENS.viewer,
+    contributor: REQUIRED_PERSONA_TOKENS.contributor,
+    project_manager: REQUIRED_PERSONA_TOKENS.project_manager,
+    team_leader: REQUIRED_PERSONA_TOKENS.team_leader,
+    sibling_owner: REQUIRED_PERSONA_TOKENS.sibling_owner,
+    cross_tenant: REQUIRED_PERSONA_TOKENS.cross_tenant,
+  };
+  const token = roleTokenMap[role] ?? '';
   assert.ok(
     token,
     `Missing persona JWT for role "${role}". Provide PIT_W83_TOKEN_* variables for deterministic actor authentication.`,
