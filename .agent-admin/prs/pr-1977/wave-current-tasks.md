@@ -2,7 +2,7 @@
 
 PR: #1977
 WAVE: APW-DURABLE-PAID-CALL-RUNTIME-IMPLEMENTATION-V01
-STATUS: IMPLEMENTED_TO_GREEN — QP_ECAP_PASS — FINAL_IAA_PASS — MERGE_ELIGIBLE
+STATUS: IMPLEMENTED_TO_GREEN — QP_ECAP_PASS — FINAL_IAA_PASS — GOVERNANCE_PATH_NORMALIZED — MERGE_GATE_RERUN_REQUIRED
 CS2_AUTHORITY: Johan Ras
 CS2_DECISION: AUTHORISE_APW_DURABLE_PAID_CALL_RUNTIME_IMPLEMENTATION_WAVE
 DATE: 2026-07-28
@@ -15,7 +15,11 @@ RUNTIME_CORE_COMMIT: 648a61977e03b3908c5515b10717e5618b93f0a0
 GATE_DETECTED_FIRST_IMPLEMENTATION_COMMIT: ed54be17febbc14b8f8dcef41706fe4c3c8066b8
 QP_ECAP_COMMIT: 5f78b1c84bd91688d2eecc0dc4729ca748a0a2fb
 FINAL_IAA_COMMIT: f8bbf983e703a13163c4d8e24f0b5093fc26c0af
+FINAL_IAA_PATH: .agent-admin/assurance/iaa-wave-record-apw-durable-paid-call-runtime-pr-1977-final-20260728.md
 FINAL_IAA_TOKEN: IAA-APW-DURABLE-PAID-CALL-RUNTIME-1977-20260728-PASS
+REVIEW_REMEDIATION_IAA_PATH: .agent-admin/assurance/iaa-wave-record-apw-durable-paid-call-runtime-pr-1977-review-remediation-20260728.md
+REVIEW_REMEDIATION_IAA_TOKEN: IAA-APW-DURABLE-PAID-CALL-RUNTIME-1977-REVIEW-20260728-PASS
+GOVERNANCE_ARTIFACT_PATH_REPAIR: c047ac40e55d7fcfaa3ff8dc09a9c052108d68cc
 
 ## Authorised sequence
 
@@ -28,7 +32,8 @@ FINAL_IAA_TOKEN: IAA-APW-DURABLE-PAID-CALL-RUNTIME-1977-20260728-PASS
 7. Preserve all existing public-chat regression tests and zero-cost containment behaviour.
 8. Complete Foreman QP and ECAP evidence.
 9. Freeze the implementation head and obtain independent final IAA.
-10. Return to CS2 before deployment, infrastructure mutation or paid-call activation.
+10. Normalize assurance artifact paths when the Merge Gate Interface path taxonomy rejects legacy assurance filenames.
+11. Return to CS2 before deployment, infrastructure mutation or paid-call activation.
 
 ## Active tasks
 
@@ -46,6 +51,8 @@ FINAL_IAA_TOKEN: IAA-APW-DURABLE-PAID-CALL-RUNTIME-1977-20260728-PASS
 - [x] Run the full existing gateway regression suite.
 - [x] Complete QP and ECAP.
 - [x] Obtain independent final IAA.
+- [x] Normalize final and review-remediation IAA evidence into approved `iaa-wave-record-*` assurance paths.
+- [ ] Rerun exact-head merge gates after governance artifact path repair.
 
 ## Runtime delivery requirements
 
@@ -55,7 +62,7 @@ FINAL_IAA_TOKEN: IAA-APW-DURABLE-PAID-CALL-RUNTIME-1977-20260728-PASS
 - privacy-safe anonymous-client rate limiting using non-reversible keyed hashes;
 - shared fail-closed circuit breaker;
 - provider-failure reservation reconciliation;
-- safe containment reasons for call, token, client and circuit limits;
+- safe containment reasons for call, token and circuit limits;
 - telemetry limited to non-sensitive budget metadata;
 - provider-budget evidence and bounded observation-window gates;
 - no raw prompt, answer, IP address, credential, secret, token or environment value in logs.
