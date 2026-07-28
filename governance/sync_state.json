@@ -42,17 +42,12 @@
     ]
   },
   "integrity": {
-    "evidence_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_evidence.log",
-    "alignment_log": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313_alignment.log",
-    "session_contract": ".agent-admin/sessions/governance-liaison/liaison-20260211-125313.md",
-    "sha256_verified": 96,
+    "evidence_log": ".agent-admin/governance/drift-report-align-20260728-084558.md",
+    "alignment_log": ".agent-admin/governance/ripple-log.json",
+    "session_contract": ".agent-admin/ripple/layer-down-received-20260728T084603Z.json",
+    "sha256_verified": 202,
     "sha256_variance_files": [
-      "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
-      "governance/canon/MERGE_GATE_PHILOSOPHY.md",
-      "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
-      "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
-      "governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md",
-      "governance/coordination/CROSS_AGENT_COORDINATION_PROTOCOL.md"
+      "governance/canon/GOVERNANCE_CANON_MANIFEST.md"
     ],
     "inventory_entries_validated": 203,
     "canonical_commit_provenance_validated": 203,
