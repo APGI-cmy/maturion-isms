@@ -843,7 +843,17 @@
       "type": "automated-alignment",
       "canonical_commit": "52ce157bb5b2971256cbe5e4123c576dc65fabbb",
       "files_updated": 3,
-      "status": "SUCCESS"
+      "status": "CORRECTED_AFTER_STOP_AND_FIX",
+      "automation_files_updated": 3,
+      "accepted_files_layered_down": 1,
+      "accepted_files": [
+        "governance/CANON_INVENTORY.json"
+      ],
+      "rejected_files": [
+        "governance/canon/GOVERNANCE_CANON_MANIFEST.md"
+      ],
+      "correction_issue": "1982",
+      "notes": "PR #1983 preserved the 203-entry provenance inventory but also copied an INTERNAL manifest and emitted stale evidence. The corrective lane restores the consumer manifest and normalizes receipt, alignment, ripple, hash, and sync-state evidence."
     }
   ],
   "last_updated": "2026-04-09T13:32:59Z"
