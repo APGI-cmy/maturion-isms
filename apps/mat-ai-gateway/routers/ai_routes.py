@@ -144,11 +144,8 @@ def public_chat(
 ) -> dict:
     """Public Maturion chat endpoint for the APW public website."""
     context = dict(request.context or {})
-    peer = http_request.client.host if http_request.client else "unknown"
-    forwarded = http_request.headers.get("x-forwarded-for", "")
-    forwarded_client = forwarded.split(",", maxsplit=1)[0].strip()
     observed_client = (
-        f"{peer}|{forwarded_client}" if forwarded_client else peer
+        http_request.client.host if http_request.client else "unknown"
     )
     context["client_request_id"] = observed_client
     try:
