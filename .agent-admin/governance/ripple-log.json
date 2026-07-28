@@ -853,7 +853,8 @@
         "governance/canon/GOVERNANCE_CANON_MANIFEST.md"
       ],
       "correction_issue": "1982",
-      "notes": "PR #1983 preserved the 203-entry provenance inventory but also copied an INTERNAL manifest and emitted stale evidence. The corrective lane restores the consumer manifest and normalizes receipt, alignment, ripple, hash, and sync-state evidence."
+      "notes": "PR #1983 preserved the 203-entry provenance inventory but also copied an INTERNAL manifest and emitted stale evidence. The corrective lane restores the consumer manifest and normalizes receipt, alignment, ripple, hash, and sync-state evidence.",
+      "correction_pr": "1984"
     }
   ],
   "last_updated": "2026-04-09T13:32:59Z"
