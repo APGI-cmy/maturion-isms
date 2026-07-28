@@ -8,7 +8,7 @@
 **Base SHA:** `f6454c00719181cca7f31aff0e0909a63772750d`  
 **Supabase target:** `ujucvyyspfxlxlfdamda`  
 **CS2:** Johan Ras  
-**Status:** TASK SET COMMITTED / IAA PRE-BRIEF COMPLETE at `aad6ee6f…` WITH TIMING CORRECTION `70cef205…` / SCHEMA BUILDER APPOINTED at `4b0f36bd…` / GOVERNANCE LAYER-DOWN CORRECTION MERGED VIA #1984 / SCHEMA-BUILDER WAKE-UP PASSED AT `3087aa2e…` / REPOSITORY RED-TO-GREEN COMPLETE
+**Status:** TASK SET COMMITTED / IAA PRE-BRIEF COMPLETE at `aad6ee6f…` WITH TIMING CORRECTION `70cef205…` / SCHEMA BUILDER APPOINTED at `4b0f36bd…` / GOVERNANCE LAYER-DOWN CORRECTION MERGED VIA #1984 / SCHEMA-BUILDER WAKE-UP PASSED AT `3087aa2e…` / REPOSITORY RED-TO-GREEN COMPLETE / ROOT TEST DISCOVERABILITY CORRECTED / TENANT WRITE-PATH TEST PENDING
 
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-mmm-private-helper-policy-alignment-1959-20260727.md
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-mmm-private-helper-policy-alignment-1959-20260727.md
@@ -35,6 +35,13 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 - Focused QA committed RED at `0ad269f896d5f9c13b6d4ea163b0679b1322b5c5`;
   the exact seven-policy migration committed GREEN at
   `313a2daf085773d6cbbcce716184e53efb7e035a`.
+- Root Vitest discoverability was corrected after review because
+  `vitest.config.ts` did not include `modules/MMM/tests/B4-framework/**/*.test.ts`
+  or `**/*.test.tsx`; the focused guard now runs under the normal root test
+  config as well as the B4 config.
+- Read-only inspection of Supabase project `ujucvyyspfxlxlfdamda` on
+  2026-07-28 returned all seven target policies with
+  `app_private.mmm_current_user_org_id()`. No live mutation was performed.
 - Production database mutation remains blocked until governed post-merge deployment.
 
 ## Qualifying task set
@@ -46,8 +53,8 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: yes
 | RLS-1959-03 | Independent IAA classifies the wave and writes the canonical pre-brief into the declared wave record | SECURITY_ASSURANCE / GOVERNANCE_EVIDENCE | COMPLETE — pre-brief `aad6ee6f…`; timing correction `70cef205…` |
 | RLS-1959-04 | Foreman records a bounded schema-builder appointment before implementation; the schema-valid PR-scoped machine proof follows the first implementation commit | DELEGATION / GOVERNANCE_EVIDENCE | COMPLETE — appointment `4b0f36bd…`; first implementation `0ad269f8…` |
 | RLS-1959-05 | Schema builder authors one idempotent migration that recreates only the seven named policies with `app_private.mmm_current_user_org_id()` | DATABASE_SCHEMA / RLS_SECURITY | COMPLETE — `313a2daf…` |
-| RLS-1959-06 | Schema builder implements structural tests for seven private-helper references and unchanged hardened helper grants | DATABASE_QA / SECURITY_QA | COMPLETE — RED `0ad269f8…`; GREEN 4/4 |
-| RLS-1959-07 | Schema builder implements authenticated same-org, cross-org and anonymous criteria/descriptor/storage path tests without `service_role` masking | RLS_SECURITY / TENANT_ISOLATION | PENDING DISPOSABLE BRANCH COST CONFIRMATION |
+| RLS-1959-06 | Schema builder implements structural tests for seven private-helper references and unchanged hardened helper grants | DATABASE_QA / SECURITY_QA | COMPLETE — RED `0ad269f8…`; GREEN 4/4; root test discoverability corrected |
+| RLS-1959-07 | Schema builder implements authenticated same-org, cross-org and anonymous criteria/descriptor/storage path tests without `service_role` masking | RLS_SECURITY / TENANT_ISOLATION | PENDING usable disposable branch; existing branch `difxtqokpogiieybxgwr` has zero target policies and is not schema-parity |
 | RLS-1959-08 | Run focused and regression suites; Foreman QP; ECAP; freeze current head; obtain independent final IAA | QUALITY / ADMINISTRATION / INDEPENDENT_ASSURANCE | IN PROGRESS; BLOCKED ON RLS-1959-07 |
 | RLS-1959-09 | CS2 review and merge, governed migration deployment, read-only live verification, Issue #1959 closure | MERGE / DEPLOYMENT_ASSURANCE | BLOCKED BY RLS-1959-08 |
 | RLS-1959-10 | Reconcile the MMM tracker for PRs #1958/#1962 and prepare the separate #1961 build-to-GREEN lane | SUCCESSOR_CONTROL | BLOCKED BY RLS-1959-09; OUTSIDE PR #1973 IMPLEMENTATION |
