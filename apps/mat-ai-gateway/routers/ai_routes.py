@@ -147,9 +147,10 @@ def public_chat(
     peer = http_request.client.host if http_request.client else "unknown"
     forwarded = http_request.headers.get("x-forwarded-for", "")
     forwarded_client = forwarded.split(",", maxsplit=1)[0].strip()
-    context["_server_client_identifier"] = (
+    observed_client = (
         f"{peer}|{forwarded_client}" if forwarded_client else peer
     )
+    context["client_request_id"] = observed_client
     try:
         result = _public_chat.answer(
             message=request.message,
