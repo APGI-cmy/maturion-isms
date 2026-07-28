@@ -15,10 +15,11 @@ function readFile(relPath: string): string {
 }
 
 const STATE_MACHINE_PATH = 'apps/mmm/src/lib/approval/approvalWorkflowStateMachine.ts';
+const APPROVAL_CLIENT_PATH = 'apps/mmm/src/lib/approval/approvalWorkflowClient.ts';
 const DOMAIN_ACTION_PATH = 'supabase/functions/mmm-domain-approval-action/index.ts';
 const FRAMEWORK_ACTION_PATH = 'supabase/functions/mmm-framework-approval-action/index.ts';
 
-describe('MMM Approval Workflow Foundation QA-to-RED — issue #1961', () => {
+ describe('MMM Approval Workflow Foundation QA-to-GREEN — issue #1961', () => {
   it('T-MMM-AWF-001/002/014: central state machine declares actors, completeness and expected-version conflict handling', () => {
     expect(fileExists(STATE_MACHINE_PATH)).toBe(true);
     const source = readFile(STATE_MACHINE_PATH);
@@ -72,30 +73,40 @@ describe('MMM Approval Workflow Foundation QA-to-RED — issue #1961', () => {
     expect(source).toMatch(/audit|transition/i);
   });
 
-  it('T-MMM-AWF-016: UI projects server lock/status truth for Level 1, 2 and 3', () => {
-    const domainUi = readFile('apps/mmm/src/components/assessment/DomainAuditBuilder.tsx');
-    const frameworkUi = readFile('apps/mmm/src/pages/AssessmentFrameworkHandoffPage.tsx');
-    expect(domainUi).toMatch(/submitted_l1/);
-    expect(domainUi).toMatch(/returned_l2/);
-    expect(domainUi).toMatch(/approved_l2/);
-    expect(domainUi).toMatch(/locked/);
-    expect(frameworkUi).toMatch(/submitted_l3/);
-    expect(frameworkUi).toMatch(/returned_l3/);
-    expect(frameworkUi).toMatch(/approved_l3/);
+  it('T-MMM-AWF-016: typed client projects server lock/status truth for Level 1, 2 and 3', () => {
+    expect(fileExists(APPROVAL_CLIENT_PATH)).toBe(true);
+    const client = readFile(APPROVAL_CLIENT_PATH);
+    expect(client).toMatch(/mmm_domain_approval_requests/);
+    expect(client).toMatch(/mmm_framework_approval_requests/);
+    expect(client).toMatch(/submitted_l1/);
+    expect(client).toMatch(/returned_l2/);
+    expect(client).toMatch(/approved_l2/);
+    expect(client).toMatch(/submitted_l3/);
+    expect(client).toMatch(/returned_l3/);
+    expect(client).toMatch(/approved_l3/);
+    expect(client).toMatch(/status/);
+    expect(client).toMatch(/locked/);
+    expect(client).toMatch(/expected_state|expectedState/);
+    expect(client).toMatch(/expected_version|expectedVersion/);
   });
 
-  it('T-MMM-AWF-017: private RLS helper model remains hardened while authenticated policy execution is supported', () => {
+  it('T-MMM-AWF-017: private RLS helper model remains hardened and stale policies are reconciled', () => {
     const hardeningPath = 'supabase/migrations/20260530000003_mmm_function_search_path_hardening.sql';
+    const reconciliationPath = 'supabase/migrations/20260724000001_mmm_rls_private_helper_policy_reconciliation.sql';
     expect(fileExists(hardeningPath)).toBe(true);
+    expect(fileExists(reconciliationPath)).toBe(true);
     const hardening = readFile(hardeningPath);
+    const reconciliation = readFile(reconciliationPath);
     expect(hardening).toMatch(/CREATE OR REPLACE FUNCTION app_private\.mmm_current_user_org_id/i);
     expect(hardening).toMatch(/CREATE OR REPLACE FUNCTION app_private\.mmm_current_user_role/i);
     expect(hardening).toMatch(/GRANT EXECUTE ON FUNCTION app_private\.mmm_current_user_org_id\(\) TO authenticated, service_role/i);
     expect(hardening).toMatch(/GRANT EXECUTE ON FUNCTION app_private\.mmm_current_user_role\(\) TO authenticated, service_role/i);
     expect(hardening).toMatch(/REVOKE EXECUTE ON FUNCTION public\.mmm_current_user_org_id\(\) FROM PUBLIC, anon, authenticated/i);
     expect(hardening).toMatch(/REVOKE EXECUTE ON FUNCTION public\.mmm_current_user_role\(\) FROM PUBLIC, anon, authenticated/i);
-    expect(hardening).not.toMatch(/DISABLE ROW LEVEL SECURITY/i);
-    expect(hardening).not.toMatch(/GRANT .*service_role.*authenticated/i);
+    expect(reconciliation).toMatch(/app_private\.mmm_current_user_org_id\(\)/i);
+    expect(reconciliation).toMatch(/app_private\.mmm_current_user_role\(\)/i);
+    expect(reconciliation).not.toMatch(/DISABLE ROW LEVEL SECURITY/i);
+    expect(reconciliation).not.toMatch(/GRANT .*service_role.*authenticated/i);
   });
 
   it('T-MMM-AWF-018: descriptor regression authority remains present', () => {
