@@ -18,7 +18,7 @@ import { chromium } from 'playwright';
  */
 
 const REPO_ROOT = new URL('../../../../', import.meta.url).pathname;
-const DEFAULT_PORT = '4173';
+const DEFAULT_PORT = '5173';
 const BASE_URL = process.env.PIT_W83_BROWSER_BASE_URL ?? `http://127.0.0.1:${DEFAULT_PORT}`;
 const MANAGE_LOCAL_DEV_SERVER = !process.env.PIT_W83_BROWSER_BASE_URL;
 

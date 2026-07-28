@@ -36,7 +36,7 @@ const REQUIRED_PERSONA_TOKENS = {
   viewer: process.env.PIT_W83_TOKEN_VIEWER ?? '',
   contributor: process.env.PIT_W83_TOKEN_CONTRIBUTOR ?? '',
   team_leader: process.env.PIT_W83_TOKEN_TEAM_LEADER ?? '',
-  project_manager: process.env.PIT_W83_TOKEN_PROJECT_LEADER ?? '',
+  project_manager: process.env.PIT_W83_TOKEN_PROJECT_MANAGER ?? process.env.PIT_W83_TOKEN_PROJECT_LEADER ?? '',
   sibling_owner: process.env.PIT_W83_TOKEN_SIBLING_OWNER ?? '',
   cross_tenant: process.env.PIT_W83_TOKEN_CROSS_TENANT ?? '',
 };
