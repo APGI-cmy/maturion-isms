@@ -1,7 +1,7 @@
 """Durable, fail-closed spend controls for APW public chat.
 
-The production adapter delegates all reservation and reconciliation operations to
-atomic PostgreSQL RPCs.  The in-memory adapter exists only for deterministic
+The production adapter delegates reservation and reconciliation operations to
+atomic PostgreSQL RPCs. The in-memory adapter exists only for deterministic
 unit tests and shares state across service instances in the current process.
 No prompt, answer, raw client identifier, credential, or secret is persisted.
 """
@@ -44,7 +44,11 @@ class DurableSpendStore(Protocol):
         client_limit: int,
     ) -> SpendDecision: ...
 
-    def reconcile_success(self, reservation_id: str, actual_tokens: int) -> None: ...
+    def reconcile_success(
+        self,
+        reservation_id: str,
+        actual_tokens: int,
+    ) -> None: ...
 
     def reconcile_failure(self, reservation_id: str) -> None: ...
 
@@ -102,13 +106,41 @@ class InMemoryDurableSpendStore:
             client_count = int(clients.get(client_bucket, 0))
 
             if circuit != "closed":
-                return self._decision(False, "paid_call_circuit_open", None, budget_day, state, client_bucket)
+                return self._decision(
+                    False,
+                    "paid_call_circuit_open",
+                    None,
+                    budget_day,
+                    state,
+                    client_bucket,
+                )
             if client_count >= client_limit:
-                return self._decision(False, "client_rate_limit_reached", None, budget_day, state, client_bucket)
+                return self._decision(
+                    False,
+                    "client_rate_limit_reached",
+                    None,
+                    budget_day,
+                    state,
+                    client_bucket,
+                )
             if calls >= call_limit:
-                return self._decision(False, "durable_daily_call_limit_reached", None, budget_day, state, client_bucket)
+                return self._decision(
+                    False,
+                    "durable_daily_call_limit_reached",
+                    None,
+                    budget_day,
+                    state,
+                    client_bucket,
+                )
             if tokens + estimated_tokens > token_limit:
-                return self._decision(False, "durable_daily_token_limit_reached", None, budget_day, state, client_bucket)
+                return self._decision(
+                    False,
+                    "durable_daily_token_limit_reached",
+                    None,
+                    budget_day,
+                    state,
+                    client_bucket,
+                )
 
             self._sequence += 1
             reservation_id = f"mem-{budget_day}-{self._sequence}"
@@ -118,14 +150,28 @@ class InMemoryDurableSpendStore:
             reservations = state["reservations"]
             assert isinstance(reservations, dict)
             reservations[reservation_id] = estimated_tokens
-            return self._decision(True, "paid_call_permitted", reservation_id, budget_day, state, client_bucket)
+            return self._decision(
+                True,
+                "paid_call_permitted",
+                reservation_id,
+                budget_day,
+                state,
+                client_bucket,
+            )
 
-    def reconcile_success(self, reservation_id: str, actual_tokens: int) -> None:
+    def reconcile_success(
+        self,
+        reservation_id: str,
+        actual_tokens: int,
+    ) -> None:
         with self._lock:
             state, reserved = self._find_reservation(reservation_id)
             if state is None:
                 return
-            state["tokens"] = max(0, int(state["tokens"]) - reserved + max(0, actual_tokens))
+            state["tokens"] = max(
+                0,
+                int(state["tokens"]) - reserved + max(0, actual_tokens),
+            )
             reservations = state["reservations"]
             assert isinstance(reservations, dict)
             reservations.pop(reservation_id, None)
@@ -144,7 +190,10 @@ class InMemoryDurableSpendStore:
             assert isinstance(reservations, dict)
             reservations.pop(reservation_id, None)
 
-    def _find_reservation(self, reservation_id: str) -> tuple[dict[str, object] | None, int]:
+    def _find_reservation(
+        self,
+        reservation_id: str,
+    ) -> tuple[dict[str, object] | None, int]:
         for state in self._days.values():
             reservations = state["reservations"]
             assert isinstance(reservations, dict)
@@ -176,7 +225,12 @@ class InMemoryDurableSpendStore:
 class SupabaseRpcDurableSpendStore:
     """Production adapter using server-side atomic PostgreSQL RPCs."""
 
-    def __init__(self, base_url: str, service_role_key: str, timeout_seconds: float = 5.0) -> None:
+    def __init__(
+        self,
+        base_url: str,
+        service_role_key: str,
+        timeout_seconds: float = 5.0,
+    ) -> None:
         self._base_url = base_url.rstrip("/")
         self._service_role_key = service_role_key
         self._timeout_seconds = timeout_seconds
@@ -204,7 +258,9 @@ class SupabaseRpcDurableSpendStore:
         )
         return SpendDecision(
             permitted=bool(payload.get("permitted")),
-            reason=str(payload.get("reason") or "durable_budget_unavailable"),
+            reason=str(
+                payload.get("reason") or "durable_budget_unavailable"
+            ),
             reservation_id=payload.get("reservation_id"),
             budget_day=str(payload.get("budget_day") or budget_day),
             reserved_calls=int(payload.get("reserved_calls") or 0),
@@ -213,16 +269,30 @@ class SupabaseRpcDurableSpendStore:
             rate_limit_bucket=client_bucket,
         )
 
-    def reconcile_success(self, reservation_id: str, actual_tokens: int) -> None:
+    def reconcile_success(
+        self,
+        reservation_id: str,
+        actual_tokens: int,
+    ) -> None:
         self._rpc(
             "apw_reconcile_paid_call_success",
-            {"p_reservation_id": reservation_id, "p_actual_tokens": max(0, actual_tokens)},
+            {
+                "p_reservation_id": reservation_id,
+                "p_actual_tokens": max(0, actual_tokens),
+            },
         )
 
     def reconcile_failure(self, reservation_id: str) -> None:
-        self._rpc("apw_reconcile_paid_call_failure", {"p_reservation_id": reservation_id})
+        self._rpc(
+            "apw_reconcile_paid_call_failure",
+            {"p_reservation_id": reservation_id},
+        )
 
-    def _rpc(self, function_name: str, payload: dict[str, object]) -> dict[str, object]:
+    def _rpc(
+        self,
+        function_name: str,
+        payload: dict[str, object],
+    ) -> dict[str, object]:
         request = urllib.request.Request(
             f"{self._base_url}/rest/v1/rpc/{function_name}",
             data=json.dumps(payload).encode("utf-8"),
@@ -234,10 +304,15 @@ class SupabaseRpcDurableSpendStore:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=self._timeout_seconds) as response:
+            with urllib.request.urlopen(
+                request,
+                timeout=self._timeout_seconds,
+            ) as response:
                 decoded = json.loads(response.read().decode("utf-8"))
         except (urllib.error.URLError, TimeoutError, ValueError) as exc:
-            raise RuntimeError("durable spend authority unavailable") from exc
+            raise RuntimeError(
+                "durable spend authority unavailable"
+            ) from exc
         if isinstance(decoded, list):
             decoded = decoded[0] if decoded else {}
         if not isinstance(decoded, dict):
@@ -249,11 +324,28 @@ class UnavailableDurableSpendStore:
     """Fail-closed adapter used when deployed configuration is incomplete."""
 
     def reserve(self, **kwargs: object) -> SpendDecision:
-        budget_day = str(kwargs.get("budget_day") or date.today().isoformat())
-        client_bucket = str(kwargs.get("client_bucket") or "unavailable")
-        return SpendDecision(False, "durable_budget_unavailable", None, budget_day, 0, 0, "open", client_bucket)
+        budget_day = str(
+            kwargs.get("budget_day") or date.today().isoformat()
+        )
+        client_bucket = str(
+            kwargs.get("client_bucket") or "unavailable"
+        )
+        return SpendDecision(
+            False,
+            "durable_budget_unavailable",
+            None,
+            budget_day,
+            0,
+            0,
+            "open",
+            client_bucket,
+        )
 
-    def reconcile_success(self, reservation_id: str, actual_tokens: int) -> None:
+    def reconcile_success(
+        self,
+        reservation_id: str,
+        actual_tokens: int,
+    ) -> None:
         return None
 
     def reconcile_failure(self, reservation_id: str) -> None:
@@ -261,20 +353,38 @@ class UnavailableDurableSpendStore:
 
 
 def build_usage_store() -> DurableSpendStore:
-    if os.environ.get("PYTEST_CURRENT_TEST") is not None or os.environ.get("OPENAI_API_KEY") == "test-openai-key-fixture":
+    is_test = (
+        os.environ.get("PYTEST_CURRENT_TEST") is not None
+        or os.environ.get("OPENAI_API_KEY") == "test-openai-key-fixture"
+    )
+    if is_test:
         return InMemoryDurableSpendStore.shared()
     base_url = os.environ.get("SUPABASE_URL", "").strip()
-    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    service_key = os.environ.get(
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "",
+    ).strip()
     if base_url and service_key:
         return SupabaseRpcDurableSpendStore(base_url, service_key)
     return UnavailableDurableSpendStore()
 
 
 def privacy_safe_client_bucket(raw_identifier: str) -> str:
-    secret = os.environ.get("MATURION_PUBLIC_CHAT_CLIENT_HASH_SECRET", "").encode("utf-8")
+    secret = os.environ.get(
+        "MATURION_PUBLIC_CHAT_CLIENT_HASH_SECRET",
+        "",
+    ).encode("utf-8")
     if not secret:
-        secret = b"test-only-client-hash-key" if os.environ.get("PYTEST_CURRENT_TEST") else b""
+        secret = (
+            b"test-only-client-hash-key"
+            if os.environ.get("PYTEST_CURRENT_TEST")
+            else b""
+        )
     if not secret:
         return "unavailable"
-    digest = hmac.new(secret, raw_identifier.encode("utf-8"), hashlib.sha256).hexdigest()
+    digest = hmac.new(
+        secret,
+        raw_identifier.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
     return digest[:24]
