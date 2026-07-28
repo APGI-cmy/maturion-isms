@@ -1,4 +1,4 @@
-name: APW Paid-Call RED Evidence
+name: APW Paid-Call Durable Spend Evidence
 
 on:
   pull_request:
@@ -6,12 +6,13 @@ on:
     paths:
       - '.agent-admin/qa-to-red/pr-1976/**'
       - 'apps/mat-ai-gateway/**'
+      - 'supabase/migrations/**apw_durable_paid_call_budget.sql'
       - 'Maturion/prebuild/runtime-activation-readiness/APW-Paid-Call-Readiness-and-Spend-Control-v0.1.md'
       - '.github/workflows/apw-paid-call-red-evidence.yml'
   workflow_dispatch:
 
 jobs:
-  red-evidence:
+  durable-spend-evidence:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,24 +23,21 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: pip install -r apps/mat-ai-gateway/requirements.txt pytest httpx
-      - name: Run intentional RED contract
-        shell: bash
+      - name: Run APW-RED-PAID-001..016 as GREEN contract
+        working-directory: apps/mat-ai-gateway
         run: |
-          set +e
-          cd apps/mat-ai-gateway
-          PYTHONPATH=. python -m pytest ../../.agent-admin/qa-to-red/pr-1976/test_public_chat_durable_spend_red.py -q > "$GITHUB_WORKSPACE/apw-paid-call-red.log" 2>&1
-          status=$?
-          set -e
-          cat "$GITHUB_WORKSPACE/apw-paid-call-red.log"
-          test "$status" -ne 0
-          grep -Eq '16 failed' "$GITHUB_WORKSPACE/apw-paid-call-red.log"
-          ! grep -Eq 'ERROR collecting|ImportError|ModuleNotFoundError|SyntaxError|FileNotFoundError|ConnectionError' "$GITHUB_WORKSPACE/apw-paid-call-red.log"
+          PYTHONPATH=. python -m pytest ../../.agent-admin/qa-to-red/pr-1976/test_public_chat_durable_spend_red.py -q | tee "$GITHUB_WORKSPACE/apw-paid-call-durable-green.log"
+          grep -Eq '16 passed' "$GITHUB_WORKSPACE/apw-paid-call-durable-green.log"
       - name: Run existing GREEN public-chat regression
         working-directory: apps/mat-ai-gateway
         run: python -m pytest tests/test_public_chat.py -q
-      - name: Upload RED evidence
+      - name: Run full gateway regression
+        working-directory: apps/mat-ai-gateway
+        run: python -m pytest tests/ -q
+      - name: Upload durable spend evidence
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: apw-paid-call-red-evidence-${{ github.sha }}
-          path: apw-paid-call-red.log
+          name: apw-paid-call-durable-spend-evidence-${{ github.sha }}
+          path: apw-paid-call-durable-green.log
+          if-no-files-found: error
