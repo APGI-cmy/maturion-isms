@@ -16,7 +16,7 @@
       "governance/CANON_INVENTORY.json"
     ],
     "upstream_ripple_pr": "1375",
-    "followup_pr": "corrective-pr-for-1983",
+    "followup_pr": "1984",
     "ripple_pr": "1983",
     "source_issue": "1982"
   },
