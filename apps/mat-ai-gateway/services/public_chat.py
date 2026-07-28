@@ -2,8 +2,9 @@
 
 The implementation lives in ``public_chat_runtime``. The externally returned
 containment reason for an exhausted call budget remains
-``daily_call_limit_reached`` for compatibility. Durable internal reasons also
-include ``durable_daily_token_limit_reached``, ``client_rate_limit_reached``,
+``daily_call_limit_reached`` for compatibility. Its internal durable reason is
+``durable_daily_call_limit_reached``. Other durable internal reasons include
+``durable_daily_token_limit_reached``, ``client_rate_limit_reached``,
 ``paid_call_circuit_open`` and ``durable_budget_unavailable``.
 
 The preactivation gates ``PROVIDER_BUDGET_EVIDENCE_VERIFIED`` and
@@ -21,7 +22,9 @@ from services.durable_spend import (
     privacy_safe_client_bucket,
     utc_budget_day,
 )
-from services.public_chat_runtime import PublicChatService as RuntimePublicChatService
+from services.public_chat_runtime import (
+    PublicChatService as RuntimePublicChatService,
+)
 
 
 class PublicChatService(RuntimePublicChatService):
@@ -36,16 +39,31 @@ class PublicChatService(RuntimePublicChatService):
         clean_message = message.strip()
         safe_context = context or {}
         page = self._safe_page(safe_context)
-        apw_result = self._try_apw_specialist_route(clean_message, page, safe_context)
+        apw_result = self._try_apw_specialist_route(
+            clean_message,
+            page,
+            safe_context,
+        )
         route = apw_result.get("route")
-        messages = self._build_messages(clean_message, history or [], page, apw_result)
-        decision = self._paid_call_permitted_with_messages(route, safe_context, messages)
+        messages = self._build_messages(
+            clean_message,
+            history or [],
+            page,
+            apw_result,
+        )
+        decision = self._paid_call_permitted_with_messages(
+            route,
+            safe_context,
+            messages,
+        )
 
         if decision.permitted and decision.reservation_id:
             try:
                 answer, usage = self._complete(messages)
             except Exception:
-                self._reconcile_failed_provider_call(decision.reservation_id)
+                self._reconcile_failed_provider_call(
+                    decision.reservation_id
+                )
                 raise
             self._reserve_and_reconcile_tokens(
                 decision.reservation_id,
@@ -55,9 +73,15 @@ class PublicChatService(RuntimePublicChatService):
             containment_reason = "paid_call_permitted"
         else:
             answer = self._static_response(apw_result)
-            usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+            usage = {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+            }
             response_mode = "static_containment"
-            containment_reason = self._compatibility_reason(decision.reason)
+            containment_reason = self._compatibility_reason(
+                decision.reason
+            )
 
         return {
             "answer": answer,
@@ -87,7 +111,16 @@ class PublicChatService(RuntimePublicChatService):
     ) -> SpendDecision:
         budget_day = utc_budget_day()
         if route == "apw_integration_disabled":
-            return SpendDecision(False, "integration_disabled", None, budget_day, 0, 0, "closed", "none")
+            return SpendDecision(
+                False,
+                "integration_disabled",
+                None,
+                budget_day,
+                0,
+                0,
+                "closed",
+                "none",
+            )
         if route == "maturion_only":
             return SpendDecision(
                 False,
@@ -100,7 +133,16 @@ class PublicChatService(RuntimePublicChatService):
                 "none",
             )
         if not self._paid_calls_enabled():
-            return SpendDecision(False, "paid_calls_disabled", None, budget_day, 0, 0, "closed", "none")
+            return SpendDecision(
+                False,
+                "paid_calls_disabled",
+                None,
+                budget_day,
+                0,
+                0,
+                "closed",
+                "none",
+            )
         if os.environ.get("PYTEST_CURRENT_TEST") and not isinstance(
             self._usage_store,
             InMemoryDurableSpendStore,
@@ -112,9 +154,12 @@ class PublicChatService(RuntimePublicChatService):
             self._raw_client_identifier(context)
         )
         prompt_upper_bound = sum(
-            len(item.get("content", "").encode("utf-8")) for item in messages
+            len(item.get("content", "").encode("utf-8"))
+            for item in messages
         )
-        estimated_total_tokens = prompt_upper_bound + self._max_output_tokens
+        estimated_total_tokens = (
+            prompt_upper_bound + self._max_output_tokens
+        )
         try:
             return self._usage_store.reserve(
                 budget_day=budget_day,
