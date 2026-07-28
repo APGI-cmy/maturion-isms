@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Union
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, field_validator
 
 from services.image_analysis import ImageAnalyser
@@ -138,13 +138,23 @@ def analyse_image(request: AnalyseImageRequest) -> dict:
 
 
 @router.post("/public-chat")
-def public_chat(request: PublicChatRequest) -> dict:
+def public_chat(
+    request: PublicChatRequest,
+    http_request: Request,
+) -> dict:
     """Public Maturion chat endpoint for the APW public website."""
+    context = dict(request.context or {})
+    peer = http_request.client.host if http_request.client else "unknown"
+    forwarded = http_request.headers.get("x-forwarded-for", "")
+    forwarded_client = forwarded.split(",", maxsplit=1)[0].strip()
+    context["_server_client_identifier"] = (
+        f"{peer}|{forwarded_client}" if forwarded_client else peer
+    )
     try:
         result = _public_chat.answer(
             message=request.message,
             history=request.history,
-            context=request.context,
+            context=context,
         )
         logger.info(
             "public_chat_route route=%s page=%s history_count=%s "
