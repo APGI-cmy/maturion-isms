@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-05-22",
+  "last_updated": "2026-05-23",
   "total_canons": 203,
-  "generation_timestamp": "2026-05-22T00:00:00Z",
+  "generation_timestamp": "2026-05-23T07:57:33Z",
   "canons": [
     {
       "filename": "ACTIVATION_STATE_MODEL.md",
@@ -12,6 +12,7 @@
       "description": "This document defines the **canonical activation state model** for all Maturion systems, subsystems, and capabilities.",
       "type": "canon",
       "path": "governance/canon/ACTIVATION_STATE_MODEL.md",
+      "canonical_commit": "71b2584d5003c2f2e693c6d39c413ece63adf61b",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "1748046bfe978d9c7cc35dea6ff472a82038e38469fc1c1da833b241e9c46361"
     },
@@ -23,6 +24,7 @@
       "description": "This protocol establishes the **canonical definition of agent baselines**, their role in self-governing agent systems, and the mandatory procedures for baseline management, validation, and drift re...",
       "type": "canon",
       "path": "governance/canon/AGENT_BASELINE_MANAGEMENT_PROTOCOL.md",
+      "canonical_commit": "a88a4c7c513e7a227234de9353cfb9b81d666997",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ebb3fca986d667140e7d19a09d7fa203eeb2297d1a04753aca9525de2f6d7394"
     },
@@ -34,6 +36,7 @@
       "description": "This document defines the **canonical protocol** by which agents maintain currency with canonical governance context through governed, auditable, and deterministic synchronisation.",
       "type": "canon",
       "path": "governance/canon/AGENT_CANONICAL_CONTEXT_SYNCHRONISATION_PROTOCOL.md",
+      "canonical_commit": "404daf728fb4004fee9f8b577024a472855647ba",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "974023b3a5a99b0ef30b40c930a292647d732cc9091b84e5689328f151fa97c3"
     },
@@ -45,6 +48,7 @@
       "description": "This document establishes **canonical, agent-class-specific merge gate protocols** for the Living Agent System (LAS v5.0.0)",
       "type": "canon",
       "path": "governance/canon/AGENT_CLASS_SPECIFIC_GATE_PROTOCOLS.md",
+      "canonical_commit": "619d277360bbeda83dca14c88ca1f042e421a4cd",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "fba2f30452b1ffa4a76a385ddaf93fb70440af18f9921ac49be99478b8edfa99"
     },
@@ -56,6 +60,7 @@
       "description": "Canonical governance document: AGENT_CONTRACT_ARCHITECTURE",
       "type": "canon",
       "path": "governance/canon/AGENT_CONTRACT_ARCHITECTURE.md",
+      "canonical_commit": "9a0998c800f379f0f44cfe84dc587669de18db90",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ee253d38fe7ad0688b61ae8accda2e53297d8de43c7a3fd0c387b28951445af2"
     },
@@ -67,6 +72,7 @@
       "description": "Canonical governance document: AGENT_CONTRACT_FILE_PROTECTION_POLICY",
       "type": "canon",
       "path": "governance/canon/AGENT_CONTRACT_FILE_PROTECTION_POLICY.md",
+      "canonical_commit": "b5a81d282aaede413b9c8ab30d67fc6f18bcae4d",
       "layer_down_status": "LAYER_DOWN",
       "file_hash_sha256": "77f14bc5cb1e4440735a2822fab91ee0723f7743ca6efc393f5cab22848a6b2a"
     },
@@ -78,6 +84,7 @@
       "description": "This protocol establishes a **granular authority hierarchy** for `.agent` contract files across the Maturion ecosystem",
       "type": "canon",
       "path": "governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md",
+      "canonical_commit": "2db2f33eaf14ef87e8e544807ade4bf8c9d02547",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ebf75726638d06df25bd101d94c33d2c460e111efdc2f07bfd05e1fdc0218891"
     },
@@ -89,6 +96,7 @@
       "description": "This canon defines the **bounded, reviewable model** for when placeholder-like terms (`stub`,\n`placeholder`, `TBD`, `TODO`) may be ignored in agent-contract validation.",
       "type": "canon",
       "path": "governance/canon/AGENT_CONTRACT_PLACEHOLDER_CHECK_CANON.md",
+      "canonical_commit": "e5275ccead7ca947eb32a4f4afce8690a639bf67",
       "layer_down_status": "LAYER_DOWN",
       "file_hash_sha256": "f5c9d72ebf2584e10ff09f29fdbc90c6f8251b2ebfbce58983c7db0e45dbac1d"
     },
@@ -100,6 +108,7 @@
       "description": "This protocol establishes **protection mechanisms for critical agent contract requirements** through locked sections that prevent unauthorized modification, removal, or weakening of governance-crit...",
       "type": "canon",
       "path": "governance/canon/AGENT_CONTRACT_PROTECTION_PROTOCOL.md",
+      "canonical_commit": "47d39f25be3d5b00d19c1068b79d8536ce5f43cf",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "de6777e1cbffbf10c7bdce2f5b0b13dd2b1df053f46bd6e1428d4357480449d7"
     },
@@ -111,6 +120,7 @@
       "description": "Canonical governance document: AGENT_CREATION_BUNDLE_REQUIREMENTS",
       "type": "canon",
       "path": "governance/canon/AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
+      "canonical_commit": "39f266209d5ce43f2b9f38c77849061208102a62",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "47fa11a5447d30cf2deb7a4be82800c0db6f2ea04770390a98160b009d0df17d"
     },
@@ -122,6 +132,7 @@
       "description": "Canonical governance document: AGENT_DELEGATION_PROTOCOL",
       "type": "canon",
       "path": "governance/canon/AGENT_DELEGATION_PROTOCOL.md",
+      "canonical_commit": "10df56f6c7928d6052ce08829e054016b2a5bae2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "e91ccd075fa151668a38419a9e716359669590cc0457dc7edc15a9f4be724b47"
     },
@@ -133,6 +144,7 @@
       "description": "This constitutional canon establishes the mandatory pre-task environmental health scanning, autonomous remediation, escalation, and full auditability requirements for all agents in the Living Agent...",
       "type": "canon",
       "path": "governance/canon/AGENT_ENVIRONMENTAL_RESPONSIBILITY_DOCTRINE.md",
+      "canonical_commit": "2a8d5e3badc7b7bf8805fb90c3c200b48e8cc778",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "9ee48f13d99e962be536b1cd85d73a47f4c8b5c89bae81438820ffbb18529ea8"
     },
@@ -144,6 +156,7 @@
       "description": "Canonical governance document: AGENT_HANDOVER_AUTOMATION",
       "type": "canon",
       "path": "governance/canon/AGENT_HANDOVER_AUTOMATION.md",
+      "canonical_commit": "179ba49b335040e33793542d0522f922e9211162",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "4b1fc80de6258b782995a1b31eb5d7f321dbf0ff641ca564c4109fa4fc605ba1"
     },
@@ -155,6 +168,7 @@
       "description": "Canonical governance document: AGENT_INDUCTION_PROTOCOL",
       "type": "canon",
       "path": "governance/canon/AGENT_INDUCTION_PROTOCOL.md",
+      "canonical_commit": "7ef4398d922e0a920e723aa6849dfeb94b3ca602",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "756f6c643d064c4702ea9ebe8ea6af90fbda97b295eef60b9515fb93c231fa7a"
     },
@@ -166,6 +180,7 @@
       "description": "Canonical governance document: AGENT_PREFLIGHT_PATTERN",
       "type": "canon",
       "path": "governance/canon/AGENT_PREFLIGHT_PATTERN.md",
+      "canonical_commit": "7ef4398d922e0a920e723aa6849dfeb94b3ca602",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "611ddfd8c3f068320668656987948d7f687979fda63c9fa6e8bf6ffe60dc36b6"
     },
@@ -177,6 +192,7 @@
       "description": "Canonical governance document: AGENT_PRIORITY_SYSTEM",
       "type": "canon",
       "path": "governance/canon/AGENT_PRIORITY_SYSTEM.md",
+      "canonical_commit": "7ef4398d922e0a920e723aa6849dfeb94b3ca602",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "d6251a956f013278d094d44be4ad0aef1817d9a7623bf409c13c14d3e160e0d6"
     },
@@ -188,6 +204,7 @@
       "description": "This document defines the only legitimate process by which software agents may be introduced (“recruited”) into the governance system administered by the Foreman.",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT.md",
+      "canonical_commit": "d97059cb309babc9443e9a0e78d09eb3c3dc75ea",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "963eed45e027e02a3ae595d5043ec09b4e604203eec71f7de790bbd4d0675e18"
     },
@@ -199,6 +216,7 @@
       "description": "This document provides **explicit, unambiguous clarification** of:\n- **Who may recruit which agents** in the Maturion ecosystem\n- **Who may update which `.agent` contract files**\n- **How ripple-tri...",
       "type": "canon",
       "path": "governance/canon/AGENT_RECRUITMENT_AND_CONTRACT_AUTHORITY_MODEL.md",
+      "canonical_commit": "73e0124d36c71603a7924c24e3aef5eed0cb2535",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "b186485a224a5667b3468a3dd72238465fb1b8335f0d6007cf3fe7337b98b7ca"
     },
@@ -210,6 +228,7 @@
       "description": "Canonical governance document: AGENT_REGISTRY_ARCHITECTURE",
       "type": "canon",
       "path": "governance/canon/AGENT_REGISTRY_ARCHITECTURE.md",
+      "canonical_commit": "10df56f6c7928d6052ce08829e054016b2a5bae2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "4bc5862119a83aca540e56aa64b76a40e652afc962fe637a2308bd63714b0beb"
     },
@@ -221,6 +240,7 @@
       "description": "This document defines the **canonical obligation** for all agents to **recognize, surface, and communicate ripple effects** of their changes.",
       "type": "canon",
       "path": "governance/canon/AGENT_RIPPLE_AWARENESS_OBLIGATION.md",
+      "canonical_commit": "8157dd8840162d056d1984eb9cdfee97fdb084bb",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "af119046b2fca941581c120912e8b0aa8d12ee1165ed76b1248fe534584e8162"
     },
@@ -232,6 +252,7 @@
       "description": "This document provides **explicit, canonical clarification** defining **which governance gates apply to which agent roles**.",
       "type": "canon",
       "path": "governance/canon/AGENT_ROLE_GATE_APPLICABILITY.md",
+      "canonical_commit": "064585c835a842f76108670f9e9f4c781bc1767e",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "61a672972df09058930880babef70eba2e6ee3fc3efb2df764772c17c785fbe2"
     },
@@ -243,6 +264,7 @@
       "description": "This protocol establishes the **universal agent self-governance check** that MUST be performed by every agent before starting any work",
       "type": "canon",
       "path": "governance/canon/AGENT_SELF_GOVERNANCE_PROTOCOL.md",
+      "canonical_commit": "3f2f40d0e812cd4593337f985c0f38f6cff6d48b",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "a6094dc8aa600bb036b5a6d02f51cbc5e4c52037588bdcef90a7f1d2f50c1259"
     },
@@ -254,6 +276,7 @@
       "description": "Canonical governance document: AGENT_TIER_ARCHITECTURE",
       "type": "canon",
       "path": "governance/canon/AGENT_TIER_ARCHITECTURE.md",
+      "canonical_commit": "03e4286a37459f01bda0c8136b5ed6afaf579562",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "facdee9e0ac11ced482c0a985c8064f5d30cee20616edc61e6e236dc545e389f"
     },
@@ -265,6 +288,7 @@
       "description": "Canonical governance document: AIMC_MMM_CONVERGENCE_BOUNDARY_CANON",
       "type": "canon",
       "path": "governance/canon/AIMC_MMM_CONVERGENCE_BOUNDARY_CANON.md",
+      "canonical_commit": "9749fba625d0b7989a754f6dd7ff8e83e7add2a9",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "2818c33ebe8e50617592dd5fc830939bc8ee515be6a76f7b2fb27ce3ae5c9824"
     },
@@ -276,6 +300,7 @@
       "description": "Canonical governance document: AIMC_SPECIALIST_OPERATING_MODEL",
       "type": "canon",
       "path": "governance/canon/AIMC_SPECIALIST_OPERATING_MODEL.md",
+      "canonical_commit": "9749fba625d0b7989a754f6dd7ff8e83e7add2a9",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "50d60061c6dbbfd93cd2a383951cdafac49761f86c964e8a4f2eca0b7a9a03c3"
     },
@@ -287,6 +312,7 @@
       "description": "This document defines the **Maturion AI Management Centre (AIMC)** — a centralised AI capability platform that serves as the single, governed integration point for all AI capabilities across the Ma...",
       "type": "canon",
       "path": "governance/canon/AIMC_STRATEGY.md",
+      "canonical_commit": "faf74a9456ffd67e01c398f41dfa4b2490e37666",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "dfe539fe290148e6e7c9112fa269b5cd0124c456954de1d75c9a7870cd79b2dc"
     },
@@ -298,6 +324,7 @@
       "description": "This document defines the **mandatory contract** for how each application declares its unique commissioning and startup requirements in a structured, auditable, and machine-interpretable way.",
       "type": "canon",
       "path": "governance/canon/APP_STARTUP_REQUIREMENTS_DECLARATION.md",
+      "canonical_commit": "0794be0089c15e0f4b9c85df1b7df9e7a8cb5715",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "cab183981086ba1c7408f451632bd84b8b4f615e66a0cad667b02fa4dd3f8103"
     },
@@ -309,6 +336,7 @@
       "description": "This document defines the **mandatory completeness requirements** for all architecture artifacts in the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md",
+      "canonical_commit": "31ca6fb20d3edc65736dafe7f6368b12b81a79eb",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "66d41bc7ffaccf2e7016bc8a5daff04e03128a23fbb5d8e0b4f2b2f6d87824a3"
     },
@@ -320,6 +348,7 @@
       "description": "This document defines the **canonical semantics for human-in-the-loop review** of assisted ripple scan reports.",
       "type": "canon",
       "path": "governance/canon/ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
+      "canonical_commit": "17f6d5880a99dfe3cf8703b071935cc37b2ac702",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "e1ab12b9912bccb16db4ff68038aab5407ea40b812f4c84cef4a208299a6bcbe"
     },
@@ -331,6 +360,7 @@
       "description": "This document defines the **canonical scope** of assisted ripple scanning within a single repository.",
       "type": "canon",
       "path": "governance/canon/ASSISTED_RIPPLE_SCAN_SCOPE.md",
+      "canonical_commit": "6d2acd90558f32ac7c6c3a17f1e6db3b8f6c0afc",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "35b45dd2053f7ab48eb2d028a25da990910ab249b4219f2410eede94147d5479"
     },
@@ -342,6 +372,7 @@
       "description": "This document defines what it means for a repository to be **audit-ready** from a governance and compliance perspective.",
       "type": "canon",
       "path": "governance/canon/AUDIT_READINESS_MODEL.md",
+      "canonical_commit": "0475bf5da5eef0961b38f0993193cfee27554f2f",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "d627ef3ee892d2d694413e824dcad4557707bd5ec3960967881c18662372bdee"
     },
@@ -353,6 +384,7 @@
       "description": "This document establishes **mandatory automated quality tooling requirements** for security, accessibility, and performance across the Maturion platform",
       "type": "canon",
       "path": "governance/canon/AUTOMATED_QUALITY_TOOLING_CANON.md",
+      "canonical_commit": "17f6d5880a99dfe3cf8703b071935cc37b2ac702",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ee6abd405d7b535dbb1e74283c72c6f84efe05078be7602c3901da42d48a206f"
     },
@@ -364,6 +396,7 @@
       "description": "Canonical governance document: BOOTSTRAP_EXECUTION_LEARNINGS",
       "type": "canon",
       "path": "governance/canon/BOOTSTRAP_EXECUTION_LEARNINGS.md",
+      "canonical_commit": "23c071feb95968fc4204ea5acfdb1d5fc91ae93e",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "808414ed163063c71d01f4105d1d95cb7b69b81afdcdf1f1a0dee0f4032cddf9"
     },
@@ -375,6 +408,7 @@
       "description": "This canon formally defines **branch protection enforcement** as a mandatory, governed requirement for all repositories executing governed builds under the One-Time Build philosophy.",
       "type": "canon",
       "path": "governance/canon/BRANCH_PROTECTION_ENFORCEMENT.md",
+      "canonical_commit": "7efe37d726464f0d49a5c1c0a9ae62b3e1c131a6",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "c34600f193a8f729d0642ff11b04a7fbaec361f4a80e9c29f8cc3e940160dad9"
     },
@@ -386,6 +420,7 @@
       "description": "This specification defines the **canonical YAML frontmatter requirements** for builder agent contracts to ensure:\n- GitHub Copilot parser compatibility\n- Reliable agent discovery and recognition\n- ...",
       "type": "canon",
       "path": "governance/canon/BUILDER_AGENT_YAML_FRONTMATTER_COMPLIANCE_SPEC.md",
+      "canonical_commit": "23c071feb95968fc4204ea5acfdb1d5fc91ae93e",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "296e7a5acb55e6c41d1c895c7d6a0d8ce09553967055856af092754157dffd22"
     },
@@ -397,6 +432,7 @@
       "description": "Canonical governance document: BUILDER_CONTRACT_BINDING_CHECKLIST",
       "type": "canon",
       "path": "governance/canon/BUILDER_CONTRACT_BINDING_CHECKLIST.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "a70e9a810944457c5abad2c4fc00e94ab1c1fd95a69c116ce74dab7aa202f249"
     },
@@ -408,6 +444,7 @@
       "description": "Canonical governance document: BUILDER_FIRST_PR_MERGE_MODEL",
       "type": "canon",
       "path": "governance/canon/BUILDER_FIRST_PR_MERGE_MODEL.md",
+      "canonical_commit": "ebb2c75c1d7bda4031056149410d77189f18394b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ca9d2c96be68a944a9a04ed504e2c3faf1aed8b3cd70acc82d0be09cb4b8a0cf"
     },
@@ -419,6 +456,7 @@
       "description": "This standard defines how Build Effectiveness is computed and reported.",
       "type": "canon",
       "path": "governance/canon/BUILD_EFFECTIVENESS_STANDARD.md",
+      "canonical_commit": "830b3b421262e5c87c22e2a7d7175e4707469d49",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "36351307c8d6b7b6259000f6f22ae4712b3c04e2b45d959b6ca3ba486e4116e8"
     },
@@ -430,6 +468,7 @@
       "description": "This document defines the **canonical model for build interventions, alerts, and attention routing** within the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/BUILD_INTERVENTION_AND_ALERT_MODEL.md",
+      "canonical_commit": "e7bb72ebecaf220ca0d2856c037e779da17957cd",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ae68a65c28d9003532deb9dcab9769de03e8a43ab11e3305fe906721ffb57b80"
     },
@@ -441,6 +480,7 @@
       "description": "This document defines the **canonical inspection and drill-down model** for all build nodes within the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/BUILD_NODE_INSPECTION_MODEL.md",
+      "canonical_commit": "db3e1ceb1766ec6549e3482648acc3c8961d384f",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "9e20439593c57c41ea3772226a0864796bd0438855d5e267a4405c0a399b33ab"
     },
@@ -452,6 +492,7 @@
       "description": "This document defines the **canonical hierarchical structure of builds** within the Maturion ecosystem, establishing how work is organized, executed, monitored, and controlled across multiple level...",
       "type": "canon",
       "path": "governance/canon/BUILD_TREE_EXECUTION_MODEL.md",
+      "canonical_commit": "d640762cf47da0634592ca326adbe3b3b17ba365",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "01a65186bf0b1bd9b17ef330a554476bffe1764c0350e9f366515d640afcc9bf"
     },
@@ -463,6 +504,7 @@
       "description": "This canon defines integrity requirements for `governance/CANON_INVENTORY.json` and any inventories consumed by alignment workflows",
       "type": "canon",
       "path": "governance/canon/CANON_INVENTORY_INTEGRITY_REQUIREMENTS.md",
+      "canonical_commit": "a319a9f335e63d7607a4177f4ffb7ad3e8daba23",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1134f4a8e60ce2cc3f877b64bc4b2c749d113252b2cb46a8a441e92c52abe5ef"
     },
@@ -474,6 +516,7 @@
       "description": "This rule prevents PRs from accumulating non-local failures\nthat destroy diagnostic clarity.",
       "type": "canon",
       "path": "governance/canon/CASCADING_FAILURE_CIRCUIT_BREAKER.md",
+      "canonical_commit": "e78026cde3819b32eba940fa11f7fda98c09c187",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "e4f666fef38bf0173aa6ac3634316ce67803a9d5585d4a7bab979be18af5bf93"
     },
@@ -485,6 +528,7 @@
       "description": "This protocol defines **catastrophic failure** classification, detection, response, and recovery procedures for the Maturion execution ecosystem.",
       "type": "canon",
       "path": "governance/canon/CATASTROPHIC_FAILURE_PROTOCOL.md",
+      "canonical_commit": "142426dab27dc051ed83ed4153b7582ba9929d4a",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "7f5034f39d0162114c64411bbc8027a388627b0e938aacefb0d345a2b47c14bd"
     },
@@ -496,8 +540,21 @@
       "description": "This canon establishes that **CI execution is confirmatory, not diagnostic** across all governed repositories.",
       "type": "canon",
       "path": "governance/canon/CI_CONFIRMATORY_NOT_DIAGNOSTIC.md",
+      "canonical_commit": "57c8fc705417997dc619d559070591c5adededd6",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "75ee0e772077aa063d807257d8f51844e0e6651a6bc7d350723073e991a06aeb"
+    },
+    {
+      "filename": "CODEX_BUILD_COMPLETION_DEFINITION.md",
+      "version": "1.0.0",
+      "file_hash": "dd3a62d87f8445036f64dafb75886e1159538556f1d49bb05a797d6cf81c9ca1",
+      "effective_date": "2026-05-22",
+      "description": "Defines the mandatory completion checkpoint before Codex or the AI workforce may present a build to Johan for non-coder UI or product evaluation.",
+      "type": "canon",
+      "path": "governance/canon/CODEX_BUILD_COMPLETION_DEFINITION.md",
+      "canonical_commit": "6028fe8604e4a8bf0eff8d612b210fc51e157adc",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "dd3a62d87f8445036f64dafb75886e1159538556f1d49bb05a797d6cf81c9ca1"
     },
     {
       "filename": "CODE_COVERAGE_THRESHOLD_CANON.md",
@@ -507,6 +564,7 @@
       "description": "This document establishes **mandatory code coverage thresholds** for all Maturion application repositories",
       "type": "canon",
       "path": "governance/canon/CODE_COVERAGE_THRESHOLD_CANON.md",
+      "canonical_commit": "fff87806416ac9afa1fe361650afefc8a8344ade",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "f969f80a18f3b8b628012232f40571639d7f8493fbedcdc68e003361a7dbed42"
     },
@@ -518,6 +576,7 @@
       "description": "This document formally defines the **Cognitive Capability Orchestration Model** for the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/COGNITIVE_CAPABILITY_ORCHESTRATION_MODEL.md",
+      "canonical_commit": "faf74a9456ffd67e01c398f41dfa4b2490e37666",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "2a25d4c67b1efcbc5a2bfa7fd635597aafecdbb7350868f124ea7694c324e0c7"
     },
@@ -529,6 +588,7 @@
       "description": "This document formally defines the **authority hierarchy and decision rights** for the Cognitive Hygiene Protocol (CHP) within the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/COGNITIVE_HYGIENE_AUTHORITY_MODEL.md",
+      "canonical_commit": "13efc7a4593b5f33ec52adbfcf6db21a3a51b9a3",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "de4e651fab211f4af817ce6fbbefce949f5f085c8d2396607ba111de29299071"
     },
@@ -540,6 +600,7 @@
       "description": "This document formally defines how the **Cognitive Hygiene Protocol (CHP)** interacts with **memory systems** to ensure memory integrity, proposal-only writes, and zero risk of silent memory mutation.",
       "type": "canon",
       "path": "governance/canon/COGNITIVE_HYGIENE_MEMORY_INTEGRATION_MODEL.md",
+      "canonical_commit": "3167c01e28503bae1fc3ed9193b2352b7773fb67",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "0e5bb3e877a7288bdf058bdaa675c682831fab68a644d7448182650b0918662d"
     },
@@ -551,6 +612,7 @@
       "description": "This document establishes **Combined Subwave Testing (CST)** and **Combined Wave Testing (CWT)** as the canonical patterns for strategic integration assurance in multi-wave, one-time builds.",
       "type": "canon",
       "path": "governance/canon/COMBINED_TESTING_PATTERN.md",
+      "canonical_commit": "8502a56000fb198a4f69cab3e9cd42e180f6a9c0",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "d89d6462367cc980a64e835994640028940c7ea752eeff8424726d18fd04e6af"
     },
@@ -562,6 +624,7 @@
       "description": "This protocol canonises the **comment-only / non-mutating agent session mode** as a first-class governance concept.",
       "type": "canon",
       "path": "governance/canon/COMMENT_ONLY_AGENT_SESSION_PROTOCOL.md",
+      "canonical_commit": "821aeeb5389c9effc69717b34f046309be09a9f4",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c"
     },
@@ -573,6 +636,7 @@
       "description": "This document defines the **canonical evidence model** for commissioning and activation of Maturion applications.",
       "type": "canon",
       "path": "governance/canon/COMMISSIONING_EVIDENCE_MODEL.md",
+      "canonical_commit": "e7abdf529dc8ef5ee150e543c7fd8b31f10e0297",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "0b0d89ba3faa8b5434876f8ef1c827d4f1bd4a85fad20853ee69e424ec57030f"
     },
@@ -584,6 +648,7 @@
       "description": "This policy defines how Maturion achieves **continuous audit readiness** and\n**international standards compliance** across the entire build-and-maintain factory.",
       "type": "canon",
       "path": "governance/canon/COMPLIANCE_AND_STANDARDS_GOVERNANCE.md",
+      "canonical_commit": "dbbef623a675af8362aef77fdec748e1f06fbbcb",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "8f0b0af2657708237853beede03871ad85a3337015aafdd6aeb9a51e686f6054"
     },
@@ -595,6 +660,7 @@
       "description": "Canonical governance document: CONSTITUTIONAL_SANDBOX_PATTERN",
       "type": "canon",
       "path": "governance/canon/CONSTITUTIONAL_SANDBOX_PATTERN.md",
+      "canonical_commit": "231c00d687cc7f1b45b7554d01ff68d6e3f2a37e",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "25e88a801581b7358abd50b36d4c23a913f803b622cafc54078eee6a85d8f1d3"
     },
@@ -606,6 +672,7 @@
       "description": "Canonical governance document: CONSTITUTIONAL_SANDBOX_ROLLOUT_GUIDANCE",
       "type": "canon",
       "path": "governance/canon/CONSTITUTIONAL_SANDBOX_ROLLOUT_GUIDANCE.md",
+      "canonical_commit": "c4229c6a707bcee0d62f891dff2764c19b103869",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "4004262d4a0e3b49e04be6318f8843dcf3f4d30e8b8b901463f8fa31386378ae"
     },
@@ -617,6 +684,7 @@
       "description": "This document establishes **Contract Testing** as a mandatory governance requirement for all API and interface integration points across the Maturion platform, specifically including all AIMC (AI M...",
       "type": "canon",
       "path": "governance/canon/CONTRACT_TESTING_CANON.md",
+      "canonical_commit": "fff87806416ac9afa1fe361650afefc8a8344ade",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "7452ab65959cfefde73065fe24eaa45111d7c515757e191ab498b0f1653a8ed0"
     },
@@ -628,6 +696,7 @@
       "description": "This protocol defines the **explicit, controlled mechanism** for propagating governance changes from the governance repository (`maturion-foreman-governance`) to downstream application repositories...",
       "type": "canon",
       "path": "governance/canon/CROSS_REPOSITORY_LAYER_DOWN_PROTOCOL.md",
+      "canonical_commit": "9c035bdbf1dd271deba85ae2e564ed4ff47d8ad5",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "953b3a49327fd51eeaf81d1f68d3228b595a7ec5e165d3f207de70feb7569de4"
     },
@@ -639,6 +708,7 @@
       "description": "This document defines the **canonical model** for cross-repository ripple awareness within the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/CROSS_REPOSITORY_RIPPLE_AWARENESS_MODEL.md",
+      "canonical_commit": "54e93e215352770209cbb6a7861f7df4e4874333",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "43105c47f70c4d455d6cf5a104f5a47224c882d3fc25dd1b9c3225df7a0ce61d"
     },
@@ -650,6 +720,7 @@
       "description": "This canon defines the **mandatory transport protocol** for governance ripple events",
       "type": "canon",
       "path": "governance/canon/CROSS_REPO_RIPPLE_TRANSPORT_PROTOCOL.md",
+      "canonical_commit": "9cb2ba50dbac0a6948f94375be9f37e0736bde1c",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1ef6f17cb66d2737b068431022db69adb0028d4ccc0e00947552327f282daae4"
     },
@@ -661,6 +732,7 @@
       "description": "Canonical governance document: CS2_AGENT_FILE_AUTHORITY_MODEL",
       "type": "canon",
       "path": "governance/canon/CS2_AGENT_FILE_AUTHORITY_MODEL.md",
+      "canonical_commit": "2db2f33eaf14ef87e8e544807ade4bf8c9d02547",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "a87f99eac31be2fc6d0d9bcf392dec685aa8422be9149520a098dc38ab8e44fe"
     },
@@ -672,6 +744,7 @@
       "description": "This canon establishes the **mandatory governance framework** for resolving defects, performing maintenance, and managing patches for already published builds and production systems.",
       "type": "canon",
       "path": "governance/canon/DEFECT_RESOLUTION_MAINTENANCE_CANON.md",
+      "canonical_commit": "69abeea770c67cd94528f9361825b9340a4cf262",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "fd5e4b627542c52220e689391cb33bfa368f94677001f5dd1461ea2226e9dd00"
     },
@@ -683,6 +756,7 @@
       "description": "This document formally defines the **delegation instruction protocol** and **audit model** for platform action execution between Foreman (FM) and Maturion.",
       "type": "canon",
       "path": "governance/canon/DELEGATION_INSTRUCTION_AND_AUDIT_MODEL.md",
+      "canonical_commit": "a854c538018c4e9dda83a4c4bc443a1d5a97fa74",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ff6adb194e1ffd213d489a0b388c3543de8cdd22d8c2cee5f798d3af511c2bd3"
     },
@@ -694,6 +768,7 @@
       "description": "These rules govern how responsibility domains evolve over time.",
       "type": "canon",
       "path": "governance/canon/DOMAIN_EVOLUTION_RULES.md",
+      "canonical_commit": "7ab9493b543117d202899ebcf32fe56f2f2647a0",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "0d2e3cfde5b26dbbbddf423ca932b278488b25481cc7cf4f83bc7107571003b2"
     },
@@ -705,6 +780,7 @@
       "description": "This document defines how responsibility domains are held accountable\nfor architectural completeness and build correctness over time.",
       "type": "canon",
       "path": "governance/canon/DOMAIN_OWNERSHIP_ACCOUNTABILITY.md",
+      "canonical_commit": "cd923a11f70d8e9c2aeba29594bf567a2a6277ec",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "2fa1b2a8dbc0d2359a99d6acbd5db0e3695751b6d46e5039d1c4e505ef0e5d39"
     },
@@ -716,6 +792,7 @@
       "description": "Canonical governance document: DOMAIN_STATE_ENFORCEMENT_RULE",
       "type": "canon",
       "path": "governance/canon/DOMAIN_STATE_ENFORCEMENT_RULE.md",
+      "canonical_commit": "f8fcbda1751af6e4054113cc1aa9ebf298e622b2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "19d9d8436892316e2585abf254f1618c62b8b80c575e3f4dc923626fa2c4af46"
     },
@@ -727,6 +804,7 @@
       "description": "This document contains **draft language** for insertion into agent contract files (`.agent` or `.agent.md`) in future waves.",
       "type": "canon",
       "path": "governance/canon/DRAFT_AGENT_RIPPLE_AWARENESS_LANGUAGE.md",
+      "canonical_commit": "8157dd8840162d056d1984eb9cdfee97fdb084bb",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "99ac8dcabc3780e28914c3ca25a4629f20b3ff331983307b333635a5aa3f7913"
     },
@@ -738,6 +816,7 @@
       "description": "Canonical governance document: ECOSYSTEM_VOCABULARY",
       "type": "canon",
       "path": "governance/canon/ECOSYSTEM_VOCABULARY.md",
+      "canonical_commit": "6b9e25ec336a119393d894a7796bf382398f6ab1",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6348821580749301aeb63f694dd34268b4eb0a8b97d1c550ff7567a7275e3d6a"
     },
@@ -749,6 +828,7 @@
       "description": "Canonical governance document: ENFORCEMENT_DESIGN_NOTE",
       "type": "canon",
       "path": "governance/canon/ENFORCEMENT_DESIGN_NOTE.md",
+      "canonical_commit": "e69a80a4e2854604183ce81b7ab7dbd6d9c2f30f",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "0edcd8f08eb2ba305ed3a103e8390874b487f97f00e90297e0d4c2ceba0b5bca"
     },
@@ -760,6 +840,7 @@
       "description": "This document defines the **mandatory process** for environment variable provisioning in the Maturion build model.",
       "type": "canon",
       "path": "governance/canon/ENVIRONMENT_PROVISIONING_PROCESS.md",
+      "canonical_commit": "c9efb896cc8ca77afd80a6b936aec72a406d7a43",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "7c6c9f60b9fe08cf28dfac4e140ba120d834aff5b8132c75a990c1e810a956a5"
     },
@@ -771,6 +852,7 @@
       "description": "This policy establishes the **canonical escalation hierarchy, triggers, procedures, and authority chain** for the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/ESCALATION_POLICY.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "27cb87ee3a0466086ee1459698fbf7daa3cd2ac6ba46e5039af92630c52be7ec"
     },
@@ -782,6 +864,7 @@
       "description": "This canon defines the **mandatory evidence bundle** for every governed PR",
       "type": "canon",
       "path": "governance/canon/EVIDENCE_ARTIFACT_BUNDLE_STANDARD.md",
+      "canonical_commit": "a319a9f335e63d7607a4177f4ffb7ad3e8daba23",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6902b99f9790b097d84574e5d11b66be8c8b09a4e9ca656b52e790700e2b0938"
     },
@@ -793,6 +876,7 @@
       "description": "This protocol establishes **mandatory execution verification** at every phase of FPC (First Point of Contact) repository layer-down and all governance-enforced work.",
       "type": "canon",
       "path": "governance/canon/EXECUTION_BOOTSTRAP_PROTOCOL.md",
+      "canonical_commit": "7df7277764a2a4ce50e3c2fb250eb707d3d68e5b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "5e86c270f5a1cc44b77a63768e86305dddb28b2fe2ebdb755deabf9576677f1f"
     },
@@ -804,6 +888,7 @@
       "description": "This protocol establishes the **continuous monitoring and enforcement framework** for the Execution Bootstrap Protocol across all governed repositories throughout each governance cycle.",
       "type": "canon",
       "path": "governance/canon/EXECUTION_BOOTSTRAP_PROTOCOL_MONITORING_AND_ENFORCEMENT.md",
+      "canonical_commit": "6c96b50ea6c265b989da8022f044ff8ea391483d",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "f16bd300b7a32964772198b4201c9a5077bd41be0b74b5e758131b4d81689d2c"
     },
@@ -815,6 +900,7 @@
       "description": "This protocol defines the **canonical role, authority boundaries, and handover sequence** for the `execution-ceremony-admin-agent` — an administrator-class agent appointed to own **job-administrati...",
       "type": "canon",
       "path": "governance/canon/EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md",
+      "canonical_commit": "02f2fc06bf172b83f9e29ccf3368649f42c834aa",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "252ac6e167e0913e56e08c1555b8dce87e47cf0176ec6dbbe9d3d0328e813f7a"
     },
@@ -826,6 +912,7 @@
       "description": "Canonical governance document: FAIL-ONLY-ONCE",
       "type": "canon",
       "path": "governance/canon/FAIL-ONLY-ONCE.md",
+      "canonical_commit": "b800a2ddb5ef407a1881b6d91a0686847860c981",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "e45b3588b5e36d3b9d4acf37837c907d7feda45723b0a49a7f9ad49ac073ae69"
     },
@@ -837,6 +924,7 @@
       "description": "This rule ensures that failures that expose governance gaps are formally promoted\ninto governance change management rather than remaining local knowledge.",
       "type": "canon",
       "path": "governance/canon/FAILURE_PROMOTION_RULE.md",
+      "canonical_commit": "b9ba567c1668eb03ee975df17a207d4301bf4524",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "14c86a0ef3180c7eeca8920ca5e88b8d016bd29dd2dbe3b9e8a8a7f71363179f"
     },
@@ -848,6 +936,7 @@
       "description": "This protocol establishes the **Final Complete Wave Test (FCWT)** as the mandatory last build/test step before audit sign-off and production readiness of any MAT application or application module.",
       "type": "canon",
       "path": "governance/canon/FINAL_COMPLETE_WAVE_TEST_PROTOCOL.md",
+      "canonical_commit": "7df7277764a2a4ce50e3c2fb250eb707d3d68e5b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1efa116f1a959932cfd37a7ef6da8cb48ca4c19e6c55bca986a9f04ef24e1b91"
     },
@@ -859,6 +948,7 @@
       "description": "This protocol defines the **mandatory, gated process** the Foreman (FM) MUST follow when appointing builders, ensuring constitutional compliance with:\n- **OPOJD (One-Prompt One-Job Doctrine)**: Con...",
       "type": "canon",
       "path": "governance/canon/FM_BUILDER_APPOINTMENT_PROTOCOL.md",
+      "canonical_commit": "816748c605256d290351a823798b214f7f2b5b61",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "7506d757bef352ed727fc7435c02e318d51c37ae4f91d49df8b828f58576437d"
     },
@@ -870,6 +960,7 @@
       "description": "This document defines the **canonical protocol** by which the FM (Foreman) App and any execution system loads, caches, invalidates, and interprets governance canon from the `maturion-foreman-govern...",
       "type": "canon",
       "path": "governance/canon/FM_GOVERNANCE_LOADING_PROTOCOL.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "e33adf2f671add3615a0a16b0b1575407e670def9ccde4870ba8eb07a1ef3cb5"
     },
@@ -881,6 +972,7 @@
       "description": "This protocol establishes **FM's autonomous authority and responsibility for merge gate management**, defining when FM can independently fix gate misalignments, when escalation is required, and the...",
       "type": "canon",
       "path": "governance/canon/FM_MERGE_GATE_MANAGEMENT_PROTOCOL.md",
+      "canonical_commit": "8b7d3ce0d0534f8025bbc60061535371ca94f512",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "c04a33f5e452efbd421d4f1320b5e046031e3fd27f16b83b3cb903d010b9b181"
     },
@@ -892,6 +984,7 @@
       "description": "Canonical governance document: FM_PREAUTH_CHECKLIST_CANON",
       "type": "canon",
       "path": "governance/canon/FM_PREAUTH_CHECKLIST_CANON.md",
+      "canonical_commit": "374e1f7a5c19e2a275f038d1da09f289c3825bab",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6f48a49354822e12cfcfb3c2a9b2fc01db4984efb8a1f3bea6057bf49f5dec17"
     },
@@ -903,6 +996,7 @@
       "description": "This SOP defines **two mandatory enhancements** to the Foreman Quality Protocol (QP):",
       "type": "canon",
       "path": "governance/canon/FM_QUALITY_PROTOCOL_ENHANCED_SOP.md",
+      "canonical_commit": "7d900266c65b7a14cd0f97c82cf98bee53bdc6f8",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "65ee6752ef458a2c043aa59d20d2b9c6c58830aef56ea5e429d3f1b4f25b900b"
     },
@@ -914,6 +1008,7 @@
       "description": "This document defines the **runtime enforcement and continuous situational awareness mechanisms** that ensure FM (Foreman) operates within governance constraints and cannot drift from canonical int...",
       "type": "canon",
       "path": "governance/canon/FM_RUNTIME_ENFORCEMENT_AND_AWARENESS_MODEL.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "27c0caae7183ceb489eec3d98775176d3e5131ad0d16036833eed09a71f08aed"
     },
@@ -925,6 +1020,7 @@
       "description": "This document formally defines the **Foreman (FM)** as a **managerial authority** within the Maturion ecosystem, establishing its supervisory responsibilities over builders and the execution process.",
       "type": "canon",
       "path": "governance/canon/FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
+      "canonical_commit": "02f2fc06bf172b83f9e29ccf3368649f42c834aa",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "4c8e2f1818cc29fb1a564832a9eedb39724057a3ad0f75b8500a64f3a6c9b5e5"
     },
@@ -936,6 +1032,7 @@
       "description": "This protocol establishes the **canonical memory management requirements** for Foreman (FM) agents, defining:\n- FM memory context structure and boundaries\n- Memory lifecycle and retention policies\n...",
       "type": "canon",
       "path": "governance/canon/FOREMAN_MEMORY_PROTOCOL.md",
+      "canonical_commit": "6981e6ccdd31e30482f3c7dd694f3e8081df2ba3",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "f3373df8b17e592f0f227ddb586ad744b644d3c3b7a178588bbbbac6a08b43e9"
     },
@@ -947,6 +1044,7 @@
       "description": "This protocol establishes the **mandatory pre-flight agent availability check** that Foreman agents MUST execute before starting any wave execution.",
       "type": "canon",
       "path": "governance/canon/FOREMAN_PRE_WAVE_AGENT_AVAILABILITY_CHECK.md",
+      "canonical_commit": "23c071feb95968fc4204ea5acfdb1d5fc91ae93e",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "13b3633cd90e520c9121315aee33f2ef4cf34bceddd308dc5d2716963436855f"
     },
@@ -958,6 +1056,7 @@
       "description": "This protocol establishes the **canonical workflow for FM wave planning and issue artifact generation**, defining:\n- Wave planning methodology and decomposition strategy\n- Subwave identification an...",
       "type": "canon",
       "path": "governance/canon/FOREMAN_WAVE_PLANNING_AND_ISSUE_ARTIFACT_GENERATION_PROTOCOL.md",
+      "canonical_commit": "33f91afde4e730d9be1865c3b100c1713375c753",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "2d4603796bce3a18209ce09d6bc7a2907f5fbb6accd5b7f71cc88c545eca0cf8"
     },
@@ -969,6 +1068,7 @@
       "description": "This is the **First Point of Contact (FPC)** document for governance layer-down.",
       "type": "canon",
       "path": "governance/canon/FPC_REPOSITORY_LAYERDOWN_GUIDE.md",
+      "canonical_commit": "47d39f25be3d5b00d19c1068b79d8536ce5f43cf",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "0986945d35500a0986719ab92a4a6baf3e5853698c4c4165b02662be4e19958b"
     },
@@ -980,6 +1080,7 @@
       "description": "This standard establishes explicit definitions and enforcement mechanisms for \"fully functional\" delivery across design, implementation, and deployment phases.",
       "type": "canon",
       "path": "governance/canon/FULLY_FUNCTIONAL_DELIVERY_STANDARD.md",
+      "canonical_commit": "3c5f1f997550a59e209f3b202f052a35f53d1496",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "019fbac7587291d8827b3cc1bdf409cfcb1e23ab69c314ff6ada4ca11145c871"
     },
@@ -991,6 +1092,7 @@
       "description": "This document defines the **Gate-Predictive Compliance Analysis (GPCA)** model - a pre-handover, read-only compliance prediction mechanism that enables agents to predict PR gate outcomes before sub...",
       "type": "canon",
       "path": "governance/canon/GATE_PREDICTIVE_COMPLIANCE_ANALYSIS.md",
+      "canonical_commit": "9ad9869992b54a36f5549ced4aad672e9dd83ee1",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "2938e2f1d5a5fe951276ed398ce819d6eec6f351c110a65af032c9691dd3ed99"
     },
@@ -1002,6 +1104,7 @@
       "description": "This matrix defines which governance artifacts are **mandatory**, **recommended**, or **not applicable** for each agent type operating in the Maturion ecosystem",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_AGENT_REQUIREMENTS_MATRIX.md",
+      "canonical_commit": "ccca55c863cf9b9dd8269a7a566967b82fc5906f",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "c17be9d75f1d3204e3615f1b7784b43c8975ff9de6997491737c56f81bfed5f9"
     },
@@ -1013,6 +1116,7 @@
       "description": "This protocol establishes **systematic, automated, and continuous monitoring** of governance alignment across all application repositories to detect and remediate drift, misalignment, and governanc...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_ALIGNMENT_MONITORING_PROTOCOL.md",
+      "canonical_commit": "9c5efc3201db2d28877edcb6247bcd1ca99810f8",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "a94effb59bbf70b0797b89a26c3a5f8d8e2081258ddefda08e85e02ac46eaab4"
     },
@@ -1024,6 +1128,7 @@
       "description": "This document establishes the **canonical taxonomy** for all governance artifacts, distinguishing governance from executable code, scripts from templates, and defining testing obligations for each ...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_ARTIFACT_TAXONOMY.md",
+      "canonical_commit": "619d277360bbeda83dca14c88ca1f042e421a4cd",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1d5981d48b922da6cafb25809ae3800815996a747fb3af21e9479a28ae50a851"
     },
@@ -1035,19 +1140,21 @@
       "description": "Canonical governance document: GOVERNANCE_BUILDER_SUBMISSION_SURVEY",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_BUILDER_SUBMISSION_SURVEY.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "8ba703a5feccf6ee5bd4e3dff7574c9e4c17a6ca5a97008e62504406b690bcf5"
     },
     {
       "filename": "GOVERNANCE_CANON_MANIFEST.md",
       "version": "1.0.0",
-      "file_hash": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05",
+      "file_hash": "1502ca98c65323ed5ea297ad26583fa932647f77ad4f0d94e9867cd06ed51a6a",
       "effective_date": "2026-01-05",
       "description": "This manifest is the **authoritative human-readable layer-down index** for the canonical governance standards curated in this document.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",
+      "canonical_commit": "6028fe8604e4a8bf0eff8d612b210fc51e157adc",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05"
+      "file_hash_sha256": "1502ca98c65323ed5ea297ad26583fa932647f77ad4f0d94e9867cd06ed51a6a"
     },
     {
       "filename": "GOVERNANCE_COMPLETENESS_MODEL.md",
@@ -1057,6 +1164,7 @@
       "description": "This document defines what it means for the **Governance Repository** to be:\n- **Complete**\n- **Internally consistent**\n- **Dependency-closed**\n- **Audit-structure-ready**",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_COMPLETENESS_MODEL.md",
+      "canonical_commit": "195f6a758f71be67e8f152823437cdea22480452",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "b852bf91b569001de575ab2bce9880c41c1c3bcc8cdc558ef2f448f2d7a5d842"
     },
@@ -1068,6 +1176,7 @@
       "description": "This document formally transitions governance enforcement from legacy PR gate semantics to the modern governance enforcement model",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_ENFORCEMENT_TRANSITION.md",
+      "canonical_commit": "33bac7aee8c7a0a4ce54ab23de298d10b6eac9f5",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "2559385fed7c68b6fc58166a2932287eab1831ed2d3cbb1429c9907a65a6235a"
     },
@@ -1079,6 +1188,7 @@
       "description": "This contract defines the **single, authoritative specification** for what governance artifacts MUST be layered down from the governance repository (`maturion-foreman-governance`) into any applicat...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_LAYERDOWN_CONTRACT.md",
+      "canonical_commit": "2ca5ce0a2a8690321cb790c4339e608e4cbeff27",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "a92728f20ee5080e93fb53e3b66b9eaabbfc56d55cb871efd444eb9213f17dd5"
     },
@@ -1090,6 +1200,7 @@
       "description": "This protocol defines the **automated mechanism** for detecting and proposing canonization of local governance extensions in consumer repositories when a consumer repo's governance file version exc...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_LAYER_UP_PROTOCOL.md",
+      "canonical_commit": "0086b05f2f5787b77c48ba9b8bfaf5c4af7f6975",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "5f00356e78a11466290758c6f9363cb646546295e01597b0a1e0969629b11bd7"
     },
@@ -1101,6 +1212,7 @@
       "description": "This document defines the **minimum requirements** that MUST be satisfied before a Governance Liaison Agent may be validly appointed and authorized to act.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_LIAISON_MINIMUM_APPOINTMENT_REQUIREMENTS.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "2b0c3f220697f61c0739574f1c349e95c02cb5706b8563d9cb05ca2b7e95ade0"
     },
@@ -1112,6 +1224,7 @@
       "description": "Canonical governance document: GOVERNANCE_LIAISON_MINIMUM_REQUIREMENTS_VALIDATION",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_LIAISON_MINIMUM_REQUIREMENTS_VALIDATION.md",
+      "canonical_commit": "8fd406a359ff4753f72b108fe3ff08a75c933019",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "33aea7096c49be84a8e24960dac6fa04f1a8dfde4ec248a07e407575ef9aa957"
     },
@@ -1123,6 +1236,7 @@
       "description": "Canonical governance document: GOVERNANCE_LIAISON_ROLE_SURVEY",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_LIAISON_ROLE_SURVEY.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "2cf9ebe33adbf6005609ab6ac75bff02cfd7215220a83f4c7bd3b2c952f99d33"
     },
@@ -1134,6 +1248,7 @@
       "description": "This protocol provides **comprehensive training** for Governance Liaison agents, covering:\n- Core responsibilities and authority boundaries\n- Execution Bootstrap Protocol integration\n- Prehandover ...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_LIAISON_TRAINING_PROTOCOL.md",
+      "canonical_commit": "b984fc6f08c48407194e5a375717a6a56fe9ab99",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "e326764bb1cfb03e20a8d99ade1a0f116e98236d899382c9eaa14dfe65df6d56"
     },
@@ -1145,6 +1260,7 @@
       "description": "Canonical governance document: GOVERNANCE_PURPOSE_AND_SCOPE",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md",
+      "canonical_commit": "aab16d8d409fe4a6c9c0d60906a488ab9c185920",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "40de7b9de5ec5a72e88e046e474729b536e60905b8039c570a7f6d17308e729c"
     },
@@ -1156,6 +1272,7 @@
       "description": "This protocol establishes **mandatory systematic ripple steps** for all governance changes to ensure complete propagation across all affected files, references, templates, agents, and repositories",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_RIPPLE_CHECKLIST_PROTOCOL.md",
+      "canonical_commit": "51ed27bae1db1df75c241400c97bcde034157174",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "d33c6e03df7af4357ae658a01a3bd3fd5dc093fcae78fd6062b99b250f0f57e4"
     },
@@ -1167,6 +1284,7 @@
       "description": "This document establishes the **canonical protocol for governance ripple signaling, detection, and response**",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_RIPPLE_DETECTION_PROTOCOL.md",
+      "canonical_commit": "951da3a4d19b3603f1dd5010b159ff8a8bd74958",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "7432374184b8a7c5d9b6bf22253c427cef3a293440c0f1450b130ea858ccc0d1"
     },
@@ -1178,6 +1296,7 @@
       "description": "This document defines the **Governance Layering and Rippling Model** - a bidirectional governance evolution framework that enables governance to adapt and improve while maintaining authority, consi...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
+      "canonical_commit": "e7bb72ebecaf220ca0d2856c037e779da17957cd",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "fa52c59c06adf03636a0de9f2116ce6e498cf48248fbc4df7d3bc7f1d43aba76"
     },
@@ -1189,6 +1308,7 @@
       "description": "This canon establishes the **universal enforcement requirement** that all automated write operations across all Maturion repositories MUST use `MATURION_BOT_TOKEN` as the execution identity",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md",
+      "canonical_commit": "99dd2de03d898924c001df4c52165e39a95e5e59",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "124040f73ab3b414d45d58d065c5d22f5d05cd1288f9107595b93a9c28645a61"
     },
@@ -1200,6 +1320,7 @@
       "description": "This document establishes the **canonical validation protocol for governance artifacts**, specifically defining validation success criteria for each agent class, including **non-Build-to-Green (non...",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_VALIDATION_PROTOCOL.md",
+      "canonical_commit": "951da3a4d19b3603f1dd5010b159ff8a8bd74958",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6062fa017aa7f6ce5c3d6ca94070d7bd363ee9d9d6bf817b9d2721f741f7f81c"
     },
@@ -1211,6 +1332,7 @@
       "description": "This document defines the **canonical protocol** for governance version identification, synchronization detection, and version compatibility expectations across the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_VERSIONING_AND_SYNC_PROTOCOL.md",
+      "canonical_commit": "7aec6a2e4a5290ca867215f499d2d417e16ce273",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "8bcec0b387419dfb023c3b58f965c21320d51ef49a40eae000477f94aaa4f257"
     },
@@ -1222,6 +1344,7 @@
       "description": "This document formally defines the **Governance Watchdog** as a mandatory automated gap detection\nsystem for all Maturion repositories under governance that operate the Living Agent System.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_WATCHDOG_CANON.md",
+      "canonical_commit": "f827dc0c088ddfc8929e281ea8b121e67b23dfd8",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "0ae44a6fd760740a183a1db0bfb07dc57878b50ac686abb81d6fed0f214ba899"
     },
@@ -1233,6 +1356,7 @@
       "description": "Canonical governance document: IAA_PRE_BRIEF_PROTOCOL",
       "type": "canon",
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
+      "canonical_commit": "7b7a967c4de9f31b8db9e93407cb1f468cd3847b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef"
     },
@@ -1244,6 +1368,7 @@
       "description": "Canonical governance document: INDEPENDENT_ASSURANCE_AGENT_CANON",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
+      "canonical_commit": "fcc34abe2d99b62032444fb4e8eb6ac35d8f6532",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f"
     },
@@ -1255,6 +1380,7 @@
       "description": "This document defines the **Initialization Completeness Gate** — a mandatory governance gate that verifies repository initialization completeness before architecture, build, or execution activities...",
       "type": "canon",
       "path": "governance/canon/INITIALIZATION_COMPLETENESS_GATE.md",
+      "canonical_commit": "dd47b37ebf5cc0dbc41726ff0094e58bbe9a7791",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "23d86014f109ddcd13fb2ade8c3a911deb698d04e772563b570b12fa67b9320a"
     },
@@ -1266,6 +1392,7 @@
       "description": "This document formally establishes **In-Between Wave Reconciliation (IBWR)** as a mandatory execution step that occurs **after a wave gate PASS and before authorization of the next wave**.",
       "type": "canon",
       "path": "governance/canon/IN_BETWEEN_WAVE_RECONCILIATION.md",
+      "canonical_commit": "8502a56000fb198a4f69cab3e9cd42e180f6a9c0",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "65432a46d8d6a86ccfb0409ffd12ce494ab626c6a22c68202e3125d0987dd547"
     },
@@ -1277,6 +1404,7 @@
       "description": "This protocol defines the **explicit, controlled mechanism** for propagating lessons learned, governance improvements, and alignment feedback from downstream application repositories back to the ca...",
       "type": "canon",
       "path": "governance/canon/LAYER_UP_PROTOCOL.md",
+      "canonical_commit": "ac168dcd394be1586d9df8566973d6b7c89cbf28",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ac23efd1b44ac26b620cf387fdba6b23031ac988a5b51fb304eb215ce7ffc58f"
     },
@@ -1288,6 +1416,7 @@
       "description": "This model defines how raw lessons learned from builds,\nPR gate failures, QA mismatches, and operational friction\nare captured, evaluated, and promoted into governance.",
       "type": "canon",
       "path": "governance/canon/LEARNING_INTAKE_AND_PROMOTION_MODEL.md",
+      "canonical_commit": "dfd6ab115de0ab4874b7e5f263e21487ff913a9b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "9d4392181dcecd8a08d5dd84f443fb2920b81091c7a1b37c02c662c42913f3c0"
     },
@@ -1299,6 +1428,7 @@
       "description": "This document formally defines the **learning loop categories** and their lifecycles within the Maturion governance ecosystem.",
       "type": "canon",
       "path": "governance/canon/LEARNING_LOOP_CATEGORIES_AND_LIFECYCLE.md",
+      "canonical_commit": "36c42751f9de953d6eff585769b03f990d029d2b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "b8950b3484f91b260c190a9920cdea314a57d42dadca74e4ef3bab84a7a99476"
     },
@@ -1310,6 +1440,7 @@
       "description": "This rule governs how learnings that indicate systemic gaps\nare promoted into governance, architecture law, and agent behavior.",
       "type": "canon",
       "path": "governance/canon/LEARNING_PROMOTION_RULE.md",
+      "canonical_commit": "5ea5280441a7d01a243d073a597a0bb466fe33b2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "005db7541d66918d2d8af32feba4e86105a0027c9b6148cfb71523bf3e13af8b"
     },
@@ -1321,6 +1452,7 @@
       "description": "This document establishes the **canonical protocol for dynamic, agent-driven governance discovery and health checking at wake-up**",
       "type": "canon",
       "path": "governance/canon/LIVING_AGENT_GOVERNANCE_HEALTH_CHECKS.md",
+      "canonical_commit": "951da3a4d19b3603f1dd5010b159ff8a8bd74958",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "62c5f6b49613dea34d8260e2bbbd71c2c36aa9ddcfd7ab95991317352518beeb"
     },
@@ -1332,6 +1464,7 @@
       "description": "Canonical governance document: LIVING_AGENT_SYSTEM",
       "type": "canon",
       "path": "governance/canon/LIVING_AGENT_SYSTEM.md",
+      "canonical_commit": "397afde1a2f6110848429b7e5d3b4d7f3170d342",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "2ff416262bbdefdb9ccc6b3152afe922bef592eacecbb6ab57deadf74e92261e"
     },
@@ -1343,6 +1476,7 @@
       "description": "This document formally establishes the constitutional requirement for **systematic, canonical progress recording during wave execution** and **evidence-based wave closure certification** within the...",
       "type": "canon",
       "path": "governance/canon/MANDATORY_CANONICAL_PROGRESS_RECORDING_AND_WAVE_CLOSURE_CERTIFICATION.md",
+      "canonical_commit": "fcdcc1979283d95e618c982faf67c37adc76a154",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "59e84814c60c54b78f5058096320454adcd6017f6277c03d371ec42c4701d4a6"
     },
@@ -1354,6 +1488,7 @@
       "description": "This document provides a **single, authoritative specification** listing all mandatory components and patterns that MUST be present in every Maturion application/repository.",
       "type": "canon",
       "path": "governance/canon/MANDATORY_CROSS_APP_COMPONENTS.md",
+      "canonical_commit": "78e2182020d77a8d1dfd6a02ab2810f3f7d10c7d",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "b7b646b047ce06828a672f2816f66ab6b717bdd6655ef2a925c3998c909b92a9"
     },
@@ -1365,6 +1500,7 @@
       "description": "To institutionalize continuous improvement across all applications, agents, and builders **without disrupting execution or introducing scope creep**.",
       "type": "canon",
       "path": "governance/canon/MANDATORY_ENHANCEMENT_CAPTURE_STANDARD.md",
+      "canonical_commit": "99a954556a753ea6a998239b2ddc519a043cd95d",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1b466115f513ff11f910fd7fb3372102d3416b3a1dc58480b2c00d01823a2722"
     },
@@ -1376,6 +1512,7 @@
       "description": "This protocol establishes a **mandatory structured reflection process** for all governance repository work units",
       "type": "canon",
       "path": "governance/canon/MANDATORY_PROCESS_IMPROVEMENT_REFLECTION_PROTOCOL.md",
+      "canonical_commit": "20779d5b43e0b58c4751742357779c4a67f44bcf",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "bafe809f31ece322879c3e092007536e0e7dce17741ed3cda770c101a967d4d4"
     },
@@ -1387,6 +1524,7 @@
       "description": "This canon defines the **Maturion Bot Execution Identity** used for cross-repo governance automation",
       "type": "canon",
       "path": "governance/canon/MATURION_BOT_EXECUTION_IDENTITY_MODEL.md",
+      "canonical_commit": "a319a9f335e63d7607a4177f4ffb7ad3e8daba23",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "838f49f1a7449971ff22a09403eccc8170596b9702d011a83d165b275ab996b6"
     },
@@ -1398,6 +1536,7 @@
       "description": "This document formally classifies and defines **Maturion-isms** as **Foundational Conceptual Doctrine** within the Maturion governance ecosystem.",
       "type": "canon",
       "path": "governance/canon/MATURION_CONCEPTUAL_DOCTRINE.md",
+      "canonical_commit": "79c30fae20698cc1807cd81398a09e50d33fac36",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "d0f6d78a97f84cf748f50b1e43150d798a79e45469fadce00ac7ae9a05f0d909"
     },
@@ -1409,6 +1548,7 @@
       "description": "This document defines the canonical specification for the Maturion Runtime\nExecution Monitor.",
       "type": "canon",
       "path": "governance/canon/MATURION_RUNTIME_EXECUTION_MONITOR_SPEC.md",
+      "canonical_commit": "828d5d1b285fdbc0462e591c90fc6e41bd73b4ca",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "e1f82b55131ea8b757ad773c596a0939efeb6788cad5ef3ec624e27ee933546d"
     },
@@ -1420,6 +1560,7 @@
       "description": "This document formally defines **Memory Integrity** and **Corruption Detection** requirements for the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/MEMORY_INTEGRITY_AND_CORRUPTION_MODEL.md",
+      "canonical_commit": "da84bcbacdfd0072d1b8efc119a7ffc5038d6307",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "22825528fe90b14641db67e966b2d4e0e0e718966f703c260ba2cd693a9132be"
     },
@@ -1431,6 +1572,7 @@
       "description": "This document formally defines the **Memory Lifecycle State Machine** required by Foreman (FM) runtime and cognitive hygiene integration.",
       "type": "canon",
       "path": "governance/canon/MEMORY_LIFECYCLE_STATE_MACHINE_CONTRACT.md",
+      "canonical_commit": "9962b2d55a23d75525167278128bd66eca1f3896",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "fce229b63c146ba71e646140103662b4e857e44525d41c34a09a3b2041a64c13"
     },
@@ -1442,6 +1584,7 @@
       "description": "This document formally defines what **Memory State Observability** means for Foreman (FM) and Watchdog.",
       "type": "canon",
       "path": "governance/canon/MEMORY_OBSERVABILITY_QUERY_CONTRACT.md",
+      "canonical_commit": "d3c6def991ccbee740b141590b948d4996f708f6",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "62550d0ef0d393f9506f628b07805b1787be448aefcbae3cabb24c3155712735"
     },
@@ -1453,6 +1596,7 @@
       "description": "This document provides the **authoritative mapping of agent roles to applicable merge gates**, ensuring precise, deterministic gate enforcement across all repositories in the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/MERGE_GATE_APPLICABILITY_MATRIX.md",
+      "canonical_commit": "8b7d3ce0d0534f8025bbc60061535371ca94f512",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "85ab24acbbe639577cfeb31627204a91a978d7e000260a52f42634c3c1c9dd47"
     },
@@ -1464,6 +1608,7 @@
       "description": "This canon defines the **standardized merge gate interface** that every governed repository must expose",
       "type": "canon",
       "path": "governance/canon/MERGE_GATE_INTERFACE_STANDARD.md",
+      "canonical_commit": "a319a9f335e63d7607a4177f4ffb7ad3e8daba23",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1f211a80b274b06d591bf267ceb533c75119655afda07afaec6a92b3d6d5b91a"
     },
@@ -1475,6 +1620,7 @@
       "description": "Canonical governance document: MERGE_GATE_PHILOSOPHY",
       "type": "canon",
       "path": "governance/canon/MERGE_GATE_PHILOSOPHY.md",
+      "canonical_commit": "2dc91f3400dd6d64a1085a1c3623327374a17af1",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "315ee14f3a8abd882f212463983d3115ace9adbb64f3a77f2cbdc47e2bca5774"
     },
@@ -1486,6 +1632,7 @@
       "description": "Canonical governance document: MMM_SIMPLE_PR_ADMIN_MODEL",
       "type": "canon",
       "path": "governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md",
+      "canonical_commit": "d976c4dc5a88862145e07592cf7bbf85622be67b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6c050cb0cbb6d9ed205693893ae9cf597cbcbdd8c1d30ec99ffb18dff35697e4"
     },
@@ -1497,6 +1644,7 @@
       "description": "Canonical governance document: MULTI_EMBODIMENT_ORCHESTRATION_MODEL",
       "type": "canon",
       "path": "governance/canon/MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md",
+      "canonical_commit": "27b955ed50e4abbd118f92378ca41f6c0a3a35e4",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1ad56794e3f284b04f29dda876e683344d0719a1edb44a1fc646a1f3769f41e3"
     },
@@ -1508,6 +1656,7 @@
       "description": "Canonical governance document: ORCHESTRATOR_SPECIALIST_ARCHITECTURE",
       "type": "canon",
       "path": "governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md",
+      "canonical_commit": "10df56f6c7928d6052ce08829e054016b2a5bae2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "0ff730650dd34742dac3cce642011f48cd9b3efa3864335833db0931d87071b3"
     },
@@ -1519,6 +1668,7 @@
       "description": "This canon establishes the **canonical per-agent parking station path** and formalises the requirement that each agent writes suggestions only to its own dedicated file",
       "type": "canon",
       "path": "governance/canon/PARKING_STATION_PATH_STANDARD.md",
+      "canonical_commit": "a791e6c14533e66cf4fd35bff33bc1410895e25d",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "a0e9a512e08d8e6829dacf4c7195d8911f314d2d9838c59f6730a84585c8b7ad"
     },
@@ -1530,6 +1680,7 @@
       "description": "This document provides **interim guidance** for handling references to canonical governance documents that may be referenced but whose locations were previously unclear",
       "type": "canon",
       "path": "governance/canon/PENDING_CANON_REFERENCES_INTERIM_GUIDANCE.md",
+      "canonical_commit": "6981e6ccdd31e30482f3c7dd694f3e8081df2ba3",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "0a86a0ccfec8ee51f12dc4da60f94585732f0eb0a48d201d58fa5d4a157b9aba"
     },
@@ -1541,6 +1692,7 @@
       "description": "This document defines **mandatory AI features** that MUST be present in all Maturion applications unless explicitly exempted by CS2 with written justification.",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AI_REQUIREMENTS.md",
+      "canonical_commit": "78e2182020d77a8d1dfd6a02ab2810f3f7d10c7d",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1e99a0fe28dc9556d37227109dcbe0d2a21678f858e5710aacb0366085dc20be"
     },
@@ -1552,6 +1704,7 @@
       "description": "This document formally defines the **authority boundary** between:\n- **Foreman (FM)** — execution authority within repositories\n- **Maturion** — control-plane authority for platform actions (GitHub)",
       "type": "canon",
       "path": "governance/canon/PLATFORM_AUTHORITY_BOUNDARY_AND_DELEGATION_MODEL.md",
+      "canonical_commit": "7d30da8166af27db94ff0100e9cf259488feeb7f",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1faef6d0741cf3b67b98eb0b7419d4fe4f98eb73ee0a89e8786c39d6e06e576d"
     },
@@ -1563,6 +1716,7 @@
       "description": "This canon defines, constitutionally and unambiguously, what it means for the platform to be **ready to execute a governed build**.",
       "type": "canon",
       "path": "governance/canon/PLATFORM_READINESS_FOR_GOVERNED_BUILD_EXECUTION.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "c3837f94ce8b65e749bcff3acfc94690b77f1d8d6879355557c7b0bc55b8852b"
     },
@@ -1574,6 +1728,7 @@
       "description": "This canon establishes the **explicit execution model** requirement for any PR that changes implementation files.",
       "type": "canon",
       "path": "governance/canon/POLC_EXECUTION_MODEL_CANON.md",
+      "canonical_commit": "d206c98fc510c8cb67d7c228a9a77d2698f8878b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "3e4294c8549d814a51f4b35e6d85a3f1bf588b82d2c44a333547a55f01bf5db6"
     },
@@ -1585,6 +1740,7 @@
       "description": "This protocol establishes a **universal post-mortem process** for completed builds, requiring all agents (foreman, builders, governance, QA, etc.) to deliver domain-specific lessons learned and imp...",
       "type": "canon",
       "path": "governance/canon/POST_MORTEM_PROTOCOL.md",
+      "canonical_commit": "20e897536c9c88c055cd09fa774879b1e7fae268",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "dd847a354b3914da98cd70851ae32b9d2dc5d51e0233253ded2437a2ea2c9b3d"
     },
@@ -1596,6 +1752,7 @@
       "description": "This document establishes **mandatory post-production health verification and telemetry governance requirements** for all Maturion applications after production deployment",
       "type": "canon",
       "path": "governance/canon/POST_PRODUCTION_TELEMETRY_CANON.md",
+      "canonical_commit": "fff87806416ac9afa1fe361650afefc8a8344ade",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "f1c6b2c1df5620d7657b7a625434c7309c3ae0760c99f7f5e7f7671d4b23b85d"
     },
@@ -1607,6 +1764,7 @@
       "description": "This canon establishes a **mandatory Pre-Build Reality Check gate** that must be passed before any implementation (build) work may begin in the Maturion module delivery lifecycle.",
       "type": "canon",
       "path": "governance/canon/PRE_BUILD_REALITY_CHECK_CANON.md",
+      "canonical_commit": "0fdc98e6528409b4548465f9cad1309cfe9f0c42",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "eca3d16f5ca0ac6345115f79fbaa4306df29b815caa2eb175d3d31fece2d0bc9"
     },
@@ -1618,6 +1776,7 @@
       "description": "This canon formalises the **End-to-End Pre-Build Stage Model** as mandatory governance for all future governed builds operating under the 100% one-time build philosophy.",
       "type": "canon",
       "path": "governance/canon/PRE_BUILD_STAGE_MODEL_CANON.md",
+      "canonical_commit": "31ca6fb20d3edc65736dafe7f6368b12b81a79eb",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "98a1b9bb70e12f172f35be31dc6c50ebec1a2c4ac93bef6cb773b345d58203ff"
     },
@@ -1629,6 +1788,7 @@
       "description": "This protocol establishes **Pre-Implementation Behavior Review** as a mandatory step in all enhancement testing workflows to prevent repeated test rework cycles caused by assumptions about expected...",
       "type": "canon",
       "path": "governance/canon/PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md",
+      "canonical_commit": "d8c32f3b50a54c192f0294850bd1cab128262098",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "ea3b2086b49496a777a661085a1c24c5ca4fd2d827c10faf3589d02489ffd48a"
     },
@@ -1640,6 +1800,7 @@
       "description": "This protocol establishes **mandatory pre-work governance self-test and gap detection** for ALL agents before starting any new job, issue, or pull request",
       "type": "canon",
       "path": "governance/canon/PRE_WORK_GOVERNANCE_SELF_TEST_PROTOCOL.md",
+      "canonical_commit": "ccca55c863cf9b9dd8269a7a566967b82fc5906f",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "bef0d48e538f93e5dc9298b4ddad95c79ca75d34e3e5265653c89498e2299a61"
     },
@@ -1651,6 +1812,7 @@
       "description": "Canonical governance document: PROXY_AUTHORITY_MODEL",
       "type": "canon",
       "path": "governance/canon/PROXY_AUTHORITY_MODEL.md",
+      "canonical_commit": "39f266209d5ce43f2b9f38c77849061208102a62",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "4f95fb1aaadaa99adb1503782024c55def41e176326011d385f685a8a476049c"
     },
@@ -1662,6 +1824,7 @@
       "description": "This document defines the **canonical operational protocol** for evaluating PR gates based on agent role applicability",
       "type": "canon",
       "path": "governance/canon/PR_GATE_EVALUATION_AND_ROLE_PROTOCOL.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "92a9a15966a40785f9e017c0b213ca782e958b34ee9d837c3b1b4cf57c3e6fc7"
     },
@@ -1673,6 +1836,7 @@
       "description": "This rule enforces the One-Time Build Law by preventing\nhandover of builds that do not already satisfy all required PR gates.",
       "type": "canon",
       "path": "governance/canon/PR_GATE_PRECONDITION_RULE.md",
+      "canonical_commit": "064585c835a842f76108670f9e9f4c781bc1767e",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "9ca7bbbcb65f1ae0b86d9be84c515dc9cab6d2f26ee56b71f2990618b19fa562"
     },
@@ -1684,6 +1848,7 @@
       "description": "This policy prevents cascading failures caused by excessive initial scope.",
       "type": "canon",
       "path": "governance/canon/PR_SCOPE_CONTROL_POLICY.md",
+      "canonical_commit": "916250145d513e79ae54b747baf3085f03f0fbfe",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "05bb5cdcbbd07accef92c1a21bca8f553c2018919752839171cdd719adedfd98"
     },
@@ -1695,6 +1860,7 @@
       "description": "Canonical governance document: QA_CATALOG_ALIGNMENT_GATE_CANON",
       "type": "canon",
       "path": "governance/canon/QA_CATALOG_ALIGNMENT_GATE_CANON.md",
+      "canonical_commit": "195f6a758f71be67e8f152823437cdea22480452",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "b28b6bb6f58887be6a8b0a325b7cd450650c0e7fd8ce2ac4a3ea6113dd5a9a82"
     },
@@ -1706,6 +1872,7 @@
       "description": "This document defines the **mandatory initialization phase** for all new application repositories before architecture design or build activities may begin.",
       "type": "canon",
       "path": "governance/canon/REPOSITORY_INITIALIZATION_AND_GOVERNANCE_SEEDING_PROTOCOL.md",
+      "canonical_commit": "f06f8d51d8a4d2ffbaf296de9cc784fabb702fb0",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "afa5e6e306ccaab1be34d5b8a94d07d5c2060935bfc86903213bd7591c126864"
     },
@@ -1717,6 +1884,7 @@
       "description": "This document provides **explicit, canonical separation** between:\n1",
       "type": "canon",
       "path": "governance/canon/REPOSITORY_SEEDING_AND_ENFORCEMENT_ROLE_SEPARATION.md",
+      "canonical_commit": "dd47b37ebf5cc0dbc41726ff0094e58bbe9a7791",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "1b04d252531851619a4619ec7c8eac97239bf203dd799af1a2b362c999b7fdc0"
     },
@@ -1728,6 +1896,7 @@
       "description": "This document defines governance rules for **requirement specifications** across all repositories requiring structured requirements management.",
       "type": "canon",
       "path": "governance/canon/REQUIREMENT_SPECIFICATION_GOVERNANCE.md",
+      "canonical_commit": "cf5062c96e69049da5de715360d2e80d3c96f56b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "645cf74498ff42d8aebdd7eeb7c2d60ccf23ef099c8dd8877ff202a930a98063"
     },
@@ -1739,6 +1908,7 @@
       "description": "Canonical governance document: RESPONSIBILITY_DOMAIN_ENTRY.template",
       "type": "canon",
       "path": "governance/canon/RESPONSIBILITY_DOMAIN_ENTRY.template.md",
+      "canonical_commit": "a96ef3bc0da44bfb8e7d62835045b9708d64e226",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "1f6666a1fff4845ca762179620fa065de92337be98048fcc41683d6e9f0319d2"
     },
@@ -1750,6 +1920,7 @@
       "description": "This registry defines the **only valid responsibility domains**\nthat may be declared in a Scope Declaration.",
       "type": "canon",
       "path": "governance/canon/RESPONSIBILITY_DOMAIN_REGISTRY.md",
+      "canonical_commit": "54ce23e82e216954d3cf12fb9293d4b5f1d4f643",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "4f511ec3d99accaf7e382fc481df2c90cca7e50cf579919e1a36a503111cacb7"
     },
@@ -1761,6 +1932,7 @@
       "description": "This document defines **Ripple Intelligence Layer (RIL)** as a first-class governance concept within the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/RIPPLE_INTELLIGENCE_LAYER.md",
+      "canonical_commit": "fb9f48ede01fb95b21b3b1dfd34120472fc5256c",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "899f43533bf13a9bd39c716213a0d0642d942bd4a5654c394c25eaca9bbb2eda"
     },
@@ -1772,6 +1944,7 @@
       "description": "Canonical governance document: RIPPLE_RUNTIME_INTEGRATION_SURVEY",
       "type": "canon",
       "path": "governance/canon/RIPPLE_RUNTIME_INTEGRATION_SURVEY.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "36c2f5d5cb4621d3a7f677a629b70cb8ada219b2f10d883d6333526d89c45723"
     },
@@ -1783,6 +1956,7 @@
       "description": "Canonical governance document: ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON",
       "type": "canon",
       "path": "governance/canon/ROOT_CAUSE_CORRECTIVE_ACTION_AGENT_CANON.md",
+      "canonical_commit": "2d042ada790e87eacb9df97505d9c28ce8e876af",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "9edbf7678f64264b5fb764e86ccacf5339b405098aec2c7208d94640552ff45e"
     },
@@ -1794,6 +1968,7 @@
       "description": "This schema defines the mandatory structure for a Scope Declaration.",
       "type": "canon",
       "path": "governance/canon/SCOPE_DECLARATION_SCHEMA.md",
+      "canonical_commit": "179ba49b335040e33793542d0522f922e9211162",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "9aca071be20525159e8ee5f9b1450f53b144aeceeddd156146906be5a9e0f02f"
     },
@@ -1805,6 +1980,7 @@
       "description": "This rule enforces alignment between a PR’s declared scope\nand the files actually modified in the PR.",
       "type": "canon",
       "path": "governance/canon/SCOPE_TO_DIFF_RULE.md",
+      "canonical_commit": "a8af5e4a7c89cd14944162a8cac75c65983d96f6",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "d2c96ce6d14c34e28ff79c39c7c97f69ffbf9a905fff32feaf8d310f3f5825ed"
     },
@@ -1816,6 +1992,7 @@
       "description": "This document establishes the **canonical self-alignment authority model** that defines precisely what each agent class may align autonomously, what requires escalation to CS2, and what boundaries ...",
       "type": "canon",
       "path": "governance/canon/SELF_ALIGNMENT_AUTHORITY_MODEL.md",
+      "canonical_commit": "619d277360bbeda83dca14c88ca1f042e421a4cd",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "7bef68ef7cbf538b97e116d1b1fa0a3eb1ebd8af68a4a14cca72c8753c8a08eb"
     },
@@ -1827,6 +2004,7 @@
       "description": "Canonical governance document: SPECIALIST_KNOWLEDGE_MANAGEMENT",
       "type": "canon",
       "path": "governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+      "canonical_commit": "9749fba625d0b7989a754f6dd7ff8e83e7add2a9",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "d0e22e5b701fac3406a9c0b03f02fbe9cfc4446b27f8edcc69e28d83138fe9bd"
     },
@@ -1838,6 +2016,7 @@
       "description": "This doctrine establishes **zero tolerance for technical debt, test failures, errors, and safety violations** across all Maturion systems",
       "type": "canon",
       "path": "governance/canon/STOP_AND_FIX_DOCTRINE.md",
+      "canonical_commit": "f48db39090d963ef1e28a5bdf380747346c7b24a",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "a1158f7705d04127f3b707c9082021b072c0cea2659c40207a0783dc3debd8b2"
     },
@@ -1849,6 +2028,7 @@
       "description": "This document defines the **mandatory protocol** for commissioning and progressive activation of any Maturion application.",
       "type": "canon",
       "path": "governance/canon/SYSTEM_COMMISSIONING_AND_PROGRESSIVE_ACTIVATION_PROTOCOL.md",
+      "canonical_commit": "de807caccd89966476beddd6e0853eb68b012201",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "a8e4c94e1674549ba8b24e4a32118a54657b5517221ee0ff8d033f6f114e91b8"
     },
@@ -1860,6 +2040,7 @@
       "description": "This protocol establishes the **Threat Assessment & Response Protocol (TARP)** for systematic threat classification, assessment, and response within the Maturion execution ecosystem.",
       "type": "canon",
       "path": "governance/canon/TARP_PROTOCOL.md",
+      "canonical_commit": "36c42751f9de953d6eff585769b03f990d029d2b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "66ebc152177664126ce596a449232c1eb35e3c7a803920f6c08b7bcf1dc31917"
     },
@@ -1871,6 +2052,7 @@
       "description": "Canonical governance document: THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE",
       "type": "canon",
       "path": "governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md",
+      "canonical_commit": "5d15bc22caa83b16ae992155b6a2bb7c1b339f71",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "3aaf14f2500eeeed93eecdd210d1a7b4defec7e004ad557f7f69c3f4742cd9d3"
     },
@@ -1882,6 +2064,7 @@
       "description": "This policy expands the **'We Only Fail Once'** breach registry and preflight attestation requirement—previously mandated only for the Foreman agent—to **every agent class** in the Living Agent Sys...",
       "type": "canon",
       "path": "governance/canon/UNIVERSAL_FAIL_ONLY_ONCE_POLICY.md",
+      "canonical_commit": "f48db39090d963ef1e28a5bdf380747346c7b24a",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "410370f548ca3431ab695070f3061be0259279095d2d3ce15cf9bedfd7529796"
     },
@@ -1893,6 +2076,7 @@
       "description": "This document defines governance rules for **versioning and evolution** of all governance artifacts, application code, and system components.",
       "type": "canon",
       "path": "governance/canon/VERSIONING_AND_EVOLUTION_GOVERNANCE.md",
+      "canonical_commit": "cf5062c96e69049da5de715360d2e80d3c96f56b",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "590509c92e0a945dee8dafa6fb6614f4300bc08c9f38a84ce1df5bcf4d8bcf32"
     },
@@ -1904,6 +2088,7 @@
       "description": "This document defines **vision drift detection requirements** for the Independent Watchdog.",
       "type": "canon",
       "path": "governance/canon/VISION_ALIGNMENT_AND_DRIFT_MODEL.md",
+      "canonical_commit": "a1fd9bfe679728871bd0f5691b0059b28562842e",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "8703e597776637d5352ca96db972f3a9cb60636508a891a40cc5e9b191c5800c"
     },
@@ -1915,6 +2100,7 @@
       "description": "Canonical governance document: WARNING_DISCOVERY_BLOCKER_PROTOCOL",
       "type": "canon",
       "path": "governance/canon/WARNING_DISCOVERY_BLOCKER_PROTOCOL.md",
+      "canonical_commit": "feb4996d953258399ad79e57b58a18b2f81b047f",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "3eaf0b304fc9dda42421900ff39a6156fe04c9a799c8d0313448b1c0b5cb5e9b"
     },
@@ -1926,6 +2112,7 @@
       "description": "This document formally defines the **Independent Watchdog** as a governance observation and escalation system within the Maturion ecosystem.",
       "type": "canon",
       "path": "governance/canon/WATCHDOG_AUTHORITY_AND_SCOPE.md",
+      "canonical_commit": "e7bb72ebecaf220ca0d2856c037e779da17957cd",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "4f06306fbc1a1016cbbf04e7085473dd2cb37ea2cda9f45bbeb86cc03213392d"
     },
@@ -1937,6 +2124,7 @@
       "description": "This document formally defines how the **Independent Watchdog** observes the **Cognitive Hygiene Protocol (CHP)** to ensure governance compliance and cognitive stability without compromising Watchd...",
       "type": "canon",
       "path": "governance/canon/WATCHDOG_COGNITIVE_OBSERVATION_PROTOCOL.md",
+      "canonical_commit": "17175278337cf9480d2e87f2aaa66089a0bd0a00",
       "layer_down_status": "OPTIONAL",
       "file_hash_sha256": "d42c6b9103c81648713c784341c647e0d08e8b8b393dd9898e4d09a67187bfcc"
     },
@@ -1948,6 +2136,7 @@
       "description": "This document formally defines the **Quality Integrity Watchdog (QIW)** as an observational channel within the Independent Watchdog system for monitoring build, lint, test, deployment, and runtime ...",
       "type": "canon",
       "path": "governance/canon/WATCHDOG_QUALITY_INTEGRITY_CHANNEL.md",
+      "canonical_commit": "6b08223e74d39e6170b52bf355c1363217df8e9c",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "fc8516f968a7208ffa294a285b1055bc2a9762e20c7ae763adace5eb0165190a"
     },
@@ -1959,6 +2148,7 @@
       "description": "This canon documents critical lessons learned from MAT (Maturion Asset Tracker) Waves 5-7 regarding recurring failures to deliver complete, working, deployed infrastructure components despite clear...",
       "type": "canon",
       "path": "governance/canon/WAVES_5_TO_7_INFRA_FE_WIRING_LESSONS.md",
+      "canonical_commit": "cdd609565e74d43540b0dade85c198ade90e7cf1",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "503d2a4d8d0ebdc8f44e4d1efa7dea82bce7229a2c5680a018bb7242b61025ff"
     },
@@ -1970,6 +2160,7 @@
       "description": "This document establishes the **Wave Model** as the canonical execution unit structure for Maturion application development",
       "type": "canon",
       "path": "governance/canon/WAVE_MODEL.md",
+      "canonical_commit": "24979e04f4db93d9b0932ade196621b0634c1434",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "90005eeb88e17cfc6f8587a2a8e6115129b574a2eb4860110896e4ccab3013aa"
     },
@@ -1981,6 +2172,7 @@
       "description": "This doctrine establishes the **\"We Only Fail Once\"** constitutional principle: **Every failure MUST result in structural governance improvement that prevents identical recurrence**.",
       "type": "canon",
       "path": "governance/canon/WE_ONLY_FAIL_ONCE_DOCTRINE.md",
+      "canonical_commit": "142426dab27dc051ed83ed4153b7582ba9929d4a",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "fe01cf1078ec905fafbc235eddec117325e9491e5575b5d0233b8216e13a7574"
     },
@@ -1992,6 +2184,7 @@
       "description": "This protocol canonises the **Zero-Tolerance Finding Principle** for all AI and agent output in the Maturion ecosystem:",
       "type": "canon",
       "path": "governance/canon/ZERO_TOLERANCE_FINDING_PROTOCOL.md",
+      "canonical_commit": "f48db39090d963ef1e28a5bdf380747346c7b24a",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6598e2fa3d9a924e3bf70b966f790fda892c142a64bd5f75ef434f2e8a2e4c3a"
     },
@@ -2003,6 +2196,7 @@
       "description": "Canonical governance document: AGENT_CONTRACT_MIGRATION_GUIDE",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/AGENT_CONTRACT_MIGRATION_GUIDE.md",
+      "canonical_commit": "47d39f25be3d5b00d19c1068b79d8536ce5f43cf",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "d3f2e17da23733e5f5e27a71bb0c5d0071da1d1c10fab73a23fbd902d60fe2d9"
     },
@@ -2014,6 +2208,7 @@
       "description": "This document defines **which canonical governance documents** repository `.agent` files MUST or SHOULD bind to, establishing the **minimum governance foundation** for all repositories.",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/AGENT_FILE_BINDING_REQUIREMENTS.md",
+      "canonical_commit": "47d39f25be3d5b00d19c1068b79d8536ce5f43cf",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "8ef8716b2228c651572aa8880cc17f4d9d05715511f21920fe67396755514e7f"
     },
@@ -2025,6 +2220,7 @@
       "description": "Canonical governance document: AGENT_FILE_CREATION_POLICY",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/AGENT_FILE_CREATION_POLICY.md",
+      "canonical_commit": "5edcf698d9fbba9ed67ea3e0025a97d83ca1a4c5",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "f6a225c1479465b66b7378cdb4d52c27b61c41546d1cee31638e15f9df331fea"
     },
@@ -2036,6 +2232,7 @@
       "description": "Canonical governance document: AGENT_ONBOARDING_QUICKSTART",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/AGENT_ONBOARDING_QUICKSTART.md",
+      "canonical_commit": "b2950a319abc335825ea3548917f29f2719cdd1e",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "e6ec7372cb554c02d7d304fe538318e6a7ad48de2db4fa7d2b969340a2606d6d"
     },
@@ -2047,6 +2244,7 @@
       "description": "Canonical governance document: README",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/README.md",
+      "canonical_commit": "5edcf698d9fbba9ed67ea3e0025a97d83ca1a4c5",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "2ec60edea3b5e5086b28191f22bcab82b854e3b93b0ebefb7889f9392d9574ce"
     },
@@ -2058,6 +2256,7 @@
       "description": "This runbook defines the **ongoing maintenance protocol** for repository `.agent` files, ensuring:\n- Files remain synchronized with canonical governance\n- Changes are made with appropriate authorit...",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/runbooks/AGENT_FILE_MAINTENANCE.md",
+      "canonical_commit": "47d39f25be3d5b00d19c1068b79d8536ce5f43cf",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "1a8f8160ef72ec19b6dac1fcba39c3e301544cfdfc143d0697cc2cf27bd9430a"
     },
@@ -2069,6 +2268,7 @@
       "description": "This runbook defines the **complete validation process** for repository `.agent` files, ensuring:\n- Structural correctness against schema\n- Mandatory bindings are present\n- Canonical references are...",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/runbooks/AGENT_FILE_VALIDATION.md",
+      "canonical_commit": "47d39f25be3d5b00d19c1068b79d8536ce5f43cf",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "58896fa2469dac4a5562d8e5ccd11ecc2857779bd41779ad6817c5938173de0a"
     },
@@ -2080,6 +2280,7 @@
       "description": "Canonical governance document: AGENT_CONTRACT.template",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/templates/AGENT_CONTRACT.template.md",
+      "canonical_commit": "b2950a319abc335825ea3548917f29f2719cdd1e",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "0a8f1a975a964e33bfc2a8fe97a21dea6e2015ce89692b160d494dc04c92a105"
     },
@@ -2091,6 +2292,7 @@
       "description": "Canonical governance document: AGENT_FILE_LOCKED_SECTIONS_TEMPLATE",
       "type": "canon",
       "path": "governance/canon/agent-contracts-guidance/templates/AGENT_FILE_LOCKED_SECTIONS_TEMPLATE.md",
+      "canonical_commit": "6d8634ecced04569d77d25a147edfdf0156aa8f2",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "76bb6d7a9af346b88ba0bd07046c12d0a07b8d93d72d34c06a04f811dfd044bc"
     },
@@ -2102,6 +2304,7 @@
       "description": "Canonical governance document: effectiveness.template",
       "type": "canon",
       "path": "governance/canon/effectiveness.template.md",
+      "canonical_commit": "33f0d95ffb2aa855639dd7851dfa3741f1d41ea8",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "ff1b2f86f2c7ff80a987789fed75718c7ee8c699f4fd238609714c92ba8f8381"
     },
@@ -2113,6 +2316,7 @@
       "description": "Canonical governance document: failure.template",
       "type": "canon",
       "path": "governance/canon/failure.template.md",
+      "canonical_commit": "5ec8976d07fd04f2f0b39b03782f247c1c72b650",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "21ef14966907a7b21bc90dc092f549f9554a379288be542e0bc8aa07bf51951a"
     },
@@ -2124,6 +2328,7 @@
       "description": "Canonical governance document: scope-declaration.template",
       "type": "canon",
       "path": "governance/canon/scope-declaration.template.md",
+      "canonical_commit": "179ba49b335040e33793542d0522f922e9211162",
       "layer_down_status": "INTERNAL",
       "file_hash_sha256": "f233e0bd21d745f5e2df0d0c9625913168a2ff94baa77e790084485c78afdf53"
     },
@@ -2135,6 +2340,7 @@
       "description": "This policy establishes **App Descriptions as mandatory upstream authority artifacts** for all applications in the Maturion ecosystem.",
       "type": "policy",
       "path": "governance/policy/APP_DESCRIPTION_REQUIREMENT_POLICY.md",
+      "canonical_commit": "0fdc98e6528409b4548465f9cad1309cfe9f0c42",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "67aa6fa019f963c87fc6ccf1afbb0be8a733f3b6f4b46f0fd398e0844e1ebcd5"
     },
@@ -2146,6 +2352,7 @@
       "description": "This policy defines the **CORRECT vs INCORRECT methodology** for tracing tests to architectural requirements.",
       "type": "policy",
       "path": "governance/policy/ARCHITECTURE_TEST_TRACEABILITY_METHODOLOGY.md",
+      "canonical_commit": "d38a4cebead3e4082655d21db799157c6d4e9c7c",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "428f63b3173397878800bd996d30b80b434e251c711665025c044971d967d566"
     },
@@ -2157,6 +2364,7 @@
       "description": "This policy establishes a **mandatory automated deprecation detection gate** for technical debt prevention across all repositories in the Maturion Engineering Ecosystem.",
       "type": "policy",
       "path": "governance/policy/AUTOMATED_DEPRECATION_DETECTION_GATE.md",
+      "canonical_commit": "ddf7141b29508323dcb7c1ff408e5b8c84864285",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "eab436d8df86923e3075f9cbe6026f4a09e8e5d0eff774ac154ec1dc63119265"
     },
@@ -2168,6 +2376,7 @@
       "description": "This policy defines the **Builder QA Handover Contract** - the canonical requirements for Builder agents to hand over work to the Governance Gate for merge authorization.",
       "type": "policy",
       "path": "governance/policy/BUILDER_QA_HANDOVER_POLICY.md",
+      "canonical_commit": "2676575e3e0314c5847e39d2641c528ae99c5ced",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "dffdaddb554d1b9486122bcf1c8b03b6331943aadc390c8131104ff6587f874b"
     },
@@ -2179,6 +2388,7 @@
       "description": "This policy establishes the complete governance framework for FM-to-Maturion delegated platform actions, defining:\n- When and how FM delegates platform actions to Maturion\n- What instructions FM mu...",
       "type": "policy",
       "path": "governance/policy/FM_MATURION_DELEGATED_ACTION_POLICY.md",
+      "canonical_commit": "f4b6fb9a329ef712f3c8d753fbee907d964ab87c",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "5668a48a689ff7f5dbaeebf460f11d4ca96ff7e9e4b8620f18f990ba37e3c14c"
     },
@@ -2190,6 +2400,7 @@
       "description": "This policy establishes a **zero-tolerance ban on minimizing language** when describing technical debt, failing tests, or unresolved warnings in PR submissions, QA reports, or completion declarations.",
       "type": "policy",
       "path": "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
+      "canonical_commit": "5f197ba640be4c71e34a06260bdb8b9265208a7a",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "6d50f484cf2ab84527a8c940d47138657ce81c71f93f51a76e19a74220f5dc09"
     },
@@ -2201,6 +2412,7 @@
       "description": "This protocol defines the **canonical procedure** for handling PR Gate failures across all repositories in the Maturion Engineering Ecosystem.",
       "type": "policy",
       "path": "governance/policy/PR_GATE_FAILURE_HANDLING_PROTOCOL.md",
+      "canonical_commit": "2676575e3e0314c5847e39d2641c528ae99c5ced",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "2fc7c5faf7292ca295529644822d02d45aa3505fbb14569fa477a5f80dd6965a"
     },
@@ -2212,6 +2424,7 @@
       "description": "Canonical governance document: QA_POLICY_MASTER",
       "type": "policy",
       "path": "governance/policy/QA_POLICY_MASTER.md",
+      "canonical_commit": "ff2dc0d64815b6a2d2d8fc810211051bb247b9a8",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "506f2db83ea27539966ab9311fb8cc07f95c7c8fc007ff7f774adafe34bba972"
     },
@@ -2223,19 +2436,9 @@
       "description": "This policy establishes a **zero-tolerance governance gate** for test removal across all repositories in the Maturion Engineering Ecosystem.",
       "type": "policy",
       "path": "governance/policy/TEST_REMOVAL_GOVERNANCE_GATE.md",
+      "canonical_commit": "7209d5aa8f4b9e0aa41e0e9cc375c61dfd475f7d",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1bd997b07837e1c3375f5b4b40c9086a8fd39d598341f749ed7c8e23f0ad3c84"
-    },
-    {
-      "filename": "CODEX_BUILD_COMPLETION_DEFINITION.md",
-      "version": "1.0.0",
-      "file_hash": "dd3a62d87f8445036f64dafb75886e1159538556f1d49bb05a797d6cf81c9ca1",
-      "effective_date": "2026-05-22",
-      "description": "Defines the mandatory completion checkpoint before Codex or the AI workforce may present a build to Johan for non-coder UI or product evaluation.",
-      "type": "canon",
-      "path": "governance/canon/CODEX_BUILD_COMPLETION_DEFINITION.md",
-      "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "dd3a62d87f8445036f64dafb75886e1159538556f1d49bb05a797d6cf81c9ca1"
     }
   ]
 }
