@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "apw-durable-paid-call-runtime-implementation-v01",
+  "pr_number": 1977,
+  "prebrief_commit_sha": "47b9ef55322fcfbf68be31fe972e976ce25bb552",
+  "builder_appointment_timestamp": "2026-07-28T07:17:09Z",
+  "builder_appointment_commit_sha": "53ed397d3af85325e9ed544ec48b922474b5648c",
+  "builder_agent": "apw-durable-paid-call-runtime-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/apw-durable-paid-call-runtime-v0.1.md",
+  "first_implementation_commit_sha": "648a61977e03b3908c5515b10717e5618b93f0a0",
+  "qp_review_timestamp": "2026-07-28T07:30:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1977.md",
+  "remediation_record_ref": ".agent-admin/prs/pr-1977/wave-current-tasks.md",
+  "implementation_note": "The durable spend authority core was the first implementation commit and followed the independent prebrief and bounded runtime-builder appointment. Migration, runtime wiring and test conversion followed in later commits."
+}
