@@ -16,7 +16,7 @@ import threading
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime, timezone
 from typing import Protocol
 
 
@@ -149,7 +149,10 @@ class InMemoryDurableSpendStore:
             clients[client_bucket] = client_count + 1
             reservations = state["reservations"]
             assert isinstance(reservations, dict)
-            reservations[reservation_id] = estimated_tokens
+            reservations[reservation_id] = {
+                "estimated_tokens": estimated_tokens,
+                "client_bucket": client_bucket,
+            }
             return self._decision(
                 True,
                 "paid_call_permitted",
@@ -165,24 +168,33 @@ class InMemoryDurableSpendStore:
         actual_tokens: int,
     ) -> None:
         with self._lock:
-            state, reserved = self._find_reservation(reservation_id)
+            state, reserved, _ = self._find_reservation(reservation_id)
             if state is None:
-                return
+                raise RuntimeError("unknown or reconciled spend reservation")
             state["tokens"] = max(
                 0,
                 int(state["tokens"]) - reserved + max(0, actual_tokens),
             )
+            state["failures"] = 0
             reservations = state["reservations"]
             assert isinstance(reservations, dict)
             reservations.pop(reservation_id, None)
 
     def reconcile_failure(self, reservation_id: str) -> None:
         with self._lock:
-            state, reserved = self._find_reservation(reservation_id)
-            if state is None:
-                return
+            state, reserved, client_bucket = self._find_reservation(
+                reservation_id
+            )
+            if state is None or client_bucket is None:
+                raise RuntimeError("unknown or reconciled spend reservation")
             state["calls"] = max(0, int(state["calls"]) - 1)
             state["tokens"] = max(0, int(state["tokens"]) - reserved)
+            clients = state["clients"]
+            assert isinstance(clients, dict)
+            clients[client_bucket] = max(
+                0,
+                int(clients.get(client_bucket, 0)) - 1,
+            )
             state["failures"] = int(state["failures"]) + 1
             if int(state["failures"]) >= 3:
                 state["circuit"] = "open"
@@ -193,13 +205,18 @@ class InMemoryDurableSpendStore:
     def _find_reservation(
         self,
         reservation_id: str,
-    ) -> tuple[dict[str, object] | None, int]:
+    ) -> tuple[dict[str, object] | None, int, str | None]:
         for state in self._days.values():
             reservations = state["reservations"]
             assert isinstance(reservations, dict)
-            if reservation_id in reservations:
-                return state, int(reservations[reservation_id])
-        return None, 0
+            record = reservations.get(reservation_id)
+            if isinstance(record, dict):
+                return (
+                    state,
+                    int(record["estimated_tokens"]),
+                    str(record["client_bucket"]),
+                )
+        return None, 0, None
 
     @staticmethod
     def _decision(
@@ -274,19 +291,26 @@ class SupabaseRpcDurableSpendStore:
         reservation_id: str,
         actual_tokens: int,
     ) -> None:
-        self._rpc(
+        payload = self._rpc(
             "apw_reconcile_paid_call_success",
             {
                 "p_reservation_id": reservation_id,
                 "p_actual_tokens": max(0, actual_tokens),
             },
         )
+        self._require_reconciled(payload)
 
     def reconcile_failure(self, reservation_id: str) -> None:
-        self._rpc(
+        payload = self._rpc(
             "apw_reconcile_paid_call_failure",
             {"p_reservation_id": reservation_id},
         )
+        self._require_reconciled(payload)
+
+    @staticmethod
+    def _require_reconciled(payload: dict[str, object]) -> None:
+        if payload.get("reconciled") is not True:
+            raise RuntimeError("durable spend reservation was not reconciled")
 
     def _rpc(
         self,
@@ -324,9 +348,7 @@ class UnavailableDurableSpendStore:
     """Fail-closed adapter used when deployed configuration is incomplete."""
 
     def reserve(self, **kwargs: object) -> SpendDecision:
-        budget_day = str(
-            kwargs.get("budget_day") or date.today().isoformat()
-        )
+        budget_day = str(kwargs.get("budget_day") or utc_budget_day())
         client_bucket = str(
             kwargs.get("client_bucket") or "unavailable"
         )
@@ -346,10 +368,10 @@ class UnavailableDurableSpendStore:
         reservation_id: str,
         actual_tokens: int,
     ) -> None:
-        return None
+        raise RuntimeError("durable spend authority unavailable")
 
     def reconcile_failure(self, reservation_id: str) -> None:
-        return None
+        raise RuntimeError("durable spend authority unavailable")
 
 
 def build_usage_store() -> DurableSpendStore:
@@ -380,7 +402,7 @@ def privacy_safe_client_bucket(raw_identifier: str) -> str:
             if os.environ.get("PYTEST_CURRENT_TEST")
             else b""
         )
-    if not secret:
+    if not secret or not raw_identifier.strip():
         return "unavailable"
     digest = hmac.new(
         secret,
@@ -388,3 +410,7 @@ def privacy_safe_client_bucket(raw_identifier: str) -> str:
         hashlib.sha256,
     ).hexdigest()
     return digest[:24]
+
+
+def utc_budget_day() -> str:
+    return datetime.now(timezone.utc).date().isoformat()
