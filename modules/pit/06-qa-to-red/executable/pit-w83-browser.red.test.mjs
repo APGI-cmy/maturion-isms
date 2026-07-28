@@ -14,7 +14,7 @@ import { chromium } from 'playwright';
  *
  * Environment:
  *   - Optional PIT_W83_BROWSER_BASE_URL: use existing started app (skip local dev spawn)
- *   - Otherwise this harness starts `pnpm --filter isms-portal dev` on 127.0.0.1:4173
+ *   - Otherwise this harness starts `pnpm --filter isms-portal dev` on 127.0.0.1:5173
  */
 
 const REPO_ROOT = new URL('../../../../', import.meta.url).pathname;
