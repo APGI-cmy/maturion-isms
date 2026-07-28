@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "mmm-private-helper-policy-alignment-1959",
+  "pr_number": 1973,
+  "prebrief_commit_sha": "aad6ee6f09fc7f5c77244b5b9d35b92255905f48",
+  "builder_appointment_timestamp": "2026-07-27T07:44:38Z",
+  "builder_appointment_commit_sha": "4b0f36bd3f71a2aaa2559f570c0a70fa9814a7e9",
+  "builder_agent": "schema-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-1959-schema-builder.md",
+  "first_implementation_commit_sha": "0ad269f896d5f9c13b6d4ea163b0679b1322b5c5",
+  "qp_review_timestamp": "2026-07-28T09:48:21Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

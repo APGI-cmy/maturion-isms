@@ -11,6 +11,21 @@
 
 The automated PR comment carrying the task set from PR #1893 is stale, unrelated to this wave, and non-authoritative. The sole authoritative task source for this pre-brief is .agent-admin/prs/pr-1973/wave-current-tasks.md at the reviewed PR head.
 
+IAA_PREFLIGHT_BRIEF
+PR: 1973
+WAVE: mmm-private-helper-policy-alignment-1959
+CURRENT_HEAD_SHA: ACTIVE_HEAD_RESOLVED_BY_GATE
+WAVE_TASKS_PATH: .agent-admin/prs/pr-1973/wave-current-tasks.md
+EXPECTED_QA_SCOPE:
+  - Prove exactly seven authorised RLS policies use app_private.mmm_current_user_org_id() without changing helper grants or other policies.
+EXPECTED_FAILURE_MODES:
+  - Reject public or unqualified helper calls, privilege broadening, bypass-role evidence, non-idempotent migration behaviour, or scope beyond seven policies.
+FOREMAN_INSTRUCTIONS:
+  - Require executable RED-to-GREEN evidence, QP, ECAP, exact-head hosted checks, and independent final IAA before merge.
+IAA_WILL_QA:
+  - Independently challenge policy parity, tenant isolation, denial boundaries, migration idempotency, evidence lineage, and exact-head scope.
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
 ## PRE-BRIEF
 
 PR: #1973

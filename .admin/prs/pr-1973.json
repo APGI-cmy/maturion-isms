@@ -7,12 +7,16 @@
     ".admin/prs/pr-1973.json",
     ".agent-admin/assurance/iaa-wave-record-mmm-private-helper-policy-alignment-1959-20260727.md",
     ".agent-admin/builder-appointments/issue-1959-schema-builder.md",
+    ".agent-admin/control/delegation-orders/pr-1973.json",
     ".agent-admin/prs/pr-1973/wave-current-tasks.md",
     ".agent-admin/scope-declarations/issue-1959.md",
     ".agent-admin/scope-declarations/pr-1973.md",
     ".agent-workspace/schema-builder/escalation-inbox/blocker-20260727-pr1973-canon-provenance.md",
     ".agent-workspace/schema-builder/memory/session-099-20260727.md",
-    ".agent-workspace/schema-builder/memory/session-100-20260728.md"
+    ".agent-workspace/schema-builder/memory/session-100-20260728.md",
+    ".agent-workspace/schema-builder/memory/session-101-20260728.md",
+    "modules/MMM/tests/B4-framework/private-helper-seven-policy-alignment.test.ts",
+    "supabase/migrations/20260728094338_mmm_rls_seven_policy_private_helper_alignment.sql"
   ],
   "risk": "high",
   "requires_iaa": true,
@@ -31,9 +35,9 @@
   "execution_model": "foreman-orchestrated",
   "orchestrating_agent": "foreman-v2-agent",
   "implementing_agent": "schema-builder",
-  "implementation_status": "SCHEMA_BUILDER_WAKEUP_CLEAR_QA_TO_RED_PENDING_IMPLEMENTATION_NOT_STARTED",
+  "implementation_status": "REPOSITORY_RED_TO_GREEN_COMPLETE_LIVE_TENANT_TEST_PENDING",
   "schema_builder_preflight_head_sha": "3087aa2e08f50028946e43c7ddf8f43ae0df2119",
-  "schema_builder_preflight_result": "PASS",
+  "schema_builder_preflight_result": "PASS_203_OF_203_PROVENANCE_VALID",
   "schema_builder_preflight_blocker": null,
   "schema_builder_preflight_timestamp": "2026-07-28T09:36:04Z",
   "schema_builder_preflight_evidence": ".agent-workspace/schema-builder/memory/session-100-20260728.md",
@@ -41,5 +45,7 @@
   "prebrief_commit_sha": "aad6ee6f09fc7f5c77244b5b9d35b92255905f48",
   "prebrief_correction_commit_sha": "70cef205b5bc7c867b706a4b34ec6c320a42ca1f",
   "builder_appointment_timestamp": "2026-07-27T07:44:38Z",
-  "builder_appointment_commit_sha": "4b0f36bd3f71a2aaa2559f570c0a70fa9814a7e9"
+  "builder_appointment_commit_sha": "4b0f36bd3f71a2aaa2559f570c0a70fa9814a7e9",
+  "first_implementation_commit_sha": "0ad269f896d5f9c13b6d4ea163b0679b1322b5c5",
+  "migration_commit_sha": "313a2daf085773d6cbbcce716184e53efb7e035a"
 }
