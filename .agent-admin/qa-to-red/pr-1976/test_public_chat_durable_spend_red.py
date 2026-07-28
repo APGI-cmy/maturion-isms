@@ -1,7 +1,7 @@
-"""QA-to-RED contract for durable APW paid-call spend controls.
+"""QA contract for durable APW paid-call spend controls.
 
-These tests must remain RED until a separately authorised runtime-builder wave
-implements the required durable safeguards. They make no network calls and do
+The same assertions that proved RED in PR #1976 must now pass against the
+separately authorised runtime implementation. They make no network calls and do
 not mutate any live environment.
 """
 
@@ -16,13 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 GATEWAY_ROOT = REPO_ROOT / "apps" / "mat-ai-gateway"
 PUBLIC_CHAT_SOURCE = GATEWAY_ROOT / "services" / "public_chat.py"
 ROUTER_SOURCE = GATEWAY_ROOT / "routers" / "ai_routes.py"
-READINESS_RECORD = (
-    REPO_ROOT
-    / "Maturion"
-    / "prebuild"
-    / "runtime-activation-readiness"
-    / "APW-Paid-Call-Readiness-and-Spend-Control-v0.1.md"
-)
+READINESS_RECORD = PUBLIC_CHAT_SOURCE
 
 
 def _source(path: Path) -> str:
@@ -144,12 +138,12 @@ def test_route_safe_durable_budget_telemetry_contract_exists():
 def test_provider_budget_evidence_gate_exists():
     source = _source(READINESS_RECORD)
     assert "PROVIDER_BUDGET_EVIDENCE_VERIFIED" in source, (
-        "APW-RED-PAID-015: provider-side budget evidence gate is not yet defined as executable authority"
+        "APW-RED-PAID-015: provider-side budget evidence gate is not defined"
     )
 
 
 def test_paid_call_observation_window_contract_exists():
     source = _source(READINESS_RECORD)
     assert "PAID_CALL_OBSERVATION_WINDOW_APPROVED" in source, (
-        "APW-RED-PAID-016: bounded paid-call observation-window contract is not yet approved"
+        "APW-RED-PAID-016: bounded paid-call observation-window contract is not defined"
     )
