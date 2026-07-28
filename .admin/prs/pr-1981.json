@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "pr": 1981,
+  "issue": 1974,
+  "type": "governance-change",
+  "status": "ADMIN_NORMALIZATION_IN_PROGRESS",
+  "owner": "copilot",
+  "branch": "copilot/pit-w83-pre-build-strategy-alignment",
+  "base_pr": 1972,
+  "base_branch": "pit-w83-prebuild-strategy-alignment-1968",
+  "base_sha": "e18eb8c1f70fcdd96c6b8dea4ad8b4a2e676c966",
+  "head_sha": "current_head",
+  "appointment_start_head": "4b30c140b6767cf345b9ca9ca5f6c0558f6703d3",
+  "canonical_wave_identity": "pit-w83-qa-to-red-correction-2-issue-1974",
+  "existing_builder_appointment_authority": ".agent-admin/builder-appointments/pit-w83-qa-to-red-completion-issue-1974.md",
+  "scope": [
+    ".admin/prs/pr-1981.json",
+    ".agent-admin/assurance/iaa-prebrief-pit-w83-qa-to-red-correction-2-pr-1981.md",
+    ".agent-admin/prs/pr-1981/active-state.json",
+    ".agent-admin/prs/pr-1981/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1981.md"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "evidence_required": [
+    "PR-scoped admin manifest, scope, active-state, and wave-task artifacts bound to PR #1981 and Issue #1974",
+    "Resolver output selecting PR-scoped PIT W8.3 correction-2 identity over legacy MMM wave",
+    "Admin/preflight gate outputs proving bootstrap/identity/preflight contracts are valid without runtime changes"
+  ],
+  "merge_authority": "CS2"
+}
