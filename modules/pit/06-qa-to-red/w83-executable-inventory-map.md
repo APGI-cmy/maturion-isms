@@ -103,8 +103,8 @@ Each ID maps to:
 |---|---|---|---|
 | `pit-w83-prebuild.red.test.mjs` | 1 — sentinel | 8 | Static: route/workspace/migration/RPC existence |
 | `pit-w83-red-contract.test.mjs` | 2 — supplemental | 36 | Static: file/migration pattern presence |
-| `pit-w83-supabase.red.test.mjs` | 3a — integration | 27 | Controlled Supabase mock: RPC calls + table queries + RLS simulation |
-| `pit-w83-browser.red.test.mjs` | 3b — browser | 11 | Component existence + route-registration + rendered-behaviour documentation |
+| `pit-w83-supabase.red.test.mjs` | 3a — integration | 27 | Live Supabase API/RPC client with persona JWT headers against isolated/disposable environment |
+| `pit-w83-browser.red.test.mjs` | 3b — browser | 11 | Real Playwright browser run against started app routes with rendered-state assertions |
 
 All harnesses: exit non-zero (RED), 0 passes, 0 harness errors.
 
@@ -112,9 +112,9 @@ All harnesses: exit non-zero (RED), 0 passes, 0 harness errors.
 
 ### Tier 3a — Supabase integration failures
 
-Tests call controlled Supabase mock methods and assert success. All fail RED because:
-- `result.error` is non-null (mock returns PG 42883 for missing RPCs, PG 42P01 for missing tables)
-- `result.data.applied_count` or `result.data.status` is absent (RPC doesn't exist)
+Tests execute real Supabase requests (RPC + table queries) and assert success semantics. All fail RED because:
+- `result.error` is non-null (live PostgreSQL codes such as 42883 function missing, 42P01 relation missing, 42501 role/RLS denied, P0001 explicit raise)
+- `result.data.applied_count` or `result.data.status` is absent because target W8.3 RPCs are not implemented
 
 PostgreSQL error codes used:
 - `42883` — function does not exist (missing RPC)
@@ -124,9 +124,9 @@ PostgreSQL error codes used:
 
 ### Tier 3b — Browser/component failures
 
-Tests assert component files exist and routes are registered. All fail RED because:
-- `existsSync(path)` returns false (component file absent)
-- `appTsxSource.includes(routeKey)` returns false (route not registered)
+Tests start the PIT app, launch Playwright Chromium, navigate real W8.3 paths, and assert rendered capability markers. All fail RED because:
+- target W8.3 routes currently resolve to not-found states
+- required wizard/invite/lifecycle/AIMC capability surfaces are absent from rendered UI
 
 ## Test counts
 

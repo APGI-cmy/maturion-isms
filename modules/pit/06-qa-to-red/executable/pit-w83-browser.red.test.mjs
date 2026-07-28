@@ -1,235 +1,254 @@
-import test from 'node:test';
+import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve, join } from 'node:path';
+import { spawn, spawnSync } from 'node:child_process';
+import { once } from 'node:events';
+import { chromium } from 'playwright';
 
 /**
- * PIT W8.3 — Browser / Component RED Harness
+ * PIT W8.3 — Browser RED Harness (real browser + running app)
  *
- * Covers contract IDs: PIT-RED-W83-010..014, 018..020, 030(component), 034
- * (Plus a combined route-registration test for all W8.3 routes.)
- *
- * Governing issue:     #1974 (QA-to-RED completion)
- * Carrier PR:          #1972
- * Parent pre-build:    #1968
- * QA builder appt:     e18eb8c
- * Foreman QP finding:  QP-W83-001 (pr-1975-foreman-qp.md)
+ * Covers contract IDs: PIT-RED-W83-010..014, 018..020, 030(component), 034.
  *
  * Run from repository root:
  *   node --test modules/pit/06-qa-to-red/executable/pit-w83-browser.red.test.mjs
  *
- * ALL tests MUST fail (RED) until the W8.3 implementation builder delivers
- * the required React components, routes, and UI interaction logic.
- *
- * Harness rules:
- *   - No ENOENT, SyntaxError, ERR_MODULE_NOT_FOUND or ReferenceError.
- *   - Every failure names the specific missing W8.3 UI capability.
- *   - No test may pass before W8.3 runtime is delivered.
- *
- * Component loading strategy:
- *   Each test first checks existsSync() — if the component file is absent the
- *   test fails immediately with a capability-named assertion error (not a harness
- *   error).  When the file is present (W8.3 implemented) the test proceeds to use
- *   dynamic import() and React Testing Library assertions to verify rendered
- *   behaviour, wizard states, role-denied controls, and route registration.
+ * Environment:
+ *   - Optional PIT_W83_BROWSER_BASE_URL: use existing started app (skip local dev spawn)
+ *   - Otherwise this harness starts `pnpm --filter isms-portal dev` on 127.0.0.1:4173
  */
 
-// ─── Paths ───────────────────────────────────────────────────────────────────
+const REPO_ROOT = new URL('../../../../', import.meta.url).pathname;
+const BASE_URL = process.env.PIT_W83_BROWSER_BASE_URL ?? 'http://127.0.0.1:4173';
+const MANAGE_LOCAL_DEV_SERVER = !process.env.PIT_W83_BROWSER_BASE_URL;
 
-const repo    = resolve(import.meta.dirname, '../../../..');
-const pitPages = join(repo, 'apps/isms-portal/src/pages/pit');
-const appTsx   = join(repo, 'apps/isms-portal/src/App.tsx');
-
-// W8.3 component paths — MUST NOT exist yet
-const PATHS = {
-  milestoneWizard:     join(pitPages, 'MilestoneSetupWizard.tsx'),
-  deliverableWizard:   join(pitPages, 'DeliverableSetupWizard.tsx'),
-  taskWizard:          join(pitPages, 'TaskSetupWizard.tsx'),
-  invitePreview:       join(pitPages, 'MilestoneOwnerInvitePreview.tsx'),
-  inviteAcceptance:    join(pitPages, 'HierarchyInviteAcceptance.tsx'),
-  lifecycleActions:    join(pitPages, 'HierarchyLifecycleActions.tsx'),
-  cancellationGuard:   join(pitPages, 'CancellationDescendantGuard.tsx'),
-  mmmTransformPage:    join(pitPages, 'MmmTransformWizard.tsx'),
-  aimcPreferencePanel: join(pitPages, 'AimcPreferencePanel.tsx'),
+const ROUTES = {
+  root: '/',
+  milestoneWizard: '/projects/00000000-0000-4000-8010-000000000001/milestones/new',
+  deliverableWizard: '/projects/00000000-0000-4000-8010-000000000001/deliverables/new?milestoneId=00000000-0000-4000-8020-000000000001',
+  taskWizard: '/projects/00000000-0000-4000-8010-000000000001/tasks/new?deliverableId=00000000-0000-4000-8030-000000000001',
+  inviteAcceptance: '/projects/00000000-0000-4000-8010-000000000001/hierarchy-invite/invite-token-001',
+  lifecycle: '/projects/00000000-0000-4000-8010-000000000001/settings/hierarchy',
+  mmmTransform: '/projects/00000000-0000-4000-8010-000000000001/mmm-transform',
+  aimcPreferences: '/projects/00000000-0000-4000-8010-000000000001/settings/aimc-preferences',
 };
 
-// Pre-read App.tsx once for route-presence assertions (empty string if absent)
-const appTsxSource = existsSync(appTsx) ? readFileSync(appTsx, 'utf8') : '';
+let devServer;
+let browser;
+let page;
+const snapshots = new Map();
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+async function waitForServer(url, timeoutMs = 90_000) {
+  const started = Date.now();
+  let lastError;
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const response = await fetch(url, { method: 'GET' });
+      if (response.ok || response.status === 404) return;
+    } catch (error) {
+      lastError = error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  throw new Error(`Browser harness failed to start app at ${url}: ${String(lastError ?? 'timeout')}`);
+}
 
-/**
- * Assert that `filePath` exists; fail with a meaningful capability message if not.
- * Returns true if the file is present (caller may proceed with dynamic import),
- * or throws (stopping the test) if it is absent.
- */
-function assertComponentExists(filePath, componentName, renderedBehaviour) {
-  assert.ok(
-    existsSync(filePath),
-    `W8.3 requires ${componentName} — component file absent at ${filePath.replace(repo + '/', '')}; ${renderedBehaviour} not verifiable`,
+function spawnLocalAppServer() {
+  return spawn('pnpm', ['--filter', 'isms-portal', 'dev', '--host', '127.0.0.1', '--port', '4173', '--strictPort'], {
+    cwd: REPO_ROOT,
+    stdio: 'ignore',
+    env: { ...process.env, CI: '1' },
+  });
+}
+
+async function captureRoute(name, routePath) {
+  const target = new URL(routePath, BASE_URL).toString();
+  try {
+    const response = await page.goto(target, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    const html = await page.content();
+    snapshots.set(name, {
+      url: page.url(),
+      status: response?.status() ?? null,
+      html,
+      notFound: /not found|404|page not found/i.test(html),
+      denied: /access denied|permission denied|unauthorized|forbidden/i.test(html),
+      error: null,
+    });
+  } catch (error) {
+    snapshots.set(name, {
+      url: target,
+      status: null,
+      html: '',
+      notFound: false,
+      denied: false,
+      error: String(error),
+    });
+  }
+}
+
+async function launchBrowserWithBootstrap() {
+  try {
+    return await chromium.launch({ headless: true });
+  } catch (error) {
+    if (!String(error).includes("Executable doesn't exist")) throw error;
+    const install = spawnSync('npx', ['playwright', 'install', 'chromium'], {
+      cwd: REPO_ROOT,
+      stdio: 'inherit',
+      env: { ...process.env, CI: '1' },
+    });
+    assert.equal(
+      install.status,
+      0,
+      'Playwright browser bootstrap failed. Unable to install Chromium for W8.3 browser harness.',
+    );
+    return chromium.launch({ headless: true });
+  }
+}
+
+function requireSnapshot(routeKey, capability) {
+  const snap = snapshots.get(routeKey);
+  assert.ok(snap, `W8.3 browser harness missing route snapshot for ${routeKey}`);
+  assert.equal(
+    snap.error,
+    null,
+    `W8.3 browser harness failed before RED assertion for ${capability}: ${snap.error}`,
+  );
+  return snap;
+}
+
+function assertCapabilityInRenderedUi(routeKey, capabilityRegex, requirementText) {
+  const snap = requireSnapshot(routeKey, requirementText);
+  assert.equal(
+    snap.notFound,
+    false,
+    `W8.3 requires routable ${routeKey} state before capability checks — route resolved to not-found`,
+  );
+  assert.match(
+    snap.html,
+    capabilityRegex,
+    requirementText,
   );
 }
 
-// ─── Tests ───────────────────────────────────────────────────────────────────
-
-// ── W83-010: MilestoneSetupWizard renders five wizard states ─────────────────
-
-test('PIT-RED-W83-010 [browser] MilestoneSetupWizard renders five wizard states (setup, configure, scope, invite, confirm)', () => {
-  assertComponentExists(
-    PATHS.milestoneWizard,
-    'MilestoneSetupWizard.tsx',
-    'wizard states (setup → configure → scope → invite → confirm)',
-  );
-  // When GREEN: import and render the component, step through each of the 5 states
-  // using userEvent.click(getByRole('button', { name: /next/i })) and verify labels
-});
-
-// ── W83-011: DeliverableSetupWizard renders scoped to its parent milestone ──
-
-test('PIT-RED-W83-011 [browser] DeliverableSetupWizard renders and is scoped to its parent milestone', () => {
-  assertComponentExists(
-    PATHS.deliverableWizard,
-    'DeliverableSetupWizard.tsx',
-    'milestone-scoped deliverable wizard states and milestone reference in wizard header',
-  );
-  // When GREEN: render(<DeliverableSetupWizard milestoneId="..." />) and verify
-  // milestone title visible, submit disabled until required fields complete
-});
-
-// ── W83-012: TaskSetupWizard requires mandatory deliverable parent ────────────
-
-test('PIT-RED-W83-012 [browser] TaskSetupWizard renders with mandatory deliverable parent binding', () => {
-  assertComponentExists(
-    PATHS.taskWizard,
-    'TaskSetupWizard.tsx',
-    'mandatory deliverable-parent binding in task wizard form',
-  );
-  // When GREEN: render(<TaskSetupWizard deliverableId="..." />) and verify
-  // deliverableId shown as read-only parent field, form cannot submit without it
-});
-
-// ── W83-013: MilestoneOwnerInvitePreview renders accountability and timeline ──
-
-test('PIT-RED-W83-013 [browser] MilestoneOwnerInvitePreview renders accountability scope and timeline content', () => {
-  assertComponentExists(
-    PATHS.invitePreview,
-    'MilestoneOwnerInvitePreview.tsx',
-    'accountability scope section and timeline section in milestone-owner invitation preview',
-  );
-  // When GREEN: render(<MilestoneOwnerInvitePreview milestoneId="..." />) and verify
-  // accountability section, timeline section, and 'Send invitation' button are visible
-});
-
-// ── W83-014: HierarchyInviteAcceptance component and route registered ─────────
-
-test('PIT-RED-W83-014 [browser] HierarchyInviteAcceptance component exists and its route is registered in App.tsx', () => {
-  assertComponentExists(
-    PATHS.inviteAcceptance,
-    'HierarchyInviteAcceptance.tsx',
-    'hierarchy invitation acceptance rendered at its App.tsx route',
-  );
-  const routeRegistered =
-    appTsxSource.includes('HierarchyInviteAcceptance') ||
-    appTsxSource.includes('hierarchy-invite');
-  assert.ok(
-    routeRegistered,
-    'W8.3 requires HierarchyInviteAcceptance route registered in App.tsx — route absent',
-  );
-  // When GREEN: navigate to the invite route and verify the component renders
-  // and allows the invitee to accept ownership
-});
-
-// ── W83-018: HierarchyLifecycleActions renders Archive/Cancel/Restore only ───
-
-test('PIT-RED-W83-018 [browser] HierarchyLifecycleActions renders Archive, Cancel, and Restore actions without Delete', () => {
-  assertComponentExists(
-    PATHS.lifecycleActions,
-    'HierarchyLifecycleActions.tsx',
-    'Archive, Cancel, and Restore lifecycle action buttons (no Delete button)',
-  );
-  // When GREEN: render(<HierarchyLifecycleActions nodeId="..." nodeType="milestone" />) and verify
-  // Archive/Cancel/Restore buttons present; Delete button absent
-});
-
-// ── W83-019: CancellationDescendantGuard blocks cancel for incomplete descendants
-
-test('PIT-RED-W83-019 [browser] CancellationDescendantGuard renders blocking modal for incomplete descendants', () => {
-  assertComponentExists(
-    PATHS.cancellationGuard,
-    'CancellationDescendantGuard.tsx',
-    'blocking modal listing incomplete descendants before milestone cancellation',
-  );
-  // When GREEN: render with mock pit_cancellation_preflight returning incomplete items;
-  // verify blocking modal visible, 'Force cancel' absent, 'Review descendants' action present
-});
-
-// ── W83-020: CancellationDescendantGuard blocks deliverable with incomplete tasks
-
-test('PIT-RED-W83-020 [browser] CancellationDescendantGuard at deliverable level blocks cancellation for incomplete tasks', () => {
-  assertComponentExists(
-    PATHS.cancellationGuard,
-    'CancellationDescendantGuard.tsx (deliverable-level guard)',
-    'deliverable-level blocking modal for incomplete tasks before deliverable cancellation',
-  );
-  // When GREEN: render with deliverableId prop and mock returning incomplete tasks;
-  // verify blocking modal appears with task list
-});
-
-// ── W83-030 (component): MmmTransformWizard renders with domain/MPS/criterion UI
-
-test('PIT-RED-W83-030 [browser] MmmTransformWizard renders MMM transformation UI with domain, MPS, and criterion preview', () => {
-  assertComponentExists(
-    PATHS.mmmTransformPage,
-    'MmmTransformWizard.tsx',
-    'MMM transformation wizard with Domain/MPS/Criterion hierarchy preview and Import button',
-  );
-  // When GREEN: render(<MmmTransformWizard projectId="..." />) and:
-  // upload MMM package fixture, verify domain preview, MPS list, criterion decomposition,
-  // and 'Import' button enabled when package is valid
-});
-
-// ── W83-034: AimcPreferencePanel renders opt-in/inspect/delete preference UI ──
-
-test('PIT-RED-W83-034 [browser] AimcPreferencePanel renders AIMC learning opt-in, preference inspect, and delete controls', () => {
-  assertComponentExists(
-    PATHS.aimcPreferencePanel,
-    'AimcPreferencePanel.tsx',
-    'AIMC consent toggle, stored-preference list, and delete-all-preferences button',
-  );
-  // When GREEN: render(<AimcPreferencePanel userId="..." />) and verify:
-  // opt-in toggle, view stored preferences section, delete-all-preferences button,
-  // and that delete calls pit_delete_aimc_preferences RPC
-});
-
-// ── W83 routes: W8.3 route paths registered in App.tsx ──────────────────────
-//
-// This test proves the five-state route coverage requirement:
-// each W8.3 route must be registered before it can exhibit the five states
-// (loading | denied | error | not-found | data) verified by route-state
-// resolution logic equivalent to resolvePitProjectDetailState.
-
-test('PIT-RED-W83 [browser] W8.3 milestone, deliverable, task, project-settings, and hierarchy-invite routes registered in App.tsx', () => {
-  const missingRoutes = [];
-
-  if (!appTsxSource.includes('MILESTONE') && !appTsxSource.includes('/milestone')) {
-    missingRoutes.push('milestone route (ROUTES.MILESTONE or /milestone/:id)');
-  }
-  if (!appTsxSource.includes('DELIVERABLE') && !appTsxSource.includes('/deliverable')) {
-    missingRoutes.push('deliverable route (ROUTES.DELIVERABLE or /deliverable/:id)');
-  }
-  if (!appTsxSource.includes('/task') && !appTsxSource.includes('TASK_ROUTE')) {
-    missingRoutes.push('task route (ROUTES.TASK or /task/:id)');
-  }
-  if (!appTsxSource.includes('PROJECT_SETTINGS') && !appTsxSource.includes('project-settings')) {
-    missingRoutes.push('project settings route (ROUTES.PROJECT_SETTINGS or /projects/:id/settings)');
-  }
-  if (!appTsxSource.includes('HierarchyInviteAcceptance') && !appTsxSource.includes('hierarchy-invite')) {
-    missingRoutes.push('hierarchy invite acceptance route');
+before(async () => {
+  if (MANAGE_LOCAL_DEV_SERVER) {
+    devServer = spawnLocalAppServer();
+    await waitForServer(BASE_URL);
+  } else {
+    await waitForServer(BASE_URL);
   }
 
+  browser = await launchBrowserWithBootstrap();
+  page = await browser.newPage();
+
+  await captureRoute('root', ROUTES.root);
+  await captureRoute('milestoneWizard', ROUTES.milestoneWizard);
+  await captureRoute('deliverableWizard', ROUTES.deliverableWizard);
+  await captureRoute('taskWizard', ROUTES.taskWizard);
+  await captureRoute('inviteAcceptance', ROUTES.inviteAcceptance);
+  await captureRoute('lifecycle', ROUTES.lifecycle);
+  await captureRoute('mmmTransform', ROUTES.mmmTransform);
+  await captureRoute('aimcPreferences', ROUTES.aimcPreferences);
+});
+
+after(async () => {
+  if (page) await page.close();
+  if (browser) await browser.close();
+  if (devServer) {
+    devServer.kill('SIGTERM');
+    const exited = await Promise.race([
+      once(devServer, 'exit'),
+      new Promise((resolve) => setTimeout(() => resolve('timeout'), 5_000)),
+    ]);
+    if (exited === 'timeout') devServer.kill('SIGKILL');
+  }
+});
+
+test('PIT-RED-W83-010 [browser] MilestoneSetupWizard renders five wizard states', () => {
+  assertCapabilityInRenderedUi(
+    'milestoneWizard',
+    /milestone\s+setup\s+wizard|setup\s*→\s*configure\s*→\s*scope\s*→\s*invite\s*→\s*confirm/i,
+    'W8.3 requires MilestoneSetupWizard rendered with five wizard states (setup/configure/scope/invite/confirm)',
+  );
+});
+
+test('PIT-RED-W83-011 [browser] DeliverableSetupWizard renders with parent milestone scope', () => {
+  assertCapabilityInRenderedUi(
+    'deliverableWizard',
+    /deliverable\s+setup\s+wizard|parent\s+milestone/i,
+    'W8.3 requires DeliverableSetupWizard rendered with explicit parent-milestone scope',
+  );
+});
+
+test('PIT-RED-W83-012 [browser] TaskSetupWizard enforces mandatory deliverable parent binding', () => {
+  assertCapabilityInRenderedUi(
+    'taskWizard',
+    /task\s+setup\s+wizard|deliverable\s+parent/i,
+    'W8.3 requires TaskSetupWizard rendered with mandatory deliverable parent binding',
+  );
+});
+
+test('PIT-RED-W83-013 [browser] MilestoneOwnerInvitePreview renders accountability and timeline content', () => {
+  assertCapabilityInRenderedUi(
+    'milestoneWizard',
+    /milestone\s+owner\s+invite\s+preview|accountability\s+scope|timeline/i,
+    'W8.3 requires MilestoneOwnerInvitePreview with accountability scope and timeline content',
+  );
+});
+
+test('PIT-RED-W83-014 [browser] HierarchyInviteAcceptance route renders acceptance journey', () => {
+  assertCapabilityInRenderedUi(
+    'inviteAcceptance',
+    /hierarchy\s+invite\s+acceptance|accept\s+ownership/i,
+    'W8.3 requires a rendered HierarchyInviteAcceptance journey on the hierarchy invite route',
+  );
+});
+
+test('PIT-RED-W83-018 [browser] HierarchyLifecycleActions renders Archive/Cancel/Restore controls', () => {
+  assertCapabilityInRenderedUi(
+    'lifecycle',
+    /archive|cancel|restore/i,
+    'W8.3 requires HierarchyLifecycleActions controls (Archive, Cancel, Restore) in rendered lifecycle UI',
+  );
+});
+
+test('PIT-RED-W83-019 [browser] CancellationDescendantGuard blocks milestone cancellation with incomplete descendants', () => {
+  assertCapabilityInRenderedUi(
+    'lifecycle',
+    /incomplete\s+descendants|review\s+descendants|cancellation\s+blocked/i,
+    'W8.3 requires milestone cancellation blocking modal for incomplete descendants',
+  );
+});
+
+test('PIT-RED-W83-020 [browser] CancellationDescendantGuard blocks deliverable cancellation with incomplete tasks', () => {
+  assertCapabilityInRenderedUi(
+    'lifecycle',
+    /incomplete\s+tasks|deliverable\s+cancellation\s+blocked/i,
+    'W8.3 requires deliverable-level cancellation blocking modal for incomplete tasks',
+  );
+});
+
+test('PIT-RED-W83-030 [browser] MmmTransformWizard renders domain/MPS/criterion transformation surface', () => {
+  assertCapabilityInRenderedUi(
+    'mmmTransform',
+    /mmm\s+transform\s+wizard|domain|mps|criterion|import/i,
+    'W8.3 requires MmmTransformWizard rendered with Domain/MPS/Criterion transformation controls',
+  );
+});
+
+test('PIT-RED-W83-034 [browser] AIMC preference panel renders opt-in/inspect/delete controls', () => {
+  assertCapabilityInRenderedUi(
+    'aimcPreferences',
+    /aimc\s+learning\s+opt-?in|stored\s+preferences|delete\s+all\s+preferences/i,
+    'W8.3 requires AIMC preference panel with opt-in, inspect, and delete controls',
+  );
+});
+
+test('PIT-RED-W83 [browser] W8.3 milestone/deliverable/task/settings/invite routes all render (not static checks)', () => {
+  const required = ['milestoneWizard', 'deliverableWizard', 'taskWizard', 'lifecycle', 'inviteAcceptance'];
+  const missing = required.filter((key) => requireSnapshot(key, key).notFound);
   assert.equal(
-    missingRoutes.length,
+    missing.length,
     0,
-    `W8.3 requires all five routes registered in App.tsx — missing: ${missingRoutes.join('; ')}`,
+    `W8.3 requires routed browser rendering for milestone/deliverable/task/settings/invite states — unresolved routes: ${missing.join(', ')}`,
   );
 });

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createClient } from '@supabase/supabase-js';
 
 /**
  * PIT W8.3 — Supabase Integration RED Harness
@@ -23,139 +24,79 @@ import assert from 'node:assert/strict';
  *   - Every failure names the specific missing W8.3 capability.
  *   - No test may pass before W8.3 runtime is delivered.
  *
- * This file implements a controlled Supabase mock that models the exact
- * error responses the real Supabase server returns for absent W8.3 schema
- * objects.  When W8.3 migrations are applied, replace this mock with a
- * live test-environment client; the assertions remain identical.
+ * This harness executes real Supabase API/RPC calls against an isolated test
+ * project (local/disposable). No controlled JavaScript mock is used.
  */
 
-// ─── Pre-W8.3 Supabase Mock ─────────────────────────────────────────────────
-//
-// Models the Supabase REST/RPC error envelope for PostgreSQL errors:
-//   code 42883 = function does not exist
-//   code 42P01 = relation does not exist
-//   code 42501 = insufficient_privilege (RLS denial)
-//   code 23514 = check_violation (constraint)
-//   code P0001 = raise_exception (explicit RAISE in PL/pgSQL)
+// ─── Isolated Supabase harness configuration ────────────────────────────────
 
-const PG_FUNCTION_NOT_FOUND = (name) => ({
-  data: null,
-  error: {
-    code: '42883',
-    message: `function ${name}(unknown) does not exist`,
-    details: null,
-    hint: `No function matches the given name and argument types.`,
-  },
-});
+const SUPABASE_URL = process.env.PIT_W83_SUPABASE_URL ?? process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.PIT_W83_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
+const REQUIRED_PERSONA_TOKENS = {
+  viewer: process.env.PIT_W83_TOKEN_VIEWER ?? '',
+  contributor: process.env.PIT_W83_TOKEN_CONTRIBUTOR ?? '',
+  team_leader: process.env.PIT_W83_TOKEN_TEAM_LEADER ?? '',
+  project_manager: process.env.PIT_W83_TOKEN_PROJECT_LEADER ?? '',
+  sibling_owner: process.env.PIT_W83_TOKEN_SIBLING_OWNER ?? '',
+  cross_tenant: process.env.PIT_W83_TOKEN_CROSS_TENANT ?? '',
+};
 
-const PG_RELATION_NOT_FOUND = (table) => ({
-  data: null,
-  error: {
-    code: '42P01',
-    message: `relation "${table}" does not exist`,
-    details: null,
-    hint: null,
-  },
-});
-
-const PG_RLS_DENIED = (table) => ({
-  data: [],
-  error: {
-    code: '42501',
-    message: `new row violates row-level security policy for table "${table}"`,
-    details: null,
-    hint: null,
-  },
-});
-
-const PG_CHECK_VIOLATION = (constraint) => ({
-  data: null,
-  error: {
-    code: '23514',
-    message: `new row for relation violates check constraint "${constraint}"`,
-    details: null,
-    hint: null,
-  },
-});
-
-const PG_RAISE = (msg) => ({
-  data: null,
-  error: { code: 'P0001', message: msg, details: null, hint: null },
-});
-
-// W8.3 RPCs that do not exist yet
-const W83_MISSING_RPCS = new Set([
-  'pit_create_task',
-  'pit_create_deliverable',
-  'pit_create_milestone',
-  'pit_update_task',
-  'pit_cancellation_preflight',
-  'pit_approve_structural_change',
-]);
-
-// W8.3 tables that do not exist yet
-const W83_MISSING_TABLES = new Set([
-  'pit_milestones',
-  'pit_deliverables',
-  'pit_tasks',
-  'pit_date_exceptions',
-  'pit_structural_audit',
-  'pit_preferences',
-  'pit_hierarchy_change_requests',
-]);
-
-/**
- * Create a controlled Supabase mock authenticated as `actor`.
- * `actor.role` is used to simulate RLS enforcement.
- */
-function createPreW83Client(actor = { userId: null, orgId: null, role: 'unauthenticated' }) {
-  const fromChain = (table) => {
-    let _error = null;
-
-    if (W83_MISSING_TABLES.has(table)) {
-      _error = PG_RELATION_NOT_FOUND(table).error;
-    } else if (actor.role === 'viewer' && table !== 'user_org_memberships' && table !== 'user_roles') {
-      // Viewer RLS denial simulation for W8.3 hierarchy tables
-      _error = PG_RLS_DENIED(table).error;
-    } else if (actor.orgId && actor.orgId !== '00000000-0000-4000-8000-aaa000000001') {
-      // Cross-tenant isolation: different orgId returns empty set
-      _error = null; // no error but zero rows enforced by RLS
-    }
-
-    const resolved = () => Promise.resolve(_error ? { data: null, error: _error } : { data: [], error: null });
-    const chain = {
-      select: () => chain,
-      insert: () => chain,
-      update: () => chain,
-      upsert: () => chain,
-      delete: () => chain,
-      eq: () => chain,
-      neq: () => chain,
-      is: () => chain,
-      not: () => chain,
-      or: () => chain,
-      order: () => chain,
-      limit: () => chain,
-      single: resolved,
-      maybeSingle: resolved,
-      then: (resolve, reject) => resolved().then(resolve, reject),
-    };
-    return chain;
-  };
-
-  const rpc = (name, _args = {}) => {
-    if (W83_MISSING_RPCS.has(name)) {
-      return Promise.resolve(PG_FUNCTION_NOT_FOUND(name));
-    }
-    // Simulate role check for structural-change approval
-    if (name === 'pit_approve_structural_change' && actor.role !== 'project_manager') {
-      return Promise.resolve(PG_RAISE('Only the project leader may approve structural changes.'));
-    }
-    return Promise.resolve(PG_FUNCTION_NOT_FOUND(name));
-  };
-
-  return { from: fromChain, rpc };
+function requireHarnessEnv() {
+  assert.ok(
+    SUPABASE_URL && SUPABASE_ANON_KEY,
+    'Supabase harness setup missing. Provide PIT_W83_SUPABASE_URL and PIT_W83_SUPABASE_ANON_KEY for an isolated/disposable test project.',
+  );
 }
+
+async function assertHarnessConnectivity() {
+  requireHarnessEnv();
+  const probe = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const { error } = await probe.from('information_schema.tables').select('table_name').limit(1);
+  assert.ok(
+    !error || error.code === '42501' || error.code === '42P01',
+    `Supabase harness connectivity failed: ${error?.message ?? 'unknown error'}`,
+  );
+}
+
+function bearerForRole(role) {
+  if (role === 'unauthenticated') return null;
+  const token =
+    role === 'viewer'
+      ? REQUIRED_PERSONA_TOKENS.viewer
+      : role === 'contributor'
+      ? REQUIRED_PERSONA_TOKENS.contributor
+      : role === 'project_manager'
+      ? REQUIRED_PERSONA_TOKENS.project_manager
+      : role === 'team_leader'
+      ? REQUIRED_PERSONA_TOKENS.team_leader
+      : role === 'sibling_owner'
+      ? REQUIRED_PERSONA_TOKENS.sibling_owner
+      : role === 'cross_tenant'
+      ? REQUIRED_PERSONA_TOKENS.cross_tenant
+      : '';
+  assert.ok(
+    token,
+    `Missing persona JWT for role "${role}". Provide PIT_W83_TOKEN_* variables for deterministic actor authentication.`,
+  );
+  return token;
+}
+
+function createPreW83Client(actor = { role: 'unauthenticated' }) {
+  requireHarnessEnv();
+  const token = bearerForRole(actor.role);
+  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: {
+      headers: token ? { Authorization: 'Bearer ' + token } : {},
+    },
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
+}
+
+await assertHarnessConnectivity();
 
 // ─── Actor personas ──────────────────────────────────────────────────────────
 
@@ -166,8 +107,8 @@ const MILESTONE_OWNER    = { userId: '00000000-0000-4000-8001-000000000003', org
 const DELIVERABLE_OWNER  = { userId: '00000000-0000-4000-8001-000000000004', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
 const TASK_OWNER         = { userId: '00000000-0000-4000-8001-000000000005', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'contributor' };
 const PROJECT_LEADER     = { userId: '00000000-0000-4000-8001-000000000010', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'project_manager' };
-const CROSS_TENANT       = { userId: '00000000-0000-4000-8002-000000000001', orgId: '00000000-0000-4000-8000-bbb000000002', role: 'project_manager' };
-const SIBLING_OWNER      = { userId: '00000000-0000-4000-8001-000000000006', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'team_leader' };
+const CROSS_TENANT       = { userId: '00000000-0000-4000-8002-000000000001', orgId: '00000000-0000-4000-8000-bbb000000002', role: 'cross_tenant' };
+const SIBLING_OWNER      = { userId: '00000000-0000-4000-8001-000000000006', orgId: '00000000-0000-4000-8000-aaa000000001', role: 'sibling_owner' };
 
 // ─── Common RPC arguments ───────────────────────────────────────────────────
 
