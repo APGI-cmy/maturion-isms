@@ -1,0 +1,45 @@
+name: APW Paid-Call RED Evidence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.agent-admin/qa-to-red/pr-1976/**'
+      - 'apps/mat-ai-gateway/**'
+      - 'Maturion/prebuild/runtime-activation-readiness/APW-Paid-Call-Readiness-and-Spend-Control-v0.1.md'
+      - '.github/workflows/apw-paid-call-red-evidence.yml'
+  workflow_dispatch:
+
+jobs:
+  red-evidence:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r apps/mat-ai-gateway/requirements.txt pytest httpx
+      - name: Run intentional RED contract
+        shell: bash
+        run: |
+          set +e
+          cd apps/mat-ai-gateway
+          PYTHONPATH=. python -m pytest ../../.agent-admin/qa-to-red/pr-1976/test_public_chat_durable_spend_red.py -q > "$GITHUB_WORKSPACE/apw-paid-call-red.log" 2>&1
+          status=$?
+          set -e
+          cat "$GITHUB_WORKSPACE/apw-paid-call-red.log"
+          test "$status" -ne 0
+          grep -Eq '16 failed' "$GITHUB_WORKSPACE/apw-paid-call-red.log"
+          ! grep -Eq 'ERROR collecting|ImportError|ModuleNotFoundError|SyntaxError|FileNotFoundError|ConnectionError' "$GITHUB_WORKSPACE/apw-paid-call-red.log"
+      - name: Run existing GREEN public-chat regression
+        working-directory: apps/mat-ai-gateway
+        run: python -m pytest tests/test_public_chat.py -q
+      - name: Upload RED evidence
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: apw-paid-call-red-evidence-${{ github.sha }}
+          path: apw-paid-call-red.log
