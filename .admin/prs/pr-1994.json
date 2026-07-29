@@ -25,9 +25,16 @@
   "risk": "low",
   "requires_iaa": true,
   "requires_ecap": true,
-  "objective": "Recover only the missing committed public.profiles root migration provenance for clean bootstrap. No database action is authorised by this PR.",
-  "isolation_prohibition": "no db push, apply_migration, execute_sql, project/branch creation, rebase, reset, or merge on any Supabase project",
+  "objective": "Recover only the missing committed public.profiles root migration provenance for clean bootstrap. No production database action is authorised by this PR.",
+  "automation_boundary_exception": {
+    "observed": true,
+    "kind": "repository-managed Supabase Git preview",
+    "disposition": "A non-production empty-data preview branch was automatically created for PR #1994 and processed the new migration. It is not a clean-bootstrap validation and cannot support a merge, QP, ECAP, or IAA claim.",
+    "production_status": "APGI-cmy’s Project migration ledger does not contain version 20260615000000."
+  },
+  "isolation_prohibition": "no operator-initiated db push, apply_migration, execute_sql, project/branch creation, rebase, reset, or merge on any Supabase project",
   "required_pre_merge": [
+    "Independent disposition of the automatic preview exception",
     "Fresh isolated clean-bootstrap validation after this source recovery is independently accepted",
     "Proof no migration was applied to APGI-cmy’s Project",
     "Foreman QP",
