@@ -9,7 +9,7 @@
   "builder": "Copilot schema-builder",
   "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1994.md",
   "wave_tasks_ref": ".agent-admin/prs/pr-1994/wave-current-tasks.md",
-  "prebrief_ref": ".agent-admin/assurance/iaa-prebrief-public-profiles-root-provenance-v01.md",
+  "prebrief_ref": ".agent-admin/assurance/iaa-wave-record-public-profiles-root-provenance-recovery-20260729.md",
   "comparison_ref": ".agent-admin/source-live-comparisons/pr-1994-public-profiles.md",
   "qp_status": "WITHHELD",
   "ecap_status": "WITHHELD",
