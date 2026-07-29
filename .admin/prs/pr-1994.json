@@ -14,7 +14,7 @@
   "merge_status": "NO_GO",
   "scope": [
     ".admin/prs/pr-1994.json",
-    ".agent-admin/assurance/iaa-prebrief-public-profiles-root-provenance-v01.md",
+    ".agent-admin/assurance/iaa-wave-record-public-profiles-root-provenance-recovery-20260729.md",
     ".agent-admin/control/delegation-orders/pr-1994.json",
     ".agent-admin/prs/pr-1994/wave-current-tasks.md",
     ".agent-admin/scope-declarations/pr-1994.md",
