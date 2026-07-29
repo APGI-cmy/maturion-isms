@@ -34,27 +34,29 @@ describe('Issue #1990 foundational public.profiles bootstrap — QA-to-RED', () 
     const sql = profilesBootstrap()?.sql ?? '';
     expect(sql).toMatch(/\bid\s+uuid\s+(?:primary\s+key\s+)?references\s+auth\.users\s*\(\s*id\s*\)\s+on\s+delete\s+cascade/i);
     expect(sql).toMatch(/\borganisation_id\s+uuid\b[\s\S]{0,180}references\s+public\.organisations\s*\(\s*id\s*\)/i);
+    expect(sql).not.toMatch(/\borganisation_id\s+uuid\s+not\s+null\b/i);
   });
 
   it('enables RLS and establishes own-row SELECT, INSERT and UPDATE protection', () => {
     const sql = profilesBootstrap()?.sql ?? '';
     expect(sql).toMatch(/alter\s+table\s+public\.profiles\s+enable\s+row\s+level\s+security/i);
     for (const command of ['select', 'insert', 'update']) {
-      expect(sql).toMatch(new RegExp(`create\\s+policy[\\s\\S]{0,360}on\\s+public\\.profiles\\s+for\\s+${command}[\\s\\S]{0,360}auth\\.uid\\s*\\(\\s*\\)\\s*=\\s*id`, 'i'));
+      expect(sql).toMatch(new RegExp(`create\\s+policy[\\s\\S]{0,360}on\\s+public\\.profiles[\\s\\S]{0,360}for\\s+${command}[\\s\\S]{0,360}to\\s+public[\\s\\S]{0,360}auth\\.uid\\s*\\(\\s*\\)\\s*=\\s*id`, 'i'));
     }
   });
 
-  it('keeps the bootstrap bounded to foundational fields and no profile trigger', () => {
+  it('keeps the bootstrap bounded with production-equivalent defaults/nullability and no profile trigger', () => {
     const sql = profilesBootstrap()?.sql ?? '';
     expect(sql).toMatch(/\bid\s+uuid\b/i);
     expect(sql).toMatch(/\borganisation_id\s+uuid\b/i);
     expect(sql).toMatch(/\bdisplay_name\s+text\b/i);
     expect(sql).toMatch(/\bemail\s+text\b/i);
     expect(sql).toMatch(/\bfull_name\s+text\b/i);
-    expect(sql).toMatch(/\blanguage\s+text\b/i);
-    expect(sql).toMatch(/\btheme\s+text\b/i);
-    expect(sql).toMatch(/\brole\s+text\b/i);
-    expect(sql).toMatch(/\bpreferences\s+jsonb\b/i);
+    expect(sql).toMatch(/\blanguage\s+text\s+default\s+'en'/i);
+    expect(sql).toMatch(/\btheme\s+text\s+default\s+'light'/i);
+    expect(sql).toMatch(/\brole\s+text\s+default\s+'viewer'/i);
+    expect(sql.toLowerCase()).toContain("preferences jsonb default '{}'::jsonb");
+    expect(sql).not.toMatch(/\bpreferences\s+jsonb\s+not\s+null\b/i);
     expect(sql).toMatch(/\bcreated_at\s+timestamptz\b/i);
     expect(sql).toMatch(/\bupdated_at\s+timestamptz\b/i);
     expect(sql).not.toMatch(/create\s+trigger[\s\S]{0,120}on\s+public\.profiles/i);

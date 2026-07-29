@@ -5,7 +5,7 @@
 **Branch:** `fix/issue-1990-migration-baseline-reconciliation`  
 **IAA role:** independent-assurance-agent  
 **Authority:** CS2-authorised scope expansion recorded on Issue #1990  
-**Status:** PREFLIGHT_BRIEF_COMPLETE — implementation not yet appointed
+**Status:** PREFLIGHT_BRIEF_COMPLETE — schema-builder appointed; bounded correction in progress
 
 ## Assurance question
 
@@ -22,11 +22,18 @@ Commit `a42fab96ae46dd2386ecc6b3ff7c33b7fbddde90` establishes the executable aut
 
 ## Builder constraints
 
-- The builder may not create a bootstrap migration until after the separate appointment record is committed.
+- The builder appointment for this scope is committed at `4af5e076bf14e3aabdc9ec5dc1da4acfee6cf52b`.
 - Use the Supabase CLI's discovered migration-creation command to create any migration file; do not invent a filename.
 - Reconstruct from production metadata and current source evidence only. Do not copy retired MAT legacy SQL wholesale.
 - Keep the existing four migration-identity repairs byte-for-byte unchanged.
 - Do not run DDL or data changes against production; do not alter PR #1973, Edge Functions, Vercel, grants, helper functions, or application code.
+
+## Active correction chain (immutable SHAs)
+
+- canonical IAA pre-brief refresh: `6432bc1e7ec2dfd8adaa823f4c7474efa9e23209`
+- schema-builder appointment: `4af5e076bf14e3aabdc9ec5dc1da4acfee6cf52b`
+- first bounded bootstrap implementation head: `70774b337fcefb05d6d0fe81779d0ce7f8d90739`
+- current correction target: apply bounded metadata/policy-role/delegation-proof fixes on the next PR #1992 head only
 
 ## Required GREEN evidence
 
