@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "public-profiles-root-provenance-recovery-20260729",
+  "governing_issue": 1993,
+  "pr_number": 1994,
+  "base_branch": "main",
+  "phase": "SOURCE_RECOVERY_DRAFT",
+  "result": "SOURCE_RECOVERY_IMPLEMENTED_AWAITING_FOREMAN_INTAKE",
+  "builder": "Copilot schema-builder",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1994.md",
+  "wave_tasks_ref": ".agent-admin/prs/pr-1994/wave-current-tasks.md",
+  "prebrief_ref": ".agent-admin/assurance/iaa-prebrief-public-profiles-root-provenance-v01.md",
+  "comparison_ref": ".agent-admin/source-live-comparisons/pr-1994-public-profiles.md",
+  "qp_status": "WITHHELD",
+  "ecap_status": "WITHHELD",
+  "iaa_status": "WITHHELD",
+  "merge_status": "NO_GO",
+  "objective": "Source-only recovery of the missing public.profiles root migration. No database DDL/DML execution is authorised.",
+  "hard_boundaries": [
+    "Do not apply SQL anywhere",
+    "Do not create Supabase infrastructure",
+    "Do not modify APGI-cmy’s Project",
+    "Do not modify PR #1986 or PR #1981",
+    "Do not add legacy MAT objects or broad grants"
+  ]
+}
