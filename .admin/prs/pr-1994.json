@@ -1,0 +1,38 @@
+{
+  "pr": 1994,
+  "issue": 1993,
+  "type": "foundational-schema-provenance-recovery",
+  "wave": "public-profiles-root-provenance-recovery-20260729",
+  "owner": "foreman",
+  "builder": "Copilot schema-builder",
+  "base_branch": "main",
+  "phase": "SOURCE_RECOVERY_DRAFT",
+  "merge_authority": "CS2",
+  "qp_status": "WITHHELD",
+  "ecap_status": "WITHHELD",
+  "iaa_status": "WITHHELD",
+  "merge_status": "NO_GO",
+  "scope": [
+    ".admin/prs/pr-1994.json",
+    ".agent-admin/assurance/iaa-prebrief-public-profiles-root-provenance-v01.md",
+    ".agent-admin/control/delegation-orders/pr-1994.json",
+    ".agent-admin/prs/pr-1994/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1994.md",
+    ".agent-admin/source-live-comparisons/pr-1994-public-profiles.md",
+    "modules/mat/tests/foundational-provenance/public-profiles-root-migration.test.ts",
+    "supabase/migrations/20260615000000_public_profiles_root_provenance.sql"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "objective": "Recover only the missing committed public.profiles root migration provenance for clean bootstrap. No database action is authorised by this PR.",
+  "isolation_prohibition": "no db push, apply_migration, execute_sql, project/branch creation, rebase, reset, or merge on any Supabase project",
+  "required_pre_merge": [
+    "Fresh isolated clean-bootstrap validation after this source recovery is independently accepted",
+    "Proof no migration was applied to APGI-cmy’s Project",
+    "Foreman QP",
+    "ECAP",
+    "Independent IAA",
+    "CS2 merge gate"
+  ]
+}
