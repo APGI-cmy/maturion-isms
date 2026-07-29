@@ -5,6 +5,7 @@ export default defineConfig({
     include: [
       'modules/MMM/tests/B4-framework/migration-baseline-reconciliation.test.ts',
       'modules/MMM/tests/B4-framework/foundational-profiles-bootstrap.test.ts',
+      'modules/MMM/tests/B4-framework/criteria-provenance-bootstrap.test.ts',
     ],
     globals: true,
     reporters: ['verbose'],
