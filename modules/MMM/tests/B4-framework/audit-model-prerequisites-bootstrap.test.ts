@@ -31,11 +31,11 @@ describe('Issue #1990 legacy audit-model prerequisites — refreshed QA-to-RED',
   it('reconstructs the ordered audits root contract before criteria', () => {
     const audits = bootstrap('audits');
     assertBeforeCriteria(audits, 'audits');
-    expect(audits.sql).toMatch(/organisation_id\\s+uuid\\s+not\\s+null\\s+references\\s+public\\.organisations\\s*\\(\\s*id\\s*\\)\\s+on\\s+delete\\s+cascade/i);
-    expect(audits.sql).toMatch(/status\\s+text\\s+not\\s+null\\s+default\\s+'draft'/i);
-    expect(audits.sql).toMatch(/organisation_name\\s+varchar\\s*\\(\\s*255\\s*\\)\\s+not\\s+null/i);
-    expect(audits.sql).toMatch(/criteria_approved\\s+boolean\\s+not\\s+null\\s+default\\s+false/i);
-    expect(audits.sql).toMatch(/alter\\s+table\\s+public\\.audits\\s+enable\\s+row\\s+level\\s+security/i);
+    expect(audits.sql).toMatch(/organisation_id\s+uuid\s+not\s+null\s+references\s+public\.organisations\s*\(\s*id\s*\)\s+on\s+delete\s+cascade/i);
+    expect(audits.sql).toMatch(/status\s+text\s+not\s+null\s+default\s+'draft'/i);
+    expect(audits.sql).toMatch(/organisation_name\s+varchar\s*\(\s*255\s*\)\s+not\s+null/i);
+    expect(audits.sql).toMatch(/criteria_approved\s+boolean\s+not\s+null\s+default\s+false/i);
+    expect(audits.sql).toMatch(/alter\s+table\s+public\.audits\s+enable\s+row\s+level\s+security/i);
   });
 
   it('reconstructs the ordered domains contract and its production isolation/cascade posture', () => {
