@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 const migrationDirectory = resolve(process.cwd(), 'supabase/migrations');
 const migrationName = '20260615000000_public_profiles_root_provenance.sql';
 const migrationPath = resolve(migrationDirectory, migrationName);
-const pitSlice4Version = '20260722102655_pit_stage12_slice4_project_persistence.sql';
+const pitSlice4Version = '20260722090000_pit_stage12_slice4_project_persistence.sql';
 
 function source(): string {
   expect(existsSync(migrationPath), `missing root migration: ${migrationName}`).toBe(true);
@@ -14,6 +14,8 @@ function source(): string {
 
 describe('Issue #1993 — public.profiles root migration provenance', () => {
   it('T-1993-RED-001: introduces the root migration in the required ordering window', () => {
+    const pitSlice4Path = resolve(migrationDirectory, pitSlice4Version);
+    expect(existsSync(pitSlice4Path), `referenced PIT Slice 4 migration must exist: ${pitSlice4Version}`).toBe(true);
     expect(migrationName > '20260610180000_isms_w6_persistence_audit.sql').toBe(true);
     expect(migrationName < pitSlice4Version).toBe(true);
     source();
