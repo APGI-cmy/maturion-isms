@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 const ROOT = resolve(__dirname, '../../../..');
 const MIGRATIONS = resolve(ROOT, 'supabase/migrations');
 const CRITERIA_BOOTSTRAP = '20260729120338_criteria_foundational_bootstrap.sql';
+const CASCADE_TRIGGERS = '20260729130000_exclusion_cascade_triggers.sql';
 
 type Migration = { filename: string; sql: string };
 
@@ -25,6 +26,12 @@ function bootstrap(table: string): Migration | undefined {
 function assertBeforeCriteria(migration: Migration | undefined, table: string): asserts migration is Migration {
   expect(migration, `missing source bootstrap for public.${table}`).toBeDefined();
   expect(migration!.filename < CRITERIA_BOOTSTRAP).toBe(true);
+}
+
+function allSqlForTable(table: string): string {
+  return sourceMigrations()
+    .map(({ sql }) => sql)
+    .join('\n');
 }
 
 describe('Issue #1990 legacy audit-model prerequisites — refreshed QA-to-RED', () => {
@@ -70,5 +77,37 @@ describe('Issue #1990 legacy audit-model prerequisites — refreshed QA-to-RED',
     expect(cascade!.filename > CRITERIA_BOOTSTRAP).toBe(true);
     expect(cascade!.sql).toMatch(/create\s+trigger\s+exclude_cascade_domains_trigger[\s\S]{0,320}after\s+update\s+of\s+excluded\s+on\s+public\.domains/i);
     expect(cascade!.sql).toMatch(/create\s+trigger\s+exclude_cascade_mps_trigger[\s\S]{0,320}after\s+update\s+of\s+excluded\s+on\s+public\.mini_performance_standards/i);
+  });
+
+  it('applies production-parity corrections to audits: period columns, varchar facility_location, no organisation_name default', () => {
+    const migrations = sourceMigrations();
+    const corrections = migrations.find(({ sql }) =>
+      /alter\s+table\s+public\.audits[\s\S]{0,120}audit_period_start/i.test(sql),
+    );
+    expect(corrections, 'missing production-parity corrections migration for public.audits').toBeDefined();
+    expect(corrections!.filename > CASCADE_TRIGGERS).toBe(true);
+    expect(corrections!.sql).toMatch(/audit_period_start\s+date/i);
+    expect(corrections!.sql).toMatch(/audit_period_end\s+date/i);
+    expect(corrections!.sql).toMatch(/facility_location\s+type\s+varchar/i);
+    expect(corrections!.sql).toMatch(/organisation_name\s+drop\s+default/i);
+  });
+
+  it('applies production-parity corrections to audits: insert and all org-isolation policies', () => {
+    const migrations = sourceMigrations();
+    const allSql = migrations.map(({ sql }) => sql).join('\n');
+    expect(allSql).toMatch(/create\s+policy\s+audits_insert_authenticated[\s\S]{0,400}for\s+insert[\s\S]{0,200}created_by\s*=\s*auth\.uid\(\)/i);
+    expect(allSql).toMatch(/create\s+policy\s+audits_org_isolation[\s\S]{0,400}for\s+all[\s\S]{0,400}organisation_id\s+in/i);
+  });
+
+  it('applies production-parity corrections to domains: delete policy TO public', () => {
+    const migrations = sourceMigrations();
+    const allSql = migrations.map(({ sql }) => sql).join('\n');
+    expect(allSql).toMatch(/create\s+policy\s+domains_delete_org_isolation[\s\S]{0,400}for\s+delete[\s\S]{0,120}to\s+public/i);
+  });
+
+  it('sets production-equivalent search path on cascade_exclude_to_children function', () => {
+    const migrations = sourceMigrations();
+    const allSql = migrations.map(({ sql }) => sql).join('\n');
+    expect(allSql).toMatch(/set\s+search_path\s*=\s*public\s*,\s*auth\s*,\s*storage\s*,\s*extensions\s*,\s*pg_temp/i);
   });
 });
