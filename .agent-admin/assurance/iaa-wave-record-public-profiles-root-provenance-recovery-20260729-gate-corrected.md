@@ -1,6 +1,6 @@
 # IAA Wave Record — public-profiles-root-provenance-recovery-20260729-gate-corrected
 
-PR: pending replacement for #1994
+PR: #1996
 ISSUE: #1993
 BRANCH: copilot/recover-public-profiles-root-migration-20260729-gate-corrected
 STATUS: PRE-BRIEF COMPLETE — FINAL IAA WITHHELD
