@@ -95,8 +95,9 @@ describe('Issue #1990 legacy audit-model prerequisites — refreshed QA-to-RED',
   it('applies production-parity corrections to audits: insert and all org-isolation policies', () => {
     const migrations = sourceMigrations();
     const allSql = migrations.map(({ sql }) => sql).join('\n');
-    expect(allSql).toMatch(/create\s+policy\s+audits_insert_authenticated[\s\S]{0,400}for\s+insert[\s\S]{0,200}created_by\s*=\s*auth\.uid\(\)/i);
-    expect(allSql).toMatch(/create\s+policy\s+audits_org_isolation[\s\S]{0,400}for\s+all[\s\S]{0,400}organisation_id\s+in/i);
+    // Assert final effective policy: TO public with full production predicate
+    expect(allSql).toMatch(/create\s+policy\s+audits_insert_authenticated[\s\S]{0,400}for\s+insert[\s\S]{0,120}to\s+public[\s\S]{0,300}auth\.role\(\)\s*=\s*'authenticated'[\s\S]{0,120}auth\.uid\(\)\s*=\s*created_by/i);
+    expect(allSql).toMatch(/create\s+policy\s+audits_org_isolation[\s\S]{0,400}for\s+all[\s\S]{0,120}to\s+public[\s\S]{0,400}organisation_id\s+in/i);
   });
 
   it('applies production-parity corrections to domains: delete policy TO public', () => {
