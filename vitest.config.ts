@@ -6,6 +6,8 @@ export default defineConfig({
       'modules/mat/tests/**/*.test.ts',
       'modules/mat/tests/**/*.test.tsx',
       'modules/MMM/tests/B3-ui/**/*.test.ts',
+      'modules/MMM/tests/B4-framework/**/*.test.ts',
+      'modules/MMM/tests/B4-framework/**/*.test.tsx',
       'packages/ai-centre/src/__tests__/**/*.test.ts',
       'api/**/*.test.ts',
     ],
