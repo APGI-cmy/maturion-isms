@@ -2,10 +2,10 @@
 
 **Module**: MMM (Maturity Model Management)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-07-23  
-**Updated By**: CS2 proxy reconciliation under issue #1955
+**Last Updated**: 2026-08-06  
+**Updated By**: Foreman proxy orchestration — PR #1973 merge-ready; PR #2002 replacement lane open; approval runtime blocked on prerequisites
 
-> **Classification**: ACTIVE — DESCRIPTOR RUNTIME IMPLEMENTED; CS2 LIVE CLOSURE VALIDATION PENDING; APPROVAL FOUNDATION RUNTIME IS NEXT
+> **Classification**: ACTIVE — DESCRIPTOR RUNTIME IMPLEMENTED; PR #1973 MERGE-READY (CS2 ACTION REQUIRED); mmm_native_migrations RECOVERY IN PR #2002; APPROVAL FOUNDATION RUNTIME BLOCKED ON PREREQUISITE MERGES
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main MMM progress dashboard.
 > **Frozen Implementation Authority**: `modules/MMM/07-implementation-plan/implementation-plan.md` v1.0.0
 > **Execution Alignment Addendum**: `modules/MMM/07-implementation-plan/descriptor-runtime-approval-execution-alignment-addendum-2026-07-23.md`
@@ -13,7 +13,7 @@
 
 ## 1. Current Executive Status
 
-The MMM descriptor reasoning and governed-learning lane has progressed beyond pre-build and has been implemented in the live Criteria Management runtime through PR #1941.
+The MMM descriptor reasoning and governed-learning lane has been implemented in the live Criteria Management runtime through PR #1941. The RLS private-helper alignment lane (PR #1973) is merge-ready and awaiting CS2 action. The mmm_native_migrations recovery lane is in progress on PR #2002. The approval runtime wave is blocked on prerequisite merges.
 
 Current state:
 
@@ -25,7 +25,11 @@ Current state:
 - editing one maturity descriptor preserves the other persisted maturity levels;
 - incomplete historical descriptor sets can regenerate only missing levels while retaining non-empty and edited levels;
 - MMM live verification now uses the MMM-specific Vercel boundary and reports functional failure honestly;
-- CS2 live validation of the merged #1941 behavior remains the final closure gate for the descriptor issue chain.
+- **CS2 live validation of the merged #1941 behavior remains the final closure gate for the descriptor issue chain** (human action required);
+- **PR #1973** (7 RLS policy alignment to private helper) is `mergeStateStatus: CLEAN`, all governance checks pass — **merge-ready, awaiting CS2 action**;
+- **PR #2002** (mmm_native_migrations recovery, lawful replacement for #2000) is open as draft with valid governance spine and passing CI gates; progression through QP → ECAP → IAA → merge-ready is next;
+- **PR #2000** was closed as superseded by the lawful PR #2002 replacement lane;
+- **Approval Workflow Foundation Runtime** (Issue #1961) governance spine is in place (IAA pre-brief `0ace85a0`, QA-builder appointment, build-green appointment, QA-to-Red merged at #1962) but implementation is blocked until #1973 and #2002 are merged.
 
 The descriptor work is a partial Stage 12 Wave B4 implementation slice. It does **not** complete the full B4 Framework Lifecycle wave, which also includes complete ingestion, compile, publication, three-tier approval, versioning, and related executable test obligations.
 
@@ -86,6 +90,14 @@ Core rules remain:
 | #1937 | Runtime hotfix | Explicit relevance threshold and non-contamination behavior implemented |
 | #1941 | Runtime hotfix | First-edit preservation and incomplete-level recovery implemented |
 | #1949 | Verification/boundary hotfix | MMM-specific Vercel secret boundary and honest live verification merged |
+
+## 4a. Active PR Lane Status (2026-08-06)
+
+| PR | Branch | State | Governance | Notes |
+|---:|---|---|---|---|
+| #1973 | `fix/issue-1959-private-helper-policy-alignment` | OPEN — **MERGE READY** | All gates PASS; `mergeStateStatus: CLEAN` | Awaiting CS2 merge action |
+| #2002 | `apgi-cmy-mmm-2000-replacement-lane` | OPEN — DRAFT | Delegation-order gate PASS; all governance checks PASS | mmm_native_migrations recovery; needs QP→ECAP→IAA→merge-ready flow |
+| #2000 | — | CLOSED — SUPERSEDED | Failed `delegation-order-gate` (single-commit ancestry) | Superseded by #2002 |
 
 ## 5. Descriptor Closure Gate
 
@@ -187,15 +199,26 @@ No approval workflow completion claim is permitted from #1846 alone.
 
 ## 9. Next Governed Runtime Wave
 
-After the descriptor live-closure evidence is recorded and issue #1955 is merged, the next MMM product lane is:
+After PR #1973 (RLS alignment) and PR #2002 (mmm_native_migrations recovery) are merged, and the descriptor live-closure evidence is recorded, the next MMM product lane is:
 
 ### Approval Workflow Foundation Runtime
 
+**Governance spine already in place** — do not recreate these artifacts:
+
+| Artifact | Path | Commit |
+|---|---|---|
+| IAA pre-brief | `.agent-admin/assurance/iaa-prebrief-mmm-approval-workflow-foundation-20260723.md` | `0ace85a0` |
+| QA builder appointment | `.agent-admin/builder-appointments/wave-mmm-approval-workflow-foundation-20260723.md` | already committed |
+| Build-green appointment | `.agent-admin/builder-appointments/wave-mmm-approval-foundation-build-green-2026-06-24.md` | already committed |
+| QA-to-Red merged | PR #1962 | merged |
+
+The next action is to create a fresh build-to-GREEN implementation branch and PR for Issue #1961 off current `main` after prerequisites (#1973, #2002) are merged.
+
 Required first-wave scope:
 
-1. Create a fresh implementation issue and scope declaration.
-2. Create IAA pre-brief and builder appointment before the first implementation commit.
-3. Convert the relevant approval QA-to-red expectations into executable failing tests.
+1. ~~Create a fresh implementation issue and scope declaration.~~ Issue #1961 already exists.
+2. ~~Create IAA pre-brief and builder appointment before the first implementation commit.~~ Governance spine already in place (see table above).
+3. Convert the relevant approval QA-to-red expectations into executable failing tests (QA-to-Red at #1962 is the authority).
 4. Implement durable persistence for approval rounds, approvers, proposed changes, comments, lock state, notification events, audit events, and AI-learning events.
 5. Implement the canonical server-side approval state machine.
 6. Implement the canonical Edge Functions:
