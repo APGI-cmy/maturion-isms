@@ -1,30 +1,13 @@
 {
-  "pr": 2002,
-  "issue": 1990,
-  "scope": "mmm_native_migrations recovery bootstrap",
-  "description": "Lawful replacement for PR #2000. Contains three ordered commits proving correct delegation sequence: governance pre-brief → builder appointment → implementation.",
-  "delegation_order": [
-    {
-      "order": 1,
-      "sha": "5bb9f28054ce8e50ccd386d5124e920518cbb520",
-      "type": "governance",
-      "artifact": ".agent-admin/assurance/iaa-prebrief-issue-1990-mmm-native-migrations-recovery-20260806.md",
-      "message": "docs(1990): add mmm native migrations pre-brief"
-    },
-    {
-      "order": 2,
-      "sha": "470d4d1b418dd190be57c120cf680ebc64720fe8",
-      "type": "governance",
-      "artifact": ".agent-admin/builder-appointments/issue-1990-mmm-native-migrations-recovery-schema-builder.md",
-      "message": "docs(1990): appoint mmm native migrations builder"
-    },
-    {
-      "order": 3,
-      "sha": "be5fbacf6603752b2c7fe3092f3a8742a1d05211",
-      "type": "implementation",
-      "artifact": "modules/MMM/tests/B4-framework/mmm-native-migrations-bootstrap.test.ts",
-      "message": "test(1990): update PR_BASE_SHA to cf34e5a8 for mmm_native_migrations bootstrap recovery lane"
-    }
-  ],
-  "notes": "PR #2000 was structurally invalid (single commit, no delegation-order proof). This PR is the lawful replacement with correct governance ancestry."
+  "schema_version": "1.0.0",
+  "wave_id": "issue-1990-mmm-native-migrations-recovery",
+  "pr_number": 2002,
+  "prebrief_commit_sha": "5bb9f28054ce8e50ccd386d5124e920518cbb520",
+  "builder_appointment_timestamp": "2026-08-06T09:22:15Z",
+  "builder_appointment_commit_sha": "470d4d1b418dd190be57c120cf680ebc64720fe8",
+  "builder_agent": "schema-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-1990-mmm-native-migrations-recovery-schema-builder.md",
+  "first_implementation_commit_sha": "be5fbacf6603752b2c7fe3092f3a8742a1d05211",
+  "qp_review_timestamp": "2026-08-06T09:26:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
 }
