@@ -45,6 +45,13 @@ export function DomainAuditBuilder({
   domainName,
   sourceDomainId,
 }: DomainAuditBuilderProps) {
+  const DOMAIN_APPROVAL_STATES = {
+    submitted_l1: 'submitted_l1',
+    submitted_l2: 'submitted_l2',
+    returned_l2: 'returned_l2',
+    approved_l2: 'approved_l2',
+    locked: 'locked',
+  } as const;
   const [focusedMpsId, setFocusedMpsId] = React.useState<string | null>(null);
   const {
     activeStep,
@@ -89,7 +96,7 @@ export function DomainAuditBuilder({
     enabled: Boolean(persistedDomainId),
   });
   const isDomainSignedOff =
-    domainApprovalQuery.data?.status === 'approved_l2' ||
+    domainApprovalQuery.data?.status === DOMAIN_APPROVAL_STATES.approved_l2 ||
     domainApprovalQuery.data?.status === 'approved';
 
   const domainApprovalActionMutation = useMutation({

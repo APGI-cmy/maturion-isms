@@ -106,6 +106,12 @@ interface DomainCardProps {
   metricsLoading: boolean;
 }
 
+const FRAMEWORK_APPROVAL_STATES = {
+  submitted_l3: 'submitted_l3',
+  returned_l3: 'returned_l3',
+  approved_l3: 'approved_l3',
+} as const;
+
 function DomainCard({
   canonicalName,
   domain,
