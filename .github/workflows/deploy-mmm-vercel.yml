@@ -183,6 +183,28 @@ jobs:
         if: steps.secret_check.outputs.configured == 'true'
         run: vercel pull --yes --environment=preview --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
+      - name: Verify MMM Vercel project boundary
+        if: steps.secret_check.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          test -f .vercel/project.json
+          if ! grep -q "\"projectId\":\"${MMM_VERCEL_PROJECT_ID}\"" .vercel/project.json; then
+            echo "::error::Pulled Vercel project does not match MMM_VERCEL_PROJECT_ID."
+            exit 1
+          fi
+          project_link_path=".vercel/.project.json"
+          if [ -f "$project_link_path" ]; then
+            if grep -qi "maturion-pit" "$project_link_path"; then
+              echo "::error::MMM workflow resolved to PIT Vercel project. Fix MMM_VERCEL_PROJECT_ID / MMM_VERCEL_ORG_ID secrets."
+              exit 1
+            fi
+            if ! grep -qi "maturion-isms-mmm" "$project_link_path"; then
+              echo "::error::MMM workflow did not resolve to the expected MMM Vercel project (maturion-isms-mmm)."
+              exit 1
+            fi
+          fi
+          echo "MMM Vercel project boundary verified."
+
       - name: Build MMM preview artifacts
         if: steps.secret_check.outputs.configured == 'true'
         run: vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
@@ -310,6 +332,28 @@ jobs:
       - name: Pull MMM production settings
         if: steps.secret_check.outputs.configured == 'true'
         run: vercel pull --yes --environment=production --token=${{ secrets.MMM_VERCEL_TOKEN }}
+
+      - name: Verify MMM Vercel project boundary
+        if: steps.secret_check.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          test -f .vercel/project.json
+          if ! grep -q "\"projectId\":\"${MMM_VERCEL_PROJECT_ID}\"" .vercel/project.json; then
+            echo "::error::Pulled Vercel project does not match MMM_VERCEL_PROJECT_ID."
+            exit 1
+          fi
+          project_link_path=".vercel/.project.json"
+          if [ -f "$project_link_path" ]; then
+            if grep -qi "maturion-pit" "$project_link_path"; then
+              echo "::error::MMM workflow resolved to PIT Vercel project. Fix MMM_VERCEL_PROJECT_ID / MMM_VERCEL_ORG_ID secrets."
+              exit 1
+            fi
+            if ! grep -qi "maturion-isms-mmm" "$project_link_path"; then
+              echo "::error::MMM workflow did not resolve to the expected MMM Vercel project (maturion-isms-mmm)."
+              exit 1
+            fi
+          fi
+          echo "MMM Vercel project boundary verified."
 
       - name: Build MMM production artifacts
         if: steps.secret_check.outputs.configured == 'true'
