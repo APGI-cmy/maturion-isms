@@ -2,7 +2,7 @@
 
 **Appointed builder:** schema-builder / Copilot  
 **Issue:** #1990  
-**Replacement PR:** PENDING — to be opened on this branch after the first lawful implementation commit  
+**Replacement PR:** #2002 (apgi-cmy-mmm-2000-replacement-lane)  
 **Authority chain:** Johan Ras (CS2) → Foreman → schema-builder  
 **Appointment status:** ACTIVE FOR THE BOUNDED IMPLEMENTATION BELOW
 
