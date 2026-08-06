@@ -2,10 +2,10 @@
 
 **Module**: MMM (Maturity Model Management)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-07-23  
-**Updated By**: CS2 proxy reconciliation under issue #1955
+**Last Updated**: 2026-08-06  
+**Updated By**: Foreman proxy orchestration — #1973 and #2002 merged; approval foundation build-to-green wave in progress (Issue #1961)
 
-> **Classification**: ACTIVE — DESCRIPTOR RUNTIME IMPLEMENTED; CS2 LIVE CLOSURE VALIDATION PENDING; APPROVAL FOUNDATION RUNTIME IS NEXT
+> **Classification**: ACTIVE — DESCRIPTOR RUNTIME IMPLEMENTED; RLS ALIGNMENT MERGED (#1973); mmm_native_migrations RECOVERY MERGED (#2002); APPROVAL FOUNDATION BUILD-TO-GREEN IN PROGRESS (ISSUE #1961)
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main MMM progress dashboard.
 > **Frozen Implementation Authority**: `modules/MMM/07-implementation-plan/implementation-plan.md` v1.0.0
 > **Execution Alignment Addendum**: `modules/MMM/07-implementation-plan/descriptor-runtime-approval-execution-alignment-addendum-2026-07-23.md`
