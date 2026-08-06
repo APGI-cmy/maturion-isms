@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "supabase-migration-source-baseline-recovery-20260728",
+  "governing_issue": 1987,
+  "pr_number": 1986,
+  "base_branch": "main",
+  "current_head_sha": "9871b415b36592903caa727a66bf443653213f0f",
+  "phase": "GOVERNANCE_NORMALIZATION",
+  "result": "GOVERNANCE_NORMALIZATION_IN_PROGRESS",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1986.md",
+  "wave_tasks_ref": ".agent-admin/prs/pr-1986/wave-current-tasks.md",
+  "prebrief_ref": ".agent-admin/assurance/iaa-prebrief-supabase-migration-source-baseline-recovery-v01.md",
+  "supersedes_stale_wave": "wave-mmm-descriptor-hardening-retry-2026-07-01",
+  "supersedes_stale_issue": 1883,
+  "supersedes_stale_pr": 1893,
+  "qp_status": "WITHHELD",
+  "ecap_status": "WITHHELD",
+  "iaa_status": "WITHHELD",
+  "merge_status": "NO_GO",
+  "isolation_prohibition": "no db push, apply_migration, execute_sql, rebase, reset or merge on ujucvyyspfxlxlfdamda",
+  "objective": "Source-only reconciliation of four already-applied migration sources absent from main. No database DDL/DML execution, no RLS weakening, no credential sharing.",
+  "dependencies": {
+    "pit_slice4_provenance": "merged PR #1952",
+    "mmm_policy_provenance": "Issue #1959"
+  }
+}

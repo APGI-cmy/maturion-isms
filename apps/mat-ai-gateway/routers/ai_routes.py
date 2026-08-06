@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Union
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, field_validator
 
 from services.image_analysis import ImageAnalyser
@@ -39,7 +39,6 @@ class ParseRequest(BaseModel):
     @field_validator("user_instructions")
     @classmethod
     def escape_user_instructions(cls, v: str | None) -> str | None:
-        """Escape angle brackets before downstream instruction wrapping."""
         if v is None:
             return v
         return v.replace("<", "&lt;").replace(">", "&gt;")
@@ -87,7 +86,6 @@ class PublicChatRequest(BaseModel):
 
 @router.post("/parse")
 def parse_document(request: ParseRequest) -> dict:
-    """Convert a source document into structured content."""
     return _parser.parse(
         document_url=request.document_url,
         tenant_id=request.tenant_id,
@@ -97,7 +95,6 @@ def parse_document(request: ParseRequest) -> dict:
 
 @router.post("/score")
 def score_maturity(request: ScoreRequest) -> dict:
-    """Derive maturity scoring from evidence and criteria."""
     if request.evidence is None:
         evidence: list[Union[str, dict]] = []
     elif isinstance(request.evidence, list):
@@ -116,7 +113,6 @@ def score_maturity(request: ScoreRequest) -> dict:
 
 @router.post("/transcribe")
 def transcribe_audio(request: TranscribeRequest) -> dict:
-    """Transcribe audio evidence."""
     return _transcriber.transcribe(
         audio_url=request.audio_url,
         tenant_id=request.tenant_id,
@@ -125,7 +121,6 @@ def transcribe_audio(request: TranscribeRequest) -> dict:
 
 @router.post("/report")
 def generate_report(request: ReportRequest) -> dict:
-    """Generate a governed report."""
     audit_data = request.audit_data or {"audit_id": request.audit_id}
     return _generator.generate(
         audit_data=audit_data,
@@ -136,7 +131,6 @@ def generate_report(request: ReportRequest) -> dict:
 
 @router.post("/analyse-image")
 def analyse_image(request: AnalyseImageRequest) -> dict:
-    """Analyse image evidence."""
     return _analyser.analyse(
         image_url=request.image_url,
         tenant_id=request.tenant_id,
@@ -144,18 +138,28 @@ def analyse_image(request: AnalyseImageRequest) -> dict:
 
 
 @router.post("/public-chat")
-def public_chat(request: PublicChatRequest) -> dict:
+def public_chat(
+    request: PublicChatRequest,
+    http_request: Request,
+) -> dict:
     """Public Maturion chat endpoint for the APW public website."""
+    context = dict(request.context or {})
+    observed_client = (
+        http_request.client.host if http_request.client else "unknown"
+    )
+    context["client_request_id"] = observed_client
     try:
         result = _public_chat.answer(
             message=request.message,
             history=request.history,
-            context=request.context,
+            context=context,
         )
         logger.info(
             "public_chat_route route=%s page=%s history_count=%s "
             "response_mode=%s containment_reason=%s model=%s "
-            "prompt_tokens=%s completion_tokens=%s total_tokens=%s",
+            "prompt_tokens=%s completion_tokens=%s total_tokens=%s "
+            "budget_day=%s reserved_calls=%s reserved_tokens=%s "
+            "circuit_state=%s rate_limit_bucket=%s",
             result.get("apw_specialist_route"),
             result.get("page"),
             result.get("history_count"),
@@ -165,6 +169,11 @@ def public_chat(request: PublicChatRequest) -> dict:
             result.get("prompt_tokens"),
             result.get("completion_tokens"),
             result.get("total_tokens"),
+            result.get("budget_day"),
+            result.get("reserved_calls"),
+            result.get("reserved_tokens"),
+            result.get("circuit_state"),
+            result.get("rate_limit_bucket"),
         )
         return result
     except (RuntimeError, KeyError) as exc:

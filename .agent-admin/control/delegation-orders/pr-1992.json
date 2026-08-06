@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "issue-1990-migration-baseline-reconciliation-expanded-bootstrap",
+  "pr_number": 1992,
+  "prebrief_commit_sha": "b8d6ec3d489cec91f0389f9ac9a11fbe5a6809dd",
+  "builder_appointment_timestamp": "2026-07-28T07:04:00Z",
+  "builder_appointment_commit_sha": "062ad76b5db43d9cb5fe1ac120ca135452567ea5",
+  "builder_agent": "schema-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-1990-migration-baseline-reconciliation-schema-builder.md",
+  "first_implementation_commit_sha": "9a456f21d5ed11c6bde3d2512f2a02129a040958",
+  "qp_review_timestamp": "2026-07-29T11:20:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/issue-1990-migration-baseline-reconciliation.md",
+  "remediation_record_ref": ".agent-admin/assurance/iaa-prebrief-issue-1990-foundational-profiles-bootstrap-20260729.md",
+  "implementation_note": "Expanded foundational-bootstrap correction chain: pre-brief 6432bc1e7ec2dfd8adaa823f4c7474efa9e23209; appointment 4af5e076bf14e3aabdc9ec5dc1da4acfee6cf52b; first bounded bootstrap implementation 70774b337fcefb05d6d0fe81779d0ce7f8d90739. Delegation gate detects PR-wide first implementation as 9a456f21d5ed11c6bde3d2512f2a02129a040958, so this file preserves both proofs."
+}

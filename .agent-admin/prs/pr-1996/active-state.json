@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0.0",
+  "pr_number": 1996,
+  "manifest_path": ".admin/prs/pr-1996.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-1996.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-public-profiles-root-provenance-recovery-20260729-gate-corrected.md",
+  "wave_tasks_path": ".agent-admin/prs/pr-1996/wave-current-tasks.md"
+}

@@ -1,0 +1,45 @@
+{
+  "pr": 1986,
+  "issue": 1987,
+  "type": "source-recovery-governance-normalization",
+  "wave": "supabase-migration-source-baseline-recovery-20260728",
+  "owner": "foreman-v2-agent",
+  "phase": "GOVERNANCE_NORMALIZATION",
+  "merge_authority": "CS2",
+  "qp_status": "WITHHELD",
+  "ecap_status": "WITHHELD",
+  "iaa_status": "WITHHELD",
+  "merge_status": "NO_GO",
+  "supersedes_stale_wave_for_this_pr": "wave-mmm-descriptor-hardening-retry-2026-07-01",
+  "base_branch": "main",
+  "current_head_sha": "9871b415b36592903caa727a66bf443653213f0f",
+  "scope": [
+    ".admin/prs/pr-1986.json",
+    ".agent-admin/assurance/iaa-prebrief-supabase-migration-source-baseline-recovery-v01.md",
+    ".agent-admin/control/delegation-orders/pr-1986.json",
+    ".agent-admin/prs/pr-1986/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-1986.md",
+    "supabase/migrations/20260722102655_pit_stage12_slice4_project_persistence.sql",
+    "supabase/migrations/20260722104224_pit_slice4_privilege_hardening.sql",
+    "supabase/migrations/20260723141559_pit_slice4_rpc_only_mutation_boundary.sql",
+    "supabase/migrations/20260728070417_mmm_rls_private_helper_policy_reconciliation.sql"
+  ],
+  "risk": "low",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "isolation_prohibition": "no db push, apply_migration, execute_sql, rebase, reset or merge on ujucvyyspfxlxlfdamda",
+  "objective": "Source-only reconciliation of four already-applied migration sources absent from main. No database DDL/DML execution, no RLS weakening, no credential sharing.",
+  "dependencies": {
+    "pit_slice4_provenance": "merged PR #1952",
+    "mmm_policy_provenance": "Issue #1959"
+  },
+  "required_pre_merge": [
+    "Foreman acceptance of normalized governance head",
+    "Clean-environment Supabase CLI migration bootstrap validation with raw evidence",
+    "Proof no migration applied to ujucvyyspfxlxlfdamda",
+    "Foreman QP",
+    "ECAP",
+    "Independent IAA",
+    "CS2 merge gate"
+  ]
+}
