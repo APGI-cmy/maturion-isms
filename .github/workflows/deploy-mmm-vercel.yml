@@ -167,7 +167,7 @@ jobs:
 
       - name: Build MMM preview artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: |`r`n          corepack enable`r`n          vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM preview bundle environment
         if: steps.secret_check.outputs.configured == 'true'
@@ -295,7 +295,7 @@ jobs:
 
       - name: Build MMM production artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: |`r`n          corepack enable`r`n          vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM production bundle environment
         if: steps.secret_check.outputs.configured == 'true'
@@ -316,3 +316,4 @@ jobs:
         run: |
           echo "MMM production deploy skipped because app-specific Vercel secrets are not fully configured."
           echo "Required: MMM_VERCEL_ORG_ID, MMM_VERCEL_PROJECT_ID, MMM_VERCEL_TOKEN."
+
