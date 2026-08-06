@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "issue-1990-mmm-native-migrations-recovery",
+  "pr_number": 2002,
+  "prebrief_commit_sha": "5bb9f28054ce8e50ccd386d5124e920518cbb520",
+  "builder_appointment_timestamp": "2026-08-06T09:22:15Z",
+  "builder_appointment_commit_sha": "470d4d1b418dd190be57c120cf680ebc64720fe8",
+  "builder_agent": "schema-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-1990-mmm-native-migrations-recovery-schema-builder.md",
+  "first_implementation_commit_sha": "be5fbacf6603752b2c7fe3092f3a8742a1d05211",
+  "qp_review_timestamp": "2026-08-06T09:26:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

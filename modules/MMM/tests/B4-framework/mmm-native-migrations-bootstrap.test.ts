@@ -11,7 +11,7 @@ const WORKFLOWS = resolve(ROOT, '.github/workflows');
 const HARDENING_MIGRATION = '20260530000002_mmm_security_advisor_hardening.sql';
 
 // The base commit before this PR's changes — used to identify pre-existing files
-const PR_BASE_SHA = '9c464c14931d40deb980a388be7e27ca3097c958';
+const PR_BASE_SHA = 'cf34e5a8c16491e8874b7ac2f4d100b5917c0dd5';
 
 const CREATE_TABLE_RE = /create\s+table(?:\s+if\s+not\s+exists)?\s+public\.mmm_native_migrations\b/i;
 
