@@ -1,0 +1,28 @@
+name: Deploy MCP endpoint to Render (staging)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "mcp-servers/agent-bootstrap/**"
+      - "src/**"
+      - ".github/workflows/deploy-mcp-render-staging.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy (staging)
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID_STAGING }}
+        run: |
+          set -euo pipefail
+          curl -sS -X POST \
+            "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+            -H "accept: application/json" \
+            -H "authorization: Bearer ${RENDER_API_KEY}" \
+            -H "content-type: application/json" \
+            -d '{}' | tee /tmp/render-deploy.json
+          echo "Render deploy triggered."
