@@ -1,11 +1,11 @@
 # Refreshed IAA Pre-Brief — Issue #1990 `mmm_native_migrations` Recovery
 
 **Issue:** #1990  
-**Replacement PR:** PENDING — fresh lawful replacement lane required  
+**Replacement PR:** #2002 (apgi-cmy-mmm-2000-replacement-lane)  
 **Branch:** `apgi-cmy-mmm-2000-replacement-lane`  
 **IAA role:** independent-assurance-agent  
 **Authority:** Johan Ras, CS2 — bounded follow-on recovery lane after merged #1992 baseline  
-**Status:** PRE-BRIEF COMPLETE; implementation blocked pending the appointment recorded after this artifact
+**Status:** PRE-BRIEF COMPLETE; implemented in PR #2002
 
 ## Assurance question
 
