@@ -167,7 +167,9 @@ jobs:
 
       - name: Build MMM preview artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: |`r`n          corepack enable`r`n          vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: |
+          corepack enable
+          vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM preview bundle environment
         if: steps.secret_check.outputs.configured == 'true'
@@ -295,7 +297,9 @@ jobs:
 
       - name: Build MMM production artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: |`r`n          corepack enable`r`n          vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: |
+          corepack enable
+          vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM production bundle environment
         if: steps.secret_check.outputs.configured == 'true'
