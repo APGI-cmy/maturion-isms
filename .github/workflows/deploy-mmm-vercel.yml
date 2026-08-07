@@ -157,23 +157,48 @@ jobs:
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
           MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
-          mkdir -p .vercel
+          mkdir -p ${{ env.MMM_APP_PATH }}/.vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
-            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
+            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > ${{ env.MMM_APP_PATH }}/.vercel/project.json
 
       - name: Pull MMM Vercel project settings
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel pull --yes --environment=preview --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
+
+      - name: Verify MMM Vercel project boundary
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          test -f ${{ env.MMM_APP_PATH }}/.vercel/project.json
+          if ! grep -q "\"projectId\":\"${MMM_VERCEL_PROJECT_ID}\"" ${{ env.MMM_APP_PATH }}/.vercel/project.json; then
+            echo "::error::Pulled Vercel project does not match MMM_VERCEL_PROJECT_ID."
+            exit 1
+          fi
+          project_link_path="${{ env.MMM_APP_PATH }}/.vercel/.project.json"
+          if [ -f "$project_link_path" ]; then
+            if grep -qi "maturion-pit" "$project_link_path"; then
+              echo "::error::MMM workflow resolved to PIT Vercel project. Fix MMM_VERCEL_PROJECT_ID / MMM_VERCEL_ORG_ID secrets."
+              exit 1
+            fi
+            if ! grep -qi "maturion-isms-mmm" "$project_link_path"; then
+              echo "::error::MMM workflow did not resolve to the expected MMM Vercel project (maturion-isms-mmm)."
+              exit 1
+            fi
+          fi
+          echo "MMM Vercel project boundary verified."
 
       - name: Build MMM preview artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel build --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM preview bundle environment
         if: steps.secret_check.outputs.configured == 'true'
         run: |
           set -euo pipefail
-          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" apps/mmm/.vercel/output apps/mmm/dist 2>/dev/null; then
             echo "::error::MMM preview bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
             exit 1
           fi
@@ -184,7 +209,7 @@ jobs:
         id: deploy
         run: |
           set -euo pipefail
-          url=$(vercel deploy --prebuilt --token=${{ secrets.MMM_VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }})
           echo "preview-url=$url" >> "$GITHUB_OUTPUT"
           echo "Preview URL: $url"
 
@@ -285,23 +310,48 @@ jobs:
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
           MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
-          mkdir -p .vercel
+          mkdir -p ${{ env.MMM_APP_PATH }}/.vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
-            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
+            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > ${{ env.MMM_APP_PATH }}/.vercel/project.json
 
       - name: Pull MMM production settings
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel pull --yes --environment=production --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
+
+      - name: Verify MMM Vercel project boundary
+        if: steps.secret_check.outputs.configured == 'true'
+        env:
+          MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
+          MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          test -f ${{ env.MMM_APP_PATH }}/.vercel/project.json
+          if ! grep -q "\"projectId\":\"${MMM_VERCEL_PROJECT_ID}\"" ${{ env.MMM_APP_PATH }}/.vercel/project.json; then
+            echo "::error::Pulled Vercel project does not match MMM_VERCEL_PROJECT_ID."
+            exit 1
+          fi
+          project_link_path="${{ env.MMM_APP_PATH }}/.vercel/.project.json"
+          if [ -f "$project_link_path" ]; then
+            if grep -qi "maturion-pit" "$project_link_path"; then
+              echo "::error::MMM workflow resolved to PIT Vercel project. Fix MMM_VERCEL_PROJECT_ID / MMM_VERCEL_ORG_ID secrets."
+              exit 1
+            fi
+            if ! grep -qi "maturion-isms-mmm" "$project_link_path"; then
+              echo "::error::MMM workflow did not resolve to the expected MMM Vercel project (maturion-isms-mmm)."
+              exit 1
+            fi
+          fi
+          echo "MMM Vercel project boundary verified."
 
       - name: Build MMM production artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel build --prod --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM production bundle environment
         if: steps.secret_check.outputs.configured == 'true'
         run: |
           set -euo pipefail
-          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" apps/mmm/.vercel/output apps/mmm/dist 2>/dev/null; then
             echo "::error::MMM production bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
             exit 1
           fi
@@ -309,7 +359,7 @@ jobs:
 
       - name: Deploy MMM production to Vercel
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Record skipped MMM production deployment
         if: steps.secret_check.outputs.configured != 'true'
