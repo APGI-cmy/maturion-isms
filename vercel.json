@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rootDirectory": "apps/isms-portal",
   "rewrites": [
     { "source": "/health", "destination": "/api/health" },
     {
