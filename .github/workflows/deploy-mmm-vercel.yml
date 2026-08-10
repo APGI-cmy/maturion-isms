@@ -132,6 +132,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -157,23 +169,23 @@ jobs:
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
           MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
-          mkdir -p .vercel
+          mkdir -p ${{ env.MMM_APP_PATH }}/.vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
-            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
+            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > ${{ env.MMM_APP_PATH }}/.vercel/project.json
 
       - name: Pull MMM Vercel project settings
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel pull --yes --environment=preview --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Build MMM preview artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel build --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel build --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM preview bundle environment
         if: steps.secret_check.outputs.configured == 'true'
         run: |
           set -euo pipefail
-          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" apps/mmm/.vercel/output apps/mmm/dist 2>/dev/null; then
             echo "::error::MMM preview bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
             exit 1
           fi
@@ -184,7 +196,7 @@ jobs:
         id: deploy
         run: |
           set -euo pipefail
-          url=$(vercel deploy --prebuilt --token=${{ secrets.MMM_VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }})
           echo "preview-url=$url" >> "$GITHUB_OUTPUT"
           echo "Preview URL: $url"
 
@@ -260,6 +272,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -285,23 +309,23 @@ jobs:
           MMM_VERCEL_ORG_ID: ${{ secrets.MMM_VERCEL_ORG_ID }}
           MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
-          mkdir -p .vercel
+          mkdir -p ${{ env.MMM_APP_PATH }}/.vercel
           printf '{"projectId":"%s","orgId":"%s"}\n' \
-            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > .vercel/project.json
+            "$MMM_VERCEL_PROJECT_ID" "$MMM_VERCEL_ORG_ID" > ${{ env.MMM_APP_PATH }}/.vercel/project.json
 
       - name: Pull MMM production settings
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel pull --yes --environment=production --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Build MMM production artifacts
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel build --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel build --prod --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Validate MMM production bundle environment
         if: steps.secret_check.outputs.configured == 'true'
         run: |
           set -euo pipefail
-          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" .vercel/output apps/mmm/dist 2>/dev/null; then
+          if grep -R "https://placeholder.supabase.co\|placeholder-anon-key" apps/mmm/.vercel/output apps/mmm/dist 2>/dev/null; then
             echo "::error::MMM production bundle contains placeholder Supabase environment values. Configure Vercel project env vars before deployment."
             exit 1
           fi
@@ -309,10 +333,11 @@ jobs:
 
       - name: Deploy MMM production to Vercel
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.MMM_VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --cwd ${{ env.MMM_APP_PATH }} --token=${{ secrets.MMM_VERCEL_TOKEN }}
 
       - name: Record skipped MMM production deployment
         if: steps.secret_check.outputs.configured != 'true'
         run: |
           echo "MMM production deploy skipped because app-specific Vercel secrets are not fully configured."
           echo "Required: MMM_VERCEL_ORG_ID, MMM_VERCEL_PROJECT_ID, MMM_VERCEL_TOKEN."
+

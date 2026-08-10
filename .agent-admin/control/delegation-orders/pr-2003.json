@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "issue-1961-mmm-approval-foundation-build-green",
+  "pr_number": 2003,
+  "prebrief_commit_sha": "2c0c7803b2bda563dcc863359112b1a388bea93d",
+  "builder_appointment_timestamp": "2026-08-06T12:07:20Z",
+  "builder_appointment_commit_sha": "52e4a645043d012e388a7cf8cf82cc2d85ba0e9b",
+  "builder_agent": "api-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-1961-approval-foundation-build-green-schema-builder-20260806.md",
+  "first_implementation_commit_sha": "93da17bd464a0a66c4c21f6c66ef9a596c3da115",
+  "qp_review_timestamp": "2026-08-06T12:10:05Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

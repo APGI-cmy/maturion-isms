@@ -1,0 +1,25 @@
+# IAA Pre-Brief — Issue #1961 MMM Approval Foundation Build-to-GREEN
+
+- issue: 1961
+- wave_id: issue-1961-mmm-approval-foundation-build-green
+- authority: CS2 override authorized by Johan Ras
+- builder_identity: api-builder / ui-builder
+- branch: apgi-cmy-mmm-issue-1961-build-to-green
+- objective: Turn approval workflow foundation QA-to-Red tests GREEN with bounded implementation scope.
+- bounded_scope:
+  - Add state machine foundation for L1/L2 and L3 references
+  - Update domain approval action function with required guards and transition/audit semantics
+  - Add framework approval action function for L3 transitions
+  - Minimal UI state projection updates for required approval statuses
+- out_of_scope:
+  - Level 2 invite modal UI
+  - Level 1 e-mail delivery
+  - Level 3 final approval UI
+  - Published model runtime
+  - Evidence modal runtime
+  - Database migrations
+  - PIT/ISMS Portal changes
+- test_authority:
+  - modules/MMM/tests/B4-framework/approval-workflow-foundation-red.test.ts
+- commit_intent:
+  - This pre-brief commit precedes builder appointment and implementation commits per delegation-order gate.
