@@ -4,20 +4,18 @@ import { corsHeaders, jsonResponse, validateJWT } from '../_shared/mmm-auth.ts';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
-type DomainApprovalAction = 'submit' | 'return' | 'resubmit' | 'approve';
+type FrameworkApprovalAction = 'submit' | 'return' | 'approve';
 
-function mapAction(action: DomainApprovalAction): { status: string; locked: boolean } {
+function mapFrameworkAction(action: FrameworkApprovalAction): { status: string; locked: boolean } {
   switch (action) {
     case 'submit':
-      return { status: 'submitted_l2', locked: true };
+      return { status: 'submitted_l3', locked: true };
     case 'return':
-      return { status: 'returned_l2', locked: false };
-    case 'resubmit':
-      return { status: 'submitted_l2', locked: true };
+      return { status: 'returned_l3', locked: false };
     case 'approve':
-      return { status: 'approved_l2', locked: true };
+      return { status: 'approved_l3', locked: true };
     default:
-      throw new Error(`Unknown domain approval action: ${action}`);
+      throw new Error(`Unknown framework approval action: ${action}`);
   }
 }
 
@@ -37,13 +35,11 @@ Deno.serve(async (req: Request) => {
   }
 
   let body: {
-    domain_id?: string;
-    action_type?: DomainApprovalAction;
-    assigned_reviewer?: string | null;
+    framework_id?: string;
+    action_type?: FrameworkApprovalAction;
+    assigned_approver?: string | null;
     idempotency_key?: string;
     correlation_id?: string;
-    reason?: string;
-    comment?: string;
     expected_status?: string;
   } = {};
   try {
@@ -51,41 +47,27 @@ Deno.serve(async (req: Request) => {
   } catch {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
-  if (!body.domain_id || !body.action_type) {
-    return jsonResponse({ error: 'domain_id and action_type are required.' }, 400);
+
+  if (!body.framework_id || !body.action_type) {
+    return jsonResponse({ error: 'framework_id and action_type are required.' }, 400);
   }
 
-  // Ownership guard: validate that the submitted domain belongs to the caller org
-  // before creating/updating approval rows with service-role privileges.
-  const { data: ownedDomain, error: ownedDomainError } = await supabase
-    .from('mmm_domains')
-    .select('id, framework:mmm_frameworks!inner(id, organisation_id)')
-    .eq('id', body.domain_id)
-    .eq('mmm_frameworks.organisation_id', claims.orgId)
-    .maybeSingle();
-  if (ownedDomainError) {
-    return jsonResponse({ error: ownedDomainError.message || 'Failed to validate domain ownership.' }, 500);
-  }
-  if (!ownedDomain?.id) {
-    return jsonResponse({ error: 'Domain not found in caller organisation scope.' }, 403);
-  }
-
-  const transition = mapAction(body.action_type);
   const correlationId = body.correlation_id ?? body.idempotency_key ?? crypto.randomUUID();
+  const transition = mapFrameworkAction(body.action_type);
   const now = new Date().toISOString();
 
   const { data: existing, error: existingError } = await supabase
-    .from('mmm_domain_approval_requests')
-    .select('id,status,submitted_by,assigned_reviewer')
-    .eq('domain_id', body.domain_id)
+    .from('mmm_framework_approval_requests')
+    .select('id,status,organisation_id,submitted_by')
+    .eq('framework_id', body.framework_id)
     .eq('organisation_id', claims.orgId)
     .maybeSingle();
   if (existingError) {
-    return jsonResponse({ error: existingError.message || 'Failed to load domain approval request.' }, 500);
+    return jsonResponse({ error: existingError.message || 'Failed to load framework approval request.' }, 500);
   }
 
   if (existing?.submitted_by && existing.submitted_by === claims.userId && body.action_type === 'approve') {
-    return jsonResponse({ error: 'submitter and approver must differ (self-approval prohibited).' }, 403);
+    return jsonResponse({ error: 'submitter and approver must differ for executive approval.' }, 403);
   }
 
   if (body.expected_status && existing?.status && existing.status !== body.expected_status) {
@@ -95,12 +77,12 @@ Deno.serve(async (req: Request) => {
   let requestId = existing?.id as string | undefined;
   if (!requestId) {
     const { data: created, error: createError } = await supabase
-      .from('mmm_domain_approval_requests')
+      .from('mmm_framework_approval_requests')
       .insert({
         organisation_id: claims.orgId,
-        domain_id: body.domain_id,
+        framework_id: body.framework_id,
         submitted_by: claims.userId,
-        assigned_reviewer: body.assigned_reviewer ?? null,
+        assigned_approver: body.assigned_approver ?? null,
         status: transition.status,
         locked: transition.locked,
         latest_action_by: claims.userId,
@@ -109,7 +91,7 @@ Deno.serve(async (req: Request) => {
       .select('id')
       .single();
     if (createError || !created?.id) {
-      return jsonResponse({ error: createError?.message || 'Failed to create domain approval request.' }, 500);
+      return jsonResponse({ error: createError?.message || 'Failed to create framework approval request.' }, 500);
     }
     requestId = created.id as string;
   } else {
@@ -120,35 +102,33 @@ Deno.serve(async (req: Request) => {
       latest_action_at: now,
       updated_at: now,
     };
-    if (body.assigned_reviewer !== undefined) {
-      payload.assigned_reviewer = body.assigned_reviewer;
+    if (body.assigned_approver !== undefined) {
+      payload.assigned_approver = body.assigned_approver;
     }
     const { error: updateError } = await supabase
-      .from('mmm_domain_approval_requests')
+      .from('mmm_framework_approval_requests')
       .update(payload)
       .eq('id', requestId);
     if (updateError) {
-      return jsonResponse({ error: updateError.message || 'Failed to update domain approval request.' }, 500);
+      return jsonResponse({ error: updateError.message || 'Failed to update framework approval request.' }, 500);
     }
   }
 
   await supabase.from('mmm_audit_logs').insert({
-    action_type: 'DOMAIN_L2_ACTION',
+    action_type: 'FRAMEWORK_L3_ACTION',
     actor_id: claims.userId,
-    target_entity_type: 'domain',
-    target_entity_id: body.domain_id,
+    target_entity_type: 'framework',
+    target_entity_id: body.framework_id,
     after_state: {
       request_id: requestId,
       action_type: body.action_type,
-      transition: `${existing?.status ?? 'draft'}->${transition.status}`,
-      status: transition.status,
-      locked: transition.locked,
-      reason: body.reason ?? null,
-      comment: body.comment ?? null,
+      transition: transition.status,
+      approved_l2: existing?.status === 'approved_l2',
       correlation_id: correlationId,
-      assigned_reviewer: body.assigned_reviewer ?? existing?.assigned_reviewer ?? null,
+      assigned_approver: body.assigned_approver ?? null,
+      executive: true,
     },
   });
 
-  return jsonResponse({ ok: true, request_id: requestId, status: transition.status, locked: transition.locked, correlation_id: correlationId }, 200);
+  return jsonResponse({ ok: true, request_id: requestId, status: transition.status, correlation_id: correlationId }, 200);
 });
