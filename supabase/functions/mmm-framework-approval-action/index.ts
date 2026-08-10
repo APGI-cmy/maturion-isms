@@ -14,6 +14,8 @@ function mapFrameworkAction(action: FrameworkApprovalAction): { status: string; 
       return { status: 'returned_l3', locked: false };
     case 'approve':
       return { status: 'approved_l3', locked: true };
+    default:
+      throw new Error(`Unknown framework approval action: ${action}`);
   }
 }
 

@@ -16,6 +16,8 @@ function mapAction(action: DomainApprovalAction): { status: string; locked: bool
       return { status: 'submitted_l2', locked: true };
     case 'approve':
       return { status: 'approved_l2', locked: true };
+    default:
+      throw new Error(`Unknown domain approval action: ${action}`);
   }
 }
 
