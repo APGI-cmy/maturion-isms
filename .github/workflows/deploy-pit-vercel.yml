@@ -168,13 +168,19 @@ jobs:
           PIT_VERCEL_ORG_ID: ${{ secrets.PIT_VERCEL_ORG_ID }}
           PIT_VERCEL_PROJECT_ID: ${{ secrets.PIT_VERCEL_PROJECT_ID }}
         run: |
-          mkdir -p .vercel
-          printf '{"projectId":"%s","orgId":"%s"}\n' "$PIT_VERCEL_PROJECT_ID" "$PIT_VERCEL_ORG_ID" > .vercel/project.json
+          mkdir -p apps/isms-portal/.vercel
+          printf '{"projectId":"%s","orgId":"%s"}\n' "$PIT_VERCEL_PROJECT_ID" "$PIT_VERCEL_ORG_ID" > apps/isms-portal/.vercel/project.json
+      - name: Pull PIT preview settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.PIT_VERCEL_TOKEN }} --cwd=apps/isms-portal
+      - name: Build PIT preview artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --token=${{ secrets.PIT_VERCEL_TOKEN }} --cwd=apps/isms-portal
       - name: Deploy PIT preview
         if: steps.secret_check.outputs.configured == 'true'
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --token=${{ secrets.PIT_VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --token=${{ secrets.PIT_VERCEL_TOKEN }} --cwd=apps/isms-portal)
           echo "preview-url=$url" >> "$GITHUB_OUTPUT"
       - name: PIT route smoke test
         if: steps.secret_check.outputs.configured == 'true'
@@ -277,8 +283,14 @@ jobs:
           PIT_VERCEL_ORG_ID: ${{ secrets.PIT_VERCEL_ORG_ID }}
           PIT_VERCEL_PROJECT_ID: ${{ secrets.PIT_VERCEL_PROJECT_ID }}
         run: |
-          mkdir -p .vercel
-          printf '{"projectId":"%s","orgId":"%s"}\n' "$PIT_VERCEL_PROJECT_ID" "$PIT_VERCEL_ORG_ID" > .vercel/project.json
+          mkdir -p apps/isms-portal/.vercel
+          printf '{"projectId":"%s","orgId":"%s"}\n' "$PIT_VERCEL_PROJECT_ID" "$PIT_VERCEL_ORG_ID" > apps/isms-portal/.vercel/project.json
+      - name: Pull PIT production settings
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=production --token=${{ secrets.PIT_VERCEL_TOKEN }} --cwd=apps/isms-portal
+      - name: Build PIT production artifacts
+        if: steps.secret_check.outputs.configured == 'true'
+        run: vercel build --prod --token=${{ secrets.PIT_VERCEL_TOKEN }} --cwd=apps/isms-portal
       - name: Deploy PIT production
         if: steps.secret_check.outputs.configured == 'true'
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.PIT_VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.PIT_VERCEL_TOKEN }} --cwd=apps/isms-portal
