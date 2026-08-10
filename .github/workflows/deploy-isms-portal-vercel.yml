@@ -143,7 +143,7 @@ jobs:
         id: deploy
         run: |
           set -euo pipefail
-          url=$(vercel deploy --prebuilt --token=${{ secrets.ISMS_VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --token=${{ secrets.ISMS_VERCEL_TOKEN }} --cwd=apps/isms-portal)
           echo "preview-url=$url" >> "$GITHUB_OUTPUT"
           echo "Preview URL: $url"
       - name: ISMS SPA smoke test
@@ -282,7 +282,7 @@ jobs:
         if: steps.secret_check.outputs.configured == 'true'
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.ISMS_VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.ISMS_VERCEL_TOKEN }} --cwd=apps/isms-portal)
           echo "production-url=$url" >> "$GITHUB_OUTPUT"
           echo "Production URL: $url"
       - name: Record skipped ISMS production deployment
