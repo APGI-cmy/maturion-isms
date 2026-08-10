@@ -46,7 +46,7 @@ on:
 
 env:
   NODE_VERSION: '22'
-  PNPM_VERSION: '9.12.0'
+  PNPM_VERSION: '10.x'
   PIT_DEPLOYMENT_MODE: integrated-shell
   PIT_HOST_PACKAGE_FILTER: isms-portal
   PIT_HOST_OUTPUT_DIR: apps/isms-portal/dist
