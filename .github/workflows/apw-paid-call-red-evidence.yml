@@ -1,0 +1,43 @@
+name: APW Paid-Call Durable Spend Evidence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.agent-admin/qa-to-red/pr-1976/**'
+      - 'apps/mat-ai-gateway/**'
+      - 'supabase/migrations/**apw_durable_paid_call_budget.sql'
+      - 'Maturion/prebuild/runtime-activation-readiness/APW-Paid-Call-Readiness-and-Spend-Control-v0.1.md'
+      - '.github/workflows/apw-paid-call-red-evidence.yml'
+  workflow_dispatch:
+
+jobs:
+  durable-spend-evidence:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r apps/mat-ai-gateway/requirements.txt pytest httpx
+      - name: Run APW-RED-PAID-001..016 as GREEN contract
+        working-directory: apps/mat-ai-gateway
+        run: |
+          PYTHONPATH=. python -m pytest ../../.agent-admin/qa-to-red/pr-1976/test_public_chat_durable_spend_red.py -q | tee "$GITHUB_WORKSPACE/apw-paid-call-durable-green.log"
+          grep -Eq '16 passed' "$GITHUB_WORKSPACE/apw-paid-call-durable-green.log"
+      - name: Run existing GREEN public-chat regression
+        working-directory: apps/mat-ai-gateway
+        run: python -m pytest tests/test_public_chat.py -q
+      - name: Run full gateway regression
+        working-directory: apps/mat-ai-gateway
+        run: python -m pytest tests/ -q
+      - name: Upload durable spend evidence
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: apw-paid-call-durable-spend-evidence-${{ github.sha }}
+          path: apw-paid-call-durable-green.log
+          if-no-files-found: error

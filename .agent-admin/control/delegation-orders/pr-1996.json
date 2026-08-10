@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "public-profiles-root-provenance-recovery-20260729-gate-corrected",
+  "governing_issue": 1993,
+  "pr_number": 1996,
+  "prebrief_commit_sha": "db19d7e79b84ad6d714dee34453b17446f12ccf8",
+  "builder_appointment_timestamp": "2026-07-29T11:42:00Z",
+  "builder_appointment_commit_sha": "eabee2a68422c0b8231606f8ab6e38a5da4a55e3",
+  "builder_agent": "Copilot schema-builder",
+  "builder_task_ref": "T-1993-SOURCE-001: source-only public.profiles root recovery",
+  "first_implementation_commit_sha": "85e442da91a2e22c280ad520a614fc30054533bc",
+  "qp_review_timestamp": "2026-07-29T11:45:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "scope_declaration_ref": ".agent-admin/scope-declarations/pr-1996.md",
+  "prebrief_ref": ".agent-admin/assurance/iaa-wave-record-public-profiles-root-provenance-recovery-20260729-gate-corrected.md",
+  "builder_appointment_ref": ".agent-admin/builder-appointments/pr-1993-public-profiles-root-recovery-gate-corrected.md",
+  "objective": "Prove only the required order: canonical IAA pre-brief, builder appointment, then intended-RED QA implementation.",
+  "hard_boundaries": [
+    "No production SQL",
+    "No Supabase project or branch creation",
+    "No QP, ECAP, final IAA, clean-bootstrap, or merge claim"
+  ]
+}
