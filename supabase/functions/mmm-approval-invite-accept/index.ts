@@ -146,11 +146,19 @@ Deno.serve(async (req: Request) => {
       .eq('id', inv.approval_round_id)
       .maybeSingle();
 
+    // STOP if round lookup fails (organisation_id is NOT NULL in schema)
+    if (roundAuditError || !roundForAudit) {
+      return jsonResponse(
+        { error: 'Failed to retrieve round organisation for audit', details: roundAuditError?.message || 'Round not found' },
+        500
+      );
+    }
+
     // Create audit event for invitation acceptance
     const { error: auditError } = await supabase
       .from('mmm_approval_audit_events')
       .insert({
-        organisation_id: roundForAudit?.organisation_id,
+        organisation_id: roundForAudit.organisation_id,
         approval_round_id: inv.approval_round_id,
         event_type: 'invitation_accepted',
         actor_id: user_id || null,
@@ -159,7 +167,7 @@ Deno.serve(async (req: Request) => {
       });
 
     if (auditError) {
-      console.error('Audit event error (non-blocking):', auditError);
+      return jsonResponse({ error: 'Failed to create audit event', details: auditError.message }, 500);
     }
 
     // Transition round status from invited to in_review when first approver accepts
@@ -187,17 +195,18 @@ Deno.serve(async (req: Request) => {
     }
 
     // Create notification event to inform Level 1 that approver has accepted
+    // Organisation ID must come from round, not from invitations (invitations table has no organisation_id)
     const idempotencyKey = `approver_accepted:${inv.approver_id}:${inv.approval_round_id}`;
     const { error: notifError } = await supabase
       .from('mmm_approval_notification_events')
       .insert({
-        organisation_id: inv.organisation_id,
+        organisation_id: roundForAudit.organisation_id,
         approval_round_id: inv.approval_round_id,
-        recipient_email: inv.email,
+        recipient_email: email,
         notification_type: 'approver_accepted',
         payload_json: {
-          approver_full_name: inv.full_name || 'Approver',
-          approver_email: inv.email,
+          approver_full_name: full_name || 'Approver',
+          approver_email: email,
         },
         idempotency_key: idempotencyKey,
         status: 'queued',
@@ -205,7 +214,7 @@ Deno.serve(async (req: Request) => {
       });
 
     if (notifError) {
-      console.error('Notification event error (non-blocking):', notifError);
+      return jsonResponse({ error: 'Failed to queue notification event', details: notifError.message }, 500);
     }
 
     return jsonResponse({
