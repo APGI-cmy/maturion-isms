@@ -164,7 +164,7 @@ Deno.serve(async (req: Request) => {
           author_user_id: userId,
           author_role: 'level_2',
           body: round_comment,
-          visibility: 'all_participants',
+          visibility: 'round_participants',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })

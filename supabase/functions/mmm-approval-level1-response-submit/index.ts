@@ -74,8 +74,8 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: 'Approval round not found' }, 404);
     }
 
-    // Authorisation: User must be the framework owner (Level 1)
-    if (level_1_user_id !== userId) {
+    // Authorisation: User must be the framework owner (Level 1) — derived from round, not request body
+    if (round.submitted_by_user_id !== userId) {
       return jsonResponse({ error: 'Unauthorised: not the framework owner' }, 403);
     }
 
@@ -157,6 +157,43 @@ Deno.serve(async (req: Request) => {
 
       if (response.action === 'accepted' || response.action === 'edited_by_level_1') {
         appliedChangeIds.push(response.proposed_change_id);
+
+        // Write final_value to the actual target object in the maturity model
+        if (response.final_value) {
+          const objectId = change.object_id;
+          const objectType = change.object_type as string;
+          let writeError: { message: string } | null = null;
+
+          if (objectType === 'domain') {
+            const { error } = await supabase
+              .from('mmm_domains')
+              .update({ name: response.final_value, updated_at: new Date().toISOString() })
+              .eq('id', objectId);
+            writeError = error;
+          } else if (objectType === 'mps' || objectType === 'intent_statement') {
+            const { error } = await supabase
+              .from('mmm_maturity_process_steps')
+              .update({ intent_statement: response.final_value, updated_at: new Date().toISOString() })
+              .eq('id', objectId);
+            writeError = error;
+          } else if (objectType === 'criterion') {
+            const { error } = await supabase
+              .from('mmm_criteria')
+              .update({ name: response.final_value, updated_at: new Date().toISOString() })
+              .eq('id', objectId);
+            writeError = error;
+          } else if (objectType === 'maturity_descriptor') {
+            const { error } = await supabase
+              .from('mmm_level_descriptors')
+              .update({ descriptor_text: response.final_value })
+              .eq('id', objectId);
+            writeError = error;
+          }
+
+          if (writeError) {
+            return jsonResponse({ error: 'Failed to apply final value to target object', details: writeError.message }, 500);
+          }
+        }
       }
 
       // Create audit event

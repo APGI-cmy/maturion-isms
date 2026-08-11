@@ -102,6 +102,16 @@ Deno.serve(async (req: Request) => {
 
     // Level 3 prerequisite check: verify all required domains have level 2 approval
     if (approval_level === 'level_3') {
+      // Fetch all domains for this framework
+      const { data: frameworkDomains, error: domainsError } = await supabase
+        .from('mmm_domains')
+        .select('id')
+        .eq('framework_id', framework_id);
+
+      if (domainsError) {
+        return jsonResponse({ error: 'Database error fetching framework domains', details: domainsError.message }, 500);
+      }
+
       const { data: l2Approvals, error: l2Error } = await supabase
         .from('mmm_approval_rounds')
         .select('domain_id')
@@ -113,10 +123,14 @@ Deno.serve(async (req: Request) => {
         return jsonResponse({ error: 'Database error checking L2 prerequisites', details: l2Error.message }, 500);
       }
 
-      // For Level 3, we need at least one L2 approval (simplified—real logic would verify all required domains)
-      if (!l2Approvals || l2Approvals.length === 0) {
+      // Every framework domain must have an approved_by_all L2 round
+      const approvedDomainIds = new Set((l2Approvals || []).map((r: { domain_id: string }) => r.domain_id));
+      const requiredDomainIds = (frameworkDomains || []).map((d: { id: string }) => d.id);
+      const missingDomains = requiredDomainIds.filter((id: string) => !approvedDomainIds.has(id));
+
+      if (requiredDomainIds.length === 0 || missingDomains.length > 0) {
         return jsonResponse(
-          { error: 'Level 3 round cannot proceed: required Level 2 approvals not yet complete' },
+          { error: 'Level 3 round cannot proceed: all framework domains must have an approved Level 2 round' },
           400
         );
       }

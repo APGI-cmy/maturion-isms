@@ -393,7 +393,7 @@ CREATE POLICY "mmm_approval_invitations_select_own_org"
   FOR SELECT
   USING (EXISTS (
     SELECT 1 FROM public.mmm_approval_approvers a
-    WHERE a.id = approval_invitations.approver_id
+    WHERE a.id = mmm_approval_invitations.approver_id
     AND a.organisation_id = mmm_current_user_org_id()
   ));
 
@@ -403,7 +403,7 @@ CREATE POLICY "mmm_approval_invitations_insert_own_org"
   FOR INSERT
   WITH CHECK (EXISTS (
     SELECT 1 FROM public.mmm_approval_approvers a
-    WHERE a.id = approval_invitations.approver_id
+    WHERE a.id = mmm_approval_invitations.approver_id
     AND a.organisation_id = mmm_current_user_org_id()
   ));
 
@@ -434,7 +434,7 @@ CREATE POLICY "mmm_approval_comments_select_own_org"
   FOR SELECT
   USING (EXISTS (
     SELECT 1 FROM public.mmm_approval_rounds r
-    WHERE r.id = approval_comments.approval_round_id
+    WHERE r.id = mmm_approval_comments.approval_round_id
     AND r.organisation_id = mmm_current_user_org_id()
   ));
 
@@ -444,7 +444,7 @@ CREATE POLICY "mmm_approval_comments_insert_own_org"
   FOR INSERT
   WITH CHECK (EXISTS (
     SELECT 1 FROM public.mmm_approval_rounds r
-    WHERE r.id = approval_comments.approval_round_id
+    WHERE r.id = mmm_approval_comments.approval_round_id
     AND r.organisation_id = mmm_current_user_org_id()
   ));
 
