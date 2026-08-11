@@ -4,9 +4,9 @@
 **Wave Reference**: MMM Issue #2004  
 **Repository**: APGI-cmy/maturion-isms  
 **Branch**: apgi-cmy-jubilant-journey  
-**Head Commit**: 19f8373c  
+**Head Commit**: 31be19b58883da97f9919f556f4459830a44bad4  
 **Date**: 2026-08-11  
-**Status**: IAA PRE-BRIEF BINDING — AWAITING IAA FINAL ASSURANCE
+**Status**: BLOCKED CHECKPOINT RECORD — NOT AN IAA VERDICT
 
 ---
 
@@ -25,7 +25,9 @@
 
 ### 1.2 What Was Built
 
-**6 Edge Functions** implementing the full MMM Approval Workflow state machine against migration `20260810000001_mmm_approval_workflow_foundation.sql`:
+This record is retained only as a current-head checkpoint of builder-visible facts. It does **not** constitute an IAA pre-brief approval, IAA final assurance, or wave authorization record for current-head handover.
+
+**7 Edge Functions** are in current PR scope against migration `20260810000001_mmm_approval_workflow_foundation.sql`:
 
 1. `mmm-approval-round-create` — Creates round, approvers, invitations, audit events; state: draft→invited
 2. `mmm-approval-invite-accept` — Token validation, user binding; state: invited→in_review; with explicit 500 on lookup failure before any NOT NULL audit insert
@@ -33,6 +35,7 @@
 4. `mmm-approval-decision-submit` — L2/L3 consensus + domain lock; correct decision_at field
 5. `mmm-approval-level1-response-submit` — L1 decision + learning events; correct null approval_level
 6. `mmm-approval-lock-transition` — Service-role lock transitions; UUID actor_id
+7. `mmm-approval-workspace-read` — Workspace read path with JWT/RLS filtering
 
 **Migration**: 8 tables, 10 enums, org-level RLS via mmm_current_user_org_id()
 
@@ -40,11 +43,11 @@
 
 | Test File | Tests | Status |
 |-----------|-------|--------|
-| approval-edge-functions-executable.test.ts | 26/26 | ✅ PASS |
-| approval-foundation-contract.test.ts | 10/10 | ✅ PASS |
-| approval-workflow-foundation-red.test.ts | 8/8 | ✅ PASS |
-| sidebar-context-and-mps-approval.test.ts | 15/15 | ✅ PASS |
-| **Total** | **59/59** | **✅ PASS** |
+| approval-edge-functions-executable.test.ts | stale | ⚠️ Needs rerun after seven-function expansion at current head |
+| approval-foundation-contract.test.ts | not reasserted here | ⚠️ No positive claim |
+| approval-workflow-foundation-red.test.ts | not reasserted here | ⚠️ No positive claim |
+| sidebar-context-and-mps-approval.test.ts | not reasserted here | ⚠️ No positive claim |
+| **Total** | **current-head verdict pending** | **❌ BLOCKED** |
 
 ### 1.4 Schema Reconciliation Evidence
 
@@ -79,7 +82,7 @@ All critical schema mismatches fixed (from STOP_AND_FIX at commit 516ac3f5):
 
 ## 2. IAA INDEPENDENCE DECLARATION
 
-IAA is independent of Foreman and builder. IAA must:
+IAA is independent of Foreman and builder. No IAA verdict is created or implied by this record. IAA must:
 1. Independently verify the 26 direct Edge Function tests cover all material schema paths
 2. Independently verify the audit lookup guard exists and returns 500 before NOT NULL write
 3. Independently verify RLS enforcement cannot be bypassed client-side
@@ -90,25 +93,12 @@ IAA is independent of Foreman and builder. IAA must:
 
 ---
 
-## 3. ECAP ADMIN BOUNDARY
+## 3. CURRENT BLOCKERS
 
-### 3.1 Admin Artifacts for ECAP Review
-
-| Artifact | Location | Status |
-|----------|----------|--------|
-| Scope declaration | .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-2004-* | ✅ Created |
-| IAA pre-brief binding | This file (§1) | ✅ Created |
-| Builder appointment | Commit cbf9dcc9 | ✅ Committed |
-| Pre-brief | Commit bebd2583 | ✅ Committed |
-| Remediation evidence | FOREMAN_REMEDIATION_EVIDENCE_MMM_2004.md | ✅ Committed |
-| QP verdict | Foreman scope declaration §4 | ✅ Recorded |
-
-### 3.2 ECAP Boundary Rule
-
-ECAP validates admin artifacts only. ECAP cannot:
-- Substitute for IAA assurance verdict
-- Claim build readiness (that is Foreman/QP domain)
-- Override IAA or Foreman authority
+1. Foreman STOP_AND_FIX requires current-head-only truthful artifacts and removal of stale positive claims.
+2. Seven-function direct executable coverage is required; prior suite omitted `mmm-approval-workspace-read`.
+3. CS2 must resolve the non-retroactive prebrief/delegation breach for Issue #2004 integration-builder lane.
+4. No ECAP or IAA progression may be claimed until the above conditions are cleared by their proper authorities.
 
 ---
 
@@ -116,15 +106,15 @@ ECAP validates admin artifacts only. ECAP cannot:
 
 | Gate | Status | Evidence |
 |------|--------|----------|
-| Worktree clean at 19f8373c | ✅ PASS | git status clean |
-| Builder QP PASS | ✅ PASS | Foreman QP verdict (scope declaration §4) |
-| IAA pre-brief present and bound | ✅ PASS | This file + commit bebd2583 |
-| Admin artifacts present | ✅ PASS | Scope declaration + IAA wave record |
-| ECAP admin validation | ⏳ PENDING | Awaiting ECAP review |
-| IAA final assurance | ⏳ PENDING | Awaiting IAA verdict |
-| handover-allowed record | ⏳ PENDING | To be created after IAA PASS |
-| PR open at head | ⏳ PENDING | No open PR yet for apgi-cmy-jubilant-journey |
-| Required CI checks green | ⏳ PENDING | PR must be opened to run checks |
+| Worktree clean at current head | ⏳ PENDING | Re-check after builder remediation commit |
+| Builder QP PASS | ❌ BLOCKED | Active Foreman STOP_AND_FIX at current head |
+| IAA pre-brief present and applicable | ❌ DISPUTED | CS2 must resolve Issue #2004 lane applicability/order |
+| Admin artifacts truthful at current head | ❌ BLOCKED | stale positive artifacts must not stand |
+| ECAP admin validation | 🚫 NOT STARTED | No self-created ECAP state permitted |
+| IAA final assurance | 🚫 NOT STARTED | No self-created IAA verdict permitted |
+| handover-allowed record | 🚫 BLOCKED | must remain false until proper gate progression |
+| PR open at head | ⏳ PENDING | Out of scope for this checkpoint |
+| Required CI checks green | ⏳ PENDING | Cannot be claimed here |
 
 ---
 
@@ -132,17 +122,17 @@ ECAP validates admin artifacts only. ECAP cannot:
 
 | Stage | Status | Date |
 |-------|--------|------|
-| Pre-brief | ✅ COMPLETE | Prior to build (bebd2583) |
-| Builder appointment | ✅ COMPLETE | cbf9dcc9 |
-| Build execution | ✅ COMPLETE | Multiple commits through 19f8373c |
-| Foreman QP | ✅ PASS | 2026-08-11 |
-| ECAP admin validation | ⏳ PENDING | — |
-| IAA final assurance | ⏳ PENDING | — |
+| Pre-brief | ⚠️ DISPUTED | historical artifact exists; applicability/order unresolved |
+| Builder appointment | ⚠️ DISPUTED | historical artifact exists; applicability/order unresolved |
+| Build execution | ✅ COMPLETE | implementation commits exist on branch |
+| Foreman QP | ❌ STOP_AND_FIX | current head requires remediation |
+| ECAP admin validation | 🚫 NOT STARTED | — |
+| IAA final assurance | 🚫 NOT STARTED | — |
 | CS2 merge decision | ⏳ PENDING | — |
 
 ---
 
-**Wave Authority**: Foreman (Copilot CLI, 2026-08-11)  
-**IAA Independence**: REQUIRED — IAA must issue independently  
+**Checkpoint Authority**: Builder-authored blocked-state record only  
+**IAA Independence**: REQUIRED — only IAA may issue IAA verdicts  
 **ECAP Boundary**: Admin artifacts only; no readiness authority  
 **CS2 Merge Authority**: Reserved — no autonomous merge

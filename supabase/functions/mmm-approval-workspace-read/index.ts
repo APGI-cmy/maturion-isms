@@ -92,9 +92,9 @@ Deno.serve(async (req: Request) => {
 
     // Build status filter
     const statusMap: Record<string, string[]> = {
-      pending: ['drafted', 'invited', 'in_review', 'changes_requested'],
-      approved: ['approved', 'approved_by_all'],
-      rejected: ['rejected', 'superseded', 'cancelled'],
+      pending: ['draft', 'invited', 'in_review', 'changes_requested', 'resubmitted', 'approved_by_some'],
+      approved: ['approved_by_all'],
+      rejected: ['superseded', 'cancelled'],
     };
     const statuses = statusMap[filter];
 

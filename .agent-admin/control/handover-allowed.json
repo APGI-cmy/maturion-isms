@@ -1,1 +1,22 @@
-{  "schema_version": "1.0.0",  "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",  "pr_number": 2006,  "current_head_sha": "b8acd07d2dc42ab1f0c28c0975e204250ff8768d",  "state": "PRE_HANDOVER_GATE_PASS",  "handover_allowed": true,  "foreman_qp_pass": true,  "builder_delegation_verified": true,  "delegation_precedes_implementation": true,  "iaa_prebrief_ready": true,  "scope_current": true,  "ecap_required": true,  "ecap_admin_validated": true,  "all_required_checks_green": true,  "iaa_final_required": true,  "blocking_findings": []}
+{
+  "schema_version": "1.0.0",
+  "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
+  "pr_number": 2006,
+  "current_head_sha": "31be19b58883da97f9919f556f4459830a44bad4",
+  "state": "BLOCKED",
+  "handover_allowed": false,
+  "foreman_qp_pass": false,
+  "builder_delegation_verified": false,
+  "delegation_precedes_implementation": false,
+  "iaa_prebrief_ready": false,
+  "scope_current": false,
+  "ecap_required": true,
+  "ecap_admin_validated": false,
+  "all_required_checks_green": false,
+  "iaa_final_required": true,
+  "blocking_findings": [
+    "Current PR head 31be19b58883da97f9919f556f4459830a44bad4 does not have current-head-only truthful handover controls.",
+    "CS2 resolution required for non-retroactive prebrief/delegation breach on Issue #2004 integration-builder lane.",
+    "Foreman QP rerun pending after seven-function executable test coverage and control truthfulness remediation."
+  ]
+}

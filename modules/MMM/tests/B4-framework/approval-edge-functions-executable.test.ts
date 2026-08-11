@@ -11,13 +11,14 @@
  * - Issue #2004: Approval Workflow Foundation Runtime
  * - Wave: mmm-approval-foundation-runtime-build-to-green
  *
- * Coverage (6 Edge Functions):
+ * Coverage (7 Edge Functions):
  * 1. mmm-approval-round-create: Create round + approvers + invitations + audit
  * 2. mmm-approval-decision-submit: Submit L2/L3 decision + audit
  * 3. mmm-approval-proposed-changes-submit: Submit proposed changes + audit
  * 4. mmm-approval-invite-accept: Accept invitation + create audit (ERROR HANDLING FIX)
  * 5. mmm-approval-level1-response-submit: L1 response + learning events + audit
  * 6. mmm-approval-lock-transition: Lock round before L2 changes
+ * 7. mmm-approval-workspace-read: Workspace data read with RLS filtering
  *
  * Test Strategy:
  * - Read source code directly
@@ -184,6 +185,7 @@ describe('EXECUTABLE: Edge Function Schema-Contract Validation (Issue #2004)', (
       'mmm-approval-invite-accept',
       'mmm-approval-level1-response-submit',
       'mmm-approval-lock-transition',
+      'mmm-approval-workspace-read',
     ];
 
     for (const func of functions) {
@@ -330,9 +332,48 @@ describe('EXECUTABLE: Edge Function Schema-Contract Validation (Issue #2004)', (
     });
   });
 
+  describe('7. mmm-approval-workspace-read', () => {
+    const code = () => functionCodes['mmm-approval-workspace-read'];
+
+    it('should validate JWT before reading workspace data', () => {
+      if (!code()) return;
+      expect(code()).toContain('validateJWT');
+    });
+
+    it('should filter approval rounds by organisation_id', () => {
+      if (!code()) return;
+      expect(code()).toMatch(/mmm_approval_rounds[\s\S]*?organisation_id/);
+    });
+
+    it('should use schema-valid round statuses in filters', () => {
+      if (!code()) return;
+      expect(code()).toMatch(/pending:\s*\[\s*'draft',\s*'invited',\s*'in_review',\s*'changes_requested',\s*'resubmitted',\s*'approved_by_some'\s*\]/);
+      expect(code()).toMatch(/approved:\s*\[\s*'approved_by_all'\s*\]/);
+      expect(code()).toMatch(/rejected:\s*\[\s*'superseded',\s*'cancelled'\s*\]/);
+      expect(code()).not.toMatch(/pending:\s*\[[^\]]*'drafted'/);
+      expect(code()).not.toMatch(/approved:\s*\[[^\]]*'approved'/);
+      expect(code()).not.toMatch(/rejected:\s*\[[^\]]*'rejected'/);
+    });
+
+    it('should read notification events with organisation_id filter', () => {
+      if (!code()) return;
+      expect(code()).toMatch(/mmm_approval_notification_events[\s\S]*?organisation_id/);
+      expect(code()).toContain('notification_events');
+    });
+  });
+
   describe('Cross-Function Consistency', () => {
+    const writePathFunctions = [
+      'mmm-approval-round-create',
+      'mmm-approval-decision-submit',
+      'mmm-approval-proposed-changes-submit',
+      'mmm-approval-invite-accept',
+      'mmm-approval-level1-response-submit',
+      'mmm-approval-lock-transition',
+    ];
+
     it('all functions should use mmm_approval_audit_events table', () => {
-      for (const func of Object.keys(functionCodes)) {
+      for (const func of writePathFunctions) {
         expect(functionCodes[func]).toContain('mmm_approval_audit_events', `${func} missing audit events table`);
       }
     });
@@ -344,7 +385,7 @@ describe('EXECUTABLE: Edge Function Schema-Contract Validation (Issue #2004)', (
     });
 
     it('all functions should use correct actor_role enum', () => {
-      for (const func of Object.keys(functionCodes)) {
+      for (const func of writePathFunctions) {
         expect(functionCodes[func]).toMatch(/actor_role.*(?:level_[123]|system)/, `${func} invalid actor_role`);
       }
     });
@@ -367,6 +408,9 @@ describe('EXECUTABLE: Edge Function Schema-Contract Validation (Issue #2004)', (
         'mmm-approval-decision-submit',
         'mmm-approval-proposed-changes-submit',
         'mmm-approval-invite-accept',
+        'mmm-approval-level1-response-submit',
+        'mmm-approval-lock-transition',
+        'mmm-approval-workspace-read',
       ];
 
       for (const func of required) {
@@ -405,7 +449,7 @@ describe('EXECUTABLE: Edge Function Schema-Contract Validation (Issue #2004)', (
  *
  * Pass Criteria:
  * - All code pattern assertions pass
- * - All 6 Edge Functions loaded successfully
+ * - All 7 Edge Functions loaded successfully
  * - Schema definition coverage complete
  * - Error handling paths validated
  *

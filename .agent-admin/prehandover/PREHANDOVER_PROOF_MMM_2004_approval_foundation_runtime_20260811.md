@@ -3,17 +3,17 @@
 
 **Session Reference**: Foreman orchestration — MMM Issue #2004  
 **Branch**: apgi-cmy-jubilant-journey  
-**Head Commit at Checkpoint**: 19f8373c  
+**Head Commit at Checkpoint**: 31be19b58883da97f9919f556f4459830a44bad4  
 **Date**: 2026-08-11  
-**Foreman Posture**: PRE-HANDOVER — Awaiting ECAP + IAA Final Assurance
+**Foreman Posture**: BLOCKED — QP STOP_AND_FIX ACTIVE
 
 ---
 
 ## PREHANDOVER CHECKPOINT RESULT
 
-**Status**: PRE-HANDOVER CONDITIONS MET FOR ECAP/IAA PROGRESSION
+**Status**: PRE-HANDOVER CONDITIONS NOT MET
 
-All pre-conditions for ECAP → IAA progression are satisfied at current head `19f8373c`.
+This artifact is retained as a current-head checkpoint record only. ECAP/IAA progression is blocked at current head `31be19b58883da97f9919f556f4459830a44bad4` pending truthful-control remediation, seven-function executable coverage, and CS2 resolution of the non-retroactive prebrief/delegation breach.
 
 ---
 
@@ -21,50 +21,48 @@ All pre-conditions for ECAP → IAA progression are satisfied at current head `1
 
 | Gate | Status | Evidence |
 |------|--------|----------|
-| Builder QP PASS at current head | ✅ PASS | Foreman QP verdict — 26/26 direct Edge Function tests + full schema reconciliation |
-| Worktree clean (no uncommitted changes) | ✅ PASS | `git status` — clean at 19f8373c |
-| Governance artifacts committed | ✅ PASS | Pre-brief (bebd2583), appointment (cbf9dcc9), remediation evidence (3a7feb1f, 19f8373c) |
-| Scope declaration present | ✅ PASS | scope-declaration-wave-mmm-2004-approval-foundation-runtime-20260811.md |
-| IAA wave record / pre-brief binding | ✅ PASS | iaa-wave-record-mmm-2004-approval-foundation-runtime-20260811.md |
-| POLC boundary maintained | ✅ PASS | Builder implemented; Foreman orchestrated; no role crossover |
-| No outstanding builder STOP_AND_FIX | ✅ PASS | All STOP_AND_FIX items resolved (3a7feb1f) |
-| No .skip()/.todo() in test files | ✅ PASS | Direct source inspection + test execution confirms |
+| Builder QP PASS at current head | ❌ BLOCKED | Foreman STOP_AND_FIX requires seven-function executable coverage and truthful current-head controls |
+| Worktree clean (no uncommitted changes) | ⏳ PENDING | Re-check after remediation commit |
+| Governance artifacts committed | ❌ BLOCKED | Existing positive admin artifacts are stale and over-claim authority at prior heads |
+| Scope declaration present | ⚠️ STALE | Existing declaration references prior head and invalid QP PASS posture |
+| IAA wave record / pre-brief binding | ❌ BLOCKED | Existing record over-claims IAA progression and must not stand as positive evidence |
+| POLC boundary maintained | ✅ PASS | Builder implemented; Foreman/IAA/ECAP verdicts not recreated here |
+| No outstanding builder STOP_AND_FIX | ❌ BLOCKED | Foreman STOP_AND_FIX active at current head |
+| No .skip()/.todo() in test files | ⏳ PENDING | Re-evaluate after seven-function suite update and rerun |
 
 ---
 
 ## Evidence Summary
 
 ### Code Evidence
-- **6 Edge Functions** fully schema-reconciled against migration 20260810000001
-- **26/26 direct schema-contract tests** PASS (approval-edge-functions-executable.test.ts)
-- **59/59 total tests** PASS across all four test files
+- **7 Edge Functions** in PR scope require direct executable coverage, including `mmm-approval-workspace-read`
+- Existing 26-test suite is insufficient until expanded and rerun at current head
+- No positive aggregate PASS claim is made in this checkpoint
 - **Null-safety fix**: mmm-approval-invite-accept returns explicit 500 on failed round lookup before any NOT NULL audit write
 
 ### Governance Evidence
 - Pre-brief committed: bebd2583
 - Builder appointment committed: cbf9dcc9
-- STOP_AND_FIX remediation complete: 3a7feb1f
-- Executable validation complete: 19f8373c
-- Schema reconciliation detailed: FOREMAN_REMEDIATION_EVIDENCE_MMM_2004.md
+- Historical ordering and applicability to Issue #2004 integration-builder lane remain disputed and require CS2 resolution
+- Prior positive evidence artifacts tied to 19f8373c/b8acd07d are not authoritative for current head
 
 ### Remaining Gates (ECAP → IAA → CS2)
-1. **ECAP admin validation** — Admin artifact boundary review
-2. **IAA final assurance** — Independent binary ASSURANCE-TOKEN or REJECTION-PACKAGE
-3. **PR open** — Open PR for apgi-cmy-jubilant-journey → main
-4. **Required CI checks** — Green at current head on open PR
-5. **handover-allowed** — To be created after IAA PASS
-6. **CS2 merge decision** — Final authority
+1. **Builder remediation** — revert weakened gate, fix seventh-function coverage, rerun tests
+2. **CS2 determination** — explicit waiver or restart/rebase for non-retroactive prebrief/delegation breach
+3. **Foreman QP rerun** — only after clean current-head remediation is committed
+4. **ECAP admin validation** — only if Foreman advances lane
+5. **IAA final assurance** — only if independently invoked after valid progression
+6. **CS2 merge decision** — final authority
 
 ---
 
 ## Foreman Declaration
 
-Foreman declares:
-- QP has been performed at current head 19f8373c and result is PASS
-- All builder STOP_AND_FIX items are resolved
-- Pre-build process artifacts are committed and traceable
-- Lane is ready to progress to ECAP admin validation, then IAA final assurance
-- No merge-ready claim is made at this stage — CS2 retains merge authority
+Checkpoint declaration:
+- This lane is currently BLOCKED by active Foreman STOP_AND_FIX findings.
+- No QP PASS, ECAP validation, IAA assurance, CI PASS, or handover-allowed posture is claimed here.
+- Historical prebrief/delegation chain applicability for Issue #2004 integration-builder remains unresolved and is escalated to CS2.
+- This artifact is a truthful blocked-state record only.
 
 **Authority**: Foreman orchestration (Copilot CLI, 2026-08-11)  
 **Governed by**: Foreman contract v2.17.0  
