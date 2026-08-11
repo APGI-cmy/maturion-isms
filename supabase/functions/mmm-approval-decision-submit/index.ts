@@ -27,7 +27,7 @@ import { jsonResponse, corsHeaders, validateJWT } from '../_shared/mmm-auth.ts';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
-type Decision = 'approved' | 'changes_requested' | 'rejected';
+type Decision = 'approved' | 'changes_requested' | 'declined';
 
 interface SubmitDecisionRequest {
   approval_round_id: string;
@@ -83,6 +83,10 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: 'Approver not found in this round' }, 403);
     }
 
+    if (approver.user_id !== userId) {
+      return jsonResponse({ error: 'Authenticated user is not the assigned approver' }, 403);
+    }
+
     // Check for pending proposed changes by this approver
     const { data: pendingChanges, error: pendingError } = await supabase
       .from('mmm_approval_proposed_changes')
@@ -102,11 +106,13 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const approverStatus = decision === 'approved' ? 'approved' : decision === 'declined' ? 'declined' : 'changes_submitted';
+
     // Update approver decision
     const { error: updateError } = await supabase
       .from('mmm_approval_approvers')
       .update({
-        status: decision,
+        status: approverStatus,
         decision: decision,
         decision_comment: decision_comment || null,
         decision_at: new Date().toISOString(),
@@ -213,6 +219,7 @@ Deno.serve(async (req: Request) => {
         .insert({
           organisation_id: orgId,
           approval_round_id,
+          recipient_email: approver.email,
           notification_type: 'level_2_all_approved',
           payload_json: {
             domain_id: round.domain_id,

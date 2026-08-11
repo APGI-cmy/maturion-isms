@@ -30,7 +30,11 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '
 interface AcceptInviteRequest {
   token: string;
   user_id?: string;
-  email: string;
+  email?: string;
+  signup_profile?: {
+    email?: string;
+    full_name?: string;
+  };
   full_name?: string;
 }
 
@@ -50,7 +54,9 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = (await req.json()) as AcceptInviteRequest;
-    const { token, user_id, email, full_name } = body;
+    const email = body.email || body.signup_profile?.email || '';
+    const full_name = body.full_name || body.signup_profile?.full_name;
+    const { token, user_id } = body;
 
     if (!token || !email) {
       return jsonResponse({ error: 'token and email are required' }, 400);
@@ -129,7 +135,7 @@ Deno.serve(async (req: Request) => {
         .from('mmm_approval_approvers')
         .update({
           user_id,
-          status: 'accepted',
+          status: 'invite_accepted',
           accepted_invite_at: new Date().toISOString(),
         })
         .eq('id', inv.approver_id);
@@ -176,7 +182,7 @@ Deno.serve(async (req: Request) => {
       .from('mmm_approval_approvers')
       .select('id')
       .eq('approval_round_id', inv.approval_round_id)
-      .eq('status', 'accepted');
+      .eq('status', 'invite_accepted');
 
     if (!checkError && acceptedApprovers && acceptedApprovers.length > 0) {
       // At least one approver has accepted, transition round to in_review

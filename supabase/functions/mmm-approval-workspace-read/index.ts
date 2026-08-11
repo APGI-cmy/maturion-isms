@@ -39,21 +39,20 @@ interface WorkspaceReadResponse {
     approvers: Array<{
       id: string;
       user_id: string;
-      domain_id?: string;
       status: string;
       decision?: string;
     }>;
     proposed_changes: Array<{
       id: string;
-      field: string;
+      field_name: string;
       original_value: string;
       proposed_value: string;
       status: string;
     }>;
     comments: Array<{
       id: string;
-      user_id: string;
-      text: string;
+      author_user_id: string;
+      body: string;
       created_at: string;
     }>;
   }>;
@@ -118,27 +117,27 @@ Deno.serve(async (req: Request) => {
         // Fetch approvers
         const { data: approvers, error: approversError } = await supabase
           .from('mmm_approval_approvers')
-          .select('id, user_id, domain_id, status, decision')
+          .select('id, user_id, status, decision')
           .eq('approval_round_id', round.id);
 
         // Fetch proposed changes
         const { data: changes, error: changesError } = await supabase
           .from('mmm_approval_proposed_changes')
-          .select('id, field, original_value, proposed_value, status')
+          .select('id, field_name, original_value, proposed_value, status')
           .eq('approval_round_id', round.id);
 
         // Fetch comments
         const { data: comments, error: commentsError } = await supabase
           .from('mmm_approval_comments')
-          .select('id, user_id, text, created_at')
+          .select('id, author_user_id, body, created_at')
           .eq('approval_round_id', round.id)
           .order('created_at', { ascending: true });
 
         return {
           ...round,
-          approvers: approversError ? [] : approvers,
-          proposed_changes: changesError ? [] : changes,
-          comments: commentsError ? [] : comments,
+          approvers: approversError ? [] : (approvers || []),
+          proposed_changes: changesError ? [] : (changes || []),
+          comments: commentsError ? [] : (comments || []),
         };
       })
     );

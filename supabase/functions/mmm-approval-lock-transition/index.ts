@@ -29,8 +29,10 @@ const SERVICE_ROLE_SECRET = Deno.env.get('MMM_SERVICE_ROLE_SECRET') ?? '';
 
 interface TransitionLockRequest {
   approval_round_id: string;
-  new_lock_state: 'locked_by_final_approval' | 'unlocked';
-  organisation_id: string;
+  target_lock_state?: 'locked_by_final_approval' | 'unlocked';
+  new_lock_state?: 'locked_by_final_approval' | 'unlocked';
+  organisation_id?: string;
+  lock_scope?: { organisation_id?: string };
   service_secret?: string;
 }
 
@@ -39,7 +41,7 @@ Deno.serve(async (req: Request) => {
 
   // Service-role-only endpoint
   const serviceSecret = req.headers.get('x-service-secret') || '';
-  if (serviceSecret !== SERVICE_ROLE_SECRET) {
+  if (!SERVICE_ROLE_SECRET || serviceSecret !== SERVICE_ROLE_SECRET) {
     return jsonResponse({ error: 'Unauthorised (service role required)' }, 403);
   }
 
@@ -47,7 +49,9 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = (await req.json()) as TransitionLockRequest;
-    const { approval_round_id, new_lock_state, organisation_id } = body;
+    const new_lock_state = body.new_lock_state || body.target_lock_state;
+    const organisation_id = body.organisation_id || body.lock_scope?.organisation_id;
+    const { approval_round_id } = body;
 
     if (!approval_round_id || !new_lock_state || !organisation_id) {
       return jsonResponse({ error: 'Missing required fields' }, 400);
@@ -71,8 +75,8 @@ Deno.serve(async (req: Request) => {
 
     // Validate round status (must be level_3_pending or approved/rejected for unlock)
     const validStatuses = new_lock_state === 'locked_by_final_approval' ?
-      ['level_3_pending'] :
-      ['approved', 'rejected'];
+      ['approved_by_all'] :
+      ['approved_by_all', 'superseded', 'cancelled'];
 
     if (!validStatuses.includes(round.status)) {
       return jsonResponse(
@@ -85,7 +89,7 @@ Deno.serve(async (req: Request) => {
     const { data: locks, error: locksError } = await supabase
       .from('mmm_approval_locks')
       .select('*')
-      .eq('approval_round_id', approval_round_id);
+      .eq('locked_by_round_id', approval_round_id);
 
     if (locksError) {
       return jsonResponse({ error: 'Database error fetching locks', details: locksError.message }, 500);

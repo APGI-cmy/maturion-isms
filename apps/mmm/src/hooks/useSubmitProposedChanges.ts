@@ -34,7 +34,7 @@ export function useSubmitProposedChanges() {
           body: {
             approval_round_id: params.approvalRoundId,
             approver_id: params.approverId,
-            proposed_changes: params.changes.map((change) => ({
+            changes: params.changes.map((change) => ({
               object_type: change.objectType,
               object_id: change.objectId,
               field_name: change.fieldName,

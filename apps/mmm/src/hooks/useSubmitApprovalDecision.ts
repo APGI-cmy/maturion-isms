@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 
 interface SubmitApprovalDecisionResponse {
   approval_round_id: string;
-  decision: 'approved' | 'rejected';
+  decision: 'approved' | 'changes_requested' | 'declined';
   status: string;
   notification_event_id: string;
   audit_event_id: string;
@@ -20,7 +20,7 @@ export function useSubmitApprovalDecision() {
   const submitDecision = async (params: {
     approvalRoundId: string;
     approverId: string;
-    decision: 'approved' | 'rejected';
+    decision: 'approved' | 'changes_requested' | 'declined';
     comment?: string;
   }): Promise<SubmitApprovalDecisionResponse> => {
     setIsLoading(true);
@@ -35,8 +35,8 @@ export function useSubmitApprovalDecision() {
         throw new Error('Approver ID is required');
       }
 
-      if (!params.decision || !['approved', 'rejected'].includes(params.decision)) {
-        throw new Error('Decision must be "approved" or "rejected"');
+      if (!params.decision || !['approved', 'changes_requested', 'declined'].includes(params.decision)) {
+        throw new Error('Decision must be "approved", "changes_requested", or "declined"');
       }
 
       const { data, error: functionError } = await supabase.functions.invoke(
@@ -46,7 +46,7 @@ export function useSubmitApprovalDecision() {
             approval_round_id: params.approvalRoundId,
             approver_id: params.approverId,
             decision: params.decision,
-            comment: params.comment,
+            decision_comment: params.comment,
           },
         }
       );

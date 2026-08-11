@@ -9,7 +9,7 @@ export interface CreateLearningEventParams {
 
 /**
  * Capture learning event (human override of AI scoring)
- * Stores to mmm_approval_learning_events table
+ * Stores to mmm_ai_learning_events table
  * 
  * Requirements:
  * - consent=true required before capturing
@@ -30,7 +30,7 @@ export async function captureLearningEvent(params: CreateLearningEventParams) {
     // Get the approval round to fetch organisation_id
     const { data: round, error: roundError } = await supabase
       .from('mmm_approval_rounds')
-      .select('organisation_id')
+      .select('organisation_id, framework_id')
       .eq('id', approvalRoundId)
       .single();
 
@@ -43,14 +43,21 @@ export async function captureLearningEvent(params: CreateLearningEventParams) {
 
     // Create learning event
     const { data, error } = await supabase
-      .from('mmm_approval_learning_events')
+      .from('mmm_ai_learning_events')
       .insert({
         approval_round_id: approvalRoundId,
         organisation_id: round.organisation_id,
-        user_id: userId,
-        learning_text: anonymizedText,
-        consent: true,
-        recorded_at: new Date().toISOString(),
+        framework_id: round.framework_id,
+        approval_level: 'level_2',
+        object_type: 'maturity_descriptor',
+        object_id: approvalRoundId,
+        original_value: null,
+        proposed_value: null,
+        final_value: null,
+        decision: 'edited',
+        reason: anonymizedText,
+        actor_role: 'level_2',
+        consent_given: true,
         created_at: new Date().toISOString(),
       })
       .select()
@@ -73,11 +80,11 @@ export async function captureLearningEvent(params: CreateLearningEventParams) {
 export async function getLearningEvents(approvalRoundId: string) {
   try {
     const { data, error } = await supabase
-      .from('mmm_approval_learning_events')
+      .from('mmm_ai_learning_events')
       .select('*')
       .eq('approval_round_id', approvalRoundId)
-      .eq('consent', true)
-      .order('recorded_at', { ascending: false });
+      .eq('consent_given', true)
+      .order('created_at', { ascending: false });
 
     if (error) {
       throw error;
@@ -103,12 +110,12 @@ export async function exportLearningEvents(params: {
     const { startDate, endDate, limit = 1000 } = params;
 
     const { data, error } = await supabase
-      .from('mmm_approval_learning_events')
+      .from('mmm_ai_learning_events')
       .select('*')
-      .eq('consent', true)
-      .gte('recorded_at', startDate)
-      .lte('recorded_at', endDate)
-      .order('recorded_at', { ascending: false })
+      .eq('consent_given', true)
+      .gte('created_at', startDate)
+      .lte('created_at', endDate)
+      .order('created_at', { ascending: false })
       .limit(limit);
 
     if (error) {
@@ -129,11 +136,11 @@ export async function exportLearningEvents(params: {
 export async function getUserLearningEvents(userId: string, limit: number = 50) {
   try {
     const { data, error } = await supabase
-      .from('mmm_approval_learning_events')
+      .from('mmm_ai_learning_events')
       .select('*')
       .eq('user_id', userId)
-      .eq('consent', true)
-      .order('recorded_at', { ascending: false })
+      .eq('consent_given', true)
+      .order('created_at', { ascending: false })
       .limit(limit);
 
     if (error) {

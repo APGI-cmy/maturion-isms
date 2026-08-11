@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export interface ProposedChange {
   id: string;
-  objectType: 'domain' | 'mps' | 'criterion' | 'descriptor';
+  objectType: 'domain' | 'mps' | 'criterion' | 'maturity_descriptor';
   objectId: string;
   fieldName: string;
   displayReference: string;
@@ -12,7 +12,7 @@ export interface ProposedChange {
 }
 
 interface ProposeChangeModalProps {
-  objectType: 'domain' | 'mps' | 'criterion' | 'descriptor';
+  objectType: 'domain' | 'mps' | 'criterion' | 'maturity_descriptor';
   objectId: string;
   fieldName: string;
   displayReference: string;
@@ -94,7 +94,7 @@ export function ProposeChangeModal({
       domain: 'Domain',
       mps: 'Management Practice Statement',
       criterion: 'Criterion',
-      descriptor: 'Maturity Descriptor',
+      maturity_descriptor: 'Maturity Descriptor',
     };
     return labels[objectType];
   };

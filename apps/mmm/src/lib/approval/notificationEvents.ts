@@ -1,12 +1,13 @@
 import { supabase } from '../../lib/supabase';
 
 export type NotificationType =
-  | 'round_created'
-  | 'invitation_sent'
-  | 'all_l2_approvals_received'
-  | 'decision_made'
-  | 'round_approved'
-  | 'round_rejected';
+  | 'level_2_invitation'
+  | 'level_2_changes_submitted'
+  | 'level_1_response_submitted'
+  | 'level_2_all_approved'
+  | 'level_3_invitation'
+  | 'level_3_changes_submitted'
+  | 'final_approval_complete';
 
 export interface CreateNotificationEventParams {
   approvalRoundId: string;
@@ -54,7 +55,7 @@ export async function queueNotification(params: CreateNotificationEventParams) {
     }
 
     // Generate idempotency key (consistent across retries)
-    const idempotencyKey = `${approvalRoundId}-${recipientUserId}-${notificationType}-${Date.now()}`;
+    const idempotencyKey = `${approvalRoundId}:${recipientUserId}:${notificationType}`;
 
     // Queue notification
     const { data, error } = await supabase
