@@ -56,7 +56,10 @@ json_validate() {
     if [ "$JSON_PARSER" = "jq" ]; then
         jq empty "$json_file" >/dev/null 2>&1
     else
-        "$NODE_BIN" -e 'JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))' "$json_file" >/dev/null 2>&1
+        "$NODE_BIN" - "$json_file" >/dev/null 2>&1 <<'NODE'
+const fs = require("fs");
+JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+NODE
     fi
 }
 
