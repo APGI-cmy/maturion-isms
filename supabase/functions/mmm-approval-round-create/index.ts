@@ -161,10 +161,8 @@ Deno.serve(async (req: Request) => {
         framework_id,
         domain_id: domain_id || null,
         approval_level,
-        status: 'drafted',
+        status: 'draft',
         submitted_by_user_id,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
       })
       .select('id');
 
@@ -185,7 +183,8 @@ Deno.serve(async (req: Request) => {
         approval_round_id: roundId,
         event_type: 'round_created',
         actor_id: userId,
-        timestamp: new Date().toISOString(),
+        actor_role: 'system',
+        details: null,
       });
 
     if (auditError) {
@@ -206,13 +205,13 @@ Deno.serve(async (req: Request) => {
         .insert({
           organisation_id,
           approval_round_id: roundId,
-          framework_id,
-          domain_id: domain_id || null,
+          user_id: null, // Will be set when approver accepts invitation
           email: approver.email,
           full_name: approver.full_name,
           designation: approver.designation || null,
+          approval_level,
           status: 'invited',
-          assigned_at: new Date().toISOString(),
+          invited_by_user_id: userId,
         })
         .select('id');
 
@@ -237,16 +236,12 @@ Deno.serve(async (req: Request) => {
       const { data: invitationData, error: invitationError } = await supabase
         .from('mmm_approval_invitations')
         .insert({
-          organisation_id,
           approval_round_id: roundId,
           approver_id: approverId,
-          framework_id,
-          domain_id: domain_id || null,
           email: approver.email,
           token_hash: tokenHash,
           status: 'pending_send',
           expires_at: expiresAt.toISOString(),
-          created_at: new Date().toISOString(),
         })
         .select('id');
 
@@ -265,7 +260,8 @@ Deno.serve(async (req: Request) => {
           approval_round_id: roundId,
           event_type: 'approver_invited',
           actor_id: userId,
-          timestamp: new Date().toISOString(),
+          actor_role: 'system',
+          details: null,
         });
 
       if (inviteAuditError) {
@@ -279,6 +275,7 @@ Deno.serve(async (req: Request) => {
         .insert({
           organisation_id,
           approval_round_id: roundId,
+          recipient_user_id: null,
           recipient_email: approver.email,
           notification_type: approval_level === 'level_2' ? 'level_2_invitation' : 'level_3_invitation',
           payload_json: {

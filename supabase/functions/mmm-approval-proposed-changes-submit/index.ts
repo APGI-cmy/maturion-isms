@@ -144,7 +144,8 @@ Deno.serve(async (req: Request) => {
           approval_round_id,
           event_type: 'change_proposed',
           actor_id: userId,
-          timestamp: new Date().toISOString(),
+          actor_role: 'level_2',
+          details: null,
         });
 
       if (auditError) {

@@ -167,7 +167,8 @@ Deno.serve(async (req: Request) => {
           approval_round_id,
           event_type: 'change_applied',
           actor_id: userId,
-          timestamp: new Date().toISOString(),
+          actor_role: 'level_1',
+          details: null,
         });
 
       if (auditError) {
@@ -186,7 +187,7 @@ Deno.serve(async (req: Request) => {
           framework_id: round.framework_id,
           approval_round_id,
           proposed_change_id: response.proposed_change_id,
-          approval_level: 'level_1',
+          approval_level: null,
           object_type: change.object_type,
           object_id: change.object_id,
           original_value: change.original_value,
@@ -195,7 +196,7 @@ Deno.serve(async (req: Request) => {
           decision: learningDecision,
           reason: response.response_comment || null,
           actor_role: 'level_1',
-          created_at: new Date().toISOString(),
+          consent_given: false,
         })
         .select('id');
 

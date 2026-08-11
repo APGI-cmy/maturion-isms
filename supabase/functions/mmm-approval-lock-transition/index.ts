@@ -116,8 +116,9 @@ Deno.serve(async (req: Request) => {
         organisation_id,
         approval_round_id,
         event_type: 'lock_transition',
-        actor_id: 'system',
-        timestamp: new Date().toISOString(),
+        actor_id: '00000000-0000-0000-0000-000000000000',
+        actor_role: 'system',
+        details: null,
       });
 
     if (auditError) {

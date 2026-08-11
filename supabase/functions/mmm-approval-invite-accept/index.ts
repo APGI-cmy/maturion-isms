@@ -130,7 +130,7 @@ Deno.serve(async (req: Request) => {
         .update({
           user_id,
           status: 'accepted',
-          updated_at: new Date().toISOString(),
+          accepted_invite_at: new Date().toISOString(),
         })
         .eq('id', inv.approver_id);
 
@@ -139,15 +139,23 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // Fetch round organization for audit event
+    const { data: roundForAudit, error: roundAuditError } = await supabase
+      .from('mmm_approval_rounds')
+      .select('organisation_id')
+      .eq('id', inv.approval_round_id)
+      .maybeSingle();
+
     // Create audit event for invitation acceptance
     const { error: auditError } = await supabase
       .from('mmm_approval_audit_events')
       .insert({
-        organisation_id: inv.organisation_id,
+        organisation_id: roundForAudit?.organisation_id,
         approval_round_id: inv.approval_round_id,
         event_type: 'invitation_accepted',
         actor_id: user_id || null,
-        timestamp: new Date().toISOString(),
+        actor_role: 'level_2',
+        details: null,
       });
 
     if (auditError) {

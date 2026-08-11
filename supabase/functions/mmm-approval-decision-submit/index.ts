@@ -109,8 +109,7 @@ Deno.serve(async (req: Request) => {
         status: decision,
         decision: decision,
         decision_comment: decision_comment || null,
-        decided_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        decision_at: new Date().toISOString(),
       })
       .eq('id', approver_id);
 
@@ -126,7 +125,8 @@ Deno.serve(async (req: Request) => {
         approval_round_id,
         event_type: 'decision_submitted',
         actor_id: userId,
-        timestamp: new Date().toISOString(),
+        actor_role: 'system',
+        details: null,
       });
 
     if (auditError) {
@@ -164,11 +164,13 @@ Deno.serve(async (req: Request) => {
       if (round.domain_id) {
         const lockData = {
           organisation_id: orgId,
-          approval_round_id,
+          framework_id: round.framework_id,
+          domain_id: round.domain_id,
           object_type: 'domain',
           object_id: round.domain_id,
           lock_state: 'locked_by_level_2',
-          locked_at: new Date().toISOString(),
+          locked_by_round_id: approval_round_id,
+          reason: 'Approval consensus reached at Level 2',
         };
 
         const { error: lockError } = await supabase
