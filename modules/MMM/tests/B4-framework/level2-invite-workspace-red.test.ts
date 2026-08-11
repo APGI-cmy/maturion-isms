@@ -305,4 +305,171 @@ describe('MMM Level 2 Invite Modal and Workspace — QA-to-RED', () => {
     it.todo('should show error message if attempted');
     it.todo('should API should reject final-locked domain');
   });
+
+  // ============================================================================
+  // Section 9: Propose Change Modal (ProposeChangeModal Component)
+  // ============================================================================
+
+  describe('T-MMM-PROPOSE-CHANGE-001: Modal displays change context', () => {
+    it.todo('should display object type (Domain/MPS/Criterion/Descriptor)');
+    it.todo('should display display reference path');
+    it.todo('should display field name being changed');
+    it.todo('should display original value in read-only field');
+  });
+
+  describe('T-MMM-PROPOSE-CHANGE-002: Capture proposed value', () => {
+    it.todo('should have textarea for proposed value (required)');
+    it.todo('should validate proposed value is not empty');
+    it.todo('should validate proposed value differs from original');
+    it.todo('should show error if proposed value is empty');
+    it.todo('should show error if proposed value equals original');
+    it.todo('should enable Save button only when proposed value is valid');
+  });
+
+  describe('T-MMM-PROPOSE-CHANGE-003: Capture optional comment', () => {
+    it.todo('should have textarea for comment/reason (optional)');
+    it.todo('should allow empty comment');
+    it.todo('should show character count');
+  });
+
+  describe('T-MMM-PROPOSE-CHANGE-004: Save change', () => {
+    it.todo('should generate unique ID for change');
+    it.todo('should construct ProposedChange object with all required fields');
+    it.todo('should call onSave callback with ProposedChange');
+    it.todo('should close modal on successful save');
+    it.todo('should disable Save button while saving');
+    it.todo('should show error if save fails');
+  });
+
+  describe('T-MMM-PROPOSE-CHANGE-005: Cancel/close', () => {
+    it.todo('should close modal on Cancel button click');
+    it.todo('should close modal on close button click');
+    it.todo('should discard unsaved changes when closing');
+  });
+
+  describe('T-MMM-PROPOSE-CHANGE-006: Field reference display', () => {
+    it.todo('should show object type label');
+    it.todo('should show object ID');
+    it.todo('should show field name');
+    it.todo('should show full display reference');
+  });
+
+  // ============================================================================
+  // Section 10: Proposed Changes Summary (ProposedChangesSummary Component)
+  // ============================================================================
+
+  describe('T-MMM-PROPOSED-SUMMARY-001: Display all staged changes', () => {
+    it.todo('should show count of changes in header');
+    it.todo('should display each change in its own card');
+    it.todo('should hide summary when no changes present');
+  });
+
+  describe('T-MMM-PROPOSED-SUMMARY-002: Display change details', () => {
+    it.todo('should display object type badge (colored by type)');
+    it.todo('should display display reference');
+    it.todo('should display field name');
+    it.todo('should display original value in left column');
+    it.todo('should display proposed value in right column');
+    it.todo('should display arrow between original and proposed');
+    it.todo('should display comment if present');
+  });
+
+  describe('T-MMM-PROPOSED-SUMMARY-003: Remove individual changes', () => {
+    it.todo('should show remove (X) button for each change');
+    it.todo('should call onRemoveChange when remove clicked');
+    it.todo('should update header count after removal');
+    it.todo('should disable remove buttons while submitting');
+  });
+
+  describe('T-MMM-PROPOSED-SUMMARY-004: Clear all changes', () => {
+    it.todo('should show Clear All button when changes present');
+    it.todo('should hide Clear All button when no changes');
+    it.todo('should call onClearAll when button clicked');
+    it.todo('should confirm before clearing if more than 5 changes');
+    it.todo('should disable Clear All button while submitting');
+  });
+
+  describe('T-MMM-PROPOSED-SUMMARY-005: Visual styling by object type', () => {
+    it.todo('should use purple styling for domain changes');
+    it.todo('should use blue styling for MPS changes');
+    it.todo('should use green styling for criterion changes');
+    it.todo('should use orange styling for descriptor changes');
+  });
+
+  describe('T-MMM-PROPOSED-SUMMARY-006: Ready-for-submission indicator', () => {
+    it.todo('should show summary text with change count');
+    it.todo('should note that Level 1 user will be notified');
+  });
+
+  // ============================================================================
+  // Section 11: Submission Hooks (useSubmitProposedChanges, useSubmitApprovalDecision)
+  // ============================================================================
+
+  describe('T-MMM-SUBMISSION-HOOKS-001: useSubmitProposedChanges hook', () => {
+    it.todo('should call mmm-approval-proposed-changes-submit Edge Function');
+    it.todo('should transform ProposedChange[] to API payload format');
+    it.todo('should handle successful submission response');
+    it.todo('should handle submission errors and return error message');
+    it.todo('should set isLoading true while submitting');
+    it.todo('should reject if no changes provided');
+  });
+
+  describe('T-MMM-SUBMISSION-HOOKS-002: useSubmitApprovalDecision hook', () => {
+    it.todo('should call mmm-approval-decision-submit Edge Function');
+    it.todo('should accept decision: "approved" or "rejected"');
+    it.todo('should accept optional comment parameter');
+    it.todo('should handle successful submission response');
+    it.todo('should handle submission errors and return error message');
+    it.todo('should set isLoading true while submitting');
+    it.todo('should reject invalid decisions');
+    it.todo('should reject missing approvalRoundId');
+    it.todo('should reject missing approverId');
+  });
+
+  // ============================================================================
+  // Section 12: Integration Tests — Full L2 Approval Flow
+  // ============================================================================
+
+  describe('T-MMM-L2-INTEGRATION-001: Complete L2 approval with changes', () => {
+    it.todo('should invite approvers from L1 modal');
+    it.todo('should receive invitation and accept in L2 workspace');
+    it.todo('should review domain and propose changes');
+    it.todo('should submit changes via proposed-changes hook');
+    it.todo('should verify notification created for L1 user');
+    it.todo('should submit approval decision');
+    it.todo('should verify audit events created');
+  });
+
+  describe('T-MMM-L2-INTEGRATION-002: Complete L2 approval without changes', () => {
+    it.todo('should accept invitation');
+    it.todo('should review domain without proposing changes');
+    it.todo('should submit approval decision directly');
+    it.todo('should verify notification created');
+  });
+
+  describe('T-MMM-L2-INTEGRATION-003: L2 rejection workflow', () => {
+    it.todo('should accept invitation');
+    it.todo('should review domain');
+    it.todo('should submit rejection decision');
+    it.todo('should include rejection comment');
+    it.todo('should verify notification sent to L1');
+  });
+
+  describe('T-MMM-L2-INTEGRATION-004: Multiple L2 approvers', () => {
+    it.todo('should invite multiple approvers for same domain');
+    it.todo('should each approver independently review and decide');
+    it.todo('should NOT transition to L3 until all L2 approvals received');
+    it.todo('should transition to L3 when all L2 approvers approve');
+  });
+
+  describe('T-MMM-L2-INTEGRATION-005: L2 approver cannot self-approve', () => {
+    it.todo('should not include Level 1 user as potential Level 2 approver');
+    it.todo('should show error if attempted');
+  });
+
+  describe('T-MMM-L2-INTEGRATION-006: L2 required domain validation', () => {
+    it.todo('should ensure all required domains have approvers');
+    it.todo('should block submission if required domain missing approvers');
+    it.todo('should show error listing missing required approvers');
+  });
 });
