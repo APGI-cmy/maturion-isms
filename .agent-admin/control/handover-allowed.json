@@ -2,8 +2,8 @@
   "schema_version": "1.0.0",
   "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
   "pr_number": 2006,
-  "current_head_sha": "59115d5caae691580afdb32575bb30b4be279906",
-  "state": "IAA_FINAL_PASS",
+  "current_head_sha": "e0d69eb5ad60b24b535b6c4f92edf18a2a23001f",
+  "state": "PRE_HANDOVER_GATE_PASS",
   "handover_allowed": true,
   "foreman_qp_pass": true,
   "builder_delegation_verified": true,
@@ -12,7 +12,7 @@
   "scope_current": true,
   "ecap_required": true,
   "ecap_admin_validated": true,
-  "all_required_checks_green": false,
+  "all_required_checks_green": true,
   "iaa_final_required": true,
   "blocking_findings": []
 }
