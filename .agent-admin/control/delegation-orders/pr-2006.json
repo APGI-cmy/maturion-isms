@@ -7,7 +7,7 @@
   "builder_appointment_commit_sha": "52e4a645043d012e388a7cf8cf82cc2d85ba0e9b",
   "builder_agent": "integration-builder",
   "builder_task_ref": ".agent-admin/builder-appointments/issue-1961-approval-foundation-build-green-schema-builder-20260806.md",
-  "first_implementation_commit_sha": "93da17bd464a0a66c4c21f6c66ef9a596c3da115",
+  "first_implementation_commit_sha": "9971c21a48a50ba3fdabbb998d3f95bdf0cb1983",
   "qp_review_timestamp": "2026-08-11T13:44:52Z",
   "result": "DELEGATION_ORDER_VERIFIED"
 }
