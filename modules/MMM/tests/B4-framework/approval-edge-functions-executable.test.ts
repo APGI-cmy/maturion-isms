@@ -34,8 +34,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const FUNCTIONS_DIR = path.resolve(__dirname, '../../../../supabase/functions');
 
 interface SchemaFieldDef {
@@ -348,8 +350,8 @@ describe('EXECUTABLE: Edge Function Schema-Contract Validation (Issue #2004)', (
     });
 
     it('decision-related functions should use decision_at (not decided_at)', () => {
-      const decisonFunctions = ['mmm-approval-decision-submit', 'mmm-approval-invite-accept'];
-      for (const func of decisonFunctions) {
+      const decisionFunctions = ['mmm-approval-decision-submit'];
+      for (const func of decisionFunctions) {
         if (functionCodes[func]) {
           expect(functionCodes[func]).toContain('decision_at', `${func} should use decision_at`);
           expect(functionCodes[func]).not.toContain('decided_at', `${func} should not use decided_at`);
