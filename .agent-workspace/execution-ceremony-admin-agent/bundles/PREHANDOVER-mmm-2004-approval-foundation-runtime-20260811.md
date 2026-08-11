@@ -55,7 +55,7 @@ ECAP validates admin artifacts only. ECAP explicitly does NOT:
 
 - Gate status matrix: ✅ All current gates with pass/fail/pending
 - Evidence summary: ✅ Code and governance evidence referenced
-- Remaining gates: ✅ ECAP→IAA→PR→CI→handover-allowed→CS2 path declared
+- Remaining gates: ✅ ECAP→IAA→PR→CI→lane-gate-control→CS2 path declared
 - Foreman declaration: ✅ QP PASS declared; no premature readiness claim present
 
 ### 3.4 Artifact Consistency Check

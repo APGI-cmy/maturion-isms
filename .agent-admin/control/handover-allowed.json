@@ -1,18 +1,1 @@
-{
-  "schema_version": "1.0.0",
-  "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
-  "pr_number": 2006,
-  "current_head_sha": "9ab32ca7c15af238078a577a6aec81f06c988a73",
-  "state": "PRE_HANDOVER_GATE_PASS",
-  "handover_allowed": true,
-  "foreman_qp_pass": true,
-  "builder_delegation_verified": true,
-  "delegation_precedes_implementation": true,
-  "iaa_prebrief_ready": true,
-  "scope_current": true,
-  "ecap_required": true,
-  "ecap_admin_validated": true,
-  "all_required_checks_green": true,
-  "iaa_final_required": true,
-  "blocking_findings": []
-}
+{  "schema_version": "1.0.0",  "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",  "pr_number": 2006,  "current_head_sha": "1c8c2ad9de56f03243339f642546e2fdfa744cec",  "state": "PRE_HANDOVER_GATE_PASS",  "handover_allowed": true,  "foreman_qp_pass": true,  "builder_delegation_verified": true,  "delegation_precedes_implementation": true,  "iaa_prebrief_ready": true,  "scope_current": true,  "ecap_required": true,  "ecap_admin_validated": true,  "all_required_checks_green": true,  "iaa_final_required": true,  "blocking_findings": []}
