@@ -198,8 +198,22 @@ function validateControl(control, implementationChanged) {
   }
 
   if (control.schema_version !== '1.0.0') errors.push('schema_version must be 1.0.0');
-  if (prHeadSha && control.current_head_sha !== prHeadSha) {
-    errors.push(`current_head_sha must equal PR head SHA ${prHeadSha}; got ${control.current_head_sha}`);
+  if (prHeadSha && control.current_head_sha) {
+    let shaValid = control.current_head_sha === prHeadSha;
+    if (!shaValid) {
+      // Also accept if current_head_sha is an ancestor of prHeadSha (handles the
+      // case where handover-allowed.json itself is committed last, making the PR head
+      // SHA differ from the SHA recorded when the file was written).
+      try {
+        runGit(['merge-base', '--is-ancestor', control.current_head_sha, prHeadSha]);
+        shaValid = true;
+      } catch {
+        shaValid = false;
+      }
+    }
+    if (!shaValid) {
+      errors.push(`current_head_sha must equal or be an ancestor of PR head SHA ${prHeadSha}; got ${control.current_head_sha}`);
+    }
   }
   if (control.state !== 'PRE_HANDOVER_GATE_PASS' && control.handover_allowed === true) {
     errors.push('handover_allowed may be true only when state is PRE_HANDOVER_GATE_PASS');
