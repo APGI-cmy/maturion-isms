@@ -114,3 +114,15 @@ Next gates:
 **Authority**: Foreman orchestration lane  
 **Created**: 2026-08-11  
 **Self-modification**: Prohibited per SELF-MOD-FM-001
+
+---
+
+## Approved Artifact Paths
+
+APPROVED_ARTIFACT_PATHS:
+- .agent-workspace/foreman-v2/personal/scope-declaration-wave-mmm-2004-approval-foundation-runtime-20260811.md
+- .agent-admin/assurance/iaa-wave-record-mmm-2004-approval-foundation-runtime-20260811.md
+- .agent-admin/prehandover/PREHANDOVER_PROOF_MMM_2004_approval_foundation_runtime_20260811.md
+- .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-mmm-2004-approval-foundation-runtime-20260811.md
+- .agent-admin/control/delegation-orders/pr-2006.json
+- .agent-admin/control/handover-allowed.json

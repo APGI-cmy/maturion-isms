@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
+  "pr_number": 2006,
+  "current_head_sha": "59115d5caae691580afdb32575bb30b4be279906",
+  "state": "IAA_FINAL_PASS",
+  "handover_allowed": true,
+  "foreman_qp_pass": true,
+  "builder_delegation_verified": true,
+  "delegation_precedes_implementation": true,
+  "iaa_prebrief_ready": true,
+  "scope_current": true,
+  "ecap_required": true,
+  "ecap_admin_validated": true,
+  "all_required_checks_green": false,
+  "iaa_final_required": true,
+  "blocking_findings": []
+}

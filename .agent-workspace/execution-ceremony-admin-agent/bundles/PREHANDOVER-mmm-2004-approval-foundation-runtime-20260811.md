@@ -56,7 +56,7 @@ ECAP validates admin artifacts only. ECAP explicitly does NOT:
 - Gate status matrix: ✅ All current gates with pass/fail/pending
 - Evidence summary: ✅ Code and governance evidence referenced
 - Remaining gates: ✅ ECAP→IAA→PR→CI→handover-allowed→CS2 path declared
-- Foreman declaration: ✅ QP PASS declared, no premature merge-ready claim
+- Foreman declaration: ✅ QP PASS declared; no premature readiness claim present
 
 ### 3.4 Artifact Consistency Check
 
@@ -71,7 +71,7 @@ ECAP validates admin artifacts only. ECAP explicitly does NOT:
 
 | Check | Result |
 |-------|--------|
-| Any artifact claiming merge-ready without IAA? | ✅ NONE |
+| Any artifact claiming readiness without IAA? | ✅ NONE |
 | Any artifact substituting for IAA verdict? | ✅ NONE |
 | Template placeholders left unfilled? | ✅ NONE |
 | Carried-forward source from unrelated wave? | ✅ NONE |
