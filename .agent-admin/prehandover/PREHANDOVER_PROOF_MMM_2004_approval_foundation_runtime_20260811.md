@@ -3,7 +3,7 @@
 
 **Session Reference**: Foreman orchestration — MMM Issue #2004  
 **Branch**: apgi-cmy-jubilant-journey  
-**Head Commit at Checkpoint**: 31be19b58883da97f9919f556f4459830a44bad4  
+**Head Commit at Checkpoint**: 801c5e5eed992c9ca990cc3061d9f029fa4c70ba  
 **Date**: 2026-08-11  
 **Foreman Posture**: BLOCKED — QP STOP_AND_FIX ACTIVE
 
@@ -13,7 +13,7 @@
 
 **Status**: PRE-HANDOVER CONDITIONS NOT MET
 
-This artifact is retained as a current-head checkpoint record only. ECAP/IAA progression is blocked at current head `31be19b58883da97f9919f556f4459830a44bad4` pending truthful-control remediation, seven-function executable coverage, and CS2 resolution of the non-retroactive prebrief/delegation breach.
+This artifact is retained as a current-head checkpoint record only. ECAP/IAA progression is blocked at current head `801c5e5eed992c9ca990cc3061d9f029fa4c70ba` pending truthful-control remediation, seven-function executable coverage, and CS2 resolution of the non-retroactive prebrief/delegation breach.
 
 ---
 

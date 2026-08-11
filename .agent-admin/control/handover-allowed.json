@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
   "pr_number": 2006,
-  "current_head_sha": "31be19b58883da97f9919f556f4459830a44bad4",
+  "current_head_sha": "801c5e5eed992c9ca990cc3061d9f029fa4c70ba",
   "state": "BLOCKED",
   "handover_allowed": false,
   "foreman_qp_pass": false,
@@ -15,7 +15,7 @@
   "all_required_checks_green": false,
   "iaa_final_required": true,
   "blocking_findings": [
-    "Current PR head 31be19b58883da97f9919f556f4459830a44bad4 does not have current-head-only truthful handover controls.",
+    "Current PR head 801c5e5eed992c9ca990cc3061d9f029fa4c70ba does not have current-head-only truthful handover controls.",
     "CS2 resolution required for non-retroactive prebrief/delegation breach on Issue #2004 integration-builder lane.",
     "Foreman QP rerun pending after seven-function executable test coverage and control truthfulness remediation."
   ]

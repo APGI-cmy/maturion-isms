@@ -5,7 +5,7 @@
 **Authority**: Builder-authored corrective note only  
 **Date**: 2026-08-11  
 **Branch**: apgi-cmy-jubilant-journey  
-**Current Head**: 31be19b58883da97f9919f556f4459830a44bad4
+**Current Head**: 801c5e5eed992c9ca990cc3061d9f029fa4c70ba
 
 ---
 
@@ -16,7 +16,7 @@ That assertion is not authoritative for the current head and must not be treated
 Independent Assurance verdict.
 
 No ASSURANCE-TOKEN is currently issued for MMM Issue #2004 at current head
-`31be19b58883da97f9919f556f4459830a44bad4`.
+`801c5e5eed992c9ca990cc3061d9f029fa4c70ba`.
 
 PHASE_B_BLOCKING_TOKEN: PENDING
 
