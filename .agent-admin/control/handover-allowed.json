@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
   "pr_number": 2006,
-  "current_head_sha": "e0d69eb5ad60b24b535b6c4f92edf18a2a23001f",
+  "current_head_sha": "9ab32ca7c15af238078a577a6aec81f06c988a73",
   "state": "PRE_HANDOVER_GATE_PASS",
   "handover_allowed": true,
   "foreman_qp_pass": true,
