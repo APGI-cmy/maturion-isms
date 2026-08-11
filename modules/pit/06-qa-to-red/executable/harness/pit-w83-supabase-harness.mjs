@@ -15,14 +15,17 @@ async function loadCreateClient() {
 export function resolveHarnessConfig(t) {
   const config = {
     supabaseUrl: process.env.PIT_W83_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
-    anonKey: process.env.PIT_W83_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY,
+    anonKey:
+      process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+      process.env.PIT_W83_SUPABASE_ANON_KEY ||
+      process.env.VITE_SUPABASE_ANON_KEY,
     serviceRoleKey: process.env.PIT_W83_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
     appUrl: process.env.PIT_W83_APP_URL || process.env.VITE_PIT_APP_URL || 'http://127.0.0.1:4173',
   };
 
   const missing = [];
   if (!config.supabaseUrl) missing.push('PIT_W83_SUPABASE_URL (or VITE_SUPABASE_URL)');
-  if (!config.anonKey) missing.push('PIT_W83_SUPABASE_ANON_KEY (or VITE_SUPABASE_ANON_KEY)');
+  if (!config.anonKey) missing.push('VITE_SUPABASE_PUBLISHABLE_KEY (or PIT_W83_SUPABASE_ANON_KEY or VITE_SUPABASE_ANON_KEY)');
   if (!config.serviceRoleKey) missing.push('PIT_W83_SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SERVICE_ROLE_KEY)');
 
   if (missing.length > 0) {
@@ -42,13 +45,13 @@ export async function createHarnessClients(config) {
 }
 
 export async function verifyHarnessReadiness(config, clients) {
-  const healthResponse = await fetch(`${config.supabaseUrl}/rest/v1/`, {
+  const healthResponse = await fetch(`${config.supabaseUrl}/auth/v1/settings`, {
     headers: { apikey: config.anonKey },
     signal: AbortSignal.timeout(10_000),
   });
   assert.ok(
     healthResponse.ok,
-    `Harness health check failed: ${healthResponse.status} ${healthResponse.statusText}. Start disposable/local Supabase before running RED suite.`,
+    `Harness auth readiness check failed: ${healthResponse.status} ${healthResponse.statusText}. Configure a valid disposable/local publishable or anon key.`,
   );
 
   const { error: sessionError } = await clients.anonClient.auth.getSession();

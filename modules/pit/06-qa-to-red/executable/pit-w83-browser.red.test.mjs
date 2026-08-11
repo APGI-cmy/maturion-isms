@@ -11,31 +11,68 @@ import {
 let state;
 let browser;
 let chromium;
+let initializing;
+
+async function seedBrowserAuth(page, state, role) {
+  const persona = state.personas[role];
+  assert.ok(persona?.accessToken, `Missing access token for role ${role}`);
+
+  await page.addInitScript(
+    ({ supabaseUrl, accessToken }) => {
+      const storage = {
+        [`sb-${supabaseUrl.split('//')[1].split('.')[0]}-auth-token`]: JSON.stringify({
+          access_token: accessToken,
+          token_type: 'bearer',
+          user: null,
+          expires_in: 3600,
+          expires_at: Math.floor(Date.now() / 1000) + 3600,
+          refresh_token: null,
+        }),
+      };
+      for (const [key, value] of Object.entries(storage)) {
+        window.localStorage.setItem(key, value);
+      }
+    },
+    { supabaseUrl: state.config.supabaseUrl, accessToken: persona.accessToken },
+  );
+}
 
 async function initializeHarness(t) {
   const config = resolveHarnessConfig(t);
   if (!config) return null;
 
-  if (!state) {
+  if (initializing) return initializing;
+  if (state) return state;
+
+  initializing = (async () => {
     const clients = await createHarnessClients(config);
     await verifyHarnessReadiness(config, clients);
     const personaSeed = await createPersonas(clients);
-    if (!chromium) {
-      const playwright = await import('playwright');
-      chromium = playwright.chromium;
+
+    try {
+      if (!chromium) {
+        const playwright = await import('playwright');
+        chromium = playwright.chromium;
+      }
+
+      const appProbe = await fetch(config.appUrl, { signal: AbortSignal.timeout(10_000) });
+      assert.ok(
+        appProbe.ok,
+        `Application probe failed at ${config.appUrl} (${appProbe.status}). Start the app before executing browser RED tests.`,
+      );
+
+      browser = await chromium.launch({ headless: true });
+      state = { config, clients, ...personaSeed };
+      return state;
+    } catch (error) {
+      await cleanupPersonas(clients, personaSeed.personas);
+      throw error;
+    } finally {
+      initializing = undefined;
     }
+  })();
 
-    const appProbe = await fetch(config.appUrl, { signal: AbortSignal.timeout(10_000) });
-    assert.ok(
-      appProbe.ok,
-      `Application probe failed at ${config.appUrl} (${appProbe.status}). Start the app before executing browser RED tests.`,
-    );
-
-    browser = await chromium.launch({ headless: true });
-    state = { config, clients, ...personaSeed };
-  }
-
-  return state;
+  return initializing;
 }
 
 async function withPage(t, run) {
@@ -85,6 +122,7 @@ const browserCases = [
     id: 'PIT-RED-W83-007',
     title: 'milestone owner cannot edit sibling milestone',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'milestone_owner');
       await page.goto(`${state.config.appUrl}/projects/demo/milestones`, { waitUntil: 'domcontentloaded' });
       await page.getByTestId('pit-milestone-row-sibling').getByRole('button', { name: /edit/i }).click();
       await assert.doesNotReject(
@@ -97,6 +135,7 @@ const browserCases = [
     id: 'PIT-RED-W83-008',
     title: 'deliverable owner cannot edit sibling deliverable',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'deliverable_owner');
       await page.goto(`${state.config.appUrl}/projects/demo/deliverables`, { waitUntil: 'domcontentloaded' });
       await page.getByTestId('pit-deliverable-row-sibling').getByRole('button', { name: /edit/i }).click();
       await assert.doesNotReject(
@@ -109,6 +148,7 @@ const browserCases = [
     id: 'PIT-RED-W83-010',
     title: 'project leader milestone setup wizard renders five states',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'project_leader');
       await page.goto(`${state.config.appUrl}/projects/demo/milestones`, { waitUntil: 'domcontentloaded' });
       await page.getByRole('button', { name: /new milestone|setup milestone/i }).click();
       await page.getByTestId('pit-milestone-wizard-step-1').waitFor();
@@ -122,6 +162,7 @@ const browserCases = [
     id: 'PIT-RED-W83-011',
     title: 'milestone owner deliverable wizard is scope-bound',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'milestone_owner');
       await page.goto(`${state.config.appUrl}/projects/demo/deliverables`, { waitUntil: 'domcontentloaded' });
       await page.getByRole('button', { name: /new deliverable|setup deliverable/i }).click();
       await page.getByTestId('pit-deliverable-wizard').waitFor();
@@ -132,6 +173,7 @@ const browserCases = [
     id: 'PIT-RED-W83-012',
     title: 'deliverable owner task wizard enforces deliverable parent',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'deliverable_owner');
       await page.goto(`${state.config.appUrl}/projects/demo/tasks`, { waitUntil: 'domcontentloaded' });
       await page.getByRole('button', { name: /new task|setup task/i }).click();
       await page.getByTestId('pit-task-parent-deliverable').waitFor();
@@ -143,6 +185,7 @@ const browserCases = [
     id: 'PIT-RED-W83-013',
     title: 'milestone-owner invitation preview includes accountability and timeline wording',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'project_leader');
       await page.goto(`${state.config.appUrl}/projects/demo/settings`, { waitUntil: 'domcontentloaded' });
       await page.getByRole('button', { name: /invite milestone owner/i }).click();
       await page.getByText(/accountability/i).waitFor();
@@ -154,6 +197,7 @@ const browserCases = [
     id: 'PIT-RED-W83-014',
     title: 'invitation acceptance flow links account and grants scoped access',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'viewer');
       await page.goto(`${state.config.appUrl}/pit/invite/demo-token/accept`, { waitUntil: 'domcontentloaded' });
       await page.getByLabel(/email/i).fill('invitee@example.test');
       await page.getByLabel(/password/i).fill('Invited-user#2026');
@@ -165,6 +209,7 @@ const browserCases = [
     id: 'PIT-RED-W83-016',
     title: 'child date outside parent range requires explicit exception confirmation',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'project_leader');
       await page.goto(`${state.config.appUrl}/projects/demo/milestones`, { waitUntil: 'domcontentloaded' });
       await page.getByRole('button', { name: /new deliverable/i }).click();
       await page.getByLabel(/start date/i).fill('2027-01-20');
@@ -178,6 +223,7 @@ const browserCases = [
     id: 'PIT-RED-W83-018',
     title: 'non-admin removal menu excludes hard delete option',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'contributor');
       await page.goto(`${state.config.appUrl}/projects/demo/milestones`, { waitUntil: 'domcontentloaded' });
       await page.getByTestId('pit-row-actions').first().click();
       await page.getByRole('menuitem', { name: /archive/i }).waitFor();
@@ -190,6 +236,7 @@ const browserCases = [
     id: 'PIT-RED-W83-032',
     title: 'Maturion suggestion request stores proposal without canonical write before approval',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'contributor');
       await page.goto(`${state.config.appUrl}/projects/demo/tasks`, { waitUntil: 'domcontentloaded' });
       await page.getByRole('button', { name: /request maturion suggestion/i }).click();
       await page.getByText(/proposal generated/i).waitFor();

@@ -10,7 +10,7 @@
   "base_branch": "main",
   "base_sha": "d52e48e36c3eecc0b16641950eb2b04d54ebd21e",
   "merge_base_sha": "d52e48e36c3eecc0b16641950eb2b04d54ebd21e",
-  "head_sha": "current_head",
+  "head_sha": "f986ac7c7e344a6d021d2b97f5743b45d34d3835",
   "rebase_record": {
     "reason": "PR #1972 merged into main and main contains the recovered local migration-source baseline required for disposable Supabase bootstrap.",
     "previous_base_branch": "pit-w83-prebuild-strategy-alignment-1968",
