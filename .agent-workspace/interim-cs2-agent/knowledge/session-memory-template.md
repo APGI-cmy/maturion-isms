@@ -1,4 +1,4 @@
-# Interim CS2 Agent ? Session Memory Template
+# Interim CS2 Agent - Session Memory Template
 
 **Agent**: interim-cs2-agent
 **Version**: 1.0.0
