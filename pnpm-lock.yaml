@@ -369,6 +369,9 @@ importers:
 
   apps/mmm:
     dependencies:
+      lucide-react:
+        specifier: ^0.462.0
+        version: 0.462.0(react@18.3.1)
       '@supabase/supabase-js':
         specifier: ^2.39.0
         version: 2.99.0
