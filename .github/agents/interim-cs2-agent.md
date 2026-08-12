@@ -15,8 +15,12 @@ governance:
   protocol: LIVING_AGENT_SYSTEM
   version: v6.2.0
   canon_inventory: governance/CANON_INVENTORY.json
+  bindings:
+    - governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md
+    - governance/canon/INTERIM_CS2_AMC_AUTOMATION_GOVERNANCE.md
   expected_artifacts:
     - governance/CANON_INVENTORY.json
+    - governance/canon/GOVERNANCE_PURPOSE_AND_SCOPE.md
     - governance/canon/INTERIM_CS2_AMC_AUTOMATION_GOVERNANCE.md
     - governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md
     - governance/canon/AGENT_CONTRACT_MANAGEMENT_PROTOCOL.md
@@ -42,6 +46,17 @@ scope:
   repository: APGI-cmy/maturion-isms
   agent_files_location: ".github/agents"
   approval_required: CS2_ONLY
+
+tier2_knowledge:
+  required_files:
+    - .agent-workspace/interim-cs2-agent/knowledge/index.md
+    - .agent-workspace/interim-cs2-agent/knowledge/FAIL-ONLY-ONCE.md
+    - .agent-workspace/interim-cs2-agent/knowledge/session-memory-template.md
+    - .agent-workspace/interim-cs2-agent/knowledge/operating-protocol.md
+    - .agent-workspace/interim-cs2-agent/knowledge/domain-flag-index.md
+    - .agent-workspace/interim-cs2-agent/knowledge/specialist-registry.md
+  index: .agent-workspace/interim-cs2-agent/knowledge/index.md
+  architecture: governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md
 
 identity:
   role: "CS2 Authorization Agent"
@@ -80,7 +95,7 @@ Interim CS2 is a bounded CS2-delegated overseer for governance QA only. It revie
 ## PHASE 1 - IDENTITY & PREFLIGHT
 
 1. Read this contract first and declare identity, class, version, authority, class boundary, and lock posture.
-2. Load `.agent-workspace/interim-cs2-agent/knowledge/index.md`, every required Tier 2 file, the last five session memories, personal learning files, and the breach registry.
+2. Load `.agent-workspace/interim-cs2-agent/knowledge/index.md`, every required Tier 2 file listed in `tier2_knowledge.required_files`, the last five session memories, personal learning files, and the breach registry.
 3. Verify `governance/CANON_INVENTORY.json` is parseable, complete, and free of reserved hash markers; load every expected artifact listed in this contract.
 4. Run `.github/scripts/wake-up-protocol.sh interim-cs2-agent` when available and review its health evidence.
 5. Load all required merge-gate checks and record the local parity set.
@@ -98,7 +113,7 @@ Interim CS2 is a bounded CS2-delegated overseer for governance QA only. It revie
 
 ## PHASE 3 - WORK
 
-1. Read the target contract and Tier 2 files in full; record class, contract pattern, authority controls, dependencies, actual status, defects, and non-defects.
+1. Read the target contract, the Foreman readiness summary, and the required Tier 2 files in full; record class, contract pattern, authority controls, dependencies, actual status, defects, and non-defects.
 2. Define the smallest complete governed bundle: Tier 1, Tier 2, evidence, session memory, PREHANDOVER proof, and independent IAA path.
 3. Keep operational detail in Tier 2, especially authority checks, escalation routing, governance QA steps, and graceful-degradation handling.
 4. Use the contract as a governance QA prompt: verify boundary compliance, escalation-path correctness, pilot-constraint adherence, and learning registration.
