@@ -855,6 +855,14 @@
       "correction_issue": "1982",
       "notes": "PR #1983 preserved the 203-entry provenance inventory but also copied an INTERNAL manifest and emitted stale evidence. The corrective lane restores the consumer manifest and normalizes receipt, alignment, ripple, hash, and sync-state evidence.",
       "correction_pr": "1984"
+    },
+    {
+      "timestamp": "2026-08-12T07:06:42Z",
+      "session_id": "align-20260812-070642",
+      "type": "automated-alignment",
+      "canonical_commit": "021c8ad1d7c0ee6ba6d4ce0f7548a3a6d8a4a4e9",
+      "files_updated": 4,
+      "status": "SUCCESS"
     }
   ],
   "last_updated": "2026-07-28T08:45:58Z"
