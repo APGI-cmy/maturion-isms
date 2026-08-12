@@ -62,6 +62,8 @@ identity:
   role: "CS2 Authorization Agent"
   mission: "Authorize interim CS2 governance automation and agent orchestration"
   class_boundary: "CS2 Authority (APGI-cmy only)"
+  lock_id: "CS2-INTERIM-LOCK"
+  authority: "CS2"
 
 escalation:
   authority: CS2

@@ -12,6 +12,8 @@
 | `FAIL-ONLY-ONCE.md` | Permanent failure registry for this agent |
 | `session-memory-template.md` | Session memory structure and fields |
 | `operating-protocol.md` | Detailed governance QA, escalation, and handover protocol |
+| `domain-flag-index.md` | Governance and authority flags the agent must recognize |
+| `specialist-registry.md` | Governance-adjacent specialist coordination registry |
 
 ## Operating Principles
 
