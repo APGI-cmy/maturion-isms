@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-05-23",
-  "total_canons": 203,
+  "total_canons": 204,
   "generation_timestamp": "2026-05-23T07:57:33Z",
   "canons": [
     {
@@ -2439,6 +2439,18 @@
       "canonical_commit": "7209d5aa8f4b9e0aa41e0e9cc375c61dfd475f7d",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "1bd997b07837e1c3375f5b4b40c9086a8fd39d598341f749ed7c8e23f0ad3c84"
+    },
+    {
+      "filename": "INTERIM_CS2_AMC_AUTOMATION_GOVERNANCE.md",
+      "version": "1.0.0",
+      "file_hash": "52327b7356e6497c3e437b79f20a5e1adebba35fa70f84cfd836911d94dadfc2",
+      "effective_date": "2026-08-11",
+      "description": "This document establishes **canonical governance for interim CS2/AMC automation**, defining role boundaries, authority limits, escalation procedures, and operational constraints for the bounded MMM #2004 pilot.",
+      "type": "canon",
+      "path": "governance/canon/INTERIM_CS2_AMC_AUTOMATION_GOVERNANCE.md",
+      "canonical_commit": "fcbb9f01582d1959c0ae89abc58ac238f5289c05",
+      "layer_down_status": "PUBLIC_API",
+      "file_hash_sha256": "52327b7356e6497c3e437b79f20a5e1adebba35fa70f84cfd836911d94dadfc2"
     }
   ]
 }

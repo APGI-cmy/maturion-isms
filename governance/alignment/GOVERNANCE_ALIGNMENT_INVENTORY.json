@@ -3,12 +3,12 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-07-28",
+  "last_updated": "2026-08-12",
   "last_ripple_commit": "52ce157bb5b2971256cbe5e4123c576dc65fabbb",
   "last_ripple_timestamp": "2026-07-28T08:45:58Z",
   "alignment_summary": {
-    "total_artifacts": 58,
-    "aligned": 48,
+    "total_artifacts": 59,
+    "aligned": 49,
     "drifted": 0,
     "missing": 0,
     "escalated": 4,
@@ -183,10 +183,10 @@
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
       "canonical_hash_sha256": "1502ca98c65323ed5ea297ad26583fa932647f77ad4f0d94e9867cd06ed51a6a",
-      "local_hash_sha256": "fc3ddf69229736aa8f9357524d27bc7ed3d4c032926defeb0cc73a1d496d2b05",
-      "alignment_status": "INTERNAL_NOT_LAYERED",
+      "local_hash_sha256": "1502ca98c65323ed5ea297ad26583fa932647f77ad4f0d94e9867cd06ed51a6a",
+      "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-07-28T08:45:58Z",
+      "last_verified": "2026-08-12T07:06:48Z",
       "change_note": "Canonical hash and content-producing commit recorded from governance PR #1375. The consumer retains its pre-PR #1983 manifest because this artifact is INTERNAL and issue #1982 authorizes inventory provenance only; the variance is intentional and is not a PUBLIC_API drift.",
       "canonical_commit": "6028fe8604e4a8bf0eff8d612b210fc51e157adc",
       "canonical_source_repo": "APGI-cmy/maturion-foreman-governance",
@@ -722,6 +722,18 @@
       "canonical_commit": "8684f42b39d1a1927b34cd9c64c3c3dc85a986ad",
       "canonical_source_repo": "APGI-cmy/maturion-foreman-governance",
       "canonical_source_path": "governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md"
+    },
+    {
+      "filename": "INTERIM_CS2_AMC_AUTOMATION_GOVERNANCE.md",
+      "path": "governance/canon/INTERIM_CS2_AMC_AUTOMATION_GOVERNANCE.md",
+      "canonical_version": "TBD",
+      "local_version": "TBD",
+      "canonical_hash_sha256": "TBD",
+      "local_hash_sha256": "52327b7356e6497c3e437b79f20a5e1adebba35fa70f84cfd836911d94dadfc2",
+      "alignment_status": "PENDING_REVIEW",
+      "layer_down_status": "PUBLIC_API",
+      "last_verified": "2026-08-12T07:06:48Z",
+      "change_note": "Auto-added by ripple-integration inventory update step"
     }
   ],
   "metadata": {

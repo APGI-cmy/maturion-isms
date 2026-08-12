@@ -100,6 +100,7 @@ It serves to:
 | `PRE_BUILD_STAGE_MODEL_CANON.md` | 1.1.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-05-11 |
 | `PRE_IMPLEMENTATION_BEHAVIOR_REVIEW_PROTOCOL.md` | 1.0.0 | PUBLIC_API | FM App, SlotMaster, All Repos | 2026-01-14 |
 | `FULLY_FUNCTIONAL_DELIVERY_STANDARD.md` | 2.0.0 | PUBLIC_API | FM App, SlotMaster, maturion-isms, All Repos | 2026-05-07 |
+| `CODEX_BUILD_COMPLETION_DEFINITION.md` | 1.0.0 | PUBLIC_API | FM App, app_management_centre, maturion-isms, PartPulse, R_Roster, All Repos | 2026-05-22 |
 
 ### 3.3 Delegation & Execution Models (PUBLIC_API)
 
@@ -277,10 +278,10 @@ These policies are located in `governance/policy/` and establish constitutional 
 
 ## 4. Governance Public API Summary
 
-**Total Canon Files Listed in This Manifest**: 98  
+**Total Canon Files Listed in This Manifest**: 99
 **Total Policy Files**: 15  
-**Combined Total**: 113  
-**PUBLIC_API**: 83 files (73%)  
+**Combined Total**: 114
+**PUBLIC_API**: 84 files (74%)
 **OPTIONAL**: 16 files (14%)  
 **INTERNAL**: 14 files (13%)  
 **DEPRECATED**: 0 files (0%)
@@ -363,6 +364,7 @@ When a breaking change is required:
 | 2026-04-15 | Added §3.15 AIMC Platform Models (7 files); updated totals 93→95 canon files, combined 108→110; SPECIALIST_KNOWLEDGE_MANAGEMENT.md amended with Source Model Governance cross-reference | governance-repo-administrator-v2 (issue #1343) |
 | 2026-05-07 | Added FULLY_FUNCTIONAL_DELIVERY_STANDARD.md v2.0.0 to §3.2; added INDEPENDENT_ASSURANCE_AGENT_CANON.md v1.9.0 to §3.4; updated totals 95→97 canon, combined 110→112, PUBLIC_API 81→82, INTERNAL 13→14. **Manifest reconciliation**: both files existed in CANON_INVENTORY.json (at v1.0.0 and v1.8.0 respectively) but were absent from this manifest — this entry corrects that omission while simultaneously version-bumping both files. | copilot (issue #1367 — canon alignment: require full functional delivery for product build PASS) |
 | 2026-05-11 | Stage 5 architecture governance drift reconciliation: ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md updated to v1.4; PRE_BUILD_STAGE_MODEL_CANON.md updated to v1.1.0 with §AD-01–§AD-24 matrix gate; BUILD_PROGRESS_TRACKER_TEMPLATE.md version/date updated for Stage 5 gate language. | copilot (issue: Governance: Upgrade Stage 5 Architecture checklist for full App Description AD-01 to AD-24 coverage) |
+| 2026-05-22 | Added CODEX_BUILD_COMPLETION_DEFINITION.md v1.0.0 to §3.2; defines the mandatory completion checkpoint before Codex or the AI workforce may present a build to Johan for non-coder UI/product evaluation; layered down to governed consumer repos. | CS2 Johan Ras via CodexAdvisor |
 
 ### 7.2 Layer-Down Completion Tracking
 

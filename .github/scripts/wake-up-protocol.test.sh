@@ -87,8 +87,42 @@ run_protocol() {
     return "$status"
 }
 
+create_constrained_path() {
+    local destination="$1"
+    local include_node="$2"
+
+    mkdir -p "$destination"
+    printf '#!/usr/bin/env bash\nexit 127\n' > "$destination/jq"
+    chmod +x "$destination/jq"
+
+    if [ "$include_node" != "true" ]; then
+        printf '#!/usr/bin/env bash\nexit 127\n' > "$destination/node"
+        chmod +x "$destination/node"
+    fi
+}
+
+run_protocol_with_path() {
+    local fixture="$1"
+    local agent_id="$2"
+    local output_file="$3"
+    local constrained_path="$4"
+
+    set +e
+    (
+        cd "$fixture"
+        PATH="$constrained_path:$PATH" "$BASH" .github/scripts/wake-up-protocol.sh "$agent_id"
+    ) >"$output_file" 2>&1
+    local status=$?
+    set -e
+    return "$status"
+}
+
 fixture="${TEST_ROOT}/fixture"
 create_fixture "$fixture"
+node_only_path="${TEST_ROOT}/node-only-path"
+parserless_path="${TEST_ROOT}/parserless-path"
+create_constrained_path "$node_only_path" true
+create_constrained_path "$parserless_path" false
 
 happy_output="${TEST_ROOT}/happy.out"
 if run_protocol "$fixture" "test-agent" "$happy_output" \
@@ -97,6 +131,38 @@ if run_protocol "$fixture" "test-agent" "$happy_output" \
     record_pass "complete declared Tier 2 set passes"
 else
     record_fail "complete declared Tier 2 set passes" "$(cat "$happy_output")"
+fi
+
+node_fallback_output="${TEST_ROOT}/node-fallback.out"
+if run_protocol_with_path "$fixture" "test-agent" "$node_fallback_output" "$node_only_path" \
+    && grep -q "JSON parser: node" "$node_fallback_output" \
+    && grep -q "All JSON files valid" "$node_fallback_output" \
+    && grep -q "All health checks PASSED" "$node_fallback_output"; then
+    record_pass "Node.js fallback validates valid JSON without jq"
+else
+    record_fail "Node.js fallback validates valid JSON without jq" "$(cat "$node_fallback_output")"
+fi
+
+printf '{"version":\n' > "$fixture/governance/CANON_INVENTORY.json"
+malformed_output="${TEST_ROOT}/malformed.out"
+if ! run_protocol_with_path "$fixture" "test-agent" "$malformed_output" "$node_only_path" \
+    && grep -q "JSON parser: node" "$malformed_output" \
+    && grep -q "CANON_INVENTORY.json is invalid JSON" "$malformed_output" \
+    && ! grep -q "All health checks PASSED" "$malformed_output"; then
+    record_pass "Node.js fallback rejects malformed JSON"
+else
+    record_fail "Node.js fallback rejects malformed JSON" "$(cat "$malformed_output")"
+fi
+
+printf '{"version":"1.0.0","total_artifacts":0,"canons":[]}\n' > "$fixture/governance/CANON_INVENTORY.json"
+parserless_output="${TEST_ROOT}/parserless.out"
+if ! run_protocol_with_path "$fixture" "test-agent" "$parserless_output" "$parserless_path" \
+    && grep -q "JSON parser/tooling unavailable" "$parserless_output" \
+    && ! grep -q "invalid JSON" "$parserless_output" \
+    && ! grep -q "All health checks PASSED" "$parserless_output"; then
+    record_pass "missing JSON parser fails closed as tooling"
+else
+    record_fail "missing JSON parser fails closed as tooling" "$(cat "$parserless_output")"
 fi
 
 mkdir -p "$fixture/.agent-workspace/test-agent/memory"
