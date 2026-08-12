@@ -33,6 +33,15 @@ export function resolveHarnessConfig(t) {
     assert.fail(`${message} Configure disposable/local Supabase credentials for PIT W8.3 RED execution.`);
   }
 
+  const isLocalUrl = /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?/.test(config.supabaseUrl);
+  if (!isLocalUrl && !process.env.PIT_W83_ALLOW_REMOTE_SUPABASE) {
+    assert.fail(
+      `Safety gate: PIT_W83_SUPABASE_URL points to a non-local instance (${config.supabaseUrl}). ` +
+        'This harness uses the service role key to mutate auth state. ' +
+        'Set PIT_W83_ALLOW_REMOTE_SUPABASE=1 to explicitly acknowledge running against a non-local project.',
+    );
+  }
+
   return config;
 }
 
@@ -72,6 +81,8 @@ export async function createPersonas(clients) {
   ];
 
   const personas = {};
+  const orgId = `org-w83-${runId}`;
+  const projectId = `proj-w83-${runId}`;
 
   for (const role of roles) {
     const email = `pit-w83-${role}-${runId}@example.test`;
@@ -96,15 +107,113 @@ export async function createPersonas(clients) {
 
     assert.equal(signInError, null, `Persona auth failed for ${role}: ${signInError?.message}`);
 
+    const userId = userData.user?.id;
+
+    if (role !== 'cross_tenant_actor') {
+      await clients.serviceClient
+        .from('user_org_memberships')
+        .upsert({ user_id: userId, org_id: orgId, created_at: new Date().toISOString() }, { onConflict: 'user_id,org_id', ignoreDuplicates: true });
+
+      await clients.serviceClient
+        .from('user_roles')
+        .upsert({ user_id: userId, project_id: projectId, role, created_at: new Date().toISOString() }, { onConflict: 'user_id,project_id,role', ignoreDuplicates: true });
+    }
+
     personas[role] = {
       email,
       password,
-      userId: userData.user?.id,
+      userId,
+      orgId,
+      projectId,
       accessToken: signInData.session?.access_token,
     };
   }
 
   return { runId, personas };
+}
+
+export async function seedDomainFixtures(clients, personas) {
+  const sc = clients.serviceClient;
+  const projectLeader = personas.project_leader;
+  const milestoneOwner = personas.milestone_owner;
+  const deliverableOwner = personas.deliverable_owner;
+  const contributor = personas.contributor;
+  const projectId = projectLeader?.projectId ?? 'proj-demo';
+
+  const fixtures = [
+    {
+      table: 'pit_milestones',
+      rows: [
+        { id: 'milestone-a', title: 'W8.3 Fixture Milestone A', project_id: projectId, status: 'active', owner_id: milestoneOwner?.userId },
+      ],
+    },
+    {
+      table: 'pit_deliverables',
+      rows: [
+        { id: 'deliverable-a', title: 'W8.3 Fixture Deliverable A', milestone_id: 'milestone-a', project_id: projectId, status: 'active', owner_id: deliverableOwner?.userId },
+        { id: 'deliverable-b', title: 'W8.3 Fixture Deliverable B', milestone_id: 'milestone-a', project_id: projectId, status: 'active', owner_id: deliverableOwner?.userId },
+      ],
+    },
+    {
+      table: 'pit_tasks',
+      rows: [
+        { id: 'task-a', title: 'W8.3 Fixture Task A', deliverable_id: 'deliverable-a', project_id: projectId, status: 'active' },
+        { id: 'task-x', title: 'W8.3 Fixture Task X', deliverable_id: 'deliverable-a', project_id: projectId, status: 'active', owner_id: personas.task_owner?.userId },
+        { id: 'generated-task-a', title: 'W8.3 Generated Task A', deliverable_id: 'deliverable-a', project_id: projectId, status: 'active', source_lineage: { source: 'maturion', suggestion_id: 'suggestion-a' }, integration_status: null },
+        { id: 'task-evidence-a', title: 'W8.3 Evidence Task A', deliverable_id: 'deliverable-a', project_id: projectId, status: 'active', progress_state: 'in_progress', canonical_status: 'pending' },
+      ],
+    },
+    {
+      table: 'pit_transfer_proposals',
+      rows: [
+        { id: 'proposal-a', source_id: 'milestone-a', targets: [], status: 'pending', created_by: milestoneOwner?.userId, version: 1 },
+        { id: 'proposal-valid-multi-child', source_id: 'milestone-a', targets: [{ child_id: 'task-a', target_id: 'deliverable-b' }, { child_id: 'task-x', target_id: 'deliverable-b' }], status: 'pending', created_by: milestoneOwner?.userId, version: 1 },
+        { id: 'proposal-force-rollback', source_id: 'milestone-a', targets: [{ child_id: 'task-a', target_id: 'deliverable-b' }, { child_id: 'task-x', target_id: 'deliverable-b' }], status: 'pending', created_by: milestoneOwner?.userId, version: 1 },
+        { id: 'proposal-stale-version', source_id: 'milestone-a', targets: [{ child_id: 'task-a', target_id: 'deliverable-b' }], status: 'pending', created_by: milestoneOwner?.userId, version: 1 },
+      ],
+    },
+    {
+      table: 'pit_suggestions',
+      rows: [
+        { id: 'suggestion-a', task_id: 'task-a', project_id: projectId, created_by: contributor?.userId, status: 'pending' },
+        { id: 'suggestion-opt-in', task_id: 'task-x', project_id: projectId, created_by: contributor?.userId, status: 'pending' },
+      ],
+    },
+    {
+      table: 'pit_evidence',
+      rows: [
+        { id: 'evidence-a', task_id: 'task-evidence-a', project_id: projectId, submitted_by: projectLeader?.userId, status: 'pending' },
+      ],
+    },
+  ];
+
+  const errors = [];
+  for (const { table, rows } of fixtures) {
+    const { error } = await sc.from(table).upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+    if (error) {
+      errors.push(`${table}: ${error.message}`);
+    }
+  }
+
+  if (errors.length > 0) {
+    console.warn(`[pit-w83-harness] Domain fixture seed warnings (tables may not exist yet in RED phase): ${errors.join('; ')}`);
+  }
+}
+
+export async function cleanupDomainFixtures(clients) {
+  const sc = clients.serviceClient;
+  const fixtureIds = {
+    pit_evidence: ['evidence-a'],
+    pit_suggestions: ['suggestion-a', 'suggestion-opt-in'],
+    pit_transfer_proposals: ['proposal-a', 'proposal-valid-multi-child', 'proposal-force-rollback', 'proposal-stale-version'],
+    pit_tasks: ['task-a', 'task-x', 'generated-task-a', 'task-evidence-a'],
+    pit_deliverables: ['deliverable-a', 'deliverable-b'],
+    pit_milestones: ['milestone-a'],
+  };
+
+  for (const [table, ids] of Object.entries(fixtureIds)) {
+    await sc.from(table).delete().in('id', ids);
+  }
 }
 
 export async function cleanupPersonas(clients, personas) {

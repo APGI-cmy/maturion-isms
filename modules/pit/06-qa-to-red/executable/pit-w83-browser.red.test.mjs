@@ -94,9 +94,10 @@ const browserCases = [
     id: 'PIT-RED-W83-006',
     title: 'viewer mutation controls are disabled and crafted API mutation is denied',
     run: async ({ page, state }) => {
+      await seedBrowserAuth(page, state, 'viewer');
       await page.goto(`${state.config.appUrl}/projects/demo/milestones`, { waitUntil: 'domcontentloaded' });
       const editButton = page.locator('[data-testid="pit-mutation-edit"]');
-      await assert.rejects(editButton.click(), /.+/, 'Expected viewer mutation control to be unavailable/disabled');
+      await assert.rejects(editButton.click({ timeout: 2_000 }), /.+/, 'Expected viewer mutation control to be unavailable/disabled');
 
       const denial = await page.evaluate(async ({ url, key, token }) => {
         const response = await fetch(`${url}/rest/v1/rpc/pit_reparent_task`, {

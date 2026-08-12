@@ -6,6 +6,8 @@ import {
   verifyHarnessReadiness,
   createPersonas,
   cleanupPersonas,
+  seedDomainFixtures,
+  cleanupDomainFixtures,
   callRpcWithToken,
   callRestMutation,
   assertGreenExpectation,
@@ -22,6 +24,7 @@ async function getHarnessState(t) {
       const clients = await createHarnessClients(config);
       await verifyHarnessReadiness(config, clients);
       const seed = await createPersonas(clients);
+      await seedDomainFixtures(clients, seed.personas);
       sharedState = {
         config,
         clients,
@@ -151,7 +154,42 @@ const supabaseCases = [
   {
     id: 'PIT-RED-W83-025',
     title: 'forced second-child failure rolls back entire transfer transaction',
-    run: (t) => runRpcCase(t, 'project_leader', 'pit_approve_transfer_proposal', { proposal_id: 'proposal-force-rollback', force_second_child_failure: true }, 'no-write'),
+    run: async (t) => {
+      const state = await getHarnessState(t);
+      if (!state) return;
+
+      const beforeChildren = await callRestMutation(
+        state.config,
+        'pit_tasks?deliverable_id=eq.deliverable-a&select=id,deliverable_id',
+        'GET',
+        null,
+        state.personas.project_leader?.accessToken,
+      );
+      const childrenBefore = Array.isArray(beforeChildren.body) ? beforeChildren.body : [];
+
+      const result = await callRpcWithToken(
+        state.config,
+        'pit_approve_transfer_proposal',
+        { proposal_id: 'proposal-force-rollback', force_second_child_failure: true },
+        state.personas.project_leader?.accessToken,
+      );
+      assertGreenExpectation(result, 'no-write');
+
+      const afterChildren = await callRestMutation(
+        state.config,
+        'pit_tasks?deliverable_id=eq.deliverable-a&select=id,deliverable_id',
+        'GET',
+        null,
+        state.personas.project_leader?.accessToken,
+      );
+      const childrenAfter = Array.isArray(afterChildren.body) ? afterChildren.body : [];
+
+      assert.deepEqual(
+        childrenAfter.map((r) => r.id).sort(),
+        childrenBefore.map((r) => r.id).sort(),
+        'Expected all child assignments to be rolled back after forced second-child failure',
+      );
+    },
   },
   {
     id: 'PIT-RED-W83-026',
@@ -196,7 +234,53 @@ const supabaseCases = [
   {
     id: 'PIT-RED-W83-031',
     title: 'generated task wording edits do not mutate immutable source lineage',
-    run: (t) => runRestCase(t, 'task_owner', 'pit_tasks?id=eq.generated-task-a', 'PATCH', { title: 'edited wording', source_lineage: { source: 'tamper' } }, 'deny'),
+    run: async (t) => {
+      const state = await getHarnessState(t);
+      if (!state) return;
+
+      const token = state.personas.task_owner?.accessToken;
+      assert.ok(token, 'Missing access token for role task_owner');
+
+      const beforeResult = await callRestMutation(
+        state.config,
+        'pit_tasks?id=eq.generated-task-a&select=id,source_lineage',
+        'GET',
+        null,
+        token,
+      );
+      const originalLineage = Array.isArray(beforeResult.body) ? beforeResult.body[0]?.source_lineage : undefined;
+
+      const titleEditResult = await callRestMutation(
+        state.config,
+        'pit_tasks?id=eq.generated-task-a',
+        'PATCH',
+        { title: 'edited wording' },
+        token,
+      );
+      assertGreenExpectation(titleEditResult, 'success');
+
+      const lineageTamperResult = await callRestMutation(
+        state.config,
+        'pit_tasks?id=eq.generated-task-a',
+        'PATCH',
+        { source_lineage: { source: 'tamper' } },
+        token,
+      );
+      assertGreenExpectation(lineageTamperResult, 'deny');
+
+      const afterResult = await callRestMutation(
+        state.config,
+        'pit_tasks?id=eq.generated-task-a&select=id,source_lineage',
+        'GET',
+        null,
+        token,
+      );
+      const lineageAfter = Array.isArray(afterResult.body) ? afterResult.body[0]?.source_lineage : undefined;
+
+      if (originalLineage !== undefined) {
+        assert.deepEqual(lineageAfter, originalLineage, 'Expected source_lineage to remain unchanged after wording edit and rejected lineage tamper');
+      }
+    },
   },
   {
     id: 'PIT-RED-W83-033',
@@ -303,5 +387,6 @@ test('PIT-RED-W83-035: evidence evaluation stores proposal without automatic can
 
 test.after(async () => {
   if (!sharedState) return;
+  await cleanupDomainFixtures(sharedState.clients);
   await cleanupPersonas(sharedState.clients, sharedState.personas);
 });
