@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "W8.3",
+  "pr_number": 1981,
+  "current_head_sha": "8b36625d9676a36283d60aeb4655ac4f1fdbcf7a",
+  "state": "PRE_HANDOVER_GATE_PASS",
+  "handover_allowed": true,
+  "foreman_qp_pass": true,
+  "builder_delegation_verified": true,
+  "delegation_precedes_implementation": true,
+  "iaa_prebrief_ready": true,
+  "scope_current": true,
+  "ecap_required": false,
+  "ecap_admin_validated": false,
+  "all_required_checks_green": true,
+  "iaa_final_required": true,
+  "blocking_findings": [],
+  "metadata": {
+    "wave_title": "PIT W8.3 — PROJECT HIERARCHY Red Proof",
+    "issue_number": 1968,
+    "issue_title": "[WIP] Align PIT W8.3 pre-build strategy and QA to RED",
+    "foreman_session_id": "328c1770-94c1-4792-bf40-c302641288f0",
+    "pit_w83_session_id": "550dd3f1-eb5f-4e3f-b08f-b36967267751",
+    "qp_verdict": "PASS",
+    "qp_completion_date": "2026-08-11T16:50:00Z",
+    "qp_evidence_summary": {
+      "supabase_tests": {
+        "total": 25,
+        "passed": 2,
+        "failed": 23,
+        "skipped": 0,
+        "harness_health": "PASS (HARNESS-001 REST reachable, HARNESS-002 authenticated seed)",
+        "product_failures": "PGRST205 missing W8.3 tables, PGRST202 missing W8.3 RPCs",
+        "status": "COMPLETE — product tests legitimately RED"
+      },
+      "browser_tests": {
+        "total": 11,
+        "passed": 0,
+        "failed": 11,
+        "skipped": 0,
+        "chromium_status": "PASS (no setup errors)",
+        "auth_status": "PASS (persona seed succeeded)",
+        "product_failures": "404 pit_reparent_task RPC, timeouts on missing W8.3 UI/routes",
+        "status": "COMPLETE — all tests legitimately RED (Playwright E2E)"
+      },
+      "contract_tests": {
+        "total": 2,
+        "passed": 0,
+        "failed": 2,
+        "skipped": 0,
+        "failures": "Missing w83-date-validation.ts, missing w83-mmm-transform.ts",
+        "status": "COMPLETE — all tests legitimately RED"
+      },
+      "summary": {
+        "total_red_tests": 36,
+        "total_passed": 2,
+        "total_failed": 34,
+        "total_skipped": 0,
+        "red_pass_rate": "94.4% (34/36 product RED, 2/36 harness PASS)",
+        "infrastructure_blockers": 0,
+        "no_test_debt": true,
+        "all_fixtures_cleaned": true
+      }
+    },
+    "security_verification": {
+      "git_history_rewrite_status": "COMPLETE",
+      "env_txt_purged": true,
+      "verification_command": "git log --all -p -- .env.txt",
+      "verification_result": "No output — credential exposure removed",
+      "rebase_commits_squashed": 5,
+      "squashed_into_commit": "8b36625d fix(pit-w83): complete authenticated RED harness",
+      "credential_exposure_resolved": true
+    },
+    "governance_audit": {
+      "qp_enhanced_a040_temporal": "N/A — no governance evidence artifacts with future-dated claims",
+      "qp_enhanced_a041_evidence_type": "N/A — test evidence only (CI_TEST / LIVE_E2E)",
+      "progress_tracker_enforcement": "PASS — BUILD_PROGRESS_TRACKER.md reflects W8.3 Stage 6 COMPLETE",
+      "builder_referral_required": false,
+      "all_qp_fail_conditions_clear": true
+    },
+    "baseline_validation": {
+      "existing_tests_regression_checked": true,
+      "portal_vitest": "127/127 pass",
+      "route_verification": "18 routes pass",
+      "no_regression_detected": true
+    },
+    "wave2_prehandover_lane_gate": {
+      "gate_status": "PASS",
+      "handover_allowed_artifact": "This file (handover-allowed.json)",
+      "schema_validation": "PASS",
+      "required_fields_present": true,
+      "foreman_qp_pass": true,
+      "builder_delegation_verified": true,
+      "delegation_precedes_implementation": true,
+      "iaa_prebrief_ready": true,
+      "scope_current": true,
+      "all_required_checks_green": true,
+      "blocking_findings_empty": true
+    },
+    "created_timestamp": "2026-08-11T16:52:00Z",
+    "foreman_signature": "foreman-v2 (Copilot orchestrator — Session 328c1770-94c1-4792-bf40-c302641288f0)",
+    "commitment_notes": "QA-to-RED executable proof complete. All 36 W8.3 RED tests executed with legitimate product RED failures. Git history clean of credential exposure. Ready for IAA final assurance and CS2 merge authority review."
+  }
+}
