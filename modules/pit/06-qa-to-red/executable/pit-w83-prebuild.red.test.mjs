@@ -22,37 +22,37 @@ const migrations = list('supabase/migrations').join('\n');
  * not part of the normal GREEN regression command before builder appointment.
  */
 
-test('PIT-RED-W83-001: milestone route is registered', () => {
+test('PIT-SUPPLEMENTAL-W83-S001: milestone route is registered', () => {
   assert.match(routeSource, /projects\/:id\/milestones/, 'Missing milestone route');
 });
 
-test('PIT-RED-W83-002: deliverable route is registered', () => {
+test('PIT-SUPPLEMENTAL-W83-S002: deliverable route is registered', () => {
   assert.match(routeSource, /projects\/:id\/deliverables/, 'Missing deliverable route');
 });
 
-test('PIT-RED-W83-003: task route is registered', () => {
+test('PIT-SUPPLEMENTAL-W83-S003: task route is registered', () => {
   assert.match(routeSource, /projects\/:id\/tasks/, 'Missing task route');
 });
 
-test('PIT-RED-W83-004: project settings route is registered', () => {
+test('PIT-SUPPLEMENTAL-W83-S004: project settings route is registered', () => {
   assert.match(routeSource, /projects\/:id\/settings/, 'Missing project settings route');
 });
 
-test('PIT-RED-W83-005: hierarchy workspaces exist', () => {
+test('PIT-SUPPLEMENTAL-W83-S005: hierarchy workspaces exist', () => {
   assert.match(pitPages, /Milestone/i, 'Missing milestone workspace');
   assert.match(pitPages, /Deliverable/i, 'Missing deliverable workspace');
   assert.match(pitPages, /Task/i, 'Missing task workspace');
 });
 
-test('PIT-RED-W83-006: Supabase hierarchy migration exists', () => {
+test('PIT-SUPPLEMENTAL-W83-S006: Supabase hierarchy migration exists', () => {
   assert.match(migrations, /pit.*w83.*hierarchy/i, 'Missing W8.3 hierarchy migration');
 });
 
-test('PIT-RED-W83-007: structural-change approval migration exists', () => {
+test('PIT-SUPPLEMENTAL-W83-S007: structural-change approval migration exists', () => {
   assert.match(migrations, /hierarchy.*change.*request|structural.*change/i, 'Missing structural-change request and approval migration');
 });
 
-test('PIT-RED-W83-008: atomic transfer/cancel RPC is specified in migration source', () => {
+test('PIT-SUPPLEMENTAL-W83-S008: atomic transfer/cancel RPC is specified in migration source', () => {
   const migrationText = list('supabase/migrations')
     .filter((name) => name.endsWith('.sql'))
     .map((name) => read(`supabase/migrations/${name}`))
