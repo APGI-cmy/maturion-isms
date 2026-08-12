@@ -12,23 +12,29 @@ import {
 } from './harness/pit-w83-supabase-harness.mjs';
 
 let sharedState;
+let sharedStateInit;
 
 async function getHarnessState(t) {
   const config = resolveHarnessConfig(t);
-  if (!config) return null;
 
-  if (!sharedState) {
-    const clients = await createHarnessClients(config);
-    await verifyHarnessReadiness(config, clients);
-    const seed = await createPersonas(clients);
-    sharedState = {
-      config,
-      clients,
-      ...seed,
-    };
+  if (!sharedStateInit) {
+    sharedStateInit = (async () => {
+      const clients = await createHarnessClients(config);
+      await verifyHarnessReadiness(config, clients);
+      const seed = await createPersonas(clients);
+      sharedState = {
+        config,
+        clients,
+        ...seed,
+      };
+      return sharedState;
+    })().catch((error) => {
+      sharedStateInit = undefined;
+      throw error;
+    });
   }
 
-  return sharedState;
+  return sharedStateInit;
 }
 
 async function runRpcCase(t, role, rpcName, payload, expectation) {
