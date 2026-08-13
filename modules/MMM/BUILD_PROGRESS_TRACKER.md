@@ -1,4 +1,4 @@
-﻿# BUILD PROGRESS TRACKER
+# BUILD PROGRESS TRACKER
 
 **Module**: MMM (Maturity Model Management)  
 **Module Slug**: MMM  
@@ -129,13 +129,13 @@ All 8 pre-build steps and foundation contract complete and merged.
 | PR | Classification | Result |
 |---:|---|---|
 | #2003 | Foundation state machine (Issue #1961) | `mmm-domain-approval-action` + `mmm-framework-approval-action` with correlation, idempotency, self-approval prohibition, level status constants. 8/8 tests green. Merged 2026-08-10. |
-| #2006 | Foundation runtime (Issue #2004) | 7 Edge Functions, 8-table migration with 10 enums + RLS, 59/59 tests across 4 suites. **IAA/ECAP status was PENDING at merge.** Merged 2026-08-11. |
+| #2006 | Foundation runtime (Issue #2004) | 7 Edge Functions, 9-table migration with 10 enums + RLS, 59/59 tests across 4 suites. **IAA/ECAP status was PENDING at merge.** Merged 2026-08-11. |
 
 **IAA Closure Gap (PR #2006):** ECAP and IAA final assurance gates not fully closed before merge. Foreman QP passed at head, but IAA and ECAP evidence marked PENDING in PR body. This gap must be acknowledged and addressed before next wave begins. Noted in 2026-08-13 CS2 retrospective.
 
 **What PR #2006 implements:**
 
-- Approval-round, approver, proposed-change, comment, lock state, notification, audit, and AI-learning event persistence (8 tables, 10 enums)
+- Approval-round, approver, invitation, proposed-change, comment, lock state, notification, audit, and AI-learning event persistence (9 tables, 10 enums)
 - Server-enforced approval state machine
 - All 7 canonical approval Edge Functions
 - Org-level RLS via `mmm_current_user_org_id()`
@@ -162,6 +162,8 @@ Pre-build required before any implementation commit:
 3. Create IAA pre-brief and builder appointment before first implementation commit
 4. Confirm QA-to-red authority (`level2-invite-workspace-qa-to-red.md`) is current and aligned
 5. Convert QA-to-red expectations into executable failing tests (QA-to-RED)
+
+**Existing scaffold note:** PR #2006 merged scaffold components (`Level2InviteModal.tsx`, `Level2Workspace.tsx`, `useCreateApprovalRound.ts`) and associated TODO test stubs. The next builder must audit, adopt, and complete this scaffold rather than starting from scratch. Pre-build review must include an assessment of the existing scaffold state.
 
 Bounded scope:
 
