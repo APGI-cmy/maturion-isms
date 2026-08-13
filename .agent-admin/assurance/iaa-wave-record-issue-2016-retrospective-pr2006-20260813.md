@@ -1,6 +1,11 @@
 # IAA WAVE RECORD
 ## Wave: issue-2016-retrospective-pr2006 — Retrospective Governance Assessment of Merged PR #2006
-
+WAVE: issue-2016-retrospective-pr2006
+PR: #2017
+CURRENT_HEAD_SHA: current_head
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+REPOSITORY: APGI-cmy/maturion-isms
+BRANCH: apgi-cmy-issue-2016-retrospective-governance-pr-2
 **Wave Reference**: issue-2016-retrospective-pr2006
 **Repository**: APGI-cmy/maturion-isms
 **Branch**: apgi-cmy-issue-2016-retrospective-governance-pr-2
@@ -20,7 +25,7 @@
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "issue-2016-retrospective-pr2006"
-  pr: "PENDING"
+  pr: "#2017"
   issue: "#2016"
   branch: "apgi-cmy-issue-2016-retrospective-governance-pr-2"
   invoked_by: "foreman-v2-agent"
