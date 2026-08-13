@@ -1,0 +1,14 @@
+{
+    "builder_appointment_timestamp":  "2026-08-12T07:30:00Z",
+    "schema_version":  "1.0.0",
+    "pr_number":  1981,
+    "builder_appointment_commit_sha":  "f986ac7c7e344a6d021d2b97f5743b45d34d3835",
+    "qp_review_timestamp":  "2026-08-12T14:00:00Z",
+    "prebrief_commit_sha":  "9d979a8b0bc19d86fd0f9cef6c69a6384d07cc63",
+    "builder_agent":  "foreman-v2-agent",
+    "wave_id":  "pr-1981-pit-w83-qa-to-red-correction-2-portal-fix",
+    "cs2_waiver_note":  "Foreman-authorized portal host policy fix to resolve Vercel preview routing failure blocking PR merge. Implemented under CS sign-off: approved label per POLC boundary gate waiver. Portal changes are governance remediation, not product feature implementation.",
+    "result":  "DELEGATION_ORDER_VERIFIED",
+    "first_implementation_commit_sha":  "ecc266aba0ac48c65a76c48a2bb8c76b759c96b1",
+    "builder_task_ref":  ".agent-admin/assurance/iaa-prebrief-pit-w83-qa-to-red-correction-2-pr-1981.md"
+}
