@@ -20,7 +20,7 @@
 IAA_PREFLIGHT_BRIEF:
   schema_version: "1.0.0"
   wave: "issue-2016-retrospective-pr2006"
-  pr: "PENDING"
+  pr: "#2017"
   issue: "#2016"
   branch: "apgi-cmy-issue-2016-retrospective-governance-pr-2"
   invoked_by: "foreman-v2-agent"
