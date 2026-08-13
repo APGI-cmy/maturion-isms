@@ -107,7 +107,7 @@
 - final_iaa_invoked: pending (to occur after PR open + /prepare-handover checkpoint refresh)
 - final_iaa_evidence_path: pending
 - final_iaa_token: IAA-ISSUE-2016-RETRO-20260813-PASS issued for the retrospective record itself; a further current-head confirmation is pending once the PR exists and CI has run
-- final_iaa_verdict: PASS (for the retrospective record's own completeness/compliance); PENDING for current-head-on-PR confirmation
+- final_iaa_verdict: PENDING (IAA's own wave-record `## TOKEN` section already issued an ASSURANCE-TOKEN scoped to the retrospective record's own completeness/compliance; the separate current-head-on-PR final confirmation required before CS2 review has not yet been invoked)
 - final_iaa_findings: Substantive verification-evidence gap identified for PR #2006's post-token commits (`21496a65`, `c995d457`) — routed to CS2_DISPOSITION_PACKAGE Option B, a separate prospective remediation issue, NOT folded into this PR
 
 ## CI and merge-gate evidence
