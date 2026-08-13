@@ -1,4 +1,4 @@
-﻿# BUILD PROGRESS TRACKER
+# BUILD PROGRESS TRACKER
 
 **Module**: MMM (Maturity Model Management)  
 **Module Slug**: MMM  
