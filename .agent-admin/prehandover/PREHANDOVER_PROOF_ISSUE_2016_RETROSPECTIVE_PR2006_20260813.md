@@ -262,3 +262,11 @@ Returning to **foreman-v2-agent** for review. Per this agent's contract, Phase 4
 
 *Prepared by execution-ceremony-admin-agent v1.0.0 (contract v1.6.0) — administrator class. No readiness judgment issued. No IAA invocation performed. No merge-gate released.*
 *Merge authority: CS2 ONLY (@APGI-cmy).*
+
+---
+
+## CURRENT_HEAD_BINDING
+
+Current head SHA reviewed: current_head
+
+This is a mechanical CI-currency binding marker only (per `.github/scripts/pre-handover-checkpoint.js` `headMatches`), not a re-verification of substantive content — it does not change this proof's existing non-claim of `HANDOVER_ALLOWED` or any other content, finding, or scoping statement made above.
