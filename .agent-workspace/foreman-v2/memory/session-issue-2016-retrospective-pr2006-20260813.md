@@ -33,7 +33,7 @@
 
 - task_summary: Independent, post-merge retrospective governance assessment of merged PR #2006, reconciling contradictory historical assurance artifacts (PASS token vs. BLOCKED-CHECKPOINT wave record) via a NEW append-only wave record, without reopening PR #2006 or editing its immutable evidence, culminating in a small governance-only PR with a binary CS2 disposition package.
 - issue_or_wave: Issue #2016 / wave issue-2016-retrospective-pr2006
-- in_scope_files: `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` (new), `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md` (new), `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` (updated tracker), this session memory file.
+- in_scope_files: `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` (new), `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` (new), `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` (updated tracker), this session memory file.
 - out_of_scope: Any edit to `.agent-admin/assurance/iaa-token-mmm-2004-approval-foundation-runtime-20260811.md` or `.agent-admin/assurance/iaa-wave-record-mmm-2004-approval-foundation-runtime-20260811.md`; reopening or commenting on PR #2006; any production/runtime/schema/test code change; any replacement standalone PASS token for PR #2006.
 - acceptance_criteria: All 14 checkboxes in Issue #2016 (bootstrap as IAA; independently inspect anchors; chronology + drift analysis; contradiction matrix; separated findings; non-retroactivity statement; token disposition; no compliant-at-merge claim; no replacement PASS; append-only/addendum mechanism; binary CS2 disposition; structural prevention/owner/closure criteria; small governance-only PR from main citing anchors; current-head checks + final IAA assurance before CS2 review) — see "Roles invoked" and "Work and evidence produced" tables below for evidence mapping.
 - stop_conditions: Any attempt to reopen PR #2006; any edit to the two historical artifacts; any production code change; any standalone PASS token naming PR #2006; any incident log entry surfacing as OPEN/IN_PROGRESS during the session.
@@ -58,7 +58,7 @@
 |---|---|---|---|---|---|
 | 1 | independent-assurance-agent (pre-brief + retrospective assessment) | Issue #2016 RETRO-2016-01 | `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` | `c449ea0a` | ASSURANCE-TOKEN `IAA-ISSUE-2016-RETRO-20260813-PASS` (scoped to this record only, NOT PR #2006) |
 | 2 | Foreman Quality Professor (self) | QP review of IAA artifact | this session memory | n/a (review, no separate commit) | PASS — diff scope verified 2 files, historical artifacts confirmed byte-identical to base, PR #2006 confirmed untouched (no new comments, state MERGED), all 14 Issue #2016 acceptance criteria mapped to artifact sections |
-| 3 | execution-ceremony-admin-agent | Phase 4 admin bundle preparation | `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md` | `f2208dc3` | Bundle prepared; no readiness claim; flagged one non-blocking tracker-currency observation, remediated by Foreman in tracker update |
+| 3 | execution-ceremony-admin-agent | Phase 4 admin bundle preparation | `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` | `f2208dc3` | Bundle prepared; no readiness claim; flagged one non-blocking tracker-currency observation, remediated by Foreman in tracker update |
 | 4 | independent-assurance-agent (final) | Final assurance on new governance PR at current head | pending — to be invoked after PR is opened and `/prepare-handover` checkpoint is refreshed | pending | pending |
 
 - delegation_order_verified: not_applicable (no builder-class delegation exists in this wave; only IAA and ECAP were delegated, per specialist-registry.md, neither requiring a delegation-order JSON)
@@ -71,7 +71,7 @@
 |---|---|---|---|
 | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | create/update | foreman-v2-agent | Wave binding for IAA pre-brief; tracker updated to reflect QP PASS and ECAP bundle completion |
 | `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` | create | independent-assurance-agent | Full retrospective record: PRE-BRIEF, CHRONOLOGY, DRIFT_ANALYSIS, CONTRADICTION_MATRIX, SEPARATED_FINDINGS, NON_RETROACTIVITY_STATEMENT, HISTORICAL_TOKEN_DISPOSITION, CS2_DISPOSITION_PACKAGE (Option B), STRUCTURAL_PREVENTION, TOKEN |
-| `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md` | create | execution-ceremony-admin-agent | Phase 4 admin bundle; diff evidence; historical-immutability evidence; gate_set_checked; explicit non-claim of HANDOVER_ALLOWED |
+| `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` | create | execution-ceremony-admin-agent | Phase 4 admin bundle; diff evidence; historical-immutability evidence; gate_set_checked; explicit non-claim of HANDOVER_ALLOWED |
 | `.agent-admin/assurance/iaa-token-mmm-2004-approval-foundation-runtime-20260811.md` | none (read-only) | n/a | Confirmed byte-identical to base commit `0fe10c2e` — preserved as historical evidence |
 | `.agent-admin/assurance/iaa-wave-record-mmm-2004-approval-foundation-runtime-20260811.md` | none (read-only) | n/a | Confirmed byte-identical to base commit `0fe10c2e` — preserved as historical evidence |
 | PR #2006 | none | n/a | Confirmed state MERGED, no new comments since 2026-08-11 — not reopened, not touched |
@@ -79,7 +79,7 @@
 ## Quality Professor review
 
 - qp_applicable: true
-- qp_evidence_path: this session memory (§ Roles invoked, row 2) and `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md`
+- qp_evidence_path: this session memory (§ Roles invoked, row 2) and `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md`
 - tests_executed: not_applicable — governance-record-only wave, no executable test surface changed
 - tests_passed: not_applicable
 - tests_failed: not_applicable
@@ -93,7 +93,7 @@
 ## ECAP administrative validation
 
 - ecap_required: true
-- ecap_evidence_path: `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md`
+- ecap_evidence_path: `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md`
 - admin_fields_current: true
 - scope_current: true
 - exact_head_binding: recorded in PREHANDOVER proof at time of writing (branch head prior to PR creation)
@@ -159,6 +159,6 @@
 
 - outcome: PASS_TO_NEXT_STATE (ECAP_ADMIN_VALIDATED -> PRE_HANDOVER_GATE_PASS pending -> IAA_FINAL_PASS pending -> CS2_REVIEW)
 - session_memory_complete: true
-- prehandover_memory_path: `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md`
+- prehandover_memory_path: `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md`
 - suggestions_for_improvement: Promote the "token verified at head N, production commits N+1..M land before merge, no re-verification, no automated detection" pattern into FAIL-ONLY-ONCE.md as a new rule (per IAA's own STRUCTURAL_PREVENTION section) — recommend a follow-up CS2-authorized session to do so, since Foreman must not self-modify Tier 2 knowledge without the normal review path.
 - closed_at_utc: 2026-08-13 (session continues through PR creation and final IAA; this memory will not be edited post-commit per artifact-immutability norms — any update needed will be a follow-up commit, not an edit)

@@ -175,7 +175,7 @@ These gate evaluations are IAA's own, reproduced here by reference for bundle co
 |---|---|---|---|
 | 1 | IAA retrospective wave record | `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` | ✅ Created (by IAA, prior to this bundle step) |
 | 2 | Foreman wave-current-tasks tracker | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | ✅ Updated (by Foreman, prior to this bundle step) |
-| 3 | This PREHANDOVER proof | `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md` | ✅ Created (this bundle step) |
+| 3 | This PREHANDOVER proof | `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` | ✅ Created (this bundle step) |
 
 Historical artifacts referenced (untouched, confirmed byte-identical to base — not part of this wave's deliverable set):
 - `.agent-admin/assurance/iaa-token-mmm-2004-approval-foundation-runtime-20260811.md`
@@ -253,7 +253,7 @@ No BLOCKED, INCOMPLETE, or ABSENT items found. Bundle is being returned to Forem
 Returning to **foreman-v2-agent** for review. Per this agent's contract, Phase 4 (IAA invocation on the eventual PR's current head, token ceremony, merge-gate release) is Foreman-only. This agent has no Phase 4 authority and will not proceed further.
 
 **Bundle contents returned**:
-- This PREHANDOVER proof: `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md`
+- This PREHANDOVER proof: `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md`
 - IAA wave record (reference, untouched by this agent): `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md`
 - Foreman wave-current-tasks tracker (reference, untouched by this agent): `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`
 - Commit-state gate result: PASS (see §4.3c section above)

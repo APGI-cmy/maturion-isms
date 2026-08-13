@@ -44,7 +44,7 @@ issue a replacement standalone PASS token for PR #2006, and does NOT alter produ
 4. ✅ IAA PRE-BRIEF invocation (independent-assurance-agent, action: PRE-BRIEF) — `## PRE-BRIEF` committed in `iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` (commit `c449ea0a`)
 5. ✅ IAA independent retrospective assessment (chronology, drift, contradiction matrix, disposition, CS2 package, structural prevention, scoped TOKEN `IAA-ISSUE-2016-RETRO-20260813-PASS`) committed to the same wave record (commit `c449ea0a`)
 6. ✅ Foreman Quality Professor review of IAA's retrospective artifact — PASS (diff scope verified 2 files only, historical artifacts confirmed byte-identical to base, PR #2006 confirmed untouched, all Issue #2016 acceptance criteria mapped)
-7. ✅ execution-ceremony-admin-agent Phase 4 admin bundle (PREHANDOVER proof assembly) — administrative only, no readiness claim — committed at `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md` (commit `f2208dc3`)
+7. ✅ execution-ceremony-admin-agent Phase 4 admin bundle (PREHANDOVER proof assembly) — administrative only, no readiness claim — committed at `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` (commit `f2208dc3`, renamed by Foreman in a later commit to match the CI discovery pattern `proof-*.md`)
 8. ⏳ Foreman session memory committed
 9. ✅ PR #2017 opened from current `main`
 10. ⏳ `/prepare-handover` triggered on the new PR; refreshed current-head PRE_HANDOVER_CHECKPOINT_RESULT obtained
