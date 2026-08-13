@@ -57,7 +57,7 @@
 | Sequence | Role or agent | Task reference | Appointment/evidence path | Commit SHA | Result |
 |---|---|---|---|---|---|
 | 1 | independent-assurance-agent (pre-brief + retrospective assessment) | Issue #2016 RETRO-2016-01 | `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` | `c449ea0a` | ASSURANCE-TOKEN `IAA-ISSUE-2016-RETRO-20260813-PASS` (scoped to this record only, NOT PR #2006) |
-| 2 | Foreman Quality Professor (self) | QP review of IAA artifact | this session memory | n/a (review, no separate commit) | PASS — diff scope verified 2 files, historical artifacts confirmed byte-identical to base, PR #2006 confirmed untouched (no new comments, state MERGED), all 14 Issue #2016 acceptance criteria mapped to artifact sections |
+| 2 | Foreman Quality Professor (self) | QP review of IAA artifact | this session memory | n/a (review, no separate commit) | PASS — diff scope verified 4 files (governance-only), historical artifacts confirmed byte-identical to base, PR #2006 confirmed untouched (no new comments, state MERGED), all 14 Issue #2016 acceptance criteria mapped to artifact sections |
 | 3 | execution-ceremony-admin-agent | Phase 4 admin bundle preparation | `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md` | `f2208dc3` | Bundle prepared; no readiness claim; flagged one non-blocking tracker-currency observation, remediated by Foreman in tracker update |
 | 4 | independent-assurance-agent (final) | Final assurance on new governance PR at current head | pending — to be invoked after PR is opened and `/prepare-handover` checkpoint is refreshed | pending | pending |
 
