@@ -5,7 +5,7 @@ Session ID: session-issue-2016-retrospective-pr2006-20260813
 Date: 2026-08-13
 Branch: apgi-cmy-issue-2016-retrospective-governance-pr-2
 Issue: #2016 — [Agent Task] independent-assurance-agent — Retrospective governance assessment for merged PR #2006
-PR: PENDING (to be opened from current main after retrospective assessment artifacts are committed)
+PR: #2017
 CS2 Authorization: Confirmed via issue #2016 opened by @APGI-cmy and assigned to independent-assurance-agent; Foreman appointed as orchestrator per session instruction.
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md
@@ -46,7 +46,7 @@ issue a replacement standalone PASS token for PR #2006, and does NOT alter produ
 6. ✅ Foreman Quality Professor review of IAA's retrospective artifact — PASS (diff scope verified 2 files only, historical artifacts confirmed byte-identical to base, PR #2006 confirmed untouched, all Issue #2016 acceptance criteria mapped)
 7. ✅ execution-ceremony-admin-agent Phase 4 admin bundle (PREHANDOVER proof assembly) — administrative only, no readiness claim — committed at `.agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md` (commit `f2208dc3`)
 8. ⏳ Foreman session memory committed
-9. ⏳ PR opened from current `main`; PR-scoped wave-current-tasks.md/scope-declaration added
+9. ✅ PR #2017 opened from current `main`
 10. ⏳ `/prepare-handover` triggered on the new PR; refreshed current-head PRE_HANDOVER_CHECKPOINT_RESULT obtained
 11. ⏳ IAA final assurance invoked on the new PR's current head (verdict scoped to THIS governance PR only — not a #2006 replacement token)
 12. ⏳ Handover to CS2 for review/merge decision only — no autonomous merge
