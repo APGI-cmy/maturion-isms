@@ -6,7 +6,7 @@
 **Prepared by**: execution-ceremony-admin-agent (class: administrator) — Phase 4 administrative bundle only. This document contains no readiness judgment, no IAA invocation, no ASSURANCE-TOKEN, and no merge-gate release. All substantive assessment content below is IAA's own, reproduced/cited by reference; all readiness/merge decisions remain Foreman's and CS2's.
 **Triggering Issue**: #2016 — [Agent Task] independent-assurance-agent — Retrospective governance assessment for merged PR #2006
 **Branch**: `apgi-cmy-issue-2016-retrospective-governance-pr-2`
-**PR**: PENDING — no PR has been opened yet at the time this proof is written. CI/required-checks status is therefore **PENDING** (not evaluated, not applicable to state prior to PR creation).
+**PR**: #2017 — PR opened; CI/required-checks status now tracked on the PR.
 
 ---
 
