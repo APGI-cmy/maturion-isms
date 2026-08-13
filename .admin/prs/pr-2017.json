@@ -1,0 +1,27 @@
+{
+  "pr": 2017,
+  "issue": 2016,
+  "type": "governance-retrospective-assessment",
+  "wave": "issue-2016-retrospective-pr2006",
+  "owner": "foreman-v2-agent",
+  "builder": "none — no builder-class delegation in this wave",
+  "base_branch": "main",
+  "phase": "IAA_RETROSPECTIVE_COMPLETE_AWAITING_CS2",
+  "qp_status": "PASS",
+  "ecap_status": "ADMIN_VALIDATED",
+  "iaa_status": "SELF_SCOPED_PASS_PENDING_CURRENT_HEAD_FINAL",
+  "merge_status": "CS2_REVIEW_PENDING",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "objective": "Independent retrospective governance assessment reconciling contradictory historical IAA artifacts for merged, immutable PR #2006, without reopening PR #2006 or altering its evidence, and without issuing a replacement PASS token for PR #2006.",
+  "scope": [
+    ".admin/prs/pr-2017.json",
+    ".agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md",
+    ".agent-admin/prehandover/PREHANDOVER_PROOF_ISSUE_2016_RETROSPECTIVE_PR2006_20260813.md",
+    ".agent-admin/prs/pr-2017/active-state.json",
+    ".agent-admin/prs/pr-2017/wave-current-tasks.md",
+    ".agent-admin/scope-declarations/pr-2017.md",
+    ".agent-workspace/foreman-v2/memory/session-issue-2016-retrospective-pr2006-20260813.md",
+    ".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
+  ]
+}
