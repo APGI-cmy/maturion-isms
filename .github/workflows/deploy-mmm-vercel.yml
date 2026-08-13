@@ -184,22 +184,19 @@ jobs:
           MMM_VERCEL_PROJECT_ID: ${{ secrets.MMM_VERCEL_PROJECT_ID }}
         run: |
           set -euo pipefail
-          test -f ${{ env.MMM_APP_PATH }}/.vercel/project.json
-          if ! grep -q "\"projectId\":\"${MMM_VERCEL_PROJECT_ID}\"" ${{ env.MMM_APP_PATH }}/.vercel/project.json; then
-            echo "::error::Pulled Vercel project does not match MMM_VERCEL_PROJECT_ID."
+
+          project_json="${{ env.MMM_APP_PATH }}/.vercel/project.json"
+          test -f "$project_json"
+
+          actual_project_id="$(node -e 'const p=require(process.argv[1]); process.stdout.write(p.projectId ?? "")' "$project_json")"
+          actual_org_id="$(node -e 'const p=require(process.argv[1]); process.stdout.write(p.orgId ?? "")' "$project_json")"
+
+          if [ "$actual_project_id" != "${MMM_VERCEL_PROJECT_ID}" ] || [ "$actual_org_id" != "${MMM_VERCEL_ORG_ID}" ]; then
+            echo "::error::Pulled Vercel project does not match MMM_VERCEL_PROJECT_ID / MMM_VERCEL_ORG_ID."
+            echo "::error::projectId=$actual_project_id orgId=$actual_org_id"
             exit 1
           fi
-          project_link_path="${{ env.MMM_APP_PATH }}/.vercel/.project.json"
-          if [ -f "$project_link_path" ]; then
-            if grep -qi "maturion-pit" "$project_link_path"; then
-              echo "::error::MMM workflow resolved to PIT Vercel project. Fix MMM_VERCEL_PROJECT_ID / MMM_VERCEL_ORG_ID secrets."
-              exit 1
-            fi
-            if ! grep -qi "maturion-isms-mmm" "$project_link_path"; then
-              echo "::error::MMM workflow did not resolve to the expected MMM Vercel project (maturion-isms-mmm)."
-              exit 1
-            fi
-          fi
+
           echo "MMM Vercel project boundary verified."
 
       - name: Build MMM preview artifacts
