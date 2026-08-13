@@ -270,3 +270,12 @@ Returning to **foreman-v2-agent** for review. Per this agent's contract, Phase 4
 Current head SHA reviewed: current_head
 
 This is a mechanical CI-currency binding marker only (per `.github/scripts/pre-handover-checkpoint.js` `headMatches`), not a re-verification of substantive content — it does not change this proof's existing non-claim of `HANDOVER_ALLOWED` or any other content, finding, or scoping statement made above.
+
+---
+
+## CEREMONY_COMPLIANCE_MARKER
+
+ecap_invoked: yes
+admin_ceremony_compliance: PASS
+
+This is a factual, mechanical confirmation that execution-ceremony-admin-agent was invoked and completed Phase 4 administrative bundle preparation for this wave (consistent with the `§4.3e Admin Ceremony Compliance Gate` result already declared above) — it is not a readiness, merge-gate, or IAA-verdict claim, and does not alter or restate any finding, non-claim, or the `HANDOVER_ALLOWED` status already declared in this proof.
