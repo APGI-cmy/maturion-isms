@@ -47,8 +47,8 @@ issue a replacement standalone PASS token for PR #2006, and does NOT alter produ
 7. ✅ execution-ceremony-admin-agent Phase 4 admin bundle (PREHANDOVER proof assembly) — administrative only, no readiness claim — committed at `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` (commit `f2208dc3`, renamed by Foreman in a later commit to match the CI discovery pattern `proof-*.md`)
 8. ⏳ Foreman session memory committed
 9. ✅ PR #2017 opened from current `main`
-10. ⏳ `/prepare-handover` triggered on the new PR; refreshed current-head PRE_HANDOVER_CHECKPOINT_RESULT obtained
-11. ⏳ IAA final assurance invoked on the new PR's current head (verdict scoped to THIS governance PR only — not a #2006 replacement token)
-12. ⏳ Handover to CS2 for review/merge decision only — no autonomous merge
+10. ✅ `/prepare-handover` triggered on PR #2017 at final head `009eac22`; refreshed PRE_HANDOVER_CHECKPOINT_RESULT obtained — ACTIVE_PR_IDENTITY_BINDING: PASS, ADMIN_CEREMONY/ECAP satisfied, IAA satisfied, INJECTION_STATE: current. Sole remaining reported blocker is a pre-existing, repo-wide Wave 6/7 legacy required-check-name gap, unrelated to this PR.
+11. ✅ IAA final current-head confirmation appended (commit `8221153b`) — independently reconfirms original TOKEN unchanged/valid and confirms the above characterization.
+12. ⏳ Handover to CS2 for review/merge decision only — no autonomous merge. Foreman-controllable lifecycle complete; PR ready for CS2.
 
 No production code, schema, migration, or CI-behaviour change is authorised in this wave.

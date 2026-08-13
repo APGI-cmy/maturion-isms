@@ -59,7 +59,7 @@
 | 1 | independent-assurance-agent (pre-brief + retrospective assessment) | Issue #2016 RETRO-2016-01 | `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` | `c449ea0a` | ASSURANCE-TOKEN `IAA-ISSUE-2016-RETRO-20260813-PASS` (scoped to this record only, NOT PR #2006) |
 | 2 | Foreman Quality Professor (self) | QP review of IAA artifact | this session memory | n/a (review, no separate commit) | PASS — diff scope verified 2 files, historical artifacts confirmed byte-identical to base, PR #2006 confirmed untouched (no new comments, state MERGED), all 14 Issue #2016 acceptance criteria mapped to artifact sections |
 | 3 | execution-ceremony-admin-agent | Phase 4 admin bundle preparation | `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` | `f2208dc3` | Bundle prepared; no readiness claim; flagged one non-blocking tracker-currency observation, remediated by Foreman in tracker update |
-| 4 | independent-assurance-agent (final) | Final assurance on new governance PR at current head | pending — to be invoked after PR is opened and `/prepare-handover` checkpoint is refreshed | pending | pending |
+| 4 | independent-assurance-agent (final) | Final assurance on new governance PR at current head | `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` `## FINAL_CURRENT_HEAD_CONFIRMATION` | `8221153b` | Independently confirmed: original TOKEN unchanged/valid; all real CI checks green at head `009eac22`; sole remaining checkpoint blocker is a pre-existing, repo-wide Wave 6/7 legacy required-check-name gap (documented in `.agent-admin/control/merge-gate-required-checks.json`, dated 2026-06-16, predates this wave); `HANDOVER_ALLOWED` correctly remains unclaimed; PR ready for CS2 review/merge-decision only |
 
 - delegation_order_verified: not_applicable (no builder-class delegation exists in this wave; only IAA and ECAP were delegated, per specialist-registry.md, neither requiring a delegation-order JSON)
 - first_implementation_commit_sha: none (no product/runtime implementation in this wave)
@@ -137,6 +137,7 @@
 |---|---|---|---|---|
 | B-01 | Substantive verification-evidence gap on PR #2006's post-token commits (21496a65, c995d457) — security-relevant auth-derivation fix shipped with no dedicated test coverage and no IAA re-verification token | CS2 (disposition) + future builder/IAA wave (remediation) | Open a new, separately-governed issue per CS2_DISPOSITION_PACKAGE Option B; run normal pre-brief → delegation → build → QP → IAA sequence | OPEN — awaiting CS2 action, correctly NOT resolved within this PR |
 | B-02 | Disputed pre-brief/delegation timing for original Issue #2004 lane | CS2 | CS2 must issue explicit resolution/waiver; not curable retrospectively | OPEN — explicitly preserved as unresolved per NON_RETROACTIVITY_STATEMENT |
+| B-03 | pre-handover-checkpoint.js's static legacy `REQUIRED_CHECKS` list (12 names, e.g. `preflight/admin-control-router`, `preflight/mmm-pr-admin`) reports "missing" for every PR in this repo because none of the 12 exist as configured GitHub Actions job names; this is the documented, pre-existing Wave 6→Wave 7 required-check-inventory-alignment gap (`.agent-admin/control/merge-gate-required-checks.json`, `wave7_validation_required: true`, dated 2026-06-16) | CS2 (acknowledge/waive for this PR) + a future Wave 7 platform-governance session (fix the script repo-wide) | CS2 to accept this as a pre-existing, out-of-scope condition for PR #2017; a separate Wave 7 session should reconcile `pre-handover-checkpoint.js`'s `REQUIRED_CHECKS` against the live `merge-gate-required-checks.json` manifest | OPEN — pre-existing and repo-wide; independently reproduced and confirmed by IAA in `## FINAL_CURRENT_HEAD_CONFIRMATION`; not introduced by, or specific to, this PR |
 
 ## Decisions and rationale
 
@@ -146,19 +147,20 @@
 | Do not edit historical token/wave record files | Issue #2016 explicit instruction; immutability principle; verified via empty git diff | Issue #2016 + Foreman QP |
 | CS2_DISPOSITION_PACKAGE Option B (bounded remediation, not revert, not accepted-risk) | IAA's independent code read found no runtime defect but a genuine verification-evidence gap on security-relevant code (CORE-020 zero-partial-pass) | independent-assurance-agent verdict, accepted by Foreman QP |
 | Foreman authored own session memory and tracker directly (not delegated) | Both are Foreman's own orchestration/continuity artifacts per contract's "Allowed outputs" and session-memory-template.md; not product/implementation artifacts | foreman-v2-agent contract §5 |
+| Do not attempt to patch `pre-handover-checkpoint.js`'s legacy `REQUIRED_CHECKS` list inside this PR | Out of scope for a "small governance-only" retrospective PR; affects CI behavior repo-wide for every PR; already tracked as a named Wave 7 platform-governance item, not an Issue #2016 deliverable | Foreman scope discipline; `.agent-admin/control/merge-gate-required-checks.json` |
 
 ## Next action
 
-- immediate_next_action: Commit this session memory, then open the governance-only PR from current `main`, then post `/prepare-handover` on the new PR and await the refreshed current-head PRE_HANDOVER_CHECKPOINT_RESULT, then invoke IAA final assurance on the new PR's current head.
-- action_owner: foreman-v2-agent
+- immediate_next_action: Push final commits; confirm CI green at final head; hand over to CS2 for review and merge decision. No further Foreman action is required unless CS2 requests changes.
+- action_owner: CS2 (Johan Ras / @APGI-cmy)
 - may_start_now: true
-- conditions_before_start: none — QP PASS and ECAP admin validation are both complete.
-- prohibited_next_actions: Do not merge; do not claim handover/completion language before PRE_HANDOVER_CHECKPOINT_RESULT is refreshed and IAA final assurance is obtained; do not fold the successor remediation (B-01) into this PR.
+- conditions_before_start: none — QP PASS, ECAP admin validation, and IAA final current-head confirmation are all complete and evidenced.
+- prohibited_next_actions: Do not merge (Foreman/any agent); do not fold B-01 or B-03 remediation into this PR; do not claim `HANDOVER_ALLOWED: yes` — that field correctly remains blocked by the pre-existing B-03 condition and is CS2's call to waive or defer.
 
 ## Session close
 
-- outcome: PASS_TO_NEXT_STATE (ECAP_ADMIN_VALIDATED -> PRE_HANDOVER_GATE_PASS pending -> IAA_FINAL_PASS pending -> CS2_REVIEW)
+- outcome: CS2_REVIEW — all Foreman-controllable lifecycle states complete (BOOTSTRAP → PREFLIGHT_LOCKED → IAA_PREBRIEF_READY → BUILD_DELEGATED [n/a, no builder] → BUILDER_HANDOVER_RECEIVED [n/a] → FOREMAN_QP_PASS → ECAP_ADMIN_VALIDATED → IAA_FINAL_PASS-scoped-to-record). `PRE_HANDOVER_GATE_PASS` is NOT claimed: the checkpoint bot's own `RESULT: STOP_AND_FIX` stands, driven solely by the pre-existing B-03 condition, which is transparently disclosed rather than suppressed or worked around.
 - session_memory_complete: true
 - prehandover_memory_path: `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md`
-- suggestions_for_improvement: Promote the "token verified at head N, production commits N+1..M land before merge, no re-verification, no automated detection" pattern into FAIL-ONLY-ONCE.md as a new rule (per IAA's own STRUCTURAL_PREVENTION section) — recommend a follow-up CS2-authorized session to do so, since Foreman must not self-modify Tier 2 knowledge without the normal review path.
-- closed_at_utc: 2026-08-13 (session continues through PR creation and final IAA; this memory will not be edited post-commit per artifact-immutability norms — any update needed will be a follow-up commit, not an edit)
+- suggestions_for_improvement: (1) Promote the "token verified at head N, production commits N+1..M land before merge, no re-verification, no automated detection" pattern into FAIL-ONLY-ONCE.md as a new rule (per IAA's own STRUCTURAL_PREVENTION section) — recommend a follow-up CS2-authorized session to do so. (2) Reconcile `pre-handover-checkpoint.js`'s `REQUIRED_CHECKS` legacy list against the live `merge-gate-required-checks.json` manifest under a Wave 7 platform-governance session, since the current mismatch makes `HANDOVER_ALLOWED: yes` effectively unreachable for any PR in this repo via that specific bot.
+- closed_at_utc: 2026-08-13 (final commit `8221153b` and subsequent push; this memory will not be edited post-commit per artifact-immutability norms — any further update will be a follow-up commit, not an edit)
