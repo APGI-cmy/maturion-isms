@@ -12,8 +12,13 @@ export function isPitDeploymentHost(hostname: string): boolean {
   return hostname.toLowerCase() === PIT_DEPLOYMENT_HOST;
 }
 
+export function isPitPreviewDeploymentHost(hostname: string): boolean {
+  const normalizedHostname = hostname.toLowerCase();
+  return normalizedHostname.endsWith('.vercel.app') && normalizedHostname !== PIT_DEPLOYMENT_HOST;
+}
+
 export function shouldRedirectPitDeploymentHost(location: HostPolicyLocation): boolean {
-  return isPitDeploymentHost(location.hostname);
+  return isPitDeploymentHost(location.hostname) && !isPitPreviewDeploymentHost(location.hostname);
 }
 
 export function createCanonicalIsmsUrl(location: HostPolicyLocation): string {

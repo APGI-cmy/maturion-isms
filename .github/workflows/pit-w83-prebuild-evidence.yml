@@ -1,0 +1,150 @@
+name: PIT W8.3 Pre-Build Evidence
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/pit-w83-prebuild-evidence.yml'
+      - '.agent-admin/**pit-w83**'
+      - 'modules/pit/**'
+      - 'apps/isms-portal/src/App.tsx'
+      - 'apps/isms-portal/src/pages/pit/**'
+      - 'supabase/migrations/**'
+      - 'apps/isms-portal/package.json'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '9.12.0'
+
+jobs:
+  qa-to-red-sentinel:
+    name: W8.3 Intended RED Confirmed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v5
+
+      - name: Confirm runner Node version
+        run: node --version
+
+      - name: Run sentinel and preserve raw RED output
+        id: sentinel
+        shell: bash
+        run: |
+          set +e
+          node --test modules/pit/06-qa-to-red/executable/pit-w83-prebuild.red.test.mjs 2>&1 | tee pit-w83-red-sentinel.log
+          sentinel_status=${PIPESTATUS[0]}
+          set -e
+
+          echo "sentinel_status=${sentinel_status}" >> "$GITHUB_OUTPUT"
+
+          if [ "$sentinel_status" -eq 0 ]; then
+            echo "::error::W8.3 sentinel unexpectedly passed before implementation."
+            exit 1
+          fi
+
+          required_failures=(
+            "Missing milestone route"
+            "Missing deliverable route"
+            "Missing task route"
+            "Missing project settings route"
+            "Missing W8.3 hierarchy migration"
+            "Missing structural-change request and approval migration"
+            "Missing atomic project-leader approval RPC"
+          )
+
+          for expected in "${required_failures[@]}"; do
+            if ! grep -Fq "$expected" pit-w83-red-sentinel.log; then
+              echo "::error::Sentinel failed, but expected requirement failure was absent: $expected"
+              exit 1
+            fi
+          done
+
+          if grep -Eq "ENOENT|SyntaxError|ERR_MODULE_NOT_FOUND|ReferenceError" pit-w83-red-sentinel.log; then
+            echo "::error::Sentinel contains a harness/runtime error rather than only intended missing-capability failures."
+            exit 1
+          fi
+
+          {
+            echo "## PIT W8.3 QA-to-RED"
+            echo
+            echo "- Command exit: ${sentinel_status} (expected non-zero)"
+            echo "- Result: intended RED confirmed"
+            echo "- Raw log: workflow artifact pit-w83-red-sentinel"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload RED sentinel log
+        uses: actions/upload-artifact@v5
+        with:
+          name: pit-w83-red-sentinel
+          path: pit-w83-red-sentinel.log
+          retention-days: 30
+
+  normal-regression:
+    name: Existing PIT Host Regression GREEN
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Run existing Vitest regression suite
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter isms-portal test:run 2>&1 | tee pit-w83-vitest-regression.log
+
+      - name: Verify route registry
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter isms-portal verify:routes 2>&1 | tee pit-w83-route-regression.log
+
+      - name: Build PIT integrated shell
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter isms-portal build 2>&1 | tee pit-w83-build-regression.log
+
+      - name: Record known lint configuration debt
+        shell: bash
+        run: |
+          {
+            echo "## Regression scope"
+            echo
+            echo "- Vitest suite: executed"
+            echo "- Route registry verification: executed"
+            echo "- Production build: executed"
+            echo "- Lint: not used as readiness evidence because the repository currently has ESLint 9 without an eslint.config.* file; this is pre-existing configuration debt and not caused by PR #1972."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload GREEN regression logs
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: pit-w83-normal-regression
+          path: |
+            pit-w83-vitest-regression.log
+            pit-w83-route-regression.log
+            pit-w83-build-regression.log
+          retention-days: 30

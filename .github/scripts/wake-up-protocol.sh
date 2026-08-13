@@ -27,6 +27,64 @@ if [ ! -f "$AGENT_CONTRACT_FILE" ]; then
 fi
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 SESSION_DATE=$(date -u +"%Y%m%d")
+JSON_PARSER=""
+NODE_BIN=""
+
+# Select a standards-compliant JSON parser. jq is preferred for compatibility
+# with existing jq expressions; Node is the repository's portable fallback.
+# Failure to find either is a tooling failure, never an invalid-JSON result.
+select_json_parser() {
+    if command -v jq >/dev/null 2>&1 && jq --version >/dev/null 2>&1; then
+        JSON_PARSER="jq"
+        return 0
+    fi
+
+    if command -v node >/dev/null 2>&1 && node --version >/dev/null 2>&1; then
+        JSON_PARSER="node"
+        NODE_BIN="$(command -v node)"
+        return 0
+    fi
+
+    echo -e "${RED}❌ JSON parser/tooling unavailable: neither jq nor Node.js is available; cannot validate governance JSON (failing closed)${NC}"
+    return 1
+}
+
+# Strictly validates a JSON document using the selected standards-compliant parser.
+json_validate() {
+    local json_file="$1"
+
+    if [ "$JSON_PARSER" = "jq" ]; then
+        jq empty "$json_file" >/dev/null 2>&1
+    else
+        "$NODE_BIN" - "$json_file" >/dev/null 2>&1 <<'NODE'
+const fs = require("fs");
+JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+NODE
+    fi
+}
+
+# Emits CANON_INVENTORY metadata as count<TAB>has-explicit-count<TAB>version.
+read_inventory_metadata() {
+    local inventory_file="$1"
+
+    if [ "$JSON_PARSER" = "jq" ]; then
+        jq -r '[
+          (.total_artifacts // .total_canons // (.canons | length? // 0)),
+          (has("total_artifacts") or has("total_canons")),
+          (.version // "unknown")
+        ] | @tsv' "$inventory_file"
+    else
+        "$NODE_BIN" - "$inventory_file" <<'NODE'
+const fs = require("fs");
+const inventory = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const hasCount = Object.prototype.hasOwnProperty.call(inventory, "total_artifacts")
+  || Object.prototype.hasOwnProperty.call(inventory, "total_canons");
+const count = inventory.total_artifacts ?? inventory.total_canons
+  ?? (Array.isArray(inventory.canons) ? inventory.canons.length : 0);
+console.log(`${count}\t${hasCount}\t${inventory.version ?? "unknown"}`);
+NODE
+    fi
+}
 
 # Returns 0 when the agent contract explicitly enables placeholder-hash degraded mode.
 agent_requires_placeholder_hash_enforcement() {
@@ -42,54 +100,90 @@ agent_requires_placeholder_hash_enforcement() {
 # Counts invalid/placeholder hashes in CANON_INVENTORY.json across supported layouts.
 count_invalid_inventory_hashes() {
     local inventory_file="$1"
-    jq -r '
-      def invalid_hash:
-        if type != "string" then
-          true
-        else
-          (test("^[0-9a-fA-F]{64}$") | not)
-          or test("^0{64}$")
-        end;
-      if (.canons? | type) == "array" then
-        [ .canons[]? | (.file_hash_sha256 // .file_hash) | select(invalid_hash) ] | length
-      elif (.artifacts? | type) == "object" then
-        [ .artifacts[]?
-          | (if type == "object" then (.sha256 // .file_hash_sha256 // .file_hash) else . end)
-          | select(invalid_hash)
-        ] | length
-      else
-        0
-      end
-    ' "$inventory_file"
+    if [ "$JSON_PARSER" = "jq" ]; then
+        jq -r '
+          def invalid_hash:
+            if type != "string" then
+              true
+            else
+              (test("^[0-9a-fA-F]{64}$") | not)
+              or test("^0{64}$")
+            end;
+          if (.canons? | type) == "array" then
+            [ .canons[]? | (.file_hash_sha256 // .file_hash) | select(invalid_hash) ] | length
+          elif (.artifacts? | type) == "object" then
+            [ .artifacts[]?
+              | (if type == "object" then (.sha256 // .file_hash_sha256 // .file_hash) else . end)
+              | select(invalid_hash)
+            ] | length
+          else
+            0
+          end
+        ' "$inventory_file"
+    else
+        "$NODE_BIN" - "$inventory_file" <<'NODE'
+const fs = require("fs");
+const inventory = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const isInvalid = (value) => typeof value !== "string"
+  || !/^[0-9a-f]{64}$/i.test(value)
+  || /^0{64}$/.test(value);
+const entries = Array.isArray(inventory.canons)
+  ? inventory.canons.map((entry) => entry?.file_hash_sha256 ?? entry?.file_hash)
+  : inventory.artifacts && typeof inventory.artifacts === "object"
+    ? Object.values(inventory.artifacts).map((entry) =>
+      entry && typeof entry === "object"
+        ? entry.sha256 ?? entry.file_hash_sha256 ?? entry.file_hash
+        : entry)
+    : [];
+console.log(entries.filter(isInvalid).length);
+NODE
+    fi
 }
 
 # Counts entries missing canonical commit SHA provenance in CANON_INVENTORY.json.
 count_missing_inventory_commit_provenance() {
     local inventory_file="$1"
-    jq -r '
-      def missing_commit:
-        . == null
-        or (type != "string")
-        or (length != 40)
-        or (test("^[0-9a-fA-F]{40}$") | not);
-      def commit_field:
-        .canonical_commit_sha
-        // .canonical_commit
-        // .canonical_commit_sha1
-        // .commit_sha
-        // .source_commit_sha
-        // .commit;
-      if (.canons? | type) == "array" then
-        [ .canons[]? | (if type == "object" then commit_field else null end) | select(missing_commit) ] | length
-      elif (.artifacts? | type) == "object" then
-        [ .artifacts[]?
-          | (if type == "object" then commit_field else null end)
-          | select(missing_commit)
-        ] | length
-      else
-        0
-      end
-    ' "$inventory_file"
+    if [ "$JSON_PARSER" = "jq" ]; then
+        jq -r '
+          def missing_commit:
+            . == null
+            or (type != "string")
+            or (length != 40)
+            or (test("^[0-9a-fA-F]{40}$") | not);
+          def commit_field:
+            .canonical_commit_sha
+            // .canonical_commit
+            // .canonical_commit_sha1
+            // .commit_sha
+            // .source_commit_sha
+            // .commit;
+          if (.canons? | type) == "array" then
+            [ .canons[]? | (if type == "object" then commit_field else null end) | select(missing_commit) ] | length
+          elif (.artifacts? | type) == "object" then
+            [ .artifacts[]?
+              | (if type == "object" then commit_field else null end)
+              | select(missing_commit)
+            ] | length
+          else
+            0
+          end
+        ' "$inventory_file"
+    else
+        "$NODE_BIN" - "$inventory_file" <<'NODE'
+const fs = require("fs");
+const inventory = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const commitOf = (entry) => entry?.canonical_commit_sha ?? entry?.canonical_commit
+  ?? entry?.canonical_commit_sha1 ?? entry?.commit_sha ?? entry?.source_commit_sha
+  ?? entry?.commit;
+const entries = Array.isArray(inventory.canons)
+  ? inventory.canons
+  : inventory.artifacts && typeof inventory.artifacts === "object"
+    ? Object.values(inventory.artifacts)
+    : [];
+console.log(entries.map(commitOf).filter((commit) =>
+  typeof commit !== "string" || !/^[0-9a-f]{40}$/i.test(commit)).length);
+NODE
+    fi
 }
 
 # Prints every Tier 2 required-file entry declared inside the top-level
@@ -398,18 +492,23 @@ echo "------------------------------"
 
 PHASE3_STATUS="PASS"
 
+if ! select_json_parser; then
+    echo -e "${RED}✗ Phase 3: FAILED - JSON parser/tooling is unavailable${NC}"
+    exit 1
+fi
+echo "  - JSON parser: ${JSON_PARSER}"
+
 # Load CANON_INVENTORY.json
 CANON_INVENTORY="${REPO_ROOT}/governance/CANON_INVENTORY.json"
 if [ -f "$CANON_INVENTORY" ]; then
     echo -e "${GREEN}✓ CANON_INVENTORY.json found${NC}"
     
     # Validate JSON
-    if jq empty "$CANON_INVENTORY" 2>/dev/null; then
-        CANON_COUNT=$(jq '.total_artifacts // .total_canons // (.canons | length? // 0)' "$CANON_INVENTORY")
-        if ! jq -e 'has("total_artifacts") or has("total_canons")' "$CANON_INVENTORY" >/dev/null 2>&1; then
+    if json_validate "$CANON_INVENTORY"; then
+        IFS=$'\t' read -r CANON_COUNT HAS_EXPLICIT_CANON_COUNT CANON_VERSION < <(read_inventory_metadata "$CANON_INVENTORY")
+        if [ "$HAS_EXPLICIT_CANON_COUNT" != "true" ]; then
             echo -e "${YELLOW}⚠️  CANON_INVENTORY.json missing total_artifacts/total_canons; using canons array length fallback${NC}"
         fi
-        CANON_VERSION=$(jq -r '.version // "unknown"' "$CANON_INVENTORY")
         echo "  - Canon version: ${CANON_VERSION}"
         echo "  - Total artifacts: ${CANON_COUNT}"
         if agent_requires_placeholder_hash_enforcement; then
@@ -478,7 +577,7 @@ fi
 echo "  - Validating JSON files..."
 JSON_ERRORS=0
 while IFS= read -r json_file; do
-    if ! jq empty "$json_file" 2>/dev/null; then
+    if ! json_validate "$json_file"; then
         echo -e "${RED}    ❌ Invalid JSON: ${json_file}${NC}"
         JSON_ERRORS=$((JSON_ERRORS + 1))
     fi
