@@ -18,7 +18,7 @@ As of 2026-08-13:
 **Completed since last tracker update (2026-07-23):**
 
 - PR #2003 (merged 2026-08-10): Approval workflow state machine foundation
-- PR #2006 (merged 2026-08-11): **Approval Workflow Foundation Runtime (Issue #2004)** — 7 Edge Functions, 8-table migration with RLS, 59/59 tests
+- PR #2006 (merged 2026-08-11): **Approval Workflow Foundation Runtime (Issue #2004)** — 7 Edge Functions, 9-table migration with RLS, 59/59 tests
 - PR #2005 (merged 2026-08-11): Governance script fix (JSON parser fallback)
 - PR #2008 (merged 2026-08-12): Governance layer-down ripple
 - PR #2011 (merged 2026-08-12): Interim CS2 agent contract bundle
