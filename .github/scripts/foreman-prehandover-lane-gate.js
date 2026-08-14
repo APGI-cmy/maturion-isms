@@ -9,6 +9,9 @@ const workflowSha = process.env.GITHUB_SHA || '';
 const prHeadSha = process.env.PR_HEAD_SHA || workflowSha;
 const prBaseSha = process.env.PR_BASE_SHA || '';
 const eventName = process.env.GITHUB_EVENT_NAME || '';
+const prNumber = Number.parseInt(process.env.PR_NUMBER || '', 10);
+const sourceRunId = process.env.SOURCE_WORKFLOW_RUN_ID || '';
+const sourceWorkflow = process.env.SOURCE_WORKFLOW_NAME || '';
 const controlPath = path.join(repoRoot, '.agent-admin/control/handover-allowed.json');
 
 const positiveStructuredClaimPatterns = [
@@ -31,10 +34,37 @@ const laneIntentPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/PREHANDO
 const handoverLanguageScanPattern = /(^|\/)\.agent-workspace\/foreman-v2\/memory\/.*\.(md|txt|json|yml|yaml)$|(^|\/)\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.*\.(md|txt|json|yml|yaml)$/i;
 const implementationPathPattern = /^(modules\/[^/]+\/src\/|apps\/[^/]+\/src\/|packages\/[^/]+\/src\/|supabase\/functions\/|api\/|lib\/)/;
 const implementationTestPattern = /(^|\/)(__tests__|tests?)\/|\.(test|spec)\.(ts|tsx|js|jsx)$/;
+const cs2TriggerPath = path.join(repoRoot, '.agent-admin/control/cs2-trigger.json');
 
 function fail(message) {
   console.error(`::error::${message}`);
   process.exitCode = 1;
+}
+
+function classifyFailure(reason) {
+  const escalationRequired = /(?:failed correction cycle|app-breaking intent gap|human decision|cs2 escalation|protected governance|agent authority)/i.test(reason);
+  return escalationRequired ? 'CS2_ESCALATION_REQUIRED' : 'FOREMAN_STOP_AND_FIX';
+}
+
+function emitCs2Trigger(reason) {
+  const payload = {
+    schema_version: '1.0.0',
+    trigger: 'PRE_HANDOVER_CHECKPOINT',
+    decision: classifyFailure(reason),
+    action: '/prepare-handover',
+    source: 'foreman-prehandover-lane-gate',
+    timestamp: new Date().toISOString(),
+    reason,
+    pr_number: Number.isInteger(prNumber) && prNumber > 0 ? prNumber : null,
+    source_run_id: sourceRunId || null,
+    source_workflow: sourceWorkflow || null,
+    workflow_sha: workflowSha || null,
+    pr_head_sha: prHeadSha || null,
+    pr_base_sha: prBaseSha || null,
+  };
+  fs.mkdirSync(path.dirname(cs2TriggerPath), { recursive: true });
+  fs.writeFileSync(cs2TriggerPath, `${JSON.stringify(payload, null, 2)}\n`);
+  console.error(`::warning::CS2 trigger emitted: ${payload.action} -> ${path.relative(repoRoot, cs2TriggerPath)}`);
 }
 
 function warn(message) {
@@ -198,19 +228,8 @@ function validateControl(control, implementationChanged) {
   }
 
   if (control.schema_version !== '1.0.0') errors.push('schema_version must be 1.0.0');
-  if (prHeadSha && control.current_head_sha) {
-    let shaValid = control.current_head_sha === prHeadSha;
-    if (!shaValid) {
-      try {
-        runGit(['merge-base', '--is-ancestor', control.current_head_sha, prHeadSha]);
-        shaValid = true;
-      } catch {
-        shaValid = false;
-      }
-    }
-    if (!shaValid) {
-      errors.push(`current_head_sha must equal or be an ancestor of PR head SHA ${prHeadSha}; got ${control.current_head_sha}`);
-    }
+  if (prHeadSha && control.current_head_sha !== prHeadSha) {
+    errors.push(`current_head_sha must equal PR head SHA ${prHeadSha}; got ${control.current_head_sha}`);
   }
   if (control.state !== 'PRE_HANDOVER_GATE_PASS' && control.handover_allowed === true) {
     errors.push('handover_allowed may be true only when state is PRE_HANDOVER_GATE_PASS');
@@ -276,6 +295,7 @@ if (!handoverGateRelevant) {
 }
 
 if (!fs.existsSync(controlPath)) {
+  emitCs2Trigger('missing handover-allowed control file while pre-handover lane gate is relevant');
   fail('Missing .agent-admin/control/handover-allowed.json while pre-handover lane gate is relevant.');
   if (implementationFiles.length) warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);
   if (laneIntentFiles.length) warn(`pre-handover lane intent files changed: ${laneIntentFiles.slice(0, 20).join(', ')}`);
@@ -289,6 +309,7 @@ if (!control) process.exit(process.exitCode || 1);
 const errors = validateControl(control, implementationChanged);
 
 if (errors.length > 0) {
+  emitCs2Trigger(errors.join('; '));
   console.error('Pre-handover lane gate failed:');
   for (const error of errors) console.error(`- ${error}`);
   if (implementationFiles.length) warn(`implementation files changed: ${implementationFiles.slice(0, 20).join(', ')}`);

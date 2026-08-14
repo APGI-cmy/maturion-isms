@@ -528,6 +528,14 @@ if [ -f "$CANON_INVENTORY" ]; then
         else
             echo "  - Placeholder-hash enforcement: DISABLED"
         fi
+        if [ -z "${NODE_BIN}" ]; then
+            echo -e "${RED}❌ CANON_INVENTORY content validation requires Node.js (failing closed)${NC}"
+            PHASE3_STATUS="FAIL"
+        elif "$NODE_BIN" "${SCRIPT_DIR}/validate-canon-inventory.js" --inventory "$CANON_INVENTORY" --root "$REPO_ROOT"; then
+            echo -e "${GREEN}✓ CANON_INVENTORY content hashes verified using LF-normalized UTF-8${NC}"
+        else
+            PHASE3_STATUS="FAIL"
+        fi
     else
         echo -e "${RED}❌ CANON_INVENTORY.json is invalid JSON${NC}"
         PHASE3_STATUS="FAIL"
