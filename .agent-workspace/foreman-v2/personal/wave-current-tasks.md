@@ -1,33 +1,54 @@
 # Wave Current Tasks — foreman-v2-agent
 
-Wave: wave-mmm-descriptor-hardening-retry-2026-07-01
-Session ID: session-mmm-descriptor-hardening-retry-20260701
-Date: 2026-07-01
-Branch: apgi-cmy-fix-descriptor-gerund-normalization
-Issue: #1883 — [Agent Task] MMM descriptor generation hardening with governed prebuild flow
-PR: #1893
-CS2 Authorization: Confirmed via issue #1883 opened by @APGI-cmy and assigned to Copilot.
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-hardening-retry-2026-07-01.md
-iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-wave-mmm-descriptor-hardening-retry-2026-07-01.md
-implementation_plan_path: modules/MMM/07-implementation-plan/implementation-plan.md
-builder_checklist_path: modules/MMM/09-builder-checklist/builder-checklist.md
-qa_to_red_path: modules/MMM/05-qa-to-red/descriptor-hardening-retry-qa-to-red-2026-07-01.md
-builder_appointment_path: .agent-admin/builder-appointments/wave-mmm-descriptor-hardening-retry-2026-07-01.md
-delegation_order_path: .agent-admin/control/delegation-orders/pr-1893.json
+Wave: issue-2016-retrospective-pr2006
+Session ID: session-issue-2016-retrospective-pr2006-20260813
+Date: 2026-08-13
+Branch: apgi-cmy-issue-2016-retrospective-governance-pr-2
+Issue: #2016 — [Agent Task] independent-assurance-agent — Retrospective governance assessment for merged PR #2006
+PR: #2017
+CS2 Authorization: Confirmed via issue #2016 opened by @APGI-cmy and assigned to independent-assurance-agent; Foreman appointed as orchestrator per session instruction.
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md
+implementation_plan_path: not_applicable — governance-only retrospective record, no product implementation
+builder_checklist_path: not_applicable — no builder-class delegation in this wave
+qa_to_red_path: not_applicable
+builder_appointment_path: not_applicable
+delegation_order_path: not_applicable — this wave delegates only to independent-assurance-agent (assessment) and execution-ceremony-admin-agent (Phase 4 admin bundle)
 ceremony_admin_appointed: true
 
 ## Wave objective
 
-Retry MMM descriptor hardening after revert commit `41d7503c`, using full prebuild governance order:
-canonical IAA pre-brief -> builder appointment -> first implementation commit.
+Perform an independent, post-merge retrospective governance assessment of merged PR #2006
+(`feat(MMM): Approval Workflow Foundation Runtime Build-to-Green`, merge commit
+`a8d5d28763d862d04b3724b5362b876c03cb31fa`, final head `4071b73489d7dbfe7bcdb10cbc44651cc07ec252`,
+previously assured head `32bba159`). Reconcile the contradictory existing assurance artifacts
+(`iaa-token-mmm-2004-approval-foundation-runtime-20260811.md` PASS vs.
+`iaa-wave-record-mmm-2004-approval-foundation-runtime-20260811.md` BLOCKED CHECKPOINT) without
+reopening PR #2006 or editing its immutable evidence. Produce a single new, append-only IAA wave
+record documenting chronology, drift analysis, a contradiction matrix, separated
+code/security/functional vs. process-governance findings, the disposition of the historical token,
+and a binary CS2 disposition package. Open a small governance-only PR from current `main` citing
+Issue #2016, PR #2006, and the three anchor SHAs. This wave does NOT reopen PR #2006, does NOT
+issue a replacement standalone PASS token for PR #2006, and does NOT alter product runtime code.
+
+## Qualifying tasks (for IAA PRE-BRIEF)
+
+1. task_id: RETRO-2016-01 — Independent retrospective governance assessment of merged PR #2006 and
+   reconciliation of its contradictory assurance artifacts. assurance_category: CANON_GOVERNANCE.
 
 ## Active task sequence
 
-1. ✅ Foreman preflight lock (Tier 1/Tier 2, canon inventory, FAIL-ONLY-ONCE, merge-gate checks loaded)
-2. ✅ Scope declaration refreshed for retry wave
-3. ✅ QA-to-Red acceptance criteria defined for retry
-4. ✅ IAA pre-brief invocation and canonical wave-record completion
-5. ✅ Builder appointment package prepared (pre-implementation only)
-6. ✅ PR #1893 created and PR-scoped delegation-order path initialized
-7. ✅ Builder implementation delegated after order-gate prerequisites
-8. ✅ Builder handover received (commit `df00d65a`)
+1. ✅ Foreman preflight lock (Tier 1/Tier 2, canon inventory, FAIL-ONLY-ONCE checked clean, merge-gate checks loaded)
+2. ✅ Fresh remediation branch `apgi-cmy-issue-2016-retrospective-governance-pr-2` created from current `main` (0fe10c2e)
+3. ✅ wave-current-tasks.md (this file) authored by Foreman to bind the IAA pre-brief
+4. ✅ IAA PRE-BRIEF invocation (independent-assurance-agent, action: PRE-BRIEF) — `## PRE-BRIEF` committed in `iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` (commit `c449ea0a`)
+5. ✅ IAA independent retrospective assessment (chronology, drift, contradiction matrix, disposition, CS2 package, structural prevention, scoped TOKEN `IAA-ISSUE-2016-RETRO-20260813-PASS`) committed to the same wave record (commit `c449ea0a`)
+6. ✅ Foreman Quality Professor review of IAA's retrospective artifact — PASS (diff scope verified 2 files only, historical artifacts confirmed byte-identical to base, PR #2006 confirmed untouched, all Issue #2016 acceptance criteria mapped)
+7. ✅ execution-ceremony-admin-agent Phase 4 admin bundle (PREHANDOVER proof assembly) — administrative only, no readiness claim — committed at `.agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md` (commit `f2208dc3`, renamed by Foreman in a later commit to match the CI discovery pattern `proof-*.md`)
+8. ⏳ Foreman session memory committed
+9. ✅ PR #2017 opened from current `main`
+10. ✅ `/prepare-handover` triggered on PR #2017 at final head `009eac22`; refreshed PRE_HANDOVER_CHECKPOINT_RESULT obtained — ACTIVE_PR_IDENTITY_BINDING: PASS, ADMIN_CEREMONY/ECAP satisfied, IAA satisfied, INJECTION_STATE: current. Sole remaining reported blocker is a pre-existing, repo-wide Wave 6/7 legacy required-check-name gap, unrelated to this PR.
+11. ✅ IAA final current-head confirmation appended (commit `8221153b`) — independently reconfirms original TOKEN unchanged/valid and confirms the above characterization.
+12. ⏳ Handover to CS2 for review/merge decision only — no autonomous merge. Foreman-controllable lifecycle complete; PR ready for CS2.
+
+No production code, schema, migration, or CI-behaviour change is authorised in this wave.

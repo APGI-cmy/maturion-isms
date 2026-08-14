@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "pr_number": 2017,
+  "manifest_path": ".admin/prs/pr-2017.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-2017.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md",
+  "ecap_artifact_path": ".agent-admin/prehandover/proof-pr-2017-issue-2016-retrospective-pr2006-20260813.md",
+  "wave_tasks_path": ".agent-admin/prs/pr-2017/wave-current-tasks.md"
+}
