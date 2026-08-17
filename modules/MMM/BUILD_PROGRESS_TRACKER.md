@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Model Management)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-08-13  
-**Updated By**: CS2 reality-check and tracker reconciliation
+**Last Updated**: 2026-08-17  
+**Updated By**: CS2 automation framework implementation
 
 > **Classification**: ACTIVE — APPROVAL WORKFLOW FOUNDATION RUNTIME MERGED (PR #2006); IAA CLOSURE GAP RECORDED; NEXT WAVE: LEVEL 2 UI PRE-BUILD
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main MMM progress dashboard.
@@ -195,3 +195,45 @@ Bounded scope:
 Do not claim full B4 completion, approval workflow completion, Stage 12 completion, production readiness, or full MMM handover from any subset of the above work.
 
 Completion claims require corresponding executable tests, operational backend and frontend wiring, preview/live evidence, fully closed governance gates (including IAA), and CS2 acceptance for the specific wave.
+
+## 13. CS2 Automation Framework Implementation (2026-08-17)
+
+**Status: OPERATIONAL — Manual trigger automation ready for use**
+
+### Objective
+Establish event-driven CS2 oversight automation that can be invoked from Automations UI play button, replacing email/manual assignment flow.
+
+### Automations Configured
+
+| Name | Trigger | Mode | Status |
+|---|---|---|---|
+| CS2 Oversight — MMM Level 2 Batch Review | Manual (play button) | Interactive | ✅ Ready |
+| Foreman — MMM Supervised Build Cycle | Cron `*/30 * * * *` | Autopilot | Enabled (waits for active lane) |
+| CS2 Oversight — Independent Governance Review | Cron `5,35 * * * *` | Autopilot | Enabled (waits for active lane) |
+
+### How to Use
+1. **Navigate to:** GitHub Copilot App → Automations tab
+2. **Find:** "CS2 Oversight — MMM Level 2 Batch Review"
+3. **Click:** Play button (▶️)
+4. **Automation executes:**
+   - Phase 1: Bootstrap interim-cs2-agent with full Tier 2 knowledge load
+   - Phase 2: Verify batch scope alignment and exact-head binding
+   - Phase 3: Delivery Intent Review (trace FRS/TRS/architecture/QA-to-Red chain)
+   - Phase 4: Route decision (FOREMAN_REENTRY, STOP_AND_FIX, or ESCALATION)
+
+### Documentation
+- User guide: `.agent-admin/automation-guides/CS2-AUTOMATION-USER-GUIDE.md`
+- Automation prompt: `Automations` UI (workflow ID: `b3bf32d2-3684-407a-8728-f09e7d17d135`)
+- Interim-cs2-agent contract: `.github/agents/interim-cs2-agent.md`
+- Tier 2 knowledge: `.agent-workspace/interim-cs2-agent/knowledge/`
+
+### Integration Point
+This automation gates the next MMM Level 2 batch entry. Before Level 2 implementation can begin:
+1. CS2 automation must confirm scope and intent (`FOREMAN_REENTRY_PACKET`)
+2. Foreman must run QP → ECAP → IAA gates
+3. Independent CS2 oversight must validate all gates (`LANE_CLEAR_FOR_MERGE`)
+4. Human CS2 decides merge
+
+### Next Action
+Once Level 2 pre-build is complete, issue will be assigned to interim-cs2-agent (or created via automation workflow), which triggers this automation via play button.
+
