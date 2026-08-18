@@ -361,6 +361,9 @@ describe('T-2025-01: Repeatable optional supplementary upload rows', () => {
       expect(
         container.querySelectorAll('div[data-testid^="organisation-supplementary-row-"]').length,
       ).toBe(4);
+      expect(screen.getByText('supp-one.pptx')).toBeTruthy();
+      expect(screen.getByText('supp-two.xlsx')).toBeTruthy();
+      expect(screen.getByText('supp-three.pdf')).toBeTruthy();
     });
 
     // Each populated row must be individually removable without clearing the others.

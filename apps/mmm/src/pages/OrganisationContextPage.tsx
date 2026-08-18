@@ -310,10 +310,10 @@ export default function OrganisationContextPage() {
   };
 
   const handleRemoveSupplementaryRow = (rowIndex: number) => {
-   setSupplementaryRows((prev) => {
-     const next = prev.filter((_, idx) => idx !== rowIndex);
-     return ensureTrailingEmptySupplementaryRow(next, nextSupplementaryRowId);
-   });
+    setSupplementaryRows((prev) => {
+      const next = prev.filter((_, idx) => idx !== rowIndex);
+      return ensureTrailingEmptySupplementaryRow(next, nextSupplementaryRowId);
+    });
   };
 
   // Uses the worker's bounded/background mode for organisation-context reprocess so the client
@@ -544,11 +544,6 @@ export default function OrganisationContextPage() {
     });
     if (suppInsertError) {
       try {
-        await supabase.storage.from('mmm-subject-knowledge').remove([suppPath]);
-      } catch {
-        // Best-effort cleanup; retain a durable failed-status row below either way.
-      }
-      try {
         await supabase.from('mmm_subject_knowledge_documents').insert({
           organisation_id: activeOrg.id,
           uploaded_by: userId,
@@ -564,11 +559,11 @@ export default function OrganisationContextPage() {
           processing_status: 'failed',
           processing_error: 'Metadata save was unsuccessful after storage upload. This file needs attention before use.',
           tags: suppTags,
-          upload_notes: `Supplementary context document metadata save failed after storage upload; original object at ${suppPath} was cleaned up.`,
+          upload_notes: 'Supplementary context document metadata save failed after storage upload.',
         });
       } catch {
-        // Best-effort durability write; if the database remains unavailable, the successful
-        // cleanup above still avoids leaving the uploaded file in ambiguous use.
+        // Best-effort durability write; if the database remains unavailable, the uploaded
+        // object temporarily has no corresponding status row yet.
       }
       return;
     }
