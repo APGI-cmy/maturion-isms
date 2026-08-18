@@ -55,6 +55,7 @@ export default function FrameworkUploadPage() {
   const requestedMode = resolveModeFromQuery(searchParams.get('mode'));
   const [mode, setMode] = useState<'A'|'B'|'C'>(requestedMode);
   const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [supplementaryFiles, setSupplementaryFiles] = useState<File[]>([]);
   const [started, setStarted] = useState(false);
   const [modeAValidationError, setModeAValidationError] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -62,7 +63,24 @@ export default function FrameworkUploadPage() {
 
   useEffect(() => {
     setMode(requestedMode);
+    setSourceFile(null);
+    setSupplementaryFiles([]);
   }, [requestedMode]);
+
+  const ACCEPTED_TYPES = [
+    '.pdf', '.doc', '.docx', '.txt', '.md', '.csv',
+    '.pptx', '.ppt', '.xlsx', '.xls',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/plain',
+    'text/markdown',
+    'text/csv',
+  ].join(',');
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -85,6 +103,9 @@ export default function FrameworkUploadPage() {
         formData.append('source_type', 'VERBATIM');
         formData.append('mode', mode);
         formData.append('metadata', JSON.stringify({ source_type: 'VERBATIM', mode, framework_id: frameworkId }));
+        for (const f of supplementaryFiles) {
+          formData.append('supplementary_files', f);
+        }
 
         const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
           headers: await getEdgeInvokeHeaders(),
@@ -108,6 +129,9 @@ export default function FrameworkUploadPage() {
         formData.append('source_type', 'HYBRID');
         formData.append('mode', mode);
         formData.append('metadata', JSON.stringify({ source_type: 'HYBRID', mode, framework_id: frameworkId }));
+        for (const f of supplementaryFiles) {
+          formData.append('supplementary_files', f);
+        }
 
         const { data, error } = await supabase.functions.invoke('mmm-upload-framework-source', {
           headers: await getEdgeInvokeHeaders(),
@@ -191,14 +215,32 @@ export default function FrameworkUploadPage() {
             {(mode === 'A' || mode === 'C') && (
               <div className="upload-page__file-input">
                 <label htmlFor="framework-source-file" className="upload-page__next-state-label">
-                  Framework source file
+                  Primary framework source file <span style={{color:'#888',fontWeight:'normal'}}>(PDF, Word, PowerPoint, Excel, text)</span>
                 </label>
                 <input
                   id="framework-source-file"
                   type="file"
-                  accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                  accept={ACCEPTED_TYPES}
                   onChange={(e) => setSourceFile(e.target.files?.[0] ?? null)}
                 />
+                {sourceFile && (
+                  <p style={{margin:'4px 0 0',fontSize:'0.85rem',color:'#555'}}>Selected: {sourceFile.name}</p>
+                )}
+                <label htmlFor="framework-supplementary-files" className="upload-page__next-state-label" style={{marginTop:'12px',display:'block'}}>
+                  Supplementary files <span style={{color:'#888',fontWeight:'normal'}}>(optional — PPTX, XLSX, PDF, Word; supports multiple)</span>
+                </label>
+                <input
+                  id="framework-supplementary-files"
+                  type="file"
+                  accept={ACCEPTED_TYPES}
+                  multiple
+                  onChange={(e) => setSupplementaryFiles(e.target.files ? Array.from(e.target.files) : [])}
+                />
+                {supplementaryFiles.length > 0 && (
+                  <p style={{margin:'4px 0 0',fontSize:'0.85rem',color:'#555'}}>
+                    {supplementaryFiles.length} supplementary file{supplementaryFiles.length > 1 ? 's' : ''}: {supplementaryFiles.map(f => f.name).join(', ')}
+                  </p>
+                )}
               </div>
             )}
             <button
