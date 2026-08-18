@@ -82,11 +82,15 @@ function ensureArrayWithStrings(obj, key) {
   }
 }
 
-function assertExactHead(payload, currentHead) {
-  if (!currentHead) return;
-  const expected = payload.expected_head_sha || payload.current_head_sha || payload.head_sha;
-  if (expected && expected !== currentHead) {
-    fail(`Exact-head validation failed: expected ${expected} but received ${currentHead}`);
+function assertExactHead(payload, liveHead) {
+  if (!liveHead) return;
+  const current = (payload.current_head_sha || '').trim();
+  const expected = (payload.expected_head_sha || '').trim();
+  if (current && current !== liveHead) {
+    fail(`Exact-head validation failed: current_head_sha (${current}) does not match live head (${liveHead})`);
+  }
+  if (expected && expected !== liveHead) {
+    fail(`Exact-head validation failed: expected_head_sha (${expected}) does not match live head (${liveHead})`);
   }
 }
 
@@ -100,7 +104,7 @@ async function main() {
   ensureObject(payload, 'payload');
   payload.message_type = explicitType;
 
-  const headSha = (headArg || payload.current_head_sha || payload.expected_head_sha || process.env.PR_HEAD_SHA || process.env.GITHUB_SHA || '').trim();
+  const headSha = (headArg || process.env.PR_HEAD_SHA || process.env.GITHUB_SHA || '').trim();
   assertExactHead(payload, headSha);
 
   switch (explicitType) {
@@ -112,19 +116,20 @@ async function main() {
       ensureString(payload, 'current_head_sha');
       ensureString(payload, 'expected_head_sha');
       ensureString(payload, 'scope');
-      ensureObject(payload, 'gate_snapshot');
+      ensureObject(payload.gate_snapshot, 'gate_snapshot');
       ensureBoolean(payload, 'immediate_dispatch');
       break;
     }
     case 'FOREMAN_HANDOVER': {
       ensureString(payload, 'batch_id');
       ensureString(payload, 'current_head_sha');
+      ensureString(payload, 'expected_head_sha');
       ensureBoolean(payload, 'foreman_qp_pass');
       ensureBoolean(payload, 'iaa_prebrief_ready');
       ensureBoolean(payload, 'all_required_checks_green');
       ensureBoolean(payload, 'builder_delegation_verified');
       ensureBoolean(payload, 'delegation_precedes_implementation');
-      ensureObject(payload, 'gate_snapshot');
+      ensureObject(payload.gate_snapshot, 'gate_snapshot');
       if (!payload.foreman_qp_pass || !payload.iaa_prebrief_ready || !payload.all_required_checks_green) {
         fail('FOREMAN_HANDOVER is blocked until QP pass, IAA prebrief, and all required checks are green');
       }
@@ -132,14 +137,17 @@ async function main() {
     }
     case 'CS2_STOP_AND_FIX': {
       ensureString(payload, 'batch_id');
+      ensureString(payload, 'current_head_sha');
+      ensureString(payload, 'expected_head_sha');
       ensureString(payload, 'fix_reason');
       ensureString(payload, 'owner');
-      ensureObject(payload, 'review_findings');
+      ensureObject(payload.review_findings, 'review_findings');
       break;
     }
     case 'CS2_MERGE_APPROVAL': {
       ensureString(payload, 'batch_id');
       ensureString(payload, 'current_head_sha');
+      ensureString(payload, 'expected_head_sha');
       ensureBoolean(payload, 'merge_approved');
       ensureBoolean(payload, 'iaa_final_pass');
       ensureBoolean(payload, 'exact_head_binding_verified');
@@ -159,7 +167,7 @@ async function main() {
       ensureString(payload, 'cross_wave_validation_artifact');
       ensureArrayWithStrings(payload, 'validation_evidence');
       ensureArrayWithStrings(payload, 'compatibility_security_compliance_evidence');
-      ensureObject(payload, 'evaluation');
+      ensureObject(payload.evaluation, 'evaluation');
       ensureBoolean(payload.evaluation, 'cwt_complete');
       ensureBoolean(payload.evaluation, 'cross_wave_anti_regression_complete');
       ensureBoolean(payload.evaluation, 'compatibility_security_compliance_complete');
@@ -182,10 +190,13 @@ async function main() {
     ok: true,
     message_type: explicitType,
     batch_id: payload.batch_id || null,
-    current_head_sha: payload.current_head_sha || headSha || null,
-    expected_head_sha: payload.expected_head_sha || payload.current_head_sha || headSha || null,
+    current_head_sha: payload.current_head_sha || null,
+    expected_head_sha: payload.expected_head_sha || null,
     validated_at: new Date().toISOString(),
-    exact_head_bound: !payload.expected_head_sha || !headSha ? true : payload.expected_head_sha === headSha,
+    exact_head_bound:
+      !!(payload.current_head_sha && payload.expected_head_sha && headSha) &&
+      payload.current_head_sha === headSha &&
+      payload.expected_head_sha === headSha,
   };
 
   if (outArg) {

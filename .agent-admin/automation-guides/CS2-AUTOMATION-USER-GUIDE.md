@@ -209,7 +209,7 @@ Next: Human CS2 reviews, makes authority decision, updates scope or adjusts cons
 3. Re-trigger CS2 Oversight — if QP = PASS, Foreman will be triggered automatically
 
 ### Trigger Verified
-The chain works: CS2 → (if PASS) → `run_workflow("0962aeb1...")` → Foreman. Phase 5 was reached in logic but correctly skipped because QP = FAIL. Once Red QA is in place, the full chain will fire.
+The chain works: CS2 → (if PASS) → writes trigger file → Foreman play button. Phase 5 was reached in logic but correctly skipped because QP = FAIL. Once Red QA is in place, the full chain will fire.
 
 ---
 

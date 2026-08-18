@@ -79,18 +79,17 @@ Written by **CS2** when it appoints a builder after receiving a lane request.
     → Foreman reads cs2-decision-latest.json from main
     → if no active builder lane:
         writes cs2-lane-request.json on main
-        calls run_workflow → CS2 wakes up automatically
-          → CS2 appoints builder, writes trigger → Foreman wakes again
+        manual play button triggers CS2 → CS2 appoints builder, writes trigger → Foreman wakes again
     → if active lane: runs QP → ECAP → IAA
       → if any gate FAIL: STOP_AND_FIX (named owner fixes, re-trigger CS2)
       → if all gates PASS:
           writes foreman-complete-latest.json on main
-          calls run_workflow → CS2 Independent Review wakes up automatically
+          manual play button triggers CS2 Independent Review
             → CS2-IR reviews final HEAD
             → LANE_CLEAR_FOR_MERGE or STOP_AND_FIX routes back to Foreman
 ```
 
-**All wakeups are automatic via `run_workflow`. No manual clicks required after the first CS2 trigger.**
+**Wakeups use manual play buttons or file-based triggers. `run_workflow` is not available in automation contexts.**
 
 ## Important: All trigger files must be on the `main` branch
 - All workflows navigate to `C:\Users\Johan\.copilot\repos\maturion-isms` (main checkout) before reading or writing trigger files.

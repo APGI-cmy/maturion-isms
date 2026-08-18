@@ -85,11 +85,11 @@ Create a CS2 automation workflow that can be triggered from the GitHub Copilot A
 CS2 Oversight (Manual play button)
     ↓ Loads batch scope + validates intent
     ↓
-    [FOREMAN_REENTRY_PACKET approved] → Foreman cycle starts (*/30 * * * *)
+    [FOREMAN_REENTRY_PACKET approved] → Foreman cycle starts (manual play button)
         ↓
         QP → ECAP → IAA gates
         ↓
-        [All pass] → CS2 Independent Review (5,35 * * * *)
+        [All pass] → CS2 Independent Review (manual play button)
             ↓
             [LANE_CLEAR_FOR_MERGE] → Human CS2 merge decision
 
