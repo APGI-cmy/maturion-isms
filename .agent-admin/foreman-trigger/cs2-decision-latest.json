@@ -1,7 +1,7 @@
 ﻿{
-  "timestamp": "' + $ts + '",
+  "timestamp": "2026-08-18T09:26:44.2700523+02:00",
   "decision": "FOREMAN_REENTRY_PACKET",
-  "review_head_sha": "' + $sha + '",
+  "review_head_sha": "b77300ed29c9fde26059b578a4b5c520e7441a53",
   "active_scope_declaration": ".agent-admin/scope-declarations/wave-mmm-level2-approval-qa-red-2026-06-23.md",
   "advisory_observations": "Issue #2019 is open and matches the Level 2 invite modal + workspace scope. The valid CS2 lane request was archived, and qa-builder was appointed for the MMM Level 2 QA-to-red lane. Scope is bounded to Level 2 invite/workspace only and within a single supervised cycle.",
   "cs2_authorized": true,
