@@ -542,6 +542,12 @@ export default function OrganisationContextPage() {
     });
     if (suppInsertError) {
       try {
+        await supabase.storage.from('mmm-subject-knowledge').remove([suppPath]);
+      } catch {
+        // Best-effort cleanup; retain a durable failed-status row below either way.
+      }
+      const suppFailurePath = `${activeOrg.id}/${userId}/${nextUploadPathToken()}-supp-metadata-failed-${suppSafeName}`;
+      try {
         await supabase.from('mmm_subject_knowledge_documents').insert({
           organisation_id: activeOrg.id,
           uploaded_by: userId,
@@ -551,17 +557,17 @@ export default function OrganisationContextPage() {
           mime_type: suppMime,
           file_size: file.size,
           storage_bucket: 'mmm-subject-knowledge',
-          storage_path: suppPath,
+          storage_path: suppFailurePath,
           document_role: 'knowledge_source',
           scope_type: 'organisation_context',
           processing_status: 'failed',
           processing_error: 'Metadata save was unsuccessful after storage upload. This file needs attention before use.',
           tags: suppTags,
-          upload_notes: 'Supplementary context document metadata save failed after storage upload.',
+          upload_notes: `Supplementary context document metadata save failed after storage upload; original object at ${suppPath} was cleaned up.`,
         });
       } catch {
         // Best-effort durability write; if the database remains unavailable, the successful
-        // storage upload simply has no corresponding status row yet.
+        // cleanup above still avoids leaving the uploaded file in ambiguous use.
       }
       return;
     }

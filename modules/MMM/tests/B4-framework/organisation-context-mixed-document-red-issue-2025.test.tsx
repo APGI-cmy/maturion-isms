@@ -56,7 +56,7 @@ type Scenario = {
   contextPersistShouldFail?: boolean;
 };
 
-const { mockSupabase, configureScenario, mockStorageUpload, mockInvoke } = vi.hoisted(() => {
+const { mockSupabase, configureScenario, mockStorageUpload, mockStorageRemove, mockInvoke } = vi.hoisted(() => {
   let scenario: Scenario | null = null;
   let documentsStore: DocRow[] = [];
   let idCounter = 0;
@@ -80,6 +80,8 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockInvoke } = vi.ho
     }
     return Promise.resolve({ data: { path }, error: null });
   });
+
+  const mockStorageRemove = vi.fn(() => Promise.resolve({ data: null, error: null }));
 
   const mockInvoke = vi.fn((fnName: string, opts?: { body?: Record<string, unknown> }) => {
     if (fnName === 'mmm-organisation-context') {
@@ -236,7 +238,7 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockInvoke } = vi.ho
       },
       functions: { invoke: mockInvoke },
       storage: {
-        from: vi.fn(() => ({ upload: mockStorageUpload })),
+        from: vi.fn(() => ({ upload: mockStorageUpload, remove: mockStorageRemove })),
       },
       from: vi.fn((table: string) => makeBuilder(table)),
     },
@@ -245,9 +247,11 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockInvoke } = vi.ho
       documentsStore = next.initialDocs.map((doc) => ({ ...doc }));
       idCounter = documentsStore.length;
       mockStorageUpload.mockClear();
+      mockStorageRemove.mockClear();
       mockInvoke.mockClear();
     },
     mockStorageUpload,
+    mockStorageRemove,
     mockInvoke,
   };
 });
@@ -354,7 +358,9 @@ describe('T-2025-01: Repeatable optional supplementary upload rows', () => {
     fireEvent.click(screen.getByTestId('organisation-supplementary-row-remove-3'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('organisation-supplementary-row-3')).toBeTruthy();
+      expect(
+        container.querySelectorAll('div[data-testid^="organisation-supplementary-row-"]').length,
+      ).toBe(4);
     });
 
     // Each populated row must be individually removable without clearing the others.
