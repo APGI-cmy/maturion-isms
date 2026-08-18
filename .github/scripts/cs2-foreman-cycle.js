@@ -96,12 +96,12 @@ function assertExactHead(payload, liveHead) {
 
 async function main() {
   const payload = await readJsonInput();
+  ensureObject(payload, 'payload');
   const explicitType = (typeArg || payload.message_type || payload.type || process.env.CS2_MESSAGE_TYPE || '').trim();
   if (!allowedTypes.has(explicitType)) {
     fail(`Unsupported message_type '${explicitType}'. Allowed: ${Array.from(allowedTypes).join(', ')}`);
   }
 
-  ensureObject(payload, 'payload');
   payload.message_type = explicitType;
 
   const headSha = (headArg || process.env.PR_HEAD_SHA || process.env.GITHUB_SHA || '').trim();

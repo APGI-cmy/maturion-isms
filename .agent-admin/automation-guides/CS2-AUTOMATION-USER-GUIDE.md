@@ -83,11 +83,11 @@ CS2 Oversight (Manual)
     ↓
     STOP_AND_FIX → Foreman fixes → CS2 retriggers
     or
-    FOREMAN_REENTRY_PACKET → Foreman runs (every 30 min via cron)
+    FOREMAN_REENTRY_PACKET → Foreman runs (manual play button)
         ↓
         QP Review → ECAP Review → IAA Review
         ↓
-        (If all pass) → CS2 Independent Review (every 5,35 min via cron)
+        (If all pass) → CS2 Independent Review (manual play button)
             ↓
             LANE_CLEAR_FOR_MERGE → Human CS2 decides merge
 ```
@@ -112,7 +112,7 @@ Phase 2: READY_FOR_DEEP_REVIEW
 Phase 3: Quality Professor — PASS
 Phase 4: FOREMAN_REENTRY_PACKET — scope and intent approved, Foreman may proceed
 
-Next: Foreman starts supervised build cycle (runs every 30 min)
+Next: Foreman starts supervised build cycle (manual play button)
 ```
 
 ### Blocked (STOP_AND_FIX)

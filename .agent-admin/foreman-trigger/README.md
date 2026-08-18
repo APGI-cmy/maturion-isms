@@ -75,7 +75,7 @@ Written by **CS2** when it appoints a builder after receiving a lane request.
     → if present: appoints builder, writes cs2-builder-appointment.json
   → CS2 reviews scope + traceability
   → writes cs2-decision-latest.json on main
-  → calls run_workflow → Foreman wakes up automatically
+  → writes file-based trigger → Foreman manual play button starts
     → Foreman reads cs2-decision-latest.json from main
     → if no active builder lane:
         writes cs2-lane-request.json on main

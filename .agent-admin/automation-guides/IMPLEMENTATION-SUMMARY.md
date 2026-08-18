@@ -142,7 +142,7 @@ When Level 2 pre-build is ready:
 1. **Create Level 2 implementation issue** (or batch assignment)
 2. **Trigger CS2 Oversight automation** (click play button in Automations tab)
 3. Automation validates scope and intent
-4. If approved, Foreman automatically runs (every 30 min via cron)
+4. If approved, Foreman runs via manual play button trigger
 5. Foreman runs QP → ECAP → IAA gates
 6. CS2 Independent Review validates and provides merge decision
 
