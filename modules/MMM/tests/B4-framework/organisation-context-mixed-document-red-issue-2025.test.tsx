@@ -279,6 +279,24 @@ function makeFile(name: string, mimeType: string, content = 'stub-content'): Fil
   return new File([content], name, { type: mimeType });
 }
 
+async function addSupplementaryFiles(container: HTMLElement, files: File[]) {
+  for (let index = 0; index < files.length; index += 1) {
+    const selector =
+      index === 0
+        ? '#context-supplementary-files'
+        : `[data-testid="organisation-supplementary-row-${index}"] input[type="file"]`;
+    const input =
+      (container.querySelector(selector) as HTMLInputElement | null) ??
+      ((await screen.findByTestId(`organisation-supplementary-row-${index}`)).querySelector(
+        'input[type="file"]',
+      ) as HTMLInputElement | null);
+    if (!input) {
+      throw new Error(`Missing supplementary input for row ${index}`);
+    }
+    fireEvent.change(input, { target: { files: [files[index]] } });
+  }
+}
+
 function baseOrg(id = 'org-t2025'): OrgFixture {
   return {
     id,
@@ -405,8 +423,6 @@ describe('T-2025-03: Mixed-batch per-file isolation', () => {
     await screen.findByTestId('organisation-source-upload');
 
     const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
-    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
-
     fireEvent.change(primaryInput, {
       target: {
         files: [
@@ -417,14 +433,10 @@ describe('T-2025-03: Mixed-batch per-file isolation', () => {
         ],
       },
     });
-    fireEvent.change(suppInput, {
-      target: {
-        files: [
-          makeFile('supp-should-still-succeed-1.pptx', 'application/vnd.ms-powerpoint'),
-          makeFile('supp-should-still-succeed-2.xlsx', 'application/vnd.ms-excel'),
-        ],
-      },
-    });
+    await addSupplementaryFiles(container, [
+      makeFile('supp-should-still-succeed-1.pptx', 'application/vnd.ms-powerpoint'),
+      makeFile('supp-should-still-succeed-2.xlsx', 'application/vnd.ms-excel'),
+    ]);
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 
@@ -448,19 +460,13 @@ describe('T-2025-03: Mixed-batch per-file isolation', () => {
     await screen.findByTestId('organisation-source-upload');
 
     const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
-    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
-
     fireEvent.change(primaryInput, {
       target: { files: [makeFile('primary-ok.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')] },
     });
-    fireEvent.change(suppInput, {
-      target: {
-        files: [
-          makeFile('same-name.txt', 'text/plain', 'first'),
-          makeFile('same-name.txt', 'text/plain', 'second'),
-        ],
-      },
-    });
+    await addSupplementaryFiles(container, [
+      makeFile('same-name.txt', 'text/plain', 'first'),
+      makeFile('same-name.txt', 'text/plain', 'second'),
+    ]);
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 
@@ -490,17 +496,11 @@ describe('T-2025-04: Durable, actionable per-file processing status/error persis
     await screen.findByTestId('organisation-source-upload');
 
     const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
-    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
-
     fireEvent.change(primaryInput, { target: { files: [makeFile('primary-ok.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')] } });
-    fireEvent.change(suppInput, {
-      target: {
-        files: [
-          makeFile('good-supp.pptx', 'application/vnd.ms-powerpoint'),
-          makeFile('flaky-supp.txt', 'text/plain'),
-        ],
-      },
-    });
+    await addSupplementaryFiles(container, [
+      makeFile('good-supp.pptx', 'application/vnd.ms-powerpoint'),
+      makeFile('flaky-supp.txt', 'text/plain'),
+    ]);
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 
@@ -569,19 +569,13 @@ describe('T-2025-05: Recoverable bounded/async resource-failure handling (regres
     await screen.findByTestId('organisation-source-upload');
 
     const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
-    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
-
     fireEvent.change(primaryInput, {
       target: { files: [makeFile('resource-heavy-doc-2.pdf', 'application/pdf')] },
     });
-    fireEvent.change(suppInput, {
-      target: {
-        files: [
-          makeFile('supp-during-hang-1.pptx', 'application/vnd.ms-powerpoint'),
-          makeFile('supp-during-hang-2.xlsx', 'application/vnd.ms-excel'),
-        ],
-      },
-    });
+    await addSupplementaryFiles(container, [
+      makeFile('supp-during-hang-1.pptx', 'application/vnd.ms-powerpoint'),
+      makeFile('supp-during-hang-2.xlsx', 'application/vnd.ms-excel'),
+    ]);
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 

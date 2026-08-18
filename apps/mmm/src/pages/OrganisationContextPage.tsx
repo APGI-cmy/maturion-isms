@@ -540,7 +540,31 @@ export default function OrganisationContextPage() {
       tags: suppTags,
       upload_notes: 'Supplementary context document.',
     });
-    if (suppInsertError) return;
+    if (suppInsertError) {
+      try {
+        await supabase.from('mmm_subject_knowledge_documents').insert({
+          organisation_id: activeOrg.id,
+          uploaded_by: userId,
+          updated_by: userId,
+          title: `Supplementary - ${file.name}`,
+          file_name: file.name,
+          mime_type: suppMime,
+          file_size: file.size,
+          storage_bucket: 'mmm-subject-knowledge',
+          storage_path: suppPath,
+          document_role: 'knowledge_source',
+          scope_type: 'organisation_context',
+          processing_status: 'failed',
+          processing_error: 'Metadata save was unsuccessful after storage upload. This file needs attention before use.',
+          tags: suppTags,
+          upload_notes: 'Supplementary context document metadata save failed after storage upload.',
+        });
+      } catch {
+        // Best-effort durability write; if the database remains unavailable, the successful
+        // storage upload simply has no corresponding status row yet.
+      }
+      return;
+    }
 
     try {
       const { data: suppDoc } = await supabase
