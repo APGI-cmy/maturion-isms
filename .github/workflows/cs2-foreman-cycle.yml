@@ -1,0 +1,62 @@
+name: CS2 Foreman Cycle
+
+on:
+  workflow_dispatch:
+    inputs:
+      batch_id:
+        description: 'Batch identifier for the CS2-Foreman loop'
+        required: true
+        type: string
+      message_type:
+        description: 'Payload type to validate and route'
+        required: true
+        type: choice
+        options:
+          - CS2_ASSIGNMENT
+          - FOREMAN_HANDOVER
+          - CS2_STOP_AND_FIX
+          - CS2_MERGE_APPROVAL
+          - CS2_POSTMERGE_HANDOVER
+      payload_json:
+        description: 'JSON payload for the selected message type'
+        required: true
+        type: string
+      head_sha:
+        description: 'Expected live head SHA for exact-head validation'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+run-name: >-
+  CS2 Foreman Cycle / ${{ inputs.message_type }} / ${{ inputs.batch_id }}
+
+jobs:
+  validate-cycle-payload:
+    name: validate-cs2-foreman-cycle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Validate exact-head payload and route rules
+        shell: bash
+        env:
+          CS2_FOREMAN_PAYLOAD: ${{ github.event.inputs.payload_json }}
+          CS2_MESSAGE_TYPE: ${{ github.event.inputs.message_type }}
+          PR_HEAD_SHA: ${{ github.event.inputs.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          node .github/scripts/cs2-foreman-cycle.js --type "$CS2_MESSAGE_TYPE" --payload "$CS2_FOREMAN_PAYLOAD" --head-sha "$PR_HEAD_SHA"
+
+      - name: Preflight Foreman sequence lock for handover or approval events
+        if: github.event.inputs.message_type == 'FOREMAN_HANDOVER' || github.event.inputs.message_type == 'CS2_MERGE_APPROVAL'
+        shell: bash
+        env:
+          FOREMAN_SEQUENCE_PAYLOAD: ${{ github.event.inputs.payload_json }}
+        run: |
+          set -euo pipefail
+          node .github/scripts/foreman-sequence-lock.js --payload "$FOREMAN_SEQUENCE_PAYLOAD"
