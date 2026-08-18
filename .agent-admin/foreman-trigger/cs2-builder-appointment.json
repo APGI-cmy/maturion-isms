@@ -1,8 +1,8 @@
 ﻿{
-  "timestamp": "2026-08-18T09:33:40.3741548+02:00",
+  "timestamp": "2026-08-18T07:46:24.6518113Z",
   "appointed_builder": "qa-builder",
   "issue_ref": "#2019",
-  "scope_declaration": ".agent-admin/scope-declarations/wave-mmm-level2-approval-qa-red-2026-06-23.md",
+  "scope_declaration": "wave-mmm-level2-approval-qa-red-2026-06-23.md",
   "task": "Create QA-to-red baseline for MMM Level 2 invite workflow. Replace all it.todo() stubs in modules/MMM/tests/B4-framework/level2-invite-workspace-red.test.ts with real failing tests. Tests must fail for the right reasons before any implementation.",
   "cs2_authorized": true,
   "builder_may_proceed": true
