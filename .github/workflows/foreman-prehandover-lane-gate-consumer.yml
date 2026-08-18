@@ -62,7 +62,7 @@ jobs:
 
       - name: Download source failure artifact
         if: steps.source.outputs.skip != 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: cs2-trigger
           run-id: ${{ steps.source.outputs.source_run_id }}
