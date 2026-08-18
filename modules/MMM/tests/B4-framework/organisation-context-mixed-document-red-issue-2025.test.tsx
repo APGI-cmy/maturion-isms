@@ -96,6 +96,16 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockInvoke } = vi.ho
       return Promise.resolve({ data: null, error: { message: 'unknown action' } });
     }
     if (fnName === 'mmm-subject-knowledge-reprocess') {
+      if (opts?.body?.background === true) {
+        return Promise.resolve({
+          data: {
+            accepted: true,
+            status: 'processing',
+            document_id: opts?.body?.document_id,
+          },
+          error: null,
+        });
+      }
       const mode = scenario?.reprocessMode ?? 'success';
       if (mode === 'hang') {
         // Simulate a long-running call without leaving never-resolving promises + open timeout handles.
@@ -323,6 +333,12 @@ describe('T-2025-01: Repeatable optional supplementary upload rows', () => {
     // A 4th row must appear too (arbitrary, not capped at exactly 3).
     expect(await screen.findByTestId('organisation-supplementary-row-3')).toBeTruthy();
 
+    fireEvent.click(screen.getByTestId('organisation-supplementary-row-remove-3'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('organisation-supplementary-row-3')).toBeTruthy();
+    });
+
     // Each populated row must be individually removable without clearing the others.
     const removeRow0 = screen.getByTestId('organisation-supplementary-row-remove-0');
     fireEvent.click(removeRow0);
@@ -425,6 +441,41 @@ describe('T-2025-03: Mixed-batch per-file isolation', () => {
     );
     expect(suppUploadAttempted).toBe(true);
   });
+
+  it('gives same-name supplementary files distinct storage paths within one batch', async () => {
+    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'success' });
+    const { container } = renderOrganisationContextPage();
+    await screen.findByTestId('organisation-source-upload');
+
+    const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
+    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
+
+    fireEvent.change(primaryInput, {
+      target: { files: [makeFile('primary-ok.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')] },
+    });
+    fireEvent.change(suppInput, {
+      target: {
+        files: [
+          makeFile('same-name.txt', 'text/plain', 'first'),
+          makeFile('same-name.txt', 'text/plain', 'second'),
+        ],
+      },
+    });
+
+    fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('organisation-source-upload').textContent ?? '').toMatch(
+        /finished successfully/i,
+      );
+    });
+
+    const supplementaryPaths = mockStorageUpload.mock.calls
+      .map(([path]) => String(path))
+      .filter((path) => path.includes('-supp-same-name.txt'));
+    expect(supplementaryPaths).toHaveLength(2);
+    expect(new Set(supplementaryPaths).size).toBe(2);
+  });
 });
 
 describe('T-2025-04: Durable, actionable per-file processing status/error persistence', () => {
@@ -475,8 +526,8 @@ describe('T-2025-04: Durable, actionable per-file processing status/error persis
 });
 
 describe('T-2025-05: Recoverable bounded/async resource-failure handling (regression guard for Edge Worker HTTP 546 WORKER_RESOURCE_LIMIT)', () => {
-  it('bounds the reprocess Edge Function invocation with a client-side abort/timeout budget instead of an unbounded wait', async () => {
-    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'hang' });
+  it('uses worker-side background processing so the browser can persist mode context without keeping the reprocess request open', async () => {
+    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'success' });
     const { container } = renderOrganisationContextPage();
     await screen.findByTestId('organisation-source-upload');
 
@@ -503,15 +554,17 @@ describe('T-2025-05: Recoverable bounded/async resource-failure handling (regres
     const reprocessCall = mockInvoke.mock.calls.find(
       ([name]) => name === 'mmm-subject-knowledge-reprocess',
     );
-    const options = (reprocessCall?.[1] ?? {}) as { signal?: AbortSignal };
+    const options = (reprocessCall?.[1] ?? {}) as { body?: Record<string, unknown>; signal?: AbortSignal };
 
-    // A resource-heavy document must be bounded by a client-enforced timeout/abort budget so
-    // it can never exhaust the Edge Worker resource limit (HTTP 546) unrecoverably.
-    expect(options.signal).toBeInstanceOf(AbortSignal);
+    expect(options.body?.background).toBe(true);
+    expect(options.signal).toBeUndefined();
+    await waitFor(() => {
+      expect(screen.getAllByText(/processing continues in the background/i).length).toBeGreaterThan(0);
+    });
   });
 
-  it('does not block the rest of the batch indefinitely while the primary reprocess call is still pending', async () => {
-    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'hang' });
+  it('does not block the rest of the batch while the primary document is handed off to background processing', async () => {
+    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'success' });
     const { container } = renderOrganisationContextPage();
     await screen.findByTestId('organisation-source-upload');
 
@@ -532,16 +585,12 @@ describe('T-2025-05: Recoverable bounded/async resource-failure handling (regres
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 
-    // Give the (bounded, well under the ~125.6s production fault window) event loop a chance
-    // to process any async/queued work — this is a short real-time wait, not a 125s wait.
-    await new Promise((resolve) => setTimeout(resolve, 150));
-
-    const suppUploadAttempted = mockStorageUpload.mock.calls.some(([path]) =>
-      String(path).includes('supp-'),
-    );
-    // A hung/resource-exhausted primary reprocess call must not block the rest of the batch:
-    // other files must still be attempted independently/asynchronously.
-    expect(suppUploadAttempted).toBe(true);
+    await waitFor(() => {
+      const suppUploadAttempted = mockStorageUpload.mock.calls.some(([path]) =>
+        String(path).includes('supp-'),
+      );
+      expect(suppUploadAttempted).toBe(true);
+    });
   });
 });
 

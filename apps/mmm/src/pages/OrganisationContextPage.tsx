@@ -45,6 +45,8 @@ type OrganisationSourceDoc = {
 };
 
 type ReprocessResponse = {
+  accepted?: boolean;
+  status?: string;
   success?: boolean;
   error?: string;
   document_id?: string;
@@ -132,12 +134,6 @@ const ORG_ACCEPTED_TYPES = [
   'application/json',
 ].join(',');
 
-// Client-side bounded invocation budget for the `mmm-subject-knowledge-reprocess` Edge
-// Function call. This is well under the ~125.6s HTTP 546 WORKER_RESOURCE_LIMIT production
-// fault window (issue #2025) so the client never waits unboundedly on a hung/resource-heavy
-// reprocess call; the invocation is aborted client-side instead of blocking indefinitely.
-const REPROCESS_INVOKE_TIMEOUT_MS = 45_000;
-
 let supplementaryRowIdSeq = 0;
 function nextSupplementaryRowId(): string {
   supplementaryRowIdSeq += 1;
@@ -148,6 +144,23 @@ type SupplementaryRow = {
   id: string;
   files: File[];
 };
+
+type PrimaryUploadResult = {
+  backgroundProcessing: boolean;
+};
+
+function ensureTrailingEmptySupplementaryRow(rows: SupplementaryRow[]): SupplementaryRow[] {
+  if (rows.length === 0) return [{ id: nextSupplementaryRowId(), files: [] }];
+  const lastRow = rows[rows.length - 1];
+  return lastRow.files.length === 0 ? rows : [...rows, { id: nextSupplementaryRowId(), files: [] }];
+}
+
+function nextUploadPathToken(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
 
 export default function OrganisationContextPage() {
   const qc = useQueryClient();
@@ -295,50 +308,46 @@ export default function OrganisationContextPage() {
   };
 
   const handleRemoveSupplementaryRow = (rowIndex: number) => {
-    setSupplementaryRows((prev) => {
-      const next = prev.filter((_, idx) => idx !== rowIndex);
-      return next.length > 0 ? next : [{ id: nextSupplementaryRowId(), files: [] }];
-    });
+   setSupplementaryRows((prev) => {
+     const next = prev.filter((_, idx) => idx !== rowIndex);
+     return ensureTrailingEmptySupplementaryRow(next);
+   });
   };
 
-  // Bounds the `mmm-subject-knowledge-reprocess` Edge Function invocation with a client-side
-  // AbortController timeout budget (issue #2025 / T-2025-05) instead of an unbounded wait, so a
-  // resource-heavy document can never hang the client indefinitely even if the Edge Worker
-  // itself exhausts its resource limit (HTTP 546 WORKER_RESOURCE_LIMIT).
+  // Uses the worker's bounded/background mode for organisation-context reprocess so the client
+  // receives a durable accepted/processing state immediately instead of aborting a still-running
+  // Edge Function request before mode-context persistence can complete (issue #2025 / T-2025-05).
   const invokeReprocessBounded = async (documentId: string): Promise<ReprocessResponse | null> => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), REPROCESS_INVOKE_TIMEOUT_MS);
-    try {
-      const headers = await getEdgeInvokeHeaders();
-      const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
-        headers,
-        body: { document_id: documentId },
-        signal: controller.signal,
-      });
-      if (error) {
-        throw new Error(error.message || 'Reprocess failed.');
-      }
-      if (data && typeof data === 'object' && 'success' in data && (data as { success?: boolean }).success === false) {
-        const detail =
-          typeof (data as { error?: unknown }).error === 'string'
-            ? (data as { error: string }).error
-            : 'Processing failed.';
-        throw new Error(detail);
-      }
-      return data as ReprocessResponse | null;
-    } finally {
-      clearTimeout(timeoutId);
+    const headers = await getEdgeInvokeHeaders();
+    const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
+      headers,
+      body: { document_id: documentId, background: true },
+    });
+    if (error) {
+      throw new Error(error.message || 'Reprocess failed.');
     }
+    if (data && typeof data === 'object' && 'success' in data && (data as { success?: boolean }).success === false) {
+      const detail =
+        typeof (data as { error?: unknown }).error === 'string'
+          ? (data as { error: string }).error
+          : 'Processing failed.';
+      throw new Error(detail);
+    }
+    return data as ReprocessResponse | null;
   };
 
   // Uploads the single primary source document end-to-end (storage -> metadata -> bounded
   // reprocess -> mode context persistence). Runs independently of supplementary uploads so a
   // primary failure/hang cannot gate or roll back supplementary attempts (T-2025-03, T-2025-05).
-  const uploadPrimaryDocument = async (activeOrg: NonNullable<typeof org>, file: File, userId: string) => {
+  const uploadPrimaryDocument = async (
+    activeOrg: NonNullable<typeof org>,
+    file: File,
+    userId: string,
+  ): Promise<PrimaryUploadResult> => {
     setSourceUploadStatus('Starting upload…');
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
     const mimeType = resolveMimeType(file);
-    const storagePath = `${activeOrg.id}/${userId}/${Date.now()}-${safeName}`;
+    const storagePath = `${activeOrg.id}/${userId}/${nextUploadPathToken()}-${safeName}`;
     const { error: uploadError } = await supabase.storage
       .from('mmm-subject-knowledge')
       .upload(storagePath, file, { contentType: mimeType, upsert: false });
@@ -438,8 +447,13 @@ export default function OrganisationContextPage() {
       throw new Error(insertedLookupError?.message || 'Source document saved but could not resolve document id for processing.');
     }
 
-    await invokeReprocessBounded(insertedDoc.id);
-    setSourceUploadStatus('Processing complete. Finalizing mode context…');
+    const reprocessResult = await invokeReprocessBounded(insertedDoc.id);
+    const isBackgroundProcessing = (reprocessResult?.accepted ?? false) || reprocessResult?.status === 'processing';
+    setSourceUploadStatus(
+      isBackgroundProcessing
+        ? 'Processing started in the background. Finalizing mode context…'
+        : 'Processing complete. Finalizing mode context…',
+    );
 
     // Persist the selected mode in organisation context so runtime mode resolution
     // remains stable across framework pages and sessions.
@@ -459,7 +473,12 @@ export default function OrganisationContextPage() {
       throw new Error(contextPersistError.message || 'Source processed, but mode context save failed.');
     }
 
-    setSourceUploadStatus('Organisation source upload finished successfully.');
+    setSourceUploadStatus(
+      isBackgroundProcessing
+        ? 'Organisation source upload finished successfully. Processing continues in the background.'
+        : 'Organisation source upload finished successfully.',
+    );
+    return { backgroundProcessing: isBackgroundProcessing };
   };
 
   // Uploads a single supplementary file independently of the primary document and of every
@@ -469,7 +488,7 @@ export default function OrganisationContextPage() {
   const uploadSupplementaryDocument = async (activeOrg: NonNullable<typeof org>, file: File, userId: string) => {
     const suppSafeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
     const suppMime = resolveMimeType(file);
-    const suppPath = `${activeOrg.id}/${userId}/${Date.now()}-supp-${suppSafeName}`;
+    const suppPath = `${activeOrg.id}/${userId}/${nextUploadPathToken()}-supp-${suppSafeName}`;
     const suppTags = ['organisation_context', 'supplementary', `source_mode:${sourceMode}`, `organisation_id:${activeOrg.id}`];
 
     const { error: suppUploadError } = await supabase.storage
@@ -568,8 +587,12 @@ export default function OrganisationContextPage() {
       // still-pending/hung primary reprocess call must never gate or block the supplementary
       // attempts, and one supplementary file's failure must never block another's.
       const primaryPromise = uploadPrimaryDocument(activeOrg, sourceFile, userId)
-        .then(() => {
-          setMessage('Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.');
+        .then((result) => {
+          setMessage(
+            result?.backgroundProcessing
+              ? 'Organisation source document uploaded successfully. Processing continues in the background while the selected mode remains saved.'
+              : 'Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.',
+          );
           qc.invalidateQueries({ queryKey: ['organisation-context'] });
         })
         .catch((err) => {
