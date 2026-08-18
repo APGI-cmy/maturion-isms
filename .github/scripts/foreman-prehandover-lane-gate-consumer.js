@@ -18,6 +18,8 @@ function validateTrigger(payload, { sourceRunId, sourceWorkflow, prNumber, headS
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) fail('artifact payload must be an object');
   if (payload.schema_version !== '1.0.0') fail('artifact schema_version must be 1.0.0');
   if (payload.source !== 'foreman-prehandover-lane-gate') fail('artifact source is not foreman-prehandover-lane-gate');
+  if (payload.trigger !== 'PRE_HANDOVER_CHECKPOINT') fail('artifact trigger is unsupported');
+  if (payload.action !== '/prepare-handover') fail('artifact action is unsupported');
   if (!VALID_DECISIONS.has(payload.decision)) fail('artifact decision is unsupported');
   if (typeof payload.reason !== 'string' || !payload.reason.trim()) fail('artifact reason is missing');
   if (!Number.isInteger(payload.pr_number) || payload.pr_number !== Number(prNumber)) fail('artifact PR identity does not match source run');
@@ -38,6 +40,11 @@ function renderReviewEvent(payload) {
   const route = payload.decision === 'FOREMAN_STOP_AND_FIX'
     ? 'Foreman must stop the handover claim, correct the listed lane-gate defect, and rerun the current-head checkpoint.'
     : 'CS2 review is required before further authority-bound governance action. This event does not authorize or impersonate a CS2 decision.';
+  const reason = String(payload.reason)
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/@/g, '@\u200b')
+    .replace(/`/g, "'")
+    .slice(0, 500);
   return [
     MARKER,
     '<!-- bounded-review-event -->',
@@ -49,7 +56,7 @@ function renderReviewEvent(payload) {
     `- **Head SHA:** \`${payload.pr_head_sha}\``,
     `- **Source workflow run:** \`${payload.source_run_id}\``,
     `- **Idempotency key:** \`${key}\``,
-    `- **Reason:** ${payload.reason}`,
+    `- **Reason:** \`${reason}\``,
     '',
     `**Bounded action:** ${route}`,
     '',
