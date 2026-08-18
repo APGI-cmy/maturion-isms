@@ -69,6 +69,10 @@ function resolveMimeType(file: File): string {
   if (name.endsWith('.pdf')) return 'application/pdf';
   if (name.endsWith('.docx')) return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   if (name.endsWith('.doc')) return 'application/msword';
+  if (name.endsWith('.pptx')) return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+  if (name.endsWith('.ppt')) return 'application/vnd.ms-powerpoint';
+  if (name.endsWith('.xlsx')) return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  if (name.endsWith('.xls')) return 'application/vnd.ms-excel';
   if (name.endsWith('.txt')) return 'text/plain';
   if (name.endsWith('.md')) return 'text/markdown';
   if (name.endsWith('.csv')) return 'text/csv';
@@ -112,10 +116,26 @@ async function fetchOrganisationContext(): Promise<OrganisationContextResponse> 
   return { organisation } as OrganisationContextResponse;
 }
 
+const ORG_ACCEPTED_TYPES = [
+  '.pdf', '.doc', '.docx', '.txt', '.md', '.csv',
+  '.pptx', '.ppt', '.xlsx', '.xls',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'text/plain',
+  'text/markdown',
+  'text/csv',
+].join(',');
+
 export default function OrganisationContextPage() {
   const qc = useQueryClient();
   const [message, setMessage] = useState<string | null>(null);
   const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [supplementaryOrgFiles, setSupplementaryOrgFiles] = useState<File[]>([]);
   const [sourceMode, setSourceMode] = useState<OrganisationModeSource>('VERBATIM');
   const [isUploadingSource, setIsUploadingSource] = useState(false);
   const [sourceUploadStatus, setSourceUploadStatus] = useState<string | null>(null);
@@ -360,6 +380,44 @@ export default function OrganisationContextPage() {
       }
       setSourceUploadStatus('Processing complete. Finalizing mode context…');
 
+      // Upload supplementary files (non-blocking: log errors but don't fail the whole operation)
+      if (supplementaryOrgFiles.length > 0) {
+        setSourceUploadStatus(`Uploading ${supplementaryOrgFiles.length} supplementary file(s)…`);
+        for (const suppFile of supplementaryOrgFiles) {
+          try {
+            const suppSafeName = suppFile.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
+            const suppMime = resolveMimeType(suppFile);
+            const suppPath = `${org.id}/${userId}/${Date.now()}-supp-${suppSafeName}`;
+            const { error: suppUploadError } = await supabase.storage
+              .from('mmm-subject-knowledge')
+              .upload(suppPath, suppFile, { contentType: suppMime, upsert: false });
+            if (suppUploadError) throw new Error(suppUploadError.message);
+            const suppTags = ['organisation_context', 'supplementary', `source_mode:${sourceMode}`, `organisation_id:${org.id}`];
+            const { error: suppInsertError } = await supabase.from('mmm_subject_knowledge_documents').insert({
+              organisation_id: org.id, uploaded_by: userId, updated_by: userId,
+              title: `Supplementary - ${suppFile.name}`, file_name: suppFile.name,
+              mime_type: suppMime, file_size: suppFile.size,
+              storage_bucket: 'mmm-subject-knowledge', storage_path: suppPath,
+              document_role: 'knowledge_source', scope_type: 'organisation_context',
+              processing_status: 'pending', tags: suppTags,
+              upload_notes: 'Supplementary context document.',
+            });
+            if (!suppInsertError) {
+              const { data: suppDoc } = await supabase.from('mmm_subject_knowledge_documents')
+                .select('id').eq('storage_path', suppPath).maybeSingle();
+              if (suppDoc?.id) {
+                await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
+                  headers: await getEdgeInvokeHeaders(),
+                  body: { document_id: suppDoc.id },
+                });
+              }
+            }
+          } catch {
+            // Non-fatal: primary upload succeeded; supplementary failures are logged but not surfaced
+          }
+        }
+      }
+
       // Persist the selected mode in organisation context so runtime mode resolution
       // remains stable across framework pages and sessions.
       const nextContext = {
@@ -379,6 +437,7 @@ export default function OrganisationContextPage() {
       }
 
       setSourceFile(null);
+      setSupplementaryOrgFiles([]);
       setSourceUploadStatus('Organisation source upload finished successfully.');
       setMessage('Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.');
       qc.invalidateQueries({ queryKey: ['organisation-context'] });
@@ -482,7 +541,6 @@ export default function OrganisationContextPage() {
 
       <div className="card" data-testid="organisation-source-upload">
         <h2>Organisation Source Documents</h2>
-        <p style={{ color: 'red', fontWeight: 700 }}>DEBUG-MARKER-20260601-A</p>
         <p>
           Upload the customer-specific document Maturion should use for Verbatim, Hybrid, or New Generation
           framework creation.
@@ -501,13 +559,33 @@ export default function OrganisationContextPage() {
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="context-source-file">Source document</label>
+          <label htmlFor="context-source-file">Primary source document <span style={{color:'#888',fontWeight:'normal'}}>(PDF, Word, PowerPoint, Excel, text)</span></label>
           <input
             id="context-source-file"
             className="form-control"
             type="file"
+            accept={ORG_ACCEPTED_TYPES}
             onChange={(event) => setSourceFile(event.target.files?.[0] ?? null)}
           />
+          {sourceFile && (
+            <p style={{margin:'4px 0 0',fontSize:'0.85rem',color:'#555'}}>Selected: {sourceFile.name}</p>
+          )}
+        </div>
+        <div className="form-group">
+          <label htmlFor="context-supplementary-files">Supplementary files <span style={{color:'#888',fontWeight:'normal'}}>(optional — PPTX, XLSX, PDF; supports multiple)</span></label>
+          <input
+            id="context-supplementary-files"
+            className="form-control"
+            type="file"
+            accept={ORG_ACCEPTED_TYPES}
+            multiple
+            onChange={(event) => setSupplementaryOrgFiles(event.target.files ? Array.from(event.target.files) : [])}
+          />
+          {supplementaryOrgFiles.length > 0 && (
+            <p style={{margin:'4px 0 0',fontSize:'0.85rem',color:'#555'}}>
+              {supplementaryOrgFiles.length} supplementary file{supplementaryOrgFiles.length > 1 ? 's' : ''}: {supplementaryOrgFiles.map(f => f.name).join(', ')}
+            </p>
+          )}
         </div>
         <button
           type="button"

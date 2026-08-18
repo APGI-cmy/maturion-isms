@@ -12,11 +12,12 @@ function readFile(relPath: string): string {
   return readFileSync(abs, 'utf-8');
 }
 
-describe('T-MMM-S6-196: Framework origin progression is non-blocking', () => {
-  it('FrameworkOriginPage routes to upload mode without direct edge invocation', () => {
+describe('T-MMM-S6-196: Framework origin progression passes auth headers to framework init', () => {
+  it('FrameworkOriginPage calls mmm-framework-init with getEdgeInvokeHeaders', () => {
     const src = readFile('apps/mmm/src/pages/FrameworkOriginPage.tsx');
-    expect(src).toContain("navigate(`/frameworks/upload?mode=${uploadMode}`)");
-    expect(src).not.toContain("supabase.functions.invoke('mmm-framework-init'");
+    expect(src).toContain("supabase.functions.invoke('mmm-framework-init'");
+    expect(src).toContain('getEdgeInvokeHeaders');
+    expect(src).toContain("navigate(`/frameworks/upload?mode=${uploadMode}");
   });
 });
 
