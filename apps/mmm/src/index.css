@@ -2544,6 +2544,8 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   top: 0;
   height: 100vh;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .mmm-shell__brand {
@@ -2587,6 +2589,31 @@ small { font-size: 0.875rem; color: var(--color-text-muted); }
   background: #dcecff;
   color: #0c2f5a;
   font-weight: 700;
+}
+
+.mmm-shell__sidebar-footer {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #d9e1ec;
+}
+
+.mmm-shell__signout-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #d9e1ec;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mmm-shell__signout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
 }
 
 .mmm-shell__content {

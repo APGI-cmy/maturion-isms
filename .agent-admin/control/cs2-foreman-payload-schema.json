@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/APGI-cmy/maturion-isms/.agent-admin/control/cs2-foreman-payload-schema.json",
+  "title": "CS2 Foreman payload schema",
+  "type": "object",
+  "required": ["message_type", "batch_id", "current_head_sha", "expected_head_sha"],
+  "properties": {
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "CS2_ASSIGNMENT",
+        "FOREMAN_HANDOVER",
+        "CS2_STOP_AND_FIX",
+        "CS2_MERGE_APPROVAL",
+        "CS2_POSTMERGE_HANDOVER"
+      ]
+    },
+    "batch_id": { "type": "string", "minLength": 1 },
+    "current_head_sha": { "type": "string", "pattern": "^[0-9a-fA-F]{40}$" },
+    "expected_head_sha": { "type": "string", "pattern": "^[0-9a-fA-F]{40}$" },
+    "triggered_by": { "type": "string" },
+    "target_agent": { "type": "string" },
+    "scope": { "type": "string" },
+    "issue_id": { "type": "string" },
+    "review_findings": { "type": "object" },
+    "fix_reason": { "type": "string" },
+    "owner": { "type": "string" },
+    "foreman_qp_pass": { "type": "boolean" },
+    "iaa_prebrief_ready": { "type": "boolean" },
+    "all_required_checks_green": { "type": "boolean" },
+    "builder_delegation_verified": { "type": "boolean" },
+    "delegation_precedes_implementation": { "type": "boolean" },
+    "iaa_final_pass": { "type": "boolean" },
+    "exact_head_binding_verified": { "type": "boolean" },
+    "merge_approved": { "type": "boolean" },
+    "handover_to": { "type": "string" },
+    "improvement_artifact": { "type": "string" },
+    "cwt_closure_report": { "type": "string" },
+    "cross_wave_validation_artifact": { "type": "string" },
+    "validation_evidence": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "compatibility_security_compliance_evidence": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "gate_snapshot": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "message_type": { "const": "CS2_ASSIGNMENT" } } },
+      "then": {
+        "required": ["triggered_by", "target_agent", "scope", "gate_snapshot", "immediate_dispatch"],
+        "properties": { "immediate_dispatch": { "type": "boolean" } }
+      }
+    },
+    {
+      "if": { "properties": { "message_type": { "const": "FOREMAN_HANDOVER" } } },
+      "then": {
+        "required": ["foreman_qp_pass", "iaa_prebrief_ready", "all_required_checks_green", "builder_delegation_verified", "delegation_precedes_implementation", "gate_snapshot"]
+      }
+    },
+    {
+      "if": { "properties": { "message_type": { "const": "CS2_STOP_AND_FIX" } } },
+      "then": {
+        "required": ["fix_reason", "owner", "review_findings"]
+      }
+    },
+    {
+      "if": { "properties": { "message_type": { "const": "CS2_MERGE_APPROVAL" } } },
+      "then": {
+        "required": ["merge_approved", "iaa_final_pass", "exact_head_binding_verified", "all_required_checks_green"]
+      }
+    },
+    {
+      "if": { "properties": { "message_type": { "const": "CS2_POSTMERGE_HANDOVER" } } },
+      "then": {
+        "required": [
+          "handover_to",
+          "improvement_artifact",
+          "cwt_closure_report",
+          "cross_wave_validation_artifact",
+          "validation_evidence",
+          "compatibility_security_compliance_evidence",
+          "evaluation"
+        ],
+        "properties": {
+          "evaluation": {
+            "type": "object",
+            "required": [
+              "cwt_complete",
+              "cross_wave_anti_regression_complete",
+              "compatibility_security_compliance_complete",
+              "post_delivery_validation_complete"
+            ],
+            "properties": {
+              "cwt_complete": { "type": "boolean", "const": true },
+              "cross_wave_anti_regression_complete": { "type": "boolean", "const": true },
+              "compatibility_security_compliance_complete": { "type": "boolean", "const": true },
+              "post_delivery_validation_complete": { "type": "boolean", "const": true }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase, getEdgeInvokeHeaders } from '@/lib/supabase';
 
 const ORIGIN_OPTIONS: { value: 'VERBATIM' | 'GENERATED' | 'HYBRID'; label: string; description: string }[] = [
   {
@@ -35,6 +35,7 @@ export default function FrameworkOriginPage() {
   const mutation = useMutation({
     mutationFn: async (selectedMode: 'VERBATIM' | 'GENERATED' | 'HYBRID') => {
       const { data, error } = await supabase.functions.invoke('mmm-framework-init', {
+        headers: await getEdgeInvokeHeaders(),
         body: {
           source_type: selectedMode,
         },
