@@ -1,9 +1,9 @@
-﻿{
-  "timestamp": "2026-08-18T07:46:37.0940870Z",
+{
+  "timestamp": "2026-08-18T09:51:06+02:00",
   "decision": "FOREMAN_REENTRY_PACKET",
-  "review_head_sha": "c32b04434dfe05c660a35e603563603f332de3ad",
+  "review_head_sha": "0f42145161df303e0ec3ac7925d6ca6546284517",
   "active_scope_declaration": "wave-mmm-level2-approval-qa-red-2026-06-23.md",
-  "advisory_observations": "Issue #2019 is the active batch scope for MMM Level 2 invite workflow; scope is bounded to Level 2 invite modal and approval workspace; no active builder PR exists for this scope; qa-builder appointment was recorded in .agent-admin/foreman-trigger/cs2-builder-appointment.json and authorizes QA-to-red baseline work.",
+  "advisory_observations": "Issue #2019 is live and scoped to MMM Level 2 invite/workspace QA-to-red. The builder appointment was recorded on main for qa-builder, the lane request was archived, and the scope remains bounded to the request/approval workspace and single supervised QA-to-red cycle.",
   "cs2_authorized": true,
   "foreman_may_proceed": true
 }
