@@ -98,11 +98,17 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockInvoke } = vi.ho
     if (fnName === 'mmm-subject-knowledge-reprocess') {
       const mode = scenario?.reprocessMode ?? 'success';
       if (mode === 'hang') {
-        // Simulates an Edge Function call that never returns within the worker resource
-        // limit (regression target: HTTP 546 WORKER_RESOURCE_LIMIT at ~125.6s). We never
-        // resolve this promise so tests must prove bounded/async client behavior instead of
-        // waiting on it.
-        return new Promise(() => {});
+        // Simulate a long-running call without leaving never-resolving promises + open timeout handles.
+        return new Promise((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                data: { success: true, document_id: opts?.body?.document_id, chunk_count: 0 },
+                error: null,
+              }),
+            1_000,
+          ),
+        );
       }
       if (mode === 'fail') {
         return Promise.resolve({ data: null, error: { message: 'Simulated reprocess failure' } });
