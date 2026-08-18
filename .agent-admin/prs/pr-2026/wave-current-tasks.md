@@ -54,7 +54,7 @@ authoritative and must not be contradicted by builder-level task briefs.
 5. [x] Canonical IAA PRE-BRIEF committed inside `.agent-admin/assurance/iaa-wave-record-issue-2025-20260818.md` (no standalone prebrief file), bound to PR #2026 and issue #2025. Commit `51385abb25808e717df751a4a925a32e78da6170`.
 6. [x] qa-builder appointed (issue #2027) via appointment commit `65a9eb91504acaf7977f74606d4167650393f53b`; QA-to-Red committed (RED) at `1a2fdbd87c57e84f4df38d5e57b9dc165b4c7dc5` — 7 RED / 2 GREEN (regression guards), independently reproduced by Foreman.
 7. [x] PR-scoped delegation-order evidence committed: `.agent-admin/control/delegation-orders/pr-2026.json` (prebrief -> appointment -> first-implementation strict ancestor chain verified).
-8. [ ] ui-builder appointed with a linked GitHub issue; UI implementation committed (client-only).
+8. [x] ui-builder appointed (issue #2028) via appointment commit `f54f848ac8b427a4fcabb156ee74b26d84c9cd6b`; UI implementation committed at `70d102ef1833dda3a09755a8fb5c6f058d3dbcc9` (client-only, no server/schema files touched) — 9/9 tests GREEN, independently reproduced by Foreman.
 9. [ ] api-builder and/or document-parser-agent appointed with a linked GitHub issue; bounded ingestion implementation committed (server-only).
 10. [ ] Foreman Quality Professor review — PASS (full diff, 100% green targeted tests, zero skip/todo/stub, architecture/scope conformant).
 11. [ ] Targeted tests, app build, CWT/cross-wave anti-regression, compatibility/security/compliance evidence collected and pasted into PREHANDOVER proof.
