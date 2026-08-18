@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getEdgeInvokeHeaders, supabase } from '@/lib/supabase';
 
@@ -134,12 +134,6 @@ const ORG_ACCEPTED_TYPES = [
   'application/json',
 ].join(',');
 
-let supplementaryRowIdSeq = 0;
-function nextSupplementaryRowId(): string {
-  supplementaryRowIdSeq += 1;
-  return `supp-row-${supplementaryRowIdSeq}`;
-}
-
 type SupplementaryRow = {
   id: string;
   files: File[];
@@ -149,10 +143,13 @@ type PrimaryUploadResult = {
   backgroundProcessing: boolean;
 };
 
-function ensureTrailingEmptySupplementaryRow(rows: SupplementaryRow[]): SupplementaryRow[] {
-  if (rows.length === 0) return [{ id: nextSupplementaryRowId(), files: [] }];
+function ensureTrailingEmptySupplementaryRow(
+  rows: SupplementaryRow[],
+  createRowId: () => string,
+): SupplementaryRow[] {
+  if (rows.length === 0) return [{ id: createRowId(), files: [] }];
   const lastRow = rows[rows.length - 1];
-  return lastRow.files.length === 0 ? rows : [...rows, { id: nextSupplementaryRowId(), files: [] }];
+  return lastRow.files.length === 0 ? rows : [...rows, { id: createRowId(), files: [] }];
 }
 
 function nextUploadPathToken(): string {
@@ -164,6 +161,11 @@ function nextUploadPathToken(): string {
 
 export default function OrganisationContextPage() {
   const qc = useQueryClient();
+  const supplementaryRowIdSeqRef = useRef(0);
+  const nextSupplementaryRowId = () => {
+    supplementaryRowIdSeqRef.current += 1;
+    return `supp-row-${supplementaryRowIdSeqRef.current}`;
+  };
   const [message, setMessage] = useState<string | null>(null);
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [supplementaryRows, setSupplementaryRows] = useState<SupplementaryRow[]>(() => [
@@ -310,7 +312,7 @@ export default function OrganisationContextPage() {
   const handleRemoveSupplementaryRow = (rowIndex: number) => {
    setSupplementaryRows((prev) => {
      const next = prev.filter((_, idx) => idx !== rowIndex);
-     return ensureTrailingEmptySupplementaryRow(next);
+     return ensureTrailingEmptySupplementaryRow(next, nextSupplementaryRowId);
    });
   };
 
@@ -546,7 +548,6 @@ export default function OrganisationContextPage() {
       } catch {
         // Best-effort cleanup; retain a durable failed-status row below either way.
       }
-      const suppFailurePath = `${activeOrg.id}/${userId}/${nextUploadPathToken()}-supp-metadata-failed-${suppSafeName}`;
       try {
         await supabase.from('mmm_subject_knowledge_documents').insert({
           organisation_id: activeOrg.id,
@@ -557,7 +558,7 @@ export default function OrganisationContextPage() {
           mime_type: suppMime,
           file_size: file.size,
           storage_bucket: 'mmm-subject-knowledge',
-          storage_path: suppFailurePath,
+          storage_path: suppPath,
           document_role: 'knowledge_source',
           scope_type: 'organisation_context',
           processing_status: 'failed',
