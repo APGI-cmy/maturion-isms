@@ -34,14 +34,17 @@ NODE_BIN=""
 # with existing jq expressions; Node is the repository's portable fallback.
 # Failure to find either is a tooling failure, never an invalid-JSON result.
 select_json_parser() {
+    if command -v node >/dev/null 2>&1 && node --version >/dev/null 2>&1; then
+        NODE_BIN="$(command -v node)"
+    fi
+
     if command -v jq >/dev/null 2>&1 && jq --version >/dev/null 2>&1; then
         JSON_PARSER="jq"
         return 0
     fi
 
-    if command -v node >/dev/null 2>&1 && node --version >/dev/null 2>&1; then
+    if [ -n "${NODE_BIN}" ]; then
         JSON_PARSER="node"
-        NODE_BIN="$(command -v node)"
         return 0
     fi
 
