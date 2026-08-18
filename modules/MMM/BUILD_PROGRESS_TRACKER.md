@@ -26,7 +26,7 @@ As of 2026-08-13:
 **Current state:**
 
 - All 7 approval Foundation Edge Functions implemented and merged (PR #2006)
-- 8-table migration (10 enums, org-level RLS) merged
+- 9-table migration (10 enums, org-level RLS) merged
 - 59/59 tests passing at merge
 - **IAA closure gap**: PR #2006 merged with IAA/ECAP status PENDING — governance gap noted; must be addressed before next wave
 - No active builder PR or branch currently

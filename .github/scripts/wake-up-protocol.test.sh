@@ -29,9 +29,10 @@ create_fixture() {
         "$fixture/.github/agents" \
         "$fixture/.agent-workspace/test-agent/knowledge" \
         "$fixture/.agent-workspace/no-tier-agent" \
-        "$fixture/governance"
+        "$fixture/governance/canon"
 
     cp "$PROTOCOL_SCRIPT" "$fixture/.github/scripts/wake-up-protocol.sh"
+    cp "${SCRIPT_DIR}/validate-canon-inventory.js" "$fixture/.github/scripts/validate-canon-inventory.js"
     chmod +x "$fixture/.github/scripts/wake-up-protocol.sh"
 
     cat > "$fixture/.github/agents/test-agent.md" <<'EOF'
@@ -60,7 +61,11 @@ EOF
     printf '# Fixture index\n' > "$fixture/.agent-workspace/test-agent/knowledge/index.md"
     printf '# Alpha\n' > "$fixture/.agent-workspace/test-agent/knowledge/alpha.md"
     printf '# Beta\n' > "$fixture/.agent-workspace/test-agent/knowledge/beta.md"
-    printf '{"version":"1.0.0","total_artifacts":0,"canons":[]}\n' > "$fixture/governance/CANON_INVENTORY.json"
+    printf 'canonical fixture\n' > "$fixture/governance/canon/example.md"
+    local canon_hash
+    canon_hash="$(sha256sum "$fixture/governance/canon/example.md" | awk '{print $1}')"
+    printf '{"version":"1.0.0","total_artifacts":1,"canons":[{"path":"governance/canon/example.md","file_hash_sha256":"%s"}]}\n' \
+        "$canon_hash" > "$fixture/governance/CANON_INVENTORY.json"
 
     (
         cd "$fixture"
@@ -127,6 +132,7 @@ create_constrained_path "$parserless_path" false
 happy_output="${TEST_ROOT}/happy.out"
 if run_protocol "$fixture" "test-agent" "$happy_output" \
     && grep -q "Tier 2 required-file validation passed" "$happy_output" \
+    && grep -q "content hashes verified using LF-normalized UTF-8" "$happy_output" \
     && grep -q "All health checks PASSED" "$happy_output"; then
     record_pass "complete declared Tier 2 set passes"
 else

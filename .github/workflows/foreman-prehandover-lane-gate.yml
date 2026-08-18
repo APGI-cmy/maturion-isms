@@ -24,4 +24,15 @@ jobs:
         env:
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+          PR_NUMBER: ${{ github.event.pull_request.number || '' }}
+          SOURCE_WORKFLOW_RUN_ID: ${{ github.run_id }}
+          SOURCE_WORKFLOW_NAME: ${{ github.workflow }}
         run: node .github/scripts/foreman-prehandover-lane-gate.js
+
+      - name: Upload CS2 trigger artifact
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: cs2-trigger
+          path: .agent-admin/control/cs2-trigger.json
+          if-no-files-found: ignore
