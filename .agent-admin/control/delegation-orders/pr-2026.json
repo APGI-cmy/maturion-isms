@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "issue-2025-fix-organisation-context-mixed-document",
+  "pr_number": 2026,
+  "prebrief_commit_sha": "51385abb25808e717df751a4a925a32e78da6170",
+  "builder_appointment_timestamp": "2026-08-18T14:20:00Z",
+  "builder_appointment_commit_sha": "65a9eb91504acaf7977f74606d4167650393f53b",
+  "builder_agent": "qa-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-2025-qa-to-red-pr2026-20260818.md",
+  "first_implementation_commit_sha": "1a2fdbd87c57e84f4df38d5e57b9dc165b4c7dc5",
+  "qp_review_timestamp": "2026-08-18T14:35:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}

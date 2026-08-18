@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "pr_number": 2026,
+  "manifest_path": ".agent-admin/prs/pr-2026.json",
+  "scope_path": ".agent-admin/scope-declarations/issue-2025.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-issue-2025-20260818.md",
+  "ecap_artifact_path": null,
+  "wave_tasks_path": ".agent-admin/prs/pr-2026/wave-current-tasks.md"
+}

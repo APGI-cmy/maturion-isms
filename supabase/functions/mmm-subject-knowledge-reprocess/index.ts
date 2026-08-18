@@ -28,12 +28,45 @@ const AI_PARSE_TIMEOUT_MS = 120_000;
 
 type ReprocessBody = {
   document_id?: string;
+  background?: boolean;
 };
 
 type AiParseResult = {
   domains?: Array<Record<string, unknown>>;
   mini_performance_standards?: Array<Record<string, unknown>>;
   confidence_score?: number;
+};
+
+type ReprocessClaims = {
+  userId: string;
+  orgId: string;
+  role: string;
+};
+
+type SubjectKnowledgeDocument = {
+  id: string;
+  organisation_id: string;
+  title: string | null;
+  file_name: string | null;
+  mime_type: string | null;
+  file_size: number | null;
+  storage_bucket: string;
+  storage_path: string;
+  document_role: string | null;
+  scope_type: string | null;
+  upload_notes: string | null;
+};
+
+type ReprocessResult = {
+  accepted?: boolean;
+  status?: string;
+  success?: boolean;
+  error?: string;
+  document_id: string;
+  chunk_count?: number;
+  kuc_success?: boolean;
+  kuc_fallback?: boolean;
+  kuc_error?: string | null;
 };
 
 async function tryAiGatewayParseText(params: {
@@ -183,76 +216,13 @@ function buildVerbatimIndexRows(params: {
   return rows;
 }
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders() });
-  }
-
-  if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
-  }
-
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    return jsonResponse({ error: 'Service configuration error' }, 500);
-  }
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-  let claims: { userId: string; orgId: string; role: string };
-  try {
-    claims = await validateJWT(req, supabase);
-  } catch (response) {
-    return response as Response;
-  }
-
-  let body: ReprocessBody;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonResponse({ error: 'Invalid JSON body' }, 400);
-  }
-
-  const documentId = (body.document_id ?? '').trim();
-  if (!documentId) {
-    return jsonResponse({ error: 'document_id is required' }, 400);
-  }
-
-  const { data: doc, error: docError } = await supabase
-    .from('mmm_subject_knowledge_documents')
-    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes')
-    .eq('id', documentId)
-    .eq('organisation_id', claims.orgId)
-    .is('archived_at', null)
-    .maybeSingle();
-
-  if (docError || !doc) {
-    return jsonResponse({ error: docError?.message ?? 'Document not found.' }, 404);
-  }
-
-  // Organisation-context sources are allowed for standard admins as well; global subject knowledge remains superuser-only.
-  const role = (claims.role ?? '').trim().toUpperCase();
-  const isSuperuser = ['ADMIN', 'OWNER', 'SUPERUSER', 'BACKOFFICE_ADMIN', 'LEAD_AUDITOR'].includes(role);
-  const isOrgContext = (doc.scope_type ?? '').toLowerCase() === 'organisation_context';
-  if (!isSuperuser && !isOrgContext) {
-    return jsonResponse(
-      {
-        error: 'Insufficient role for subject knowledge reprocess',
-        actual: claims.role,
-      },
-      403,
-    );
-  }
-
-  await supabase
-    .from('mmm_subject_knowledge_documents')
-    .update({
-      processing_status: 'processing',
-      processing_error: null,
-      updated_by: claims.userId,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', documentId);
-
+async function runReprocessPipeline(params: {
+  supabase: ReturnType<typeof createClient>;
+  doc: SubjectKnowledgeDocument;
+  claims: ReprocessClaims;
+  documentId: string;
+}): Promise<ReprocessResult> {
+  const { supabase, doc, claims, documentId } = params;
   try {
     const { data: fileBlob, error: downloadError } = await supabase.storage
       .from(doc.storage_bucket)
@@ -287,6 +257,7 @@ Deno.serve(async (req: Request) => {
       uploadNotes: doc.upload_notes,
     });
     const tags = buildSafeReprocessTags({ scopeType: doc.scope_type, sourceMode });
+    const isOrgContext = (doc.scope_type ?? '').toLowerCase() === 'organisation_context';
     const orgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
 
     const extractedText = await extractBestEffortText({
@@ -323,7 +294,6 @@ Deno.serve(async (req: Request) => {
       const { error: chunkError } = await supabase.from('ai_knowledge').insert(chunkPayloads);
       if (chunkError) {
         const lower = (chunkError.message ?? '').toLowerCase();
-        // Retry path for strict json parser failures on legacy edge-case metadata payloads.
         if (lower.includes('invalid input syntax for type json')) {
           const slim = chunkPayloads.map((payload) => ({
             ...sanitizeKnowledgeInsertPayload(payload),
@@ -333,7 +303,6 @@ Deno.serve(async (req: Request) => {
           if (retryError) {
             const retryLower = (retryError.message ?? '').toLowerCase();
             if (retryLower.includes('invalid input syntax for type json')) {
-              // Final fallback: insert with empty metadata object.
               const minimal = chunkPayloads.map((payload) => ({
                 ...sanitizeKnowledgeInsertPayload(payload),
                 metadata: {},
@@ -342,7 +311,6 @@ Deno.serve(async (req: Request) => {
               if (finalRetryError) {
                 const finalRetryLower = (finalRetryError.message ?? '').toLowerCase();
                 if (finalRetryLower.includes('invalid input syntax for type json')) {
-                  // Last resort: omit the JSONB column entirely so Postgres applies its '{}' default.
                   const noMetadata = chunkPayloads.map(omitKnowledgeMetadataColumn);
                   const { error: noMetadataError } = await supabase.from('ai_knowledge').insert(noMetadata);
                   if (noMetadataError) {
@@ -417,7 +385,6 @@ Deno.serve(async (req: Request) => {
     if (completionError) {
       const lower = (completionError.message ?? '').toLowerCase();
       if (lower.includes('invalid input syntax for type json')) {
-        // Final fallback: write completion state without KUC classification blob.
         const { error: slimCompletionError } = await supabase
           .from('mmm_subject_knowledge_documents')
           .update({
@@ -433,16 +400,13 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    return jsonResponse(
-      {
-        document_id: documentId,
-        chunk_count: chunkPayloads.length,
-        kuc_success: kucResult.success,
-        kuc_fallback: kucResult.fallback,
-        kuc_error: kucResult.error,
-      },
-      200,
-    );
+    return {
+      document_id: documentId,
+      chunk_count: chunkPayloads.length,
+      kuc_success: kucResult.success,
+      kuc_fallback: kucResult.fallback,
+      kuc_error: kucResult.error,
+    };
   } catch (error) {
     const message = sanitizeForPostgresText(error instanceof Error ? error.message : 'Unexpected reprocess error.');
     await supabase
@@ -455,15 +419,111 @@ Deno.serve(async (req: Request) => {
       })
       .eq('id', documentId);
 
-    // Return a structured non-fatal response so the UI can continue and show the
-    // persisted document status/error instead of a generic invoke transport failure.
+    return {
+      success: false,
+      error: message,
+      document_id: documentId,
+    };
+  }
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders() });
+  }
+
+  if (req.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return jsonResponse({ error: 'Service configuration error' }, 500);
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  let claims: ReprocessClaims;
+  try {
+    claims = await validateJWT(req, supabase);
+  } catch (response) {
+    return response as Response;
+  }
+
+  let body: ReprocessBody;
+  try {
+    body = await req.json();
+  } catch {
+    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+  }
+
+  const documentId = (body.document_id ?? '').trim();
+  if (!documentId) {
+    return jsonResponse({ error: 'document_id is required' }, 400);
+  }
+
+  const { data: doc, error: docError } = await supabase
+    .from('mmm_subject_knowledge_documents')
+    .select('id,organisation_id,title,file_name,mime_type,file_size,storage_bucket,storage_path,document_role,scope_type,upload_notes')
+    .eq('id', documentId)
+    .eq('organisation_id', claims.orgId)
+    .is('archived_at', null)
+    .maybeSingle();
+
+  if (docError || !doc) {
+    return jsonResponse({ error: docError?.message ?? 'Document not found.' }, 404);
+  }
+
+  // Organisation-context sources are allowed for standard admins as well; global subject knowledge remains superuser-only.
+  const role = (claims.role ?? '').trim().toUpperCase();
+  const isSuperuser = ['ADMIN', 'OWNER', 'SUPERUSER', 'BACKOFFICE_ADMIN', 'LEAD_AUDITOR'].includes(role);
+  const isOrgContext = (doc.scope_type ?? '').toLowerCase() === 'organisation_context';
+  if (!isSuperuser && !isOrgContext) {
     return jsonResponse(
       {
-        success: false,
-        error: message,
-        document_id: documentId,
+        error: 'Insufficient role for subject knowledge reprocess',
+        actual: claims.role,
       },
-      200,
+      403,
     );
   }
+
+  await supabase
+    .from('mmm_subject_knowledge_documents')
+    .update({
+      processing_status: 'processing',
+      processing_error: null,
+      updated_by: claims.userId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', documentId);
+
+  const background = body.background === true;
+  if (background) {
+    // For organisation-context uploads, return immediately with durable `processing` state and
+    // finish the heavy pipeline in the worker so the browser does not have to keep the request
+    // open just to persist follow-up mode context.
+    // deno-lint-ignore no-explicit-any
+    (EdgeRuntime as any).waitUntil(runReprocessPipeline({
+      supabase,
+      doc: doc as SubjectKnowledgeDocument,
+      claims,
+      documentId,
+    }));
+    return jsonResponse(
+      {
+        accepted: true,
+        status: 'processing',
+        document_id: documentId,
+      },
+      202,
+    );
+  }
+
+  const result = await runReprocessPipeline({
+    supabase,
+    doc: doc as SubjectKnowledgeDocument,
+    claims,
+    documentId,
+  });
+  return jsonResponse(result, 200);
 });
