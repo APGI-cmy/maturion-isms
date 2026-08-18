@@ -1,9 +1,0 @@
-﻿{
-    "review_head_sha":  "11afb18a4235072a0d7d008c6fc19390d43dc931",
-    "timestamp":  "2026-08-18T04:54:08.7639518Z",
-    "advisory_observations":  "Tier 2 files delivery-intent-review-protocol.md and bootstrap-input-validation-spec.md absent in prior run; memory directory was empty",
-    "decision":  "FOREMAN_REENTRY_PACKET",
-    "active_scope_declaration":  ".agent-admin/scope-declarations/wave-mmm-level2-approval-qa-red-2026-06-23.md",
-    "cs2_authorized":  true,
-    "foreman_may_proceed":  true
-}
