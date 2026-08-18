@@ -1,9 +1,9 @@
 ﻿{
-    "review_head_sha":  "f0d003dcddd41410bd019de44e6741d2d76ed711",
-    "timestamp":  "2026-08-18T06:41:55.6474432Z",
-    "advisory_observations":  "Bounded to MMM Level 2 invite modal + scoped approver workspace only; preserve exact-head and QA-to-red evidence; prior MMM approval-wave drift risk includes Level 1/3 scope expansion and runtime implementation before red baseline; keep governance artifacts under .agent-admin and avoid broad MMM cleanup or unbounded prebuild work.",
-    "decision":  "FOREMAN_REENTRY_PACKET",
-    "active_scope_declaration":  ".agent-admin/scope-declarations/wave-mmm-level2-approval-qa-red-2026-06-23.md",
-    "cs2_authorized":  true,
-    "foreman_may_proceed":  true
+  "timestamp": "'$ts'",
+  "decision": "FOREMAN_REENTRY_PACKET",
+  "review_head_sha": "'$sha'",
+  "active_scope_declaration": ".agent-admin/scope-declarations/wave-mmm-level2-approval-qa-red-2026-06-23.md",
+  "advisory_observations": "'$obs'",
+  "cs2_authorized": true,
+  "foreman_may_proceed": true
 }
