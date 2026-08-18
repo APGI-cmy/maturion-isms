@@ -18,6 +18,8 @@ function validateTrigger(payload, { sourceRunId, sourceWorkflow, prNumber, headS
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) fail('artifact payload must be an object');
   if (payload.schema_version !== '1.0.0') fail('artifact schema_version must be 1.0.0');
   if (payload.source !== 'foreman-prehandover-lane-gate') fail('artifact source is not foreman-prehandover-lane-gate');
+  if (payload.trigger !== 'PRE_HANDOVER_CHECKPOINT') fail('artifact trigger is unsupported');
+  if (payload.action !== '/prepare-handover') fail('artifact action is unsupported');
   if (!VALID_DECISIONS.has(payload.decision)) fail('artifact decision is unsupported');
   if (typeof payload.reason !== 'string' || !payload.reason.trim()) fail('artifact reason is missing');
   if (!Number.isInteger(payload.pr_number) || payload.pr_number !== Number(prNumber)) fail('artifact PR identity does not match source run');
