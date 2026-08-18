@@ -40,6 +40,11 @@ function renderReviewEvent(payload) {
   const route = payload.decision === 'FOREMAN_STOP_AND_FIX'
     ? 'Foreman must stop the handover claim, correct the listed lane-gate defect, and rerun the current-head checkpoint.'
     : 'CS2 review is required before further authority-bound governance action. This event does not authorize or impersonate a CS2 decision.';
+  const reason = String(payload.reason)
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/@/g, '@\u200b')
+    .replace(/`/g, "'")
+    .slice(0, 500);
   return [
     MARKER,
     '<!-- bounded-review-event -->',
@@ -51,7 +56,7 @@ function renderReviewEvent(payload) {
     `- **Head SHA:** \`${payload.pr_head_sha}\``,
     `- **Source workflow run:** \`${payload.source_run_id}\``,
     `- **Idempotency key:** \`${key}\``,
-    `- **Reason:** ${payload.reason}`,
+    `- **Reason:** \`${reason}\``,
     '',
     `**Bounded action:** ${route}`,
     '',
