@@ -1,7 +1,7 @@
 ﻿{
-  "timestamp": "2026-08-18T07:10:00.000Z",
+  "timestamp": "2026-08-18T09:11:33.9187184+02:00",
   "decision": "FOREMAN_REENTRY_PACKET",
-  "review_head_sha": "2399c1cf9cd3828dc373f4c31f9474a81a87a9c4",
+  "review_head_sha": "1a58b6fee5cb9868a2782bf314c9b457a3556ec3",
   "active_scope_declaration": ".agent-admin/scope-declarations/wave-mmm-level2-approval-qa-red-2026-06-23.md",
   "advisory_observations": "Issue #2019 is open and aligned to the MMM Level 2 invite/workspace QA-to-red scope; builder appointment status is recorded as qa-builder assigned to this lane; scope remains bounded to the Level 2 invite modal and approval workspace only; the remaining work is a single supervised QA-to-red cycle before any implementation.",
   "cs2_authorized": true,
