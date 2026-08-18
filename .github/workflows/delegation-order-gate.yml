@@ -2,7 +2,7 @@ name: Builder Delegation Order Gate
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
   workflow_dispatch: {}
 
 permissions:
@@ -25,4 +25,5 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number || '' }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
         run: node .github/scripts/delegation-order-gate.js

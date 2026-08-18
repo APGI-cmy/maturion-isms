@@ -9,6 +9,7 @@ const workflowSha = process.env.GITHUB_SHA || '';
 const prHeadSha = process.env.PR_HEAD_SHA || workflowSha;
 const prBaseSha = process.env.PR_BASE_SHA || '';
 const prNumber = (process.env.PR_NUMBER || '').trim();
+const prLabels = (process.env.PR_LABELS || '').split(',').map((l) => l.trim()).filter(Boolean);
 
 const legacyControlRelPath = '.agent-admin/control/delegation-order.json';
 const scopedControlRelPath = prNumber ? `.agent-admin/control/delegation-orders/pr-${prNumber}.json` : '';
@@ -227,6 +228,14 @@ console.log(`PR base SHA: ${prBaseSha || 'unknown'}`);
 console.log(`Changed files: ${changedFiles.length}`);
 console.log(`Implementation files changed: ${implementationFiles.length}`);
 console.log(`Expected PR-scoped evidence: ${scopedControlRelPath || 'unavailable because PR_NUMBER is missing'}`);
+
+// CS2 supreme authority bypass — waives delegation order requirement for scoped emergencies
+if (prLabels.includes('CS sign-off: approved')) {
+  console.log('✅ PASS — PR carries \'CS sign-off: approved\' label.');
+  console.log('   CS2 explicit sign-off detected. delegation-order-gate waived');
+  console.log('   per CS2 supreme authority (AGCFPP §2). Override is scoped to this PR.');
+  process.exit(0);
+}
 
 if (implementationFiles.length === 0) {
   console.log('No implementation-like files changed. Delegation order gate passes.');
