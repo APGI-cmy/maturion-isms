@@ -1,18 +1,22 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
-  "pr_number": 2006,
-  "current_head_sha": "32bba159ddfa0e320461cd368de633929aa6e821",
+  "wave_id": "issue-2025-2030-production-remediation-organisation-context",
+  "pr_number": 2031,
+  "current_head_sha": "a66f8cb40463ec33f2321add6568c7a5599f6501",
   "state": "PRE_HANDOVER_GATE_PASS",
-  "handover_allowed": true,
-  "foreman_qp_pass": true,
-  "builder_delegation_verified": true,
-  "delegation_precedes_implementation": true,
-  "iaa_prebrief_ready": true,
+  "handover_allowed": false,
+  "foreman_qp_pass": false,
+  "builder_delegation_verified": false,
+  "delegation_precedes_implementation": false,
+  "iaa_prebrief_ready": false,
   "scope_current": true,
   "ecap_required": true,
-  "ecap_admin_validated": true,
-  "all_required_checks_green": true,
+  "ecap_admin_validated": false,
+  "all_required_checks_green": false,
   "iaa_final_required": true,
-  "blocking_findings": []
+  "blocking_findings": [
+    "IAA prebrief not yet created",
+    "Builder delegations not yet assigned",
+    "Final IAA assurance not yet invoked"
+  ]
 }
