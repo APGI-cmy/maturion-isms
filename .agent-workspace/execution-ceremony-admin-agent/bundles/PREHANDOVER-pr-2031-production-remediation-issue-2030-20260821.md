@@ -19,7 +19,7 @@ pr: 2031
 issue: 2030
 supersedes_issue: 2025
 branch: apgi-cmy-issue-2030-production-remediation-organisation-context
-current_head_sha: 5121856c590a25a62aa89775bd5ecec184e6b15f
+current_head_sha: 9d0d81342aa22e27da1f408f168e4c850d5eec97
 protected_path_touched: false
 ecap_required: true
 ecap_invoked: yes
@@ -34,7 +34,7 @@ handover_allowed: true
 result_state: ADMIN_REVERIFICATION_ACCEPTED_RETURNED_TO_FOREMAN
 
 ## PR: #2031
-CURRENT_HEAD_SHA: 5121856c590a25a62aa89775bd5ecec184e6b15f
+CURRENT_HEAD_SHA: 9d0d81342aa22e27da1f408f168e4c850d5eec97
 
 ECAP_IDENTITY_BINDING_CHECK
 ACTUAL_PR: #2031
@@ -42,7 +42,7 @@ BUNDLE_PR: #2031
 SCOPE_DECLARATION_PR: #2031
 WAVE_CURRENT_TASKS_PR: #2031
 BRANCH: apgi-cmy-issue-2030-production-remediation-organisation-context
-HEAD_SHA: 929666da2b0d6dac7ed2e2078859b9aee3cf9ae1
+HEAD_SHA: 9d0d81342aa22e27da1f408f168e4c850d5eec97
 ALL_MATCH: yes
 RESULT: PASS
 
@@ -77,9 +77,9 @@ inherited by assumption.
 
 ---
 
-## 2. Independent Re-Verification Performed THIS SESSION (current head `929666da`)
+## 2. Independent Re-Verification Performed THIS SESSION (current head `9d0d8134`)
 
-Independent re-verification at current head `5121856c590a25a62aa89775bd5ecec184e6b15f` finds
+Independent re-verification at current head `9d0d81342aa22e27da1f408f168e4c850d5eec97` finds
 **no new problem** beyond what was already disclosed (as a non-blocking, non-required-check
 observation) in the prior substantive bundle. The 15-file declared scope is confirmed unchanged
 in composition, the two targeted test files reproduce 27/27 GREEN directly, and all six named
@@ -87,8 +87,8 @@ ECAP-relevant preflight gates plus the overall merge-gate verdict are PASS at th
 
 ### 2.1 Head SHA confirmation
 ```
-git log -1 --format="%H"          -> 5121856c590a25a62aa89775bd5ecec184e6b15f
-gh pr view 2031 --json headRefOid -> "headRefOid":"5121856c590a25a62aa89775bd5ecec184e6b15f"
+git log -1 --format="%H"          -> 9d0d81342aa22e27da1f408f168e4c850d5eec97
+gh pr view 2031 --json headRefOid -> "headRefOid":"9d0d81342aa22e27da1f408f168e4c850d5eec97"
 ```
 Local checkout and live PR head agree. PR state: `OPEN`, `mergeable: MERGEABLE`.
 
@@ -165,7 +165,7 @@ and not introduced by this re-verification.)
 | `governance/artifact-path-enforcement` | pass |
 
 All six ECAP-relevant preflight gates named in the delegation, plus the overall
-`merge-gate/verdict`, are **PASS** at current head `929666da`.
+`merge-gate/verdict`, are **PASS** at current head `9d0d8134`.
 
 **Disclosed, non-blocking observation:** `Deploy MMM Preview` shows `fail` in `gh pr checks`
 output at this head. This is the same MMM-preview-route smoke check disclosed as a non-required
@@ -222,9 +222,9 @@ exclusively to PR #2031 / issue #2030.
 
 ## 5. Certification to Foreman
 
-Independent re-verification at current head `929666da2b0d6dac7ed2e2078859b9aee3cf9ae1` finds
+Independent re-verification at current head `9d0d81342aa22e27da1f408f168e4c850d5eec97` finds
 **no new problem** beyond what was already disclosed (as a non-blocking, non-required-check
-observation) in the prior substantive bundle. The 14-file declared scope is confirmed unchanged
+observation) in the prior substantive bundle. The 15-file declared scope is confirmed unchanged
 in composition, the two targeted test files reproduce 27/27 GREEN directly, and all six named
 ECAP-relevant preflight gates plus the overall merge-gate verdict are PASS at this exact head.
 
@@ -238,7 +238,7 @@ owned and are unaffected by this pointer file.
 result:
   handover_allowed: true
   result_code: "ADMIN_REVERIFICATION_ACCEPTED_RETURNED_TO_FOREMAN"
-  scope_of_this_verdict: "Administrative ceremony re-verification only, scoped to PR #2031 at current head 5121856c590a25a62aa89775bd5ecec184e6b15f. Not a disposition decision. IAA final assurance and Foreman's release decision remain outstanding, Foreman/IAA-owned next steps."
+  scope_of_this_verdict: "Administrative ceremony re-verification only, scoped to PR #2031 at current head 9d0d81342aa22e27da1f408f168e4c850d5eec97. Not a disposition decision. IAA final assurance and Foreman's release decision remain outstanding, Foreman/IAA-owned next steps."
   blocking_item: "none found by ECAP"
   advisory_items:
     - "Deploy MMM Preview smoke check is red at current head; non-required per merge-gate-required-checks alignment (confirmed passing); recommend routine follow-up, not a gate blocker."
