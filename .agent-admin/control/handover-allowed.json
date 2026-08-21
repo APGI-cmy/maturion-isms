@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "wave_id": "issue-2025-2030-production-remediation-organisation-context",
   "pr_number": 2031,
-  "current_head_sha": "e3d9c8c62cf89f4b865ed32c1762130c701ea634",
+  "current_head_sha": "8b65fd471da2fe0993c372f83b8f1d9d1307e6e6",
   "state": "PRE_HANDOVER_GATE_PASS",
   "handover_allowed": false,
   "foreman_qp_pass": false,
