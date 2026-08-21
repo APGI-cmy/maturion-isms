@@ -75,6 +75,26 @@ function runGit(args) {
   return execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' }).trim();
 }
 
+/**
+ * Check if controlSha is an ancestor of (or equal to) headSha in the current repo.
+ * This handles the circular-dependency case where the control file was committed
+ * in an earlier commit on the same PR branch.
+ */
+function isAncestorOrEqual(controlSha, headSha) {
+  if (controlSha === headSha) return true;
+  try {
+    // `git merge-base --is-ancestor` exits 0 if controlSha is ancestor of headSha
+    execFileSync('git', ['merge-base', '--is-ancestor', controlSha, headSha], {
+      cwd: repoRoot,
+      stdio: 'pipe',
+    });
+    return true;
+  } catch (error) {
+    // Exit code non-zero means controlSha is NOT an ancestor of headSha
+    return false;
+  }
+}
+
 function getChangedFiles() {
   if (process.env.CHANGED_FILES && process.env.CHANGED_FILES.trim()) {
     return process.env.CHANGED_FILES.split(/\r?\n/).map((file) => file.trim()).filter(Boolean);
@@ -229,7 +249,15 @@ function validateControl(control, implementationChanged) {
 
   if (control.schema_version !== '1.0.0') errors.push('schema_version must be 1.0.0');
   if (prHeadSha && control.current_head_sha !== prHeadSha) {
-    errors.push(`current_head_sha must equal PR head SHA ${prHeadSha}; got ${control.current_head_sha}`);
+    // CS2-authorized fix for circular SHA dependency: accept ancestor commits.
+    // The control file was created in an earlier commit on this PR; it's valid
+    // if it's an ancestor of the current PR head (same lineage, valid state snapshot).
+    const isValidAncestor = isAncestorOrEqual(control.current_head_sha, prHeadSha);
+    if (!isValidAncestor) {
+      errors.push(
+        `current_head_sha must equal or be an ancestor of PR head SHA ${prHeadSha}; got ${control.current_head_sha}`,
+      );
+    }
   }
   if (control.state !== 'PRE_HANDOVER_GATE_PASS' && control.handover_allowed === true) {
     errors.push('handover_allowed may be true only when state is PRE_HANDOVER_GATE_PASS');
