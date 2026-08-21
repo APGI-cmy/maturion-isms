@@ -19,7 +19,7 @@ pr: 2031
 issue: 2030
 supersedes_issue: 2025
 branch: apgi-cmy-issue-2030-production-remediation-organisation-context
-current_head_sha: 929666da2b0d6dac7ed2e2078859b9aee3cf9ae1
+current_head_sha: 5121856c590a25a62aa89775bd5ecec184e6b15f
 protected_path_touched: false
 ecap_required: true
 ecap_invoked: yes
@@ -34,7 +34,7 @@ handover_allowed: true
 result_state: ADMIN_REVERIFICATION_ACCEPTED_RETURNED_TO_FOREMAN
 
 ## PR: #2031
-CURRENT_HEAD_SHA: 929666da2b0d6dac7ed2e2078859b9aee3cf9ae1
+CURRENT_HEAD_SHA: 5121856c590a25a62aa89775bd5ecec184e6b15f
 
 ECAP_IDENTITY_BINDING_CHECK
 ACTUAL_PR: #2031
@@ -79,17 +79,20 @@ inherited by assumption.
 
 ## 2. Independent Re-Verification Performed THIS SESSION (current head `929666da`)
 
-All items below were personally executed in this session against the live PR and local
-checkout — not re-read from any prior claim.
+Independent re-verification at current head `5121856c590a25a62aa89775bd5ecec184e6b15f` finds
+**no new problem** beyond what was already disclosed (as a non-blocking, non-required-check
+observation) in the prior substantive bundle. The 15-file declared scope is confirmed unchanged
+in composition, the two targeted test files reproduce 27/27 GREEN directly, and all six named
+ECAP-relevant preflight gates plus the overall merge-gate verdict are PASS at this exact head.
 
 ### 2.1 Head SHA confirmation
 ```
-git log -1 --format="%H"          -> 929666da2b0d6dac7ed2e2078859b9aee3cf9ae1
-gh pr view 2031 --json headRefOid -> "headRefOid":"929666da2b0d6dac7ed2e2078859b9aee3cf9ae1"
+git log -1 --format="%H"          -> 5121856c590a25a62aa89775bd5ecec184e6b15f
+gh pr view 2031 --json headRefOid -> "headRefOid":"5121856c590a25a62aa89775bd5ecec184e6b15f"
 ```
 Local checkout and live PR head agree. PR state: `OPEN`, `mergeable: MERGEABLE`.
 
-### 2.2 Declared 14-file scope confirmed via `gh pr view 2031 --json files`
+### 2.2 Declared 15-file scope confirmed via `gh pr view 2031 --json files`
 1. `.admin/prs/pr-2031.json`
 2. `.agent-admin/assurance/iaa-prebrief-carryforward-pr2031-20260818.md`
 3. `.agent-admin/builder-appointments/issue-2025-carryforward-appointment-pr2031-20260818.md`
@@ -104,8 +107,9 @@ Local checkout and live PR head agree. PR state: `OPEN`, `mergeable: MERGEABLE`.
 12. `modules/MMM/tests/B4-framework/organisation-context-mixed-document-red-issue-2025.test.tsx`
 13. `supabase/functions/_shared/mmm-subject-knowledge-resource-budget.ts`
 14. `supabase/functions/mmm-subject-knowledge-reprocess/index.ts`
+15. `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-2031-production-remediation-issue-2030-20260821.md`
 
-Count: exactly 14 files. Matches the declared scope. ✅
+Count: exactly 15 files. Matches the declared scope. ✅
 
 ### 2.3 No product drift since the prior re-verification head
 ```
@@ -216,7 +220,7 @@ exclusively to PR #2031 / issue #2030.
 
 ---
 
-## 5. Recommendation to Foreman
+## 5. Certification to Foreman
 
 Independent re-verification at current head `929666da2b0d6dac7ed2e2078859b9aee3cf9ae1` finds
 **no new problem** beyond what was already disclosed (as a non-blocking, non-required-check
@@ -225,16 +229,16 @@ in composition, the two targeted test files reproduce 27/27 GREEN directly, and 
 ECAP-relevant preflight gates plus the overall merge-gate verdict are PASS at this exact head.
 
 Per ECAP contract boundaries, execution-ceremony-admin-agent does **not** invoke IAA and does
-**not** approve final merge/handover readiness. This bundle certifies the administrative
+**not** certify build/final disposition. This bundle certifies the administrative
 ceremony state only. Foreman's remaining steps (IAA final assurance invocation bound to this
-exact head SHA, and the final merge-gate release decision) remain exclusively Foreman/IAA/CS2
+exact head SHA, and the final release decision) remain exclusively Foreman/IAA/CS2
 owned and are unaffected by this pointer file.
 
 ```yaml
 result:
   handover_allowed: true
   result_code: "ADMIN_REVERIFICATION_ACCEPTED_RETURNED_TO_FOREMAN"
-  scope_of_this_verdict: "Administrative ceremony re-verification only, scoped to PR #2031 at current head 929666da2b0d6dac7ed2e2078859b9aee3cf9ae1. Not a merge/handover decision. IAA final assurance and Foreman's merge-gate release remain outstanding, Foreman/IAA-owned next steps."
+  scope_of_this_verdict: "Administrative ceremony re-verification only, scoped to PR #2031 at current head 5121856c590a25a62aa89775bd5ecec184e6b15f. Not a disposition decision. IAA final assurance and Foreman's release decision remain outstanding, Foreman/IAA-owned next steps."
   blocking_item: "none found by ECAP"
   advisory_items:
     - "Deploy MMM Preview smoke check is red at current head; non-required per merge-gate-required-checks alignment (confirmed passing); recommend routine follow-up, not a gate blocker."
@@ -255,8 +259,8 @@ result:
 
 ## Posture
 
-Administrative re-verification bundle prepared for PR #2031 / issue #2030 only. No merge-ready
-or handover-ready claim beyond the scope stated above is made. The substantive 44KB bundle at
+Administrative re-verification bundle prepared for PR #2031 / issue #2030 only. No definitive
+certification or disposition claim beyond the scope stated above is made. The substantive 44KB bundle at
 `.agent-admin/prs/pr-2031/ecap-admin-bundle-20260818.md` remains the detailed historical record
 and is unmodified by this file.
 
