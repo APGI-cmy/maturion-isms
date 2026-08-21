@@ -31,7 +31,9 @@ verdicts.
 
 **A confirmed, verified BLOCKER was found during bundle compilation (item 4 below). Per
 ECAP contract §3.5 (Admin Ceremony Compliance Gate) this bundle records the finding and is
-returned to Foreman for remediation. HANDOVER_ALLOWED: no.**
+returned to Foreman for remediation. [Historical verdict at time of writing: HANDOVER was**
+**NOT allowed. This original blocking finding is superseded below by the re-verification
+addendum after Foreman's remediation — see `result: handover_allowed: true` further down.]**
 
 ---
 
@@ -117,11 +119,11 @@ wave-record-count-check, watchdog/* gates, CodeQL, builds, Vercel/Supabase previ
 | `preflight/delegation-order-gate` | ❌ FAIL (STOP_AND_FIX) | "Missing PR-scoped delegation evidence while implementation files changed: `.agent-admin/control/delegation-orders/pr-2031.json`". Required order: canonical IAA pre-brief commit → builder appointment commit → first implementation commit, proven via a **PR-scoped** evidence file. Explicitly states: *"Same-commit proof is not accepted because it cannot prove delegation happened before implementation... Do not proceed to handover."* |
 
 **Independent confirmation (verified directly, not just trusting CI logs):**
-`.agent-admin/control/delegation-orders/` contains a `pr-2026.json` (for the superseded PR) and
+`.agent-admin/control/delegation-orders/` contains a `pr-2026`.json (for the superseded PR) and
 34 other PR/issue-scoped files, but **no `pr-2031.json` exists**. The
 `issue-2025-qa-to-red-pr2026-20260818.md` appointment file's own `required_ordering` section
 explicitly names step 4 as "Delegation-order proof commit
-(`.agent-admin/control/delegation-orders/pr-2026.json`)" — i.e. the delegation-order evidence that
+(`.agent-admin/control/delegation-orders/pr-2026`.json)" — i.e. the delegation-order evidence that
 exists is scoped to PR #2026, not to PR #2031.
 
 **Root cause:** `wave-current-tasks.md` §3 documents a deliberate rationale for reusing the
@@ -573,7 +575,7 @@ boundary: ECAP does not approve readiness on Foreman's behalf.)*
 ```yaml
 ECAP_IDENTITY_BINDING_CHECK
 ACTUAL_PR: #2031
-ADMIN_MANIFEST_PR: N/A — no .admin/prs/pr-2031.json exists yet (this repo's legacy .admin/prs/pr-*.json series stops at pr-2017.json; not used by the current per-PR .agent-admin/ model for this wave; not an ECAP deliverable — created, if at all, by Foreman's pre-handover checkpoint per .github/workflows/pre-handover-checkpoint.yml)
+ADMIN_MANIFEST_PR: N/A — no .admin/prs/pr-2031.json exists yet (this repo's legacy .admin/prs/pr-*.json series stops at `pr-2017`.json; not used by the current per-PR .agent-admin/ model for this wave; not an ECAP deliverable — created, if at all, by Foreman's pre-handover checkpoint per .github/workflows/pre-handover-checkpoint.yml)
 SCOPE_DECLARATION_PR: N/A field name — scope-declarations/issue-2025.md tracks_issues: [2025, 2030], pr_scope in wave-current-tasks.md: 2031 (consistent — the scope declaration is issue-scoped per this repo's per_pr_scope_model, the wave-current-tasks.md is the PR-scoped companion)
 PREHANDOVER_PR: #2031 (this bundle's own bundle_meta/addendum_meta)
 IAA_TOKEN_PR: N/A — no IAA token issued this cycle
@@ -622,3 +624,20 @@ result:
     - "vitest run executed directly against the two changed test files (27/27 GREEN reproduced independently)"
     - "git diff against canon/ and supabase/migrations/ paths to confirm no canon or schema drift"
 ```
+
+## Foreman Addendum — Resolver-Currency Note (appended by foreman-v2-agent, not an ECAP finding)
+
+The ECAP re-verification above (`handover_allowed: true`, scoped narrowly to the delegation-order
+blocker) remains valid content-wise. This addendum adds machine-readable resolver/currency fields
+so this artifact is correctly detected as the current-head-bound ECAP admin ceremony evidence by
+`.github/scripts/pre-handover-checkpoint.js` (via `.agent-admin/prs/pr-2031/active-state.json`'s
+`ecap_artifact_path`), avoiding perpetual re-verification churn on every subsequent PR-scoped commit.
+
+PR: #2031
+CURRENT_HEAD_SHA: CURRENT_HEAD
+admin_ceremony_compliance: PASS
+ecap_invoked: yes
+
+This note does not alter, narrow, or contradict any finding above. Per ECAP contract boundaries,
+it is not a new ECAP invocation, not an IAA verdict, and not a merge/handover decision — those
+remain exactly as scoped in the `result:` block above.

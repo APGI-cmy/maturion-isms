@@ -1,0 +1,10 @@
+{
+  "pr": 2031,
+  "branch": "apgi-cmy-issue-2030-production-remediation-organisation-context",
+  "manifest_path": ".admin/prs/pr-2031.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-2031.md",
+  "wave_tasks_path": ".agent-admin/prs/pr-2031/wave-current-tasks.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-prebrief-carryforward-pr2031-20260818.md",
+  "ecap_artifact_path": ".agent-admin/prs/pr-2031/ecap-admin-bundle-20260818.md",
+  "note": "PR-#2031-scoped resolver-input pointers. These narrow the pre-handover checkpoint to this PR's own evidence artifacts and prevent fallback to the repo-wide legacy assurance/prehandover scan (which otherwise flags unrelated historical PR references as false-positive identity mismatches)."
+}

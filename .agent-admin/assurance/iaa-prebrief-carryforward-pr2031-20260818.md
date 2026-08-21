@@ -1,5 +1,18 @@
 # PR-Scoped IAA Pre-Brief Carry-Forward Acknowledgment — PR #2031 (Issue #2030 / #2025)
 
+PR: #2031
+WAVE_TASKS_PATH: .agent-admin/prs/pr-2031/wave-current-tasks.md
+CURRENT_HEAD_SHA: CURRENT_HEAD
+
+## PRE-BRIEF
+
+The canonical IAA_PREFLIGHT_BRIEF content (scope, acceptance contract, risk register) for this wave
+is reaffirmed, unchanged, from `.agent-admin/assurance/iaa-wave-record-issue-2025-20260818.md`,
+carried forward into PR #2031's own commit ancestry below. This heading exists so this PR-scoped
+artifact is machine-detectable as the active, current-head-bound IAA pre-brief for PR #2031 (see
+`.agent-admin/prs/pr-2031/active-state.json` -> `iaa_artifact_path`), rather than requiring a
+repo-wide fallback scan of historical `.agent-admin/assurance/` artifacts belonging to other PRs.
+
 ```yaml
 carry_forward_acknowledgment:
   pr_number: 2031

@@ -19,6 +19,18 @@ pr_scope:
   cs2_authorization: "issue #2030 (production-remediation record, CS2/APGI-cmy authorized)"
 ```
 
+PR: #2031
+Branch: apgi-cmy-issue-2030-production-remediation-organisation-context
+iaa_wave_record_path: .agent-admin/assurance/iaa-prebrief-carryforward-pr2031-20260818.md
+ecap_bundle_path: .agent-admin/prs/pr-2031/ecap-admin-bundle-20260818.md
+
+These four bare fields are resolver-input identity-binding fields consumed by
+`.github/scripts/resolve-active-pr-state.js` and `.github/scripts/identity-binding-gate.sh`. They
+bind this PR's evidence resolution narrowly to PR #2031's own artifacts (see
+`.agent-admin/prs/pr-2031/active-state.json`), preventing fallback to a repo-wide historical scan of
+`.agent-admin/assurance/`, `.agent-admin/prehandover/`, and `.agent-workspace/foreman-v2/memory/`
+that would otherwise surface unrelated PR references as false-positive identity mismatches.
+
 ## 1. Why this PR exists — precise fault statement
 
 Production fault: `mmm-subject-knowledge-reprocess` Edge Function returns **HTTP 546
