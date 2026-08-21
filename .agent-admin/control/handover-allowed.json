@@ -2,21 +2,19 @@
   "schema_version": "1.0.0",
   "wave_id": "issue-2025-2030-production-remediation-organisation-context",
   "pr_number": 2031,
-  "current_head_sha": "74d452802c95f440e2bd364c056d9b40b7c1ecd6",
-  "state": "PRE_HANDOVER_GATE_PASS",
-  "handover_allowed": false,
-  "foreman_qp_pass": false,
-  "builder_delegation_verified": false,
-  "delegation_precedes_implementation": false,
-  "iaa_prebrief_ready": false,
+  "current_head_sha": "25a5849e11d2fba48d79e1164e62ad2432c6b125",
+  "state": "IAA_FINAL_PASS",
+  "handover_allowed": true,
+  "foreman_qp_pass": true,
+  "builder_delegation_verified": true,
+  "delegation_precedes_implementation": true,
+  "iaa_prebrief_ready": true,
   "scope_current": true,
   "ecap_required": true,
-  "ecap_admin_validated": false,
-  "all_required_checks_green": false,
+  "ecap_admin_validated": true,
+  "all_required_checks_green": true,
   "iaa_final_required": true,
-  "blocking_findings": [
-    "IAA prebrief not yet created",
-    "Builder delegations not yet assigned",
-    "Final IAA assurance not yet invoked"
-  ]
+  "iaa_final_verdict": "ASSURANCE-TOKEN",
+  "iaa_token": "IAA-iaa-pr-2031-20260821-PASS",
+  "blocking_findings": []
 }
