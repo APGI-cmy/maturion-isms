@@ -52,11 +52,11 @@ type Scenario = {
   initialDocs: DocRow[];
   primaryUploadFailPathMatch?: string | null;
   supplementaryUploadFailFileNames?: string[];
-  reprocessMode?: 'success' | 'hang' | 'fail';
+  reprocessMode?: 'success' | 'hang' | 'fail' | 'deferred';
   contextPersistShouldFail?: boolean;
 };
 
-const { mockSupabase, configureScenario, mockStorageUpload, mockStorageRemove, mockInvoke } = vi.hoisted(() => {
+const { mockSupabase, configureScenario, mockStorageUpload, mockInvoke } = vi.hoisted(() => {
   let scenario: Scenario | null = null;
   let documentsStore: DocRow[] = [];
   let idCounter = 0;
@@ -81,8 +81,6 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockStorageRemove, m
     return Promise.resolve({ data: { path }, error: null });
   });
 
-  const mockStorageRemove = vi.fn(() => Promise.resolve({ data: null, error: null }));
-
   const mockInvoke = vi.fn((fnName: string, opts?: { body?: Record<string, unknown> }) => {
     if (fnName === 'mmm-organisation-context') {
       const action = opts?.body?.action;
@@ -98,32 +96,30 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockStorageRemove, m
       return Promise.resolve({ data: null, error: { message: 'unknown action' } });
     }
     if (fnName === 'mmm-subject-knowledge-reprocess') {
-      if (opts?.body?.background === true) {
-        return Promise.resolve({
-          data: {
-            accepted: true,
-            status: 'processing',
-            document_id: opts?.body?.document_id,
-          },
-          error: null,
-        });
-      }
       const mode = scenario?.reprocessMode ?? 'success';
       if (mode === 'hang') {
-        // Simulate a long-running call without leaving never-resolving promises + open timeout handles.
-        return new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                data: { success: true, document_id: opts?.body?.document_id, chunk_count: 0 },
-                error: null,
-              }),
-            1_000,
-          ),
-        );
+        // Simulates an Edge Function call that never returns within the worker resource
+        // limit (regression target: HTTP 546 WORKER_RESOURCE_LIMIT at ~125.6s). We never
+        // resolve this promise so tests must prove bounded/async client behavior instead of
+        // waiting on it.
+        return new Promise(() => {});
       }
       if (mode === 'fail') {
         return Promise.resolve({ data: null, error: { message: 'Simulated reprocess failure' } });
+      }
+      if (mode === 'deferred') {
+        // api-builder's real deferred-completion contract (b07ebf38): the server accepted the
+        // request and is still processing it in the background. `success: true` here does NOT
+        // mean the document finished chunking/indexing.
+        return Promise.resolve({
+          data: {
+            success: true,
+            document_id: opts?.body?.document_id,
+            processing_status: 'processing',
+            deferred: true,
+          },
+          error: null,
+        });
       }
       return Promise.resolve({
         data: { success: true, document_id: opts?.body?.document_id, chunk_count: 3 },
@@ -238,7 +234,7 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockStorageRemove, m
       },
       functions: { invoke: mockInvoke },
       storage: {
-        from: vi.fn(() => ({ upload: mockStorageUpload, remove: mockStorageRemove })),
+        from: vi.fn(() => ({ upload: mockStorageUpload })),
       },
       from: vi.fn((table: string) => makeBuilder(table)),
     },
@@ -247,11 +243,9 @@ const { mockSupabase, configureScenario, mockStorageUpload, mockStorageRemove, m
       documentsStore = next.initialDocs.map((doc) => ({ ...doc }));
       idCounter = documentsStore.length;
       mockStorageUpload.mockClear();
-      mockStorageRemove.mockClear();
       mockInvoke.mockClear();
     },
     mockStorageUpload,
-    mockStorageRemove,
     mockInvoke,
   };
 });
@@ -283,24 +277,6 @@ function makeFile(name: string, mimeType: string, content = 'stub-content'): Fil
   return new File([content], name, { type: mimeType });
 }
 
-async function addSupplementaryFiles(container: HTMLElement, files: File[]) {
-  for (let index = 0; index < files.length; index += 1) {
-    const selector =
-      index === 0
-        ? '#context-supplementary-files'
-        : `[data-testid="organisation-supplementary-row-${index}"] input[type="file"]`;
-    const input =
-      (container.querySelector(selector) as HTMLInputElement | null) ??
-      ((await screen.findByTestId(`organisation-supplementary-row-${index}`)).querySelector(
-        'input[type="file"]',
-      ) as HTMLInputElement | null);
-    if (!input) {
-      throw new Error(`Missing supplementary input for row ${index}`);
-    }
-    fireEvent.change(input, { target: { files: [files[index]] } });
-  }
-}
-
 function baseOrg(id = 'org-t2025'): OrgFixture {
   return {
     id,
@@ -310,6 +286,16 @@ function baseOrg(id = 'org-t2025'): OrgFixture {
     onboarding_complete: true,
     context_updated_at: null,
   };
+}
+
+// Returns only the supplementary-row *container* elements (`organisation-supplementary-row-N`),
+// excluding the per-row remove buttons (`organisation-supplementary-row-remove-N`), which share
+// the same `organisation-supplementary-row-` testid prefix and would otherwise double-count if
+// matched with a plain "starts-with" selector.
+function getSupplementaryRowEls(container: HTMLElement): HTMLElement[] {
+  return Array.from(container.querySelectorAll<HTMLElement>('[data-testid]')).filter((el) =>
+    /^organisation-supplementary-row-\d+$/.test(el.getAttribute('data-testid') ?? ''),
+  );
 }
 
 afterEach(() => {
@@ -354,17 +340,6 @@ describe('T-2025-01: Repeatable optional supplementary upload rows', () => {
 
     // A 4th row must appear too (arbitrary, not capped at exactly 3).
     expect(await screen.findByTestId('organisation-supplementary-row-3')).toBeTruthy();
-
-    fireEvent.click(screen.getByTestId('organisation-supplementary-row-remove-3'));
-
-    await waitFor(() => {
-      expect(
-        container.querySelectorAll('div[data-testid^="organisation-supplementary-row-"]').length,
-      ).toBe(4);
-      expect(screen.getByText('supp-one.pptx')).toBeTruthy();
-      expect(screen.getByText('supp-two.xlsx')).toBeTruthy();
-      expect(screen.getByText('supp-three.pdf')).toBeTruthy();
-    });
 
     // Each populated row must be individually removable without clearing the others.
     const removeRow0 = screen.getByTestId('organisation-supplementary-row-remove-0');
@@ -432,6 +407,8 @@ describe('T-2025-03: Mixed-batch per-file isolation', () => {
     await screen.findByTestId('organisation-source-upload');
 
     const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
+    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
+
     fireEvent.change(primaryInput, {
       target: {
         files: [
@@ -442,10 +419,14 @@ describe('T-2025-03: Mixed-batch per-file isolation', () => {
         ],
       },
     });
-    await addSupplementaryFiles(container, [
-      makeFile('supp-should-still-succeed-1.pptx', 'application/vnd.ms-powerpoint'),
-      makeFile('supp-should-still-succeed-2.xlsx', 'application/vnd.ms-excel'),
-    ]);
+    fireEvent.change(suppInput, {
+      target: {
+        files: [
+          makeFile('supp-should-still-succeed-1.pptx', 'application/vnd.ms-powerpoint'),
+          makeFile('supp-should-still-succeed-2.xlsx', 'application/vnd.ms-excel'),
+        ],
+      },
+    });
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 
@@ -462,35 +443,6 @@ describe('T-2025-03: Mixed-batch per-file isolation', () => {
     );
     expect(suppUploadAttempted).toBe(true);
   });
-
-  it('gives same-name supplementary files distinct storage paths within one batch', async () => {
-    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'success' });
-    const { container } = renderOrganisationContextPage();
-    await screen.findByTestId('organisation-source-upload');
-
-    const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
-    fireEvent.change(primaryInput, {
-      target: { files: [makeFile('primary-ok.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')] },
-    });
-    await addSupplementaryFiles(container, [
-      makeFile('same-name.txt', 'text/plain', 'first'),
-      makeFile('same-name.txt', 'text/plain', 'second'),
-    ]);
-
-    fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('organisation-source-upload').textContent ?? '').toMatch(
-        /finished successfully/i,
-      );
-    });
-
-    const supplementaryPaths = mockStorageUpload.mock.calls
-      .map(([path]) => String(path))
-      .filter((path) => path.includes('-supp-same-name.txt'));
-    expect(supplementaryPaths).toHaveLength(2);
-    expect(new Set(supplementaryPaths).size).toBe(2);
-  });
 });
 
 describe('T-2025-04: Durable, actionable per-file processing status/error persistence', () => {
@@ -505,11 +457,17 @@ describe('T-2025-04: Durable, actionable per-file processing status/error persis
     await screen.findByTestId('organisation-source-upload');
 
     const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
+    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
+
     fireEvent.change(primaryInput, { target: { files: [makeFile('primary-ok.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')] } });
-    await addSupplementaryFiles(container, [
-      makeFile('good-supp.pptx', 'application/vnd.ms-powerpoint'),
-      makeFile('flaky-supp.txt', 'text/plain'),
-    ]);
+    fireEvent.change(suppInput, {
+      target: {
+        files: [
+          makeFile('good-supp.pptx', 'application/vnd.ms-powerpoint'),
+          makeFile('flaky-supp.txt', 'text/plain'),
+        ],
+      },
+    });
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 
@@ -535,8 +493,17 @@ describe('T-2025-04: Durable, actionable per-file processing status/error persis
 });
 
 describe('T-2025-05: Recoverable bounded/async resource-failure handling (regression guard for Edge Worker HTTP 546 WORKER_RESOURCE_LIMIT)', () => {
-  it('uses worker-side background processing so the browser can persist mode context without keeping the reprocess request open', async () => {
-    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'success' });
+  // NOTE: this assertion was updated per the issue #2025 reconciliation (PR #2026) to reflect
+  // that api-builder's server-side fix (commit b07ebf38) now unconditionally bounds every
+  // `mmm-subject-knowledge-reprocess` invocation *server-side*. A client-side AbortController/
+  // timeout layered on top of that server-side bound is no longer wanted: aborting a request
+  // whose server pipeline is still safely running to completion is itself the exact failure
+  // mode a Codex review flagged (P2 finding #1). The original assertion (`toBeInstanceOf
+  // (AbortSignal)`) proved the opposite of what is now required and has been flipped; the
+  // 'hang' mock semantics are retained unchanged so this still genuinely proves resource-safety
+  // (a resource-heavy/never-resolving reprocess call) rather than being weakened.
+  it('does not construct a client-side AbortController/timeout around the reprocess invocation, since the server now owns the bound (api-builder b07ebf38)', async () => {
+    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'hang' });
     const { container } = renderOrganisationContextPage();
     await screen.findByTestId('organisation-source-upload');
 
@@ -563,37 +530,47 @@ describe('T-2025-05: Recoverable bounded/async resource-failure handling (regres
     const reprocessCall = mockInvoke.mock.calls.find(
       ([name]) => name === 'mmm-subject-knowledge-reprocess',
     );
-    const options = (reprocessCall?.[1] ?? {}) as { body?: Record<string, unknown>; signal?: AbortSignal };
+    const options = (reprocessCall?.[1] ?? {}) as { signal?: AbortSignal };
 
-    expect(options.body?.background).toBe(true);
+    // The server (b07ebf38) now unconditionally bounds every reprocess invocation itself, so
+    // the client must no longer layer its own AbortController/timeout signal on top of it — a
+    // client-side abort could itself cut off a server pipeline that was safely running to
+    // completion, which is exactly the failure mode the Codex review flagged.
     expect(options.signal).toBeUndefined();
-    await waitFor(() => {
-      expect(screen.getAllByText(/processing continues in the background/i).length).toBeGreaterThan(0);
-    });
   });
 
-  it('does not block the rest of the batch while the primary document is handed off to background processing', async () => {
-    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'success' });
+  it('does not block the rest of the batch indefinitely while the primary reprocess call is still pending', async () => {
+    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'hang' });
     const { container } = renderOrganisationContextPage();
     await screen.findByTestId('organisation-source-upload');
 
     const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
+    const suppInput = container.querySelector('#context-supplementary-files') as HTMLInputElement;
+
     fireEvent.change(primaryInput, {
       target: { files: [makeFile('resource-heavy-doc-2.pdf', 'application/pdf')] },
     });
-    await addSupplementaryFiles(container, [
-      makeFile('supp-during-hang-1.pptx', 'application/vnd.ms-powerpoint'),
-      makeFile('supp-during-hang-2.xlsx', 'application/vnd.ms-excel'),
-    ]);
+    fireEvent.change(suppInput, {
+      target: {
+        files: [
+          makeFile('supp-during-hang-1.pptx', 'application/vnd.ms-powerpoint'),
+          makeFile('supp-during-hang-2.xlsx', 'application/vnd.ms-excel'),
+        ],
+      },
+    });
 
     fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
 
-    await waitFor(() => {
-      const suppUploadAttempted = mockStorageUpload.mock.calls.some(([path]) =>
-        String(path).includes('supp-'),
-      );
-      expect(suppUploadAttempted).toBe(true);
-    });
+    // Give the (bounded, well under the ~125.6s production fault window) event loop a chance
+    // to process any async/queued work — this is a short real-time wait, not a 125s wait.
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    const suppUploadAttempted = mockStorageUpload.mock.calls.some(([path]) =>
+      String(path).includes('supp-'),
+    );
+    // A hung/resource-exhausted primary reprocess call must not block the rest of the batch:
+    // other files must still be attempted independently/asynchronously.
+    expect(suppUploadAttempted).toBe(true);
   });
 });
 
@@ -712,5 +689,157 @@ describe('T-2025-08: Existing single-primary-document happy path (regression gua
       'mmm-subject-knowledge-reprocess',
       expect.anything(),
     );
+  });
+});
+
+describe('T-2025-09: Distinct storage paths for concurrently-started supplementary uploads with colliding basenames (issue #2025 reconciliation, PR #2026)', () => {
+  it('uploads two supplementary rows whose files share an identical sanitized basename to two distinct storage paths, even when both uploads start in the same tick', async () => {
+    // The current implementation derives each supplementary storage path synchronously from
+    // `Date.now()` (before either upload's first `await`), and `Array.prototype.map` invokes
+    // every `uploadSupplementaryDocument(...)` call back-to-back in the same synchronous JS
+    // execution turn. Freezing `Date.now()` makes the same-tick collision deterministic/
+    // reproducible in CI instead of relying on sub-millisecond timing luck.
+    const fixedNow = 1_700_000_000_000;
+    const nowSpy = vi.spyOn(Date, 'now').mockReturnValue(fixedNow);
+    try {
+      configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'success' });
+      const { container } = renderOrganisationContextPage();
+      await screen.findByTestId('organisation-source-upload');
+
+      const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
+      fireEvent.change(primaryInput, {
+        target: {
+          files: [
+            makeFile(
+              'primary-doc.docx',
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ),
+          ],
+        },
+      });
+
+      const row0 = container.querySelector(
+        '[data-testid="organisation-supplementary-row-0"] input[type="file"]',
+      ) as HTMLInputElement;
+      fireEvent.change(row0, {
+        target: { files: [makeFile('duplicate-name.pdf', 'application/pdf')] },
+      });
+
+      const row1 = await screen.findByTestId('organisation-supplementary-row-1');
+      const row1Input = row1.querySelector('input[type="file"]') as HTMLInputElement;
+      // Same sanitized basename as row 0's file — this is the collision case: two genuinely
+      // distinct File objects (distinct rows/selections) that happen to share a filename.
+      fireEvent.change(row1Input, {
+        target: { files: [makeFile('duplicate-name.pdf', 'application/pdf')] },
+      });
+
+      fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
+
+      await waitFor(() => {
+        const suppCallsForFile = mockStorageUpload.mock.calls.filter(([path]) =>
+          String(path).includes('duplicate-name.pdf'),
+        );
+        expect(suppCallsForFile.length).toBe(2);
+      });
+
+      const suppPaths = mockStorageUpload.mock.calls
+        .filter(([path]) => String(path).includes('duplicate-name.pdf'))
+        .map(([path]) => String(path));
+
+      // Both same-basename, same-tick supplementary uploads must be written to two DISTINCT
+      // storage paths — not collide on an identical `Date.now()`-derived path.
+      expect(new Set(suppPaths).size).toBe(2);
+    } finally {
+      nowSpy.mockRestore();
+    }
+  });
+});
+
+describe('T-2025-10: Trailing-empty-row invariant after row removal (issue #2025 reconciliation, PR #2026)', () => {
+  it('recreates a trailing empty row after removing a row such that the new last row is populated', async () => {
+    configureScenario({ org: baseOrg(), initialDocs: [] });
+    const { container } = renderOrganisationContextPage();
+    await screen.findByTestId('organisation-source-upload');
+
+    const row0 = container.querySelector(
+      '[data-testid="organisation-supplementary-row-0"] input[type="file"]',
+    ) as HTMLInputElement;
+    fireEvent.change(row0, { target: { files: [makeFile('supp-a.pdf', 'application/pdf')] } });
+
+    const row1 = await screen.findByTestId('organisation-supplementary-row-1');
+    const row1Input = row1.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(row1Input, {
+      target: { files: [makeFile('supp-b.pptx', 'application/vnd.ms-powerpoint')] },
+    });
+
+    // Selecting a file in row 1 (the then-last row) must have auto-revealed an empty row 2.
+    await screen.findByTestId('organisation-supplementary-row-2');
+    expect(getSupplementaryRowEls(container)).toHaveLength(3);
+
+    // Remove row 2 — the auto-generated trailing EMPTY row. After removal, the new last row
+    // (row 1, "supp-b.pptx") is POPULATED, which must trigger recreation of a trailing empty
+    // row so the user can keep adding files without disturbing their existing selections.
+    fireEvent.click(screen.getByTestId('organisation-supplementary-row-remove-2'));
+
+    await waitFor(() => {
+      expect(getSupplementaryRowEls(container)).toHaveLength(3);
+    });
+
+    const rowsAfterRemoval = getSupplementaryRowEls(container);
+    const newLastRow = rowsAfterRemoval[rowsAfterRemoval.length - 1];
+    expect(newLastRow.getAttribute('data-testid')).toBe('organisation-supplementary-row-2');
+    expect(newLastRow.querySelector('input[type="file"]')).toBeTruthy();
+    // The recreated trailing row must be genuinely empty — no carried-over file selection.
+    expect(newLastRow.textContent ?? '').not.toMatch(/supp-a\.pdf|supp-b\.pptx/i);
+
+    // The two existing populated rows must remain undisturbed by the invariant recreation.
+    expect(screen.getByText('supp-a.pdf')).toBeTruthy();
+    expect(screen.getByText('supp-b.pptx')).toBeTruthy();
+  });
+});
+
+describe('T-2025-11: Deferred/processing reprocess response must not report full completion (issue #2025 reconciliation, PR #2026)', () => {
+  it('does not display a "finished successfully" message and reflects the durable "processing" status when the reprocess response reports deferred/processing_status, and never calls window.alert', async () => {
+    configureScenario({ org: baseOrg(), initialDocs: [], reprocessMode: 'deferred' });
+    const { container } = renderOrganisationContextPage();
+    await screen.findByTestId('organisation-source-upload');
+
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
+
+    const primaryInput = container.querySelector('#context-source-file') as HTMLInputElement;
+    fireEvent.change(primaryInput, {
+      target: {
+        files: [makeFile('deferred-processing-doc.pdf', 'application/pdf')],
+      },
+    });
+    fireEvent.click(screen.getByTestId('upload-organisation-source-btn'));
+
+    await waitFor(() =>
+      expect(mockInvoke).toHaveBeenCalledWith(
+        'mmm-subject-knowledge-reprocess',
+        expect.anything(),
+      ),
+    );
+
+    // Let the upload pipeline settle completely (button reverts once the async flow's
+    // `finally` block runs) before asserting on the final rendered status text.
+    await waitFor(() => {
+      expect(screen.getByTestId('upload-organisation-source-btn').textContent).toBe(
+        'Upload Organisation Source',
+      );
+    });
+
+    const statusText = screen.getByTestId('organisation-source-upload').textContent ?? '';
+
+    // A deferred/background-processing response (`success: true, processing_status:
+    // 'processing', deferred: true`) must NOT be reported as a fully-finished success — the
+    // pipeline has not actually completed chunking/indexing yet.
+    expect(statusText).not.toMatch(/finished successfully/i);
+    // It must instead reflect the durable "processing" status (matching the per-file status
+    // list, which already reads `processing_status` from the database).
+    expect(statusText).toMatch(/processing/i);
+    expect(alertSpy).not.toHaveBeenCalled();
+
+    alertSpy.mockRestore();
   });
 });

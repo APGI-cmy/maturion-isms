@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getEdgeInvokeHeaders, supabase } from '@/lib/supabase';
 
@@ -45,12 +45,16 @@ type OrganisationSourceDoc = {
 };
 
 type ReprocessResponse = {
-  accepted?: boolean;
-  status?: string;
   success?: boolean;
   error?: string;
   document_id?: string;
   chunk_count?: number;
+  // api-builder's server-side deferred-completion contract (b07ebf38): when the reprocess
+  // pipeline accepts the request but has not finished chunking/indexing within the request
+  // lifecycle, it reports `deferred: true` / `processing_status: 'processing'` alongside
+  // `success: true`. Callers MUST NOT treat that combination as a fully-finished result.
+  processing_status?: string;
+  deferred?: boolean;
 };
 
 function formatOrganisationSourceStatus(doc: OrganisationSourceDoc): string {
@@ -134,38 +138,19 @@ const ORG_ACCEPTED_TYPES = [
   'application/json',
 ].join(',');
 
+let supplementaryRowIdSeq = 0;
+function nextSupplementaryRowId(): string {
+  supplementaryRowIdSeq += 1;
+  return `supp-row-${supplementaryRowIdSeq}`;
+}
+
 type SupplementaryRow = {
   id: string;
   files: File[];
 };
 
-type PrimaryUploadResult = {
-  backgroundProcessing: boolean;
-};
-
-function ensureTrailingEmptySupplementaryRow(
-  rows: SupplementaryRow[],
-  createRowId: () => string,
-): SupplementaryRow[] {
-  if (rows.length === 0) return [{ id: createRowId(), files: [] }];
-  const lastRow = rows[rows.length - 1];
-  return lastRow.files.length === 0 ? rows : [...rows, { id: createRowId(), files: [] }];
-}
-
-function nextUploadPathToken(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID();
-  }
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
 export default function OrganisationContextPage() {
   const qc = useQueryClient();
-  const supplementaryRowIdSeqRef = useRef(0);
-  const nextSupplementaryRowId = () => {
-    supplementaryRowIdSeqRef.current += 1;
-    return `supp-row-${supplementaryRowIdSeqRef.current}`;
-  };
   const [message, setMessage] = useState<string | null>(null);
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [supplementaryRows, setSupplementaryRows] = useState<SupplementaryRow[]>(() => [
@@ -312,18 +297,32 @@ export default function OrganisationContextPage() {
   const handleRemoveSupplementaryRow = (rowIndex: number) => {
     setSupplementaryRows((prev) => {
       const next = prev.filter((_, idx) => idx !== rowIndex);
-      return ensureTrailingEmptySupplementaryRow(next, nextSupplementaryRowId);
+      if (next.length === 0) {
+        return [{ id: nextSupplementaryRowId(), files: [] }];
+      }
+      // Trailing-empty-row invariant (issue #2025 / T-2025-10): if removal leaves a POPULATED
+      // row as the new last row, append a fresh empty row after it so the user can keep adding
+      // files without disturbing existing selections — mirroring the auto-reveal behavior in
+      // `handleSupplementaryRowFilesChange`.
+      const newLastRow = next[next.length - 1];
+      if (newLastRow.files.length > 0) {
+        return [...next, { id: nextSupplementaryRowId(), files: [] }];
+      }
+      return next;
     });
   };
 
-  // Uses the worker's bounded/background mode for organisation-context reprocess so the client
-  // receives a durable accepted/processing state immediately instead of aborting a still-running
-  // Edge Function request before mode-context persistence can complete (issue #2025 / T-2025-05).
+  // Invokes the `mmm-subject-knowledge-reprocess` Edge Function directly, with no client-side
+  // AbortController/timeout wrapper. api-builder's server-side fix (b07ebf38) now
+  // unconditionally bounds every invocation itself (worst case ~108s, safely under the 150s
+  // free-plan ceiling), so a client-side abort layered on top would itself risk cutting off a
+  // server pipeline that is safely running to completion (issue #2025 reconciliation,
+  // T-2025-05).
   const invokeReprocessBounded = async (documentId: string): Promise<ReprocessResponse | null> => {
     const headers = await getEdgeInvokeHeaders();
     const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
       headers,
-      body: { document_id: documentId, background: true },
+      body: { document_id: documentId },
     });
     if (error) {
       throw new Error(error.message || 'Reprocess failed.');
@@ -345,11 +344,16 @@ export default function OrganisationContextPage() {
     activeOrg: NonNullable<typeof org>,
     file: File,
     userId: string,
-  ): Promise<PrimaryUploadResult> => {
+  ): Promise<ReprocessResponse | null> => {
     setSourceUploadStatus('Starting upload…');
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
     const mimeType = resolveMimeType(file);
-    const storagePath = `${activeOrg.id}/${userId}/${nextUploadPathToken()}-${safeName}`;
+    // Storage-path uniqueness (issue #2025 / T-2025-09): `crypto.randomUUID()` is used
+    // elsewhere in this codebase's browser/Vite runtime target (e.g. approval modals), so it
+    // is confirmed available here. A per-call unique salt is appended so concurrent uploads of
+    // same-basename files (which `Array.prototype.map` can invoke synchronously, in the same
+    // tick, before either upload's first `await`) never collide on an identical `Date.now()`.
+    const storagePath = `${activeOrg.id}/${userId}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
     const { error: uploadError } = await supabase.storage
       .from('mmm-subject-knowledge')
       .upload(storagePath, file, { contentType: mimeType, upsert: false });
@@ -450,12 +454,7 @@ export default function OrganisationContextPage() {
     }
 
     const reprocessResult = await invokeReprocessBounded(insertedDoc.id);
-    const isBackgroundProcessing = (reprocessResult?.accepted ?? false) || reprocessResult?.status === 'processing';
-    setSourceUploadStatus(
-      isBackgroundProcessing
-        ? 'Processing started in the background. Finalizing mode context…'
-        : 'Processing complete. Finalizing mode context…',
-    );
+    setSourceUploadStatus('Processing complete. Finalizing mode context…');
 
     // Persist the selected mode in organisation context so runtime mode resolution
     // remains stable across framework pages and sessions.
@@ -475,12 +474,20 @@ export default function OrganisationContextPage() {
       throw new Error(contextPersistError.message || 'Source processed, but mode context save failed.');
     }
 
+    // Deferred/processing response messaging (issue #2025 / T-2025-11): api-builder's
+    // server-side fix (b07ebf38) can report `success: true` alongside `deferred: true` /
+    // `processing_status: 'processing'` when the reprocess pipeline accepted the document but
+    // has not finished chunking/indexing yet. That combination must NOT be reported as a fully
+    // finished upload — surface the durable "processing" status instead (consistent with the
+    // per-file status list, which already reads `processing_status` from the database).
+    const isDeferred =
+      reprocessResult?.deferred === true || reprocessResult?.processing_status === 'processing';
     setSourceUploadStatus(
-      isBackgroundProcessing
-        ? 'Organisation source upload finished successfully. Processing continues in the background.'
+      isDeferred
+        ? 'Organisation source document uploaded; processing is continuing in the background.'
         : 'Organisation source upload finished successfully.',
     );
-    return { backgroundProcessing: isBackgroundProcessing };
+    return reprocessResult;
   };
 
   // Uploads a single supplementary file independently of the primary document and of every
@@ -490,7 +497,12 @@ export default function OrganisationContextPage() {
   const uploadSupplementaryDocument = async (activeOrg: NonNullable<typeof org>, file: File, userId: string) => {
     const suppSafeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
     const suppMime = resolveMimeType(file);
-    const suppPath = `${activeOrg.id}/${userId}/${nextUploadPathToken()}-supp-${suppSafeName}`;
+    // Storage-path uniqueness (issue #2025 / T-2025-09): `Array.prototype.map` invokes every
+    // `uploadSupplementaryDocument(...)` call synchronously, in the same tick, before any of
+    // them reach their first `await` — so two same-basename files uploaded in the same batch
+    // can collide on an identical `Date.now()` value. A per-call `crypto.randomUUID()` salt
+    // guarantees distinct paths regardless of timing.
+    const suppPath = `${activeOrg.id}/${userId}/${Date.now()}-${crypto.randomUUID()}-supp-${suppSafeName}`;
     const suppTags = ['organisation_context', 'supplementary', `source_mode:${sourceMode}`, `organisation_id:${activeOrg.id}`];
 
     const { error: suppUploadError } = await supabase.storage
@@ -542,31 +554,7 @@ export default function OrganisationContextPage() {
       tags: suppTags,
       upload_notes: 'Supplementary context document.',
     });
-    if (suppInsertError) {
-      try {
-        await supabase.from('mmm_subject_knowledge_documents').insert({
-          organisation_id: activeOrg.id,
-          uploaded_by: userId,
-          updated_by: userId,
-          title: `Supplementary - ${file.name}`,
-          file_name: file.name,
-          mime_type: suppMime,
-          file_size: file.size,
-          storage_bucket: 'mmm-subject-knowledge',
-          storage_path: suppPath,
-          document_role: 'knowledge_source',
-          scope_type: 'organisation_context',
-          processing_status: 'failed',
-          processing_error: 'Metadata save was unsuccessful after storage upload. This file needs attention before use.',
-          tags: suppTags,
-          upload_notes: 'Supplementary context document metadata save failed after storage upload.',
-        });
-      } catch {
-        // Best-effort durability write; if the database remains unavailable, the uploaded
-        // object temporarily has no corresponding status row yet.
-      }
-      return;
-    }
+    if (suppInsertError) return;
 
     try {
       const { data: suppDoc } = await supabase
@@ -613,10 +601,15 @@ export default function OrganisationContextPage() {
       // still-pending/hung primary reprocess call must never gate or block the supplementary
       // attempts, and one supplementary file's failure must never block another's.
       const primaryPromise = uploadPrimaryDocument(activeOrg, sourceFile, userId)
-        .then((result) => {
+        .then((reprocessResult) => {
+          // Deferred/processing response messaging (issue #2025 / T-2025-11): mirror the
+          // per-card status wording — a deferred/still-processing reprocess response must not
+          // be reported as a fully finished upload here either.
+          const isDeferred =
+            reprocessResult?.deferred === true || reprocessResult?.processing_status === 'processing';
           setMessage(
-            result?.backgroundProcessing
-              ? 'Organisation source document uploaded successfully. Processing continues in the background while the selected mode remains saved.'
+            isDeferred
+              ? 'Organisation source document uploaded and accepted; processing continues in the background.'
               : 'Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.',
           );
           qc.invalidateQueries({ queryKey: ['organisation-context'] });

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "issue-2025-fix-organisation-context-mixed-document",
+  "pr_number": 2031,
+  "prebrief_commit_sha": "62b1364fbf68d47bea023a02c9e8e43b9894355e",
+  "builder_appointment_timestamp": "2026-08-18T17:05:00Z",
+  "builder_appointment_commit_sha": "987ba2fd941283af663c7fa0c2f298d9cccd0e53",
+  "builder_agent": "qa-builder",
+  "builder_task_ref": ".agent-admin/builder-appointments/issue-2025-carryforward-appointment-pr2031-20260818.md",
+  "first_implementation_commit_sha": "3280f83bb444b137ab2c51dbd7d766cf2e9973f0",
+  "qp_review_timestamp": "2026-08-18T17:50:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
