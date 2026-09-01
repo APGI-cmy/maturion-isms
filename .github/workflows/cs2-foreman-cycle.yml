@@ -42,10 +42,35 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Prepare payload with injected HEAD SHA
+        id: prepare-payload
+        shell: bash
+        env:
+          PAYLOAD_INPUT: ${{ github.event.inputs.payload_json }}
+          HEAD_SHA: ${{ github.event.inputs.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          
+          # Try to read as JSON string first, then as file path
+          if [[ "$PAYLOAD_INPUT" =~ ^{.*}$ ]]; then
+            PAYLOAD_JSON="$PAYLOAD_INPUT"
+          elif [[ -f "$PAYLOAD_INPUT" ]]; then
+            PAYLOAD_JSON=$(cat "$PAYLOAD_INPUT")
+          else
+            echo "::error::Payload is neither valid JSON nor a readable file: $PAYLOAD_INPUT"
+            exit 1
+          fi
+          
+          # Inject current HEAD SHA into payload
+          INJECTED_PAYLOAD=$(echo "$PAYLOAD_JSON" | jq --arg sha "$HEAD_SHA" '.current_head_sha=$sha | .expected_head_sha=$sha')
+          
+          # Store as output for next step
+          echo "payload=$(echo "$INJECTED_PAYLOAD" | jq -c .)" >> "$GITHUB_OUTPUT"
+
       - name: Validate exact-head payload and route rules
         shell: bash
         env:
-          CS2_FOREMAN_PAYLOAD: ${{ github.event.inputs.payload_json }}
+          CS2_FOREMAN_PAYLOAD: ${{ steps.prepare-payload.outputs.payload }}
           CS2_MESSAGE_TYPE: ${{ github.event.inputs.message_type }}
           PR_HEAD_SHA: ${{ github.event.inputs.head_sha || github.sha }}
         run: |

@@ -3,8 +3,8 @@
   "issue_id": "2033",
   "triggered_by": "interim-cs2-agent",
   "target_agent": "api-builder",
-  "current_head_sha": "df1435fbf646a0b84dcf5b87b95388080a4f6f8a",
-  "expected_head_sha": "df1435fbf646a0b84dcf5b87b95388080a4f6f8a",
+  "current_head_sha": "",
+  "expected_head_sha": "",
   "scope": "MMM Level 2",
   "gate_snapshot": {
     "merge_gate_validation": {
