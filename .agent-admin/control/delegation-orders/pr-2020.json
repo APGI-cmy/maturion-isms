@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "mmm-level-2",
+  "pr_number": 2020,
+  "prebrief_commit_sha": "0f42145161df303e0ec3ac7925d6ca6546284517",
+  "builder_appointment_timestamp": "2026-09-01T08:15:00Z",
+  "builder_appointment_commit_sha": "2e1e5a383efff0d7031492fe07d9caa62df31e7f",
+  "builder_agent": "qa-builder",
+  "builder_task_ref": "issue#2019-mmm-level-2-invite-qa-red",
+  "first_implementation_commit_sha": "bfe8d1287fa2ee44711c8bd448dec80026769cdf",
+  "qp_review_timestamp": "2026-09-01T08:45:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
