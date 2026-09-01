@@ -1,0 +1,102 @@
+{
+  "timestamp": "2026-09-01T08:29:34+02:00",
+  "record_type": "GOVERNANCE_REMEDIATION_WAVE",
+  "issue": 2033,
+  "title": "PPTX/XLSX Text Extraction for MMM Chunking Fix",
+  "breach_class": "GOV-BREACH-AIMC-W5-002",
+  "breach_description": "PROCESS_BYPASS — Developer created PR #2034 directly without Foreman governance routing",
+  "cs2_decision_reference": "cs2-decision-latest.json (2026-08-24T09:05:36+02:00)",
+  "cs2_authorization": {
+    "authorized": true,
+    "decision": "FOREMAN_REENTRY_PACKET",
+    "foreman_may_proceed": true,
+    "scope": "MMM Level 2"
+  },
+  "remediation_actions": [
+    {
+      "sequence": 1,
+      "action": "PHASE_1_BOOTSTRAP",
+      "agent": "foreman-v2-agent",
+      "status": "COMPLETE",
+      "evidence": ".agent-admin/assurance/phase1-foreman-bootstrap-2026-09-01.md"
+    },
+    {
+      "sequence": 2,
+      "action": "SCOPE_DECLARATION",
+      "agent": "foreman-v2-agent",
+      "status": "COMPLETE",
+      "evidence": ".agent-admin/scope-declarations/scope-declaration-issue-2033-pptx-xlsx-fix.md"
+    },
+    {
+      "sequence": 3,
+      "action": "BUILDER_DELEGATION",
+      "agent": "foreman-v2-agent → api-builder",
+      "status": "IN_PROGRESS",
+      "description": "Proper Foreman delegation order issued; api-builder tasked with governed delivery"
+    },
+    {
+      "sequence": 4,
+      "action": "CI_VALIDATION",
+      "agent": "api-builder",
+      "status": "PENDING",
+      "description": "Run full CI pipeline; validate all 21 merge-gate required checks pass"
+    },
+    {
+      "sequence": 5,
+      "action": "QP_REVIEW",
+      "agent": "foreman-v2-agent (Quality Professor)",
+      "status": "PENDING",
+      "description": "Quality Professor binary PASS after builder handover"
+    },
+    {
+      "sequence": 6,
+      "action": "IAA_FINAL_ASSURANCE",
+      "agent": "independent-assurance-agent",
+      "status": "PENDING",
+      "description": "Final assurance token after QP PASS and pre-handover gate"
+    },
+    {
+      "sequence": 7,
+      "action": "CS2_MERGE_DECISION",
+      "agent": "CS2 (@APGI-cmy)",
+      "status": "PENDING",
+      "description": "Final merge authority review and approval"
+    }
+  ],
+  "technical_scope": {
+    "issue": "#2033",
+    "current_pr": "#2034 (blocked, will be superseded)",
+    "reference_commit": "96ebc40f76c0fcec1c6c0cd38331578eed46b3bf",
+    "files_changed": [
+      "modules/MMM/tests/B4-framework/mmm-subject-knowledge-pptx-xlsx-extraction.test.ts",
+      "supabase/functions/_shared/mmm-subject-knowledge.ts"
+    ],
+    "test_status": "12/12 passing",
+    "scope_classification": "NARROW — surgical fix, no schema/migration/API changes"
+  },
+  "merge_gate_validation": {
+    "total_required_checks": 21,
+    "currently_blocked": ["delegation-order-gate", "builder-involvement-check", "foreman-implementation-check"],
+    "validation_strategy": "Proper Foreman routing → api-builder delivery → full CI pipeline → all 21 checks green → merge authorized"
+  },
+  "next_steps": [
+    "api-builder receives delegation order with ceremony requirements",
+    "api-builder integrates commit 96ebc40f into clean governed PR",
+    "api-builder runs full CI validation",
+    "api-builder produces pre-handover documentation and ECAP bundle",
+    "Foreman conducts Quality Professor review (PASS expected)",
+    "IAA final assurance issued",
+    "CS2 merge decision"
+  ],
+  "contacts": {
+    "foreman": "foreman-v2-agent",
+    "builder": "api-builder",
+    "assurance": "independent-assurance-agent",
+    "authority": "CS2 (@APGI-cmy)"
+  },
+  "wave_context": {
+    "active_scope_declaration": "wave-mmm-level2-approval-qa-red-2026-06-23.md",
+    "builder_appointment": "qa-builder (issue #2019)",
+    "maturion_wave": "Level 2"
+  }
+}
