@@ -1,10 +1,9 @@
 ﻿{
-    "scope_declaration":  "wave-mmm-level2-approval-qa-red-2026-06-23.md",
-    "branch":  "foreman/mmm-level2-approval-qa-red",
-    "timestamp":  "2026-09-01T12:57:43.742+02:00",
-    "task":  "Create QA-to-red baseline for MMM Level 2 invite modal and approval workspace. Define failing tests covering Level 2 invite modal with multiple approvers, approver row add/remove, email validation, required fields, API contract integration, notification events, approval workspace rendering, proposed-change controls, approve/submit actions, and authorization boundaries.",
-    "appointed_builder":  "qa-builder",
-    "issue_ref":  "#2019",
-    "cs2_authorized":  true,
-    "builder_may_proceed":  true
+  "timestamp": "2026-09-01T11:01:56.3065316Z",
+  "appointed_builder": "qa-builder",
+  "issue_ref": "#2019",
+  "scope_declaration": "wave-mmm-level2-approval-qa-red-2026-06-23.md",
+  "task": "Create QA-to-red baseline for MMM Level 2 approval invite/workspace. Define failing test cases covering: Level 2 invite modal with multiple approvers, approver row add/remove behavior, email validation, required fields (name, email, approval level, designation/scope), API contract integration (mmm-approval-round-create), notification event creation, scoped approver access handoff, Level 2 approval workspace rendering (domain/MPS/intent/criteria/descriptors), proposed-change controls isolation, approve/submit-changes action routing, and authorization/scope boundaries.",
+  "cs2_authorized": true,
+  "builder_may_proceed": true
 }
