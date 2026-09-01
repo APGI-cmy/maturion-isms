@@ -1,9 +1,9 @@
-{
-    "timestamp":  "2026-09-01T13:07:17.1215601+02:00",
+﻿{
+    "review_head_sha":  "f4bafd745ac7b5404ca8a565154844d3406d8929",
+    "timestamp":  "2026-09-01T15:35:39.0301090+02:00",
+    "advisory_observations":  "Lane request received and archived. Issue #2019 reopened per CS2 REACTIVATION protocol. Scope is valid, bounded to Level 2 invite/workspace QA-to-red only. qa-builder appointed and authorized to proceed. Traceability confirmed: scope matches requirement, work is completable in single supervised cycle. Builder appointment committed to main. Ready for Foreman delegation and QA-to-red baseline establishment.",
     "decision":  "FOREMAN_REENTRY_PACKET",
-    "review_head_sha":  "f456a0d249829b49e458354c6814a086f973c37c",
     "active_scope_declaration":  "wave-mmm-level2-approval-qa-red-2026-06-23.md",
-    "advisory_observations":  "Lane request archived to main; qa-builder appointed for issue #2019; scope is bounded to MMM Level 2 invite/workspace QA-to-red only and matches a single supervised cycle.",
     "cs2_authorized":  true,
     "foreman_may_proceed":  true
 }
