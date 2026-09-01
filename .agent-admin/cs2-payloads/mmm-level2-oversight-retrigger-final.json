@@ -1,1 +1,17 @@
-{"scope":"wave-mmm-level2-approval-qa-red-2026-06-23","timestamp":"2026-09-01T12:28:00Z","batch_id":"mmm-level2-oversight-retrigger-final-nobom-20260901","message_type":"CS2_ASSIGNMENT","governance_paths_verified":true,"head_sha":"4ec4355a1945cc84fa49ae598d548c96d63040"}
+{
+  "batch_id": "mmm-level2-oversight-retrigger-20260901-1200",
+  "issue_id": "2033",
+  "triggered_by": "interim-cs2-agent",
+  "target_agent": "api-builder",
+  "current_head_sha": "1fb1ec035d7543097d21b9eccd637c51bceda66b",
+  "expected_head_sha": "1fb1ec035d7543097d21b9eccd637c51bceda66b",
+  "scope": "MMM Level 2",
+  "gate_snapshot": {
+    "merge_gate_validation": {
+      "total_required_checks": 21,
+      "currently_blocked": ["delegation-order-gate", "builder-involvement-check", "foreman-implementation-check"]
+    },
+    "remediation_wave": "governance-paths-restored-2026-09-01"
+  },
+  "immediate_dispatch": true
+}
