@@ -1,9 +1,9 @@
-﻿{
-  "timestamp": "2026-08-24T09:05:36.551+02:00",
-  "decision": "FOREMAN_REENTRY_PACKET",
-  "review_head_sha": "2e1e5a383efff0d7031492fe07d9caa62df31e7f",
-  "active_scope_declaration": "wave-mmm-level2-approval-qa-red-2026-06-23.md",
-  "advisory_observations": "Lane request received and archived. Builder appointment already recorded for qa-builder on issue #2019. Scope is bounded to MMM Level 2 invite/workspace QA-to-red and suitable for a single supervised cycle.",
-  "cs2_authorized": true,
-  "foreman_may_proceed": true
+{
+    "review_head_sha":  "e6fd332eac02fb1f8301ec00394136ab74dd7912",
+    "timestamp":  "2026-09-01T12:16:11.7587294+02:00",
+    "advisory_observations":  "Foreman lane request received and archived. Scope bounds confirmed: MMM Level 2 approval invite/workspace QA-to-red only. Builder qa-builder appointed for issue #2019. QA-to-red task established with complete failing test requirements. Builder appointment file committed to main. Ready for Foreman reentry with builder delegation.",
+    "decision":  "FOREMAN_REENTRY_PACKET",
+    "active_scope_declaration":  "wave-mmm-level2-approval-qa-red-2026-06-23.md",
+    "cs2_authorized":  true,
+    "foreman_may_proceed":  true
 }
