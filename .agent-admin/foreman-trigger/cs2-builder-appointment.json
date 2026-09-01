@@ -1,9 +1,9 @@
-﻿{
+{
     "appointed_builder":  "qa-builder",
     "builder_may_proceed":  true,
-    "timestamp":  "2026-08-18T09:54:25.5837181+02:00",
+    "timestamp":  "2026-09-01T12:15:54.7878907+02:00",
     "scope_declaration":  "wave-mmm-level2-approval-qa-red-2026-06-23.md",
     "issue_ref":  "#2019",
     "cs2_authorized":  true,
-    "task":  "Create QA-to-red baseline for MMM Level 2 invite workflow. Replace all it.todo() stubs in modules/MMM/tests/B4-framework/level2-invite-workspace-red.test.ts with real failing tests. Tests must fail for the right reasons before any implementation."
+    "task":  "Create QA-to-red baseline for MMM Level 2 approval invite/workspace. Establish failing tests covering: Level 2 invite modal with multiple approvers, approver row add/remove, email validation/duplicate prevention, required fields (name/email/level/designation), API contract integration, notification event creation, scoped approver handoff, Level 2 workspace rendering (domain/MPS/intent/criteria/descriptors), proposed-change read-only semantics, approve/submit-changes routing, and authorization boundaries. All tests must fail for the right reasons before any implementation."
 }
