@@ -64,6 +64,108 @@ function isDocxMimeType(mimeType: string): boolean {
   return mimeType.toLowerCase().includes('officedocument.wordprocessingml.document');
 }
 
+function isPptxMimeType(mimeType: string): boolean {
+  const n = mimeType.toLowerCase();
+  return n.includes('officedocument.presentationml') || n.includes('vnd.ms-powerpoint');
+}
+
+function isXlsxMimeType(mimeType: string): boolean {
+  const n = mimeType.toLowerCase();
+  return n.includes('officedocument.spreadsheetml') || n.includes('vnd.ms-excel');
+}
+
+/**
+ * Extract readable text from a PPTX file (ZIP with ppt/slides/slide*.xml).
+ * Captures <a:t> text runs from every slide in order.
+ */
+async function extractPptxText(fileBlob: Blob): Promise<string> {
+  const zip = await JSZip.loadAsync(await fileBlob.arrayBuffer());
+  const slidePaths = Object.keys(zip.files)
+    .filter((p) => /^ppt\/slides\/slide\d+\.xml$/i.test(p))
+    .sort((a, b) => {
+      const numA = Number.parseInt(a.replace(/\D/g, ''), 10);
+      const numB = Number.parseInt(b.replace(/\D/g, ''), 10);
+      return numA - numB;
+    });
+  const parts: string[] = [];
+  for (const path of slidePaths) {
+    const file = zip.file(path);
+    if (!file) continue;
+    const xml = await file.async('text');
+    const textRuns = [...xml.matchAll(/<a:t\b[^>]*>([\s\S]*?)<\/a:t>/g)]
+      .map((m) => decodeXmlEntities(m[1] ?? '').trim())
+      .filter((t) => t.length > 0);
+    if (textRuns.length > 0) parts.push(textRuns.join(' '));
+  }
+  return sanitizeForPostgresText(parts.join('\n\n')).trim();
+}
+
+/**
+ * Extract readable text from an XLSX file (ZIP with xl/sharedStrings.xml + xl/worksheets/sheet*.xml).
+ * Reads shared-string table first, then resolves <v>/<is><t> references from each sheet.
+ */
+async function extractXlsxText(fileBlob: Blob): Promise<string> {
+  const zip = await JSZip.loadAsync(await fileBlob.arrayBuffer());
+
+  // Parse shared strings
+  const sharedStrings: string[] = [];
+  const ssFile = zip.file('xl/sharedStrings.xml');
+  if (ssFile) {
+    const ssXml = await ssFile.async('text');
+    const siMatches = [...ssXml.matchAll(/<si\b[^>]*>([\s\S]*?)<\/si>/g)];
+    for (const si of siMatches) {
+      const tRuns = [...(si[1] ?? '').matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g)]
+        .map((m) => decodeXmlEntities(m[1] ?? '').trim())
+        .join(' ');
+      sharedStrings.push(tRuns.trim());
+    }
+  }
+
+  const sheetPaths = Object.keys(zip.files)
+    .filter((p) => /^xl\/worksheets\/sheet\d+\.xml$/i.test(p))
+    .sort((a, b) => {
+      const numA = Number.parseInt(a.replace(/\D/g, ''), 10);
+      const numB = Number.parseInt(b.replace(/\D/g, ''), 10);
+      return numA - numB;
+    });
+
+  const sheetParts: string[] = [];
+  for (const path of sheetPaths) {
+    const file = zip.file(path);
+    if (!file) continue;
+    const xml = await file.async('text');
+    const rowTexts: string[] = [];
+    const rows = [...xml.matchAll(/<row\b[^>]*>([\s\S]*?)<\/row>/g)];
+    for (const row of rows) {
+      const cells = [...(row[1] ?? '').matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)];
+      const cellValues: string[] = [];
+      for (const cell of cells) {
+        const attrs = cell[1] ?? '';
+        const inner = cell[2] ?? '';
+        // t="s" → shared string; t="inlineStr" → inline; else numeric/raw
+        const typeMatch = attrs.match(/\bt="([^"]*)"/);
+        const cellType = typeMatch?.[1] ?? '';
+        let value = '';
+        if (cellType === 's') {
+          const vMatch = inner.match(/<v\b[^>]*>([\s\S]*?)<\/v>/);
+          const idx = Number.parseInt(vMatch?.[1] ?? '', 10);
+          value = Number.isFinite(idx) ? (sharedStrings[idx] ?? '') : '';
+        } else if (cellType === 'inlineStr') {
+          const tMatch = inner.match(/<is\b[^>]*>[\s\S]*?<t\b[^>]*>([\s\S]*?)<\/t>/);
+          value = decodeXmlEntities(tMatch?.[1] ?? '').trim();
+        } else {
+          const vMatch = inner.match(/<v\b[^>]*>([\s\S]*?)<\/v>/);
+          value = (vMatch?.[1] ?? '').trim();
+        }
+        if (value.length > 0) cellValues.push(value);
+      }
+      if (cellValues.length > 0) rowTexts.push(cellValues.join('\t'));
+    }
+    if (rowTexts.length > 0) sheetParts.push(rowTexts.join('\n'));
+  }
+  return sanitizeForPostgresText(sheetParts.join('\n\n')).trim();
+}
+
 function decodeXmlEntities(input: string): string {
   return input
     .replace(/&lt;/g, '<')
@@ -164,6 +266,16 @@ export function extractBestEffortText(params: {
     if (isDocxMimeType(mimeType)) {
       const docxText = await extractDocxText(fileBlob);
       if (docxText.length > 0) return docxText;
+    }
+
+    if (isPptxMimeType(mimeType)) {
+      const pptxText = await extractPptxText(fileBlob);
+      if (pptxText.length > 0) return pptxText;
+    }
+
+    if (isXlsxMimeType(mimeType)) {
+      const xlsxText = await extractXlsxText(fileBlob);
+      if (xlsxText.length > 0) return xlsxText;
     }
 
     const aiText = sanitizeForPostgresText(aiParsedText ?? '').trim();

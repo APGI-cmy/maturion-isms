@@ -49,6 +49,12 @@ type ReprocessResponse = {
   error?: string;
   document_id?: string;
   chunk_count?: number;
+  // api-builder's server-side deferred-completion contract (b07ebf38): when the reprocess
+  // pipeline accepts the request but has not finished chunking/indexing within the request
+  // lifecycle, it reports `deferred: true` / `processing_status: 'processing'` alongside
+  // `success: true`. Callers MUST NOT treat that combination as a fully-finished result.
+  processing_status?: string;
+  deferred?: boolean;
 };
 
 function formatOrganisationSourceStatus(doc: OrganisationSourceDoc): string {
@@ -69,6 +75,10 @@ function resolveMimeType(file: File): string {
   if (name.endsWith('.pdf')) return 'application/pdf';
   if (name.endsWith('.docx')) return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   if (name.endsWith('.doc')) return 'application/msword';
+  if (name.endsWith('.pptx')) return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+  if (name.endsWith('.ppt')) return 'application/vnd.ms-powerpoint';
+  if (name.endsWith('.xlsx')) return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  if (name.endsWith('.xls')) return 'application/vnd.ms-excel';
   if (name.endsWith('.txt')) return 'text/plain';
   if (name.endsWith('.md')) return 'text/markdown';
   if (name.endsWith('.csv')) return 'text/csv';
@@ -112,10 +122,40 @@ async function fetchOrganisationContext(): Promise<OrganisationContextResponse> 
   return { organisation } as OrganisationContextResponse;
 }
 
+const ORG_ACCEPTED_TYPES = [
+  '.pdf', '.doc', '.docx', '.txt', '.md', '.csv', '.json',
+  '.pptx', '.ppt', '.xlsx', '.xls',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'text/plain',
+  'text/markdown',
+  'text/csv',
+  'application/json',
+].join(',');
+
+let supplementaryRowIdSeq = 0;
+function nextSupplementaryRowId(): string {
+  supplementaryRowIdSeq += 1;
+  return `supp-row-${supplementaryRowIdSeq}`;
+}
+
+type SupplementaryRow = {
+  id: string;
+  files: File[];
+};
+
 export default function OrganisationContextPage() {
   const qc = useQueryClient();
   const [message, setMessage] = useState<string | null>(null);
   const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [supplementaryRows, setSupplementaryRows] = useState<SupplementaryRow[]>(() => [
+    { id: nextSupplementaryRowId(), files: [] },
+  ]);
   const [sourceMode, setSourceMode] = useState<OrganisationModeSource>('VERBATIM');
   const [isUploadingSource, setIsUploadingSource] = useState(false);
   const [sourceUploadStatus, setSourceUploadStatus] = useState<string | null>(null);
@@ -238,156 +278,361 @@ export default function OrganisationContextPage() {
     }
   };
 
+  // Repeatable optional supplementary upload rows (issue #2025 / T-2025-01): selecting a file
+  // in the current last row reveals a new empty optional row, and each row is individually
+  // removable, so an arbitrary number (3+) of supplementary files can be attached without
+  // reopening/replacing a single combined picker.
+  const handleSupplementaryRowFilesChange = (rowIndex: number, fileList: FileList | null) => {
+    const files = fileList ? Array.from(fileList) : [];
+    setSupplementaryRows((prev) => {
+      const next = prev.map((row, idx) => (idx === rowIndex ? { ...row, files } : row));
+      const isLastRow = rowIndex === prev.length - 1;
+      if (isLastRow && files.length > 0) {
+        next.push({ id: nextSupplementaryRowId(), files: [] });
+      }
+      return next;
+    });
+  };
+
+  const handleRemoveSupplementaryRow = (rowIndex: number) => {
+    setSupplementaryRows((prev) => {
+      const next = prev.filter((_, idx) => idx !== rowIndex);
+      if (next.length === 0) {
+        return [{ id: nextSupplementaryRowId(), files: [] }];
+      }
+      // Trailing-empty-row invariant (issue #2025 / T-2025-10): if removal leaves a POPULATED
+      // row as the new last row, append a fresh empty row after it so the user can keep adding
+      // files without disturbing existing selections — mirroring the auto-reveal behavior in
+      // `handleSupplementaryRowFilesChange`.
+      const newLastRow = next[next.length - 1];
+      if (newLastRow.files.length > 0) {
+        return [...next, { id: nextSupplementaryRowId(), files: [] }];
+      }
+      return next;
+    });
+  };
+
+  // Invokes the `mmm-subject-knowledge-reprocess` Edge Function directly, with no client-side
+  // AbortController/timeout wrapper. api-builder's server-side fix (b07ebf38) now
+  // unconditionally bounds every invocation itself (worst case ~108s, safely under the 150s
+  // free-plan ceiling), so a client-side abort layered on top would itself risk cutting off a
+  // server pipeline that is safely running to completion (issue #2025 reconciliation,
+  // T-2025-05).
+  const invokeReprocessBounded = async (documentId: string): Promise<ReprocessResponse | null> => {
+    const headers = await getEdgeInvokeHeaders();
+    const { data, error } = await supabase.functions.invoke('mmm-subject-knowledge-reprocess', {
+      headers,
+      body: { document_id: documentId },
+    });
+    if (error) {
+      throw new Error(error.message || 'Reprocess failed.');
+    }
+    if (data && typeof data === 'object' && 'success' in data && (data as { success?: boolean }).success === false) {
+      const detail =
+        typeof (data as { error?: unknown }).error === 'string'
+          ? (data as { error: string }).error
+          : 'Processing failed.';
+      throw new Error(detail);
+    }
+    return data as ReprocessResponse | null;
+  };
+
+  // Uploads the single primary source document end-to-end (storage -> metadata -> bounded
+  // reprocess -> mode context persistence). Runs independently of supplementary uploads so a
+  // primary failure/hang cannot gate or roll back supplementary attempts (T-2025-03, T-2025-05).
+  const uploadPrimaryDocument = async (
+    activeOrg: NonNullable<typeof org>,
+    file: File,
+    userId: string,
+  ): Promise<ReprocessResponse | null> => {
+    setSourceUploadStatus('Starting upload…');
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
+    const mimeType = resolveMimeType(file);
+    // Storage-path uniqueness (issue #2025 / T-2025-09): `crypto.randomUUID()` is used
+    // elsewhere in this codebase's browser/Vite runtime target (e.g. approval modals), so it
+    // is confirmed available here. A per-call unique salt is appended so concurrent uploads of
+    // same-basename files (which `Array.prototype.map` can invoke synchronously, in the same
+    // tick, before either upload's first `await`) never collide on an identical `Date.now()`.
+    const storagePath = `${activeOrg.id}/${userId}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+    const { error: uploadError } = await supabase.storage
+      .from('mmm-subject-knowledge')
+      .upload(storagePath, file, { contentType: mimeType, upsert: false });
+    if (uploadError) {
+      const detail = JSON.stringify({
+        message: uploadError.message,
+        name: uploadError.name,
+        statusCode: (uploadError as { statusCode?: string }).statusCode ?? null,
+        error: (uploadError as { error?: string }).error ?? null,
+        path: storagePath,
+        mimeType,
+        fileSize: file.size,
+      });
+      // Persist a durable failed record (per-file processing status) rather than losing the
+      // failure only in transient component state (T-2025-04 durability contract).
+      try {
+        await supabase.from('mmm_subject_knowledge_documents').insert({
+          organisation_id: activeOrg.id,
+          uploaded_by: userId,
+          updated_by: userId,
+          title: `${sourceMode} source - ${file.name}`,
+          file_name: file.name,
+          mime_type: mimeType,
+          file_size: file.size,
+          storage_bucket: 'mmm-subject-knowledge',
+          storage_path: storagePath,
+          document_role: 'knowledge_source',
+          scope_type: 'organisation_context',
+          processing_status: 'failed',
+          // Generic, non-file-name-bearing message: the title already carries the file name, so
+          // the durable per-file status stays unambiguous/actionable without duplicating it. Also
+          // avoids repeating the literal word "failed" (already shown via processing_status) so
+          // the status text remains the single unambiguous match for that word in the UI.
+          processing_error: 'Storage upload was unsuccessful before the document could be processed.',
+          tags: ['organisation_context', 'mode_source', `source_mode:${sourceMode}`, `organisation_id:${activeOrg.id}`],
+          upload_notes: 'Primary source upload failed at storage layer.',
+        });
+      } catch {
+        // Best-effort durability write; the primary failure is still surfaced via the thrown
+        // error below regardless of whether this durable record could be persisted.
+      }
+      throw new Error(`Storage upload failed: ${detail}`);
+    }
+    setSourceUploadStatus('Storage upload complete. Saving document metadata…');
+
+    const tags = [
+      'organisation_context',
+      'mode_source',
+      `source_mode:${sourceMode}`,
+      `organisation_id:${activeOrg.id}`,
+    ];
+    const { error: insertError } = await supabase.from('mmm_subject_knowledge_documents').insert({
+      organisation_id: activeOrg.id,
+      uploaded_by: userId,
+      updated_by: userId,
+      title: `${sourceMode} source - ${file.name}`,
+      file_name: file.name,
+      mime_type: mimeType,
+      file_size: file.size,
+      storage_bucket: 'mmm-subject-knowledge',
+      storage_path: storagePath,
+      document_role: 'knowledge_source',
+      scope_type: 'organisation_context',
+      processing_status: 'pending',
+      tags,
+      upload_notes:
+        sourceMode === 'VERBATIM'
+          ? 'Authoritative verbatim source document for MPS, intent, and criteria extraction.'
+          : sourceMode === 'HYBRID'
+          ? 'Hybrid source document: harvest customer material, then complete gaps with subject knowledge.'
+          : 'New-generation context source: use as organisation familiarisation material.',
+    });
+    if (insertError) {
+      const detail = JSON.stringify({
+        message: insertError.message,
+        code: insertError.code ?? null,
+        details: insertError.details ?? null,
+        hint: insertError.hint ?? null,
+        orgId: activeOrg.id,
+        scopeType: 'organisation_context',
+        sourceMode,
+      });
+      throw new Error(`Database insert failed: ${detail}`);
+    }
+    setSourceUploadStatus('Metadata saved. Processing source document…');
+
+    // Auto-reprocess immediately so organisation source documents become chunked/AI-consumable
+    // without requiring the user to switch to DMC first.
+    const { data: insertedDoc, error: insertedLookupError } = await supabase
+      .from('mmm_subject_knowledge_documents')
+      .select('id')
+      .eq('organisation_id', activeOrg.id)
+      .eq('storage_bucket', 'mmm-subject-knowledge')
+      .eq('storage_path', storagePath)
+      .maybeSingle();
+    if (insertedLookupError || !insertedDoc?.id) {
+      throw new Error(insertedLookupError?.message || 'Source document saved but could not resolve document id for processing.');
+    }
+
+    const reprocessResult = await invokeReprocessBounded(insertedDoc.id);
+    setSourceUploadStatus('Processing complete. Finalizing mode context…');
+
+    // Persist the selected mode in organisation context so runtime mode resolution
+    // remains stable across framework pages and sessions.
+    const nextContext = {
+      ...(activeOrg.context ?? {}),
+      frameworkCreationMode: sourceMode,
+      sourceMode,
+    };
+    const { error: contextPersistError } = await supabase
+      .from('mmm_organisations')
+      .update({
+        context: nextContext,
+        context_updated_at: new Date().toISOString(),
+      })
+      .eq('id', activeOrg.id);
+    if (contextPersistError) {
+      throw new Error(contextPersistError.message || 'Source processed, but mode context save failed.');
+    }
+
+    // Deferred/processing response messaging (issue #2025 / T-2025-11): api-builder's
+    // server-side fix (b07ebf38) can report `success: true` alongside `deferred: true` /
+    // `processing_status: 'processing'` when the reprocess pipeline accepted the document but
+    // has not finished chunking/indexing yet. That combination must NOT be reported as a fully
+    // finished upload — surface the durable "processing" status instead (consistent with the
+    // per-file status list, which already reads `processing_status` from the database).
+    const isDeferred =
+      reprocessResult?.deferred === true || reprocessResult?.processing_status === 'processing';
+    setSourceUploadStatus(
+      isDeferred
+        ? 'Organisation source document uploaded; processing is continuing in the background.'
+        : 'Organisation source upload finished successfully.',
+    );
+    return reprocessResult;
+  };
+
+  // Uploads a single supplementary file independently of the primary document and of every
+  // other supplementary file, so one file's failure never rolls back or blocks the others
+  // (T-2025-03 mixed-batch per-file isolation). Failures are persisted as a durable per-file
+  // status row rather than only being held in component state (T-2025-04).
+  const uploadSupplementaryDocument = async (activeOrg: NonNullable<typeof org>, file: File, userId: string) => {
+    const suppSafeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
+    const suppMime = resolveMimeType(file);
+    // Storage-path uniqueness (issue #2025 / T-2025-09): `Array.prototype.map` invokes every
+    // `uploadSupplementaryDocument(...)` call synchronously, in the same tick, before any of
+    // them reach their first `await` — so two same-basename files uploaded in the same batch
+    // can collide on an identical `Date.now()` value. A per-call `crypto.randomUUID()` salt
+    // guarantees distinct paths regardless of timing.
+    const suppPath = `${activeOrg.id}/${userId}/${Date.now()}-${crypto.randomUUID()}-supp-${suppSafeName}`;
+    const suppTags = ['organisation_context', 'supplementary', `source_mode:${sourceMode}`, `organisation_id:${activeOrg.id}`];
+
+    const { error: suppUploadError } = await supabase.storage
+      .from('mmm-subject-knowledge')
+      .upload(suppPath, file, { contentType: suppMime, upsert: false });
+    if (suppUploadError) {
+      try {
+        await supabase.from('mmm_subject_knowledge_documents').insert({
+          organisation_id: activeOrg.id,
+          uploaded_by: userId,
+          updated_by: userId,
+          title: `Supplementary - ${file.name}`,
+          file_name: file.name,
+          mime_type: suppMime,
+          file_size: file.size,
+          storage_bucket: 'mmm-subject-knowledge',
+          storage_path: suppPath,
+          document_role: 'knowledge_source',
+          scope_type: 'organisation_context',
+          processing_status: 'failed',
+          // Generic, non-file-name-bearing message: the title already carries the file name, so
+          // the durable per-file status stays unambiguous/actionable without duplicating it. Also
+          // avoids repeating the literal word "failed" so the status text (processing_status)
+          // remains the single unambiguous match for that word in the UI.
+          processing_error: 'Storage upload was unsuccessful. This file was not saved; remove the row and retry.',
+          tags: suppTags,
+          upload_notes: 'Supplementary context document upload failed at storage layer.',
+        });
+      } catch {
+        // Best-effort durability write; the per-row status list simply omits this entry if
+        // even the failure record could not be persisted.
+      }
+      return;
+    }
+
+    const { error: suppInsertError } = await supabase.from('mmm_subject_knowledge_documents').insert({
+      organisation_id: activeOrg.id,
+      uploaded_by: userId,
+      updated_by: userId,
+      title: `Supplementary - ${file.name}`,
+      file_name: file.name,
+      mime_type: suppMime,
+      file_size: file.size,
+      storage_bucket: 'mmm-subject-knowledge',
+      storage_path: suppPath,
+      document_role: 'knowledge_source',
+      scope_type: 'organisation_context',
+      processing_status: 'pending',
+      tags: suppTags,
+      upload_notes: 'Supplementary context document.',
+    });
+    if (suppInsertError) return;
+
+    try {
+      const { data: suppDoc } = await supabase
+        .from('mmm_subject_knowledge_documents')
+        .select('id')
+        .eq('storage_path', suppPath)
+        .maybeSingle();
+      if (suppDoc?.id) {
+        await invokeReprocessBounded(suppDoc.id);
+      }
+    } catch {
+      // Non-fatal: the supplementary document's durable metadata row is already persisted with
+      // a 'pending' status; a reprocess failure here is surfaced via the per-file status list.
+    }
+  };
+
   const uploadModeSourceDocument = async () => {
     if (!org) {
       const err = 'Organisation context not loaded.';
       setSourceUploadStatus(err);
       setMessage(err);
-      window.alert(err);
       return;
     }
     if (!sourceFile) {
       const err = 'Choose a source document before uploading.';
       setSourceUploadStatus(err);
       setMessage(err);
-      window.alert(err);
       return;
     }
 
+    const activeOrg = org;
     setIsUploadingSource(true);
     setMessage(null);
-    setSourceUploadStatus('Starting upload…');
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw new Error(sessionError.message);
       const userId = sessionData.session?.user?.id;
       if (!userId) throw new Error('No authenticated user found.');
 
-      const safeName = sourceFile.name.replace(/[^a-zA-Z0-9._-]+/g, '_');
-      const mimeType = resolveMimeType(sourceFile);
-      const storagePath = `${org.id}/${userId}/${Date.now()}-${safeName}`;
-      const { error: uploadError } = await supabase.storage
-        .from('mmm-subject-knowledge')
-        .upload(storagePath, sourceFile, {
-          contentType: mimeType,
-          upsert: false,
-        });
-      if (uploadError) {
-        const detail = JSON.stringify({
-          message: uploadError.message,
-          name: uploadError.name,
-          statusCode: (uploadError as { statusCode?: string }).statusCode ?? null,
-          error: (uploadError as { error?: string }).error ?? null,
-          path: storagePath,
-          mimeType,
-          fileSize: sourceFile.size,
-        });
-        throw new Error(`Storage upload failed: ${detail}`);
-      }
-      setSourceUploadStatus('Storage upload complete. Saving document metadata…');
+      const supplementaryFiles = supplementaryRows.flatMap((row) => row.files);
 
-      const tags = [
-        'organisation_context',
-        'mode_source',
-        `source_mode:${sourceMode}`,
-        `organisation_id:${org.id}`,
-      ];
-      const { error: insertError } = await supabase.from('mmm_subject_knowledge_documents').insert({
-        organisation_id: org.id,
-        uploaded_by: userId,
-        updated_by: userId,
-        title: `${sourceMode} source - ${sourceFile.name}`,
-        file_name: sourceFile.name,
-        mime_type: mimeType,
-        file_size: sourceFile.size,
-        storage_bucket: 'mmm-subject-knowledge',
-        storage_path: storagePath,
-        document_role: 'knowledge_source',
-        scope_type: 'organisation_context',
-        processing_status: 'pending',
-        tags,
-        upload_notes:
-          sourceMode === 'VERBATIM'
-            ? 'Authoritative verbatim source document for MPS, intent, and criteria extraction.'
-            : sourceMode === 'HYBRID'
-            ? 'Hybrid source document: harvest customer material, then complete gaps with subject knowledge.'
-            : 'New-generation context source: use as organisation familiarisation material.',
-      });
-      if (insertError) {
-        const detail = JSON.stringify({
-          message: insertError.message,
-          code: insertError.code ?? null,
-          details: insertError.details ?? null,
-          hint: insertError.hint ?? null,
-          orgId: org.id,
-          scopeType: 'organisation_context',
-          sourceMode,
-        });
-        throw new Error(`Database insert failed: ${detail}`);
-      }
-      setSourceUploadStatus('Metadata saved. Processing source document…');
-
-      // Auto-reprocess immediately so organisation source documents become chunked/AI-consumable
-      // without requiring the user to switch to DMC first.
-      const { data: insertedDoc, error: insertedLookupError } = await supabase
-        .from('mmm_subject_knowledge_documents')
-        .select('id')
-        .eq('organisation_id', org.id)
-        .eq('storage_bucket', 'mmm-subject-knowledge')
-        .eq('storage_path', storagePath)
-        .maybeSingle();
-      if (insertedLookupError || !insertedDoc?.id) {
-        throw new Error(insertedLookupError?.message || 'Source document saved but could not resolve document id for processing.');
-      }
-
-      const headers = await getEdgeInvokeHeaders();
-      const { data: reprocessData, error: reprocessError } = await supabase.functions.invoke(
-        'mmm-subject-knowledge-reprocess',
-        {
-          headers,
-          body: { document_id: insertedDoc.id },
-        },
-      );
-      if (reprocessError) {
-        throw new Error(reprocessError.message || 'Source document uploaded but automatic processing failed.');
-      }
-      if (reprocessData && typeof reprocessData === 'object' && 'success' in reprocessData && (reprocessData as { success?: boolean }).success === false) {
-        const detail =
-          typeof (reprocessData as { error?: unknown }).error === 'string'
-            ? (reprocessData as { error: string }).error
-            : 'Source document uploaded, but processing failed.';
-        throw new Error(detail);
-      }
-      setSourceUploadStatus('Processing complete. Finalizing mode context…');
-
-      // Persist the selected mode in organisation context so runtime mode resolution
-      // remains stable across framework pages and sessions.
-      const nextContext = {
-        ...(org.context ?? {}),
-        frameworkCreationMode: sourceMode,
-        sourceMode,
-      };
-      const { error: contextPersistError } = await supabase
-        .from('mmm_organisations')
-        .update({
-          context: nextContext,
-          context_updated_at: new Date().toISOString(),
+      // Client-side mixed-batch orchestration (T-2025-03, T-2025-05): the primary document
+      // and every supplementary file are attempted independently/concurrently. A failed or
+      // still-pending/hung primary reprocess call must never gate or block the supplementary
+      // attempts, and one supplementary file's failure must never block another's.
+      const primaryPromise = uploadPrimaryDocument(activeOrg, sourceFile, userId)
+        .then((reprocessResult) => {
+          // Deferred/processing response messaging (issue #2025 / T-2025-11): mirror the
+          // per-card status wording — a deferred/still-processing reprocess response must not
+          // be reported as a fully finished upload here either.
+          const isDeferred =
+            reprocessResult?.deferred === true || reprocessResult?.processing_status === 'processing';
+          setMessage(
+            isDeferred
+              ? 'Organisation source document uploaded and accepted; processing continues in the background.'
+              : 'Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.',
+          );
+          qc.invalidateQueries({ queryKey: ['organisation-context'] });
         })
-        .eq('id', org.id);
-      if (contextPersistError) {
-        throw new Error(contextPersistError.message || 'Source processed, but mode context save failed.');
-      }
+        .catch((err) => {
+          const msg = err instanceof Error ? err.message : 'Organisation source upload failed.';
+          setSourceUploadStatus(msg);
+          setMessage(msg);
+        });
+
+      const supplementaryPromise = Promise.allSettled(
+        supplementaryFiles.map((file) => uploadSupplementaryDocument(activeOrg, file, userId)),
+      );
+
+      await Promise.allSettled([primaryPromise, supplementaryPromise]);
+      qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', activeOrg.id] });
 
       setSourceFile(null);
-      setSourceUploadStatus('Organisation source upload finished successfully.');
-      setMessage('Organisation source document uploaded and processed. Maturion can now use it according to the selected mode.');
-      qc.invalidateQueries({ queryKey: ['organisation-context'] });
-      qc.invalidateQueries({ queryKey: ['organisation-context-source-docs', org.id] });
+      setSupplementaryRows([{ id: nextSupplementaryRowId(), files: [] }]);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Organisation source upload failed.';
       setSourceUploadStatus(msg);
       setMessage(msg);
-      window.alert(msg);
     } finally {
       setIsUploadingSource(false);
     }
@@ -482,7 +727,6 @@ export default function OrganisationContextPage() {
 
       <div className="card" data-testid="organisation-source-upload">
         <h2>Organisation Source Documents</h2>
-        <p style={{ color: 'red', fontWeight: 700 }}>DEBUG-MARKER-20260601-A</p>
         <p>
           Upload the customer-specific document Maturion should use for Verbatim, Hybrid, or New Generation
           framework creation.
@@ -501,13 +745,54 @@ export default function OrganisationContextPage() {
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="context-source-file">Source document</label>
+          <label htmlFor="context-source-file">Primary source document <span style={{color:'#888',fontWeight:'normal'}}>(PDF, Word, PowerPoint, Excel, text)</span></label>
           <input
             id="context-source-file"
             className="form-control"
             type="file"
+            accept={ORG_ACCEPTED_TYPES}
             onChange={(event) => setSourceFile(event.target.files?.[0] ?? null)}
           />
+          {sourceFile && (
+            <p style={{margin:'4px 0 0',fontSize:'0.85rem',color:'#555'}}>Selected: {sourceFile.name}</p>
+          )}
+        </div>
+        <div className="form-group">
+          <label htmlFor="context-supplementary-files">
+            Supplementary files{' '}
+            <span style={{ color: '#888', fontWeight: 'normal' }}>
+              (optional — PDF, Word, PowerPoint, Excel, text, JSON; add as many rows as you need)
+            </span>
+          </label>
+          {supplementaryRows.map((row, rowIndex) => (
+            <div
+              key={row.id}
+              data-testid={`organisation-supplementary-row-${rowIndex}`}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}
+            >
+              <input
+                id={rowIndex === 0 ? 'context-supplementary-files' : undefined}
+                className="form-control"
+                type="file"
+                accept={ORG_ACCEPTED_TYPES}
+                multiple
+                onChange={(event) => handleSupplementaryRowFilesChange(rowIndex, event.target.files)}
+              />
+              {row.files.length > 0 && (
+                <span style={{ fontSize: '0.85rem', color: '#555' }}>
+                  {row.files.map((f) => f.name).join(', ')}
+                </span>
+              )}
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-testid={`organisation-supplementary-row-remove-${rowIndex}`}
+                onClick={() => handleRemoveSupplementaryRow(rowIndex)}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
         </div>
         <button
           type="button"

@@ -19,12 +19,33 @@ import {
   sanitizeForPostgresText,
   sha256Hex,
 } from '../_shared/mmm-subject-knowledge.ts';
+import {
+  AI_PARSE_TIMEOUT_MS,
+  BACKGROUND_COMPLETION_HARD_TIMEOUT_MS,
+  SYNC_COMPLETION_BUDGET_MS,
+  buildBackgroundTimeoutFailureUpdate,
+  buildDeferredAcceptedResponse,
+  truncateForSynchronousProcessing,
+} from '../_shared/mmm-subject-knowledge-resource-budget.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const AI_GATEWAY_URL = (Deno.env.get('AI_GATEWAY_URL') ?? '').replace(/\/+$/, '');
 const KUC_BASE_URL = (Deno.env.get('KUC_BASE_URL') ?? '').replace(/\/+$/, '');
-const AI_PARSE_TIMEOUT_MS = 120_000;
+
+/** Minimal shape of the platform-provided background-task global (see background-tasks doc). */
+type EdgeRuntimeLike = { waitUntil?: (promise: Promise<unknown>) => void };
+
+function getEdgeRuntime(): EdgeRuntimeLike | undefined {
+  // Accessed via globalThis (never a bare identifier reference) so this file never throws a
+  // ReferenceError in any host that doesn't provide `EdgeRuntime` (e.g. a plain `deno test` or
+  // hypothetical non-Supabase runtime) — it simply falls back to "no background hand-off".
+  return (globalThis as unknown as { EdgeRuntime?: EdgeRuntimeLike }).EdgeRuntime;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 type ReprocessBody = {
   document_id?: string;
@@ -253,217 +274,286 @@ Deno.serve(async (req: Request) => {
     })
     .eq('id', documentId);
 
-  try {
-    const { data: fileBlob, error: downloadError } = await supabase.storage
-      .from(doc.storage_bucket)
-      .download(doc.storage_path);
+  // Resource-safe redesign (issue #2025 / task #2029): the full download -> KUC upload -> AI
+  // Gateway parse -> extraction -> chunk/index-write pipeline is executed inside a single
+  // promise that ALWAYS resolves (never rejects) and ALWAYS writes a durable terminal
+  // `processing_status` ('completed' or 'failed') before resolving — regardless of whether the
+  // HTTP response for this invocation ends up being the synchronous result (fast/small
+  // documents) or the fast "processing" acknowledgement below (resource-heavy documents whose
+  // pipeline is hurried off to `EdgeRuntime.waitUntil()` background completion). This is what
+  // guarantees no supported document format can turn this invocation's own HTTP response into
+  // a HTTP 546 WORKER_RESOURCE_LIMIT: the response is decoupled from pipeline duration.
+  const runReprocessPipeline = async (): Promise<Record<string, unknown>> => {
+    try {
+      const { data: fileBlob, error: downloadError } = await supabase.storage
+        .from(doc.storage_bucket)
+        .download(doc.storage_path);
 
-    if (downloadError || !fileBlob) {
-      throw new Error(downloadError?.message ?? 'Unable to download source file for reprocess.');
-    }
+      if (downloadError || !fileBlob) {
+        throw new Error(downloadError?.message ?? 'Unable to download source file for reprocess.');
+      }
 
-    const documentRole = normalizeSubjectDocumentRole(doc.document_role);
-    const kucResult = await uploadToKuc(
-      fileBlob,
-      documentRole as 'criteria_source' | 'evidence' | 'knowledge_source' | 'guidance' | 'template',
-      claims.orgId,
-      claims.userId,
-      {
-        filename: doc.file_name,
-        mime_type: doc.mime_type,
-        size_bytes: Number(doc.file_size ?? 0),
-        upload_context: 'subject_knowledge',
-      },
-    );
+      const documentRole = normalizeSubjectDocumentRole(doc.document_role);
+      const kucResult = await uploadToKuc(
+        fileBlob,
+        documentRole as 'criteria_source' | 'evidence' | 'knowledge_source' | 'guidance' | 'template',
+        claims.orgId,
+        claims.userId,
+        {
+          filename: doc.file_name,
+          mime_type: doc.mime_type,
+          size_bytes: Number(doc.file_size ?? 0),
+          upload_context: 'subject_knowledge',
+        },
+      );
 
-    const aiParse = await tryAiGatewayParseText({
-      supabase,
-      storageBucket: doc.storage_bucket,
-      storagePath: doc.storage_path,
-      tenantId: claims.orgId,
-    });
-    const sourceMode = deriveSourceModeFromSafeFields({
-      title: doc.title,
-      uploadNotes: doc.upload_notes,
-    });
-    const tags = buildSafeReprocessTags({ scopeType: doc.scope_type, sourceMode });
-    const orgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
+      const aiParse = await tryAiGatewayParseText({
+        supabase,
+        storageBucket: doc.storage_bucket,
+        storagePath: doc.storage_path,
+        tenantId: claims.orgId,
+      });
+      const sourceMode = deriveSourceModeFromSafeFields({
+        title: doc.title,
+        uploadNotes: doc.upload_notes,
+      });
+      const tags = buildSafeReprocessTags({ scopeType: doc.scope_type, sourceMode });
+      const orgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
 
-    const extractedText = await extractBestEffortText({
-      mimeType: doc.mime_type,
-      fileBlob,
-      fallbackText: [
-        `Subject knowledge document: ${doc.title ?? doc.file_name}`,
-        `MIME type: ${doc.mime_type}`,
-        doc.upload_notes ? `Uploader notes: ${doc.upload_notes}` : '',
-      ].filter(Boolean).join('\n'),
-      kucClassification: kucResult.kuc_classification,
-      aiParsedText: orgVerbatim ? null : aiParse.text,
-    });
+      const extractedTextRaw = await extractBestEffortText({
+        mimeType: doc.mime_type,
+        fileBlob,
+        fallbackText: [
+          `Subject knowledge document: ${doc.title ?? doc.file_name}`,
+          `MIME type: ${doc.mime_type}`,
+          doc.upload_notes ? `Uploader notes: ${doc.upload_notes}` : '',
+        ].filter(Boolean).join('\n'),
+        kucClassification: kucResult.kuc_classification,
+        aiParsedText: orgVerbatim ? null : aiParse.text,
+      });
 
-    const chunkPayloads = await buildChunkPayloads({
-      organisationId: claims.orgId,
-      documentId,
-      sourceDocumentName: doc.file_name,
-      source: 'mmm-dmc-reprocess',
-      content: extractedText,
-      documentRole,
-      domain: 'subject_knowledge',
-      module: 'mmm',
-      metadata: {
-        storage_bucket: doc.storage_bucket,
-        storage_path: doc.storage_path,
-        tags,
-        kuc_classification: kucResult.kuc_classification ?? null,
-      },
-    });
+      // Bound the amount of text pushed through the CPU-bound chunk/regex extraction below
+      // (see resource-budget helper module docblock for the platform CPU-time rationale).
+      const { text: extractedText, truncated: extractedTextTruncated } =
+        truncateForSynchronousProcessing(extractedTextRaw);
 
-    await supabase.from('ai_knowledge').delete().eq('document_id', documentId);
-    if (chunkPayloads.length > 0) {
-      const { error: chunkError } = await supabase.from('ai_knowledge').insert(chunkPayloads);
-      if (chunkError) {
-        const lower = (chunkError.message ?? '').toLowerCase();
-        // Retry path for strict json parser failures on legacy edge-case metadata payloads.
-        if (lower.includes('invalid input syntax for type json')) {
-          const slim = chunkPayloads.map((payload) => ({
-            ...sanitizeKnowledgeInsertPayload(payload),
-            metadata: { document_role: documentRole, retry_mode: 'json_slim_fallback' },
-          }));
-          const { error: retryError } = await supabase.from('ai_knowledge').insert(slim);
-          if (retryError) {
-            const retryLower = (retryError.message ?? '').toLowerCase();
-            if (retryLower.includes('invalid input syntax for type json')) {
-              // Final fallback: insert with empty metadata object.
-              const minimal = chunkPayloads.map((payload) => ({
-                ...sanitizeKnowledgeInsertPayload(payload),
-                metadata: {},
-              }));
-              const { error: finalRetryError } = await supabase.from('ai_knowledge').insert(minimal);
-              if (finalRetryError) {
-                const finalRetryLower = (finalRetryError.message ?? '').toLowerCase();
-                if (finalRetryLower.includes('invalid input syntax for type json')) {
-                  // Last resort: omit the JSONB column entirely so Postgres applies its '{}' default.
-                  const noMetadata = chunkPayloads.map(omitKnowledgeMetadataColumn);
-                  const { error: noMetadataError } = await supabase.from('ai_knowledge').insert(noMetadata);
-                  if (noMetadataError) {
-                    throw new Error(noMetadataError.message || 'Unable to persist ai_knowledge chunks (metadata column omitted).');
+      const chunkPayloads = await buildChunkPayloads({
+        organisationId: claims.orgId,
+        documentId,
+        sourceDocumentName: doc.file_name,
+        source: 'mmm-dmc-reprocess',
+        content: extractedText,
+        documentRole,
+        domain: 'subject_knowledge',
+        module: 'mmm',
+        metadata: {
+          storage_bucket: doc.storage_bucket,
+          storage_path: doc.storage_path,
+          tags,
+          kuc_classification: kucResult.kuc_classification ?? null,
+          extracted_text_truncated: extractedTextTruncated,
+        },
+      });
+
+      await supabase.from('ai_knowledge').delete().eq('document_id', documentId);
+      if (chunkPayloads.length > 0) {
+        const { error: chunkError } = await supabase.from('ai_knowledge').insert(chunkPayloads);
+        if (chunkError) {
+          const lower = (chunkError.message ?? '').toLowerCase();
+          // Retry path for strict json parser failures on legacy edge-case metadata payloads.
+          if (lower.includes('invalid input syntax for type json')) {
+            const slim = chunkPayloads.map((payload) => ({
+              ...sanitizeKnowledgeInsertPayload(payload),
+              metadata: { document_role: documentRole, retry_mode: 'json_slim_fallback' },
+            }));
+            const { error: retryError } = await supabase.from('ai_knowledge').insert(slim);
+            if (retryError) {
+              const retryLower = (retryError.message ?? '').toLowerCase();
+              if (retryLower.includes('invalid input syntax for type json')) {
+                // Final fallback: insert with empty metadata object.
+                const minimal = chunkPayloads.map((payload) => ({
+                  ...sanitizeKnowledgeInsertPayload(payload),
+                  metadata: {},
+                }));
+                const { error: finalRetryError } = await supabase.from('ai_knowledge').insert(minimal);
+                if (finalRetryError) {
+                  const finalRetryLower = (finalRetryError.message ?? '').toLowerCase();
+                  if (finalRetryLower.includes('invalid input syntax for type json')) {
+                    // Last resort: omit the JSONB column entirely so Postgres applies its '{}' default.
+                    const noMetadata = chunkPayloads.map(omitKnowledgeMetadataColumn);
+                    const { error: noMetadataError } = await supabase.from('ai_knowledge').insert(noMetadata);
+                    if (noMetadataError) {
+                      throw new Error(noMetadataError.message || 'Unable to persist ai_knowledge chunks (metadata column omitted).');
+                    }
+                  } else {
+                    throw new Error(finalRetryError.message || 'Unable to persist ai_knowledge chunks (minimal json retry failed).');
                   }
-                } else {
-                  throw new Error(finalRetryError.message || 'Unable to persist ai_knowledge chunks (minimal json retry failed).');
                 }
+              } else {
+                throw new Error(retryError.message || 'Unable to persist ai_knowledge chunks (json retry failed).');
               }
-            } else {
-              throw new Error(retryError.message || 'Unable to persist ai_knowledge chunks (json retry failed).');
             }
+          } else {
+            throw new Error(chunkError.message || 'Unable to persist ai_knowledge chunks.');
+          }
+        }
+      }
+
+      const frameworkId = null;
+      const verbatimRows = buildVerbatimIndexRows({
+        organisationId: claims.orgId,
+        documentId,
+        frameworkId,
+        sourceMode,
+        parseResult: aiParse.parseResult,
+        extractedText,
+      });
+      await supabase.from('mmm_org_source_verbatim_index').delete().eq('document_id', documentId);
+      if (verbatimRows.length > 0) {
+        const { error: indexError } = await supabase
+          .from('mmm_org_source_verbatim_index')
+          .upsert(verbatimRows, { onConflict: 'document_id,domain_name,mps_code' });
+        if (indexError) {
+          throw new Error(indexError.message || 'Unable to persist verbatim source index rows.');
+        }
+      }
+
+      const fileHash = await sha256Hex(`${doc.file_name}:${doc.storage_bucket}:${doc.storage_path}:${doc.file_size ?? 0}`);
+      const isOrgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
+      const hasExtractedChunks = chunkPayloads.length > 0;
+      const completionUpdate = {
+        processing_status: hasExtractedChunks ? 'completed' : 'failed',
+        processing_error: !kucResult.success && !kucResult.fallback
+          ? sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`)
+          : null,
+        chunk_count: chunkPayloads.length,
+        content_hash: fileHash,
+        kuc_upload_id: kucResult.kuc_classification?.upload_id ?? null,
+        kuc_parse_job_id: kucResult.kuc_classification?.parse_job_id ?? null,
+        kuc_classification: sanitizeForPostgresJson(kucResult.kuc_classification ?? null),
+        updated_by: claims.userId,
+        updated_at: new Date().toISOString(),
+      };
+      if (isOrgVerbatim && verbatimRows.length === 0) {
+        const headingCount = (extractedText.match(/(?:^|\n)\s*MPS\s*[A-Za-z0-9.]+\s*[–-]/gi) ?? []).length;
+        const kucTextCandidate = sanitizeForPostgresText(
+          String((kucResult.kuc_classification as Record<string, unknown> | null)?.extracted_text ?? ''),
+        ).trim();
+        completionUpdate.processing_error =
+          `VERBATIM source index warning: no extractable MPS intent statements were indexed; chunk fallback remains available. ` +
+          `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0}, ` +
+          `kuc_success=${kucResult.success}, kuc_error=${kucResult.error ?? 'none'}, kuc_chars=${kucTextCandidate.length}, ` +
+          `kuc_base_url_present=${KUC_BASE_URL ? 'yes' : 'no'})`;
+      }
+
+      const { error: completionError } = await supabase
+        .from('mmm_subject_knowledge_documents')
+        .update(completionUpdate)
+        .eq('id', documentId);
+
+      if (completionError) {
+        const lower = (completionError.message ?? '').toLowerCase();
+        if (lower.includes('invalid input syntax for type json')) {
+          // Final fallback: write completion state without KUC classification blob.
+          const { error: slimCompletionError } = await supabase
+            .from('mmm_subject_knowledge_documents')
+            .update({
+              ...completionUpdate,
+              kuc_classification: null,
+            })
+            .eq('id', documentId);
+          if (slimCompletionError) {
+            throw new Error(`final-document-update(json-slim-fallback): ${slimCompletionError.message}`);
           }
         } else {
-          throw new Error(chunkError.message || 'Unable to persist ai_knowledge chunks.');
+          throw new Error(`final-document-update: ${completionError.message}`);
         }
       }
-    }
 
-    const frameworkId = null;
-    const verbatimRows = buildVerbatimIndexRows({
-      organisationId: claims.orgId,
-      documentId,
-      frameworkId,
-      sourceMode,
-      parseResult: aiParse.parseResult,
-      extractedText,
-    });
-    await supabase.from('mmm_org_source_verbatim_index').delete().eq('document_id', documentId);
-    if (verbatimRows.length > 0) {
-      const { error: indexError } = await supabase
-        .from('mmm_org_source_verbatim_index')
-        .upsert(verbatimRows, { onConflict: 'document_id,domain_name,mps_code' });
-      if (indexError) {
-        throw new Error(indexError.message || 'Unable to persist verbatim source index rows.');
-      }
-    }
-
-    const fileHash = await sha256Hex(`${doc.file_name}:${doc.storage_bucket}:${doc.storage_path}:${doc.file_size ?? 0}`);
-    const isOrgVerbatim = isOrgContext && sourceMode === 'VERBATIM';
-    const hasExtractedChunks = chunkPayloads.length > 0;
-    const completionUpdate = {
-      processing_status: hasExtractedChunks ? 'completed' : 'failed',
-      processing_error: !kucResult.success && !kucResult.fallback
-        ? sanitizeForPostgresText(`KUC upload failed: ${kucResult.error ?? 'Unknown KUC error'}`)
-        : null,
-      chunk_count: chunkPayloads.length,
-      content_hash: fileHash,
-      kuc_upload_id: kucResult.kuc_classification?.upload_id ?? null,
-      kuc_parse_job_id: kucResult.kuc_classification?.parse_job_id ?? null,
-      kuc_classification: sanitizeForPostgresJson(kucResult.kuc_classification ?? null),
-      updated_by: claims.userId,
-      updated_at: new Date().toISOString(),
-    };
-    if (isOrgVerbatim && verbatimRows.length === 0) {
-      const headingCount = (extractedText.match(/(?:^|\n)\s*MPS\s*[A-Za-z0-9.]+\s*[–-]/gi) ?? []).length;
-      const kucTextCandidate = sanitizeForPostgresText(
-        String((kucResult.kuc_classification as Record<string, unknown> | null)?.extracted_text ?? ''),
-      ).trim();
-      completionUpdate.processing_error =
-        `VERBATIM source index warning: no extractable MPS intent statements were indexed; chunk fallback remains available. ` +
-        `(chars=${extractedText.length}, mps_headings=${headingCount}, ai_summary_chars=${aiParse.text?.length ?? 0}, ` +
-        `kuc_success=${kucResult.success}, kuc_error=${kucResult.error ?? 'none'}, kuc_chars=${kucTextCandidate.length}, ` +
-        `kuc_base_url_present=${KUC_BASE_URL ? 'yes' : 'no'})`;
-    }
-
-    const { error: completionError } = await supabase
-      .from('mmm_subject_knowledge_documents')
-      .update(completionUpdate)
-      .eq('id', documentId);
-
-    if (completionError) {
-      const lower = (completionError.message ?? '').toLowerCase();
-      if (lower.includes('invalid input syntax for type json')) {
-        // Final fallback: write completion state without KUC classification blob.
-        const { error: slimCompletionError } = await supabase
-          .from('mmm_subject_knowledge_documents')
-          .update({
-            ...completionUpdate,
-            kuc_classification: null,
-          })
-          .eq('id', documentId);
-        if (slimCompletionError) {
-          throw new Error(`final-document-update(json-slim-fallback): ${slimCompletionError.message}`);
-        }
-      } else {
-        throw new Error(`final-document-update: ${completionError.message}`);
-      }
-    }
-
-    return jsonResponse(
-      {
+      return {
         document_id: documentId,
         chunk_count: chunkPayloads.length,
         kuc_success: kucResult.success,
         kuc_fallback: kucResult.fallback,
         kuc_error: kucResult.error,
-      },
-      200,
-    );
-  } catch (error) {
-    const message = sanitizeForPostgresText(error instanceof Error ? error.message : 'Unexpected reprocess error.');
-    await supabase
-      .from('mmm_subject_knowledge_documents')
-      .update({
-        processing_status: 'failed',
-        processing_error: message,
-        updated_by: claims.userId,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', documentId);
+      };
+    } catch (error) {
+      const message = sanitizeForPostgresText(error instanceof Error ? error.message : 'Unexpected reprocess error.');
+      await supabase
+        .from('mmm_subject_knowledge_documents')
+        .update({
+          processing_status: 'failed',
+          processing_error: message,
+          updated_by: claims.userId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', documentId);
 
-    // Return a structured non-fatal response so the UI can continue and show the
-    // persisted document status/error instead of a generic invoke transport failure.
-    return jsonResponse(
-      {
+      // Return a structured non-fatal payload so the caller can continue and show the
+      // persisted document status/error instead of a generic invoke transport failure.
+      return {
         success: false,
         error: message,
         document_id: documentId,
-      },
-      200,
-    );
+      };
+    }
+  };
+
+  const pipelinePromise = runReprocessPipeline();
+
+  // Race the pipeline against a strictly bounded "try to finish synchronously" budget. Small
+  // and fast documents (the existing single-document happy path) resolve well inside this
+  // budget and the caller gets the exact same fully-populated response as before. Anything
+  // slower — regardless of which stage is slow (storage download, KUC upload, AI Gateway
+  // parse, extraction, or index writes) — falls through to the deferred/background path below
+  // instead of continuing to hold this HTTP response open.
+  const raceOutcome = await Promise.race<{ settled: true; result: Record<string, unknown> } | { settled: false }>([
+    pipelinePromise.then((result) => ({ settled: true, result })),
+    sleep(SYNC_COMPLETION_BUDGET_MS).then(() => ({ settled: false })),
+  ]);
+
+  if (raceOutcome.settled) {
+    return jsonResponse(raceOutcome.result, 200);
   }
+
+  // Sync budget exceeded: hand the still-running pipeline off to the platform's background-task
+  // mechanism (`EdgeRuntime.waitUntil`) instead of continuing to block this HTTP response, and
+  // respond immediately. `mmm_subject_knowledge_documents.processing_status` already reads
+  // 'processing' for this document (written above, before the pipeline started), so the
+  // client's polled document list shows accurate durable status regardless of how long
+  // completion ultimately takes. A hard ceiling (BACKGROUND_COMPLETION_HARD_TIMEOUT_MS) below
+  // guarantees a durable terminal status gets written even if the pipeline itself hangs
+  // indefinitely on a downstream dependency (e.g. an unresponsive AI Gateway or KUC service).
+  const guardedBackgroundCompletion = (async () => {
+    const hardTimeoutOutcome = await Promise.race<{ hitHardTimeout: true } | { hitHardTimeout: false }>([
+      pipelinePromise.then(() => ({ hitHardTimeout: false as const })),
+      sleep(BACKGROUND_COMPLETION_HARD_TIMEOUT_MS).then(() => ({ hitHardTimeout: true as const })),
+    ]);
+    if (hardTimeoutOutcome.hitHardTimeout) {
+      try {
+        await supabase
+          .from('mmm_subject_knowledge_documents')
+          .update(buildBackgroundTimeoutFailureUpdate(new Date().toISOString(), claims.userId))
+          .eq('id', documentId);
+      } catch {
+        // Best-effort only: if this final guard write itself fails, the pipeline's own
+        // completion/catch handler remains the source of truth for durable status if/when it
+        // eventually settles.
+      }
+    }
+    // Whether or not the hard timeout fired, never leave an unhandled rejection dangling.
+    await pipelinePromise.catch(() => undefined);
+  })();
+
+  const edgeRuntime = getEdgeRuntime();
+  if (edgeRuntime?.waitUntil) {
+    edgeRuntime.waitUntil(guardedBackgroundCompletion);
+  } else {
+    // Local/dev or a runtime without background-task support: still let the pipeline continue
+    // running without awaiting it here, but never let an unhandled rejection escape this
+    // request handler.
+    guardedBackgroundCompletion.catch(() => undefined);
+  }
+
+  return jsonResponse(buildDeferredAcceptedResponse(documentId), 200);
 });

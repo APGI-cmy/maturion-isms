@@ -1,5 +1,6 @@
-import { type CSSProperties, type MouseEvent as ReactMouseEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { type CSSProperties, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -34,6 +35,12 @@ function getAutoSidebarWidth(): number {
 export default function AuthenticatedAppShell() {
   const [sidebarWidth, setSidebarWidth] = useState(() => getAutoSidebarWidth());
   const dragState = useRef<{ startX: number; startWidth: number } | null>(null);
+  const navigate = useNavigate();
+
+  const handleSignOut = useCallback(async () => {
+    await supabase.auth.signOut();
+    navigate('/login', { replace: true });
+  }, [navigate]);
 
   useEffect(() => {
     const raw = window.localStorage.getItem('mmm.sidebar.width');
@@ -98,6 +105,15 @@ export default function AuthenticatedAppShell() {
             </NavLink>
           ))}
         </nav>
+        <div className="mmm-shell__sidebar-footer">
+          <button
+            type="button"
+            className="mmm-shell__signout-btn"
+            onClick={() => { void handleSignOut(); }}
+          >
+            Sign Out
+          </button>
+        </div>
       </aside>
       <div
         className="mmm-shell__resize-handle"

@@ -2,8 +2,8 @@
 
 **Module**: MMM (Maturity Model Management)  
 **Module Slug**: MMM  
-**Last Updated**: 2026-08-13  
-**Updated By**: CS2 reality-check and tracker reconciliation
+**Last Updated**: 2026-08-17  
+**Updated By**: CS2 automation framework implementation
 
 > **Classification**: ACTIVE — APPROVAL WORKFLOW FOUNDATION RUNTIME MERGED (PR #2006); IAA CLOSURE GAP RECORDED; NEXT WAVE: LEVEL 2 UI PRE-BUILD
 > **Document Role**: PRIMARY LIVE CONTROL DOCUMENT — CS2 should use this document as the main MMM progress dashboard.
@@ -26,7 +26,7 @@ As of 2026-08-13:
 **Current state:**
 
 - All 7 approval Foundation Edge Functions implemented and merged (PR #2006)
-- 8-table migration (10 enums, org-level RLS) merged
+- 9-table migration (10 enums, org-level RLS) merged
 - 59/59 tests passing at merge
 - **IAA closure gap**: PR #2006 merged with IAA/ECAP status PENDING — governance gap noted; must be addressed before next wave
 - No active builder PR or branch currently
@@ -195,3 +195,80 @@ Bounded scope:
 Do not claim full B4 completion, approval workflow completion, Stage 12 completion, production readiness, or full MMM handover from any subset of the above work.
 
 Completion claims require corresponding executable tests, operational backend and frontend wiring, preview/live evidence, fully closed governance gates (including IAA), and CS2 acceptance for the specific wave.
+
+## 13. CS2 Automation Framework Implementation (2026-08-17)
+
+**Status: OPERATIONAL — File-based trigger chain, all manual play-button**
+
+**Last updated**: 2026-08-17 15:49 — Root cause resolved; file-based trigger mechanism deployed
+
+### Objective
+Event-driven CS2→Foreman→CS2-IR chain, all triggered via play buttons in the Automations UI. No polling, no cron, no `run_workflow` calls (not available in automation context).
+
+### Automations Configured
+
+| Name | Workflow ID | Trigger | Mode | Status |
+|---|---|---|---|---|
+| CS2 Oversight — MMM Level 2 Batch Review | `b3bf32d2` | Manual (play ▶️) | Interactive | ✅ Active |
+| Foreman — MMM Supervised Build Cycle | `0962aeb1` | Manual (play ▶️) | Autopilot | ✅ Active |
+| CS2 Oversight — Independent Governance Review | `2802fa7b` | Manual (play ▶️) | Autopilot | ✅ Active |
+| Foreman — worktree duplicate | `7cea2cfe` | — | — | ❌ Disabled |
+| MMM Watchdog | `e2745ed8` | — | — | ❌ Disabled |
+
+### How the Chain Works
+
+```
+[▶ CS2 Oversight]
+  → Phases 1-4: Bootstrap → Alignment → Delivery Intent Review → Routing
+  → Phase 5: writes + commits .agent-admin/foreman-trigger/cs2-decision-latest.json
+              { decision, foreman_may_proceed: true/false, head_sha, findings_summary }
+
+[▶ Foreman]
+  → Step 0: reads cs2-decision-latest.json
+    → if foreman_may_proceed=false → STOPS (blocked, print reason)
+    → if foreman_may_proceed=true  → runs QP→ECAP→IAA cycle
+  → Phase 6 (if final-handover-ready): writes foreman-complete-latest.json
+
+[▶ CS2 Independent Review]
+  → reads foreman-complete-latest.json
+  → runs independent assurance on exact HEAD
+  → issues PASS token or REJECTION-PACKAGE
+```
+
+### Root Cause of Missing Foreman Trigger (Resolved)
+**Problem**: Original prompt instructed agents to call `run_workflow()` — but that tool is only available in interactive chat sessions, not in automation execution contexts.
+
+**Fix**: File-based trigger mechanism. CS2 writes a JSON file to `.agent-admin/foreman-trigger/`, commits it, and Foreman reads it on startup. Foreman writes its completion file for CS2-IR to read.
+
+### How to Use
+1. Navigate to: **Copilot App → Automations tab**
+2. Click ▶️ on **CS2 Oversight — MMM Level 2 Batch Review** → review runs, trigger file committed
+3. Click ▶️ on **Foreman — MMM Supervised Build Cycle** → reads trigger, runs if authorized
+4. Click ▶️ on **CS2 Oversight — Independent Governance Review** → final assurance
+
+### Trigger File Infrastructure
+- Directory: `.agent-admin/foreman-trigger/`
+- `cs2-decision-latest.json` — written by CS2, read by Foreman
+- `foreman-complete-latest.json` — written by Foreman, read by CS2-IR
+- `README.md` — full chain documentation
+
+### Live Run History
+
+| Run | Time | Automation | Result |
+|---|---|---|---|
+| #1 | 14:50 | CS2 Oversight | Completed ~50s — Phase 5 missing (pre-fix) |
+| #2 | 15:27 | CS2 Oversight | Completed ~6min — STOP_AND_FIX (QP=FAIL, correct governance) |
+| #3 | pending | CS2 Oversight | Will produce trigger file (Phase 5 now wired) |
+
+### Current Blocker (Governance, Not Automation)
+CS2 will issue `STOP_AND_FIX` until these are resolved:
+1. `modules/MMM/tests/B4-framework/level2-invite-workspace-red.test.ts` — replace 240 `it.todo()` stubs with real failing assertions
+2. `Level2Workspace.tsx` — remove `alert()` placeholder flows, implement real data fetch + validation
+
+**These are real QA deficiencies, not automation bugs.** Fix these, then run CS2 → expect `FOREMAN_REENTRY_PACKET` → click Foreman play button.
+
+### Documentation
+- User guide: `.agent-admin/automation-guides/CS2-AUTOMATION-USER-GUIDE.md`
+- Trigger chain README: `.agent-admin/foreman-trigger/README.md`
+- Interim-cs2-agent contract: `.github/agents/interim-cs2-agent.md`
+

@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "issue-2004-mmm-approval-foundation-runtime-build-green",
-  "pr_number": 2006,
-  "current_head_sha": "32bba159ddfa0e320461cd368de633929aa6e821",
+  "wave_id": "issue-2025-2030-production-remediation-organisation-context",
+  "pr_number": 2031,
+  "current_head_sha": "74d452802c95f440e2bd364c056d9b40b7c1ecd6",
   "state": "PRE_HANDOVER_GATE_PASS",
   "handover_allowed": true,
   "foreman_qp_pass": true,
@@ -14,5 +14,7 @@
   "ecap_admin_validated": true,
   "all_required_checks_green": true,
   "iaa_final_required": true,
+  "iaa_final_verdict": "ASSURANCE-TOKEN",
+  "iaa_token": "IAA-iaa-pr-2031-20260821-PASS",
   "blocking_findings": []
 }

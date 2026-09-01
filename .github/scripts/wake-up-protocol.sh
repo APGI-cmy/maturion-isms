@@ -34,14 +34,17 @@ NODE_BIN=""
 # with existing jq expressions; Node is the repository's portable fallback.
 # Failure to find either is a tooling failure, never an invalid-JSON result.
 select_json_parser() {
+    if command -v node >/dev/null 2>&1 && node --version >/dev/null 2>&1; then
+        NODE_BIN="$(command -v node)"
+    fi
+
     if command -v jq >/dev/null 2>&1 && jq --version >/dev/null 2>&1; then
         JSON_PARSER="jq"
         return 0
     fi
 
-    if command -v node >/dev/null 2>&1 && node --version >/dev/null 2>&1; then
+    if [ -n "${NODE_BIN}" ]; then
         JSON_PARSER="node"
-        NODE_BIN="$(command -v node)"
         return 0
     fi
 
@@ -527,6 +530,14 @@ if [ -f "$CANON_INVENTORY" ]; then
             fi
         else
             echo "  - Placeholder-hash enforcement: DISABLED"
+        fi
+        if [ -z "${NODE_BIN}" ]; then
+            echo -e "${RED}❌ CANON_INVENTORY content validation requires Node.js (failing closed)${NC}"
+            PHASE3_STATUS="FAIL"
+        elif "$NODE_BIN" "${SCRIPT_DIR}/validate-canon-inventory.js" --inventory "$CANON_INVENTORY" --root "$REPO_ROOT"; then
+            echo -e "${GREEN}✓ CANON_INVENTORY content hashes verified using LF-normalized UTF-8${NC}"
+        else
+            PHASE3_STATUS="FAIL"
         fi
     else
         echo -e "${RED}❌ CANON_INVENTORY.json is invalid JSON${NC}"

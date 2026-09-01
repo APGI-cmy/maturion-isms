@@ -6,8 +6,30 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); return; }
+    // First-time user check: redirect to onboarding if no profile or onboarding incomplete
+    const userId = data.session?.user?.id;
+    if (userId) {
+      const { data: profile } = await supabase
+        .from('mmm_profiles')
+        .select('organisation_id')
+        .eq('id', userId)
+        .maybeSingle();
+      if (!profile?.organisation_id) {
+        navigate('/onboarding');
+        return;
+      }
+      const { data: org } = await supabase
+        .from('mmm_organisations')
+        .select('onboarding_complete')
+        .eq('id', profile.organisation_id)
+        .maybeSingle();
+      if (!org?.onboarding_complete) {
+        navigate('/onboarding');
+        return;
+      }
+    }
     navigate('/dashboard');
   };
   return (
