@@ -1,6 +1,6 @@
 # IAA PRE-BRIEF PROTOCOL
 
-**Status**: CANONICAL | **Version**: 1.2.2 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2
 **Date**: 2026-03-03  
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
@@ -11,6 +11,7 @@ and does not automatically apply to direct-CS2 standalone governance-repo-admini
 canon actions (CS2 guidance — issue #1319)  
 **Amended**: 2026-04-08 — v1.2.1: Reference update — added `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` to references; clarified that Phase 4 handover proof may be prepared by `execution-ceremony-admin-agent` under Foreman oversight without affecting IAA independence or Pre-Brief validity; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.2.2: Re-invocation ownership cross-reference — added §Re-Invocation After Rejection — Ownership Reference, clarifying that after a `REJECTION-PACKAGE` the Foreman (not CS2) owns the stop-and-fix loop and re-invocation; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
+**Amended**: 2026-09-04 — v1.3.0: Replaced standalone pre-brief files with the canonical wave-record-only carrier. Pre-brief amendments are append-only subsections in the same wave record. Authority: CS2 issue #1399.
 
 ---
 
@@ -90,18 +91,20 @@ IAA Trigger Table in `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`. Spe
 
 ## Pre-Brief Content Requirements
 
-Each Pre-Brief artifact MUST contain the following sections:
+Each wave record MUST contain a non-empty `## PRE-BRIEF` section with the following content:
 
 ### Header Block
 
 ```markdown
-# IAA Pre-Brief — Wave <N> — <Wave Description>
+# IAA Wave Record — Wave <N> — <Wave Description>
 
-**IAA Session**: IAA-<YYYYMMDD>-PREBRIEF-WAVE<N>
+## PRE-BRIEF
+
+**Producer**: independent-assurance-agent
 **Wave**: <N>
 **Date**: YYYY-MM-DD
 **Wave Task List**: <path/to/wave-current-tasks.md>
-**Authority**: IAA_PRE_BRIEF_PROTOCOL.md v1.0.0
+**Authority**: IAA_PRE_BRIEF_PROTOCOL.md
 **Status**: ACTIVE
 ```
 
@@ -142,23 +145,15 @@ discovered during review not listed here.
 
 ## Storage Location
 
-Pre-Brief artifacts are stored at:
+The sole Pre-Brief carrier is the wave record:
 
 ```
-.agent-admin/assurance/iaa-prebrief-wave<N>.md
+.agent-admin/assurance/iaa-wave-record-<wave>-<date>.md
 ```
 
-Where `<N>` is the zero-padded wave number (e.g., `iaa-prebrief-wave09.md`).
-
-If a wave has a descriptive identifier rather than a number, use:
-
-```
-.agent-admin/assurance/iaa-prebrief-<wave-slug>.md
-```
-
-Pre-Brief artifacts are **immutable** once published. If task scope changes materially after
-publication, the Foreman must request a **Pre-Brief Amendment** (see §Pre-Brief Amendment
-below).
+`<wave>` is the wave number or approved descriptive identifier, and `<date>` is the record
+date. Standalone pre-brief files are prohibited. The initial `## PRE-BRIEF` declaration
+is immutable once published; amendments are append-only subsections in the same wave record.
 
 ---
 
@@ -193,11 +188,11 @@ removed, or substantially redesigned), the Foreman must:
 1. Note the scope change in the wave task list
 2. Invoke IAA for a Pre-Brief Amendment via `task(agent_type: "independent-assurance-agent")`
    with action flag `PRE-BRIEF-AMEND`
-3. IAA generates an amendment artifact at:
-   `.agent-admin/assurance/iaa-prebrief-<wave-slug>-amend<M>.md`
-   where `M` is the amendment number (01, 02, …)
-4. The original Pre-Brief is marked `SUPERSEDED` with a reference to the amendment
-5. The amendment becomes the active Pre-Brief for assurance purposes
+3. IAA appends `### PRE-BRIEF AMENDMENT <M> — YYYY-MM-DD` to the existing canonical wave record,
+   where `M` is the amendment number (01, 02, ...)
+4. The amendment identifies the superseded requirement without rewriting the original
+   `## PRE-BRIEF` declaration
+5. The latest amendment subsection becomes the active amendment for assurance purposes
 
 Minor scope changes (e.g., file paths corrected, typo fixes in descriptions) do not require
 an amendment. The IAA uses judgment about materiality.
@@ -261,7 +256,7 @@ governance violation equivalent to modifying evidence in-place.
 
 **Wave**: 10
 **Foreman**: foreman-v2
-**IAA Pre-Brief**: .agent-admin/assurance/iaa-prebrief-wave10.md
+**IAA Wave Record**: .agent-admin/assurance/iaa-wave-record-10-YYYYMMDD.md
 **Status**: IN PROGRESS
 
 ---
@@ -359,7 +354,7 @@ MUST NOT open a PR or proceed to IAA invocation until all handover gate conditio
 | All qualifying tasks are `[x]` or `[~]` | No `[ ]` lines remain unless explicitly annotated | YES |
 | Every `[~]` line has a `notes` entry with reason | Inspect each `[~]` entry | YES |
 | Every `[x]` has a QP PASS record in session memory | Session memory review | YES |
-| IAA Pre-Brief artifact exists for the wave | `ls .agent-admin/assurance/iaa-prebrief-wave<N>.md` | YES |
+| IAA wave record with non-empty `## PRE-BRIEF` exists for the wave | `ls .agent-admin/assurance/iaa-wave-record-<wave>-<date>.md` | YES |
 | All qualifying tasks appear in both checklist and Pre-Brief | Cross-reference | YES |
 
 ### PREHANDOVER Proof Template — Required Fields
@@ -373,8 +368,8 @@ wave_checklist: .agent-admin/waves/wave-<N>-current-tasks.md
 status: ALL_TICKED | PARTIALLY_TICKED | BLOCKED
 pending: none | [list of task IDs still in [ ] state]
 descoped: none | [list of task IDs marked [~] with reasons]
-iaa_prebrief: .agent-admin/assurance/iaa-prebrief-wave<N>.md
-prebrief_status: ACTIVE | SUPERSEDED (ref: <amendment path>)
+iaa_wave_record: .agent-admin/assurance/iaa-wave-record-<wave>-<date>.md
+prebrief_status: ACTIVE | AMENDED (ref: subsection number)
 ```
 
 `status: ALL_TICKED` means all qualifying tasks are either `[x]` or `[~]` with documented
@@ -454,9 +449,9 @@ If a task is added to the wave scope after the Pre-Brief is published:
 1. Foreman adds the task to `wave-current-tasks.md` with tick status `[ ]`
 2. Foreman commits with message: `chore(wave-<N>): add TASK-<N>-<SEQ> to checklist`
 3. Foreman requests a Pre-Brief Amendment via IAA invocation with `PRE-BRIEF-AMEND` action
-4. IAA generates an amendment at `.agent-admin/assurance/iaa-prebrief-wave<N>-amend<M>.md`
-5. The original Pre-Brief is marked `SUPERSEDED` by the IAA with a reference to the amendment
-6. The amendment becomes the active Pre-Brief; the PREHANDOVER proof must reference the amendment
+4. IAA appends an amendment subsection to the canonical wave record
+5. The amendment identifies the affected original requirement without mutating it
+6. The amendment becomes the active Pre-Brief amendment; the PREHANDOVER proof must reference the wave record and subsection
 
 If the Foreman adds a task to the checklist without a corresponding Pre-Brief Amendment, the
 IAA will flag a `CHECKLIST-GATE-005` finding at handover.
@@ -587,7 +582,7 @@ assurance execution:
 
 | Phase | Name | Timing | Artifact |
 |-------|------|--------|----------|
-| Phase 0 | Pre-Brief | Wave start — before building begins | `iaa-prebrief-wave<N>.md` |
+| Phase 0 | Pre-Brief | Wave start — before building begins | `iaa-wave-record-<wave>-<date>.md` with non-empty `## PRE-BRIEF` |
 | Checklist Gate | Wave Checklist Invocation Gate | IAA session — before Phase 3 | `wave-<N>-current-tasks.md` + `wave_checklist` PREHANDOVER block |
 | Phase 1 | Preflight Proof | Per PR — before build | `preflight-proof-<PR#>.md` |
 | Phase 2 | Governance Proof | Per PR — before build | `governance-proof-<PR#>.md` |
@@ -638,4 +633,4 @@ token/session format, prohibited wording, worked example):
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.2.2 | Effective: 2026-04-05 (v1.2.0) | Amended: 2026-04-08 (v1.2.2) | Previous: 2026-04-08 (v1.2.1) | Original: 2026-03-03 (v1.1.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.3.0 | Effective: 2026-04-05 (v1.2.0) | Amended: 2026-09-04 (v1.3.0) | Previous: 2026-04-08 (v1.2.2) | Original: 2026-03-03 (v1.1.0)*
