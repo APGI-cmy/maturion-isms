@@ -1,6 +1,6 @@
 # INDEPENDENT_ASSURANCE_AGENT_CANON
 
-**Status**: CANONICAL | **Version**: 1.9.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.10.0 | **Authority**: CS2
 **Date**: 2026-03-03
 **Amended**: 2026-03-03 — v1.1.0: Added §Proactive Assurance — Pre-Brief Protocol
 **Amended**: 2026-03-04 — v1.2.1: Added §CS2 Direct Review Track
@@ -11,6 +11,7 @@
 **Amended**: 2026-04-19 — v1.7.0: Added ACR-09 through ACR-14 (gate-inventory hardening, post-token normalization, cross-artifact contradiction, carried-forward canonical source parity); added active-bundle scope rule for ACR checks; aligned with governance-repo hardening wave outcomes; authority: CS2 — governance-repo hardening wave.
 **Amended**: 2026-04-21 — v1.8.0: Added ACR-15 (active-wave/task-tracker contradiction) and ACR-16 (active final-state token/session incoherence); extended active-bundle scope rule to include wave task-tracker in bundle definition; aligned with ISMS merged hardening baseline (parity catch-up wave); authority: CS2 — governance-repo ECAP/IAA parity catch-up issue.
 **Amended**: 2026-05-07 — v1.9.0: Added §Product-Facing PR Split Verdict Model — IAA must issue explicit `ADMIN_PASS`/`FUNCTIONAL_PASS`/`VERDICT` split verdict for product-facing T2 PRs; updated §Binary Output Specification to include split verdict fields; defines FULL_FUNCTIONAL_DELIVERY, PARTIAL_FUNCTIONAL_DELIVERY, ADMIN_ONLY verdict classes; prohibits generic product PASS without functional delivery evidence; cross-references FULLY_FUNCTIONAL_DELIVERY_STANDARD.md §12; authority: CS2 — Canon alignment: require full functional delivery for product build PASS.
+**Amended**: 2026-09-04 — v1.10.0: Replaced standalone pre-brief artifacts with the single canonical wave-record carrier and clarified the structural self-assurance review route for IAA contract changes; authority: CS2 issue #1399.
 
 ---
 
@@ -522,11 +523,14 @@ completed before the first qualifying PR opens for IAA review.
 
 The IAA **MUST**:
 
-1. Generate a Pre-Brief artifact at `.agent-admin/assurance/iaa-prebrief-wave<N>.md`
+1. Create or update the wave record at `.agent-admin/assurance/iaa-wave-record-<wave>-<date>.md`
+   with a non-empty `## PRE-BRIEF` section. This is the sole Pre-Brief carrier; standalone
+   pre-brief artifacts are prohibited.
 2. Declare, per task, which proof phases are required, which FFA checks apply, which
 evidence artifacts will be checked, and which overlays apply
 3. Cross-reference the active Pre-Brief at handover and report per-requirement status
-4. Mark the Pre-Brief as `SUPERSEDED` when a valid amendment replaces it
+4. Preserve the original `## PRE-BRIEF` declaration and append any valid amendment as a dated,
+   numbered subsection in the same wave record
 
 The IAA **MUST NOT**:
 
@@ -568,7 +572,7 @@ at this step, before any Phase 1–4 assessment occurs.
 
 ### Full Specification
 
-See `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` v1.0.0 for the complete specification
+See `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` for the complete specification
 including content requirements, amendment protocol, cross-agent interactions, and example
 template.
 
@@ -582,8 +586,10 @@ template.
 ### Rule
 
 When CS2 personally reviews a PR and posts a **CS2-DIRECT-REVIEW** comment on that PR,
-the review is formally equivalent to an IAA `ASSURANCE-TOKEN`. No separate IAA invocation
-is required before merge.
+CS2 supplies the governing review for a canon-defined direct-review class. For a PR modifying
+the IAA governing contract, the structural self-assurance prohibition applies: the required
+sequence is deterministic validation, Foreman QP, then CS2 direct review. That sequence does
+not issue, waive, or substitute an IAA token and does not itself grant merge permission.
 
 ### CS2-DIRECT-REVIEW Comment Format
 
@@ -595,13 +601,17 @@ PR: #[number]
 Date: YYYY-MM-DD
 Reviewed by: @APGI-cmy
 Content verdict: APPROVED
-IAA ceremony: WAIVED — CS2 direct review
+Review route: CS2 direct review
 Merge authority: CS2
 ```
 
 ### Applicability
 
-This track applies to **all** PR types **except**:
+This track applies to canon-defined CS2-direct PR classes. A PR modifying the IAA governing
+contract follows the structural self-assurance route stated above and must not represent that
+route as an IAA token or waiver.
+
+This track does not apply to:
 
 - PRs where `.github/agents/` Tier 1 contract files are modified by an **autonomous agent
 without CS2 co-authorship** (those still require IAA)
@@ -612,9 +622,9 @@ In both exception cases, the standard Five-Phase Delivery Proof Protocol applies
 
 ### Effect on Merge Gate
 
-A valid `CS2-DIRECT-REVIEW` comment on a PR is treated as equivalent to a committed
-`ASSURANCE-TOKEN` artifact. The merge gate workflow will recognise the comment as
-satisfying the `iaa-assurance-check` requirement.
+A valid `CS2-DIRECT-REVIEW` comment is the required CS2 review record for an applicable
+direct-review class. For an IAA governing-contract modification, the review record confirms
+only that CS2 conducted the required direct review; it is not an IAA artifact or waiver.
 
 ### Rationale
 
@@ -689,7 +699,7 @@ canon-defined exception classes:
 
 | Exception Class | Canon Basis | Why CS2-Owned |
 |-----------------|-------------|---------------|
-| **Structural self-assurance / independence prohibition** | `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Independence Requirements rule 1` | The IAA cannot validly assure its own governing contract — CS2 must directly review |
+| **Structural self-assurance / independence prohibition** | `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Independence Requirements rule 1` | The IAA cannot validly assure its own governing contract; deterministic validation, Foreman QP, then CS2 direct review are required, with no IAA token or waiver |
 | **CS2-direct PR classes** | `§CS2 Direct Review Track` in this canon | CS2 has explicitly designated the PR for direct review, rendering IAA ceremony optional |
 | **IAA contract modification** | `§Independence Requirements rule 4` | Only CS2 may update the IAA agent contract file |
 
@@ -1001,4 +1011,4 @@ Reason: UI shell rendered; admin artifacts correct. Upload, generation, onboardi
 
 ---
 
-*Authority: CS2 (Johan Ras) | Version: 1.9.0 | Effective: 2026-02-24 | Amended: 2026-05-07 (v1.9.0) | Previous: 2026-04-21 (v1.8.0)*
+*Authority: CS2 (Johan Ras) | Version: 1.10.0 | Effective: 2026-02-24 | Amended: 2026-09-04 (v1.10.0) | Previous: 2026-05-07 (v1.9.0)*

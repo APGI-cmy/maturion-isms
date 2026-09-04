@@ -3,7 +3,7 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
-  "last_updated": "2026-08-12",
+  "last_updated": "2026-09-04",
   "last_ripple_commit": "52ce157bb5b2971256cbe5e4123c576dc65fabbb",
   "last_ripple_timestamp": "2026-07-28T08:45:58Z",
   "alignment_summary": {
@@ -159,10 +159,10 @@
       "canonical_version": "1.9.0",
       "local_version": "1.9.0",
       "canonical_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
-      "local_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
+      "local_hash_sha256": "a981e920d17c5a2c9cf5308fca149d92ddde952651d9c3a51fd86cd25f00e546",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-05-07T14:13:46Z",
+      "last_verified": "2026-09-04T09:06:39Z",
       "change_note": "v1.9.0 aligned to canonical commit 4e200025fba62c86204e01a37880b6f535fac05d; split IAA verdict semantics (ADMIN_PASS/FUNCTIONAL_PASS/VERDICT) and FULLY_FUNCTIONAL_DELIVERY cross-reference synced."
     },
     {
@@ -171,10 +171,10 @@
       "canonical_version": "1.2.2",
       "local_version": "1.2.2",
       "canonical_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
-      "local_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
+      "local_hash_sha256": "ea6ae4ed1cc28933ef90dea21a16e936af67844018492723b9e0915e2ca4b36f",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-04-29T07:34:56Z",
+      "last_verified": "2026-09-04T09:06:39Z",
       "change_note": "v1.2.2: Updated in canonical commit 404c78fa. Layered down via CI ripple PR #1323. Hash updated from 15d220e5... to 3e04013e..."
     },
     {
@@ -213,10 +213,10 @@
       "canonical_version": "1.0.2",
       "local_version": "1.0.2",
       "canonical_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
-      "local_hash_sha256": "0ae44a6fd760740a183a1db0bfb07dc57878b50ac686abb81d6fed0f214ba899",
+      "local_hash_sha256": "fdb3e83bb6e6e44b264e2af480e1dea478f05fb3172c71707612ecffff6b15a6",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-05-04T15:14:34Z"
+      "last_verified": "2026-09-04T09:06:39Z"
     },
     {
       "filename": "FRS_TEMPLATE.md",

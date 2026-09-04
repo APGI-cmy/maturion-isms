@@ -1338,39 +1338,39 @@
     },
     {
       "filename": "GOVERNANCE_WATCHDOG_CANON.md",
-      "version": "1.0.1",
-      "file_hash": "0ae44a6fd760740a183a1db0bfb07dc57878b50ac686abb81d6fed0f214ba899",
+      "version": "1.0.2",
+      "file_hash": "fdb3e83bb6e6e44b264e2af480e1dea478f05fb3172c71707612ecffff6b15a6",
       "effective_date": "2026-03-04",
       "description": "This document formally defines the **Governance Watchdog** as a mandatory automated gap detection\nsystem for all Maturion repositories under governance that operate the Living Agent System.",
       "type": "canon",
       "path": "governance/canon/GOVERNANCE_WATCHDOG_CANON.md",
-      "canonical_commit": "f827dc0c088ddfc8929e281ea8b121e67b23dfd8",
+      "canonical_commit": "a331ece2f610151f9fda3b32fae80ede849bcf9b",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "0ae44a6fd760740a183a1db0bfb07dc57878b50ac686abb81d6fed0f214ba899"
+      "file_hash_sha256": "fdb3e83bb6e6e44b264e2af480e1dea478f05fb3172c71707612ecffff6b15a6"
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-      "version": "1.2.2 | **Authority**: CS2",
-      "file_hash": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef",
+      "version": "1.3.0 | **Authority**: CS2",
+      "file_hash": "ea6ae4ed1cc28933ef90dea21a16e936af67844018492723b9e0915e2ca4b36f",
       "effective_date": "unknown",
       "description": "Canonical governance document: IAA_PRE_BRIEF_PROTOCOL",
       "type": "canon",
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
-      "canonical_commit": "7b7a967c4de9f31b8db9e93407cb1f468cd3847b",
+      "canonical_commit": "a331ece2f610151f9fda3b32fae80ede849bcf9b",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "3e04013ecd21f7fbf3353c893427e74d4187bec174c60614a2c8a4edfa705cef"
+      "file_hash_sha256": "ea6ae4ed1cc28933ef90dea21a16e936af67844018492723b9e0915e2ca4b36f"
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "version": "1.9.0 | **Authority**: CS2",
-      "file_hash": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f",
+      "version": "1.10.0 | **Authority**: CS2",
+      "file_hash": "a981e920d17c5a2c9cf5308fca149d92ddde952651d9c3a51fd86cd25f00e546",
       "effective_date": "unknown",
       "description": "Canonical governance document: INDEPENDENT_ASSURANCE_AGENT_CANON",
       "type": "canon",
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
-      "canonical_commit": "fcc34abe2d99b62032444fb4e8eb6ac35d8f6532",
+      "canonical_commit": "a331ece2f610151f9fda3b32fae80ede849bcf9b",
       "layer_down_status": "INTERNAL",
-      "file_hash_sha256": "87f3b17cc51a0ccc11bf236057b2e03ed99765bd6c5aae1434a3953697a8ce3f"
+      "file_hash_sha256": "a981e920d17c5a2c9cf5308fca149d92ddde952651d9c3a51fd86cd25f00e546"
     },
     {
       "filename": "INITIALIZATION_COMPLETENESS_GATE.md",
@@ -2448,7 +2448,7 @@
       "description": "This document establishes **canonical governance for interim CS2/AMC automation**, defining role boundaries, authority limits, escalation procedures, and operational constraints for the bounded MMM #2004 pilot.",
       "type": "canon",
       "path": "governance/canon/INTERIM_CS2_AMC_AUTOMATION_GOVERNANCE.md",
-      "canonical_commit": "fcbb9f01582d1959c0ae89abc58ac238f5289c05",
+      "canonical_commit": "5a38f26bdd706829b0bfcaba0790c1b866cfcd14",
       "layer_down_status": "PUBLIC_API",
       "file_hash_sha256": "52327b7356e6497c3e437b79f20a5e1adebba35fa70f84cfd836911d94dadfc2"
     }
