@@ -1,6 +1,6 @@
 ---
 title: "Governance Watchdog Canon"
-version: 1.0.1
+version: 1.0.2
 status: Canonical
 created: 2026-03-04
 authority: CS2 (Johan Ras)
@@ -23,7 +23,7 @@ related:
 **Canon ID**: GOVERNANCE_WATCHDOG_CANON  
 **Authority**: Johan Ras (CS2)  
 **Status**: Canonical  
-**Version**: 1.0.1  
+**Version**: 1.0.2
 **Effective Date**: 2026-03-04  
 **Layer-Down Status**: PUBLIC_API  
 **Applies To**: All Maturion repositories under governance  
@@ -168,7 +168,8 @@ the instant a DRAFT → Ready transition occurs on any non-exempt PR.
 ### 5.2 Detection Obligation
 
 **REQ-GWC-202**: When Gap 2 fires, the watchdog MUST check whether a pre-brief artifact file
-matching the pattern `.agent-admin/assurance/iaa-prebrief-wave*.md` (or the adapted pattern per §8)
+matching the canonical wave-record pattern `.agent-admin/assurance/iaa-wave-record-<wave>-<date>.md`
+(or the adapted wave-record pattern per §8)
 exists on the branch at the moment of the DRAFT → Ready transition.
 
 **REQ-GWC-203**: If no pre-brief artifact is found, the watchdog MUST post a PR comment that:
@@ -293,7 +294,7 @@ without confirming they match is prohibited.
 
 | Parameter | Default (maturion-isms) | Adapt Requirement |
 |---|---|---|
-| Pre-brief artifact path | `.agent-admin/assurance/iaa-prebrief-wave*.md` | MUST match the repo's assurance directory convention |
+| Pre-brief carrier path | `.agent-admin/assurance/iaa-wave-record-<wave>-<date>.md` with non-empty `## PRE-BRIEF` | MUST match the repo's assurance directory convention |
 | `wave-current-tasks.md` path | `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` | MUST match the repo's Foreman workspace path |
 | PREHANDOVER file pattern | `PREHANDOVER*.md` (repo root) | MUST be adjusted if PREHANDOVER proofs are stored in a subdirectory |
 | IAA token field name | `iaa_audit_token:` | MUST match the PREHANDOVER proof template used in the repo |
@@ -418,6 +419,7 @@ This canon was promoted following completion of Phase 1 validation in `APGI-cmy/
 |---|---|---|
 | 1.0.0 | 2026-03-04 | Initial canon created from validated strategy GWDS-001 v1.1.0. Phase 1 production validation complete. |
 | 1.0.1 | 2026-03-21 | PR review: Fixed REQ-GWC-102 (use commit status/check run instead of commit comment to avoid `contents: write`); aligned REQ-GWC-801/802 with GOVERNANCE_TOKEN_USAGE_REQUIREMENTS.md (MATURION_BOT_TOKEN for writes); added traceable production event references and "Re-invocation cycles" metric row in §12. |
+| 1.0.2 | 2026-09-04 | Replaced the direct standalone pre-brief carrier references with the canonical wave-record-only carrier; authority: CS2 issue #1399. |
 
 ---
 
