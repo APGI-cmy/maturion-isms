@@ -25,6 +25,11 @@ $ pnpm exec vitest run modules/MMM/tests/B4-framework/mmm-native-migrations-boot
 $ corepack pnpm exec vitest run modules/MMM/tests/B4-framework/mmm-native-migrations-bootstrap.test.ts
 undefined
 ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "vitest" not found
+
+Rerun after migration-header correction:
+$ corepack pnpm exec vitest run modules/MMM/tests/B4-framework/mmm-native-migrations-bootstrap.test.ts
+undefined
+ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "vitest" not found
 ```
 
 ## Affected MMM regression suite
@@ -79,5 +84,6 @@ Source   : GitHub PR event context/env
 
 The Vitest runs are blocked in this environment because dependencies are not installed; `npm ci`
 also fails before installation because npm does not support the repository's `workspace:*`
-dependency protocol. Clean isolated Supabase replay, QP, ECAP, independent IAA final assurance,
-production access, and merge remain unauthorized and outstanding.
+dependency protocol. Migration header and contract validation passed. Clean isolated Supabase
+replay, QP, ECAP, independent IAA final assurance, production access, and merge remain
+unauthorized and outstanding.
