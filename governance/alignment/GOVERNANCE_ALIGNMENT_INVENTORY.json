@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
-  "description": "Consumer-side governance alignment inventory \u2014 tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
+  "description": "Consumer-side governance alignment inventory — tracks alignment status of layered-down governance artifacts in this repository against the canonical source",
   "last_updated": "2026-09-04",
   "last_ripple_commit": "ad9761c43efe2026e8a12849754a7d9fd260dfdd",
   "last_ripple_timestamp": "2026-09-04T09:06:06Z",
@@ -14,7 +14,7 @@
     "escalated": 4,
     "not_tracked": 0,
     "pending_review": 6,
-    "overall_status": "PARTIAL \u2014 INTERNAL MANIFEST NOT LAYERED; AGENT CONTRACT FILES ESCALATED TO CS2"
+    "overall_status": "PARTIAL — INTERNAL MANIFEST NOT LAYERED; AGENT CONTRACT FILES ESCALATED TO CS2"
   },
   "artifacts": [
     {
@@ -27,73 +27,73 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-29T13:31:54Z",
-      "change_note": "v1.7.0 (canonical commit d99e68e8): \u00a74.3g Scope-Refresh and Evidence-Exactness Gate added; global scope declaration replaced with per-PR artifact. Layered down via CI ripple PR #1517 (canonical commit d99e68e8759af5f619851116e583d768c4f4c1e1)."
+      "change_note": "v1.7.0 (canonical commit d99e68e8): §4.3g Scope-Refresh and Evidence-Exactness Gate added; global scope declaration replaced with per-PR artifact. Layered down via CI ripple PR #1517 (canonical commit d99e68e8759af5f619851116e583d768c4f4c1e1)."
     },
     {
       "filename": "ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
       "path": "governance/canon/ASSISTED_RIPPLE_SCAN_HUMAN_REVIEW_SEMANTICS.md",
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
-      "canonical_hash_sha256": "1c72a45294640ce51966be64fb2bcf37a47c1366a9488f53a0321ecccca3d9f7",
+      "canonical_hash_sha256": "e1ab12b9912bccb16db4ff68038aab5407ea40b812f4c84cef4a208299a6bcbe",
       "local_hash_sha256": "e1ab12b9912bccb16db4ff68038aab5407ea40b812f4c84cef4a208299a6bcbe",
       "alignment_status": "ALIGNED",
       "layer_down_status": "OPTIONAL",
-      "last_verified": "2026-05-04T15:14:34Z"
+      "last_verified": "2026-09-05T08:20:00Z"
     },
     {
       "filename": "AUTOMATED_QUALITY_TOOLING_CANON.md",
       "path": "governance/canon/AUTOMATED_QUALITY_TOOLING_CANON.md",
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
-      "canonical_hash_sha256": "c1f052a7dffaf1cf182c9d4aa6cc434ebd5e7a2a7cd1aa243fb6ed132f5fe9a5",
+      "canonical_hash_sha256": "ee6abd405d7b535dbb1e74283c72c6f84efe05078be7602c3901da42d48a206f",
       "local_hash_sha256": "ee6abd405d7b535dbb1e74283c72c6f84efe05078be7602c3901da42d48a206f",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-05-04T15:14:34Z"
+      "last_verified": "2026-09-05T08:20:00Z"
     },
     {
       "filename": "BUILD_INTERVENTION_AND_ALERT_MODEL.md",
       "path": "governance/canon/BUILD_INTERVENTION_AND_ALERT_MODEL.md",
       "canonical_version": "1.0",
       "local_version": "1.0",
-      "canonical_hash_sha256": "b74ffd7421f314df6efb882c383b0a24de872eb8a005dd2596632471160491db",
+      "canonical_hash_sha256": "ae68a65c28d9003532deb9dcab9769de03e8a43ab11e3305fe906721ffb57b80",
       "local_hash_sha256": "ae68a65c28d9003532deb9dcab9769de03e8a43ab11e3305fe906721ffb57b80",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-05-04T15:14:34Z"
+      "last_verified": "2026-09-05T08:20:00Z"
     },
     {
       "filename": "GOVERNANCE_RIPPLE_MODEL.md",
       "path": "governance/canon/GOVERNANCE_RIPPLE_MODEL.md",
       "canonical_version": "1.1.0",
       "local_version": "1.1.0",
-      "canonical_hash_sha256": "00cc56b025a30956d26420ba86328abb2ad2e6894399c7c661721e6c2e42f387",
+      "canonical_hash_sha256": "fa52c59c06adf03636a0de9f2116ce6e498cf48248fbc4df7d3bc7f1d43aba76",
       "local_hash_sha256": "fa52c59c06adf03636a0de9f2116ce6e498cf48248fbc4df7d3bc7f1d43aba76",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-05-04T15:14:34Z"
+      "last_verified": "2026-09-05T08:20:00Z"
     },
     {
       "filename": "WATCHDOG_AUTHORITY_AND_SCOPE.md",
       "path": "governance/canon/WATCHDOG_AUTHORITY_AND_SCOPE.md",
       "canonical_version": "1.0.0",
       "local_version": "1.0.0",
-      "canonical_hash_sha256": "36b66652da76236ab1bcc891cd32666ce95879f8bf224c64289d8732881d0063",
+      "canonical_hash_sha256": "4f06306fbc1a1016cbbf04e7085473dd2cb37ea2cda9f45bbeb86cc03213392d",
       "local_hash_sha256": "4f06306fbc1a1016cbbf04e7085473dd2cb37ea2cda9f45bbeb86cc03213392d",
       "alignment_status": "ALIGNED",
       "layer_down_status": "OPTIONAL",
-      "last_verified": "2026-05-04T15:14:34Z"
+      "last_verified": "2026-09-05T08:20:00Z"
     },
     {
       "filename": "POLICY-NO-ONLY-LANGUAGE.md",
       "path": "governance/policy/POLICY-NO-ONLY-LANGUAGE.md",
       "canonical_version": "v1.0",
       "local_version": "v1.0",
-      "canonical_hash_sha256": "88369fb8b764f063f5d67f0ae1c4caed5587b65412ca11ef083ad6b4ab31b253",
+      "canonical_hash_sha256": "6d50f484cf2ab84527a8c940d47138657ce81c71f93f51a76e19a74220f5dc09",
       "local_hash_sha256": "6d50f484cf2ab84527a8c940d47138657ce81c71f93f51a76e19a74220f5dc09",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-03-02T11:23:28Z"
+      "last_verified": "2026-09-05T08:20:00Z"
     },
     {
       "filename": "CodexAdvisor-agent.md",
@@ -103,7 +103,7 @@
       "canonical_hash_sha256": "a6aee49152e6fe9f01b992df73790b12406cf5604d54f5af26d1a31e1bd2996c",
       "local_hash_sha256": "29c8f436597e0fc7d716d7de805db3f80fd729084d714d75cc2e59715e54f73a",
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-04-09T13:22:00Z",
       "escalation_ref": "ESC-AGENTFILE-29E76ECF-20260304",
       "prior_escalations": [
@@ -112,7 +112,7 @@
         "ESC-AGENTFILE-4981C34F-20260304",
         "ESC-AGENTFILE-4E2E193C-20260304"
       ],
-      "note": "Local v3.4.0 is OLDER than canonical v4.0.1 \u2014 layer-up situation. Canonical ripple f5b61144 (trigger: Update CodexAdvisor-agent.md) updated this file to v4.0.1. Per A-015: escalated directly to CS2 only. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED for ripple/governance-canon drift detection only; it did not assert agent contract version or hash parity with the canonical artifact. This inventory entry therefore remains ESCALATED_TO_CS2 with canonical/local version and hash mismatch recorded above. Prior ripple 3166bec3 (trigger: Update print statement from -Hello- to -Goodbye-) also changed this file but did not advance version to current state."
+      "note": "Local v3.4.0 is OLDER than canonical v4.0.1 — layer-up situation. Canonical ripple f5b61144 (trigger: Update CodexAdvisor-agent.md) updated this file to v4.0.1. Per A-015: escalated directly to CS2 only. CI ripple-integration.yml confirmed NO_DRIFT_DETECTED for ripple/governance-canon drift detection only; it did not assert agent contract version or hash parity with the canonical artifact. This inventory entry therefore remains ESCALATED_TO_CS2 with canonical/local version and hash mismatch recorded above. Prior ripple 3166bec3 (trigger: Update print statement from -Hello- to -Goodbye-) also changed this file but did not advance version to current state."
     },
     {
       "filename": "foreman-v2-agent.md",
@@ -122,7 +122,7 @@
       "canonical_hash_sha256": "d17ea8c41f5f588528d076a37e292849b80f332c7fa432bfa58dba9ed3b8125b",
       "local_hash_sha256": "d0e634970b2ac2b4deedbf2bfe7f3c44e95778227972c0e697b41b0033235044",
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-03-03T13:03:45Z",
       "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
       "note": "Agent contract changed in ripple 6523fe8d (2026-03-04). Escalated to CS2. Also see prior escalation ESC-AGENTFILE-E77B00C7-20260303 from ripple e77b00c7. CS2 to apply via CodexAdvisor-agent + IAA. canonical_hash_sha256 corrected from erroneous 40-char SHA1 to local file SHA256 (canonical source unavailable for comparison; ESCALATED_TO_CS2 status unchanged)."
@@ -135,7 +135,7 @@
       "canonical_hash_sha256": null,
       "local_hash_sha256": null,
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-03-03T13:03:45Z",
       "escalation_ref": "ESC-AGENTFILE-E77B00C7-20260303",
       "note": "Not present locally. CS2 to decide whether this agent should be introduced to maturion-isms. Canonical SHA-256 is unavailable; previous value was a 40-character non-SHA256 digest and has been cleared to avoid mis-validation."
@@ -148,7 +148,7 @@
       "canonical_hash_sha256": "ed4b301bcdcafc015bd2e61be25920ed7e4eb64d516cadd537e29337bb710642",
       "local_hash_sha256": "1d3c55131e07286208d328f228973047afaa8bfb9e91255b86ff7821b09afabd",
       "alignment_status": "ESCALATED_TO_CS2",
-      "layer_down_status": "AGENT_CONTRACT \u2014 requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
+      "layer_down_status": "AGENT_CONTRACT — requires CodexAdvisor-agent + IAA + CS2 per AGCFPP-001",
       "last_verified": "2026-09-05T07:43:24Z",
       "escalation_ref": "ESC-AGENTFILE-6523FE8D-20260304",
       "canonical_commit": "ad9761c43efe2026e8a12849754a7d9fd260dfdd",
@@ -159,11 +159,11 @@
       "path": "governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md",
       "canonical_version": "1.10.0",
       "local_version": "1.10.0",
-      "canonical_hash_sha256": "216dd16fb97330f97367348d08c720d7a4196d508f394e50d39ff2df725bac35",
+      "canonical_hash_sha256": "a981e920d17c5a2c9cf5308fca149d92ddde952651d9c3a51fd86cd25f00e546",
       "local_hash_sha256": "a981e920d17c5a2c9cf5308fca149d92ddde952651d9c3a51fd86cd25f00e546",
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
-      "last_verified": "2026-09-05T07:43:24Z",
+      "last_verified": "2026-09-05T08:20:00Z",
       "canonical_commit": "ad9761c43efe2026e8a12849754a7d9fd260dfdd",
       "change_note": "v1.10.0 aligned to canonical commit ad9761c4; direct standalone pre-brief carrier references replaced with the canonical wave-record-only carrier."
     },
@@ -172,11 +172,11 @@
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
       "canonical_version": "1.3.0",
       "local_version": "1.3.0",
-      "canonical_hash_sha256": "f9ed9f1507e4dbe055c11da1052618da645a0cb1db93eb661cb474eb73aa131d",
+      "canonical_hash_sha256": "ea6ae4ed1cc28933ef90dea21a16e936af67844018492723b9e0915e2ca4b36f",
       "local_hash_sha256": "ea6ae4ed1cc28933ef90dea21a16e936af67844018492723b9e0915e2ca4b36f",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-09-05T07:43:24Z",
+      "last_verified": "2026-09-05T08:20:00Z",
       "canonical_commit": "ad9761c43efe2026e8a12849754a7d9fd260dfdd",
       "change_note": "v1.3.0 aligned to canonical commit ad9761c4; pre-brief carrier semantics aligned to the canonical wave record."
     },
@@ -215,11 +215,11 @@
       "path": "governance/canon/GOVERNANCE_WATCHDOG_CANON.md",
       "canonical_version": "1.0.2",
       "local_version": "1.0.2",
-      "canonical_hash_sha256": "f578c6443858d588c6953d6935b977d9f735d50f3a04f36d8f6b64342f4240b0",
+      "canonical_hash_sha256": "fdb3e83bb6e6e44b264e2af480e1dea478f05fb3172c71707612ecffff6b15a6",
       "local_hash_sha256": "fdb3e83bb6e6e44b264e2af480e1dea478f05fb3172c71707612ecffff6b15a6",
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
-      "last_verified": "2026-09-05T07:43:24Z",
+      "last_verified": "2026-09-05T08:20:00Z",
       "canonical_commit": "ad9761c43efe2026e8a12849754a7d9fd260dfdd",
       "change_note": "v1.0.2 verified against canonical commit ad9761c4; direct standalone pre-brief carrier references replaced with the canonical wave-record-only carrier."
     },
@@ -256,7 +256,7 @@
       "layer_down_status": "TEMPLATE",
       "last_verified": "2026-05-12T06:24:04Z",
       "canonical_commit": "8684f42b39d1a1927b34cd9c64c3c3dc85a986ad",
-      "change_note": "Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad \u2014 Stage 5 template update layered down via ripple PR #1615."
+      "change_note": "Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad — Stage 5 template update layered down via ripple PR #1615."
     },
     {
       "filename": "PRE_BUILD_REALITY_CHECK_CANON.md",
@@ -313,7 +313,7 @@
       "layer_down_status": "TEMPLATE",
       "last_verified": "2026-05-12T06:24:04Z",
       "canonical_commit": "8684f42b39d1a1927b34cd9c64c3c3dc85a986ad",
-      "change_note": "Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad \u2014 Stage 5 checklist metadata layered down via ripple PR #1615; template intro remains pinned to PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0 pending content revision."
+      "change_note": "Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad — Stage 5 checklist metadata layered down via ripple PR #1615; template intro remains pinned to PRE_BUILD_STAGE_MODEL_CANON.md v1.0.0 pending content revision."
     },
     {
       "filename": "UX_WORKFLOW_WIRING_SPEC_TEMPLATE.md",
@@ -334,7 +334,7 @@
       "canonical_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c",
       "local_hash_sha256": "3b342b6fa746ad418a767f46c38dca5ff19a5e5f4ee72d766645337e5211b29c",
       "alignment_status": "ALIGNED",
-      "layer_down_status": "PUBLIC_API \u2014 file exists canonically (commit bfe47f6d) but not yet listed in canonical CANON_INVENTORY.json; automated layer-down not triggered",
+      "layer_down_status": "PUBLIC_API — file exists canonically (commit bfe47f6d) but not yet listed in canonical CANON_INVENTORY.json; automated layer-down not triggered",
       "last_verified": "2026-05-04T15:14:34Z",
       "change_note": "New file introduced in canonical commit bfe47f6d (trigger: canonise-oopjd-session-mode). File declares Layer-Down Status: PUBLIC_API. Not yet present in canonical CANON_INVENTORY.json (198 entries). CI ripple-integration.yml confirmed NO_DRIFT_DETECTED because CANON_INVENTORY.json does not include this file. Status: NOT_TRACKED until CANON_INVENTORY.json is updated by canonical source to include this file. No local copy exists. No layer-down action required at this time."
     },
@@ -348,7 +348,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-20T07:37:10Z",
-      "change_note": "v1.2.0 (canonical commit 849973019a): Added \u00a73.5a Template Non-Leakage Duty, \u00a73.5b Active-Bundle Scope, \u00a73.7a Carried-Forward Claim Resolution Duty, \u00a73.8a Gate Evidence Inventory Duty. Layered down via CI ripple PR #1423. Hash updated from cfb97290... to 252ac6e1..."
+      "change_note": "v1.2.0 (canonical commit 849973019a): Added §3.5a Template Non-Leakage Duty, §3.5b Active-Bundle Scope, §3.7a Carried-Forward Claim Resolution Duty, §3.8a Gate Evidence Inventory Duty. Layered down via CI ripple PR #1423. Hash updated from cfb97290... to 252ac6e1..."
     },
     {
       "filename": "FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md",
@@ -360,7 +360,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-20T07:37:10Z",
-      "change_note": "v1.5.0 (canonical commit 849973019a): Updated \u00a714.6 \u2014 added gate inventory verification (Step 4), pre-final instruction wording check (Step 5), cross-artifact consistency active-bundle scoped (Step 6), carried-forward claim spot-check (Step 7). Layered down via CI ripple PR #1423. Hash updated from 3e1c27d6... to 4c8e2f18..."
+      "change_note": "v1.5.0 (canonical commit 849973019a): Updated §14.6 — added gate inventory verification (Step 4), pre-final instruction wording check (Step 5), cross-artifact consistency active-bundle scoped (Step 6), carried-forward claim spot-check (Step 7). Layered down via CI ripple PR #1423. Hash updated from 3e1c27d6... to 4c8e2f18..."
     },
     {
       "filename": "AGENT_CONTRACT_ARCHITECTURE.md",
@@ -480,7 +480,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "TIER2_TEMPLATE",
       "last_verified": "2026-04-17T11:52:02Z",
-      "change_note": "New in canonical commit 56d92004. Scope declaration generation template (ECAP-QC-002 / \u00a74.3d). Layered down in this wave."
+      "change_note": "New in canonical commit 56d92004. Scope declaration generation template (ECAP-QC-002 / §4.3d). Layered down in this wave."
     },
     {
       "filename": "SESSION_MEMORY.template.md",
@@ -552,7 +552,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-17T08:32:08Z",
-      "change_note": "v1.0.0: New canon. Defines canonical convergence boundary between MMM and AIMC \u2014 ownership boundaries, interface constraints, artefact custody rules. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
+      "change_note": "v1.0.0: New canon. Defines canonical convergence boundary between MMM and AIMC — ownership boundaries, interface constraints, artefact custody rules. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
     },
     {
       "filename": "AIMC_SPECIALIST_OPERATING_MODEL.md",
@@ -564,7 +564,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-04-17T08:32:08Z",
-      "change_note": "v1.0.0: New canon. Defines specialist operating model for AIMC agents \u2014 knowledge source taxonomy (Tier 1\u20134), source trust hierarchy, priority/conflict rules, freshness rules, delegation and module-consumer mode, human-in-the-loop boundaries. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
+      "change_note": "v1.0.0: New canon. Defines specialist operating model for AIMC agents — knowledge source taxonomy (Tier 1–4), source trust hierarchy, priority/conflict rules, freshness rules, delegation and module-consumer mode, human-in-the-loop boundaries. Layered down via ripple PR #1393 (canonical commit a9283eaf, issue #1343)."
     },
     {
       "filename": "SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
@@ -603,7 +603,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "INTERNAL",
       "last_verified": "2026-04-29T13:31:54Z",
-      "change_note": "v2.0.0 (canonical commit d99e68e8): per-PR artifact location; \u00a74 section 7 added; \u00a75.1 v2 header fields; \u00a75.7 Files Changed section; \u00a76 validity rules extended. Layered down via CI ripple PR #1517."
+      "change_note": "v2.0.0 (canonical commit d99e68e8): per-PR artifact location; §4 section 7 added; §5.1 v2 header fields; §5.7 Files Changed section; §6 validity rules extended. Layered down via CI ripple PR #1517."
     },
     {
       "filename": "scope-declaration.template.md",
@@ -723,7 +723,7 @@
       "alignment_status": "ALIGNED",
       "layer_down_status": "PUBLIC_API",
       "last_verified": "2026-05-12T06:24:04Z",
-      "change_note": "v1.4: Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad \u2014 Stage 5 checklist upgrade layered down via ripple PR #1615.",
+      "change_note": "v1.4: Aligned to canonical commit 8684f42b39d1a1927b34cd9c64c3c3dc85a986ad — Stage 5 checklist upgrade layered down via ripple PR #1615.",
       "canonical_commit": "8684f42b39d1a1927b34cd9c64c3c3dc85a986ad",
       "canonical_source_repo": "APGI-cmy/maturion-foreman-governance",
       "canonical_source_path": "governance/canon/ARCHITECTURE_COMPLETENESS_REQUIREMENTS.md"
