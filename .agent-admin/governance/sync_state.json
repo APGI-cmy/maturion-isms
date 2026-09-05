@@ -2,13 +2,13 @@
   "version": "1.0.0",
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
-  "last_updated": "2026-05-04T15:28:28Z",
-  "canonical_commit": "44218bcd28d5e02f800362c6f052402146301e3d",
+  "last_updated": "2026-09-05T07:43:24Z",
+  "canonical_commit": "ad9761c43efe2026e8a12849754a7d9fd260dfdd",
   "canonical_inventory_version": "1.0.0",
   "sync_pending": false,
   "drift_detected": false,
-  "last_ripple_received": "2026-05-04T15:13:59Z",
-  "last_ripple_dispatch_id": "44218bcd",
-  "last_liaison_session": "session-072-20260504",
-  "notes": "Ripple 44218bcd processed by session-072-20260504. Changed artifacts: MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0 new (INTERNAL). Layered down via ripple PR #1528 (auto-merged). ISMS-side support added: .github/scripts/validate-simple-pr-admin.sh. MMM product-fix PRs now use .admin/pr.json as single source of truth per MMM_SIMPLE_PR_ADMIN_MODEL.md v1.0.0."
+  "last_ripple_received": "2026-09-04T09:06:06Z",
+  "last_ripple_dispatch_id": "ad9761c4",
+  "last_liaison_session": "session-layer-down-ad9761c4-20260905",
+  "notes": "Ripple ad9761c4 processed. Canonical governance canon artifacts were verified against the source commit and alignment inventory updated. The independent-assurance-agent.md contract change remains escalated to CS2 per AGCFPP-001."
 }
