@@ -1,0 +1,58 @@
+name: CS2 Work Request
+description: Start one bounded governed delivery job.
+title: "[CS2] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form creates one CS2 work packet. It does not authorize a merge,
+        scope expansion, production change, or a second concurrent job.
+  - type: input
+    id: authorization_reference
+    attributes:
+      label: CS2 authorization reference
+      description: URL or instruction that authorizes this exact job.
+    validations: { required: true }
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      options: [PIT]
+    validations: { required: true }
+  - type: input
+    id: responsibility
+    attributes:
+      label: One responsibility
+      description: One outcome-focused sentence.
+    validations: { required: true }
+  - type: textarea
+    id: allowed_paths
+    attributes:
+      label: Allowed paths
+      description: Exact repository paths. Use "none" for analysis-only work.
+    validations: { required: true }
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Measurable acceptance criteria
+    validations: { required: true }
+  - type: textarea
+    id: validation
+    attributes:
+      label: Required validation commands and hosted checks
+    validations: { required: true }
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Known dependencies or user actions
+      description: State "none known" if none are known.
+    validations: { required: true }
+  - type: checkboxes
+    id: pilot_limits
+    attributes:
+      label: Pilot limits
+      options:
+        - label: I confirm this is one PIT job only; scope expansion and merge remain for Johan Ras / CS2.
+          required: true
+        - label: I confirm the controller may self-remediate only inside the declared sandbox.
+          required: true
