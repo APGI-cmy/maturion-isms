@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PIT CS2 Controller Pilot Work Register",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["work_item_id", "repository", "module", "issue_number", "state", "next_action", "correction_count", "max_corrections", "human_approval"],
+  "properties": {
+    "work_item_id": {"type": "string", "pattern": "^pit-[a-z0-9-]+$"},
+    "repository": {"const": "APGI-cmy/maturion-isms"},
+    "module": {"const": "PIT"},
+    "issue_number": {"type": "integer", "minimum": 1},
+    "pr_number": {"type": ["integer", "null"], "minimum": 1},
+    "submission_head": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+    "state": {"enum": ["intake", "foreman", "builder", "qp", "ecap", "iaa", "cs2_review", "awaiting_human", "closed"]},
+    "next_action": {"type": "string", "minLength": 1},
+    "correction_count": {"type": "integer", "minimum": 0, "maximum": 1},
+    "max_corrections": {"const": 1},
+    "human_approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_expansion", "merge"],
+      "properties": {
+        "scope_expansion": {"const": false},
+        "merge": {"const": false}
+      }
+    },
+    "last_processed": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "head_sha": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+        "comment_id": {"type": ["integer", "null"], "minimum": 1},
+        "review_id": {"type": ["integer", "null"], "minimum": 1}
+      }
+    }
+  }
+}
