@@ -14,6 +14,8 @@ test('pilot workflow persists one register and has hourly safety observation', (
   assert.match(workflow, /cron: '17 \* \* \* \*'/);
   assert.match(workflow, /CS2-Work-Item:/);
   assert.match(workflow, /idempotent no-op/);
+  assert.match(workflow, /\/cs2-\(approve\|reject\)/);
+  assert.match(workflow, /author !== 'APGI-cmy'/);
 });
 
 test('pre-brief injection cannot use a repository-global legacy wave record', () => {
