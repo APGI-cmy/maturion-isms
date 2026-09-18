@@ -1,12 +1,15 @@
 name: CS2 Work Request
 description: Start one bounded governed delivery job.
 title: "[CS2] "
+labels: ["cs2:queued"]
 body:
   - type: markdown
     attributes:
       value: |
-        This form creates one CS2 work packet. It does not authorize a merge,
-        scope expansion, production change, or a second concurrent job.
+        This form creates one CS2 work packet. The controller claims the work
+        item, dispatches Foreman, and records its state on this Issue. It does
+        not authorize a merge, scope expansion, production change, or a second
+        concurrent job.
   - type: input
     id: authorization_reference
     attributes:
