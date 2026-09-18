@@ -7,8 +7,6 @@ on:
     paths:
       - '.agent-admin/prs/pr-*/wave-current-tasks.md'
       - '.agent-workspace/foreman*/personal/wave-current-tasks.md'
-  pull_request_target:
-    types: [opened, ready_for_review]
   issue_comment:
     types: [created]
   workflow_dispatch: {}
@@ -24,7 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       github.event_name == 'push' ||
-      github.event_name == 'pull_request_target' ||
       (github.event_name == 'issue_comment' &&
        (github.event.comment.body == '/iaa-prebrief' ||
         startsWith(github.event.comment.body, '/iaa-prebrief '))) ||
@@ -75,12 +72,6 @@ jobs:
               } catch (_e) {}
             }
 
-            if (eventName === 'pull_request_target' && prNumber) {
-              const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: Number(prNumber) });
-              ref = pr.head.sha;
-              branch = pr.head.ref;
-            }
-
             core.setOutput('pr_number', prNumber);
             core.setOutput('ref', ref);
             core.setOutput('branch', branch || 'unknown');
@@ -98,9 +89,12 @@ jobs:
             const prNumber = process.env.PR_NUMBER || '';
             const ref = process.env.REF || context.sha;
 
-            const taskPaths = [];
-            if (prNumber) taskPaths.push(`.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md`);
-            taskPaths.push('.agent-workspace/foreman-v2/personal/wave-current-tasks.md');
+            // A pre-brief belongs only to the PR-scoped job.  The former global
+            // personal-path fallback let a historic wave contaminate unrelated
+            // PRs, which turned a Foreman-owned action into a false CS2 stop.
+            const taskPaths = prNumber
+              ? [`.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md`]
+              : [];
 
             let tasksFound = false;
             let tasksSnippet = '';
@@ -152,7 +146,7 @@ jobs:
         run: echo "Canonical pre-brief exists at ${{ steps.inspect.outputs.prebrief_path }}"
 
       - name: Post canonical pre-brief request
-        if: steps.inspect.outputs.prebrief_exists != 'true'
+        if: steps.inspect.outputs.tasks_found == 'true' && steps.inspect.outputs.prebrief_exists != 'true'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.ctx.outputs.pr_number }}
@@ -177,6 +171,7 @@ jobs:
               '## IAA Pre-Brief Invocation',
               '',
               'Action Required: generate the canonical Wave Pre-Brief.',
+              'This is a Foreman-owned prerequisite. Do not request a CS2 waiver for it.',
               `Wave: ${wave}`,
               `Branch: ${branch}`,
               prNumber ? `PR: #${prNumber}` : 'PR: PENDING',
