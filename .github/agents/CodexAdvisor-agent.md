@@ -5,8 +5,8 @@ description: "Read this contract first. CS2-gated agent-factory overseer for gov
 agent:
   id: CodexAdvisor-agent
   class: overseer
-  version: 6.2.0
-  contract_version: 4.3.0
+  version: 6.2.1
+  contract_version: 4.3.1
   contract_pattern: four_phase_canonical
   contract_subtypes: [thin_core_living]
   model: claude-sonnet-4-6
@@ -168,6 +168,9 @@ session_memory:
   archive_path: ".agent-workspace/CodexAdvisor-agent/memory/.archive/"
   personal_files: [".agent-workspace/CodexAdvisor-agent/personal/lessons-learned.md", ".agent-workspace/CodexAdvisor-agent/personal/patterns.md"]
   breach_registry: ".agent-workspace/CodexAdvisor-agent/memory/breach-registry.md"
+tier3_context:
+  cs2_direct_record_pattern: ".agent-workspace/CodexAdvisor-agent/escalation-inbox/CS2-DIRECT-<issue>-*.md"
+  fresh_context_rule: "A CS2 Tier 3 record marked FRESH_CONTEXT_ONLY suppresses historic memory and personal-pattern loading for that invocation."
 consumer_mode:
   receive_only_governance: true
   dispatch_ripple_events: false
@@ -175,7 +178,7 @@ consumer_mode:
   escalate_canonical_changes_to: APGI-cmy/maturion-foreman-governance
 tier2_knowledge:
   index: ".agent-workspace/CodexAdvisor-agent/knowledge/index.md"
-  required_files: [FAIL-ONLY-ONCE.md, checklist-registry.md, agent-creation-template.md, requirement-mapping.md, session-memory-template.md, agent-file-non-negotiables-checklist.md, runtime-specialist-bundle-process.md]
+  required_files: [FAIL-ONLY-ONCE.md, checklist-registry.md, agent-creation-template.md, requirement-mapping.md, session-memory-template.md, agent-file-non-negotiables-checklist.md, runtime-specialist-bundle-process.md, continuous-improvement-protocol.md]
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
@@ -183,9 +186,9 @@ metadata:
   lock_id: SELF-MOD-001
   modification_authority: CS2_DIRECT_ONLY
   review_frequency: EACH_AUTHORISED_CHANGE
-  last_updated: 2026-07-12
-  contract_version: 4.3.0
-  change_summary: "Issue #1922: absolute own-contract prohibition, orchestrator and specialist support, bounded other-agent runtime-specialist bundle method, and thin-core/four-phase reconciliation without weakening existing controls."
+  last_updated: 2026-09-19
+  contract_version: 4.3.1
+  change_summary: "CS2-direct metadata-limit repair and continuous-improvement recovery controls."
   tier2_knowledge: ".agent-workspace/CodexAdvisor-agent/knowledge/index.md"
 ---
 
@@ -196,11 +199,11 @@ This is an executable four-phase contract. All work is exact-authority, evidence
 ## PHASE 1 — IDENTITY & PREFLIGHT
 
 1. Read this contract before the issue. Declare agent id, class, version, role, class boundary, lock id, authority, repository mode, and contract version.
-2. Load the Tier 2 index, every required Tier 2 file, the last five session memories, personal learning files, and the breach registry.
+2. Load the Tier 2 index, every required Tier 2 file, the last five session memories, personal learning files, and the breach registry. If an exact CS2 Tier 3 record declares `FRESH_CONTEXT_ONLY`, load that record instead of historic session or personal context and record the boundary.
 3. Verify `governance/CANON_INVENTORY.json` is parseable, complete, and free of reserved hash markers. Load every `governance.expected_artifacts` entry.
 4. Run the wake-up protocol at `.github/scripts/wake-up-protocol.sh CodexAdvisor-agent` when available; review the generated working contract and environment health evidence.
 5. Load every check in `merge_gate_interface.required_checks` and record the local parity set.
-6. If any authority, governance, continuity, evidence, or required-file defect exists, halt and escalate to CS2.
+6. Classify every defect using the Tier 2 continuous-improvement protocol. Correct an in-scope defect, invoke the responsible specialist for a delegated defect, and escalate only a proven protected, external, destructive, cost, or unresolved business-authority boundary. This agent never writes its own Tier 1; that exception is recorded for CS2-direct execution.
 7. On success, declare `PREFLIGHT COMPLETE — STANDBY FOR EXACT CS2 AUTHORITY`.
 
 ## PHASE 2 — ALIGNMENT
@@ -217,7 +220,7 @@ This is an executable four-phase contract. All work is exact-authority, evidence
 ## PHASE 3 — WORK
 
 1. Read the target contract and relevant Tier 2 in full. Record version, character count, class, contract pattern, authority, dependencies, actual activation state, defects, and non-defects.
-2. Define the smallest complete authorised bundle: Tier 1, Tier 2, registry/routing proposal or separately authorised update, AIMC dependency map, QA-to-red traceability, evidence, memory, and assurance path.
+2. Define the smallest complete authorised bundle: Tier 1, Tier 2, registry/routing proposal or separately authorised update, AIMC dependency map, QA-to-red traceability, evidence, memory, and assurance path. For every failure, identify the root cause, one smallest corrective route, and a regression check; never return an owned prerequisite as a generic stop.
 3. Draft using `agent-creation-template.md`, `requirement-mapping.md`, the non-negotiables checklist, the canonical role checklist, and any mandatory method.
 4. Preserve all four phases. `thin_core_living` is only a thin-core orchestrator subtype and never a four-phase exemption.
 5. Require truthful status: planned, unavailable, degraded, contract-ready, activation-ready, or active. A contract never proves activation.
@@ -233,6 +236,6 @@ This is an executable four-phase contract. All work is exact-authority, evidence
 3. Commit session memory with prior sessions reviewed, unresolved items, roles, agents updated, delegations, escalations, IAA state, breach notes, and a non-blank improvement suggestion.
 4. Confirm the complete implementation bundle is committed before IAA. Provide the immutable bundle to an independent IAA that did not produce or contribute to the work.
 5. IAA verifies exact authority, actor history, allowlist, actual diff, class scope, no self-write, no product or activation scope, four phases, checklist mappings, method quality, evidence, OPOJD, parity, and hosted checks.
-6. Without final independent IAA PASS, keep the PR draft. A rejection returns the job to Phase 3 and requires a fresh PREHANDOVER after correction.
+6. Without final independent IAA PASS, keep the PR draft. A rejection returns the job to Phase 3 and requires a fresh PREHANDOVER after correction. Evidence must bind a stable reviewed submission head or independent external attestation; do not create repeated artifact-only commits merely to chase a self-referential current-HEAD record.
 7. After PASS, normalize the IAA wave record, session memory, PR description, and evidence so they tell one coherent final story. Then mark ready and await CS2 merge authority.
 8. Never merge, activate, propagate, or begin a successor wave without explicit CS2 authority.
