@@ -1,5 +1,33 @@
 # IAA Wave Record — PR #2048 CS2-Direct CodexAdvisor Recovery Hardening
 
+IAA_PREFLIGHT_BRIEF
+PR: #2048
+ISSUE: #2047
+WAVE: pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919
+WAVE_TASKS_PATH: .agent-admin/prs/pr-2048/wave-current-tasks.md
+CURRENT_HEAD_SHA: 7e365fb5d8572e18f728fc43a23e60ba5f341e5d
+QUALIFYING_TASKS:
+- GOV-2048-01 — Rebind IAA/Foreman/ECAP assurance to PR #2048 and the submitted head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`, replacing inherited retrospective context with PR-scoped evidence only.
+APPLICABLE_OVERLAY: AGENT_CONTRACT
+ANTI_REGRESSION_OBLIGATIONS: no — `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` reviewed; this is governance/agent-contract recovery-hardening only, with no product/runtime/deployment/schema/CI deliverable in scope.
+EXPECTED_QA_SCOPE:
+- Qualify only GOV-2048-01 for PR #2048 on the submitted head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`.
+- Keep active evidence bound to `.agent-admin/prs/pr-2048/wave-current-tasks.md`; no product/runtime/deployment/schema/CI scope is included in this pre-brief.
+- Treat `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` as NON-ACTIVE / UNUSABLE for PR #2048 because it binds to PR `#2017` and a different wave-tasks path.
+EXPECTED_FAILURE_MODES:
+- Historical PR `#2017` / `issue-2016-retrospective-pr2006` evidence is reused as active proof for PR #2048.
+- Scope expands beyond GOV-2048-01 into product/runtime/deployment/schema/CI or into unauthorized new CodexAdvisor contract edits.
+- Any final PASS / REJECTION token is claimed from this pre-brief-only invocation.
+FOREMAN_INSTRUCTIONS:
+- Keep PR #2048 bound to GOV-2048-01, `WAVE_TASKS_PATH: .agent-admin/prs/pr-2048/wave-current-tasks.md`, and the submitted head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`.
+- Do not use the historical retrospective wave record as active evidence for PR #2048.
+- Do not treat this invocation as final assurance; independent final IAA assurance remains a separate later step.
+IAA_WILL_QA:
+- QA the PR-bound governance evidence binding, qualifying-task identity, and submitted-head relevance for PR #2048 only.
+- QA that the historical retrospective artifact remains explicitly NON-ACTIVE / UNUSABLE for PR #2048.
+- QA that no product/runtime/deployment/schema/CI scope is imported into this pre-brief.
+RESULT: PREFLIGHT_BRIEF_COMPLETE
+
 Wave: `pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919`
 Date: 2026-09-19
 Repository: `APGI-cmy/maturion-isms`
