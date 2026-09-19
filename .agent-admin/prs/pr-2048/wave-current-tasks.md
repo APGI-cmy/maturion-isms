@@ -7,7 +7,7 @@ Base Branch: main
 Base SHA: 1603f0ca201754e152f79a13d8e0a62fc4e51755
 Stable Submitted Head SHA: 7e365fb5d8572e18f728fc43a23e60ba5f341e5d
 CURRENT_HEAD_BINDING: CURRENT_HEAD
-Status: IAA_PREBRIEF_COMPLETE_QP_ECAP_FINAL_IAA_PENDING
+Status: IAA_FINAL_PASS_CS2_REVIEW
 CS2_AUTHORITY: Johan Ras (@APGI-cmy)
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md
 ecap_bundle_path: .agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md
@@ -37,16 +37,17 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: not_required
 
 | Task ID | Description | Owner | Status |
 |---|---|---|---|
-| GOV-2048-01 | Rebind IAA/Foreman/ECAP assurance to PR #2048 and the submitted head, replacing inherited retrospective context with PR-scoped evidence only | foreman-v2-agent | IN_PROGRESS |
+| GOV-2048-01 | Rebind IAA/Foreman/ECAP assurance to PR #2048 and the submitted head, replacing inherited retrospective context with PR-scoped evidence only | foreman-v2-agent | COMPLETE |
 | IAA-2048-PB | Generate canonical PR-scoped IAA pre-brief bound to PR #2048 and mark inherited retrospective evidence unusable | independent-assurance-agent | COMPLETE |
 | QP-2048 | Perform Foreman QP review on the governance-only submitted head and PR-scoped correction artifacts | foreman-v2-agent | COMPLETE |
 | ECAP-2048 | Produce administrative validation bundle for the PR-scoped evidence set | execution-ceremony-admin-agent | COMPLETE |
-| IAA-2048-FINAL | Perform independent final assurance on the resulting stable PR #2048 head | independent-assurance-agent | PENDING |
+| IAA-2048-FINAL | Perform independent final assurance on the resulting stable PR #2048 head | independent-assurance-agent | COMPLETE |
 
 ## Current evidence state
 
 - Active PR-scoped IAA pre-brief: `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md`
 - Canonical PREHANDOVER proof pointer: `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md`
+- Final IAA assurance token: `IAA-session-1289-20260919-PASS`
 - Historical retrospective record remains NON-ACTIVE / UNUSABLE for this PR: `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md`
 - Hosted CI evidence from the previously submitted substantive head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d` was green at comment time; this correction adds only PR-scoped governance evidence and must now complete QP, ECAP, and final IAA on the resulting stable branch head.
 

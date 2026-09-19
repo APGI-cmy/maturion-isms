@@ -52,7 +52,7 @@
 | Foreman QP | `.agent-admin/prs/pr-2048/wave-current-tasks.md` | COMPLETE | PASS recorded |
 | ECAP admin validation | `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` | COMPLETE | ADMIN_VALIDATED with reconciliation summary and canonical proof pointer |
 | PREHANDOVER proof | `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md` | COMPLETE | Discoverable canonical pointer path added |
-| Final IAA assurance | `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` | PENDING_RETRY | Awaiting fresh invocation after these corrections |
+| Final IAA assurance | `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` | COMPLETE | Final reassessment PASS with token `IAA-session-1289-20260919-PASS` on committed head `d4f73332c62bed57b92bcc006cb01b8485cd85a8` |
 
 ## Roles invoked and delegation
 
@@ -61,6 +61,7 @@
 | 1 | independent-assurance-agent | `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` | PREFLIGHT_BRIEF_COMPLETE, later FINAL rejection package |
 | 2 | execution-ceremony-admin-agent | `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` | ADMIN_VALIDATED after symbolic CURRENT_HEAD revalidation; reconciliation/proof repair added |
 | 3 | foreman-v2-agent | this file, `.agent-admin/prs/pr-2048/wave-current-tasks.md`, `.admin/prs/pr-2048.json`, `.agent-admin/scope-declarations/pr-2048.md` | QP PASS, tracker/manifest parity repair, session memory restored |
+| 4 | independent-assurance-agent | `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md`, `.agent-workspace/independent-assurance-agent/memory/session-1289-20260919.md` | Final reassessment PASS; ASSURANCE-TOKEN `IAA-session-1289-20260919-PASS` |
 
 ## Final IAA rejection findings addressed
 
@@ -73,15 +74,15 @@
 
 ## Next action
 
-- immediate_next_action: run targeted validation plus secret scanning on the changed artifact set, then re-invoke independent final IAA assurance for PR #2048.
-- action_owner: foreman-v2-agent
+- immediate_next_action: await CS2 review/merge decision on the recorded PR-scoped evidence set; no further Foreman correction is required unless new evidence appears.
+- action_owner: CS2
 - merge_authority: CS2_ONLY
 - handover_allowed: false
 
 ## Session close
 
-- outcome: IN_PROGRESS_REMEDIATION
+- outcome: CS2_REVIEW
 - session_memory_complete: true
 - prehandover_memory_path: `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md`
 - suggestions_for_improvement: For protected own-contract repairs, create PR-scoped Foreman session memory and discoverable PREHANDOVER proof during the first ECAP pass so final IAA does not need to reject on ceremony completeness after substantive review is already done.
-- closed_at_utc: pending until fresh final IAA concludes
+- closed_at_utc: 2026-09-19
