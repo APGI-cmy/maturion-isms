@@ -22,4 +22,3 @@
 
 - CS2-only canonical amendment decision for `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md`.
 - GOV-2047-04 PIT controller tests/docs depend on the controller surface in blocked PR #2046.
-
