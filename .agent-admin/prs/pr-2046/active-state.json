@@ -1,14 +1,15 @@
 {
   "pr": 2046,
   "branch": "codex/pit-cs2-controller-pilot",
-  "runtime_head_sha": "fba039505a8c7d6720bf5f452a8eccfa36b959c6",
+  "runtime_head_sha": "95d08b48e955a4a1709589d2b99b43c7fd13d713",
   "manifest_path": ".admin/prs/pr-2046.json",
   "scope_path": ".agent-admin/scope-declarations/pr-2046.md",
   "wave_tasks_path": ".agent-admin/prs/pr-2046/wave-current-tasks.md",
   "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md",
   "ecap_artifact_path": ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md",
-  "current_base_to_head_file_count": 17,
+  "current_base_to_head_file_count": 23,
   "current_bounded_github_file_count": 8,
+  "current_iaa_path_alignment_file_count": 6,
   "current_pr_bound_admin_assurance_file_count": 9,
-  "note": "PR-bound admin state revalidated for exact head fba039505a8c7d6720bf5f452a8eccfa36b959c6. The exact base->head diff contains 17 files total: 8 bounded .github controller-pilot files plus 9 PR-bound admin/assurance/ceremony artifacts, including the existing wave record, the PR-scoped prehandover proof, the OVL-CI-005 S-033 evidence file, and the Foreman session-memory artifact. This state records ECAP administrative revalidation only; ECAP did not invoke IAA or issue a final assurance verdict."
+  "note": "PR-bound admin state revalidated for exact head 95d08b48e955a4a1709589d2b99b43c7fd13d713. The exact base->head diff contains 23 files total: 8 bounded .github controller-pilot foundation files, 6 already-committed IAA path-alignment surfaces, and 9 PR-bound admin/assurance/ceremony artifacts, including the existing wave record, the PR-scoped prehandover proof, the OVL-CI-005 S-033 evidence file, and the Foreman session-memory artifact. This state records ECAP administrative revalidation only; ECAP did not invoke IAA or issue a final assurance verdict."
 }

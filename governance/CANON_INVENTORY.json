@@ -1350,15 +1350,15 @@
     },
     {
       "filename": "IAA_PRE_BRIEF_PROTOCOL.md",
-      "version": "1.3.0 | **Authority**: CS2",
-      "file_hash": "ea6ae4ed1cc28933ef90dea21a16e936af67844018492723b9e0915e2ca4b36f",
+      "version": "1.4.0 | **Authority**: CS2",
+      "file_hash": "bb2e0a75779922c9ca929ef862d70ca2ef0063099c69526760c57f17cff4a432",
       "effective_date": "unknown",
       "description": "Canonical governance document: IAA_PRE_BRIEF_PROTOCOL",
       "type": "canon",
       "path": "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md",
       "canonical_commit": "a331ece2f610151f9fda3b32fae80ede849bcf9b",
       "layer_down_status": "PUBLIC_API",
-      "file_hash_sha256": "ea6ae4ed1cc28933ef90dea21a16e936af67844018492723b9e0915e2ca4b36f"
+      "file_hash_sha256": "bb2e0a75779922c9ca929ef862d70ca2ef0063099c69526760c57f17cff4a432"
     },
     {
       "filename": "INDEPENDENT_ASSURANCE_AGENT_CANON.md",
