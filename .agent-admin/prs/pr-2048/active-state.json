@@ -1,7 +1,7 @@
 {
   "pr": 2048,
   "branch": "cs2/codex-advisor-recovery-hardening",
-  "runtime_head_sha": "63b7d706860224acebeb22b9180472cf3d2a2eea",
+  "runtime_head_sha": "c4201e305a255d1b4fcd891bcc3839e91258781f",
   "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
   "manifest_path": ".admin/prs/pr-2048.json",
   "scope_path": ".agent-admin/scope-declarations/pr-2048.md",
