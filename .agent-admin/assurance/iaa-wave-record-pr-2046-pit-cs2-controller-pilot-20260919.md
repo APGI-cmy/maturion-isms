@@ -10,7 +10,7 @@ IAA_PREFLIGHT_BRIEF:
   issue: "#2044 — PIT Operational Core — 24 September release control"
   branch: "codex/pit-cs2-controller-pilot"
   repository: "APGI-cmy/maturion-isms"
-  current_head_sha: "4aae78170f5f2e704c04541ca6b0ab6583654540"
+  current_head_sha: "fba039505a8c7d6720bf5f452a8eccfa36b959c6"
   work_item_id: "pit-issue-2044"
   active_register_row: "PIT-R1"
   qualifying_tasks:
@@ -27,27 +27,32 @@ IAA_PREFLIGHT_BRIEF:
       summary: "Keep scope-expansion and merge approvals human-only throughout the controller pilot."
       assurance_category: "CI_WORKFLOW"
   required_build_gates:
-    - "Exact current-head binding for PR #2046 on branch codex/pit-cs2-controller-pilot"
-    - "Canonical PR-scoped IAA pre-brief discoverable by .github/workflows/iaa-prebrief-inject.yml"
-    - "Single active work-register row for work item pit-issue-2044"
+    - "Exact current-head binding for PR #2046 on branch codex/pit-cs2-controller-pilot."
+    - "Canonical PR-scoped IAA pre-brief discoverable by .github/workflows/iaa-prebrief-inject.yml."
+    - "Single active work-register row for work item pit-issue-2044."
+    - "Ordinary PR-scoped PREHANDOVER/session-memory/S-033 evidence remains on-branch for final assurance."
   expected_qa_scope:
     - "Verify the controller persists exactly one active PIT work-register row for Issue #2044."
     - "Verify Foreman dispatches and consumes only the PR-scoped PRE-BRIEF for PR #2046."
     - "Verify only same-repository PRs carrying CS2-Work-Item: pit-issue-2044 can bind."
     - "Verify scope-expansion and merge decisions remain human-only."
+    - "Verify the ordinary PR-scoped PREHANDOVER/session-memory/S-033 route evidence remains attributable to this exact head."
   high_risk_failure_modes:
     - "Stale or cross-wave pre-brief state is accepted instead of the active PR-scoped artifact."
     - "A PR without CS2-Work-Item: pit-issue-2044 is treated as bound."
     - "More than one active PIT work-register row can persist concurrently."
     - "Controller automation implies or performs scope expansion or merge approval."
+    - "Ordinary PR-scoped PREHANDOVER/session-memory/S-033 evidence drifts to an older head and is treated as current."
   required_builder_evidence:
     - "Node test output for .github/scripts/pit-cs2-controller.test.js and .github/scripts/pit-cs2-controller-workflow.test.js."
     - "YAML parse validation for .github/workflows/pit-cs2-controller.yml, .github/workflows/iaa-prebrief-inject.yml, and .github/ISSUE_TEMPLATE/cs2-work-request.yml."
     - "PR binding evidence showing CS2-Work-Item: pit-issue-2044 on the nominated same-repository PR."
+    - "On-branch route evidence for .agent-admin/prehandover/proof-pr-2046-pit-cs2-controller-pilot-20260919.md, .agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md, and .agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md."
   required_foreman_qp_checks:
-    - "Confirm PR-bound admin artifacts all bind to exact head 4aae78170f5f2e704c04541ca6b0ab6583654540."
+    - "Confirm PR-bound admin artifacts all bind to exact head fba039505a8c7d6720bf5f452a8eccfa36b959c6."
     - "Confirm this PRE-BRIEF block is canonical and discoverable by the injector."
     - "Confirm the controller pilot remains within the bounded .github/** governance scope."
+    - "Confirm PREHANDOVER/session-memory/S-033 artifacts remain present on-branch and attributable to this PR-scoped route."
   ecap_required: true
   ecap_expected_artifacts:
     - ".admin/prs/pr-2046.json"
@@ -56,10 +61,14 @@ IAA_PREFLIGHT_BRIEF:
     - ".agent-admin/prs/pr-2046/wave-current-tasks.md"
     - ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md"
     - ".agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md"
+    - ".agent-admin/prehandover/proof-pr-2046-pit-cs2-controller-pilot-20260919.md"
+    - ".agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md"
+    - ".agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md"
   final_iaa_focus:
-    - "PR #2046 remains bound to exact head 4aae78170f5f2e704c04541ca6b0ab6583654540."
+    - "PR #2046 remains bound to exact head fba039505a8c7d6720bf5f452a8eccfa36b959c6."
     - "The controller pilot enforces one active work item and one nominated PR."
     - "Human-only approvals for scope expansion and merge are preserved."
+    - "Ordinary PR-scoped PREHANDOVER/session-memory/S-033 evidence remains coherent with the same head and route."
   result: PREFLIGHT_BRIEF_COMPLETE
 ```
 

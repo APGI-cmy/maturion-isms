@@ -8,7 +8,7 @@
   "branch": "codex/pit-cs2-controller-pilot",
   "base_branch": "main",
   "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
-  "head_sha": "4aae78170f5f2e704c04541ca6b0ab6583654540",
+  "head_sha": "fba039505a8c7d6720bf5f452a8eccfa36b959c6",
   "canonical_wave_identity": "pr-2046-pit-cs2-controller-pilot",
   "requires_iaa": true,
   "requires_ecap": true,
@@ -31,19 +31,23 @@
     ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md"
   ],
   "diff_truth": {
-    "base_to_head_total_files": 14,
+    "base_to_head_total_files": 17,
     "bounded_github_controller_files": 8,
-    "pr_bound_admin_assurance_files": 6,
+    "pr_bound_admin_assurance_files": 9,
     "pr_bound_admin_assurance_paths": [
       ".admin/prs/pr-2046.json",
       ".agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md",
+      ".agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md",
+      ".agent-admin/prehandover/proof-pr-2046-pit-cs2-controller-pilot-20260919.md",
       ".agent-admin/prs/pr-2046/active-state.json",
       ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md",
       ".agent-admin/prs/pr-2046/wave-current-tasks.md",
-      ".agent-admin/scope-declarations/pr-2046.md"
+      ".agent-admin/scope-declarations/pr-2046.md",
+      ".agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md"
     ]
   },
-  "revalidated_for_head_at_utc": "2026-09-19T10:35:07Z",
+  "revalidated_for_head_at_utc": "2026-09-19T11:00:31Z",
   "merge_authority": "CS2",
-  "execution_model": "foreman-governed"
+  "execution_model": "foreman-governed",
+  "note": "PR #2046 administrative truth refreshed for exact head fba039505a8c7d6720bf5f452a8eccfa36b959c6. The current head adds only ordinary PR-scoped Foreman ceremony evidence within the existing route: the prehandover proof, the OVL-CI-005 S-033 evidence file, and the Foreman session-memory artifact. ECAP updated only the bounded PR admin records listed in prepared_admin_artifacts."
 }
