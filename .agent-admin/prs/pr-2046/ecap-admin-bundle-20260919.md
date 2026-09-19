@@ -6,12 +6,12 @@ bundle_meta:
   agent_class: administrator
   agent_version: "1.0.0"
   contract_version: "1.6.0"
-  prepared_at_utc: "2026-09-19T10:22:17Z"
+  prepared_at_utc: "2026-09-19T10:35:07Z"
   pr_number: 2046
   pr_title: "feat(cs2): add bounded PIT controller pilot setup"
-  verified_head_sha: "2cce1a31373c6430c89bf35a36f1ca90ba208f49"
+  verified_head_sha: "4aae78170f5f2e704c04541ca6b0ab6583654540"
   base_sha: "1603f0ca201754e152f79a13d8e0a62fc4e51755"
-  scope: "Administrative validation and PR-bound bootstrap artifact preparation only."
+  scope: "Administrative revalidation and PR-bound artifact refresh only."
 ```
 
 ## Identity and boundary
@@ -21,42 +21,36 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
 ## Preflight record
 
 - `governance/CANON_INVENTORY.json` loaded; null/empty hash count re-checked locally: `0`.
-- Exact local HEAD matched appointment head: `2cce1a31373c6430c89bf35a36f1ca90ba208f49`.
-- `git status --porcelain` on receipt was **not** empty because `.agent-admin/control-state/pr-unknown.json` was already untracked. This is an admin/control artifact, not a primary substantive deliverable, so ECAP did not HALT-005.
-- PR #2046 current-head resolver state before ECAP artifact preparation:
-
-```json
-{
-  "bootstrap_required": true,
-  "next_required_action": "BOOTSTRAP_REQUIRED",
-  "delta_type": "GATE_CHANGE_DELTA"
-}
-```
+- Exact local HEAD for this bounded revalidation: `4aae78170f5f2e704c04541ca6b0ab6583654540`.
+- `git status --porcelain` on receipt was **not** empty because `.agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md` was already modified in the working tree. This is an admin/assurance artifact, not a primary substantive deliverable. ECAP did not alter that file in this bounded update.
+- `governance/CANON_INVENTORY.json` path/hash preflight check result: `0` null hashes, `0` missing canon paths.
 
 ## Current-head evidence reviewed
 
 ### Scope coherence
 
-- GitHub PR #2046 changed-file set contains exactly 8 in-scope files, all inside the user-declared bounded `.github/**` controller-pilot surface.
+- Exact base→head diff `1603f0ca201754e152f79a13d8e0a62fc4e51755..4aae78170f5f2e704c04541ca6b0ab6583654540` contains 14 files total.
+- 8 changed files are inside the bounded `.github/**` controller-pilot surface.
+- 6 changed files are PR-bound admin/assurance artifacts:
+  - `.admin/prs/pr-2046.json`
+  - `.agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md`
+  - `.agent-admin/prs/pr-2046/active-state.json`
+  - `.agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md`
+  - `.agent-admin/prs/pr-2046/wave-current-tasks.md`
+  - `.agent-admin/scope-declarations/pr-2046.md`
 - No PIT product code, `.github/agents/**`, Supabase, deployment, or merge-authority path appears in the PR diff.
 
 ### Validation re-checks
 
-- Local targeted tests re-run by ECAP:
-  - `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js`
-  - Result: `11 pass, 0 fail`
-- Local YAML parse validation re-run by ECAP:
+- `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` → `11 pass, 0 fail`
+- YAML parse validation passed for:
   - `.github/workflows/pit-cs2-controller.yml`
   - `.github/workflows/iaa-prebrief-inject.yml`
   - `.github/ISSUE_TEMPLATE/cs2-work-request.yml`
-  - Result: all parsed successfully
-- GitHub check-run review at appointment head:
-  - governance / preflight parity checks relevant to this controller pilot were green
-  - `copilot` job remained `in_progress` when observed and is not treated here as an ECAP-authored verdict
 
-## Minimal PR-bound artifacts prepared
+## PR-bound artifacts updated in this revalidation
 
-ECAP prepared only the narrow PR-bound bootstrap/admin records required for this head/context:
+ECAP updated only the narrow PR-bound bootstrap/admin records requested for this head/context:
 
 - `.admin/prs/pr-2046.json`
 - `.agent-admin/scope-declarations/pr-2046.md`
@@ -64,34 +58,26 @@ ECAP prepared only the narrow PR-bound bootstrap/admin records required for this
 - `.agent-admin/prs/pr-2046/wave-current-tasks.md`
 - `.agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md`
 
-## PREHANDOVER discovery decision
+The existing wave record `.agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md` remains part of the exact PR diff, but was not modified by this bounded ECAP update.
 
-No legacy PREHANDOVER pointer bundle was created.
-
-Reason:
-
-1. This exact head is not in a pre-handover/final-assurance state.
-2. The active resolver state before ECAP preparation was `BOOTSTRAP_REQUIRED`, not a handover lane.
-3. The branch already showed `preflight/foreman-prehandover-lane-gate` green without a PR-scoped PREHANDOVER artifact, so creating one here would be stale/untruthful paperwork.
-
-## ECAP admin result
+## ECAP revalidation result
 
 ```yaml
-ecap_admin_result:
+ecap_revalidation_result:
   administrative_validation_only: true
   phase_4_bundle_opened: false
-  prehandover_pointer_created: false
   iaa_invoked_by_ecap: false
   hand_to_cs2_by_ecap: false
   result: RETURN_TO_FOREMAN
+  verdict: ECAP_ADMIN_REVALIDATION_UPDATED_FOR_CURRENT_HEAD
   rationale: >
-    Minimal PR-bound bootstrap/admin artifacts are now prepared for PR #2046, but
-    the Foreman-owned PR-scoped IAA pre-brief does not exist at this exact head
-    and ECAP has no authority to create it.
+    The five bounded PR-2046 admin artifacts now truthfully bind to exact head
+    4aae78170f5f2e704c04541ca6b0ab6583654540 and truthfully record the exact
+    14-file base->head diff (8 bounded .github controller files + 6 PR-bound
+    admin/assurance artifacts). This is an administrative metadata refresh only.
   next_foreman_owned_action: >
-    If these bootstrap artifacts are to be committed, Foreman must pair them with
-    the job-bound PR-scoped IAA pre-brief for this work item/PR and continue the
-    process without reusing stale cross-wave evidence.
+    Use these refreshed PR-bound admin artifacts for any further Foreman-owned
+    assurance flow on exact head 4aae78170f5f2e704c04541ca6b0ab6583654540.
 ```
 
 ## Returned artifact paths
@@ -101,32 +87,3 @@ ecap_admin_result:
 - `.agent-admin/prs/pr-2046/active-state.json`
 - `.agent-admin/prs/pr-2046/wave-current-tasks.md`
 - `.agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md`
-
-## Re-Validation Addendum — committed head `b6090b91d63beb492cbe0299461e5c4bc6110efe`
-
-- Exact local HEAD now matches the follow-up validation target: `b6090b91d63beb492cbe0299461e5c4bc6110efe`.
-- `git status --porcelain` at follow-up validation time: empty.
-- `git diff --name-only` at follow-up validation time: empty.
-- `git diff --name-only 1603f0ca201754e152f79a13d8e0a62fc4e51755..b6090b91d63beb492cbe0299461e5c4bc6110efe` shows the same bounded controller-pilot code scope plus PR-bound admin/assurance artifacts only:
-  - bounded `.github/**` controller-pilot files: 8
-  - PR-bound admin/assurance artifacts: 6
-  - PIT product/runtime files changed: 0
-  - protected contract files changed: 0
-- Local re-checks on this committed head:
-  - `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` → `11 pass, 0 fail`
-  - YAML parse validation passed for `.github/workflows/pit-cs2-controller.yml`, `.github/workflows/iaa-prebrief-inject.yml`, and `.github/ISSUE_TEMPLATE/cs2-work-request.yml`
-- PR-bound bootstrap/admin artifacts and the PR-scoped IAA PRE-BRIEF wave record are now committed on-branch. ECAP did not invoke IAA, did not open a Phase 4 bundle, and did not hand to CS2.
-
-```yaml
-ecap_follow_up_result:
-  administrative_validation_only: true
-  phase_4_bundle_opened: false
-  iaa_invoked_by_ecap: false
-  hand_to_cs2_by_ecap: false
-  result: RETURN_TO_FOREMAN
-  verdict: ECAP_ADMIN_REVALIDATION_PASS
-  rationale: >
-    Current committed head remains within the bounded PR #2046 controller-pilot scope,
-    the PR-bound bootstrap/admin records are now committed, and the PR-scoped PRE-BRIEF
-    exists on-branch. Any further assurance or handover action remains Foreman-owned.
-```
