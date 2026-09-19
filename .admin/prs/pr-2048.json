@@ -1,0 +1,28 @@
+{
+  "pr": 2048,
+  "issue": 2047,
+  "type": "agent-contract-assurance-repair",
+  "owner": "foreman-v2-agent",
+  "branch": "cs2/codex-advisor-recovery-hardening",
+  "head_sha": "CURRENT_HEAD",
+  "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
+  "scope": [
+    ".github/agents/CodexAdvisor-agent.md",
+    ".agent-workspace/CodexAdvisor-agent/escalation-inbox/CS2-DIRECT-2047-OWN-CONTRACT-HARDENING.md",
+    ".agent-workspace/CodexAdvisor-agent/knowledge/FAIL-ONLY-ONCE.md",
+    ".agent-workspace/CodexAdvisor-agent/knowledge/continuous-improvement-protocol.md",
+    ".agent-workspace/CodexAdvisor-agent/knowledge/index.md",
+    ".admin/prs/pr-2048.json",
+    ".agent-admin/scope-declarations/pr-2048.md",
+    ".agent-admin/prs/pr-2048/wave-current-tasks.md",
+    ".agent-admin/prs/pr-2048/active-state.json",
+    ".agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md",
+    ".agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md"
+  ],
+  "risk": "high",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "merge_authority": "CS2",
+  "implementing_agent": "CodexAdvisor-agent",
+  "objective": "Rebind PR #2048 assurance to its own CS2-direct CodexAdvisor recovery-hardening head and replace inherited historical pre-brief context with PR-scoped Foreman, ECAP, and IAA evidence."
+}

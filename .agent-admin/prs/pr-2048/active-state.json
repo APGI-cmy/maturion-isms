@@ -1,0 +1,10 @@
+{
+  "pr": 2048,
+  "branch": "cs2/codex-advisor-recovery-hardening",
+  "manifest_path": ".admin/prs/pr-2048.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-2048.md",
+  "wave_tasks_path": ".agent-admin/prs/pr-2048/wave-current-tasks.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md",
+  "ecap_artifact_path": ".agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md",
+  "note": "PR-#2048-scoped resolver pointers. These prevent fallback to inherited historical issue-2016/PR-2017 assurance artifacts and bind subsequent governance checks to this PR's own evidence."
+}
