@@ -5,6 +5,7 @@
   "owner": "foreman-v2-agent",
   "branch": "cs2/codex-advisor-recovery-hardening",
   "head_sha": "CURRENT_HEAD",
+  "submitted_head_sha": "7e365fb5d8572e18f728fc43a23e60ba5f341e5d",
   "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
   "scope": [
     ".github/agents/CodexAdvisor-agent.md",

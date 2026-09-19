@@ -5,7 +5,8 @@ Issue: #2047
 Branch: cs2/codex-advisor-recovery-hardening
 Base Branch: main
 Base SHA: 1603f0ca201754e152f79a13d8e0a62fc4e51755
-Submitted Head SHA: 7e365fb5d8572e18f728fc43a23e60ba5f341e5d
+Stable Submitted Head SHA: 7e365fb5d8572e18f728fc43a23e60ba5f341e5d
+CURRENT_HEAD_BINDING: CURRENT_HEAD
 Status: IAA_PREBRIEF_COMPLETE_QP_ECAP_FINAL_IAA_PENDING
 CS2_AUTHORITY: Johan Ras (@APGI-cmy)
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md
