@@ -6,11 +6,11 @@ bundle_meta:
   agent_class: administrator
   agent_version: "1.0.0"
   contract_version: "1.6.0"
-  prepared_at_utc: "2026-09-19T11:18:35Z"
+  prepared_at_utc: "2026-09-19T14:25:21Z"
   pr_number: 2046
   pr_title: "feat(cs2): add bounded PIT controller pilot setup"
   verified_head_sha: "CURRENT_HEAD"
-  base_sha: "1603f0ca201754e152f79a13d8e0a62fc4e51755"
+  base_sha: "7b059c4d33b2a950cecc178eb6c94fef62468e8a"
   scope: "Administrative revalidation and PR-bound artifact refresh only."
 ```
 
@@ -29,7 +29,7 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
 
 ### Scope coherence
 
-- Exact base→head diff `1603f0ca201754e152f79a13d8e0a62fc4e51755..CURRENT_HEAD` contains 24 files total.
+- Exact base→head diff `7b059c4d33b2a950cecc178eb6c94fef62468e8a..CURRENT_HEAD` contains 24 files total.
 - 8 changed files are inside the bounded `.github/**` controller-pilot surface.
 - 7 changed files are already-committed IAA path-alignment surfaces for the proven blocker fix:
   - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
@@ -68,6 +68,8 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
 ### Validation re-checks
 
 - `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` → `11 pass, 0 fail`
+- `bash .github/scripts/resolve-active-pr-state.test.sh` → `7 pass, 0 fail`
+- `bash .github/scripts/iaa-preflight-contract-gate.test.sh` → `22 pass, 0 fail`
 - YAML parse validation passed for:
   - `.github/workflows/pit-cs2-controller.yml`
   - `.github/workflows/iaa-prebrief-inject.yml`

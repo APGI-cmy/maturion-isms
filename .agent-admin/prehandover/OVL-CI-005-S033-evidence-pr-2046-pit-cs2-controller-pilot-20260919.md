@@ -102,22 +102,39 @@ Observed result:
 11 pass, 0 fail, 0 skipped, 0 todo
 ```
 
-Historical exact-head hosted PR checks captured earlier on `17b11f6091679b6ec91817e4b30952a7898697e5`:
+Additional contract-alignment/local route regressions executed on the rebased submitted head:
 
-- `35438129445` Stub Detection Check
-- `35438129477` Preflight Evidence Gate
-- `35438129465` Builder Delegation Order Gate
-- `35438129483` Merge Gate Required Checks Alignment
-- `35438129466` Actions Deprecation Gate
-- `35438129440` IAA Pre-Brief Contract Alignment
-- `35438129444` POLC Boundary Validation
-- `35438129432` Foreman Pre-Handover Lane Gate
-- `35438129450` Wave 7 Governance Validation
-- `35438129436` ECAP Admin Boundary Gate
-- `35438129442` CodeQL
+```text
+bash .github/scripts/resolve-active-pr-state.test.sh
+bash .github/scripts/iaa-preflight-contract-gate.test.sh
+```
+
+Observed result:
+
+```text
+7 pass, 0 fail
+22 pass, 0 fail
+```
+
+Rebased submitted head hosted PR checks captured on `9573839a6d51f82d3917f3c5d403448ad9005161`:
+
+- `preflight/phase-1-evidence`
+- `preflight/iaa-prebrief-contract-alignment`
+- `preflight/foreman-prehandover-lane-gate`
+- `preflight/delegation-order-gate`
+- `preflight/ecap-admin-boundary-gate`
+- `preflight/merge-gate-required-checks-alignment`
+- `merge-gate/verdict`
+- `governance/alignment`
+- `stop-and-fix/enforcement`
+- `foreman-implementation-check`
+- `builder-involvement-check`
+- `session-memory-check`
+- `CodeQL`
+- `iaa-prebrief/inject`
 
 ---
 
-These historical run IDs are retained only as prior-route evidence. Active `CURRENT_HEAD` hosted checks must still be re-checked GREEN before final IAA/handover posture.
+These rebased-head checks are retained as the current-main submitted-head evidence snapshot. Active `CURRENT_HEAD` hosted checks must still be re-checked GREEN after the bounded admin-truth refresh commit and before final IAA/handover posture.
 
 **OVL-CI-005 S-033 exception status**: **COMPLETE**

@@ -54,6 +54,20 @@ Observed result:
 11 pass, 0 fail, 0 skipped, 0 todo
 ```
 
+Contract-alignment/local route regression executed:
+
+```text
+bash .github/scripts/resolve-active-pr-state.test.sh
+bash .github/scripts/iaa-preflight-contract-gate.test.sh
+```
+
+Observed result:
+
+```text
+7 pass, 0 fail
+22 pass, 0 fail
+```
+
 YAML/Issue Form parse validation executed:
 
 ```text
@@ -68,21 +82,24 @@ QP snapshot verdict: **PASS**
 
 ## 4. Exact-head hosted checks
 
-Historical exact-head check snapshot captured earlier on `17b11f6091679b6ec91817e4b30952a7898697e5`:
+Rebased submitted head `9573839a6d51f82d3917f3c5d403448ad9005161` was re-checked GREEN for the required current-head lanes before this bounded admin-truth refresh, including:
 
-- `35438129445` Stub Detection Check
-- `35438129477` Preflight Evidence Gate
-- `35438129465` Builder Delegation Order Gate
-- `35438129483` Merge Gate Required Checks Alignment
-- `35438129466` Actions Deprecation Gate
-- `35438129440` IAA Pre-Brief Contract Alignment
-- `35438129444` POLC Boundary Validation
-- `35438129432` Foreman Pre-Handover Lane Gate
-- `35438129450` Wave 7 Governance Validation
-- `35438129436` ECAP Admin Boundary Gate
-- `35438129442` CodeQL
+- `preflight/phase-1-evidence`
+- `preflight/iaa-prebrief-contract-alignment`
+- `preflight/foreman-prehandover-lane-gate`
+- `preflight/delegation-order-gate`
+- `preflight/ecap-admin-boundary-gate`
+- `preflight/merge-gate-required-checks-alignment`
+- `merge-gate/verdict`
+- `governance/alignment`
+- `stop-and-fix/enforcement`
+- `foreman-implementation-check`
+- `builder-involvement-check`
+- `session-memory-check`
+- `CodeQL`
+- `iaa-prebrief/inject`
 
-This historical snapshot is not used as a substitute for the active `CURRENT_HEAD` review. Active current-head hosted checks must still be re-checked GREEN before final IAA/handover posture. Non-required push workflows on the same branch may still report self-referential failures; those are not used here as substitute evidence for the two modified controller workflows. The explicit OVL-CI-005 S-033 evidence is recorded separately at:
+This submitted-head check snapshot is not used as a substitute for the next post-refresh `CURRENT_HEAD` review. Active current-head hosted checks must still be re-checked GREEN after the bounded admin-truth commit and before final IAA/handover posture. Non-required push workflows on the same branch may still report self-referential failures; those are not used here as substitute evidence for the two modified controller workflows. The explicit OVL-CI-005 S-033 evidence is recorded separately at:
 
 - `/home/runner/work/maturion-isms/maturion-isms/.agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md`
 
@@ -101,6 +118,6 @@ This historical snapshot is not used as a substitute for the active `CURRENT_HEA
 
 ## 6. Immediate next action
 
-1. Refresh PR-scoped administrative truth for the latest head if ECAP requires it.
-2. Re-invoke independent IAA on the exact submitted head.
+1. Re-check post-refresh current-head hosted checks after the bounded current-main admin refresh commit.
+2. Re-invoke independent IAA on the exact submitted head produced by that refresh.
 3. If IAA still rejects, report only the smallest proven protected-route blocker.
