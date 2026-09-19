@@ -8,14 +8,12 @@ const test = require('node:test');
 const root = path.resolve(__dirname, '..');
 const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), 'utf8');
 
-test('pilot workflow persists one register and has hourly safety observation', () => {
+test('pilot workflow delegates controller decisions to the tested runtime module', () => {
   const workflow = read('workflows/pit-cs2-controller.yml');
-  assert.match(workflow, /controller\.renderRegister\(row\)/);
+  assert.match(workflow, /types: \[opened\]/);
   assert.match(workflow, /cron: '17 \* \* \* \*'/);
-  assert.match(workflow, /CS2-Work-Item:/);
-  assert.match(workflow, /idempotent no-op/);
-  assert.match(workflow, /\/cs2-\(approve\|reject\)/);
-  assert.match(workflow, /author !== 'APGI-cmy'/);
+  assert.match(workflow, /await controller\.run\(\{ github, context, core, eventName: process\.env\.EVENT_NAME \}\)/);
+  assert.match(workflow, /ref: \$\{\{ github\.event\.repository\.default_branch \}\}/);
 });
 
 test('pre-brief injection cannot use a repository-global legacy wave record', () => {
