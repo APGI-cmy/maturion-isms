@@ -92,3 +92,51 @@ ADMIN_REJECTION_NOTICE
 - No readiness claim made.
 - No merge-ready claim made.
 - No assurance verdict substituted.
+
+## Re-validation Addendum — 2026-09-19
+
+Administrative re-validation only for PR `#2048`, limited to the prior current-head binding blocker.
+
+- Re-validated current branch head: `131ec666122f1bc0cde3953b851f7e88787f2b26`
+- Re-validated base SHA: `1603f0ca201754e152f79a13d8e0a62fc4e51755`
+- Stable substantive submission head retained: `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`
+- Update scope: this existing ECAP bundle only
+
+### Re-validated administrative findings
+
+1. **PR scoping remains correct**
+   - `.admin/prs/pr-2048.json`, `.agent-admin/scope-declarations/pr-2048.md`, `.agent-admin/prs/pr-2048/wave-current-tasks.md`, `.agent-admin/prs/pr-2048/active-state.json`, and `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` remain bound to PR `#2048`, issue `#2047`, and branch `cs2/codex-advisor-recovery-hardening`.
+
+2. **Historical fallback exclusion remains correct**
+   - The PR-scoped wave record and wave task tracker still mark `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md` as **NON-ACTIVE / UNUSABLE** for PR `#2048`.
+
+3. **Diff confinement remains correct**
+   - `git diff --name-only 1603f0ca201754e152f79a13d8e0a62fc4e51755..131ec666122f1bc0cde3953b851f7e88787f2b26` remains limited to the authorised CodexAdvisor recovery-hardening files plus the PR-scoped governance/admin artifacts.
+   - `git diff --name-only 7e365fb5d8572e18f728fc43a23e60ba5f341e5d..131ec666122f1bc0cde3953b851f7e88787f2b26` shows only PR-scoped governance/admin artifacts:
+     - `.admin/prs/pr-2048.json`
+     - `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md`
+     - `.agent-admin/prs/pr-2048/active-state.json`
+     - `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md`
+     - `.agent-admin/prs/pr-2048/wave-current-tasks.md`
+     - `.agent-admin/scope-declarations/pr-2048.md`
+
+4. **Current-head binding blocker is now resolved**
+   - `.admin/prs/pr-2048.json` now uses `"head_sha": "CURRENT_HEAD"` together with `"submitted_head_sha": "7e365fb5d8572e18f728fc43a23e60ba5f341e5d"`.
+   - `.agent-admin/scope-declarations/pr-2048.md` declares `CURRENT_HEAD_BINDING: CURRENT_HEAD` and `STABLE_SUBMISSION_HEAD: 7e365fb5d8572e18f728fc43a23e60ba5f341e5d`.
+   - `.agent-admin/prs/pr-2048/wave-current-tasks.md` declares `CURRENT_HEAD_BINDING: CURRENT_HEAD` and `Stable Submitted Head SHA: 7e365fb5d8572e18f728fc43a23e60ba5f341e5d`.
+   - `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` declares `CURRENT_HEAD_SHA: CURRENT_HEAD`, `Bound runtime review head marker: CURRENT_HEAD`, and the same stable submitted head.
+   - `governance/templates/iaa-wave-record.template.md` explicitly permits symbolic runtime-head markers including `CURRENT_HEAD`.
+   - `.agent-workspace/CodexAdvisor-agent/knowledge/FAIL-ONLY-ONCE.md` prohibits artifact-only exact current-HEAD chase loops and requires assurance evidence to bind a stable reviewed submission head or independent external attestation.
+
+Administrative finding: the artifact set now uses a coherent symbolic current-head binding model while preserving the stable substantive submission head. For this PR-scoped administrative check, that resolves the prior stale/incomplete exact-SHA blocker.
+
+### Supersession
+
+This addendum supersedes the prior **"### 5. PR / branch / head binding correctness"** blocker section above and supersedes the prior **Administrative Result** for current-head binding re-validation only.
+
+## Administrative Result — Re-validation Supersession
+
+ADMIN_VALIDATED
+
+- RESULT: `ADMIN_VALIDATED`
+- REASON: `Symbolic current-head binding is now coherent across the PR #2048 artifact set, is explicitly permitted by the repository's current governance model, preserves the stable substantive submission head 7e365fb5d8572e18f728fc43a23e60ba5f341e5d, and resolves the prior admin blocker without requiring an exact-SHA artifact chase loop.`
