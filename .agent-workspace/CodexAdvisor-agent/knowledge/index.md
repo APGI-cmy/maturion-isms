@@ -1,9 +1,9 @@
 # CodexAdvisor — Tier 2 Knowledge Index
 
 **Agent**: CodexAdvisor-agent  
-**Contract Version**: 4.3.0  
-**Knowledge Version**: 1.5.0  
-**Last Updated**: 2026-07-12  
+**Contract Version**: 4.3.1  
+**Knowledge Version**: 1.6.0  
+**Last Updated**: 2026-09-19  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ## Tier 2 Knowledge Contents
@@ -18,6 +18,7 @@
 | `session-memory-template.md` | Standard session-memory template | current |
 | `agent-file-non-negotiables-checklist.md` | Blocking contract and bundle controls | 1.5.0 |
 | `runtime-specialist-bundle-process.md` | Bounded method for orchestrator and runtime-specialist contract bundles | 1.0.0 |
+| `continuous-improvement-protocol.md` | Root-cause remediation, escalation and regression protocol | 1.0.0 |
 
 ## Constitutional Authority Rules
 
@@ -26,6 +27,8 @@
 3. CodexAdvisor may create or update contracts and Tier 2 bundles for other agents only under exact CS2 authority.
 4. Final independent IAA PASS is mandatory before an agent-contract PR may be presented as merge-ready.
 5. A contract or Tier 2 bundle does not activate a specialist or prove runtime implementation.
+6. An owned or delegated defect is not a generic stop: apply the continuous-improvement protocol before escalating.
+7. An exact CS2 Tier 3 record marked `FRESH_CONTEXT_ONLY` limits the invocation to that record plus current Tier 1 and Tier 2; historic memory and personal patterns are excluded.
 
 ## Supported Classes and Methods
 
