@@ -5,6 +5,7 @@
 **Evidence snapshot head**: `CURRENT_HEAD`
 **Foreman state**: `FOREMAN_CONTROL`
 **Date**: 2026-09-19
+**iaa_audit_token**: `IAA-session-pr-2046-pit-cs2-controller-pilot-20260919-PASS`
 
 ---
 
