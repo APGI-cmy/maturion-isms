@@ -1,0 +1,61 @@
+# PR #2049 Wave Current Tasks
+
+PR: #2049
+Issue: #2047 — Governance: harden Foreman convergence and anti-loop controls
+Wave: GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919
+Branch: copilot/governance-harden-foreman-controls
+Base branch: main
+Base SHA: 7b059c4d33b2a950cecc178eb6c94fef62468e8a
+Initial planning head SHA: 6c878323f01e53926f67740a0c1ce5c542915e79
+CS2 authorization: user-provided explicit authorization, 2026-09-19
+Status: PREFLIGHT_PENDING
+iaa_prebrief_path: PENDING
+
+## Wave boundary
+
+- In scope: the minimal coherent governance ripple for Foreman convergence and anti-loop controls described in issue #2047.
+- Out of scope: PIT product behavior, database, Supabase, deployment, secrets, releases, merge authority, unrelated role changes, and any weakening of IAA independence or quality gates.
+- Required routing invariant: self-remediate ordinary Foreman-owned prerequisites; delegate specialist-owned work; escalate only a proven protected or external authority boundary.
+- Evidence invariant: use a stable reviewed head or external attestation; do not create self-referential exact-current-HEAD evidence refresh loops.
+
+## Qualifying task checklist
+
+- [ ] GOV-2047-01 — Assess authoritative/canonical ripple and produce the consumer layer-down plan for the Foreman, IAA, operating-model, and ECAP control changes.
+      builder: governance-liaison-isms-agent
+      qp_verdict: PENDING
+      notes: Canonical changes must be requested and assessed before consumer implementation; no broad canon cleanup.
+
+- [ ] GOV-2047-02 — Apply the CS2-authorized minimal agent-contract hardening to Foreman and IAA paths: remediation ladder, Foreman-owned prerequisite handling, no terminal READY_FOR_IAA state, PR-scoped-first prebrief route, legacy fallback only when no PR record exists, and stable reviewed-head/external-attestation semantics.
+      builder: CodexAdvisor-agent
+      qp_verdict: PENDING
+      notes: CodexAdvisor owns any .github/agents/ edits under AGCFPP; preserve IAA independence and do not self-certify assurance.
+
+- [ ] GOV-2047-03 — Apply the corresponding consumer governance controls in Foreman Tier 2/FAIL-ONLY-ONCE, FOREMAN_OPERATING_MODEL, IAA protocol/schema/workflow material, and the directly applicable ECAP boundary protocol.
+      builder: governance-liaison-isms-agent
+      qp_verdict: PENDING
+      notes: Limit changes to direct authority/ripple references identified by GOV-2047-01.
+
+- [ ] GOV-2047-04 — Add focused PIT controller tests and controller documentation covering automatic IAA prebrief invocation, IAA rejection-to-Foreman correction/reinvocation, protected-conflict CodexAdvisor routing, non-terminal READY_FOR_IAA prohibition, PR-scoped and legacy-fallback path behavior, and exact-head loop prevention.
+      builder: pit-specialist
+      qp_verdict: PENDING
+      notes: QA execution/evidence must be independently routed as required; no PIT product behavior change.
+
+- [ ] GOV-2047-05 — Execute focused QA for the controller/contract hardening and report test results, skips, warnings, and regression evidence.
+      builder: qa-builder
+      qp_verdict: PENDING
+      notes: Must preserve 100%-GREEN and zero-test-debt controls; no readiness or assurance verdict.
+
+## IAA tokens received this wave
+
+| PR # | Token | Date |
+|------|-------|------|
+| 2049 | PENDING | — |
+
+## Wave completion gate
+
+- [ ] All tasks above show `[x]` only after a recorded Foreman QP PASS.
+- [ ] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
+- [ ] PREHANDOVER proof and session memory are current and committed.
+- [ ] Independent IAA final assurance has a current, valid recorded result.
+- [ ] CS2 receives the evidence package for its exclusive merge decision.
+
