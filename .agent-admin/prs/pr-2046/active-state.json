@@ -1,0 +1,11 @@
+{
+  "pr": 2046,
+  "branch": "codex/pit-cs2-controller-pilot",
+  "runtime_head_sha": "2cce1a31373c6430c89bf35a36f1ca90ba208f49",
+  "manifest_path": ".admin/prs/pr-2046.json",
+  "scope_path": ".agent-admin/scope-declarations/pr-2046.md",
+  "wave_tasks_path": ".agent-admin/prs/pr-2046/wave-current-tasks.md",
+  "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md",
+  "ecap_artifact_path": ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md",
+  "note": "PR-scoped IAA PRE-BRIEF now exists locally at .agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md for reviewed head 2cce1a31373c6430c89bf35a36f1ca90ba208f49. This state records PRE-BRIEF only; no final assurance token or rejection verdict was issued in this invocation."
+}

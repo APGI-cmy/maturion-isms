@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "pr": 2046,
+  "issue": null,
+  "type": "governance-change",
+  "status": "ECAP_BOOTSTRAP_PREPARED_PREBRIEF_FOREMAN_OWNED",
+  "owner": "foreman-v2-agent",
+  "branch": "codex/pit-cs2-controller-pilot",
+  "base_branch": "main",
+  "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
+  "head_sha": "2cce1a31373c6430c89bf35a36f1ca90ba208f49",
+  "canonical_wave_identity": "pr-2046-pit-cs2-controller-pilot",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "objective": "Bounded PIT controller pilot setup so a CS2 Work Request claims exactly one PIT job, dispatches Foreman for its mandatory PR-scoped IAA pre-brief, and binds only the nominated same-repository PR marked with the active work item.",
+  "scope": [
+    ".github/ISSUE_TEMPLATE/cs2-work-request.yml",
+    ".github/cs2-controller/pit-pilot.md",
+    ".github/cs2-controller/work-register.schema.json",
+    ".github/scripts/pit-cs2-controller-workflow.test.js",
+    ".github/scripts/pit-cs2-controller.js",
+    ".github/scripts/pit-cs2-controller.test.js",
+    ".github/workflows/iaa-prebrief-inject.yml",
+    ".github/workflows/pit-cs2-controller.yml"
+  ],
+  "prepared_admin_artifacts": [
+    ".admin/prs/pr-2046.json",
+    ".agent-admin/scope-declarations/pr-2046.md",
+    ".agent-admin/prs/pr-2046/active-state.json",
+    ".agent-admin/prs/pr-2046/wave-current-tasks.md",
+    ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md"
+  ],
+  "merge_authority": "CS2",
+  "execution_model": "foreman-governed"
+}
