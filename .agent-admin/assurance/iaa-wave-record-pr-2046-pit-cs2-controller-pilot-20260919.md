@@ -72,6 +72,18 @@ IAA_PREFLIGHT_BRIEF:
   result: PREFLIGHT_BRIEF_COMPLETE
 ```
 
+## TOKEN
+
+### 2026-09-19 — PR #2046 @ `364254d2a4a297b3a744fcabc4ef0bb7c3c0df20` — ASSURANCE-TOKEN
+
+- Verdict: PASS
+- Token reference: `IAA-session-pr-2046-pit-cs2-controller-pilot-20260919-PASS`
+- Bound PR: `#2046`
+- Bound exact head: `364254d2a4a297b3a744fcabc4ef0bb7c3c0df20`
+- Merge gate parity: PASS
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-pr-2046-pit-cs2-controller-pilot-20260919-PASS
+
 ## REJECTION_HISTORY
 
 ### 2026-09-19 — PR #2046 — REJECTION-PACKAGE
