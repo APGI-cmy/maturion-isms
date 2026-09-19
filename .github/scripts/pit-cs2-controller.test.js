@@ -5,6 +5,7 @@ const test = require('node:test');
 const controller = require('./pit-cs2-controller.js');
 
 const CONTROLLER_USER = { login: controller.CONTROLLER_LOGIN, type: 'Bot' };
+const FOREMAN_USER = { login: controller.FOREMAN_LOGIN, type: 'Bot' };
 const CS2_USER = { login: controller.PILOT_CS2_LOGIN, type: 'User' };
 const OTHER_USER = { login: 'someone-else', type: 'User' };
 
@@ -146,6 +147,14 @@ function workRequestBody(module = 'PIT') {
   ].join('\n');
 }
 
+function foremanNominationBody(prNumber, workItemId) {
+  return [
+    controller.FOREMAN_NOMINATION_MARKER,
+    `FOREMAN_NOMINATE_PR: ${prNumber}`,
+    `CS2-Work-Item: ${workItemId}`,
+  ].join('\n');
+}
+
 test('real Issue Form payload is claimed once and duplicate intake is idempotent', async () => {
   const issue = {
     number: 42,
@@ -278,7 +287,7 @@ test('active validated register on a closed issue beyond the first page still bl
   assert.match(posted[0].body, /pit-issue-250/);
 });
 
-test('only a nominated authorised same-repository work-item PR can bind once to the active row', async () => {
+test('only a Foreman-nominated authorised same-repository work-item PR can bind once to the active row', async () => {
   const repository = 'APGI-cmy/maturion-isms';
   const seededRow = controller.initialRegister({ issueNumber: 42, repository });
   const harness = createHarness({
@@ -365,7 +374,41 @@ test('only a nominated authorised same-repository work-item PR can bind once to 
       ...baseContext,
       payload: {
         issue: { number: 42 },
-        comment: { body: '/cs2-nominate-pr 502', user: CS2_USER },
+        comment: { body: foremanNominationBody(502, 'pit-issue-42'), user: OTHER_USER },
+      },
+    },
+    core: harness.core,
+    eventName: 'issue_comment',
+  });
+
+  persisted = controller.parseRegister((harness.comments.get('42') || [])[0].body);
+  assert.equal(persisted.nominated_pr, null);
+  assert.match(harness.messages.info.at(-1), /human CS2/i);
+
+  await controller.run({
+    github: harness.github,
+    context: {
+      ...baseContext,
+      payload: {
+        issue: { number: 42 },
+        comment: { body: foremanNominationBody(502, 'pit-issue-999'), user: FOREMAN_USER },
+      },
+    },
+    core: harness.core,
+    eventName: 'issue_comment',
+  });
+
+  persisted = controller.parseRegister((harness.comments.get('42') || [])[0].body);
+  assert.equal(persisted.nominated_pr, null);
+  assert.match(harness.messages.warning.at(-1), /work item mismatch/i);
+
+  await controller.run({
+    github: harness.github,
+    context: {
+      ...baseContext,
+      payload: {
+        issue: { number: 42 },
+        comment: { body: foremanNominationBody(502, 'pit-issue-42'), user: FOREMAN_USER },
       },
     },
     core: harness.core,
@@ -375,6 +418,7 @@ test('only a nominated authorised same-repository work-item PR can bind once to 
   persisted = controller.parseRegister((harness.comments.get('42') || [])[0].body);
   assert.equal(persisted.nominated_pr.number, 502);
   assert.equal(persisted.nominated_pr.head_repository, repository);
+  assert.equal(persisted.nominated_pr.recorded_by, controller.FOREMAN_LOGIN);
 
   await controller.run({
     github: harness.github,
@@ -420,6 +464,21 @@ test('only a nominated authorised same-repository work-item PR can bind once to 
   assert.equal((harness.comments.get('502') || []).length, 1);
   assert.match((harness.comments.get('502') || [])[0].body, /wave-current-tasks\.md/);
   assert.match((harness.comments.get('502') || [])[0].body, /Submitted head/);
+
+  await controller.run({
+    github: harness.github,
+    context: {
+      ...baseContext,
+      payload: {
+        issue: { number: 42 },
+        comment: { body: foremanNominationBody(502, 'pit-issue-42'), user: FOREMAN_USER },
+      },
+    },
+    core: harness.core,
+    eventName: 'issue_comment',
+  });
+
+  assert.match(harness.messages.info.at(-1), /idempotent no-op/);
 
   await controller.run({
     github: harness.github,

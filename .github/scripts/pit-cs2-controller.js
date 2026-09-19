@@ -5,8 +5,10 @@ const path = require('node:path');
 
 const REGISTER_MARKER = '<!-- pit-cs2-work-register:v1 -->';
 const FOREMAN_DISPATCH_MARKER = '<!-- pit-cs2-foreman-dispatch:v1 -->';
+const FOREMAN_NOMINATION_MARKER = '<!-- pit-cs2-foreman-nominate:v1 -->';
 const PR_BOUND_MARKER = '<!-- pit-cs2-pr-bound:v1 -->';
 const CONTROLLER_LOGIN = 'github-actions[bot]';
+const FOREMAN_LOGIN = 'Copilot';
 const PILOT_CS2_LOGIN = 'APGI-cmy';
 const LIST_PAGE_SIZE = 100;
 const ACTIVE_STATES = new Set([
@@ -157,6 +159,19 @@ function nominatePullRequest(register, { prNumber, headRepository, bodyMarker, a
   };
 }
 
+function parseForemanNomination(body) {
+  if (!body || !body.includes(FOREMAN_NOMINATION_MARKER)) return null;
+  const prMatch = body.match(/FOREMAN_NOMINATE_PR:\s*#?(\d+)/i);
+  const workItemId = boundWorkItem(body);
+  if (!prMatch || !workItemId) {
+    throw new Error('Foreman nomination must include FOREMAN_NOMINATE_PR and CS2-Work-Item.');
+  }
+  return {
+    prNumber: Number(prMatch[1]),
+    workItemId,
+  };
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -294,7 +309,13 @@ async function dispatchForeman(github, owner, repo, issueNumber, row) {
     '',
     'Do not ask Johan/CS2 to authorise, waive, or create this pre-brief. Resolve ordinary governance, tooling, evidence-format, and configuration defects inside the declared sandbox. Escalate only a genuine external credential/cost/destructive action, protected-contract change, unresolvable business decision, or final human UI/UX acceptance.',
     '',
-    'Before PR binding, nominate exactly one same-repository PR on this Issue with `/cs2-nominate-pr <number>`.',
+    'Before PR binding, Foreman must nominate exactly one same-repository PR on this Issue with the authenticated controller marker comment.',
+    '',
+    '```text',
+    `${FOREMAN_NOMINATION_MARKER}`,
+    `FOREMAN_NOMINATE_PR: <pr-number>`,
+    `CS2-Work-Item: ${row.work_item_id}`,
+    '```',
     `The nominated PR must include \`CS2-Work-Item: ${row.work_item_id}\` in its body.`,
   ].join('\n');
   await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, body });
@@ -403,18 +424,29 @@ async function run({ github, context, core, eventName }) {
     }
     const actor = context.payload.comment.user || {};
     const author = String(actor.login || '');
-    if (author !== PILOT_CS2_LOGIN || String(actor.type || '') === 'Bot') {
-      core.info('Controller commands are accepted only from human CS2.');
-      return;
-    }
     const body = String(context.payload.comment.body || '').trim();
-    const nomination = body.match(/^\/cs2-nominate-pr\s+#?(\d+)$/i);
-    if (nomination) {
-      const prNumber = Number(nomination[1]);
+    if (author === FOREMAN_LOGIN) {
+      const nomination = parseForemanNomination(body);
+      if (!nomination) {
+        core.info('No Foreman nomination transition; no action.');
+        return;
+      }
+      if (nomination.workItemId !== found.row.work_item_id) {
+        core.warning(`Foreman nomination work item mismatch for #${issue.number}.`);
+        return;
+      }
+      const prNumber = nomination.prNumber;
       const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
       const expectedMarker = `CS2-Work-Item: ${found.row.work_item_id}`;
       if (!isSameRepositoryPullRequest(pr, repository) || boundWorkItem(pr.body || '') !== found.row.work_item_id) {
         core.warning(`PR #${prNumber} is not an authorised nomination target for ${found.row.work_item_id}.`);
+        return;
+      }
+      if (found.row.nominated_pr
+        && found.row.nominated_pr.number === prNumber
+        && found.row.nominated_pr.head_repository === pr.head.repo.full_name
+        && found.row.nominated_pr.body_marker === expectedMarker) {
+        core.info(`Foreman nomination for PR #${prNumber} already recorded; idempotent no-op.`);
         return;
       }
       const next = nominatePullRequest(found.row, {
@@ -424,7 +456,11 @@ async function run({ github, context, core, eventName }) {
         actor: author,
       });
       await writeRegister(github, owner, repo, issue.number, found.comment, next);
-      core.info(`Recorded nominated PR #${prNumber} for ${found.row.work_item_id}.`);
+      core.info(`Recorded Foreman-nominated PR #${prNumber} for ${found.row.work_item_id}.`);
+      return;
+    }
+    if (author !== PILOT_CS2_LOGIN || String(actor.type || '') === 'Bot') {
+      core.info('Human controller commands are accepted only from human CS2.');
       return;
     }
     const command = body.match(/^\/cs2-(approve|reject)\s+(scope-expansion|merge)$/i);
@@ -447,6 +483,8 @@ module.exports = {
   ACTIVE_STATES,
   CONTROLLER_LOGIN,
   FOREMAN_DISPATCH_MARKER,
+  FOREMAN_LOGIN,
+  FOREMAN_NOMINATION_MARKER,
   PILOT_CS2_LOGIN,
   PR_BOUND_MARKER,
   REGISTER_MARKER,
@@ -460,6 +498,7 @@ module.exports = {
   issueFormField,
   isActive,
   nominatePullRequest,
+  parseForemanNomination,
   parseRegister,
   recordHumanApproval,
   renderRegister,
