@@ -11,6 +11,8 @@
     "pr",
     "issue",
     "branch",
+    "current_head_sha",
+    "work_item_id",
     "qualifying_tasks",
     "required_build_gates",
     "expected_qa_scope",
@@ -43,6 +45,16 @@
       "minLength": 1
     },
     "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "current_head_sha": {
+      "description": "Submitted head binding for the active pre-brief.",
+      "type": "string",
+      "pattern": "^([0-9a-f]{40}|CURRENT_HEAD|ACTIVE_HEAD_RESOLVED_BY_GATE|GITHUB_PR_HEAD_SHA)$"
+    },
+    "work_item_id": {
+      "description": "Active PR-bound work-item identifier, or PENDING when no PR-bound work item exists.",
       "type": "string",
       "minLength": 1
     },
