@@ -1,9 +1,9 @@
 # PREHANDOVER PROOF — PR #2046 PIT CS2 Controller Pilot
 
-**PR**: #2046  
-**Branch**: `codex/pit-cs2-controller-pilot`  
-**Evidence snapshot head**: `17b11f6091679b6ec91817e4b30952a7898697e5`  
-**Foreman state**: `FOREMAN_CONTROL`  
+**PR**: #2046
+**Branch**: `codex/pit-cs2-controller-pilot`
+**Evidence snapshot head**: `CURRENT_HEAD`
+**Foreman state**: `FOREMAN_CONTROL`
 **Date**: 2026-09-19
 
 ---
@@ -68,7 +68,7 @@ QP snapshot verdict: **PASS**
 
 ## 4. Exact-head hosted checks
 
-Hosted checks observed GREEN on `17b11f6091679b6ec91817e4b30952a7898697e5`:
+Historical exact-head check snapshot captured earlier on `17b11f6091679b6ec91817e4b30952a7898697e5`:
 
 - `35438129445` Stub Detection Check
 - `35438129477` Preflight Evidence Gate
@@ -82,7 +82,7 @@ Hosted checks observed GREEN on `17b11f6091679b6ec91817e4b30952a7898697e5`:
 - `35438129436` ECAP Admin Boundary Gate
 - `35438129442` CodeQL
 
-Non-required push workflows on the same branch may still report self-referential failures; those are not used here as substitute evidence for the two modified controller workflows. The explicit OVL-CI-005 S-033 evidence is recorded separately at:
+This historical snapshot is not used as a substitute for the active `CURRENT_HEAD` review. Active current-head hosted checks must still be re-checked GREEN before final IAA/handover posture. Non-required push workflows on the same branch may still report self-referential failures; those are not used here as substitute evidence for the two modified controller workflows. The explicit OVL-CI-005 S-033 evidence is recorded separately at:
 
 - `/home/runner/work/maturion-isms/maturion-isms/.agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md`
 

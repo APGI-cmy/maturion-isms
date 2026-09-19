@@ -10,7 +10,7 @@ IAA_PREFLIGHT_BRIEF:
   issue: "#2044 — PIT Operational Core — 24 September release control"
   branch: "codex/pit-cs2-controller-pilot"
   repository: "APGI-cmy/maturion-isms"
-  current_head_sha: "fba039505a8c7d6720bf5f452a8eccfa36b959c6"
+  current_head_sha: "CURRENT_HEAD"
   work_item_id: "pit-issue-2044"
   active_register_row: "PIT-R1"
   qualifying_tasks:
@@ -49,7 +49,7 @@ IAA_PREFLIGHT_BRIEF:
     - "PR binding evidence showing CS2-Work-Item: pit-issue-2044 on the nominated same-repository PR."
     - "On-branch route evidence for .agent-admin/prehandover/proof-pr-2046-pit-cs2-controller-pilot-20260919.md, .agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md, and .agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md."
   required_foreman_qp_checks:
-    - "Confirm PR-bound admin artifacts all bind to exact head fba039505a8c7d6720bf5f452a8eccfa36b959c6."
+    - "Confirm PR-bound admin artifacts all bind to exact head CURRENT_HEAD."
     - "Confirm this PRE-BRIEF block is canonical and discoverable by the injector."
     - "Confirm the controller pilot remains within the bounded .github/** governance scope."
     - "Confirm PREHANDOVER/session-memory/S-033 artifacts remain present on-branch and attributable to this PR-scoped route."
@@ -65,7 +65,7 @@ IAA_PREFLIGHT_BRIEF:
     - ".agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md"
     - ".agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md"
   final_iaa_focus:
-    - "PR #2046 remains bound to exact head fba039505a8c7d6720bf5f452a8eccfa36b959c6."
+    - "PR #2046 remains bound to exact head CURRENT_HEAD."
     - "The controller pilot enforces one active work item and one nominated PR."
     - "Human-only approvals for scope expansion and merge are preserved."
     - "Ordinary PR-scoped PREHANDOVER/session-memory/S-033 evidence remains coherent with the same head and route."

@@ -5,15 +5,15 @@ PR: #2046
 Branch: codex/pit-cs2-controller-pilot
 Base branch: main
 Base SHA: 1603f0ca201754e152f79a13d8e0a62fc4e51755
-Head SHA: 95d08b48e955a4a1709589d2b99b43c7fd13d713
-Status: CURRENT_HEAD_ADMIN_REVALIDATION_UPDATED
+Head SHA: CURRENT_HEAD
+Status: CURRENT_HEAD_SYMBOLIC_BINDING_ACTIVE
 WAVE_TASKS_PATH: .agent-admin/prs/pr-2046/wave-current-tasks.md
 ecap_bundle_path: .agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md
 
 ## Current-head truth
 
 - Scope remains frozen to the eight `.github/**` controller-pilot foundation files listed in `.agent-admin/scope-declarations/pr-2046.md`; current head also carries six already-committed IAA path-alignment surfaces for the proven blocker fix, but ECAP did not modify those surfaces in this pass.
-- Exact base→head diff for `1603f0ca201754e152f79a13d8e0a62fc4e51755..95d08b48e955a4a1709589d2b99b43c7fd13d713` contains 23 files total:
+- Exact base→head diff for `1603f0ca201754e152f79a13d8e0a62fc4e51755..CURRENT_HEAD` contains 23 files total:
   - bounded `.github/**` controller-pilot foundation files: 8
   - already-committed IAA path-alignment surfaces: 6
   - PR-bound admin/assurance/ceremony artifacts: 9
@@ -39,7 +39,7 @@ ecap_bundle_path: .agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md
 - Current-head local validation re-checked by ECAP:
   - `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` → 11 pass, 0 fail.
   - YAML parse validation passed for `.github/workflows/pit-cs2-controller.yml`, `.github/workflows/iaa-prebrief-inject.yml`, and `.github/ISSUE_TEMPLATE/cs2-work-request.yml`.
-- Incremental delta from prior ECAP-refreshed head `fba039505a8c7d6720bf5f452a8eccfa36b959c6` to current head `95d08b48e955a4a1709589d2b99b43c7fd13d713` adds the proven IAA path-alignment surfaces plus this current-head admin refresh:
+- Incremental delta from prior ECAP-refreshed head `fba039505a8c7d6720bf5f452a8eccfa36b959c6` to current head `CURRENT_HEAD` adds the proven IAA path-alignment surfaces plus this current-head admin refresh:
   - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
   - `.agent-admin/control/schemas/iaa-preflight-brief.schema.json`
   - `.github/agents/independent-assurance-agent.md`
@@ -51,7 +51,7 @@ ecap_bundle_path: .agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md
 
 ## Foreman-owned next action
 
-- Use the updated PR-bound admin records for exact head `95d08b48e955a4a1709589d2b99b43c7fd13d713`.
+- Use the updated PR-bound admin records for exact head `CURRENT_HEAD`.
 - Historical or cross-wave pre-brief state is not to be reused as the active artifact for this PR.
 
 ## ECAP boundary

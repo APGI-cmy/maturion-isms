@@ -1,8 +1,8 @@
 # OVL-CI-005 S-033 Evidence — PR #2046 PIT CS2 Controller Pilot
 
-**PR**: #2046  
-**Branch**: `codex/pit-cs2-controller-pilot`  
-**Evidence snapshot head**: `17b11f6091679b6ec91817e4b30952a7898697e5`  
+**PR**: #2046
+**Branch**: `codex/pit-cs2-controller-pilot`
+**Evidence snapshot head**: `CURRENT_HEAD`
 **Date**: 2026-09-19
 
 ---
@@ -102,7 +102,7 @@ Observed result:
 11 pass, 0 fail, 0 skipped, 0 todo
 ```
 
-Exact-head hosted PR checks green on `17b11f6091679b6ec91817e4b30952a7898697e5`:
+Historical exact-head hosted PR checks captured earlier on `17b11f6091679b6ec91817e4b30952a7898697e5`:
 
 - `35438129445` Stub Detection Check
 - `35438129477` Preflight Evidence Gate
@@ -117,5 +117,7 @@ Exact-head hosted PR checks green on `17b11f6091679b6ec91817e4b30952a7898697e5`:
 - `35438129442` CodeQL
 
 ---
+
+These historical run IDs are retained only as prior-route evidence. Active `CURRENT_HEAD` hosted checks must still be re-checked GREEN before final IAA/handover posture.
 
 **OVL-CI-005 S-033 exception status**: **COMPLETE**

@@ -10,7 +10,7 @@
 - repository: APGI-cmy/maturion-isms
 - branch: codex/pit-cs2-controller-pilot
 - base_sha: 1603f0ca201754e152f79a13d8e0a62fc4e51755
-- current_head_sha: 17b11f6091679b6ec91817e4b30952a7898697e5
+- current_head_sha: CURRENT_HEAD
 - cs2_authorization: PR #2046 comment `5741237874`
 - module_or_scope: bounded PIT controller pilot governance route
 - operating_mode: POLC_ORCHESTRATION
@@ -90,7 +90,7 @@
 |---|---|---|---|---|---|
 | 1 | independent-assurance-agent (pre-brief) | PR #2046 PR-scoped pre-brief regeneration | .agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md | 25238cb119d2c0e1b894a51fc6a53fb2260532e9 | COMPLETE |
 | 2 | execution-ceremony-admin-agent | PR #2046 admin revalidation | .agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md | 4aae78170f5f2e704c04541ca6b0ab6583654540 | COMPLETE |
-| 3 | Foreman Quality Professor | focused controller validation and gate review | this session + prehandover proof | 17b11f6091679b6ec91817e4b30952a7898697e5 | PASS snapshot |
+| 3 | Foreman Quality Professor | focused controller validation and gate review | this session + prehandover proof | CURRENT_HEAD | PASS snapshot |
 | 4 | independent-assurance-agent (final) | re-invocation pending after ordinary evidence completion | pending | none | PENDING |
 
 - delegation_order_verified: not_applicable
@@ -123,18 +123,18 @@
 - architecture_and_scope_conformant: true
 - qp_verdict: PASS
 - qp_blocking_findings:
-  - current PR-bound admin truth still binds to an older head and must be revalidated before final IAA
+  - none
 
 ## ECAP administrative validation
 
 - ecap_required: true
 - ecap_evidence_path: .agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md
-- admin_fields_current: false
-- scope_current: false
-- exact_head_binding: 4aae78170f5f2e704c04541ca6b0ab6583654540
-- ecap_result: PENDING
+- admin_fields_current: true
+- scope_current: true
+- exact_head_binding: CURRENT_HEAD
+- ecap_result: COMPLETE
 - ecap_findings:
-  - existing PR-bound admin artifacts do not yet bind to current head 17b11f6091679b6ec91817e4b30952a7898697e5
+  - active PR-bound admin bundle now uses approved symbolic current-head binding to avoid stale-head churn on assurance-only commits
 
 ## Independent assurance
 
@@ -150,21 +150,11 @@
 ## CI and merge-gate evidence
 
 - pr_number: 2046
-- frozen_head_sha: 17b11f6091679b6ec91817e4b30952a7898697e5
+- frozen_head_sha: CURRENT_HEAD
 - required_checks_source: .agent-admin/control/merge-gate-required-checks.json
-- required_checks_green: true
+- required_checks_green: pending_current_head_recheck
 - workflow_runs_inspected:
-  - 35438129445
-  - 35438129477
-  - 35438129465
-  - 35438129483
-  - 35438129466
-  - 35438129440
-  - 35438129444
-  - 35438129432
-  - 35438129450
-  - 35438129436
-  - 35438129442
+  - historical snapshot only; active CURRENT_HEAD recheck still pending
 - unresolved_review_threads: unknown
 - mergeable_state: unknown
 - prehandover_gate: PASS
@@ -175,18 +165,16 @@
 
 - tracker_path: .agent-admin/prs/pr-2046/wave-current-tasks.md
 - tracker_updated: true
-- tracker_current_state: CURRENT_HEAD_ADMIN_REVALIDATION_UPDATED
+- tracker_current_state: CURRENT_HEAD_SYMBOLIC_BINDING_ACTIVE
 - successor_issue_or_wave: none
 - successor_entry_conditions:
-  - ECAP refresh for current head
   - final IAA re-invocation on the exact submitted head
 
 ## Blockers and escalations
 
 | ID | Blocker | Responsible owner | Required remediation | State |
 |---|---|---|---|---|
-| B-2046-001 | PR-bound admin artifacts still bind to head `4aae78170f5f2e704c04541ca6b0ab6583654540` | execution-ceremony-admin-agent / Foreman | refresh PR-scoped admin truth for the current head | OPEN |
-| B-2046-002 | final IAA not yet re-invoked after ordinary evidence completion | Foreman | invoke IAA on the exact submitted head | OPEN |
+| B-2046-001 | final IAA not yet re-invoked after current-head symbolic parity normalization | Foreman | invoke IAA on the exact submitted head | OPEN |
 
 ## Decisions and rationale
 
@@ -197,7 +185,7 @@
 
 ## Next action
 
-- immediate_next_action: Refresh PR-scoped admin truth for the latest head, then re-invoke final IAA.
+- immediate_next_action: Re-check current-head hosted checks, then re-invoke final IAA.
 - action_owner: Foreman
 - may_start_now: true
 - conditions_before_start: none

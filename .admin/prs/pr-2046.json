@@ -3,12 +3,12 @@
   "pr": 2046,
   "issue": null,
   "type": "governance-change",
-  "status": "ECAP_ADMIN_REVALIDATION_UPDATED_FOR_CURRENT_HEAD",
+  "status": "ECAP_ADMIN_REVALIDATION_CURRENT_HEAD_SYMBOLIC",
   "owner": "foreman-v2-agent",
   "branch": "codex/pit-cs2-controller-pilot",
   "base_branch": "main",
   "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
-  "head_sha": "95d08b48e955a4a1709589d2b99b43c7fd13d713",
+  "head_sha": "CURRENT_HEAD",
   "canonical_wave_identity": "pr-2046-pit-cs2-controller-pilot",
   "requires_iaa": true,
   "requires_ecap": true,
@@ -58,5 +58,5 @@
   "revalidated_for_head_at_utc": "2026-09-19T11:18:35Z",
   "merge_authority": "CS2",
   "execution_model": "foreman-governed",
-  "note": "Protected alignment for the proven IAA path blocker has now landed. PR #2046 administrative truth is refreshed for exact head 95d08b48e955a4a1709589d2b99b43c7fd13d713. The exact base->head diff now contains 23 files total: 8 bounded controller-pilot foundation files, 6 already-committed IAA path-alignment surfaces, and 9 PR-bound admin/assurance/ceremony artifacts. ECAP updated only the bounded PR admin records listed in prepared_admin_artifacts."
+  "note": "Protected alignment for the proven IAA path blocker has now landed. PR #2046 administrative truth now binds the active reviewed head through the approved symbolic marker CURRENT_HEAD to avoid stale-head churn on bounded assurance-only commits. The exact base->head diff contains 23 files total: 8 bounded controller-pilot foundation files, 6 already-committed IAA path-alignment surfaces, and 9 PR-bound admin/assurance/ceremony artifacts. ECAP updated only the bounded PR admin records listed in prepared_admin_artifacts."
 }

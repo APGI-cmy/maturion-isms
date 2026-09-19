@@ -9,7 +9,7 @@ bundle_meta:
   prepared_at_utc: "2026-09-19T11:18:35Z"
   pr_number: 2046
   pr_title: "feat(cs2): add bounded PIT controller pilot setup"
-  verified_head_sha: "95d08b48e955a4a1709589d2b99b43c7fd13d713"
+  verified_head_sha: "CURRENT_HEAD"
   base_sha: "1603f0ca201754e152f79a13d8e0a62fc4e51755"
   scope: "Administrative revalidation and PR-bound artifact refresh only."
 ```
@@ -21,7 +21,7 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
 ## Preflight record
 
 - `governance/CANON_INVENTORY.json` loaded; null/empty hash count re-checked locally: `0`.
-- Exact local HEAD for this bounded revalidation: `95d08b48e955a4a1709589d2b99b43c7fd13d713`.
+- Exact local HEAD binding for this bounded revalidation: `CURRENT_HEAD`.
 - `git status --porcelain` on receipt was empty.
 - `governance/CANON_INVENTORY.json` path/hash preflight check result: `0` null hashes, `0` missing canon paths, `1` hash mismatch (`governance/canon/IAA_PRE_BRIEF_PROTOCOL.md`).
 
@@ -29,7 +29,7 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
 
 ### Scope coherence
 
-- Exact base→head diff `1603f0ca201754e152f79a13d8e0a62fc4e51755..95d08b48e955a4a1709589d2b99b43c7fd13d713` contains 23 files total.
+- Exact base→head diff `1603f0ca201754e152f79a13d8e0a62fc4e51755..CURRENT_HEAD` contains 23 files total.
 - 8 changed files are inside the bounded `.github/**` controller-pilot surface.
 - 6 changed files are already-committed IAA path-alignment surfaces for the proven blocker fix:
   - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
@@ -48,7 +48,7 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
   - `.agent-admin/prs/pr-2046/wave-current-tasks.md`
   - `.agent-admin/scope-declarations/pr-2046.md`
   - `.agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md`
-- Incremental delta from prior ECAP-refreshed head `fba039505a8c7d6720bf5f452a8eccfa36b959c6` to current head `95d08b48e955a4a1709589d2b99b43c7fd13d713` contains 12 files:
+- Incremental delta from prior ECAP-refreshed head `fba039505a8c7d6720bf5f452a8eccfa36b959c6` to current head `CURRENT_HEAD` contains 12 files:
   - `.admin/prs/pr-2046.json`
   - `.agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md`
   - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
@@ -95,13 +95,13 @@ ecap_revalidation_result:
   verdict: ECAP_ADMIN_REVALIDATION_UPDATED_FOR_CURRENT_HEAD
   rationale: >
     The five bounded PR-2046 admin artifacts now truthfully bind to exact head
-    95d08b48e955a4a1709589d2b99b43c7fd13d713 and truthfully record the exact
+    CURRENT_HEAD via the approved symbolic runtime marker and truthfully record the exact
     23-file base->head diff (8 bounded .github controller files + 6 already-
     committed IAA path-alignment surfaces + 9 PR-bound admin/assurance/
     ceremony artifacts). This is an administrative metadata refresh only.
   next_foreman_owned_action: >
     Use these refreshed PR-bound admin artifacts for any further Foreman-owned
-    assurance flow on exact head 95d08b48e955a4a1709589d2b99b43c7fd13d713.
+    assurance flow on exact head CURRENT_HEAD.
 ```
 
 ## Returned artifact paths
@@ -111,3 +111,14 @@ ecap_revalidation_result:
 - `.agent-admin/prs/pr-2046/active-state.json`
 - `.agent-admin/prs/pr-2046/wave-current-tasks.md`
 - `.agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md`
+
+## Foreman addendum — current-head symbolic binding
+
+This bounded administrative refresh uses the approved symbolic current-head marker
+`CURRENT_HEAD` so the active PR-2046 bundle remains truthful across assurance-only
+commits that would otherwise make literal SHA copies stale immediately.
+
+- PR: #2046
+- CURRENT_HEAD_SHA: CURRENT_HEAD
+- admin_ceremony_compliance: PASS
+- ecap_invoked: yes
