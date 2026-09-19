@@ -21,7 +21,7 @@ gate_snapshot_head_sha: CURRENT_HEAD
 post_push_head_sha: CURRENT_HEAD
 Stable Submitted Head SHA: 7e365fb5d8572e18f728fc43a23e60ba5f341e5d
 Base SHA: 1603f0ca201754e152f79a13d8e0a62fc4e51755
-files_changed: 14
+files_changed: 15
 scope_refreshed_post_final_edit: YES
 art_refresh_required: NO
 art_refresh_completed: N/A
