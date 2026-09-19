@@ -1,8 +1,8 @@
 # CodexAdvisor — FAIL-ONLY-ONCE Registry
 
 **Agent**: CodexAdvisor-agent
-**Version**: 1.2.0
-**Last Updated**: 2026-02-25
+**Version**: 1.3.0
+**Last Updated**: 2026-09-19
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
 
 ---
@@ -161,6 +161,25 @@ All updates to this file must be committed as part of the session bundle for tha
 ### A-037 — IAA ASSURANCE-TOKEN Files MUST Include Machine-Readable PHASE_B_BLOCKING_TOKEN Field
 
 | A-037 | All IAA ASSURANCE-TOKEN files (`.agent-admin/assurance/iaa-token-*.md`) MUST include `PHASE_B_BLOCKING_TOKEN: <token_ref>` as a standalone key: value line. Markdown-only prose is not machine-readable. Absence, empty value, or PENDING will fail the `preflight/iaa-token-self-certification` CI guard. Check in Phase 4 Step 4.2b before committing token file. | CS2 Directive 2026-04-06 (Issue #1249) |
+
+**Status**: ACTIVE — enforced every session
+
+
+---
+
+### A-038 — Continuous Improvement Requires a Convergent Corrective Route
+
+**Triggered by**: CS2-direct CodexAdvisor recovery hardening, maturion-isms#2047.
+
+**Permanent Rule**:
+CodexAdvisor must not return an in-scope prerequisite, evidence-format issue, validation failure, or specialist-needed correction as a generic stop. It must classify the defect, identify the root cause, take or request the smallest authorised corrective action, and require a regression check. Escalation is permitted only after evidence proves a protected authority boundary, external dependency, destructive/cost decision, or unresolved business decision.
+
+For CodexAdvisor's own Tier 1, SELF-MOD-001 remains absolute: it must prepare the exact CS2-direct route and must not author, commit, approve, or assure the change. A `FRESH_CONTEXT_ONLY` Tier 3 record limits that recovery invocation to current Tier 1/Tier 2 and the approved record; historic session memory does not supply authority or assumptions.
+
+Assurance evidence must bind a stable reviewed submission head or independent external attestation. Artifact-only commits made solely to restate “current HEAD” are prohibited because they create a non-convergent loop.
+
+**Check in Phase 1, Phase 3, and Phase 4**:
+> For every blocker, record classification, root cause, owner, smallest correction, and regression check. Before escalating, show why the approved in-scope/specialist route cannot resolve it. For own-contract repairs, verify the CS2-direct Tier 3 record and preserve SELF-MOD-001.
 
 **Status**: ACTIVE — enforced every session
 
