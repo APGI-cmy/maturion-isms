@@ -228,3 +228,98 @@ IAA_REJECTION_NOTICE:
   - `CORE-020 / OVL-AC-002`: committed `.agent-admin/prs/pr-2048/active-state.json` remains stale versus the committed PR evidence set. Fix required: recommit the active-state artifact with CURRENT_HEAD binding coherence and the exact committed diff inventory only.
   - `ACR-07`: active-state changed-files inventory still mismatches the actual diff and other active ceremony artifacts (`15` vs `14`). Fix required: regenerate and commit the exact PR-scoped inventory before re-invocation.
   - `ACR-08`: committed active-state references stale path `.agent-admin/prs/pr-unknown/active-state.json` not present on branch. Fix required: remove the stale reference and re-run final assurance on the committed result.
+
+## FINAL ASSURANCE — FINAL REASSESSMENT 2026-09-19
+
+Invocation: PR `#2048 / fix(codex-advisor): restore config and recovery controls` | Invoked by: `CS2-direct final reassessment request` | Produced by: `CodexAdvisor-agent`, `foreman-v2-agent`, `execution-ceremony-admin-agent` | Class: `AGENT_CONTRACT` | Ceremony-admin: `YES` | STOP-AND-FIX: `ACTIVE`
+
+Independence: `CONFIRMED`
+
+Category: `AGENT_CONTRACT` | IAA triggered: `YES` | Ambiguity: `CLEAR`
+
+`IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` v1.0.0 loaded. Applying pre-approval doctrine and protected-component verification to this AGENT_CONTRACT invocation.
+
+Checklist loaded: `CORE-020`, `CORE-021`, `CORE-026`, `CORE-027`, `AGENT_CONTRACT overlay`, `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md`
+
+Evidence heads:
+- Reviewed committed current branch head: `d4f73332c62bed57b92bcc006cb01b8485cd85a8`
+- Stable substantive submitted head: `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`
+- Base SHA: `1603f0ca201754e152f79a13d8e0a62fc4e51755`
+- Runtime head binding model: `CURRENT_HEAD`
+- Exact committed `base...HEAD` diff: `15` paths, all matched by `.agent-admin/scope-declarations/pr-2048.md`
+
+FAIL-ONLY-ONCE:
+- `A-001`: `PRESENT` — IAA invocation evidence is present in this PR-scoped wave record and in the PR-scoped proof/task bundle.
+- `A-002`: `CONFIRMED` — no class exemption was accepted; `.github/agents/CodexAdvisor-agent.md` keeps this PR in `AGENT_CONTRACT`.
+
+Acceptance-Criteria Evidence Matrix (`CORE-026`):
+
+| Acceptance criterion | Hard evidence | Verdict |
+|---|---|---|
+| PR-bound task record exists at `.agent-admin/prs/pr-2048/wave-current-tasks.md` | `.agent-admin/prs/pr-2048/wave-current-tasks.md` declares PR `#2048`, issue `#2047`, branch `cs2/codex-advisor-recovery-hardening`, stable submitted head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`, and canonical artifact paths | PASS ✅ |
+| Active assurance artifact path resolves to PR `#2048` evidence, not historical fallback | `.agent-admin/prs/pr-2048/active-state.json` points only to PR `#2048` artifacts; `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` and `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md` both mark the old PR `#2017` retrospective record as NON-ACTIVE / UNUSABLE for this PR | PASS ✅ |
+| Foreman QP confirms the submitted head changes only the authorised CodexAdvisor contract and local knowledge/escalation files | `.agent-admin/prs/pr-2048/wave-current-tasks.md` `qp_verdict` records `full_diff_reviewed: true`, `out_of_scope_changes_detected: false`, and the authorised file set; current `git diff --name-only 1603f0ca201754e152f79a13d8e0a62fc4e51755...d4f73332c62bed57b92bcc006cb01b8485cd85a8` remains within that declared scope plus PR-scoped assurance artifacts | PASS ✅ |
+| ECAP validates administrative binding only and does not substitute for readiness authority | `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` states `Administrative scope only`, `No IAA invocation performed`, `No readiness claim made`, and concludes `ADMIN_VALIDATED`; `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md` states `HANDOVER_ALLOWED: no` and `RESULT: ADMIN_POINTER_ONLY` | PASS ✅ |
+| Independent IAA final assurance reviews the same stable head referenced by the task record | This reassessment used stable head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`, current committed head `d4f73332c62bed57b92bcc006cb01b8485cd85a8`, and confirmed the post-submission delta is limited to PR-scoped governance/assurance repairs plus the bounded CodexAdvisor knowledge-index correction already cited in prior rejection handling | PASS ✅ |
+
+Independent Risk Challenge (`CORE-027`):
+1. **What could still fail after merge?** Future own-contract recovery work could reintroduce self-referential current-HEAD evidence loops, blur CS2-direct authority boundaries, or broaden the repair beyond CodexAdvisor governance scope.
+2. **What evidence would prove it does not fail?** The contract and Tier 2 bundle must keep `SELF-MOD-001`, `CS2_DIRECT_ONLY`, `FRESH_CONTEXT_ONLY`, the continuous-improvement ladder, and the stable-reviewed-head / independent-attestation rule; the PR-scoped assurance bundle must keep exact diff parity and PR-only routing.
+3. **Is that evidence present?** Yes. The CodexAdvisor contract, Tier 2 knowledge files, Tier 3 CS2-direct record, PR-scoped scope declaration, ECAP bundle, and proof pointer all show those controls; the identity-binding, governance-evidence-exactness, and scope-to-diff gates pass on the committed head.
+4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?** No unresolved contradiction remains. The issue’s sequencing correction narrows PR `#2048` to the CodexAdvisor self-repair lane, and the current diff stays within that lane without product/runtime/deployment expansion.
+5. **Would a reasonable production owner accept this as merge-ready?** Yes for this bounded governance repair. Independent assurance, admin boundary evidence, scope parity, and contract/Tier 2 protections are all present and no blocker remains inside the reviewed PR scope.
+
+Check results:
+- `CORE-020`: PASS ✅ — required evidence is committed, PR-scoped, and independently verifiable on the committed head.
+- `CORE-021`: PASS ✅ — zero-severity-tolerance preserved; no finding was softened or waived.
+- `CORE-026`: PASS ✅ — the acceptance-criteria evidence matrix above maps every active PR `#2048` requirement to hard evidence.
+- `CORE-027`: PASS ✅ — the independent risk challenge is complete and affirmative.
+- `OVL-AC-001` Strategy alignment: PASS ✅ — the diff implements the declared CS2-direct CodexAdvisor recovery-hardening scope only.
+- `OVL-AC-002` No contradictions: PASS ✅ — the stale `pr-unknown` reference is gone, the changed-file inventory is coherent at `15`, the CodexAdvisor knowledge index is internally aligned at `1.6.0`, and the current authoritative binding model is consistently `CURRENT_HEAD` plus stable submitted head.
+- `OVL-AC-003` Authority boundaries correct: PASS ✅ — `SELF-MOD-001`, `CS2_DIRECT_ONLY`, and independent IAA handover remain explicit and unweakened.
+- `OVL-AC-004` Delegation safety: PASS ✅ — the new continuous-improvement route requires self-remediate/delegate/prove-escalation ordering and does not permit builder/product/deployment overreach.
+- `OVL-AC-005` Four-phase structure present: PASS ✅ — the CodexAdvisor Tier 1 remains a substantive four-phase canonical contract.
+- `OVL-AC-006` Self-modification prohibition present: PASS ✅ — the contract still states `I never create, modify, commit, approve, or self-assure .github/agents/CodexAdvisor-agent.md.`
+- `OVL-AC-007` Ripple / cross-agent impact: PASS ✅ — the Tier 1 contract, Tier 2 index, new Tier 2 continuous-improvement protocol, FAIL-ONLY-ONCE rule, Tier 3 CS2-direct record, and PR-scoped assurance artifacts were updated together.
+- `OVL-AC-ADM-001` PREHANDOVER proof exists: PASS ✅ — `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md` is committed and discoverable.
+- `OVL-AC-ADM-002` Session memory exists: PASS ✅ — `.agent-workspace/foreman-v2/memory/session-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` is committed.
+- `OVL-AC-ADM-003` Tier 2 stub present: PASS ✅ — `.agent-workspace/CodexAdvisor-agent/knowledge/index.md` exists and lists the required bundle including `continuous-improvement-protocol.md`.
+- `OVL-AC-ADM-004` Character count within limit: PASS ✅ — `.github/agents/CodexAdvisor-agent.md` is `17,553` characters and `metadata.change_summary` is `78` characters.
+- `ACR-01`: PASS ✅ — `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` includes populated `ECAP_RECONCILIATION_SUMMARY` sections `C1–C6`.
+- `ACR-07`: PASS ✅ — `.admin/prs/pr-2048.json`, `.agent-admin/scope-declarations/pr-2048.md`, `.agent-admin/prs/pr-2048/active-state.json`, and the exact `git diff` all agree on the `15`-path active PR-scoped file set.
+- `ACR-08`: PASS ✅ — no stale artifact path reference remains in the committed active-state artifact; all referenced paths resolve to PR `#2048` assets on branch.
+- `ACR-09`: PASS ✅ — the active tracker, ECAP bundle, and PREHANDOVER proof each declare the gate set checked.
+- `ACR-15`: PASS ✅ — the previously contradictory ECAP/tracker state is resolved, and no open prior rejection blocker remains in the active PR-scoped ceremony set.
+
+Total: `22` checks, `22` PASS, `0` FAIL
+
+Adoption phase: `PHASE_B_BLOCKING` — blocking
+
+MERGE GATE PARITY:
+- `identity-binding-gate.sh` (PR `#2048` context): PASS ✅
+- `validate-governance-evidence-exactness.sh` (PR `#2048` context): PASS ✅
+- `validate-scope-to-diff.sh` (PR `#2048` context): PASS ✅
+- `YAML validation`: PASS ✅
+- `Character count`: PASS ✅
+- `Canon hash verification`: PASS ✅
+- `Checklist compliance`: PASS ✅
+- Result: `PASS`
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: `#2048 / fix(codex-advisor): restore config and recovery controls`
+All `22` checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: `IAA-session-1289-20260919-PASS`
+Adoption phase: `PHASE_B_BLOCKING`
+═══════════════════════════════════════
+
+## TOKEN
+
+- Date: `2026-09-19`
+- PR: `#2048`
+- Reviewed head: `d4f73332c62bed57b92bcc006cb01b8485cd85a8`
+- Stable substantive submitted head: `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`
+- PHASE_B_BLOCKING_TOKEN: `IAA-session-1289-20260919-PASS`
+- Verdict: `ASSURANCE-TOKEN`
+- Merge gate parity: `PASS`
