@@ -11,6 +11,17 @@
     "module": {"const": "PIT"},
     "issue_number": {"type": "integer", "minimum": 1},
     "pr_number": {"type": ["integer", "null"], "minimum": 1},
+    "nominated_pr": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["number", "head_repository", "body_marker", "recorded_by"],
+      "properties": {
+        "number": {"type": "integer", "minimum": 1},
+        "head_repository": {"const": "APGI-cmy/maturion-isms"},
+        "body_marker": {"type": "string", "pattern": "^CS2-Work-Item:\\s*pit-[a-z0-9-]+$"},
+        "recorded_by": {"type": "string", "minLength": 1}
+      }
+    },
     "submission_head": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
     "state": {"enum": ["intake", "foreman", "builder", "qp", "ecap", "iaa", "cs2_review", "awaiting_human", "closed"]},
     "next_action": {"type": "string", "minLength": 1},

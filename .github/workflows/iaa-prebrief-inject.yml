@@ -98,16 +98,24 @@ jobs:
 
             let tasksFound = false;
             let tasksSnippet = '';
+            let taskPath = '';
             let wave = 'unknown';
+            let workItemId = '';
+            let taskHeadSha = '';
             for (const path of taskPaths) {
               try {
                 const { data } = await github.rest.repos.getContent({ owner, repo, path, ref });
                 if (Array.isArray(data) || data.type !== 'file') continue;
                 const content = Buffer.from(data.content, 'base64').toString('utf8');
                 tasksFound = true;
+                taskPath = path;
                 tasksSnippet = content.slice(0, 1500).replace(/`/g, "'");
                 const match = content.match(/(?:\*\*Wave\*\*|wave):\s*(?:Wave\s+)?([^\s\n]+)/i);
                 if (match) wave = match[1];
+                const workItemMatch = content.match(/(?:CS2-Work-Item|work_item_id):\s*(pit-issue-\d+)/i);
+                if (workItemMatch) workItemId = workItemMatch[1];
+                const headShaMatch = content.match(/(?:head_sha_at_open|Head SHA):\s*"?([0-9a-f]{40})"?/i);
+                if (headShaMatch) taskHeadSha = headShaMatch[1];
                 break;
               } catch (_e) {}
             }
@@ -127,7 +135,9 @@ jobs:
                   lower.includes('result: preflight_brief_complete') &&
                   !lower.includes('superseded');
                 const prBound = prNumber ? new RegExp(`\\bpr:\\s*#?${prNumber}\\b`, 'i').test(content) : true;
-                if (canonical && prBound) {
+                const workItemBound = workItemId ? content.includes(workItemId) : true;
+                const headBound = taskHeadSha ? content.includes(taskHeadSha) : true;
+                if (canonical && prBound && workItemBound && headBound) {
                   prebriefExists = true;
                   prebriefPath = file.path;
                   break;
@@ -137,6 +147,9 @@ jobs:
 
             core.setOutput('tasks_found', String(tasksFound));
             core.setOutput('tasks_snippet', tasksSnippet);
+            core.setOutput('task_path', taskPath);
+            core.setOutput('work_item_id', workItemId);
+            core.setOutput('task_head_sha', taskHeadSha);
             core.setOutput('wave', wave);
             core.setOutput('prebrief_exists', String(prebriefExists));
             core.setOutput('prebrief_path', prebriefPath);
@@ -155,6 +168,9 @@ jobs:
           WAVE: ${{ steps.inspect.outputs.wave }}
           TASKS_FOUND: ${{ steps.inspect.outputs.tasks_found }}
           TASKS_SNIPPET: ${{ steps.inspect.outputs.tasks_snippet }}
+          TASK_PATH: ${{ steps.inspect.outputs.task_path }}
+          WORK_ITEM_ID: ${{ steps.inspect.outputs.work_item_id }}
+          TASK_HEAD_SHA: ${{ steps.inspect.outputs.task_head_sha }}
           ISSUE_NUMBER: ${{ github.event.issue.number || '' }}
         with:
           script: |
@@ -199,6 +215,10 @@ jobs:
               'Current wave task list:',
               '',
               taskSection,
+              '',
+              `PR-scoped task record: ${process.env.TASK_PATH || `.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md`}`,
+              process.env.WORK_ITEM_ID ? `Work item: ${process.env.WORK_ITEM_ID}` : 'Work item: MUST MATCH active controller work item',
+              `Submitted head: ${process.env.TASK_HEAD_SHA || process.env.REF || context.sha}`,
             ].join('\n');
 
             if (targetNumber) {
