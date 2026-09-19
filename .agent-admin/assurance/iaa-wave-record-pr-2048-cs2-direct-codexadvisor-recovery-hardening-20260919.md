@@ -147,6 +147,75 @@ IAA_REJECTION_NOTICE:
 - `RESULT: REJECTED_BACK_TO_PRODUCER`
 ═══════════════════════════════════════
 
+## FINAL ASSURANCE — RE-INVOCATION 2026-09-19
+
+Invocation: PR `#2048 / fix(codex-advisor): restore config and recovery controls` | Invoked by: `CS2-direct reassessment request` | Produced by: `CodexAdvisor-agent`, `foreman-v2-agent`, `execution-ceremony-admin-agent` | Class: `AGENT_CONTRACT` | Ceremony-admin: `YES` | STOP-AND-FIX: `ACTIVE`
+
+Independence: `CONFIRMED`
+
+Category: `AGENT_CONTRACT` | IAA triggered: `YES` | Ambiguity: `CLEAR`
+
+Checklist loaded: `CORE-020`, `CORE-021`, `AGENT_CONTRACT overlay`, `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md`
+
+Evidence heads:
+- Reviewed current branch head: `05c8e019d0c1bdcf7832efdd7ff8c818f271ce02`
+- Prior rejection-round head: `94bf6f3d20189a115a2374275408e7ea72175512`
+- Stable substantive submitted head: `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`
+- Runtime head binding model: `CURRENT_HEAD`
+
+FAIL-ONLY-ONCE:
+- `A-001`: `PRESENT` — IAA invocation evidence remains present in this PR-scoped wave record.
+- `A-002`: `CONFIRMED` — no class exemption accepted; AGENT_CONTRACT remained mandatory.
+
+Check results:
+- `CORE-020`: FAIL ❌ — the committed active-state artifact is not fully verifiable against the committed PR evidence set: `HEAD:.agent-admin/prs/pr-2048/active-state.json` still declares `runtime_head_sha: 5855fc958b6e8497bfaeae2c663f78541b374406` and lists `.agent-admin/prs/pr-unknown/active-state.json` in `changed_files`, while the committed `git diff --name-only 1603f0ca201754e152f79a13d8e0a62fc4e51755...HEAD` contains 14 files and no `pr-unknown` path.
+- `CORE-021`: PASS ✅ — zero-severity-tolerance enforced; no finding softened.
+- `OVL-AC-001` Strategy alignment: PASS ✅ — the correction set remains limited to PR-scoped assurance repair on the already-reviewed submitted head.
+- `OVL-AC-002` No contradictions: FAIL ❌ — prior missing-proof, missing-session-memory, ECAP-summary, gate-set, tracker parity, and CodexAdvisor index-version findings are resolved, but the committed active-state artifact still contradicts the active PR evidence set with a stale runtime-head SHA and a non-PR `pr-unknown` path.
+- `OVL-AC-003` Authority boundaries correct: PASS ✅ — CS2-direct protected own-contract routing and IAA independence remain explicit.
+- `OVL-AC-004` Delegation safety: PASS ✅ — no builder/product/runtime/deployment/CI scope expansion was introduced.
+- `OVL-AC-005` Four-phase structure present: PASS ✅ — the submitted CodexAdvisor Tier 1 remains substantively intact.
+- `OVL-AC-006` Self-modification prohibition present: PASS ✅ — self-modification controls remain intact.
+- `OVL-AC-007` Ripple / cross-agent impact: PASS ✅ — PR-scoped proof, ECAP, task tracker, and Foreman memory were added together; no untracked downstream contract ripple is evident.
+- `OVL-AC-ADM-001` PREHANDOVER proof exists: PASS ✅ — `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md` is committed on branch.
+- `OVL-AC-ADM-002` Session memory exists: PASS ✅ — `.agent-workspace/foreman-v2/memory/session-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` is committed on branch.
+- `OVL-AC-ADM-003` Tier 2 stub present: PASS ✅ — `.agent-workspace/CodexAdvisor-agent/knowledge/index.md` exists and the internal header/table version drift is corrected to `1.6.0`.
+- `OVL-AC-ADM-004` Character count within limit: PASS ✅ — `.github/agents/CodexAdvisor-agent.md` remains below the 30,000-character limit.
+- `ACR-01` ECAP reconciliation summary present: PASS ✅ — `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` now embeds `ECAP_RECONCILIATION_SUMMARY` sections `C1–C6`.
+- `ACR-07` Declared count/path parity across ceremony artifacts: FAIL ❌ — the committed active-state artifact still declares a 15-path `changed_files` list including `.agent-admin/prs/pr-unknown/active-state.json`, while the scope declaration, PREHANDOVER proof, wave task tracker, and actual PR diff all bind the set to 14 PR-scoped files only.
+- `ACR-08` Stale artifact path reference: FAIL ❌ — `HEAD:.agent-admin/prs/pr-2048/active-state.json` references `.agent-admin/prs/pr-unknown/active-state.json`, which is not committed on branch and is not part of PR `#2048`.
+- `ACR-09` Gate set identified: PASS ✅ — the active PR-scoped tracker, ECAP bundle, and PREHANDOVER proof now name the gate inventory explicitly.
+- `ACR-15` Active bundle / tracker coherence: PASS ✅ — `ECAP-2048` is now `COMPLETE`, and the active tracker no longer leaves ECAP pending.
+
+Total: `20` checks, `16` PASS, `4` FAIL
+
+Adoption phase: `PHASE_B_BLOCKING` — blocking
+
+MERGE GATE PARITY:
+- `YAML validation`: PASS ✅
+- `Character count`: PASS ✅
+- `Canon hash verification`: PASS ✅
+- `Checklist compliance`: FAIL ❌ — the committed active-state artifact remains stale/over-inclusive relative to the PR-scoped evidence set and exact diff.
+- Result: `FAIL`
+
+═══════════════════════════════════════
+REJECTION-PACKAGE
+PR: `#2048 / fix(codex-advisor): restore config and recovery controls`
+`4` check(s) FAILED. Merge blocked. STOP-AND-FIX required.
+FAILURES:
+  - `CORE-020` — Committed PR evidence is not fully verifiable because `.agent-admin/prs/pr-2048/active-state.json` still records a stale exact `runtime_head_sha` and a non-PR `pr-unknown` path — Fix required: recommit the PR-scoped active-state artifact so it matches the actual committed `base...HEAD` diff and the CURRENT_HEAD binding model — Classification: `Ceremony`
+  - `OVL-AC-002` — Active PR-scoped evidence still contradicts itself through the committed active-state artifact even though the prior rejection findings were otherwise repaired — Fix required: normalize the committed active-state artifact to the same 14-file PR-scoped evidence set used by the scope declaration, PREHANDOVER proof, ECAP bundle, and wave tracker — Classification: `Ceremony`
+  - `ACR-07` — Declared changed-file inventory remains inconsistent across active ceremony artifacts (`15` in committed active-state vs `14` everywhere else / in actual diff) — Fix required: refresh and commit the active-state changed-files inventory from the exact committed diff before re-invocation — Classification: `Systemic`
+  - `ACR-08` — Committed active-state still references stale path `.agent-admin/prs/pr-unknown/active-state.json` not present on branch — Fix required: remove the stale `pr-unknown` reference from the committed active-state artifact and re-run final assurance on the committed result — Classification: `Systemic`
+Prevention action required: harden the producer-side active-state refresh path so local validation-side working-tree rewrites are not mistaken for committed PR evidence.
+This PR must not be opened until all failures are resolved and IAA re-invoked.
+Adoption phase: `PHASE_B_BLOCKING`
+IAA_REJECTION_NOTICE:
+- `RCA_REVIEW: REFER_BACK`
+- `HANDOVER_ALLOWED: no`
+- `RESULT: REJECTED_BACK_TO_PRODUCER`
+═══════════════════════════════════════
+
 ## REJECTION_HISTORY
 
 - `2026-09-19` — Reviewed branch head `94bf6f3d20189a115a2374275408e7ea72175512`; stable substantive head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`.
@@ -155,3 +224,7 @@ IAA_REJECTION_NOTICE:
   - `ACR-01`: ECAP reconciliation summary absent. Fix required: add canonical reconciliation summary (`C1–C6`) to the active ECAP bundle.
   - `ACR-09`: gate set not identified. Fix required: declare the exact gates checked in the active ceremony artifacts.
   - `ACR-15 / OVL-AC-002`: active tracker contradicts ECAP `ADMIN_VALIDATED` result; CodexAdvisor Tier 2 index version metadata also drifts internally. Fix required: normalize all active artifact states and version references before re-invocation.
+- `2026-09-19` — Re-invocation reviewed current branch head `05c8e019d0c1bdcf7832efdd7ff8c818f271ce02`; stable substantive head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`.
+  - `CORE-020 / OVL-AC-002`: committed `.agent-admin/prs/pr-2048/active-state.json` remains stale versus the committed PR evidence set. Fix required: recommit the active-state artifact with CURRENT_HEAD binding coherence and the exact committed diff inventory only.
+  - `ACR-07`: active-state changed-files inventory still mismatches the actual diff and other active ceremony artifacts (`15` vs `14`). Fix required: regenerate and commit the exact PR-scoped inventory before re-invocation.
+  - `ACR-08`: committed active-state references stale path `.agent-admin/prs/pr-unknown/active-state.json` not present on branch. Fix required: remove the stale reference and re-run final assurance on the committed result.

@@ -1,7 +1,7 @@
 {
   "pr": 2048,
   "branch": "cs2/codex-advisor-recovery-hardening",
-  "runtime_head_sha": "5855fc958b6e8497bfaeae2c663f78541b374406",
+  "runtime_head_sha": "05c8e019d0c1bdcf7832efdd7ff8c818f271ce02",
   "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
   "manifest_path": ".admin/prs/pr-2048.json",
   "scope_path": ".agent-admin/scope-declarations/pr-2048.md",
@@ -24,7 +24,6 @@
     ".agent-admin/prs/pr-2048/active-state.json",
     ".agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md",
     ".agent-admin/prs/pr-2048/wave-current-tasks.md",
-    ".agent-admin/prs/pr-unknown/active-state.json",
     ".agent-admin/scope-declarations/pr-2048.md",
     ".agent-workspace/CodexAdvisor-agent/escalation-inbox/CS2-DIRECT-2047-OWN-CONTRACT-HARDENING.md",
     ".agent-workspace/CodexAdvisor-agent/knowledge/FAIL-ONLY-ONCE.md",
