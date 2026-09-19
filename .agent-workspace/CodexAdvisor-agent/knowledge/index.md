@@ -10,7 +10,7 @@
 
 | File | Purpose | Version |
 |---|---|---:|
-| `index.md` | Knowledge entry point and version reference | 1.5.0 |
+| `index.md` | Knowledge entry point and version reference | 1.6.0 |
 | `FAIL-ONLY-ONCE.md` | Permanent governance failure registry | current |
 | `checklist-registry.md` | Maps supported roles and classes to mandatory checklists | 1.2.0 |
 | `agent-creation-template.md` | Master template for agent contract creation | current |

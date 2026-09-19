@@ -38,7 +38,7 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: not_required
 | GOV-2048-01 | Rebind IAA/Foreman/ECAP assurance to PR #2048 and the submitted head, replacing inherited retrospective context with PR-scoped evidence only | foreman-v2-agent | IN_PROGRESS |
 | IAA-2048-PB | Generate canonical PR-scoped IAA pre-brief bound to PR #2048 and mark inherited retrospective evidence unusable | independent-assurance-agent | COMPLETE |
 | QP-2048 | Perform Foreman QP review on the governance-only submitted head and PR-scoped correction artifacts | foreman-v2-agent | COMPLETE |
-| ECAP-2048 | Produce administrative validation bundle for the PR-scoped evidence set | execution-ceremony-admin-agent | PENDING |
+| ECAP-2048 | Produce administrative validation bundle for the PR-scoped evidence set | execution-ceremony-admin-agent | COMPLETE |
 | IAA-2048-FINAL | Perform independent final assurance on the resulting stable PR #2048 head | independent-assurance-agent | PENDING |
 
 ## Current evidence state
@@ -46,6 +46,29 @@ BUILDER_DELEGATION_INCLUDES_PREFLIGHT_SCOPE: not_required
 - Active PR-scoped IAA pre-brief: `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md`
 - Historical retrospective record remains NON-ACTIVE / UNUSABLE for this PR: `.agent-admin/assurance/iaa-wave-record-issue-2016-retrospective-pr2006-20260813.md`
 - Hosted CI evidence from the previously submitted substantive head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d` was green at comment time; this correction adds only PR-scoped governance evidence and must now complete QP, ECAP, and final IAA on the resulting stable branch head.
+
+gate_set_checked:
+- merge-gate/verdict: PASS
+- governance/alignment: PASS
+- stop-and-fix/enforcement: PASS
+- preflight/phase-1-evidence: PASS
+- preflight/iaa-prebrief-contract-alignment: PASS
+- preflight/ecap-admin-boundary-gate: PASS
+- preflight/foreman-prehandover-lane-gate: PASS
+- preflight/delegation-order-gate: PASS
+- preflight/merge-gate-required-checks-alignment: PASS
+- scope-declaration-check: PASS
+- session-memory-check: PASS
+- builder-involvement-check: PASS
+- foreman-implementation-check: PASS
+- agent-contract/cs2-authorization: PASS
+- agent-contract/actor-authority: PASS
+- agent-contract/authority-check: PASS
+- agent-contract/iaa-assurance-token: PASS
+- agent-contract/self-modification-prevention: PASS
+- agent-contract-format/yaml-validation: PASS
+- agent-contract-format/placeholder-check: PASS
+- agent-contract-format/verdict: PASS
 
 ## Foreman Quality Professor (QP) verdict
 
