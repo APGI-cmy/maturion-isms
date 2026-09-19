@@ -8,7 +8,7 @@
 
 ## 1. Purpose
 
-This protocol removes the mismatch between Foreman's pre-brief expectation and IAA's Phase 0 output.
+This protocol removes the mismatch between Foreman's pre-brief expectation and IAA's Phase 0 output while keeping the active pre-brief bound to the same PR-scoped task record, work item, and submitted head.
 
 The pre-brief is a compact control sheet. It is not a long narrative artifact and it is not a standalone `iaa-prebrief-*.md` file.
 
@@ -49,6 +49,8 @@ IAA_PREFLIGHT_BRIEF:
   pr: "<number-or-PENDING>"
   issue: "<issue-number-and-title-or-PENDING>"
   branch: "<branch-name>"
+  current_head_sha: "<40-char SHA or approved symbolic current-head marker>"
+  work_item_id: "<active work-item id or PENDING when no PR-bound work item exists>"
   qualifying_tasks:
     - task_id: "<id>"
       summary: "<task summary>"
@@ -82,7 +84,7 @@ Foreman must not delegate builders until all of the following are true:
 3. The wave record contains `## PRE-BRIEF`.
 4. The section contains `IAA_PREFLIGHT_BRIEF`.
 5. The block contains `result: PREFLIGHT_BRIEF_COMPLETE`.
-6. The pre-brief is bound to the current PR or wave.
+6. The pre-brief is bound to the current PR, active work item, and submitted head (or to the approved wave fallback context when no PR-bound record exists).
 
 Foreman must pass the pre-brief path to each builder appointment.
 
@@ -98,16 +100,23 @@ When invoked with `Action: PRE-BRIEF`, IAA must:
 .agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md
 ```
 
-2. Use the legacy personal path only if the PR-scoped file is absent:
+2. Use the legacy wave-scoped path only if the PR-scoped file is absent:
+
+```text
+.agent-admin/waves/wave-<N>-current-tasks.md
+```
+
+3. Use the legacy personal path only if neither PR-scoped nor wave-scoped file exists:
 
 ```text
 .agent-workspace/foreman-v2/personal/wave-current-tasks.md
 ```
 
-3. Classify qualifying tasks.
-4. Produce the canonical `IAA_PREFLIGHT_BRIEF` block.
-5. Commit or update the matching wave record only.
-6. Reply with the wave record path and qualifying task count.
+4. Reject any task record that does not match the active PR/job context or submitted head.
+5. Classify qualifying tasks.
+6. Produce the canonical `IAA_PREFLIGHT_BRIEF` block.
+7. Commit or update the matching wave record only.
+8. Reply with the wave record path and qualifying task count.
 
 IAA must not produce standalone prebrief, token, or rejection-package files for this pre-brief step.
 
@@ -120,7 +129,9 @@ A pre-brief is complete only when the wave record contains:
 - `## PRE-BRIEF`
 - `IAA_PREFLIGHT_BRIEF`
 - `schema_version: "1.0.0"`
+- `current_head_sha`
+- `work_item_id` for PR-bound jobs
 - `result: PREFLIGHT_BRIEF_COMPLETE`
-- PR or wave binding
+- PR/work-item/head binding (or approved no-PR wave fallback binding)
 
 Anything else is advisory text, not a completed pre-brief.

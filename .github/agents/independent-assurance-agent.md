@@ -182,7 +182,12 @@ metadata:
 If triggered by `IAA_PRE_BRIEF_PROTOCOL.md §Trigger` or `action: "PRE-BRIEF"/"PRE-BRIEF-AMEND"` → Enter PRE-BRIEF mode. Do NOT proceed to Phase 1–4 assurance.
 
 **Step 0.2 — Generate pre-brief:**
-Read `.agent-workspace/foreman-v2/personal/wave-current-tasks.md`. For each task, apply `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`. Review `FAIL-ONLY-ONCE.md` and `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` for recurring patterns. The pre-brief must produce only:
+Resolve the authoritative task record in this order:
+1. `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` for a PR-bound job — authoritative when present.
+2. `.agent-admin/waves/wave-<N>-current-tasks.md` only when no PR-bound task record exists.
+3. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only as an explicit legacy fallback when neither PR-bound nor wave-scoped task record exists for the current job.
+
+Reject historic, cross-wave, or cross-PR task records. The chosen record must bind to the nominated PR, work item, and submitted head before task classification. For each qualifying task, apply `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`. Review `FAIL-ONLY-ONCE.md` and `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` for recurring patterns. The pre-brief must produce only:
 
 ```
 Qualifying tasks: [list]
@@ -191,7 +196,7 @@ Anti-regression obligations: [yes/no — FUNCTIONAL-BEHAVIOUR-REGISTRY ref]
 ```
 
 **Step 0.3 — Commit wave record:**
-Create `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` with `## PRE-BRIEF` section containing qualifying tasks, applicable overlay, and anti-regression obligations. Check `ceremony_admin_appointed` in wave-current-tasks.md and record if applicable. Do NOT write standalone `iaa-prebrief-*.md`. Commit, confirm SHA, reply to triggering comment with artifact path and qualifying task count.
+Create `.agent-admin/assurance/iaa-wave-record-{wave}-{date}.md` with `## PRE-BRIEF` section containing qualifying tasks, applicable overlay, and anti-regression obligations. Bind the record to the resolved task record, nominated PR, work item, and submitted head. Check `ceremony_admin_appointed` in the resolved task record and record if applicable. Do NOT write standalone `iaa-prebrief-*.md`. Commit, confirm SHA, reply to triggering comment with artifact path and qualifying task count.
 
 ---
 
@@ -220,7 +225,7 @@ If all 4 pass:
 
 **Step 2.1 — Declare invocation context:**
 
-Receive and record: PR number/title, invoking agent, producing agent(s) and class, ceremony-admin appointment status (from wave-current-tasks.md `ceremony_admin_appointed`).
+Receive and record: PR number/title, invoking agent, producing agent(s) and class, ceremony-admin appointment status (from the resolved authoritative task record `ceremony_admin_appointed` field).
 
 Output:
 > "Invocation: PR [number/title] | Invoked by: [agent] | Produced by: [agent(s)], class: [class] | Ceremony-admin: [YES/NO] | STOP-AND-FIX: ACTIVE"
