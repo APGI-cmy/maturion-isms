@@ -27,6 +27,30 @@ I am execution-ceremony-admin-agent, class: administrator, version 1.0.0. Role: 
   - `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md`
   - current PR diff scope
 
+## gate_set_checked
+
+- merge-gate/verdict: PASS
+- governance/alignment: PASS
+- stop-and-fix/enforcement: PASS
+- preflight/phase-1-evidence: PASS
+- preflight/iaa-prebrief-contract-alignment: PASS
+- preflight/ecap-admin-boundary-gate: PASS
+- preflight/foreman-prehandover-lane-gate: PASS
+- preflight/delegation-order-gate: PASS
+- preflight/merge-gate-required-checks-alignment: PASS
+- scope-declaration-check: PASS
+- session-memory-check: PASS
+- builder-involvement-check: PASS
+- foreman-implementation-check: PASS
+- agent-contract/cs2-authorization: PASS
+- agent-contract/actor-authority: PASS
+- agent-contract/authority-check: PASS
+- agent-contract/iaa-assurance-token: PASS
+- agent-contract/self-modification-prevention: PASS
+- agent-contract-format/yaml-validation: PASS
+- agent-contract-format/placeholder-check: PASS
+- agent-contract-format/verdict: PASS
+
 ## Required Findings
 
 ### 1. PR-scoped bootstrap artifacts exist
@@ -140,3 +164,91 @@ ADMIN_VALIDATED
 
 - RESULT: `ADMIN_VALIDATED`
 - REASON: `Symbolic current-head binding is now coherent across the PR #2048 artifact set, is explicitly permitted by the repository's current governance model, preserves the stable substantive submission head 7e365fb5d8572e18f728fc43a23e60ba5f341e5d, and resolves the prior admin blocker without requiring an exact-SHA artifact chase loop.`
+
+
+## Canonical PREHANDOVER Proof Pointer
+
+- canonical_prehandover_proof_path: `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md`
+- active_resolver_binding: `.agent-admin/prs/pr-2048/active-state.json` now selects this PR-scoped proof path for checkpoint tooling
+- stable_substantive_submitted_head: `7e365fb5d8572e18f728fc43a23e60ba5f341e5d`
+- runtime_head_binding: `CURRENT_HEAD`
+- boundary: `ECAP administrative evidence only — no IAA invocation, no merge/handover authority`
+
+
+## ECAP_RECONCILIATION_SUMMARY
+
+### C1. Final-State Declaration
+
+**Final State**: `COMPLETE`
+
+| Dimension | Status |
+|-----------|--------|
+| Substantive readiness | Accepted by Foreman QP on the stable submitted head `7e365fb5d8572e18f728fc43a23e60ba5f341e5d` |
+| Administrative readiness | ECAP administrative evidence repair complete for PR #2048 |
+| IAA assurance verdict | Pending re-invocation — no new IAA token issued by this ECAP repair |
+| Ripple status | NOT-APPLICABLE |
+| Admin-compliance result | PASS for this scoped ECAP repair |
+
+### C2. Artifact Completeness Table
+
+| Artifact Class | Required Path | Present | Committed | Final-State Normalized | Notes / Exception |
+|---------------|--------------|---------|-----------|----------------------|------------------|
+| PREHANDOVER proof | `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md` | ✓ | ✓ | ✓ | Canonical PR-scoped pointer bundle for checkpoint tooling. |
+| Foreman session memory | `.agent-workspace/foreman-v2/memory/session-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` | ✓ | ✓ | ✓ | Added to close the final IAA ceremony-completeness gap for PR #2048. |
+| IAA session memory | `.agent-workspace/independent-assurance-agent/memory/session-1288-20260919.md` | ✓ | ✓ | ✓ | Existing IAA rejection-round memory remains committed and unchanged. |
+| Gate results | `.agent-admin/prs/pr-2048/wave-current-tasks.md` `gate_set_checked` | ✓ | ✓ | ✓ | Exact gate inventory declared in active tracker and mirrored here. |
+| ECAP reconciliation summary | `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` | ✓ | ✓ | ✓ | Embedded C1–C6 summary. |
+| Scope declaration | `.agent-admin/scope-declarations/pr-2048.md` | ✓ | ✓ | ✓ | Refreshed to include the canonical proof path and current diff count. |
+| IAA token file | `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` | N/A | N/A | N/A | Current artifact is a rejection package / wave record, not a PASS token. |
+
+### C3. Cross-Artifact Consistency Table
+
+| Row | Consistency Dimension | Source Value | Verified Against | Match |
+|-----|-----------------------|-------------|-----------------|-------|
+| 1 | PR / issue / branch | `#2048` / `#2047` / `cs2/codex-advisor-recovery-hardening` | Manifest, scope declaration, wave tasks, proof pointer | ✓ |
+| 2 | Runtime head binding | `CURRENT_HEAD` | Manifest `head_sha`, wave record `CURRENT_HEAD_SHA`, proof pointer | ✓ |
+| 3 | Stable substantive head | `7e365fb5d8572e18f728fc43a23e60ba5f341e5d` | Scope declaration, wave tasks, wave record, proof pointer | ✓ |
+| 4 | ECAP artifact paths | `.agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md` and `.agent-admin/prehandover/proof-pr-2048-current-head-20260919.md` | Active state resolver, wave tasks, scope declaration | ✓ |
+| 5 | Gate inventory | `21` exact entries | Wave tasks `gate_set_checked`, proof pointer, bundle | ✓ |
+| 6 | Boundary statement | ECAP administrative only | Proof pointer, bundle header, user instruction scope | ✓ |
+
+### C4. Ripple Assessment Block
+
+| Field | Value |
+|-------|-------|
+| PUBLIC_API changed? | NO |
+| Layer-down required? | NO |
+| Inventory / registry update required? | NO |
+| Status | NOT-APPLICABLE |
+| Linked downstream issue/PR (if deferred) | none |
+| Notes | This ECAP repair changed only PR-scoped admin evidence artifacts. |
+
+No PUBLIC_API files changed in this ECAP repair. Ripple obligation: NOT-APPLICABLE.
+
+### C5. Foreman Administrative Readiness Block
+
+| Field | Value |
+|-------|-------|
+| substantive_readiness | ACCEPTED — existing QP PASS on stable submitted head |
+| administrative_readiness | ECAP repair complete — Foreman review still required before any later IAA re-invocation |
+| QP admin-compliance check completed | no — this ECAP repair does not substitute for Foreman review |
+| IAA invocation authorized | no |
+| Rejection reason (if REJECTED) | N/A |
+| Foreman Session | not restated in active PR-scoped artifacts |
+| Checkpoint Date | 2026-09-19 |
+
+### C6. ECAP Identity Binding Check (MANDATORY)
+
+```yaml
+ECAP_IDENTITY_BINDING_CHECK
+ACTUAL_PR: #2048
+ADMIN_MANIFEST_PR: #2048
+SCOPE_DECLARATION_PR: #2048
+PREHANDOVER_PR: #2048
+IAA_TOKEN_PR: #2048
+WAVE_CURRENT_TASKS_PR: #2048
+BRANCH: cs2/codex-advisor-recovery-hardening
+HEAD_SHA: CURRENT_HEAD
+ALL_MATCH: yes
+RESULT: PASS
+```

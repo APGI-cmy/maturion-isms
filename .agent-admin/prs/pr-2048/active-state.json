@@ -5,6 +5,9 @@
   "scope_path": ".agent-admin/scope-declarations/pr-2048.md",
   "wave_tasks_path": ".agent-admin/prs/pr-2048/wave-current-tasks.md",
   "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md",
-  "ecap_artifact_path": ".agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md",
-  "note": "PR-#2048-scoped resolver pointers. These prevent fallback to inherited historical issue-2016/PR-2017 assurance artifacts and bind subsequent governance checks to this PR's own evidence."
+  "ecap_artifact_path": ".agent-admin/prehandover/proof-pr-2048-current-head-20260919.md",
+  "note": "PR-#2048-scoped resolver pointers. The canonical PREHANDOVER proof path is resolver-selected for checkpoint tooling, while the ECAP narrative bundle remains recorded separately.",
+  "ecap_bundle_path": ".agent-admin/prs/pr-2048/ecap-admin-bundle-20260919.md",
+  "runtime_head_sha": "CURRENT_HEAD",
+  "stable_submitted_head_sha": "7e365fb5d8572e18f728fc43a23e60ba5f341e5d"
 }
