@@ -8,8 +8,10 @@ Base branch: main
 Base SHA: 7b059c4d33b2a950cecc178eb6c94fef62468e8a
 Initial planning head SHA: 6c878323f01e53926f67740a0c1ce5c542915e79
 CS2 authorization: user-provided explicit authorization, 2026-09-19
-Status: PREFLIGHT_PENDING
-iaa_prebrief_path: PENDING
+Status: IAA_PREBRIEF_READY
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md
+iaa_prebrief_commit_sha: 148c5ef067f51a5d19db3c61238f4be7dbed917d
+ceremony_admin_appointed: PENDING — ECAP is required by the pre-brief and may be appointed only after Foreman QP PASS.
 
 ## Wave boundary
 
@@ -23,7 +25,7 @@ iaa_prebrief_path: PENDING
 - [ ] GOV-2047-01 — Assess authoritative/canonical ripple and produce the consumer layer-down plan for the Foreman, IAA, operating-model, and ECAP control changes.
       builder: governance-liaison-isms-agent
       qp_verdict: PENDING
-      notes: Canonical changes must be requested and assessed before consumer implementation; no broad canon cleanup.
+      notes: IN PROGRESS — appointed after IAA pre-brief in this commit. Canonical changes must be requested and assessed before consumer implementation; no broad canon cleanup.
 
 - [ ] GOV-2047-02 — Apply the CS2-authorized minimal agent-contract hardening to Foreman and IAA paths: remediation ladder, Foreman-owned prerequisite handling, no terminal READY_FOR_IAA state, PR-scoped-first prebrief route, legacy fallback only when no PR record exists, and stable reviewed-head/external-attestation semantics.
       builder: CodexAdvisor-agent
@@ -58,4 +60,3 @@ iaa_prebrief_path: PENDING
 - [ ] PREHANDOVER proof and session memory are current and committed.
 - [ ] Independent IAA final assurance has a current, valid recorded result.
 - [ ] CS2 receives the evidence package for its exclusive merge decision.
-
