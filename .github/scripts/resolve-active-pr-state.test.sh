@@ -3,11 +3,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RESOLVER_SCRIPT="${SCRIPT_DIR}/resolve-active-pr-state.js"
-TEST_DIR="$(mktemp -d)"
+TEST_DIR="${SCRIPT_DIR}/.test-workspaces/resolve-active-pr-state-$$"
+rm -rf "$TEST_DIR"
+mkdir -p "$TEST_DIR"
 trap 'rm -rf "$TEST_DIR"' EXIT
 
 PASS=0
 FAIL=0
+CASE_SEQ=0
 
 json_get() {
   local file="$1"
@@ -27,7 +30,9 @@ run_case() {
   local expected_wave_path="${4:-}"
 
   local ws
-  ws="$(mktemp -d -p "$TEST_DIR")"
+  CASE_SEQ=$((CASE_SEQ + 1))
+  ws="${TEST_DIR}/case-${CASE_SEQ}"
+  mkdir -p "$ws"
   pushd "$ws" >/dev/null
 
   git init -q
@@ -136,6 +141,29 @@ WAVE
   git commit -q -m "admin only"
 }
 
+setup_pr_scoped_preferred() {
+  mkdir -p .admin/prs .agent-admin/scope-declarations .agent-admin/prs/pr-9001 .agent-workspace/foreman-v2/personal
+  cat > .admin/prs/pr-9001.json <<'JSON'
+{"pr": 9001, "branch": "feature"}
+JSON
+  cat > .agent-admin/scope-declarations/pr-9001.md <<'SCOPE'
+PR_NUMBER: 9001
+BRANCH: feature
+SCOPE
+  cat > .agent-admin/prs/pr-9001/wave-current-tasks.md <<'WAVE'
+PR: #9001
+Branch: feature
+WAVE_TASKS_PATH: .agent-admin/prs/pr-9001/wave-current-tasks.md
+WAVE
+  cat > .agent-workspace/foreman-v2/personal/wave-current-tasks.md <<'WAVE'
+PR: #9001
+Branch: feature
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+WAVE
+  git add .
+  git commit -q -m "prefer pr scoped wave tasks"
+}
+
 setup_legacy_manifest_fallback() {
   # Only legacy .admin/pr.json exists; no PR-scoped manifest; should not trigger BOOTSTRAP_REQUIRED
   mkdir -p .admin .agent-admin/scope-declarations .agent-admin/prs/pr-9001
@@ -155,11 +183,31 @@ WAVE
   git commit -q -m "admin only with legacy manifest"
 }
 
+setup_legacy_wave_fallback() {
+  mkdir -p .admin/prs .agent-admin/scope-declarations .agent-workspace/foreman-v2/personal
+  cat > .admin/prs/pr-9001.json <<'JSON'
+{"pr": 9001, "branch": "feature"}
+JSON
+  cat > .agent-admin/scope-declarations/pr-9001.md <<'SCOPE'
+PR_NUMBER: 9001
+BRANCH: feature
+SCOPE
+  cat > .agent-workspace/foreman-v2/personal/wave-current-tasks.md <<'WAVE'
+PR: #9001
+Branch: feature
+WAVE_TASKS_PATH: .agent-workspace/foreman-v2/personal/wave-current-tasks.md
+WAVE
+  git add .
+  git commit -q -m "legacy wave fallback"
+}
+
 run_case "bootstrap missing artifacts (mismatched legacy wave ignored)" "BOOTSTRAP_REQUIRED" setup_bootstrap_required ".agent-admin/prs/pr-9001/wave-current-tasks.md"
 run_case "identity contradictions block" "BLOCKED" setup_blocked_mismatch
 run_case "substantive delta needs evidence" "EVIDENCE_REQUIRED" setup_evidence_required
 run_case "admin-only delta with bootstrap+evidence passes" "PASS" setup_pass_admin_only
+run_case "pr-scoped wave tasks take precedence over matching legacy copy" "PASS" setup_pr_scoped_preferred ".agent-admin/prs/pr-9001/wave-current-tasks.md"
 run_case "legacy manifest fallback avoids spurious BOOTSTRAP_REQUIRED" "PASS" setup_legacy_manifest_fallback
+run_case "legacy wave-task fallback applies when pr-scoped record is absent" "PASS" setup_legacy_wave_fallback ".agent-workspace/foreman-v2/personal/wave-current-tasks.md"
 
 echo ""
 echo "Passed: $PASS"

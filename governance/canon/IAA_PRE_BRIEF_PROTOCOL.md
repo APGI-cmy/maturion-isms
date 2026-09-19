@@ -1,6 +1,6 @@
 # IAA PRE-BRIEF PROTOCOL
 
-**Status**: CANONICAL | **Version**: 1.3.0 | **Authority**: CS2
+**Status**: CANONICAL | **Version**: 1.4.0 | **Authority**: CS2
 **Date**: 2026-03-03  
 **Amended**: 2026-03-03 — v1.1.0: Added §Wave Checklist Management, §Foreman Handover Gate,
 §IAA Invocation Gate, §Mid-Wave Task Addition, wave_checklist PREHANDOVER field, and commit
@@ -12,6 +12,7 @@ canon actions (CS2 guidance — issue #1319)
 **Amended**: 2026-04-08 — v1.2.1: Reference update — added `EXECUTION_CEREMONY_ADMINISTRATION_PROTOCOL.md` to references; clarified that Phase 4 handover proof may be prepared by `execution-ceremony-admin-agent` under Foreman oversight without affecting IAA independence or Pre-Brief validity; authority: CS2 — ECAP-001 canon establishment issue.
 **Amended**: 2026-04-08 — v1.2.2: Re-invocation ownership cross-reference — added §Re-Invocation After Rejection — Ownership Reference, clarifying that after a `REJECTION-PACKAGE` the Foreman (not CS2) owns the stop-and-fix loop and re-invocation; cross-references INDEPENDENT_ASSURANCE_AGENT_CANON.md §IAA Re-Invocation After Rejection for full rules. Authority: CS2 — Foreman IAA re-invocation ownership canonisation issue.
 **Amended**: 2026-09-04 — v1.3.0: Replaced standalone pre-brief files with the canonical wave-record-only carrier. Pre-brief amendments are append-only subsections in the same wave record. Authority: CS2 issue #1399.
+**Amended**: 2026-09-19 — v1.4.0: For PR-bound jobs, made `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` the authoritative task record for IAA pre-brief resolution; retained wave-scoped and personal paths as explicit fallback-only legacy routes when no PR-bound record exists; required PR/work-item/submitted-head binding to prevent historic or cross-wave contamination. Authority: CS2-authorised PR #2046 alignment.
 
 ---
 
@@ -20,8 +21,8 @@ canon actions (CS2 guidance — issue #1319)
 Defines the **IAA Pre-Brief Protocol** — a proactive assurance mechanism that shifts quality
 assurance left by declaring acceptance criteria at wave start rather than at final handover.
 
-At the beginning of every wave, once the Foreman has created and populated
-`wave-current-tasks.md`, the IAA is invoked to read the task list and generate a **Pre-Brief**
+At the beginning of every qualifying PR-bound job or wave, once the Foreman has created and populated
+the authoritative `wave-current-tasks.md` record for that job, the IAA is invoked to read the task list and generate a **Pre-Brief**
 artifact. The Pre-Brief declares, per task, the exact assurance requirements the IAA will check
 at handover. Submitting agents receive these criteria before building, eliminating iterative
 reject-fix-reject cycles caused by late discovery of assurance expectations.
@@ -51,20 +52,32 @@ wave start.
 
 ## Trigger
 
-The IAA Pre-Brief is triggered **once per wave**, immediately after the Foreman creates and
-populates the wave task list artifact (`wave-current-tasks.md` or equivalent). The Foreman
+The IAA Pre-Brief is triggered **once per active PR-bound job or wave**, immediately after the Foreman creates and
+populates the authoritative task record (`wave-current-tasks.md`). The Foreman
 invokes the IAA via the standard `task(agent_type: "independent-assurance-agent")` tool call
 with a `PRE-BRIEF` action flag.
 
 **Trigger conditions** (all must be true):
 1. Foreman has created the wave task list artifact for the current wave
 2. The wave task list contains at least one qualifying task (per §Qualifying Tasks below)
-3. No Pre-Brief already exists for this wave number
+3. No active Pre-Brief already exists for the same nominated PR/work item/submitted head binding
 
 If the IAA tool call fails or is unavailable, the Foreman records `PHASE_A_ADVISORY` status
 and the Pre-Brief is deferred until IAA is accessible. Wave execution **may proceed** in
 `PHASE_A_ADVISORY` mode, but Pre-Brief must be completed before the first qualifying PR opens
 for review.
+
+---
+
+## Authoritative Task Record Resolution
+
+For IAA Pre-Brief input, task-record resolution is ordered and fail-closed:
+
+1. **PR-bound authoritative path** — `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md`
+2. **Wave-scoped fallback** — `.agent-admin/waves/wave-<N>-current-tasks.md` only when no PR-bound task record exists
+3. **Personal legacy fallback** — `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only when neither PR-bound nor wave-scoped task record exists for the current job
+
+Historic, cross-wave, cross-PR, or mismatched-head task records are invalid input. The active task record and the active Pre-Brief must bind the same nominated PR, work item, and submitted head.
 
 ---
 
@@ -103,7 +116,7 @@ Each wave record MUST contain a non-empty `## PRE-BRIEF` section with the follow
 **Producer**: independent-assurance-agent
 **Wave**: <N>
 **Date**: YYYY-MM-DD
-**Wave Task List**: <path/to/wave-current-tasks.md>
+**Task Record**: <path/to/wave-current-tasks.md>
 **Authority**: IAA_PRE_BRIEF_PROTOCOL.md
 **Status**: ACTIVE
 ```
@@ -125,6 +138,8 @@ For each qualifying task, the Pre-Brief lists:
 | `required_phases` | YES | Which delivery proof phases (1–4) are required |
 | `required_evidence_artifacts` | YES | Explicit list of artifact paths the IAA will check |
 | `applicable_overlays` | YES | Which category overlays apply (from `iaa-category-overlays.md`) |
+| `work_item_id` | YES for PR-bound jobs | Active work-item binding used to prove same-job scope |
+| `current_head_sha` | YES for PR-bound jobs | Submitted-head binding used to prevent stale or historic reuse |
 | `specific_rules` | NO | Named compliance rules (e.g., CORE-018, INV-409) the IAA will check |
 | `notes` | NO | Additional context or caveats specific to this task |
 
@@ -201,21 +216,15 @@ an amendment. The IAA uses judgment about materiality.
 
 ## Wave Checklist Schema
 
-The `wave-current-tasks.md` is the Foreman's authoritative record of all tasks planned for a
-wave. It is a living document updated as work progresses and a mandatory handover artifact.
+The resolved `wave-current-tasks.md` record is the Foreman's authoritative record of all tasks planned for the active PR-bound job or wave. It is a living document updated as work progresses and a mandatory handover artifact.
 
 ### File Location and Naming
 
-```
-.agent-admin/waves/wave-<N>-current-tasks.md
+```text
+.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md
 ```
 
-Where `<N>` is the zero-padded wave number (e.g., `wave-09-current-tasks.md`). For waves with
-a descriptive slug, the file may be named `wave-<slug>-current-tasks.md`.
-
-The Foreman references this canonical path in all wave planning and handover artifacts. A
-symlink or alias at `.agent-admin/waves/wave-current-tasks.md` pointing to the current wave
-file is permitted.
+This PR-scoped path is authoritative for PR-bound jobs. If no PR-bound task record exists, the Foreman may fall back to `.agent-admin/waves/wave-<N>-current-tasks.md`; if neither path exists, `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` remains a legacy fallback only when it is explicitly bound to the same job context. Historic or cross-wave reuse is prohibited.
 
 ### Per-Task Schema
 
@@ -289,7 +298,7 @@ cannot serve as the Pre-Brief input.
 
 **Creation checklist** (Foreman, FM_H):
 
-1. Create file at `.agent-admin/waves/wave-<N>-current-tasks.md`
+1. Create file at `.agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` for PR-bound jobs; use `.agent-admin/waves/wave-<N>-current-tasks.md` only when no PR-bound task record exists
 2. Populate all known tasks for the wave with schema-compliant entries
 3. Set all `qp_verdict` values to `PENDING` and tick status to `[ ]`
 4. Commit file to the PR branch
@@ -350,7 +359,7 @@ MUST NOT open a PR or proceed to IAA invocation until all handover gate conditio
 
 | Condition | Check | Blocker |
 |-----------|-------|---------|
-| Checklist file exists at canonical path | `ls .agent-admin/waves/wave-<N>-current-tasks.md` | YES |
+| Checklist file exists at resolved authoritative path | `ls .agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md` (or approved fallback path) | YES |
 | All qualifying tasks are `[x]` or `[~]` | No `[ ]` lines remain unless explicitly annotated | YES |
 | Every `[~]` line has a `notes` entry with reason | Inspect each `[~]` entry | YES |
 | Every `[x]` has a QP PASS record in session memory | Session memory review | YES |
@@ -364,7 +373,7 @@ The Foreman's PREHANDOVER proof MUST include a `wave_checklist` section:
 ```markdown
 ## Wave Checklist
 
-wave_checklist: .agent-admin/waves/wave-<N>-current-tasks.md
+wave_checklist: .agent-admin/prs/pr-<PR_NUMBER>/wave-current-tasks.md
 status: ALL_TICKED | PARTIALLY_TICKED | BLOCKED
 pending: none | [list of task IDs still in [ ] state]
 descoped: none | [list of task IDs marked [~] with reasons]
@@ -583,7 +592,7 @@ assurance execution:
 | Phase | Name | Timing | Artifact |
 |-------|------|--------|----------|
 | Phase 0 | Pre-Brief | Wave start — before building begins | `iaa-wave-record-<wave>-<date>.md` with non-empty `## PRE-BRIEF` |
-| Checklist Gate | Wave Checklist Invocation Gate | IAA session — before Phase 3 | `wave-<N>-current-tasks.md` + `wave_checklist` PREHANDOVER block |
+| Checklist Gate | Wave Checklist Invocation Gate | IAA session — before Phase 3 | resolved authoritative `wave-current-tasks.md` + `wave_checklist` PREHANDOVER block |
 | Phase 1 | Preflight Proof | Per PR — before build | `preflight-proof-<PR#>.md` |
 | Phase 2 | Governance Proof | Per PR — before build | `governance-proof-<PR#>.md` |
 | Phase 3 | Working Phase Proof | Per PR — during/after build | `working-proof-<PR#>.md` |
