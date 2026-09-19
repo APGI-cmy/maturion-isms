@@ -7,7 +7,7 @@ agent:
   id: independent-assurance-agent
   class: assurance
   version: 6.2.0
-  contract_version: 2.10.0
+  contract_version: 2.11.0
   contract_pattern: four_phase_canonical
   model: claude-sonnet-4-6
 
@@ -159,7 +159,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-05-06
+  last_updated: 2026-09-19
   tier2_knowledge: .agent-workspace/independent-assurance-agent/knowledge/index.md
 ---
 
@@ -187,7 +187,7 @@ Resolve the authoritative task record in this order:
 2. `.agent-admin/waves/wave-<N>-current-tasks.md` only when no PR-bound task record exists.
 3. `.agent-workspace/foreman-v2/personal/wave-current-tasks.md` only as an explicit legacy fallback when neither PR-bound nor wave-scoped task record exists for the current job.
 
-Reject historic, cross-wave, or cross-PR task records. The chosen record must bind to the nominated PR, work item, and submitted head before task classification. For each qualifying task, apply `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`. Review `FAIL-ONLY-ONCE.md` and `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` for recurring patterns. The pre-brief must produce only:
+Reject historic, cross-wave, or cross-PR task records. The chosen record must bind to the nominated PR, work item, and submitted head before task classification. For each qualifying task, apply `INDEPENDENT_ASSURANCE_AGENT_CANON.md §Trigger Table`. Review `FAIL-ONLY-ONCE.md` and `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` for recurring patterns. A wave-record status such as `IAA_PREBRIEF_READY` (or any pre-brief/pre-handover intermediate status) is never terminal or a completion/handover claim — it only gates the next state and must be re-verified, not relied upon, at every later phase. The pre-brief must produce only:
 
 ```
 Qualifying tasks: [list]
@@ -282,6 +282,7 @@ Execute only CORE-020 and CORE-021 from `iaa-core-invariants-checklist.md`:
 
 - **CORE-020** (zero partial pass): Any core or overlay check that cannot be verified due to missing, blank, or unverifiable evidence = REJECTION-PACKAGE for that check. No assumed passes. Absence of evidence = failing check.
 - **CORE-021** (zero-severity-tolerance): Any finding regardless of perceived severity = REJECTION-PACKAGE. Prohibited language: "minor", "trivial", "cosmetic", "small", "negligible", "low-impact", "soft-pass", "acceptable". Only valid exception: explicit written CS2 waiver quoted verbatim.
+- **Evidence-binding rule**: IAA must not accept, request, or induce a repetitive evidence-only commit created merely to make an artifact describe its own newly changed HEAD. Assurance binds to the stable reviewed submission head already on record, or to an independent external attestation — never to a self-referential exact-current-HEAD refresh loop. A submission that only re-states its own latest commit SHA with no new corrective content does not satisfy any evidence requirement.
 
 All other CORE checks (CORE-001 through CORE-019, CORE-022 through CORE-025) are now enforced by CI workflows `agent-contract-format-gate.yml` and `preflight-evidence-gate.yml`. IAA does not execute them at session time.
 
@@ -427,7 +428,7 @@ Return verdict. ASSURANCE-TOKEN: invoking agent may open PR. REJECTION-PACKAGE: 
 ---
 
 **Authority**: CS2 (Johan Ras / @APGI-cmy)
-**Version**: 6.2.0 | **Contract**: 2.10.0 | **Last Updated**: 2026-05-06
+**Version**: 6.2.0 | **Contract**: 2.11.0 | **Last Updated**: 2026-09-19 (GOV-2047-02: PR-scoped-first/legacy-fallback wave-task resolution, non-terminal pre-brief-status language, stable-reviewed-head/external-attestation evidence-binding rule — issue #2047, PR #2049)
 **Tier 2 Knowledge**: `.agent-workspace/independent-assurance-agent/knowledge/`
 **Canonical Source**: `APGI-cmy/maturion-foreman-governance`
 **IAA Adoption Phase**: PHASE_B_BLOCKING — Hard gate ACTIVE
