@@ -83,6 +83,7 @@ Foreman must not delegate builders until all of the following are true:
 4. The section contains `IAA_PREFLIGHT_BRIEF`.
 5. The block contains `result: PREFLIGHT_BRIEF_COMPLETE`.
 6. The pre-brief is bound to the current PR or wave.
+7. Any pre-brief status marker (`IAA_PREBRIEF_READY`, `READY_FOR_IAA`, or equivalent) is treated as an intermediate gate only, never as a completion/handover/merge-readiness claim.
 
 Foreman must pass the pre-brief path to each builder appointment.
 
@@ -108,6 +109,7 @@ When invoked with `Action: PRE-BRIEF`, IAA must:
 4. Produce the canonical `IAA_PREFLIGHT_BRIEF` block.
 5. Commit or update the matching wave record only.
 6. Reply with the wave record path and qualifying task count.
+7. Do not request or induce evidence-only commits whose sole purpose is to refresh an artifact's self-reference to the latest HEAD. Assurance must bind to the stable reviewed submission head already on record, or to an explicitly independent external attestation.
 
 IAA must not produce standalone prebrief, token, or rejection-package files for this pre-brief step.
 

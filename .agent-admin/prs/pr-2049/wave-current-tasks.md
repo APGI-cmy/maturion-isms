@@ -8,7 +8,7 @@ Base branch: main
 Base SHA: 7b059c4d33b2a950cecc178eb6c94fef62468e8a
 Initial planning head SHA: 6c878323f01e53926f67740a0c1ce5c542915e79
 CS2 authorization: user-provided explicit authorization, 2026-09-19
-Status: IAA_PREBRIEF_READY
+Status: FOREMAN_CONTROL
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md
 iaa_prebrief_commit_sha: 148c5ef067f51a5d19db3c61238f4be7dbed917d
 ceremony_admin_appointed: PENDING — ECAP is required by the pre-brief and may be appointed only after Foreman QP PASS.
@@ -27,20 +27,20 @@ ceremony_admin_appointed: PENDING — ECAP is required by the pre-brief and may 
       qp_verdict: PASS
       notes: QP PASS — assessment is complete at .agent-admin/governance/pr-2049-gov-2047-01-ripple-assessment.md (05621689b16a185247c1c3b4037b849cd87b5ec1). It identifies no unapproved scope expansion and correctly separates direct consumer work from CS2-protected canon work.
 
-- [ ] GOV-2047-02 — Apply the CS2-authorized minimal agent-contract hardening to Foreman and IAA paths: remediation ladder, Foreman-owned prerequisite handling, no terminal READY_FOR_IAA state, PR-scoped-first prebrief route, legacy fallback only when no PR record exists, and stable reviewed-head/external-attestation semantics.
+- [x] GOV-2047-02 — Apply the CS2-authorized minimal agent-contract hardening to Foreman and IAA paths: remediation ladder, Foreman-owned prerequisite handling, no terminal READY_FOR_IAA state, PR-scoped-first prebrief route, legacy fallback only when no PR record exists, and stable reviewed-head/external-attestation semantics.
       builder: CodexAdvisor-agent
-      qp_verdict: FAIL
-      notes: STOP_AND_FIX — builder self-recorded QP PASS and task completion, but only Foreman may issue QP verdicts. The delivered diff also fails git diff --check due trailing whitespace. Referral: .agent-admin/quality-professor/builder-referral-20260919-CodexAdvisor-agent-2047.md. Canonical IAA_PRE_BRIEF_PROTOCOL amendment remains a separate CS2-only authority blocker.
+      qp_verdict: PASS
+      notes: PASS after STOP_AND_FIX remediation — Foreman-corrected tracker authority mismatch and removed whitespace defects (`git diff --check` clean on current head). Contract/Tier2/IAA hardening landed on reviewed head and maintains canonical-boundary separation for CS2-only canon amendments.
 
-- [ ] GOV-2047-03 — Apply the corresponding consumer governance controls in Foreman Tier 2/FAIL-ONLY-ONCE, FOREMAN_OPERATING_MODEL, IAA protocol/schema/workflow material, and the directly applicable ECAP boundary protocol.
+- [x] GOV-2047-03 — Apply the corresponding consumer governance controls in Foreman Tier 2/FAIL-ONLY-ONCE, FOREMAN_OPERATING_MODEL, IAA protocol/schema/workflow material, and the directly applicable ECAP boundary protocol.
       builder: CodexAdvisor-agent
-      qp_verdict: FAIL
-      notes: STOP_AND_FIX — builder self-recorded QP PASS and task completion, but only Foreman may issue QP verdicts. The delivered diff also fails git diff --check due trailing whitespace. Referral: .agent-admin/quality-professor/builder-referral-20260919-CodexAdvisor-agent-2047.md. Verification-only ECAP and operating-model findings remain subject to Foreman re-review after correction.
+      qp_verdict: PASS
+      notes: PASS — consumer coherence updates completed and re-verified on current head across Foreman Tier2/FAIL-ONLY-ONCE plus targeted FOREMAN_OPERATING_MODEL, IAA prebrief protocol, and WAVE4 ECAP boundary language (admin-only + anti-loop consistency).
 
 - [ ] GOV-2047-04 — Add focused PIT controller tests and controller documentation covering automatic IAA prebrief invocation, IAA rejection-to-Foreman correction/reinvocation, protected-conflict CodexAdvisor routing, non-terminal READY_FOR_IAA prohibition, PR-scoped and legacy-fallback path behavior, and exact-head loop prevention.
       builder: pit-specialist
       qp_verdict: PENDING
-      notes: BLOCKED — the controller surface exists only on open, blocked PR #2046 and is absent from this branch/base, as evidenced by GOV-2047-01. Await CS2 direction on integration order or controller-surface availability; do not fabricate tests against a nonexistent surface.
+      notes: BLOCKED (sequencing dependency) — controller surface is still isolated to open PR #2046 and not present in this branch history; complete only after #2046 merges and this PR rebases to current main, then run focused controller regressions against the rebased head.
 
 - [ ] GOV-2047-05 — Execute focused QA for the controller/contract hardening and report test results, skips, warnings, and regression evidence.
       builder: qa-builder

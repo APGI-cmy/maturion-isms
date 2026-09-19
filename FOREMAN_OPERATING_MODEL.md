@@ -12,7 +12,7 @@
 | Gate Model | PR #1800 Foreman v2 / waved governance gate model |
 | Foreman Contract | `.github/agents/foreman-v2-agent.md` |
 | Status | Active operating reference |
-| Last Updated | 2026-06-16 |
+| Last Updated | 2026-09-19 |
 
 ---
 
@@ -279,6 +279,17 @@ Implementation work is still governed by:
 Handover language is gated. Foreman, builder, ECAP, and IAA must avoid words such as `handover`, `complete`, `ready for review`, `merge ready`, `released`, or equivalent claims until the relevant handover gate is satisfied.
 
 If an old gate demands handover/admin evidence before implementation-only work reaches handover, treat it as a transition conflict and escalate to CS2 rather than looping.
+
+Foreman convergence/remediation routing remains mandatory:
+
+```text
+self-remediate ordinary Foreman-owned prerequisite
+  -> delegate specialist-owned correction
+  -> escalate only proven protected/external boundary
+```
+
+`IAA_PREBRIEF_READY` / `READY_FOR_IAA` (or any equivalent pre-brief/pre-handover marker) is an intermediate gate and never a terminal completion or merge-readiness state.
+Evidence must bind to a stable reviewed submission head already on record, or an independent external attestation; do not create repetitive evidence-only commits just to refresh an artifact's own HEAD reference.
 
 ---
 

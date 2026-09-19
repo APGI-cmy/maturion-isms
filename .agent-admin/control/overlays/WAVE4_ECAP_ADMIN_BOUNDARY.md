@@ -53,6 +53,7 @@ Forbidden result language examples:
 
 ```text
 ready for IAA
+READY_FOR_IAA
 ready for merge
 merge-ready
 build ready
@@ -62,6 +63,7 @@ rejection package
 ```
 
 These forbidden examples are documentation only. ECAP output artifacts must not use them as status claims.
+ECAP output must also never request or imply an evidence-only "refresh-to-current-HEAD" loop; ECAP remains administrative and may only return bounded admin findings for Foreman routing.
 
 ---
 
