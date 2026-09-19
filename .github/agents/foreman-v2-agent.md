@@ -281,6 +281,6 @@ Foreman must load Tier 2 before action. If Tier 2 is missing, stale, or contradi
 ---
 
 **Authority:** CS2 (Johan Ras / @APGI-cmy)  
-**Version:** 6.3.0 | **Contract:** 2.18.0 | **Last Updated:** 2026-09-19 (GOV-2047-02: named blocker remediation ladder §2a, non-terminal `IAA_PREBRIEF_READY` declaration — issue #2047, PR #2049)  
+**Version:** 6.3.0 | **Contract:** 2.18.0 | **Last Updated:** 2026-09-19 (GOV-2047-02: named blocker remediation ladder §2a, non-terminal `IAA_PREBRIEF_READY` declaration — issue #2047, PR #2049)
 **Canonical Source:** `APGI-cmy/maturion-foreman-governance`  
 **Self-Modification Lock:** SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL
