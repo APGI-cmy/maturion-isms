@@ -22,30 +22,30 @@ ceremony_admin_appointed: PENDING — ECAP is required by the pre-brief and may 
 
 ## Qualifying task checklist
 
-- [ ] GOV-2047-01 — Assess authoritative/canonical ripple and produce the consumer layer-down plan for the Foreman, IAA, operating-model, and ECAP control changes.
+- [x] GOV-2047-01 — Assess authoritative/canonical ripple and produce the consumer layer-down plan for the Foreman, IAA, operating-model, and ECAP control changes.
       builder: governance-liaison-isms-agent
-      qp_verdict: PENDING
-      notes: IN PROGRESS — appointed after IAA pre-brief in this commit. Canonical changes must be requested and assessed before consumer implementation; no broad canon cleanup.
+      qp_verdict: PASS
+      notes: QP PASS — assessment is complete at .agent-admin/governance/pr-2049-gov-2047-01-ripple-assessment.md (05621689b16a185247c1c3b4037b849cd87b5ec1). It identifies no unapproved scope expansion and correctly separates direct consumer work from CS2-protected canon work.
 
 - [ ] GOV-2047-02 — Apply the CS2-authorized minimal agent-contract hardening to Foreman and IAA paths: remediation ladder, Foreman-owned prerequisite handling, no terminal READY_FOR_IAA state, PR-scoped-first prebrief route, legacy fallback only when no PR record exists, and stable reviewed-head/external-attestation semantics.
       builder: CodexAdvisor-agent
       qp_verdict: PENDING
-      notes: CodexAdvisor owns any .github/agents/ edits under AGCFPP; preserve IAA independence and do not self-certify assurance.
+      notes: IN PROGRESS — CodexAdvisor appointed after IAA pre-brief and GOV-2047-01 QP PASS in this commit. CodexAdvisor owns any .github/agents/ edits under AGCFPP; preserve IAA independence and do not self-certify assurance. Canonical IAA_PRE_BRIEF_PROTOCOL amendment requires CS2-only approval; prepare recommendation only unless that approval is explicit.
 
 - [ ] GOV-2047-03 — Apply the corresponding consumer governance controls in Foreman Tier 2/FAIL-ONLY-ONCE, FOREMAN_OPERATING_MODEL, IAA protocol/schema/workflow material, and the directly applicable ECAP boundary protocol.
-      builder: governance-liaison-isms-agent
+      builder: CodexAdvisor-agent
       qp_verdict: PENDING
-      notes: Limit changes to direct authority/ripple references identified by GOV-2047-01.
+      notes: IN PROGRESS — re-routed from governance-liaison-isms-agent because the target paths are outside its write authority, per GOV-2047-01. Limit changes to direct authority/ripple references identified by GOV-2047-01; ECAP and already-correct IAA control protocol are verification-only unless a direct coherence fix is evidenced.
 
 - [ ] GOV-2047-04 — Add focused PIT controller tests and controller documentation covering automatic IAA prebrief invocation, IAA rejection-to-Foreman correction/reinvocation, protected-conflict CodexAdvisor routing, non-terminal READY_FOR_IAA prohibition, PR-scoped and legacy-fallback path behavior, and exact-head loop prevention.
       builder: pit-specialist
       qp_verdict: PENDING
-      notes: QA execution/evidence must be independently routed as required; no PIT product behavior change.
+      notes: BLOCKED — the controller surface exists only on open, blocked PR #2046 and is absent from this branch/base, as evidenced by GOV-2047-01. Await CS2 direction on integration order or controller-surface availability; do not fabricate tests against a nonexistent surface.
 
 - [ ] GOV-2047-05 — Execute focused QA for the controller/contract hardening and report test results, skips, warnings, and regression evidence.
       builder: qa-builder
       qp_verdict: PENDING
-      notes: Must preserve 100%-GREEN and zero-test-debt controls; no readiness or assurance verdict.
+      notes: PENDING — may begin only after the actual governed changes and any available controller tests/docs are delivered. Must preserve 100%-GREEN and zero-test-debt controls; no readiness or assurance verdict.
 
 ## IAA tokens received this wave
 
