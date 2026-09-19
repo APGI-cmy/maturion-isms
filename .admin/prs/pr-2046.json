@@ -31,15 +31,16 @@
     ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md"
   ],
   "diff_truth": {
-    "base_to_head_total_files": 23,
+    "base_to_head_total_files": 24,
     "bounded_github_controller_files": 8,
-    "already_committed_iaa_path_alignment_files": 6,
+    "already_committed_iaa_path_alignment_files": 7,
     "already_committed_iaa_path_alignment_paths": [
       ".agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md",
       ".agent-admin/control/schemas/iaa-preflight-brief.schema.json",
       ".github/agents/independent-assurance-agent.md",
       ".github/scripts/iaa-preflight-contract-gate.test.sh",
       ".github/scripts/resolve-active-pr-state.test.sh",
+      "governance/CANON_INVENTORY.json",
       "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md"
     ],
     "pr_bound_admin_assurance_files": 9,
@@ -58,5 +59,5 @@
   "revalidated_for_head_at_utc": "2026-09-19T11:18:35Z",
   "merge_authority": "CS2",
   "execution_model": "foreman-governed",
-  "note": "Protected alignment for the proven IAA path blocker has now landed. PR #2046 administrative truth now binds the active reviewed head through the approved symbolic marker CURRENT_HEAD to avoid stale-head churn on bounded assurance-only commits. The exact base->head diff contains 23 files total: 8 bounded controller-pilot foundation files, 6 already-committed IAA path-alignment surfaces, and 9 PR-bound admin/assurance/ceremony artifacts. ECAP updated only the bounded PR admin records listed in prepared_admin_artifacts."
+  "note": "Protected alignment for the proven IAA path blocker has now landed. PR #2046 administrative truth now binds the active reviewed head through the approved symbolic marker CURRENT_HEAD to avoid stale-head churn on bounded assurance-only commits. The exact base->head diff contains 24 files total: 8 bounded controller-pilot foundation files, 7 already-committed IAA path-alignment surfaces including governance/CANON_INVENTORY.json, and 9 PR-bound admin/assurance/ceremony artifacts. ECAP updated only the bounded PR admin records listed in prepared_admin_artifacts."
 }

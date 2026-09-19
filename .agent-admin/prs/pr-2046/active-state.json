@@ -7,9 +7,9 @@
   "wave_tasks_path": ".agent-admin/prs/pr-2046/wave-current-tasks.md",
   "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md",
   "ecap_artifact_path": ".agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md",
-  "current_base_to_head_file_count": 23,
+  "current_base_to_head_file_count": 24,
   "current_bounded_github_file_count": 8,
-  "current_iaa_path_alignment_file_count": 6,
+  "current_iaa_path_alignment_file_count": 7,
   "current_pr_bound_admin_assurance_file_count": 9,
-  "note": "PR-bound admin state binds the active reviewed head through ACTIVE_HEAD_RESOLVED_BY_GATE to avoid stale-head churn on bounded assurance-only commits. The base->head diff contains 23 files total: 8 bounded .github controller-pilot foundation files, 6 already-committed IAA path-alignment surfaces, and 9 PR-bound admin/assurance/ceremony artifacts, including the existing wave record, the PR-scoped prehandover proof, the OVL-CI-005 S-033 evidence file, and the Foreman session-memory artifact. This state records ECAP administrative revalidation only; ECAP did not invoke IAA or issue a final assurance verdict."
+  "note": "PR-bound admin state binds the active reviewed head through ACTIVE_HEAD_RESOLVED_BY_GATE to avoid stale-head churn on bounded assurance-only commits. The base->head diff contains 24 files total: 8 bounded .github controller-pilot foundation files, 7 already-committed IAA path-alignment surfaces including governance/CANON_INVENTORY.json, and 9 PR-bound admin/assurance/ceremony artifacts, including the existing wave record, the PR-scoped prehandover proof, the OVL-CI-005 S-033 evidence file, and the Foreman session-memory artifact. This state records ECAP administrative revalidation only; ECAP did not invoke IAA or issue a final assurance verdict."
 }

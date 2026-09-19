@@ -12,10 +12,10 @@ ecap_bundle_path: .agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md
 
 ## Current-head truth
 
-- Scope remains frozen to the eight `.github/**` controller-pilot foundation files listed in `.agent-admin/scope-declarations/pr-2046.md`; current head also carries six already-committed IAA path-alignment surfaces for the proven blocker fix, but ECAP did not modify those surfaces in this pass.
-- Exact base→head diff for `1603f0ca201754e152f79a13d8e0a62fc4e51755..CURRENT_HEAD` contains 23 files total:
+- Scope remains frozen to the eight `.github/**` controller-pilot foundation files listed in `.agent-admin/scope-declarations/pr-2046.md`; current head also carries seven already-committed IAA path-alignment surfaces for the proven blocker fix, including `governance/CANON_INVENTORY.json`, but ECAP did not modify those surfaces in this pass.
+- Exact base→head diff for `1603f0ca201754e152f79a13d8e0a62fc4e51755..CURRENT_HEAD` contains 24 files total:
   - bounded `.github/**` controller-pilot foundation files: 8
-  - already-committed IAA path-alignment surfaces: 6
+  - already-committed IAA path-alignment surfaces: 7
   - PR-bound admin/assurance/ceremony artifacts: 9
 - This bounded ECAP revalidation updated only these five PR-2046 admin artifacts:
   - `.admin/prs/pr-2046.json`
@@ -29,12 +29,13 @@ ecap_bundle_path: .agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md
   - `.agent-admin/prehandover/OVL-CI-005-S033-evidence-pr-2046-pit-cs2-controller-pilot-20260919.md`
   - `.agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md`
   These are included in the 23-file diff count but were not modified by this bounded ECAP update.
-- The six already-committed IAA path-alignment surfaces present on the current head are:
+- The seven already-committed IAA path-alignment surfaces present on the current head are:
   - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
   - `.agent-admin/control/schemas/iaa-preflight-brief.schema.json`
   - `.github/agents/independent-assurance-agent.md`
   - `.github/scripts/iaa-preflight-contract-gate.test.sh`
   - `.github/scripts/resolve-active-pr-state.test.sh`
+  - `governance/CANON_INVENTORY.json`
   - `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md`
 - Current-head local validation re-checked by ECAP:
   - `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` → 11 pass, 0 fail.

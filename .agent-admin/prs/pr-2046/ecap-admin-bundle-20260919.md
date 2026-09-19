@@ -23,20 +23,21 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
 - `governance/CANON_INVENTORY.json` loaded; null/empty hash count re-checked locally: `0`.
 - Exact local HEAD binding for this bounded revalidation: `CURRENT_HEAD`.
 - `git status --porcelain` on receipt was empty.
-- `governance/CANON_INVENTORY.json` path/hash preflight check result: `0` null hashes, `0` missing canon paths, `1` hash mismatch (`governance/canon/IAA_PRE_BRIEF_PROTOCOL.md`).
+- `governance/CANON_INVENTORY.json` path/hash preflight check result: `0` null hashes, `0` missing canon paths, `0` hash mismatches.
 
 ## Current-head evidence reviewed
 
 ### Scope coherence
 
-- Exact base→head diff `1603f0ca201754e152f79a13d8e0a62fc4e51755..CURRENT_HEAD` contains 23 files total.
+- Exact base→head diff `1603f0ca201754e152f79a13d8e0a62fc4e51755..CURRENT_HEAD` contains 24 files total.
 - 8 changed files are inside the bounded `.github/**` controller-pilot surface.
-- 6 changed files are already-committed IAA path-alignment surfaces for the proven blocker fix:
+- 7 changed files are already-committed IAA path-alignment surfaces for the proven blocker fix:
   - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
   - `.agent-admin/control/schemas/iaa-preflight-brief.schema.json`
   - `.github/agents/independent-assurance-agent.md`
   - `.github/scripts/iaa-preflight-contract-gate.test.sh`
   - `.github/scripts/resolve-active-pr-state.test.sh`
+  - `governance/CANON_INVENTORY.json`
   - `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md`
 - 9 changed files are PR-bound admin/assurance/ceremony artifacts:
   - `.admin/prs/pr-2046.json`
@@ -48,7 +49,7 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
   - `.agent-admin/prs/pr-2046/wave-current-tasks.md`
   - `.agent-admin/scope-declarations/pr-2046.md`
   - `.agent-workspace/foreman-v2/memory/session-pr-2046-pit-cs2-controller-pilot-20260919.md`
-- Incremental delta from prior ECAP-refreshed head `fba039505a8c7d6720bf5f452a8eccfa36b959c6` to current head `CURRENT_HEAD` contains 12 files:
+- Incremental delta from prior ECAP-refreshed head `fba039505a8c7d6720bf5f452a8eccfa36b959c6` to current head `CURRENT_HEAD` contains 13 files:
   - `.admin/prs/pr-2046.json`
   - `.agent-admin/assurance/iaa-wave-record-pr-2046-pit-cs2-controller-pilot-20260919.md`
   - `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md`
@@ -60,6 +61,7 @@ I am `execution-ceremony-admin-agent`, class `administrator`, version `1.0.0`. I
   - `.github/agents/independent-assurance-agent.md`
   - `.github/scripts/iaa-preflight-contract-gate.test.sh`
   - `.github/scripts/resolve-active-pr-state.test.sh`
+  - `governance/CANON_INVENTORY.json`
   - `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md`
 - No PIT product code, Supabase, deployment, or merge-authority path appears in the PR diff. The only `.github/agents/**` path present is the already-committed IAA contract alignment file `.github/agents/independent-assurance-agent.md`.
 
@@ -96,8 +98,8 @@ ecap_revalidation_result:
   rationale: >
     The five bounded PR-2046 admin artifacts now truthfully bind to exact head
     CURRENT_HEAD via the approved symbolic runtime marker and truthfully record the exact
-    23-file base->head diff (8 bounded .github controller files + 6 already-
-    committed IAA path-alignment surfaces + 9 PR-bound admin/assurance/
+    24-file base->head diff (8 bounded .github controller files + 7 already-
+    committed IAA path-alignment surfaces including governance/CANON_INVENTORY.json + 9 PR-bound admin/assurance/
     ceremony artifacts). This is an administrative metadata refresh only.
   next_foreman_owned_action: >
     Use these refreshed PR-bound admin artifacts for any further Foreman-owned

@@ -16,7 +16,7 @@
   - `/home/runner/work/maturion-isms/maturion-isms/.github/scripts/pit-cs2-controller*`
   - `/home/runner/work/maturion-isms/maturion-isms/.github/workflows/pit-cs2-controller.yml`
   - `/home/runner/work/maturion-isms/maturion-isms/.github/workflows/iaa-prebrief-inject.yml`
-- No PIT product code, `.github/agents/**`, Supabase, deployment, merge-authority, or secret change is requested here.
+- No PIT product code, Supabase, deployment, merge-authority, or secret change is requested here. The exact current diff does include one already-committed protected agent-contract alignment file, `/home/runner/work/maturion-isms/maturion-isms/.github/agents/independent-assurance-agent.md`, plus the directly coupled `/home/runner/work/maturion-isms/maturion-isms/governance/CANON_INVENTORY.json` update required to keep the aligned canon hash current.
 - This proof is a Foreman-owned ceremony artifact only; it is not a handover claim and not a merge-ready claim.
 
 ---
