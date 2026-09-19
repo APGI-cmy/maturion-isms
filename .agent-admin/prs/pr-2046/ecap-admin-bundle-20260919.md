@@ -101,3 +101,32 @@ ecap_admin_result:
 - `.agent-admin/prs/pr-2046/active-state.json`
 - `.agent-admin/prs/pr-2046/wave-current-tasks.md`
 - `.agent-admin/prs/pr-2046/ecap-admin-bundle-20260919.md`
+
+## Re-Validation Addendum — committed head `b6090b91d63beb492cbe0299461e5c4bc6110efe`
+
+- Exact local HEAD now matches the follow-up validation target: `b6090b91d63beb492cbe0299461e5c4bc6110efe`.
+- `git status --porcelain` at follow-up validation time: empty.
+- `git diff --name-only` at follow-up validation time: empty.
+- `git diff --name-only 1603f0ca201754e152f79a13d8e0a62fc4e51755..b6090b91d63beb492cbe0299461e5c4bc6110efe` shows the same bounded controller-pilot code scope plus PR-bound admin/assurance artifacts only:
+  - bounded `.github/**` controller-pilot files: 8
+  - PR-bound admin/assurance artifacts: 6
+  - PIT product/runtime files changed: 0
+  - protected contract files changed: 0
+- Local re-checks on this committed head:
+  - `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` → `11 pass, 0 fail`
+  - YAML parse validation passed for `.github/workflows/pit-cs2-controller.yml`, `.github/workflows/iaa-prebrief-inject.yml`, and `.github/ISSUE_TEMPLATE/cs2-work-request.yml`
+- PR-bound bootstrap/admin artifacts and the PR-scoped IAA PRE-BRIEF wave record are now committed on-branch. ECAP did not invoke IAA, did not open a Phase 4 bundle, and did not hand to CS2.
+
+```yaml
+ecap_follow_up_result:
+  administrative_validation_only: true
+  phase_4_bundle_opened: false
+  iaa_invoked_by_ecap: false
+  hand_to_cs2_by_ecap: false
+  result: RETURN_TO_FOREMAN
+  verdict: ECAP_ADMIN_REVALIDATION_PASS
+  rationale: >
+    Current committed head remains within the bounded PR #2046 controller-pilot scope,
+    the PR-bound bootstrap/admin records are now committed, and the PR-scoped PRE-BRIEF
+    exists on-branch. Any further assurance or handover action remains Foreman-owned.
+```

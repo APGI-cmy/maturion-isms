@@ -8,7 +8,7 @@
   "branch": "codex/pit-cs2-controller-pilot",
   "base_branch": "main",
   "base_sha": "1603f0ca201754e152f79a13d8e0a62fc4e51755",
-  "head_sha": "2cce1a31373c6430c89bf35a36f1ca90ba208f49",
+  "head_sha": "b6090b91d63beb492cbe0299461e5c4bc6110efe",
   "canonical_wave_identity": "pr-2046-pit-cs2-controller-pilot",
   "requires_iaa": true,
   "requires_ecap": true,
