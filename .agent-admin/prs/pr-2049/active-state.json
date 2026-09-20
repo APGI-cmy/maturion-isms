@@ -15,7 +15,7 @@
   "admin_only_delta": false,
   "substantive_delta_after_evidence": false,
   "gate_change_delta": true,
-  "next_required_action": "PASS",
+  "next_required_action": "EVIDENCE_REQUIRED",
   "delta_type": "GATE_CHANGE_DELTA",
   "contradictions": [],
   "changed_files": [
@@ -63,5 +63,5 @@
     "governance/CANON_INVENTORY.json",
     "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md"
   ],
-  "note": "PR-2049-scoped resolver inputs and bounded ECAP administrative outputs. Stable substantive review head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2; runtime current-head handling is symbolic to avoid exact-head refresh churn on assurance-only commits. Under the stable reviewed-head binding adopted by this PR, bounded admin-only follow-up artifacts do not stale the PR-scoped IAA pre-brief on their own, so the normalized current state is PASS pending ordinary Foreman review and any later IAA invocation."
+  "note": "PR-2049-scoped resolver inputs and bounded ECAP administrative outputs. Stable substantive review head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2; runtime current-head handling is symbolic to avoid exact-head refresh churn on assurance-only commits. Bounded admin-only follow-up artifacts do not stale the PR-scoped IAA pre-brief on their own, but the wave tracker still shows outstanding completion-gate evidence for current PREHANDOVER/session memory and final IAA assurance, so the normalized current state remains EVIDENCE_REQUIRED until those items are completed."
 }

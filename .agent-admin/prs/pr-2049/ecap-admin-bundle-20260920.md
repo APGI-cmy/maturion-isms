@@ -42,7 +42,7 @@ I am execution-ceremony-admin-agent, class: administrator, version 1.0.0. Role: 
 - pr-bootstrap-artifacts-present: PASS
 - pr-scope-to-committed-diff-parity: PASS
 - git-diff-check-whitespace: PASS
-- resolve-active-pr-state-consistency: PASS
+- resolve-active-pr-state-consistency: PASS (remaining requirement is completion-gate evidence, not stale-evidence churn)
 - no-iaa-invocation-no-token-no-readiness-claim: PASS
 
 ## Required Findings
@@ -81,7 +81,7 @@ PASS:
 PASS:
 - Stable reviewed substantive head remains `54d06636c4a3968cbea0588866d0ab4e59ce40b2`.
 - The bounded ECAP pass intentionally preserved that reviewed head and applied symbolic current-head binding to the PR admin artifacts so admin-only follow-up commits do **not** force an exact-HEAD evidence refresh loop.
-- The normalized PR-scoped active-state record therefore resolves to `next_required_action: PASS`; Foreman review and any later IAA invocation remain separate, ordinary next steps rather than a stale-evidence blocker.
+- The normalized PR-scoped active-state record therefore resolves to `next_required_action: EVIDENCE_REQUIRED` because the tracker still carries open completion-gate evidence items (current PREHANDOVER/session memory and final IAA assurance), not because of a stale-evidence blocker on the admin-only follow-up artifacts.
 
 ### 5. Additional note on wave-record shape
 
