@@ -11,7 +11,11 @@ CS2 authorization: user-provided explicit authorization, 2026-09-19
 Status: FOREMAN_CONTROL
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md
 iaa_prebrief_commit_sha: 148c5ef067f51a5d19db3c61238f4be7dbed917d
-ceremony_admin_appointed: PENDING — ECAP is required by the pre-brief and may be appointed only after Foreman QP PASS.
+ceremony_admin_appointed: true
+ceremony_admin_appointment_timestamp_utc: 2026-09-20T07:16:01Z
+reviewed_head_sha: 54d06636c4a3968cbea0588866d0ab4e59ce40b2
+current_head_binding: CURRENT_HEAD
+ecap_bundle_path: .agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md
 
 ## Wave boundary
 
@@ -56,7 +60,7 @@ ceremony_admin_appointed: PENDING — ECAP is required by the pre-brief and may 
 ## Wave completion gate
 
 - [ ] All tasks above show `[x]` only after a recorded Foreman QP PASS.
-- [ ] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
+- [x] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
 - [ ] PREHANDOVER proof and session memory are current and committed.
 - [ ] Independent IAA final assurance has a current, valid recorded result.
 - [ ] CS2 receives the evidence package for its exclusive merge decision.
