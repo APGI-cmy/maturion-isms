@@ -27,3 +27,14 @@ test('pre-brief injection cannot use a repository-global legacy wave record', ()
   assert.match(workflow, /Submitted head:/);
   assert.doesNotMatch(workflow, /pull_request_target:\n\s+types: \[opened, ready_for_review\]/);
 });
+
+test('pilot documentation locks the controller-facing governance route', () => {
+  const guide = read('cs2-controller/pit-pilot.md');
+  assert.match(guide, /Foreman must create the PR-scoped task record, invoke IAA/i);
+  assert.match(guide, /Foreman → CodexAdvisor\/CS2, not PIT implementation scope/);
+  assert.match(guide, /IAA rejects the\s+submission, the controller route returns to Foreman for one bounded correction/i);
+  assert.match(guide, /legacy\s+personal-path consultation is a Foreman\/IAA fallback only when no PR-scoped\s+task record exists/i);
+  assert.match(guide, /independent external attestation/);
+  assert.doesNotMatch(guide, /`NO_CHANGE`, `STOP_AND_FIX`, `READY_FOR_IAA`, or/);
+  assert.match(guide, /`READY_FOR_IAA` \(or any ready-class label\) is never a terminal completion/i);
+});

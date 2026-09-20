@@ -37,15 +37,15 @@ ceremony_admin_appointed: PENDING — ECAP is required by the pre-brief and may 
       qp_verdict: PASS
       notes: PASS — consumer coherence updates completed and re-verified on current head across Foreman Tier2/FAIL-ONLY-ONCE plus targeted FOREMAN_OPERATING_MODEL, IAA prebrief protocol, and WAVE4 ECAP boundary language (admin-only + anti-loop consistency).
 
-- [ ] GOV-2047-04 — Add focused PIT controller tests and controller documentation covering automatic IAA prebrief invocation, IAA rejection-to-Foreman correction/reinvocation, protected-conflict CodexAdvisor routing, non-terminal READY_FOR_IAA prohibition, PR-scoped and legacy-fallback path behavior, and exact-head loop prevention.
-      builder: pit-specialist
-      qp_verdict: PENDING
-      notes: BLOCKED (sequencing dependency) — controller surface is still isolated to open PR #2046 and not present in this branch history; complete only after #2046 merges and this PR rebases to current main, then run focused controller regressions against the rebased head.
+- [x] GOV-2047-04 — Add focused PIT controller tests and controller documentation covering automatic IAA prebrief invocation, IAA rejection-to-Foreman correction/reinvocation, protected-conflict CodexAdvisor routing, non-terminal READY_FOR_IAA prohibition, PR-scoped and legacy-fallback path behavior, and exact-head loop prevention.
+      builder: maturion-agent
+      qp_verdict: PASS
+      notes: PASS — after current-main integration brought PR #2046's controller foundation onto this branch, maturion-agent accepted the controller/governance-facing fallback route and updated `.github/scripts/pit-cs2-controller.js`, `.github/scripts/pit-cs2-controller.test.js`, `.github/scripts/pit-cs2-controller-workflow.test.js`, and `.github/cs2-controller/pit-pilot.md` with the required PR-scoped pre-brief, rejection-routing, protected-conflict CodexAdvisor/CS2, non-terminal READY_FOR_IAA, legacy-fallback, and no exact-head-loop coverage. Builder validation reported `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` = 12 passed / 0 failed.
 
-- [ ] GOV-2047-05 — Execute focused QA for the controller/contract hardening and report test results, skips, warnings, and regression evidence.
+- [x] GOV-2047-05 — Execute focused QA for the controller/contract hardening and report test results, skips, warnings, and regression evidence.
       builder: qa-builder
-      qp_verdict: PENDING
-      notes: PENDING — may begin only after the actual governed changes and any available controller tests/docs are delivered. Must preserve 100%-GREEN and zero-test-debt controls; no readiness or assurance verdict.
+      qp_verdict: PASS
+      notes: PASS — qa-builder executed focused QA on the GOV-2047-04 surface only. `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` returned 12 passed / 0 failed / 0 skipped / 0 todo / 0 warnings, and the focused test-debt scan across the four in-scope files found 0 `.skip/.todo/TODO/FIXME/xit/xdescribe/xtest` markers.
 
 ## IAA tokens received this wave
 

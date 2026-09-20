@@ -307,7 +307,7 @@ async function dispatchForeman(github, owner, repo, issueNumber, row) {
     '',
     '**Your immediate, Foreman-owned action is mandatory:** create the PR-scoped `wave-current-tasks.md`, invoke `independent-assurance-agent` with `action: PRE-BRIEF`, and obtain the canonical, job-bound IAA pre-brief before any builder delegation.',
     '',
-    'Do not ask Johan/CS2 to authorise, waive, or create this pre-brief. Resolve ordinary governance, tooling, evidence-format, and configuration defects inside the declared sandbox. Escalate only a genuine external credential/cost/destructive action, protected-contract change, unresolvable business decision, or final human UI/UX acceptance.',
+    'Do not ask Johan/CS2 to authorise, waive, or create this pre-brief. Resolve ordinary governance, tooling, evidence-format, and configuration defects inside the declared sandbox. Escalate only a genuine external credential/cost/destructive action, a protected agent-contract or canon conflict that must route through CodexAdvisor/CS2, an unresolvable business decision, or final human UI/UX acceptance.',
     '',
     'Before PR binding, Foreman must nominate exactly one same-repository PR on this Issue with the authenticated controller marker comment.',
     '',
@@ -410,6 +410,8 @@ async function run({ github, context, core, eventName }) {
         `PR-scoped task record: \`.agent-admin/prs/pr-${pr.number}/wave-current-tasks.md\`.`,
         `Work item: \`${next.work_item_id}\`. Submitted head: \`${pr.head.sha}\`.`,
         'Complete the job-bound IAA PRE-BRIEF now. A missing pre-brief is a Foreman action, not a CS2 escalation. Ignore any historic wave, pre-brief, or gate material that is not bound to this work-item and PR.',
+        'If IAA returns a rejection, Foreman owns one bounded correction on this same PR-scoped route and must re-invoke the PRE-BRIEF/IAA path for the bound work item.',
+        'Do not treat any READY_FOR_IAA-style status as terminal completion, and do not create evidence-only commits merely to refresh the current HEAD; bind evidence to the submitted reviewed head or an independent external attestation.',
       ].join('\n'),
     });
     return;
