@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "wave_id": "issue-2025-2030-production-remediation-organisation-context",
-  "pr_number": 2031,
-  "current_head_sha": "74d452802c95f440e2bd364c056d9b40b7c1ecd6",
+  "wave_id": "GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919",
+  "pr_number": 2049,
+  "current_head_sha": "093b1195933182a64993e2c3a24c42af100d0b7e",
   "state": "PRE_HANDOVER_GATE_PASS",
   "handover_allowed": true,
   "foreman_qp_pass": true,
@@ -14,7 +14,5 @@
   "ecap_admin_validated": true,
   "all_required_checks_green": true,
   "iaa_final_required": true,
-  "iaa_final_verdict": "ASSURANCE-TOKEN",
-  "iaa_token": "IAA-iaa-pr-2031-20260821-PASS",
   "blocking_findings": []
 }

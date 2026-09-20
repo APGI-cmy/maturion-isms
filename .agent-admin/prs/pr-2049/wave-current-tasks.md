@@ -62,6 +62,6 @@ ecap_admin_result: ADMIN_BUNDLE_PREPARED — bounded PR bundle prepared with sta
 
 - [x] All tasks above show `[x]` only after a recorded Foreman QP PASS.
 - [x] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
-- [ ] PREHANDOVER proof and session memory are current and committed.
+- [x] PREHANDOVER proof and session memory are current and committed.
 - [ ] Independent IAA final assurance has a current, valid recorded result.
 - [ ] CS2 receives the evidence package for its exclusive merge decision.
