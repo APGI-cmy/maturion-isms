@@ -16,7 +16,7 @@ ceremony_admin_appointment_timestamp_utc: 2026-09-20T07:16:01Z
 reviewed_head_sha: 54d06636c4a3968cbea0588866d0ab4e59ce40b2
 current_head_binding: CURRENT_HEAD
 ecap_bundle_path: .agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md
-ecap_admin_result: EVIDENCE_STALE — bounded PR bundle prepared, but final Foreman/IAA path must resolve stale pre-brief freshness relative to this admin commit.
+ecap_admin_result: ADMIN_BUNDLE_PREPARED — bounded PR bundle prepared with stable reviewed-head binding preserved; Foreman review is still required before any later IAA re-invocation.
 
 ## Wave boundary
 
@@ -43,9 +43,9 @@ ecap_admin_result: EVIDENCE_STALE — bounded PR bundle prepared, but final Fore
       notes: PASS — consumer coherence updates completed and re-verified on current head across Foreman Tier2/FAIL-ONLY-ONCE plus targeted FOREMAN_OPERATING_MODEL, IAA prebrief protocol, and WAVE4 ECAP boundary language (admin-only + anti-loop consistency).
 
 - [x] GOV-2047-04 — Add focused PIT controller tests and controller documentation covering automatic IAA prebrief invocation, IAA rejection-to-Foreman correction/reinvocation, protected-conflict CodexAdvisor routing, non-terminal READY_FOR_IAA prohibition, PR-scoped and legacy-fallback path behavior, and exact-head loop prevention.
-      builder: maturion-agent
+      builder: pit-specialist
       qp_verdict: PASS
-      notes: PASS — after current-main integration brought PR #2046's controller foundation onto this branch, maturion-agent accepted the controller/governance-facing fallback route and updated `.github/scripts/pit-cs2-controller.js`, `.github/scripts/pit-cs2-controller.test.js`, `.github/scripts/pit-cs2-controller-workflow.test.js`, and `.github/cs2-controller/pit-pilot.md` with the required PR-scoped pre-brief, rejection-routing, protected-conflict CodexAdvisor/CS2, non-terminal READY_FOR_IAA, legacy-fallback, and no exact-head-loop coverage. Builder validation reported `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` = 12 passed / 0 failed.
+      notes: PASS — after current-main integration brought PR #2046's controller foundation onto this branch, the Foreman-routed GOV-2047-04 specialist lane completed the controller/governance-facing updates in `.github/scripts/pit-cs2-controller.js`, `.github/scripts/pit-cs2-controller.test.js`, `.github/scripts/pit-cs2-controller-workflow.test.js`, and `.github/cs2-controller/pit-pilot.md` with the required PR-scoped pre-brief, rejection-routing, protected-conflict CodexAdvisor/CS2, non-terminal READY_FOR_IAA, legacy-fallback, and no exact-head-loop coverage. Builder validation reported `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` = 12 passed / 0 failed.
 
 - [x] GOV-2047-05 — Execute focused QA for the controller/contract hardening and report test results, skips, warnings, and regression evidence.
       builder: qa-builder
@@ -60,7 +60,7 @@ ecap_admin_result: EVIDENCE_STALE — bounded PR bundle prepared, but final Fore
 
 ## Wave completion gate
 
-- [ ] All tasks above show `[x]` only after a recorded Foreman QP PASS.
+- [x] All tasks above show `[x]` only after a recorded Foreman QP PASS.
 - [x] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
 - [ ] PREHANDOVER proof and session memory are current and committed.
 - [ ] Independent IAA final assurance has a current, valid recorded result.

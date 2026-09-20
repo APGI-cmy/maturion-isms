@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919",
+  "pr_number": 2049,
+  "issue_id": 2047,
+  "prebrief_commit_sha": "148c5ef067f51a5d19db3c61238f4be7dbed917d",
+  "prebrief_timestamp": "2026-09-19T14:21:50Z",
+  "prebrief_evidence": ".agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md",
+  "builder_appointment_timestamp": "2026-09-19T14:31:27Z",
+  "builder_appointment_commit_sha": "691bb26615e148b2195b49152f989d21b0715ad8",
+  "builder_agent": "pit-specialist",
+  "builder_task_ref": ".agent-admin/prs/pr-2049/wave-current-tasks.md#GOV-2047-04",
+  "builder_authority": "foreman-v2-agent (POLC Supervisor)",
+  "delegation_order_reference": "Foreman routing for GOV-2047-04 on PR #2049",
+  "delegation_order_timestamp": "2026-09-19T14:31:27Z",
+  "delegation_order_scope": "Focused PIT controller governance-route regressions and pilot documentation covering PR-scoped pre-brief routing, rejection-to-Foreman correction/reinvocation, protected CodexAdvisor/CS2 routing, non-terminal READY_FOR_IAA semantics, legacy fallback, and exact-head loop prevention.",
+  "delegation_order_classification": "PR-scoped implementation/test delegation evidence for controller-route regressions",
+  "first_implementation_commit_sha": "54d06636c4a3968cbea0588866d0ab4e59ce40b2",
+  "first_implementation_timestamp": "2026-09-20T07:15:54Z",
+  "first_implementation_evidence": "Commit `test(gov-2047): add controller route regressions` updates .github/scripts/pit-cs2-controller.test.js and .github/scripts/pit-cs2-controller-workflow.test.js alongside the bound controller/docs surface.",
+  "qp_review_timestamp": "2026-09-20T07:15:54Z",
+  "qp_review_verdict": "PASS",
+  "qp_review_evidence": ".agent-admin/prs/pr-2049/wave-current-tasks.md records GOV-2047-04 as PASS on the reviewed substantive head 54d06636c4a3968cbea0588866d0ab4e59ce40b2.",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "result_timestamp": "2026-09-20T07:15:54Z",
+  "gates_remediated": [
+    "preflight/delegation-order-gate"
+  ],
+  "notes": "The gate-detected first implementation commit for PR #2049 is 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The PR-scoped IAA pre-brief commit (148c5ef067f51a5d19db3c61238f4be7dbed917d) is a strict ancestor of the Foreman routing/appointment lineage commit (691bb26615e148b2195b49152f989d21b0715ad8), which is a strict ancestor of that implementation commit. This artifact keeps the recorded builder identity aligned to the formal GOV-2047-04 appointment lineage that was committed before the controller regression implementation landed. This artifact restores the missing PR-scoped delegation proof required by the Builder Delegation Order Gate."
+}

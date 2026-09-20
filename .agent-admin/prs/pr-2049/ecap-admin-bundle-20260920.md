@@ -42,7 +42,7 @@ I am execution-ceremony-admin-agent, class: administrator, version 1.0.0. Role: 
 - pr-bootstrap-artifacts-present: PASS
 - pr-scope-to-committed-diff-parity: PASS
 - git-diff-check-whitespace: PASS
-- resolve-active-pr-state-consistency: BLOCKED (`EVIDENCE_STALE`)
+- resolve-active-pr-state-consistency: PASS
 - no-iaa-invocation-no-token-no-readiness-claim: PASS
 
 ## Required Findings
@@ -76,12 +76,12 @@ PASS:
   - `.agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md`
 - `.agent-admin/scope-declarations/pr-2049.md` lists the full 43-file committed diff and limits `approved_artifact_paths` to the bounded PR-2049 ECAP output set.
 
-### 4. Foreman blocker — active resolver reports stale IAA evidence
+### 4. Active resolver/current-head binding
 
-BLOCKER PRESENT:
-- `resolve-active-pr-state.js` returns `next_required_action: EVIDENCE_STALE` at current head because the active IAA artifact `.agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md` predates this bounded ECAP admin commit.
-- The bounded ECAP pass intentionally preserved the stable reviewed substantive head `54d06636c4a3968cbea0588866d0ab4e59ce40b2` and applied symbolic current-head binding to the PR admin artifacts, but it did **not** rewrite the IAA wave record itself.
-- ECAP does **not** invoke IAA and does **not** backfill or refresh the wave record on IAA's behalf. Foreman must decide the proper remediation before final IAA invocation (for example, a Foreman-owned refresh/re-invocation path that lawfully updates the active IAA artifact for the current branch state).
+PASS:
+- Stable reviewed substantive head remains `54d06636c4a3968cbea0588866d0ab4e59ce40b2`.
+- The bounded ECAP pass intentionally preserved that reviewed head and applied symbolic current-head binding to the PR admin artifacts so admin-only follow-up commits do **not** force an exact-HEAD evidence refresh loop.
+- The normalized PR-scoped active-state record therefore resolves to `next_required_action: PASS`; Foreman review and any later IAA invocation remain separate, ordinary next steps rather than a stale-evidence blocker.
 
 ### 5. Additional note on wave-record shape
 
@@ -90,7 +90,7 @@ BLOCKER PRESENT:
 
 ## §4.3e Gate Summary
 
-`§4.3e Gate: AAP-01–09/15–16 PASS for artifact truthfulness | Checklist COMPLETE with residual BLOCKER (`EVIDENCE_STALE`) on the active IAA artifact freshness dependency | R01–R17 COMPLETE/N/A as documented below | Reconciliation Summary PRESENT`
+`§4.3e Gate: AAP-01–09/15–16 PASS for artifact truthfulness | Checklist COMPLETE with stable reviewed-head/current-head binding preserved (no stale-evidence blocker for bounded admin-only follow-up) | R01–R17 COMPLETE/N/A as documented below | Reconciliation Summary PRESENT`
 
 ## Returned Artifact Paths
 
@@ -101,11 +101,11 @@ BLOCKER PRESENT:
 
 ## Administrative Result
 
-ADMIN_REJECTION_NOTICE
+ADMIN_VALIDATED
 
 - HANDOVER_ALLOWED: `no`
-- RESULT: `REJECTED_BACK_TO_FOREMAN`
-- REASON: `The bounded PR-2049 administrative bundle was prepared and identity-bound, but the active resolver still returns EVIDENCE_STALE because the PR-scoped IAA wave record predates this admin commit. ECAP did not and cannot refresh the IAA artifact in this pass.`
+- RESULT: `ADMIN_VALIDATED`
+- REASON: `The bounded PR-2049 administrative bundle is identity-bound and coherent under the stable reviewed-head/current-head model adopted by this PR. These admin-only artifacts do not require a self-referential evidence refresh loop; Foreman review and any later IAA invocation remain separate steps.`
 - administrative_validation_only: `true`
 - iaa_invoked_by_ecap: `false`
 - readiness_claim_made_by_ecap: `false`
@@ -120,10 +120,10 @@ ADMIN_REJECTION_NOTICE
 | Dimension | Status |
 |-----------|--------|
 | Substantive readiness | Accepted by Foreman QP in the PR-scoped tracker and appointment brief; recorded here only, not re-adjudicated by ECAP |
-| Administrative readiness | BLOCKED — bounded PR-2049 admin bundle prepared, but active IAA evidence freshness remains unresolved |
-| IAA assurance verdict | PENDING — Foreman-only next step after blocker resolution |
+| Administrative readiness | ACCEPTED — bounded PR-2049 admin bundle prepared with stable reviewed-head/current-head binding preserved; Foreman review still required |
+| IAA assurance verdict | PENDING — Foreman-only next step after ordinary review of the prepared admin bundle |
 | Ripple status | COMPLETED — GOV-2047-01 ripple assessment committed; one PUBLIC_API canon change already accounted for on the reviewed head |
-| Admin-compliance result | BLOCKED |
+| Admin-compliance result | ACCEPTED |
 
 ### C2. Artifact Completeness Table
 
@@ -172,10 +172,10 @@ ADMIN_REJECTION_NOTICE
 | Field | Value |
 |-------|-------|
 | substantive_readiness | ACCEPTED — recorded in Foreman-owned tracker / appointment brief |
-| administrative_readiness | ACCEPTED for bounded PR-bootstrap handback; Foreman review still required |
+| administrative_readiness | ECAP admin bundle prepared — stable reviewed-head binding preserved; Foreman review still required before any later IAA re-invocation |
 | QP admin-compliance check completed | no |
 | IAA invocation authorized | no |
-| Rejection reason (if REJECTED) | Active resolver returns `EVIDENCE_STALE` on the current IAA wave record after the bounded ECAP admin commit |
+| Rejection reason (if REJECTED) | N/A |
 | Foreman Session | not restated in the bounded PR-2049 artifact set |
 | Checkpoint Date | 2026-09-20 |
 

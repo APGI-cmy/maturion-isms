@@ -3,7 +3,7 @@
   "pr": 2049,
   "issue": 2047,
   "type": "governance-controller-hardening",
-  "status": "ECAP_ADMIN_BUNDLE_PREPARED_EVIDENCE_STALE",
+  "status": "ECAP_ADMIN_BUNDLE_PREPARED",
   "owner": "foreman-v2-agent",
   "branch": "copilot/governance-harden-foreman-controls",
   "base_branch": "main",

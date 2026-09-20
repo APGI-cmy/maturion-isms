@@ -412,7 +412,9 @@ jobs:
               fields: result.fields || {},
             });
 
-            if (advisoryUnavailable === 'github_api_rate_limited') {
+            const preloadedComments = readJson(process.env.PR_COMMENTS_PATH, null);
+
+            if (advisoryUnavailable === 'github_api_rate_limited' && !preloadedComments) {
               core.warning([
                 'Skipping sticky producer guidance comment upsert due to GitHub API rate limiting.',
                 'ADVISORY_UNAVAILABLE: github_api_rate_limited',
@@ -423,7 +425,7 @@ jobs:
             }
 
             try {
-              const comments = readJson(process.env.PR_COMMENTS_PATH, null) || await github.paginate(github.rest.issues.listComments, {
+              const comments = preloadedComments || await github.paginate(github.rest.issues.listComments, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
