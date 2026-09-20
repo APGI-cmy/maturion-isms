@@ -438,7 +438,11 @@ jobs:
               }
             } catch (error) {
               if (!isRateLimitError(error)) throw error;
-              core.setFailed([
+              // Rate limit is an infrastructure condition, not a PR defect.
+              // Keep the job green so advisory-only rate limiting does not fail
+              // CI on the PR; the classification lines stay visible as warnings
+              // and the upserted advisory comment carries the same state.
+              core.warning([
                 'ADVISORY_UNAVAILABLE: github_api_rate_limited',
                 'INFRASTRUCTURE_RERUN_NEEDED: yes',
                 'PR_DEFECT_INFERRED: no',
