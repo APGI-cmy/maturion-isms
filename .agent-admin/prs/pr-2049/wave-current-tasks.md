@@ -16,6 +16,7 @@ ceremony_admin_appointment_timestamp_utc: 2026-09-20T07:16:01Z
 reviewed_head_sha: 54d06636c4a3968cbea0588866d0ab4e59ce40b2
 current_head_binding: CURRENT_HEAD
 ecap_bundle_path: .agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md
+ecap_admin_result: EVIDENCE_STALE — bounded PR bundle prepared, but final Foreman/IAA path must resolve stale pre-brief freshness relative to this admin commit.
 
 ## Wave boundary
 
