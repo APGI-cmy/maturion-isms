@@ -8,7 +8,7 @@ Base branch: main
 Base SHA: 7b059c4d33b2a950cecc178eb6c94fef62468e8a
 Initial planning head SHA: 6c878323f01e53926f67740a0c1ce5c542915e79
 CS2 authorization: user-provided explicit authorization, 2026-09-19
-Status: FOREMAN_CONTROL
+Status: IAA_FINAL_PASS_CS2_REVIEW
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md
 iaa_prebrief_commit_sha: 148c5ef067f51a5d19db3c61238f4be7dbed917d
 ceremony_admin_appointed: true
@@ -16,7 +16,7 @@ ceremony_admin_appointment_timestamp_utc: 2026-09-20T07:16:01Z
 reviewed_head_sha: 54d06636c4a3968cbea0588866d0ab4e59ce40b2
 current_head_binding: CURRENT_HEAD
 ecap_bundle_path: .agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md
-ecap_admin_result: ADMIN_BUNDLE_PREPARED — bounded PR bundle prepared with stable reviewed-head binding preserved; Foreman review is still required before any later IAA re-invocation.
+ecap_admin_result: ADMIN_VALIDATED — bounded PR bundle remained valid under stable reviewed-head binding and was accepted as the administrative input to the final IAA PASS recorded for this wave.
 
 ## Wave boundary
 
@@ -56,12 +56,12 @@ ecap_admin_result: ADMIN_BUNDLE_PREPARED — bounded PR bundle prepared with sta
 
 | PR # | Token | Date |
 |------|-------|------|
-| 2049 | PENDING | — |
+| 2049 | IAA-session-1290-20260920-PASS | 2026-09-20 |
 
 ## Wave completion gate
 
 - [x] All tasks above show `[x]` only after a recorded Foreman QP PASS.
 - [x] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
 - [x] PREHANDOVER proof and session memory are current and committed.
-- [ ] Independent IAA final assurance has a current, valid recorded result.
-- [ ] CS2 receives the evidence package for its exclusive merge decision.
+- [x] Independent IAA final assurance has a current, valid recorded result.
+- [x] CS2 receives the evidence package for its exclusive merge decision.

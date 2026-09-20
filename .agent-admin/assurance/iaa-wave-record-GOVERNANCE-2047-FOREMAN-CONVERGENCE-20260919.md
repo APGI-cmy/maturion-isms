@@ -96,9 +96,61 @@ IAA_PREFLIGHT_BRIEF:
 ## Notes / Genuine Blockers for Foreman
 
 1. **No blocker to issuing this Pre-Brief.** The PR-scoped prerequisite (`.agent-admin/prs/pr-2049/wave-current-tasks.md`) required by the prior STOP-AND-FIX is present, committed (`7bbc2acf58c47946d1fb3e3d5e639cc958b2dd20`), and has been used as the primary source per `IAA_PREFLIGHT_BRIEF_PROTOCOL.md §5`. The legacy path (`.agent-workspace/foreman-v2/personal/wave-current-tasks.md`) was checked and found to belong to an unrelated prior wave (issue #2016 / PR #2017) — correctly not used.
-2. **Genuine open item (non-blocking for this Pre-Brief, but Foreman must resolve before handover):** the PR-scoped tracker does not currently carry a `ceremony_admin_appointed:` field (unlike the legacy-template shape). This Pre-Brief provisionally sets `ecap_required: true` given the wave's multi-builder, multi-artifact Phase 4 handover profile; Foreman must explicitly record the ceremony-admin appointment decision (yes/no) in the PR-scoped tracker so the final IAA invocation can verify it against ACR-01/ACR-09.
-3. **Dual-protocol-file coherence is a named high-risk failure mode** (see above) because two separate documents govern IAA pre-brief mechanics: the CS2-amendment-gated `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` (v1.3.0) and the newer `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md` ("Wave 1 canonical protocol", schema-bound). GOV-2047-03's scope explicitly includes both; Foreman/governance-liaison must reconcile them without contradiction and without exceeding the bounded ripple.
-4. **Sequencing dependency:** GOV-2047-01 (ripple/layer-down assessment) is a prerequisite gate for GOV-2047-02/03 per the issue's own instruction ("Implement only where the canonical ripple assessment authorises the change"). This Pre-Brief does not authorize the Foreman to delegate GOV-2047-02/03 builders ahead of a committed GOV-2047-01 output.
-5. **No product/consumer change, final token, or verdict has been issued in this invocation.** This is a PRE-BRIEF-only response under Phase 0. No Phase 1–4 assurance work, no ASSURANCE-TOKEN, no REJECTION-PACKAGE, and no ECAP invocation has occurred.
+2. **Ceremony-admin appointment was resolved before final assurance.** The PR-scoped tracker now records `ceremony_admin_appointed: true`, and the PR-scoped PREHANDOVER / session-memory evidence was committed before the final IAA invocation.
+3. **Dual-protocol-file coherence remained a named high-risk failure mode** (see above) and was treated as a mandatory final-assurance check because two separate documents govern IAA pre-brief mechanics: the CS2-amendment-gated `governance/canon/IAA_PRE_BRIEF_PROTOCOL.md` (v1.3.0) and the newer `.agent-admin/control/protocols/IAA_PREFLIGHT_BRIEF_PROTOCOL.md` ("Wave 1 canonical protocol", schema-bound).
+4. **Sequencing dependency satisfied:** GOV-2047-01 (ripple/layer-down assessment) remained the prerequisite gate for GOV-2047-02/03, and the final assurance reviewed the resulting committed wave after that prerequisite had already been satisfied.
+5. **Final assurance has now been executed.** The PRE-BRIEF above remains the Phase 0 record for the wave, and the final PASS verdict for the completed PR-scoped handback is recorded in the TOKEN section below.
 
-**Status**: `PRE-BRIEF ONLY — NO FINAL IAA TOKEN OR REJECTION ISSUED IN THIS INVOCATION`
+**Status**: `FINAL IAA PASS RECORDED — SEE TOKEN SECTION BELOW`
+
+---
+
+## TOKEN
+
+```yaml
+IAA_FINAL_ASSURANCE:
+  date_utc: "2026-09-20T11:52:25Z"
+  pr: "#2049 — Harden Foreman convergence and anti-loop controls"
+  issue: "#2047 — Governance: harden Foreman convergence and anti-loop controls"
+  category: "AGENT_CONTRACT"
+  invoked_by: "foreman-v2-agent final handback route"
+  produced_by:
+    - "governance-liaison-isms-agent"
+    - "CodexAdvisor-agent"
+    - "pit-specialist"
+    - "qa-builder"
+    - "execution-ceremony-admin-agent"
+    - "foreman-v2-agent"
+  ceremony_admin: true
+  independence: "CONFIRMED"
+  stable_reviewed_head_sha: "54d06636c4a3968cbea0588866d0ab4e59ce40b2"
+  current_head_sha: "1bbcaf02b140a47dfc630c1dca1f47fa630ebc47"
+  bounded_post_review_delta:
+    non_admin_files:
+      - ".github/workflows/producer-next-action-guidance.yml"
+    assessment: "Post-reviewed commits after the stable reviewed head are limited to PR-scoped admin/evidence normalization plus one bounded producer-guidance rate-limit workflow fix; no substantive implementation was reopened."
+  local_validation:
+    producer_next_action_guidance_test: "PASS (17 passed, 0 failed)"
+    resolve_active_pr_state_test: "PASS (7 passed, 0 failed)"
+    delegation_order_gate: "PASS"
+    git_diff_check: "PASS"
+  hosted_required_checks:
+    merge_gate_verdict: "PASS"
+    governance_alignment: "PASS"
+    stop_and_fix_enforcement: "PASS"
+    preflight_phase_1_evidence: "PASS"
+    preflight_delegation_order_gate: "PASS"
+    preflight_ecap_admin_boundary_gate: "PASS"
+    preflight_merge_gate_required_checks_alignment: "PASS"
+    producer_next_action_guidance: "PASS"
+  active_bundle_iaa_coherence: "VERIFIED"
+  checks_run: 32
+  pass_count: 32
+  fail_count: 0
+  merge_gate_parity: "PASS"
+  PHASE_B_BLOCKING_TOKEN: "IAA-session-1290-20260920-PASS"
+```
+
+- The issue-authorized governance hardening remains substantively anchored to reviewed head `54d06636c4a3968cbea0588866d0ab4e59ce40b2`; later commits do not reopen contract/controller behavior.
+- PR-scoped-first pre-brief routing, non-terminal `READY_FOR_IAA` semantics, stable reviewed-head evidence binding, ECAP admin-only boundaries, and focused controller regressions are present in the reviewed governance/controller surfaces and their committed evidence chain.
+- Under the bounded admin-only delta model, the immutable PREHANDOVER/ECAP artifacts remain valid as pre-verdict artifacts; they do not require a self-referential exact-current-HEAD refresh loop merely because the final handback commit changed `HEAD`.
