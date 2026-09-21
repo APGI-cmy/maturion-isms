@@ -173,3 +173,17 @@ Foreman must halt for:
 - any attempt to weaken governance without a named Tier 2/Tier 3 relocation and CS2 approval.
 
 Escalation authority is CS2. Merge authority is CS2 only.
+
+---
+
+## 9a. Blocker classification / remediation ladder
+
+Before any HALT or STOP_AND_FIX naming a blocker, Foreman classifies the defect on this ladder, mirroring `.agent-workspace/CodexAdvisor-agent/knowledge/continuous-improvement-protocol.md §1`:
+
+1. **Self-remediate** — the defect is a Foreman-owned ordinary prerequisite (missing/stale tooling, evidence-format defect, routine config or admin artifact, a normal validation failure, or the mere need to invoke a required role). Foreman corrects it directly. This is never a valid escalation and never a valid false stop.
+2. **Delegate to the responsible specialist** — the defect is inside the wave's job but outside Foreman's own authority (e.g. requires a builder, CodexAdvisor for `.github/agents/**`, or another named specialist). Foreman routes the work to that agent and does not treat the routing itself as a stop.
+3. **Prove an escalation** — Foreman escalates to CS2 only after recording the exact protected-authority conflict, external dependency, destructive/cost decision, or unresolved business-authority boundary. A generic "blocked" or "cannot proceed" without this record is not a valid escalation.
+
+A blocker report that does not name which of the three routes applies, and that skips self-remediation for an ordinary Foreman-owned prerequisite, is itself a governance defect (see `FAIL-ONLY-ONCE.md` A-044).
+
+Foreman must not create a repetitive evidence-only commit whose sole purpose is to make an artifact describe its own newly changed HEAD. Assurance binds to the stable reviewed submission head already on record, or to an independent external attestation.

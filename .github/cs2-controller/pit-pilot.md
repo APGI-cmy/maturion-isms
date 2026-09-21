@@ -29,22 +29,39 @@ Escalate only: a required secret or external account action; an approved-cost or
 destructive production action; a protected agent-contract/canon change; an
 unresolvable business decision; or human UI/UX acceptance.
 
+If the protected conflict is an agent-contract or canon boundary, the route is
+Foreman → CodexAdvisor/CS2, not PIT implementation scope. If IAA rejects the
+submission, the controller route returns to Foreman for one bounded correction
+on the same PR-scoped task record plus a fresh `PRE-BRIEF`/IAA invocation.
+Ordinary correction work is never a standalone CS2 escalation.
+
 ## State and routing
 
 `intake → foreman → builder → qp → ecap → iaa → cs2_review → awaiting_human → closed`
 
 Each run processes only a changed Issue/PR event and emits one of:
-`NO_CHANGE`, `STOP_AND_FIX`, `READY_FOR_IAA`, or
-`CS2_DECISION_REQUIRED`.
+`NO_CHANGE`, `STOP_AND_FIX`, or `CS2_DECISION_REQUIRED`.
+Controller/Foreman commentary may note pre-brief progress, but
+`READY_FOR_IAA` (or any ready-class label) is never a terminal completion,
+approval, or handover state.
 
 The controller never creates a new PR, wave, pre-brief, session memory, or
 narrative evidence merely to satisfy itself. It may dispatch Foreman to create
 the job-specific, contract-required pre-brief. Evidence is a command result,
 hosted check, review, or current-head record wherever possible.
 
+Evidence binds to the submitted reviewed head already on record, or to an
+independent external attestation. The controller, Foreman, and IAA must not
+create repetitive evidence-only commits whose sole purpose is to refresh an
+artifact's own current-HEAD self-reference.
+
 The controller ignores a pre-brief, wave task, or gate result that is not bound
 to the active work-item Issue and nominated PR. Historical or cross-wave state
 is reported as `IGNORE_STALE_CONTEXT`; it is never an implementation blocker.
+The controller automation is PR-scoped-first. Any remaining legacy
+personal-path consultation is a Foreman/IAA fallback only when no PR-scoped
+task record exists yet for the bound PR/work item, and never a substitute for
+the active PR-scoped record once that record exists.
 
 ## Corrections and approval
 

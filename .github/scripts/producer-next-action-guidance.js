@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const STICKY_MARKER = '<!-- producer-next-action-shortfall -->';
+const { evaluateFinalPassCs2ReviewStateFromFields } = require('./final-pass-cs2-review');
 
 const NEXT_ACTION_GUIDANCE = {
   REFRESH_INJECTION_INTAKE: 'Comment `/prepare-handover` again after the latest push or instruction change to refresh the trusted current-head intake.',
@@ -42,22 +43,29 @@ function nextActionSentence(nextRequiredControl) {
   return NEXT_ACTION_GUIDANCE[nextRequiredControl] || `Clear \`${nextRequiredControl}\` before any final summary, ready-for-review, handover, or merge-ready claim.`;
 }
 
+function isCs2ReviewOnlyState(fields = {}) {
+  return evaluateFinalPassCs2ReviewStateFromFields(fields).effectiveCs2Review;
+}
+
 function renderGuidanceComment({ prNumber, headSha, fields = {} }) {
   const clean = isCleanState(fields);
   const nextRequiredControl = String(fields.NEXT_REQUIRED_CONTROL || 'none');
   const shortSha = String(headSha || '').slice(0, 12) || 'unknown';
   const checksSummary = summarizeChecks(fields);
   const result = String(fields.RESULT || '').toUpperCase();
+  const cs2ReviewOnly = isCs2ReviewOnlyState(fields);
   const advisoryUnavailable = String(fields.ADVISORY_UNAVAILABLE || '').toLowerCase();
   const stopAndFix = result === 'STOP_AND_FIX';
   const gray = advisoryUnavailable === 'github_api_rate_limited' || result === 'ADVISORY_UNAVAILABLE';
-  const amber = !gray && !stopAndFix && !clean;
+  const amber = !gray && !stopAndFix && !clean && !cs2ReviewOnly;
   const status = clean ? 'yes' : 'no';
 
   const header = gray
     ? '# ⚪ ADVISORY UNAVAILABLE — GITHUB API RATE LIMIT'
     : stopAndFix
       ? '# 🛑 STOP — DO NOT CONTINUE TO HANDOVER'
+      : cs2ReviewOnly
+        ? '# 🔵 WITH CS2 — final PASS recorded'
       : clean
         ? '# ✅ GREEN — current head guidance is clean'
         : '# 🟠 AMBER — guidance pending / waiting';
@@ -97,6 +105,23 @@ function renderGuidanceComment({ prNumber, headSha, fields = {} }) {
       '',
       `CURRENT_HEAD_CHECKS: ${checksSummary}`,
       `CHECKPOINT_RESULT: ${String(fields.RESULT || 'unknown')}`,
+    );
+    return lines.join('\n');
+  }
+
+  if (cs2ReviewOnly) {
+    lines.push(
+      'CS2_REVIEW_ONLY: yes',
+      'FINAL_SUMMARY_ALLOWED: no',
+      'READY_FOR_REVIEW_ALLOWED: no',
+      'HANDOVER_CLAIM_ALLOWED: no',
+      'NEXT_REQUIRED_CONTROL: none',
+      `INJECTION_STATE: ${String(fields.INJECTION_STATE || 'unknown')}`,
+      `CURRENT_HEAD_CHECKS: ${checksSummary}`,
+      `CHECKPOINT_RESULT: ${String(fields.RESULT || 'CS2_REVIEW')}`,
+      '',
+      'Final IAA PASS is recorded. The evidence package is with CS2 for the exclusive review/merge decision.',
+      'Do not regenerate pre-brief, builder, QP, ECAP, IAA, or evidence-refresh work unless CS2 directs otherwise.',
     );
     return lines.join('\n');
   }

@@ -368,6 +368,8 @@ jobs:
           PR_NUMBER: ${{ steps.context.outputs.pr_number }}
           HEAD_SHA: ${{ steps.context.outputs.head_sha }}
           RESULT_FILE: ${{ steps.evaluate.outputs.result_file }}
+          PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
+          ADVISORY_UNAVAILABLE: ${{ steps.inputs.outputs.advisory_unavailable }}
         with:
           script: |
             const fs = require('fs');
@@ -384,6 +386,17 @@ jobs:
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA || '';
             const resultFilePath = process.env.RESULT_FILE || '';
+            const advisoryUnavailable = process.env.ADVISORY_UNAVAILABLE || 'none';
+
+            const readJson = (targetPath, fallback) => {
+              if (!targetPath) return fallback;
+              try {
+                return JSON.parse(fs.readFileSync(targetPath, 'utf8'));
+              } catch (error) {
+                core.warning(`Failed to read/parse ${targetPath}: ${error.message}`);
+                return fallback;
+              }
+            };
 
             let result = {};
             if (resultFilePath) {
@@ -399,8 +412,20 @@ jobs:
               fields: result.fields || {},
             });
 
+            const preloadedComments = readJson(process.env.PR_COMMENTS_PATH, null);
+
+            if (advisoryUnavailable === 'github_api_rate_limited' && !preloadedComments) {
+              core.warning([
+                'Skipping sticky producer guidance comment upsert due to GitHub API rate limiting.',
+                'ADVISORY_UNAVAILABLE: github_api_rate_limited',
+                'INFRASTRUCTURE_RERUN_NEEDED: yes',
+                'PR_DEFECT_INFERRED: no',
+              ].join('\n'));
+              return;
+            }
+
             try {
-              const comments = await github.paginate(github.rest.issues.listComments, {
+              const comments = preloadedComments || await github.paginate(github.rest.issues.listComments, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
@@ -438,7 +463,8 @@ jobs:
               }
             } catch (error) {
               if (!isRateLimitError(error)) throw error;
-              core.setFailed([
+              core.warning([
+                'Failed to update/read sticky producer guidance comment due to GitHub API rate limiting.',
                 'ADVISORY_UNAVAILABLE: github_api_rate_limited',
                 'INFRASTRUCTURE_RERUN_NEEDED: yes',
                 'PR_DEFECT_INFERRED: no',

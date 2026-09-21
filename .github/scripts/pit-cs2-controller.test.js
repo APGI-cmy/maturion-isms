@@ -189,6 +189,10 @@ test('real Issue Form payload is claimed once and duplicate intake is idempotent
   assert.equal(posted.filter((comment) => comment.body.includes(controller.REGISTER_MARKER)).length, 2);
   assert.equal(posted.filter((comment) => comment.user.login === controller.CONTROLLER_LOGIN && comment.body.includes(controller.REGISTER_MARKER)).length, 1);
   assert.equal(posted.filter((comment) => comment.body.includes(controller.FOREMAN_DISPATCH_MARKER)).length, 1);
+  const dispatch = posted.find((comment) => comment.body.includes(controller.FOREMAN_DISPATCH_MARKER));
+  assert.match(dispatch.body, /invoke `independent-assurance-agent` with `action: PRE-BRIEF`/);
+  assert.match(dispatch.body, /before any builder delegation/);
+  assert.match(dispatch.body, /CodexAdvisor\/CS2/);
 
   const persisted = controller.parseRegister(
     posted.find((comment) => comment.user.login === controller.CONTROLLER_LOGIN && comment.body.includes(controller.REGISTER_MARKER)).body,
@@ -462,8 +466,13 @@ test('only a Foreman-nominated authorised same-repository work-item PR can bind 
   assert.equal(persisted.pr_number, 502);
   assert.equal(persisted.last_processed.head_sha, 'b'.repeat(40));
   assert.equal((harness.comments.get('502') || []).length, 1);
-  assert.match((harness.comments.get('502') || [])[0].body, /wave-current-tasks\.md/);
-  assert.match((harness.comments.get('502') || [])[0].body, /Submitted head/);
+  const prBoundComment = (harness.comments.get('502') || [])[0];
+  assert.match(prBoundComment.body, /wave-current-tasks\.md/);
+  assert.match(prBoundComment.body, /Submitted head/);
+  assert.match(prBoundComment.body, /Complete the job-bound IAA PRE-BRIEF now/);
+  assert.match(prBoundComment.body, /If IAA returns a rejection, Foreman owns one bounded correction/);
+  assert.match(prBoundComment.body, /Do not treat any READY_FOR_IAA-style status as terminal completion/);
+  assert.match(prBoundComment.body, /do not create evidence-only commits merely to refresh the current HEAD/i);
 
   await controller.run({
     github: harness.github,

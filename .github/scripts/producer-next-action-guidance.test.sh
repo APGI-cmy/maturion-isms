@@ -281,6 +281,84 @@ run_case \
   "$resolver_binding" \
   "PASS"
 
+cs2_review_render="$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+process.stdout.write(guidance.renderGuidanceComment({
+  prNumber: 2049,
+  headSha: 'ac19fdf4c966465d2e2a202930504f368e5d3627',
+  fields: {
+    RESULT: 'CS2_REVIEW',
+    FINAL_PASS_CS2_REVIEW: 'yes',
+    ACTIVE_STATE_NEXT_REQUIRED_ACTION: 'CS2_REVIEW',
+    PR_MANIFEST_STATUS: 'IAA_FINAL_PASS_CS2_REVIEW',
+    WAVE_TASKS_STATUS: 'IAA_FINAL_PASS_CS2_REVIEW',
+    IAA_FINAL_ASSURANCE_PRESENT: 'yes',
+    IAA_TOKEN_PENDING: 'no',
+    IAA_TOKEN_PRESENT: 'yes',
+    NEXT_REQUIRED_CONTROL: 'none',
+    INJECTION_STATE: 'current',
+    FAILING_CHECKS: 'none',
+    PENDING_CHECKS: 'none',
+    MISSING_CHECKS: 'none',
+  },
+}));
+EOF
+)"
+
+run_case \
+  "18. final PASS CS2 review guidance renders CS2-only posture" \
+  "$(printf '%s' "$cs2_review_render" | grep -Ec '^# 🔵 WITH CS2 — final PASS recorded|CS2_REVIEW_ONLY: yes|NEXT_REQUIRED_CONTROL: none|CHECKPOINT_RESULT: CS2_REVIEW' || true)" \
+  "4"
+
+run_case \
+  "19. final PASS CS2 review guidance says evidence package is with CS2" \
+  "$(printf '%s' "$cs2_review_render" | grep -c 'evidence package is with CS2 for the exclusive review/merge decision' || true)" \
+  "1"
+
+run_case \
+  "20. final PASS CS2 review guidance suppresses pre-brief / IAA refresh instructions" \
+  "$(printf '%s' "$cs2_review_render" | grep -Ec 'canonical Wave Pre-Brief|IAA prebrief / wave binding artifacts|Obtain fresh IAA final assurance|Run `/prepare-handover`' || true)" \
+  "0"
+
+blocked_final_pass_render="$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+process.stdout.write(guidance.renderGuidanceComment({
+  prNumber: 2049,
+  headSha: 'c7e9e2cd1769e053691c3f82a48d883090125f4d',
+  fields: {
+    RESULT: 'STOP_AND_FIX',
+    ACTIVE_STATE_NEXT_REQUIRED_ACTION: 'CS2_REVIEW',
+    PR_MANIFEST_STATUS: 'IAA_FINAL_PASS_CS2_REVIEW',
+    WAVE_TASKS_STATUS: 'IAA_FINAL_PASS_CS2_REVIEW',
+    IAA_TOKEN_PRESENT: 'yes',
+    IAA_FINAL_ASSURANCE_PRESENT: 'yes',
+    IAA_TOKEN_PENDING: 'no',
+    FINAL_PASS_DECLARED: 'yes',
+    FINAL_PASS_CS2_REVIEW: 'no',
+    FINAL_PASS_SUPERSEDED: 'yes',
+    FAILING_CHECKS: 'preflight/gate-changing-pr-rule',
+    PENDING_CHECKS: 'none',
+    MISSING_CHECKS: 'none',
+    MERGE_CONFLICT_CHECKED: 'yes',
+    MERGEABLE_WITH_BASE: 'yes',
+    BASE_SYNCED_OR_CONFLICTS_RESOLVED: 'yes',
+    ACTIVE_PR_IDENTITY_BINDING: 'PASS',
+    SCOPE_CURRENT: 'yes',
+    STALE_EVIDENCE_FOUND: 'no',
+    ACTIVE_ARTIFACTS_REPORT_FAIL_OR_NO: 'no',
+    OUT_OF_SANDBOX_OR_GOVERNANCE_BLOCKER: 'none',
+    NEXT_REQUIRED_CONTROL: 'CURRENT_HEAD_GATES_GREEN',
+    INJECTION_STATE: 'current',
+  },
+}));
+EOF
+)"
+
+run_case \
+  "21. superseded final PASS with a failed check does not render CS2-review-only guidance" \
+  "$(printf '%s' "$blocked_final_pass_render" | grep -Ec '^# 🛑 STOP — DO NOT CONTINUE TO HANDOVER|CS2_REVIEW_ONLY: yes' || true)" \
+  "1"
+
 echo ""
 echo "Passed: $PASS"
 echo "Failed: $FAIL"

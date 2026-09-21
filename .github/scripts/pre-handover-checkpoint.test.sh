@@ -1023,6 +1023,120 @@ run_checkpoint_field_test \
     {"field":"RESULT","equals":"HANDOVER_ALLOWED"}
   ]'
 
+setup_final_pass_cs2_review_guidance_state() {
+  seed_manifest_and_scope
+  seed_green_checks
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  mkdir -p .agent-admin/prs/pr-9999 .agent-admin/assurance
+  TEST_ACTIVE_STATE_JSON='{"pr":9999,"branch":"copilot/test-checkpoint","next_required_action":"CS2_REVIEW","manifest_path":".admin/prs/pr-9999.json","scope_path":".agent-admin/scope-declarations/pr-9999.md","wave_tasks_path":".agent-admin/prs/pr-9999/wave-current-tasks.md","iaa_artifact_path":".agent-admin/assurance/iaa-wave-record-test.md","ecap_artifact_path":".agent-admin/prs/pr-9999/ecap-admin-bundle.md"}'
+  cat > .admin/prs/pr-9999.json <<'JSON'
+{"pr":9999,"branch":"copilot/test-checkpoint","status":"IAA_FINAL_PASS_CS2_REVIEW"}
+JSON
+  cat > .agent-admin/scope-declarations/pr-9999.md <<'SCOPE'
+PR_NUMBER: 9999
+ISSUE: #1583
+BRANCH: copilot/test-checkpoint
+FILES_CHANGED: 5
+- `.admin/prs/pr-9999.json` - manifest
+- `.agent-admin/scope-declarations/pr-9999.md` - scope
+- `.agent-admin/prs/pr-9999/wave-current-tasks.md` - wave tasks
+- `.agent-admin/prs/pr-9999/ecap-admin-bundle.md` - ecap bundle
+- `.agent-admin/assurance/iaa-wave-record-test.md` - iaa record
+SCOPE
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+Status: IAA_FINAL_PASS_CS2_REVIEW
+WAVE
+  cat > .agent-admin/prs/pr-9999/ecap-admin-bundle.md <<'ECAP'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+CURRENT_HEAD_SHA: CURRENT_HEAD
+ecap_invoked: yes
+ecap_verdict: PASS
+admin_ceremony_compliance: PASS
+ECAP
+  cat > .agent-admin/assurance/iaa-wave-record-test.md <<'IAA'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+CURRENT_HEAD_SHA: CURRENT_HEAD
+## PRE-BRIEF
+IAA_PREFLIGHT_BRIEF:
+  result: PREFLIGHT_BRIEF_COMPLETE
+## TOKEN
+PHASE_B_BLOCKING_TOKEN: IAA-session-1290-20260920-PASS
+IAA
+  git add .
+  git commit -q -m "seed final pass cs2 review state"
+}
+run_checkpoint_field_test \
+  "10i. final PASS CS2 review state suppresses further producer controls" \
+  setup_final_pass_cs2_review_guidance_state \
+  "CS2_REVIEW" \
+  "no" \
+  '[
+    {"field":"ACTIVE_STATE_NEXT_REQUIRED_ACTION","equals":"CS2_REVIEW"},
+    {"field":"PR_MANIFEST_STATUS","equals":"IAA_FINAL_PASS_CS2_REVIEW"},
+    {"field":"WAVE_TASKS_STATUS","equals":"IAA_FINAL_PASS_CS2_REVIEW"},
+    {"field":"IAA_TOKEN_PRESENT","equals":"yes"},
+    {"field":"FINAL_PASS_CS2_REVIEW","equals":"yes"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"none"}
+  ]'
+
+setup_final_pass_cs2_review_with_failed_check() {
+  setup_final_pass_cs2_review_guidance_state
+  CHECK_RUNS_JSON='[
+    {"name":"preflight/phase-1-evidence","status":"completed","conclusion":"success"},
+    {"name":"preflight/admin-control-router","status":"completed","conclusion":"success"},
+    {"name":"preflight/iaa-prebrief-existence","status":"completed","conclusion":"success"},
+    {"name":"preflight/identity-binding","status":"completed","conclusion":"success"},
+    {"name":"preflight/iaa-token-self-certification","status":"completed","conclusion":"success"},
+    {"name":"preflight/hfmc-ripple-presence","status":"completed","conclusion":"success"},
+    {"name":"preflight/evidence-exactness","status":"completed","conclusion":"success"},
+    {"name":"preflight/iaa-final-assurance","status":"completed","conclusion":"success"},
+    {"name":"preflight/ecap-admin-ceremony","status":"completed","conclusion":"success"},
+    {"name":"preflight/scope-declaration-parity","status":"completed","conclusion":"success"},
+    {"name":"preflight/mmm-pr-admin","status":"completed","conclusion":"success"},
+    {"name":"preflight/product-delivery-gates","status":"completed","conclusion":"success"},
+    {"name":"preflight/gate-changing-pr-rule","status":"completed","conclusion":"failure"}
+  ]'
+}
+run_checkpoint_field_test \
+  "10j. final PASS plus failed required check stays STOP_AND_FIX" \
+  setup_final_pass_cs2_review_with_failed_check \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"FINAL_PASS_DECLARED","equals":"yes"},
+    {"field":"FINAL_PASS_CS2_REVIEW","equals":"no"},
+    {"field":"FINAL_PASS_SUPERSEDED","equals":"yes"},
+    {"field":"FINAL_PASS_BLOCKERS","contains":"failing checks: preflight/gate-changing-pr-rule"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"CURRENT_HEAD_GATES_GREEN"},
+    {"field":"REASON","contains":"Recorded final PASS is superseded"}
+  ]'
+
+setup_final_pass_cs2_review_with_merge_conflict() {
+  setup_final_pass_cs2_review_guidance_state
+  TEST_MERGE_CONFLICT_CHECKED="yes"
+  TEST_MERGEABLE_WITH_BASE="no"
+  TEST_BASE_SYNCED_OR_CONFLICTS_RESOLVED="no"
+}
+run_checkpoint_field_test \
+  "10k. final PASS plus merge conflict stays STOP_AND_FIX" \
+  setup_final_pass_cs2_review_with_merge_conflict \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"FINAL_PASS_DECLARED","equals":"yes"},
+    {"field":"FINAL_PASS_CS2_REVIEW","equals":"no"},
+    {"field":"FINAL_PASS_SUPERSEDED","equals":"yes"},
+    {"field":"MERGEABLE_WITH_BASE","equals":"no"},
+    {"field":"FINAL_PASS_BLOCKERS","contains":"merge conflicts with base unresolved"}
+  ]'
+
 setup_merge_conflict_not_resolved() {
   setup_green_checkpoint
   TEST_MERGE_CONFLICT_CHECKED="yes"

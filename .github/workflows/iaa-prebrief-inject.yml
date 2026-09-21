@@ -50,14 +50,56 @@ jobs:
             let prNumber = process.env.PR_NUMBER || '';
             let ref = process.env.PR_HEAD_SHA || context.sha;
             let branch = '';
+            let baseSha = '';
+            let baseRef = '';
+            let prTitle = '';
+            let prBody = '';
+            let mergeConflictChecked = 'no';
+            let mergeableWithBase = 'no';
+            let baseSynced = 'no';
+            let updatedAt = '';
+
+            const setPrOutputs = async (pr) => {
+              prNumber = String(pr.number);
+              ref = pr.head.sha;
+              branch = pr.head.ref || branch;
+              baseSha = pr.base.sha || '';
+              baseRef = pr.base.ref || '';
+              prTitle = pr.title || '';
+              prBody = pr.body || '';
+              updatedAt = pr.updated_at || '';
+              const mergeableState = String(pr.mergeable_state || '').toLowerCase();
+              if (typeof pr.mergeable === 'boolean') {
+                mergeConflictChecked = 'yes';
+                mergeableWithBase = pr.mergeable ? 'yes' : 'no';
+              } else if (mergeableState) {
+                if (['clean', 'has_hooks', 'unstable'].includes(mergeableState)) {
+                  mergeConflictChecked = 'yes';
+                  mergeableWithBase = 'yes';
+                } else if (mergeableState === 'dirty') {
+                  mergeConflictChecked = 'yes';
+                  mergeableWithBase = 'no';
+                }
+              }
+              try {
+                const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+                  owner,
+                  repo,
+                  basehead: `${pr.base.sha}...${pr.head.sha}`,
+                });
+                if (['ahead', 'identical'].includes(String(comparison.status || '').toLowerCase())) {
+                  baseSynced = 'yes';
+                }
+              } catch (error) {
+                core.info(`Unable to determine whether PR head contains base SHA: ${error.message}`);
+              }
+            };
 
             if (eventName === 'issue_comment') {
               const issueNumber = Number(process.env.ISSUE_NUMBER || 0);
               try {
                 const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: issueNumber });
-                prNumber = String(issueNumber);
-                ref = pr.head.sha;
-                branch = pr.head.ref;
+                await setPrOutputs(pr);
               } catch (_e) {}
             }
 
@@ -66,15 +108,217 @@ jobs:
               try {
                 const { data: pulls } = await github.rest.pulls.list({ owner, repo, state: 'open', head: `${owner}:${branch}`, per_page: 1 });
                 if (pulls.length) {
-                  prNumber = String(pulls[0].number);
-                  ref = pulls[0].head.sha;
+                  const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: pulls[0].number });
+                  await setPrOutputs(pr);
                 }
+              } catch (_e) {}
+            }
+
+            if (eventName === 'workflow_dispatch' && prNumber) {
+              try {
+                const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: Number(prNumber) });
+                await setPrOutputs(pr);
               } catch (_e) {}
             }
 
             core.setOutput('pr_number', prNumber);
             core.setOutput('ref', ref);
             core.setOutput('branch', branch || 'unknown');
+            core.setOutput('base_sha', baseSha);
+            core.setOutput('base_ref', baseRef);
+            core.setOutput('title', prTitle);
+            core.setOutput('body', prBody);
+            core.setOutput('updated_at', updatedAt);
+            core.setOutput('merge_conflict_checked', mergeConflictChecked);
+            core.setOutput('mergeable_with_base', mergeableWithBase);
+            core.setOutput('base_synced_or_conflicts_resolved', baseSynced);
+
+      - name: Collect current-head injector inputs
+        id: inputs
+        if: steps.ctx.outputs.pr_number != ''
+        uses: actions/github-script@v7
+        env:
+          CHECKPOINT_INPUT_DIR: ${{ runner.temp }}/iaa-prebrief-inject
+          PR_NUMBER: ${{ steps.ctx.outputs.pr_number }}
+          HEAD_SHA: ${{ steps.ctx.outputs.ref }}
+          PR_BODY: ${{ steps.ctx.outputs.body }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const headSha = process.env.HEAD_SHA;
+            const prNumber = parseInt(process.env.PR_NUMBER, 10);
+            const prBody = process.env.PR_BODY || '';
+            let issueNumber = '';
+
+            const { data: checkRunsData } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha,
+              per_page: 100,
+            });
+
+            const { data: statusData } = await github.rest.repos.getCombinedStatusForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: headSha,
+            });
+
+            const repoFiles = {};
+            const comments = [];
+
+            const fetchFile = async (targetPath) => {
+              try {
+                const { data } = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: targetPath,
+                  ref: headSha,
+                });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  repoFiles[targetPath] = Buffer.from(data.content, 'base64').toString('utf8');
+                }
+              } catch {}
+            };
+
+            const fetchDirectory = async (targetPath, includePattern) => {
+              try {
+                const { data } = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: targetPath,
+                  ref: headSha,
+                });
+                if (!Array.isArray(data)) return;
+                for (const entry of data) {
+                  if (entry.type !== 'file') continue;
+                  if (includePattern && !includePattern.test(entry.path)) continue;
+                  await fetchFile(entry.path);
+                }
+              } catch {}
+            };
+
+            let changedFiles = [];
+            let page = 1;
+            while (true) {
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                per_page: 100,
+                page,
+              });
+              changedFiles = changedFiles.concat(files.map((file) => file.filename));
+              if (files.length < 100) break;
+              page += 1;
+            }
+
+            page = 1;
+            while (true) {
+              const { data: pageComments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 100,
+                page,
+              });
+              comments.push(...pageComments);
+              if (pageComments.length < 100) break;
+              page += 1;
+            }
+
+            const scopePath = `.agent-admin/scope-declarations/pr-${prNumber}.md`;
+            await fetchFile(scopePath);
+            const scopeText = repoFiles[scopePath] || '';
+            const match = scopeText.match(/^ISSUE:\s*#?(\d+)/m);
+            if (match) issueNumber = match[1];
+
+            await fetchFile(`.admin/prs/pr-${prNumber}.json`);
+            await fetchFile('.admin/pr.json');
+            await fetchFile(scopePath);
+            await fetchFile(`.functional-delivery/pr-${prNumber}.md`);
+
+            const activeStatePath = `.agent-admin/prs/pr-${prNumber}/active-state.json`;
+            await fetchFile(activeStatePath);
+            await fetchFile(`.agent-admin/prs/pr-${prNumber}/wave-current-tasks.md`);
+
+            const bodyArtifactMatch = prBody.match(/Functional-Delivery-Artifact:\s*(\S+)/i);
+            if (bodyArtifactMatch) {
+              await fetchFile(bodyArtifactMatch[1]);
+            }
+
+            const activeStateText = repoFiles[activeStatePath] || '';
+            let activeState = null;
+            try {
+              activeState = activeStateText ? JSON.parse(activeStateText) : null;
+            } catch (error) {
+              core.info(`Active-state JSON for PR #${prNumber} could not be parsed (${error.message}). Using legacy fallback discovery.`);
+            }
+
+            const resolverSelectedPaths = [
+              activeState?.manifest_path,
+              activeState?.scope_path,
+              activeState?.iaa_artifact_path,
+              activeState?.ecap_artifact_path,
+              activeState?.wave_tasks_path,
+            ].filter(Boolean);
+
+            if (resolverSelectedPaths.length > 0) {
+              for (const artifactPath of resolverSelectedPaths) {
+                await fetchFile(artifactPath);
+              }
+            } else {
+              await fetchDirectory('.agent-admin/assurance', /^\.agent-admin\/assurance\/(iaa-prebrief-|iaa-token-|iaa-wave-record-).+\.md$/);
+              await fetchDirectory('.agent-admin/prehandover', /^\.agent-admin\/prehandover\/proof-.+\.md$/);
+              await fetchDirectory('.agent-workspace/execution-ceremony-admin-agent/bundles', /^\.agent-workspace\/execution-ceremony-admin-agent\/bundles\/.+\.md$/);
+              await fetchDirectory('.agent-workspace/foreman-v2/memory', /^\.agent-workspace\/foreman-v2\/memory\/PREHANDOVER-.+\.md$/);
+            }
+
+            fs.mkdirSync(process.env.CHECKPOINT_INPUT_DIR, { recursive: true });
+            const writeJson = (name, value) => {
+              const targetPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-${name}.json`);
+              fs.writeFileSync(targetPath, JSON.stringify(value));
+              return targetPath;
+            };
+            const repoFilesPath = path.join(process.env.CHECKPOINT_INPUT_DIR, `pr-${prNumber}-repo-files.json`);
+            fs.writeFileSync(repoFilesPath, JSON.stringify(repoFiles));
+
+            core.setOutput('check_runs_path', writeJson('check-runs', checkRunsData.check_runs || []));
+            core.setOutput('commit_statuses_path', writeJson('commit-statuses', statusData.statuses || []));
+            core.setOutput('pr_comments_path', writeJson('comments', comments));
+            core.setOutput('changed_files_path', writeJson('changed-files', changedFiles));
+            core.setOutput('repo_files_path', repoFilesPath);
+            core.setOutput('issue_number', issueNumber);
+
+      - name: Evaluate current-head blocker snapshot
+        id: checkpoint
+        if: steps.ctx.outputs.pr_number != ''
+        env:
+          PR_NUMBER: ${{ steps.ctx.outputs.pr_number }}
+          ISSUE_NUMBER: ${{ steps.inputs.outputs.issue_number }}
+          PR_TITLE: ${{ steps.ctx.outputs.title }}
+          PR_BODY: ${{ steps.ctx.outputs.body }}
+          PR_UPDATED_AT: ${{ steps.ctx.outputs.updated_at }}
+          PR_BRANCH: ${{ steps.ctx.outputs.branch }}
+          BASE_BRANCH: ${{ steps.ctx.outputs.base_ref }}
+          BASE_SHA: ${{ steps.ctx.outputs.base_sha }}
+          HEAD_SHA: ${{ steps.ctx.outputs.ref }}
+          CHECKPOINT_TRIGGER: /iaa-prebrief
+          CHECKPOINT_INTAKE_ONLY: "true"
+          CHECKPOINT_MARK_CURRENT_RUN_AS_INTAKE: "true"
+          CHECKPOINT_CHECK_RUNS_PATH: ${{ steps.inputs.outputs.check_runs_path }}
+          CHECKPOINT_COMMIT_STATUSES_PATH: ${{ steps.inputs.outputs.commit_statuses_path }}
+          CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
+          CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
+          CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
+          ACTIVE_STATE_PATH: ".agent-admin/prs/pr-${{ steps.ctx.outputs.pr_number }}/active-state.json"
+          CHECKPOINT_MERGE_CONFLICT_CHECKED: ${{ steps.ctx.outputs.merge_conflict_checked }}
+          CHECKPOINT_MERGEABLE_WITH_BASE: ${{ steps.ctx.outputs.mergeable_with_base }}
+          CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED: ${{ steps.ctx.outputs.base_synced_or_conflicts_resolved }}
+        run: |
+          RESULT_FILE="${{ runner.temp }}/iaa-prebrief-checkpoint-result-${{ steps.ctx.outputs.pr_number }}.json"
+          node .github/scripts/pre-handover-checkpoint.js > "$RESULT_FILE"
+          echo "result_path=$RESULT_FILE" >> "$GITHUB_OUTPUT"
 
       - name: Inspect task and wave-record state
         id: inspect
@@ -82,8 +326,11 @@ jobs:
         env:
           PR_NUMBER: ${{ steps.ctx.outputs.pr_number }}
           REF: ${{ steps.ctx.outputs.ref }}
+          CHECKPOINT_RESULT_PATH: ${{ steps.checkpoint.outputs.result_path }}
         with:
           script: |
+            const { buildInjectionDecision, readSimpleField } = require('./.github/scripts/iaa-prebrief-inject.js');
+            const fs = require('fs');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const prNumber = process.env.PR_NUMBER || '';
@@ -98,6 +345,7 @@ jobs:
 
             let tasksFound = false;
             let tasksSnippet = '';
+            let taskContent = '';
             let taskPath = '';
             let wave = 'unknown';
             let workItemId = '';
@@ -109,6 +357,7 @@ jobs:
                 const content = Buffer.from(data.content, 'base64').toString('utf8');
                 tasksFound = true;
                 taskPath = path;
+                taskContent = content;
                 tasksSnippet = content.slice(0, 1500).replace(/`/g, "'");
                 const match = content.match(/(?:\*\*Wave\*\*|wave):\s*(?:Wave\s+)?([^\s\n]+)/i);
                 if (match) wave = match[1];
@@ -122,6 +371,7 @@ jobs:
 
             let prebriefExists = false;
             let prebriefPath = '';
+            let matchedWaveRecordContent = '';
             try {
               const { data: dir } = await github.rest.repos.getContent({ owner, repo, path: '.agent-admin/assurance', ref });
               const files = Array.isArray(dir) ? dir.filter(f => f.type === 'file' && /^iaa-wave-record-.*\.md$/.test(f.name)) : [];
@@ -140,10 +390,66 @@ jobs:
                 if (canonical && prBound && workItemBound && headBound) {
                   prebriefExists = true;
                   prebriefPath = file.path;
+                  matchedWaveRecordContent = content;
                   break;
+                }
+                if (!matchedWaveRecordContent && prBound) {
+                  matchedWaveRecordContent = content;
                 }
               }
             } catch (_e) {}
+
+            const activeStatePath = prNumber ? `.agent-admin/prs/pr-${prNumber}/active-state.json` : '';
+            let activeState = null;
+            if (activeStatePath) {
+              try {
+                const { data } = await github.rest.repos.getContent({ owner, repo, path: activeStatePath, ref });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  activeState = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
+                }
+              } catch (_e) {}
+            }
+
+            let manifest = null;
+            const manifestPath = activeState?.manifest_path || (prNumber ? `.admin/prs/pr-${prNumber}.json` : '');
+            if (manifestPath) {
+              try {
+                const { data } = await github.rest.repos.getContent({ owner, repo, path: manifestPath, ref });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  manifest = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
+                }
+              } catch (_e) {}
+            }
+
+            let iaaArtifactText = matchedWaveRecordContent;
+            const resolverIaaArtifactPath = activeState?.iaa_artifact_path || readSimpleField(taskContent, 'iaa_prebrief_path');
+            if (resolverIaaArtifactPath) {
+              try {
+                const { data } = await github.rest.repos.getContent({ owner, repo, path: resolverIaaArtifactPath, ref });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  iaaArtifactText = Buffer.from(data.content, 'base64').toString('utf8');
+                }
+              } catch (_e) {}
+            }
+
+            let checkpointFields = null;
+            const checkpointResultPath = process.env.CHECKPOINT_RESULT_PATH || '';
+            if (checkpointResultPath) {
+              try {
+                const checkpointResult = JSON.parse(fs.readFileSync(checkpointResultPath, 'utf8'));
+                checkpointFields = checkpointResult.fields || null;
+              } catch (error) {
+                core.info(`Unable to parse checkpoint result from ${checkpointResultPath}: ${error.message}`);
+              }
+            }
+
+            const injectionDecision = buildInjectionDecision({
+              taskText: taskContent,
+              activeState,
+              manifest,
+              iaaArtifactText,
+              checkpointFields,
+            });
 
             core.setOutput('tasks_found', String(tasksFound));
             core.setOutput('tasks_snippet', tasksSnippet);
@@ -153,13 +459,20 @@ jobs:
             core.setOutput('wave', wave);
             core.setOutput('prebrief_exists', String(prebriefExists));
             core.setOutput('prebrief_path', prebriefPath);
+            core.setOutput('injection_outcome', injectionDecision.outcome);
+            core.setOutput('terminal_state_reason', injectionDecision.reason);
 
-      - name: Skip if canonical pre-brief exists
-        if: steps.inspect.outputs.prebrief_exists == 'true'
-        run: echo "Canonical pre-brief exists at ${{ steps.inspect.outputs.prebrief_path }}"
+      - name: Skip if canonical pre-brief exists or injection outcome is not REQUEST_PREBRIEF
+        if: steps.inspect.outputs.prebrief_exists == 'true' || steps.inspect.outputs.injection_outcome != 'REQUEST_PREBRIEF'
+        run: |
+          if [ "${{ steps.inspect.outputs.prebrief_exists }}" = "true" ]; then
+            echo "Canonical pre-brief exists at ${{ steps.inspect.outputs.prebrief_path }}"
+          else
+            echo "${{ steps.inspect.outputs.terminal_state_reason }}"
+          fi
 
       - name: Post canonical pre-brief request
-        if: steps.inspect.outputs.tasks_found == 'true' && steps.inspect.outputs.prebrief_exists != 'true'
+        if: steps.inspect.outputs.tasks_found == 'true' && steps.inspect.outputs.prebrief_exists != 'true' && steps.inspect.outputs.injection_outcome == 'REQUEST_PREBRIEF'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.ctx.outputs.pr_number }}
