@@ -1,7 +1,7 @@
 {
   "pr": 2049,
   "branch": "copilot/governance-harden-foreman-controls",
-  "runtime_head_sha": "ACTIVE_HEAD_RESOLVED_BY_GATE",
+  "runtime_head_sha": "761340c15fac5e4c1947ac2fb3b910036a15f8f4",
   "stable_reviewed_head_sha": "54d06636c4a3968cbea0588866d0ab4e59ce40b2",
   "base_sha": "7b059c4d33b2a950cecc178eb6c94fef62468e8a",
   "manifest_path": ".admin/prs/pr-2049.json",
@@ -15,8 +15,8 @@
   "admin_only_delta": false,
   "substantive_delta_after_evidence": false,
   "gate_change_delta": true,
-  "next_required_action": "CS2_REVIEW",
-  "delta_type": "IAA_FINAL_PASS_RECORDED",
+  "next_required_action": "PASS",
+  "delta_type": "GATE_CHANGE_DELTA",
   "contradictions": [],
   "changed_files": [
     ".admin/prs/pr-2046.json",
@@ -60,6 +60,10 @@
     ".github/scripts/pit-cs2-controller-workflow.test.js",
     ".github/scripts/pit-cs2-controller.js",
     ".github/scripts/pit-cs2-controller.test.js",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/scripts/producer-next-action-guidance.js",
+    ".github/scripts/producer-next-action-guidance.test.sh",
     ".github/scripts/resolve-active-pr-state.test.sh",
     ".github/workflows/iaa-prebrief-inject.yml",
     ".github/workflows/pit-cs2-controller.yml",
@@ -68,5 +72,5 @@
     "governance/CANON_INVENTORY.json",
     "governance/canon/IAA_PRE_BRIEF_PROTOCOL.md"
   ],
-  "note": "PR-2049-scoped resolver inputs now include the committed PREHANDOVER/session evidence and the final IAA PASS token recorded in `.agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md`. Stable substantive review head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2; symbolic current-head handling still avoids exact-head refresh churn for assurance-only follow-up. The remaining action is CS2's exclusive review/merge decision on the completed evidence package."
+  "note": "Stable substantive review head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. Current HEAD 761340c adds a bounded producer-guidance/pre-handover runtime correction in four .github/scripts files after the earlier final PASS record, so the PR-scoped active state is normalized away from CS2_REVIEW and back to PRE_HANDOVER_GATE_PASS / refreshed-final-IAA-pending posture while preserving current-head binding and exact-diff truth."
 }

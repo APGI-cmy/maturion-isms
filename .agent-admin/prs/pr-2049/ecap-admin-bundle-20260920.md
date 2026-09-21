@@ -15,7 +15,7 @@ I am execution-ceremony-admin-agent, class: administrator, version 1.0.0. Role: 
 - Stable reviewed substantive head: `54d06636c4a3968cbea0588866d0ab4e59ce40b2`
 - Runtime current-head binding for admin artifacts: `CURRENT_HEAD`
 - Base SHA: `7b059c4d33b2a950cecc178eb6c94fef62468e8a`
-- Validation date: `2026-09-20`
+- Validation date: `2026-09-21`
 
 ## Preflight
 
@@ -24,7 +24,7 @@ I am execution-ceremony-admin-agent, class: administrator, version 1.0.0. Role: 
 - `git status --porcelain` on receipt was empty.
 - `git diff --check` was PASS with no whitespace findings.
 - The PR-scoped wave record `.agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md` exists and contains `## PRE-BRIEF`.
-- ECAP self-remediation within authority for this bounded pass: created the PR manifest, PR scope declaration, PR active-state record, PR ECAP admin bundle, and normalized the PR tracker appointment/bundle pointer fields.
+- ECAP self-remediation within authority for this bounded pass: refreshed the PR manifest, handover control, PR scope declaration, PR active-state record, and PR ECAP admin bundle so the current-head producer-guidance runtime correction is reflected without modifying Foreman-owned PREHANDOVER/session artifacts or the historical IAA wave record.
 
 ## Foreman-declared prerequisites observed (not re-adjudicated by ECAP)
 
@@ -42,7 +42,7 @@ I am execution-ceremony-admin-agent, class: administrator, version 1.0.0. Role: 
 - pr-bootstrap-artifacts-present: PASS
 - pr-scope-to-committed-diff-parity: PASS
 - git-diff-check-whitespace: PASS
-- resolve-active-pr-state-consistency: PASS (remaining requirement is completion-gate evidence, not stale-evidence churn)
+- resolve-active-pr-state-consistency: PASS (current resolver posture is `PASS` / `GATE_CHANGE_DELTA`, not stale-evidence churn)
 - no-iaa-invocation-no-token-no-readiness-claim: PASS
 
 ## Required Findings
@@ -68,25 +68,25 @@ PASS:
 ### 3. Scope parity
 
 PASS:
-- Final committed base→head diff for `7b059c4d33b2a950cecc178eb6c94fef62468e8a..HEAD` contains `43` files.
-- This is the previously committed 39-file GOV-2047 branch diff plus 4 bounded PR-2049 admin artifacts added in this pass:
-  - `.admin/prs/pr-2049.json`
-  - `.agent-admin/scope-declarations/pr-2049.md`
-  - `.agent-admin/prs/pr-2049/active-state.json`
-  - `.agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md`
-- `.agent-admin/scope-declarations/pr-2049.md` lists the full 43-file committed diff and limits `approved_artifact_paths` to the bounded PR-2049 ECAP output set.
+- Final committed base→head diff for `7b059c4d33b2a950cecc178eb6c94fef62468e8a..HEAD` contains `52` files.
+- This is the previously recorded 48-file PR scope plus the bounded current-head producer-guidance runtime correction in four files:
+  - `.github/scripts/pre-handover-checkpoint.js`
+  - `.github/scripts/pre-handover-checkpoint.test.sh`
+  - `.github/scripts/producer-next-action-guidance.js`
+  - `.github/scripts/producer-next-action-guidance.test.sh`
+- `.agent-admin/scope-declarations/pr-2049.md` now lists the full 52-file committed diff and keeps `approved_artifact_paths` unchanged.
 
 ### 4. Active resolver/current-head binding
 
 PASS:
 - Stable reviewed substantive head remains `54d06636c4a3968cbea0588866d0ab4e59ce40b2`.
-- The bounded ECAP pass intentionally preserved that reviewed head and applied symbolic current-head binding to the PR admin artifacts so admin-only follow-up commits do **not** force an exact-HEAD evidence refresh loop.
-- The normalized PR-scoped active-state record therefore resolves to `next_required_action: EVIDENCE_REQUIRED` because the tracker still carries open completion-gate evidence items (current PREHANDOVER/session memory and final IAA assurance), not because of a stale-evidence blocker on the admin-only follow-up artifacts.
+- The bounded ECAP pass preserves that reviewed head while updating the PR admin truth to actual current HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4`.
+- The normalized PR-scoped active-state record now resolves to `next_required_action: PASS` with `delta_type: GATE_CHANGE_DELTA`, while manifest/tracker status is intentionally stepped back from `IAA_FINAL_PASS_CS2_REVIEW` to `PRE_HANDOVER_GATE_PASS` until Foreman refreshes final IAA on the corrected head.
 
 ### 5. Additional note on wave-record shape
 
 - The active PR #2049 IAA wave record is present and clearly PR-bound, but it also remains in a legacy-shaped markdown layout rather than the newer flat-field style used by some current validation scripts (`WAVE_TASKS_PATH`, explicit `current_head_sha`, explicit `work_item_id` line items).
-- ECAP did **not** modify the IAA wave record. This note is supplementary to the stale-evidence blocker above.
+- ECAP did **not** modify the IAA wave record or token section. For current-head truthfulness, this bundle treats that final PASS as historical earlier-head evidence and does not let PR #2049 continue claiming current-head `CS2_REVIEW` posture while refreshed final IAA is pending.
 
 ## §4.3e Gate Summary
 
@@ -95,6 +95,7 @@ PASS:
 ## Returned Artifact Paths
 
 - `.admin/prs/pr-2049.json`
+- `.agent-admin/control/handover-allowed.json`
 - `.agent-admin/scope-declarations/pr-2049.md`
 - `.agent-admin/prs/pr-2049/active-state.json`
 - `.agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md`
@@ -105,7 +106,7 @@ ADMIN_VALIDATED
 
 - HANDOVER_ALLOWED: `no`
 - RESULT: `ADMIN_VALIDATED`
-- REASON: `The bounded PR-2049 administrative bundle is identity-bound and coherent under the stable reviewed-head/current-head model adopted by this PR. These admin-only artifacts do not require a self-referential evidence refresh loop; Foreman review and any later IAA invocation remain separate steps.`
+- REASON: `The bounded PR-2049 administrative bundle is identity-bound and coherent under the stable reviewed-head/current-head model adopted by this PR. Current HEAD 761340c introduces a bounded producer-guidance runtime correction after the earlier final PASS record, so ECAP has accurately normalized the PR-scoped posture back to PRE_HANDOVER_GATE_PASS pending refreshed final IAA, without invoking IAA or making any readiness claim.`
 - administrative_validation_only: `true`
 - iaa_invoked_by_ecap: `false`
 - readiness_claim_made_by_ecap: `false`
@@ -121,7 +122,7 @@ ADMIN_VALIDATED
 |-----------|--------|
 | Substantive readiness | Accepted by Foreman QP in the PR-scoped tracker and appointment brief; recorded here only, not re-adjudicated by ECAP |
 | Administrative readiness | ACCEPTED — bounded PR-2049 admin bundle prepared with stable reviewed-head/current-head binding preserved; Foreman review still required |
-| IAA assurance verdict | PENDING — Foreman-only next step after ordinary review of the prepared admin bundle |
+| IAA assurance verdict | PENDING_REFRESH_CURRENT_HEAD — historical PASS remains recorded, but refreshed final IAA is still required for HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4` |
 | Ripple status | COMPLETED — GOV-2047-01 ripple assessment committed; one PUBLIC_API canon change already accounted for on the reviewed head |
 | Admin-compliance result | ACCEPTED |
 
@@ -130,14 +131,14 @@ ADMIN_VALIDATED
 | Artifact Class | Required Path | Present | Committed | Final-State Normalized | Notes / Exception |
 |---------------|--------------|---------|-----------|----------------------|------------------|
 | PR manifest | `.admin/prs/pr-2049.json` | ✓ | ✓ | ✓ | Created in this bounded ECAP pass |
-| Scope declaration | `.agent-admin/scope-declarations/pr-2049.md` | ✓ | ✓ | ✓ | Lists full 43-file committed diff and bounded `approved_artifact_paths` |
+| Scope declaration | `.agent-admin/scope-declarations/pr-2049.md` | ✓ | ✓ | ✓ | Lists full 52-file committed diff and bounded `approved_artifact_paths` |
 | Active state | `.agent-admin/prs/pr-2049/active-state.json` | ✓ | ✓ | ✓ | PR-scoped resolver input |
 | PR tracker | `.agent-admin/prs/pr-2049/wave-current-tasks.md` | ✓ | ✓ | ✓ | Appointment normalized; ECAP bundle path recorded |
-| IAA wave record | `.agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md` | ✓ | ✓ | ✓ | Existing PR-scoped pre-brief artifact; unchanged by ECAP |
+| IAA wave record | `.agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md` | ✓ | ✓ | ✓ | Existing PR-scoped pre-brief + historical PASS artifact; unchanged by ECAP |
 | ECAP admin bundle | `.agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md` | ✓ | ✓ | ✓ | This file |
-| PREHANDOVER proof | N/A | N/A | N/A | N/A | Full PREHANDOVER/token ceremony not opened in this bounded PR-bootstrap pass |
-| Session memory | N/A | N/A | N/A | N/A | Not created in this bounded PR-bootstrap pass |
-| IAA token file | N/A | N/A | N/A | N/A | No IAA invocation in this ECAP pass |
+| PREHANDOVER proof | `.agent-workspace/foreman-v2/memory/PREHANDOVER-pr-2049-governance-foreman-convergence-20260920.md` | ✓ | ✓ | ✓ | Existing Foreman-owned ceremony evidence retained unchanged in this bounded refresh |
+| Session memory | `.agent-workspace/foreman-v2/memory/session-pr-2049-governance-foreman-convergence-20260920.md` | ✓ | ✓ | ✓ | Existing Foreman-owned ceremony evidence retained unchanged in this bounded refresh |
+| IAA token file | wave-record `## TOKEN` section only | ✓ | ✓ | ✓ | Historical final PASS retained unchanged; refreshed final IAA still pending for current HEAD |
 
 ### C3. Cross-Artifact Consistency Table
 
@@ -146,8 +147,8 @@ ADMIN_VALIDATED
 | 1 | PR / issue / branch | `#2049` / `#2047` / `copilot/governance-harden-foreman-controls` | Manifest, scope declaration, tracker, wave record | ✓ |
 | 2 | Stable reviewed head | `54d06636c4a3968cbea0588866d0ab4e59ce40b2` | Manifest, scope declaration, tracker | ✓ |
 | 3 | Runtime current-head binding | `CURRENT_HEAD` / `ACTIVE_HEAD_RESOLVED_BY_GATE` | Manifest, scope declaration, active state, tracker | ✓ |
-| 4 | ECAP return artifact paths | 4 bounded PR-2049 paths | Scope declaration `approved_artifact_paths`, active state, bundle | ✓ |
-| 5 | Scope declaration parity | `43` files | Scope declaration count vs committed base→head diff | ✓ |
+| 4 | ECAP return artifact paths | 5 bounded PR-2049 paths | Scope declaration `approved_artifact_paths`, active state, bundle | ✓ |
+| 5 | Scope declaration parity | `52` files | Scope declaration count vs committed base→head diff | ✓ |
 | 6 | Boundary statement | ECAP administrative only | Manifest note, tracker checkbox, bundle header/result | ✓ |
 
 ### C4. Ripple Assessment Block
@@ -172,12 +173,12 @@ ADMIN_VALIDATED
 | Field | Value |
 |-------|-------|
 | substantive_readiness | ACCEPTED — recorded in Foreman-owned tracker / appointment brief |
-| administrative_readiness | ECAP admin bundle prepared — stable reviewed-head binding preserved; Foreman review still required before any later IAA re-invocation |
+| administrative_readiness | ECAP admin bundle refreshed for HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4` — stable reviewed-head binding preserved; Foreman review still required before refreshed final IAA |
 | QP admin-compliance check completed | no |
 | IAA invocation authorized | no |
 | Rejection reason (if REJECTED) | N/A |
 | Foreman Session | not restated in the bounded PR-2049 artifact set |
-| Checkpoint Date | 2026-09-20 |
+| Checkpoint Date | 2026-09-21 |
 
 ### C6. ECAP Identity Binding Check (MANDATORY)
 

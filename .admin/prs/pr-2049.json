@@ -3,7 +3,7 @@
   "pr": 2049,
   "issue": 2047,
   "type": "governance-controller-hardening",
-  "status": "IAA_FINAL_PASS_CS2_REVIEW",
+  "status": "PRE_HANDOVER_GATE_PASS",
   "owner": "foreman-v2-agent",
   "branch": "copilot/governance-harden-foreman-controls",
   "base_branch": "main",
@@ -13,7 +13,7 @@
   "canonical_wave_identity": "GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919",
   "requires_iaa": true,
   "requires_ecap": true,
-  "objective": "Maintain the PR-scoped administrative and assurance record for PR #2049 through final independent IAA handback without reopening the reviewed substantive implementation.",
+  "objective": "Maintain the PR-scoped administrative and assurance record for PR #2049 through a bounded current-head admin refresh after the producer-guidance runtime correction, without reopening the reviewed substantive implementation.",
   "scope": [
     ".github/ISSUE_TEMPLATE/cs2-work-request.yml",
     ".github/agents/foreman-v2-agent.md",
@@ -36,7 +36,11 @@
     ".agent-admin/control/schemas/iaa-preflight-brief.schema.json",
     ".agent-admin/governance/agent-contract-diffs/diff-20260919-gov-2047-02-03-foreman-iaa-hardening.md",
     ".agent-admin/governance/pr-2049-gov-2047-01-ripple-assessment.md",
-    ".agent-admin/quality-professor/builder-referral-20260919-CodexAdvisor-agent-2047.md"
+    ".agent-admin/quality-professor/builder-referral-20260919-CodexAdvisor-agent-2047.md",
+    ".github/scripts/pre-handover-checkpoint.js",
+    ".github/scripts/pre-handover-checkpoint.test.sh",
+    ".github/scripts/producer-next-action-guidance.js",
+    ".github/scripts/producer-next-action-guidance.test.sh"
   ],
   "prepared_admin_artifacts": [
     ".admin/prs/pr-2049.json",
@@ -50,5 +54,5 @@
     ".agent-workspace/independent-assurance-agent/memory/session-1290-20260920.md"
   ],
   "execution_model": "foreman-governed",
-  "note": "Stable reviewed substantive head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. Current-head-sensitive administrative artifacts bind via symbolic CURRENT_HEAD / ACTIVE_HEAD_RESOLVED_BY_GATE semantics to avoid exact-head refresh loops on assurance-only commits, and final independent assurance is now recorded in the PR-scoped wave record."
+  "note": "Stable reviewed substantive head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The earlier final independent assurance remains historically recorded in the PR-scoped wave record, but current HEAD 761340c carries a bounded producer-guidance runtime correction, so PR-scoped admin posture is normalized back to PRE_HANDOVER_GATE_PASS until Foreman refreshes final IAA on the corrected head."
 }
