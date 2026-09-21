@@ -855,6 +855,9 @@ function evaluateCheckpoint(input = {}) {
   const tokenPresent = assuranceArtifacts.length > 0;
   const iaaArtifactCurrent = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
   const iaaArtifactStale = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
+  const activeStateNextRequiredAction = String(activeState.next_required_action || '').trim();
+  const manifestStatus = String(manifest?.status || '').trim();
+  const waveTasksStatus = readSimpleField(waveTasksText, 'Status');
   const tokenPending = [
     // Admin artifacts intentionally ignore issueNumber matching because issues are
     // reused across rounds and can pull unrelated historical ceremony files.
@@ -884,6 +887,14 @@ function evaluateCheckpoint(input = {}) {
   const iaaWaiverPresent = activeArtifactTexts.some((text) => /\biaa_waiver_ref:\s*(?!none\b|n\/a\b|not_applicable\b)\S+/i.test(text));
   const ecapSatisfiedOrValidlyWaived = !requiresEcap || (adminPresent && adminCurrent) || ecapWaiverPresent;
   const iaaSatisfiedOrValidlyWaived = !requiresIaa || ((finalAssurancePresent && iaaArtifactCurrent && !tokenPending) || iaaWaiverPresent);
+  const finalPassCs2Review = activeStateNextRequiredAction === 'CS2_REVIEW'
+    && finalAssurancePresent
+    && tokenPresent
+    && !tokenPending
+    && (
+      manifestStatus === 'IAA_FINAL_PASS_CS2_REVIEW'
+      || waveTasksStatus === 'IAA_FINAL_PASS_CS2_REVIEW'
+    );
   const hasOutOfSandboxOrGovernanceBlocker = hasNonEmptyValue(outOfSandboxOrGovernanceBlocker);
 
   const identityArtifacts = [];
@@ -1152,6 +1163,13 @@ function evaluateCheckpoint(input = {}) {
     reason = 'Injection intake refreshed for current PR state. Formal review/handover claim still required.';
   }
 
+  if (finalPassCs2Review) {
+    handoverAllowed = false;
+    nextRequiredControl = 'none';
+    result = 'CS2_REVIEW';
+    reason = 'Final IAA PASS is recorded; the evidence package is with CS2 for the exclusive review/merge decision.';
+  }
+
   const hasFailedGateSignal = failedGateSignalTimes.length > 0;
   const unresolvedPostFailureItems = hasFailedGateSignal && !handoverAllowed;
   const postFailurePackageType = hasFailedGateSignal ? 'POST_FAILURE_REJECTION_PACKAGE' : 'not_required';
@@ -1201,6 +1219,10 @@ function evaluateCheckpoint(input = {}) {
     IAA_TOKEN_PENDING: yesNoNotRequired(tokenPending, requiresIaa),
     IAA_ARTIFACT_CURRENT: yesNoNotRequired(iaaArtifactCurrent, requiresIaa),
     IAA_SATISFIED_OR_VALIDLY_WAIVED: yesNoUnknown(iaaSatisfiedOrValidlyWaived),
+    ACTIVE_STATE_NEXT_REQUIRED_ACTION: activeStateNextRequiredAction || 'none',
+    PR_MANIFEST_STATUS: manifestStatus || 'unknown',
+    WAVE_TASKS_STATUS: waveTasksStatus || 'unknown',
+    FINAL_PASS_CS2_REVIEW: finalPassCs2Review ? 'yes' : 'no',
     BUILDER_QA_REQUIRED: builderQaRequired ? 'yes' : 'no',
     BUILDER_QA_INVOKED: yesNoNotRequired(builderQaInvoked, builderQaRequired),
     BUILDER_QA_EVIDENCE_PRESENT: yesNoNotRequired(functionalEvidencePresent, builderQaRequired),

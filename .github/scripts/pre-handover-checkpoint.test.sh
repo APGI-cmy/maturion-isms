@@ -1023,6 +1023,57 @@ run_checkpoint_field_test \
     {"field":"RESULT","equals":"HANDOVER_ALLOWED"}
   ]'
 
+setup_final_pass_cs2_review_guidance_state() {
+  seed_manifest_and_scope
+  seed_green_checks
+  TEST_CHECKPOINT_INTAKE_ONLY="true"
+  mkdir -p .agent-admin/prs/pr-9999 .agent-admin/assurance
+  TEST_ACTIVE_STATE_JSON='{"pr":9999,"branch":"copilot/test-checkpoint","next_required_action":"CS2_REVIEW","manifest_path":".admin/prs/pr-9999.json","scope_path":".agent-admin/scope-declarations/pr-9999.md","wave_tasks_path":".agent-admin/prs/pr-9999/wave-current-tasks.md","iaa_artifact_path":".agent-admin/assurance/iaa-wave-record-test.md"}'
+  cat > .admin/prs/pr-9999.json <<'JSON'
+{"pr":9999,"branch":"copilot/test-checkpoint","status":"IAA_FINAL_PASS_CS2_REVIEW"}
+JSON
+  cat > .agent-admin/scope-declarations/pr-9999.md <<'SCOPE'
+PR_NUMBER: 9999
+ISSUE: #1583
+BRANCH: copilot/test-checkpoint
+FILES_CHANGED: 2
+- `.admin/prs/pr-9999.json` - manifest
+- `.agent-admin/scope-declarations/pr-9999.md` - scope
+SCOPE
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+Status: IAA_FINAL_PASS_CS2_REVIEW
+WAVE
+  cat > .agent-admin/assurance/iaa-wave-record-test.md <<'IAA'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+CURRENT_HEAD_SHA: CURRENT_HEAD
+## PRE-BRIEF
+IAA_PREFLIGHT_BRIEF:
+  result: PREFLIGHT_BRIEF_COMPLETE
+## TOKEN
+PHASE_B_BLOCKING_TOKEN: IAA-session-1290-20260920-PASS
+IAA
+  git add .
+  git commit -q -m "seed final pass cs2 review state"
+}
+run_checkpoint_field_test \
+  "10i. final PASS CS2 review state suppresses further producer controls" \
+  setup_final_pass_cs2_review_guidance_state \
+  "CS2_REVIEW" \
+  "no" \
+  '[
+    {"field":"ACTIVE_STATE_NEXT_REQUIRED_ACTION","equals":"CS2_REVIEW"},
+    {"field":"PR_MANIFEST_STATUS","equals":"IAA_FINAL_PASS_CS2_REVIEW"},
+    {"field":"WAVE_TASKS_STATUS","equals":"IAA_FINAL_PASS_CS2_REVIEW"},
+    {"field":"IAA_TOKEN_PRESENT","equals":"yes"},
+    {"field":"FINAL_PASS_CS2_REVIEW","equals":"yes"},
+    {"field":"NEXT_REQUIRED_CONTROL","equals":"none"}
+  ]'
+
 setup_merge_conflict_not_resolved() {
   setup_green_checkpoint
   TEST_MERGE_CONFLICT_CHECKED="yes"

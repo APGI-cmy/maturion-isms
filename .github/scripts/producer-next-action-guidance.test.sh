@@ -281,6 +281,41 @@ run_case \
   "$resolver_binding" \
   "PASS"
 
+cs2_review_render="$(node - "$GUIDANCE_SCRIPT" <<'EOF'
+const guidance = require(process.argv[2]);
+process.stdout.write(guidance.renderGuidanceComment({
+  prNumber: 2049,
+  headSha: 'ac19fdf4c966465d2e2a202930504f368e5d3627',
+  fields: {
+    RESULT: 'CS2_REVIEW',
+    FINAL_PASS_CS2_REVIEW: 'yes',
+    ACTIVE_STATE_NEXT_REQUIRED_ACTION: 'CS2_REVIEW',
+    IAA_TOKEN_PRESENT: 'yes',
+    NEXT_REQUIRED_CONTROL: 'none',
+    INJECTION_STATE: 'current',
+    FAILING_CHECKS: 'none',
+    PENDING_CHECKS: 'none',
+    MISSING_CHECKS: 'none',
+  },
+}));
+EOF
+)"
+
+run_case \
+  "18. final PASS CS2 review guidance renders CS2-only posture" \
+  "$(printf '%s' "$cs2_review_render" | grep -Ec '^# 🔵 WITH CS2 — final PASS recorded|CS2_REVIEW_ONLY: yes|NEXT_REQUIRED_CONTROL: none|CHECKPOINT_RESULT: CS2_REVIEW' || true)" \
+  "4"
+
+run_case \
+  "19. final PASS CS2 review guidance says evidence package is with CS2" \
+  "$(printf '%s' "$cs2_review_render" | grep -c 'evidence package is with CS2 for the exclusive review/merge decision' || true)" \
+  "1"
+
+run_case \
+  "20. final PASS CS2 review guidance suppresses pre-brief / IAA refresh instructions" \
+  "$(printf '%s' "$cs2_review_render" | grep -Ec 'canonical Wave Pre-Brief|IAA prebrief / wave binding artifacts|Obtain fresh IAA final assurance|Run `/prepare-handover`' || true)" \
+  "0"
+
 echo ""
 echo "Passed: $PASS"
 echo "Failed: $FAIL"
