@@ -3,7 +3,7 @@
   "pr": 2049,
   "issue": 2047,
   "type": "governance-controller-hardening",
-  "status": "PRE_HANDOVER_GATE_PASS",
+  "status": "IAA_FINAL_PASS_CS2_REVIEW",
   "owner": "foreman-v2-agent",
   "branch": "copilot/governance-harden-foreman-controls",
   "base_branch": "main",
@@ -13,7 +13,7 @@
   "canonical_wave_identity": "GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919",
   "requires_iaa": true,
   "requires_ecap": true,
-  "objective": "Maintain the PR-scoped administrative and assurance record for PR #2049 through the bounded terminal-state safety correction and the required refreshed final independent assurance, without reopening the reviewed substantive implementation.",
+  "objective": "Maintain the PR-scoped administrative and assurance record for PR #2049 through the bounded terminal-state safety correction and the refreshed final independent assurance, without reopening the reviewed substantive implementation.",
   "scope": [
     ".github/ISSUE_TEMPLATE/cs2-work-request.yml",
     ".github/agents/foreman-v2-agent.md",
@@ -55,8 +55,9 @@
     ".agent-workspace/foreman-v2/memory/PREHANDOVER-pr-2049-governance-foreman-convergence-20260920.md",
     ".agent-workspace/foreman-v2/memory/session-pr-2049-governance-foreman-convergence-20260920.md",
     ".agent-workspace/independent-assurance-agent/memory/session-1290-20260920.md",
-    ".agent-workspace/independent-assurance-agent/memory/session-1291-20260921.md"
+    ".agent-workspace/independent-assurance-agent/memory/session-1291-20260921.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1292-20260921.md"
   ],
   "execution_model": "foreman-governed",
-  "note": "Stable reviewed substantive head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The earlier final independent assurance remains historically recorded in the PR-scoped wave record, but current HEAD ba2c4830966fc89e1d0109f892dc9615204b3435 carries a bounded terminal-state safety correction, so PR-scoped admin posture is stepped back to PRE_HANDOVER_GATE_PASS until refreshed current-head ECAP/admin validation and final IAA are completed."
+  "note": "Stable reviewed substantive head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The bounded terminal-state safety correction set (runtime-fix head ba2c4830966fc89e1d0109f892dc9615204b3435 plus refreshed-final-IAA-pending posture at 3392e02c9c36ba03178dfbb64d8c44bc9348f3c4) is now independently assured. Current-head-sensitive administrative artifacts continue to bind via symbolic CURRENT_HEAD / ACTIVE_HEAD_RESOLVED_BY_GATE semantics, and the PR-scoped state has resumed IAA_FINAL_PASS_CS2_REVIEW pending CS2's exclusive review/merge decision."
 }

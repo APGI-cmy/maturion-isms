@@ -264,3 +264,120 @@ Merge permitted (subject to CS2 approval).
 Token reference: IAA-session-1291-20260921-PASS
 Adoption phase: PHASE_B_BLOCKING
 ═══════════════════════════════════════
+
+---
+
+## TOKEN AMENDMENT — 2026-09-21 (terminal-state safety)
+
+The earlier tokens `IAA-session-1290-20260920-PASS` and `IAA-session-1291-20260921-PASS` remain wave history only. This amendment binds the corrected-head posture after the bounded terminal-state safety runtime correction (`ba2c4830966fc89e1d0109f892dc9615204b3435`) and the PR-scoped refreshed-final-IAA-pending supersession commit (`3392e02c9c36ba03178dfbb64d8c44bc9348f3c4`).
+
+CURRENT_HEAD_SHA: CURRENT_HEAD
+PHASE_B_BLOCKING_TOKEN: IAA-session-1292-20260921-PASS
+
+```yaml
+IAA_FINAL_ASSURANCE_REFRESH:
+  date_utc: "2026-09-21T07:02:40Z"
+  pr: "#2049 — Harden Foreman convergence and anti-loop controls"
+  issue: "#2047 — Governance: harden Foreman convergence and anti-loop controls"
+  category: "AGENT_CONTRACT"
+  invoked_by: "foreman-v2-agent refreshed final assurance route"
+  produced_by:
+    - "governance-liaison-isms-agent"
+    - "CodexAdvisor-agent"
+    - "pit-specialist"
+    - "qa-builder"
+    - "execution-ceremony-admin-agent"
+    - "foreman-v2-agent"
+  ceremony_admin: true
+  independence: "CONFIRMED"
+  stable_reviewed_head_sha: "54d06636c4a3968cbea0588866d0ab4e59ce40b2"
+  current_head_sha: "3392e02c9c36ba03178dfbb64d8c44bc9348f3c4"
+  supersedes_historical_token: "IAA-session-1291-20260921-PASS"
+  bounded_post_review_delta:
+    non_admin_files:
+      - ".github/scripts/final-pass-cs2-review.js"
+      - ".github/scripts/iaa-prebrief-inject.js"
+      - ".github/scripts/iaa-prebrief-inject.test.js"
+      - ".github/scripts/pre-handover-checkpoint.js"
+      - ".github/scripts/pre-handover-checkpoint.test.sh"
+      - ".github/scripts/producer-next-action-guidance.js"
+      - ".github/scripts/producer-next-action-guidance.test.sh"
+      - ".github/scripts/pit-cs2-controller-workflow.test.js"
+      - ".github/workflows/iaa-prebrief-inject.yml"
+    admin_refresh_files:
+      - ".admin/prs/pr-2049.json"
+      - ".agent-admin/control/handover-allowed.json"
+      - ".agent-admin/prs/pr-2049/active-state.json"
+      - ".agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md"
+      - ".agent-admin/prs/pr-2049/wave-current-tasks.md"
+      - ".agent-admin/scope-declarations/pr-2049.md"
+    assessment: "The corrected current-head delta is bounded to a shared final-PASS/CS2-review evaluator used by checkpoint, producer-guidance, and pre-brief injection paths, plus the required PR-scoped admin truth refresh. The reviewed substantive governance surface remains anchored to stable reviewed head 54d06636c4a3968cbea0588866d0ab4e59ce40b2."
+  local_validation:
+    iaa_prebrief_inject_tests: "PASS (3 passed, 0 failed)"
+    pit_controller_workflow_tests: "PASS (3 passed, 0 failed)"
+    producer_next_action_guidance_test: "PASS (21 passed, 0 failed)"
+    pre_handover_checkpoint_test: "PASS (53 passed, 0 failed)"
+    git_diff_check: "PASS"
+  fail_only_once:
+    A-001_invocation_evidence: "PRESENT"
+    A-002_no_class_exemption: "CONFIRMED"
+  core_invariants:
+    CORE-020: "PASS"
+    CORE-021: "PASS"
+    CORE-026: "PASS"
+    CORE-027: "PASS"
+  overlay_checks:
+    OVL-AC-001: "PASS"
+    OVL-AC-002: "PASS"
+    OVL-AC-003: "PASS"
+    OVL-AC-004: "PASS"
+    OVL-AC-005: "PASS"
+    OVL-AC-006: "PASS"
+    OVL-AC-007: "PASS"
+  admin_ceremony_auto_reject_checks:
+    ACR-01_through_ACR-16: "PASS"
+  merge_gate_parity:
+    merge_gate_verdict: "PASS"
+    governance_alignment: "PASS"
+    stop_and_fix_enforcement: "PASS"
+  active_bundle_iaa_coherence: "VERIFIED"
+  checks_run: 32
+  pass_count: 32
+  fail_count: 0
+  PHASE_B_BLOCKING_TOKEN: "IAA-session-1292-20260921-PASS"
+```
+
+### Acceptance-Criteria Evidence Matrix
+
+1. **Concise change/ripple inventory showing why each modified artifact is necessary** — PASS
+   Evidence: `.agent-admin/governance/pr-2049-gov-2047-01-ripple-assessment.md`; `.agent-admin/governance/agent-contract-diffs/diff-20260919-gov-2047-02-03-foreman-iaa-hardening.md`; `.agent-admin/scope-declarations/pr-2049.md`.
+2. **Focused tests for the new behavioural rules and both PR-scoped and legacy-fallback IAA paths** — PASS
+   Evidence: `node --test .github/scripts/iaa-prebrief-inject.test.js .github/scripts/pit-cs2-controller-workflow.test.js` → `6 passed, 0 failed`; `bash .github/scripts/producer-next-action-guidance.test.sh` → `21 passed, 0 failed`; `bash .github/scripts/pre-handover-checkpoint.test.sh` → `53 passed, 0 failed`.
+3. **Contract, CANON, schema, workflow, and relevant current-head checks run honestly** — PASS
+   Evidence: `git diff --check` → PASS; `governance/CANON_INVENTORY.json` hash integrity re-verified; hosted current-head lanes `iaa-prebrief/inject`, `producer/next-action-guidance`, `merge-gate/verdict`, `governance/alignment`, and `stop-and-fix/enforcement` are GREEN on PR head `3392e02c9c36ba03178dfbb64d8c44bc9348f3c4`.
+4. **A handback to Foreman for QP → ECAP → independent IAA** — PASS
+   Evidence: `.agent-workspace/foreman-v2/memory/PREHANDOVER-pr-2049-governance-foreman-convergence-20260920.md`; `.agent-workspace/foreman-v2/memory/session-pr-2049-governance-foreman-convergence-20260920.md`; `.agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md`; this amended wave record.
+5. **PASS demonstrates that the controller can continue inside its sandbox and escalates only genuine protected or external decisions** — PASS
+   Evidence: `.github/scripts/final-pass-cs2-review.js` centralizes final-PASS/CS2-review blocker precedence; `.github/scripts/pre-handover-checkpoint.js`, `.github/scripts/producer-next-action-guidance.js`, and `.github/scripts/iaa-prebrief-inject.js` consume that evaluator so valid CS2-review-only posture suppresses redundant ceremony while real blockers preserve STOP-AND-FIX behavior.
+
+### Independent Risk Challenge
+
+1. **What could still fail after merge?**
+   A future change could drift one terminal-state consumer away from the shared evaluator and reintroduce false CS2-review-only suppression or redundant pre-brief churn.
+2. **What evidence would prove it does not fail?**
+   The shared evaluator must remain the single source of terminal-state truth, and regression suites must continue asserting both the positive CS2-review-only path and blocker-precedence fallback path.
+3. **Is that evidence present?**
+   Yes — the new shared evaluator exists in `.github/scripts/final-pass-cs2-review.js`, and the focused regression suites cover valid final-PASS suppression plus superseded-final-PASS fallback.
+4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?**
+   No — the correction narrows runtime behavior to the issue-authorized anti-loop intent without reopening the reviewed contract/canon/controller scope.
+5. **Would a reasonable production owner accept this as merge-ready?**
+   Yes — the corrected-head posture is independently assured, the PR-scoped admin truth has been refreshed, and the remaining decision is CS2-only review/merge authority.
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #2049 — Harden Foreman convergence and anti-loop controls
+All 32 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-1292-20260921-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════════════
