@@ -59,5 +59,9 @@
     ".agent-workspace/independent-assurance-agent/memory/session-1292-20260921.md"
   ],
   "execution_model": "foreman-governed",
-  "note": "Stable reviewed substantive head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The bounded closure repair head b5aafb4f4317dfa08c242720cec70fe0b4a10fdf hardens the injector blocker snapshot and submitted-diff scope parity without reopening the reviewed substantive implementation. PR-scoped current-head-sensitive administrative artifacts continue to bind via symbolic CURRENT_HEAD / ACTIVE_HEAD_RESOLVED_BY_GATE semantics."
+  "note": "Stable reviewed substantive head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The reviewed implementation head for this bounded handback is b5aafb4f4317dfa08c242720cec70fe0b4a10fdf. The current admin validation head at validation time is 2ec9c69622a368c4a821f8639e6aed73f1eaef51, whose only committed delta from b5aafb4f4317dfa08c242720cec70fe0b4a10fdf is PR-scoped administrative evidence sync in .admin/prs/pr-2049.json, .agent-admin/prs/pr-2049/active-state.json, and .agent-admin/scope-declarations/pr-2049.md. Final independent assurance token IAA-session-1293-20260921-PASS now binds current head 2ec9c69622a368c4a821f8639e6aed73f1eaef51 to reviewed implementation head b5aafb4f4317dfa08c242720cec70fe0b4a10fdf.",
+  "current_admin_validation_head_sha": "2ec9c69622a368c4a821f8639e6aed73f1eaef51",
+  "reviewed_implementation_head_sha": "b5aafb4f4317dfa08c242720cec70fe0b4a10fdf",
+  "final_iaa_token": "IAA-session-1293-20260921-PASS",
+  "final_iaa_token_binding_result": "PASS"
 }

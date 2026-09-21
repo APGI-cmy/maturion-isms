@@ -2,10 +2,11 @@
 
 **PR**: #2049
 **Branch**: `copilot/governance-harden-foreman-controls`
-**Evidence snapshot head**: `093b1195933182a64993e2c3a24c42af100d0b7e`
+**Evidence snapshot head**: `2ec9c69622a368c4a821f8639e6aed73f1eaef51`
+**Reviewed implementation head**: `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf`
 **Stable reviewed substantive head**: `54d06636c4a3968cbea0588866d0ab4e59ce40b2`
 **Foreman state**: `FOREMAN_CONTROL`
-**Date**: 2026-09-20
+**Date**: 2026-09-21
 
 protected_path_touched: true
 ecap_required: true
@@ -13,8 +14,9 @@ ecap_invoked: true
 ceremony_admin_appointed: true
 ecap_verdict: ADMIN_VALIDATED
 ecap_waiver_ref: none
-handover_allowed: false
-final_iaa_verdict: PENDING
+handover_allowed: true
+final_iaa_verdict: PASS
+final_iaa_token: IAA-session-1293-20260921-PASS
 
 ---
 
@@ -43,21 +45,27 @@ final_iaa_verdict: PENDING
 
 ## 3. Focused validation snapshot
 
-Local validation executed on the current branch state before final IAA invocation:
+Local validation executed on the reviewed implementation/current admin-validation handback before final CS2 review posture:
 
 ```text
+node --test .github/scripts/iaa-prebrief-inject.test.js .github/scripts/pit-cs2-controller-workflow.test.js
+bash .github/scripts/pre-handover-checkpoint.test.sh
 bash .github/scripts/producer-next-action-guidance.test.sh
-PR_NUMBER=2049 PR_HEAD_SHA=6174a2b42e30e393ca1e6865b6d17261a18ad6a1 PR_BASE_SHA=058b6af0e352d33c262255465371b3fc94c5af99 node .github/scripts/delegation-order-gate.js
+bash .github/scripts/validate-scope-to-diff.test.sh
+PR_NUMBER=2049 bash .github/scripts/validate-scope-to-diff.sh
 ```
 
 Observed result:
 
 ```text
-17 passed, 0 failed
-Delegation order gate passed.
+iaa-prebrief injector/workflow tests: PASS (8 passed, 0 failed)
+pre-handover checkpoint regressions: PASS (53 passed, 0 failed)
+producer next-action guidance regressions: PASS (21 passed, 0 failed)
+scope parity regressions: PASS (9 passed, 0 failed)
+scope parity current branch diff: PASS (43 declared / 43 actual)
 ```
 
-GitHub current-head checks inspected for PR #2049 at current head `093b1195933182a64993e2c3a24c42af100d0b7e` show the required lanes green, including:
+GitHub current-head checks inspected for PR #2049 at current head `2ec9c69622a368c4a821f8639e6aed73f1eaef51` show the required lanes green, including:
 
 - `preflight/phase-1-evidence`
 - `preflight/iaa-prebrief-contract-alignment`
@@ -79,16 +87,17 @@ GitHub current-head checks inspected for PR #2049 at current head `093b119593318
 ## 4. Current handback posture
 
 - GOV-2047-01 through GOV-2047-05 are recorded as Foreman QP PASS in the PR-scoped tracker.
-- ECAP administrative reconciliation is now recorded as `ADMIN_VALIDATED` under the stable reviewed-head/current-head model; the earlier stale-evidence loop claim has been normalized away.
+- ECAP administrative reconciliation is recorded as `ADMIN_VALIDATED` under the stable reviewed substantive head / reviewed implementation head / current admin-validation head model.
 - PR-scoped PREHANDOVER proof and Foreman session memory now exist for this wave.
-- Final IAA assurance token is still pending at the time this proof is written.
-- `handover_allowed` remains `false` until independent IAA issues a final PASS token for PR #2049.
+- Independent final IAA PASS is now recorded with token `IAA-session-1293-20260921-PASS`.
+- Deterministic token-presence and head-binding verification is PASS: current head `2ec9c69622a368c4a821f8639e6aed73f1eaef51` is bound to reviewed implementation head `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf`.
+- This handback is `READY FOR CS2 REVIEW` only; no further ordinary work is initiated after this state.
 
 ---
 
 ## 5. Immediate next action
 
-1. Keep the stable reviewed-head binding intact.
-2. Invoke independent IAA final assurance on PR #2049.
-3. If IAA rejects, remediate only the bounded finding and re-invoke.
-4. Return only the resulting PASS token or a precise protected/external blocker.
+1. Hold the stable reviewed-head / reviewed-implementation-head / current-admin-head binding intact.
+2. Await CS2's exclusive review / merge decision.
+3. Do not reopen QP, ECAP, or IAA solely because this token-recording admin state exists.
+4. Re-enter STOP_AND_FIX only if a genuine new failing/pending check, merge conflict, or substantive delta appears.

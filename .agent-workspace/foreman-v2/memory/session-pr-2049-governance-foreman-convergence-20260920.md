@@ -6,11 +6,11 @@
 - agent_class: foreman
 - contract_version: 2.18.0
 - session_id: session-pr-2049-governance-foreman-convergence
-- date_utc: 2026-09-20
+- date_utc: 2026-09-21
 - repository: APGI-cmy/maturion-isms
 - branch: copilot/governance-harden-foreman-controls
 - base_sha: 058b6af0e352d33c262255465371b3fc94c5af99
-- current_head_sha: CURRENT_HEAD
+- current_head_sha: 2ec9c69622a368c4a821f8639e6aed73f1eaef51
 - stable_reviewed_head_sha: 54d06636c4a3968cbea0588866d0ab4e59ce40b2
 - cs2_authorization: PR #2049 comment `5749559936`
 - module_or_scope: PR #2049 final assurance handback for GOV-2047 hardening wave
@@ -62,7 +62,7 @@
 |---|---|---|---|---|
 | 1 | execution-ceremony-admin-agent | PR #2049 bounded admin bundle | .agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md | COMPLETE |
 | 2 | Foreman Quality Professor | current-head evidence normalization and focused validation snapshot | this session + PREHANDOVER proof | PASS |
-| 3 | independent-assurance-agent (final) | PR #2049 final assurance handback | pending | PENDING |
+| 3 | independent-assurance-agent (final) | PR #2049 final assurance handback | .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md | PASS — IAA-session-1293-20260921-PASS |
 
 ## Work and evidence produced
 
@@ -73,15 +73,19 @@
 | .agent-admin/control/handover-allowed.json | update | Foreman | PR #2049 pre-handover gate control normalized |
 | .agent-admin/prs/pr-2049/wave-current-tasks.md | update | Foreman | PREHANDOVER/session evidence state will be normalized |
 | .agent-admin/scope-declarations/pr-2049.md | update | Foreman | scope inventory widened to final handback artifacts |
+| .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md | update | independent-assurance-agent | final assurance token amendment recorded |
 
 ## Quality Professor review
 
 - qp_applicable: true
 - tests_executed:
+  - node --test .github/scripts/iaa-prebrief-inject.test.js .github/scripts/pit-cs2-controller-workflow.test.js
+  - bash .github/scripts/pre-handover-checkpoint.test.sh
   - bash .github/scripts/producer-next-action-guidance.test.sh
-  - PR_NUMBER=2049 PR_HEAD_SHA=6174a2b42e30e393ca1e6865b6d17261a18ad6a1 PR_BASE_SHA=058b6af0e352d33c262255465371b3fc94c5af99 node .github/scripts/delegation-order-gate.js
-  - GitHub PR #2049 check-run inspection on current head 093b1195933182a64993e2c3a24c42af100d0b7e
-- tests_passed: 19
+  - bash .github/scripts/validate-scope-to-diff.test.sh
+  - PR_NUMBER=2049 bash .github/scripts/validate-scope-to-diff.sh
+  - GitHub PR #2049 check-run inspection on current head 2ec9c69622a368c4a821f8639e6aed73f1eaef51
+- tests_passed: 91
 - tests_failed: 0
 - warnings: none
 - qp_verdict: PASS
@@ -99,14 +103,15 @@
 
 - prebrief_wave_record: .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md
 - prebrief_result: PREFLIGHT_BRIEF_COMPLETE
-- final_iaa_invoked: false
-- final_iaa_token: none
-- final_iaa_verdict: PENDING
+- final_iaa_invoked: true
+- final_iaa_token: IAA-session-1293-20260921-PASS
+- final_iaa_verdict: PASS
+- final_iaa_findings: none
 
 ## CI and merge-gate evidence
 
 - pr_number: 2049
-- frozen_head_sha: 093b1195933182a64993e2c3a24c42af100d0b7e
+- frozen_head_sha: 2ec9c69622a368c4a821f8639e6aed73f1eaef51
 - required_checks_green: true
 - hosted_checks_snapshot:
   - preflight/phase-1-evidence
@@ -123,29 +128,30 @@
   - foreman-implementation-check
   - session-memory-check
   - CodeQL
-- handover_allowed: false
+- handover_allowed: true
 - merge_authority: CS2_ONLY
 
 ## Blockers and escalations
 
 | ID | Blocker | Responsible owner | Required remediation | State |
 |---|---|---|---|---|
-| B-2049-001 | final IAA PASS token not yet issued on PR #2049 | independent-assurance-agent / Foreman | invoke final IAA on current PR-scoped route and record resulting token or bounded rejection | OPEN |
+| B-2049-001 | final IAA PASS token for the current bounded handback | independent-assurance-agent / Foreman | token recorded in wave record and task tracker; deterministic binding check completed | RESOLVED |
 
 ## Next action
 
-- immediate_next_action: Invoke final independent IAA on the current PR-scoped route after committing this PREHANDOVER/session evidence set.
-- action_owner: Foreman
+- immediate_next_action: READY FOR CS2 REVIEW on current implementation/admin handback package.
+- action_owner: CS2
 - may_start_now: true
 - conditions_before_start: none
 - prohibited_next_actions:
-  - reopen substantive implementation
-  - request CS2 waiver for ordinary in-sandbox completion work
+  - reopen substantive implementation without a genuine new blocker
+  - request or generate a new IAA pre-brief
+  - rerun QP, ECAP, or IAA solely because the token-recording admin state exists
   - create exact-head evidence refresh loops for admin-only commits
 
 ## Session close
 
-- outcome: PASS_TO_NEXT_STATE
+- outcome: AWAIT_CS2
 - session_memory_complete: true
 - prehandover_memory_path: .agent-workspace/foreman-v2/memory/PREHANDOVER-pr-2049-governance-foreman-convergence-20260920.md
 - suggestions_for_improvement: PR-scoped handback artifacts should be introduced before the final IAA step so the last remaining delta is token/presence normalization only.

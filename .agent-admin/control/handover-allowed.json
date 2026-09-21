@@ -2,7 +2,9 @@
   "schema_version": "1.0.0",
   "wave_id": "GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919",
   "pr_number": 2049,
-  "current_head_sha": "3392e02c9c36ba03178dfbb64d8c44bc9348f3c4",
+  "current_head_sha": "2ec9c69622a368c4a821f8639e6aed73f1eaef51",
+  "reviewed_implementation_head_sha": "b5aafb4f4317dfa08c242720cec70fe0b4a10fdf",
+  "stable_reviewed_substantive_head_sha": "54d06636c4a3968cbea0588866d0ab4e59ce40b2",
   "state": "PRE_HANDOVER_GATE_PASS",
   "handover_allowed": true,
   "foreman_qp_pass": true,
@@ -14,5 +16,6 @@
   "ecap_admin_validated": true,
   "all_required_checks_green": true,
   "iaa_final_required": true,
+  "note": "Bounded admin validation on current head 2ec9c69622a368c4a821f8639e6aed73f1eaef51 distinguishes the reviewed implementation head b5aafb4f4317dfa08c242720cec70fe0b4a10fdf from the stable reviewed substantive head 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The committed b5aafb4f4317dfa08c242720cec70fe0b4a10fdf..2ec9c69622a368c4a821f8639e6aed73f1eaef51 delta is administrative evidence sync only.",
   "blocking_findings": []
 }

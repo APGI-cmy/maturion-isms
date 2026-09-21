@@ -2,6 +2,8 @@
   "pr": 2049,
   "branch": "copilot/governance-harden-foreman-controls",
   "runtime_head_sha": "ACTIVE_HEAD_RESOLVED_BY_GATE",
+  "current_admin_validation_head_sha": "2ec9c69622a368c4a821f8639e6aed73f1eaef51",
+  "reviewed_implementation_head_sha": "b5aafb4f4317dfa08c242720cec70fe0b4a10fdf",
   "stable_reviewed_head_sha": "54d06636c4a3968cbea0588866d0ab4e59ce40b2",
   "base_sha": "058b6af0e352d33c262255465371b3fc94c5af99",
   "manifest_path": ".admin/prs/pr-2049.json",
@@ -63,5 +65,5 @@
     ".github/workflows/producer-next-action-guidance.yml",
     "FOREMAN_OPERATING_MODEL.md"
   ],
-  "note": "Stable substantive review head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The bounded closure repair on current head b5aafb4f4317dfa08c242720cec70fe0b4a10fdf now aligns the injector blocker snapshot and submitted-diff parity gates, and the PR-scoped active-state record now matches the exact 43-file GitHub submitted base\u2192head diff for the current correction head while preserving symbolic CURRENT_HEAD / ACTIVE_HEAD_RESOLVED_BY_GATE semantics."
+  "note": "Stable reviewed substantive head remains 54d06636c4a3968cbea0588866d0ab4e59ce40b2. The reviewed implementation head for this bounded handback is b5aafb4f4317dfa08c242720cec70fe0b4a10fdf. The current admin validation head at validation time is 2ec9c69622a368c4a821f8639e6aed73f1eaef51, whose only committed delta from b5aafb4f4317dfa08c242720cec70fe0b4a10fdf is PR-scoped administrative evidence sync in .admin/prs/pr-2049.json, .agent-admin/prs/pr-2049/active-state.json, and .agent-admin/scope-declarations/pr-2049.md. Final independent assurance token IAA-session-1293-20260921-PASS binds current head 2ec9c69622a368c4a821f8639e6aed73f1eaef51 to reviewed implementation head b5aafb4f4317dfa08c242720cec70fe0b4a10fdf while preserving symbolic CURRENT_HEAD / ACTIVE_HEAD_RESOLVED_BY_GATE semantics."
 }

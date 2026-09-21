@@ -5,7 +5,7 @@ Issue: #2047 — Governance: harden Foreman convergence and anti-loop controls
 Wave: GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919
 Branch: copilot/governance-harden-foreman-controls
 Base branch: main
-Base SHA: 7b059c4d33b2a950cecc178eb6c94fef62468e8a
+Base SHA: 058b6af0e352d33c262255465371b3fc94c5af99
 Initial planning head SHA: 6c878323f01e53926f67740a0c1ce5c542915e79
 CS2 authorization: user-provided explicit authorization, 2026-09-19
 Status: IAA_FINAL_PASS_CS2_REVIEW
@@ -15,10 +15,13 @@ ceremony_admin_appointed: true
 ceremony_admin_appointment_timestamp_utc: 2026-09-20T07:16:01Z
 reviewed_head_sha: 54d06636c4a3968cbea0588866d0ab4e59ce40b2
 current_head_binding: CURRENT_HEAD
-current_head_refresh_sha: 3392e02c9c36ba03178dfbb64d8c44bc9348f3c4
+reviewed_implementation_head_sha: b5aafb4f4317dfa08c242720cec70fe0b4a10fdf
+current_admin_validation_head_sha: 2ec9c69622a368c4a821f8639e6aed73f1eaef51
+iaa_final_token: IAA-session-1293-20260921-PASS
+iaa_token_binding_result: PASS — independent final assurance binds current head `2ec9c69622a368c4a821f8639e6aed73f1eaef51` to reviewed implementation head `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf` under stable reviewed substantive head `54d06636c4a3968cbea0588866d0ab4e59ce40b2`.
 ecap_bundle_path: .agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md
-ecap_admin_result: ADMIN_VALIDATED — the bounded PR bundle was refreshed for the terminal-state safety correction set and remained the administrative input to the refreshed final IAA PASS now recorded for PR #2049.
-status_note: Historical tokens `IAA-session-1290-20260920-PASS` and `IAA-session-1291-20260921-PASS` remain wave history only. Refreshed final assurance for the corrected-head posture is now recorded as `IAA-session-1292-20260921-PASS`, restoring CS2-review-only posture without reopening the reviewed substantive implementation.
+ecap_admin_result: ADMIN_VALIDATED — this bounded PR handback distinguishes stable reviewed substantive head `54d06636c4a3968cbea0588866d0ab4e59ce40b2`, reviewed implementation head `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf`, and current admin validation head `2ec9c69622a368c4a821f8639e6aed73f1eaef51` without reopening substantive scope.
+status_note: Historical assurance tokens remain wave history only. For the current bounded handback, the committed `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf..2ec9c69622a368c4a821f8639e6aed73f1eaef51` delta is administrative evidence sync only, preserving CS2-review-only posture. Final independent assurance now records token `IAA-session-1293-20260921-PASS`, and deterministic token-presence/head-binding verification is PASS.
 
 ## Wave boundary
 
@@ -58,14 +61,15 @@ status_note: Historical tokens `IAA-session-1290-20260920-PASS` and `IAA-session
 
 | PR # | Token | Date |
 |------|-------|------|
-| 2049 | IAA-session-1292-20260921-PASS | 2026-09-21 |
+| 2049 | IAA-session-1293-20260921-PASS | 2026-09-21 |
 
-Historical note: `IAA-session-1290-20260920-PASS` and `IAA-session-1291-20260921-PASS` remain part of the wave history only; the refreshed current-head assurance for the terminal-state safety correction set is `IAA-session-1292-20260921-PASS`, anchored to stable reviewed head `54d06636c4a3968cbea0588866d0ab4e59ce40b2` and corrected-head posture `3392e02c9c36ba03178dfbb64d8c44bc9348f3c4`.
+Historical note: `IAA-session-1290-20260920-PASS`, `IAA-session-1291-20260921-PASS`, and `IAA-session-1292-20260921-PASS` remain part of wave history only. This bounded admin handback now records stable reviewed substantive head `54d06636c4a3968cbea0588866d0ab4e59ce40b2`, reviewed implementation head `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf`, current admin validation head `2ec9c69622a368c4a821f8639e6aed73f1eaef51`, and current token `IAA-session-1293-20260921-PASS`.
 
 ## Wave completion gate
 
 - [x] All tasks above show `[x]` only after a recorded Foreman QP PASS.
 - [x] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
 - [x] PREHANDOVER proof and session memory are current and committed.
-- [x] Independent IAA final assurance has a current, valid recorded result for the corrected-head posture at `3392e02c9c36ba03178dfbb64d8c44bc9348f3c4`.
+- [x] PR-scoped administrative artifacts now distinguish the stable reviewed substantive head, the reviewed implementation head, and the current admin validation head without introducing any new substantive delta.
+- [x] Independent final IAA result/token is recorded for current head `2ec9c69622a368c4a821f8639e6aed73f1eaef51`, with deterministic reviewed-implementation head binding PASS to `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf`.
 - [x] CS2 receives the corrected-head evidence package for its exclusive merge decision.

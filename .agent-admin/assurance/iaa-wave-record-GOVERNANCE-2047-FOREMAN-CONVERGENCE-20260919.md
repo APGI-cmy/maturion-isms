@@ -381,3 +381,111 @@ Merge permitted (subject to CS2 approval).
 Token reference: IAA-session-1292-20260921-PASS
 Adoption phase: PHASE_B_BLOCKING
 ═══════════════════════════════════════════════
+
+---
+
+## TOKEN AMENDMENT — 2026-09-21 (current admin-validation head coherence)
+
+The earlier tokens `IAA-session-1290-20260920-PASS`, `IAA-session-1291-20260921-PASS`, and `IAA-session-1292-20260921-PASS` remain wave history only. This amendment binds the bounded final assurance for the current admin-validation head `2ec9c69622a368c4a821f8639e6aed73f1eaef51`, whose committed delta from reviewed implementation head `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf` is limited to PR-scoped administrative truth sync in `.admin/prs/pr-2049.json`, `.agent-admin/prs/pr-2049/active-state.json`, and `.agent-admin/scope-declarations/pr-2049.md`.
+
+CURRENT_HEAD_SHA: CURRENT_HEAD
+PHASE_B_BLOCKING_TOKEN: IAA-session-1293-20260921-PASS
+
+```yaml
+IAA_FINAL_ASSURANCE_REFRESH:
+  date_utc: "2026-09-21T08:24:52Z"
+  pr: "#2049 — Harden Foreman convergence and anti-loop controls"
+  issue: "#2047 — Governance: harden Foreman convergence and anti-loop controls"
+  category: "AGENT_CONTRACT"
+  invoked_by: "foreman-v2-agent final handback route"
+  produced_by:
+    - "governance-liaison-isms-agent"
+    - "CodexAdvisor-agent"
+    - "pit-specialist"
+    - "qa-builder"
+    - "execution-ceremony-admin-agent"
+    - "foreman-v2-agent"
+  ceremony_admin: true
+  independence: "CONFIRMED"
+  stable_reviewed_head_sha: "54d06636c4a3968cbea0588866d0ab4e59ce40b2"
+  reviewed_implementation_head_sha: "b5aafb4f4317dfa08c242720cec70fe0b4a10fdf"
+  current_head_sha: "2ec9c69622a368c4a821f8639e6aed73f1eaef51"
+  supersedes_historical_token: "IAA-session-1292-20260921-PASS"
+  bounded_post_review_delta:
+    admin_refresh_files:
+      - ".admin/prs/pr-2049.json"
+      - ".agent-admin/prs/pr-2049/active-state.json"
+      - ".agent-admin/scope-declarations/pr-2049.md"
+    assessment: "The final handback delta after reviewed implementation head b5aafb4f4317dfa08c242720cec70fe0b4a10fdf is administrative evidence sync only. No reviewed runtime/controller implementation was reopened."
+  local_validation:
+    iaa_prebrief_inject_tests: "PASS (5 passed, 0 failed)"
+    pit_controller_workflow_tests: "PASS (3 passed, 0 failed)"
+    producer_next_action_guidance_test: "PASS (21 passed, 0 failed)"
+    pre_handover_checkpoint_test: "PASS (53 passed, 0 failed)"
+    validate_scope_to_diff: "PASS (43 declared / 43 actual)"
+    git_diff_check: "PASS"
+  hosted_required_checks:
+    merge_gate_verdict: "PASS"
+    governance_alignment: "PASS"
+    stop_and_fix_enforcement: "PASS"
+    producer_next_action_guidance: "PASS"
+    codeql: "PASS"
+  fail_only_once:
+    A-001_invocation_evidence: "PRESENT"
+    A-002_no_class_exemption: "CONFIRMED"
+  core_invariants:
+    CORE-020: "PASS"
+    CORE-021: "PASS"
+  focus_checks:
+    FINAL_PASS_CS2_REVIEW_PATH: "PASS"
+    STOP_AND_FIX_BLOCKER_PATH: "PASS"
+    SUBSTANTIVE_DELTA_REQUIRES_ASSURANCE_PATH: "PASS"
+    NO_PREBRIEF_REINJECTION_LOOP: "PASS"
+    NO_EVIDENCE_REFRESH_LOOP: "PASS"
+    PR_SCOPED_ADMIN_TRUTH_COHERENCE: "PASS"
+    REVIEWED_IMPLEMENTATION_HEAD_TOKEN_BINDING: "PASS"
+  admin_ceremony_auto_reject_checks:
+    ACR-01_through_ACR-16: "PASS"
+  merge_gate_parity:
+    merge_gate_verdict: "PASS"
+    governance_alignment: "PASS"
+    stop_and_fix_enforcement: "PASS"
+  active_bundle_iaa_coherence: "VERIFIED"
+  checks_run: 16
+  pass_count: 16
+  fail_count: 0
+  PHASE_B_BLOCKING_TOKEN: "IAA-session-1293-20260921-PASS"
+```
+
+### Acceptance-Criteria Evidence Matrix
+
+1. **Current blocker facts preserve the three required outcomes** — PASS
+   Evidence: `.github/scripts/final-pass-cs2-review.js`; `.github/scripts/iaa-prebrief-inject.js`; `.github/scripts/pre-handover-checkpoint.js`; `.github/scripts/producer-next-action-guidance.js`; `node --test .github/scripts/iaa-prebrief-inject.test.js .github/scripts/pit-cs2-controller-workflow.test.js`; `bash .github/scripts/pre-handover-checkpoint.test.sh`; `bash .github/scripts/producer-next-action-guidance.test.sh`.
+2. **No new pre-brief request or evidence-refresh loop is reintroduced** — PASS
+   Evidence: `.github/scripts/iaa-prebrief-inject.js:24-45`; `.github/scripts/pre-handover-checkpoint.js:1148-1188`; `.github/scripts/producer-next-action-guidance.js:112-126`.
+3. **Current PR-scoped admin/assurance truth is coherent for this handback** — PASS
+   Evidence: `git diff --name-only b5aafb4f4317dfa08c242720cec70fe0b4a10fdf..2ec9c69622a368c4a821f8639e6aed73f1eaef51` = only `.admin/prs/pr-2049.json`, `.agent-admin/prs/pr-2049/active-state.json`, `.agent-admin/scope-declarations/pr-2049.md`; those three artifacts all declare stable reviewed head `54d06636c4a3968cbea0588866d0ab4e59ce40b2`, reviewed implementation head `b5aafb4f4317dfa08c242720cec70fe0b4a10fdf`, and current admin validation head `2ec9c69622a368c4a821f8639e6aed73f1eaef51`.
+4. **Current handback PASS token is now explicitly recorded for the current admin-validation head** — PASS
+   Evidence: this token amendment; `PHASE_B_BLOCKING_TOKEN: IAA-session-1293-20260921-PASS`.
+
+### Independent Risk Challenge
+
+1. **What could still fail after merge?**
+   A future change could bypass the shared final-PASS evaluator and reintroduce redundant pre-brief or evidence-refresh churn after a valid current-head PASS.
+2. **What evidence would prove it does not fail?**
+   Injector, checkpoint, and producer-guidance paths must continue consuming the same blocker-aware evaluator, and their regression suites must continue covering PASS, blocker, and re-assurance branches.
+3. **Is that evidence present?**
+   Yes — the shared evaluator is in `.github/scripts/final-pass-cs2-review.js` and the targeted suites above cover the required branches.
+4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?**
+   No — the bounded handback only refreshes PR-scoped truth for the current admin-validation head and does not reopen reviewed implementation scope.
+5. **Would a reasonable production owner accept this as merge-ready?**
+   Yes — the current handback state is limited to admin truth sync, the required lanes are green, and the remaining decision is CS2-only review/merge authority.
+
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #2049 — Harden Foreman convergence and anti-loop controls
+All 16 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-1293-20260921-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
