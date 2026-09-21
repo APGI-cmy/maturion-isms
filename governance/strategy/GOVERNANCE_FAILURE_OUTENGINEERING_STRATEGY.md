@@ -7,7 +7,7 @@
 **Quality owner:** Foreman in Quality Professor (QP) mode  
 **Administrative validation:** ECAP; **independent assurance:** IAA  
 **Status:** Living strategy — proposed controls, documentation filing only; not implementation or merge approval  
-**Version:** 1.4 — 2026-09-21; escaped-failure register update  
+**Version:** 1.5 — 2026-09-21; automation north-star mandate  
 **Repository home:** `governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md`  
 **Review cadence:** At every governed PR closure and monthly CS2 review  
 
@@ -35,6 +35,20 @@ This strategy turns delivery failures into a measurable, continuously improving 
 > An agent completes all work within its authority, independently changes from delivery mode to evaluation mode before every handover, corrects all in-sandbox defects, and escalates to CS2 only a proven protected, external, cost, destructive, or irreducible business-decision boundary.
 
 The strategy applies to all governed work, including agent contracts, CANON, controller automation, QA, QP, ECAP, IAA, PR administration, and product delivery.
+
+### 1.1 Project north-star mandate and drift guardrail
+
+**The governing objective is fully automated, bounded and convergent job delivery:** aligned agents must take an authorised work item from intake through correction, independent assurance, active CS2 review/merge and approved successor dispatch without routine human chasing, repeated ceremony, or unbounded spend. The system must continuously detect, record, test and outengineer each escaped failure path so that a recurrence becomes progressively less likely and, where practical, technically impossible.
+
+Every proposed issue, PR, contract change, workflow, review disposition and wave must pass this decision test:
+
+1. Does it reduce recurring failure, uncontrolled repetition, unnecessary human handover, or unsafe authority ambiguity?
+2. Does it preserve independent assurance, Foreman-owned remediation, least privilege, explicit human boundaries and the safety envelope?
+3. Does it add a measurable prevention/detection control, a regression test, or evidence that an existing control is effective?
+
+If any answer is **no**, the proposed action is a drift risk. CS2/Codex must call it out plainly, STOP-and-Fix or redesign it before progression; only Johan may approve a recorded, time-bounded exception at a protected or irreducible business boundary. This guardrail does not permit CS2 to override a direct Johan instruction; it requires the deviation, consequence and alternative to be made explicit first.
+
+The target is not automation for its own sake. It is autonomous convergence with bounded risk: agents correct ordinary in-sandbox defects themselves, humans decide only reserved matters, and no event can consume credits or generate a new ceremony indefinitely.
 
 ### Success criteria
 
@@ -348,3 +362,4 @@ The current user instructions authorize repository filing, workflow alignment, a
 | 1.2 | 2026-09-21 | Recorded PR #2049 terminal-state failures FO-015/FO-016; made all injector paths and material-blocker precedence mandatory W3 controls | Strategy update pending in PR #2050; runtime repair required in PR #2049 |
 | 1.3 | 2026-09-21 | Added a mandatory safety envelope and human kill switch, authoritative event decision record, machine-enforced active-CS2 merge policy, failure escape analysis, explicit terminal precedence and `READY_FOR_IAA` retirement | Strategy update pending in PR #2050; no runtime authority or limit is activated by this documentation change |
 | 1.4 | 2026-09-21 | Recorded FO-017 injector blocker-input escape and FO-018 false scope-parity escape found in PR #2049; tightened W2/W3 proof requirements | Strategy update pending in PR #2050; PR #2049 requires bounded correction and revalidation |
+| 1.5 | 2026-09-21 | Recorded the project north-star mandate: fully automated, bounded, convergent delivery with continuous failure outengineering; added the mandatory drift decision test and escalation rule | Strategy update pending in PR #2050; applies immediately as a CS2 review guardrail, while machine enforcement remains a planned implementation outcome |
