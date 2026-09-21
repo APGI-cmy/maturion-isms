@@ -7,7 +7,7 @@
 **Quality owner:** Foreman in Quality Professor (QP) mode  
 **Administrative validation:** ECAP; **independent assurance:** IAA  
 **Status:** Living strategy — proposed controls, documentation filing only; not implementation or merge approval  
-**Version:** 1.1 — 2026-09-21; workflow-aligned repository edition  
+**Version:** 1.3 — 2026-09-21; enforceability and safety-envelope edition  
 **Repository home:** `governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md`  
 **Review cadence:** At every governed PR closure and monthly CS2 review  
 
@@ -103,6 +103,8 @@ An admin-only correction re-enters the affected deterministic check, not the ent
 
 `CS2_REVIEW` is quiescent for upstream delivery/assurance on the same valid reviewed submission: no producer or watchdog may restart pre-brief/build/QP/ECAP/IAA solely because a comment or valid token append occurred. Active CS2 must still perform its own final review and merge-eligibility check; PASS is not an automatic merge command. A material finding, substantive change, relevant base/dependency change, or invalidated evidence can reopen the affected lane with a recorded reason. A valid authorized CS2 review proceeds to `MERGE_AUTHORIZED → MERGED → CLOSED`; those are proposed semantic states to be mapped into the implemented schema, not states already deployed.
 
+`READY_FOR_IAA` is retired as an ambiguous handover label. Where the system needs to state that final assurance is the next lawful step, it must use `IAA_ASSURANCE_REQUIRED`; that is a non-terminal, controller-owned state which cannot be returned to CS2 as completion. Existing occurrences must be migrated through the protected contract/CANON route and protected by a compatibility check that rejects the retired label in new task records, workflow guidance and agent handovers.
+
 Human CS2 (Johan), the PIT controller, and `interim-cs2-agent` are currently distinct. The interim contract is advisory-only and returns findings or a `FOREMAN_REENTRY_PACKET`; the live pilot reserves merge to Johan. **These are current-state limitations to remove through the enabling wave, not permanent strategy restrictions.** Codex Advisor must propose the smallest CANON-consistent transition to an active CS2 contract and its Tier 2/3 controls, whether a governed successor contract or an expressly authorized upgrade. No silent repurposing or self-modification is permitted.
 
 ### 3.3 Active CS2 review and merge mandate
@@ -120,6 +122,22 @@ Before the merge call, CS2 must re-read the exact PR head/base, required checks 
 After a timeout or repeated webhook, query whether the PR already merged before retrying. Record merge SHA and verified closure once. If a required independent review cannot be supplied by the configured identity, that is a proven permission/identity boundary, not a reason to relax review policy. A PR that changes CS2's own merge authority, safety breaker or escalation boundary remains human-approved; ordinary preauthorized PRs must not return to Johan merely for another routine merge click.
 
 The initial enabling authority change is human-CS2-approved and independently assured. Its rollout begins with read-only/shadow merge decisions, exercises refusal cases, then enables scoped real merges. This filing is not an instruction to merge #2049 or any other existing PR now.
+
+### 3.4 Machine-enforced active-CS2 merge policy
+
+The enabled controller must evaluate a versioned, machine-readable **merge policy** before any merge call. It is a least-privilege allow-list, not a general permission to merge. Each policy decision must bind these facts:
+
+| Policy field | Required rule |
+|---|---|
+| Repository and branch | Repository, base branch and approved wave/work-item must match an explicit allow-list. |
+| Change surface | Changed paths and PR type must be within the packet's approved scope; protected-contract, CANON, safety-envelope or CS2-authority changes are human-CS2-approved only. |
+| Reviewed identity | The PR head SHA, base SHA/mergeability, review timestamp and IAA reviewed-content binding must match the merge attempt. |
+| Required conditions | Required checks complete and passing; no unresolved substantive review thread; valid Foreman QP, ECAP where applicable, and independent IAA PASS token; no active circuit breaker. |
+| Compare-and-set | The merge API receives the exact reviewed head SHA. A changed head/base, conflict or required-check change invalidates the decision and prevents merge. |
+| Refusal and escalation | Out-of-policy scope, missing evidence, unresolved identity, unavailable independent review, permission denial, or safety trip returns a typed refusal to Foreman or the precise human-CS2 boundary. It must never bypass a gate. |
+| Audit and retry | Record one decision record and merge result. On timeout/webhook replay, read PR state first; retry only if it is still open, unchanged and within the idempotency key. |
+
+W3 must supply policy-validation tests for every refusal condition. W4 must map the policy fields to the enabled CS2 Tier 1/2/3 authority and repository permission. Until both are independently assured, CS2 remains unable to execute a live merge.
 
 ## 4. Control architecture
 
@@ -186,6 +204,24 @@ Each control requires a regression test, including a property test that admin-on
 
 The current pilot allows one formal correction; a further material correction requires closure and a smaller recut under its existing rules. This strategy cannot expand that limit. Recut attempts must share the parent work-item budget so changing PRs cannot reset the cost/loop breaker. W0 must specify approved numeric limits before unattended operation; none are claimed configured by this filing.
 
+### 5.1 Safety envelope and human kill switch
+
+No unattended controller may act without a versioned **safety envelope** bound to the work item. The envelope is configured once by an authorised human-CS2 decision, is readable by every workflow, and is enforced by a supervisor that is independent of the delivery agents. Its minimum fields are:
+
+`work_item_id, approved_paths, approved_agents, maximum_active_jobs, maximum_stage_attempts, maximum_remediation_attempts, maximum_dispatch_runtime, maximum_total_runtime, maximum_spend, maximum_merge_attempts, expiry, circuit_breaker_state, reset_authority, kill_switch_state`.
+
+The implementation must fail closed when the envelope is absent, expired, malformed, inconsistent with the task record, or unable to measure a configured limit. The **human kill switch** disables new dispatches, retries, merges and successor release immediately while preserving evidence; it must be usable without another agent run. A trip produces exactly one `LOOP_BREAK`/`BUDGET_TRIP` decision, cancels or safely abandons active automation, and requires a classified incident repair plus an authorised audited reset. It may not reset itself because a new comment, token, PR, or webhook arrives.
+
+W0 must propose numeric defaults and refusal behaviour for approval. The starting values must be deliberately conservative and tested with a simulated 24-hour repeated event; this strategy does not silently grant any spending ceiling.
+
+### 5.2 Authoritative event decision record
+
+Every controller, injector, watchdog, QP/ECAP transition and CS2 merge decision must read and append the same PR-scoped decision record. This record is the factual interface between agents; prose comments are evidence, not a substitute for state. At a minimum each event records:
+
+`event_id, received_at, source, work_item_id, pr_number, head_sha, base_sha, reviewed_content_fingerprint, state_before, material_blockers, delta_class, requested_stage, allowed_next_action, action_owner, idempotency_key, attempt_count, safety_envelope_id, budget_snapshot, decision, reason_code, evidence_refs, state_after`.
+
+The evaluator must be deterministic: the same input and record returns the same decision. Unknown/missing facts return a typed `STOP_AND_FIX` or `PROVEN_EXTERNAL_BOUNDARY`; they never infer readiness. Decision records are append-only, integrity-checked and retained across rebases/recuts under the parent work-item identity so a new PR cannot erase history, recurrence counts or safety budgets.
+
 ## 6. Failure improvement register
 
 This table is the initial baseline. Update it for every material failure, near miss, repeat, or control improvement.
@@ -213,9 +249,23 @@ This table is the initial baseline. Update it for every material failure, near m
 
 ### Required entry for every new failure
 
-`FO-### | date | work item/PR | observed behaviour | impact | root cause | classification | containment | permanent control | test/gate | owner | status | recurrence count | evidence links`
+`FO-### | date | work item/PR | observed behaviour | impact | root cause | classification | containment | permanent control | test/gate | earliest expected detection layer | actual detection layer | escape explanation | owner | status | recurrence count | evidence links`
 
 Lifecycle: OPEN → CONTAINED → SCHEDULED → IMPLEMENTED → VERIFIED → CLOSED; any recurrence becomes REOPENED with an incremented recurrence count. Scheduling a control is not closure. Close only with implemented prevention, passing relevant regression evidence, independent verification, and an identified owner. Keep date, PR and evidence links with every transition.
+
+### 6.1 Mandatory failure escape analysis
+
+Every new failure, near miss, false PASS and circuit-breaker trip must answer these questions before its control can close:
+
+| Question | Required use |
+|---|---|
+| Where should this first have been caught? | Name the earliest practical layer: delivery self-check, Foreman QP, ECAP, IAA, controller/CS2, or merge policy. |
+| Where was it actually caught? | Record the real detecting actor/gate and the exact evidence. |
+| Why did it escape? | Classify the gap: missing control, control not invoked, incorrect state/context, insufficient test, authority ambiguity, or human/agent execution error. |
+| What was the impact? | Record remediation cycles, time, model/spend estimate where available, assurance capacity, affected PRs and whether an unsafe merge was prevented. |
+| What changes now? | Link the smallest preventive control, regression/gate ID, owner, target wave and validation evidence. |
+
+Monthly CS2 review must publish the top escape paths and recurrence/cost trend. A layer that repeatedly catches defects late is evidence that its upstream control is weak; it must trigger a STOP-and-Fix improvement task, not be celebrated as a successful late catch.
 
 ## 7. CANON alignment rules
 
@@ -234,11 +284,11 @@ The current PIT pilot accepts only one active work item until its row is `closed
 
 | Wave | Scope and key deliverables | Dependencies | Safe concurrency | Accountable route | Completion proof |
 |---|---|---|---|---|---|
-| W0 — Baseline and containment | Verify register/control evidence; define and implement approved loop/spend limits; incident containment | Exact authorized scope and current dependencies | Register/design preparation only while containment is pending | Human CS2 → Foreman → appointed specialist | tested breaker, approved numeric limits, truthful baseline |
-| W1 — Agent self-check and remediation | Tier 1/2/3 evaluation switch; remediation ladder; self-check schema | W0 containment; disposition of #2049; W4 authority map | W2/W3 design only, with no overlapping files; pilot execution remains serial | Foreman → Codex Advisor for protected edits; appropriate builders otherwise | contract/protocol tests and rejected-job demonstration |
+| W0 — Baseline and containment | Verify register/control evidence; define and implement approved safety envelope, loop/spend limits, human kill switch and decision-record schema; incident containment | Exact authorized scope and current dependencies | Register/design preparation only while containment is pending | Human CS2 → Foreman → appointed specialist | tested breaker and kill switch, approved numeric limits, decision-record validation, truthful baseline |
+| W1 — Agent self-check and remediation | Tier 1/2/3 evaluation switch; remediation ladder; self-check schema; replace `READY_FOR_IAA` with `IAA_ASSURANCE_REQUIRED` | W0 containment; disposition of #2049; W4 authority map | W2/W3 design only, with no overlapping files; pilot execution remains serial | Foreman → Codex Advisor for protected edits; appropriate builders otherwise | contract/protocol tests, retired-label compatibility gate and rejected-job demonstration |
 | W2 — Assurance uplift | QP manifest; ECAP evidence/transition validation; IAA non-recurrence checks | W0; frozen W1 interface; W4 alignment | Disjoint test/design work with W3, if separately authorized | Foreman → authorized specialists | seeded failure suite caught by correct assurance layers |
-| W3 — Controller state, merge and loop safety | shared evaluator and terminal-precedence function for all event sources; idempotency; delta/terminal controls; injections; scoped review/merge adapter and successor queue | W0; controller foundation; frozen W1/W2 interfaces; approved W4 active-CS2 authority | Test/design with W1/W2; one active pilot job; shared evaluator changes serialized | Foreman → appointed controller/QA builders | actual-injector final-PASS test emits zero pre-brief request; checkpoint rejects failed-gate/merge-conflict despite recorded PASS; unsafe/stale/self-authorizing merge refused; duplicate/reordered events; simulated 24-hour repeat stopped without live spending |
-| W4 — Active CS2 authority and CANON alignment | active review/merge contract plus Tier 2/3 controls; control map; upstream/consumer parity; #2041 reconciliation | Start inventory at W0; human approval and independent assurance of enabling authority before activation | Cross-cutting design lane with W1–W3; shared protected files serialized | Human CS2 → authorized Codex Advisor / governance layer-down route | authority/permission/parity evidence per wave; final audit before W5 |
+| W3 — Controller state, merge and loop safety | shared evaluator and terminal-precedence function for all event sources; idempotency; delta/terminal controls; injections; decision-record store; safety-envelope supervisor; scoped review/merge adapter and successor queue | W0; controller foundation; frozen W1/W2 interfaces; approved W4 active-CS2 authority | Test/design with W1/W2; one active pilot job; shared evaluator changes serialized | Foreman → appointed controller/QA builders | actual-injector final-PASS test emits zero pre-brief request; checkpoint rejects failed-gate/merge-conflict despite recorded PASS; unsafe/stale/self-authorizing merge refused; duplicate/reordered events; decision record deterministic; kill switch and simulated 24-hour repeat stop without live spending |
+| W4 — Active CS2 authority and CANON alignment | active review/merge contract plus Tier 2/3 controls; machine-enforced merge-policy map; control map; upstream/consumer parity; #2041 reconciliation | Start inventory at W0; human approval and independent assurance of enabling authority before activation | Cross-cutting design lane with W1–W3; shared protected files serialized | Human CS2 → authorized Codex Advisor / governance layer-down route | authority/permission/parity evidence per wave; merge-policy refusal suite; final audit before W5 |
 | W5 — Integrated two-wave pilot | Two bounded, preauthorized PIT-compatible work packets; rejection, token append, active CS2 review/merge and successor exercises | W1–W4 verified and merged; active controller authority, merge permissions and queue tests established | Two pilot packets execute strictly sequentially | Active CS2 → Foreman → specialists → Foreman → active CS2 review/merge | first packet independently assured, CS2-reviewed, CS2-merged and closed before exactly-once dispatch of second |
 | W6 — Scale and continuous review | Expand only after pilot proof; monthly recurrence review | W5; separate module/concurrency authorization | Independent module lanes only when authorized and supported | CS2 → controller/Foreman | adoption evidence, metrics, enforced aggregate budgets |
 
@@ -265,6 +315,9 @@ These are planned work packets, not assignments already posted. This staged tria
 | Duplicate stage requests | 0 executed; all detected | investigate state evaluator/idempotency breach |
 | Escalations lacking proven external/protected boundary | 0 | return to Foreman with `SELF_REMEDIATE` injection |
 | Mean remediation cycles per job | declining trend | analyse top recurring patterns monthly |
+| Safety-envelope or kill-switch trip | 0 avoidable trips; 100% immediate containment | post-incident review, no automated reset, and regression expansion before resumption |
+| Escaped defect detection gap | declining earliest-to-actual detection distance | strengthen the earliest failed layer and record escape analysis |
+| Merge-policy refusal correctness | 100% of seeded unsafe merges refused | STOP-and-Fix merge policy and authority mapping |
 
 ## 10. Governance cadence and change control
 
@@ -291,3 +344,4 @@ The current user instructions authorize repository filing, workflow alignment, a
 | 1.0 | 2026-09-21 | Initial strategy and failure baseline | Document created; not repository-filed |
 | 1.1 | 2026-09-21 | Explicit pre-brief/appointment/Foreman return paths, per-stage fix routing, active CS2 review/merge target, protected enabling route, pilot limits and safe successor gate | Documentation filing requested; enabling implementation remains pending |
 | 1.2 | 2026-09-21 | Recorded PR #2049 terminal-state failures FO-015/FO-016; made all injector paths and material-blocker precedence mandatory W3 controls | Strategy update pending in PR #2050; runtime repair required in PR #2049 |
+| 1.3 | 2026-09-21 | Added a mandatory safety envelope and human kill switch, authoritative event decision record, machine-enforced active-CS2 merge policy, failure escape analysis, explicit terminal precedence and `READY_FOR_IAA` retirement | Strategy update pending in PR #2050; no runtime authority or limit is activated by this documentation change |
