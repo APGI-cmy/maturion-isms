@@ -104,12 +104,48 @@ fi
 
 echo "✓ Scope file: $SCOPE_FILE"
 
-# Get list of changed files from git diff
-# Try origin/main first, fall back to main if origin/main doesn't exist
-if git rev-parse origin/main >/dev/null 2>&1; then
-    CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null | sort)
+normalize_changed_files() {
+    python - "$1" <<'PY'
+import json
+import pathlib
+import sys
+
+source = pathlib.Path(sys.argv[1])
+text = source.read_text(encoding='utf-8')
+stripped = text.lstrip()
+items = []
+if stripped.startswith('['):
+    data = json.loads(text)
+    items = [str(item).strip() for item in data if str(item).strip()]
+else:
+    items = [line.strip() for line in text.splitlines() if line.strip()]
+
+for value in sorted(dict.fromkeys(items)):
+    print(value)
+PY
+}
+
+CHANGED_FILES_SOURCE="git diff"
+SUBMITTED_DIFF_PATH="${SCOPE_DIFF_FILES_PATH:-${CHANGED_FILES_PATH:-}}"
+
+# Get list of changed files from the authoritative submitted PR file set when
+# available; fall back to local git diff only when no explicit submitted diff
+# snapshot was provided.
+if [ -n "$SUBMITTED_DIFF_PATH" ] && [ -f "$SUBMITTED_DIFF_PATH" ]; then
+    CHANGED_FILES="$(normalize_changed_files "$SUBMITTED_DIFF_PATH")"
+    CHANGED_FILES_SOURCE="submitted PR file set ($SUBMITTED_DIFF_PATH)"
+elif [ -n "${SCOPE_DIFF_FILES_JSON:-}" ]; then
+    TMP_DIFF_FILE="$(mktemp)"
+    printf '%s\n' "$SCOPE_DIFF_FILES_JSON" > "$TMP_DIFF_FILE"
+    CHANGED_FILES="$(normalize_changed_files "$TMP_DIFF_FILE")"
+    CHANGED_FILES_SOURCE="submitted PR file set (SCOPE_DIFF_FILES_JSON)"
+    rm -f "$TMP_DIFF_FILE"
 else
-    CHANGED_FILES=$(git diff --name-only main...HEAD 2>/dev/null | sort)
+    if git rev-parse origin/main >/dev/null 2>&1; then
+        CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null | sort)
+    else
+        CHANGED_FILES=$(git diff --name-only main...HEAD 2>/dev/null | sort)
+    fi
 fi
 
 if [ -z "$CHANGED_FILES" ]; then
@@ -118,7 +154,7 @@ else
     CHANGED_COUNT=$(echo "$CHANGED_FILES" | wc -l)
 fi
 
-echo "✓ Found $CHANGED_COUNT changed files in git diff"
+echo "✓ Found $CHANGED_COUNT changed files in $CHANGED_FILES_SOURCE"
 
 # Extract files from scope declaration file.
 # Handles both the v2 per-PR format (bare list items) and the legacy format.
@@ -152,12 +188,12 @@ if [ "$CHANGED_COUNT" -gt 0 ] && [ "$SCOPE_COUNT" -eq 0 ]; then
     echo ""
     echo "❌ $SCOPE_FILE is empty or malformed"
     echo ""
-    echo "Git diff shows $CHANGED_COUNT changed files, but $SCOPE_FILE declares 0 files."
+    echo "$CHANGED_FILES_SOURCE shows $CHANGED_COUNT changed files, but $SCOPE_FILE declares 0 files."
     echo ""
     echo "Remediation:"
     echo "  1. Ensure $SCOPE_FILE contains file declarations in format:"
     echo "     - \`path/to/file.ext\`"
-    echo "  2. List all files from: git diff --name-only origin/main...HEAD"
+    echo "  2. List all files from: $CHANGED_FILES_SOURCE"
     echo ""
     exit 1
 fi
@@ -165,9 +201,9 @@ fi
 # Validate git diff is not empty when scope declaration exists
 if [ "$CHANGED_COUNT" -eq 0 ] && [ "$SCOPE_COUNT" -gt 0 ]; then
     echo ""
-    echo "❌ Git diff is empty but $SCOPE_FILE declares $SCOPE_COUNT files"
+    echo "❌ $CHANGED_FILES_SOURCE is empty but $SCOPE_FILE declares $SCOPE_COUNT files"
     echo ""
-    echo "This indicates $SCOPE_FILE contains files not present in git diff."
+    echo "This indicates $SCOPE_FILE contains files not present in $CHANGED_FILES_SOURCE."
     echo ""
     echo "Remediation:"
     echo "  1. Verify you're on the correct branch"
@@ -231,7 +267,7 @@ if [ "$HAS_ERRORS" = true ]; then
     echo "❌ Scope-to-Diff validation FAILED"
     echo ""
     echo "Summary:"
-    echo "  Changed files (git diff):        $CHANGED_COUNT"
+    echo "  Changed files ($CHANGED_FILES_SOURCE): $CHANGED_COUNT"
     echo "  Declared files ($SCOPE_FILE): $SCOPE_COUNT"
     echo "  Missing from declaration:        $MISSING_COUNT"
     echo "  Extra in declaration:            $EXTRA_COUNT"
@@ -246,7 +282,7 @@ fi
 echo "✅ Exact set comparison PASSED"
 echo ""
 echo "Summary:"
-echo "  Changed files (git diff):        $CHANGED_COUNT"
+echo "  Changed files ($CHANGED_FILES_SOURCE): $CHANGED_COUNT"
 echo "  Declared files ($SCOPE_FILE): $SCOPE_COUNT"
 echo "  Missing files:                   0"
 echo "  Extra files:                     0"

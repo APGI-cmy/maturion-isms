@@ -156,7 +156,35 @@ jobs:
           echo "evidence_found=$EVIDENCE_FOUND" >> $GITHUB_OUTPUT
 
       - name: Validate Scope Declaration (BL-027)
+        id: scope_diff
+        if: (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && steps.check_governance.outputs.is_governance_auto != 'true' && steps.evidence_check.outputs.evidence_found != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const files = [];
+            let page = 1;
+            while (true) {
+              const { data } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                per_page: 100,
+                page,
+              });
+              files.push(...data.map((item) => item.filename));
+              if (data.length < 100) break;
+              page += 1;
+            }
+            const targetPath = path.join(process.env.RUNNER_TEMP, `submitted-pr-files-${context.payload.pull_request.number}.json`);
+            fs.writeFileSync(targetPath, JSON.stringify(files));
+            core.setOutput('path', targetPath);
+
+      - name: Validate Scope Declaration (BL-027)
         if: steps.check_governance.outputs.is_governance_auto != 'true' && steps.evidence_check.outputs.evidence_found != 'true'
+        env:
+          SCOPE_DIFF_FILES_PATH: ${{ steps.scope_diff.outputs.path }}
         run: |
           # Check evidence first
           if bash .github/scripts/check-evidence.sh "Scope-to-Diff" "Scope.*Declaration|scope-to-diff" | grep -q "skip_execution=true"; then

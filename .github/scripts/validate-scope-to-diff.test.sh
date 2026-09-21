@@ -52,7 +52,15 @@ run_test() {
     git checkout -q -b test-branch
     
     # Run test-specific setup
+    unset PR_NUMBER SCOPE_DIFF_FILES_PATH SCOPE_DIFF_FILES_JSON CHANGED_FILES_PATH
     $setup_func
+
+    if [ -f "submitted-files.json" ]; then
+        export SCOPE_DIFF_FILES_PATH="$test_workspace/submitted-files.json"
+    fi
+    if [ -f ".agent-admin/scope-declarations/pr-2049.md" ]; then
+        export PR_NUMBER=2049
+    fi
     
     # Run validation script and capture output
     set +e
@@ -191,6 +199,41 @@ EOF
 }
 
 run_test "Empty PR (no changes)" 0 "setup_test_7"
+
+# Test 8: Authoritative submitted file set rejects inherited extra declarations
+setup_test_8() {
+    mkdir -p .agent-admin/scope-declarations
+    cat > submitted-files.json << 'EOF'
+[".agent-admin/scope-declarations/pr-2049.md","file1.txt"]
+EOF
+
+    cat > .agent-admin/scope-declarations/pr-2049.md << 'EOF'
+# Scope Declaration
+FILES_CHANGED: 3
+- `.agent-admin/scope-declarations/pr-2049.md`
+- `file1.txt`
+- `inherited-only.txt`
+EOF
+}
+
+run_test "Submitted PR file set rejects extra inherited declarations" 1 "setup_test_8"
+
+# Test 9: Authoritative submitted file set rejects missing declarations
+setup_test_9() {
+    mkdir -p .agent-admin/scope-declarations
+    cat > submitted-files.json << 'EOF'
+[".agent-admin/scope-declarations/pr-2049.md","file1.txt","file2.txt"]
+EOF
+
+    cat > .agent-admin/scope-declarations/pr-2049.md << 'EOF'
+# Scope Declaration
+FILES_CHANGED: 2
+- `.agent-admin/scope-declarations/pr-2049.md`
+- `file1.txt`
+EOF
+}
+
+run_test "Submitted PR file set rejects missing declarations" 1 "setup_test_9"
 
 # Cleanup test directory
 rm -rf "$TEST_DIR"
