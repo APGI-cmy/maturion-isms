@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "wave_id": "GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919",
   "pr_number": 2049,
-  "current_head_sha": "761340c15fac5e4c1947ac2fb3b910036a15f8f4",
+  "current_head_sha": "ba2c4830966fc89e1d0109f892dc9615204b3435",
   "state": "PRE_HANDOVER_GATE_PASS",
   "handover_allowed": true,
   "foreman_qp_pass": true,

@@ -24,7 +24,7 @@ I am execution-ceremony-admin-agent, class: administrator, version 1.0.0. Role: 
 - `git status --porcelain` on receipt was empty.
 - `git diff --check` was PASS with no whitespace findings.
 - The PR-scoped wave record `.agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md` exists and contains `## PRE-BRIEF`.
-- ECAP self-remediation within authority for this bounded pass: refreshed the PR manifest, handover control, PR scope declaration, PR active-state record, and PR ECAP admin bundle so the current-head producer-guidance runtime correction is reflected without modifying Foreman-owned PREHANDOVER/session artifacts or the historical IAA wave record.
+- ECAP self-remediation within authority for this bounded pass: refreshed the PR manifest, handover control, PR scope declaration, PR active-state record, and PR ECAP admin bundle so the current-head terminal-state safety runtime correction is reflected without modifying Foreman-owned PREHANDOVER/session artifacts or the historical IAA wave record.
 
 ## Foreman-declared prerequisites observed (not re-adjudicated by ECAP)
 
@@ -68,20 +68,20 @@ PASS:
 ### 3. Scope parity
 
 PASS:
-- Final committed base→head diff for `7b059c4d33b2a950cecc178eb6c94fef62468e8a..HEAD` contains `52` files.
-- This is the previously recorded 48-file PR scope plus the bounded current-head producer-guidance runtime correction in four files:
-  - `.github/scripts/pre-handover-checkpoint.js`
-  - `.github/scripts/pre-handover-checkpoint.test.sh`
-  - `.github/scripts/producer-next-action-guidance.js`
-  - `.github/scripts/producer-next-action-guidance.test.sh`
-- `.agent-admin/scope-declarations/pr-2049.md` now lists the full 52-file committed diff and keeps `approved_artifact_paths` unchanged.
+- Final committed base→head diff for `7b059c4d33b2a950cecc178eb6c94fef62468e8a..HEAD` contains `56` files.
+- This is the previously recorded 52-file PR scope plus the bounded current-head terminal-state safety correction in four additional files:
+  - `.github/scripts/final-pass-cs2-review.js`
+  - `.github/scripts/iaa-prebrief-inject.js`
+  - `.github/scripts/iaa-prebrief-inject.test.js`
+  - `.github/workflows/iaa-prebrief-inject.yml`
+- `.agent-admin/scope-declarations/pr-2049.md` now lists the full 56-file committed diff and keeps `approved_artifact_paths` unchanged.
 
 ### 4. Active resolver/current-head binding
 
 PASS:
 - Stable reviewed substantive head remains `54d06636c4a3968cbea0588866d0ab4e59ce40b2`.
-- The bounded ECAP pass preserves that reviewed head while updating the PR admin truth to actual current HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4`.
-- The normalized PR-scoped active-state record now resolves to `next_required_action: PASS` with `delta_type: GATE_CHANGE_DELTA`, while manifest/tracker status is intentionally stepped back from `IAA_FINAL_PASS_CS2_REVIEW` to `PRE_HANDOVER_GATE_PASS` until Foreman refreshes final IAA on the corrected head.
+- The bounded ECAP pass preserves that reviewed head while updating the PR admin truth to actual current HEAD `ba2c4830966fc89e1d0109f892dc9615204b3435`.
+- The normalized PR-scoped active-state record now resolves to `next_required_action: PASS` with `delta_type: SUBSTANTIVE_DELTA_AFTER_EVIDENCE`, while manifest/tracker status is intentionally stepped back from `IAA_FINAL_PASS_CS2_REVIEW` to `PRE_HANDOVER_GATE_PASS` until Foreman refreshes final IAA on the corrected head.
 
 ### 5. Additional note on wave-record shape
 
@@ -106,7 +106,7 @@ ADMIN_VALIDATED
 
 - HANDOVER_ALLOWED: `no`
 - RESULT: `ADMIN_VALIDATED`
-- REASON: `The bounded PR-2049 administrative bundle is identity-bound and coherent under the stable reviewed-head/current-head model adopted by this PR. Current HEAD 761340c introduces a bounded producer-guidance runtime correction after the earlier final PASS record, so ECAP has accurately normalized the PR-scoped posture back to PRE_HANDOVER_GATE_PASS pending refreshed final IAA, without invoking IAA or making any readiness claim.`
+- REASON: `The bounded PR-2049 administrative bundle is identity-bound and coherent under the stable reviewed-head/current-head model adopted by this PR. Current HEAD ba2c483 introduces a bounded terminal-state safety runtime correction after the earlier final PASS record, so ECAP has accurately normalized the PR-scoped posture back to PRE_HANDOVER_GATE_PASS pending refreshed final IAA, without invoking IAA or making any readiness claim.`
 - administrative_validation_only: `true`
 - iaa_invoked_by_ecap: `false`
 - readiness_claim_made_by_ecap: `false`
@@ -122,7 +122,7 @@ ADMIN_VALIDATED
 |-----------|--------|
 | Substantive readiness | Accepted by Foreman QP in the PR-scoped tracker and appointment brief; recorded here only, not re-adjudicated by ECAP |
 | Administrative readiness | ACCEPTED — bounded PR-2049 admin bundle prepared with stable reviewed-head/current-head binding preserved; Foreman review still required |
-| IAA assurance verdict | PENDING_REFRESH_CURRENT_HEAD — historical PASS remains recorded, but refreshed final IAA is still required for HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4` |
+| IAA assurance verdict | PENDING_REFRESH_CURRENT_HEAD — historical PASS remains recorded, but refreshed final IAA is still required for HEAD `ba2c4830966fc89e1d0109f892dc9615204b3435` |
 | Ripple status | COMPLETED — GOV-2047-01 ripple assessment committed; one PUBLIC_API canon change already accounted for on the reviewed head |
 | Admin-compliance result | ACCEPTED |
 
@@ -173,7 +173,7 @@ ADMIN_VALIDATED
 | Field | Value |
 |-------|-------|
 | substantive_readiness | ACCEPTED — recorded in Foreman-owned tracker / appointment brief |
-| administrative_readiness | ECAP admin bundle refreshed for HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4` — stable reviewed-head binding preserved; Foreman review still required before refreshed final IAA |
+| administrative_readiness | ECAP admin bundle refreshed for HEAD `ba2c4830966fc89e1d0109f892dc9615204b3435` — stable reviewed-head binding preserved; Foreman review still required before refreshed final IAA |
 | QP admin-compliance check completed | no |
 | IAA invocation authorized | no |
 | Rejection reason (if REJECTED) | N/A |
