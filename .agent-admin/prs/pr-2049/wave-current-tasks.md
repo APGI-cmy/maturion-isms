@@ -8,17 +8,17 @@ Base branch: main
 Base SHA: 7b059c4d33b2a950cecc178eb6c94fef62468e8a
 Initial planning head SHA: 6c878323f01e53926f67740a0c1ce5c542915e79
 CS2 authorization: user-provided explicit authorization, 2026-09-19
-Status: PRE_HANDOVER_GATE_PASS
+Status: IAA_FINAL_PASS_CS2_REVIEW
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md
 iaa_prebrief_commit_sha: 148c5ef067f51a5d19db3c61238f4be7dbed917d
 ceremony_admin_appointed: true
 ceremony_admin_appointment_timestamp_utc: 2026-09-20T07:16:01Z
 reviewed_head_sha: 54d06636c4a3968cbea0588866d0ab4e59ce40b2
 current_head_binding: CURRENT_HEAD
-current_head_refresh_sha: 761340c15fac5e4c1947ac2fb3b910036a15f8f4
+current_head_refresh_sha: c8b4a7b87065dd3350e42e84251195c6c098675f
 ecap_bundle_path: .agent-admin/prs/pr-2049/ecap-admin-bundle-20260920.md
-ecap_admin_result: ADMIN_VALIDATED — bounded PR bundle is refreshed for HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4`, stable reviewed-head binding is preserved, and the current-head posture is normalized back to PRE_HANDOVER_GATE_PASS while refreshed final IAA remains pending.
-status_note: Historical IAA PASS token remains recorded in the wave record for the earlier handback snapshot, but current HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4` carries a bounded producer-guidance runtime correction and therefore does not currently claim CS2-review-only final-PASS posture.
+ecap_admin_result: ADMIN_VALIDATED — bounded PR bundle was refreshed for corrected head `c8b4a7b87065dd3350e42e84251195c6c098675f`, stable reviewed-head binding is preserved, and refreshed final IAA PASS is now recorded.
+status_note: Historical token `IAA-session-1290-20260920-PASS` remains wave history only. Current corrected-head final assurance is `IAA-session-1291-20260921-PASS`, after which this PR returns to CS2-review-only posture.
 
 ## Wave boundary
 
@@ -58,14 +58,14 @@ status_note: Historical IAA PASS token remains recorded in the wave record for t
 
 | PR # | Token | Date |
 |------|-------|------|
-| 2049 | IAA-session-1290-20260920-PASS | 2026-09-20 |
+| 2049 | IAA-session-1291-20260921-PASS | 2026-09-21 |
 
-Historical note: the token above remains part of the wave history, but it is no longer treated as the current-head final assurance record after the 2026-09-21 producer-guidance runtime correction at `761340c15fac5e4c1947ac2fb3b910036a15f8f4`.
+Historical note: `IAA-session-1290-20260920-PASS` remains part of the wave history only; the current corrected-head final assurance record is `IAA-session-1291-20260921-PASS`.
 
 ## Wave completion gate
 
 - [x] All tasks above show `[x]` only after a recorded Foreman QP PASS.
 - [x] ECAP administrative validation, if required by the IAA pre-brief, is recorded without substantive readiness language.
 - [x] PREHANDOVER proof and session memory are current and committed.
-- [ ] Independent IAA final assurance has a current, valid recorded result for HEAD `761340c15fac5e4c1947ac2fb3b910036a15f8f4`.
-- [ ] After that refresh, CS2 receives the corrected-head evidence package for its exclusive merge decision.
+- [x] Independent IAA final assurance has a current, valid recorded result for HEAD `c8b4a7b87065dd3350e42e84251195c6c098675f`.
+- [x] After that refresh, CS2 receives the corrected-head evidence package for its exclusive merge decision.
