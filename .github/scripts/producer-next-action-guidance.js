@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const STICKY_MARKER = '<!-- producer-next-action-shortfall -->';
+const { evaluateFinalPassCs2ReviewStateFromFields } = require('./final-pass-cs2-review');
 
 const NEXT_ACTION_GUIDANCE = {
   REFRESH_INJECTION_INTAKE: 'Comment `/prepare-handover` again after the latest push or instruction change to refresh the trusted current-head intake.',
@@ -43,12 +44,7 @@ function nextActionSentence(nextRequiredControl) {
 }
 
 function isCs2ReviewOnlyState(fields = {}) {
-  return String(fields.FINAL_PASS_CS2_REVIEW || '').toLowerCase() === 'yes'
-    || (
-      String(fields.RESULT || '').toUpperCase() === 'CS2_REVIEW'
-      && String(fields.ACTIVE_STATE_NEXT_REQUIRED_ACTION || '').toUpperCase() === 'CS2_REVIEW'
-      && String(fields.IAA_TOKEN_PRESENT || '').toLowerCase() === 'yes'
-    );
+  return evaluateFinalPassCs2ReviewStateFromFields(fields).effectiveCs2Review;
 }
 
 function renderGuidanceComment({ prNumber, headSha, fields = {} }) {

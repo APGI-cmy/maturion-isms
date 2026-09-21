@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const handoverIntent = require('./handover-intent');
+const { evaluateFinalPassCs2ReviewState } = require('./final-pass-cs2-review');
 
 const REQUIRED_CHECKS = [
   'preflight/phase-1-evidence',
@@ -887,14 +888,6 @@ function evaluateCheckpoint(input = {}) {
   const iaaWaiverPresent = activeArtifactTexts.some((text) => /\biaa_waiver_ref:\s*(?!none\b|n\/a\b|not_applicable\b)\S+/i.test(text));
   const ecapSatisfiedOrValidlyWaived = !requiresEcap || (adminPresent && adminCurrent) || ecapWaiverPresent;
   const iaaSatisfiedOrValidlyWaived = !requiresIaa || ((finalAssurancePresent && iaaArtifactCurrent && !tokenPending) || iaaWaiverPresent);
-  const finalPassCs2Review = activeStateNextRequiredAction === 'CS2_REVIEW'
-    && finalAssurancePresent
-    && tokenPresent
-    && !tokenPending
-    && (
-      manifestStatus === 'IAA_FINAL_PASS_CS2_REVIEW'
-      || waveTasksStatus === 'IAA_FINAL_PASS_CS2_REVIEW'
-    );
   const hasOutOfSandboxOrGovernanceBlocker = hasNonEmptyValue(outOfSandboxOrGovernanceBlocker);
 
   const identityArtifacts = [];
@@ -933,6 +926,28 @@ function evaluateCheckpoint(input = {}) {
   const activeIdentityBindingPass = identityMismatchFindings.length === 0;
 
   const staleShaFound = adminStale || iaaArtifactStale || (functionalEvidencePresent && !functionalEvidenceCurrent) || (scopePresent && !scopeCountMatches);
+  const scopeCurrent = scopePresent && scopeCountMatches;
+  const substantiveDeltaAfterEvidence = activeState.substantive_delta_after_evidence === true;
+  const finalPassState = evaluateFinalPassCs2ReviewState({
+    nextRequiredAction: activeStateNextRequiredAction,
+    manifestStatus,
+    waveTasksStatus,
+    finalAssurancePresent,
+    tokenPresent,
+    tokenPending,
+    failingChecks: checks.failing,
+    pendingChecks: checks.pending,
+    missingChecks: checks.missing,
+    mergeConflictChecked,
+    mergeableWithBase,
+    baseSyncedOrConflictsResolved,
+    identityBindingPass: activeIdentityBindingPass,
+    scopeCurrent,
+    substantiveDeltaAfterEvidence,
+    invalidatedEvidence: staleShaFound || activeArtifactsReportFailOrNo,
+    outOfAuthorityBlocker: hasOutOfSandboxOrGovernanceBlocker,
+  });
+  const finalPassCs2Review = finalPassState.effectiveCs2Review;
   const reasons = [];
   const producerSideGatesRequired = Array.from(new Set([
     adminCeremonyRequired ? 'preflight/ecap-admin-ceremony' : '',
@@ -1168,6 +1183,8 @@ function evaluateCheckpoint(input = {}) {
     nextRequiredControl = 'none';
     result = 'CS2_REVIEW';
     reason = 'Final IAA PASS is recorded; the evidence package is with CS2 for the exclusive review/merge decision.';
+  } else if (finalPassState.superseded) {
+    reason = `${reason} Recorded final PASS is superseded by current blocker(s): ${finalPassState.blockers.join('; ')}.`.trim();
   }
 
   const hasFailedGateSignal = failedGateSignalTimes.length > 0;
@@ -1223,6 +1240,11 @@ function evaluateCheckpoint(input = {}) {
     PR_MANIFEST_STATUS: manifestStatus || 'unknown',
     WAVE_TASKS_STATUS: waveTasksStatus || 'unknown',
     FINAL_PASS_CS2_REVIEW: finalPassCs2Review ? 'yes' : 'no',
+    FINAL_PASS_DECLARED: finalPassState.declaredFinalPass ? 'yes' : 'no',
+    FINAL_PASS_SUPERSEDED: finalPassState.superseded ? 'yes' : 'no',
+    FINAL_PASS_BLOCKERS: finalPassState.blockers.length ? finalPassState.blockers.join(' | ') : 'none',
+    SCOPE_CURRENT: scopeCurrent ? 'yes' : 'no',
+    SUBSTANTIVE_DELTA_AFTER_EVIDENCE: substantiveDeltaAfterEvidence ? 'yes' : 'no',
     BUILDER_QA_REQUIRED: builderQaRequired ? 'yes' : 'no',
     BUILDER_QA_INVOKED: yesNoNotRequired(builderQaInvoked, builderQaRequired),
     BUILDER_QA_EVIDENCE_PRESENT: yesNoNotRequired(functionalEvidencePresent, builderQaRequired),

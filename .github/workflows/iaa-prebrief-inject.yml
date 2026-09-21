@@ -84,6 +84,7 @@ jobs:
           REF: ${{ steps.ctx.outputs.ref }}
         with:
           script: |
+            const { buildInjectionDecision, readSimpleField } = require('./.github/scripts/iaa-prebrief-inject.js');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const prNumber = process.env.PR_NUMBER || '';
@@ -98,6 +99,7 @@ jobs:
 
             let tasksFound = false;
             let tasksSnippet = '';
+            let taskContent = '';
             let taskPath = '';
             let wave = 'unknown';
             let workItemId = '';
@@ -109,6 +111,7 @@ jobs:
                 const content = Buffer.from(data.content, 'base64').toString('utf8');
                 tasksFound = true;
                 taskPath = path;
+                taskContent = content;
                 tasksSnippet = content.slice(0, 1500).replace(/`/g, "'");
                 const match = content.match(/(?:\*\*Wave\*\*|wave):\s*(?:Wave\s+)?([^\s\n]+)/i);
                 if (match) wave = match[1];
@@ -122,6 +125,7 @@ jobs:
 
             let prebriefExists = false;
             let prebriefPath = '';
+            let matchedWaveRecordContent = '';
             try {
               const { data: dir } = await github.rest.repos.getContent({ owner, repo, path: '.agent-admin/assurance', ref });
               const files = Array.isArray(dir) ? dir.filter(f => f.type === 'file' && /^iaa-wave-record-.*\.md$/.test(f.name)) : [];
@@ -140,10 +144,54 @@ jobs:
                 if (canonical && prBound && workItemBound && headBound) {
                   prebriefExists = true;
                   prebriefPath = file.path;
+                  matchedWaveRecordContent = content;
                   break;
+                }
+                if (!matchedWaveRecordContent && prBound) {
+                  matchedWaveRecordContent = content;
                 }
               }
             } catch (_e) {}
+
+            const activeStatePath = prNumber ? `.agent-admin/prs/pr-${prNumber}/active-state.json` : '';
+            let activeState = null;
+            if (activeStatePath) {
+              try {
+                const { data } = await github.rest.repos.getContent({ owner, repo, path: activeStatePath, ref });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  activeState = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
+                }
+              } catch (_e) {}
+            }
+
+            let manifest = null;
+            const manifestPath = activeState?.manifest_path || (prNumber ? `.admin/prs/pr-${prNumber}.json` : '');
+            if (manifestPath) {
+              try {
+                const { data } = await github.rest.repos.getContent({ owner, repo, path: manifestPath, ref });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  manifest = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
+                }
+              } catch (_e) {}
+            }
+
+            let iaaArtifactText = matchedWaveRecordContent;
+            const resolverIaaArtifactPath = activeState?.iaa_artifact_path || readSimpleField(taskContent, 'iaa_prebrief_path');
+            if (resolverIaaArtifactPath) {
+              try {
+                const { data } = await github.rest.repos.getContent({ owner, repo, path: resolverIaaArtifactPath, ref });
+                if (!Array.isArray(data) && data.type === 'file') {
+                  iaaArtifactText = Buffer.from(data.content, 'base64').toString('utf8');
+                }
+              } catch (_e) {}
+            }
+
+            const injectionDecision = buildInjectionDecision({
+              taskText: taskContent,
+              activeState,
+              manifest,
+              iaaArtifactText,
+            });
 
             core.setOutput('tasks_found', String(tasksFound));
             core.setOutput('tasks_snippet', tasksSnippet);
@@ -153,13 +201,20 @@ jobs:
             core.setOutput('wave', wave);
             core.setOutput('prebrief_exists', String(prebriefExists));
             core.setOutput('prebrief_path', prebriefPath);
+            core.setOutput('suppress_prebrief_request', injectionDecision.suppressPrebriefRequest ? 'true' : 'false');
+            core.setOutput('terminal_state_reason', injectionDecision.reason);
 
-      - name: Skip if canonical pre-brief exists
-        if: steps.inspect.outputs.prebrief_exists == 'true'
-        run: echo "Canonical pre-brief exists at ${{ steps.inspect.outputs.prebrief_path }}"
+      - name: Skip if canonical pre-brief exists or final PASS suppresses ceremony
+        if: steps.inspect.outputs.prebrief_exists == 'true' || steps.inspect.outputs.suppress_prebrief_request == 'true'
+        run: |
+          if [ "${{ steps.inspect.outputs.prebrief_exists }}" = "true" ]; then
+            echo "Canonical pre-brief exists at ${{ steps.inspect.outputs.prebrief_path }}"
+          else
+            echo "${{ steps.inspect.outputs.terminal_state_reason }}"
+          fi
 
       - name: Post canonical pre-brief request
-        if: steps.inspect.outputs.tasks_found == 'true' && steps.inspect.outputs.prebrief_exists != 'true'
+        if: steps.inspect.outputs.tasks_found == 'true' && steps.inspect.outputs.prebrief_exists != 'true' && steps.inspect.outputs.suppress_prebrief_request != 'true'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.ctx.outputs.pr_number }}
