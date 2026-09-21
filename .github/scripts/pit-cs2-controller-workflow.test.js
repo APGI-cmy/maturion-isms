@@ -22,6 +22,7 @@ test('pre-brief injection cannot use a repository-global legacy wave record', ()
   assert.match(workflow, /name: Collect current-head injector inputs/);
   assert.match(workflow, /name: Evaluate current-head blocker snapshot/);
   assert.match(workflow, /CHECKPOINT_CHECK_RUNS_PATH:/);
+  assert.match(workflow, /ACTIVE_STATE_PATH: "\.agent-admin\/prs\/pr-\$\{\{ steps\.ctx\.outputs\.pr_number \}\}\/active-state\.json"/);
   assert.match(workflow, /CHECKPOINT_MERGEABLE_WITH_BASE:/);
   assert.match(workflow, /core\.setOutput\('injection_outcome'/);
   assert.doesNotMatch(workflow, /taskPaths\.push\('\.agent-workspace\/foreman-v2\/personal\/wave-current-tasks\.md'\)/);

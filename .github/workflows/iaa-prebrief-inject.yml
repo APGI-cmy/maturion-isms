@@ -311,6 +311,7 @@ jobs:
           CHECKPOINT_CHANGED_FILES_PATH: ${{ steps.inputs.outputs.changed_files_path }}
           CHECKPOINT_PR_COMMENTS_PATH: ${{ steps.inputs.outputs.pr_comments_path }}
           CHECKPOINT_REPO_FILES_PATH: ${{ steps.inputs.outputs.repo_files_path }}
+          ACTIVE_STATE_PATH: ".agent-admin/prs/pr-${{ steps.ctx.outputs.pr_number }}/active-state.json"
           CHECKPOINT_MERGE_CONFLICT_CHECKED: ${{ steps.ctx.outputs.merge_conflict_checked }}
           CHECKPOINT_MERGEABLE_WITH_BASE: ${{ steps.ctx.outputs.mergeable_with_base }}
           CHECKPOINT_BASE_SYNCED_OR_CONFLICTS_RESOLVED: ${{ steps.ctx.outputs.base_synced_or_conflicts_resolved }}
