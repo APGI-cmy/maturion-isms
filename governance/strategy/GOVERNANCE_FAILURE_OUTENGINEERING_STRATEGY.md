@@ -7,7 +7,7 @@
 **Quality owner:** Foreman in Quality Professor (QP) mode  
 **Administrative validation:** ECAP; **independent assurance:** IAA  
 **Status:** Living strategy — proposed controls, documentation filing only; not implementation or merge approval  
-**Version:** 1.5 — 2026-09-21; automation north-star mandate  
+**Version:** 1.6 — 2026-09-21; current-head assurance freshness control  
 **Repository home:** `governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md`  
 **Review cadence:** At every governed PR closure and monthly CS2 review  
 
@@ -263,6 +263,7 @@ This table is the initial baseline. Update it for every material failure, near m
 | FO-017 | Pre-brief injector treats final PASS as effective without receiving current check/conflict facts | Incomplete shared-evaluator input | give every injector the authoritative current-head blocker snapshot and require three outcomes: `SUPPRESS_TERMINAL`, `STOP_AND_FIX_NO_INJECTION`, or `REQUEST_PREBRIEF`; test final PASS plus failed, pending, missing and merge-conflict conditions through the real workflow entrypoint | Controller, Foreman QP, IAA | Observed on #2049 head `ce2867f`; OPEN | hard gate + real-workflow negative-path tests |
 | FO-018 | PR scope record claims parity while it lists inherited paths absent from the submitted GitHub diff | Evidence/source-of-truth drift | derive declared paths/count from the exact GitHub base→head diff; fail closed on either undeclared actual files or declared-but-absent paths; bind the parity result to the reviewed head | Foreman QP, ECAP, controller | Observed on #2049 head `ce2867f`: declared `57`, actual `40`, 17 stale inherited paths; OPEN | hard gate + bidirectional parity test |
 
+| FO-019 | Current implementation changes are presented as final-ready with an IAA PASS token bound to an earlier implementation head | Assurance identity/freshness | Bind QP, ECAP, IAA and CS2 terminal transition to one reviewed implementation fingerprint; permit only a verified token-only delta after IAA; fail closed if code, workflow, scope or evidence inputs changed after the IAA-reviewed fingerprint | Foreman QP, ECAP, IAA, controller/CS2 | Observed on PR #2049: runtime-repair head `2ec9c69` was newer than IAA-reviewed head `3392e02`; OPEN | hard gate + reviewed-fingerprint/allowed-delta regression tests |
 ### Required entry for every new failure
 
 `FO-### | date | work item/PR | observed behaviour | impact | root cause | classification | containment | permanent control | test/gate | earliest expected detection layer | actual detection layer | escape explanation | owner | status | recurrence count | evidence links`
@@ -363,3 +364,4 @@ The current user instructions authorize repository filing, workflow alignment, a
 | 1.3 | 2026-09-21 | Added a mandatory safety envelope and human kill switch, authoritative event decision record, machine-enforced active-CS2 merge policy, failure escape analysis, explicit terminal precedence and `READY_FOR_IAA` retirement | Strategy update pending in PR #2050; no runtime authority or limit is activated by this documentation change |
 | 1.4 | 2026-09-21 | Recorded FO-017 injector blocker-input escape and FO-018 false scope-parity escape found in PR #2049; tightened W2/W3 proof requirements | Strategy update pending in PR #2050; PR #2049 requires bounded correction and revalidation |
 | 1.5 | 2026-09-21 | Recorded the project north-star mandate: fully automated, bounded, convergent delivery with continuous failure outengineering; added the mandatory drift decision test and escalation rule | Strategy update pending in PR #2050; applies immediately as a CS2 review guardrail, while machine enforcement remains a planned implementation outcome |
+| 1.6 | 2026-09-21 | Recorded FO-019: runtime changes on PR #2049 were presented with an IAA PASS bound to an earlier implementation head; added reviewed-fingerprint and permitted-token-delta prevention requirements | Strategy update pending in PR #2050; current-head QP/ECAP/IAA completion required before PR #2049 can return to CS2 review |
