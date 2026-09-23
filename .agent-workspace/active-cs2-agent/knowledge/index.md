@@ -9,7 +9,7 @@
 
 | Requirement | Artifact | Owner / route | Validation | Current readiness |
 |---|---|---|---|---|
-| Tier 1 identity, authority, four phases, inactive status | `.github/agents/active-cs2-agent.md` | CodexAdvisor under issue #2056; final approval by human CS2 | YAML parse, char-count, fresh-process bootstrap load, provider-boundary capture | CONTRACT_READY / INACTIVE |
+| Tier 1 identity, authority, four phases, inactive status | `.github/agents/active-cs2-agent.md` | CodexAdvisor under exact CS2 authority; final approval by human CS2 | YAML parse, char-count, fresh-process bootstrap load, provider-boundary capture | CONTRACT_READY / INACTIVE |
 | Permanent failure rules | `FAIL-ONLY-ONCE.md` | active-cs2-agent continuity | Preflight read; referenced by session memory | READY |
 | Role method and truthfulness | `operating-protocol.md` | active-cs2-agent | Phase 2 load | READY |
 | Bootstrap gate | `bootstrap-input-validation-spec.md` | active-cs2-agent | Wake-up + explicit matrix | READY |
@@ -29,7 +29,7 @@
 3. Human CS2 retains reserved matters, breaker reset, activation approval, and protected merge authority.
 4. IAA remains independent and final; ECAP remains administrative only.
 5. Tier 3 is reconstructed from validated durable facts and cannot invent authority.
-6. PR #1413 remains a metadata-only integrity/evidence follow-up unless an actual failing check proves otherwise.
+6. Metadata-only provenance or inventory-rebinding work remains a later integrity/evidence follow-up unless an actual failing check proves otherwise.
 
 ## Truthful status vocabulary
 

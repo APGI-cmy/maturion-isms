@@ -27,13 +27,16 @@ This PR delivers the inactive active-CS2 contract and Tier 2 bundle. It does not
 
 | Check | Command / surface | Result | Meaning |
 |---|---|---|---|
+| In-session MCP bootstrap request | `agent_bootstrap(agent_id: "active-cs2-agent")` | PASS | The available MCP surface in this session returned the active-CS2 contract after the correction pass. |
 | Fresh-process bootstrap discovery | `cd mcp-servers/agent-bootstrap && node test-bootstrap.js` | PASS | A fresh `agent-bootstrap` server process discovered 21 agent contracts, including `active-cs2-agent`, and validated core lookup/boot behaviour. |
+| Fresh-server MCP bootstrap request | Node SDK stdio client against a freshly spawned `node index.js` server in `mcp-servers/agent-bootstrap/` | PASS | A real MCP `tools/call` request for `agent_bootstrap(agent_id: "active-cs2-agent")` returned the active-CS2 contract plus expected Tier 1 / Tier 2 markers. This proves the actual fresh-server tool path, not only replicated lookup logic. |
 | Tier 2 bundle loadability | `.github/scripts/wake-up-protocol.sh active-cs2-agent` | PASS | The wake-up path resolved `.github/agents/active-cs2-agent.md`, loaded `.agent-workspace/active-cs2-agent/knowledge/index.md`, and verified all 10 declared Tier 2 required files exist. |
-| Live MCP provider refresh | `agent_bootstrap(agent_id: \"active-cs2-agent\")` in the current already-running tool session | EXTERNAL PROVIDER BOUNDARY | The registered MCP server instance did not rescan `.github/agents/` after file creation and returned `Unrecognized agent_id 'active-cs2-agent'`. This is a session-refresh/provider limitation, not evidence that a fresh server process cannot load the contract. |
+| Two-/three-wave schema fixtures | Python `jsonschema.validate(...)` against `valid-two-wave-pilot.json`, `valid-three-wave-plan.json`, and `scoped-merge-policy.json` | PASS | The repository's published two-wave job, three-wave job, and scoped merge-policy fixtures are schema-valid and demonstrate that this bundle does not encode a two-wave limit. |
+| Rejection acceptance specification | Structural validation of `evaluator-rejection-cases.json` | PASS (ACCEPTANCE SPEC ONLY) | Eighteen evaluator rejection/acceptance cases are present and structurally coherent. They define future evaluator expectations only; they do not claim a live controller or runtime evaluator already exists. |
 
 ## Truthful Wave B conclusion
 
-The repository proves real loadability of the new contract and required Tier 2 bundle through a fresh bootstrap-server process plus the wake-up protocol. The remaining limitation is provider refresh inside the already-running in-session MCP registration: the live tool list is stale until the server is restarted or a new session begins. No runtime/controller activation is implied by this proof.
+The repository proves real loadability of the new contract and required Tier 2 bundle through the available in-session MCP surface, a fresh bootstrap-server process, a successful real fresh-server MCP bootstrap request, and the wake-up protocol. It also proves the currently published two-/three-wave and merge-policy fixtures are schema-valid, while keeping evaluator rejection cases clearly categorized as acceptance specifications for an unimplemented runtime. No runtime/controller activation is implied by this proof.
 
 ## Runtime implementation handback
 

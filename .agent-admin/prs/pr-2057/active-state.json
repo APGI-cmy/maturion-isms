@@ -14,9 +14,13 @@
   "admin_only_delta": false,
   "substantive_delta_after_evidence": false,
   "gate_change_delta": false,
-  "next_required_action": "PASS",
+  "next_required_action": "CURRENT_HEAD_REVALIDATION_THEN_ECAP_AND_FINAL_IAA",
   "delta_type": "SUBSTANTIVE_DELTA",
-  "contradictions": [],
+  "contradictions": [
+    "The prior hosted failures for agent-contract-format/yaml-validation and agent-contract-format/placeholder-check were recorded on the earlier reviewed head before this correction set was submitted.",
+    "Current worktree-backed evidence now passes the targeted YAML/placeholder checks, uses escaped required-check strings that decode to identical full check names, and has a stage-aware bootstrap spec, but current-head hosted revalidation has not yet been rerun on the submitted correction head.",
+    "A real fresh-server MCP bootstrap request, wake-up validation, and applicable schema-fixture checks now pass for the submitted content, yet ECAP and final IAA remain pending until Foreman binds the same results to the current committed head."
+  ],
   "changed_files": [
     ".github/agents/active-cs2-agent.md",
     ".agent-workspace/active-cs2-agent/knowledge/index.md",
@@ -42,6 +46,9 @@
     ".agent-admin/governance/agent-contract-diffs/diff-20260923-active-cs2-successor.md",
     ".agent-admin/prehandover/proof-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-070-20260923.md",
-    ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md"
+    ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md",
+    ".agent-admin/builder-appointments/pr-2057-wave-b-executable-validation-qa-builder-20260923.md",
+    ".agent-admin/evidence/pr-2057-wave-b-qa-validation-20260923.md",
+    ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ]
 }

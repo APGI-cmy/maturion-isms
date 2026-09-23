@@ -6,7 +6,7 @@ Every active-wave context must be reconstructable from durable facts and current
 
 - `job_id`, `wave_id`, `ordinal`, `depends_on`
 - approved scope and envelope reference
-- PR number, repository, base SHA, head SHA, reviewed-content fingerprint
+- repository plus the exact ref/content fingerprint available at the current stage, and PR number/base SHA/head SHA/reviewed-content fingerprint once a PR-bound submission exists
 - current blockers and dependency outcomes
 - QP, ECAP, and IAA references applicable to the current stage
 - remaining runtime/correction/attempt counters

@@ -3,7 +3,7 @@
   "pr": 2057,
   "issue": 2056,
   "type": "active-cs2-successor-contract-bundle",
-  "status": "BUNDLE_COMPLETE_PENDING_FINAL_IAA",
+  "status": "DRAFT_PENDING_CURRENT_HEAD_REVALIDATION_ECAP_AND_FINAL_IAA",
   "owner": "CodexAdvisor-agent",
   "branch": "copilot/create-active-cs2-successor",
   "base_branch": "main",
@@ -38,7 +38,10 @@
     ".agent-admin/governance/agent-contract-diffs/diff-20260923-active-cs2-successor.md",
     ".agent-admin/prehandover/proof-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-070-20260923.md",
-    ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md"
+    ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md",
+    ".agent-admin/builder-appointments/pr-2057-wave-b-executable-validation-qa-builder-20260923.md",
+    ".agent-admin/evidence/pr-2057-wave-b-qa-validation-20260923.md",
+    ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ],
   "prepared_admin_artifacts": [
     ".admin/prs/pr-2057.json",
@@ -47,8 +50,11 @@
     ".agent-admin/prs/pr-2057/wave-current-tasks.md",
     ".agent-admin/prs/pr-2057/active-state.json",
     ".agent-admin/governance/agent-contract-diffs/diff-20260923-active-cs2-successor.md",
-    ".agent-admin/prehandover/proof-pr-2057-active-cs2-successor-20260923.md"
+    ".agent-admin/prehandover/proof-pr-2057-active-cs2-successor-20260923.md",
+    ".agent-admin/builder-appointments/pr-2057-wave-b-executable-validation-qa-builder-20260923.md",
+    ".agent-admin/evidence/pr-2057-wave-b-qa-validation-20260923.md",
+    ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ],
   "execution_model": "codexadvisor-governed-with-foreman-wave-b",
-  "note": "Implements the inactive active-CS2 successor contract and full Tier 2 continuity bundle on the published ISMS baseline from PR #2055. Fresh-process bootstrap discovery and wake-up validation passed for the authored bundle. The remaining limitation is an external/provider boundary: the already-running in-session agent_bootstrap MCP surface did not rescan .github/agents after file creation and therefore cannot load the new agent until refresh/restart. PR #1413 remains a tracked metadata-only provenance repair for later integrity/evidence rebinding and is not treated as a blanket implementation blocker."
+  "note": "This correction set submits the protected active-CS2 contract and Tier 2 bundle fixes requested on PR #2057: constitutional SELF-MOD protection, escaped required-check strings that decode back to the identical full check names, stage-aware bootstrap gating, updated runtime handoff truth, and bounded Wave B executable-validation evidence. The current worktree-backed validation record proves in-session bootstrap, real fresh-server MCP bootstrap, wake-up, and applicable schema-fixture success for the submitted content, while keeping `evaluator-rejection-cases.json` categorized as acceptance-spec evidence only. The PR remains draft because current-head hosted revalidation, Foreman current-head QP, ECAP, and final independent IAA are still pending."
 }

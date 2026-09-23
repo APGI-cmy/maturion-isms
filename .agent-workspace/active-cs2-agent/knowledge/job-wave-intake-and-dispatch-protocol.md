@@ -9,7 +9,7 @@ Before dispatch, confirm all of the following:
 3. `ordinal` and `depends_on` form a non-empty acyclic approved graph.
 4. Dependencies for the target wave are all `VALIDATED`.
 5. The envelope matches the approved W0 limits or later approved replacement values.
-6. The PR/head/base/content fingerprint in Tier 3 matches the reviewed submission.
+6. When execution is PR-bound, the PR/head/base/content fingerprint in Tier 3 matches the reviewed submission. Before a PR exists, the repository/ref/content fingerprint available at the current stage must match the approved job context and be upgraded to a PR-bound fingerprint before handover or merge-stage controls.
 7. No active breaker, missing limit, unknown predecessor, or out-of-scope path exists.
 
 ## Dispatch output
@@ -19,7 +19,7 @@ A successful release yields a dispatch envelope with:
 - `job_id`, `wave_id`, and `dispatch_idempotency_key`
 - approved scope and envelope reference
 - predecessor validation result
-- PR/head/base/reviewed-content fingerprint
+- PR/head/base/reviewed-content fingerprint when PR-bound, otherwise the exact repository/ref/content fingerprint available at dispatch time
 - current blockers
 - stage evidence references available at dispatch time
 - next allowed stage and Foreman return route

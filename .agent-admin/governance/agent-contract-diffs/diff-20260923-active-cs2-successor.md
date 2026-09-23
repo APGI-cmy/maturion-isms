@@ -16,17 +16,21 @@
 | Truthful readiness/activation state | PASS — Tier 1 states `CONTRACT_READY / INACTIVE`; Tier 2 and handoff files preserve that state and refuse runtime overclaim |
 | Preserve role boundaries | PASS — contract forbids building, specialist appointment, Foreman/QP/ECAP/IAA replacement, authority/safety self-merge, breaker reset, and self-activation |
 | Complete Tier 2 readiness bundle | PASS — 10 required knowledge files plus continuity files were created under `.agent-workspace/active-cs2-agent/` |
-| Truthful Wave B validation | PASS — loadability is proven by fresh-process bootstrap discovery plus wake-up verification; the stale in-session MCP registration is documented as the single explicit external/provider boundary |
+| Truthful Wave B validation | PASS — loadability is proven by in-session MCP bootstrap, fresh-process bootstrap discovery, a real fresh-server MCP bootstrap request, wake-up verification, and bounded schema-fixture validation; rejection cases remain acceptance-spec evidence only |
 | No unnecessary bootstrap implementation edits | PASS — no changes were made to `mcp-servers/agent-bootstrap/*`; no defect requiring such a change was proven |
 
 ## Validation
 
 - `python` YAML parse of `.github/agents/active-cs2-agent.md`: PASS
-- Contract character count: `10748` / `30000`: PASS
+- Contract character count: `11245` / `30000`: PASS
 - `.github/scripts/wake-up-protocol.sh active-cs2-agent`: PASS (contract, Tier 2 required files, CANON_INVENTORY, and environment checks)
+- `agent_bootstrap(agent_id: "active-cs2-agent")` in the current session: PASS
 - `cd mcp-servers/agent-bootstrap && node test-bootstrap.js`: PASS (fresh bootstrap server process discovers and loads 21 contracts including the new agent)
-- `agent_bootstrap(agent_id: "active-cs2-agent")` in the current already-running tool session: EXTERNAL/PROVIDER BOUNDARY (stale registration; requires refresh/new session)
+- Fresh stdio MCP client against `mcp-servers/agent-bootstrap/index.js`: PASS (real fresh-server bootstrap request returned the active-CS2 contract and expected readiness markers)
+- Two-wave / three-wave / merge-policy schema fixtures: PASS
+- `evaluator-rejection-cases.json`: PASS (ACCEPTANCE SPEC ONLY — not runtime/controller proof)
 - Placeholder scan across the new contract and Tier 2 bundle: PASS
+- Escaped YAML required-check strings decode back to the identical full check names: PASS
 
 ## Blocking Remainder
 
