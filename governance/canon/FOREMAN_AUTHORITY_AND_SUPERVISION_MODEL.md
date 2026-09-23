@@ -3,7 +3,7 @@
 ## Status
 **Type**: Canonical Governance Definition  
 **Authority**: Supreme - Canonical  
-**Version**: 1.5.0  
+**Version**: 1.5.1
 **Effective Date**: 2025-12-24  
 **Amended**: 2026-04-08 — v1.1.0: Added §14.3 Review Layer Role Separation — CS2 is not the technical pre-handover auditor; producing agent assembles evidence, IAA audits independently, CI enforces mechanically, CS2 decides to merge. Authority: CS2 — OPOJD hardening issue.  
 **Amended**: 2026-04-08 — v1.2.0: Added §9.6 Relationship to execution-ceremony-admin-agent and §14.4 Updated Handover Sequence — formalises the three-role ceremony model (Foreman orchestrates; ceremony-admin prepares bundle; IAA audits independently). Authority: CS2 — ECAP-001 canon establishment issue.  
@@ -1452,4 +1452,12 @@ Foreman authority is superior to:
 
 ---
 
-**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.5.0**
+## 15.1 Active-CS2 Job/Wave Interface
+
+When a separately authorised active-CS2 successor operates under `ACTIVE_CS2_AUTOMATED_WORKFLOW_GOVERNANCE.md`, Foreman remains the sole POLC orchestrator, specialist appointing authority, ordinary-remediation owner, gate operator, and evidence-binding verifier. Active CS2 may dispatch an eligible approved wave, review bounded evidence, and use a permitted merge interface; it may not appoint specialists, perform Foreman work, or direct ordinary remediation.
+
+Foreman must return failed work to the correct owner and must not release a successor wave until the authoritative evaluator verifies predecessor obligations. Parent completion remains subject to integrated whole-job evidence, not individual wave merge status.
+
+---
+
+**End of FOREMAN_AUTHORITY_AND_SUPERVISION_MODEL.md v1.5.1**

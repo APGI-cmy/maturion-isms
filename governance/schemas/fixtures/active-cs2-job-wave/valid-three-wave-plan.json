@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "job_id": "job-generalized-plan",
+  "status": "APPROVED",
+  "current_wave_id": null,
+  "approved_scope": {
+    "authority_reference": "human-cs2-approved-generalized-plan",
+    "acceptance_obligations": ["integrated-functional-delivery", "integrated-regression-evidence"]
+  },
+  "envelope": {
+    "envelope_id": "generalized-plan-envelope",
+    "max_active_jobs": 1,
+    "max_active_waves": 1,
+    "max_material_corrections": 1,
+    "max_dispatch_runtime_minutes": 30,
+    "max_total_runtime_minutes": 120,
+    "expiry_at": "2026-12-31T23:59:59Z",
+    "stage_attempt_limits": {"BUILD": 2, "MERGE": 1},
+    "merge_attempt_limit": 1,
+    "spend_ceiling": 0,
+    "spend_telemetry_mode": "RUNTIME_ONLY",
+    "human_reset_required": true
+  },
+  "waves": [
+    {"wave_id": "wave-a", "ordinal": 1, "status": "PLANNED", "depends_on": [], "scope": ["a"], "acceptance_obligations": ["a-accepted"], "merge_evidence": null},
+    {"wave_id": "wave-b", "ordinal": 2, "status": "PLANNED", "depends_on": ["wave-a"], "scope": ["b"], "acceptance_obligations": ["b-accepted"], "merge_evidence": null},
+    {"wave_id": "wave-c", "ordinal": 3, "status": "PLANNED", "depends_on": ["wave-b"], "scope": ["c"], "acceptance_obligations": ["c-accepted"], "merge_evidence": null}
+  ],
+  "events": [],
+  "final_acceptance": null
+}

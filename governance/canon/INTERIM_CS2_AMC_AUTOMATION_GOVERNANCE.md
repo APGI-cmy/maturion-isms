@@ -1,7 +1,8 @@
 # INTERIM CS2/AMC AUTOMATION GOVERNANCE
 
-**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.0.1 | **Authority**: CS2
 **Date**: 2026-08-11  
+**Amended**: 2026-09-22 — clarified separation from the separately governed active-CS2 successor (CS2-authorised issue #1409)
 **Type**: Constitutional Governance Definition  
 **Layer-Down Status**: PUBLIC_API  
 **Applies To**: Interim AMC-style CS2 automation agents, higher-order orchestration, bounded pilots  
@@ -454,6 +455,7 @@ Each expansion shall be explicitly authorized by CS2 through a new GitHub issue 
 | Version | Date | Amendment | Authority |
 |---------|------|-----------|-----------|
 | 1.0.0 | 2026-08-11 | Initial canon for interim CS2/AMC automation governance | CS2 |
+| 1.0.1 | 2026-09-22 | Clarified interim/advisory separation from the active-CS2 successor | CS2-authorised issue #1409 |
 
 ---
 
@@ -469,6 +471,15 @@ Each expansion shall be explicitly authorized by CS2 through a new GitHub issue 
 - `LEARNING_LOOP_CATEGORIES_AND_LIFECYCLE.md` — Learning promotion paths
 - `STOP_AND_FIX_DOCTRINE.md` — Remediation escalation
 - `MATURION_AGENT_NETWORK_ORGANIGRAM.md` — Future CS2 maturity model
+- `ACTIVE_CS2_AUTOMATED_WORKFLOW_GOVERNANCE.md` — Separate active-CS2 successor authority
+
+---
+
+## 17. Separation from Active-CS2 Successor
+
+This interim role remains advisory-only. It does not obtain dispatch, routine-merge, next-wave progression, parent-job acceptance, or controller-state authority by this canon, a pilot charter, or implication.
+
+`ACTIVE_CS2_AUTOMATED_WORKFLOW_GOVERNANCE.md` separately defines the contract-ready active-CS2 successor, its machine-governed limits, and its human-CS2 activation gate. That successor does not amend this interim role, weaken its non-substitution rules, or convert historic interim evidence into active authority.
 
 ---
 

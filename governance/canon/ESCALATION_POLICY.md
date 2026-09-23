@@ -3,7 +3,7 @@
 ## Status
 **Type**: Tier-1 Constitutional Canon  
 **Authority**: Supreme - Constitutional  
-**Version**: 3.0.0  
+**Version**: 3.0.1
 **Effective Date**: 2026-02-17  
 **Owner**: Maturion Engineering Leadership (Johan Ras)  
 **Layer-Down Status**: PUBLIC_API  
@@ -963,7 +963,15 @@ When escalating, verify:
 
 ---
 
-**Version**: 3.0.0  
+## 14.1 Active-CS2 Workflow Escalations
+
+The active-CS2 successor must fail closed and escalate to human CS2 for an unapproved wave/scope/envelope change, breaker reset, missing required limit, new cost or credential, destructive action, irreducible business decision, authority/safety merge, or constitutional ambiguity. Foreman handles ordinary implementation and correction routing. IAA retains independent assurance; it is never an escalation substitute.
+
+The authoritative evaluator records typed refusals and routes them according to `ACTIVE_CS2_AUTOMATED_WORKFLOW_GOVERNANCE.md`. A predecessor that is failed, abandoned, tripped, blocked, or unknown cannot be treated as an escalation resolution or release its successor.
+
+---
+
+**Version**: 3.0.1
 **Effective**: 2026-02-17  
 **Authority**: GOVERNANCE_PURPOSE_AND_SCOPE.md, LIVING_AGENT_SYSTEM.md v6.2.0  
 **Owner**: Johan Ras (CS2)  

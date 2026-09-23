@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maturion.example/governance/schemas/active-cs2-merge-policy/v1",
+  "title": "Active CS2 Machine-Governed Merge Policy",
+  "description": "A versioned policy allow-list. Schema conformance alone never permits merge; the evaluator must verify each required condition against current evidence.",
+  "type": "object",
+  "required": ["schema_version", "policy_version", "approval_binding", "scope", "allowed_change_classes", "required_checks", "independent_evidence_required", "resolved_substantive_threads_required", "fresh_fingerprint_required", "compare_and_set_required", "protected_authority_exclusions", "refusal_codes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "policy_version": {"type": "string", "minLength": 1},
+    "approval_binding": {"type": "object", "required": ["authority_reference", "approved_revision"], "additionalProperties": false, "properties": {"authority_reference": {"type": "string", "minLength": 1}, "approved_revision": {"type": "string", "minLength": 1}}},
+    "scope": {"type": "object", "required": ["repositories", "target_branches", "permitted_paths", "job_ids", "wave_ids"], "additionalProperties": false, "properties": {"repositories": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "target_branches": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "permitted_paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "job_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^job-[A-Za-z0-9][A-Za-z0-9._-]*$"}}, "wave_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^wave-[A-Za-z0-9][A-Za-z0-9._-]*$"}}}},
+    "allowed_change_classes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "required_checks": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "independent_evidence_required": {"const": true},
+    "resolved_substantive_threads_required": {"const": true},
+    "fresh_fingerprint_required": {"const": true},
+    "compare_and_set_required": {"const": true},
+    "protected_authority_exclusions": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {"enum": ["AGENT_CONTRACT", "AUTHORITY_CHANGE", "SAFETY_CONTROL", "CREDENTIAL", "DESTRUCTIVE_ACTION"]},
+      "allOf": [
+        {"contains": {"const": "AGENT_CONTRACT"}},
+        {"contains": {"const": "AUTHORITY_CHANGE"}},
+        {"contains": {"const": "SAFETY_CONTROL"}},
+        {"contains": {"const": "CREDENTIAL"}},
+        {"contains": {"const": "DESTRUCTIVE_ACTION"}}
+      ]
+    },
+    "refusal_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["UNAPPROVED_SCOPE", "DEPENDENCY_UNMET", "BUDGET_EXHAUSTED", "BREAKER_TRIPPED", "EVIDENCE_STALE", "MATERIAL_BLOCKER", "GATE_UNSATISFIED", "IDENTITY_MISMATCH", "UNKNOWN_DELTA", "CONFLICT", "RESERVED_MATTER"]}}
+  }
+}

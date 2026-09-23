@@ -3,21 +3,21 @@
   "repository": "APGI-cmy/maturion-isms",
   "canonical_source": "APGI-cmy/maturion-foreman-governance",
   "last_sync": {
-    "timestamp": "2026-09-04T09:06:33Z",
-    "session_id": "align-20260904-090633",
+    "timestamp": "2026-09-23T12:19:08Z",
+    "session_id": "align-20260923-121908",
     "executed_by": "governance-liaison-isms-agent",
     "canonical_inventory_version": "1.0.0",
     "canonical_inventory_date": "2026-05-23",
-    "total_canons_synced": 4,
+    "total_canons_synced": 20,
     "sync_method": "layer-down-automated",
     "sync_status": "SUCCESS",
-    "canonical_commit": "ad9761c43efe2026e8a12849754a7d9fd260dfdd",
+    "canonical_commit": "35b95f1fbe990d3b8c3ee46a91020bec6625eb54",
     "files_layered_down": [
       "governance/CANON_INVENTORY.json"
     ],
     "upstream_ripple_pr": "1375",
     "followup_pr": "1984",
-    "ripple_pr": "2042",
+    "ripple_pr": "2055",
     "source_issue": "1982"
   },
   "alignment_status": {
@@ -29,7 +29,7 @@
       "missing": 0
     },
     "drift_detected": false,
-    "last_drift_check": "2026-09-04T09:06:33Z",
+    "last_drift_check": "2026-09-23T12:19:08Z",
     "documented_exclusions": [
       {
         "path": "governance/canon/GOVERNANCE_CANON_MANIFEST.md",

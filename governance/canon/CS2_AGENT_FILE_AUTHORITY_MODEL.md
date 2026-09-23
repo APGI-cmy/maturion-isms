@@ -1,7 +1,8 @@
 # CS2 AGENT FILE AUTHORITY MODEL
 
-**Version**: 2.0.0  
+**Version**: 2.0.1
 **Date**: 2026-01-21  
+**Amended**: 2026-09-22 — active-CS2 successor contract creation and activation clarified
 **Status**: Active  
 **Type**: Constitutional Governance Rule  
 **Authority**: Supreme - Canonical  
@@ -631,6 +632,10 @@ This model **works with**:
 ---
 
 ## Version History
+
+**Version 2.0.1** (2026-09-22)
+- Active-CS2 successor contracts remain CS2-authorised agent-contract work and require CodexAdvisor creation, independent IAA review, and human CS2 approval before activation.
+- Authority derives from `ACTIVE_CS2_AUTOMATED_WORKFLOW_GOVERNANCE.md`; this change does not activate a successor or alter any existing delegation.
 
 **Version 2.0.0** (2026-01-21)  
 - **MAJOR UPDATE**: Introduces granular 5-level authority hierarchy
