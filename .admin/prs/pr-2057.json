@@ -3,7 +3,7 @@
   "pr": 2057,
   "issue": 2056,
   "type": "active-cs2-successor-contract-bundle",
-  "status": "PRE_BRIEF_ONLY",
+  "status": "BUNDLE_COMPLETE_PENDING_FINAL_IAA",
   "owner": "CodexAdvisor-agent",
   "branch": "copilot/create-active-cs2-successor",
   "base_branch": "main",
@@ -38,16 +38,17 @@
     ".agent-admin/governance/agent-contract-diffs/diff-20260923-active-cs2-successor.md",
     ".agent-admin/prehandover/proof-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/CodexAdvisor-agent/memory/PREHANDOVER-session-070-20260923.md",
-    ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md",
-    ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
+    ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md"
   ],
   "prepared_admin_artifacts": [
     ".admin/prs/pr-2057.json",
     ".agent-admin/assurance/iaa-wave-record-pr-2057-active-cs2-successor-20260923.md",
     ".agent-admin/scope-declarations/pr-2057.md",
     ".agent-admin/prs/pr-2057/wave-current-tasks.md",
-    ".agent-admin/prs/pr-2057/active-state.json"
+    ".agent-admin/prs/pr-2057/active-state.json",
+    ".agent-admin/governance/agent-contract-diffs/diff-20260923-active-cs2-successor.md",
+    ".agent-admin/prehandover/proof-pr-2057-active-cs2-successor-20260923.md"
   ],
   "execution_model": "codexadvisor-governed-with-foreman-wave-b",
-  "note": "The withdrawn WAITING_FOR_PUBLISHED_PROVENANCE stop remains historical context only. Governance PR #1413 is a tracked metadata-only provenance repair and must not be treated as a blanket implementation ban for this PR."
+  "note": "Implements the inactive active-CS2 successor contract and full Tier 2 continuity bundle on the published ISMS baseline from PR #2055. Fresh-process bootstrap discovery and wake-up validation passed for the authored bundle. The remaining limitation is an external/provider boundary: the already-running in-session agent_bootstrap MCP surface did not rescan .github/agents after file creation and therefore cannot load the new agent until refresh/restart. PR #1413 remains a tracked metadata-only provenance repair for later integrity/evidence rebinding and is not treated as a blanket implementation blocker."
 }
