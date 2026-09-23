@@ -3,7 +3,7 @@
   "pr": 2057,
   "issue": 2056,
   "type": "active-cs2-successor-contract-bundle",
-  "status": "DRAFT_PENDING_ECAP_RERUN_AND_FINAL_IAA",
+  "status": "DRAFT_PENDING_FINAL_IAA_RERUN",
   "owner": "CodexAdvisor-agent",
   "branch": "copilot/create-active-cs2-successor",
   "base_branch": "main",
@@ -64,5 +64,5 @@
     ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ],
   "execution_model": "codexadvisor-governed-with-foreman-wave-b",
-  "note": "Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` contains the protected active-CS2 contract and Tier 2 bundle fixes requested on PR #2057: constitutional SELF-MOD protection, escaped required-check strings that decode back to the identical full check names, stage-aware bootstrap gating, updated runtime handoff truth, and bounded Wave B executable-validation evidence. Foreman rebound that evidence through current-head validation and then received an ECAP admin rejection on head `246bacec9f1ef24c7c6dd1f45e6cd2a827db8784`, not because of any remaining MCP/bootstrap defect, but because active PR-scoped mutable records were not yet normalized for current-head ceremony administration. This commit performs that bounded admin normalization, adds a superseding current-head Wave B rebind artifact plus a current-head admin pointer, and keeps the PR in draft pending ECAP rerun and final independent IAA."
+  "note": "Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` contains the protected active-CS2 contract and Tier 2 bundle fixes requested on PR #2057: constitutional SELF-MOD protection, escaped required-check strings that decode back to the identical full check names, stage-aware bootstrap gating, updated runtime handoff truth, and bounded Wave B executable-validation evidence. Foreman rebound that evidence through current-head validation. ECAP has now administratively validated the normalized current-head packet by evaluating head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`, and that result was committed at head `21861845b8918d36cbba00cd888bcc6524db7ce2`. Final IAA was then invoked and rejected head `ce2e18e69222a3680f53511a973dae68f221612a` only because the active mutable PR-scoped carriers still advertised the pre-ECAP-rerun state. This commit normalizes those carriers to the committed ECAP-passed posture and keeps the PR in draft pending final IAA rerun."
 }

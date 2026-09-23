@@ -10,10 +10,10 @@ protected_path_touched: true
 ecap_required: true
 ecap_invoked: yes
 ceremony_admin_appointed: true
-ecap_verdict: REJECTED_BACK_TO_PRODUCER
-admin_ceremony_compliance: PENDING_ECAP_RERUN
+ecap_verdict: ADMIN_VALIDATED
+admin_ceremony_compliance: ECAP_ADMIN_VALIDATED
 HANDOVER_ALLOWED: no
-RESULT: ADMIN_POINTER_ONLY
+RESULT: FINAL_IAA_RERUN_PENDING
 PR: #2057
 Issue: #2056
 Branch: copilot/create-active-cs2-successor
@@ -49,10 +49,12 @@ manifest_path: .admin/prs/pr-2057.json
 - active-cs2 merge-policy fixture: PASS
 - active-cs2 evaluator rejection cases: ACCEPTANCE_SPEC_ONLY
 
+latest_iaa_rejection_head_sha: ce2e18e69222a3680f53511a973dae68f221612a
+
 ## Pointer purpose
 
 - Preserve the original immutable pointer artifact as historical evidence.
-- Provide the active current-head admin pointer path for the ECAP rerun sequence.
+- Provide the active current-head admin pointer path for the final-IAA rerun sequence after ECAP administrative validation.
 - Bind the reviewed implementation head, the ECAP rejection head, and the current mutable admin
   normalization state in one PR-scoped discovery surface.
 
@@ -60,7 +62,10 @@ manifest_path: .admin/prs/pr-2057.json
 
 - Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` passed the bounded Wave B
   executable-validation route.
-- ECAP was invoked on head `246bacec9f1ef24c7c6dd1f45e6cd2a827db8784` and rejected it back to the
-  producer for mutable PR-scoped admin-normalization gaps only.
-- This pointer exists so the next ECAP pass can evaluate the normalized current head without
-  rewriting historical evidence.
+- ECAP administratively validated the normalized PR-scoped current-head packet by evaluating
+  head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`; that result is recorded in
+  `.agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md`.
+- Final IAA was then invoked and rejected head `ce2e18e69222a3680f53511a973dae68f221612a`
+  because the active mutable PR-scoped carriers still advertised the pre-ECAP-rerun state.
+- This pointer refresh resolves that carrier contradiction without requiring a prohibited
+  evidence-only exact-head refresh loop. The next step is final IAA rerun on the resulting current head.
