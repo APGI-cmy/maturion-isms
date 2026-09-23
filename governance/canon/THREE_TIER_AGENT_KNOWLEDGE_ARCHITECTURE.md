@@ -1,6 +1,6 @@
 # THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE
 
-**Status**: CANONICAL | **Version**: 1.0.0 | **Authority**: CS2  
+**Status**: CANONICAL | **Version**: 1.0.1 | **Authority**: CS2
 **Date**: 2026-02-21
 
 ---
@@ -215,6 +215,7 @@ The agent accumulates Tier 3 knowledge during execution:
 | **foreman** | FM governance canon (SHA256 verified) | Wave state, builder registry, pre-auth checklist | Wave/subwave context |
 | **governance-admin** | `CANON_INVENTORY.json` + constitutional canon | Ripple state, consumer registry | Session-specific governance context |
 | **assurance** | IAA canon (SHA256 verified) + `CANON_INVENTORY.json` | `governance/quality/agent-integrity/` reference index | PR-specific assurance context |
+| **active-cs2** | `ACTIVE_CS2_AUTOMATED_WORKFLOW_GOVERNANCE.md` + `CANON_INVENTORY.json` (SHA256 verified) | Approved job/wave record, merge policy, envelope ledger, and failure register | Validated job/wave dispatch context including scope, dependencies, PR/head/base/content, blockers, and QP/ECAP/IAA references |
 
 ---
 
@@ -256,7 +257,7 @@ These issues serve as the canonical reference for how consumer repositories impl
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-02-21  
+**Version**: 1.0.1
+**Last Updated**: 2026-09-22
 **Authority**: CS2 (Johan Ras)  
 **Living Agent System**: v6.2.0

@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "policy_version": "pilot-1",
+  "approval_binding": {
+    "authority_reference": "human-cs2-approved-w0",
+    "approved_revision": "w0-plan-rev-1"
+  },
+  "scope": {
+    "repositories": ["APGI-cmy/maturion-isms"],
+    "target_branches": ["main"],
+    "permitted_paths": ["governance/**"],
+    "job_ids": ["job-w0-pilot"],
+    "wave_ids": ["wave-foundation", "wave-follow-on"]
+  },
+  "allowed_change_classes": ["governance"],
+  "required_checks": ["required-check"],
+  "independent_evidence_required": true,
+  "resolved_substantive_threads_required": true,
+  "fresh_fingerprint_required": true,
+  "compare_and_set_required": true,
+  "protected_authority_exclusions": ["AGENT_CONTRACT", "AUTHORITY_CHANGE", "SAFETY_CONTROL", "CREDENTIAL", "DESTRUCTIVE_ACTION"],
+  "refusal_codes": ["UNAPPROVED_SCOPE", "EVIDENCE_STALE", "MATERIAL_BLOCKER", "GATE_UNSATISFIED", "RESERVED_MATTER"]
+}

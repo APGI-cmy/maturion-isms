@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "job_id": "job-w0-pilot",
+  "status": "APPROVED",
+  "current_wave_id": null,
+  "approved_scope": {
+    "authority_reference": "human-cs2-approved-w0",
+    "acceptance_obligations": ["integrated-functional-delivery"]
+  },
+  "envelope": {
+    "envelope_id": "w0-pilot-envelope",
+    "max_active_jobs": 1,
+    "max_active_waves": 1,
+    "max_material_corrections": 1,
+    "max_dispatch_runtime_minutes": 30,
+    "max_total_runtime_minutes": 120,
+    "expiry_at": null,
+    "stage_attempt_limits": null,
+    "merge_attempt_limit": null,
+    "spend_ceiling": null,
+    "spend_telemetry_mode": "RUNTIME_ONLY",
+    "human_reset_required": true
+  },
+  "waves": [
+    {"wave_id": "wave-foundation", "ordinal": 1, "status": "PLANNED", "depends_on": [], "scope": ["containment"], "acceptance_obligations": ["foundation-accepted"], "merge_evidence": null},
+    {"wave_id": "wave-follow-on", "ordinal": 2, "status": "PLANNED", "depends_on": ["wave-foundation"], "scope": ["integration"], "acceptance_obligations": ["integration-accepted"], "merge_evidence": null}
+  ],
+  "events": [],
+  "final_acceptance": null
+}
