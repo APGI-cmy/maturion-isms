@@ -84,3 +84,7 @@ IAA_PREFLIGHT_BRIEF:
 - Trigger basis: the PR-scoped objective requires creation of `.github/agents/active-cs2-agent.md`; `AGENT_CONTRACT` is therefore the controlling trigger category for this pre-brief.
 - Anti-regression review: `FAIL-ONLY-ONCE.md` and `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` reviewed; no BUILD/AAWP_MAT anti-regression niggle obligation is activated by this PRE-BRIEF-only, inactive-bundle scope.
 - Status: `PRE-BRIEF ONLY — NO FINAL IAA TOKEN OR REJECTION ISSUED IN THIS INVOCATION`
+
+## REJECTION_HISTORY
+
+- 2026-09-23 — ACR-12 / ACR-15 active-bundle state contradiction: `.agent-admin/prehandover/proof-pr-2057-current-head-admin-20260923.md` still declares `ecap_verdict: REJECTED_BACK_TO_PRODUCER`, `admin_ceremony_compliance: PENDING_ECAP_RERUN`, and the PR-scoped tracker/manifest files still say `DRAFT_PENDING_ECAP_RERUN` / `RERUN_ECAP_ON_CURRENT_HEAD_THEN_FINAL_IAA`, while `.agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md` declares `ADMIN_VALIDATED`. Fix required: execution-ceremony-admin-agent (with Foreman/CodexAdvisor PR-scoped admin carrier ownership) must normalize the active current-head admin pointer and PR-scoped tracker/manifest/state files to the committed ECAP-passed posture before final IAA is re-invoked. Classification: SYSTEMIC ceremony-state parity regression; prevention action: enforce a post-ECAP-pass normalization sweep/gate before final IAA invocation.
