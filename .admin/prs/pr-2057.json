@@ -3,12 +3,14 @@
   "pr": 2057,
   "issue": 2056,
   "type": "active-cs2-successor-contract-bundle",
-  "status": "DRAFT_PENDING_CURRENT_HEAD_REVALIDATION_ECAP_AND_FINAL_IAA",
+  "status": "DRAFT_PENDING_ECAP_RERUN_AND_FINAL_IAA",
   "owner": "CodexAdvisor-agent",
   "branch": "copilot/create-active-cs2-successor",
   "base_branch": "main",
   "base_sha": "fe854ca44febb864dc661f95a0c0f9a79d980ef2",
   "head_sha": "CURRENT_HEAD",
+  "reviewed_implementation_head_sha": "a8843608bb958c7908e71f8592be2d326b23f318",
+  "ecap_rejection_head_sha": "246bacec9f1ef24c7c6dd1f45e6cd2a827db8784",
   "canonical_wave_identity": "ACTIVE-CS2-SUCCESSOR-20260923",
   "requires_iaa": true,
   "requires_ecap": true,
@@ -41,6 +43,9 @@
     ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md",
     ".agent-admin/builder-appointments/pr-2057-wave-b-executable-validation-qa-builder-20260923.md",
     ".agent-admin/evidence/pr-2057-wave-b-qa-validation-20260923.md",
+    ".agent-admin/evidence/pr-2057-wave-b-current-head-rebind-20260923.md",
+    ".agent-admin/prehandover/proof-pr-2057-current-head-admin-20260923.md",
+    ".agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ],
   "prepared_admin_artifacts": [
@@ -51,10 +56,13 @@
     ".agent-admin/prs/pr-2057/active-state.json",
     ".agent-admin/governance/agent-contract-diffs/diff-20260923-active-cs2-successor.md",
     ".agent-admin/prehandover/proof-pr-2057-active-cs2-successor-20260923.md",
+    ".agent-admin/prehandover/proof-pr-2057-current-head-admin-20260923.md",
     ".agent-admin/builder-appointments/pr-2057-wave-b-executable-validation-qa-builder-20260923.md",
     ".agent-admin/evidence/pr-2057-wave-b-qa-validation-20260923.md",
+    ".agent-admin/evidence/pr-2057-wave-b-current-head-rebind-20260923.md",
+    ".agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ],
   "execution_model": "codexadvisor-governed-with-foreman-wave-b",
-  "note": "This correction set submits the protected active-CS2 contract and Tier 2 bundle fixes requested on PR #2057: constitutional SELF-MOD protection, escaped required-check strings that decode back to the identical full check names, stage-aware bootstrap gating, updated runtime handoff truth, and bounded Wave B executable-validation evidence. The current worktree-backed validation record proves in-session bootstrap, real fresh-server MCP bootstrap, wake-up, and applicable schema-fixture success for the submitted content, while keeping `evaluator-rejection-cases.json` categorized as acceptance-spec evidence only. The PR remains draft because current-head hosted revalidation, Foreman current-head QP, ECAP, and final independent IAA are still pending."
+  "note": "Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` contains the protected active-CS2 contract and Tier 2 bundle fixes requested on PR #2057: constitutional SELF-MOD protection, escaped required-check strings that decode back to the identical full check names, stage-aware bootstrap gating, updated runtime handoff truth, and bounded Wave B executable-validation evidence. Foreman rebound that evidence through current-head validation and then received an ECAP admin rejection on head `246bacec9f1ef24c7c6dd1f45e6cd2a827db8784`, not because of any remaining MCP/bootstrap defect, but because active PR-scoped mutable records were not yet normalized for current-head ceremony administration. This commit performs that bounded admin normalization, adds a superseding current-head Wave B rebind artifact plus a current-head admin pointer, and keeps the PR in draft pending ECAP rerun and final independent IAA."
 }

@@ -2,24 +2,26 @@
   "pr": 2057,
   "branch": "copilot/create-active-cs2-successor",
   "runtime_head_sha": "ACTIVE_HEAD_RESOLVED_BY_GATE",
+  "reviewed_implementation_head_sha": "a8843608bb958c7908e71f8592be2d326b23f318",
+  "ecap_rejection_head_sha": "246bacec9f1ef24c7c6dd1f45e6cd2a827db8784",
   "base_sha": "fe854ca44febb864dc661f95a0c0f9a79d980ef2",
   "manifest_path": ".admin/prs/pr-2057.json",
   "scope_path": ".agent-admin/scope-declarations/pr-2057.md",
   "active_state_path": ".agent-admin/prs/pr-2057/active-state.json",
   "wave_tasks_path": ".agent-admin/prs/pr-2057/wave-current-tasks.md",
   "iaa_artifact_path": ".agent-admin/assurance/iaa-wave-record-pr-2057-active-cs2-successor-20260923.md",
-  "ecap_artifact_path": "",
+  "ecap_artifact_path": ".agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md",
   "bootstrap_required": false,
   "rebase_only_delta": false,
   "admin_only_delta": false,
   "substantive_delta_after_evidence": false,
   "gate_change_delta": false,
-  "next_required_action": "CURRENT_HEAD_REVALIDATION_THEN_ECAP_AND_FINAL_IAA",
+  "next_required_action": "RERUN_ECAP_ON_CURRENT_HEAD_THEN_FINAL_IAA",
   "delta_type": "SUBSTANTIVE_DELTA",
   "contradictions": [
-    "The prior hosted failures for agent-contract-format/yaml-validation and agent-contract-format/placeholder-check were recorded on the earlier reviewed head before this correction set was submitted.",
-    "Current worktree-backed evidence now passes the targeted YAML/placeholder checks, uses escaped required-check strings that decode to identical full check names, and has a stage-aware bootstrap spec, but current-head hosted revalidation has not yet been rerun on the submitted correction head.",
-    "A real fresh-server MCP bootstrap request, wake-up validation, and applicable schema-fixture checks now pass for the submitted content, yet ECAP and final IAA remain pending until Foreman binds the same results to the current committed head."
+    "Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` passed the targeted YAML/placeholder checks, fresh-server MCP bootstrap, wake-up, and applicable schema-fixture validation.",
+    "ECAP then rejected the next head `246bacec9f1ef24c7c6dd1f45e6cd2a827db8784` for mutable PR-scoped admin-normalization gaps, not for a remaining contract-format or MCP/bootstrap defect.",
+    "This active-state refresh resolves the mutable-record gap, but ECAP and final IAA remain pending until the bounded admin-normalization delta is revalidated on the new current head."
   ],
   "changed_files": [
     ".github/agents/active-cs2-agent.md",
@@ -49,6 +51,9 @@
     ".agent-workspace/CodexAdvisor-agent/memory/session-070-20260923.md",
     ".agent-admin/builder-appointments/pr-2057-wave-b-executable-validation-qa-builder-20260923.md",
     ".agent-admin/evidence/pr-2057-wave-b-qa-validation-20260923.md",
+    ".agent-admin/evidence/pr-2057-wave-b-current-head-rebind-20260923.md",
+    ".agent-admin/prehandover/proof-pr-2057-current-head-admin-20260923.md",
+    ".agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ]
 }
