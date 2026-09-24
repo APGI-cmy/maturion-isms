@@ -118,6 +118,39 @@ IAA_PREFLIGHT_BRIEF:
 5. **Would a reasonable production owner accept this as merge-ready?**  
    Yes, for the narrow authorized scope only: an inactive contract/readiness bundle with truthful validation and no activation claim.
 
+### Delta Final Assurance — 2026-09-24
+
+- Invocation date: `2026-09-24`
+- Reviewed PR / issue: `#2057` / `#2056`
+- Reviewed current head: `6365d9f5f2c2be6b533a00b801316dedf5e4a15d`
+- Prior reviewed-content IAA PASS head: `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`
+- Bounded delta base: `1959d07d00710aa5d23ab0ac5e18f4d46912c207`
+- Classified category: `AGENT_CONTRACT`
+- Ceremony-admin appointed: `YES`
+
+### Delta Acceptance-Criteria Evidence Matrix
+
+| Acceptance criterion | Independent evidence | Verdict |
+|---|---|---|
+| Tier 1 Phase 2 step 1 now aligns with the stage-aware Tier 2 model and no longer requires a future PR at approved-job intake | `.github/agents/active-cs2-agent.md` Phase 2 step 1; `.agent-workspace/active-cs2-agent/knowledge/bootstrap-input-validation-spec.md` stage model + approved-job intake / PR-bound execution rows; `.agent-workspace/active-cs2-agent/knowledge/job-wave-intake-and-dispatch-protocol.md` intake gate item 6 | PASS |
+| Approved-job intake remains possible without a future PR, while PR-bound execution still fails closed when due carriers are absent | `.github/agents/active-cs2-agent.md` Phase 2 step 1; `.agent-workspace/active-cs2-agent/knowledge/bootstrap-input-validation-spec.md` rows 27-45 and evaluation rules 80-82 | PASS |
+| Final merge still requires current checks, merge policy, compare-and-set binding, and final independent assurance | `.github/agents/active-cs2-agent.md` Phase 3 step 5; `.agent-workspace/active-cs2-agent/knowledge/bootstrap-input-validation-spec.md` final-merge rows 54-61; GitHub PR #2057 current check runs on head `6365d9f5f2c2be6b533a00b801316dedf5e4a15d` | PASS |
+| Current PR-scoped carriers are truthful for the live 33-file diff and now include the published `#2060` inventory basis | `git diff --name-only fe854ca44febb864dc661f95a0c0f9a79d980ef2..6365d9f5f2c2be6b533a00b801316dedf5e4a15d` = 33 files; `.admin/prs/pr-2057.json` `scope[]`; `.agent-admin/prs/pr-2057/active-state.json` `changed_files[]`; `.agent-admin/scope-declarations/pr-2057.md` `FILES_CHANGED`; remote `refs/heads/main` `governance/CANON_INVENTORY.json` SHA `c7f28c17f981af3c9ac3c6c46b79d073cff88057` | PASS |
+| Existing Wave B + ECAP evidence remains reusable and no new runtime/controller/activation claim was introduced by the bounded delta | `.agent-admin/evidence/pr-2057-wave-b-current-head-rebind-20260923.md` 2026-09-24 stage-alignment addendum; `.agent-admin/prehandover/proof-pr-2057-current-head-admin-20260923.md`; `.agent-workspace/active-cs2-agent/knowledge/runtime-integration-handoff.md` | PASS |
+
+### Delta Independent Risk Challenge
+
+1. **What could still fail after merge?**  
+   A future live active-CS2 implementation could still fail because the runtime evaluator, merge executor, safety supervisor, and activation path are intentionally not delivered here.
+2. **What evidence would prove it does not fail?**  
+   The current PR must stay strictly inactive, require later-stage PR-bound carriers only when due, and preserve explicit fail-closed final-merge prerequisites; later runtime waves would need separate executable evidence and independent assurance.
+3. **Is that evidence present?**  
+   Yes. The revised Tier 1 sentence now matches the Tier 2 stage model, the current carriers truthfully bind the 33-file PR state, and the runtime handoff continues to state that runtime/controller/activation surfaces are not implemented.
+4. **Is there any contradiction between issue intent, architecture requirements, and PR evidence?**  
+   No. The bounded delta removes the prior intake-stage contradiction without broadening scope, reopening runtime claims, or weakening final merge controls.
+5. **Would a reasonable production owner accept this as merge-ready?**  
+   Yes, for the bounded inactive-contract delta only: the current head preserves the previously assured inactive bundle while correcting the only remaining Tier 1/Tier 2 stage-alignment gap.
+
 ## TOKEN
 
 ```text
@@ -127,6 +160,20 @@ PR: #2057 — Implement inactive active-CS2 successor and Tier 2/3 readiness bun
 Reviewed HEAD: 4b6294ca8f06b7c40f273c30cfcde8a321ee50f8
 Date: 2026-09-23
 Checks: 36 substantive checks — 36 PASS, 0 FAIL
+Merge gate parity: PASS
+Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
+Merge permitted subject to CS2 approval.
+```
+
+```text
+PHASE_B_BLOCKING_TOKEN: IAA-session-1296-20260924-PASS
+Verdict: ASSURANCE-TOKEN (PASS)
+PR: #2057 — Implement inactive active-CS2 successor and Tier 2/3 readiness bundle
+Reviewed HEAD: 6365d9f5f2c2be6b533a00b801316dedf5e4a15d
+Delta base: 1959d07d00710aa5d23ab0ac5e18f4d46912c207
+Boundary: Bounded delta only — prior reviewed-content assurance remains the reusable baseline; no runtime/controller/activation approval implied.
+Date: 2026-09-24
+Checks: 18 substantive checks — 18 PASS, 0 FAIL
 Merge gate parity: PASS
 Adoption phase: PHASE_B_BLOCKING — Hard gate ACTIVE
 Merge permitted subject to CS2 approval.
