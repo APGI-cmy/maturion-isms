@@ -13,7 +13,7 @@ ceremony_admin_appointed: true
 ecap_verdict: ADMIN_VALIDATED
 admin_ceremony_compliance: ECAP_ADMIN_VALIDATED
 HANDOVER_ALLOWED: no
-RESULT: FINAL_IAA_RERUN_PENDING
+RESULT: DELTA_FINAL_IAA_PENDING
 PR: #2057
 Issue: #2056
 Branch: copilot/create-active-cs2-successor
@@ -22,7 +22,7 @@ CURRENT_HEAD_SHA: CURRENT_HEAD
 reviewed_implementation_head_sha: a8843608bb958c7908e71f8592be2d326b23f318
 ecap_rejection_head_sha: 246bacec9f1ef24c7c6dd1f45e6cd2a827db8784
 Base SHA: fe854ca44febb864dc661f95a0c0f9a79d980ef2
-files_changed: 31
+files_changed: 33
 scope_refreshed_post_final_edit: YES
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr-2057-active-cs2-successor-20260923.md
 ecap_validation_path: .agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md
@@ -50,11 +50,12 @@ manifest_path: .admin/prs/pr-2057.json
 - active-cs2 evaluator rejection cases: ACCEPTANCE_SPEC_ONLY
 
 latest_iaa_rejection_head_sha: ce2e18e69222a3680f53511a973dae68f221612a
+latest_reviewed_iaa_pass_head_sha: 4b6294ca8f06b7c40f273c30cfcde8a321ee50f8
 
 ## Pointer purpose
 
 - Preserve the original immutable pointer artifact as historical evidence.
-- Provide the active current-head admin pointer path for the final-IAA rerun sequence after ECAP administrative validation.
+- Provide the active current-head admin pointer path for the delta-final-IAA sequence after ECAP administrative validation.
 - Bind the reviewed implementation head, the ECAP rejection head, and the current mutable admin
   normalization state in one PR-scoped discovery surface.
 
@@ -65,7 +66,14 @@ latest_iaa_rejection_head_sha: ce2e18e69222a3680f53511a973dae68f221612a
 - ECAP administratively validated the normalized PR-scoped current-head packet by evaluating
   head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`; that result is recorded in
   `.agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md`.
-- Final IAA was then invoked and rejected head `ce2e18e69222a3680f53511a973dae68f221612a`
-  because the active mutable PR-scoped carriers still advertised the pre-ECAP-rerun state.
-- This pointer refresh resolves that carrier contradiction without requiring a prohibited
-  evidence-only exact-head refresh loop. The next step is final IAA rerun on the resulting current head.
+- Final IAA later issued `IAA-session-1295-20260923-PASS` for reviewed content head
+  `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`; the earlier rejection at head
+  `ce2e18e69222a3680f53511a973dae68f221612a` remains historical only.
+- The published #2060 inventory repair is now part of the current integrity basis, and the active
+  PR-scoped carrier set truthfully reflects the 33-file diff.
+- The only remaining substantive delta is the Tier 1 Phase 2 step 1 sentence now aligned with the
+  existing stage-aware Tier 2 intake model; existing Wave B and ECAP evidence remain reusable for
+  this bounded delta.
+- This pointer refresh preserves historical artifacts without creating a prohibited evidence-only
+  exact-head loop. The next step is delta-bounded independent final assurance on the resulting
+  current head.
