@@ -16,12 +16,12 @@
   "admin_only_delta": false,
   "substantive_delta_after_evidence": true,
   "gate_change_delta": false,
-  "next_required_action": "FOREMAN_DELTA_QP_AND_FINAL_IAA_ON_CURRENT_HEAD",
+  "next_required_action": "CS2_REVIEW",
   "delta_type": "SUBSTANTIVE_DELTA_AFTER_EVIDENCE",
   "contradictions": [
     "Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` passed the targeted YAML/placeholder checks, fresh-server MCP bootstrap, wake-up, and applicable schema-fixture validation.",
-    "ECAP administratively validated the normalized current-head packet by evaluating head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`, and final IAA later issued `IAA-session-1295-20260923-PASS` for reviewed content head `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`.",
-    "The published #2060 inventory repair is now present on ISMS main and incorporated into the current integrity basis; the remaining open delta is the Tier 1 stage-alignment sentence plus current-head carrier refresh on a 33-file diff that already includes IAA sessions `1294` and `1295`."
+    "ECAP administratively validated the normalized current-head packet by evaluating head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`, final IAA issued `IAA-session-1295-20260923-PASS` for reviewed content head `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`, and delta-bounded final IAA then issued `IAA-session-1296-20260924-PASS` for current head `6365d9f5f2c2be6b533a00b801316dedf5e4a15d`.",
+    "The published #2060 inventory repair is now present on ISMS main and incorporated into the current integrity basis; the current PR-scoped carrier set truthfully reflects the 34-file diff, including IAA sessions `1294`, `1295`, and `1296`, with no remaining automation blocker inside authorized scope."
   ],
   "changed_files": [
     ".github/agents/active-cs2-agent.md",
@@ -56,6 +56,7 @@
     ".agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md",
     ".agent-workspace/independent-assurance-agent/memory/session-1294-20260923.md",
-    ".agent-workspace/independent-assurance-agent/memory/session-1295-20260923.md"
+    ".agent-workspace/independent-assurance-agent/memory/session-1295-20260923.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1296-20260924.md"
   ]
 }

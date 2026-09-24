@@ -68,6 +68,6 @@ All other recorded digests matched the committed reviewed implementation head.
 
 ## Current truthful next step
 
-The remaining blocker is now the bounded current-head delta only: refresh the mutable PR-scoped
-records for 33-file parity, rerun the affected Foreman/QP current-head checks on the corrected Tier
-1 sentence, and obtain delta-bounded independent final assurance on the resulting current head.
+The bounded current-head delta is now independently assured by `IAA-session-1296-20260924-PASS`.
+Existing Wave B + ECAP evidence remains the reusable baseline, and the resulting boundary is
+`CONTRACT_READY / INACTIVE — HUMAN MERGE DECISION`.

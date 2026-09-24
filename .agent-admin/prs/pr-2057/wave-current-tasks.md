@@ -8,7 +8,7 @@ Base branch: main
 Base SHA: fe854ca44febb864dc661f95a0c0f9a79d980ef2
 Initial planning head SHA: 64e5db29cc65061a32aff7d1b172ff804693d7a4
 CS2 authorization: issue #2056 plus PR comment 5795073517 (2026-09-23)
-Status: DRAFT_PENDING_FINAL_IAA_RERUN
+Status: IAA_FINAL_PASS_CS2_REVIEW
 iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr-2057-active-cs2-successor-20260923.md
 iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-pr-2057-active-cs2-successor-20260923.md
 IAA_PREFLIGHT_BRIEF_REVIEWED: yes
@@ -22,7 +22,7 @@ ecap_bundle_path: .agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VAL
 active_wave_b_evidence_path: .agent-admin/evidence/pr-2057-wave-b-current-head-rebind-20260923.md
 active_ecap_artifact_path: .agent-admin/prehandover/proof-pr-2057-current-head-admin-20260923.md
 current_head_binding: CURRENT_HEAD
-status_note: The bundle remains `CONTRACT_READY / INACTIVE` only. Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` passed the bounded Wave B executable-validation route. ECAP then administratively validated the normalized current-head packet by evaluating head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`, and final IAA later issued `IAA-session-1295-20260923-PASS` for reviewed content head `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`. The published #2060 inventory repair is now part of the active integrity basis. The current bounded delta is limited to aligning the Tier 1 intake sentence with the already-correct stage-aware Tier 2 model and refreshing the current-head carriers/scope on the 33-file diff that already contains IAA sessions `1294` and `1295`. Keep PR #2057 in draft and route only the affected delta checks plus independent final assurance on the resulting current head.
+status_note: The bundle remains `CONTRACT_READY / INACTIVE` only. Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` passed the bounded Wave B executable-validation route. ECAP then administratively validated the normalized current-head packet by evaluating head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`, final IAA issued `IAA-session-1295-20260923-PASS` for reviewed content head `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`, and delta-bounded final IAA issued `IAA-session-1296-20260924-PASS` for current head `6365d9f5f2c2be6b533a00b801316dedf5e4a15d`. The published #2060 inventory repair is now part of the active integrity basis, the PR-scoped carriers truthfully reflect the 34-file diff including IAA sessions `1294`, `1295`, and `1296`, and the resulting posture is `CONTRACT_READY / INACTIVE — HUMAN MERGE DECISION`. Ready for Johan's review; do not merge or activate from this branch.
 
 ## Wave boundary
 
@@ -72,4 +72,4 @@ status_note: The bundle remains `CONTRACT_READY / INACTIVE` only. Reviewed imple
 
 ## IAA tokens received this wave
 
-`IAA-session-1295-20260923-PASS` exists in `.agent-admin/assurance/iaa-wave-record-pr-2057-active-cs2-successor-20260923.md` for reviewed content head `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`, and `.agent-workspace/independent-assurance-agent/memory/session-1295-20260923.md` records the bounded rerun learning note. The current correction reopens only a bounded delta-assurance step because the Tier 1 intake sentence must now be aligned to the already-correct stage-aware Tier 2 model on the resulting current head.
+`IAA-session-1295-20260923-PASS` remains the reviewed-content PASS for head `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`, and `IAA-session-1296-20260924-PASS` now covers the bounded current-head delta at `6365d9f5f2c2be6b533a00b801316dedf5e4a15d`. `.agent-workspace/independent-assurance-agent/memory/session-1295-20260923.md` and `.agent-workspace/independent-assurance-agent/memory/session-1296-20260924.md` record the reusable-baseline and bounded-delta learning notes respectively.
