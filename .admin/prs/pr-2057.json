@@ -14,7 +14,7 @@
   "canonical_wave_identity": "ACTIVE-CS2-SUCCESSOR-20260923",
   "requires_iaa": true,
   "requires_ecap": true,
-  "objective": "Create the inactive active-CS2 successor contract and complete Tier 2/3 readiness bundle on PR #2057, using the published ISMS baseline from PR #2055 while tracking PR #1413 as a later integrity/evidence rebinding concern only.",
+  "objective": "Create the inactive active-CS2 successor contract and complete Tier 2/3 readiness bundle on PR #2057, using the published ISMS baseline from PR #2055 with the published #2060 inventory repair now incorporated into the current integrity/evidence basis.",
   "scope": [
     ".github/agents/active-cs2-agent.md",
     ".agent-workspace/active-cs2-agent/knowledge/index.md",
@@ -46,7 +46,9 @@
     ".agent-admin/evidence/pr-2057-wave-b-current-head-rebind-20260923.md",
     ".agent-admin/prehandover/proof-pr-2057-current-head-admin-20260923.md",
     ".agent-workspace/execution-ceremony-admin-agent/ECAP_ADMIN_VALIDATION-pr-2057-active-cs2-successor-20260923.md",
-    ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
+    ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1294-20260923.md",
+    ".agent-workspace/independent-assurance-agent/memory/session-1295-20260923.md"
   ],
   "prepared_admin_artifacts": [
     ".admin/prs/pr-2057.json",
@@ -64,5 +66,5 @@
     ".agent-workspace/foreman-v2/memory/session-pr-2057-active-cs2-successor-20260923.md"
   ],
   "execution_model": "codexadvisor-governed-with-foreman-wave-b",
-  "note": "Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` contains the protected active-CS2 contract and Tier 2 bundle fixes requested on PR #2057: constitutional SELF-MOD protection, escaped required-check strings that decode back to the identical full check names, stage-aware bootstrap gating, updated runtime handoff truth, and bounded Wave B executable-validation evidence. Foreman rebound that evidence through current-head validation. ECAP has now administratively validated the normalized current-head packet by evaluating head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`, and that result was committed at head `21861845b8918d36cbba00cd888bcc6524db7ce2`. Final IAA was then invoked and rejected head `ce2e18e69222a3680f53511a973dae68f221612a` only because the active mutable PR-scoped carriers still advertised the pre-ECAP-rerun state. This commit normalizes those carriers to the committed ECAP-passed posture and keeps the PR in draft pending final IAA rerun."
+  "note": "Reviewed implementation head `a8843608bb958c7908e71f8592be2d326b23f318` contains the protected active-CS2 contract and Tier 2 bundle fixes requested on PR #2057: constitutional SELF-MOD protection, escaped required-check strings that decode back to the identical full check names, stage-aware bootstrap gating, updated runtime handoff truth, and bounded Wave B executable-validation evidence. Foreman rebound that evidence through current-head validation. ECAP then administratively validated the normalized current-head packet by evaluating head `453ff1e648fe3cd0a23d0aa1a157bbc1748c1f03`, and final IAA later issued `IAA-session-1295-20260923-PASS` for reviewed content head `4b6294ca8f06b7c40f273c30cfcde8a321ee50f8`. The current bounded delta incorporates the published #2060 inventory repair arrival, restores scope parity for the two IAA session-memory paths already in diff, and narrows the remaining substantive change to the Tier 1 intake sentence that must align with the existing stage-aware Tier 2 model before bounded delta review/assurance on the resulting current head."
 }

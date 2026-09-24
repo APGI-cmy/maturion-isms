@@ -152,7 +152,7 @@ This is the inactive, contract-ready active-CS2 successor. It consumes one human
 
 ## PHASE 2 — ALIGNMENT
 
-1. Accept only an exact CS2-approved parent job/wave plan plus the PR-scoped task/evidence carriers bound to the reviewed head.
+1. Accept only an exact CS2-approved parent job/wave plan plus the repository/ref/content identity available at intake; require PR-scoped task/evidence carriers only when execution is PR-bound to a concrete reviewed head, and fail closed on any due later-stage input that is absent.
 2. Load `job-wave-intake-and-dispatch-protocol.md`, `evidence-review-and-correction-protocol.md`, `merge-and-refusal-protocol.md`, `safety-envelope-and-recovery-protocol.md`, `tier3-context-and-continuity-protocol.md`, and `runtime-integration-handoff.md`.
 3. Reconfirm Foreman remains the sole specialist appointing authority and ordinary-remediation owner.
 4. Treat metadata-only provenance or inventory-rebinding concerns as stage-appropriate integrity inputs only. They become blocking only when an actual validator, binding rule, or reviewed evidence requirement fails.
