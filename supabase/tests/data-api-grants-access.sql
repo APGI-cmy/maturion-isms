@@ -9,11 +9,11 @@ INSERT INTO public.mmm_profiles(id,organisation_id,role) VALUES
 INSERT INTO public.mmm_frameworks(id,organisation_id,name,status) VALUES
  ('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000002','Other framework','DRAFT');
 INSERT INTO auth.users(id,email) VALUES
- ('00000000-0000-0000-0000-000000000101','evidence-pit-one@example.test'),
- ('00000000-0000-0000-0000-000000000102','evidence-pit-two@example.test');
+ ('00000000-0000-0000-0000-000000000101','pit-one@example.test'),
+ ('00000000-0000-0000-0000-000000000102','pit-two@example.test');
 INSERT INTO public.organisations(id,name) VALUES
- ('30000000-0000-0000-0000-000000000001','PIT and evidence org one'),
- ('30000000-0000-0000-0000-000000000002','PIT and evidence org two');
+ ('30000000-0000-0000-0000-000000000001','PIT org one'),
+ ('30000000-0000-0000-0000-000000000002','PIT org two');
 UPDATE public.profiles SET organisation_id = '30000000-0000-0000-0000-000000000001', role = 'lead_auditor'
  WHERE id = '00000000-0000-0000-0000-000000000101';
 UPDATE public.profiles SET organisation_id = '30000000-0000-0000-0000-000000000002', role = 'lead_auditor'
@@ -24,9 +24,6 @@ INSERT INTO public.user_org_memberships(user_id,org_id,status) VALUES
 INSERT INTO public.user_roles(user_id,org_id,role) VALUES
  ('00000000-0000-0000-0000-000000000101','30000000-0000-0000-0000-000000000001','project_manager'),
  ('00000000-0000-0000-0000-000000000102','30000000-0000-0000-0000-000000000002','contributor');
-INSERT INTO public.evidence_submissions(id,organisation_id,title,evidence_type,submitted_by) VALUES
- ('40000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000001','Org one evidence','document','00000000-0000-0000-0000-000000000101'),
- ('40000000-0000-0000-0000-000000000002','30000000-0000-0000-0000-000000000002','Org two evidence','document','00000000-0000-0000-0000-000000000102');
 SET LOCAL request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
 SET LOCAL request.jwt.claim.role = 'authenticated';
 SET LOCAL ROLE authenticated;
@@ -45,46 +42,9 @@ END $$;
 SET LOCAL request.jwt.claim.sub = '00000000-0000-0000-0000-000000000101';
 DO $security_regressions$
 DECLARE
- visible_rows integer;
  new_project_id uuid;
  updated_description text;
- affected_rows integer;
 BEGIN
- SELECT count(*) INTO visible_rows FROM public.evidence_submissions;
- IF visible_rows <> 1 THEN
-   RAISE EXCEPTION 'evidence_submissions SELECT was not restricted to the authenticated user organisation';
- END IF;
-
- INSERT INTO public.evidence_submissions(id,organisation_id,title,evidence_type,submitted_by)
- VALUES ('40000000-0000-0000-0000-000000000003','30000000-0000-0000-0000-000000000001','Own submission','document',auth.uid());
- UPDATE public.evidence_submissions
-   SET evaluation_status = 'in_review'
-   WHERE id = '40000000-0000-0000-0000-000000000003';
- GET DIAGNOSTICS affected_rows = ROW_COUNT;
- IF affected_rows <> 1 THEN
-   RAISE EXCEPTION 'Own-organisation evidence UPDATE did not affect exactly one row';
- END IF;
-
- BEGIN
-   INSERT INTO public.evidence_submissions(id,organisation_id,title,evidence_type,submitted_by)
-   VALUES ('40000000-0000-0000-0000-000000000004','30000000-0000-0000-0000-000000000002','Cross-org submission','document',auth.uid());
-   RAISE EXCEPTION 'Cross-organisation evidence INSERT unexpectedly allowed';
- EXCEPTION WHEN insufficient_privilege THEN NULL; END;
-
- BEGIN
-   INSERT INTO public.evidence_submissions(id,organisation_id,title,evidence_type,submitted_by)
-   VALUES ('40000000-0000-0000-0000-000000000005','30000000-0000-0000-0000-000000000001','Spoofed submitter','document','00000000-0000-0000-0000-000000000102');
-   RAISE EXCEPTION 'Spoofed evidence submitter unexpectedly allowed';
- EXCEPTION WHEN insufficient_privilege THEN NULL; END;
-
- UPDATE public.evidence_submissions
-   SET evaluation_status = 'approved'
-   WHERE id = '40000000-0000-0000-0000-000000000002';
- GET DIAGNOSTICS affected_rows = ROW_COUNT;
- IF affected_rows <> 0 THEN
-   RAISE EXCEPTION 'Cross-organisation evidence UPDATE unexpectedly affected rows';
- END IF;
-
  BEGIN
    PERFORM public.pit_is_org_member('30000000-0000-0000-0000-000000000002');
    RAISE EXCEPTION 'Authenticated caller invoked public PIT membership oracle';
@@ -144,10 +104,6 @@ BEGIN
 END
 $security_regressions$;
 SET LOCAL ROLE postgres;
-SET LOCAL ROLE service_role;
-INSERT INTO public.evidence_submissions(id,organisation_id,title,evidence_type,submitted_by)
-VALUES ('40000000-0000-0000-0000-000000000006','30000000-0000-0000-0000-000000000002','Backend evidence','document','00000000-0000-0000-0000-000000000102');
-SET LOCAL ROLE postgres;
 DO $$ DECLARE t text; BEGIN
  FOREACH t IN ARRAY ARRAY['projects','source_links'] LOOP
   -- PostgreSQL 17: a comma-separated privilege list returns true if ANY listed
@@ -157,21 +113,6 @@ DO $$ DECLARE t text; BEGIN
    RAISE EXCEPTION 'PIT RPC-only mutation boundary changed for %',t;
   END IF;
  END LOOP;
- IF NOT has_table_privilege('authenticated','public.evidence_submissions','SELECT')
-    OR NOT has_table_privilege('authenticated','public.evidence_submissions','INSERT')
-    OR NOT has_table_privilege('authenticated','public.evidence_submissions','UPDATE')
-    OR has_table_privilege('authenticated','public.evidence_submissions','DELETE') THEN
-   RAISE EXCEPTION 'Authenticated evidence_submissions privileges do not match its reviewed RLS contract';
- END IF;
- IF NOT has_table_privilege('service_role','public.evidence_submissions','SELECT')
-    OR NOT has_table_privilege('service_role','public.evidence_submissions','INSERT')
-    OR has_table_privilege('service_role','public.evidence_submissions','UPDATE')
-    OR has_table_privilege('service_role','public.evidence_submissions','DELETE') THEN
-   RAISE EXCEPTION 'Backend evidence_submissions privileges exceed or fail the observed service path';
- END IF;
- IF has_table_privilege('anon','public.evidence_submissions','SELECT,INSERT,UPDATE,DELETE') THEN
-   RAISE EXCEPTION 'evidence_submissions is exposed to anon';
- END IF;
  IF has_function_privilege('authenticated','public.mmm_current_user_org_id()','EXECUTE')
     OR has_function_privilege('authenticated','public.mmm_current_user_role()','EXECUTE')
     OR has_function_privilege('authenticated','public.pit_is_org_member(uuid)','EXECUTE')

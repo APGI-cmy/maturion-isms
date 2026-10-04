@@ -9,7 +9,7 @@
 
 ## Bounded scope
 
-Correct the existing Data API grants PR only: preserve the MMM public-helper RPC hardening, resolve the exposed PIT SECURITY DEFINER helper surface without weakening RLS or approved RPC paths, and add/test `evidence_submissions` if its supported application use and RLS are confirmed. Keep the PostgreSQL privilege-list assertion and cite PostgreSQL documentation. No deployment, unrelated schema work, or changes to Foreman Tier 1/Tier 2/CANON.
+Correct the existing Data API grants PR only: preserve the MMM public-helper RPC hardening and resolve the exposed PIT SECURITY DEFINER helper surface without weakening RLS or approved RPC paths. Exclude `evidence_submissions` from this PR's grants and focused replay because the existing legacy consumers do not match its DDL; that defect remains unresolved and outside this scope. Keep the PostgreSQL privilege-list assertion and cite PostgreSQL documentation. No deployment, unrelated schema work, or changes to Foreman Tier 1/Tier 2/CANON.
 
 ## Historical delegation-order exception
 
@@ -20,7 +20,7 @@ CS2's one-time exception is recorded in PR comments 5978432262, 5979407372, and 
 | Task ID | Task | Builder | Status | PR / Evidence |
 |---|---|---|---|---|
 | PR2058-SEC-01 | Trace MMM/PIT helper definitions, execution security, RLS references, and client/RPC callers; remove public authenticated MMM grants; resolve PIT RPC-oracle exposure with the minimal private-schema design while preserving approved paths | schema-builder | ✅ IMPLEMENTATION COMPLETE; QP PASS | PR #2058; appointed 2026-10-04T11:29:57Z; final IAA result applies to the overall PR |
-| PR2058-SEC-02 | Add exact `evidence_submissions` grants and replay/coverage fixture if confirmed supported; add focused regressions for helper non-callability/oracle denial and evidence-table grants; keep multi-privilege `has_table_privilege` assertion and cite PostgreSQL docs | schema-builder | ⚠️ GRANTS/DB REGRESSION COMPLETE; IAA FINDING OPEN | PR #2058; IAA found existing consumers query `organization_id` while the actual DDL defines `organisation_id`; no consumer fix or schema-to-consumer regression is included. PostgreSQL 17 docs: https://www.postgresql.org/docs/17/functions-info.html#FUNCTIONS-INFO-ACCESS |
+| PR2058-SEC-02 | Resolve the IAA finding by removing unsupported `evidence_submissions` grants and focused fixture claims; keep multi-privilege `has_table_privilege` assertion and cite PostgreSQL docs | schema-builder | 🟡 IN PROGRESS | PR #2058; exclude Wave 16.6 and `evidence_submissions` from this PR; the separate legacy consumer/DDL mismatch remains unresolved. PostgreSQL 17 docs: https://www.postgresql.org/docs/17/functions-info.html#FUNCTIONS-INFO-ACCESS |
 
 The recorded appointment is current and truthful; it does not assert that the appointment predates the original September implementation commits or satisfy the historical delegation-order gate.
 

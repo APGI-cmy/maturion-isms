@@ -14,6 +14,7 @@ import uuid
 ROOT = Path(__file__).resolve().parents[1]
 IMAGE = 'public.ecr.aws/supabase/postgres:17.6.1.063'
 MIGRATION = '20260923124227_explicit_data_api_grants.sql'
+PRESEEDED_LEGACY_MIGRATION = '20260310000001_wave16_6_schema_audit_completeness.sql'
 ISMS = (ROOT / 'packages/ai-centre/supabase/migrations').is_dir()
 CONTAINER = 'data-api-grants-' + uuid.uuid4().hex[:12]
 
@@ -75,7 +76,7 @@ def main():
         count = 0
         for directory in directories:
             for path in sorted(directory.glob('*.sql')):
-                if path.name == MIGRATION:
+                if path.name in (MIGRATION, PRESEEDED_LEGACY_MIGRATION):
                     continue
                 result = sql('SET ROLE postgres;\n' + path.read_text(encoding='utf-8'), expect_success=False)
                 if result.returncode:

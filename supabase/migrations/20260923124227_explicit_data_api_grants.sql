@@ -47,7 +47,6 @@ BEGIN
       ('domains', 'SELECT, INSERT, UPDATE, DELETE', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('evaluation_overrides', 'SELECT, INSERT', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('evidence', 'SELECT, INSERT, UPDATE, DELETE', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
-      ('evidence_submissions', 'SELECT, INSERT, UPDATE', '', 'SELECT, INSERT', 'r'),
       ('healthcheck', 'SELECT', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('isms_assessments', 'SELECT, INSERT, UPDATE, DELETE', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('isms_audit_events', 'SELECT, INSERT', '', 'SELECT, INSERT', 'r'),

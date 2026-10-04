@@ -15,10 +15,6 @@ restoring automatic grants.
 - The public MMM and PIT organisation/role helpers are not authenticated RPCs.
   Policies use the MMM `app_private` helpers and PIT private equivalents; the
   approved PIT project write RPCs remain callable by authenticated clients.
-- `evidence_submissions` follows its existing organisation-scoped SELECT/INSERT/
-  UPDATE policies. Authenticated clients receive those table privileges only;
-  the service role receives SELECT and INSERT for the observed backend insert/
-  returning path. Anonymous access is not granted.
 - Anonymous grants are limited to the existing `mmm_free_assessments` SELECT and
   INSERT path. No new anonymous access is added to private tables.
 - The three migration tracking tables are excluded. Backend grants cover the
@@ -44,21 +40,22 @@ grants workflow runs this check on migration changes. It uses a disposable
 Postgres 17 container without network access, host mounts or hosted credentials.
 
 Replay follows the production workflow's order: legacy, AIMC, then root
-migrations. The disposable replay also applies
-`20260310000001_wave16_6_schema_audit_completeness.sql` so coverage exercises the
-real `evidence_submissions` DDL and RLS; production's pre-seeded migration entry
-is unchanged. The replay exposed duplicate legacy trigger names; the two existing
-definitions in `20260729130000_exclusion_cascade_triggers.sql` now use DROP IF
-EXISTS before CREATE, preserving their final definitions while making a fresh
-replay succeed.
+migrations. It omits the pre-seeded
+`20260310000001_wave16_6_schema_audit_completeness.sql`: that migration's
+`evidence_submissions` column contract does not match existing legacy consumers,
+so this PR makes no Data API grant or support claim for that table. The mismatch
+remains unresolved and outside this PR's scope. The replay exposed duplicate
+legacy trigger names; the two existing definitions in
+`20260729130000_exclusion_cascade_triggers.sql` now use DROP IF EXISTS before
+CREATE, preserving their final definitions while making a fresh replay succeed.
 
 The test reproduces missing permissions with automatic grants disabled, applies
 the repair, and exercises real database roles. It checks organisation isolation,
-approval access, evidence-submission RLS/grants, PIT helper non-callability and
-the approved write RPCs, idempotency, unchanged RLS predicates/defaults,
-exclusion of future private tables, and atomic refusal when RLS is disabled.
-Auth and Storage use minimal local fixtures; this is a database test, not a
-hosted PostgREST or browser end-to-end test.
+approval access, PIT helper non-callability and the approved write RPCs,
+idempotency, unchanged RLS predicates/defaults, exclusion of future private
+tables, and atomic refusal when RLS is disabled. Auth and Storage use minimal
+local fixtures; this is a database test, not a hosted PostgREST or browser
+end-to-end test.
 
 ## Deployment
 
