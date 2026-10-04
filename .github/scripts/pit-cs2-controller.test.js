@@ -556,3 +556,304 @@ test('human approval commands normalize scope-expansion and reject automation or
   assert.match(harness.messages.info[0], /human CS2/i);
   assert.match(harness.messages.info[1], /human CS2/i);
 });
+
+// ---------------------------------------------------------------------------
+// W0-2053-C — QA-to-RED coverage for the Strategy §5.1 safety envelope / human
+// kill switch and §5.2 authoritative event decision record.
+//
+// Appointment: .agent-admin/builder-appointments/pr-2061-w0-qa-to-red-20261004.md
+// IAA pre-brief: .agent-admin/assurance/iaa-wave-record-w0-safety-containment-20261004.md
+//
+// These tests are INTENTIONALLY RED. They exercise the controller API surface
+// required by governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md
+// §5.1 and §5.2 (`evaluateSafetyEnvelope`, `enforceWorkItemLimits`,
+// `enforceSpendControl`, `resetCircuitBreaker`, `buildDecisionRecord`,
+// `recordTripEvent`, `simulateTwentyFourHourWindow`). None of these functions
+// exist in `pit-cs2-controller.js` yet, so every test below fails because the
+// required behaviour is absent — not because of malformed test setup. No test
+// in this section stubs, mocks around, or weakens its way to a false GREEN;
+// the implementation builder must satisfy these assertions as written.
+// ---------------------------------------------------------------------------
+
+const W0_SAFETY_ENVELOPE_FIELDS = [
+  'work_item_id', 'approved_paths', 'approved_agents', 'maximum_active_jobs',
+  'maximum_stage_attempts', 'maximum_remediation_attempts', 'maximum_dispatch_runtime',
+  'maximum_total_runtime', 'maximum_spend', 'maximum_merge_attempts', 'expiry',
+  'circuit_breaker_state', 'reset_authority', 'kill_switch_state',
+];
+
+const W0_DECISION_RECORD_FIELDS = [
+  'event_id', 'received_at', 'source', 'work_item_id', 'pr_number', 'head_sha', 'base_sha',
+  'reviewed_content_fingerprint', 'state_before', 'material_blockers', 'delta_class',
+  'requested_stage', 'allowed_next_action', 'action_owner', 'idempotency_key', 'attempt_count',
+  'safety_envelope_id', 'budget_snapshot', 'decision', 'reason_code', 'evidence_refs', 'state_after',
+];
+
+function w0BaselineEnvelope(overrides = {}) {
+  return {
+    work_item_id: 'pit-issue-42',
+    approved_paths: ['.github/workflows/pit-cs2-controller.yml'],
+    approved_agents: ['foreman-v2-agent', 'qa-builder'],
+    maximum_active_jobs: 1,
+    maximum_stage_attempts: 1,
+    maximum_remediation_attempts: 1,
+    maximum_dispatch_runtime: { unit: 'seconds', value: 30 * 60 },
+    maximum_total_runtime: { unit: 'seconds', value: 2 * 60 * 60 },
+    maximum_spend: { mode: 'runtime_only' },
+    maximum_merge_attempts: 1,
+    expiry: '2026-10-05T00:00:00.000Z',
+    circuit_breaker_state: 'closed',
+    reset_authority: 'human_cs2_only',
+    kill_switch_state: 'armed',
+    ...overrides,
+  };
+}
+
+function w0TaskRecord(overrides = {}) {
+  return { work_item_id: 'pit-issue-42', pr_number: 2061, ...overrides };
+}
+
+function w0SampleEvent(overrides = {}) {
+  return {
+    event_id: 'evt-0001',
+    received_at: '2026-10-04T00:00:00.000Z',
+    source: 'controller',
+    work_item_id: 'pit-issue-42',
+    pr_number: 2061,
+    head_sha: 'a'.repeat(40),
+    base_sha: 'b'.repeat(40),
+    reviewed_content_fingerprint: 'sha256:' + 'c'.repeat(64),
+    state_before: 'foreman',
+    material_blockers: [],
+    delta_class: 'admin_only',
+    requested_stage: 'IAA_PREBRIEF_READY',
+    allowed_next_action: 'FOREMAN_CREATE_PR_SCOPED_TASK_RECORD_AND_COMPLETE_IAA_PREBRIEF',
+    action_owner: 'foreman-v2-agent',
+    idempotency_key: 'pit-issue-42:evt-0001',
+    attempt_count: 1,
+    safety_envelope_id: 'env-pit-issue-42-v1',
+    budget_snapshot: { active_work_items: 1, remediation_attempts: 0, dispatch_runtime_seconds: 0, total_runtime_seconds: 0 },
+    decision: 'ALLOW',
+    reason_code: 'NONE',
+    evidence_refs: ['.agent-admin/evidence/pr-2061-w0-qa-to-red.md'],
+    state_after: 'foreman',
+    ...overrides,
+  };
+}
+
+function w0TripEvent(overrides = {}) {
+  return {
+    idempotency_key: 'pit-issue-42:trip-0001',
+    work_item_id: 'pit-issue-42',
+    condition: 'DISPATCH_RUNTIME_EXCEEDED',
+    attempt_count: 1,
+    ...overrides,
+  };
+}
+
+test('W0: a missing safety envelope fails closed and blocks dispatch', () => {
+  const decision = controller.evaluateSafetyEnvelope(null, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'ENVELOPE_MISSING');
+});
+
+test('W0: a malformed safety envelope (missing required field) fails closed', () => {
+  const malformed = w0BaselineEnvelope();
+  delete malformed.circuit_breaker_state;
+  const decision = controller.evaluateSafetyEnvelope(malformed, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'ENVELOPE_MALFORMED');
+});
+
+test('W0: a safety envelope missing any single Strategy §5.1 required field fails closed', () => {
+  for (const field of W0_SAFETY_ENVELOPE_FIELDS) {
+    const malformed = w0BaselineEnvelope();
+    delete malformed[field];
+    const decision = controller.evaluateSafetyEnvelope(malformed, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+    assert.equal(decision.decision, 'STOP_AND_FIX', `expected STOP_AND_FIX when ${field} is absent`);
+    assert.equal(decision.reason_code, 'ENVELOPE_MALFORMED', `expected ENVELOPE_MALFORMED when ${field} is absent`);
+  }
+});
+
+test('W0: an expired safety envelope fails closed', () => {
+  const expired = w0BaselineEnvelope({ expiry: '2026-10-03T00:00:00.000Z' });
+  const decision = controller.evaluateSafetyEnvelope(expired, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'ENVELOPE_EXPIRED');
+});
+
+test('W0: a task-inconsistent safety envelope (work_item_id mismatch) fails closed', () => {
+  const envelope = w0BaselineEnvelope({ work_item_id: 'pit-issue-999' });
+  const decision = controller.evaluateSafetyEnvelope(envelope, w0TaskRecord({ work_item_id: 'pit-issue-42' }), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'ENVELOPE_TASK_INCONSISTENT');
+});
+
+test('W0: an unmeasurable safety envelope limit fails closed', () => {
+  const unmeasurable = w0BaselineEnvelope({ maximum_dispatch_runtime: { unit: 'vibes', value: 'soon' } });
+  const decision = controller.evaluateSafetyEnvelope(unmeasurable, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'ENVELOPE_LIMIT_UNMEASURABLE');
+});
+
+test('W0: exactly one active work item is allowed; a second active work item is blocked', () => {
+  const envelope = w0BaselineEnvelope();
+  const allowed = controller.enforceWorkItemLimits({ active_work_items: 1 }, envelope);
+  assert.equal(allowed.decision, 'ALLOW');
+  const blocked = controller.enforceWorkItemLimits({ active_work_items: 2 }, envelope);
+  assert.equal(blocked.decision, 'STOP_AND_FIX');
+  assert.equal(blocked.reason_code, 'ACTIVE_WORK_ITEM_LIMIT_EXCEEDED');
+});
+
+test('W0: exactly one material remediation attempt is allowed; a second trips the breaker', () => {
+  const envelope = w0BaselineEnvelope();
+  const allowed = controller.enforceWorkItemLimits({ remediation_attempts: 1 }, envelope);
+  assert.equal(allowed.decision, 'ALLOW');
+  const tripped = controller.enforceWorkItemLimits({ remediation_attempts: 2 }, envelope);
+  assert.equal(tripped.decision, 'STOP_AND_FIX');
+  assert.equal(tripped.reason_code, 'REMEDIATION_ATTEMPT_LIMIT_EXCEEDED');
+});
+
+test('W0: dispatch runtime of exactly 30 minutes is allowed; 30 minutes and one second trips', () => {
+  const envelope = w0BaselineEnvelope();
+  const atLimit = controller.enforceWorkItemLimits({ dispatch_runtime_seconds: 30 * 60 }, envelope);
+  assert.equal(atLimit.decision, 'ALLOW');
+  const onePast = controller.enforceWorkItemLimits({ dispatch_runtime_seconds: 30 * 60 + 1 }, envelope);
+  assert.equal(onePast.decision, 'STOP_AND_FIX');
+  assert.equal(onePast.reason_code, 'DISPATCH_RUNTIME_EXCEEDED');
+});
+
+test('W0: total runtime of exactly two hours is allowed; two hours and one second trips', () => {
+  const envelope = w0BaselineEnvelope();
+  const atLimit = controller.enforceWorkItemLimits({ total_runtime_seconds: 2 * 60 * 60 }, envelope);
+  assert.equal(atLimit.decision, 'ALLOW');
+  const onePast = controller.enforceWorkItemLimits({ total_runtime_seconds: 2 * 60 * 60 + 1 }, envelope);
+  assert.equal(onePast.decision, 'STOP_AND_FIX');
+  assert.equal(onePast.reason_code, 'TOTAL_RUNTIME_EXCEEDED');
+});
+
+test('W0: spend control is runtime-only and refuses any live-spend-based input', () => {
+  const envelope = w0BaselineEnvelope();
+  assert.throws(() => controller.enforceSpendControl({ mode: 'live_spend', amount_usd: 0.01 }, envelope));
+  const allowed = controller.enforceSpendControl({ mode: 'runtime_only' }, envelope);
+  assert.equal(allowed.decision, 'ALLOW');
+});
+
+test('W0: a webhook-triggered reset cannot clear a tripped circuit breaker', () => {
+  const result = controller.resetCircuitBreaker(
+    { circuit_breaker_state: 'tripped' },
+    { source: 'webhook', actor: { login: 'github-actions[bot]', type: 'Bot' } },
+  );
+  assert.equal(result.circuit_breaker_state, 'tripped');
+  assert.equal(result.decision, 'STOP_AND_FIX');
+});
+
+test('W0: an agent-triggered reset cannot clear a tripped circuit breaker', () => {
+  const result = controller.resetCircuitBreaker(
+    { circuit_breaker_state: 'tripped' },
+    { source: 'agent', actor: { login: 'foreman-v2-agent', type: 'Bot' } },
+  );
+  assert.equal(result.circuit_breaker_state, 'tripped');
+  assert.equal(result.decision, 'STOP_AND_FIX');
+});
+
+test('W0: a token-triggered reset cannot clear a tripped circuit breaker', () => {
+  const result = controller.resetCircuitBreaker(
+    { circuit_breaker_state: 'tripped' },
+    { source: 'token', actor: { login: controller.CONTROLLER_LOGIN, type: 'Bot' } },
+  );
+  assert.equal(result.circuit_breaker_state, 'tripped');
+  assert.equal(result.decision, 'STOP_AND_FIX');
+});
+
+test('W0: a comment-triggered reset cannot clear a tripped circuit breaker', () => {
+  const result = controller.resetCircuitBreaker(
+    { circuit_breaker_state: 'tripped' },
+    { source: 'comment', actor: { login: controller.PILOT_CS2_LOGIN, type: 'User' } },
+  );
+  assert.equal(result.circuit_breaker_state, 'tripped');
+  assert.equal(result.decision, 'STOP_AND_FIX');
+});
+
+test('W0: a PR-triggered reset cannot clear a tripped circuit breaker', () => {
+  const result = controller.resetCircuitBreaker(
+    { circuit_breaker_state: 'tripped' },
+    { source: 'pull_request', actor: { login: controller.PILOT_CS2_LOGIN, type: 'User' } },
+  );
+  assert.equal(result.circuit_breaker_state, 'tripped');
+  assert.equal(result.decision, 'STOP_AND_FIX');
+});
+
+test('W0: an automatic-retry reset cannot clear a tripped circuit breaker', () => {
+  const result = controller.resetCircuitBreaker(
+    { circuit_breaker_state: 'tripped' },
+    { source: 'automatic_retry', actor: null },
+  );
+  assert.equal(result.circuit_breaker_state, 'tripped');
+  assert.equal(result.decision, 'STOP_AND_FIX');
+});
+
+test('W0: only an explicit human-CS2-attributed reset can clear a tripped circuit breaker', () => {
+  const result = controller.resetCircuitBreaker(
+    { circuit_breaker_state: 'tripped' },
+    { source: 'human_cs2', actor: { login: controller.PILOT_CS2_LOGIN, type: 'User' } },
+  );
+  assert.equal(result.circuit_breaker_state, 'closed');
+  assert.equal(result.decision, 'ALLOW');
+});
+
+test('W0: the decision record contains every Strategy §5.2 required field', () => {
+  const record = controller.buildDecisionRecord(w0SampleEvent());
+  for (const field of W0_DECISION_RECORD_FIELDS) {
+    assert.ok(Object.hasOwn(record, field), `decision record missing required field: ${field}`);
+  }
+});
+
+test('W0: identical input produces a byte/field-identical decision record (deterministic)', () => {
+  const event = w0SampleEvent();
+  const first = controller.buildDecisionRecord(event);
+  const second = controller.buildDecisionRecord(event);
+  assert.deepEqual(first, second);
+});
+
+test('W0: an unknown/unrecognized state_before returns a typed refusal, never inferred readiness', () => {
+  const record = controller.buildDecisionRecord(w0SampleEvent({ state_before: 'not_a_real_state' }));
+  assert.equal(record.decision, 'STOP_AND_FIX');
+  assert.equal(record.reason_code, 'UNKNOWN_STATE');
+});
+
+test('W0: a duplicate trip event is suppressed and exactly one typed trip is recorded', () => {
+  const ledger = [];
+  const event = w0TripEvent({ idempotency_key: 'pit-issue-42:trip-dup' });
+  controller.recordTripEvent(ledger, event);
+  controller.recordTripEvent(ledger, event);
+  const trips = ledger.filter((entry) => entry.type === 'LOOP_BREAK' || entry.type === 'BUDGET_TRIP');
+  assert.equal(trips.length, 1);
+});
+
+test('W0: reordered duplicate trip events still yield exactly one typed trip', () => {
+  const ledger = [];
+  const later = w0TripEvent({ idempotency_key: 'pit-issue-42:trip-reorder', attempt_count: 2 });
+  const earlier = w0TripEvent({ idempotency_key: 'pit-issue-42:trip-reorder', attempt_count: 1 });
+  controller.recordTripEvent(ledger, later);
+  controller.recordTripEvent(ledger, earlier);
+  const trips = ledger.filter((entry) => entry.type === 'LOOP_BREAK' || entry.type === 'BUDGET_TRIP');
+  assert.equal(trips.length, 1);
+});
+
+test('W0: a qualifying trip condition emits exactly one typed LOOP_BREAK or BUDGET_TRIP, never zero', () => {
+  const ledger = [];
+  controller.recordTripEvent(ledger, w0TripEvent({ idempotency_key: 'pit-issue-42:trip-exactly-one' }));
+  const trips = ledger.filter((entry) => entry.type === 'LOOP_BREAK' || entry.type === 'BUDGET_TRIP');
+  assert.equal(trips.length, 1);
+  assert.ok(['LOOP_BREAK', 'BUDGET_TRIP'].includes(trips[0].type));
+});
+
+test('W0: a simulated 24-hour repeat-event sequence makes zero live spend or paid calls', () => {
+  const envelope = w0BaselineEnvelope();
+  const clock = { start: new Date('2026-10-04T00:00:00.000Z'), tick_seconds: 60 * 60, ticks: 24 };
+  const outcome = controller.simulateTwentyFourHourWindow(envelope, clock);
+  assert.equal(outcome.live_spend_calls, 0);
+  assert.equal(outcome.paid_call_count, 0);
+  assert.equal(outcome.production_effects, 0);
+});

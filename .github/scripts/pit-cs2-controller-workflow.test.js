@@ -48,3 +48,34 @@ test('pilot documentation locks the controller-facing governance route', () => {
   assert.doesNotMatch(guide, /`NO_CHANGE`, `STOP_AND_FIX`, `READY_FOR_IAA`, or/);
   assert.match(guide, /`READY_FOR_IAA` \(or any ready-class label\) is never a terminal completion/i);
 });
+
+// ---------------------------------------------------------------------------
+// W0-2053-C — QA-to-RED coverage for the Strategy §5.1 safety envelope ceilings
+// and human-CS2-only circuit breaker reset as wired into the actual pilot
+// workflow entrypoint (not only the extracted module). These assertions are
+// INTENTIONALLY RED: the workflow does not yet declare any dispatch/runtime
+// ceiling, safety-envelope evaluation, or circuit-breaker reset wiring.
+// ---------------------------------------------------------------------------
+
+test('W0: controller dispatch step enforces the Strategy §5.1 30-minute maximum dispatch runtime ceiling', () => {
+  const workflow = read('workflows/pit-cs2-controller.yml');
+  assert.match(workflow, /timeout-minutes:\s*30/);
+});
+
+test('W0: controller job enforces the Strategy §5.1 two-hour maximum total runtime ceiling', () => {
+  const workflow = read('workflows/pit-cs2-controller.yml');
+  assert.match(workflow, /timeout-minutes:\s*120/);
+});
+
+test('W0: controller workflow evaluates the safety envelope before claiming, binding, or dispatching a work item', () => {
+  const workflow = read('workflows/pit-cs2-controller.yml');
+  assert.match(workflow, /evaluateSafetyEnvelope/);
+  assert.match(workflow, /safety[_-]envelope/i);
+});
+
+test('W0: controller workflow exposes a human-CS2-only circuit breaker reset path', () => {
+  const workflow = read('workflows/pit-cs2-controller.yml');
+  assert.match(workflow, /resetCircuitBreaker/);
+  assert.match(workflow, /reset_authority/);
+  assert.match(workflow, /human_cs2_only/);
+});
