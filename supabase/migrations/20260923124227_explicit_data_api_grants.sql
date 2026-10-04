@@ -1,10 +1,12 @@
 -- Explicit Data API grants for the 2026-10-30 Supabase default-privilege change.
--- Forward-only: applied migrations and existing privileges/RLS are left intact.
+-- Forward-only: prior migration files are unchanged; RLS predicates are retained
+-- while helper calls are requalified to non-exposed private routines.
 -- This fixed allowlist covers the repository's existing application surface.
 -- A table absent in a staged/partial deployment is reported and skipped; rerun
 -- this migration after adding such a table, or grant access in its own migration.
 -- Unknown/future tables are NEVER discovered or granted access automatically.
--- No GRANT ALL, ALTER DEFAULT PRIVILEGES, anonymous blanket grants, or RLS changes.
+-- No GRANT ALL, ALTER DEFAULT PRIVILEGES, or anonymous blanket grants. RLS
+-- predicates are preserved; policy helper references are moved to private paths.
 
 BEGIN;
 
@@ -45,6 +47,7 @@ BEGIN
       ('domains', 'SELECT, INSERT, UPDATE, DELETE', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('evaluation_overrides', 'SELECT, INSERT', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('evidence', 'SELECT, INSERT, UPDATE, DELETE', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
+      ('evidence_submissions', 'SELECT, INSERT, UPDATE', '', 'SELECT, INSERT', 'r'),
       ('healthcheck', 'SELECT', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('isms_assessments', 'SELECT, INSERT, UPDATE, DELETE', '', 'SELECT, INSERT, UPDATE, DELETE', 'r'),
       ('isms_audit_events', 'SELECT, INSERT', '', 'SELECT, INSERT', 'r'),
@@ -145,25 +148,195 @@ BEGIN
 END;
 $grants$;
 
--- Explicit EXECUTE for existing RLS helpers (no new functions or public RPCs).
+-- Older MMM policies created after the original private-helper migration still
+-- refer to the public SECURITY DEFINER routines. Repoint policy evaluation to
+-- the existing app_private routines before keeping the public RPC surface closed.
+DO $mmm_policy_helpers$
+DECLARE
+  pol record;
+  new_qual text;
+  new_check text;
+  statement text;
+BEGIN
+  FOR pol IN
+    SELECT schemaname, tablename, policyname, qual, with_check
+    FROM pg_policies
+    WHERE coalesce(qual, '') LIKE '%mmm_current_user_%'
+       OR coalesce(with_check, '') LIKE '%mmm_current_user_%'
+  LOOP
+    new_qual := pol.qual;
+    new_check := pol.with_check;
+
+    IF new_qual IS NOT NULL THEN
+      new_qual := replace(new_qual, 'public.mmm_current_user_org_id()', 'app_private.mmm_current_user_org_id()');
+      new_qual := replace(new_qual, 'public.mmm_current_user_role()', 'app_private.mmm_current_user_role()');
+      new_qual := regexp_replace(new_qual, '(^|[^.[:alnum:]_])mmm_current_user_org_id\(\)', '\1app_private.mmm_current_user_org_id()', 'g');
+      new_qual := regexp_replace(new_qual, '(^|[^.[:alnum:]_])mmm_current_user_role\(\)', '\1app_private.mmm_current_user_role()', 'g');
+    END IF;
+
+    IF new_check IS NOT NULL THEN
+      new_check := replace(new_check, 'public.mmm_current_user_org_id()', 'app_private.mmm_current_user_org_id()');
+      new_check := replace(new_check, 'public.mmm_current_user_role()', 'app_private.mmm_current_user_role()');
+      new_check := regexp_replace(new_check, '(^|[^.[:alnum:]_])mmm_current_user_org_id\(\)', '\1app_private.mmm_current_user_org_id()', 'g');
+      new_check := regexp_replace(new_check, '(^|[^.[:alnum:]_])mmm_current_user_role\(\)', '\1app_private.mmm_current_user_role()', 'g');
+    END IF;
+
+    statement := format('ALTER POLICY %I ON %I.%I', pol.policyname, pol.schemaname, pol.tablename);
+    IF new_qual IS NOT NULL THEN
+      statement := statement || format(' USING (%s)', new_qual);
+    END IF;
+    IF new_check IS NOT NULL THEN
+      statement := statement || format(' WITH CHECK (%s)', new_check);
+    END IF;
+    EXECUTE statement;
+  END LOOP;
+END;
+$mmm_policy_helpers$;
+
+-- Private helpers remain executable for RLS evaluation; app_private is not an
+-- exposed PostgREST schema. Never expose these organisation/role oracles as RPCs.
+CREATE SCHEMA IF NOT EXISTS app_private;
+REVOKE ALL ON SCHEMA app_private FROM PUBLIC, anon;
+GRANT USAGE ON SCHEMA app_private TO authenticated, service_role;
+
+CREATE OR REPLACE FUNCTION app_private.pit_is_cs2_admin()
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public, auth, pg_temp
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.user_roles r
+    WHERE r.user_id = auth.uid()
+      AND r.role = 'cs2_admin'
+      AND r.org_id IS NULL
+      AND r.project_id IS NULL
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION app_private.pit_is_org_member(target_org_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public, auth, pg_temp
+AS $$
+  SELECT app_private.pit_is_cs2_admin()
+    OR EXISTS (
+      SELECT 1
+      FROM public.user_org_memberships m
+      WHERE m.user_id = auth.uid()
+        AND m.org_id = target_org_id
+        AND m.status = 'active'
+    );
+$$;
+
+CREATE OR REPLACE FUNCTION app_private.pit_has_org_role(target_org_id uuid, allowed_roles text[])
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public, auth, pg_temp
+AS $$
+  SELECT (
+    'cs2_admin' = ANY(allowed_roles)
+    AND app_private.pit_is_cs2_admin()
+  ) OR EXISTS (
+    SELECT 1
+    FROM public.user_roles r
+    WHERE r.user_id = auth.uid()
+      AND r.org_id = target_org_id
+      AND r.role = ANY(allowed_roles)
+  );
+$$;
+
+REVOKE ALL ON FUNCTION app_private.pit_is_cs2_admin() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION app_private.pit_is_org_member(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION app_private.pit_has_org_role(uuid, text[]) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION app_private.pit_is_cs2_admin() TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION app_private.pit_is_org_member(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION app_private.pit_has_org_role(uuid, text[]) TO authenticated, service_role;
+
+-- Preserve all policy predicates while routing RLS evaluation through the
+-- non-exposed helper schema rather than public SECURITY DEFINER RPCs.
+DO $pit_policy_helpers$
+DECLARE
+  pol record;
+  new_qual text;
+  new_check text;
+  statement text;
+BEGIN
+  FOR pol IN
+    SELECT schemaname, tablename, policyname, qual, with_check
+    FROM pg_policies
+    WHERE schemaname = 'public'
+      AND (
+        coalesce(qual, '') LIKE '%pit_is_cs2_admin%'
+        OR coalesce(qual, '') LIKE '%pit_is_org_member%'
+        OR coalesce(qual, '') LIKE '%pit_has_org_role%'
+        OR coalesce(with_check, '') LIKE '%pit_is_cs2_admin%'
+        OR coalesce(with_check, '') LIKE '%pit_is_org_member%'
+        OR coalesce(with_check, '') LIKE '%pit_has_org_role%'
+      )
+  LOOP
+    new_qual := pol.qual;
+    new_check := pol.with_check;
+
+    IF new_qual IS NOT NULL THEN
+      new_qual := replace(new_qual, 'public.pit_is_cs2_admin()', 'app_private.pit_is_cs2_admin()');
+      new_qual := replace(new_qual, 'public.pit_is_org_member(', 'app_private.pit_is_org_member(');
+      new_qual := replace(new_qual, 'public.pit_has_org_role(', 'app_private.pit_has_org_role(');
+      new_qual := regexp_replace(new_qual, '(^|[^.[:alnum:]_])pit_is_cs2_admin\(\)', '\1app_private.pit_is_cs2_admin()', 'g');
+      new_qual := regexp_replace(new_qual, '(^|[^.[:alnum:]_])pit_is_org_member\(', '\1app_private.pit_is_org_member(', 'g');
+      new_qual := regexp_replace(new_qual, '(^|[^.[:alnum:]_])pit_has_org_role\(', '\1app_private.pit_has_org_role(', 'g');
+    END IF;
+
+    IF new_check IS NOT NULL THEN
+      new_check := replace(new_check, 'public.pit_is_cs2_admin()', 'app_private.pit_is_cs2_admin()');
+      new_check := replace(new_check, 'public.pit_is_org_member(', 'app_private.pit_is_org_member(');
+      new_check := replace(new_check, 'public.pit_has_org_role(', 'app_private.pit_has_org_role(');
+      new_check := regexp_replace(new_check, '(^|[^.[:alnum:]_])pit_is_cs2_admin\(\)', '\1app_private.pit_is_cs2_admin()', 'g');
+      new_check := regexp_replace(new_check, '(^|[^.[:alnum:]_])pit_is_org_member\(', '\1app_private.pit_is_org_member(', 'g');
+      new_check := regexp_replace(new_check, '(^|[^.[:alnum:]_])pit_has_org_role\(', '\1app_private.pit_has_org_role(', 'g');
+    END IF;
+
+    statement := format('ALTER POLICY %I ON %I.%I', pol.policyname, pol.schemaname, pol.tablename);
+    IF new_qual IS NOT NULL THEN
+      statement := statement || format(' USING (%s)', new_qual);
+    END IF;
+    IF new_check IS NOT NULL THEN
+      statement := statement || format(' WITH CHECK (%s)', new_check);
+    END IF;
+    EXECUTE statement;
+  END LOOP;
+END;
+$pit_policy_helpers$;
+
+-- RLS policies and the approved SECURITY DEFINER project RPCs are the only
+-- remaining internal callers. RPCs execute as their owner; authenticated clients
+-- must not be able to call these helpers directly through /rest/v1/rpc.
+REVOKE ALL ON FUNCTION public.pit_is_cs2_admin() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION public.pit_is_org_member(uuid) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION public.pit_has_org_role(uuid, text[]) FROM PUBLIC, anon, authenticated, service_role;
+
 -- Trigger functions run through triggers and are not exposed here.
+-- The public MMM helper functions were intentionally omitted: earlier hardening
+-- revoked PUBLIC/anon/authenticated execution, and the policy rewrite above keeps
+-- policies on the existing app_private helpers.
 DO $helpers$
 DECLARE
-  signature text;
-  target regprocedure;
+  public_helper regprocedure;
 BEGIN
-  FOREACH signature IN ARRAY ARRAY[
-    'public.mmm_current_user_org_id()',
-    'public.mmm_current_user_role()',
-    'public.pit_is_org_member(uuid)',
-    'public.pit_has_org_role(uuid,text[])',
-    'public.pit_is_cs2_admin()'
-  ] LOOP
-    target := to_regprocedure(signature);
-    IF target IS NOT NULL THEN
-      EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO authenticated', target);
-    END IF;
-  END LOOP;
+  public_helper := to_regprocedure('public.mmm_current_user_org_id()');
+  IF public_helper IS NOT NULL THEN
+    EXECUTE format('REVOKE EXECUTE ON FUNCTION %s FROM authenticated', public_helper);
+  END IF;
+  public_helper := to_regprocedure('public.mmm_current_user_role()');
+  IF public_helper IS NOT NULL THEN
+    EXECUTE format('REVOKE EXECUTE ON FUNCTION %s FROM authenticated', public_helper);
+  END IF;
 END;
 $helpers$;
 

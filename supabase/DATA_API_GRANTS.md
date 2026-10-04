@@ -6,11 +6,19 @@ grants remain unchanged. RLS policies alone do not grant access to a table.
 
 `20260923124227_explicit_data_api_grants.sql` adds a fixed, reviewed access list
 for the legacy, AIMC, MMM, PIT and approval schemas represented in this repository.
-It preserves existing privileges and policies without restoring automatic grants.
+It adds only reviewed table privileges and preserves RLS policy predicates without
+restoring automatic grants.
 
 - Authenticated access follows existing RLS operations, with the deliberate
   exception of PIT `projects` and `source_links`: these remain SELECT-only for
   authenticated clients, with writes through their existing RPCs.
+- The public MMM and PIT organisation/role helpers are not authenticated RPCs.
+  Policies use the MMM `app_private` helpers and PIT private equivalents; the
+  approved PIT project write RPCs remain callable by authenticated clients.
+- `evidence_submissions` follows its existing organisation-scoped SELECT/INSERT/
+  UPDATE policies. Authenticated clients receive those table privileges only;
+  the service role receives SELECT and INSERT for the observed backend insert/
+  returning path. Anonymous access is not granted.
 - Anonymous grants are limited to the existing `mmm_free_assessments` SELECT and
   INSERT path. No new anonymous access is added to private tables.
 - The three migration tracking tables are excluded. Backend grants cover the
@@ -36,14 +44,18 @@ grants workflow runs this check on migration changes. It uses a disposable
 Postgres 17 container without network access, host mounts or hosted credentials.
 
 Replay follows the production workflow's order: legacy, AIMC, then root
-migrations. It skips the same obsolete legacy migration pre-seeded by production.
-The replay exposed duplicate legacy trigger names; the two existing definitions
-in `20260729130000_exclusion_cascade_triggers.sql` now use DROP IF EXISTS before
-CREATE, preserving their final definitions while making a fresh replay succeed.
+migrations. The disposable replay also applies
+`20260310000001_wave16_6_schema_audit_completeness.sql` so coverage exercises the
+real `evidence_submissions` DDL and RLS; production's pre-seeded migration entry
+is unchanged. The replay exposed duplicate legacy trigger names; the two existing
+definitions in `20260729130000_exclusion_cascade_triggers.sql` now use DROP IF
+EXISTS before CREATE, preserving their final definitions while making a fresh
+replay succeed.
 
 The test reproduces missing permissions with automatic grants disabled, applies
 the repair, and exercises real database roles. It checks organisation isolation,
-approval access, PIT's write boundary, idempotency, unchanged RLS and defaults,
+approval access, evidence-submission RLS/grants, PIT helper non-callability and
+the approved write RPCs, idempotency, unchanged RLS predicates/defaults,
 exclusion of future private tables, and atomic refusal when RLS is disabled.
 Auth and Storage use minimal local fixtures; this is a database test, not a
 hosted PostgREST or browser end-to-end test.

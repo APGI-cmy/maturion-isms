@@ -33,7 +33,18 @@ def sql(query, db='grant_test', expect_success=True):
 
 def snapshot():
     return sql("""SELECT jsonb_build_object(
-      'policies', (SELECT jsonb_agg(to_jsonb(p) ORDER BY schemaname,tablename,policyname) FROM pg_policies p),
+      'policies', (SELECT jsonb_agg(jsonb_build_object(
+        'schemaname', p.schemaname,
+        'tablename', p.tablename,
+        'policyname', p.policyname,
+        'permissive', p.permissive,
+        'roles', p.roles,
+        'cmd', p.cmd,
+        -- The repair may change only helper schema qualification. Normalize it
+        -- so this comparison still detects changes to policy behavior/predicates.
+        'qual', CASE WHEN p.qual IS NULL THEN NULL ELSE regexp_replace(p.qual, '(public|app_private)\\.(mmm_current_user_org_id|mmm_current_user_role|pit_is_cs2_admin|pit_is_org_member|pit_has_org_role)\\(', '\\2(', 'g') END,
+        'with_check', CASE WHEN p.with_check IS NULL THEN NULL ELSE regexp_replace(p.with_check, '(public|app_private)\\.(mmm_current_user_org_id|mmm_current_user_role|pit_is_cs2_admin|pit_is_org_member|pit_has_org_role)\\(', '\\2(', 'g') END
+      ) ORDER BY schemaname,tablename,policyname) FROM pg_policies p),
       'defaults', (SELECT jsonb_agg(to_jsonb(d) ORDER BY oid) FROM pg_default_acl d),
       'relations', (SELECT jsonb_agg(jsonb_build_array(c.oid,c.relrowsecurity,c.relacl::text) ORDER BY c.oid)
         FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','v'))
@@ -65,9 +76,6 @@ def main():
         for directory in directories:
             for path in sorted(directory.glob('*.sql')):
                 if path.name == MIGRATION:
-                    continue
-                # Exactly matches the production workflow's pre-seeded legacy entry.
-                if ISMS and path.name == '20260310000001_wave16_6_schema_audit_completeness.sql':
                     continue
                 result = sql('SET ROLE postgres;\n' + path.read_text(encoding='utf-8'), expect_success=False)
                 if result.returncode:
