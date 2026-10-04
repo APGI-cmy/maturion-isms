@@ -1,9 +1,9 @@
 # Foreman v2 — Tier 2 Knowledge Index
 
 **Agent**: foreman-v2  
-**Contract Version**: 2.17.0-transition  
-**Knowledge Version**: 2.12.0  
-**Last Updated**: 2026-06-15  
+**Contract Version**: 2.18.0  
+**Knowledge Version**: 2.13.0  
+**Last Updated**: 2026-09-19  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ---
@@ -16,10 +16,10 @@ This directory contains operational domain knowledge for the Foreman v2 agent. T
 
 | File | Purpose | Version |
 |------|---------|---------|
-| `index.md` (this file) | Knowledge entry point and version reference | 2.12.0 |
+| `index.md` (this file) | Knowledge entry point and version reference | 2.13.0 |
 | `foreman-tier2-operating-protocol.md` | Wave 5 relocation target for detailed Foreman bootstrap, alignment, delegation, QP, ECAP, pre-handover, handover, AGCFPP, HALT, and escalation controls | 1.0.0 |
 | `foreman-control-relocation-map.md` | Wave 5 audit map proving Tier 1 simplification did not silently delete controls; includes fidelity levels | 1.0.0 |
-| `FAIL-ONLY-ONCE.md` | Breach registry, Universal A-rules, incident log, open improvements; must be self-attested every session before work | 4.5.0 |
+| `FAIL-ONLY-ONCE.md` | Breach registry, Universal A-rules, incident log, open improvements; must be self-attested every session before work | 4.8.0 |
 | `specialist-registry.md` | Registry of delegable agents with capabilities and separation-of-duties boundary | 1.0.0 |
 | `domain-flag-index.md` | Mode flags, orchestration pattern flags, degraded mode flags, domain boundaries | 1.0.0 |
 | `prehandover-template.md` | PREHANDOVER proof template and ceremony evidence structure | 1.9.0 |
@@ -86,6 +86,7 @@ ECAP validation is administrative evidence only and cannot substitute for Forema
 
 | Version | Date | Change |
 |---------|------|--------|
+| 2.13.0 | 2026-09-19 | Aligned the index with Foreman contract 2.18.0 and the already-merged Tier 2 controls: `FAIL-ONLY-ONCE.md` 4.8.0 and the §9a blocker-classification/remediation ladder in `foreman-tier2-operating-protocol.md`. |
 | 2.12.0 | 2026-06-15 | Registered Wave 5 Tier 2 relocation files: `foreman-tier2-operating-protocol.md` and `foreman-control-relocation-map.md`; added Wave 5 transition notes and explicit pending Wave 6/Wave 7 limitations. |
 | 2.11.0 | 2026-05-14 | Added §12 CS2 Injection Compliance Tier 2 summary and updated knowledge version. |
 | 2.9.0 | 2026-04-22 | Stage 10 ceremony contract integration and prehandover template updates. |
