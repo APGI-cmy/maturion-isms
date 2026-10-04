@@ -79,3 +79,20 @@ test('W0: controller workflow exposes a human-CS2-only circuit breaker reset pat
   assert.match(workflow, /reset_authority/);
   assert.match(workflow, /human_cs2_only/);
 });
+
+// ---------------------------------------------------------------------------
+// W0-2053-C follow-up — Foreman QP scope omission: the human kill switch must
+// be independently invocable (usable without another agent run) through the
+// real workflow entrypoint, not only the extracted module. `workflow_dispatch`
+// is the manual, human-triggerable entrypoint this workflow already declares;
+// it must wire to the kill switch so a human can invoke it directly. This
+// assertion is INTENTIONALLY RED: the workflow script does not yet reference
+// `invokeKillSwitch` or `kill_switch_state` anywhere.
+// ---------------------------------------------------------------------------
+
+test('W0: controller workflow exposes a human-invocable kill switch independent of any agent run', () => {
+  const workflow = read('workflows/pit-cs2-controller.yml');
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /invokeKillSwitch/);
+  assert.match(workflow, /kill_switch_state/);
+});

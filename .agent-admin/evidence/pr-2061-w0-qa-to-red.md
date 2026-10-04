@@ -116,3 +116,98 @@ None. All required RED coverage items (1–6 in the appointment) are represented
 ## Explicit non-claims
 
 This evidence file does **not** claim: GREEN status, build-to-green readiness, handover, final assurance, an ASSURANCE-TOKEN, or merge readiness. No implementation-builder appointment is made or implied. Per the appointment's required ordering, this RED evidence is step 3 of 4; Foreman's independent evaluation and any subsequent PR-scoped delegation-order evidence are Foreman's actions, not this builder's.
+
+---
+
+## Addendum — Foreman QP scope omission: independently invocable human kill switch (2026-10-04)
+
+**Finding:** Foreman QP reviewed the original RED coverage above and found that the circuit-breaker reset-source tests (`a webhook/agent/token/comment/PR/automatic-retry-triggered reset cannot clear a tripped circuit breaker`) prove only reset-source restriction on the circuit breaker. They do **not** directly exercise Strategy §5.1's separate requirement that the **human kill switch** be independently invocable (usable without another agent run) and that, once engaged, it immediately blocks **new dispatches, retries, merge actions, and successor release**, while **preserving evidence**. This addendum adds genuinely RED tests closing that specific gap. No other scope change was made.
+
+**Authorized paths touched (append-only, same three as above):**
+
+- `.github/scripts/pit-cs2-controller.test.js` (append-only: 7 new tests appended after the existing 34 tests)
+- `.github/scripts/pit-cs2-controller-workflow.test.js` (append-only: 1 new test appended after the existing 7 tests)
+- `.agent-admin/evidence/pr-2061-w0-qa-to-red.md` (this addendum)
+
+No controller implementation (`pit-cs2-controller.js`), workflow (`.github/workflows/*.yml`), schema, protected contract/CANON, deployment, scope/task/appointment/IAA artifact, or historic PR #2048/#2057 record was created, modified, or touched. Confirmed with `git status --short` showing only the two test files as modified (this evidence file is the third, expected change).
+
+### New tests and why each is genuinely RED
+
+`.github/scripts/pit-cs2-controller.test.js` — 7 new tests, calling `controller.invokeKillSwitch`, `controller.evaluateRetryGate`, `controller.evaluateMergeGate`, and `controller.evaluateSuccessorReleaseGate`, none of which exist on the controller module (confirmed absent from `module.exports` and from the file body via `grep`):
+
+| Required coverage (this addendum) | New test | Fails because |
+|---|---|---|
+| Independently invocable (no agent run required) | `W0: the human kill switch is independently invocable, requiring no active job, dispatch context, or agent run` | `controller.invokeKillSwitch is not a function` |
+| Only a human-CS2 source may invoke it | `W0: a non-human-CS2 source cannot invoke the kill switch` | `controller.invokeKillSwitch is not a function` |
+| Blocks new dispatch | `W0: once triggered, the kill switch blocks any new dispatch regardless of an otherwise-valid safety envelope` | `controller.evaluateSafetyEnvelope is not a function` (pre-existing absent function; this test additionally pins the `KILL_SWITCH_TRIGGERED` reason code once implemented) |
+| Blocks retries | `W0: once triggered, the kill switch blocks a retry attempt` | `controller.evaluateRetryGate is not a function` |
+| Blocks merge actions | `W0: once triggered, the kill switch blocks a merge action` | `controller.evaluateMergeGate is not a function` |
+| Blocks successor release | `W0: once triggered, the kill switch blocks successor release` | `controller.evaluateSuccessorReleaseGate is not a function` |
+| Preserves evidence | `W0: a kill switch invocation preserves all existing evidence and decision-record history` | `controller.buildDecisionRecord is not a function` (pre-existing absent function, reused here as the evidence fixture) |
+
+`.github/scripts/pit-cs2-controller-workflow.test.js` — 1 new test, asserting the real workflow entrypoint (not only the extracted module) wires the kill switch to its existing `workflow_dispatch` trigger (the manual, human-triggerable entrypoint already declared in `workflows/pit-cs2-controller.yml`), per Strategy §5's requirement that "the regression suite must use the real workflow entrypoints, not only an extracted renderer/evaluator":
+
+- `W0: controller workflow exposes a human-invocable kill switch independent of any agent run` — expects `invokeKillSwitch` and `kill_switch_state` references in the workflow script; absent today. Confirmed RED on the `invokeKillSwitch` assertion specifically (the `workflow_dispatch:` assertion in the same test already passes, since that trigger pre-exists; only the kill-switch wiring is missing).
+
+### Exact run commands and RED output
+
+```
+$ node --version
+v22.23.3
+
+$ node --test .github/scripts/pit-cs2-controller.test.js
+# tests 41
+# suites 0
+# pass 9
+# fail 32
+# cancelled 0
+# skipped 0
+# todo 0
+exit code: 1
+```
+
+All 9 pre-existing (PR #2046 pilot) tests remain GREEN (`ok 1`–`ok 9`). All 25 original W0 tests remain RED (`not ok 10`–`not ok 34`, unchanged). All 7 new kill-switch tests are RED (`not ok 35`–`not ok 41`):
+
+- `not ok 35` — `W0: the human kill switch is independently invocable, requiring no active job, dispatch context, or agent run` — `TypeError: controller.invokeKillSwitch is not a function`
+- `not ok 36` — `W0: a non-human-CS2 source cannot invoke the kill switch` — `TypeError: controller.invokeKillSwitch is not a function`
+- `not ok 37` — `W0: once triggered, the kill switch blocks any new dispatch regardless of an otherwise-valid safety envelope` — `TypeError: controller.evaluateSafetyEnvelope is not a function`
+- `not ok 38` — `W0: once triggered, the kill switch blocks a retry attempt` — `TypeError: controller.evaluateRetryGate is not a function`
+- `not ok 39` — `W0: once triggered, the kill switch blocks a merge action` — `TypeError: controller.evaluateMergeGate is not a function`
+- `not ok 40` — `W0: once triggered, the kill switch blocks successor release` — `TypeError: controller.evaluateSuccessorReleaseGate is not a function`
+- `not ok 41` — `W0: a kill switch invocation preserves all existing evidence and decision-record history` — `TypeError: controller.buildDecisionRecord is not a function`
+
+```
+$ node --test .github/scripts/pit-cs2-controller-workflow.test.js
+# tests 8
+# suites 0
+# pass 3
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+exit code: 1
+```
+
+All 3 pre-existing workflow tests remain GREEN (`ok 1`–`ok 3`). All 4 original W0 workflow tests remain RED (`not ok 4`–`not ok 7`, unchanged). The 1 new kill-switch workflow test is RED:
+
+- `not ok 8` — `W0: controller workflow exposes a human-invocable kill switch independent of any agent run` — `AssertionError: The input did not match the regular expression /invokeKillSwitch/` (the `workflow_dispatch:` sub-assertion in the same test passed; only `invokeKillSwitch`/`kill_switch_state` wiring is missing, confirming the failure is attributable solely to absent required behavior, not malformed test setup).
+
+Full captured logs (not committed, reproducible on demand): `/tmp/test1.log`, `/tmp/test2.log` from this session.
+
+### Additional API surface assumed by this addendum's RED tests
+
+Consistent with the original evidence's framing: these names and shapes are derived directly from Strategy §5.1 ("the human kill switch disables new dispatches, retries, merges and successor release immediately while preserving evidence; it must be usable without another agent run") and are not an architecture decision by this QA-to-RED task — they document the contract the new tests exercise:
+
+- `invokeKillSwitch(envelope, request) -> { kill_switch_state: 'armed'|'triggered', decision: 'ALLOW'|'STOP_AND_FIX', evidence_preserved, preserved_decision_records }` — standalone entrypoint, independently invocable (no active job/dispatch context required); only `request.source === 'human_cs2'` with a human CS2 actor can set `kill_switch_state` to `'triggered'`; any other source returns `STOP_AND_FIX` and leaves `kill_switch_state` at `'armed'`; when `existing_decision_records` is supplied, the result must preserve it unchanged under `preserved_decision_records` and set `evidence_preserved: true`.
+- `evaluateSafetyEnvelope(...)` (already assumed above) must additionally return `{ decision: 'STOP_AND_FIX', reason_code: 'KILL_SWITCH_TRIGGERED' }` whenever `envelope.kill_switch_state === 'triggered'`, regardless of the envelope's other fields being otherwise valid — this blocks new dispatch.
+- `evaluateRetryGate(envelope, retryRequest) -> { decision, reason_code }` — must return `{ decision: 'STOP_AND_FIX', reason_code: 'KILL_SWITCH_TRIGGERED' }` when `envelope.kill_switch_state === 'triggered'` — this blocks retries.
+- `evaluateMergeGate(envelope, mergeRequest) -> { decision, reason_code }` — same blocking behavior for merge actions.
+- `evaluateSuccessorReleaseGate(envelope, successorRequest) -> { decision, reason_code }` — same blocking behavior for successor release.
+
+### Secret scan (addendum)
+
+`runtime-tools-secret_scanning` run against both changed test files (`.github/scripts/pit-cs2-controller.test.js`, `.github/scripts/pit-cs2-controller-workflow.test.js`): **no secrets detected**.
+
+### Explicit non-claims (addendum)
+
+This addendum does **not** claim: GREEN status, build-to-green readiness, handover, final assurance, an ASSURANCE-TOKEN, or merge readiness. No implementation-builder appointment is made or implied. This remains QA-to-RED only, issued under the same appointment (`.agent-admin/builder-appointments/pr-2061-w0-qa-to-red-20261004.md`) in response to Foreman QP's identified scope omission; it is not a new appointment and does not expand authorized paths beyond the three already granted.

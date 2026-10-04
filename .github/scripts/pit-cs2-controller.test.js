@@ -857,3 +857,83 @@ test('W0: a simulated 24-hour repeat-event sequence makes zero live spend or pai
   assert.equal(outcome.paid_call_count, 0);
   assert.equal(outcome.production_effects, 0);
 });
+
+// ---------------------------------------------------------------------------
+// W0-2053-C follow-up — Foreman QP scope omission: Strategy §5.1 requires the
+// human kill switch to be *independently invocable* (usable without another
+// agent run) and to immediately block four distinct action categories — new
+// dispatches, retries, merges and successor release — while preserving
+// evidence. The circuit-breaker reset tests above only prove reset-source
+// restriction; they do not exercise a kill-switch entrypoint or any of the
+// four blocked-action categories. These tests are INTENTIONALLY RED: no
+// `invokeKillSwitch`, `evaluateRetryGate`, `evaluateMergeGate`, or
+// `evaluateSuccessorReleaseGate` function exists on the controller module.
+// ---------------------------------------------------------------------------
+
+test('W0: the human kill switch is independently invocable, requiring no active job, dispatch context, or agent run', () => {
+  const envelope = w0BaselineEnvelope();
+  // Deliberately no controller.run(), no job/dispatch context, no active
+  // work-item state machine — only the envelope and a direct human-CS2
+  // request, proving the kill switch is a standalone entrypoint.
+  const result = controller.invokeKillSwitch(envelope, {
+    source: 'human_cs2',
+    actor: CS2_USER,
+    reason: 'incident containment test',
+  });
+  assert.equal(result.kill_switch_state, 'triggered');
+  assert.equal(result.decision, 'ALLOW');
+});
+
+test('W0: a non-human-CS2 source cannot invoke the kill switch', () => {
+  const envelope = w0BaselineEnvelope();
+  const result = controller.invokeKillSwitch(envelope, {
+    source: 'agent',
+    actor: { login: 'foreman-v2-agent', type: 'Bot' },
+  });
+  assert.equal(result.kill_switch_state, 'armed');
+  assert.equal(result.decision, 'STOP_AND_FIX');
+});
+
+test('W0: once triggered, the kill switch blocks any new dispatch regardless of an otherwise-valid safety envelope', () => {
+  const triggeredEnvelope = w0BaselineEnvelope({ kill_switch_state: 'triggered' });
+  const decision = controller.evaluateSafetyEnvelope(triggeredEnvelope, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'KILL_SWITCH_TRIGGERED');
+});
+
+test('W0: once triggered, the kill switch blocks a retry attempt', () => {
+  const triggeredEnvelope = w0BaselineEnvelope({ kill_switch_state: 'triggered' });
+  const decision = controller.evaluateRetryGate(triggeredEnvelope, { work_item_id: 'pit-issue-42', attempt_count: 2 });
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'KILL_SWITCH_TRIGGERED');
+});
+
+test('W0: once triggered, the kill switch blocks a merge action', () => {
+  const triggeredEnvelope = w0BaselineEnvelope({ kill_switch_state: 'triggered' });
+  const decision = controller.evaluateMergeGate(triggeredEnvelope, { pr_number: 2061, head_sha: 'a'.repeat(40) });
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'KILL_SWITCH_TRIGGERED');
+});
+
+test('W0: once triggered, the kill switch blocks successor release', () => {
+  const triggeredEnvelope = w0BaselineEnvelope({ kill_switch_state: 'triggered' });
+  const decision = controller.evaluateSuccessorReleaseGate(triggeredEnvelope, {
+    work_item_id: 'pit-issue-42',
+    successor_work_item_id: 'pit-issue-43',
+  });
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'KILL_SWITCH_TRIGGERED');
+});
+
+test('W0: a kill switch invocation preserves all existing evidence and decision-record history', () => {
+  const envelope = w0BaselineEnvelope();
+  const priorRecords = [controller.buildDecisionRecord(w0SampleEvent())];
+  const result = controller.invokeKillSwitch(envelope, {
+    source: 'human_cs2',
+    actor: CS2_USER,
+    reason: 'incident containment evidence test',
+    existing_decision_records: priorRecords,
+  });
+  assert.equal(result.evidence_preserved, true);
+  assert.deepEqual(result.preserved_decision_records, priorRecords);
+});
