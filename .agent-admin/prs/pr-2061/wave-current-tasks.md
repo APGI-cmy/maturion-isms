@@ -7,8 +7,8 @@ Branch: copilot/implement-safety-envelope-containment
 Base branch: main  
 Initial planning head SHA: d2485fa5d502bf8800a7df94bc3caef69cda30da  
 CS2 authorization: PR #2061 comment 5978529004 (2026-10-04)  
-Status: PREFLIGHT_LOCKED  
-iaa_prebrief_path: PENDING  
+Status: IAA_PREBRIEF_READY
+iaa_prebrief_path: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment-20261004.md`
 
 ## Wave boundary
 
@@ -26,12 +26,12 @@ iaa_prebrief_path: PENDING
 
 - [ ] W0-2053-B — Produce the canonical IAA pre-brief for this PR-scoped wave record.
       owner: independent-assurance-agent
-      status: PENDING
+      status: COMPLETE
       evidence: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment-20261004.md`
 
 - [ ] W0-2053-C — Create executable QA-to-RED coverage only for the frozen safety-envelope, decision-record, and kill-switch/circuit-breaker requirements.
       owner: qa-builder
-      status: BLOCKED_ON_IAA_PREBRIEF
+      status: APPOINTED_PENDING_RED_RETURN
       evidence: `.agent-admin/evidence/pr-2061-w0-qa-to-red.md`
       constraints: No implementation builder appointment; no controller behavior or activation change.
 
@@ -52,7 +52,6 @@ iaa_prebrief_path: PENDING
 
 | ID | Classification | Owner | Required remediation | Status |
 |---|---|---|---|---|
-| W0-BLK-001 | Specialist-owned prerequisite | independent-assurance-agent | Produce canonical PR #2061 IAA pre-brief. | OPEN |
 | W0-BLK-002 | Bounded W3 controller defect | W3 controller route | Scope historic-reference identity scans to the active PR/work item; do not modify archival #2048/#2057 records. | RECORDED_FOR_W3 |
 
 This record is an intermediate intake gate, not a handover, completion, or merge-readiness claim.
