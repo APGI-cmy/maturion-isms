@@ -204,3 +204,69 @@ The former-scope `evidence_submissions` finding is **not** carried forward: the 
 - **Required action:** Do not deploy under this authorization. Before re-invocation, obtain the required authenticated deployed-preview journey evidence under separate authorization, or obtain a committed CS2-approved resolution of the applicable assurance scope/evidence requirement. Do not change the historical delegation-order disposition or the excluded table scope.
 - **Adoption phase:** PHASE_B_BLOCKING. Merge remains blocked; no token issued.
 - **IAA_REJECTION_NOTICE:** `RCA_REVIEW: REFER_BACK` (if RCA applies); `HANDOVER_ALLOWED: no`; `RESULT: REJECTED_BACK_TO_PRODUCER`.
+
+## REJECTION_HISTORY — 2026-10-05 CS2-directed independent reassessment
+
+### Invocation and classification
+
+- **Invocation:** PR #2058, “Add explicit application Data API grants before Supabase's October change”; CS2 comment `5991445916`.
+- **Producing agent/class:** `schema-builder`, builder class. **Ceremony-admin:** YES — ECAP-001 appointment is explicit in `.agent-workspace/foreman-v2/personal/scope-declaration-wave-pr-2058-data-api-grants-20261005.md`.
+- **Independence:** CONFIRMED. IAA did not produce or contribute to the reviewed security implementation.
+- **Bound heads:** substantive security head `1eb903588c0bfc090925cdceb7414fddcccc615b`; current PR/admin head reviewed `b9bb4eef66c32b51869187fa88ec354813505871`. Security conclusions bind to the stable substantive head; current-head workflow evidence is independently tied to `b9bb4ee…`. No exact-current-HEAD refresh is requested.
+- **Detected PR classes:** `DATABASE_MIGRATION` and `SECURITY_REMEDIATION` from the migration/access-control changes; `CI_WORKFLOW` from `.github/workflows/data-api-grants.yml`. The remaining paths are documentation and assurance/administrative evidence. No runtime UI/API source file changed.
+- **IAA category:** `CI_WORKFLOW` (mandatory trigger), with the applicable database/security BUILD_DELIVERABLE checks.
+
+### Class routing and product-build scope
+
+The class-specific evidence profile in `CS2_GOVERNED_BUILD_GATE_CLASS_ROUTING_CANON.md` §§5.2–5.3 controls. Its §§5.2 and 5.3 make CTA maps and full UI-journey proof advisory unless runtime UI/API files changed. `LIVE_FUNCTIONAL_VERIFICATION_CANON.md` §3.2 also exempts pure schema migrations without UI impact from the LFV package requirement. The PR description's `USER_CAN_COMPLETE_JOURNEY: Unverified` is an explicit non-pass, not a functional-pass or completed-delivery claim. PRODUCT_BUILD_ASSURANCE was considered for the changed database/data-access behaviour, but neither the missing deployed preview nor the absent full UI journey is a hard blocker for this detected class. No `FUNCTIONAL_PASS` is issued or claimed. The former-scope `evidence_submissions`/Wave 16.6 and 89-migration findings remain historical and are not carried forward.
+
+### Current database/security evidence
+
+| Check | Independent evidence | Result |
+|---|---|---|
+| 88-migration disposable PostgreSQL 17 replay | Local execution and current-head Data API grants run [37277113597](https://github.com/APGI-cmy/maturion-isms/actions/runs/37277113597), job `111656476537`; log reports exactly 88 migrations and all four focused PASS milestones. The runner excludes the pre-seeded Wave 16.6 migration and the grant migration under test. | PASS |
+| Fixed allowlist, object/RLS guards, and security-invoker views | `supabase/migrations/20260923124227_explicit_data_api_grants.sql` validates listed object kinds, requires RLS for listed tables and `security_invoker=true` for listed views; no automatic/default grants or blanket anonymous grants are introduced. | PASS |
+| Public helper denial and private RLS helper access | Access SQL tests authenticated direct invocation denial for public PIT/MMM helpers (effective PUBLIC rights included), anon denial, authenticated `app_private` schema/function privileges, and policy requalification. Migration explicitly revokes public PIT helper execution from PUBLIC/anon/authenticated/service_role and retains the earlier MMM PUBLIC/anon revocations. | PASS |
+| PIT `projects`/`source_links` boundary and controlled RPCs | Access SQL checks SELECT-only authenticated table privileges using the PostgreSQL 17 multi-privilege assertion and citation; authorized create/update RPCs succeed and a cross-organisation create is denied. | PASS |
+| Exercised organisation isolation and anonymous boundary | Regression reads/writes demonstrate MMM cross-organisation isolation; PIT cross-organisation RPC denial is exercised. The allowlist grants anon only on `mmm_free_assessments`; assertions cover private profiles/approval tables and helper boundaries. | PASS |
+| Idempotency, future-table privacy, atomic refusal | Runner compares policy/default/relation snapshots, reapplies the migration, checks an unlisted future table remains private to anon/authenticated/service_role, and confirms an RLS-disabled allowlisted table causes transactional refusal without state change. | PASS |
+| PIT Data API SELECT/RLS tenant-isolation execution | `data-api-grants-access.sql` inspects SELECT ACLs and policy helper text/privileges, and exercises PIT RPC writes, but does not issue an authenticated `SELECT` against `public.projects` or `public.source_links` with two-organisation rows. The existing MMM isolation query does not execute the changed PIT policies. | FAIL |
+| CodeQL and secret scan | CodeQL run [37277113658](https://github.com/APGI-cmy/maturion-isms/actions/runs/37277113658) succeeded on `b9bb4ee…`; the secret scanner reported no secrets in the 16 current changed paths. | PASS |
+| Deployment boundary | No production database deployment occurred. `supabase/DATA_API_GRANTS.md` retains the protected manual deployment path and pending-migration review; preview checks are not treated as production evidence. | PASS |
+
+**Substantive finding — PIT RLS read-path proof (Substantive):** The current security suite does not execute the affected PIT `projects`/`source_links` SELECT policies as an authenticated role, so it does not prove that the requalified `app_private.pit_is_org_member` helper both executes through those policies and filters cross-organisation rows. This is distinct from the advisory deployed UI journey. Hard authority: the task record's focused regression requirement for RLS isolation (`.agent-admin/prs/pr-2058/wave-current-tasks.md`, “Wave completion gate”); the scope declaration's expected verification that existing RLS paths continue to work; and `CS2_GOVERNED_BUILD_GATE_CLASS_ROUTING_CANON.md` §§5.2–5.3, requiring equivalent database validation, verification SQL/results, and affected-flow smoke/security evidence. **Required fix:** add a focused disposable-PostgreSQL assertion with rows in two organisations; as authenticated Org A, prove its own project/source-link rows are visible and Org B rows are not, while retaining the successful/denied RPC cases; rerun the 88-migration suite. A deployed-preview/UI journey is not required to close this finding.
+
+### Ceremony checks
+
+The current PR diff against base contains 16 paths. `.agent-admin/scope-declarations/pr-2058.md` declares `FILES_CHANGED: 15` and its frozen inventory omits `.agent-workspace/independent-assurance-agent/memory/session-1298-20261005.md`. The active task record says the count was reconciled, while the ECAP PREHANDOVER/session artifacts expressly record R07/R11 as unresolved. These are current artifacts and the discrepancy remains in the current head.
+
+- **ACR-04 / ACR-07 — FAIL (Ceremony; Systemic):** stale changed-file count and path inventory; fix by reconciling the scope declaration and active bundle to the exact current PR diff. Because the discrepancy was already explicitly surfaced in ECAP R07/R11 and remains unresolved, upstream prevention is CI enforcement that compares declared scope paths/counts to the authoritative PR diff.
+- **ACR-12 — FAIL (Ceremony):** active task/scope records claim the count reconciliation is complete while the ECAP return artifacts say the same count/path reconciliation is unresolved.
+
+Other ACR checks: ACR-01–03 PASS; ACR-05–06 PASS; ACR-08–11 PASS; ACR-13–16 PASS. ECAP reconciliation summary and named `gate_set_checked` are present; no token or final-complete claim is asserted. The scope/count findings are not a reason to alter prior historical findings.
+
+### CI and gate status
+
+- Current-head Data API grants run `37277113597` and CodeQL run `37277113658`: success.
+- Current-head `merge-gate/verdict`, `governance/alignment`, and `stop-and-fix/enforcement`: success in Merge Gate Interface run `37277111131`; local JSON and stop-and-fix evidence probes passed.
+- The only completed current-head workflow failure found is `Builder Delegation Order Gate` run `37277113600`. It remains technically FAIL. CS2 comment `5979822573` is disclosed as the one-time PR-scoped acceptance of the historical ordering failure only; it is not a PASS and does not waive security evidence, this reassessment, or CS2 review. The skipped duplicate preflight run is not a failure.
+- **FAIL-ONLY-ONCE:** A-001 invocation evidence PRESENT (CS2 comment `5991445916`); A-002 CONFIRMED (not an agent-contract PR; no class-exemption claim).
+- **CORE-020:** PASS. **CORE-021:** FAIL because the substantive and ceremony findings require rejection.
+- **OVL-CI-001–005:** PASS; the modified workflow executed successfully and current CI evidence is present. The workflow is isolated to disposable PostgreSQL and does not claim production/environment equivalence.
+- **Tally:** 33 checks — 28 PASS, 5 FAIL (CORE-021; PIT SELECT/RLS execution; ACR-04; ACR-07; ACR-12).
+- **Adoption phase:** PHASE_B_BLOCKING.
+
+### Binary verdict
+
+**REJECTION-PACKAGE — PR #2058.** Merge remains blocked. The full UI journey/live-preview evidence is advisory for this class and is not a failure. The hard failures are the PIT Data API SELECT/RLS validation gap and the three applicable ECAP count/path/coherence checks above. No assurance token, sign-off label, or merge-readiness claim is issued.
+
+`IAA_REJECTION_NOTICE`: `RCA_REVIEW: REFER_BACK` (where RCA applies); `HANDOVER_ALLOWED: no`; `RESULT: REJECTED_BACK_TO_PRODUCER`.
+
+## IAA Session Memory — embedded append
+
+- session_id: session-1299
+- pr_reviewed: PR #2058 — Add explicit application Data API grants before Supabase's October change
+- overlay_applied: CI_WORKFLOW + BUILD_DELIVERABLE / PRODUCT_BUILD_ASSURANCE (class-routed database/security scope)
+- verdict: REJECTION-PACKAGE
+- checks_run: 33 substance checks: 28 PASS, 5 FAIL
+- learning_note: Recurrent scope count/path reconciliation remained unresolved after ECAP R07/R11; require CI-enforced exact diff-to-scope validation.
