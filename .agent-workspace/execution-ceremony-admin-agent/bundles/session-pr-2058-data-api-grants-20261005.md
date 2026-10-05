@@ -45,7 +45,7 @@
 - The pre-brief correctly states that the current bounded correction does not predate the historical implementation.
 - Wave 16.6 and `public.evidence_submissions` are excluded; no supported-use claim is made for that table.
 - No live Supabase/database deployment occurred. Preview checks do not establish production deployment.
-- Final IAA and CS2 review remain pending; ECAP did not invoke IAA or issue an assurance token/verdict.
+- Final IAA and CS2 review remain pending; ECAP did not invoke IAA or issue a token or verdict.
 
 ## Commit-state observation and limits
 

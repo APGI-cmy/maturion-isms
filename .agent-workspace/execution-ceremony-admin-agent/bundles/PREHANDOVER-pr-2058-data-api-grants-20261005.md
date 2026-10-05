@@ -130,6 +130,6 @@ This is embedded here to honor the two-file-only scope; no separate reconciliati
 
 - `gate_set_checked` is present and the delegation-order outcome remains explicitly `FAIL` (AAP-15 inventory evidence present).
 - AAP-16 scan found no unresolved or provisional gate-pass wording in these two artifacts.
-- No token, assurance verdict, or claim that ECAP invoked IAA is included.
+- No token or assurance verdict is included; ECAP did not invoke IAA.
 - The scope-count inconsistency in R07/R11, uncommitted state, and pending IAA/CS2 review prevent treating the checklist/reconciliation as a completed handover gate. This file makes no §4.3e PASS assertion.
 - The required Foreman parking-station append was not made because the appointment's user instruction restricts changes to these two exact paths.
