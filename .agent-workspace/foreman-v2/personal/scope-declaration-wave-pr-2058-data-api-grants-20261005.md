@@ -8,7 +8,7 @@ appointment_utc: "2026-10-05T06:12:10Z"
 reviewed_substantive_head: "1eb903588c0bfc090925cdceb7414fddcccc615b"
 current_pr_head_at_appointment: "ef762b8dd30f6ba4121e1830a9911c876d1eaa60"
 ceremony_admin_appointed: true
-status: "ECAP_RETURN_ACCEPTED_CI_CARRIER_PRESENT_FINAL_IAA_PENDING"
+status: "ECAP_RETURN_ACCEPTED_HISTORICAL_CARRIER_PRESENT_IAA_REJECTION_REMEDIATION_QP_PASS_CS2_RISK_DISPOSITION_PENDING"
 
 ## Appointment
 
@@ -66,12 +66,13 @@ expected_return_artifact_paths:
 - `.agent-admin/scope-declarations/pr-2058.md` - PR scope and appointment record
 - `.agent-admin/prs/pr-2058/wave-current-tasks.md` - active PR task record
 - `.agent-admin/assurance/iaa-wave-record-PR-2058-SECURITY-CORRECTION-2026-10-04.md` - canonical pre-brief and historical rejection record
+- `.agent-workspace/independent-assurance-agent/memory/session-1298-20261005.md` - IAA-owned session memory included in the actual PR diff; not a Foreman or ECAP artifact
 
 ### Authorized ceremony outputs
 
 - `.agent-workspace/foreman-v2/personal/scope-declaration-wave-pr-2058-data-api-grants-20261005.md` - this Foreman scope declaration
-- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-2058-data-api-grants-20261005.md` - ECAP return artifact, pending
-- `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pr-2058-data-api-grants-20261005.md` - ECAP return artifact, pending
-- `.agent-admin/prehandover/proof-pr-2058-data-api-grants-20261005.md` - later PR-scoped CI evidence carrier, pending
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-2058-data-api-grants-20261005.md` - committed historical ECAP return, accepted by Foreman for evidence collation only; immutable
+- `.agent-workspace/execution-ceremony-admin-agent/bundles/session-pr-2058-data-api-grants-20261005.md` - committed historical ECAP return, accepted by Foreman for evidence collation only; immutable
+- `.agent-admin/prehandover/proof-pr-2058-data-api-grants-20261005.md` - committed historical carrier reflecting the state before the latest IAA rejection; immutable
 
-No other path is authorized by this declaration.
+The actual PR diff contains 16 paths. The IAA-owned session memory above is counted in the PR scope but is not a Foreman/ECAP artifact or an expansion of the appointed ceremony scope. The appointment identity, timestamp, reviewed substantive head, scope, and two ECAP return paths remain unchanged.

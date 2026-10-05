@@ -69,3 +69,43 @@ unrecorded migrations, potentially including unrelated application changes.
 Existing hosted tables do not require an emergency change for this notice.
 The grant migration does not alter data or revoke access; do not undo it by
 blindly revoking privileges that may have existed beforehand.
+
+### Future post-merge deployment and verification checklist
+
+This is a future checklist only. It is not deployment authorization and does not
+state that production deployment or verification has occurred. A CS2 or otherwise
+authorized operator must follow the existing protected path:
+
+- [ ] Confirm the change has merged to `main` through the normal review and
+  repository gates. Do not dispatch from a PR branch or use `supabase db push`,
+  direct `psql`, or another deployment path.
+- [ ] Before dispatch, review the complete pending migration queue across legacy,
+  AIMC, and MMM-native migrations, in that order. The protected workflow applies
+  all unrecorded migrations, not only the Data API grant migration. Resolve any
+  unexpected or unrelated pending work before proceeding.
+- [ ] Have the authorized operator manually dispatch
+  `.github/workflows/deploy-mmm-supabase-migrations.yml` from `main`, enter
+  `CONFIRM` exactly, and obtain the configured `production` environment approval.
+  The workflow must pass its pre-flight branch/confirmation guard and complete
+  migration and schema-verification jobs; do not bypass a failed gate.
+- [ ] After a successful run, verify the deployed MMM-native migration tracking
+  record for `20260923124227_explicit_data_api_grants.sql` and confirm the
+  production run's commit/version. Check the effective grants on `projects` and
+  `source_links`: `authenticated` has `SELECT` but not `INSERT`, `UPDATE`, or
+  `DELETE`; verify the migration's reviewed grants and RLS-enabled state are
+  present as expected. Confirm authenticated execution remains unavailable for
+  public PIT organisation/role helpers and available for the approved PIT
+  project RPCs.
+- [ ] Using an authenticated PIT account, verify the project register and
+  project-detail reads succeed for a record in that account's own organisation.
+  Verify a known project ID from another organisation is not returned by either
+  read path. Record only the verification outcome and non-sensitive identifiers.
+- [ ] Recheck that direct authenticated writes to `projects` and `source_links`
+  remain denied by their effective privileges. Verify the existing controlled
+  PIT create/update RPC paths remain available and enforce their existing
+  organisation and role checks; use only the approved PIT smoke-test procedure,
+  never direct table writes to set up or clean up production data.
+- [ ] Record the deployment run, migration/version verification, and smoke-test
+  results through the established release process. If any check fails, stop and
+  route it through the authorized incident/remediation process; do not improvise
+  a production grant or policy change.

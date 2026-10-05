@@ -24,6 +24,25 @@ INSERT INTO public.user_org_memberships(user_id,org_id,status) VALUES
 INSERT INTO public.user_roles(user_id,org_id,role) VALUES
  ('00000000-0000-0000-0000-000000000101','30000000-0000-0000-0000-000000000001','project_manager'),
  ('00000000-0000-0000-0000-000000000102','30000000-0000-0000-0000-000000000002','contributor');
+INSERT INTO public.projects(
+ id,org_id,name,type,quick_win_type,description,project_leader_id,
+ project_leader_label,start_date,end_date,created_by,updated_by
+) VALUES
+ ('40000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000001',
+  'Org A isolation fixture','project','quick_win','Org A project row',
+  '00000000-0000-0000-0000-000000000101','Org A project leader',
+  '2026-01-01','2026-12-31','00000000-0000-0000-0000-000000000101',
+  '00000000-0000-0000-0000-000000000101'),
+ ('40000000-0000-0000-0000-000000000002','30000000-0000-0000-0000-000000000002',
+  'Org B isolation fixture','project','quick_win','Org B project row',
+  '00000000-0000-0000-0000-000000000102','Org B project leader',
+  '2026-01-01','2026-12-31','00000000-0000-0000-0000-000000000102',
+  '00000000-0000-0000-0000-000000000102');
+INSERT INTO public.source_links(id,project_id,source_type,source_ref) VALUES
+ ('50000000-0000-0000-0000-000000000001',
+  '40000000-0000-0000-0000-000000000001','risk','org-a-isolation-fixture'),
+ ('50000000-0000-0000-0000-000000000002',
+  '40000000-0000-0000-0000-000000000002','risk','org-b-isolation-fixture');
 SET LOCAL request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
 SET LOCAL request.jwt.claim.role = 'authenticated';
 SET LOCAL ROLE authenticated;
@@ -45,6 +64,23 @@ DECLARE
  new_project_id uuid;
  updated_description text;
 BEGIN
+ IF (SELECT count(*) FROM public.projects
+     WHERE id = '40000000-0000-0000-0000-000000000001') <> 1 THEN
+   RAISE EXCEPTION 'Authenticated Org A cannot read its own PIT project through RLS';
+ END IF;
+ IF EXISTS (SELECT 1 FROM public.projects
+            WHERE id = '40000000-0000-0000-0000-000000000002') THEN
+   RAISE EXCEPTION 'Authenticated Org A can read the Org B PIT project through RLS';
+ END IF;
+ IF (SELECT count(*) FROM public.source_links
+     WHERE id = '50000000-0000-0000-0000-000000000001') <> 1 THEN
+   RAISE EXCEPTION 'Authenticated Org A cannot read its own PIT source link through RLS';
+ END IF;
+ IF EXISTS (SELECT 1 FROM public.source_links
+            WHERE id = '50000000-0000-0000-0000-000000000002') THEN
+   RAISE EXCEPTION 'Authenticated Org A can read the Org B PIT source link through RLS';
+ END IF;
+
  BEGIN
    PERFORM public.pit_is_org_member('30000000-0000-0000-0000-000000000002');
    RAISE EXCEPTION 'Authenticated caller invoked public PIT membership oracle';
