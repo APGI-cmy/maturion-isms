@@ -124,3 +124,48 @@ IAA_PREFLIGHT_BRIEF:
 
 Token reference: IAA-session-gov2064t4-20261005-REJECT
 
+## TOKEN
+
+### 2026-10-05 — GOV-2064-T1/T2/T4 corrected-slice re-assessment (NOT a full PR #2065 final-handover/merge-readiness verdict)
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN (SCOPED)
+PR: #2065 "prevent-rejected-iaa-handover" — GOV-2064-T1 (certification only, IAA-file diff excluded) / T2 (qa-builder corrected entrypoints) / T4 (governance-liaison-isms-agent mutation-sensitivity + wave-task truthfulness) re-assessment
+Verified HEAD: 4f4a698ebefef694520c0fe7b7db4aed142e464e (confirmed == origin/copilot/prevent-rejected-iaa-handover; ancestry 5ea96ba -> a04e0c0 -> 7dd188a -> 4f4a698 independently confirmed via git log/rev-parse, not taken from invocation claim)
+All applicable checks PASS. Merge gate parity (required_checks): PASS.
+PHASE_B_BLOCKING_TOKEN: IAA-session-gov2064-t1t2t4-reassess-20261005-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+**SCOPE — what this token covers:**
+1. T4 (governance-liaison-isms-agent, commit `5ea96ba`): both named mutation-sensitivity guards in `foreman-prehandover-lane-gate.test.sh` ("pr_number mismatch is a stale control file" and "pre_iaa_submission_allowed true before PRE_HANDOVER_GATE_PASS") independently re-verified genuinely isolated — guard removed one at a time in `foreman-prehandover-lane-gate.js`, confirmed only its own named case flips to FAIL while all others (including the pre-existing unrelated failure) are unaffected, file restored to byte-identical original (md5 `a467f9f00ae84d8141a8a21619169f3f`, zero `git diff`) after each test. `wave-current-tasks.md` rows 3/4 independently confirmed truthful: both read `🟡 IN PROGRESS`, IAA token table still showed `PENDING` as of the reviewed head — no premature terminal claim. This closes REJECTION_HISTORY finding 1 (Systemic — unverified mutation-sensitivity) and finding 2 (Ceremony — premature 🟢 DONE) from the `2026-10-05 — GOV-2064-T4 submission review` entry above. This is a genuine substantive correction, not a self-referential resubmission — `NO-DUPLICATE-PASS-001` does not apply.
+2. T1 (CodexAdvisor-agent certification, commit `a04e0c0`): independently re-read the actual diffs in commit `11a9d61` for `.github/agents/foreman-v2-agent.md` and `.github/agents/active-cs2-agent.md` only. Confirmed substantively: Foreman §4 now routes an IAA REJECTION-PACKAGE or missing/stale token at/after `PRE_HANDOVER_GATE_PASS` to `STOP_AND_FIX / CORRECTION`, never `CS2_REVIEW`; `active-cs2-agent.md` `HALT-ACS2-006` + `ACS2-NO-REJECTED-IAA-MERGE-001` + Phase 3 Step 5 block completion handover, merge, and successor-wave dispatch on a rejected/missing/stale token. No `governance/canon/**` path touched by commit `11a9d61` — no divergent local canon edit, confirmed via `git show --stat`. YAML frontmatter re-parsed successfully for both files at current HEAD; character counts well under the 30,000 hard limit. CodexAdvisor's minimality/sufficiency determination is corroborated.
+   - **EXCLUDED FROM THIS TOKEN**: the diff to `.github/agents/independent-assurance-agent.md` in the same commit `11a9d61`. Per `SELF-MOD-IAA-001`/`NO-SELF-REVIEW-001` and CS2's explicit instruction, IAA does not and must not self-assure this file's content. Structural fact only (verifiable, not a content judgment): IAA did not author that diff — it was authored by CodexAdvisor under CS2-proxy appointment, and no IAA self-review violation exists. The substantive content of that diff remains for **direct human CS2 review** and is not covered by this ASSURANCE-TOKEN.
+3. T2 (qa-builder, commits `7dd188a` + `4f4a698`): independently re-read the diffs to `.github/scripts/post-handover-auto-remediation.js`, `.github/workflows/handover-claim-gate.yml`, and `.github/scripts/pre-handover-checkpoint.js`, and independently re-ran (not just read) all three regression suites plus the lane-gate suite — exact counts below. Confirmed substantively (not just by test pass-count) that the six required properties hold: (a) `ADMIN_MANIFEST_DEFECT` is now gated on `ADMIN_MANIFEST_APPLICABLE`, defaulting to strict/applicable when absent, preserving old behavior for other callers (cases 9-12 PASS); (b) `requires_iaa`/`requires_ecap` for legacy/no-manifest PRs are derived from actual governance-control-path impact, not defaulted to all-checks-required, and the canonical `REQUIRED_CHECKS` catalog length used for `REQUIRED_CHECKS_TOTAL` reconciliation is untouched (T2-B1..B4 PASS); (c) identity-binding/staleness detection (`identityScopedArtifacts`/`isForeignPrArtifact`) excludes only artifacts explicitly bound to a *different* PR number, never ambiguous/unscoped evidence (tests 31, 33, 34 PASS — test 34 specifically proves no over-exclusion); (d) a CS2-authored (`apgi-cmy`-login-matched) comment is never read as the producer's own completion claim, by authorship not wording (T2-D1..D5 PASS, including D3/D5 controls proving non-CS2 claims are still enforced); (e) a current PR-bound wave-record PASS token is recognized without requiring a self-referential evidence-only commit (test 32 PASS); (f) genuine security/IAA/delegation-order failures remain blocking (T2-B2, P1-P9, tests 4-6, 33-34 all PASS, correctly failing-closed).
+   `wave-current-tasks.md` row 2 (commit `4f4a698`) independently confirmed: `🟡 IN PROGRESS`, non-terminal, consistent with token table `PENDING`.
+
+**Independently re-run test counts (exact, not copied from commit messages):**
+| Suite | Result |
+|---|---|
+| `.github/scripts/foreman-prehandover-lane-gate.test.sh` | 8 passed, 1 failed — the 1 failure ("stale handover control fails exact head check") independently confirmed **pre-existing**: reproduced identically on the PR's own first commit `6cdf1bf` (parent `659fed0`, which predates PR #2065 entirely) via isolated `git worktree`. **Not a regression from this wave. Out of scope for this token** — tracked below as a separate, pre-existing defect. |
+| `.github/scripts/post-handover-auto-remediation.test.sh` | 12 passed, 0 failed |
+| `.github/scripts/handover-claim-gate.test.sh` | 45 passed, 0 failed |
+| `.github/scripts/pre-handover-checkpoint.test.sh` | 57 passed, 0 failed |
+
+**Merge gate parity (Step 4.1, current HEAD `4f4a698`):** `merge-gate/verdict` success, `governance/alignment` success, `stop-and-fix/enforcement` success (live CI, independently queried). All other check runs at this HEAD (50 total) are `success` or `skipped` — no `failure`/`pending`/`queued` observed at time of review.
+
+**`wave-current-tasks.md` truthfulness (CORE-021/ACR-15 style check, this token's scope):** confirmed no row reads terminal `🟢 DONE` while the "IAA Tokens Received This Wave" table still reads `PENDING` for PR #2065. Row 1 (CodexAdvisor/T1) reads `🔴 PENDING` despite T1 substance being certified-complete — this is a conservative **under-statement**, not a false completion claim, so it does not fail this check; it is a stale-label bookkeeping discrepancy (observation below), not a governance violation.
+
+**What this token does NOT cover (explicitly out of scope):**
+- Full final-handover / merge-readiness assurance for PR #2065 as a whole.
+- The substantive content of the `.github/agents/independent-assurance-agent.md` diff in commit `11a9d61` — reserved for direct human CS2 review per CS2's explicit instruction; IAA does not self-assure this file.
+- GOV-2064-T3 (active-cs2-agent) — not re-reviewed in this invocation; its own prior proof/session-memory stands on its own record.
+- The pre-existing `foreman-prehandover-lane-gate.test.sh` "stale handover control fails exact head check" failure (predates PR #2065, traces to commit `659fed0`) — tracked as a separate, independently triageable defect, not resolved or waived by this token.
+- The `wave-current-tasks.md` row-1 stale-`PENDING`-label discrepancy (CodexAdvisor/T1) — reported to Foreman for correction, not a blocking defect of this token.
+
+**Single next action for Foreman:** (1) route the `.github/agents/independent-assurance-agent.md` diff to direct human CS2 review (do not ask IAA to self-assure it); (2) correct `wave-current-tasks.md` row 1 from `🔴 PENDING` to the correct non-terminal `🟡 IN PROGRESS` label (bookkeeping only, T1 substance already certified); (3) open or confirm a separate tracked defect for the pre-existing lane-gate test failure (origin `659fed0`, predates this PR) so it does not get silently carried forward as "this wave's problem" or silently dropped.
+
+Token reference: IAA-session-gov2064-t1t2t4-reassess-20261005-PASS
+
