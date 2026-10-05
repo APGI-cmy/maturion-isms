@@ -38,14 +38,15 @@ iaa_prebrief_path: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment
 
 - [ ] W0-2053-D — Add schema-focused RED assertions proving the required versioned safety-envelope and decision-record schemas and validator interface are absent.
       owner: qa-builder
-      status: PENDING
+      status: RED_BASELINE_ACCEPTED_BY_FOREMAN_QP
       evidence: `.agent-admin/evidence/pr-2061-w0-qa-to-red.md`
       authorized_test_paths: `.github/scripts/pit-cs2-controller.test.js`, `.github/scripts/pit-cs2-controller-workflow.test.js`
+      qp_review: PASS — 15 schema-focused RED assertions fail only because the required schemas/validation interface are absent; 9 controller and 3 workflow pre-existing tests remain green. Corrected tests preserve `maximum_merge_attempts` and `expiry` as required but proposal-only fields.
       constraints: RED-only; no implementation or schema creation.
 
 - [ ] W0-2053-E — Implement the accepted W0 RED baseline on the frozen controller, workflow, and versioned-schema surface.
       owner: pit-specialist
-      status: BLOCKED_ON_W0-2053-D
+      status: APPOINTED_IN_PROGRESS
       implementation_paths: `.github/scripts/pit-cs2-controller.js`, `.github/workflows/pit-cs2-controller.yml`, `.github/cs2-controller/safety-envelope.schema.json`, `.github/cs2-controller/decision-record.schema.json`
       constraints: No activation, live merge/successor action, automatic reset, spend telemetry, protected Tier 1/2/3/CANON edit, deployment, or archival-evidence edit.
 
@@ -68,6 +69,6 @@ iaa_prebrief_path: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment
 | ID | Classification | Owner | Required remediation | Status |
 |---|---|---|---|---|
 | W0-BLK-002 | Bounded W3 controller defect | W3 controller route | Scope historic-reference identity scans to the active PR/work item; do not modify archival #2048/#2057 records. | RECORDED_FOR_W3 |
-| W0-BLK-003 | QA prerequisite | qa-builder | Add schema-focused RED assertions for the required versioned safety-envelope and decision-record schemas and validator interface. | OPEN |
+| W0-BLK-003 | Deliberate activation boundary | CS2 | Human merge authority, active-CS2 merge/successor activation, automatic reset, spend telemetry, and non-proposal defaults remain outside this builder appointment. | OPEN |
 
 This record is an intermediate intake gate, not a handover, completion, final assurance, or merge-readiness claim.
