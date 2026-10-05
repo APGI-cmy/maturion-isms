@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maturion-isms.internal/schemas/cs2-controller/safety-envelope.schema.json",
+  "title": "PIT CS2 Controller W0 Safety Envelope",
+  "description": "Versioned, machine-validatable safety envelope per GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md Section 5.1. Configured once by an authorised human-CS2 decision, readable by every workflow, and enforced by a supervisor independent of the delivery agents. maximum_stage_attempts carries no const/default and is never read by any enforcement function in this W0 scope; maximum_merge_attempts and expiry remain required fields but are explicitly-tagged proposal-only/approved-active status objects that must never silently activate a default.",
+  "schema_version": "1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "work_item_id",
+    "approved_paths",
+    "approved_agents",
+    "maximum_active_jobs",
+    "maximum_stage_attempts",
+    "maximum_remediation_attempts",
+    "maximum_dispatch_runtime",
+    "maximum_total_runtime",
+    "maximum_spend",
+    "maximum_merge_attempts",
+    "expiry",
+    "circuit_breaker_state",
+    "reset_authority",
+    "kill_switch_state"
+  ],
+  "properties": {
+    "work_item_id": {
+      "type": "string",
+      "pattern": "^pit-issue-\\d+$",
+      "minLength": 1
+    },
+    "approved_paths": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "approved_agents": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "maximum_active_jobs": {
+      "type": "integer",
+      "const": 1
+    },
+    "maximum_stage_attempts": {
+      "type": "integer",
+      "description": "Required field, proposal-only in W0: no const/default is declared and no controller enforcement function reads this field, so it can never silently activate a limit. Explicit human-CS2 activation of a stage-attempt ceiling requires a separate, future, explicitly-approved change."
+    },
+    "maximum_remediation_attempts": {
+      "type": "integer",
+      "const": 1
+    },
+    "maximum_dispatch_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "value"],
+      "properties": {
+        "unit": { "type": "string", "const": "seconds" },
+        "value": { "type": "integer", "const": 1800 }
+      }
+    },
+    "maximum_total_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "value"],
+      "properties": {
+        "unit": { "type": "string", "const": "seconds" },
+        "value": { "type": "integer", "const": 7200 }
+      }
+    },
+    "maximum_spend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["runtime_only"] }
+      }
+    },
+    "maximum_merge_attempts": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Required field, proposal-only in W0 per explicit CS2 ruling (2026-10-05): carries no const/default. Must always be an explicitly-tagged status object -- 'proposed' (unactivated) unless a separate, explicit human-CS2 decision sets 'approved_active' with a value.",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["proposed", "approved_active"] },
+        "value": { "type": ["integer", "null"] }
+      }
+    },
+    "expiry": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Required field, proposal-only in W0 per explicit CS2 ruling (2026-10-05): carries no const/default. Must always be an explicitly-tagged status object -- 'proposed' (unactivated) unless a separate, explicit human-CS2 decision sets 'approved_active' with an ISO-8601 value.",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["proposed", "approved_active"] },
+        "value": { "type": ["string", "null"] }
+      }
+    },
+    "circuit_breaker_state": {
+      "type": "string",
+      "enum": ["closed", "tripped"]
+    },
+    "reset_authority": {
+      "type": "string",
+      "enum": ["human_cs2_only"],
+      "description": "Restricted to human-CS2-only. No webhook, agent, token, comment, pull_request, or automatic_retry source is a valid enum value; a tripped circuit breaker can never be reset by any automated path."
+    },
+    "kill_switch_state": {
+      "type": "string",
+      "enum": ["armed", "triggered"]
+    }
+  }
+}

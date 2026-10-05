@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maturion-isms.internal/schemas/cs2-controller/decision-record.schema.json",
+  "title": "PIT CS2 Controller W0 Authoritative Event Decision Record",
+  "description": "Versioned, deterministic decision record per GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md Section 5.2. Every controller, injector, watchdog, QP/ECAP transition and CS2 merge decision reads and appends the same PR-scoped decision record. additionalProperties is false to pin a single fixed, deterministic shape. decision/reason_code are closed, typed enums (never an open/free-text value) and include the mandatory UNKNOWN_STATE refusal so an unrecognized state_before can only ever resolve to a typed STOP_AND_FIX/UNKNOWN_STATE outcome, never an inferred readiness.",
+  "schema_version": "1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "received_at",
+    "source",
+    "work_item_id",
+    "pr_number",
+    "head_sha",
+    "base_sha",
+    "reviewed_content_fingerprint",
+    "state_before",
+    "material_blockers",
+    "delta_class",
+    "requested_stage",
+    "allowed_next_action",
+    "action_owner",
+    "idempotency_key",
+    "attempt_count",
+    "safety_envelope_id",
+    "budget_snapshot",
+    "decision",
+    "reason_code",
+    "evidence_refs",
+    "state_after"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "minLength": 1 },
+    "received_at": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "work_item_id": { "type": "string", "pattern": "^pit-issue-\\d+$" },
+    "pr_number": { "type": "integer", "minimum": 1 },
+    "head_sha": { "type": "string", "minLength": 1 },
+    "base_sha": { "type": "string", "minLength": 1 },
+    "reviewed_content_fingerprint": { "type": "string", "minLength": 1 },
+    "state_before": {
+      "type": "string",
+      "enum": ["intake", "foreman", "builder", "qp", "ecap", "iaa", "cs2_review", "awaiting_human", "closed"]
+    },
+    "material_blockers": { "type": "array" },
+    "delta_class": { "type": "string", "minLength": 1 },
+    "requested_stage": { "type": "string", "minLength": 1 },
+    "allowed_next_action": { "type": "string", "minLength": 1 },
+    "action_owner": { "type": "string", "minLength": 1 },
+    "idempotency_key": { "type": "string", "minLength": 1 },
+    "attempt_count": { "type": "integer", "minimum": 0 },
+    "safety_envelope_id": { "type": "string", "minLength": 1 },
+    "budget_snapshot": { "type": "object" },
+    "decision": {
+      "type": "string",
+      "enum": ["ALLOW", "STOP_AND_FIX", "PROVEN_EXTERNAL_BOUNDARY"]
+    },
+    "reason_code": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "ENVELOPE_MISSING",
+        "ENVELOPE_MALFORMED",
+        "ENVELOPE_EXPIRED",
+        "ENVELOPE_TASK_INCONSISTENT",
+        "ENVELOPE_LIMIT_UNMEASURABLE",
+        "ENVELOPE_SCHEMA_INVALID",
+        "KILL_SWITCH_TRIGGERED",
+        "ACTIVE_WORK_ITEM_LIMIT_EXCEEDED",
+        "REMEDIATION_ATTEMPT_LIMIT_EXCEEDED",
+        "DISPATCH_RUNTIME_EXCEEDED",
+        "TOTAL_RUNTIME_EXCEEDED",
+        "UNKNOWN_STATE"
+      ]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "state_after": {
+      "type": "string",
+      "enum": ["intake", "foreman", "builder", "qp", "ecap", "iaa", "cs2_review", "awaiting_human", "closed"]
+    }
+  }
+}
