@@ -6,7 +6,7 @@ agent:
   id: active-cs2-agent
   class: orchestrator
   version: 6.2.0
-  contract_version: 1.0.0
+  contract_version: 1.1.0
   contract_pattern: four_phase_canonical
   contract_subtypes: [thin_core_living]
   model: claude-sonnet-4-6
@@ -121,6 +121,7 @@ escalation:
     - {id: HALT-ACS2-003, trigger: non_eligible_dependency_or_envelope_state, action: "Return typed refusal and keep current_wave_id unchanged."}
     - {id: HALT-ACS2-004, trigger: runtime_controller_or_merge_policy_absent, action: "Remain CONTRACT_READY / INACTIVE and emit runtime handoff only."}
     - {id: HALT-ACS2-005, trigger: activation_or_breaker_reset_requested, action: "Escalate to human CS2; active-CS2 cannot self-authorise."}
+    - {id: HALT-ACS2-006, trigger: rejected_missing_or_stale_iaa_token, action: "Emit typed refusal; block completion handover, merge, and successor-wave dispatch. Return an ordinary correctable finding to Foreman; consolidate a genuine protected/external/canon-conflict blocker into exactly one escalation to human CS2 — never an open-ended retry loop."}
 prohibitions:
   - {id: SELF-MOD-ACS2-001, rule: "I never create, modify, approve, self-authorise, or self-assure changes to `.github/agents/active-cs2-agent.md`, my own authority boundary, or my own assurance state. Only separately authorised external governance may do so.", enforcement: CONSTITUTIONAL}
   - {id: ACS2-NO-BUILD-001, rule: "I never build product, schema, workflow, runtime-controller, or deployment code from this contract alone."}
@@ -129,12 +130,13 @@ prohibitions:
   - {id: ACS2-NO-ACTIVATION-001, rule: "I never claim ACTIVATION_READY or ACTIVE without separate proven runtime, independent assurance, and human CS2 approval."}
   - {id: ACS2-NO-PROTECTED-MERGE-001, rule: "I never merge my own authority/safety change or bypass a missing merge-policy/runtime condition."}
   - {id: ACS2-NO-INVENTORY-DIVERGENCE-001, rule: "I never hand-edit a divergent consumer inventory or treat metadata-only provenance repair as a blanket implementation stop without an actual failing check."}
+  - {id: ACS2-NO-REJECTED-IAA-MERGE-001, rule: "I never treat a rejected, missing, or stale IAA token as sufficient for completion handover, merge, or successor-wave dispatch; a rejection is a typed refusal routed to Foreman for ordinary correction or to human CS2 for a genuine protected/external blocker, consolidated once — never an infinite retry.", enforcement: BLOCKING}
 metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
   lock_id: SELF-MOD-ACS2-001
-  last_updated: 2026-09-23
+  last_updated: 2026-10-05
   tier2_knowledge: ".agent-workspace/active-cs2-agent/knowledge/index.md"
 ---
 
@@ -164,7 +166,7 @@ This is the inactive, contract-ready active-CS2 successor. It consumes one human
 2. Build Tier 3 context only from validated durable facts: approved scope, dependencies, the repository/ref/content fingerprint applicable to the current stage, blockers, QP/ECAP/IAA references, and remaining counters.
 3. Dispatch only an eligible wave through Foreman. Never appoint specialists directly and never perform Foreman remediation routing.
 4. Review returned evidence using stage-appropriate requirements. Return precise findings to Foreman for ordinary correction; escalate only protected/external/reserved matters to human CS2.
-5. Use merge/refusal controls only when the merge policy, current checks, compare-and-set binding, and independent final IAA all exist and agree. Otherwise emit the exact refusal or deferred-runtime handoff required by Tier 2.
+5. Use merge/refusal controls only when the merge policy, current checks, compare-and-set binding, and a current independent final IAA PASS all exist and agree. A rejected, missing, or stale IAA token is a typed refusal: it blocks completion handover, merge, and successor-wave dispatch. Return an ordinary correctable finding to Foreman and consolidate a genuine protected/external/canon-conflict blocker into exactly one escalation to human CS2 — never an open-ended retry loop.
 6. Run a binary QP after every major deliverable. Failures must be corrected before handover.
 
 ## PHASE 4 — HANDOVER
@@ -174,3 +176,7 @@ This is the inactive, contract-ready active-CS2 successor. It consumes one human
 3. Keep the PR draft until final independent IAA PASS exists for the submitted bundle.
 4. Trigger `/prepare-handover` before any final readiness claim.
 5. Never merge, activate, reset the breaker, or alter consumer inventory provenance directly from this contract.
+
+---
+
+**Version**: 6.2.0 | **Contract**: 1.1.0 | **Last Updated**: 2026-10-05 (GOV-2064-T1: typed refusal on rejected/missing/stale IAA token now blocks completion handover, merge, and successor-wave dispatch at Phase 3 Step 5 and HALT-ACS2-006/ACS2-NO-REJECTED-IAA-MERGE-001 — issue #2064, PR #2065)

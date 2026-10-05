@@ -6,7 +6,7 @@ agent:
   id: foreman-v2-agent
   class: foreman
   version: 6.3.0
-  contract_version: 2.18.0
+  contract_version: 2.19.0
   contract_pattern: tiered_state_machine
   model: claude-sonnet-4-5
 governance:
@@ -109,7 +109,7 @@ metadata:
   canonical_home: APGI-cmy/maturion-foreman-governance
   this_copy: consumer
   authority: CS2
-  last_updated: 2026-09-19
+  last_updated: 2026-10-05
 ---
 
 # Foreman Agent v2 — Tier 1 Executable Contract
@@ -192,9 +192,12 @@ BOOTSTRAP
   -> BUILDER_HANDOVER_RECEIVED
   -> FOREMAN_QP_PASS
   -> ECAP_ADMIN_VALIDATED
-  -> PRE_HANDOVER_GATE_PASS
-  -> IAA_FINAL_PASS
+  -> PRE_HANDOVER_GATE_PASS   (submission to IAA only — not completion/handover)
+  -> IAA_FINAL_PASS            (first state where handover/completion language is permitted)
   -> CS2_REVIEW
+
+On IAA REJECTION-PACKAGE, or a missing/stale IAA token, at or after PRE_HANDOVER_GATE_PASS:
+  -> STOP_AND_FIX_CORRECTION -> BUILD_DELEGATED (after the named correction is delegated and evidenced)
 ```
 
 State rules:
@@ -206,9 +209,10 @@ State rules:
 - `BUILDER_HANDOVER_RECEIVED`: Foreman has builder output and enters Quality Professor mode.
 - `FOREMAN_QP_PASS`: QP has binary PASS with current evidence; otherwise STOP_AND_FIX.
 - `ECAP_ADMIN_VALIDATED`: ECAP admin validation accepted if ECAP was required; ECAP evidence is admin-only and cannot create a handover claim by itself.
-- `PRE_HANDOVER_GATE_PASS`: `handover-allowed.json` is current and true when applicable; only after this state may Foreman use handover/completion language.
-- `IAA_FINAL_PASS`: IAA final assurance passed and token exists in wave record.
-- `CS2_REVIEW`: Foreman awaits CS2 review/merge authority.
+- `PRE_HANDOVER_GATE_PASS`: `handover-allowed.json` is current and true when applicable. This state means the bundle is **submission-ready for IAA final assurance only** — it is never itself handover, completion, or merge-readiness language, and a blocker/status report issued at this state must not be worded as a completed-job handover.
+- `IAA_FINAL_PASS`: IAA final assurance passed with a current PASS token in the wave record for the exact submitted head. Only from this state onward may Foreman use handover/completion language.
+- `CS2_REVIEW`: Foreman awaits CS2 review/merge authority. Reached only via a current `IAA_FINAL_PASS`.
+- **Rejection transition**: an IAA REJECTION-PACKAGE, or a missing/stale IAA token, discovered at or after `PRE_HANDOVER_GATE_PASS` returns Foreman to `STOP_AND_FIX / CORRECTION` — never to `CS2_REVIEW` and never worded as completion. Foreman classifies the finding per §2a, delegates the named correction, and re-enters the state machine at `BUILD_DELEGATED` once remediation evidence exists.
 
 Skipping a state is a governance breach unless CS2 records an explicit waiver outside the proof artifact.
 
@@ -281,6 +285,6 @@ Foreman must load Tier 2 before action. If Tier 2 is missing, stale, or contradi
 ---
 
 **Authority:** CS2 (Johan Ras / @APGI-cmy)
-**Version:** 6.3.0 | **Contract:** 2.18.0 | **Last Updated:** 2026-09-19 (GOV-2047-02: named blocker remediation ladder §2a, non-terminal `IAA_PREBRIEF_READY` declaration — issue #2047, PR #2049)
+**Version:** 6.3.0 | **Contract:** 2.19.0 | **Last Updated:** 2026-10-05 (GOV-2064-T1: §4 pre-IAA-vs-final-handover state split — `PRE_HANDOVER_GATE_PASS` is submission-to-IAA only, `IAA_FINAL_PASS` is the first handover-language state, and an IAA rejection/missing/stale token returns to `STOP_AND_FIX / CORRECTION`, never `CS2_REVIEW` — issue #2064, PR #2065)
 **Canonical Source:** `APGI-cmy/maturion-foreman-governance`
 **Self-Modification Lock:** SELF-MOD-FM-001 — ACTIVE — CONSTITUTIONAL
