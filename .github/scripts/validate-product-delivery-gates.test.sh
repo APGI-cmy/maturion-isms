@@ -16,6 +16,7 @@ run_test() {
   local name="$1"
   local expected="$2"
   local setup_fn="$3"
+  local expected_class="${4:-}"
 
   local ws
   ws=$(mktemp -d -p "$TEST_DIR")
@@ -24,7 +25,7 @@ run_test() {
   git init -q
   git config user.email "test@example.com"
   git config user.name "Test User"
-  mkdir -p .github/scripts .functional-delivery .agent-admin/assurance apps/mmm/src apps/mmm/tests api/frameworks supabase/migrations governance/canon Maturion/strategy docs/governance .admin/prs
+  mkdir -p .github/scripts .github/workflows .functional-delivery .agent-admin/assurance .agent-admin/notes apps/mmm/src apps/mmm/tests api/frameworks supabase/migrations supabase/tests governance/canon Maturion/strategy docs/governance docs/migrations .admin/prs
   cp "${SCRIPT_DIR}/validate-product-delivery-gates.sh" .github/scripts/validate-product-delivery-gates.sh
   cat > README.md <<'EOF'
 init
@@ -65,14 +66,22 @@ PYEOF
   code=$?
   set -e
 
-  if [ "$code" -eq "$expected" ]; then
-    echo "PASS $name"
-    PASS_COUNT=$((PASS_COUNT + 1))
-  else
-    echo "FAIL $name (expected $expected got $code)"
+  if [ "$code" -ne "$expected" ]; then
+    echo "FAIL $name (expected exit $expected got $code)"
     echo "$output" | sed 's/^/   /'
     FAIL_COUNT=$((FAIL_COUNT + 1))
+    return
   fi
+
+  if [ -n "$expected_class" ] && ! echo "$output" | grep -qF "Detected PR class: ${expected_class}"; then
+    echo "FAIL $name (expected classification '${expected_class}' not found in output)"
+    echo "$output" | sed 's/^/   /'
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    return
+  fi
+
+  echo "PASS $name"
+  PASS_COUNT=$((PASS_COUNT + 1))
 }
 
 seed_product_change_with_cta() {
@@ -172,6 +181,121 @@ ACCESS_CONTROL_IMPACT: anon/authenticated direct RPC execution removed where req
 POST_MERGE_CHECKLIST: deploy migration, rerun production Advisor, smoke-test org access, free assessment, and parse write-back
 EOF
 }
+
+seed_migration_plus_support_files() {
+  # Migration/security payload plus SQL/Python tests, a workflow file, docs, and
+  # an admin note — none of which are app/runtime or recognised evidence paths.
+  cat > supabase/migrations/20260601000000_mixed.sql <<'EOF'
+create table if not exists public.gate_mixed_test(id uuid primary key);
+EOF
+  cat > supabase/tests/test_mixed_migration.sql <<'EOF'
+select 1;
+EOF
+  cat > supabase/tests/test_mixed_migration.py <<'EOF'
+def test_mixed_migration():
+    assert True
+EOF
+  cat > .github/workflows/mixed-migration-ci.yml <<'EOF'
+name: mixed-migration-ci
+on: push
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ok
+EOF
+  cat > docs/migrations/mixed-migration-notes.md <<'EOF'
+# Mixed migration notes
+Documentation only, not an evidence artifact.
+EOF
+  cat > .agent-admin/notes/mixed-migration-admin-note.md <<'EOF'
+Admin note accompanying the migration. Not a recognised evidence-file path.
+EOF
+}
+
+t_mixed_migration_support_files_never_evidence_only() {
+  seed_migration_plus_support_files
+  git add .
+  git commit -q -m "mixed migration + tests/workflow/docs/admin, no evidence"
+}
+run_test "mixed migration+test/workflow/docs/admin never classifies EVIDENCE_ONLY (fails closed, requires DB evidence)" 1 t_mixed_migration_support_files_never_evidence_only "DATABASE_MIGRATION"
+
+t_mixed_migration_support_files_with_db_evidence_passes() {
+  seed_migration_plus_support_files
+  seed_database_evidence
+  git add .
+  git commit -q -m "mixed migration + tests/workflow/docs/admin, with database evidence"
+}
+run_test "mixed migration+test/workflow/docs/admin with database evidence passes as DATABASE_MIGRATION" 0 t_mixed_migration_support_files_with_db_evidence_passes "DATABASE_MIGRATION"
+
+t_mixed_security_support_files_with_security_evidence_passes() {
+  seed_migration_plus_support_files
+  seed_security_evidence
+  TEST_PR_BODY=$'Supabase Security Advisor remediation for RLS and extension hardening, with accompanying tests/workflow/docs/admin files.'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "mixed security remediation + tests/workflow/docs/admin, with security evidence"
+}
+run_test "mixed migration+test/workflow/docs/admin with security hint passes as SECURITY_REMEDIATION" 0 t_mixed_security_support_files_with_security_evidence_passes "SECURITY_REMEDIATION"
+
+t_mixed_migration_plus_runtime_escalates_to_app_functional() {
+  seed_migration_plus_support_files
+  seed_product_change_with_cta
+  git add .
+  git commit -q -m "mixed migration plus runtime UI/API change, no functional evidence"
+}
+run_test "runtime UI/API file mixed with migration still escalates to APP_FUNCTIONAL_BUILD" 1 t_mixed_migration_plus_runtime_escalates_to_app_functional "APP_FUNCTIONAL_BUILD"
+
+t_mixed_migration_plus_runtime_full_valid_passes() {
+  seed_migration_plus_support_files
+  seed_product_change_with_cta
+  seed_valid_functional_evidence
+  seed_valid_iaa
+  git add .
+  git commit -q -m "mixed migration plus runtime UI/API change, full functional evidence"
+}
+run_test "runtime UI/API file mixed with migration passes APP_FUNCTIONAL_BUILD with full evidence" 0 t_mixed_migration_plus_runtime_full_valid_passes "APP_FUNCTIONAL_BUILD"
+
+t_explicit_functional_claim_escalates_migration_only_diff() {
+  cat > supabase/migrations/20260601000001_claim.sql <<'EOF'
+create table if not exists public.gate_claim_test(id uuid primary key);
+EOF
+  TEST_PR_BODY=$'Functional-Delivery-Artifact: .functional-delivery/pr-9999.md'
+  export TEST_PR_BODY
+  git add .
+  git commit -q -m "migration-only diff with explicit formal functional-delivery claim"
+}
+run_test "explicit formal functional-delivery claim escalates migration-only diff to APP_FUNCTIONAL_BUILD" 1 t_explicit_functional_claim_escalates_migration_only_diff "APP_FUNCTIONAL_BUILD"
+
+t_unknown_manifest_class_fails_closed() {
+  seed_migration_plus_support_files
+  seed_database_evidence
+  cat > .admin/prs/pr-9999.json <<'EOF'
+{
+  "pr": 9999,
+  "class": "NOT_A_REAL_CLASS",
+  "owner": "CS2"
+}
+EOF
+  git add .
+  git commit -q -m "unknown manifest class"
+}
+run_test "unknown PR manifest class fails closed" 1 t_unknown_manifest_class_fails_closed
+
+t_mismatched_manifest_downgrade_fails_closed() {
+  seed_migration_plus_support_files
+  seed_database_evidence
+  cat > .admin/prs/pr-9999.json <<'EOF'
+{
+  "pr": 9999,
+  "class": "EVIDENCE_ONLY",
+  "owner": "CS2"
+}
+EOF
+  git add .
+  git commit -q -m "manifest attempts to downgrade database migration to evidence-only"
+}
+run_test "manifest cannot downgrade a database migration payload to EVIDENCE_ONLY (fails closed)" 1 t_mismatched_manifest_downgrade_fails_closed
 
 t_governance_strategy_only() {
   cat > Maturion/strategy/NOTE.md <<'EOF'
