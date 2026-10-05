@@ -159,6 +159,18 @@ run_full_control_case() {
     local legacy_handover="$5"
     local control_pr_number="$6"
     local expected_status="$7"   # "pass" (exit 0) or "fail" (non-zero exit + CS2 trigger)
+    # GOV-2064-T4 mutation-sensitivity fix: every fixture here writes
+    # "handover_allowed: true" into PREHANDOVER-fixture.md, which the gate's generic
+    # positive-handover-claim scan always detects (claimsFinalHandover=true). When
+    # final_cs2 is "false" in a fixture, that alone produces the unrelated
+    # "final_cs2_handover_allowed must be true before handover/completion language is
+    # allowed" error — which is enough by itself to fail the case and route to
+    # FOREMAN_STOP_AND_FIX, independent of whichever named guard the case claims to be
+    # testing. Without a check tied to the specific guard's own error text, deleting
+    # that named guard's logic would not be detected: the case would still "pass" via
+    # this unrelated error. expected_error_substring, when provided, pins the case to
+    # its own guard's exact error text so each case is independently mutation-sensitive.
+    local expected_error_substring="${8:-}"
     local fixture="${TEST_ROOT}/$(echo "$name" | tr ' ' '-')"
     mkdir -p "$fixture/.agent-workspace/foreman-v2/memory" "$fixture/.agent-admin/control"
     printf 'handover_allowed: true\n' > "$fixture/.agent-workspace/foreman-v2/memory/PREHANDOVER-fixture.md"
@@ -220,6 +232,10 @@ JSON
         record_fail "$name" "gate failed only on a missing-key error, not the targeted semantic check: $(cat "$fixture/output")"
         return
     fi
+    if [ -n "$expected_error_substring" ] && ! grep -qF "$expected_error_substring" "$fixture/output"; then
+        record_fail "$name" "gate failed, but not via the targeted guard (expected error text not found: '$expected_error_substring'): $(cat "$fixture/output")"
+        return
+    fi
     if node - "$fixture/.agent-admin/control/cs2-trigger.json" <<'NODE'
 const fs = require('fs');
 const [file] = process.argv.slice(2);
@@ -242,7 +258,8 @@ run_full_control_case \
 run_full_control_case \
     "pr_number mismatch is a stale control file and must fail" \
     "PRE_HANDOVER_GATE_PASS" "true" "false" "false" "999" \
-    "fail"
+    "fail" \
+    "stale control file: pr_number"
 run_full_control_case \
     "handover_allowed must equal final_cs2_handover_allowed" \
     "IAA_FINAL_PASS" "true" "true" "false" "42" \
@@ -250,7 +267,8 @@ run_full_control_case \
 run_full_control_case \
     "pre_iaa_submission_allowed true before PRE_HANDOVER_GATE_PASS must fail" \
     "BUILD_DELEGATED" "true" "false" "false" "42" \
-    "fail"
+    "fail" \
+    "pre_iaa_submission_allowed may be true only when state is PRE_HANDOVER_GATE_PASS or later"
 run_full_control_case \
     "genuine final handover state with consistent fields passes" \
     "IAA_FINAL_PASS" "true" "true" "true" "42" \
