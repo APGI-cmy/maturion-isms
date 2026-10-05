@@ -18,6 +18,27 @@ ECAP's assigned work is ceremony administration only: collate the successful nar
 
 The appointment is current and does not claim to predate the historical implementation. The delegation-order gate remains technically failed under the one-time PR-scoped CS2 exception in comment `5979822573`; no order proof is manufactured. No live Supabase/database deployment occurred.
 
+## Gate inventory checked
+
+```yaml
+gate_set_checked:
+  current_submitted_head: "7e71a5b6b6877117c21f98e232f643b2364845b1"
+  substantive_scope_head: "1eb903588c0bfc090925cdceb7414fddcccc615b"
+  grants: PASS
+  codeql: PASS
+  supabase_preview: PASS
+  vercel_preview_comments: PASS
+  merge_gate_verdict: PASS
+  governance_alignment: PASS
+  ecap_admin_boundary: PASS
+  iaa_prebrief_contract_alignment: PASS
+  foreman_prehandover_lane: PASS
+  merge_gate_required_checks_alignment: PASS
+  delegation_order:
+    result: FAIL
+    disposition: "Historical one-time PR-scoped CS2 exception, comment 5979822573; not PASS or waived."
+```
+
 ## ECAP-001 appointment fields
 
 ```yaml
