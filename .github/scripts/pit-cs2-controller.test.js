@@ -937,3 +937,164 @@ test('W0: a kill switch invocation preserves all existing evidence and decision-
   assert.equal(result.evidence_preserved, true);
   assert.deepEqual(result.preserved_decision_records, priorRecords);
 });
+
+// ---------------------------------------------------------------------------
+// W0-2053-D — Schema-focused QA-to-RED coverage proving the absent versioned,
+// machine-validatable safety-envelope and decision-record schema files, and
+// the absent controller schema-validation interface that must gate their use
+// before any evaluation, enforcement, or append is allowed.
+//
+// Task record: .agent-admin/prs/pr-2061/wave-current-tasks.md (task W0-2053-D)
+// Evidence: .agent-admin/evidence/pr-2061-w0-qa-to-red.md
+//
+// These tests are INTENTIONALLY RED for one of two reasons only:
+//   (a) `.github/cs2-controller/safety-envelope.schema.json` and
+//       `.github/cs2-controller/decision-record.schema.json` do not exist on
+//       disk (`fs.existsSync`/`fs.readFileSync` fails), or
+//   (b) `controller.validateSafetyEnvelopeAgainstSchema` and
+//       `controller.validateDecisionRecordAgainstSchema` do not exist on the
+//       controller module (`TypeError: ... is not a function`).
+// No test here creates, stubs, or fakes either schema file or the validator
+// functions; every failure is attributable solely to the absent required
+// artifact, never to a malformed fixture. `W0_SAFETY_ENVELOPE_FIELDS` and
+// `W0_DECISION_RECORD_FIELDS` (defined above) are the authoritative Strategy
+// §5.1 (14 fields) and §5.2 (22 fields) field lists, reused here so the
+// schema assertions stay exactly aligned with the behavioural RED tests
+// already accepted for W0-2053-C. The numeric limits asserted below (1
+// active job, 1 remediation attempt, 1 merge attempt, 30-minute dispatch
+// ceiling, 2-hour total runtime, runtime-only spend) match the exact W0
+// limits already fixed in `w0BaselineEnvelope()` above and in
+// `.agent-admin/prs/pr-2061/wave-current-tasks.md`.
+// ---------------------------------------------------------------------------
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const REPO_ROOT = path.resolve(__dirname, '..', '..');
+const SAFETY_ENVELOPE_SCHEMA_PATH = path.join(REPO_ROOT, '.github', 'cs2-controller', 'safety-envelope.schema.json');
+const DECISION_RECORD_SCHEMA_PATH = path.join(REPO_ROOT, '.github', 'cs2-controller', 'decision-record.schema.json');
+
+function readSchemaFile(absolutePath) {
+  return JSON.parse(fs.readFileSync(absolutePath, 'utf8'));
+}
+
+test('W0: a versioned, machine-validatable safety-envelope schema file exists at .github/cs2-controller/safety-envelope.schema.json', () => {
+  assert.equal(
+    fs.existsSync(SAFETY_ENVELOPE_SCHEMA_PATH),
+    true,
+    'expected .github/cs2-controller/safety-envelope.schema.json to exist',
+  );
+});
+
+test('W0: a versioned, machine-validatable decision-record schema file exists at .github/cs2-controller/decision-record.schema.json', () => {
+  assert.equal(
+    fs.existsSync(DECISION_RECORD_SCHEMA_PATH),
+    true,
+    'expected .github/cs2-controller/decision-record.schema.json to exist',
+  );
+});
+
+test('W0: the safety-envelope schema is valid, versioned JSON Schema (draft-aware $schema plus an explicit schema_version)', () => {
+  const schema = readSchemaFile(SAFETY_ENVELOPE_SCHEMA_PATH);
+  assert.equal(typeof schema.$schema, 'string');
+  assert.match(schema.$schema, /json-schema\.org/);
+  assert.equal(schema.type, 'object');
+  assert.equal(typeof schema.schema_version, 'string');
+  assert.match(schema.schema_version, /^\d+\.\d+\.\d+$/);
+});
+
+test('W0: the decision-record schema is valid, versioned JSON Schema (draft-aware $schema plus an explicit schema_version)', () => {
+  const schema = readSchemaFile(DECISION_RECORD_SCHEMA_PATH);
+  assert.equal(typeof schema.$schema, 'string');
+  assert.match(schema.$schema, /json-schema\.org/);
+  assert.equal(schema.type, 'object');
+  assert.equal(typeof schema.schema_version, 'string');
+  assert.match(schema.schema_version, /^\d+\.\d+\.\d+$/);
+});
+
+test('W0: the safety-envelope schema requires exactly the 14 Strategy §5.1 fields, no more and no fewer', () => {
+  const schema = readSchemaFile(SAFETY_ENVELOPE_SCHEMA_PATH);
+  assert.deepEqual([...schema.required].sort(), [...W0_SAFETY_ENVELOPE_FIELDS].sort());
+  assert.deepEqual(Object.keys(schema.properties).sort(), [...W0_SAFETY_ENVELOPE_FIELDS].sort());
+});
+
+test('W0: the safety-envelope schema encodes the exact approved W0 limits: 1 active job, 1 remediation attempt, 1 merge attempt, 30-minute dispatch ceiling, 2-hour total runtime, runtime-only spend', () => {
+  const schema = readSchemaFile(SAFETY_ENVELOPE_SCHEMA_PATH);
+  assert.equal(schema.properties.maximum_active_jobs.const, 1);
+  assert.equal(schema.properties.maximum_remediation_attempts.const, 1);
+  assert.equal(schema.properties.maximum_merge_attempts.const, 1);
+  assert.equal(schema.properties.maximum_dispatch_runtime.properties.value.const, 30 * 60);
+  assert.equal(schema.properties.maximum_dispatch_runtime.properties.unit.const, 'seconds');
+  assert.equal(schema.properties.maximum_total_runtime.properties.value.const, 2 * 60 * 60);
+  assert.equal(schema.properties.maximum_total_runtime.properties.unit.const, 'seconds');
+  assert.deepEqual(schema.properties.maximum_spend.properties.mode.enum, ['runtime_only']);
+});
+
+test('W0: the safety-envelope schema restricts reset_authority to human-CS2-only, excluding every automated reset source', () => {
+  const schema = readSchemaFile(SAFETY_ENVELOPE_SCHEMA_PATH);
+  assert.deepEqual(schema.properties.reset_authority.enum, ['human_cs2_only']);
+  for (const forbiddenSource of ['webhook', 'agent', 'token', 'comment', 'pull_request', 'automatic_retry']) {
+    assert.ok(
+      !schema.properties.reset_authority.enum.includes(forbiddenSource),
+      `reset_authority must not permit a ${forbiddenSource} source`,
+    );
+  }
+});
+
+test('W0: the decision-record schema requires exactly the 22 Strategy §5.2 fields, no more and no fewer', () => {
+  const schema = readSchemaFile(DECISION_RECORD_SCHEMA_PATH);
+  assert.deepEqual([...schema.required].sort(), [...W0_DECISION_RECORD_FIELDS].sort());
+  assert.deepEqual(Object.keys(schema.properties).sort(), [...W0_DECISION_RECORD_FIELDS].sort());
+});
+
+test('W0: the decision-record schema forbids additional properties, pinning a single fixed deterministic shape', () => {
+  const schema = readSchemaFile(DECISION_RECORD_SCHEMA_PATH);
+  assert.equal(schema.additionalProperties, false);
+});
+
+test('W0: the decision-record schema constrains decision and reason_code to a closed, typed enum including the mandatory UNKNOWN_STATE refusal, never an open/free-text value', () => {
+  const schema = readSchemaFile(DECISION_RECORD_SCHEMA_PATH);
+  assert.ok(Array.isArray(schema.properties.decision.enum));
+  assert.ok(schema.properties.decision.enum.includes('ALLOW'));
+  assert.ok(schema.properties.decision.enum.includes('STOP_AND_FIX'));
+  assert.ok(schema.properties.decision.enum.includes('PROVEN_EXTERNAL_BOUNDARY'));
+  assert.ok(Array.isArray(schema.properties.reason_code.enum));
+  assert.ok(schema.properties.reason_code.enum.includes('UNKNOWN_STATE'));
+});
+
+test('W0: a controller interface validates a well-formed safety envelope against the versioned schema before allowing any use', () => {
+  const envelope = w0BaselineEnvelope();
+  const result = controller.validateSafetyEnvelopeAgainstSchema(envelope);
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.errors, []);
+});
+
+test('W0: the safety-envelope schema validator rejects an envelope that violates an exact approved limit, with typed errors, not a silent pass', () => {
+  const envelope = w0BaselineEnvelope({ maximum_active_jobs: 2 });
+  const result = controller.validateSafetyEnvelopeAgainstSchema(envelope);
+  assert.equal(result.valid, false);
+  assert.ok(Array.isArray(result.errors) && result.errors.length > 0);
+});
+
+test('W0: a controller interface validates a well-formed decision record against the versioned schema before allowing any append', () => {
+  const record = w0SampleEvent();
+  const result = controller.validateDecisionRecordAgainstSchema(record);
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.errors, []);
+});
+
+test('W0: the decision-record schema validator issues a typed refusal for an unrecognized state_before, never a silent pass or inferred readiness', () => {
+  const record = w0SampleEvent({ state_before: 'not_a_real_state' });
+  const result = controller.validateDecisionRecordAgainstSchema(record);
+  assert.equal(result.valid, false);
+  assert.ok(Array.isArray(result.errors) && result.errors.length > 0);
+});
+
+test('W0: the controller refuses to evaluate a safety envelope that fails versioned schema validation, before any field-level enforcement runs', () => {
+  const envelope = w0BaselineEnvelope({ maximum_dispatch_runtime: { unit: 'seconds', value: 1799 } });
+  const schemaResult = controller.validateSafetyEnvelopeAgainstSchema(envelope);
+  assert.equal(schemaResult.valid, false);
+  const decision = controller.evaluateSafetyEnvelope(envelope, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(decision.decision, 'STOP_AND_FIX');
+  assert.equal(decision.reason_code, 'ENVELOPE_SCHEMA_INVALID');
+});
