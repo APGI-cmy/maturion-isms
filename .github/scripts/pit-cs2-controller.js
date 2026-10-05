@@ -386,11 +386,30 @@ function invokeKillSwitch(envelope, request) {
     ? [...request.existing_decision_records]
     : [];
   if (isHumanCs2) {
+    // Strategy §5.1: "A trip produces exactly one LOOP_BREAK/BUDGET_TRIP
+    // decision." The trip ledger is caller-supplied (`existing_trip_ledger`)
+    // so that duplicate or reordered kill-switch invocations for the same
+    // work item share one idempotent ledger and `recordTripEvent` dedupes
+    // on `idempotency_key`, guaranteeing exactly one typed trip entry per
+    // parent condition regardless of how many times the switch is invoked.
+    const tripLedger = request && Array.isArray(request.existing_trip_ledger)
+      ? request.existing_trip_ledger
+      : [];
+    const workItemId = envelope && envelope.work_item_id;
+    const condition = (request && request.condition) || 'KILL_SWITCH_TRIGGERED';
+    const tripRecord = recordTripEvent(tripLedger, {
+      idempotency_key: `${workItemId}:kill-switch-trip`,
+      work_item_id: workItemId,
+      condition,
+      attempt_count: tripLedger.length + 1,
+    });
     return {
       kill_switch_state: 'triggered',
       decision: 'ALLOW',
       evidence_preserved: true,
       preserved_decision_records: preservedDecisionRecords,
+      trip_record: tripRecord,
+      trip_ledger: tripLedger,
     };
   }
   return {
@@ -469,27 +488,39 @@ function recordTripEvent(ledger, event) {
 
 function simulateTwentyFourHourWindow(envelope, clock) {
   const ledger = [];
-  let tripCount = 0;
   const ticks = clock && Number.isInteger(clock.ticks) ? clock.ticks : 24;
   const tickSeconds = clock && Number.isFinite(clock.tick_seconds) ? clock.tick_seconds : 60 * 60;
+  let ticksExecuted = 0;
   for (let tick = 1; tick <= ticks; tick += 1) {
+    ticksExecuted = tick;
     const elapsedSeconds = tick * tickSeconds;
     const limitResult = enforceWorkItemLimits({ total_runtime_seconds: elapsedSeconds }, envelope);
     if (limitResult.decision === 'STOP_AND_FIX') {
+      // Strategy §5.1: a qualifying trip condition is keyed by work item +
+      // reason code (NOT by tick), so every subsequent repeat tick for the
+      // same still-over-limit condition is recognised by `recordTripEvent`
+      // as the same parent condition and is suppressed -- never a distinct
+      // ledger entry per tick. The loop then halts (terminal behaviour):
+      // once breaker-tripped, the simulation never keeps ticking through
+      // the remainder of the 24-hour (or longer) repeat-event window, so
+      // execution time and ledger growth are both bounded regardless of
+      // how many ticks the caller requests.
       recordTripEvent(ledger, {
-        idempotency_key: `${envelope.work_item_id}:simulated-tick-${tick}`,
+        idempotency_key: `${envelope.work_item_id}:${limitResult.reason_code}`,
         work_item_id: envelope.work_item_id,
         condition: limitResult.reason_code,
         attempt_count: tick,
       });
-      tripCount += 1;
+      break;
     }
   }
   return {
     live_spend_calls: 0,
     paid_call_count: 0,
     production_effects: 0,
-    trip_count: tripCount,
+    trip_count: ledger.length,
+    ticks_executed: ticksExecuted,
+    ticks_requested: ticks,
   };
 }
 

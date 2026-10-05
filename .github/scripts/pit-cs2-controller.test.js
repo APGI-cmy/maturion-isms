@@ -956,6 +956,115 @@ test('W0: a kill switch invocation preserves all existing evidence and decision-
 });
 
 // ---------------------------------------------------------------------------
+// W0-2053-E correction (2026-10-05, Foreman QP defect on the pit-specialist
+// containment implementation) — Strategy §5.1 requires that a kill-switch/
+// circuit-breaker trip "produces exactly one LOOP_BREAK/BUDGET_TRIP
+// decision" and that the 24-hour repeat-event simulation proves bounded
+// execution. The prior implementation minted a distinct idempotency key per
+// simulated tick (so a sustained over-limit condition could emit many
+// BUDGET_TRIP ledger entries) and `invokeKillSwitch` never produced any
+// typed trip decision at all. These tests prove the corrected behaviour and
+// must remain green.
+// ---------------------------------------------------------------------------
+
+test('W0 correction: repeat events after the first total-runtime trip cause exactly one trip record, not one per tick', () => {
+  const envelope = w0BaselineEnvelope();
+  // tick_seconds is tiny relative to maximum_total_runtime (2 hours), so the
+  // envelope trips early and the remaining simulated window represents many
+  // repeat over-limit ticks for the same parent condition.
+  const clock = { start: new Date('2026-10-04T00:00:00.000Z'), tick_seconds: 60, ticks: 24 * 60 };
+  const outcome = controller.simulateTwentyFourHourWindow(envelope, clock);
+  assert.equal(outcome.trip_count, 1, 'repeat over-limit ticks must not mint additional trip records');
+  assert.equal(outcome.live_spend_calls, 0);
+  assert.equal(outcome.paid_call_count, 0);
+  assert.equal(outcome.production_effects, 0);
+});
+
+test('W0 correction: the 24-hour simulation halts at the first qualifying trip tick (bounded terminal behaviour)', () => {
+  const envelope = w0BaselineEnvelope();
+  // Request a far longer repeat-event window than 24 hours to prove the
+  // simulation does not scale its ledger or its iteration count with the
+  // requested window length once tripped.
+  const clock = { start: new Date('2026-10-04T00:00:00.000Z'), tick_seconds: 60 * 60, ticks: 10000 };
+  const outcome = controller.simulateTwentyFourHourWindow(envelope, clock);
+  // maximum_total_runtime is 2 hours, so the trip occurs on tick 3 (the
+  // first tick whose elapsed runtime exceeds the 2-hour ceiling).
+  assert.equal(outcome.ticks_executed, 3);
+  assert.ok(outcome.ticks_executed < clock.ticks, 'simulation must terminate well before the requested window length');
+  assert.equal(outcome.trip_count, 1);
+});
+
+test('W0 correction: a non-tripping 24-hour window (within every limit) executes every requested tick and records zero trips', () => {
+  const envelope = w0BaselineEnvelope({
+    maximum_total_runtime: { unit: 'seconds', value: 999 * 60 * 60 },
+  });
+  const clock = { start: new Date('2026-10-04T00:00:00.000Z'), tick_seconds: 60 * 60, ticks: 24 };
+  const outcome = controller.simulateTwentyFourHourWindow(envelope, clock);
+  assert.equal(outcome.ticks_executed, 24);
+  assert.equal(outcome.trip_count, 0);
+});
+
+test('W0 correction: an authorized kill-switch trip produces exactly one typed LOOP_BREAK or BUDGET_TRIP decision while preserving prior evidence', () => {
+  const envelope = w0BaselineEnvelope();
+  const priorRecords = [controller.buildDecisionRecord(w0SampleEvent())];
+  const result = controller.invokeKillSwitch(envelope, {
+    source: 'human_cs2',
+    actor: CS2_USER,
+    reason: 'incident containment typed-trip test',
+    existing_decision_records: priorRecords,
+  });
+  assert.equal(result.kill_switch_state, 'triggered');
+  assert.ok(result.trip_record, 'an authorized trip must produce a trip record');
+  assert.ok(['LOOP_BREAK', 'BUDGET_TRIP'].includes(result.trip_record.type));
+  assert.equal(result.trip_ledger.length, 1, 'exactly one typed trip must be recorded');
+  // Prior evidence is unaffected by the new typed trip decision.
+  assert.equal(result.evidence_preserved, true);
+  assert.deepEqual(result.preserved_decision_records, priorRecords);
+});
+
+test('W0 correction: duplicate kill-switch calls for the same parent condition cannot emit a second trip', () => {
+  const envelope = w0BaselineEnvelope();
+  const sharedLedger = [];
+  const first = controller.invokeKillSwitch(envelope, {
+    source: 'human_cs2',
+    actor: CS2_USER,
+    reason: 'incident containment duplicate test (first call)',
+    existing_trip_ledger: sharedLedger,
+  });
+  const second = controller.invokeKillSwitch(envelope, {
+    source: 'human_cs2',
+    actor: CS2_USER,
+    reason: 'incident containment duplicate test (duplicate call)',
+    existing_trip_ledger: sharedLedger,
+  });
+  assert.equal(first.trip_record.idempotency_key, second.trip_record.idempotency_key);
+  assert.deepEqual(first.trip_record, second.trip_record);
+  assert.equal(sharedLedger.length, 1, 'a duplicate kill-switch invocation must not mint a second trip');
+});
+
+test('W0 correction: reordered kill-switch calls for the same parent condition still yield exactly one trip', () => {
+  const envelopeA = w0BaselineEnvelope({ work_item_id: 'pit-issue-77' });
+  const sharedLedger = [];
+  // Simulate reordering: a later-arriving retry request is processed before
+  // an earlier one, both for the same work item / parent condition.
+  const later = controller.invokeKillSwitch(envelopeA, {
+    source: 'human_cs2',
+    actor: CS2_USER,
+    reason: 'reordered retry (processed first)',
+    existing_trip_ledger: sharedLedger,
+  });
+  const earlier = controller.invokeKillSwitch(envelopeA, {
+    source: 'human_cs2',
+    actor: CS2_USER,
+    reason: 'original request (processed second)',
+    existing_trip_ledger: sharedLedger,
+  });
+  const trips = sharedLedger.filter((entry) => entry.type === 'LOOP_BREAK' || entry.type === 'BUDGET_TRIP');
+  assert.equal(trips.length, 1);
+  assert.deepEqual(later.trip_record, earlier.trip_record);
+});
+
+// ---------------------------------------------------------------------------
 // W0-2053-D — Schema-focused QA-to-RED coverage proving the absent versioned,
 // machine-validatable safety-envelope and decision-record schema files, and
 // the absent controller schema-validation interface that must gate their use
