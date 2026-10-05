@@ -60,3 +60,22 @@ Do not create further RCA, proof-refresh, or head-refresh artifacts. Foreman mus
 RCA_REVIEW: PASS
 Reviewer: `independent-assurance-agent`
 Scope: RCA routing assessment and RCA session memory only; this is not final assurance or merge readiness for PR #2065.
+
+## CS2 intervention addendum — class/PR routing
+
+Additional trigger evidence: CS2 intervention comments `5993179075` and `5993452768` reproduce three post-PASS control-routing defects on PR #2058 and confirm that the T4 IAA `REJECTION-PACKAGE` remains open on PR #2065.
+
+Confirmed root cause: the relevant entrypoints conflate an absent legacy admin manifest, unscoped historical artifacts, and checks that never applied to a head with an active producer handover failure. This is a gate-logic gap, not a failed PIT/RLS security regression or a substitute final-assurance result.
+
+Lowest effective fix: L3 gate logic and focused regressions, plus the already-required L4 authoritative-token canon reconciliation. No new artifact family, manifest chase, or proof/head-refresh series is justified.
+
+Foreman handback — correction remains pending:
+
+1. `governance-liaison-isms-agent` must correct the two T4 findings once: make the stale-`pr_number` and premature-`pre_iaa_submission_allowed` cases in `.github/scripts/foreman-prehandover-lane-gate.test.sh` independently mutation-sensitive, and set rows 3 and 4 of `.agent-admin/prs/pr-2065/wave-current-tasks.md` to a non-terminal state until their token table is no longer `PENDING`. IAA re-assesses only the corrected T4 slice.
+2. `qa-builder` must correct actual entrypoints and add focused regressions: `.github/scripts/post-handover-auto-remediation.js` must establish manifest applicability before classifying a missing manifest as `ADMIN_MANIFEST_DEFECT`; `.github/workflows/handover-claim-gate.yml` must derive IAA/ECAP and required checks from the applicable class/manifest rather than defaulting absent legacy manifests to all preflight checks; `.github/scripts/pre-handover-checkpoint.js` and the producer-guidance path must identity-bind only resolver-selected/current-PR artifacts, not unrelated archives. Tests must prove a factual CS2 checkpoint is not an explicit completion claim, a current PR-bound wave-record PASS is recognized without a self-invalidating commit, and genuine security/assurance failures plus the historical red delegation-order result remain visible.
+3. `CodexAdvisor-agent` owns protected Tier 1 contract changes for Foreman, IAA, and active-CS2 only. Any canonical publisher change must follow the normal authority/layer-down route; no divergent local canon edit is authorized by this RCA.
+4. `foreman-v2-agent` retains the job: appoint and supervise the owners, obtain one complete QP after all qualified corrections, then request independent final IAA. The IAA-agent contract diff must be flagged for human CS2 review rather than self-assured by IAA.
+
+Recurrence-prevention verification: remove each named guard in its focused regression and confirm that its own case fails; verify the active task table stays non-terminal while the token is pending; verify class/PR-scoped paths do not require absent checks or cross-PR archives; and confirm true security/assurance failures remain blocking.
+
+RCA status: CORRECTIVE ACTION IMPLEMENTATION PENDING. `RCA_REVIEW: PASS` above covers the original routing assessment only; this addendum requires targeted re-review after the named corrections and does not close the T4 rejection or confer final assurance.
