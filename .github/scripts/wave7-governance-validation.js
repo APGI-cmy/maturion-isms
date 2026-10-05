@@ -200,13 +200,20 @@ function runPrehandoverFixture(id, mode, expected) {
   const head = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
   writeFile(dir, '.agent-workspace/foreman-v2/memory/PREHANDOVER-session-001.md', 'handover complete and ready-for-review\n');
   if (mode !== 'missing-control') {
+    // mode 'valid' is a genuine handover/completion claim (see claim text above), so per the
+    // corrected pre-IAA-submission-only vs final-handover split it must reach the final state
+    // (IAA_FINAL_PASS) with final_cs2_handover_allowed: true — PRE_HANDOVER_GATE_PASS +
+    // handover_allowed: true alone is submission-only and is no longer sufficient here.
+    const reachedFinal = mode === 'valid';
     writeFile(dir, '.agent-admin/control/handover-allowed.json', JSON.stringify({
       schema_version: '1.0.0',
       wave_id: 'wave7-fixture',
       pr_number: 1800,
       current_head_sha: mode === 'stale-control' ? 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' : head,
-      state: 'PRE_HANDOVER_GATE_PASS',
-      handover_allowed: true,
+      state: reachedFinal ? 'IAA_FINAL_PASS' : 'PRE_HANDOVER_GATE_PASS',
+      pre_iaa_submission_allowed: true,
+      final_cs2_handover_allowed: reachedFinal,
+      handover_allowed: reachedFinal,
       foreman_qp_pass: true,
       builder_delegation_verified: true,
       delegation_precedes_implementation: true,
@@ -272,7 +279,9 @@ function runPrehandoverOrdinarySessionFixture(id, body, expected, options = {}) 
       wave_id: 'wave7-fixture',
       pr_number: 1800,
       current_head_sha: head,
-      state: 'PRE_HANDOVER_GATE_PASS',
+      state: 'IAA_FINAL_PASS',
+      pre_iaa_submission_allowed: true,
+      final_cs2_handover_allowed: true,
       handover_allowed: true,
       foreman_qp_pass: true,
       builder_delegation_verified: true,

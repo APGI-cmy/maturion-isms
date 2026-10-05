@@ -102,17 +102,19 @@ ECAP evidence is admin evidence only. IAA must not treat ECAP validation as read
 
 ---
 
-## 6. Pre-handover lane controls
+## 6. Pre-handover lane controls — submission-only (pre_iaa_submission_allowed)
 
 Before handover language or completion claims, Foreman must satisfy `.agent-admin/control/overlays/WAVE2_PREHANDOVER_LANE_GATE.md`.
 
-ECAP may compile or validate administrative bundle material before this gate, but Foreman must not use handover/completion/ready-for-review/merge-readiness language until this gate passes.
+ECAP may compile or validate administrative bundle material before this gate, but Foreman must not use handover/completion/ready-for-review/merge-readiness language until the **final** gate in §7 passes — reaching `PRE_HANDOVER_GATE_PASS` is never itself that permission (see Tier 1 §4 state rules).
 
-When implementation files, Foreman handover artifacts, or ECAP handover artifacts are relevant, `.agent-admin/control/handover-allowed.json` must exist, match current PR head, and report:
+When implementation files, Foreman handover artifacts, or ECAP handover artifacts are relevant, `.agent-admin/control/handover-allowed.json` must exist, must belong to the **current** PR (its `pr_number` and `current_head_sha` must match the live PR under evaluation — a control file left over from a different, already-merged or otherwise-closed PR/wave is stale and must never be read as satisfying this PR's checkpoint; regenerate it fresh for the current wave instead), and must report:
 
 ```yaml
 state: PRE_HANDOVER_GATE_PASS
-handover_allowed: true
+pre_iaa_submission_allowed: true   # submission-to-IAA-final-assurance only — NOT handover/completion language
+final_cs2_handover_allowed: false  # stays false until IAA_FINAL_PASS (see §7)
+handover_allowed: false            # legacy alias; MUST equal final_cs2_handover_allowed, never a bare copy of pre_iaa_submission_allowed
 foreman_qp_pass: true
 iaa_prebrief_ready: true
 scope_current: true
@@ -120,25 +122,29 @@ all_required_checks_green: true
 blocking_findings: []
 ```
 
+`pre_iaa_submission_allowed: true` at `state: PRE_HANDOVER_GATE_PASS` means exactly one thing: the bundle may now be submitted to IAA for final assurance. It is never itself handover, completion, ready-for-review, or merge-readiness language, and a blocker/status report issued at this state must not be worded as a completed-job handover. `final_cs2_handover_allowed` (and therefore the legacy `handover_allowed` alias) stays `false` until the conditions in §7 are met.
+
 If implementation files changed, builder delegation evidence must also be verified and predate implementation.
 
 ---
 
-## 7. Handover controls
+## 7. Handover controls — final (final_cs2_handover_allowed)
 
-Foreman may enter final handover only after:
+Foreman may set `final_cs2_handover_allowed: true` (and the legacy `handover_allowed` alias, which must equal it) — the first point at which handover/completion language is permitted — only after:
 
 1. QP PASS;
 2. ECAP admin validation is accepted when ECAP is required;
-3. pre-handover lane gate PASS;
+3. pre-handover lane gate PASS (`pre_iaa_submission_allowed: true` per §6 — submission-only, not itself sufficient);
 4. required checks are green at current HEAD;
 5. PREHANDOVER and session memory are committed and path-stable;
 6. pre-IAA commit-state gate passes;
-7. IAA final assurance returns a valid pass marker in the wave record.
+7. IAA final assurance returns a current ASSURANCE-TOKEN in the wave record, bound to the exact submitted head (`state: IAA_FINAL_PASS`).
 
 Foreman must not release merge gate on PENDING, FAILED, MISSING, STALE, or unevidenced checks.
 
-IAA STOP_AND_FIX returns to QP/remediation. IAA ESCALATE routes to CS2.
+**Rejection routing (never CS2_REVIEW on a rejection):** An IAA REJECTION-PACKAGE, or a missing/stale IAA token, discovered at or after `PRE_HANDOVER_GATE_PASS` returns Foreman to `STOP_AND_FIX / CORRECTION` — never to `CS2_REVIEW`, and never worded as completion or handover. Foreman classifies the finding using the §9a remediation ladder, delegates the named correction to the responsible specialist, and re-enters `BUILD_DELEGATED` once remediation evidence exists. Only a genuine protected-authority or external/canon-conflict blocker (§9a route 3) is a valid CS2 escalation; an ordinary substantive or evidence defect is never escalated to CS2 — it returns to build per `FAIL-ONLY-ONCE.md` A-045 route 4. A finding that duplicates an already-disposed rejection against unchanged reviewed content is handled per A-045 (immutable proof unchanged; non-mutating clarification if sufficient; no new tracked proof artifact; no evidence-only SHA-refresh resubmission).
+
+`CS2_REVIEW` is reached only via a current `IAA_FINAL_PASS` — never directly from `PRE_HANDOVER_GATE_PASS` and never as a rejection-routing destination.
 
 ---
 
@@ -187,3 +193,13 @@ Before any HALT or STOP_AND_FIX naming a blocker, Foreman classifies the defect 
 A blocker report that does not name which of the three routes applies, and that skips self-remediation for an ordinary Foreman-owned prerequisite, is itself a governance defect (see `FAIL-ONLY-ONCE.md` A-044).
 
 Foreman must not create a repetitive evidence-only commit whose sole purpose is to make an artifact describe its own newly changed HEAD. Assurance binds to the stable reviewed submission head already on record, or to an independent external attestation.
+
+A duplicate finding against unchanged reviewed content is not a new blocker — see `FAIL-ONLY-ONCE.md` A-045 for the four disposition routes plus the evidence-only-SHA-chase-stop rule.
+
+---
+
+## Change log
+
+| Date | Change |
+|------|--------|
+| 2026-10-05 | §6/§7 split into explicit `pre_iaa_submission_allowed` (submission-to-IAA-only, §6) and `final_cs2_handover_allowed` (first handover-language-permitted state, §7) fields, mirroring the corrected Tier 1 §4 state rules (`foreman-v2-agent.md` contract 2.19.0). §7 adds explicit rejection routing: IAA REJECTION-PACKAGE / missing / stale token → `STOP_AND_FIX / CORRECTION`, never `CS2_REVIEW`. §6 adds the stale-control-file warning (a prior PR/wave's `handover-allowed.json` must never satisfy a different current PR). Wave: GOV-2064-T4 (issue #2064, PR #2065).
