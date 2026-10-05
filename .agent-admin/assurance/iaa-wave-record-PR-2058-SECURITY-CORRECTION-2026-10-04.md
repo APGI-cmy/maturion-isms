@@ -168,3 +168,39 @@ The earlier IAA rejection below remains unchanged historical evidence for the fo
   - verdict: REJECTION-PACKAGE
   - checks_run: 38 substance checks: 27 PASS, 11 FAIL
   - learning_note: NBR-005 column mismatch recurred in an existing legacy evidence consumer; require CI-enforced schema-to-consumer column parity.
+
+### 2026-10-05 — Final assurance, narrowed security scope
+
+- **Invocation:** PR #2058, “Add explicit application Data API grants before Supabase's October change”; invoked by CS2; produced by `schema-builder` (builder class). ECAP-001 appointment for the scoped admin artifacts is recorded in the authoritative task record; ACR-01–16 were applied.
+- **Independence:** CONFIRMED. IAA did not produce or contribute to the reviewed security changes.
+- **Category:** `CI_WORKFLOW`, with the mandatory BUILD_DELIVERABLE / PRODUCT_BUILD_ASSURANCE evaluation for the T2 database/API security correction.
+- **Bound head:** substantive security submission `1eb903588c0bfc090925cdceb7414fddcccc615b`. Carrier/current reviewed PR head at invocation: `2ac1f4840703fd72ecf78c94bf741fd9c8fea04e`. The carrier commit is administrative; substantive security files are unchanged between these commits.
+- **Evidence reviewed:** `.agent-admin/prehandover/proof-pr-2058-data-api-grants-20261005.md`; this canonical wave record; `.agent-admin/prs/pr-2058/wave-current-tasks.md`; the substantive migration, access/coverage tests, test harness, and workflow at the bound security head.
+
+#### Evidence and acceptance-criteria matrix
+
+| Criterion | Evidence independently verified | Result |
+|---|---|---|
+| Preserve least-privilege grants, RLS policy semantics, MMM helper revocations, private PIT RLS helper execution, and controlled PIT RPC writes | Bound migration and PIT RPC source; access SQL assertions; Data API run [37203866742](https://github.com/APGI-cmy/maturion-isms/actions/runs/37203866742) on `1eb9035…` | PASS |
+| Keep the narrowed scope to 88 in-scope migrations; exclude Wave 16.6 and `public.evidence_submissions`; retain the documented comma-list privilege assertion | Bound migration/tests and task record; run 37203866742/job 111440899125; current carrier rerun [37276025504](https://github.com/APGI-cmy/maturion-isms/actions/runs/37276025504), job 111653118697, on `2ac1f48…` | PASS |
+| CI workflow executes the focused regression; CodeQL and secret scan report no findings | Workflow definition and successful run 37276025504; CodeQL check 111653347420 succeeded on carrier head; this session's secret scan reported no secrets in the 15 changed files | PASS |
+| No live database deployment or unsupported readiness claim | Current CI carrier explicitly states no live deployment and no handover/readiness claim | PASS |
+| Complete product-facing user journey and deployed-preview functional proof under PRODUCT_BUILD_ASSURANCE | PR description/task artifacts do not declare the required promised-user-journey block; no authenticated deployed-preview invocation, response, or user-visible success/failure evidence is present. Disposable PostgreSQL CI and preview status checks do not prove that journey. | FAIL |
+
+The former-scope `evidence_submissions` finding is **not** carried forward: the table and Wave 16.6 are excluded in the current migration, replay, fixtures, coverage, and supported-use claims. The historical delegation-order gate remains technically FAIL under CS2 comment `5979822573`; it is not counted as PASS, waived, or reclassified.
+
+#### Check results
+
+- **FAIL-ONLY-ONCE:** A-001 PRESENT; A-002 CONFIRMED/not an agent-contract PR; A-032 PASS for the bounded scope; A-034/NBR-002 applied; A-035 no relevant stack-specific niggle; A-039 matrix complete; A-040 evidence-type boundary applied; A-041 diff-first classification matches; A-042 FAIL (risk challenge questions 3 and 5 are NO); A-043 PASS.
+- **CORE:** CORE-020 PASS; CORE-021 PASS (finding results in rejection); CORE-026 PASS (matrix above); CORE-027 FAIL.
+- **CI_WORKFLOW:** OVL-CI-001 through OVL-CI-005 PASS. The active PREHANDOVER bundle and current carrier contain CI evidence; this resolves the prior OVL-CI-005 finding for the former invocation.
+- **BUILD_DELIVERABLE:** BD-000-A FAIL (no promised user journey declaration); BD-000-B FAIL (journey cannot be traced end-to-end from the declaration/evidence); BD-000-C PASS (unauthorized and cross-organisation cases are exercised); BD-000-D FAIL (no consumer-visible failure-state evidence). BD-001 through BD-024 PASS or not applicable to this schema/security-only diff. Functional Fitness: FFA-01 through FFA-05 PASS; FFA-06 FAIL because CI-only database evidence does not prove the deployed user journey.
+- **PRODUCT_BUILD_ASSURANCE:** journey gate FAIL; CTA/schema/cross-function/async/visible-state/publish/dashboard gates PASS or not applicable to the changed surface; deployed-preview proof gate FAIL. Split result: `ADMIN_PASS: yes`, `CODE_PASS: yes`, `FUNCTIONAL_PASS: no`, `VERDICT: FAIL`.
+- **ACR-01–16:** PASS. The ECAP reconciliation summary, gate set, current count reconciliation, artifact paths, and non-completion/pending status are evidenced; no final-state contradiction is found.
+- **Local merge-gate parity:** `merge-gate/verdict` PASS; `governance/alignment` PASS; `stop-and-fix/enforcement` PASS. The separate `preflight/delegation-order-gate` remains technically FAIL as described above.
+- **Tally:** 81 checks — 73 PASS, 8 FAIL. The eight failures are A-042, CORE-027, BD-000-A, BD-000-B, BD-000-D, PRODUCT_BUILD_ASSURANCE journey, PRODUCT_BUILD_ASSURANCE deployed-preview proof, and FFA-06.
+- **Independent Risk Challenge:** (1) The live API/user journey could still fail at the deployed boundary despite the SQL regression. (2) Proof requires an authenticated preview/live journey with API invocation and visible success/failure states. (3) That evidence is absent; current evidence is disposable PostgreSQL CI and preview status only. (4) The product-build assurance requirement for live functional proof is not satisfied by the explicit no-live-deployment boundary. (5) A reasonable production owner cannot accept the functional journey as proven. **FAIL.**
+- **Failure classification:** Substantive evidence/functional-assurance failure. No current-scope `evidence_submissions` defect is asserted. No new recurring pattern is promoted; recent learning was reviewed and the former-scope mismatch remains excluded.
+- **Required action:** Do not deploy under this authorization. Before re-invocation, obtain the required authenticated deployed-preview journey evidence under separate authorization, or obtain a committed CS2-approved resolution of the applicable assurance scope/evidence requirement. Do not change the historical delegation-order disposition or the excluded table scope.
+- **Adoption phase:** PHASE_B_BLOCKING. Merge remains blocked; no token issued.
+- **IAA_REJECTION_NOTICE:** `RCA_REVIEW: REFER_BACK` (if RCA applies); `HANDOVER_ALLOWED: no`; `RESULT: REJECTED_BACK_TO_PRODUCER`.
