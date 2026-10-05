@@ -27,11 +27,15 @@ begin
 end;
 $$ language plpgsql;
 
+-- The legacy migration chain also creates these triggers. The production
+-- workflow applies legacy migrations before this root bootstrap migration.
+drop trigger if exists exclude_cascade_domains_trigger on public.domains;
 create trigger exclude_cascade_domains_trigger
   after update of excluded on public.domains
   for each row
   execute function public.cascade_exclude_to_children();
 
+drop trigger if exists exclude_cascade_mps_trigger on public.mini_performance_standards;
 create trigger exclude_cascade_mps_trigger
   after update of excluded on public.mini_performance_standards
   for each row
