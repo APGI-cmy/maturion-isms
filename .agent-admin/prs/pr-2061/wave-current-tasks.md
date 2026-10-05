@@ -31,17 +31,31 @@ iaa_prebrief_path: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment
 
 - [ ] W0-2053-C — Create executable QA-to-RED coverage only for the frozen safety-envelope, decision-record, and kill-switch/circuit-breaker requirements.
       owner: qa-builder
-      status: RED_BASELINE_ACCEPTED_BY_FOREMAN_QP
+      status: RED_BASELINE_ACCEPTED_SCHEMA_RED_FOLLOW_UP_REQUIRED
       evidence: `.agent-admin/evidence/pr-2061-w0-qa-to-red.md`
-      qp_review: PASS — 32 controller and 5 workflow RED failures are attributable to absent required behavior; 9 controller and 3 workflow pre-existing tests remain green.
+      qp_review: PASS — 32 controller and 5 workflow RED failures are attributable to absent required behavior; 9 controller and 3 workflow pre-existing tests remain green. Schema-specific RED assertions are required before implementation appointment.
       constraints: No implementation builder appointment in this intake stage; no controller behavior or activation change.
+
+- [ ] W0-2053-D — Add schema-focused RED assertions proving the required versioned safety-envelope and decision-record schemas and validator interface are absent.
+      owner: qa-builder
+      status: PENDING
+      evidence: `.agent-admin/evidence/pr-2061-w0-qa-to-red.md`
+      authorized_test_paths: `.github/scripts/pit-cs2-controller.test.js`, `.github/scripts/pit-cs2-controller-workflow.test.js`
+      constraints: RED-only; no implementation or schema creation.
+
+- [ ] W0-2053-E — Implement the accepted W0 RED baseline on the frozen controller, workflow, and versioned-schema surface.
+      owner: pit-specialist
+      status: BLOCKED_ON_W0-2053-D
+      implementation_paths: `.github/scripts/pit-cs2-controller.js`, `.github/workflows/pit-cs2-controller.yml`, `.github/cs2-controller/safety-envelope.schema.json`, `.github/cs2-controller/decision-record.schema.json`
+      constraints: No activation, live merge/successor action, automatic reset, spend telemetry, protected Tier 1/2/3/CANON edit, deployment, or archival-evidence edit.
 
 ## Required order
 
 1. Canonical IAA pre-brief is committed and bound to PR #2061 / work item `W0-2053`.
-2. Foreman appoints `qa-builder` for W0-2053-C only.
-3. QA builder returns executable RED evidence.
-4. Foreman evaluates the RED baseline. An implementation-builder appointment requires a separate accepted route and is not authorized by this record.
+2. QA builder returns accepted W0-2053-C RED evidence.
+3. QA builder returns W0-2053-D schema-specific RED evidence.
+4. Foreman appoints `pit-specialist` once for W0-2053-E only.
+5. Pit specialist returns the frozen implementation with all accepted RED cases green. No completion or merge posture follows without the remaining governed route.
 
 ## IAA Tokens Received This Wave
 
@@ -54,6 +68,6 @@ iaa_prebrief_path: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment
 | ID | Classification | Owner | Required remediation | Status |
 |---|---|---|---|---|
 | W0-BLK-002 | Bounded W3 controller defect | W3 controller route | Scope historic-reference identity scans to the active PR/work item; do not modify archival #2048/#2057 records. | RECORDED_FOR_W3 |
-| W0-BLK-003 | Deliberate authorization boundary | CS2 / future governed builder route | A separate implementation-builder route may be considered only after this accepted RED baseline; it is not authorized by this intake-stage instruction. | OPEN |
+| W0-BLK-003 | QA prerequisite | qa-builder | Add schema-focused RED assertions for the required versioned safety-envelope and decision-record schemas and validator interface. | OPEN |
 
 This record is an intermediate intake gate, not a handover, completion, final assurance, or merge-readiness claim.
