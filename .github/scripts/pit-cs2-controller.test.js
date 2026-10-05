@@ -600,13 +600,30 @@ function w0BaselineEnvelope(overrides = {}) {
     maximum_dispatch_runtime: { unit: 'seconds', value: 30 * 60 },
     maximum_total_runtime: { unit: 'seconds', value: 2 * 60 * 60 },
     maximum_spend: { mode: 'runtime_only' },
-    maximum_merge_attempts: 1,
-    expiry: '2026-10-05T00:00:00.000Z',
+    // Correction (2026-10-05, Foreman QP defect on W0-2053-D): CS2 has
+    // explicitly stated maximum_merge_attempts and expiry remain required
+    // fields but their defaults must not be enforced/activated. Each is
+    // therefore an explicitly-tagged status object — an explicit
+    // unactivated/proposed state by default here — never a bare, silently
+    // active numeric/date default. An explicit approved/active state (via
+    // `w0ActivatedLimit(value)`) remains available for tests that need to
+    // exercise activated behaviour, but it must always be requested
+    // explicitly, never inferred.
+    maximum_merge_attempts: { status: 'proposed' },
+    expiry: { status: 'proposed' },
     circuit_breaker_state: 'closed',
     reset_authority: 'human_cs2_only',
     kill_switch_state: 'armed',
     ...overrides,
   };
+}
+
+// Correction (2026-10-05): helper to construct an explicit approved/active
+// value for a proposal-only field (maximum_merge_attempts, expiry), so tests
+// that must exercise activated behaviour do so only via an explicit,
+// human-CS2-decided state — never a silent default.
+function w0ActivatedLimit(value) {
+  return { status: 'approved_active', value };
 }
 
 function w0TaskRecord(overrides = {}) {
@@ -675,8 +692,8 @@ test('W0: a safety envelope missing any single Strategy §5.1 required field fai
   }
 });
 
-test('W0: an expired safety envelope fails closed', () => {
-  const expired = w0BaselineEnvelope({ expiry: '2026-10-03T00:00:00.000Z' });
+test('W0: an explicitly approved/active expiry in the past fails closed (correction 2026-10-05: an explicit activation, never a silent default)', () => {
+  const expired = w0BaselineEnvelope({ expiry: w0ActivatedLimit('2026-10-03T00:00:00.000Z') });
   const decision = controller.evaluateSafetyEnvelope(expired, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
   assert.equal(decision.decision, 'STOP_AND_FIX');
   assert.equal(decision.reason_code, 'ENVELOPE_EXPIRED');
@@ -961,10 +978,23 @@ test('W0: a kill switch invocation preserves all existing evidence and decision-
 // §5.1 (14 fields) and §5.2 (22 fields) field lists, reused here so the
 // schema assertions stay exactly aligned with the behavioural RED tests
 // already accepted for W0-2053-C. The numeric limits asserted below (1
-// active job, 1 remediation attempt, 1 merge attempt, 30-minute dispatch
-// ceiling, 2-hour total runtime, runtime-only spend) match the exact W0
-// limits already fixed in `w0BaselineEnvelope()` above and in
+// active job, 1 remediation attempt, 30-minute dispatch ceiling, 2-hour
+// total runtime, runtime-only spend) are the ONLY approved W0 numeric
+// limits, and match the exact W0 limits already fixed in
+// `w0BaselineEnvelope()` above and in
 // `.agent-admin/prs/pr-2061/wave-current-tasks.md`.
+//
+// Correction (2026-10-05, Foreman QP defect on this task's original
+// delivery): `maximum_merge_attempts` and `expiry` remain required fields of
+// the safety-envelope schema (both are still asserted as present below), but
+// per CS2's explicit direction their defaults remain proposal-only and must
+// NOT be enforced or activated. Neither field is asserted with a `const` (or
+// any other silently-activating) value below. Instead, each is proven to
+// require an explicit, human-CS2-decided status — an explicit
+// unactivated/proposed state, or an explicit approved/active state carrying
+// its own value — and the controller validation interface is proven to fail
+// closed when either field is missing or carries an invalid status, while
+// never itself activating a proposed default.
 // ---------------------------------------------------------------------------
 
 const fs = require('node:fs');
@@ -1018,16 +1048,71 @@ test('W0: the safety-envelope schema requires exactly the 14 Strategy §5.1 fiel
   assert.deepEqual(Object.keys(schema.properties).sort(), [...W0_SAFETY_ENVELOPE_FIELDS].sort());
 });
 
-test('W0: the safety-envelope schema encodes the exact approved W0 limits: 1 active job, 1 remediation attempt, 1 merge attempt, 30-minute dispatch ceiling, 2-hour total runtime, runtime-only spend', () => {
+test('W0: the safety-envelope schema encodes the exact approved W0 limits: 1 active job, 1 remediation attempt, 30-minute dispatch ceiling, 2-hour total runtime, runtime-only spend', () => {
   const schema = readSchemaFile(SAFETY_ENVELOPE_SCHEMA_PATH);
   assert.equal(schema.properties.maximum_active_jobs.const, 1);
   assert.equal(schema.properties.maximum_remediation_attempts.const, 1);
-  assert.equal(schema.properties.maximum_merge_attempts.const, 1);
   assert.equal(schema.properties.maximum_dispatch_runtime.properties.value.const, 30 * 60);
   assert.equal(schema.properties.maximum_dispatch_runtime.properties.unit.const, 'seconds');
   assert.equal(schema.properties.maximum_total_runtime.properties.value.const, 2 * 60 * 60);
   assert.equal(schema.properties.maximum_total_runtime.properties.unit.const, 'seconds');
   assert.deepEqual(schema.properties.maximum_spend.properties.mode.enum, ['runtime_only']);
+});
+
+// ---------------------------------------------------------------------------
+// Correction (2026-10-05, Foreman QP defect remediation) — the three tests
+// below replace the prior defective `maximum_merge_attempts.const === 1`
+// assertion. `maximum_merge_attempts` and `expiry` remain required fields
+// (proven below), but CS2 has explicitly ruled their defaults remain
+// proposal-only and must never be enforced/activated. These tests are
+// INTENTIONALLY RED for exactly the same two reasons as the rest of this
+// section: the schema files do not exist on disk, or the controller
+// validator/evaluator functions do not exist on the module — never because
+// of a malformed fixture.
+// ---------------------------------------------------------------------------
+
+test('W0: the safety-envelope schema requires both maximum_merge_attempts and expiry as present fields (required, never silently dropped)', () => {
+  const schema = readSchemaFile(SAFETY_ENVELOPE_SCHEMA_PATH);
+  assert.ok(schema.required.includes('maximum_merge_attempts'), 'maximum_merge_attempts must remain a required field');
+  assert.ok(schema.required.includes('expiry'), 'expiry must remain a required field');
+  assert.ok(Object.hasOwn(schema.properties, 'maximum_merge_attempts'), 'maximum_merge_attempts must remain a declared property');
+  assert.ok(Object.hasOwn(schema.properties, 'expiry'), 'expiry must remain a declared property');
+});
+
+test('W0: maximum_merge_attempts and expiry each require an explicit approved/active value or an explicit unactivated/proposed state, never a silently-defaulted active limit', () => {
+  const schema = readSchemaFile(SAFETY_ENVELOPE_SCHEMA_PATH);
+  for (const fieldName of ['maximum_merge_attempts', 'expiry']) {
+    const fieldSchema = schema.properties[fieldName];
+    assert.equal(fieldSchema.const, undefined, `${fieldName} must not carry a const (silently-activated) value`);
+    assert.equal(fieldSchema.default, undefined, `${fieldName} must not carry a default (silently-activated) value`);
+    assert.equal(fieldSchema.type, 'object', `${fieldName} must be an explicitly-tagged status object, not a bare value`);
+    assert.ok(fieldSchema.required.includes('status'), `${fieldName} must require an explicit status`);
+    assert.deepEqual(
+      [...fieldSchema.properties.status.enum].sort(),
+      ['approved_active', 'proposed'],
+      `${fieldName}.status must be exactly an explicit approved/active or unactivated/proposed state`,
+    );
+  }
+});
+
+test('W0: the controller validation interface fails closed when maximum_merge_attempts or expiry is missing or carries an invalid status, but a proposed state never activates a default limit', () => {
+  const missingMergeAttempts = w0BaselineEnvelope();
+  delete missingMergeAttempts.maximum_merge_attempts;
+  const missingDecision = controller.evaluateSafetyEnvelope(missingMergeAttempts, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(missingDecision.decision, 'STOP_AND_FIX');
+  assert.equal(missingDecision.reason_code, 'ENVELOPE_MALFORMED');
+
+  const invalidStatusEnvelope = w0BaselineEnvelope({ expiry: { status: 'not_a_real_status' } });
+  const invalidResult = controller.validateSafetyEnvelopeAgainstSchema(invalidStatusEnvelope);
+  assert.equal(invalidResult.valid, false);
+  assert.ok(Array.isArray(invalidResult.errors) && invalidResult.errors.length > 0);
+
+  const proposedOnlyEnvelope = w0BaselineEnvelope();
+  const proposedValidation = controller.validateSafetyEnvelopeAgainstSchema(proposedOnlyEnvelope);
+  assert.equal(proposedValidation.valid, true);
+  assert.deepEqual(proposedValidation.errors, []);
+  const proposedDecision = controller.evaluateSafetyEnvelope(proposedOnlyEnvelope, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.equal(proposedDecision.decision, 'ALLOW');
 });
 
 test('W0: the safety-envelope schema restricts reset_authority to human-CS2-only, excluding every automated reset source', () => {

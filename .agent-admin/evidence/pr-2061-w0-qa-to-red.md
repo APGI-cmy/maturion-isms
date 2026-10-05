@@ -247,7 +247,7 @@ Confirmed before writing any test: `.github/cs2-controller/safety-envelope.schem
 | Both schema files exist at the exact governed paths | `W0: a versioned, machine-validatable safety-envelope schema file exists at .github/cs2-controller/safety-envelope.schema.json`; `W0: a versioned, machine-validatable decision-record schema file exists at .github/cs2-controller/decision-record.schema.json` | `fs.existsSync(...)` is `false` for both paths (file absent) |
 | Both schemas are versioned, machine-validatable JSON Schema | `W0: the safety-envelope schema is valid, versioned JSON Schema (...)`; `W0: the decision-record schema is valid, versioned JSON Schema (...)` | `fs.readFileSync` throws `ENOENT` before any `$schema`/`schema_version` assertion runs |
 | Safety schema requires exactly the 14 Strategy §5.1 fields | `W0: the safety-envelope schema requires exactly the 14 Strategy §5.1 fields, no more and no fewer` | `fs.readFileSync` throws `ENOENT` |
-| Safety schema encodes the exact approved W0 limits (1 active job, 1 remediation attempt, 1 merge attempt, 30-min dispatch ceiling, 2-hour total runtime, runtime-only spend) | `W0: the safety-envelope schema encodes the exact approved W0 limits (...)` | `fs.readFileSync` throws `ENOENT` |
+| Safety schema encodes the exact approved W0 limits (1 active job, 1 remediation attempt, 30-min dispatch ceiling, 2-hour total runtime, runtime-only spend) — **corrected 2026-10-05, see Addendum 3: `maximum_merge_attempts` is no longer in this row's approved-limit list** | `W0: the safety-envelope schema encodes the exact approved W0 limits (...)` | `fs.readFileSync` throws `ENOENT` |
 | Safety schema restricts reset authority to human-CS2-only | `W0: the safety-envelope schema restricts reset_authority to human-CS2-only, excluding every automated reset source` | `fs.readFileSync` throws `ENOENT` |
 | Decision-record schema requires exactly the 22 Strategy §5.2 fields | `W0: the decision-record schema requires exactly the 22 Strategy §5.2 fields, no more and no fewer` | `fs.readFileSync` throws `ENOENT` |
 | Decision-record schema pins a fixed, deterministic shape (`additionalProperties: false`) | `W0: the decision-record schema forbids additional properties, pinning a single fixed deterministic shape` | `fs.readFileSync` throws `ENOENT` |
@@ -273,6 +273,8 @@ $ node --test .github/scripts/pit-cs2-controller.test.js
 exit code: 1
 ```
 
+> **Correction notice (2026-10-05):** the run output above is the as-delivered snapshot and is retained for historical accuracy. It is superseded by the corrected run output in **Addendum 3** below, which fixes a scope/requirements defect in `not ok 47` (the original test name and `maximum_merge_attempts.const` assertion incorrectly treated `maximum_merge_attempts` as an activated approved limit) and adds three new tests. Treat Addendum 3's counts and test list as authoritative; do not rely on `not ok 47`'s original name/assertion below for implementation guidance.
+
 All 9 pre-existing (PR #2046 pilot) tests remain GREEN (`ok 1`–`ok 9`, unchanged). All 32 previously-accepted W0-2053-C tests remain RED, unchanged (`not ok 10`–`not ok 41`). All 15 new W0-2053-D schema tests are RED (`not ok 42`–`not ok 56`):
 
 - `not ok 42` — safety-envelope schema file exists — `AssertionError [ERR_ASSERTION]: expected .github/cs2-controller/safety-envelope.schema.json to exist — false !== true`
@@ -280,7 +282,7 @@ All 9 pre-existing (PR #2046 pilot) tests remain GREEN (`ok 1`–`ok 9`, unchang
 - `not ok 44` — safety-envelope schema valid/versioned — `Error: ENOENT: no such file or directory, open '.../.github/cs2-controller/safety-envelope.schema.json'`
 - `not ok 45` — decision-record schema valid/versioned — `Error: ENOENT: no such file or directory, open '.../.github/cs2-controller/decision-record.schema.json'`
 - `not ok 46` — safety-envelope schema requires exactly 14 fields — `ENOENT` (same path as above)
-- `not ok 47` — safety-envelope schema encodes exact W0 limits — `ENOENT`
+- `not ok 47` — safety-envelope schema encodes exact W0 limits (original, now-corrected assertion set — see Addendum 3) — `ENOENT`
 - `not ok 48` — safety-envelope schema restricts reset_authority — `ENOENT`
 - `not ok 49` — decision-record schema requires exactly 22 fields — `ENOENT` (decision-record path)
 - `not ok 50` — decision-record schema forbids additional properties — `ENOENT`
@@ -330,7 +332,7 @@ No lines were removed (append-only); no existing test was weakened, skipped, or 
 
 Consistent with the framing of the original evidence and its first addendum: these names, paths, and shapes are derived directly from Strategy §5.1/§5.2 and from the already-accepted `w0BaselineEnvelope()`/`w0SampleEvent()` fixtures; they are not a new architecture decision by this QA-to-RED task — they document the contract the new tests exercise so a future implementation builder can satisfy it precisely:
 
-- `.github/cs2-controller/safety-envelope.schema.json` — a JSON Schema (`$schema` referencing json-schema.org, `type: object`, explicit semver `schema_version`) whose `required` and `properties` keys are exactly the 14 `W0_SAFETY_ENVELOPE_FIELDS`, with `maximum_active_jobs`/`maximum_remediation_attempts`/`maximum_merge_attempts` each constrained to `const: 1`, `maximum_dispatch_runtime` constrained to `{ unit: 'seconds' (const), value: 1800 (const) }`, `maximum_total_runtime` constrained to `{ unit: 'seconds' (const), value: 7200 (const) }`, `maximum_spend.properties.mode.enum` equal to `['runtime_only']`, and `reset_authority.enum` equal to `['human_cs2_only']` (excluding `webhook`/`agent`/`token`/`comment`/`pull_request`/`automatic_retry`).
+- `.github/cs2-controller/safety-envelope.schema.json` — a JSON Schema (`$schema` referencing json-schema.org, `type: object`, explicit semver `schema_version`) whose `required` and `properties` keys are exactly the 14 `W0_SAFETY_ENVELOPE_FIELDS`, with `maximum_active_jobs`/`maximum_remediation_attempts` each constrained to `const: 1`, `maximum_dispatch_runtime` constrained to `{ unit: 'seconds' (const), value: 1800 (const) }`, `maximum_total_runtime` constrained to `{ unit: 'seconds' (const), value: 7200 (const) }`, `maximum_spend.properties.mode.enum` equal to `['runtime_only']`, and `reset_authority.enum` equal to `['human_cs2_only']` (excluding `webhook`/`agent`/`token`/`comment`/`pull_request`/`automatic_retry`). **Corrected 2026-10-05 (see Addendum 3): `maximum_merge_attempts` and `expiry` remain required fields but are NOT constrained to a `const`/`default` value; each is an explicitly-tagged `{ status: 'proposed' | 'approved_active', value? }` object, so neither field's default is ever silently enforced or activated.**
 - `.github/cs2-controller/decision-record.schema.json` — a JSON Schema (same versioning conventions) whose `required` and `properties` keys are exactly the 22 `W0_DECISION_RECORD_FIELDS`, with `additionalProperties: false` (pinning a fixed, deterministic shape) and `decision`/`reason_code` each constrained to a closed `enum` that includes `ALLOW`, `STOP_AND_FIX`, `PROVEN_EXTERNAL_BOUNDARY` (for `decision`) and `UNKNOWN_STATE` (for `reason_code`), so an unrecognized `state_before` can only ever resolve to one of these typed values, never an open/free-text string.
 - `validateSafetyEnvelopeAgainstSchema(envelope) -> { valid: boolean, errors: Array }` — loads and validates against `safety-envelope.schema.json`; `errors` is empty only when `valid` is `true`.
 - `validateDecisionRecordAgainstSchema(record) -> { valid: boolean, errors: Array }` — loads and validates against `decision-record.schema.json`; `errors` is empty only when `valid` is `true`.
@@ -351,3 +353,108 @@ None. The task's required proof — that the two versioned schema files and the 
 ### Explicit non-claims
 
 This addendum does **not** claim: GREEN status, build-to-green readiness, handover, final assurance, an ASSURANCE-TOKEN, or merge readiness. No implementation-builder appointment is made or implied. This remains QA-to-RED only. No implementation builder is appointed by this delivery; per the task record's required order, Foreman's independent evaluation of this RED baseline and any subsequent appointment of `pit-specialist` for W0-2053-E are Foreman's actions, not this builder's.
+
+## Addendum 3 — Correction of a Foreman QP scope/requirements defect in Addendum 2's schema assertions (2026-10-05)
+
+- pr: #2061
+- issue: #2053
+- work_item_id: W0-2053 (task **W0-2053-D**, correction pass)
+- wave_id: W0-SAFETY-CONTAINMENT-20261004
+- owner: qa-builder
+- appointment: same as Addendum 1/2, `.agent-admin/builder-appointments/pr-2061-w0-qa-to-red-20261004.md`; no new appointment created, no authorized path expanded.
+- status: **QA-to-RED ONLY — CORRECTION OF A DEFECT, NOT GREEN, NOT HANDOVER, NOT FINAL ASSURANCE, NOT MERGE-READY.**
+
+### The defect
+
+Foreman QP found that Addendum 2's new schema assertions, and the fixture language they repeated, required `schema.properties.maximum_merge_attempts.const === 1` — i.e. they encoded `maximum_merge_attempts` as an **activated** approved numeric limit. CS2 has explicitly ruled that `maximum_stage_attempts`/`maximum_merge_attempts`/`expiry` defaults remain **proposal-only** and must not activate. The approved W0 numeric limits are, and remain, only: one active work item, one material remediation attempt, a 30-minute dispatch ceiling, a two-hour total runtime, and runtime-only spend. `maximum_merge_attempts` and `expiry` remain required fields of the safety-envelope schema, but their defaults must not be enforced or activated.
+
+### Scope and authorized paths touched (unchanged from Addendum 2)
+
+Only these two already-authorized paths were modified by this correction:
+
+- `.github/scripts/pit-cs2-controller.test.js`
+- `.agent-admin/evidence/pr-2061-w0-qa-to-red.md` (this addendum)
+
+No implementation, schema, workflow, governance, scope-declaration, task-record, builder-appointment, IAA, or historic PR #2048/#2057 file was created, modified, or touched. Confirmed with `git diff --stat` (below) showing only the two authorized paths changed.
+
+### What was corrected, and why every corrected/added test remains genuinely RED
+
+1. **`w0BaselineEnvelope()` fixture** (shared by both the W0-2053-C behavioural tests and the W0-2053-D schema tests): `maximum_merge_attempts` and `expiry` no longer default to a bare, silently-active value (`1` and a concrete ISO date, respectively). Each now defaults to an explicit **unactivated/proposed** state object — `{ status: 'proposed' }`. A new `w0ActivatedLimit(value)` helper produces the alternative explicit **approved/active** state (`{ status: 'approved_active', value }`) for the one test that needs to exercise activated expiry behaviour.
+2. **`W0: an expired safety envelope fails closed`** (previously accepted, W0-2053-C) is renamed to **`W0: an explicitly approved/active expiry in the past fails closed (correction 2026-10-05: an explicit activation, never a silent default)`** and now constructs its past expiry via `w0ActivatedLimit(...)` rather than a bare ISO string, so the test exercises an explicit human-CS2-decided activation rather than an implied default. The assertions (`STOP_AND_FIX` / `ENVELOPE_EXPIRED`) are unchanged. This test remains genuinely RED: `controller.evaluateSafetyEnvelope` does not exist (`TypeError: controller.evaluateSafetyEnvelope is not a function`) — confirmed in the run output below.
+3. **`W0: the safety-envelope schema encodes the exact approved W0 limits: ...`** (Addendum 2) is corrected to drop `maximum_merge_attempts.const` from both its title and its body; it now asserts only the five approved limits (1 active job, 1 remediation attempt, 30-minute dispatch ceiling, 2-hour total runtime, runtime-only spend). Remains genuinely RED: `fs.readFileSync` throws `ENOENT` (schema file absent).
+4. **Three new tests added**, satisfying the correction's required coverage for `maximum_merge_attempts`/`expiry` without activating either:
+   - `W0: the safety-envelope schema requires both maximum_merge_attempts and expiry as present fields (required, never silently dropped)` — asserts (a): both fields remain in `schema.required` and `schema.properties`. RED: `fs.readFileSync` throws `ENOENT`.
+   - `W0: maximum_merge_attempts and expiry each require an explicit approved/active value or an explicit unactivated/proposed state, never a silently-defaulted active limit` — asserts (b): neither field carries a `const`/`default`; each is an object type requiring an explicit `status` whose `enum` is exactly `['approved_active', 'proposed']`. RED: `fs.readFileSync` throws `ENOENT`.
+   - `W0: the controller validation interface fails closed when maximum_merge_attempts or expiry is missing or carries an invalid status, but a proposed state never activates a default limit` — asserts (c): a missing `maximum_merge_attempts` field yields `STOP_AND_FIX`/`ENVELOPE_MALFORMED`; an invalid `expiry.status` yields `valid: false` with typed errors from `validateSafetyEnvelopeAgainstSchema`; and a baseline envelope with both fields in their default `{ status: 'proposed' }` state validates (`valid: true`) and evaluates to `ALLOW` (i.e. the proposed state does not itself trip any merge-attempt or expiry enforcement). RED: `controller.evaluateSafetyEnvelope is not a function` (`TypeError`), confirmed as the first failure point — no later assertion in this test is reached or relied upon for its RED status.
+
+No test in this correction uses `.skip()`, `.todo()`, a stub, a mock-around, or a weakened assertion. Every corrected/added test's RED status is attributable solely to the absent schema file or absent controller function, verified individually below — never to a malformed fixture.
+
+### Exact run commands and RED output (post-correction)
+
+```
+$ node --version
+v22.23.3
+
+$ node --test .github/scripts/pit-cs2-controller.test.js
+# tests 59
+# suites 0
+# pass 9
+# fail 50
+# cancelled 0
+# skipped 0
+# todo 0
+exit code: 1
+```
+
+All 9 pre-existing (PR #2046 pilot) tests remain GREEN (`ok 1`–`ok 9`, unchanged). Test count moved from 56 to 59 (net +3: one schema test's assertions were corrected in place without adding a new test entry, three new tests were added covering (a)/(b)/(c) above). Pass count is unchanged at 9; fail count moved from 47 to 50 (the net +3 new/corrected tests, all RED). Individually confirmed RED causes for every test touched by this correction:
+
+- Corrected test `W0: an explicitly approved/active expiry in the past fails closed (correction 2026-10-05: an explicit activation, never a silent default)` — `TypeError: controller.evaluateSafetyEnvelope is not a function`
+- Corrected test `W0: the safety-envelope schema encodes the exact approved W0 limits: 1 active job, 1 remediation attempt, 30-minute dispatch ceiling, 2-hour total runtime, runtime-only spend` — `Error: ENOENT: no such file or directory, open '.../.github/cs2-controller/safety-envelope.schema.json'`
+- New test `W0: the safety-envelope schema requires both maximum_merge_attempts and expiry as present fields (required, never silently dropped)` — `ENOENT` (same schema path)
+- New test `W0: maximum_merge_attempts and expiry each require an explicit approved/active value or an explicit unactivated/proposed state, never a silently-defaulted active limit` — `ENOENT` (same schema path)
+- New test `W0: the controller validation interface fails closed when maximum_merge_attempts or expiry is missing or carries an invalid status, but a proposed state never activates a default limit` — `TypeError: controller.evaluateSafetyEnvelope is not a function`
+
+All other previously-RED tests (the 32 W0-2053-C behavioural tests other than the one corrected above, and the 11 W0-2053-D schema tests other than the one corrected above and the 3 added) are unchanged, confirmed by diffing the full `ok`/`not ok` test-name list before and after this correction: only the two renamed/corrected test names change position, and three new test names are inserted immediately after the corrected limits test — no other test name, order, or pass/fail status differs.
+
+```
+$ node --test .github/scripts/pit-cs2-controller-workflow.test.js
+# tests 8
+# suites 0
+# pass 3
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+exit code: 1
+```
+
+This file was **not modified** by this correction (not an authorized path for this task). Its result (3 pass, 5 fail) is unchanged from the Addendum 2 baseline.
+
+Full captured logs (not committed, reproducible on demand): `/tmp/w0-correction-test1.log`, `/tmp/w0-correction-test2.log` from this session.
+
+### Confirmation: only the two authorized paths were touched
+
+```
+$ git diff --stat
+ .agent-admin/evidence/pr-2061-w0-qa-to-red.md |   8 +-
+ .github/scripts/pit-cs2-controller.test.js    | 103 +++++++++++++++++++++++---
+ 2 files changed, 99 insertions(+), 12 deletions(-)
+```
+
+No implementation (`pit-cs2-controller.js`), workflow test (`.github/scripts/pit-cs2-controller-workflow.test.js`), workflow file (`.github/workflows/*.yml`), schema file (both confirmed still absent, not created), governance file, scope declaration, task record, builder appointment, or IAA record was created, modified, or touched.
+
+### Secret scan
+
+`runtime-tools-secret_scanning` run against both changed files (`.github/scripts/pit-cs2-controller.test.js`, `.agent-admin/evidence/pr-2061-w0-qa-to-red.md`): **no secrets detected**.
+
+### Mandatory process improvement reflection
+
+1. **What went well:** The defect was narrow and precisely located (one `.const` assertion plus the fixture value it was repeated from); the fix was achieved by re-tagging exactly two fields as explicit status objects, without touching any other field, test, or approved limit.
+2. **What failed, was blocked, or required rework:** The original Addendum 2 delivery incorrectly generalized `maximum_merge_attempts` into the "approved exact limits" group by reusing the pre-existing baseline fixture's concrete value without checking it against CS2's proposal-only ruling for stage/merge-attempt/expiry defaults. This was a scope-verification gap, not a tooling or governance-canon gap.
+3. **What process, governance, or tooling changes would have improved this build:** A lightweight pre-submission checklist cross-referencing each schema `.const`/`default` assertion against the task record's explicit "approved numeric limits" list (rather than against a convenience fixture) would have caught this before Foreman QP review.
+4. **Governance-learning compliance (BL-016, BL-018, BL-019, BL-022, BL-024, BL-029):** BL-018/BL-019 — corrected; every assertion now maps to either an explicitly-approved numeric limit or an explicitly-required-but-unactivated field, with no out-of-range activation asserted. BL-024 (constitutional sandbox) — restructuring `maximum_merge_attempts`/`expiry` as status-tagged objects is a Tier-2 procedural judgment call (schema shape), documented here, made in service of the Tier-1 constitutional requirement that no un-approved limit be silently activated. BL-029 — not applicable; still a QA-to-RED (not wave-completion) delivery.
+5. **Actionable improvement to layer up to governance canon:** Consider adding an explicit QA-builder reminder, in the schema-assertion authoring guidance, to verify every `.const`/`.default` assertion against the task record's enumerated approved-limits list before reusing any existing fixture value.
+
+### Explicit non-claims
+
+This addendum does **not** claim: GREEN status, build-to-green readiness, handover, final assurance, an ASSURANCE-TOKEN, or merge readiness. No implementation-builder appointment is made or implied. This remains QA-to-RED only, now corrected. Foreman's independent evaluation of this corrected RED baseline, and any subsequent appointment of an implementation builder for W0-2053-E, remain Foreman's actions, not this builder's.
