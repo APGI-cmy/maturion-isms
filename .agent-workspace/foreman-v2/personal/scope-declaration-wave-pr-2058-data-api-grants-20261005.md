@@ -8,7 +8,7 @@ appointment_utc: "2026-10-05T06:12:10Z"
 reviewed_substantive_head: "1eb903588c0bfc090925cdceb7414fddcccc615b"
 current_pr_head_at_appointment: "ef762b8dd30f6ba4121e1830a9911c876d1eaa60"
 ceremony_admin_appointed: true
-status: "ECAP_APPOINTED_BUNDLE_PENDING"
+status: "ECAP_RETURN_ACCEPTED_CI_CARRIER_PRESENT_FINAL_IAA_PENDING"
 
 ## Appointment
 
