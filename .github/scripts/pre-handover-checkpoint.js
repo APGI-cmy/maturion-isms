@@ -307,6 +307,23 @@ function collectPrBindings(text) {
   return values.filter((value) => Number.isFinite(value));
 }
 
+// GOV-2064-T2: identity-binding scope (RCA:
+// .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md).
+// Narrower and safer than identityScopedArtifacts() below: this only
+// excludes an artifact when it EXPLICITLY declares a binding to a
+// different PR number (e.g. an archival record whose own text says
+// "PR: #1111" while the active PR is #9999). Artifacts that mention no
+// PR binding at all (ambiguous/legacy evidence with no identity markers)
+// are NOT excluded, since those have always been treated as this PR's
+// own evidence for staleness purposes and excluding them would hide a
+// genuine stale-evidence defect rather than a false cross-PR positive.
+function isForeignPrArtifact(text, prNumber) {
+  if (!prNumber) return false;
+  const bindings = collectPrBindings(text);
+  if (bindings.length === 0) return false;
+  return !bindings.includes(prNumber);
+}
+
 function headMatches(candidate, headSha) {
   const value = normalizeValue(String(candidate || '').replace(/[`]/g, ''));
   const head = normalizeValue(headSha);
@@ -522,6 +539,28 @@ function contextScopedArtifacts(artifacts, context) {
   return artifacts;
 }
 
+// GOV-2064-T2: identity-binding scope (RCA:
+// .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md).
+// Unlike contextScopedArtifacts() above (which intentionally falls back to
+// every discovered artifact so pending-token evidence is never silently
+// missed), active-identity-binding must NEVER fall back to unrelated archival
+// records belonging to another PR. A resolver-selected artifact (active-state
+// ecap_artifact_path / iaa_artifact_path; marked with score === MAX_SAFE_INTEGER
+// by artifactFromResolverPath) is always trusted. A broad-discovery artifact
+// (legacy compatibility fallback across .agent-admin/prehandover,
+// .agent-workspace/foreman-v2/memory, .agent-admin/assurance, etc.) only
+// contributes an identity binding when it actually references the current
+// PR/issue/branch; an artifact that matches none of that context is simply
+// excluded from identity-binding consideration rather than treated as if it
+// were this PR's own evidence.
+function identityScopedArtifacts(artifacts, context) {
+  if (!artifacts || artifacts.length === 0) return [];
+  return artifacts.filter((artifact) => {
+    if (artifact.score === Number.MAX_SAFE_INTEGER) return true;
+    return matchesArtifactContext(artifact.text, context);
+  });
+}
+
 function artifactFromResolverPath(relPath) {
   const candidate = String(relPath || '').trim();
   if (!candidate) return null;
@@ -718,6 +757,23 @@ function evaluateCheckpoint(input = {}) {
     waveTasksText = safeRead(path.join(process.cwd(), waveTasksPath));
   }
   const issueNumber = resolveIssueNumber(input.issueNumber || process.env.ISSUE_NUMBER, prBody, scopeText, manifest);
+  // GOV-2064-T2: manifest applicability (RCA:
+  // .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md).
+  // A `.admin/prs/pr-NNNN.json` manifest is one recognized admin-tracking
+  // mechanism, not the only one. A PR legitimately tracked through a
+  // CS2-authorized wave-current-tasks.md record (this file's own
+  // "CS2 Authorization" header field) is a recognized alternate-class PR for
+  // which the absence of a manifest is NOT itself a defect. When neither a
+  // manifest NOR a recognized alternate admin record exists, the manifest is
+  // still considered applicable (preserving the original strict behavior) so
+  // genuinely undocumented PRs keep failing the check.
+  // NOTE: deliberately not reusing readSimpleField() here — this header field
+  // is commonly markdown-bold-wrapped (`**CS2 Authorization**: value`), a
+  // format readSimpleField()'s `label\s*:` match does not tolerate (the `**`
+  // closing the bold run sits between the label and the colon).
+  const cs2AuthorizationMatch = String(waveTasksText || '').match(/^[ \t>*-]*CS2 Authorization\**\s*:\s*(.+)$/im);
+  const hasRecognizedAlternateAdminRecord = Boolean(waveTasksText) && hasNonEmptyValue(cs2AuthorizationMatch ? cs2AuthorizationMatch[1].trim() : '');
+  const adminManifestApplicable = Boolean(manifest) || !hasRecognizedAlternateAdminRecord;
   const scopeCount = Number(readSimpleField(scopeText, 'FILES_CHANGED') || 0) || null;
   const scopePresent = Boolean(scopeText);
   const scopeCountMatches = scopePresent && scopeCount === changedFiles.length;
@@ -807,7 +863,17 @@ function evaluateCheckpoint(input = {}) {
   const adminPresent = adminArtifacts.length > 0;
   const adminInvoked = adminArtifacts.some((artifact) => /ecap_invoked:\s*(yes|true)|admin_ceremony_compliance:\s*PASS|ecap_verdict:\s*PASS/i.test(artifact.text));
   const adminCurrent = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
-  const adminStale = adminArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
+  // Staleness must only be evaluated over artifacts that are not
+  // explicitly bound to a different PR's identity. An unrelated
+  // archival record from another PR is, almost by definition, "stale"
+  // against this PR's head — but that staleness is meaningless noise,
+  // not a genuine signal that THIS PR's own evidence has gone stale.
+  // Ambiguous artifacts with no PR binding at all are left untouched
+  // (see isForeignPrArtifact) so pre-existing stale-evidence detection
+  // for this PR's own unscoped evidence keeps working unchanged.
+  const adminStale = adminArtifacts
+    .filter((artifact) => !isForeignPrArtifact(artifact.text, prNumber))
+    .some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
 
   function resolverArtifactHasIaaSection(artifact, section) {
     const text = artifact && artifact.text ? artifact.text : '';
@@ -855,7 +921,11 @@ function evaluateCheckpoint(input = {}) {
   const finalAssurancePresent = assuranceArtifacts.length > 0;
   const tokenPresent = assuranceArtifacts.length > 0;
   const iaaArtifactCurrent = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).current);
-  const iaaArtifactStale = assuranceArtifacts.some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
+  // Same rationale as adminStale above: exclude only artifacts explicitly
+  // bound to a different PR, not merely artifacts lacking identity markers.
+  const iaaArtifactStale = assuranceArtifacts
+    .filter((artifact) => !isForeignPrArtifact(artifact.text, prNumber))
+    .some((artifact) => artifactCurrentness(artifact.text, headSha).stale);
   const activeStateNextRequiredAction = String(activeState.next_required_action || '').trim();
   const manifestStatus = String(manifest?.status || '').trim();
   const waveTasksStatus = readSimpleField(waveTasksText, 'Status');
@@ -894,8 +964,12 @@ function evaluateCheckpoint(input = {}) {
   if (manifestPath && manifest) identityArtifacts.push({ path: manifestPath, text: JSON.stringify(manifest) });
   if (scopePresent) identityArtifacts.push({ path: scopePath, text: scopeText });
   if (waveTasksText) identityArtifacts.push({ path: waveTasksPath, text: waveTasksText });
-  identityArtifacts.push(...adminArtifacts.map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
-  identityArtifacts.push(...assuranceArtifacts.map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
+  // Admin artifacts intentionally ignore issueNumber matching here too, mirroring
+  // the tokenPending scoping below: issues are reused across rounds and could
+  // otherwise pull in an unrelated historical PR's ceremony file as if it bound
+  // this PR's identity.
+  identityArtifacts.push(...identityScopedArtifacts(adminArtifacts, { prNumber, branch }).map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
+  identityArtifacts.push(...identityScopedArtifacts(assuranceArtifacts, { prNumber, issueNumber, branch }).map((artifact) => ({ path: artifact.relPath, text: artifact.text })));
   const identityMismatchFindings = [];
   if (prNumber) {
     if (manifest && Number.isInteger(manifest.pr) && manifest.pr !== prNumber) {
@@ -1217,6 +1291,10 @@ function evaluateCheckpoint(input = {}) {
     POST_FAILURE_HANDLING_PACKAGE: postFailurePackageType,
     POST_FAILURE_REJECTION_PACKAGE_STATE: postFailurePackageState,
     QA_REJECTION_PACKAGE_CLOSURE_ALLOWED: qaRejectionPackageClosureAllowed,
+    // GOV-2064-T2: consumed by .github/scripts/post-handover-auto-remediation.js's
+    // classifyPostHandover() to gate ADMIN_MANIFEST_DEFECT — see
+    // .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md.
+    ADMIN_MANIFEST_APPLICABLE: adminManifestApplicable ? 'yes' : 'no',
     ADMIN_CEREMONY_REQUIRED: adminCeremonyRequired ? 'yes' : 'no',
     ADMIN_CEREMONY_INVOKED: yesNoNotRequired(adminInvoked, adminCeremonyRequired),
     ADMIN_CEREMONY_ARTIFACT_PRESENT: yesNoNotRequired(adminPresent, adminCeremonyRequired),
