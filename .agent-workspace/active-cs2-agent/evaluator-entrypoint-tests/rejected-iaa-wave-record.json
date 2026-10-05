@@ -1,0 +1,259 @@
+{
+  "schema_version": "1.0.0",
+  "job_id": "job-gov-2064-t3-test",
+  "status": "BLOCKED",
+  "current_wave_id": "wave-correction-test",
+  "approved_scope": {
+    "authority_reference": "human-cs2-approved-gov-2064-t3-test",
+    "acceptance_obligations": ["integrated-functional-delivery"]
+  },
+  "envelope": {
+    "envelope_id": "gov-2064-t3-test-envelope",
+    "max_active_jobs": 1,
+    "max_active_waves": 1,
+    "max_material_corrections": 1,
+    "max_dispatch_runtime_minutes": 30,
+    "max_total_runtime_minutes": 120,
+    "expiry_at": null,
+    "stage_attempt_limits": {"FINAL_IAA": 2},
+    "merge_attempt_limit": 1,
+    "spend_ceiling": 0,
+    "spend_telemetry_mode": "RUNTIME_ONLY",
+    "human_reset_required": true
+  },
+  "waves": [
+    {
+      "wave_id": "wave-correction-test",
+      "ordinal": 1,
+      "status": "BLOCKED",
+      "depends_on": [],
+      "scope": ["rejected-iaa-handling-test"],
+      "acceptance_obligations": ["final-iaa-pass-bound-to-reviewed-content"],
+      "merge_evidence": null
+    }
+  ],
+  "events": [
+    {
+      "event_id": "evt-1",
+      "idempotency_key": "rejfp-ac03-missing-evidence::d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa",
+      "sequence": 1,
+      "wave_id": "wave-correction-test",
+      "stage": "FINAL_IAA",
+      "event_type": "final_iaa_result",
+      "input_revision": "rev-1",
+      "state_before": "IN_REVIEW",
+      "state_after": "CORRECTION",
+      "decision": "REJECTED",
+      "reason": "MATERIAL_BLOCKER",
+      "owner": "Foreman",
+      "envelope_id": "gov-2064-t3-test-envelope",
+      "delta_class": "SUBSTANTIVE",
+      "evidence_binding": {
+        "frozen_substantive_fingerprint": {
+          "repository": "APGI-cmy/maturion-isms",
+          "pr": 2065,
+          "head_sha": "43ec0671edd361b87958fb4a6e70c1d1baf87774",
+          "base_sha": "c2d0da0251f952aa0a61276406d4a48ae94fd7ec",
+          "reviewed_content_sha256": "d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa"
+        },
+        "evidence_envelope_id": "evidence-envelope-1",
+        "current_merge_head_sha": "43ec0671edd361b87958fb4a6e70c1d1baf87774",
+        "token_only_delta_verified": false,
+        "permitted_token_append": null
+      },
+      "evidence_references": [".agent-admin/assurance/iaa-wave-record-pr-2065-prevent-rejected-iaa-handover-20261005.md"],
+      "material_blockers": ["ac-03: IAA rejection package — missing focused regression evidence for reviewed content"],
+      "budget": {
+        "dispatch_runtime_minutes": 5,
+        "total_runtime_minutes": 5,
+        "material_corrections": 0,
+        "stage_attempts": {"FINAL_IAA": 1},
+        "merge_attempts": 0,
+        "spend": 0
+      }
+    },
+    {
+      "event_id": "evt-2",
+      "idempotency_key": "rejfp-ac03-missing-evidence::d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa",
+      "sequence": 2,
+      "wave_id": "wave-correction-test",
+      "stage": "FINAL_IAA",
+      "event_type": "final_iaa_result",
+      "input_revision": "rev-1",
+      "state_before": "CORRECTION",
+      "state_after": "CORRECTION",
+      "decision": "NO_OP",
+      "reason": "DUPLICATE_FINDING_SAME_CONTENT",
+      "owner": "Foreman",
+      "envelope_id": "gov-2064-t3-test-envelope",
+      "delta_class": "ADMIN_TOKEN_ONLY",
+      "evidence_binding": {
+        "frozen_substantive_fingerprint": {
+          "repository": "APGI-cmy/maturion-isms",
+          "pr": 2065,
+          "head_sha": "43ec0671edd361b87958fb4a6e70c1d1baf87774",
+          "base_sha": "c2d0da0251f952aa0a61276406d4a48ae94fd7ec",
+          "reviewed_content_sha256": "d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa"
+        },
+        "evidence_envelope_id": "evidence-envelope-1",
+        "current_merge_head_sha": "43ec0671edd361b87958fb4a6e70c1d1baf87774",
+        "token_only_delta_verified": true,
+        "permitted_token_append": null
+      },
+      "evidence_references": [],
+      "material_blockers": ["ac-03: IAA rejection package — missing focused regression evidence for reviewed content"],
+      "budget": {
+        "dispatch_runtime_minutes": 5,
+        "total_runtime_minutes": 5,
+        "material_corrections": 0,
+        "stage_attempts": {"FINAL_IAA": 1},
+        "merge_attempts": 0,
+        "spend": 0
+      }
+    },
+    {
+      "event_id": "evt-3",
+      "idempotency_key": "handover-attempt-3::d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa",
+      "sequence": 3,
+      "wave_id": "wave-correction-test",
+      "stage": "MERGE",
+      "event_type": "completion_handover_attempt",
+      "input_revision": "rev-1",
+      "state_before": "CORRECTION",
+      "state_after": "CORRECTION",
+      "decision": "REJECTED",
+      "reason": "GATE_UNSATISFIED",
+      "owner": "active-cs2-agent",
+      "envelope_id": "gov-2064-t3-test-envelope",
+      "delta_class": "UNKNOWN",
+      "evidence_references": [],
+      "material_blockers": ["no current final independent IAA PASS bound to reviewed content d0b425e0..."],
+      "budget": {
+        "dispatch_runtime_minutes": 6,
+        "total_runtime_minutes": 6,
+        "material_corrections": 0,
+        "stage_attempts": {"FINAL_IAA": 1},
+        "merge_attempts": 1,
+        "spend": 0
+      }
+    },
+    {
+      "event_id": "evt-4",
+      "idempotency_key": "reentry-substantive::dab741b6289e7dccc1ed42330cae1accc2b755ce8079c2cd5d4b5366c9f769a6",
+      "sequence": 4,
+      "wave_id": "wave-correction-test",
+      "stage": "BUILD",
+      "event_type": "substantive_correction_submitted",
+      "input_revision": "rev-2",
+      "state_before": "CORRECTION",
+      "state_after": "IN_REVIEW",
+      "decision": "ACCEPTED",
+      "reason": "RE_ENTRY_PERMITTED_SUBSTANTIVE_DELTA",
+      "owner": "Foreman",
+      "envelope_id": "gov-2064-t3-test-envelope",
+      "delta_class": "SUBSTANTIVE",
+      "evidence_binding": {
+        "frozen_substantive_fingerprint": {
+          "repository": "APGI-cmy/maturion-isms",
+          "pr": 2065,
+          "head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+          "base_sha": "c2d0da0251f952aa0a61276406d4a48ae94fd7ec",
+          "reviewed_content_sha256": "dab741b6289e7dccc1ed42330cae1accc2b755ce8079c2cd5d4b5366c9f769a6"
+        },
+        "evidence_envelope_id": "evidence-envelope-2",
+        "current_merge_head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+        "token_only_delta_verified": false,
+        "permitted_token_append": null
+      },
+      "evidence_references": ["regression-evidence-rev-2"],
+      "material_blockers": [],
+      "budget": {
+        "dispatch_runtime_minutes": 12,
+        "total_runtime_minutes": 12,
+        "material_corrections": 1,
+        "stage_attempts": {"FINAL_IAA": 2},
+        "merge_attempts": 1,
+        "spend": 0
+      }
+    },
+    {
+      "event_id": "evt-5",
+      "idempotency_key": "rejfp-reserved-self-review::dab741b6289e7dccc1ed42330cae1accc2b755ce8079c2cd5d4b5366c9f769a6",
+      "sequence": 5,
+      "wave_id": "wave-correction-test",
+      "stage": "FINAL_IAA",
+      "event_type": "final_iaa_result",
+      "input_revision": "rev-2",
+      "state_before": "IN_REVIEW",
+      "state_after": "BLOCKED",
+      "decision": "REJECTED",
+      "reason": "RESERVED_MATTER",
+      "owner": "human CS2",
+      "envelope_id": "gov-2064-t3-test-envelope",
+      "delta_class": "SUBSTANTIVE",
+      "evidence_binding": {
+        "frozen_substantive_fingerprint": {
+          "repository": "APGI-cmy/maturion-isms",
+          "pr": 2065,
+          "head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+          "base_sha": "c2d0da0251f952aa0a61276406d4a48ae94fd7ec",
+          "reviewed_content_sha256": "dab741b6289e7dccc1ed42330cae1accc2b755ce8079c2cd5d4b5366c9f769a6"
+        },
+        "evidence_envelope_id": "evidence-envelope-2",
+        "current_merge_head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+        "token_only_delta_verified": false,
+        "permitted_token_append": null
+      },
+      "evidence_references": [],
+      "material_blockers": ["protected-authority-conflict: change requires IAA to edit/assure its own contract file — escalated, not self-certified"],
+      "budget": {
+        "dispatch_runtime_minutes": 14,
+        "total_runtime_minutes": 14,
+        "material_corrections": 1,
+        "stage_attempts": {"FINAL_IAA": 2},
+        "merge_attempts": 1,
+        "spend": 0
+      }
+    },
+    {
+      "event_id": "evt-6",
+      "idempotency_key": "rejfp-reserved-self-review::dab741b6289e7dccc1ed42330cae1accc2b755ce8079c2cd5d4b5366c9f769a6",
+      "sequence": 6,
+      "wave_id": "wave-correction-test",
+      "stage": "FINAL_IAA",
+      "event_type": "final_iaa_result",
+      "input_revision": "rev-2",
+      "state_before": "BLOCKED",
+      "state_after": "BLOCKED",
+      "decision": "NO_OP",
+      "reason": "DUPLICATE_ESCALATION_SAME_CONTENT",
+      "owner": "human CS2",
+      "envelope_id": "gov-2064-t3-test-envelope",
+      "delta_class": "ADMIN_TOKEN_ONLY",
+      "evidence_binding": {
+        "frozen_substantive_fingerprint": {
+          "repository": "APGI-cmy/maturion-isms",
+          "pr": 2065,
+          "head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+          "base_sha": "c2d0da0251f952aa0a61276406d4a48ae94fd7ec",
+          "reviewed_content_sha256": "dab741b6289e7dccc1ed42330cae1accc2b755ce8079c2cd5d4b5366c9f769a6"
+        },
+        "evidence_envelope_id": "evidence-envelope-2",
+        "current_merge_head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+        "token_only_delta_verified": true,
+        "permitted_token_append": null
+      },
+      "evidence_references": [],
+      "material_blockers": ["protected-authority-conflict: change requires IAA to edit/assure its own contract file — escalated, not self-certified"],
+      "budget": {
+        "dispatch_runtime_minutes": 14,
+        "total_runtime_minutes": 14,
+        "material_corrections": 1,
+        "stage_attempts": {"FINAL_IAA": 2},
+        "merge_attempts": 1,
+        "spend": 0
+      }
+    }
+  ],
+  "final_acceptance": null
+}

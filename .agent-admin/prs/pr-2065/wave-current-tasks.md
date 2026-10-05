@@ -15,7 +15,7 @@
 |---|------|---------|--------|---------------|
 | 1 | Correct protected Foreman, IAA, and active-CS2 Tier 1 contracts for rejected-assurance and class-first control flow | CodexAdvisor-agent | 🔴 PENDING | Issue #2064 |
 | 2 | Correct product gate class routing and focused regression coverage for mixed migration/security payloads | qa-builder | 🔴 PENDING | Issue #2064 |
-| 3 | Align active-CS2 Tier 2/Tier 3 rejection deduplication, bounded correction, and refusal behavior | active-cs2-agent | 🔴 PENDING | Issue #2064 |
+| 3 | Align active-CS2 Tier 2/Tier 3 rejection deduplication, bounded correction, and refusal behavior | active-cs2-agent | 🟢 DONE | PR #2065 — see `.agent-admin/prehandover/proof-pr-2065-gov-2064-t3-active-cs2-tier23-20261005.md` |
 | 4 | Align Foreman Tier 2/checkpoint semantics and verify the OPOJD v2.0/v2.1 layer-down route | governance-liaison-isms-agent | 🔴 PENDING | Issue #2064 |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED

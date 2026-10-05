@@ -38,6 +38,17 @@ This PR delivers the inactive active-CS2 contract and Tier 2 bundle. It does not
 
 The repository proves real loadability of the new contract and required Tier 2 bundle through the available in-session MCP surface, a fresh bootstrap-server process, a successful real fresh-server MCP bootstrap request, and the wake-up protocol. It also proves the currently published two-/three-wave and merge-policy fixtures are schema-valid, while keeping evaluator rejection cases clearly categorized as acceptance specifications for an unimplemented runtime. No runtime/controller activation is implied by this proof.
 
+## Validation performed in PR #2065 (GOV-2064-T3)
+
+| Check | Command / surface | Result | Meaning |
+|---|---|---|---|
+| Rejected/missing/stale-IAA fixture schema conformance | `python3 .agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-rejected-iaa-dedup.test.py` against the unmodified canon `governance/schemas/ACTIVE_CS2_JOB_WAVE.schema.json` | PASS (15/15) | A new local fixture (`rejected-iaa-wave-record.json`, not a canon file — no canon schema or fixture was edited) validates against the real, unmodified canon schema and demonstrates typed refusal (`MATERIAL_BLOCKER` / `GATE_UNSATISFIED` / `EVIDENCE_STALE`-class), dedup of repeated findings/escalations against unchanged reviewed content, exactly one bounded re-entry on genuine substantive change, and exactly one CS2 escalation for a genuine reserved-matter conflict — all expressed with existing schema fields only. |
+| Restart reconstruction | Same script: independent reload + recompute of counters/dedup ledger from the persisted `events` array only | PASS | Counters and dedup facts reconstruct identically from the durable ledger alone, with no reliance on in-memory or session state. |
+| Replacement-PR / new-session non-reset | Same script: same `job_id`, PR number changed to a different value in the evidence bindings, counters recomputed | PASS | Recomputed counters are identical to the original (not reset to zero), proving counters are bound to `job_id`'s durable ledger, not to PR number or session identity. |
+| Negative-control sanity check | Manually injected (a) a wave advanced to `MERGED`/job to `COMPLETE`, and (b) a duplicate finding recorded as a second `REJECTED` instead of `NO_OP` | Both correctly DETECTED as violations by the same test functions (not committed; ad hoc verification only) | Confirms the test harness actually discriminates pass/fail rather than vacuously passing. |
+
+This validation is schema/fixture/test-level only. It does not implement, wire up, or activate any live controller, CI gate, or merge runtime — see the requirement-to-runtime map above, which is unchanged by this task.
+
 ## Runtime implementation handback
 
 Any later implementation issue must name the controller/evaluator, durable record store, compare-and-set merge route, safety supervisor/reset surface, failure register, test plan, independent IAA path, and activation approval path explicitly. No new authority is created by this handoff document.
