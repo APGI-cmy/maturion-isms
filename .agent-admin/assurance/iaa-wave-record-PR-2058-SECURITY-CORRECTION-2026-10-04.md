@@ -270,3 +270,65 @@ Other ACR checks: ACR-01–03 PASS; ACR-05–06 PASS; ACR-08–11 PASS; ACR-13�
 - verdict: REJECTION-PACKAGE
 - checks_run: 33 substance checks: 28 PASS, 5 FAIL
 - learning_note: Recurrent scope count/path reconciliation remained unresolved after ECAP R07/R11; require CI-enforced exact diff-to-scope validation.
+
+### 2026-10-05 — CS2-authorized independent reassessment
+
+**Invocation:** PR #2058, “Add explicit application Data API grants before Supabase's October change”; authorized by CS2 comment `5991592978`. Reviewed by the independent-assurance-agent runtime, independent of the producing `schema-builder` (builder class). This is the IAA reviewer identity; no numeric IAA session identifier is asserted. **Ceremony-admin: YES**, per the appointment and `ceremony_admin_appointed: true` in `.agent-workspace/foreman-v2/personal/scope-declaration-wave-pr-2058-data-api-grants-20261005.md`.
+
+**Bound heads:** substantive security head `1eb903588c0bfc090925cdceb7414fddcccc615b`; administrative/current PR head `6fe46ccc7bd70b061254a5c43ed8fc4e7c46f0da`. The migration, tests, runner, workflow, documentation, and trigger migration are unchanged between those heads. No exact-current-head refresh was requested.
+
+**Diff-first class decision:** the PR changes database migrations, SQL/Python database-access tests, the grants workflow, documentation, and assurance/administrative records. It changes no runtime UI/API source file. The applicable classes are `DATABASE_MIGRATION` and `SECURITY_REMEDIATION`, with `CI_WORKFLOW` overlay for `.github/workflows/data-api-grants.yml`; IAA trigger category is `CI_WORKFLOW`. The diff has 16 paths.
+
+#### Class-routed evidence matrix
+
+| Criterion | Primary evidence inspected | Result |
+|---|---|---|
+| Fixed allowlist; object-kind/RLS/security-invoker guards; no automatic/default or blanket anonymous grants | `supabase/migrations/20260923124227_explicit_data_api_grants.sql:13-148`; `supabase/tests/data-api-grants-coverage.sql`; disposable replay | PASS |
+| Migration purpose, security finding, and exact mitigation | PR description; `.agent-admin/prs/pr-2058/wave-current-tasks.md`; migration `:150-340` | PASS |
+| Equivalent database validation for preview migration pass | `scripts/test-data-api-grants.py`; current Data API run [37289794725](https://github.com/APGI-cmy/maturion-isms/actions/runs/37289794725), job `111697253669`, on `6fe46ccc7bd70b061254a5c43ed8fc4e7c46f0da`; locally reran the script successfully. Disposable, network-isolated Supabase PostgreSQL 17.6.1 replayed exactly 88 in-scope migrations with automatic grants disabled, reproduced missing grants, applied/reapplied the repair, and passed the four logged milestones. This is equivalent database validation under §5.2; it is not hosted API/browser or production evidence. | PASS |
+| RLS predicate and database-state preservation; idempotency, future-table denial, atomic refusal when RLS is off | Runner snapshots normalized policies/default ACLs/relations; applies twice; tests future private table and transactional refusal | PASS |
+| PIT helper hardening and approved write boundary | Access SQL `:43-105, :116-165`; migration `:195-340`; controlled RPC migration `20260723141559_pit_slice4_rpc_only_mutation_boundary.sql:5-215`. Authenticated calls to public PIT/MMM helpers are denied; private helper grants and policy rewrites are present; approved create/update RPCs succeed and unauthorized cross-org create is denied. Direct project/source-link DML is denied by effective privilege assertions; the PostgreSQL multi-privilege assertion and documentation citation are retained. | PASS |
+| Authenticated PIT `projects` and `source_links` SELECT tenant isolation | `supabase/tests/support/grants-bootstrap.sql:14-26` seeds two PIT organisations/memberships/roles but no PIT project/source-link rows. `data-api-grants-access.sql:34-41` exercises MMM framework/approval isolation; `:69-105` exercises PIT RPC writes, not authenticated PIT SELECT. The SQL contains no authenticated `SELECT` against `public.projects` or `public.source_links`. The generic CI “row isolation” milestone therefore does not prove the changed PIT SELECT policies. Existing policies in `20260722102655_pit_stage12_slice4_project_persistence.sql:68-116` filter projects and source links through `pit_is_org_member`; the new migration requalifies those policy calls, but their two-organisation row behavior is not executed. | **FAIL** |
+| Exclusion of Wave 16.6 and `public.evidence_submissions` | Fixed grant values omit the table; runner excludes `20260310000001_wave16_6_schema_audit_completeness.sql`; fixture/coverage omit it; `supabase/DATA_API_GRANTS.md:42-50` explicitly records the unresolved legacy consumer/DDL mismatch and no supported-use claim | PASS |
+| Deployment boundary and post-merge checks | `supabase/DATA_API_GRANTS.md:60-71` requires the protected manual migration workflow and pending-queue review; no production database was changed. However, no explicit post-merge deployment/smoke-test sequence or post-merge security re-check checklist is present for verifying deployed role grants and the affected PIT read path. Class canon §§5.2–5.3 require these checklists. | **FAIL** |
+| CS2 risk acceptance for the security-remediation class | Reviewed CS2 comments `5991592978` (assessment instructions) and `5979822573` (historical delegation-order exception only), the task record, scope, and ECAP return. No explicit CS2 acceptance of residual security risk is evidenced; comment `5979822573` expressly does not waive security or testing. | **FAIL** |
+| Current CI/security check state | Data API run `37289794725` and CodeQL run `37289795377` succeeded on administrative head `6fe46ccc7bd70b061254a5c43ed8fc4e7c46f0da`. Current `merge-gate/verdict`, `governance/alignment`, and `stop-and-fix/enforcement` checks succeeded. `copilot` remained in progress at retrieval. `preflight/delegation-order-gate` run `37289795002` failed because `.agent-admin/control/delegation-orders/pr-2058.json` is absent. | PASS — status reported truthfully |
+| UI journey / LFV applicability | Actual diff has no runtime UI/API change and claims no `FUNCTIONAL_PASS`. Class-routing canon §§5.2–5.3 makes full UI journey proof advisory for this scope; LFV canon §3.2 exempts pure schema migrations without UI impact. This is not a preview-journey failure; no preview credentials or journey were required. | PASS |
+| Historical delegation-order exception | Current failed run `37289795002` and its log confirm the gate remains technically failed. CS2 comment `5979822573` accepts only the historical ordering failure; it is not reported as a green gate or a security waiver. | PASS — exception applied narrowly |
+
+#### Workflow overlay and retained core checks
+
+- **OVL-CI-001–005: PASS.** The path-filtered workflow invokes the regression runner; it does not weaken merge gates or swallow test failures; disposable PostgreSQL limitations are documented; the current run passed and CI evidence is present in the PREHANDOVER carrier. CI evidence is not treated as production/live evidence.
+- **CORE-020: PASS.** Evidence was inspected directly; unverified PIT row isolation is failed rather than assumed.
+- **CORE-021: FAIL.** The identified class-applicable failures require rejection.
+- **FAIL-ONLY-ONCE:** A-001 invocation evidence is present (CS2 comment `5991592978`); A-002 is confirmed/not applicable (not an agent-contract PR); A-032 does not recur in this narrowed scope because Wave 16.6/`evidence_submissions` is excluded; NBR-002 was applied to the preserved PIT RPC write path; relevant Supabase RLS patterns were reviewed. A-039 acceptance-criteria matrix is recorded above. A-040 is satisfied: database CI is used only as database evidence, not as live runtime evidence. A-041 diff-first classification is based on the actual 16-path diff. **A-042 risk challenge is complete and supports rejection:** (1) PIT cross-organisation reads could remain exposed or authorized reads could fail after policy helper requalification; (2) authenticated Org A/Org B project and source-link SELECT assertions against seeded rows would establish behavior; (3) that evidence is absent; (4) generic “row isolation” CI wording and the exact SQL differ, and scope/task/ECAP count statements conflict; (5) a production owner cannot accept the PIT isolation claim without the missing query evidence. No NBR-005 column mismatch is carried forward because the relevant table/migration is excluded and no app write path changed.
+
+#### ECAP/admin checks
+
+- **ACR-01–03: PASS; ACR-04: FAIL; ACR-05–06: PASS; ACR-07: FAIL; ACR-08–11: PASS; ACR-12: FAIL; ACR-13–16: PASS.**
+- **ACR-04 / ACR-07 — FAIL (Ceremony/Systemic):** the actual PR diff and current delegation-order workflow log each report 16 changed paths. `.agent-admin/scope-declarations/pr-2058.md` declares `FILES_CHANGED: 15` and its frozen path inventory omits `.agent-workspace/independent-assurance-agent/memory/session-1298-20261005.md`. The task record's claimed 14+1 reconciliation therefore does not describe the actual current head.
+- **ACR-12 — FAIL (Ceremony/Systemic):** the task record states that the path count is reconciled; ECAP PREHANDOVER/session records R07/R11 as unresolved; the current diff confirms 16 paths against the 15-path declaration. These active records conflict on the same scope-count dimension.
+- **Systemic prevention:** enforce exact declared-path/count comparison against the PR diff in CI before acceptance; do not resolve by refreshing SHA or editing the immutable PREHANDOVER proof.
+- The ECAP reconciliation summary and named `gate_set_checked` are present. Pending final IAA/CS2 status is not represented as complete. All referenced artifacts exist. The delegation-order result remains `FAIL`.
+
+#### Merge-gate parity
+
+- `merge-gate/verdict`: PASS — current-head GitHub check succeeded; locally checked the active root PREHANDOVER evidence path and the conditional tracker validator (`Gate not applicable`).
+- `governance/alignment`: PASS — local JSON checks for `CANON_INVENTORY.json` and `sync_state.json` succeeded; current-head check succeeded.
+- `stop-and-fix/enforcement`: PASS — local PREHANDOVER evidence check and current-head check succeeded.
+- `preflight/delegation-order-gate`: **FAIL**, not included as PASS in parity; the CS2 exception remains limited to the historical ordering defect.
+
+**Tally:** 47 checks — 39 PASS, 8 FAIL. Failures: A-042; CORE-021; PIT authenticated SELECT/RLS tenant-isolation evidence; missing post-merge deployment/smoke/security re-check checklist; missing explicit CS2 security-risk acceptance; ACR-04; ACR-07; ACR-12.
+
+**Failure classifications and required actions**
+
+1. **PIT SELECT/RLS evidence — Substantive:** add a disposable-PostgreSQL test with projects and source links in two organisations. Under authenticated Org A, assert its own rows are visible and Org B rows are absent; retain the current denied direct-write and approved/denied RPC assertions; rerun the exact 88-migration regression. Owner: producing schema-builder, under Foreman supervision.
+2. **Post-merge checklist — Ceremony/assurance:** add an explicit bounded deployment, affected-flow smoke-test, and post-merge security re-check checklist covering the protected migration path and verification of authenticated PIT reads/grants. Owner: Foreman/producer within authorized scope; no production deployment is authorized by this review.
+3. **CS2 security-risk acceptance — Assurance:** obtain explicit CS2 disposition of the security risk for the narrowed scope; the historical ordering exception is not that disposition. Owner: CS2.
+4. **ACR-04/07/12 — Ceremony/Systemic:** reconcile the active scope declaration and task/ECAP status against the exact 16-path diff, preserving the authorized current head and immutable PREHANDOVER carrier. Structural prevention: CI exact diff-to-scope path/count enforcement.
+
+No LFV/class-routing canon conflict is found for this diff: the class-specific profile controls and UI-journey evidence is advisory because runtime UI/API files did not change. No preview identity was requested. No live production deployment occurred.
+
+**REJECTION-PACKAGE — PR #2058.** Eight checks failed. STOP-AND-FIX applies; no assurance token is issued. This is the IAA decision only, not a Foreman readiness or CS2 merge decision.
+
+`IAA_REJECTION_NOTICE`: `RCA_REVIEW: REFER_BACK` (where RCA applies); `HANDOVER_ALLOWED: no`; `RESULT: REJECTED_BACK_TO_PRODUCER`.
