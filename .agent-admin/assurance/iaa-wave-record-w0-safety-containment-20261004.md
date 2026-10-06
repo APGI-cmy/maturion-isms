@@ -210,6 +210,67 @@ Total: 6 substance checks (OVL-CI-001–005 + A-039 matrix) + 16 ACR checks + 3 
 
 PHASE_B_BLOCKING — this verdict is hard-blocking per `capabilities.adoption_phase.current`.
 
+## IAA Assurance Verdict — Reassessment Invocation (2026-10-06, S-033 correction)
+
+### Binding
+
+- Bound PR / issue: `#2061` / `#2053`
+- Bound current head (this invocation — independently confirmed via `git rev-parse HEAD` in-session and PR API `head.sha`): `01e3a866b6c04235378216f8cfc8269ce2c4bd6c`
+- Prior bound head (rejected): `5a3f280755e67f3a4afae4ed21c43e4895f9ac7c` (REJECTION-PACKAGE at `72bbbe3`, Entry 1 below)
+- Authorizing instruction: CS2 (APGI-cmy), PR #2061 comment `6017588110` (2026-10-06T13:43:12Z) — authorizes exactly one reassessment of the single corrected OVL-CI-005 finding via the S-033 Inherent-Limitation Exception; independently re-fetched and read in full, text confirmed to match the authorized scope (no activation, deployment, merge, successor action, checkout change, or new evidence family authorized).
+- Correction carrier: the single commit `01e3a86` ("Document W0 S-033 exception evidence"), appending an addendum to the existing declared carrier `.agent-admin/evidence/pr-2061-w0-control-evidence-map.md` only (independently confirmed via `git show --stat 01e3a86`: 1 file changed, 60 insertions, 0 deletions).
+- Diff scope independently re-verified (`git diff --name-only 5a3f280..01e3a86`): exactly 3 files changed — this wave record, the evidence-map addendum, and one new IAA session-memory file. Zero controller/schema/workflow/test files changed since the rejected head. No checkout change, no dispatch, no activation, no deployment, no merge, no successor action, no new proof/manifest/RCA/evidence family, no scope-declaration change (independently re-diffed `216e8f7..01e3a86`: only `.agent-admin/**` and this `.agent-workspace/**` memory file touched; `scope-declarations/pr-2061.md` unchanged in content, confirmed via `git diff 216e8f7..01e3a86 -- .agent-admin/scope-declarations/pr-2061.md` producing no hunk beyond the file already being in the prior file list).
+
+### Phase 1 preflight (silent, this invocation)
+
+4/4 PASS — contract YAML parsed and identity extracted; Tier 2 knowledge index files all present (`.agent-workspace/independent-assurance-agent/knowledge/`, 13 files including all required Tier 2A/2B files); `governance/CANON_INVENTORY.json` independently re-parsed programmatically (0 null/empty/zeroed `file_hash_sha256` across all entries) and `governance/canon/INDEPENDENT_ASSURANCE_AGENT_CANON.md` confirmed present; `FAIL-ONLY-ONCE.md` loaded, no open unresolved breach found (grepped for open breach markers — none).
+
+### Phase 2 alignment
+
+- Invocation: PR #2061/#2053 | Invoked by: CS2 (direct instruction, comment `6017588110`) | Produced by: pit-specialist/Copilot (S-033 evidence addendum only — no code, controller, workflow, schema, or test change), class: builder (documentary-evidence action only) | Ceremony-admin: YES (ECAP admin bundle `.agent-admin/prs/pr-2061/ecap-admin-bundle-20261006.md`, `ADMIN_VALIDATED`, unaffected by this evidence-only diff — re-confirmed below) | STOP-AND-FIX: ACTIVE
+- Independence: CONFIRMED — IAA did not author, draft, or contribute to the S-033 addendum, the controller, the workflow, any schema, or any test file.
+- Category: CI_WORKFLOW (unchanged from the rejected invocation — the underlying diff under review, `216e8f7`, is unmodified; this reassessment is scoped solely to the OVL-CI-005 evidence correction). Ambiguity: CLEAR.
+- Checklist loaded: CORE-020, CORE-021 + CI_WORKFLOW overlay (OVL-CI-001 through OVL-CI-005, S-033 clause) + ACR-01–16 (ceremony-admin appointed).
+
+### Phase 3 — Substance evaluation (scoped to the single corrected finding; OVL-CI-001–004, ACR-01–16, and A-039 criteria 1/2/3/5/6/7/8 carried forward unchanged because the underlying controller/workflow/schema/test artifacts are byte-identical to the previously-reviewed and already-PASSed head — independently re-confirmed via the zero-file-diff result above)
+
+**A-001/A-002 (FAIL-ONLY-ONCE)**: This invocation's own evidence is present in this wave record. No agent-class exemption claimed. PASS.
+
+| Check | Independent re-verification performed by IAA this invocation | Verdict |
+|---|---|---|
+| OVL-CI-005 S-033 exception properly invoked | Read the addendum in full. It explicitly names "OVL-CI-005 S-033 Inherent-Limitation Exception", states the reason a branch dispatch is invalid (trusted-`main` checkout at `pit-cs2-controller.yml:76-80`, independently confirmed line-for-line: `ref: ${{ github.event.repository.default_branch }}` at line 79), and supplies all three required substitutes. | **PASS** |
+| S-033 substitute 1 — YAML validation | Independently re-ran `yamllint -d '{extends: default, rules: {document-start: disable, truthy: disable, line-length: disable}}' .github/workflows/pit-cs2-controller.yml` against the current head in-session: exit code `0`, matching the addendum's claimed reproducible result exactly. Disabled rules confirmed cosmetic (GitHub Actions `on:` key, long descriptive step names), not structural/parse suppression. | **PASS** |
+| S-033 substitute 2 — pattern-parity table | Independently read `pit-cs2-controller.yml` and `pit-cs2-controller.js` at the current head and confirmed every cited line range exactly: workflow steps `evaluate-envelope` (97–119), `reset-circuit-breaker` (121–148), `kill-switch` (150–183) each `require('./.github/scripts/pit-cs2-controller.js')` and call the named exported function; `evaluateSafetyEnvelope` (function body 278–310), `resetCircuitBreaker` (350–363), `invokeKillSwitch` (379–410+) all exist with the claimed signatures; `module.exports` confirmed at lines 918/921/922 respectively. Independently re-ran `node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js`: **73/73 pass, 0 fail/skip/todo** — exact match to the addendum's claim and to the original Foreman QP/ECAP/prior-IAA figure. The three named workflow-regression tests (`pit-cs2-controller-workflow.test.js:70`, `:76`, `:93`) independently confirmed present and passing by name. | **PASS** |
+| S-033 substitute 3 — retained manual control surface, honest limitation | `workflow_dispatch` independently confirmed still declared (lines 28–58) with the three non-default choices at lines 41–43 (`evaluate-envelope`, `reset-circuit-breaker`, `kill-switch`); each gated step reports a decision via `core.setOutput`/`core.info` only and performs no claim/bind/merge/successor/deployment operation (independently re-read all three step bodies in full). The addendum honestly discloses this is static, code-level evidence, not a live-dispatch claim, and that no FO register entry is closed. | **PASS** |
+| A-039 criterion 4 (re-assessed) | "Real workflow-entrypoint runtime execution" evidence class is now supplied via the CS2-authorized S-033 governed substitute rather than a live run; CORE-020's "absence of evidence = fail" no longer applies because evidence — in the explicitly authorized substitute form — is now present and independently reproduced by IAA itself, not accepted on attestation. | **PASS** |
+| A-042 risk challenge (re-assessed) | Q1–Q2 unchanged (the same residual first-live-use risk exists for any never-dispatched `workflow_dispatch` surface — this is inherent to the trusted-checkout design CS2 has explicitly chosen to preserve, not a defect in this PR). Q3: evidence is now present in the governed substitute form (YES). Q5: the production authority itself (CS2) has explicitly reviewed this exact limitation, named the governing exception, and directed this precise remediation as sufficient — a reasonable production owner in this governance model would accept it (YES). Challenge status: **RESOLVED** — no outstanding contradiction between issue intent, architecture, and now-complete evidence trail. | **PASS** |
+| W3 archive-identity scope boundary | Confirmed `W0-BLK-002` (bounded W3 controller defect, archival `#2048`/`#2057` identity-scan scoping) is unchanged by this addendum — independently re-read `wave-current-tasks.md` current-blockers table (still `RECORDED_FOR_W3`, `OPEN` for W0-BLK-003) and the evidence-map's pre-existing W3-bounding paragraph (untouched, addendum appended strictly after it). The addendum's closing line ("No FO register entry is closed... W0-BLK-002 remains correctly assigned to W3") independently verified accurate — no archival record touched in this or the prior diff. | **PASS — confirmed out of scope** |
+| Prior ECAP state re-confirmation | `.agent-admin/prs/pr-2061/ecap-admin-bundle-20261006.md` independently re-read: `admin_validation_result: ADMIN_VALIDATED`, `HANDOVER_ALLOWED: no`, Final State `ADMIN_VALIDATED — AWAITING_FINAL_IAA` — honest, non-contradictory, and unaffected by this evidence-only diff (bundle references head `216e8f7`, which is byte-identical on all code paths to the current head). No ACR-01–16 re-trigger: bundle content and bindings unchanged. | **PASS** |
+
+**A-034/A-035 FUNCTIONAL-BEHAVIOUR-REGISTRY / niggle-pattern-library**: Re-reviewed; no applicable pattern maps to this evidentiary correction.
+
+### Tally (this invocation)
+
+Total: 7 substance checks (this table) — all carried-forward OVL-CI-001–004, ACR-01–16, and the unaffected A-039 criteria stand at their prior PASS verdicts because the underlying code is byte-identical (independently re-confirmed via diff, not re-asserted on attestation). **PASS: 7/7 this invocation. Combined with the 23 previously-PASSed, unaffected checks: 25/25 PASS, 0 FAIL.** No finding requires "minor"/"cosmetic"/"low-impact" downgrade language (CORE-021). No absent/unverifiable evidence anywhere in this invocation (CORE-020).
+
+### Phase 4 — Merge Gate Parity (this invocation, current head `01e3a866b6c04235378216f8cfc8269ce2c4bd6c`)
+
+| Check | Result |
+|---|---|
+| `merge-gate/verdict` | PASS (independently confirmed via PR API check-runs at bound head) |
+| `governance/alignment` | PASS (independently confirmed via PR API check-runs at bound head) |
+| `stop-and-fix/enforcement` | PASS (independently confirmed via PR API check-runs at bound head) |
+
+All 48 check-runs at this head independently reviewed: 0 failures; non-applicable agent-contract checks correctly `skipped` (no `.github/agents/` file in this diff). Merge gate parity: PASS.
+
+### Adoption phase
+
+PHASE_B_BLOCKING — this verdict is hard-blocking per `capabilities.adoption_phase.current`.
+
+### Recommended structural prevention (carried forward, unchanged)
+
+Promote to FAIL-ONLY-ONCE: "any PR adding new `workflow_dispatch` input-gated step(s) must include at least one real dispatch run (or a properly-invoked S-033 substitute: YAML lint + pattern-parity + dispatch-retention statement) before IAA final assurance can PASS on that step." This invocation's remediation is itself the first clean exemplar of the S-033 substitute path — recommended for CS2/CodexAdvisor promotion as the canonical worked example.
+
 ## REJECTION_HISTORY
 
 ### Entry 1 — 2026-10-06 (final independent IAA assurance)
@@ -222,9 +283,35 @@ PHASE_B_BLOCKING — this verdict is hard-blocking per `capabilities.adoption_ph
 
 ## TOKEN
 
-No `PHASE_B_BLOCKING_TOKEN` is issued by this invocation — see `REJECTION-PACKAGE` verdict above. No ASSURANCE-TOKEN exists for PR #2061 as of this invocation.
+### Entry 1 — 2026-10-06 (final independent IAA assurance, bound head `5a3f280`)
+
+No `PHASE_B_BLOCKING_TOKEN` was issued by that invocation — see `REJECTION-PACKAGE` Entry 1 above. No ASSURANCE-TOKEN existed for PR #2061 as of that invocation.
 
 RESULT: `REJECTED_BACK_TO_PRODUCER`
 RCA_REVIEW: `REFER_BACK`
 HANDOVER_ALLOWED: `no`
 iaa_token_reference: `IAA-session-2061-w0-20261006-REJECT`
+
+### Entry 2 — 2026-10-06 (reassessment invocation, bound head `01e3a866b6c04235378216f8cfc8269ce2c4bd6c`)
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #2061 — W0: safety envelope and decision-record containment (issue #2053)
+All 25 checks PASS (7 re-assessed this invocation + 18 carried-forward unaffected,
+independently re-confirmed via zero-file-diff on all code/schema/test paths).
+Merge gate parity: PASS (merge-gate/verdict, governance/alignment,
+stop-and-fix/enforcement — all PASS at bound head).
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-2061-w0-20261006-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+PHASE_B_BLOCKING_TOKEN: `IAA-session-2061-w0-20261006-PASS`
+RESULT: `ACCEPTED`
+RCA_REVIEW: `NONE_REQUIRED`
+HANDOVER_ALLOWED: `yes`
+iaa_token_reference: `IAA-session-2061-w0-20261006-PASS`
+Bound head: `01e3a866b6c04235378216f8cfc8269ce2c4bd6c`
+Authorizing CS2 instruction: PR #2061 comment `6017588110`
