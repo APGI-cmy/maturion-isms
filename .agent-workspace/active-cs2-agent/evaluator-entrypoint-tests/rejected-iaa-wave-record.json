@@ -30,6 +30,15 @@
       "scope": ["rejected-iaa-handling-test"],
       "acceptance_obligations": ["final-iaa-pass-bound-to-reviewed-content"],
       "merge_evidence": null
+    },
+    {
+      "wave_id": "wave-successor-test",
+      "ordinal": 2,
+      "status": "PLANNED",
+      "depends_on": ["wave-correction-test"],
+      "scope": ["successor-wave-must-wait-for-current-wave-validation"],
+      "acceptance_obligations": ["predecessor-wave-validated-before-dispatch"],
+      "merge_evidence": null
     }
   ],
   "events": [

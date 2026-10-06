@@ -16,13 +16,16 @@ just document wording.
   (`GATE_UNSATISFIED`), a genuine substantive correction permitting exactly one bounded
   re-entry (`ACCEPTED` / `RE_ENTRY_PERMITTED_SUBSTANTIVE_DELTA`), a genuine
   protected/reserved-matter conflict escalated exactly once (`RESERVED_MATTER`), and a
-  repeat of that same conflict against unchanged content deduped to `NO_OP`.
+  repeat of that same conflict against unchanged content deduped to `NO_OP`. A dependent
+  successor wave remains `PLANNED` while the rejected wave remains current and blocked.
 - `validate-rejected-iaa-dedup.test.py` — a Python test runner that (1) validates the
   fixture against the real canon schema, (2) asserts the wave/job never reach a
-  completion/merge status while IAA is unresolved, (3) reconstructs all durable counters
-  and the dedup ledger purely from the `events` array (simulating a restart), and
-  (4) proves counters are **not reset** when the same `job_id` is carried by a
-  replacement PR number — only an explicit human-CS2 breaker reset may do that.
+  completion/merge status while IAA is unresolved, (3) verifies a stale IAA PASS bound to
+  an older fingerprint is refused with `EVIDENCE_STALE` and blocks handover, merge
+  eligibility, and successor dispatch, (4) reconstructs all durable counters and the dedup
+  ledger purely from the `events` array (simulating a restart), and (5) proves counters are
+  **not reset** when the same `job_id` is carried by a replacement PR number — only an
+  explicit human-CS2 breaker reset may do that.
 
 ## Running
 
@@ -30,7 +33,7 @@ just document wording.
 python3 .agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-rejected-iaa-dedup.test.py
 ```
 
-Expected: `Passed: 15` / `Failed: 0`, exit code `0`.
+Expected: all assertions pass, exit code `0`.
 
 ## Why this is not an activation claim
 

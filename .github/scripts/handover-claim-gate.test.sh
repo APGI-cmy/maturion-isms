@@ -610,6 +610,91 @@ run_required_checks_scope_test \
   '[]' \
   "12" "8" '["preflight/phase-1-evidence","preflight/admin-control-router","preflight/hfmc-ripple-presence","preflight/evidence-exactness","preflight/scope-declaration-parity","preflight/mmm-pr-admin","preflight/product-delivery-gates","preflight/gate-changing-pr-rule"]'
 
+# ── Manifest-read failure and governance-classification regressions ───────────
+# Mirrors the inline manifest resolver and legacy path classifier in
+# handover-claim-gate.yml. Only a GitHub 404 is treated as absence; malformed
+# payloads and API/read failures retain strict IAA/ECAP requirements.
+MANIFEST_RESOLUTION_JS='
+const { resolveAdminManifest, classifyNoManifestFiles } = require(process.env.ADMIN_MANIFEST_HELPER);
+const mode = process.env.MANIFEST_TEST_MODE;
+const files = JSON.parse(process.env.MANIFEST_TEST_FILES || "[]");
+let calls = 0;
+
+async function resolveManifest() {
+  return resolveAdminManifest({
+    prNumber: 9999,
+    getContent: async (manifestPath) => {
+    calls += 1;
+      if (mode === "malformed") {
+        return { data: { type: "file", content: Buffer.from("{not-json").toString("base64") } };
+      } else if (mode === "unreadable") {
+        return { data: { type: "dir" } };
+      } else if (mode === "api-error") {
+        throw Object.assign(new Error("Unavailable"), { status: 503 });
+      } else {
+        throw Object.assign(new Error("Not Found"), { status: 404 });
+      }
+    },
+  });
+}
+
+(async () => {
+  const result = await resolveManifest();
+  const failClosed = Boolean(result.failure);
+  const noManifestClass = Boolean(result.confirmedAbsent);
+  const legacyClass = noManifestClass ? classifyNoManifestFiles(files) : null;
+  const requiresIaa = failClosed || Boolean(legacyClass?.requiresIaa);
+  const requiresEcap = failClosed || Boolean(legacyClass?.requiresEcap);
+  const touchesGovernance = Boolean(legacyClass?.touchesGovernanceControlPaths);
+  const checks = {
+    malformed: result.failure?.startsWith("Invalid or unreadable PR admin manifest .admin/prs/pr-9999.json:") &&
+      failClosed && requiresIaa && requiresEcap && calls === 1,
+    unreadable: result.failure === "Invalid or unreadable PR admin manifest .admin/prs/pr-9999.json: GitHub content response did not contain a readable file payload." &&
+      failClosed && requiresIaa && requiresEcap && calls === 1,
+    "api-error": result.failure === "Unable to read PR admin manifest .admin/prs/pr-9999.json: GitHub API request failed (HTTP 503)." &&
+      failClosed && requiresIaa && requiresEcap && calls === 1,
+    absence: noManifestClass && !result.failure && !touchesGovernance && !requiresIaa && !requiresEcap && calls === 2,
+    "agent-admin-classification": noManifestClass && touchesGovernance && requiresIaa && requiresEcap,
+    "agent-md-classification": noManifestClass && touchesGovernance && requiresIaa && requiresEcap,
+  };
+  const scenario = mode === "malformed" ? "malformed" :
+    mode === "unreadable" ? "unreadable" :
+    mode === "api-error" ? "api-error" :
+    mode === "absence" ? "absence" :
+    mode === "agent-admin" ? "agent-admin-classification" : "agent-md-classification";
+  if (!checks[scenario]) {
+    console.error(`${scenario} failed: ${JSON.stringify({ result, calls, legacyClass, requiresIaa, requiresEcap })}`);
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`✅ manifest resolution: ${scenario}`);
+})();
+'
+
+run_manifest_resolution_test() {
+  local name="$1"
+  local mode="$2"
+  local files_json="$3"
+  if ADMIN_MANIFEST_HELPER="${SCRIPT_DIR}/handover-admin-manifest.js" \
+     MANIFEST_TEST_MODE="$mode" \
+     MANIFEST_TEST_FILES="$files_json" \
+     node -e "$MANIFEST_RESOLUTION_JS"; then
+    PASS=$((PASS + 1))
+  else
+    echo "❌ $name"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+echo ""
+echo "Scenario 9 (GOV-2064-T2): manifest reads fail closed, governance-control paths retain IAA/ECAP"
+run_manifest_resolution_test "malformed manifest fails closed" "malformed" '[]'
+run_manifest_resolution_test "unreadable manifest response fails closed" "unreadable" '[]'
+run_manifest_resolution_test "API read error fails closed" "api-error" '[]'
+run_manifest_resolution_test "confirmed 404 permits non-governance legacy classification" "absence" '["README.md"]'
+run_manifest_resolution_test "agent-admin paths remain governance-control" "agent-admin" '[".agent-admin/policy.md"]'
+run_manifest_resolution_test "agent.md paths remain governance-control" "agent-md" '["docs/security.agent.md"]'
+
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="
 

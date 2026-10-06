@@ -428,6 +428,15 @@ function isProtectedPath(file) {
     file === 'governance/CANON_INVENTORY.json';
 }
 
+function isGovernanceControlPath(file) {
+  return /^governance\//.test(file) ||
+    /^\.github\/workflows\//.test(file) ||
+    /^\.github\/scripts\//.test(file) ||
+    /^\.github\/agents\//.test(file) ||
+    /^\.agent-admin\//.test(file) ||
+    /\.agent\.md$/.test(file);
+}
+
 function isProductPath(file) {
   if (/^(\.github|governance|docs|\.agent-admin|\.agent-workspace)\//.test(file)) return false;
   if (file === '.functional-delivery/pr-template.md') return false;
@@ -557,6 +566,10 @@ function identityScopedArtifacts(artifacts, context) {
   if (!artifacts || artifacts.length === 0) return [];
   return artifacts.filter((artifact) => {
     if (artifact.score === Number.MAX_SAFE_INTEGER) return true;
+    // An explicit foreign PR binding wins over incidental issue/branch
+    // mentions in broad-discovery artifacts. Otherwise archived evidence for a
+    // reused issue or branch can be misclassified as belonging to this PR.
+    if (isForeignPrArtifact(artifact.text, context.prNumber)) return false;
     return matchesArtifactContext(artifact.text, context);
   });
 }
@@ -739,13 +752,6 @@ function evaluateCheckpoint(input = {}) {
   const { path: manifestPath, manifest } = resolveManifest(prNumber, String(activeState.manifest_path || '').trim());
   const changedFiles = input.changedFiles || parseJsonInput('CHECKPOINT_CHANGED_FILES_PATH', 'CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
   const protectedPathsTouched = changedFiles.some(isProtectedPath);
-  const requiresIaa = manifest?.requires_iaa !== false;
-  const requiresEcap = manifest?.requires_ecap !== false;
-  const adminCeremonyRequired = requiresEcap || protectedPathsTouched;
-  const productDeliveryRequired = changedFiles.some(isProductPath) || prBodyClaimsProductDelivery(prBody);
-  const builderQaRequired = productDeliveryRequired;
-  const journey = classifyProductJourney(changedFiles, prTitle, prBody);
-
   const scopePath = String(activeState.scope_path || '').trim() || (prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '');
   const scopeText = scopePath ? safeRead(path.join(process.cwd(), scopePath)) : '';
   const resolverWaveTasksPath = String(activeState.wave_tasks_path || '').trim();
@@ -774,6 +780,21 @@ function evaluateCheckpoint(input = {}) {
   const cs2AuthorizationMatch = String(waveTasksText || '').match(/^[ \t>*-]*CS2 Authorization\**\s*:\s*(.+)$/im);
   const hasRecognizedAlternateAdminRecord = Boolean(waveTasksText) && hasNonEmptyValue(cs2AuthorizationMatch ? cs2AuthorizationMatch[1].trim() : '');
   const adminManifestApplicable = Boolean(manifest) || !hasRecognizedAlternateAdminRecord;
+  const touchesGovernanceControlPaths = changedFiles.some(isGovernanceControlPath);
+  // With a manifest, its explicit class controls both ceremony requirements.
+  // Without one, retain strict defaults unless a recognized CS2-authorized
+  // wave record supplies the alternate admin record; that alternate only
+  // relaxes requirements for non-governance-control changes.
+  const requiresIaa = manifest
+    ? manifest.requires_iaa !== false
+    : adminManifestApplicable || touchesGovernanceControlPaths;
+  const requiresEcap = manifest
+    ? manifest.requires_ecap !== false
+    : adminManifestApplicable || touchesGovernanceControlPaths;
+  const adminCeremonyRequired = requiresEcap || protectedPathsTouched;
+  const productDeliveryRequired = changedFiles.some(isProductPath) || prBodyClaimsProductDelivery(prBody);
+  const builderQaRequired = productDeliveryRequired;
+  const journey = classifyProductJourney(changedFiles, prTitle, prBody);
   const scopeCount = Number(readSimpleField(scopeText, 'FILES_CHANGED') || 0) || null;
   const scopePresent = Boolean(scopeText);
   const scopeCountMatches = scopePresent && scopeCount === changedFiles.length;
@@ -1151,7 +1172,7 @@ function evaluateCheckpoint(input = {}) {
     }
   }
 
-  if (!manifestPath) reasons.push('PR admin manifest missing.');
+  if (adminManifestApplicable && !manifestPath) reasons.push('PR admin manifest missing.');
   if (!activeIdentityBindingPass) {
     reasons.push(`Active PR identity binding mismatch detected: ${identityMismatchFindings.join(' | ')}`);
   }

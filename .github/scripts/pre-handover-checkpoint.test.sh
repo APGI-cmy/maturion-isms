@@ -210,6 +210,10 @@ for (const check of checks) {
     console.error(`${check.field} missing substring: ${check.contains}; actual=${actual}`);
     ok = false;
   }
+  if (check.notContains && actual.includes(check.notContains)) {
+    console.error(`${check.field} unexpectedly contains substring: ${check.notContains}; actual=${actual}`);
+    ok = false;
+  }
 }
 
 process.exit(ok ? 0 : 1);
@@ -1439,8 +1443,9 @@ setup_identity_binding_ignores_cross_pr_archive() {
   # re-reading git HEAD now, since this function's own commit below advances
   # the actual git tree hash further.
   local head_sha="$TEST_HEAD_SHA_OVERRIDE"
-  # An unrelated archival assurance record belonging to a DIFFERENT PR
-  # (#1111, on a different branch, stale SHA). No active-state.json exists
+  # An unrelated archival assurance record explicitly bound to a DIFFERENT PR
+  # (#1111) but sharing this PR's issue and branch context, with a stale SHA.
+  # No active-state.json exists
   # for this PR, so resolver-selected artifacts are absent and broad
   # compatibility discovery runs across the whole .agent-admin/assurance
   # directory — this historical cross-PR file must not be read as if it
@@ -1459,11 +1464,13 @@ EOF
   cat > .agent-admin/assurance/iaa-wave-record-other-pr.md <<'EOF'
 ## PRE-BRIEF
 PR: #1111
-Issue: #1000
+Issue: #1583
+Branch: copilot/test-checkpoint
 
 ## TOKEN
 **PR**: #1111
-**Issue**: maturion-isms#1000
+**Issue**: maturion-isms#1583
+**Branch**: copilot/test-checkpoint
 **Reviewed SHA**: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
 PHASE_B_BLOCKING_TOKEN: IAA-session-other-pr-PASS
 ADMIN_PASS: yes
@@ -1611,6 +1618,83 @@ EOF
 run_checkpoint_test \
   "34. stale SHA in a same-PR-bound ECAP artifact still blocks (no over-exclusion by GOV-2064-T2 fix)" \
   "STOP_AND_FIX" "no" "stale against current HEAD" setup_same_pr_stale_evidence_still_blocks
+
+setup_alternate_admin_record_non_governance_legacy_payload() {
+  seed_green_checks
+  mkdir -p .agent-admin/prs/pr-9999
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+**CS2 Authorization**: GOV-2064 bounded task appointment
+WAVE
+  git add .agent-admin/prs/pr-9999/wave-current-tasks.md
+  git commit -q -m "seed recognized alternate admin record"
+  TEST_CHANGED_FILES_JSON='["README.md"]'
+}
+run_checkpoint_field_test \
+  "35. recognized alternate admin record permits non-governance legacy payload without IAA/ECAP or missing-manifest reason" \
+  setup_alternate_admin_record_non_governance_legacy_payload \
+  "HANDOVER_ALLOWED" \
+  "yes" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"no"},
+    {"field":"IAA_REQUIRED","equals":"no"},
+    {"field":"ECAP_REQUIRED","equals":"no"},
+    {"field":"REASON","notContains":"PR admin manifest missing."}
+  ]'
+
+setup_alternate_admin_record_governance_control_payload() {
+  mkdir -p .agent-admin/prs/pr-9999
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+**CS2 Authorization**: GOV-2064 bounded task appointment
+WAVE
+  git add .agent-admin/prs/pr-9999/wave-current-tasks.md
+  git commit -q -m "seed recognized alternate admin record"
+  TEST_CHANGED_FILES_JSON='[".agent-admin/policies/control.md"]'
+}
+run_checkpoint_field_test \
+  "36. recognized alternate admin record does not suppress IAA/ECAP for governance-control payload" \
+  setup_alternate_admin_record_governance_control_payload \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"no"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."},
+    {"field":"REASON","notContains":"PR admin manifest missing."}
+  ]'
+
+setup_alternate_admin_record_agent_md_payload() {
+  mkdir -p .agent-admin/prs/pr-9999
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+CS2 Authorization: GOV-2064 bounded task appointment
+WAVE
+  git add .agent-admin/prs/pr-9999/wave-current-tasks.md
+  git commit -q -m "seed recognized alternate admin record"
+  TEST_CHANGED_FILES_JSON='["docs/security.agent.md"]'
+}
+run_checkpoint_field_test \
+  "37. recognized alternate admin record does not suppress IAA/ECAP for *.agent.md control payload" \
+  setup_alternate_admin_record_agent_md_payload \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"no"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."},
+    {"field":"REASON","notContains":"PR admin manifest missing."}
+  ]'
 
 echo ""
 echo "Passed: $PASS_COUNT"

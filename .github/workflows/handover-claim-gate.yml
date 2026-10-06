@@ -135,6 +135,7 @@ jobs:
         with:
           script: |
             const handoverIntent = require('./.github/scripts/handover-intent.js');
+            const adminManifestGate = require('./.github/scripts/handover-admin-manifest.js');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA;
             const isIssueComment = context.eventName === 'issue_comment';
@@ -187,32 +188,28 @@ jobs:
 
             // ── Resolve active PR manifest (per-PR preferred, legacy fallback) ──
             // Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
-            let requiresIaa = null;
-            let requiresEcap = null;
-            let prType = 'unknown';
-            let manifestFound = false;
-            const manifestPaths = [
-              `.admin/prs/pr-${prNumber}.json`,
-              '.admin/pr.json',
-            ];
-            for (const manifestPath of manifestPaths) {
-              try {
-                const { data: content } = await github.rest.repos.getContent({
+            const manifestResolution = await adminManifestGate.resolveAdminManifest({
+              prNumber,
+              getContent: (manifestPath) => github.rest.repos.getContent({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   path: manifestPath,
                   ref: headSha,
-                });
-                const manifest = JSON.parse(Buffer.from(content.content, 'base64').toString('utf8'));
-                requiresIaa = manifest.requires_iaa !== false;
-                requiresEcap = manifest.requires_ecap !== false;
-                prType = manifest.type || 'unknown';
-                manifestFound = true;
-                console.log(`Resolved manifest: ${manifestPath}`);
-                break;
-              } catch {
-                // manifest path not found — try next
-              }
+                }),
+            });
+            const manifest = manifestResolution.manifest;
+            const manifestPath = manifestResolution.manifestPath;
+            const manifestFound = Boolean(manifest);
+            const manifestResolutionFailure = manifestResolution.failure ||
+              (!manifestFound && !manifestResolution.confirmedAbsent
+                ? 'Unable to resolve PR admin manifest: neither a readable manifest nor confirmed GitHub 404 absence was received.'
+                : '');
+            let requiresIaa = manifest ? manifest.requires_iaa !== false : null;
+            let requiresEcap = manifest ? manifest.requires_ecap !== false : null;
+            let prType = manifest ? manifest.type || 'unknown' : 'unknown';
+            if (manifestFound) console.log(`Resolved manifest: ${manifestPath}`);
+            if (manifestResolution.confirmedAbsent) {
+              console.log(`Confirmed no PR admin manifest for PR #${prNumber}: both candidate paths returned GitHub HTTP 404.`);
             }
 
             // ── GOV-2064-T2: class derivation for legacy/no-manifest PRs ─────────
@@ -225,14 +222,8 @@ jobs:
             // whether the current head actually touches governance-control paths —
             // mirrors the governance-control scope already used by
             // .github/scripts/post-handover-auto-remediation.js (GOVERNANCE_CONTROL_PATTERNS).
-            const GOVERNANCE_CONTROL_PATTERNS = [
-              /^governance\//,
-              /^\.github\/workflows\//,
-              /^\.github\/scripts\//,
-              /^\.github\/agents\//,
-            ];
             let headFilenames = [];
-            if (!manifestFound) {
+            if (!manifestFound && manifestResolution.confirmedAbsent && !manifestResolutionFailure) {
               let filePage = 1;
               let hasMoreHeadFiles = true;
               while (hasMoreHeadFiles) {
@@ -247,17 +238,23 @@ jobs:
                 hasMoreHeadFiles = files.length === 100;
                 filePage += 1;
               }
-              const touchesGovernanceControlPaths = headFilenames.some((f) =>
-                GOVERNANCE_CONTROL_PATTERNS.some((pattern) => pattern.test(f))
-              );
+              const legacyClassification = adminManifestGate.classifyNoManifestFiles(headFilenames);
+              const touchesGovernanceControlPaths = legacyClassification.touchesGovernanceControlPaths;
               // Legacy/no-manifest class: require IAA/ECAP only when this head actually
               // changes governance-control paths. A legacy PR outside that scope (e.g. a
               // product-only or administrative-tracking PR using the wave-current-tasks
               // record instead of .admin/pr.json) does not inherit a blanket requirement.
-              requiresIaa = touchesGovernanceControlPaths;
-              requiresEcap = touchesGovernanceControlPaths;
-              prType = touchesGovernanceControlPaths ? 'legacy-governance-control' : 'legacy-no-manifest';
+              requiresIaa = legacyClassification.requiresIaa;
+              requiresEcap = legacyClassification.requiresEcap;
+              prType = legacyClassification.prType;
               console.log(`No admin manifest resolved for PR #${prNumber}; derived class='${prType}' requires_iaa=${requiresIaa} requires_ecap=${requiresEcap} from governance-control path impact.`);
+            } else if (manifestResolutionFailure) {
+              // A failed read or malformed payload is not evidence of absence. Fail closed:
+              // retain the strict IAA/ECAP requirement and surface the exact read failure.
+              requiresIaa = true;
+              requiresEcap = true;
+              prType = 'manifest-resolution-error';
+              console.error(manifestResolutionFailure);
             }
             const isProductFix = !requiresIaa && !requiresEcap;
 
@@ -463,6 +460,9 @@ jobs:
               'REQUIRED_ACTION',
             ];
             const preconditionFailures = [];
+            if (manifestResolutionFailure) {
+              preconditionFailures.push(manifestResolutionFailure);
+            }
             const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
             const escapeRegex = (s) => {
               const special = '\\\\^$*+?.()|{}[]';
