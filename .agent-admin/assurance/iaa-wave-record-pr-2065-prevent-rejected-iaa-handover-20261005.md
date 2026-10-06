@@ -248,3 +248,49 @@ Adoption phase: PHASE_B_BLOCKING
 
 Token reference: IAA-session-gov2064-t3-aggregate-20261006-PASS
 
+## OVL-CI-005 S-033 Inherent-Limitation Evidence — Final Bounded Delta
+
+**Classification before evidence selection:** This PR is a mixed governance-control bundle. The current residual is classified `CI_WORKFLOW` because `.github/workflows/handover-claim-gate.yml` is modified. No product/runtime UI or API delivery claim is made. This section records validation evidence only; it does not claim handover, completion, or merge readiness.
+
+**Bounded workflow limitation at reviewed baseline `a7c9df0bf0eef682ccd45f26afdecbe1516755e6`:** The handover gate is deliberately event-context-bound. Its only triggers are `issue_comment` and `pull_request_target`; its job condition accepts those event contexts; PR number and head SHA are derived from the issue-comment API lookup or the pull-request payload. It checks out trusted default-branch code (`refs/heads/${{ github.event.repository.default_branch }}`), not the unmerged PR workflow. A bare `workflow_dispatch` has no supported PR event context and would require a new synthetic route; a branch dispatch would still run trusted default-branch workflow code rather than validate this unmerged workflow. Therefore a manual dispatch or live run of the modified head is not meaningful evidence for this change. No `workflow_dispatch` trigger or synthetic route was added.
+
+### S-033 Substitute 1 — YAML syntax validation
+
+Ran the existing Ruby standard-library YAML parser against `.github/workflows/handover-claim-gate.yml`:
+
+```text
+$ ruby -e 'require "yaml"; YAML.load_file(".github/workflows/handover-claim-gate.yml"); puts "YAML syntax: PASS"'
+YAML syntax: PASS
+```
+
+The modified workflow also passed its targeted `yamllint` syntax check. The repository-wide `.github/scripts/validate-yaml.sh` run remains red on three unchanged, out-of-scope files: `.github/workflows/foreman-reanchor.yml`, `.github/workflows/cs2-foreman-cycle.yml`, and `.github/workflows/update-liveness.yml`. None is part of this PR's changed-file set; these failures are recorded, not waived or represented as passes.
+
+### S-033 Substitute 2 — focused regressions and mutation evidence
+
+Focused tests were executed at baseline HEAD `a7c9df0bf0eef682ccd45f26afdecbe1516755e6`:
+
+| Regression suite | Result |
+|---|---:|
+| `.github/scripts/handover-claim-gate.test.sh` | 51 passed, 0 failed |
+| `.github/scripts/pre-handover-checkpoint.test.sh` | 64 passed, 0 failed |
+| `.github/scripts/resolve-active-pr-state.test.sh` | 7 passed, 0 failed |
+| `.agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-rejected-iaa-dedup.test.py` | 23 assertions passed, 0 failed |
+
+The active-CS2 fixture suite is schema-valid protocol-model consistency coverage only; it does not execute or prove evaluator/controller behavior, and active-CS2 remains `CONTRACT_READY / INACTIVE`.
+
+Three temporary negative-control mutations were applied and restored with no remaining source diff:
+
+1. Changed the handover manifest resolver to treat all nonzero HTTP statuses as absence instead of accepting only confirmed 404; the API-read-error regression failed as expected.
+2. Disabled the checkpoint's invalid-manifest fail-closed guard; the malformed per-PR manifest regression failed as expected.
+3. Removed the checkpoint's explicit foreign-PR artifact exclusion; the shared-issue/branch archival-identity regression failed as expected.
+
+### S-033 Substitute 3 — trusted-main and event-context boundary
+
+Static inspection of the workflow confirmed:
+
+- `on` contains only `issue_comment` and `pull_request_target` (`.github/workflows/handover-claim-gate.yml:65-69`).
+- The trusted checkout explicitly uses the repository default branch (`.github/workflows/handover-claim-gate.yml:98-103`).
+- The job condition accepts only those event contexts (`.github/workflows/handover-claim-gate.yml:84-95`).
+- The PR number/head SHA are read from the comment-triggered PR API lookup or the pull-request event payload (`.github/workflows/handover-claim-gate.yml:111-125`).
+
+No live post-change workflow execution is claimed. The active PR-scoped scope declaration records the exact diff; IAA reassessment and a single non-mutating current-head verification remain required.
