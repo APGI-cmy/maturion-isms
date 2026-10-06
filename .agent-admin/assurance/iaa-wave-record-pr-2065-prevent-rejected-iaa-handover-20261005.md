@@ -169,3 +169,82 @@ Adoption phase: PHASE_B_BLOCKING
 
 Token reference: IAA-session-gov2064-t1t2t4-reassess-20261005-PASS
 
+---
+
+### 2026-10-06 — GOV-2064-T3 (active-cs2-agent) independent review + aggregate current-head closure (PR #2065 bundle, IAA-contract content excluded)
+
+**Invocation context**: Human CS2 (`APGI-cmy`) proxy-completion instruction, PR #2065 comment id `6015951908` (authored by `APGI-cmy`, independently re-read verbatim from the live PR comment, not taken on trust): "Invoke IAA once only for the unassured GOV-2064-T3 active-CS2 Tier 2/3 change and the aggregate current-head closure review excluding the IAA-contract content." That same comment records: "Direct CS2 review: PASS" for the `.github/agents/independent-assurance-agent.md` diff in commit `11a9d61` — this IAA invocation does not and did not re-review that file's content; it is treated as structurally present but explicitly out of IAA's review scope, per `SELF-MOD-IAA-001`/`NO-SELF-REVIEW-001`.
+
+**Verified HEAD**: `99b6373235f6fe05180123423e98cdf06f6046cf` (confirmed via `git rev-parse HEAD` == `origin/copilot/prevent-rejected-iaa-handover`; linear ancestry `8d6f8b4 → 11a9d61 → adcce22 → b5ea440 → 665802b → [247e512/2758a8b/d5dd1c6/ad95e07/12c5735 RCA commits] → 5ea96ba → a04e0c0 → 7dd188a → 4f4a698 → 99b6373` independently walked via `git log --oneline --graph 659fed0..99b6373`, not taken from the invocation claim).
+
+#### Part A — GOV-2064-T3 (active-cs2-agent, commit `b5ea440`) — independent first-time review
+
+Builder's own proof reviewed for context only, not relied on as evidence: `.agent-admin/prehandover/proof-pr-2065-gov-2064-t3-active-cs2-tier23-20261005.md`. Every claim below was independently re-derived from the actual diff, the actual canon files, and a live re-run — not copied from that proof.
+
+- **Scope/write-path check**: `git show b5ea440 --stat` confirms the only paths touched are `.agent-workspace/active-cs2-agent/knowledge/**`, the new `.agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/**` bundle, `.agent-workspace/active-cs2-agent/memory/session-001-20261005.md`, `.agent-workspace/active-cs2-agent/parking-station/suggestions-log.md`, and the two admin files (this proof + `wave-current-tasks.md` row 3, which commit `5ea96ba` later corrected from a premature `🟢 DONE` back to truthful `🟡 IN PROGRESS` — independently confirmed via `git show 5ea96ba -- .agent-admin/prs/pr-2065/wave-current-tasks.md`). **No** `.github/agents/**`, `.github/workflows/**`, or `governance/**` path appears in this commit's stat. PASS.
+- **Tier 1 contract file untouched since T1-token-reviewed commit**: `git log --oneline a04e0c0..99b6373 -- .github/agents/active-cs2-agent.md` returns empty; `git diff a04e0c0 99b6373 -- .github/agents/active-cs2-agent.md` returns empty. Confirmed independently: no further change to that Tier 1 file occurred after the already-token-assured commit. Per scope, its content is not re-assessed here. PASS.
+- **CONTRACT_READY / INACTIVE scope preserved — no runtime/controller activation, no CI wiring, no divergent canon**:
+  - `governance/CANON_INVENTORY.json` parsed independently: zero `.agent-workspace/active-cs2-agent/**` paths tracked (confirmed by grep against the raw JSON — no match). No divergent canon hand-edit is possible under this inventory.
+  - `git diff 659fed0 99b6373 -- governance/schemas/ACTIVE_CS2_JOB_WAVE.schema.json` is empty — the canon schema the new fixture validates against is byte-identical to the PR's base.
+  - `grep -rln "evaluator-entrypoint-tests\|validate-rejected-iaa-dedup" .github/workflows/` returns empty — the new test script is **not** wired into any CI workflow.
+  - `grep -rln "active-cs2-agent" .github/workflows/*.yml` returns empty — no workflow references this agent class at all. PASS.
+- **No new refusal code invented outside the approved merge-policy vocabulary**: canonical vocabulary independently extracted from `governance/schemas/ACTIVE_CS2_MERGE_POLICY.schema.json`'s `refusal_codes` enum: `UNAPPROVED_SCOPE, DEPENDENCY_UNMET, BUDGET_EXHAUSTED, BREAKER_TRIPPED, EVIDENCE_STALE, MATERIAL_BLOCKER, GATE_UNSATISFIED, IDENTITY_MISMATCH, UNKNOWN_DELTA, CONFLICT, RESERVED_MATTER` (11 total — note: the smaller 5-code subset in the `scoped-merge-policy.json` *fixture* is a per-fixture scoped subset, not the full canonical vocabulary; this was checked against the actual schema enum, not the fixture, to avoid a false-positive "new code" finding). Every refusal code referenced across the six changed knowledge files (`EVIDENCE_STALE`, `GATE_UNSATISFIED`, `MATERIAL_BLOCKER`, `RESERVED_MATTER`, `UNAPPROVED_SCOPE`, `BUDGET_EXHAUSTED`) is a member of this pre-existing enum. No new code string was introduced. PASS.
+- **Test evidence independently reproduced** (not just read): `python3 .agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-rejected-iaa-dedup.test.py` run at current HEAD `99b6373` reproduces **exactly** 15/15 PASS, 0 FAIL, exit code 0 — identical to the builder's claim, independently executed by IAA, not copied from the proof.
+- **Independent negative-control/mutation sanity check (IAA's own, in addition to and separate from the builder's own ad hoc negative control cited in its proof)**: two separate mutations were applied to a working copy of `rejected-iaa-wave-record.json`, each run against the unmodified real test script, then the file was restored and `git diff --stat` confirmed clean (zero diff) after each:
+  1. Set `status: COMPLETE` (job) and `status: MERGED` (wave) → 3 of 15 checks correctly flipped to FAIL (`wave never advances to MERGE_ELIGIBLE/MERGED/VALIDATED...`, `wave status is CORRECTION or BLOCKED...`, `job status is BLOCKED, not COMPLETE...`), 12 unaffected. Exit code 1.
+  2. Changed event `evt-2`'s `decision` from `NO_OP` to `REJECTED` (simulating an un-deduped repeat finding) → exactly 1 of 15 checks correctly flipped to FAIL (`no duplicate rejection/escalation re-emitted for an unchanged rejection fingerprint`, reporting the exact duplicated fingerprint), 14 unaffected. Exit code 1.
+  Both mutations confirm the harness discriminates correctly and is not vacuous; it fails closed exactly on the mechanism each check is named after. PASS.
+- **Checklist/evidence-files cross-check**: the builder's own checklist and evidence-files list in its proof were spot-checked against the actual commit diff (file list, line counts, FAIL-ONLY-ONCE additions ACS2-005/ACS2-006) and found accurate; no unverifiable or unsupported claim found.
+
+**T3 verdict: PASS.** 0 findings.
+
+#### Part B — Aggregate current-head closure review (whole PR #2065 bundle, IAA-contract content excluded)
+
+- **All four qualifying tasks have a current, non-stale assurance basis at HEAD `99b6373`**:
+  - T1 (excl. `independent-assurance-agent.md` content) / T2 / T4 — covered by this wave record's existing `## TOKEN` (`IAA-session-gov2064-t1t2t4-reassess-20261005-PASS`, verified HEAD `4f4a698`); ancestry `4f4a698` → `99b6373` independently re-walked (2 commits, both wave-record/session-memory only — see below). Not re-reviewed in substance per binding instruction.
+  - T3 — Part A above, this invocation, PASS.
+  - `.github/agents/independent-assurance-agent.md` diff (commit `11a9d61`) — direct human CS2 PASS, PR #2065 comment id `6015951908`, author `APGI-cmy`, independently re-read verbatim from the live comment (see Invocation context above). Confirmed unchanged since that commit (`git log 11a9d61..99b6373 -- .github/agents/independent-assurance-agent.md` empty).
+- **No `.github/agents/**` or `.github/workflows/**` file changed since the last token's reviewed HEAD (`4f4a698`)**: `git diff 4f4a698..99b6373 --stat` shows exactly 2 files changed — this wave record (45 insertions) and the `session-gov2064-t1t2t4-reassess-20261005.md` session memory (8 insertions) — both added by the token-issuance commit `99b6373` itself. `git diff 4f4a698..99b6373 --name-only | grep -E "^\.github/(agents|workflows)/"` returns empty. Confirmed. PASS.
+- **`wave-current-tasks.md` truthfulness**: at HEAD `99b6373`, row 1 reads `🔴 PENDING` (conservative under-statement, already reported to Foreman as a non-blocking bookkeeping item by the prior token — not re-flagged as a new defect here), rows 2/3/4 read `🟡 IN PROGRESS` (non-terminal). No row reads `🟢 DONE` while its corresponding substance lacks a current IAA token. No false terminal claim. PASS. (This invocation updates row 3 to `🟢 DONE` below, now that T3 has its own current token — see task-record update.)
+- **Pre-existing lane-gate failure still present, still traces to pre-PR commit `659fed0`, not a regression, kept visible**: `bash .github/scripts/foreman-prehandover-lane-gate.test.sh` at HEAD `99b6373` reproduces **8 passed, 1 failed** — the 1 failure is `current_head_sha must equal or be an ancestor of PR head SHA ...; got ...` (stale handover control fails exact head check). Independently re-verified via `git worktree add` at commit `659fed0` (the PR's actual base, pre-dating the PR entirely): the **same** `current_head_sha must equal or be an ancestor...` failure reproduces there too (3 passed/1 failed — fewer total tests at base because the 5 additional T4 mutation-sensitivity tests did not yet exist, but the same failing check and identical failure message are present at both ends). Confirmed non-regression, confirmed still visible (not hidden, waived, or folded into this PR's scope) — matches CS2's explicit instruction ("Keep the pre-existing lane-gate test failure visible as a baseline item... not a reason to reopen, waive, or delay this bounded control correction"). PASS (as a confirmed, correctly-tracked baseline item — not resolved by this PR, not blocking it).
+- **Control property — rejected/missing/stale IAA continues to block Foreman completion handover and active-CS2 merge/successor dispatch**: confirmed as a control property (not a re-test of T1-T4 substance): the already-token-assured T1 Foreman/active-CS2 Tier 1 contract corrections (commit `11a9d61`) plus this invocation's T3 Tier 2/3 knowledge alignment (commit `b5ea440`, Part A above, independently test-verified 15/15 + 2 additional IAA-run mutations) jointly state and enforce the same rule at both the contract and knowledge layers: a `REJECTION-PACKAGE`/missing/stale IAA result produces a typed refusal (`MATERIAL_BLOCKER`/`GATE_UNSATISFIED`/`EVIDENCE_STALE`), never a `STOP_AND_FIX`-to-`CS2_REVIEW`-as-pass conversion, never `MERGE_ELIGIBLE`/`MERGED`/`VALIDATED`/`COMPLETE`. PASS.
+- **Merge gate parity (Step 4.1)**: live CI check-runs queried directly against PR #2065 at HEAD `99b6373` (50 check runs total). Every `required_checks` entry from `.agent-admin/control/merge-gate-required-checks.json` that is also listed in that manifest's `workflow_backed_required_checks` is present and `success`: `preflight/phase-1-evidence`, `preflight/iaa-prebrief-contract-alignment`, `preflight/foreman-prehandover-lane-gate`, `preflight/delegation-order-gate`, `preflight/ecap-admin-boundary-gate`, `preflight/merge-gate-required-checks-alignment`. The remaining always-required checks `merge-gate/verdict`, `governance/alignment`, `stop-and-fix/enforcement`, `foreman-implementation-check`, `builder-involvement-check`, `session-memory-check` are all `success`. The manifest's `mapped_legacy_or_external_required_checks` names not currently workflow-backed (`preflight/iaa-prebrief-existence`, `preflight/iaa-token-self-certification`, `preflight/hfmc-ripple-presence`, `preflight/evidence-exactness`, `preflight/iaa-final-assurance`, `preflight/ecap-admin-ceremony`, `preflight/scope-declaration-parity`, `preflight/mmm-pr-admin`) are correctly absent from the live check-run list and are not treated as blocking, per the manifest's own `wave7_validation_required: true` flag and CS2's instruction. One non-required, non-manifest check (`copilot`) is `in_progress` — this is this very IAA invocation's own session check, not a merge-gate requirement. Result: **PASS**, no `failure`/blocking `pending` observed among required, workflow-backed checks.
+- **Ceremony-admin re-check**: `ceremony_admin_appointed` is still not declared `true` in `.agent-admin/prs/pr-2065/wave-current-tasks.md` at this invocation. ACR-01..16 admin-ceremony checks remain inapplicable.
+
+**Aggregate verdict: PASS.** 0 findings.
+
+#### Merge Gate Parity Check (Step 4.1) — summary
+
+| Check | Result |
+|---|---|
+| Live required, workflow-backed CI checks at HEAD `99b6373` | PASS ✅ (all `success`) |
+| Legacy/pending-Wave-7 manifest names | Correctly non-blocking (absent from live checks, per manifest) |
+| `foreman-prehandover-lane-gate.test.sh` local re-run | 8/9 — 1 confirmed pre-existing, non-regression, visible baseline item |
+| T3 independent test re-run | 15/15 PASS, reproduced exactly |
+| T3 IAA-original mutation sanity checks (×2) | Both correctly fail-closed, file restored clean |
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN (SCOPED)
+PR: #2065 "prevent-rejected-iaa-handover" — GOV-2064-T3 (active-cs2-agent, commit `b5ea440`) independent first-time review + aggregate current-head closure for the whole PR #2065 bundle, EXCLUDING the substantive content of `.github/agents/independent-assurance-agent.md` (directly reviewed and PASSED by human CS2, PR #2065 comment id 6015951908)
+Verified HEAD: 99b6373235f6fe05180123423e98cdf06f6046cf (confirmed == origin/copilot/prevent-rejected-iaa-handover via git rev-parse, full ancestry independently walked, not taken from invocation claim)
+All applicable checks PASS. Merge gate parity (required_checks, workflow-backed subset): PASS.
+PHASE_B_BLOCKING_TOKEN: IAA-session-gov2064-t3-aggregate-20261006-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+**SCOPE — what this token covers:**
+1. GOV-2064-T3 (active-cs2-agent, commit `b5ea440`): first independent IAA review of this task's Tier 2/Tier 3 knowledge changes — PASS, 0 findings (Part A above).
+2. Aggregate current-head closure for PR #2065 as a whole, at HEAD `99b6373`, combining: (a) the existing scoped token for T1(excl.)/T2/T4 at `4f4a698`; (b) this invocation's T3 PASS; (c) the direct human-CS2 PASS for the `independent-assurance-agent.md` diff (comment 6015951908); (d) confirmation that nothing in `.github/agents/**`/`.github/workflows/**` changed between `4f4a698` and `99b6373` other than this wave record and session memory; (e) confirmation the pre-existing lane-gate failure remains a visible, correctly-tracked, non-regressing baseline item; (f) confirmation live required CI checks are green.
+
+**What this token does NOT cover (explicitly out of scope):**
+- The substantive content of `.github/agents/independent-assurance-agent.md` — reserved for human CS2, who has already directly reviewed and PASSED it (comment 6015951908). IAA does not and will not self-assure this file.
+- Re-review of T1 (excl. IAA file)/T2/T4 substance — these stand on the existing `IAA-session-gov2064-t1t2t4-reassess-20261005-PASS` token at `4f4a698` and are not reopened here.
+- Resolution or waiver of the pre-existing `foreman-prehandover-lane-gate.test.sh` "stale handover control fails exact head check" failure — it remains open, tracked, and out of this PR's scope, per CS2's explicit instruction not to fold it in.
+- Any future commit after `99b6373` — this token binds to the exact HEAD stated above only.
+
+**Single next action**: Per CS2's own comment (6015951908) — Foreman performs one whole-bundle QP treating this token, the existing T1/T2/T4 token, and the direct-CS2 contract approval as binding inputs, then makes **one** non-mutating final current-head verification citing all of the above plus current green checks, and returns the finished bundle to CS2 for the merge decision. **No** further status-only, proof-only, manifest-only, or head-refresh commit should be pushed after that — doing so would itself be the self-referential evidence-only loop this correction PR exists to prevent. No production deployment, active-CS2 activation, automatic reset, successor dispatch, or use of #2058's exceptional override is authorized by this token.
+
+Token reference: IAA-session-gov2064-t3-aggregate-20261006-PASS
+

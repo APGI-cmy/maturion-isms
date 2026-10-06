@@ -15,7 +15,7 @@
 |---|------|---------|--------|---------------|
 | 1 | Correct protected Foreman, IAA, and active-CS2 Tier 1 contracts for rejected-assurance and class-first control flow | CodexAdvisor-agent | 🔴 PENDING | Issue #2064 |
 | 2 | Correct product gate class routing and focused regression coverage for mixed migration/security payloads | qa-builder | 🟡 IN PROGRESS | Substantive work complete per PR #2065 commit `7dd188a7484365d272d2c79d3de3695a9c7c3838` (GOV-2064-T2): fixes to `.github/scripts/post-handover-auto-remediation.js`, `.github/workflows/handover-claim-gate.yml`, `.github/scripts/pre-handover-checkpoint.js` with regression coverage (`post-handover-auto-remediation.test.sh` 12/12, `handover-claim-gate.test.sh` 45/45, `pre-handover-checkpoint.test.sh` 57/57, all green); pending independent IAA re-assessment of the corrected T2 slice before this row may read 🟢 DONE |
-| 3 | Align active-CS2 Tier 2/Tier 3 rejection deduplication, bounded correction, and refusal behavior | active-cs2-agent | 🟡 IN PROGRESS | Substantive work complete per PR #2065 — see `.agent-admin/prehandover/proof-pr-2065-gov-2064-t3-active-cs2-tier23-20261005.md`; pending independent IAA re-assessment of the corrected T4 slice before this row may read 🟢 DONE |
+| 3 | Align active-CS2 Tier 2/Tier 3 rejection deduplication, bounded correction, and refusal behavior | active-cs2-agent | 🟢 DONE | PR #2065 commit `b5ea440`; see `.agent-admin/prehandover/proof-pr-2065-gov-2064-t3-active-cs2-tier23-20261005.md`. Independent IAA ASSURANCE-TOKEN received: `IAA-session-gov2064-t3-aggregate-20261006-PASS` (see wave record, entry dated 2026-10-06) |
 | 4 | Align Foreman Tier 2/checkpoint semantics and verify the OPOJD v2.0/v2.1 layer-down route | governance-liaison-isms-agent | 🟡 IN PROGRESS | Substantive work complete per PR #2065 — see `.agent-admin/prehandover/proof-pr-2065-gov-2064-t4-foreman-tier23-opojd-20261005.md`; pending independent IAA re-assessment of the corrected T4 slice before this row may read 🟢 DONE |
 
 **Status key**: 🔴 PENDING | 🟡 IN PROGRESS | 🟢 DONE (IAA ASSURANCE-TOKEN received) | ❌ BLOCKED
@@ -26,7 +26,8 @@
 
 | PR # | Token | Date |
 |------|-------|------|
-| 2065 | PENDING | — |
+| 2065 | `IAA-session-gov2064-t1t2t4-reassess-20261005-PASS` (scoped: T1 excl. IAA-file / T2 / T4, HEAD `4f4a698`) | 2026-10-05 |
+| 2065 | `IAA-session-gov2064-t3-aggregate-20261006-PASS` (scoped: T3 + aggregate current-head closure excl. IAA-file content, HEAD `99b6373`) | 2026-10-06 |
 
 ---
 
