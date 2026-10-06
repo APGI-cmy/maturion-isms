@@ -1,31 +1,25 @@
-# GOV-2064-T3 — Evaluator-Entrypoint Tests (Rejected/Missing/Stale IAA)
+# GOV-2064-T3 — Protocol-Model Fixture Consistency Tests
 
-These files are **test support only**. They are not a live controller, not wired into any
-CI workflow, and do not activate active-CS2 automation. They exist to prove — against the
-real, unmodified canon schema `governance/schemas/ACTIVE_CS2_JOB_WAVE.schema.json` — that
-this bundle's Tier 2 knowledge (`merge-and-refusal-protocol.md`,
-`evidence-review-and-correction-protocol.md`, `tier3-context-and-continuity-protocol.md`,
-`job-wave-intake-and-dispatch-protocol.md`) correctly describes enforceable behavior, not
-just document wording.
+These files provide **only schema-valid protocol-model fixture consistency coverage**.
+The runner checks that the fixture conforms to the real, unmodified canon schema
+`governance/schemas/ACTIVE_CS2_JOB_WAVE.schema.json` and that fixture data and local
+calculations are consistent with the expected protocol model. It does **NOT** execute or
+prove active-CS2 evaluator/controller behavior. It does not call a live evaluator or
+controller, and it is not wired into any CI workflow or runtime.
 
 ## Files
 
-- `rejected-iaa-wave-record.json` — a schema-valid job/wave record exercising: an initial
-  IAA rejection (`MATERIAL_BLOCKER`), a duplicate finding against unchanged reviewed
-  content (deduped to `NO_OP`), a blocked completion-handover attempt while IAA is missing
-  (`GATE_UNSATISFIED`), a genuine substantive correction permitting exactly one bounded
-  re-entry (`ACCEPTED` / `RE_ENTRY_PERMITTED_SUBSTANTIVE_DELTA`), a genuine
-  protected/reserved-matter conflict escalated exactly once (`RESERVED_MATTER`), and a
-  repeat of that same conflict against unchanged content deduped to `NO_OP`. A dependent
-  successor wave remains `PLANNED` while the rejected wave remains current and blocked.
-- `validate-rejected-iaa-dedup.test.py` — a Python test runner that (1) validates the
-  fixture against the real canon schema, (2) asserts the wave/job never reach a
-  completion/merge status while IAA is unresolved, (3) verifies a stale IAA PASS bound to
-  an older fingerprint is refused with `EVIDENCE_STALE` and blocks handover, merge
-  eligibility, and successor dispatch, (4) reconstructs all durable counters and the dedup
-  ledger purely from the `events` array (simulating a restart), and (5) proves counters are
-  **not reset** when the same `job_id` is carried by a replacement PR number — only an
-  explicit human-CS2 breaker reset may do that.
+- `rejected-iaa-wave-record.json` — a schema-valid protocol-model fixture encoding expected
+  values for an IAA rejection (`MATERIAL_BLOCKER`), duplicate finding (`NO_OP`), blocked
+  completion attempt while IAA is missing (`GATE_UNSATISFIED`), one modeled bounded re-entry,
+  one modeled protected/reserved-matter escalation, and a successor wave that remains
+  `PLANNED` while the rejected wave remains current and blocked. These are fixture values,
+  not observed runtime outcomes.
+- `validate-rejected-iaa-dedup.test.py` — a Python test runner that validates the fixture
+  against the real canon schema and checks consistency of fixture fields and local
+  calculations. Its assertions cover stale fingerprint / `EVIDENCE_STALE`, blocked
+  completion and merge eligibility, an undispatched successor, dedup, and modeled counters.
+  They do not exercise durable storage, process restart, evaluator, or controller behavior.
 
 ## Running
 
@@ -33,11 +27,20 @@ just document wording.
 python3 .agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-rejected-iaa-dedup.test.py
 ```
 
-Expected: all assertions pass, exit code `0`.
+Expected output:
+
+```text
+Passed: 23
+Failed: 0
+Coverage: schema-valid protocol-model fixture consistency only; active-CS2 evaluator/controller behavior NOT executed or proven.
+```
+
+Exit code `0` means only that the schema and protocol-model fixture consistency assertions
+passed. It is not evidence that active-CS2 evaluator/controller behavior is executed or
+enforced.
 
 ## Why this is not an activation claim
 
 No GitHub Actions workflow, merge gate, or runtime process invokes this script. It is a
-manually re-runnable proof artifact only. `active-cs2-agent` remains `CONTRACT_READY /
-INACTIVE` after this test exists — see `runtime-integration-handoff.md` for the full
-implemented-vs-required runtime map.
+manually re-runnable consistency test only. `active-cs2-agent` remains `CONTRACT_READY /
+INACTIVE` — see `runtime-integration-handoff.md` for the implemented-vs-required runtime map.

@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
-"""GOV-2064-T3 — focused tests at the actual job-wave evaluator entrypoints.
+"""GOV-2064-T3 — schema-valid protocol-model fixture consistency coverage.
 
-This test runner validates the active-CS2 rejected/missing/stale-IAA handling
-(typed refusal, dedup, bounded re-entry, single escalation, and durable
-counter persistence across a simulated restart / replacement PR / new
-session), dependent-successor blocking, and stale-IAA refusal against the
-REAL, UNMODIFIED canon schema
-`governance/schemas/ACTIVE_CS2_JOB_WAVE.schema.json`.
+This manually run script validates a fixture against the real, unmodified
+canon schema `governance/schemas/ACTIVE_CS2_JOB_WAVE.schema.json` and checks
+the consistency of fixture data and locally calculated protocol-model
+expectations. The assertions cover typed refusal values, dedup, bounded
+re-entry, counters, stale-fingerprint handling, blocked completion/merge,
+and an undispatched successor as represented by the fixture and local model.
 
-It does not implement, wire up, or activate any live controller, CI gate, or
-merge runtime. It is a committed, independently re-runnable test proving
-that the *existing* canon schema already expresses the required semantics,
-and that active-cs2-agent's Tier 2/Tier 3 knowledge (this bundle's own
-documents) correctly describes how to interpret it. Run manually:
+This is only schema-valid protocol-model fixture consistency coverage. It
+does NOT execute or prove active-CS2 evaluator/controller behavior. The script
+does not call or implement an evaluator, controller, CI gate, or merge
+runtime, and a passing result is not evidence that such behavior is enforced.
+Run manually:
 
     python3 .agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-rejected-iaa-dedup.test.py
 
-Exit code 0 means every assertion passed. Any failure prints a diagnostic and
-exits non-zero.
+Exit code 0 means every fixture/schema/model-consistency assertion passed.
+The final output explicitly states the coverage limitation. Any failure
+prints a diagnostic and exits non-zero.
 """
 import copy
 import json
@@ -69,13 +70,11 @@ FORBIDDEN_JOB_STATUSES_WHILE_IAA_UNRESOLVED = {"COMPLETE"}
 
 
 def reconstruct_counters(events):
-    """Pure reconstruction of durable counters from an append-only ledger.
+    """Recalculate counters from fixture events to check model consistency.
 
-    This is the 'evaluator entrypoint' under test for the persistence
-    requirement: given only the events array (as would be reloaded from a
-    durable job record after a restart / replacement PR / new session), it
-    must be possible to recompute every counter and dedup fact without any
-    other state.
+    This local calculation does not load a durable job record or exercise a
+    live evaluator/controller. It checks whether the represented event data
+    is internally consistent with the fixture's modeled expectations.
     """
     seen_idempotency_decisions = {}  # idempotency_key -> list of decisions in order
     rejection_fingerprints_first_seen = set()
@@ -148,8 +147,8 @@ def main():
     schema = load_schema()
     record = load_fixture()
 
-    # 1. Genuine evaluator entrypoint: schema conformance against the real,
-    #    unmodified canon schema (no schema edits made by this task).
+    # 1. Validate fixture conformance against the real, unmodified canon
+    #    schema (no schema edits made by this task).
     try:
         jsonschema.validate(instance=record, schema=schema)
         check("fixture conforms to unmodified canon ACTIVE_CS2_JOB_WAVE.schema.json", True)
@@ -188,8 +187,8 @@ def main():
     check("successor dependency points to the rejected current wave",
           successor["depends_on"] == [wave["wave_id"]], successor["depends_on"])
 
-    # 3. Reconstruct counters/dedup facts purely from the persisted ledger
-    #    (the "restart" proof — no reliance on any other state).
+    # 3. Recalculate counters/dedup facts from fixture events. This checks
+    #    modeled consistency only; it does not exercise restart behavior.
     result = reconstruct_counters(record["events"])
 
     check("exactly 3 distinct rejection fingerprints raised (ac-03 MATERIAL_BLOCKER, "
@@ -208,18 +207,16 @@ def main():
     check("merge was attempted and refused at least once (GATE_UNSATISFIED), never completed",
           result["final_budget"]["merge_attempts"] >= 1, result["final_budget"])
 
-    # 4. Simulate a process restart: reload the fixture from disk in total
-    #    isolation from the computation above and recompute independently.
+    # 4. Reload the fixture from disk and recompute independently, checking
+    #    fixture/model consistency only (not actual process restart behavior).
     reloaded = load_fixture()
     restart_result = reconstruct_counters(reloaded["events"])
     check("restart reconstruction matches original reconstruction exactly",
           restart_result == result, (restart_result, result))
 
-    # 5. Simulate a replacement PR / new session for the SAME job_id: only
-    #    the PR number changes in the evidence bindings; job_id is
-    #    unchanged. Counters reconstructed from the ledger must be
-    #    IDENTICAL (never reset to zero) because they are keyed by job_id's
-    #    durable ledger, not by PR number or session identity.
+    # 5. Model a replacement PR / new session for the SAME job_id by changing
+    #    only the PR number in the fixture copy. Check that local calculations
+    #    remain identical; this does not test any live persistence behavior.
     replacement_pr_record = copy.deepcopy(record)
     replacement_pr_record["job_id"] = record["job_id"]  # same job_id: same job, new carrier
     for ev in replacement_pr_record["events"]:
@@ -273,6 +270,10 @@ def main():
     print()
     print(f"Passed: {PASS_COUNT}")
     print(f"Failed: {FAIL_COUNT}")
+    print(
+        "Coverage: schema-valid protocol-model fixture consistency only; "
+        "active-CS2 evaluator/controller behavior NOT executed or proven."
+    )
     sys.exit(0 if FAIL_COUNT == 0 else 1)
 
 

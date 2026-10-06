@@ -396,14 +396,53 @@ function resolveManifest(prNumber, preferredPath = '') {
   if (preferredPath) candidates.push(preferredPath);
   if (prNumber) candidates.push(`.admin/prs/pr-${prNumber}.json`);
   candidates.push('.admin/pr.json');
+  const seen = new Set();
   for (const candidate of candidates) {
+    if (seen.has(candidate)) continue;
+    seen.add(candidate);
     const absolutePath = path.isAbsolute(candidate) ? candidate : path.join(process.cwd(), candidate);
-    const manifest = readJson(absolutePath);
-    if (manifest) {
-      return { path: candidate, manifest };
+    let text;
+    if (VIRTUAL_FILES) {
+      const virtualPath = toPosix(path.isAbsolute(candidate)
+        ? path.relative(process.cwd(), candidate)
+        : candidate);
+      if (!Object.prototype.hasOwnProperty.call(VIRTUAL_FILES, virtualPath)) continue;
+      text = String(VIRTUAL_FILES[virtualPath] ?? '');
+    } else {
+      try {
+        text = fs.readFileSync(absolutePath, 'utf8');
+      } catch (error) {
+        if (error.code === 'ENOENT') continue;
+        return {
+          path: candidate,
+          manifest: null,
+          status: 'invalid',
+          error: `could not be read (${error.code || error.message})`,
+        };
+      }
+    }
+
+    try {
+      const manifest = JSON.parse(text);
+      if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) {
+        return {
+          path: candidate,
+          manifest: null,
+          status: 'invalid',
+          error: 'must contain a JSON object',
+        };
+      }
+      return { path: candidate, manifest, status: 'valid', error: '' };
+    } catch (error) {
+      return {
+        path: candidate,
+        manifest: null,
+        status: 'invalid',
+        error: `contains malformed JSON (${error.message})`,
+      };
     }
   }
-  return { path: '', manifest: null };
+  return { path: '', manifest: null, status: 'absent', error: '' };
 }
 
 function computeChangedFiles(baseSha) {
@@ -749,7 +788,12 @@ function evaluateCheckpoint(input = {}) {
   const checkRuns = input.checkRuns || parseJsonInput('CHECKPOINT_CHECK_RUNS_PATH', 'CHECKPOINT_CHECK_RUNS_JSON', []);
   const commitStatuses = input.commitStatuses || parseJsonInput('CHECKPOINT_COMMIT_STATUSES_PATH', 'CHECKPOINT_COMMIT_STATUSES_JSON', []);
 
-  const { path: manifestPath, manifest } = resolveManifest(prNumber, String(activeState.manifest_path || '').trim());
+  const {
+    path: manifestPath,
+    manifest,
+    status: manifestResolutionStatus,
+    error: manifestResolutionError,
+  } = resolveManifest(prNumber, String(activeState.manifest_path || '').trim());
   const changedFiles = input.changedFiles || parseJsonInput('CHECKPOINT_CHANGED_FILES_PATH', 'CHECKPOINT_CHANGED_FILES_JSON', null) || computeChangedFiles(baseSha);
   const protectedPathsTouched = changedFiles.some(isProtectedPath);
   const scopePath = String(activeState.scope_path || '').trim() || (prNumber ? `.agent-admin/scope-declarations/pr-${prNumber}.md` : '');
@@ -779,18 +823,23 @@ function evaluateCheckpoint(input = {}) {
   // closing the bold run sits between the label and the colon).
   const cs2AuthorizationMatch = String(waveTasksText || '').match(/^[ \t>*-]*CS2 Authorization\**\s*:\s*(.+)$/im);
   const hasRecognizedAlternateAdminRecord = Boolean(waveTasksText) && hasNonEmptyValue(cs2AuthorizationMatch ? cs2AuthorizationMatch[1].trim() : '');
-  const adminManifestApplicable = Boolean(manifest) || !hasRecognizedAlternateAdminRecord;
+  const manifestResolutionFailed = manifestResolutionStatus === 'invalid';
+  const adminManifestApplicable = manifestResolutionStatus !== 'absent' || !hasRecognizedAlternateAdminRecord;
   const touchesGovernanceControlPaths = changedFiles.some(isGovernanceControlPath);
   // With a manifest, its explicit class controls both ceremony requirements.
   // Without one, retain strict defaults unless a recognized CS2-authorized
   // wave record supplies the alternate admin record; that alternate only
   // relaxes requirements for non-governance-control changes.
-  const requiresIaa = manifest
-    ? manifest.requires_iaa !== false
-    : adminManifestApplicable || touchesGovernanceControlPaths;
-  const requiresEcap = manifest
-    ? manifest.requires_ecap !== false
-    : adminManifestApplicable || touchesGovernanceControlPaths;
+  const requiresIaa = manifestResolutionFailed || (
+    manifest
+      ? manifest.requires_iaa !== false
+      : adminManifestApplicable || touchesGovernanceControlPaths
+  );
+  const requiresEcap = manifestResolutionFailed || (
+    manifest
+      ? manifest.requires_ecap !== false
+      : adminManifestApplicable || touchesGovernanceControlPaths
+  );
   const adminCeremonyRequired = requiresEcap || protectedPathsTouched;
   const productDeliveryRequired = changedFiles.some(isProductPath) || prBodyClaimsProductDelivery(prBody);
   const builderQaRequired = productDeliveryRequired;
@@ -1172,7 +1221,11 @@ function evaluateCheckpoint(input = {}) {
     }
   }
 
-  if (adminManifestApplicable && !manifestPath) reasons.push('PR admin manifest missing.');
+  if (manifestResolutionFailed) {
+    reasons.push(`PR admin manifest resolution failed at ${manifestPath}: ${manifestResolutionError}.`);
+  } else if (adminManifestApplicable && manifestResolutionStatus === 'absent') {
+    reasons.push('PR admin manifest missing.');
+  }
   if (!activeIdentityBindingPass) {
     reasons.push(`Active PR identity binding mismatch detected: ${identityMismatchFindings.join(' | ')}`);
   }
@@ -1336,7 +1389,8 @@ function evaluateCheckpoint(input = {}) {
     IAA_ARTIFACT_CURRENT: yesNoNotRequired(iaaArtifactCurrent, requiresIaa),
     IAA_SATISFIED_OR_VALIDLY_WAIVED: yesNoUnknown(iaaSatisfiedOrValidlyWaived),
     ACTIVE_STATE_NEXT_REQUIRED_ACTION: activeStateNextRequiredAction || 'none',
-    PR_MANIFEST_STATUS: manifestStatus || 'unknown',
+    PR_MANIFEST_STATUS: manifestStatus || (manifestResolutionFailed ? 'invalid' : 'unknown'),
+    PR_MANIFEST_RESOLUTION: manifestResolutionStatus,
     WAVE_TASKS_STATUS: waveTasksStatus || 'unknown',
     FINAL_PASS_CS2_REVIEW: finalPassCs2Review ? 'yes' : 'no',
     FINAL_PASS_DECLARED: finalPassState.declaredFinalPass ? 'yes' : 'no',

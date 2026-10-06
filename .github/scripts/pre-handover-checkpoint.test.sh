@@ -1696,6 +1696,83 @@ run_checkpoint_field_test \
     {"field":"REASON","notContains":"PR admin manifest missing."}
   ]'
 
+setup_alternate_admin_record_malformed_per_pr_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  printf '{ malformed manifest\n' > .admin/prs/pr-9999.json
+}
+run_checkpoint_field_test \
+  "38. malformed per-PR manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_malformed_per_pr_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/prs/pr-9999.json: contains malformed JSON"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
+
+setup_alternate_admin_record_unreadable_per_pr_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  rm -f .admin/prs/pr-9999.json
+  mkdir .admin/prs/pr-9999.json
+}
+run_checkpoint_field_test \
+  "39. unreadable per-PR manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_unreadable_per_pr_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/prs/pr-9999.json: could not be read (EISDIR)"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
+
+setup_alternate_admin_record_malformed_legacy_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  printf '{ malformed legacy manifest\n' > .admin/pr.json
+}
+run_checkpoint_field_test \
+  "40. malformed legacy manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_malformed_legacy_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/pr.json: contains malformed JSON"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
+
+setup_alternate_admin_record_unreadable_legacy_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  mkdir .admin/pr.json
+}
+run_checkpoint_field_test \
+  "41. unreadable legacy manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_unreadable_legacy_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/pr.json: could not be read (EISDIR)"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
+
 echo ""
 echo "Passed: $PASS_COUNT"
 echo "Failed: $FAIL_COUNT"
