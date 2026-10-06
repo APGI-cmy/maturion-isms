@@ -7,8 +7,10 @@ Branch: copilot/implement-safety-envelope-containment
 Base branch: main  
 Initial planning head SHA: d2485fa5d502bf8800a7df94bc3caef69cda30da  
 CS2 authorization: PR #2061 comment 5978529004 (2026-10-04)  
-Status: FOREMAN_QP_PASS_ECAP_IAA_PENDING
+Status: FOREMAN_QP_PASS_ECAP_COMPLETE_IAA_PENDING
 iaa_prebrief_path: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment-20261004.md`
+ecap_admin_bundle_path: `.agent-admin/prs/pr-2061/ecap-admin-bundle-20261006.md`
+ecap_admin_disposition: ADMIN_VALIDATED (2026-10-06) — bounded posture confirmed (no active-CS2 activation, live merge, successor dispatch, automatic reset, spend telemetry, non-proposal stage/merge/expiry defaults, deployment, or protected Tier 1/2/3/CANON change); W3 archive-identity item preserved out of scope; no genuine defect found; final independent IAA assurance and Foreman's non-mutating final current-head verification remain pending.
 
 ## Wave boundary
 
@@ -73,4 +75,8 @@ iaa_prebrief_path: `.agent-admin/assurance/iaa-wave-record-w0-safety-containment
 | W0-BLK-002 | Bounded W3 controller defect | W3 controller route | Scope historic-reference identity scans to the active PR/work item; do not modify archival #2048/#2057 records. | RECORDED_FOR_W3 |
 | W0-BLK-003 | Deliberate activation boundary | CS2 | Human merge authority, active-CS2 merge/successor activation, automatic reset, spend telemetry, and non-proposal defaults remain outside this builder appointment. | OPEN |
 
-This record has a Foreman QP PASS for the frozen implementation only. ECAP administration, independent final IAA, current-head verification, and CS2 review remain pending; it is not a handover, final assurance, or merge-readiness claim.
+This record has a Foreman QP PASS for the frozen implementation and a completed bounded ECAP
+administrative validation (ADMIN_VALIDATED, no genuine defect — see
+`.agent-admin/prs/pr-2061/ecap-admin-bundle-20261006.md`). Independent final IAA, Foreman's
+non-mutating final current-head verification, and CS2 review remain pending; it is not a
+handover, final assurance, or merge-readiness claim.
