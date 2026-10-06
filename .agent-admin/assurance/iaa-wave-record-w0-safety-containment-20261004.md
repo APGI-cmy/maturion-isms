@@ -119,3 +119,112 @@ IAA_PREFLIGHT_BRIEF:
 - Confirmed historic records `.agent-admin/assurance/iaa-wave-record-pr-2048-cs2-direct-codexadvisor-recovery-hardening-20260919.md` and `.agent-admin/assurance/iaa-wave-record-pr-2057-active-cs2-successor-20260923.md` exist and were read-only referenced for format precedent; neither was opened for write.
 - Applied AMBIGUITY RULE (FAIL-ONLY-ONCE A-003) to W0-2053-C: future QA-to-RED file paths are not yet known, so overlay classification is left explicitly provisional/AMBIGUOUS rather than guessed, with mandatory full re-classification required at the next IAA invocation (FAIL-ONLY-ONCE A-022).
 - No merge-gate-parity check, CORE-020/CORE-021 evaluation, category-overlay substance evaluation, or verdict was performed — these are Phase 3/4 activities and are explicitly out of scope for a Phase 0 PRE-BRIEF invocation.
+
+## IAA Assurance Verdict — Final Invocation (2026-10-06)
+
+### Binding
+
+- Bound PR / issue: `#2061` / `#2053`
+- Bound current head (independently confirmed via `git fetch origin pull/2061/head` + `git rev-parse` + PR API `head.sha`): `5a3f280755e67f3a4afae4ed21c43e4895f9ac7c`
+- Bound task record: `.agent-admin/prs/pr-2061/wave-current-tasks.md` (status at invocation: `FOREMAN_QP_PASS_ECAP_COMPLETE_IAA_PENDING`)
+- Bound ECAP admin bundle: `.agent-admin/prs/pr-2061/ecap-admin-bundle-20261006.md` (`ADMIN_VALIDATED`, bound/validated head `216e8f7c3c98a0a901a8444ab4afc50f3fe17bd8`)
+- Diff independently re-verified between ECAP-validated head and this bound current head (`216e8f7c..5a3f280`): exactly 3 files changed, all `.agent-admin/**` administrative (ECAP's own bundle + disposition lines), zero controller/schema/workflow/test changes — confirms ECAP's pass was admin-only over the frozen implementation.
+- Full base→head diff independently re-computed (`659fed07..5a3f280`): 15 files, matches `.agent-admin/scope-declarations/pr-2061.md` file list exactly; 0 of the 15 files appear in `governance/CANON_INVENTORY.json` (217 entries checked).
+
+### Phase 1 preflight (silent, this invocation)
+
+4/4 PASS — YAML parsed, Tier 2 index files all present, `governance/CANON_INVENTORY.json` independently re-parsed (217 canons, 0 null/empty/zeroed `file_hash_sha256`), `FAIL-ONLY-ONCE.md` loaded, no open unresolved breach found.
+
+### Phase 2 alignment
+
+- Invocation: PR #2061/#2053 | Invoked by: CS2 (direct task) | Produced by: pit-specialist (implementation), qa-builder (RED), foreman-v2-agent (intake/QP), execution-ceremony-admin-agent (bounded admin pass) | Ceremony-admin: YES (ECAP admin bundle present and bound) — ACR-01–16 applied below | STOP-AND-FIX: ACTIVE
+- Independence: CONFIRMED — IAA produced only the Phase 0 PRE-BRIEF artifact (task W0-2053-B) and did not author, draft, or contribute to any controller, schema, workflow, test, or evidence artifact under review.
+- A-041 Diff-First Classification: actual changed files independently computed from `git diff` (list above) = `.github/scripts/pit-cs2-controller.js`, `.github/scripts/pit-cs2-controller.test.js`, `.github/scripts/pit-cs2-controller-workflow.test.js`, `.github/workflows/pit-cs2-controller.yml`, `.github/cs2-controller/*.schema.json`, plus `.agent-admin/**` administrative artifacts. Declared category candidates at pre-brief (GOVERNANCE_EVIDENCE/PRE_BUILD_GATES) are superseded by the diff: this is now squarely **CI_WORKFLOW** (workflow file modified with new conditional job steps) with AAWP_MAT/PIT-module characteristics. Diff-derived category: `CI_WORKFLOW`. Match to any stale provisional label: NO — re-classified per FAIL-ONLY-ONCE A-022/A-041. SCOPE_DECLARATION parity: MATCH (all 15 files declared).
+- Category: CI_WORKFLOW | IAA triggered: YES (mandatory, CI/workflow change) | Ambiguity: CLEAR (no ambiguity — a workflow file and its controlling script were committed).
+- Checklist loaded: CORE-020, CORE-021 (IAA-retained) + CI_WORKFLOW overlay (OVL-CI-001 through OVL-CI-005) + ACR-01–16 (ceremony-admin appointed).
+
+### Phase 3 — Substance evaluation
+
+**A-001/A-002 (FAIL-ONLY-ONCE)**: IAA's own PRE-BRIEF invocation evidence is present (task W0-2053-B, this record). No agent-class exemption claimed anywhere in the bundle. PASS.
+
+**CORE-020 (zero partial pass)**: All claims below are backed by hard, independently-reproduced artifacts, not agent attestation. No assumed passes. PASS as a methodology; see individual findings below for the one area where evidence is absent.
+
+**CORE-021 (zero-severity-tolerance)**: No finding below is downgraded with "minor"/"cosmetic"/"low-impact" language. Findings are reported at face value.
+
+| Check | Evidence independently obtained by IAA | Verdict |
+|---|---|---|
+| OVL-CI-001 Workflow policy correctness | Read full `pit-cs2-controller.js` (929 lines) and `pit-cs2-controller.yml` (183 lines). `evaluateSafetyEnvelope` correctly fails closed for missing/malformed/expired/task-inconsistent/unmeasurable/schema-invalid envelopes (lines 278–309). `enforceWorkItemLimits` uses strict `>` comparisons against exact consts 1/1/1800s/7200s (lines 316–334), confirmed by independently executing the boundary tests (30:00 ALLOW, 30:01 STOP_AND_FIX; 2:00:00 ALLOW, 2:00:01 STOP_AND_FIX). `resetCircuitBreaker`/`invokeKillSwitch` require `source==='human_cs2' && actor.type==='User' && actor.login===PILOT_CS2_LOGIN` (lines 350–362, 379–421) — independently confirmed webhook/agent/token/comment/PR/automatic_retry sources are all rejected by re-running the 6 negative tests plus the 1 positive test. `recordTripEvent` dedupes on `idempotency_key` (lines 475–482) — confirmed exactly-once behaviour under duplicate and reordered delivery. `buildDecisionRecord` forces `STOP_AND_FIX`/`UNKNOWN_STATE` for any `state_before` outside the closed set (lines 452–459). `maximum_stage_attempts` and `maximum_merge_attempts` are confirmed, by direct grep, to be read nowhere except the required-field presence list — never enforced, matching the "proposal-only, never silently activated" design intent. `simulateTwentyFourHourWindow` is a pure in-process loop with zero network/spend calls and halts at first trip (independently confirmed: 10,000-tick request halts at tick 3 for the 2-hour ceiling). | **PASS** |
+| OVL-CI-002 Merge gate integrity | All 3 contractual required checks (`merge-gate/verdict`, `governance/alignment`, `stop-and-fix/enforcement`) independently confirmed `success` at bound head `5a3f280` via PR API. Full 49-check-run list fetched and reviewed: 0 non-skip failures/cancellations. No required check was removed, weakened, or made conditional by this diff. | **PASS** |
+| OVL-CI-003 Silent failure risk | Reviewed all new/changed steps in `pit-cs2-controller.yml`: no `continue-on-error`, no unguarded exit-code suppression. The pre-existing `run()` claim/bind/observe path (lines 729–887) is untouched by this diff (confirmed via line-level diff — only new W0 functions and their comments were added; `run()` itself has zero changed lines). | **PASS** |
+| OVL-CI-004 Environment parity | Single `ubuntu-latest` runner, no environment-specific branching introduced. N/A beyond that — no discrepancy found. | **PASS** |
+| OVL-CI-005 CI evidence present | **A workflow file (`pit-cs2-controller.yml`) was modified, adding three entirely new `workflow_dispatch`-gated job steps** (`evaluate-envelope`, `reset-circuit-breaker`, `kill-switch` — the real, non-extracted wiring for the human-CS2-only reset and independently-invocable kill switch, which is the core W0-2053-C/E deliverable). Independently queried GitHub Actions: **zero `workflow_dispatch` runs exist for this workflow** (`list_workflow_runs` filtered to `workflow_dispatch` → `total_count: 0`). The only executed trigger at the bound head is `pull_request_target`, which takes the pre-existing, unchanged "claim, bind, or safely observe" branch only (`core.info('PR has no CS2 work-item binding; no action.')` — confirmed directly from the job log) — it never reaches the three new conditional steps. No PREHANDOVER/evidence artifact (`pr-2061-w0-qa-to-red.md`, `pr-2061-w0-control-evidence-map.md`, `wave-current-tasks.md`, `ecap-admin-bundle-20261006.md`, both builder-appointment records) invokes the required S-033 Inherent-Limitation-Exception substitute, and none of the three required substitutes (actionlint/yamllint output, documented pattern-parity comparison, explicit workflow_dispatch-retention statement) is present anywhere in the bundle. This is not even a case where the exception would cleanly apply: `workflow_dispatch` on this branch *could* have been manually invoked via `gh workflow run --ref copilot/implement-safety-envelope-containment` to produce real evidence before this review — it simply was not done. **Absence of evidence = failing check per CORE-020.** | **FAIL** |
+
+**A-034/A-035 FUNCTIONAL-BEHAVIOUR-REGISTRY / niggle-pattern-library**: Reviewed both. No registered niggle pattern in either file maps to GitHub Actions workflow_dispatch/github-script wiring or Node.js CS2-controller logic (patterns are Next.js/Supabase/TanStack/Zustand stack-specific). No applicable pattern found; none silently skipped.
+
+**Non-blocking observation (not a REJECTION ground)**: `.github/scripts/pit-cs2-controller.test.js` and `.github/scripts/pit-cs2-controller-workflow.test.js` are independently confirmed to pass in full — I executed `node --test` against both files at the bound head and obtained **73/73 pass, 0 fail/skip/todo**, matching the Foreman QP and ECAP claims exactly (hard CI_TEST-equivalent evidence, not accepted on attestation alone). However, no CI workflow in this repository executes these two files automatically (confirmed: `npm test` runs `vitest run` scoped to `modules/mat`, `modules/MMM`, `packages/ai-centre`, `api/` only per `vitest.config.ts` — `.github/scripts/**` is not included; no workflow greps/names these two files). This matches a pre-existing, repository-wide convention for this script category (`foreman-prehandover-lane-gate.test.js` and `iaa-prebrief-inject.test.js` are likewise never CI-executed, and were previously accepted under IAA wave record `iaa-wave-record-GOVERNANCE-2047-FOREMAN-CONVERGENCE-20260919.md`). Because this is consistent with established, previously-accepted repository practice and issue #2053 does not explicitly mandate continuous CI wiring (only that the tests exist and the required limits be "testable"), this is recorded as a residual risk for Foreman/CS2 follow-up, not a blocking finding in this invocation.
+
+### A-039 Acceptance-Criteria Matrix (governing issue #2053)
+
+| # | Governing-issue criterion | Required evidence type | Evidence reference | Independently verified |
+|---|---|---|---|---|
+| 1 | Truthful FO-001–FO-019 control baseline | ARTIFACT | `pr-2061-w0-control-evidence-map.md` | YES — read in full; labelled "BASELINE / NOT VERIFIED", no false closure |
+| 2 | Versioned safety-envelope schema + validator, 14 required fields | STATIC_CODE + CI_TEST | `safety-envelope.schema.json`; `validateSafetyEnvelopeAgainstSchema` | YES — schema read in full; test re-executed |
+| 3 | Deterministic decision-record schema + validator | STATIC_CODE + CI_TEST | `decision-record.schema.json`; `buildDecisionRecord` | YES — schema read in full; determinism test re-executed |
+| 4 | Fail-closed kill-switch/circuit-breaker wired to real workflow entrypoint, human-reset-only, exactly-one-trip | CI_TEST (module) + LIVE/CI_RUN (workflow wiring) | module: `pit-cs2-controller.test.js`; workflow: `pit-cs2-controller-workflow.test.js` (static-match only) + `pit-cs2-controller.yml` | Module logic: YES (re-run, 73/73 pass). **Real workflow-entrypoint runtime execution: NO — zero workflow_dispatch runs exist (see OVL-CI-005 FAIL above)** |
+| 5 | Focused QA-to-RED/regression tests for all 6 risk modes | CI_TEST | both test files | YES — re-executed, all 6 modes covered and passing |
+| 6 | W0 evidence/control map separates implemented vs proposed, no false FO closure | ARTIFACT | `pr-2061-w0-control-evidence-map.md` | YES |
+| 7 | All changed files within frozen PR-scoped scope declaration | ARTIFACT | `scope-declarations/pr-2061.md` | YES — 15/15 match |
+| 8 | No active-CS2 activation/live merge/successor dispatch/Tier 1-2-3/CANON change | STATIC_CODE (diff) | full diff | YES — independently re-diffed against `CANON_INVENTORY.json`, 0 hits; `run()` untouched |
+
+**Matrix status: INCOMPLETE — criterion 4's "wired to the real workflow entrypoint" clause has STATIC_CODE/claim-only evidence for actual runtime execution; the required CI_TEST/LIVE evidence class for the real GitHub Actions wiring is MISSING with no CS2 waiver on file (A-040 Evidence-Type Downgrade Prohibition applies: STATIC_CODE/pattern-match cannot substitute for the CI-run evidence this criterion requires).**
+
+### A-042 Independent Risk Challenge
+
+1. **What could still fail after merge?** The three new `workflow_dispatch`-gated steps (`evaluate-envelope`, `reset-circuit-breaker`, `kill-switch`) — the actual human-operable containment surface this wave exists to build — have never executed once in the real GitHub Actions runtime. A trivial wiring defect (env var name mismatch, JSON parse failure on a real `workflow_dispatch` string input, incorrect `require` path resolution under `actions/github-script@v7`, or an uncaught exception from malformed human-entered JSON) would only surface the first time a human CS2 actually needs to use the kill switch during a live incident — the worst possible time to discover it.
+2. **What evidence would prove it does not fail?** A single successful `workflow_dispatch` run for each of the three new actions (or at minimum one exercising all three code paths), or the properly-invoked and documented S-033 exception (YAML lint + pattern-parity + dispatch-retention) if a live run is genuinely precluded.
+3. **Is that evidence present?** NO — confirmed zero `workflow_dispatch` runs exist; no S-033 exception invoked anywhere in the bundle.
+4. **Contradiction between issue intent, architecture, and PR evidence?** YES — issue #2053 requires "a fail-closed, independently invocable kill-switch/circuit-breaker control surface" as the central deliverable, and this PR's own evidence trail (QA-to-RED follow-up notes) explicitly states the correction was needed because the prior cut "never wired the kill switch to its existing `workflow_dispatch` trigger" — the wiring now exists in source form but has not been proven to execute.
+5. **Would a reasonable production owner accept this as merge-ready?** NO — not for the one deliverable whose entire purpose is to be reliable under human-operated incident conditions, with zero runtime proof it executes without error.
+
+**Challenge status: COMPLETE. Q3 = NO and Q5 = NO → REJECTED (not BLOCKED_PENDING_RUNTIME_EVIDENCE, since no CS2 waiver exists and the gap is remediable by the producing agents without new CS2 authorization — it requires only an evidentiary action already within the approved implementation paths).**
+
+### ACR-01–16 (ceremony-admin appointed: YES)
+
+Reviewed `.agent-admin/prs/pr-2061/ecap-admin-bundle-20261006.md` in full against all 16 triggers. ACR-01 (reconciliation summary): PRESENT (`## ECAP_RECONCILIATION_SUMMARY` with C1–C6 complete). ACR-02 (conflicting status wording): NONE — ECAP explicitly states `HANDOVER_ALLOWED: no` and does not claim an ASSURANCE-TOKEN. ACR-03 (ID consistency): PASS — PR/issue/branch/wave consistent throughout. ACR-04/05/07/08 (scope/hash/path staleness): PASS — ECAP's own file-count/head-binding update is internally consistent and independently re-verified by IAA against the live diff. ACR-06 (PUBLIC_API ripple omission): PASS — ECAP's ripple scan (0 hits) independently re-confirmed by IAA against `CANON_INVENTORY.json`. ACR-09 (gate_set_checked named): PRESENT. ACR-10/11 (stale/unconfirmed gate wording): NONE found — ECAP does not claim `merge_gate_parity: PASS`; IAA performs that check independently in this record. ACR-12 (cross-artifact contradiction): NONE found within the active bundle. ACR-13 (unfilled IAA token field while claiming COMPLETE): N/A — ECAP does not declare `final_state: COMPLETE`; it declares `ADMIN_VALIDATED — AWAITING_FINAL_IAA`. ACR-14 (unresolvable carried-forward claim): N/A. ACR-15 (open `[ ]` tasks vs declared complete): the task record's checklist items remain unchecked `[ ]` markers while individual task `status:` fields show per-task completion — this is the record's established convention (status line is authoritative, checkbox glyph is not toggled) and is consistent across all prior waves reviewed; not a fresh contradiction. ACR-16 (IAA token mismatch / `active_bundle_iaa_coherence`): N/A — no IAA token exists yet on this record prior to this invocation. **No ACR auto-reject trigger fires.**
+
+### Phase 4 — Merge Gate Parity
+
+| Check | Result |
+|---|---|
+| `merge-gate/verdict` | PASS (independently confirmed via PR API at bound head) |
+| `governance/alignment` | PASS (independently confirmed via PR API at bound head) |
+| `stop-and-fix/enforcement` | PASS (independently confirmed via PR API at bound head) |
+
+Merge gate parity for the three contractual required checks: PASS. This does not cure the OVL-CI-005/A-039/A-042 finding above, which is a substance finding outside the generic merge-gate check set.
+
+### Tally
+
+Total: 6 substance checks (OVL-CI-001–005 + A-039 matrix) + 16 ACR checks + 3 merge-gate-parity checks = 25. PASS: 23. FAIL: 1 (OVL-CI-005 / A-039 criterion 4 / A-042). Classification: **Substantive** (directly against the governing issue's core deliverable — proven-reliable kill-switch/circuit-breaker human control surface) — not Ceremony, not solely Systemic, though it reflects a recurring repo-wide pattern (workflow_dispatch wiring added without a pre-merge dispatch run) worth a named structural prevention: **Foreman/QA-builder should require one `workflow_dispatch` run (or documented S-033 substitute) as a standard QA-to-RED/Build-to-Green exit criterion for any PR adding new `workflow_dispatch` input-gated steps** — recommended for FAIL-ONLY-ONCE promotion by CS2/CodexAdvisor.
+
+### Adoption phase
+
+PHASE_B_BLOCKING — this verdict is hard-blocking per `capabilities.adoption_phase.current`.
+
+## REJECTION_HISTORY
+
+### Entry 1 — 2026-10-06 (final independent IAA assurance)
+
+- **Bound head**: `5a3f280755e67f3a4afae4ed21c43e4895f9ac7c`
+- **Finding**: OVL-CI-005 / A-039 criterion 4 / A-042 — the new `workflow_dispatch`-gated `evaluate-envelope`, `reset-circuit-breaker`, and `kill-switch` steps added to `.github/workflows/pit-cs2-controller.yml` (the real, non-extracted wiring for the human-CS2-only reset and independently-invocable kill switch required by issue #2053) have **zero GitHub Actions execution evidence** (`workflow_dispatch` run count = 0, independently confirmed), and no S-033 Inherent-Limitation-Exception substitute (YAML lint + pattern-parity + dispatch-retention) is documented anywhere in the PR's evidence bundle.
+- **Fix required**: Foreman/pit-specialist must either (a) manually trigger `workflow_dispatch` on this branch for each of the three `safety_control_action` options and record the resulting run URLs/log snippets in `.agent-admin/evidence/pr-2061-w0-qa-to-red.md` or a new evidence addendum, confirming each step executes without error and produces the expected `core.setOutput` decision; or (b) explicitly invoke the S-033 exception in the evidence bundle with all three required substitutes (actionlint/yamllint clean-run output, a documented pattern-parity comparison against an approved equivalent workflow, and explicit confirmation that `workflow_dispatch` is retained for post-merge CS2 validation). Re-invoke IAA once either remediation is committed.
+- **Classification**: Substantive.
+- **Recommended structural prevention**: Promote to FAIL-ONLY-ONCE — "any PR adding new `workflow_dispatch` input-gated step(s) must include at least one real dispatch run (or a properly-invoked S-033 substitute) before IAA final assurance."
+
+## TOKEN
+
+No `PHASE_B_BLOCKING_TOKEN` is issued by this invocation — see `REJECTION-PACKAGE` verdict above. No ASSURANCE-TOKEN exists for PR #2061 as of this invocation.
+
+RESULT: `REJECTED_BACK_TO_PRODUCER`
+RCA_REVIEW: `REFER_BACK`
+HANDOVER_ALLOWED: `no`
+iaa_token_reference: `IAA-session-2061-w0-20261006-REJECT`
