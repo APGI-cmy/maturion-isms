@@ -721,12 +721,12 @@ function bindPullRequest(register, { prNumber, headSha }) {
     throw new Error('Work-item correction budget is invalid.');
   }
   const alreadyBound = register.pr_number === prNumber;
-  const distinctHeadUpdate = alreadyBound
-    && register.submission_head !== null
-    && register.submission_head !== headSha;
-  if (alreadyBound && register.submission_head === null) {
-    throw new Error('Bound pull request is missing its persisted submission head.');
+  if (alreadyBound && (!Object.hasOwn(register, 'submission_head')
+    || !/^[0-9a-f]{40}$/.test(register.submission_head || ''))) {
+    throw new Error('Bound pull request has an invalid persisted submission head.');
   }
+  const distinctHeadUpdate = alreadyBound
+    && register.submission_head !== headSha;
   if (distinctHeadUpdate && correctionCount >= maxCorrections) {
     throw new Error('Work-item correction budget is exhausted.');
   }
@@ -1301,6 +1301,12 @@ async function run({ github, context, core, eventName }) {
     }
     if (found.row.pr_number && found.row.pr_number !== pr.number) {
       core.warning(`Work item ${workItemId} is already bound to PR #${found.row.pr_number}.`);
+      return;
+    }
+    if (found.row.pr_number === pr.number
+      && (!Object.hasOwn(found.row, 'submission_head')
+        || !/^[0-9a-f]{40}$/.test(found.row.submission_head || ''))) {
+      core.warning('Refusing PR head update: bound pull request has an invalid persisted submission head.');
       return;
     }
     if (found.row.pr_number === pr.number

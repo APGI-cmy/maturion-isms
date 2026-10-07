@@ -618,6 +618,62 @@ test('W0 repair: one distinct PR-head correction is persisted, duplicates are no
   assert.match(harness.messages.warning.at(-1), /correction budget is exhausted/i);
 });
 
+test('W0 repair: malformed persisted bound submission heads fail closed without mutation', async () => {
+  const repository = 'APGI-cmy/maturion-isms';
+  const malformedHeads = [undefined, null, 'A'.repeat(40)];
+  for (const submissionHead of malformedHeads) {
+    const nominated = controller.nominatePullRequest(
+      controller.initialRegister({ issueNumber: 42, repository }),
+      {
+        prNumber: 502,
+        headRepository: repository,
+        bodyMarker: 'CS2-Work-Item: pit-issue-42',
+        actor: controller.FOREMAN_LOGIN,
+      },
+    );
+    const bound = { ...nominated, pr_number: 502, submission_head: submissionHead };
+    const harness = createHarness({
+      issues: [{ number: 42, title: 'PIT work item', state: 'open' }],
+      initialComments: {
+        42: [
+          controllerComment(controller.renderRegister(bound), { id: 900 }),
+          w0ControllerStateComment(42),
+        ],
+      },
+    });
+    const issueSnapshot = (harness.comments.get('42') || []).map(({ id, body }) => ({ id, body }));
+
+    await controller.run({
+      github: harness.github,
+      context: {
+        repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+        payload: {
+          pull_request: {
+            number: 502,
+            body: 'CS2-Work-Item: pit-issue-42',
+            head: { sha: 'a'.repeat(40), repo: { full_name: repository } },
+            base: { repo: { full_name: repository } },
+          },
+        },
+      },
+      core: harness.core,
+      eventName: 'pull_request_target',
+    });
+
+    assert.deepEqual(
+      (harness.comments.get('42') || []).map(({ id, body }) => ({ id, body })),
+      issueSnapshot,
+    );
+    assert.deepEqual(harness.comments.get('502') || [], []);
+    assert.match(
+      harness.messages.warning.at(-1),
+      typeof submissionHead === 'string'
+        ? /absent, closed, or mismatched/i
+        : /invalid persisted submission head/i,
+    );
+  }
+});
+
 test('human approval commands normalize scope-expansion and reject automation or non-CS2 actors', async () => {
   const row = controller.initialRegister({ issueNumber: 42, repository: 'APGI-cmy/maturion-isms' });
   const harness = createHarness({
