@@ -97,6 +97,11 @@ function createHarness({ issues, initialComments = {}, pulls = {} }) {
           return { data: JSON.parse(JSON.stringify(pulls[pull_number])) };
         },
       },
+      users: {
+        async getByUsername({ username }) {
+          return { data: { login: username, type: 'User' } };
+        },
+      },
     },
   };
 
@@ -173,6 +178,7 @@ test('real Issue Form payload is claimed once and duplicate intake is idempotent
           body: controller.renderRegister(controller.initialRegister({ issueNumber: 42, repository: 'APGI-cmy/maturion-isms' })),
           user: OTHER_USER,
         },
+        w0ControllerStateComment(42),
       ],
     },
   });
@@ -237,6 +243,7 @@ test('invalid controller register fails closed and blocks a second active work i
     issues: [issue, { number: 77, title: 'Existing PIT request', state: 'closed' }],
     initialComments: {
       77: [controllerComment(`${controller.REGISTER_MARKER}\n\n\`\`\`json\n{"broken":true}\n\`\`\``, { id: 700 })],
+      42: [w0ControllerStateComment(42)],
     },
   });
 
@@ -248,8 +255,14 @@ test('invalid controller register fails closed and blocks a second active work i
   });
 
   const posted = harness.comments.get('42') || [];
-  assert.equal(posted.length, 1);
-  assert.match(posted[0].body, /register on #77 is invalid/i);
+  const conflict = posted.find((comment) => comment.body.includes('pit-cs2-controller:single-job-conflict'));
+  assert.ok(conflict);
+  assert.match(conflict.body, /register on #77 is invalid/i);
+  const state = controller.parseControllerState(
+    posted.find((comment) => comment.body.includes(controller.CONTROLLER_STATE_MARKER)).body,
+  );
+  assert.equal(state.safety_envelope.circuit_breaker_state, 'tripped');
+  assert.equal(state.trip_ledger.length, 1);
 });
 
 test('active validated register on a closed issue beyond the first page still blocks intake', async () => {
@@ -276,6 +289,7 @@ test('active validated register on a closed issue beyond the first page still bl
     issues,
     initialComments: {
       250: [controllerComment(controller.renderRegister(blockerRow), { id: 701 })],
+      42: [w0ControllerStateComment(42)],
     },
   });
 
@@ -287,8 +301,14 @@ test('active validated register on a closed issue beyond the first page still bl
   });
 
   const posted = harness.comments.get('42') || [];
-  assert.equal(posted.length, 1);
-  assert.match(posted[0].body, /pit-issue-250/);
+  const conflict = posted.find((comment) => comment.body.includes('pit-cs2-controller:single-job-conflict'));
+  assert.ok(conflict);
+  assert.match(conflict.body, /pit-issue-250/);
+  const state = controller.parseControllerState(
+    posted.find((comment) => comment.body.includes(controller.CONTROLLER_STATE_MARKER)).body,
+  );
+  assert.equal(state.safety_envelope.circuit_breaker_state, 'tripped');
+  assert.equal(state.trip_ledger.length, 1);
 });
 
 test('only a Foreman-nominated authorised same-repository work-item PR can bind once to the active row', async () => {
@@ -297,7 +317,10 @@ test('only a Foreman-nominated authorised same-repository work-item PR can bind 
   const harness = createHarness({
     issues: [{ number: 42, title: '[CS2] PIT controller correction', labels: [{ name: 'cs2:queued' }], state: 'open' }],
     initialComments: {
-      42: [controllerComment(controller.renderRegister(seededRow), { id: 900 })],
+      42: [
+        controllerComment(controller.renderRegister(seededRow), { id: 900 }),
+        w0ControllerStateComment(42),
+      ],
     },
     pulls: {
       502: {
@@ -515,7 +538,10 @@ test('human approval commands normalize scope-expansion and reject automation or
   const harness = createHarness({
     issues: [{ number: 42, title: '[CS2] PIT controller correction', state: 'open' }],
     initialComments: {
-      42: [controllerComment(controller.renderRegister(row), { id: 910 })],
+      42: [
+        controllerComment(controller.renderRegister(row), { id: 910 }),
+        w0ControllerStateComment(42),
+      ],
     },
   });
   const baseContext = { repo: { owner: 'APGI-cmy', repo: 'maturion-isms' }, payload: { issue: { number: 42 } } };
@@ -564,15 +590,9 @@ test('human approval commands normalize scope-expansion and reject automation or
 // Appointment: .agent-admin/builder-appointments/pr-2061-w0-qa-to-red-20261004.md
 // IAA pre-brief: .agent-admin/assurance/iaa-wave-record-w0-safety-containment-20261004.md
 //
-// These tests are INTENTIONALLY RED. They exercise the controller API surface
-// required by governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md
-// §5.1 and §5.2 (`evaluateSafetyEnvelope`, `enforceWorkItemLimits`,
-// `enforceSpendControl`, `resetCircuitBreaker`, `buildDecisionRecord`,
-// `recordTripEvent`, `simulateTwentyFourHourWindow`). None of these functions
-// exist in `pit-cs2-controller.js` yet, so every test below fails because the
-// required behaviour is absent — not because of malformed test setup. No test
-// in this section stubs, mocks around, or weakens its way to a false GREEN;
-// the implementation builder must satisfy these assertions as written.
+// These accepted regressions exercise the controller API surface required by
+// governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md §§5.1–5.2.
+// They remain executable against the real controller implementation.
 // ---------------------------------------------------------------------------
 
 const W0_SAFETY_ENVELOPE_FIELDS = [
@@ -665,6 +685,23 @@ function w0TripEvent(overrides = {}) {
     condition: 'DISPATCH_RUNTIME_EXCEEDED',
     attempt_count: 1,
     ...overrides,
+  };
+}
+
+function w0ControllerStateComment(issueNumber, envelope = w0BaselineEnvelope(), overrides = {}) {
+  const workItemId = `pit-issue-${issueNumber}`;
+  const state = {
+    schema_version: '1.0.0',
+    work_item_id: workItemId,
+    safety_envelope: { ...envelope, work_item_id: workItemId },
+    decision_history: [],
+    trip_ledger: [],
+    ...overrides,
+  };
+  return {
+    id: 800 + issueNumber,
+    body: controller.renderControllerState(state),
+    user: CONTROLLER_USER,
   };
 }
 
@@ -881,10 +918,8 @@ test('W0: a simulated 24-hour repeat-event sequence makes zero live spend or pai
 // agent run) and to immediately block four distinct action categories — new
 // dispatches, retries, merges and successor release — while preserving
 // evidence. The circuit-breaker reset tests above only prove reset-source
-// restriction; they do not exercise a kill-switch entrypoint or any of the
-// four blocked-action categories. These tests are INTENTIONALLY RED: no
-// `invokeKillSwitch`, `evaluateRetryGate`, `evaluateMergeGate`, or
-// `evaluateSuccessorReleaseGate` function exists on the controller module.
+// restriction; the tests below exercise the independent kill-switch entrypoint
+// and all four blocked-action categories against the real controller module.
 // ---------------------------------------------------------------------------
 
 test('W0: the human kill switch is independently invocable, requiring no active job, dispatch context, or agent run', () => {
@@ -994,13 +1029,11 @@ test('W0 correction: the 24-hour simulation halts at the first qualifying trip t
   assert.equal(outcome.trip_count, 1);
 });
 
-test('W0 correction: a non-tripping 24-hour window (within every limit) executes every requested tick and records zero trips', () => {
-  const envelope = w0BaselineEnvelope({
-    maximum_total_runtime: { unit: 'seconds', value: 999 * 60 * 60 },
-  });
-  const clock = { start: new Date('2026-10-04T00:00:00.000Z'), tick_seconds: 60 * 60, ticks: 24 };
+test('W0 correction: a non-tripping window within the fixed total-runtime ceiling executes every requested tick', () => {
+  const envelope = w0BaselineEnvelope();
+  const clock = { start: new Date('2026-10-04T00:00:00.000Z'), tick_seconds: 60 * 60, ticks: 2 };
   const outcome = controller.simulateTwentyFourHourWindow(envelope, clock);
-  assert.equal(outcome.ticks_executed, 24);
+  assert.equal(outcome.ticks_executed, 2);
   assert.equal(outcome.trip_count, 0);
 });
 
@@ -1073,20 +1106,10 @@ test('W0 correction: reordered kill-switch calls for the same parent condition s
 // Task record: .agent-admin/prs/pr-2061/wave-current-tasks.md (task W0-2053-D)
 // Evidence: .agent-admin/evidence/pr-2061-w0-qa-to-red.md
 //
-// These tests are INTENTIONALLY RED for one of two reasons only:
-//   (a) `.github/cs2-controller/safety-envelope.schema.json` and
-//       `.github/cs2-controller/decision-record.schema.json` do not exist on
-//       disk (`fs.existsSync`/`fs.readFileSync` fails), or
-//   (b) `controller.validateSafetyEnvelopeAgainstSchema` and
-//       `controller.validateDecisionRecordAgainstSchema` do not exist on the
-//       controller module (`TypeError: ... is not a function`).
-// No test here creates, stubs, or fakes either schema file or the validator
-// functions; every failure is attributable solely to the absent required
-// artifact, never to a malformed fixture. `W0_SAFETY_ENVELOPE_FIELDS` and
-// `W0_DECISION_RECORD_FIELDS` (defined above) are the authoritative Strategy
-// §5.1 (14 fields) and §5.2 (22 fields) field lists, reused here so the
-// schema assertions stay exactly aligned with the behavioural RED tests
-// already accepted for W0-2053-C. The numeric limits asserted below (1
+// These accepted schema regressions exercise the real versioned schemas and
+// validator interface without stubbing either. `W0_SAFETY_ENVELOPE_FIELDS`
+// and `W0_DECISION_RECORD_FIELDS` are the authoritative Strategy §5.1 (14
+// fields) and §5.2 (22 fields) lists. The numeric limits asserted below (1
 // active job, 1 remediation attempt, 30-minute dispatch ceiling, 2-hour
 // total runtime, runtime-only spend) are the ONLY approved W0 numeric
 // limits, and match the exact W0 limits already fixed in
@@ -1173,11 +1196,8 @@ test('W0: the safety-envelope schema encodes the exact approved W0 limits: 1 act
 // below replace the prior defective `maximum_merge_attempts.const === 1`
 // assertion. `maximum_merge_attempts` and `expiry` remain required fields
 // (proven below), but CS2 has explicitly ruled their defaults remain
-// proposal-only and must never be enforced/activated. These tests are
-// INTENTIONALLY RED for exactly the same two reasons as the rest of this
-// section: the schema files do not exist on disk, or the controller
-// validator/evaluator functions do not exist on the module — never because
-// of a malformed fixture.
+// proposal-only and must never be enforced/activated. These passing regressions
+// ensure their status/value rules remain explicit and fail closed.
 // ---------------------------------------------------------------------------
 
 test('W0: the safety-envelope schema requires both maximum_merge_attempts and expiry as present fields (required, never silently dropped)', () => {
@@ -1291,4 +1311,303 @@ test('W0: the controller refuses to evaluate a safety envelope that fails versio
   const decision = controller.evaluateSafetyEnvelope(envelope, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
   assert.equal(decision.decision, 'STOP_AND_FIX');
   assert.equal(decision.reason_code, 'ENVELOPE_SCHEMA_INVALID');
+});
+
+test('W0 repair: tripped breaker blocks dispatch, retry, merge, successor release, and limit enforcement', () => {
+  const envelope = w0BaselineEnvelope({ circuit_breaker_state: 'tripped' });
+  const decision = controller.evaluateSafetyEnvelope(envelope, w0TaskRecord(), new Date('2026-10-04T00:00:00.000Z'));
+  assert.deepEqual(decision, { decision: 'STOP_AND_FIX', reason_code: 'CIRCUIT_BREAKER_TRIPPED' });
+  for (const gate of [
+    controller.evaluateRetryGate,
+    controller.evaluateMergeGate,
+    controller.evaluateSuccessorReleaseGate,
+  ]) {
+    assert.deepEqual(gate(envelope, {}), { decision: 'STOP_AND_FIX', reason_code: 'CIRCUIT_BREAKER_TRIPPED' });
+  }
+  assert.deepEqual(
+    controller.enforceWorkItemLimits({ active_work_items: 1 }, envelope),
+    { decision: 'STOP_AND_FIX', reason_code: 'CIRCUIT_BREAKER_TRIPPED' },
+  );
+});
+
+test('W0 repair: every action gate rejects absent, malformed, and schema-invalid envelopes', () => {
+  const gates = [
+    controller.evaluateRetryGate,
+    controller.evaluateMergeGate,
+    controller.evaluateSuccessorReleaseGate,
+  ];
+  for (const envelope of [null, {}, w0BaselineEnvelope({ maximum_active_jobs: 2 })]) {
+    for (const gate of gates) {
+      const result = gate(envelope, {});
+      assert.equal(result.decision, 'STOP_AND_FIX');
+      assert.notEqual(result.reason_code, 'NONE');
+    }
+  }
+});
+
+test('W0 repair: retry, merge, and successor gates reject a work-item-mismatched envelope', () => {
+  const envelope = w0BaselineEnvelope();
+  for (const gate of [
+    controller.evaluateRetryGate,
+    controller.evaluateMergeGate,
+    controller.evaluateSuccessorReleaseGate,
+  ]) {
+    assert.deepEqual(
+      gate(envelope, { work_item_id: 'pit-issue-999' }),
+      { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_TASK_INCONSISTENT' },
+    );
+  }
+});
+
+test('W0 repair: retry, merge, and successor gates reject expired approved envelopes', () => {
+  const envelope = w0BaselineEnvelope({ expiry: w0ActivatedLimit('2020-01-01T00:00:00Z') });
+  for (const gate of [
+    controller.evaluateRetryGate,
+    controller.evaluateMergeGate,
+    controller.evaluateSuccessorReleaseGate,
+  ]) {
+    assert.deepEqual(
+      gate(envelope, {}),
+      { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_EXPIRED' },
+    );
+  }
+});
+
+test('W0 repair: every supplied usage ceiling rejects negative, non-finite, fractional-count, and string values', () => {
+  const envelope = w0BaselineEnvelope();
+  const usageFields = [
+    'active_work_items',
+    'remediation_attempts',
+    'dispatch_runtime_seconds',
+    'total_runtime_seconds',
+  ];
+  for (const field of usageFields) {
+    for (const value of [-1, Number.NaN, Number.POSITIVE_INFINITY, '1']) {
+      const result = controller.enforceWorkItemLimits({ [field]: value }, envelope);
+      assert.deepEqual(
+        result,
+        { decision: 'STOP_AND_FIX', reason_code: 'USAGE_UNMEASURABLE' },
+        `${field}=${String(value)} must be refused`,
+      );
+    }
+  }
+  for (const field of ['active_work_items', 'remediation_attempts']) {
+    assert.equal(
+      controller.enforceWorkItemLimits({ [field]: 0.5 }, envelope).reason_code,
+      'USAGE_UNMEASURABLE',
+    );
+  }
+  assert.equal(
+    controller.enforceWorkItemLimits({ untracked_runtime: Number.NaN }, envelope).reason_code,
+    'USAGE_UNMEASURABLE',
+  );
+});
+
+test('W0 repair: proposal fields require absent values when proposed and valid values when approved active', () => {
+  for (const field of ['maximum_merge_attempts', 'expiry']) {
+    const proposedWithValue = w0BaselineEnvelope({
+      [field]: { status: 'proposed', value: field === 'expiry' ? '2026-10-04T00:00:00Z' : 1 },
+    });
+    const missingActiveValue = w0BaselineEnvelope({
+      [field]: { status: 'approved_active' },
+    });
+    assert.equal(controller.validateSafetyEnvelopeAgainstSchema(proposedWithValue).valid, false);
+    assert.equal(controller.validateSafetyEnvelopeAgainstSchema(missingActiveValue).valid, false);
+  }
+  assert.equal(controller.validateSafetyEnvelopeAgainstSchema(
+    w0BaselineEnvelope({
+      maximum_merge_attempts: { status: 'approved_active', value: 1 },
+      expiry: { status: 'approved_active', value: '2026-10-04T00:00:00Z' },
+    }),
+  ).valid, true);
+});
+
+test('W0 repair: unknown decision states preserve the observed input and produce schema-valid typed refusals', () => {
+  const unknown = controller.buildDecisionRecord(w0SampleEvent({ state_before: 'unexpected-phase' }));
+  assert.equal(unknown.state_before, 'unexpected-phase');
+  assert.equal(unknown.decision, 'STOP_AND_FIX');
+  assert.equal(unknown.reason_code, 'UNKNOWN_STATE');
+  assert.equal(controller.validateDecisionRecordAgainstSchema(unknown).valid, true);
+});
+
+test('W0 repair: missing or invalid decision facts become schema-valid STOP_AND_FIX records', () => {
+  const record = controller.buildDecisionRecord({ event_id: 'invalid-facts', state_before: 'foreman' });
+  assert.equal(record.decision, 'STOP_AND_FIX');
+  assert.equal(record.reason_code, 'DECISION_RECORD_INVALID');
+  assert.equal(controller.validateDecisionRecordAgainstSchema(record).valid, true);
+  assert.ok(record.evidence_refs.some((ref) => ref === 'INVALID_FACT:work_item_id'));
+});
+
+test('W0 repair: decision schema rejects contradictory allow/refusal pairs', () => {
+  const contradictory = w0SampleEvent({ decision: 'ALLOW', reason_code: 'KILL_SWITCH_TRIGGERED' });
+  assert.equal(controller.validateDecisionRecordAgainstSchema(contradictory).valid, false);
+});
+
+test('W0 repair: claim path refuses missing and tripped persisted safety state before any register or dispatch write', async () => {
+  const issue = {
+    number: 42,
+    title: '[CS2] PIT controller correction',
+    body: workRequestBody(),
+    labels: [{ name: 'cs2:queued' }],
+    user: CS2_USER,
+    state: 'open',
+  };
+  for (const initialComments of [{}, { 42: [w0ControllerStateComment(42, w0BaselineEnvelope({ circuit_breaker_state: 'tripped' }))] }]) {
+    const harness = createHarness({ issues: [issue], initialComments });
+    await controller.run({
+      github: harness.github,
+      context: { eventName: 'issues', payload: { issue }, repo: { owner: 'APGI-cmy', repo: 'maturion-isms' } },
+      core: harness.core,
+      eventName: 'issues',
+    });
+    const comments = harness.comments.get('42') || [];
+    assert.equal(comments.some((comment) => comment.body.includes(controller.REGISTER_MARKER)), false);
+    assert.equal(comments.some((comment) => comment.body.includes(controller.FOREMAN_DISPATCH_MARKER)), false);
+    if (initialComments[42]) {
+      const stateComment = comments.find((comment) => comment.body.includes(controller.CONTROLLER_STATE_MARKER));
+      const state = controller.parseControllerState(stateComment.body);
+      assert.equal(state.decision_history.at(-1).reason_code, 'CIRCUIT_BREAKER_TRIPPED');
+    }
+  }
+});
+
+test('W0 repair: PR bind path refuses a tripped persisted envelope before changing the register or dispatching', async () => {
+  const repository = 'APGI-cmy/maturion-isms';
+  const row = controller.nominatePullRequest(
+    controller.initialRegister({ issueNumber: 42, repository }),
+    {
+      prNumber: 502,
+      headRepository: repository,
+      bodyMarker: 'CS2-Work-Item: pit-issue-42',
+      actor: 'Copilot',
+    },
+  );
+  const issue = { number: 42, title: 'PIT work item', state: 'open' };
+  const harness = createHarness({
+    issues: [issue],
+    initialComments: {
+      42: [
+        controllerComment(controller.renderRegister(row), { id: 900 }),
+        w0ControllerStateComment(42, w0BaselineEnvelope({ circuit_breaker_state: 'tripped' })),
+      ],
+    },
+    pulls: {
+      502: {
+        number: 502,
+        body: 'CS2-Work-Item: pit-issue-42',
+        head: { sha: 'b'.repeat(40), repo: { full_name: repository } },
+        base: { repo: { full_name: repository } },
+      },
+    },
+  });
+  await controller.run({
+    github: harness.github,
+    context: {
+      repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+      payload: {
+        pull_request: {
+          number: 502,
+          body: 'CS2-Work-Item: pit-issue-42',
+          head: { sha: 'b'.repeat(40), repo: { full_name: repository } },
+          base: { repo: { full_name: repository } },
+        },
+      },
+    },
+    core: harness.core,
+    eventName: 'pull_request_target',
+  });
+  const persisted = controller.parseRegister(
+    (harness.comments.get('42') || []).find((comment) => comment.body.includes(controller.REGISTER_MARKER)).body,
+  );
+  assert.equal(persisted.pr_number, null);
+  assert.equal((harness.comments.get('502') || []).length, 0);
+});
+
+test('W0 repair: editable workflow input cannot impersonate CS2 for a reset', async () => {
+  const harness = createHarness({
+    issues: [{ number: 42, title: 'PIT work item', state: 'open' }],
+    initialComments: {
+      42: [w0ControllerStateComment(42, w0BaselineEnvelope({ circuit_breaker_state: 'tripped' }))],
+    },
+  });
+  const result = await controller.runManualSafetyAction({
+    github: harness.github,
+    context: {
+      actor: 'someone-else',
+      repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+      payload: { inputs: { reset_actor_login: 'APGI-cmy' } },
+    },
+    core: harness.core,
+    action: 'reset-circuit-breaker',
+    issueNumber: 42,
+  });
+  assert.equal(result.decision, 'STOP_AND_FIX');
+  assert.equal(result.reason_code, 'HUMAN_CS2_REQUIRED');
+  const state = controller.parseControllerState(harness.comments.get('42')[0].body);
+  assert.equal(state.safety_envelope.circuit_breaker_state, 'tripped');
+  assert.equal(state.decision_history.length, 0);
+});
+
+test('W0 repair: human kill-switch persists envelope, prior history, and one trip ledger atomically across retries', async () => {
+  const prior = controller.buildDecisionRecord(w0SampleEvent());
+  const harness = createHarness({
+    issues: [{ number: 42, title: 'PIT work item', state: 'open' }],
+    initialComments: {
+      42: [w0ControllerStateComment(42, w0BaselineEnvelope(), {
+        decision_history: [prior],
+      })],
+    },
+  });
+  const context = {
+    actor: 'APGI-cmy',
+    repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+    payload: { inputs: { reset_actor_login: 'someone-else' } },
+  };
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const result = await controller.runManualSafetyAction({
+      github: harness.github,
+      context,
+      core: harness.core,
+      action: 'kill-switch',
+      issueNumber: 42,
+    });
+    assert.equal(result.decision, 'ALLOW');
+  }
+  const comments = harness.comments.get('42');
+  assert.equal(comments.length, 1);
+  const state = controller.parseControllerState(comments[0].body);
+  assert.equal(state.safety_envelope.kill_switch_state, 'triggered');
+  assert.deepEqual(state.decision_history[0], prior);
+  assert.equal(state.decision_history.length, 3);
+  assert.equal(state.trip_ledger.length, 1);
+  assert.equal(state.trip_ledger[0].type, 'BUDGET_TRIP');
+});
+
+test('W0 repair: authenticated human reset persists only the breaker transition and preserves trip evidence', async () => {
+  const prior = controller.buildDecisionRecord(w0SampleEvent());
+  const ledger = [controller.recordTripEvent([], w0TripEvent())];
+  const harness = createHarness({
+    issues: [{ number: 42, title: 'PIT work item', state: 'open' }],
+    initialComments: {
+      42: [w0ControllerStateComment(42, w0BaselineEnvelope({ circuit_breaker_state: 'tripped' }), {
+        decision_history: [prior],
+        trip_ledger: ledger,
+      })],
+    },
+  });
+  const result = await controller.runManualSafetyAction({
+    github: harness.github,
+    context: {
+      actor: 'APGI-cmy',
+      repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+    },
+    core: harness.core,
+    action: 'reset-circuit-breaker',
+    issueNumber: 42,
+  });
+  assert.equal(result.decision, 'ALLOW');
+  const state = controller.parseControllerState(harness.comments.get('42')[0].body);
+  assert.equal(state.safety_envelope.circuit_breaker_state, 'closed');
+  assert.deepEqual(state.trip_ledger, ledger);
+  assert.deepEqual(state.decision_history[0], prior);
 });

@@ -9,13 +9,10 @@ name: PIT CS2 Controller Pilot
 # `workflow_dispatch` trigger below additionally exposes a human-CS2-only,
 # manual safety-control surface -- envelope evaluation, circuit-breaker reset,
 # and the independently invocable human kill switch -- wired to the real
-# `pit-cs2-controller.js` module, not only an extracted evaluator. This
-# surface is trusted, non-activating wiring: it is observation/decision-only
-# (it logs and outputs the evaluated decision), never claims, binds, merges,
-# or releases a successor, and does not change the automated
-# issues/issue_comment/pull_request_target/schedule control path above. No
-# live merge authority or successor-dispatch capability is activated by this
-# workflow.
+# `pit-cs2-controller.js` module and the persisted work-item state. Only an
+# authenticated human CS2 actor can invoke it. It never claims, binds, merges,
+# or releases a successor, and no live merge authority or successor-dispatch
+# capability is activated by this workflow.
 on:
   issues:
     types: [opened]
@@ -30,9 +27,9 @@ on:
       safety_control_action:
         description: >-
           W0 human-CS2-only safety-control action. "observe" (default) runs
-          the ordinary claim/bind/observe path. The other three actions are a
-          manual, independently invocable design/test surface only -- none of
-          them claims, binds, merges, or releases a successor.
+          the ordinary claim/bind/observe path. The other actions read and
+          update the persisted W0 state for the selected work item; none claims,
+          binds, merges, or releases a successor.
         required: false
         type: choice
         default: observe
@@ -41,19 +38,11 @@ on:
           - evaluate-envelope
           - reset-circuit-breaker
           - kill-switch
-      safety_envelope_json:
+      work_item_issue_number:
         description: >-
-          JSON safety envelope to evaluate/reset/kill-switch against. W0
-          design/test surface only: no live production safety envelope is
-          configured or activated by this workflow.
-        required: false
-        type: string
-      reset_actor_login:
-        description: >-
-          Human-CS2 GitHub login attributed to a circuit-breaker reset or
-          kill-switch request. reset_authority is human_cs2_only; no webhook,
-          agent, token, comment, pull_request, or automatic_retry source is
-          ever accepted, regardless of this input.
+          Issue number owning the persisted W0 safety envelope, decision history,
+          and trip ledger. This selects state only; it does not authorize a
+          safety decision or actor.
         required: false
         type: string
 
@@ -101,21 +90,15 @@ jobs:
         timeout-minutes: 30
         uses: actions/github-script@v7
         env:
-          SAFETY_ENVELOPE_JSON: ${{ github.event.inputs.safety_envelope_json }}
+          WORK_ITEM_ISSUE_NUMBER: ${{ inputs.work_item_issue_number }}
         with:
           script: |
             const controller = require('./.github/scripts/pit-cs2-controller.js');
-            const envelope = process.env.SAFETY_ENVELOPE_JSON
-              ? JSON.parse(process.env.SAFETY_ENVELOPE_JSON)
-              : null;
-            const taskRecord = envelope ? { work_item_id: envelope.work_item_id } : null;
-            // evaluateSafetyEnvelope fails closed on an absent, malformed,
-            // expired, task-inconsistent, unmeasurable, or schema-invalid
-            // safety_envelope. This step only reports the decision for
-            // human-CS2 review; it never itself dispatches, binds, merges,
-            // or releases a successor.
-            const decision = controller.evaluateSafetyEnvelope(envelope, taskRecord, new Date());
-            core.info(`W0 safety_envelope evaluation decision: ${JSON.stringify(decision)}`);
+            const decision = await controller.runManualSafetyAction({
+              github, context, core,
+              action: 'evaluate-envelope',
+              issueNumber: process.env.WORK_ITEM_ISSUE_NUMBER,
+            });
             core.setOutput('safety_envelope_decision', JSON.stringify(decision));
 
       - name: W0 human-CS2-only circuit breaker reset (does not claim, bind, merge, or release a successor)
@@ -125,26 +108,15 @@ jobs:
         timeout-minutes: 30
         uses: actions/github-script@v7
         env:
-          SAFETY_ENVELOPE_JSON: ${{ github.event.inputs.safety_envelope_json }}
-          RESET_ACTOR_LOGIN: ${{ github.event.inputs.reset_actor_login }}
+          WORK_ITEM_ISSUE_NUMBER: ${{ inputs.work_item_issue_number }}
         with:
           script: |
             const controller = require('./.github/scripts/pit-cs2-controller.js');
-            const envelope = process.env.SAFETY_ENVELOPE_JSON
-              ? JSON.parse(process.env.SAFETY_ENVELOPE_JSON)
-              : {};
-            // reset_authority is fixed to human_cs2_only: no webhook, agent,
-            // token, comment, pull_request, or automatic_retry source may
-            // ever reset a tripped circuit breaker, only an explicit
-            // human-CS2-attributed request.
-            const result = controller.resetCircuitBreaker(
-              { circuit_breaker_state: envelope.circuit_breaker_state || 'tripped' },
-              {
-                source: 'human_cs2',
-                actor: { login: process.env.RESET_ACTOR_LOGIN || '', type: 'User' },
-              },
-            );
-            core.info(`W0 reset_authority=human_cs2_only circuit breaker reset result: ${JSON.stringify(result)}`);
+            const result = await controller.runManualSafetyAction({
+              github, context, core,
+              action: 'reset-circuit-breaker',
+              issueNumber: process.env.WORK_ITEM_ISSUE_NUMBER,
+            });
             core.setOutput('circuit_breaker_reset_result', JSON.stringify(result));
 
       - name: W0 human-invocable kill switch (independent of any agent run; does not claim, bind, merge, or release a successor)
@@ -154,30 +126,13 @@ jobs:
         timeout-minutes: 30
         uses: actions/github-script@v7
         env:
-          SAFETY_ENVELOPE_JSON: ${{ github.event.inputs.safety_envelope_json }}
-          RESET_ACTOR_LOGIN: ${{ github.event.inputs.reset_actor_login }}
+          WORK_ITEM_ISSUE_NUMBER: ${{ inputs.work_item_issue_number }}
         with:
           script: |
             const controller = require('./.github/scripts/pit-cs2-controller.js');
-            const envelope = process.env.SAFETY_ENVELOPE_JSON
-              ? JSON.parse(process.env.SAFETY_ENVELOPE_JSON)
-              : { kill_switch_state: 'armed' };
-            // invokeKillSwitch is independently invocable through this manual
-            // workflow_dispatch trigger alone: it requires no active job,
-            // dispatch context, or other agent run. Only an explicit
-            // human_cs2 source/actor can move kill_switch_state to
-            // 'triggered'. Once triggered, evaluateSafetyEnvelope,
-            // evaluateRetryGate, evaluateMergeGate, and
-            // evaluateSuccessorReleaseGate all fail closed with
-            // KILL_SWITCH_TRIGGERED, and existing decision-record evidence is
-            // preserved. This step never itself merges or releases a
-            // successor -- it only blocks those paths and reports the
-            // decision for human-CS2 review.
-            const result = controller.invokeKillSwitch(envelope, {
-              source: 'human_cs2',
-              actor: { login: process.env.RESET_ACTOR_LOGIN || '', type: 'User' },
-              reason: 'W0 manual human-CS2 kill switch invocation via workflow_dispatch',
-              existing_decision_records: [],
+            const result = await controller.runManualSafetyAction({
+              github, context, core,
+              action: 'kill-switch',
+              issueNumber: process.env.WORK_ITEM_ISSUE_NUMBER,
             });
-            core.info(`W0 kill_switch_state result: ${JSON.stringify(result)}`);
             core.setOutput('kill_switch_result', JSON.stringify(result));

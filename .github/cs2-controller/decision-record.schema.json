@@ -41,7 +41,7 @@
     "reviewed_content_fingerprint": { "type": "string", "minLength": 1 },
     "state_before": {
       "type": "string",
-      "enum": ["intake", "foreman", "builder", "qp", "ecap", "iaa", "cs2_review", "awaiting_human", "closed"]
+      "description": "Preserves the observed state. Values outside the known lifecycle enum are valid only as a typed STOP_AND_FIX/UNKNOWN_STATE refusal."
     },
     "material_blockers": { "type": "array" },
     "delta_class": { "type": "string", "minLength": 1 },
@@ -71,7 +71,11 @@
         "REMEDIATION_ATTEMPT_LIMIT_EXCEEDED",
         "DISPATCH_RUNTIME_EXCEEDED",
         "TOTAL_RUNTIME_EXCEEDED",
-        "UNKNOWN_STATE"
+        "UNKNOWN_STATE",
+        "CIRCUIT_BREAKER_TRIPPED",
+        "USAGE_UNMEASURABLE",
+        "DECISION_RECORD_INVALID",
+        "HUMAN_CS2_REQUIRED"
       ]
     },
     "evidence_refs": {
@@ -82,5 +86,32 @@
       "type": "string",
       "enum": ["intake", "foreman", "builder", "qp", "ecap", "iaa", "cs2_review", "awaiting_human", "closed"]
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "decision": { "const": "ALLOW" } } },
+      "then": { "properties": { "reason_code": { "const": "NONE" } } }
+    },
+    {
+      "if": { "properties": { "decision": { "const": "STOP_AND_FIX" } } },
+      "then": { "properties": { "reason_code": { "not": { "const": "NONE" } } } }
+    },
+    {
+      "if": {
+        "properties": {
+          "state_before": {
+            "not": {
+              "enum": ["intake", "foreman", "builder", "qp", "ecap", "iaa", "cs2_review", "awaiting_human", "closed"]
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "decision": { "const": "STOP_AND_FIX" },
+          "reason_code": { "const": "UNKNOWN_STATE" }
+        }
+      }
+    }
+  ]
 }

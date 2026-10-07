@@ -1,12 +1,14 @@
 'use strict';
 
 const fs = require('node:fs');
+const crypto = require('node:crypto');
 const path = require('node:path');
 
 const REGISTER_MARKER = '<!-- pit-cs2-work-register:v1 -->';
 const FOREMAN_DISPATCH_MARKER = '<!-- pit-cs2-foreman-dispatch:v1 -->';
 const FOREMAN_NOMINATION_MARKER = '<!-- pit-cs2-foreman-nominate:v1 -->';
 const PR_BOUND_MARKER = '<!-- pit-cs2-pr-bound:v1 -->';
+const CONTROLLER_STATE_MARKER = '<!-- pit-cs2-safety-state:v1 -->';
 const CONTROLLER_LOGIN = 'github-actions[bot]';
 const FOREMAN_LOGIN = 'Copilot';
 const PILOT_CS2_LOGIN = 'APGI-cmy';
@@ -65,6 +67,15 @@ const W0_SAFETY_ENVELOPE_FIELDS = [
 ];
 
 const W0_KNOWN_DECISION_STATES = new Set([...ACTIVE_STATES, 'closed']);
+const W0_BREAKER_TRIP_REASONS = new Set([
+  'ENVELOPE_EXPIRED',
+  'ENVELOPE_LIMIT_UNMEASURABLE',
+  'USAGE_UNMEASURABLE',
+  'ACTIVE_WORK_ITEM_LIMIT_EXCEEDED',
+  'REMEDIATION_ATTEMPT_LIMIT_EXCEEDED',
+  'DISPATCH_RUNTIME_EXCEEDED',
+  'TOTAL_RUNTIME_EXCEEDED',
+]);
 
 function initialRegister({ issueNumber, repository }) {
   return {
@@ -189,6 +200,36 @@ function w0SchemaTypeMatches(value, expected) {
 }
 
 function collectSchemaValidationErrors(value, schema, at, errors) {
+  for (const child of schema.allOf || []) {
+    collectSchemaValidationErrors(value, child, at, errors);
+  }
+  if (schema.anyOf) {
+    const matches = schema.anyOf.some((child) => {
+      const childErrors = [];
+      collectSchemaValidationErrors(value, child, at, childErrors);
+      return childErrors.length === 0;
+    });
+    if (!matches) errors.push(`${at} must match at least one allowed schema.`);
+  }
+  if (schema.oneOf) {
+    const matches = schema.oneOf.filter((child) => {
+      const childErrors = [];
+      collectSchemaValidationErrors(value, child, at, childErrors);
+      return childErrors.length === 0;
+    }).length;
+    if (matches !== 1) errors.push(`${at} must match exactly one allowed schema.`);
+  }
+  if (schema.not) {
+    const childErrors = [];
+    collectSchemaValidationErrors(value, schema.not, at, childErrors);
+    if (childErrors.length === 0) errors.push(`${at} matches a forbidden schema.`);
+  }
+  if (schema.if) {
+    const conditionErrors = [];
+    collectSchemaValidationErrors(value, schema.if, at, conditionErrors);
+    const branch = conditionErrors.length === 0 ? schema.then : schema.else;
+    if (branch) collectSchemaValidationErrors(value, branch, at, errors);
+  }
   if (schema.enum && !schema.enum.includes(value)) {
     errors.push(`${at} must be one of [${schema.enum.join(', ')}]; received ${JSON.stringify(value)}.`);
     return;
@@ -204,6 +245,11 @@ function collectSchemaValidationErrors(value, schema, at, errors) {
   if (schema.pattern && typeof value === 'string' && !(new RegExp(schema.pattern).test(value))) {
     errors.push(`${at} does not match required pattern ${schema.pattern}.`);
   }
+  if (schema.format === 'date-time' && typeof value === 'string'
+    && (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:\d\d)$/.test(value)
+      || Number.isNaN(Date.parse(value)))) {
+    errors.push(`${at} must be an ISO-8601 date-time.`);
+  }
   if (schema.minLength !== undefined && typeof value === 'string' && value.length < schema.minLength) {
     errors.push(`${at} must be at least ${schema.minLength} characters.`);
   }
@@ -216,22 +262,24 @@ function collectSchemaValidationErrors(value, schema, at, errors) {
   if (Array.isArray(value) && schema.items) {
     value.forEach((item, index) => collectSchemaValidationErrors(item, schema.items, `${at}[${index}]`, errors));
   }
-  if (schema.properties && isObject(value)) {
-    if (schema.additionalProperties === false) {
-      for (const key of Object.keys(value)) {
-        if (!Object.hasOwn(schema.properties, key)) {
-          errors.push(`${at}.${key} is not an allowed property.`);
-        }
-      }
-    }
+  if (isObject(value)) {
     for (const key of schema.required || []) {
       if (!Object.hasOwn(value, key)) {
         errors.push(`${at}.${key} is required.`);
       }
     }
-    for (const [key, childSchema] of Object.entries(schema.properties)) {
-      if (Object.hasOwn(value, key)) {
-        collectSchemaValidationErrors(value[key], childSchema, `${at}.${key}`, errors);
+    if (schema.properties) {
+      if (schema.additionalProperties === false) {
+        for (const key of Object.keys(value)) {
+          if (!Object.hasOwn(schema.properties, key)) {
+            errors.push(`${at}.${key} is not an allowed property.`);
+          }
+        }
+      }
+      for (const [key, childSchema] of Object.entries(schema.properties)) {
+        if (Object.hasOwn(value, key)) {
+          collectSchemaValidationErrors(value[key], childSchema, `${at}.${key}`, errors);
+        }
       }
     }
   }
@@ -284,9 +332,6 @@ function evaluateSafetyEnvelope(envelope, taskRecord, now) {
       return { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_MALFORMED' };
     }
   }
-  if (envelope.kill_switch_state === 'triggered') {
-    return { decision: 'STOP_AND_FIX', reason_code: 'KILL_SWITCH_TRIGGERED' };
-  }
   if (!taskRecord || envelope.work_item_id !== taskRecord.work_item_id) {
     return { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_TASK_INCONSISTENT' };
   }
@@ -296,6 +341,15 @@ function evaluateSafetyEnvelope(envelope, taskRecord, now) {
   const schemaResult = validateSafetyEnvelopeAgainstSchema(envelope);
   if (!schemaResult.valid) {
     return { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_SCHEMA_INVALID' };
+  }
+  if (envelope.kill_switch_state === 'triggered') {
+    return { decision: 'STOP_AND_FIX', reason_code: 'KILL_SWITCH_TRIGGERED' };
+  }
+  if (envelope.circuit_breaker_state === 'tripped') {
+    return { decision: 'STOP_AND_FIX', reason_code: 'CIRCUIT_BREAKER_TRIPPED' };
+  }
+  if (!(now instanceof Date) || Number.isNaN(now.getTime())) {
+    return { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_LIMIT_UNMEASURABLE' };
   }
   if (isObject(envelope.expiry) && envelope.expiry.status === 'approved_active') {
     const expiryTime = new Date(envelope.expiry.value).getTime();
@@ -314,19 +368,41 @@ function evaluateSafetyEnvelope(envelope, taskRecord, now) {
 // ---------------------------------------------------------------------------
 
 function enforceWorkItemLimits(usage, envelope) {
-  if (typeof usage.active_work_items === 'number'
+  const safetyDecision = evaluateSafetyEnvelope(
+    envelope,
+    envelope && { work_item_id: envelope.work_item_id },
+    new Date(),
+  );
+  if (safetyDecision.decision !== 'ALLOW') return safetyDecision;
+  if (!isObject(usage)) {
+    return { decision: 'STOP_AND_FIX', reason_code: 'USAGE_UNMEASURABLE' };
+  }
+  const limits = {
+    active_work_items: envelope.maximum_active_jobs,
+    remediation_attempts: envelope.maximum_remediation_attempts,
+    dispatch_runtime_seconds: envelope.maximum_dispatch_runtime.value,
+    total_runtime_seconds: envelope.maximum_total_runtime.value,
+  };
+  for (const [field, value] of Object.entries(usage)) {
+    if (!Object.hasOwn(limits, field)
+      || typeof value !== 'number' || !Number.isFinite(value) || value < 0
+      || (['active_work_items', 'remediation_attempts'].includes(field) && !Number.isInteger(value))) {
+      return { decision: 'STOP_AND_FIX', reason_code: 'USAGE_UNMEASURABLE' };
+    }
+  }
+  if (Object.hasOwn(usage, 'active_work_items')
     && usage.active_work_items > envelope.maximum_active_jobs) {
     return { decision: 'STOP_AND_FIX', reason_code: 'ACTIVE_WORK_ITEM_LIMIT_EXCEEDED' };
   }
-  if (typeof usage.remediation_attempts === 'number'
+  if (Object.hasOwn(usage, 'remediation_attempts')
     && usage.remediation_attempts > envelope.maximum_remediation_attempts) {
     return { decision: 'STOP_AND_FIX', reason_code: 'REMEDIATION_ATTEMPT_LIMIT_EXCEEDED' };
   }
-  if (typeof usage.dispatch_runtime_seconds === 'number'
+  if (Object.hasOwn(usage, 'dispatch_runtime_seconds')
     && usage.dispatch_runtime_seconds > envelope.maximum_dispatch_runtime.value) {
     return { decision: 'STOP_AND_FIX', reason_code: 'DISPATCH_RUNTIME_EXCEEDED' };
   }
-  if (typeof usage.total_runtime_seconds === 'number'
+  if (Object.hasOwn(usage, 'total_runtime_seconds')
     && usage.total_runtime_seconds > envelope.maximum_total_runtime.value) {
     return { decision: 'STOP_AND_FIX', reason_code: 'TOTAL_RUNTIME_EXCEEDED' };
   }
@@ -334,6 +410,14 @@ function enforceWorkItemLimits(usage, envelope) {
 }
 
 function enforceSpendControl(spend, envelope) {
+  const safetyDecision = evaluateSafetyEnvelope(
+    envelope,
+    envelope && { work_item_id: envelope.work_item_id },
+    new Date(),
+  );
+  if (safetyDecision.decision !== 'ALLOW') {
+    throw new Error('W0 safety envelope is missing, invalid, or tripped; refusing spend authorization.');
+  }
   if (!spend || spend.mode !== 'runtime_only') {
     throw new Error(`W0 spend control is runtime-only; refusing spend mode ${spend && spend.mode}.`);
   }
@@ -352,7 +436,7 @@ function resetCircuitBreaker(state, resetRequest) {
     && resetRequest.source === 'human_cs2'
     && resetRequest.actor
     && resetRequest.actor.type === 'User'
-    && resetRequest.actor.login === PILOT_CS2_LOGIN;
+    && String(resetRequest.actor.login || '').toLowerCase() === PILOT_CS2_LOGIN.toLowerCase();
   if (isHumanCs2Reset) {
     return { circuit_breaker_state: 'closed', decision: 'ALLOW' };
   }
@@ -377,6 +461,18 @@ function resetCircuitBreaker(state, resetRequest) {
 // ---------------------------------------------------------------------------
 
 function invokeKillSwitch(envelope, request) {
+  const envelopeValidation = validateSafetyEnvelopeAgainstSchema(envelope);
+  if (!envelopeValidation.valid) {
+    return {
+      kill_switch_state: envelope && envelope.kill_switch_state === 'triggered' ? 'triggered' : 'armed',
+      decision: 'STOP_AND_FIX',
+      reason_code: envelope === null || envelope === undefined ? 'ENVELOPE_MISSING' : 'ENVELOPE_SCHEMA_INVALID',
+      evidence_preserved: true,
+      preserved_decision_records: request && Array.isArray(request.existing_decision_records)
+        ? [...request.existing_decision_records]
+        : [],
+    };
+  }
   const isHumanCs2 = Boolean(request)
     && request.source === 'human_cs2'
     && request.actor
@@ -420,23 +516,29 @@ function invokeKillSwitch(envelope, request) {
   };
 }
 
-function killSwitchGate(envelope) {
-  if (envelope && envelope.kill_switch_state === 'triggered') {
-    return { decision: 'STOP_AND_FIX', reason_code: 'KILL_SWITCH_TRIGGERED' };
+function killSwitchGate(envelope, request) {
+  const safetyDecision = evaluateSafetyEnvelope(
+    envelope,
+    envelope && { work_item_id: envelope.work_item_id },
+    new Date(),
+  );
+  if (safetyDecision.decision !== 'ALLOW') return safetyDecision;
+  if (request?.work_item_id && envelope.work_item_id !== request.work_item_id) {
+    return { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_TASK_INCONSISTENT' };
   }
   return { decision: 'ALLOW', reason_code: 'NONE' };
 }
 
-function evaluateRetryGate(envelope, _retryRequest) {
-  return killSwitchGate(envelope);
+function evaluateRetryGate(envelope, retryRequest) {
+  return killSwitchGate(envelope, retryRequest);
 }
 
-function evaluateMergeGate(envelope, _mergeRequest) {
-  return killSwitchGate(envelope);
+function evaluateMergeGate(envelope, mergeRequest) {
+  return killSwitchGate(envelope, mergeRequest);
 }
 
-function evaluateSuccessorReleaseGate(envelope, _successorRequest) {
-  return killSwitchGate(envelope);
+function evaluateSuccessorReleaseGate(envelope, successorRequest) {
+  return killSwitchGate(envelope, successorRequest);
 }
 
 // ---------------------------------------------------------------------------
@@ -450,10 +552,72 @@ function evaluateSuccessorReleaseGate(envelope, _successorRequest) {
 // ---------------------------------------------------------------------------
 
 function buildDecisionRecord(event) {
-  const record = { ...event };
-  if (!W0_KNOWN_DECISION_STATES.has(event.state_before)) {
+  const supplied = isObject(event) ? event : {};
+  const normalized = {};
+  const invalidFacts = [];
+  const stringFields = [
+    'event_id', 'received_at', 'source', 'work_item_id', 'head_sha', 'base_sha',
+    'reviewed_content_fingerprint', 'delta_class', 'requested_stage', 'allowed_next_action',
+    'action_owner', 'idempotency_key', 'safety_envelope_id',
+  ];
+  const serialize = (value) => {
+    if (value === undefined) return '<missing>';
+    if (value === null || typeof value !== 'object') return JSON.stringify(value);
+    if (Array.isArray(value)) return `[${value.map(serialize).join(',')}]`;
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${serialize(value[key])}`).join(',')}}`;
+  };
+  for (const key of stringFields) {
+    const valid = typeof supplied[key] === 'string' && supplied[key].length > 0;
+    if (valid) normalized[key] = supplied[key];
+    else {
+      invalidFacts.push(key);
+      normalized[key] = key === 'work_item_id' ? 'pit-issue-0'
+        : key === 'received_at' ? '1970-01-01T00:00:00.000Z'
+          : key === 'event_id' ? `w0-${crypto.createHash('sha256').update(serialize(supplied)).digest('hex')}`
+            : key === 'idempotency_key' ? `w0-${crypto.createHash('sha256').update(serialize(supplied)).digest('hex')}`
+              : 'unknown';
+    }
+  }
+  normalized.pr_number = Number.isInteger(supplied.pr_number) && supplied.pr_number >= 1
+    ? supplied.pr_number : (invalidFacts.push('pr_number'), 1);
+  normalized.attempt_count = Number.isInteger(supplied.attempt_count) && supplied.attempt_count >= 0
+    ? supplied.attempt_count : (invalidFacts.push('attempt_count'), 0);
+  normalized.state_before = typeof supplied.state_before === 'string'
+    ? supplied.state_before : (invalidFacts.push('state_before'), serialize(supplied.state_before));
+  normalized.material_blockers = Array.isArray(supplied.material_blockers)
+    ? supplied.material_blockers : (invalidFacts.push('material_blockers'), []);
+  normalized.budget_snapshot = isObject(supplied.budget_snapshot)
+    ? supplied.budget_snapshot : (invalidFacts.push('budget_snapshot'), {});
+  normalized.decision = ['ALLOW', 'STOP_AND_FIX', 'PROVEN_EXTERNAL_BOUNDARY'].includes(supplied.decision)
+    ? supplied.decision : (invalidFacts.push('decision'), 'STOP_AND_FIX');
+  normalized.reason_code = DECISION_RECORD_SCHEMA.properties.reason_code.enum.includes(supplied.reason_code)
+    ? supplied.reason_code : (invalidFacts.push('reason_code'), 'DECISION_RECORD_INVALID');
+  normalized.evidence_refs = Array.isArray(supplied.evidence_refs)
+    ? supplied.evidence_refs.map((ref) => typeof ref === 'string' ? ref : serialize(ref))
+    : (invalidFacts.push('evidence_refs'), []);
+  normalized.state_after = W0_KNOWN_DECISION_STATES.has(supplied.state_after)
+    ? supplied.state_after : (invalidFacts.push('state_after'), 'awaiting_human');
+
+  const record = {
+    ...normalized,
+    material_blockers: normalized.material_blockers,
+    budget_snapshot: normalized.budget_snapshot,
+    evidence_refs: normalized.evidence_refs,
+  };
+  if (invalidFacts.length) {
+    record.decision = 'STOP_AND_FIX';
+    record.reason_code = 'DECISION_RECORD_INVALID';
+    record.evidence_refs = [...record.evidence_refs, ...invalidFacts.map((field) => `INVALID_FACT:${field}`)];
+  }
+  if (typeof supplied.state_before === 'string' && !W0_KNOWN_DECISION_STATES.has(record.state_before)) {
     record.decision = 'STOP_AND_FIX';
     record.reason_code = 'UNKNOWN_STATE';
+  }
+  const result = validateDecisionRecordAgainstSchema(record);
+  if (!result.valid) {
+    record.decision = 'STOP_AND_FIX';
+    if (record.reason_code !== 'UNKNOWN_STATE') record.reason_code = 'DECISION_RECORD_INVALID';
+    record.evidence_refs = [...record.evidence_refs, ...result.errors.map((error) => `SCHEMA_INVALID:${error}`)];
   }
   return record;
 }
@@ -670,6 +834,172 @@ async function writeRegister(github, owner, repo, issueNumber, existingComment, 
   await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, body });
 }
 
+function validateControllerState(state) {
+  const errors = [];
+  const fields = ['schema_version', 'work_item_id', 'safety_envelope', 'decision_history', 'trip_ledger'];
+  if (!isObject(state)) return { valid: false, errors: ['controller_state must be an object.'] };
+  for (const field of fields) {
+    if (!Object.hasOwn(state, field)) errors.push(`controller_state.${field} is required.`);
+  }
+  for (const field of Object.keys(state)) {
+    if (!fields.includes(field)) errors.push(`controller_state.${field} is not allowed.`);
+  }
+  if (state.schema_version !== '1.0.0') errors.push('controller_state.schema_version is unsupported.');
+  if (typeof state.work_item_id !== 'string' || !/^pit-issue-\d+$/.test(state.work_item_id)) {
+    errors.push('controller_state.work_item_id is invalid.');
+  }
+  const envelopeResult = validateSafetyEnvelopeAgainstSchema(state.safety_envelope);
+  if (!envelopeResult.valid) errors.push(...envelopeResult.errors);
+  else if (state.safety_envelope.work_item_id !== state.work_item_id) {
+    errors.push('controller_state safety envelope work_item_id does not match.');
+  }
+  if (!Array.isArray(state.decision_history)) {
+    errors.push('controller_state.decision_history must be an array.');
+  } else {
+    state.decision_history.forEach((record, index) => {
+      const result = validateDecisionRecordAgainstSchema(record);
+      if (!result.valid) errors.push(...result.errors.map((error) => `decision_history[${index}]: ${error}`));
+      if (record?.work_item_id !== state.work_item_id) {
+        errors.push(`decision_history[${index}] belongs to another work item.`);
+      }
+    });
+  }
+  if (!Array.isArray(state.trip_ledger)) {
+    errors.push('controller_state.trip_ledger must be an array.');
+  } else {
+    state.trip_ledger.forEach((entry, index) => {
+      if (!isObject(entry)
+        || entry.work_item_id !== state.work_item_id
+        || typeof entry.idempotency_key !== 'string'
+        || typeof entry.condition !== 'string'
+        || !Number.isInteger(entry.attempt_count)
+        || entry.attempt_count < 0
+        || !['LOOP_BREAK', 'BUDGET_TRIP'].includes(entry.type)) {
+        errors.push(`controller_state.trip_ledger[${index}] is invalid.`);
+      }
+    });
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+function renderControllerState(state) {
+  const validation = validateControllerState(state);
+  if (!validation.valid) throw new Error(`Invalid controller state: ${validation.errors.join('; ')}`);
+  return `${CONTROLLER_STATE_MARKER}\n\n\`\`\`json\n${JSON.stringify(state, null, 2)}\n\`\`\``;
+}
+
+function parseControllerState(body) {
+  if (!body || !body.includes(CONTROLLER_STATE_MARKER)) return null;
+  const match = body.match(/<!-- pit-cs2-safety-state:v1 -->\s*```json\s*([\s\S]*?)\s*```/);
+  if (!match) throw new Error('PIT controller-state marker does not contain JSON.');
+  const state = JSON.parse(match[1]);
+  const validation = validateControllerState(state);
+  if (!validation.valid) throw new Error(`Invalid PIT controller state: ${validation.errors.join('; ')}`);
+  return state;
+}
+
+async function findControllerStateComment(github, owner, repo, issueNumber, core) {
+  const candidates = [];
+  for (const comment of await listAllComments(github, owner, repo, issueNumber)) {
+    if (!comment?.body?.includes(CONTROLLER_STATE_MARKER)) continue;
+    const user = comment.user || {};
+    const trustedAuthor = (user.login === CONTROLLER_LOGIN && user.type === 'Bot')
+      || (user.login === PILOT_CS2_LOGIN && user.type === 'User');
+    if (!trustedAuthor) {
+      candidates.push({ comment, error: new Error('Controller state has an unauthenticated author.') });
+      continue;
+    }
+    try {
+      const state = parseControllerState(comment.body);
+      if (state) candidates.push({ comment, state });
+    } catch (error) {
+      candidates.push({ comment, error });
+    }
+  }
+  if (candidates.some((candidate) => candidate.error) || candidates.length > 1) {
+    const message = `Controller safety state on #${issueNumber} is invalid or ambiguous; refusing to continue.`;
+    core.warning(message);
+    return { status: 'invalid', message };
+  }
+  if (candidates.length === 1) return { status: 'valid', ...candidates[0] };
+  return { status: 'absent' };
+}
+
+async function writeControllerState(github, owner, repo, issueNumber, existingComment, state) {
+  const body = renderControllerState(state);
+  if (existingComment) {
+    await github.rest.issues.updateComment({ owner, repo, comment_id: existingComment.id, body });
+    return;
+  }
+  await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, body });
+}
+
+function stateDecisionRecord(state, result, overrides = {}) {
+  const workItemId = state.work_item_id;
+  const serial = JSON.stringify({
+    work_item_id: workItemId,
+    decision_history_length: state.decision_history.length,
+    decision: result.decision,
+    reason_code: result.reason_code,
+    ...overrides,
+  });
+  const eventId = `w0-${crypto.createHash('sha256').update(serial).digest('hex')}`;
+  const record = buildDecisionRecord({
+    event_id: eventId,
+    received_at: new Date().toISOString(),
+    source: 'pit-cs2-controller',
+    work_item_id: workItemId,
+    pr_number: overrides.pr_number || 1,
+    head_sha: overrides.head_sha || 'unknown',
+    base_sha: overrides.base_sha || 'unknown',
+    reviewed_content_fingerprint: overrides.reviewed_content_fingerprint || 'unknown',
+    state_before: overrides.state_before || 'foreman',
+    material_blockers: result.decision === 'ALLOW' ? [] : [result.reason_code],
+    delta_class: 'controller_safety',
+    requested_stage: overrides.requested_stage || 'safety_gate',
+    allowed_next_action: overrides.allowed_next_action || 'STOP_AND_FIX',
+    action_owner: 'human_cs2',
+    idempotency_key: eventId,
+    attempt_count: state.decision_history.length,
+    safety_envelope_id: `${workItemId}:safety-envelope`,
+    budget_snapshot: isObject(overrides.budget_snapshot) ? overrides.budget_snapshot : {},
+    decision: result.decision,
+    reason_code: result.reason_code,
+    evidence_refs: [],
+    state_after: result.decision === 'ALLOW' ? 'foreman' : 'awaiting_human',
+  });
+  return record;
+}
+
+function stateAfterDecision(state, result, details = {}) {
+  const record = stateDecisionRecord(state, result, details);
+  const effectiveResult = record.decision === result.decision
+    ? result
+    : { decision: 'STOP_AND_FIX', reason_code: 'DECISION_RECORD_INVALID' };
+  let safetyEnvelope = state.safety_envelope;
+  const tripLedger = [...state.trip_ledger];
+  if (effectiveResult.decision === 'STOP_AND_FIX'
+    && W0_BREAKER_TRIP_REASONS.has(effectiveResult.reason_code)) {
+    safetyEnvelope = { ...safetyEnvelope, circuit_breaker_state: 'tripped' };
+    recordTripEvent(tripLedger, {
+      idempotency_key: `${state.work_item_id}:${effectiveResult.reason_code}`,
+      work_item_id: state.work_item_id,
+      condition: effectiveResult.reason_code,
+      attempt_count: state.decision_history.length + 1,
+    });
+  }
+  return {
+    state: {
+      ...state,
+      safety_envelope: safetyEnvelope,
+      decision_history: [...state.decision_history, record],
+      trip_ledger: tripLedger,
+    },
+    decision: effectiveResult,
+    record,
+  };
+}
+
 async function listAllIssues(github, owner, repo) {
   const issues = [];
   for (let page = 1; ; page += 1) {
@@ -698,6 +1028,98 @@ async function activeRows(github, owner, repo, exceptIssueNumber, core) {
     if (found.status === 'valid' && isActive(found.row)) rows.push({ issue, ...found });
   }
   return rows;
+}
+
+async function appendStateDecision(github, owner, repo, issueNumber, found, result, details = {}) {
+  const outcome = stateAfterDecision(found.state, result, details);
+  await writeControllerState(github, owner, repo, issueNumber, found.comment, outcome.state);
+  return outcome;
+}
+
+async function loadStateForWorkItem(github, owner, repo, issueNumber, core) {
+  const found = await findControllerStateComment(github, owner, repo, issueNumber, core);
+  if (found.status !== 'valid') return found;
+  if (found.state.work_item_id !== `pit-issue-${issueNumber}`) {
+    core.warning(`Controller safety state on #${issueNumber} is bound to another work item.`);
+    return { status: 'invalid', message: 'Controller safety-state work-item mismatch.' };
+  }
+  return found;
+}
+
+async function runManualSafetyAction({ github, context, core, action, issueNumber }) {
+  const owner = context.repo.owner;
+  const repo = context.repo.repo;
+  const login = String(context.actor || '');
+  if (!login || typeof github.rest.users?.getByUsername !== 'function') {
+    core.warning('Authenticated GitHub Actions actor is unavailable; refusing manual safety action.');
+    return { decision: 'STOP_AND_FIX', reason_code: 'HUMAN_CS2_REQUIRED' };
+  }
+  const { data: actor } = await github.rest.users.getByUsername({ username: login });
+  if (!actor || actor.type !== 'User' || typeof actor.login !== 'string'
+    || actor.login.toLowerCase() !== PILOT_CS2_LOGIN.toLowerCase()) {
+    core.warning('Manual safety actions are accepted only from authenticated human CS2.');
+    return { decision: 'STOP_AND_FIX', reason_code: 'HUMAN_CS2_REQUIRED' };
+  }
+  const issueNumberValue = Number(issueNumber);
+  if (!Number.isSafeInteger(issueNumberValue) || issueNumberValue < 1) {
+    core.warning('A valid work-item issue number is required for a manual safety action.');
+    return { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_MISSING' };
+  }
+  const found = await loadStateForWorkItem(github, owner, repo, issueNumberValue, core);
+  if (found.status !== 'valid') {
+    core.warning('No valid persisted work-item safety state; refusing manual safety action.');
+    return { decision: 'STOP_AND_FIX', reason_code: found.status === 'absent' ? 'ENVELOPE_MISSING' : 'ENVELOPE_SCHEMA_INVALID' };
+  }
+
+  let result;
+  let updatedState = found.state;
+  if (action === 'evaluate-envelope') {
+    result = evaluateSafetyEnvelope(
+      found.state.safety_envelope,
+      { work_item_id: found.state.work_item_id },
+      new Date(),
+    );
+  } else if (action === 'reset-circuit-breaker') {
+    const reset = resetCircuitBreaker(found.state.safety_envelope, { source: 'human_cs2', actor });
+    result = {
+      decision: reset.decision,
+      reason_code: reset.decision === 'ALLOW' ? 'NONE' : 'HUMAN_CS2_REQUIRED',
+    };
+    if (reset.decision === 'ALLOW') {
+      updatedState = {
+        ...found.state,
+        safety_envelope: { ...found.state.safety_envelope, circuit_breaker_state: reset.circuit_breaker_state },
+      };
+    }
+  } else if (action === 'kill-switch') {
+    const killed = invokeKillSwitch(found.state.safety_envelope, {
+      source: 'human_cs2',
+      actor,
+      existing_decision_records: found.state.decision_history,
+      existing_trip_ledger: found.state.trip_ledger,
+      condition: 'KILL_SWITCH_TRIGGERED',
+    });
+    updatedState = {
+      ...found.state,
+      safety_envelope: { ...found.state.safety_envelope, kill_switch_state: killed.kill_switch_state },
+      trip_ledger: killed.trip_ledger,
+    };
+    result = {
+      decision: killed.decision,
+      reason_code: killed.decision === 'ALLOW' ? 'NONE' : 'HUMAN_CS2_REQUIRED',
+    };
+  } else {
+    core.warning(`Unknown manual safety action ${String(action)}; refusing.`);
+    return { decision: 'STOP_AND_FIX', reason_code: 'DECISION_RECORD_INVALID' };
+  }
+
+  const outcome = stateAfterDecision(updatedState, result, {
+    requested_stage: action,
+    allowed_next_action: result.decision === 'ALLOW' ? 'OBSERVE_ONLY' : 'STOP_AND_FIX',
+  });
+  await writeControllerState(github, owner, repo, issueNumberValue, found.comment, outcome.state);
+  core.info(`Persisted W0 ${action} decision: ${JSON.stringify(outcome.decision)}`);
+  return outcome.decision;
 }
 
 async function dispatchForeman(github, owner, repo, issueNumber, row) {
@@ -747,17 +1169,52 @@ async function run({ github, context, core, eventName }) {
       core.info('Work register already exists; idempotent no-op.');
       return;
     }
+    const safetyState = await loadStateForWorkItem(github, owner, repo, issue.number, core);
+    if (safetyState.status !== 'valid') {
+      core.warning('No valid persisted safety envelope; refusing to claim or dispatch this work item.');
+      return;
+    }
+    let safetyDecision = evaluateSafetyEnvelope(
+      safetyState.state.safety_envelope,
+      { work_item_id: `pit-issue-${issue.number}` },
+      new Date(),
+    );
     const active = await activeRows(github, owner, repo, issue.number, core);
+    if (safetyDecision.decision === 'ALLOW') {
+      safetyDecision = enforceWorkItemLimits(
+        { active_work_items: active.length + 1 },
+        safetyState.state.safety_envelope,
+      );
+    }
+    const recorded = await appendStateDecision(
+      github,
+      owner,
+      repo,
+      issue.number,
+      safetyState,
+      safetyDecision,
+      {
+        requested_stage: 'claim_and_dispatch',
+        allowed_next_action: 'CLAIM_AND_DISPATCH',
+        budget_snapshot: { active_work_items: active.length + 1 },
+      },
+    );
+    if (recorded.decision.decision !== 'ALLOW') {
+      core.warning(`Safety envelope blocked PIT work-item claim: ${recorded.decision.reason_code}.`);
+      if (active.length) {
+        const blocker = active[0];
+        await github.rest.issues.createComment({
+          owner,
+          repo,
+          issue_number: issue.number,
+          body: blocker.status === 'invalid'
+            ? `<!-- pit-cs2-controller:single-job-conflict -->\nCS2_DECISION_REQUIRED: PIT controller register on #${blocker.issue.number} is invalid. This request was not claimed.`
+            : `<!-- pit-cs2-controller:single-job-conflict -->\nCS2_DECISION_REQUIRED: active PIT work item \`${blocker.row.work_item_id}\` is not closed. This request was not claimed.`,
+        });
+      }
+      return;
+    }
     if (active.length) {
-      const blocker = active[0];
-      await github.rest.issues.createComment({
-        owner,
-        repo,
-        issue_number: issue.number,
-        body: blocker.status === 'invalid'
-          ? `<!-- pit-cs2-controller:single-job-conflict -->\nCS2_DECISION_REQUIRED: PIT controller register on #${blocker.issue.number} is invalid. This request was not claimed.`
-          : `<!-- pit-cs2-controller:single-job-conflict -->\nCS2_DECISION_REQUIRED: active PIT work item \`${blocker.row.work_item_id}\` is not closed. This request was not claimed.`,
-      });
       return;
     }
     const row = initialRegister({ issueNumber: issue.number, repository });
@@ -801,6 +1258,34 @@ async function run({ github, context, core, eventName }) {
     }
     if (found.row.pr_number === pr.number && found.row.last_processed?.head_sha === pr.head.sha) {
       core.info('Nominated PR head was already processed; idempotent no-op.');
+      return;
+    }
+    const safetyState = await loadStateForWorkItem(github, owner, repo, issueNumber, core);
+    if (safetyState.status !== 'valid') {
+      core.warning('No valid persisted safety envelope; refusing to bind this pull request.');
+      return;
+    }
+    const safetyDecision = evaluateSafetyEnvelope(
+      safetyState.state.safety_envelope,
+      { work_item_id: workItemId },
+      new Date(),
+    );
+    const recorded = await appendStateDecision(
+      github,
+      owner,
+      repo,
+      issueNumber,
+      safetyState,
+      safetyDecision,
+      {
+        pr_number: pr.number,
+        head_sha: pr.head.sha,
+        requested_stage: 'bind_pull_request',
+        allowed_next_action: 'BIND_PULL_REQUEST',
+      },
+    );
+    if (recorded.decision.decision !== 'ALLOW') {
+      core.warning(`Safety envelope blocked PR binding: ${recorded.decision.reason_code}.`);
       return;
     }
     const next = bindPullRequest(found.row, { prNumber: pr.number, headSha: pr.head.sha });
@@ -849,6 +1334,29 @@ async function run({ github, context, core, eventName }) {
         core.warning(`PR #${prNumber} is not an authorised nomination target for ${found.row.work_item_id}.`);
         return;
       }
+      const safetyState = await loadStateForWorkItem(github, owner, repo, issue.number, core);
+      if (safetyState.status !== 'valid') {
+        core.warning('No valid persisted safety envelope; refusing to nominate this pull request.');
+        return;
+      }
+      const safetyDecision = evaluateSafetyEnvelope(
+        safetyState.state.safety_envelope,
+        { work_item_id: found.row.work_item_id },
+        new Date(),
+      );
+      const recorded = await appendStateDecision(
+        github,
+        owner,
+        repo,
+        issue.number,
+        safetyState,
+        safetyDecision,
+        { pr_number: pr.number, requested_stage: 'nominate_pull_request', allowed_next_action: 'NOMINATE_PULL_REQUEST' },
+      );
+      if (recorded.decision.decision !== 'ALLOW') {
+        core.warning(`Safety envelope blocked PR nomination: ${recorded.decision.reason_code}.`);
+        return;
+      }
       if (found.row.nominated_pr
         && found.row.nominated_pr.number === prNumber
         && found.row.nominated_pr.head_repository === pr.head.repo.full_name
@@ -877,6 +1385,29 @@ async function run({ github, context, core, eventName }) {
     }
     const status = command[1].toLowerCase() === 'approve' ? 'approved' : 'rejected';
     const kind = command[2].toLowerCase().replace(/-/g, '_');
+    const safetyState = await loadStateForWorkItem(github, owner, repo, issue.number, core);
+    if (safetyState.status !== 'valid') {
+      core.warning('No valid persisted safety envelope; refusing to record controller approval.');
+      return;
+    }
+    const safetyDecision = evaluateSafetyEnvelope(
+      safetyState.state.safety_envelope,
+      { work_item_id: safetyState.state.work_item_id },
+      new Date(),
+    );
+    const recorded = await appendStateDecision(
+      github,
+      owner,
+      repo,
+      issue.number,
+      safetyState,
+      safetyDecision,
+      { requested_stage: `human_${kind}_${status}`, allowed_next_action: 'RECORD_HUMAN_APPROVAL' },
+    );
+    if (recorded.decision.decision !== 'ALLOW') {
+      core.warning(`Safety envelope blocked human approval recording: ${recorded.decision.reason_code}.`);
+      return;
+    }
     const next = recordHumanApproval(found.row, kind, author, status);
     await writeRegister(github, owner, repo, issue.number, found.comment, next);
     core.info(`Recorded human ${kind} decision: ${status}.`);
@@ -889,6 +1420,7 @@ async function run({ github, context, core, eventName }) {
 module.exports = {
   ACTIVE_STATES,
   CONTROLLER_LOGIN,
+  CONTROLLER_STATE_MARKER,
   FOREMAN_DISPATCH_MARKER,
   FOREMAN_LOGIN,
   FOREMAN_NOMINATION_MARKER,
@@ -898,6 +1430,7 @@ module.exports = {
   boundWorkItem,
   bindPullRequest,
   findRegisterComment,
+  findControllerStateComment,
   initialRegister,
   isControllerComment,
   isPitRequest,
@@ -907,10 +1440,15 @@ module.exports = {
   nominatePullRequest,
   parseForemanNomination,
   parseRegister,
+  parseControllerState,
   recordHumanApproval,
   renderRegister,
+  renderControllerState,
   run,
   validateRegister,
+  validateControllerState,
+  writeControllerState,
+  runManualSafetyAction,
   // W0 safety envelope and decision-record containment
   W0_SAFETY_ENVELOPE_FIELDS,
   validateSafetyEnvelopeAgainstSchema,

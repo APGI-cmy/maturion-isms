@@ -81,8 +81,18 @@
       "required": ["status"],
       "properties": {
         "status": { "type": "string", "enum": ["proposed", "approved_active"] },
-        "value": { "type": ["integer", "null"] }
-      }
+        "value": { "type": "integer", "minimum": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "approved_active" } } },
+          "then": { "required": ["value"] }
+        },
+        {
+          "if": { "properties": { "status": { "const": "proposed" } } },
+          "then": { "not": { "required": ["value"] } }
+        }
+      ]
     },
     "expiry": {
       "type": "object",
@@ -91,8 +101,18 @@
       "required": ["status"],
       "properties": {
         "status": { "type": "string", "enum": ["proposed", "approved_active"] },
-        "value": { "type": ["string", "null"] }
-      }
+        "value": { "type": "string", "format": "date-time" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "approved_active" } } },
+          "then": { "required": ["value"] }
+        },
+        {
+          "if": { "properties": { "status": { "const": "proposed" } } },
+          "then": { "not": { "required": ["value"] } }
+        }
+      ]
     },
     "circuit_breaker_state": {
       "type": "string",
