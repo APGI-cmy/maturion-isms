@@ -360,3 +360,94 @@ HANDOVER_ALLOWED: `yes`
 iaa_token_reference: `IAA-session-2061-w0-20261006-PASS`
 Bound head: `01e3a866b6c04235378216f8cfc8269ce2c4bd6c`
 Authorizing CS2 instruction: PR #2061 comment `6017588110`
+
+### Entry 3 — 2026-10-07 (final substantive reassessment)
+
+#### Binding and authority
+
+- PR / issue / work item: `#2061` / `#2053` / `W0-2053`.
+- PR title: `W0: safety envelope and decision-record containment`.
+- Branch: `copilot/implement-safety-envelope-containment`.
+- Submitted substantive head: `0a4a2b5a050980e08993ec7d6c223a5aa50634a3` (independently matched against the PR API and local `git rev-parse HEAD`).
+- Prior rejected substantive head: `045ffd2354e95a578ef2248fbdd3f24d374acc57` (REJECTION-PACKAGE, `REJECTION_HISTORY` Entry 2).
+- Invoked by: CS2 direct instruction, PR #2061 comment `6037880231`, author `APGI-cmy`. The comment authorizes this one repair in `.github/scripts/pit-cs2-controller.js` and `.github/scripts/pit-cs2-controller.test.js`; it prohibits a new appointment, evidence family, scope expansion, workflow/schema change, dispatch, deployment, merge, or handover claim.
+- Produced by: Copilot coding agent, builder class. Ceremony-admin: YES — the existing PR-2061 ECAP bundle and appointment record are present; no new ECAP pass was requested or performed.
+- Independence: CONFIRMED for the substantive work reviewed. IAA authored only the existing pre-brief and this assurance record; IAA did not author or contribute to the controller implementation, regression tests, workflow, schemas, or evidence map under review.
+- Actual head delta: exactly the two authorized paths above. Full base-to-head scope remains 17 files; the 17 declared paths match the 17 submitted paths exactly. No implementation, workflow, schema, appointment, scope-path, or evidence-family change was introduced by this reassessment.
+- Truthfulness/scope determination: the frozen scope file's `FILES_CHANGED: 17` and path list remain exact. Its `CURRENT_HEAD_BINDING` (`b052ca9...`) and `W0_REPAIR_REGRESSIONS: 92_PASS...` are snapshot values from the prior scope/evidence checkpoint, not evidence for the current correction. This reassessment binds current claims to head `0a4a2b5...` and the independently rerun 93-test result below. No current-head gate requires a scope/path correction; no proof-only refresh or new evidence artifact is warranted.
+
+#### Phase 1 and Phase 2
+
+- Phase 1: 4/4 silent preflight checks PASS — IAA identity YAML parsed; all required Tier 2A files present; 217 `file_hash_sha256` inventory entries checked with no null, empty, zeroed, or truncated value and the IAA canon present; FAIL-ONLY-ONCE rules loaded and breach registry has no open unresolved breach.
+- Invocation: PR #2061 / W0-2053 | Invoked by CS2 comment `6037880231` | Produced by Copilot coding agent, builder class | Ceremony-admin YES | STOP-AND-FIX ACTIVE.
+- Category: `CI_WORKFLOW` (the full PR diff modifies `.github/workflows/pit-cs2-controller.yml`; the current repair delta is controller implementation/test code). Supplemental `GOVERNANCE_EVIDENCE` checks apply to the bound evidence and issue criteria. IAA triggered: YES. Ambiguity: CLEAR.
+- FAIL-ONLY-ONCE: A-001 invocation evidence PRESENT in this existing wave record; A-002 CONFIRMED, no class exemption. A-034/A-035 patterns were read; none maps to this Node controller correction.
+- Checklist: CORE-020, CORE-021; OVL-CI-001–005; supplemental OVL-GE-001–004; A-039 acceptance-criteria matrix; A-042 independent risk challenge; and ACR-01–16 because the existing ceremony-admin appointment applies.
+
+#### Phase 3 — substance
+
+- **CORE-020: PASS.** Current-head behavior is supported by direct diff inspection and an independently rerun test suite; no pass is inferred from prior claims.
+- **CORE-021: PASS.** No finding is being downgraded or softened.
+- **OVL-CI-001 — workflow/controller policy correctness: PASS.** In `bindPullRequest()` the counter and maximum are validated, the correction is counted only for an already-bound same-PR register whose persisted head differs, and the returned register persists the increment. In `run()`, an already-bound current head returns as an idempotent no-op. For a distinct update, `bindPullRequest()` is evaluated before loading or writing controller state; an exhausted budget is caught and returned before register write, decision-history/trip-ledger mutation, or PR comment. The global controller-workflow concurrency group serializes workflow runs. The new regression exercises initial binding, duplicate, first distinct update, duplicate of corrected head, and a later refused head while asserting register/head/history/ledger/comments remain unchanged on refusal.
+- **OVL-CI-002 — merge-gate integrity: PASS.** No required check was removed or weakened. Current-head `merge-gate/verdict`, `governance/alignment`, and `stop-and-fix/enforcement` are all CI-successful.
+- **OVL-CI-003 — silent failure risk: PASS.** Exhausted/invalid counter errors become an explicit workflow warning and return before mutation; they are not swallowed as success.
+- **OVL-CI-004 — environment parity: PASS.** The current repair changes no workflow or environment-specific behavior. The existing W0 workflow is unchanged from the prior substantive review; its current run used the trusted-main checkout and is not represented as execution of unmerged PR code.
+- **OVL-CI-005 — CI evidence: PASS.** The prior CS2-authorized S-033 workflow-evidence substitute remains applicable because `.github/workflows/pit-cs2-controller.yml` is unchanged since the prior substantive review. Its targeted YAML lint passes. Current-head `PIT CS2 Controller Pilot` run `37621437710` completed success; the run's trusted-main checkout is accurately distinguished from current-head module tests. The focused controller suite below is current-head evidence.
+- **OVL-GE-001 — temporal integrity: PASS.** No future-dated completion claim is introduced by the repair or this entry.
+- **OVL-GE-002 — evidence-type labeling: PASS.** No new live deployment, CDV, or operational-validation item is claimed.
+- **OVL-GE-003 — evidence-type sufficiency: PASS.** No LIVE_RUNTIME/LIVE_E2E claim is substituted with code or test evidence; W0 remains unactivated.
+- **OVL-GE-004 — acceptance-criteria coverage: PASS.** The governing issue #2053 was read directly. Its six W0 acceptance conditions map to independently verifiable artifacts:
+
+| Issue #2053 acceptance condition | Current hard evidence |
+|---|---|
+| Approved limits, including one active item and one material correction, are exact and fail closed | Controller source and register schema; current-head focused test run; correction regression at `.github/scripts/pit-cs2-controller.test.js` |
+| Decision records are deterministic and unknown states do not infer readiness | Existing controller/schema implementation and regression coverage in the current-head 93-test run; current delta does not alter those paths |
+| Kill switch is independently invocable and reset is human-CS2-only, with no automatic reset | Workflow/controller source and the existing S-033 evidence in `.agent-admin/evidence/pr-2061-w0-control-evidence-map.md`; workflow unchanged from prior review |
+| Simulated 24-hour repeat-event behavior is bounded and has no live spend | Controller simulation and focused suite current-head run; no live dispatch or paid call was performed |
+| All changed files remain within the frozen PR-scoped file set | Current base-to-head path diff plus exact 17/17 scope-set comparison |
+| No activation, live merge/successor dispatch, protected governance edit, or production change | Current two-file commit diff and unchanged workflow/schema/scope paths |
+
+- **A-039 matrix status: COMPLETE.** The correction-specific criterion is backed by the current diff and test result; carried-forward criteria above are tied to current source paths and the previously CS2-authorized S-033 evidence, not to agent claims.
+- **Focused verification at current substantive head:** `node --test --test-reporter=tap .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js` — 93 tests, 93 pass, 0 fail, 0 cancelled, 0 skipped, 0 todo. `node --check` passed for controller and test; JSON parsing passed for all three controller schemas; `git diff --check HEAD^ HEAD` passed; targeted `yamllint` for the W0 workflow passed.
+- **Scope/gate local verification:** exact scope-to-diff check passed (17 declared / 17 actual, no missing or extra path); merge-gate-required-check alignment script passed; governance JSON checks passed; stop-and-fix local evidence check passed; tracker-update check was not applicable and passed. The broad repository YAML helper also reported errors in three workflows not changed by this PR (`foreman-reanchor.yml`, `cs2-foreman-cycle.yml`, `update-liveness.yml`). They are outside the submitted path set; the current merge-gate job used its PREHANDOVER evidence path, and the changed W0 workflow's targeted lint passed.
+- **ACR-01–16: PASS.** ACR-01 ECAP reconciliation summary exists. ACR-02/10 no active gate-pending/final-state contradiction: prior `IAA_PENDING` entries in the task/ECAP artifacts describe their pre-verdict checkpoint, not current gate state; no current PREHANDOVER completion claim is made. ACR-03 PR/issue/wave/branch identities match. ACR-04/07 scope count and paths match 17/17. ACR-05 no stale declared file hash. ACR-06 no PUBLIC_API/canon ripple omitted. ACR-08 referenced artifacts are committed. ACR-09 ECAP names `gate_set_checked`. ACR-11 current required gates have per-gate CI success evidence. ACR-12 no conflicting current final-state claim; prior verdict entries are explicitly bound to historic heads. ACR-13 no PREHANDOVER `final_state: COMPLETE` with an empty token. ACR-14 the carried-forward S-033 claim resolves to the current evidence map and unchanged workflow. ACR-15 no PREHANDOVER/session-memory final-completion claim conflicts with open task checkboxes. ACR-16 no active PREHANDOVER token/coherence claim exists to mismatch.
+
+#### Independent Risk Challenge (A-042 / CORE-027)
+
+1. **What could still fail after merge?** A GitHub API write failure could interrupt the existing multi-comment persistence sequence. Workflow-level concurrency serializes controller runs, and a failed action does not report a successful bind; no new concurrency or write path was added in this correction.
+2. **What evidence would prove the corrected behavior?** The persisted-register assertions and unchanged-state snapshots in the new regression, plus the complete focused suite on the exact submitted head.
+3. **Is that evidence present?** YES — independently rerun at `0a4a2b5...`, 93/93 pass; the direct diff confirms the exhaustion guard precedes state loading and writes.
+4. **Is there a contradiction between issue intent, architecture, and PR evidence?** NO — the implementation counts the first distinct same-PR head update, makes duplicates no-ops, refuses the next distinct update, and does not activate runtime/merge authority.
+5. **Would a reasonable production owner accept this correction for the authorized W0 route?** YES — as closure of the single bounded control finding and subject to CS2's exclusive merge authority; this token is not a handover, deployment, or activation authorization.
+
+**Adoption phase:** PHASE_B_BLOCKING — hard-blocking.
+
+#### Phase 4 — current gate parity and verdict
+
+| Required check | Current-head evidence | Result |
+|---|---|---|
+| `merge-gate/verdict` | PR check run `112792496094` success; local exact scope-set and targeted W0 workflow checks pass | PASS |
+| `governance/alignment` | PR check run `112792496059` success; local JSON validation and merge-gate check alignment pass | PASS |
+| `stop-and-fix/enforcement` | PR check run `112792496103` success; local evidence check passes | PASS |
+
+Current PR API reports 48 check runs and aggregate commit status `success`; CodeQL check `112792782397` is `success`. Current controller workflow run `37621437710` is `success`. Three push-triggered workflow runs at this head — `foreman-reanchor` (`37621433589`), `copilot-loop-watchdog` (`37621431112`), and `update-liveness` (`37621432491`) — concluded failure with zero jobs each; failed-job log queries returned no failed jobs/logs. These are not failing jobs or required-check failures.
+
+**Total: 34 checks, 34 PASS, 0 FAIL.** No failure classification or corrective action is outstanding.
+
+```text
+═══════════════════════════════════════
+ASSURANCE-TOKEN
+PR: #2061 — W0: safety envelope and decision-record containment (issue #2053)
+All 34 checks PASS. Merge gate parity: PASS.
+Merge permitted (subject to CS2 approval).
+Token reference: IAA-session-2061-w0-20261007-PASS
+Adoption phase: PHASE_B_BLOCKING
+═══════════════════════════════════════
+```
+
+PHASE_B_BLOCKING_TOKEN: `IAA-session-2061-w0-20261007-PASS`
+RESULT: `ACCEPTED`
+RCA_REVIEW: `NONE_REQUIRED`
+HANDOVER_ALLOWED: `no` — the next action is Foreman's authorized no-write QP after this token; no merge, deployment, activation, or release was performed or authorized here.
+Bound substantive head: `0a4a2b5a050980e08993ec7d6c223a5aa50634a3`
+Authorizing CS2 instruction: PR #2061 comment `6037880231`
