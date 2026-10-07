@@ -1,8 +1,8 @@
 # Active-CS2 Agent — Tier 2 Knowledge Index
 
 **Agent**: active-cs2-agent  
-**Version**: 1.0.0  
-**Last Updated**: 2026-09-23  
+**Version**: 1.1.0  
+**Last Updated**: 2026-10-05 (GOV-2064-T3: rejected/missing/stale-IAA refusal mapping, finding/escalation dedup, bounded re-entry, and durable counter/ledger persistence across replacement PR/session/wave — issue #2064, PR #2065)  
 **Architecture**: `governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md`
 
 ## Requirement-to-artifact map
@@ -19,6 +19,7 @@
 | Shared counters, breaker, recovery, failure register | `safety-envelope-and-recovery-protocol.md` | controller + human CS2 | Envelope review | READY |
 | Tier 3 dispatch envelope and continuity | `tier3-context-and-continuity-protocol.md` | active-cs2-agent | Envelope-field completeness | READY |
 | Implemented-vs-required runtime map | `runtime-integration-handoff.md` | CodexAdvisor now; Foreman-appointed runtime later | Command-backed loadability + handoff review | READY |
+| Rejected/missing/stale-IAA refusal, dedup, re-entry, non-activating evaluator-entrypoint tests | `evaluator-entrypoint-tests/` (fixtures + test runner, validated against the unmodified canon `ACTIVE_CS2_JOB_WAVE.schema.json`) | active-cs2-agent | `python3` jsonschema + structural assertions (run manually; not wired into any CI workflow) | READY (test evidence only, no runtime activation) |
 | Session closure structure | `session-memory-template.md` | active-cs2-agent | Handover use | READY |
 | New-agent continuity baseline | `memory/breach-registry.md`, `personal/*.md`, `parking-station/suggestions-log.md` | active-cs2-agent | Honest no-history content | READY |
 

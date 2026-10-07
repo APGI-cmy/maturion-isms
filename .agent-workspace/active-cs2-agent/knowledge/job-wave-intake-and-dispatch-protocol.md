@@ -31,3 +31,17 @@ This repository currently ships the governance, schemas, fixtures, and templates
 ## Typed refusals
 
 Use only precise codes such as `UNAPPROVED_SCOPE`, `DEPENDENCY_UNMET`, `BUDGET_EXHAUSTED`, `BREAKER_TRIPPED`, `MATERIAL_BLOCKER`, `GATE_UNSATISFIED`, `IDENTITY_MISMATCH`, `UNKNOWN_DELTA`, `CONFLICT`, `RESERVED_MATTER`, or `RUNTIME_NOT_IMPLEMENTED`.
+
+## Rejected / missing / stale IAA mapping
+
+No new refusal code is introduced for rejected, missing, or stale IAA — the approved merge-policy `refusal_codes` vocabulary already expresses each case exactly:
+
+- **Rejected** final IAA (an actual REJECTION-PACKAGE exists for the reviewed content) → `MATERIAL_BLOCKER`.
+- **Missing** final IAA (no final verdict yet bound to the reviewed content; pre-brief alone is not sufficient) → `GATE_UNSATISFIED`.
+- **Stale** final IAA (a prior PASS no longer binds the current reviewed-content fingerprint) → `EVIDENCE_STALE`.
+
+Each of these blocks dispatch of any successor wave and blocks advancing `current_wave_id` past the affected wave. See `merge-and-refusal-protocol.md` for the full handover/merge consequence and `evidence-review-and-correction-protocol.md` for dedup and re-entry handling of repeated or resolved occurrences.
+
+## Durable counters survive replacement carriers
+
+Intake must load `stage_attempts`, `merge_attempts`, `material_corrections`, `spend`, and the rejection-fingerprint/dedup ledger from the existing durable job record keyed by `job_id` whenever one exists. A replacement PR number, a new agent session, or a reissued wave-dispatch record for the **same `job_id`** is a new carrier for the same job — it is never treated as grounds to reinitialize counters or clear the dedup ledger. See the persistence rule in `tier3-context-and-continuity-protocol.md`.

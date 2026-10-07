@@ -135,11 +135,21 @@ jobs:
         with:
           script: |
             const handoverIntent = require('./.github/scripts/handover-intent.js');
+            const adminManifestGate = require('./.github/scripts/handover-admin-manifest.js');
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
             const headSha = process.env.HEAD_SHA;
             const isIssueComment = context.eventName === 'issue_comment';
             const commentBody = context.payload.comment?.body || '';
             const commentCreatedAt = context.payload.comment?.created_at ? new Date(context.payload.comment.created_at) : null;
+            // GOV-2064-T2: CS2 (apgi-cmy) is the overseer/approver, never the producer.
+            // A factual CS2 status/checkpoint request comment must never be interpreted
+            // as the producer's own explicit handover/completion claim, even when its
+            // text incidentally contains claim-like phrasing (e.g. asking "is this
+            // merge-ready yet?"). Authorship, not wording alone, decides who is making
+            // a claim. See .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md.
+            const CS2_LOGIN = 'apgi-cmy';
+            const commentAuthorLogin = String(context.payload.comment?.user?.login || '').toLowerCase();
+            const isCs2AuthoredComment = isIssueComment && commentAuthorLogin === CS2_LOGIN;
 
             if (!prNumber || !headSha) {
               core.warning('Could not determine PR number or HEAD SHA — skipping handover claim gate.');
@@ -158,6 +168,11 @@ jobs:
               return;
             }
 
+            if (isCs2AuthoredComment) {
+              core.info('Comment authored by CS2 (apgi-cmy) — a CS2 status/checkpoint request is never a producer completion claim. Skipping hard gate.');
+              return;
+            }
+
             if (isIssueComment && !handoverIntent.isExplicitHandoverClaimComment(commentBody)) {
               core.info('Issue comment does not contain an explicit handover claim signal for the hard gate. Skipping.');
               return;
@@ -173,30 +188,73 @@ jobs:
 
             // ── Resolve active PR manifest (per-PR preferred, legacy fallback) ──
             // Authority: governance/canon/MMM_SIMPLE_PR_ADMIN_MODEL.md v1.2.0
-            let requiresIaa = true;
-            let requiresEcap = true;
-            let prType = 'unknown';
-            const manifestPaths = [
-              `.admin/prs/pr-${prNumber}.json`,
-              '.admin/pr.json',
-            ];
-            for (const manifestPath of manifestPaths) {
-              try {
-                const { data: content } = await github.rest.repos.getContent({
+            const manifestResolution = await adminManifestGate.resolveAdminManifest({
+              prNumber,
+              getContent: (manifestPath) => github.rest.repos.getContent({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   path: manifestPath,
                   ref: headSha,
+                }),
+            });
+            const manifest = manifestResolution.manifest;
+            const manifestPath = manifestResolution.manifestPath;
+            const manifestFound = Boolean(manifest);
+            const manifestResolutionFailure = manifestResolution.failure ||
+              (!manifestFound && !manifestResolution.confirmedAbsent
+                ? 'Unable to resolve PR admin manifest: neither a readable manifest nor confirmed GitHub 404 absence was received.'
+                : '');
+            let requiresIaa = manifest ? manifest.requires_iaa !== false : null;
+            let requiresEcap = manifest ? manifest.requires_ecap !== false : null;
+            let prType = manifest ? manifest.type || 'unknown' : 'unknown';
+            if (manifestFound) console.log(`Resolved manifest: ${manifestPath}`);
+            if (manifestResolution.confirmedAbsent) {
+              console.log(`Confirmed no PR admin manifest for PR #${prNumber}: both candidate paths returned GitHub HTTP 404.`);
+            }
+
+            // ── GOV-2064-T2: class derivation for legacy/no-manifest PRs ─────────
+            // RCA: .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md
+            // A PR with no admin manifest (legacy PR, or a PR class that predates/falls
+            // outside the `.admin/pr.json` model) must NOT be force-defaulted into
+            // requiring every IAA/ECAP preflight check. At the same time, a genuinely
+            // governance-impacting legacy PR must not silently lose that requirement
+            // either. When no manifest is found, derive requires_iaa/requires_ecap from
+            // whether the current head actually touches governance-control paths —
+            // mirrors the governance-control scope already used by
+            // .github/scripts/post-handover-auto-remediation.js (GOVERNANCE_CONTROL_PATTERNS).
+            let headFilenames = [];
+            if (!manifestFound && manifestResolution.confirmedAbsent && !manifestResolutionFailure) {
+              let filePage = 1;
+              let hasMoreHeadFiles = true;
+              while (hasMoreHeadFiles) {
+                const { data: files } = await github.rest.pulls.listFiles({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  per_page: 100,
+                  page: filePage,
                 });
-                const manifest = JSON.parse(Buffer.from(content.content, 'base64').toString('utf8'));
-                requiresIaa = manifest.requires_iaa !== false;
-                requiresEcap = manifest.requires_ecap !== false;
-                prType = manifest.type || 'unknown';
-                console.log(`Resolved manifest: ${manifestPath}`);
-                break;
-              } catch {
-                // manifest path not found — try next
+                headFilenames.push(...files.map((f) => f.filename));
+                hasMoreHeadFiles = files.length === 100;
+                filePage += 1;
               }
+              const legacyClassification = adminManifestGate.classifyNoManifestFiles(headFilenames);
+              const touchesGovernanceControlPaths = legacyClassification.touchesGovernanceControlPaths;
+              // Legacy/no-manifest class: require IAA/ECAP only when this head actually
+              // changes governance-control paths. A legacy PR outside that scope (e.g. a
+              // product-only or administrative-tracking PR using the wave-current-tasks
+              // record instead of .admin/pr.json) does not inherit a blanket requirement.
+              requiresIaa = legacyClassification.requiresIaa;
+              requiresEcap = legacyClassification.requiresEcap;
+              prType = legacyClassification.prType;
+              console.log(`No admin manifest resolved for PR #${prNumber}; derived class='${prType}' requires_iaa=${requiresIaa} requires_ecap=${requiresEcap} from governance-control path impact.`);
+            } else if (manifestResolutionFailure) {
+              // A failed read or malformed payload is not evidence of absence. Fail closed:
+              // retain the strict IAA/ECAP requirement and surface the exact read failure.
+              requiresIaa = true;
+              requiresEcap = true;
+              prType = 'manifest-resolution-error';
+              console.error(manifestResolutionFailure);
             }
             const isProductFix = !requiresIaa && !requiresEcap;
 
@@ -314,11 +372,30 @@ jobs:
               'preflight/product-delivery-gates',
               'preflight/gate-changing-pr-rule',
             ];
+            // GOV-2064-T2: class/manifest-scoped enforcement subset. REQUIRED_CHECKS
+            // above remains the full canonical catalog (its length is still used for
+            // REQUIRED_CHECKS_TOTAL reconciliation against the producer snapshot below),
+            // but a check that this PR's resolved class does not require (requires_iaa:
+            // false / requires_ecap: false, including the derived legacy/no-manifest
+            // class above) must not be inventoried as "missing" and block handover.
+            const IAA_SCOPED_CHECKS = new Set([
+              'preflight/iaa-prebrief-existence',
+              'preflight/iaa-token-self-certification',
+              'preflight/iaa-final-assurance',
+            ]);
+            const ECAP_SCOPED_CHECKS = new Set([
+              'preflight/ecap-admin-ceremony',
+            ]);
+            const applicableRequiredChecks = REQUIRED_CHECKS.filter((name) => {
+              if (IAA_SCOPED_CHECKS.has(name)) return requiresIaa;
+              if (ECAP_SCOPED_CHECKS.has(name)) return requiresEcap;
+              return true;
+            });
             const observedNames = new Set([
               ...Array.from(latestByName.keys()),
               ...statusData.statuses.map(s => s.context),
             ]);
-            for (const req of REQUIRED_CHECKS) {
+            for (const req of applicableRequiredChecks) {
               if (!observedNames.has(req)) {
                 missing.push({ name: req });
               }
@@ -383,6 +460,9 @@ jobs:
               'REQUIRED_ACTION',
             ];
             const preconditionFailures = [];
+            if (manifestResolutionFailure) {
+              preconditionFailures.push(manifestResolutionFailure);
+            }
             const CHECKPOINT_MARKER = '<!-- pre-handover-checkpoint -->';
             const escapeRegex = (s) => {
               const special = '\\\\^$*+?.()|{}[]';
@@ -505,6 +585,10 @@ jobs:
                 // Exclude gate-bot comments (they are authoritative gate results, not producer claims)
                 if (GATE_MARKERS.some(m => b.includes(m))) return false;
                 if (b.includes(CHECKPOINT_REQUIRED_MARKER)) return false;
+                // GOV-2064-T2: CS2 (apgi-cmy) is never the producer. A factual CS2
+                // status/checkpoint request in PR history must not be read back as a
+                // producer's own prior explicit handover/completion claim.
+                if (String(c.user?.login || '').toLowerCase() === CS2_LOGIN) return false;
                 // Exclude checkpoint trigger/result comments
                 return handoverIntent.isExplicitHandoverClaimComment(b);
               });

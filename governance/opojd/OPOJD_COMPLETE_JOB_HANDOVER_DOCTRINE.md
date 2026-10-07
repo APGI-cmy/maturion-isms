@@ -1,9 +1,10 @@
-# OPOJD 2.0: Complete Job Handover Doctrine
+# OPOJD 2.1: Complete Job Handover Doctrine
 
-**Version:** 2.0  
+**Version:** 2.1  
 **Status:** Constitutional - Active  
 **Authority:** Supreme (overrides non-constitutional agent behaviors)  
 **Created:** 2026-02-11  
+**Amended:** 2026-04-08 — v2.1: Canonized terminal-state completion semantics; forbid "remaining Phase 4 ceremony" handover state; defined BLOCKED/INCOMPLETE as the explicit state when Phase 4 artifacts are absent (issue: OPOJD hardening — forbid handover of Phase 4 incomplete jobs)  
 **Ratified By:** Maturion Engineering Leadership (Johan Ras)  
 **Layer-Down Status:** PUBLIC_API  
 **Applies To:** All Agents, All Foreman Instances, All Work, All Repositories
@@ -38,6 +39,7 @@ When an agent receives a prompt, issue assignment, or coordination request, that
 - ✅ All preexisting issues in the working area fixed (Stop-and-Fix compliance)
 - ✅ All coordination artifacts documented
 - ✅ All improvement suggestions captured
+- ✅ **All required Phase 1–4 obligations fulfilled** — PREHANDOVER proof written, session memory written, IAA invoked and token committed (where required)
 - ✅ Full PR ready for merge without human intervention needed
 
 **Prohibited Handovers:**
@@ -51,6 +53,9 @@ When an agent receives a prompt, issue assignment, or coordination request, that
 - ❌ Excuse-based handover ("I don't have authority to X")
 - ❌ Ignorant handover ("I didn't know Y was required")
 - ❌ Dependency handover ("Blocked by external team")
+- ❌ **"Remaining Phase 4 ceremony"** — Phase 4 is not post-job admin; it is part of the job
+- ❌ **"PREHANDOVER still to be completed next session"** — Phase 4 artifacts must be committed before handover
+- ❌ **"IAA token still pending but job otherwise complete"** — a job missing required IAA assurance is not complete
 
 ### 1.2 Integration with OPOJD v1.0
 
@@ -70,6 +75,75 @@ This doctrine **extends and enhances** OPOJD v1.0 (continuous execution doctrine
 - **No ignorance excuse** - lack of knowledge/authority must be resolved
 
 **Combined Effect:** Agents execute continuously (v1.0) AND ensure completeness before handover (v2.0).
+
+### 1.3 Terminal-State Completion Semantics (v2.1)
+
+> **Canonical Rule**: COMPLETE means Phase 4 complete.
+
+A job has exactly two valid terminal states:
+
+| State | Definition | Handover Permitted? |
+|-------|-----------|---------------------|
+| **COMPLETE** | All Phase 1–4 obligations fulfilled. PREHANDOVER proof committed, session memory committed, IAA assurance artifact committed (where required), all CI gates passing. | ✅ YES — PR may be handed over for CS2 merge review |
+| **BLOCKED / INCOMPLETE** | One or more required Phase 4 artifacts are absent or one or more Phase 1–3 obligations are unmet. | ❌ NO — Handover prohibited; agent must not surface PR as ready |
+
+**There is no valid intermediate state.**  
+A job is not "90% done with Phase 4 remaining." A job is either COMPLETE or it is BLOCKED / INCOMPLETE.
+
+#### 1.3.1 Phase 4 Artifacts That Define Completeness
+
+A job reaches COMPLETE state only when **all** of the following are committed on the branch:
+
+1. **PREHANDOVER proof** — the producing agent's evidence bundle documenting gate execution results, compliance verification, and delivery state. File location: `.agent-admin/prehandover/proof-*.md` or `.agent-admin/prehandover/prehandover_proof*.md`.
+2. **Session memory** — the structured session record capturing task, actions, decisions, and lessons. File location: `.agent-workspace/<agent>/memory/session-NNN-YYYYMMDD.md`.
+3. **IAA assurance artifact** — when IAA is required (canon changes, agent contract changes, labelled deliverables), the independent assurance token file must be committed. File location: `.agent-admin/assurance/assurance-token-<PR#>.md` or `.agent-admin/assurance/iaa-token-session-NNN-waveY-YYYYMMDD.md`.
+
+#### 1.3.2 Missing Phase 4 Artifacts = BLOCKED / INCOMPLETE
+
+If any required Phase 4 artifact is absent, the job is in **BLOCKED / INCOMPLETE** state.  
+This state is NOT a legitimate handover state. The producing agent must not:
+
+- Open a PR with language such as "remaining Phase 4 ceremony"
+- Mark the PR as ready for review
+- Describe the job as "complete" or "substantively done"
+- Delegate Phase 4 completion to the next session
+
+The agent MUST complete Phase 4 in the same session that produced the work. Phase 4 is not optional post-work administration — it is part of the job.
+
+#### 1.3.3 Forbidden Handover Language
+
+The following phrases are prohibited in PR descriptions, commit messages, and handover communications when used to describe the current delivery state:
+
+| Prohibited Phrase | Reason |
+|-------------------|--------|
+| "remaining Phase 4 ceremony" | Normalizes an OPOJD violation as acceptable |
+| "PREHANDOVER still to be completed next session" | Phase 4 deferral is a violation, not a task item |
+| "IAA token still pending but job otherwise complete" | A job missing required IAA assurance is not complete |
+| "handover complete except for evidence artifacts" | Evidence is part of the job; absence = BLOCKED |
+| "work complete; ceremony can follow" | There is no separation between work and ceremony |
+| "outstanding" (items / work / ceremony) | Presenting a job with "outstanding" items is handing over incomplete work — the job is BLOCKED, not COMPLETE |
+| "still outstanding" | Same violation — deferral of incomplete obligations |
+| "the following items remain outstanding" | A job with remaining obligations has not been completed |
+
+**"Outstanding" is prohibited** in any handover communication used to describe obligations not yet fulfilled. A job with outstanding items is a BLOCKED job. It must not be handed over, opened as ready for review, or described as complete. The permitted alternatives are:
+
+- State: **BLOCKED — [specific item] not complete**
+- Or: complete the item first, then hand over with **COMPLETE** status
+
+Acceptable handover states are: **COMPLETE** or **BLOCKED** (with explicit reason and no merge request).
+
+#### 1.3.4 Role Separation at the Merge Gate
+
+The Four-Phase contract assigns distinct responsibilities to each layer. These responsibilities do not overlap:
+
+| Layer | Role | What They Assess |
+|-------|------|-----------------|
+| **Producing agent** | Creates the PREHANDOVER evidence bundle | Work package completion, gate results, compliance |
+| **IAA** | Performs independent final audit | Phase 1–4 evidence integrity, agent independence |
+| **CI gates** | Machine-enforce required artifact presence | Artifacts exist and have required markers |
+| **CS2** | Final merge decision | Evidence review, IAA verdict, CI results, functional outcome |
+
+**CS2 is not the technical pre-handover auditor.** CS2 makes the merge decision based on the evidence already assembled by the producing agent, validated by IAA, and confirmed by CI. CS2 does not perform Phase 4 on behalf of the producing agent.
 
 ---
 
@@ -733,6 +807,18 @@ Combined: Cannot hand over without fixing encountered issues
 ---
 
 ## 8. Version History
+
+**v2.1 (2026-04-08):**
+- Canonized terminal-state completion semantics: COMPLETE = Phase 1–4 complete
+- Added Section 1.3: Terminal-State Completion Semantics
+- Defined BLOCKED / INCOMPLETE as the explicit state when Phase 4 artifacts are absent
+- Explicitly prohibited "remaining Phase 4 ceremony" and equivalent deferral language
+- Added Phase 4 required artifact list: PREHANDOVER proof, session memory, IAA assurance artifact
+- Added role separation table: producing agent → IAA → CI → CS2 merge decision
+- Clarified CS2 role: merge decision authority, not technical pre-handover auditor
+- Closed the semantic loophole permitting "work complete, ceremony pending" handover framing
+- Amended: governance/opojd/OPOJD_COMPLETE_JOB_HANDOVER_DOCTRINE.md
+- Authority: CS2 (Johan Ras) — issue: OPOJD hardening — forbid handover of Phase 4 incomplete jobs
 
 **v2.0 (2026-02-11):**
 - Upgraded OPOJD to mandate complete job handover

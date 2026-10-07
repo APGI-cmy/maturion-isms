@@ -176,6 +176,79 @@ EOF
 )" \
   "1"
 
+# ── GOV-2064-T2 regressions ───────────────────────────────────────────────────
+# RCA: .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md
+# CS2 handback (PR #2065 comment 5993621656): no ADMIN_MANIFEST_DEFECT solely
+# because a legacy PR has no manifest, while genuine manifest defects must
+# still be flagged.
+
+run_case \
+  "9. legacy/no-manifest PR with ADMIN_MANIFEST_APPLICABLE=no -> not ADMIN_MANIFEST_DEFECT" \
+  "$(node - "$SCRIPT" <<'EOF'
+const remediation = require(process.argv[2]);
+// NOTE: HANDOVER_ALLOWED must be 'no' here (not 'yes') — classifyPostHandover()
+// short-circuits to the "allGreen" success path before ever reaching the
+// manifest-defect branch when HANDOVER_ALLOWED is 'yes', which would make this
+// test pass vacuously regardless of whether the GOV-2064-T2 fix is present.
+// This was caught and corrected via a temporarily-reintroduced-bug proof: with
+// the pre-fix condition (`!manifest` alone, ignoring manifestApplicable)
+// restored, this exact fixture returns ADMIN_MANIFEST_DEFECT; with the fix in
+// place it falls through to AMBIGUOUS_ESCALATE instead.
+const decision = remediation.classifyPostHandover({
+  fields: {
+    HANDOVER_ALLOWED: 'no',
+    ADMIN_MANIFEST_APPLICABLE: 'no',
+  },
+  changedFiles: ['docs/some-note.md'],
+  manifest: null,
+});
+process.stdout.write(decision.failureClassification);
+EOF
+)" \
+  "AMBIGUOUS_ESCALATE"
+
+run_case \
+  "10. no-manifest PR with ADMIN_MANIFEST_APPLICABLE absent (default) -> still ADMIN_MANIFEST_DEFECT (strict default preserved)" \
+  "$(node - "$SCRIPT" <<'EOF'
+const remediation = require(process.argv[2]);
+const decision = remediation.classifyPostHandover({
+  fields: { HANDOVER_ALLOWED: 'no' },
+  changedFiles: ['docs/some-note.md'],
+  manifest: null,
+});
+process.stdout.write(decision.failureClassification);
+EOF
+)" \
+  "ADMIN_MANIFEST_DEFECT"
+
+run_case \
+  "11. no-manifest PR with ADMIN_MANIFEST_APPLICABLE=yes (manifest genuinely required) -> still ADMIN_MANIFEST_DEFECT" \
+  "$(node - "$SCRIPT" <<'EOF'
+const remediation = require(process.argv[2]);
+const decision = remediation.classifyPostHandover({
+  fields: { HANDOVER_ALLOWED: 'no', ADMIN_MANIFEST_APPLICABLE: 'yes' },
+  changedFiles: ['governance/canon/SOME_CANON.md'],
+  manifest: null,
+});
+process.stdout.write(decision.failureClassification);
+EOF
+)" \
+  "ADMIN_MANIFEST_DEFECT"
+
+run_case \
+  "12. ADMIN_MANIFEST_APPLICABLE=no does NOT suppress a genuine requires_ecap=false + governance-change defect" \
+  "$(node - "$SCRIPT" <<'EOF'
+const remediation = require(process.argv[2]);
+const decision = remediation.classifyPostHandover({
+  fields: { HANDOVER_ALLOWED: 'no', ADMIN_MANIFEST_APPLICABLE: 'no' },
+  changedFiles: ['governance/canon/AGENT_HANDOVER_AUTOMATION.md'],
+  manifest: { requires_ecap: false },
+});
+process.stdout.write(decision.failureClassification);
+EOF
+)" \
+  "ADMIN_MANIFEST_DEFECT"
+
 echo ""
 echo "Passed: $PASS"
 echo "Failed: $FAIL"

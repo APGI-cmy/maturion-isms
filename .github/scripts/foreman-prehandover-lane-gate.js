@@ -16,16 +16,23 @@ const controlPath = path.join(repoRoot, '.agent-admin/control/handover-allowed.j
 
 const positiveStructuredClaimPatterns = [
   /^\s*(?:[-*]\s*)?(?:handover_allowed|handover-allowed)\s*:\s*(?:true|yes)\b/im,
+  /^\s*(?:[-*]\s*)?(?:final_cs2_handover_allowed|final-cs2-handover-allowed)\s*:\s*(?:true|yes)\b/im,
   /^\s*(?:[-*]\s*)?(?:final_iaa_verdict|final-iaa-verdict)\s*:\s*(?:pass|approved|final_assurance_pass)\b/im,
-  /^\s*(?:[-*]\s*)?(?:state|final_state|handover_state)\s*:\s*(?:PRE_HANDOVER_GATE_PASS|IAA_FINAL_PASS|CS2_REVIEW|READY_FOR_REVIEW|MERGE_READY|HANDOVER_ALLOWED)\b/im,
+  /^\s*(?:[-*]\s*)?(?:state|final_state|handover_state)\s*:\s*(?:IAA_FINAL_PASS|CS2_REVIEW|READY_FOR_REVIEW|MERGE_READY|HANDOVER_ALLOWED)\b/im,
 ];
+// NOTE: `PRE_HANDOVER_GATE_PASS` / `pre_iaa_submission_allowed` are deliberately NOT positive
+// handover claims. Per the corrected Tier 1 state rules (foreman-v2-agent.md contract 2.19.0),
+// PRE_HANDOVER_GATE_PASS means "submission-ready for IAA final assurance only" — it is never
+// itself handover, completion, ready-for-review, or merge-readiness language, so stating it must
+// not trip this gate's claim detector. Only IAA_FINAL_PASS / CS2_REVIEW and equivalent explicit
+// readiness/merge language are genuine handover claims.
 const positiveHandoverStates = new Set([
-  'pre_handover_gate_pass',
   'iaa_final_pass',
   'cs2_review',
   'ready_for_review',
   'merge_ready',
   'handover_allowed',
+  'final_cs2_handover_allowed',
 ]);
 const positiveNarrativeClaimPattern = /\b(?:ready[- ]for[- ]review|review[- ]ready|merge[- ]ready|ready[- ]to[- ]merge|release[- ]ready|production[- ]ready|handover[- ](?:ready|allowed|approved|authori[sz]ed)|handover\s+(?:is\s+)?(?:allowed|approved|authori[sz]ed)|ready\s+to\s+hand\s+over|(?:work|delivery|wave|job)\s+(?:is\s+)?(?:complete|done|released))\b/ig;
 const negativeValueAfterClaimPattern = /^\s*[:=]\s*(?:false|no|pending|blocked|not[_ -]?allowed)\b/i;
@@ -156,6 +163,7 @@ function structuredKeyValueIsPositive(key, value) {
   const normalizedKey = normalizeStructuredToken(key);
   const normalizedValue = normalizeStructuredToken(value);
   if (normalizedKey === 'handover_allowed') return normalizedValue === 'true' || normalizedValue === 'yes';
+  if (normalizedKey === 'final_cs2_handover_allowed') return normalizedValue === 'true' || normalizedValue === 'yes';
   if (normalizedKey === 'final_iaa_verdict') {
     return normalizedValue === 'pass' || normalizedValue === 'approved' || normalizedValue === 'final_assurance_pass';
   }
@@ -222,7 +230,10 @@ function findPositiveHandoverClaims(files) {
   return hits;
 }
 
-function validateControl(control, implementationChanged) {
+const finalHandoverStates = new Set(['IAA_FINAL_PASS', 'CS2_REVIEW']);
+const submissionEligibleStates = new Set(['PRE_HANDOVER_GATE_PASS', 'IAA_FINAL_PASS', 'CS2_REVIEW']);
+
+function validateControl(control, implementationChanged, claimsFinalHandover) {
   const errors = [];
   const required = [
     'schema_version',
@@ -230,6 +241,8 @@ function validateControl(control, implementationChanged) {
     'pr_number',
     'current_head_sha',
     'state',
+    'pre_iaa_submission_allowed',
+    'final_cs2_handover_allowed',
     'handover_allowed',
     'foreman_qp_pass',
     'builder_delegation_verified',
@@ -259,16 +272,46 @@ function validateControl(control, implementationChanged) {
       );
     }
   }
-  if (control.state !== 'PRE_HANDOVER_GATE_PASS' && control.handover_allowed === true) {
-    errors.push('handover_allowed may be true only when state is PRE_HANDOVER_GATE_PASS');
+
+  // Stale PR-specific control file detection: a control artifact carried over from a
+  // different PR (e.g. leftover from an earlier, already-merged wave) must never be read
+  // as satisfying a different, current PR's checkpoint. See FAIL-ONLY-ONCE.md A-039/A-045.
+  const controlPrNumber = Number.parseInt(control.pr_number, 10);
+  if (Number.isInteger(prNumber) && prNumber > 0 && Number.isInteger(controlPrNumber) && controlPrNumber > 0
+      && controlPrNumber !== prNumber) {
+    errors.push(
+      `stale control file: pr_number ${controlPrNumber} does not match the current PR ${prNumber}; regenerate handover-allowed.json for this PR`,
+    );
   }
+
+  // `pre_iaa_submission_allowed` means only "may be submitted to IAA for final assurance" —
+  // it is valid only once the submission-ready state has actually been reached.
+  if (control.pre_iaa_submission_allowed === true && !submissionEligibleStates.has(control.state)) {
+    errors.push('pre_iaa_submission_allowed may be true only when state is PRE_HANDOVER_GATE_PASS or later');
+  }
+
+  // `final_cs2_handover_allowed` — the first point at which handover/completion language is
+  // permitted — is valid only once IAA final assurance (or CS2 review) has actually passed.
+  if (control.final_cs2_handover_allowed === true && !finalHandoverStates.has(control.state)) {
+    errors.push('final_cs2_handover_allowed may be true only when state is IAA_FINAL_PASS or CS2_REVIEW');
+  }
+
+  // `handover_allowed` is a deprecated legacy alias retained for older consumers; it must never
+  // diverge from `final_cs2_handover_allowed` (this is the core "submission-only, not final
+  // handover" fix: a bare PRE_HANDOVER_GATE_PASS + handover_allowed:true can no longer pass).
+  if (control.final_cs2_handover_allowed !== undefined && control.handover_allowed !== undefined
+      && control.handover_allowed !== control.final_cs2_handover_allowed) {
+    errors.push('handover_allowed (legacy alias) must equal final_cs2_handover_allowed');
+  }
+
   if (!Array.isArray(control.blocking_findings)) errors.push('blocking_findings must be an array');
   if (Array.isArray(control.blocking_findings) && control.blocking_findings.length > 0) {
     errors.push(`blocking_findings must be empty before handover: ${control.blocking_findings.join('; ')}`);
   }
 
+  // Common prerequisites apply whether the gate is relevant for submission-only readiness or
+  // for a genuine final-handover claim.
   const requiredTrue = [
-    'handover_allowed',
     'foreman_qp_pass',
     'iaa_prebrief_ready',
     'scope_current',
@@ -277,6 +320,16 @@ function validateControl(control, implementationChanged) {
 
   for (const key of requiredTrue) {
     if (control[key] !== true) errors.push(`${key} must be true before handover/completion language is allowed`);
+  }
+
+  if (claimsFinalHandover) {
+    // A genuine handover/completion claim was detected in the scanned artifacts: this is no
+    // longer submission-only and requires the final gate, never the pre-IAA submission gate.
+    if (control.final_cs2_handover_allowed !== true) {
+      errors.push('final_cs2_handover_allowed must be true before handover/completion language is allowed (reaching PRE_HANDOVER_GATE_PASS / pre_iaa_submission_allowed is submission-to-IAA only and is not sufficient)');
+    }
+  } else if (control.pre_iaa_submission_allowed !== true) {
+    errors.push('pre_iaa_submission_allowed must be true before the pre-handover lane control artifact may be committed');
   }
 
   if (implementationChanged) {
@@ -334,7 +387,8 @@ if (!fs.existsSync(controlPath)) {
 const control = readJson(controlPath);
 if (!control) process.exit(process.exitCode || 1);
 
-const errors = validateControl(control, implementationChanged);
+const claimsFinalHandover = handoverHits.length > 0;
+const errors = validateControl(control, implementationChanged, claimsFinalHandover);
 
 if (errors.length > 0) {
   emitCs2Trigger(errors.join('; '));
