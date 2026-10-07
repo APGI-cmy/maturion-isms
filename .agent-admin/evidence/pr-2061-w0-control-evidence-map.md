@@ -107,20 +107,20 @@ No FO register entry is closed by this addendum, and W0-BLK-002 remains correctl
 
 ## Repair delta — CS2 direct appointment comment 6031880911
 
-**Bounded implementation head:** `1afb95299f18135db99740a457d6c555c8d9f6cd`. The appointment changed only the six declared implementation/test paths; this map and the scope declaration are the two permitted final administrative updates.
+**Bounded implementation head:** `b052ca9a683f445b544446afc771ce152cd97c6d`. The appointment changed only the six declared implementation/test paths; this map and the scope declaration are the two permitted final administrative updates.
 
 - Manual workflow inputs select an issue only. Reset and kill-switch identity comes from `context.actor`, is resolved through GitHub's user API, and must be the authenticated human CS2 account. Caller-supplied actor and envelope JSON inputs were removed.
-- The claim, nomination, approval, and PR-bind mutation paths load the authoritative persisted state and append a schema-valid decision before any register, binding, dispatch, or approval write. Missing or invalid state blocks the transition.
-- Dispatch, retry, merge, successor-release, limit, and spend evaluation now fail closed for invalid, expired, kill-switched, breaker-tripped, or work-item-mismatched envelopes. Supplied telemetry must be finite and non-negative; count telemetry must also be integral.
+- The claim, nomination, approval, and PR-bind mutation paths load the authoritative persisted state and append a schema-valid decision before any register, binding, dispatch, or approval write. Missing or invalid state blocks the transition. An `issues.opened` event without an envelope is a no-op; a human-CS2-authored valid envelope/state comment on that Issue triggers the existing bounded claim path, providing a reachable setup without defaults.
+- Dispatch, retry, merge, successor-release, limit, and spend evaluation now fail closed for invalid, expired, kill-switched, breaker-tripped, or work-item-mismatched envelopes. All four usage measurements are required before limit evaluation; every supplied value must be finite and non-negative, and count telemetry must also be integral.
 - A typed limit/measurement refusal trips the persisted breaker and records one idempotent `LOOP_BREAK`/`BUDGET_TRIP` ledger entry per work-item condition. The human-CS2 reset updates only the breaker; decision history and trip evidence remain in the same state comment.
-- Decision records are normalized and checked against the versioned schema before persistence. Invalid facts produce `STOP_AND_FIX`; an unknown state is retained verbatim with a schema-valid `UNKNOWN_STATE` refusal. The schema also makes `approved_active` proposal values required and forbids values while `proposed`.
+- Decision records are normalized and checked against the versioned schema before persistence. Invalid facts produce `STOP_AND_FIX`; unknown, missing, or non-string states are retained deterministically with a schema-valid `UNKNOWN_STATE` refusal. Approved expiry values reject impossible calendar dates rather than accepting `Date.parse` rollover. The schema also makes `approved_active` proposal values required and forbids values while `proposed`.
 - The static workflow regression now checks claim/bind control-flow ordering and the authenticated persisted-state entrypoint. The tests remain code-level evidence only; no `workflow_dispatch`, live merge, deployment, or successor action was run.
 
 **Reproducible verification at the implementation head:**
 
 ```text
 $ node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js
-tests 88; pass 88; fail 0; skipped 0; todo 0
+tests 92; pass 92; fail 0; skipped 0; todo 0
 
 $ yamllint -d '{extends: default, rules: {document-start: disable, truthy: disable, line-length: disable}}' .github/workflows/pit-cs2-controller.yml
 exit code: 0
