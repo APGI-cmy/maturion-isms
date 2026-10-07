@@ -711,10 +711,30 @@ function bindPullRequest(register, { prNumber, headSha }) {
   if (register.pr_number && register.pr_number !== prNumber) {
     throw new Error(`Work item ${register.work_item_id} is already bound to PR #${register.pr_number}.`);
   }
+  const correctionCount = register.correction_count;
+  const maxCorrections = register.max_corrections;
+  if (!Number.isInteger(correctionCount)
+    || correctionCount < 0
+    || !Number.isInteger(maxCorrections)
+    || maxCorrections < 0
+    || correctionCount > maxCorrections) {
+    throw new Error('Work-item correction budget is invalid.');
+  }
+  const alreadyBound = register.pr_number === prNumber;
+  const distinctHeadUpdate = alreadyBound
+    && register.submission_head !== null
+    && register.submission_head !== headSha;
+  if (alreadyBound && register.submission_head === null) {
+    throw new Error('Bound pull request is missing its persisted submission head.');
+  }
+  if (distinctHeadUpdate && correctionCount >= maxCorrections) {
+    throw new Error('Work-item correction budget is exhausted.');
+  }
   return {
     ...register,
     pr_number: prNumber,
     submission_head: headSha,
+    correction_count: correctionCount + (distinctHeadUpdate ? 1 : 0),
     state: 'foreman',
     next_action: 'FOREMAN_CREATE_PR_SCOPED_TASK_RECORD_AND_COMPLETE_IAA_PREBRIEF',
     last_processed: { ...register.last_processed, head_sha: headSha },
@@ -1283,8 +1303,16 @@ async function run({ github, context, core, eventName }) {
       core.warning(`Work item ${workItemId} is already bound to PR #${found.row.pr_number}.`);
       return;
     }
-    if (found.row.pr_number === pr.number && found.row.last_processed?.head_sha === pr.head.sha) {
+    if (found.row.pr_number === pr.number
+      && (found.row.submission_head === pr.head.sha || found.row.last_processed?.head_sha === pr.head.sha)) {
       core.info('Nominated PR head was already processed; idempotent no-op.');
+      return;
+    }
+    let next;
+    try {
+      next = bindPullRequest(found.row, { prNumber: pr.number, headSha: pr.head.sha });
+    } catch (error) {
+      core.warning(`Refusing PR head update: ${error.message}`);
       return;
     }
     const safetyState = await loadStateForWorkItem(github, owner, repo, issueNumber, core);
@@ -1315,7 +1343,6 @@ async function run({ github, context, core, eventName }) {
       core.warning(`Safety envelope blocked PR binding: ${recorded.decision.reason_code}.`);
       return;
     }
-    const next = bindPullRequest(found.row, { prNumber: pr.number, headSha: pr.head.sha });
     await writeRegister(github, owner, repo, issueNumber, found.comment, next);
     await github.rest.issues.createComment({
       owner,

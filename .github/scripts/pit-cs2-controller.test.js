@@ -533,6 +533,91 @@ test('only a Foreman-nominated authorised same-repository work-item PR can bind 
   assert.match(harness.messages.info.at(-1), /idempotent no-op/);
 });
 
+test('W0 repair: one distinct PR-head correction is persisted, duplicates are no-ops, and an exhausted update mutates nothing', async () => {
+  const repository = 'APGI-cmy/maturion-isms';
+  const nominated = controller.nominatePullRequest(
+    controller.initialRegister({ issueNumber: 42, repository }),
+    {
+      prNumber: 502,
+      headRepository: repository,
+      bodyMarker: 'CS2-Work-Item: pit-issue-42',
+      actor: controller.FOREMAN_LOGIN,
+    },
+  );
+  const harness = createHarness({
+    issues: [{ number: 42, title: 'PIT work item', state: 'open' }],
+    initialComments: {
+      42: [
+        controllerComment(controller.renderRegister(nominated), { id: 900 }),
+        w0ControllerStateComment(42),
+      ],
+    },
+  });
+  const runHead = async (headSha) => controller.run({
+    github: harness.github,
+    context: {
+      repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+      payload: {
+        pull_request: {
+          number: 502,
+          body: 'CS2-Work-Item: pit-issue-42',
+          head: { sha: headSha, repo: { full_name: repository } },
+          base: { repo: { full_name: repository } },
+        },
+      },
+    },
+    core: harness.core,
+    eventName: 'pull_request_target',
+  });
+  const issueSnapshot = () => (harness.comments.get('42') || []).map(({ id, body }) => ({ id, body }));
+  const prSnapshot = () => (harness.comments.get('502') || []).map(({ id, body }) => ({ id, body }));
+  const register = () => controller.parseRegister(
+    harness.comments.get('42').find((comment) => comment.body.includes(controller.REGISTER_MARKER)).body,
+  );
+  const persistedState = () => controller.parseControllerState(
+    harness.comments.get('42').find((comment) => comment.body.includes(controller.CONTROLLER_STATE_MARKER)).body,
+  );
+  const firstHead = 'a'.repeat(40);
+  const correctionHead = 'b'.repeat(40);
+  const rejectedHead = 'c'.repeat(40);
+
+  await runHead(firstHead);
+  assert.equal(register().correction_count, 0);
+  assert.equal(register().submission_head, firstHead);
+  const initialHistory = persistedState().decision_history;
+  const initialTripLedger = persistedState().trip_ledger;
+
+  await runHead(firstHead);
+  assert.equal(register().correction_count, 0);
+  assert.deepEqual(persistedState().decision_history, initialHistory);
+  assert.deepEqual(persistedState().trip_ledger, initialTripLedger);
+
+  await runHead(correctionHead);
+  assert.equal(register().correction_count, 1);
+  assert.equal(register().submission_head, correctionHead);
+  assert.equal(register().last_processed.head_sha, correctionHead);
+  const correctedHistory = persistedState().decision_history;
+  const correctedTripLedger = persistedState().trip_ledger;
+
+  await runHead(correctionHead);
+  assert.equal(register().correction_count, 1);
+  assert.deepEqual(persistedState().decision_history, correctedHistory);
+  assert.deepEqual(persistedState().trip_ledger, correctedTripLedger);
+  const beforeExhaustedUpdate = {
+    issueComments: issueSnapshot(),
+    prComments: prSnapshot(),
+  };
+
+  await runHead(rejectedHead);
+  assert.deepEqual(issueSnapshot(), beforeExhaustedUpdate.issueComments);
+  assert.deepEqual(prSnapshot(), beforeExhaustedUpdate.prComments);
+  assert.equal(register().correction_count, 1);
+  assert.equal(register().submission_head, correctionHead);
+  assert.deepEqual(persistedState().decision_history, correctedHistory);
+  assert.deepEqual(persistedState().trip_ledger, correctedTripLedger);
+  assert.match(harness.messages.warning.at(-1), /correction budget is exhausted/i);
+});
+
 test('human approval commands normalize scope-expansion and reject automation or non-CS2 actors', async () => {
   const row = controller.initialRegister({ issueNumber: 42, repository: 'APGI-cmy/maturion-isms' });
   const harness = createHarness({
