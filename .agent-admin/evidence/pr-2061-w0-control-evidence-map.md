@@ -9,7 +9,7 @@ Source: `governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md` §§
 - **Implemented on the PR branch, not activated on trusted `main`:** versioned safety-envelope and decision-record schemas, fail-closed controller validation, exact-limit and breaker gates, persisted work-item state, authenticated manual safety controls, and claim/bind enforcement.
 - **Preserved intake evidence:** PR-scoped intake, frozen scope, factual baseline, canonical IAA pre-brief, accepted QA-to-RED, and the prior S-033 exception record.
 - **Still inactive/out of scope:** active-CS2 activation, live merge/successor authority, deployment, automatic reset, spend telemetry, and non-proposal stage/merge/expiry defaults.
-- **Persisted state carrier:** one versioned controller-state comment per Work Request Issue contains the envelope, decision history, and trip ledger. Manual controls and event-triggered claim/bind routes load and validate that single state before writing; absent, malformed, duplicate, or mismatched state refuses mutation. A human-CS2-authored valid state is required to seed it; no default envelope is created.
+- **Persisted state carrier:** a human-CS2-authored versioned controller-state comment seeds the Work Request Issue; on first accepted update, the controller preserves that seed and creates its own authoritative state comment. The bot-owned comment then contains the envelope, decision history, and trip ledger in one serialized snapshot. Routes load and validate that state before writing; absent, malformed, duplicate, or mismatched state refuses mutation. No default envelope is created.
 - **Explicit W0 limits for QA:** active work items `1`; material remediation attempts `1`; dispatch runtime `30 minutes`; total automated runtime per work item `2 hours`; spend control `runtime-only`.
 - **Human boundary:** circuit-breaker reset authority is human CS2 only. No webhook, agent, token, comment, PR, or retry may reset a breaker.
 
@@ -107,7 +107,7 @@ No FO register entry is closed by this addendum, and W0-BLK-002 remains correctl
 
 ## Repair delta — CS2 direct appointment comment 6031880911
 
-**Bounded implementation head:** `3579f6bac24fed2b31a10eb69ca14e0787cde672`. The appointment changed only the six declared implementation/test paths; this map and the scope declaration are the two permitted final administrative updates.
+**Bounded implementation head:** `1afb95299f18135db99740a457d6c555c8d9f6cd`. The appointment changed only the six declared implementation/test paths; this map and the scope declaration are the two permitted final administrative updates.
 
 - Manual workflow inputs select an issue only. Reset and kill-switch identity comes from `context.actor`, is resolved through GitHub's user API, and must be the authenticated human CS2 account. Caller-supplied actor and envelope JSON inputs were removed.
 - The claim, nomination, approval, and PR-bind mutation paths load the authoritative persisted state and append a schema-valid decision before any register, binding, dispatch, or approval write. Missing or invalid state blocks the transition.
@@ -120,7 +120,7 @@ No FO register entry is closed by this addendum, and W0-BLK-002 remains correctl
 
 ```text
 $ node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js
-tests 87; pass 87; fail 0; skipped 0; todo 0
+tests 88; pass 88; fail 0; skipped 0; todo 0
 
 $ yamllint -d '{extends: default, rules: {document-start: disable, truthy: disable, line-length: disable}}' .github/workflows/pit-cs2-controller.yml
 exit code: 0
