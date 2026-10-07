@@ -289,3 +289,35 @@ Static inspection of the workflow confirmed:
 - The PR number/head SHA are read from the comment-triggered PR API lookup or the pull-request event payload (`.github/workflows/handover-claim-gate.yml:111-125`).
 
 No live post-change workflow execution is claimed. The active PR-scoped scope declaration records the exact diff; IAA reassessment and a single non-mutating current-head verification remain required.
+
+### 2026-10-07 — GOV-2064-T3 stale-PASS corrective delta re-assurance (PR #2065)
+
+- **Invocation / binding**: Human CS2 instruction; repository `APGI-cmy/maturion-isms`, PR `#2065`, branch `copilot/prevent-rejected-iaa-handover`, reviewed HEAD `41b17175ffede5c81712e97bdb8963e31db45ae8`. Producer: active-CS2-agent (test/README correction). `ceremony_admin_appointed` is not declared in the PR-bound task record; treated as NO. IAA-contract content remains excluded under the direct CS2 PASS recorded at PR comment `6015951908`.
+- **Bounded scope**: Compared with rejection commit `a3010f416f2f14246d0d94d0251684e5426b5288`, the substantive delta is confined to `.agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-rejected-iaa-dedup.test.py` and its existing `README.md`. No runtime, controller, workflow, CI-activation, or canon change is part of this correction.
+- **PRE-BRIEF continuity**: The existing normalized `IAA_PREFLIGHT_BRIEF` section remains byte-identical to its prior reviewed version at `fff8b83ca3d6a8908a80d9acd1d4e252b7a13313`; its previously recorded schema/context PASS stands. The original bound `current_head_sha` is preserved. No PRE-BRIEF, task-record, scope, proof, or head-refresh change was made.
+- **Correction assertions**: PASS. The test derives a single-event stale-only record, with no preceding rejection or reserved-matter blocker, and validates it against the unmodified `ACTIVE_CS2_JOB_WAVE.schema.json`. `STALE_ONLY_BLOCKING_TRANSITION` requires `EVIDENCE_STALE` from `IN_REVIEW` to produce `CORRECTION` or `BLOCKED`; assertions also require null final acceptance, current-wave merge ineligibility, and a dependent successor that remains `PLANNED`, undispatched, and ineligible.
+- **Focused test / negative control**: The current runner passed **31/31**, 0 failures. In an in-memory mutation, setting only the stale event's `state_after` to `IN_REVIEW` caused the named transition assertion and the dependent merge/successor-ineligibility assertions to fail (3 expected failures; exit 1). No tracked fixture mutation remained.
+- **README / status limitation**: PASS. README describes schema-valid fixture/model consistency only, expressly denies execution/proof of evaluator/controller behavior, and states the test is not wired to CI or runtime. `CONTRACT_READY / INACTIVE` remains explicit in the active-CS2 contract and Tier 2 index.
+- **Aggregate current-head closure context**: Existing scoped T1/T2/T4 assurance remains `IAA-session-gov2064-t1t2t4-reassess-20261005-PASS` (its recorded scope only; not reassessed here). The direct CS2 PASS for the IAA contract remains as cited above. The T3 stale-transition finding from the preceding rejection is corrected by this bounded delta. At HEAD `41b17175ffede5c81712e97bdb8963e31db45ae8`, the required check-runs `merge-gate/verdict`, `governance/alignment`, and `stop-and-fix/enforcement` were observed `success`. This status records no runtime/controller/CI activation and makes no handover or merge-readiness claim.
+- **CORE / learning checks**: CORE-020 PASS (evidence present for the bounded assertions); CORE-021 PASS (no unsupported or severity-softened finding). A-001 invocation evidence is present in this wave record; no agent-class exemption claim is made. No registered active-CS2 functional-behaviour niggle is implicated by this fixture/test-only delta.
+- **A-042 Independent Risk Challenge**:
+  1. What could still fail after merge? A reader could overinterpret a model-fixture assertion as proof of live evaluator/controller enforcement; the suite itself cannot establish runtime behavior.
+  2. What evidence would prove it does not fail? An executable evaluator/controller test against the relevant runtime transition and successor-release path would be required for that broader claim.
+  3. Is that evidence present? No runtime evidence is present or claimed. For the bounded fixture/model-consistency claim, schema validation, 31 passing assertions, the isolated transition assertion, and its negative-control failure are present.
+  4. Is there a contradiction between issue intent, architecture requirements, and PR evidence? No. The README explicitly limits evidence to fixture/model consistency and preserves `CONTRACT_READY / INACTIVE`.
+  5. Would a reasonable production owner accept this as merge-ready? Yes, as the narrow test/README correction to the reported stale-only regression gap; this is not a production-runtime, handover, or PR merge decision.
+  - Challenge status: COMPLETE for the bounded correction.
+- **Bounded delta verdict**: ASSURANCE-TOKEN — PASS; 0 findings. Adoption phase: `PHASE_B_BLOCKING`.
+
+```
+═══════════════════════════════════════
+ASSURANCE-TOKEN (BOUNDED DELTA)
+PR: #2065 "prevent-rejected-iaa-handover" — GOV-2064-T3 stale-PASS corrective test/README delta
+Reviewed HEAD: 41b17175ffede5c81712e97bdb8963e31db45ae8
+31/31 focused assertions PASS; targeted state_after=IN_REVIEW negative control fails closed.
+Existing scoped T1/T2/T4 token and direct CS2 PASS remain limited to their recorded scopes.
+PHASE_B_BLOCKING_TOKEN: IAA-session-gov2064t3-stale-delta-20261007-PASS
+Adoption phase: PHASE_B_BLOCKING
+This bounded assurance makes no runtime/controller/CI-activation, handover, or merge-readiness claim.
+═══════════════════════════════════════
+```
