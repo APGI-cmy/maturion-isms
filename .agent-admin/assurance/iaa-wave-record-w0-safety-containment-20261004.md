@@ -451,3 +451,29 @@ RCA_REVIEW: `NONE_REQUIRED`
 HANDOVER_ALLOWED: `no` — the next action is Foreman's authorized no-write QP after this token; no merge, deployment, activation, or release was performed or authorized here.
 Bound substantive head: `0a4a2b5a050980e08993ec7d6c223a5aa50634a3`
 Authorizing CS2 instruction: PR #2061 comment `6037880231`
+
+### Publication addendum — recovered prior reviewer result (2026-10-07)
+
+This addendum publishes the already-issued independent-assurance result supplied in the invocation context in response to CS2 comment `6041229901`. It is not a new assessment: no review, tests, or workflow checks were rerun, and no prior finding or verdict was changed. The preceding historical entries remain intact.
+
+- PR / issue / work item: `#2061` / `#2053` / `W0-2053`.
+- Reviewed source SHA: `d5e7610198f3f7a70c516d5a68c2cbf8ef328105` (matches the checked-out repository head at publication).
+- Integrated PR #2067 repair was limited to `.github/scripts/pit-cs2-controller.js` and `.github/scripts/pit-cs2-controller.test.js`.
+- Recorded reviewer result: `ASSURANCE-TOKEN — PASS`; all 31 checks PASS and merge-gate parity PASS.
+- Recorded focused verification: 94/94 tests passed.
+- Recorded behavior review: absent/null malformed bound `submission_head` is refused before state/comment writes; noncanonical persisted heads are refused during register validation; initial bind, one correction, exhausted refusal, and duplicate no-op are preserved.
+- Recorded check state at review time: displayed required checks were successful; conditional checks were skipped; the non-required Copilot comment-processing job was still in progress.
+- No merge, deployment, or activation was performed or authorized.
+
+```text
+ASSURANCE-TOKEN — PASS
+PR #2061, work item W0-2053
+Reviewed source SHA d5e7610198f3f7a70c516d5a68c2cbf8ef328105
+All 31 checks PASS; merge-gate parity PASS.
+Token reference: IAA-session-2061-w0-reassessment-d5e7610-20261007-PASS
+Adoption phase: PHASE_B_BLOCKING
+```
+
+PHASE_B_BLOCKING_TOKEN: `IAA-session-2061-w0-reassessment-d5e7610-20261007-PASS`
+RESULT: `ACCEPTED` — publication of the already-issued reviewer result; no new assessment.
+Bound reviewed source head: `d5e7610198f3f7a70c516d5a68c2cbf8ef328105`
