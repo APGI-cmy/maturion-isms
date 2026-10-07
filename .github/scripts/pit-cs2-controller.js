@@ -523,7 +523,7 @@ function killSwitchGate(envelope, request) {
     new Date(),
   );
   if (safetyDecision.decision !== 'ALLOW') return safetyDecision;
-  if (request?.work_item_id && envelope.work_item_id !== request.work_item_id) {
+  if (request && Object.hasOwn(request, 'work_item_id') && envelope.work_item_id !== request.work_item_id) {
     return { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_TASK_INCONSISTENT' };
   }
   return { decision: 'ALLOW', reason_code: 'NONE' };

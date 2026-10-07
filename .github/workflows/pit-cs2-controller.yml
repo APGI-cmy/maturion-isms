@@ -26,10 +26,10 @@ on:
     inputs:
       safety_control_action:
         description: >-
-          W0 human-CS2-only safety-control action. "observe" (default) runs
-          the ordinary claim/bind/observe path. The other actions read and
-          update the persisted W0 state for the selected work item; none claims,
-          binds, merges, or releases a successor.
+          W0 human-CS2-only safety-control action. "observe" (default) is a
+          safe no-op for manual dispatch. The other actions read and update the
+          persisted W0 state for the selected work item; none claims, binds,
+          merges, or releases a successor.
         required: false
         type: choice
         default: observe

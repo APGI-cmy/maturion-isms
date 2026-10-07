@@ -1,13 +1,15 @@
 # W0 Control and Evidence Map — PR #2061 / Issue #2053
 
-Status: **BASELINE / NOT VERIFIED**  
+Status: **REPAIR IMPLEMENTED / FOREMAN QP PENDING / FINAL IAA PENDING**
 Work item: `W0-2053`  
 Source: `governance/strategy/GOVERNANCE_FAILURE_OUTENGINEERING_STRATEGY.md` §§5.1, 5.2, 6, and 8  
 
 ## Implemented versus proposed
 
-- **Implemented in this PR:** PR-scoped intake, frozen scope, factual baseline, IAA pre-brief route, and QA-to-RED route only.
-- **Proposed / inactive:** safety-envelope and decision-record schema, limit enforcement, kill switch, circuit breaker, stage/merge/expiry defaults, and all runtime behavior.
+- **Implemented on the PR branch, not activated on trusted `main`:** versioned safety-envelope and decision-record schemas, fail-closed controller validation, exact-limit and breaker gates, persisted work-item state, authenticated manual safety controls, and claim/bind enforcement.
+- **Preserved intake evidence:** PR-scoped intake, frozen scope, factual baseline, canonical IAA pre-brief, accepted QA-to-RED, and the prior S-033 exception record.
+- **Still inactive/out of scope:** active-CS2 activation, live merge/successor authority, deployment, automatic reset, spend telemetry, and non-proposal stage/merge/expiry defaults.
+- **Persisted state carrier:** one versioned controller-state comment per Work Request Issue contains the envelope, decision history, and trip ledger. Manual controls and event-triggered claim/bind routes load and validate that single state before writing; absent, malformed, duplicate, or mismatched state refuses mutation. A human-CS2-authored valid state is required to seed it; no default envelope is created.
 - **Explicit W0 limits for QA:** active work items `1`; material remediation attempts `1`; dispatch runtime `30 minutes`; total automated runtime per work item `2 hours`; spend control `runtime-only`.
 - **Human boundary:** circuit-breaker reset authority is human CS2 only. No webhook, agent, token, comment, PR, or retry may reset a breaker.
 
@@ -102,3 +104,30 @@ in place and the surface remains non-activating until ordinary human merge appro
 claim. The three substitutes above satisfy the CS2-authorized S-033 exception while retaining the
 security boundary that prevents unmerged code from executing through the trusted workflow.
 No FO register entry is closed by this addendum, and W0-BLK-002 remains correctly assigned to W3.
+
+## Repair delta — CS2 direct appointment comment 6031880911
+
+**Bounded implementation head:** `3579f6bac24fed2b31a10eb69ca14e0787cde672`. The appointment changed only the six declared implementation/test paths; this map and the scope declaration are the two permitted final administrative updates.
+
+- Manual workflow inputs select an issue only. Reset and kill-switch identity comes from `context.actor`, is resolved through GitHub's user API, and must be the authenticated human CS2 account. Caller-supplied actor and envelope JSON inputs were removed.
+- The claim, nomination, approval, and PR-bind mutation paths load the authoritative persisted state and append a schema-valid decision before any register, binding, dispatch, or approval write. Missing or invalid state blocks the transition.
+- Dispatch, retry, merge, successor-release, limit, and spend evaluation now fail closed for invalid, expired, kill-switched, breaker-tripped, or work-item-mismatched envelopes. Supplied telemetry must be finite and non-negative; count telemetry must also be integral.
+- A typed limit/measurement refusal trips the persisted breaker and records one idempotent `LOOP_BREAK`/`BUDGET_TRIP` ledger entry per work-item condition. The human-CS2 reset updates only the breaker; decision history and trip evidence remain in the same state comment.
+- Decision records are normalized and checked against the versioned schema before persistence. Invalid facts produce `STOP_AND_FIX`; an unknown state is retained verbatim with a schema-valid `UNKNOWN_STATE` refusal. The schema also makes `approved_active` proposal values required and forbids values while `proposed`.
+- The static workflow regression now checks claim/bind control-flow ordering and the authenticated persisted-state entrypoint. The tests remain code-level evidence only; no `workflow_dispatch`, live merge, deployment, or successor action was run.
+
+**Reproducible verification at the implementation head:**
+
+```text
+$ node --test .github/scripts/pit-cs2-controller.test.js .github/scripts/pit-cs2-controller-workflow.test.js
+tests 87; pass 87; fail 0; skipped 0; todo 0
+
+$ yamllint -d '{extends: default, rules: {document-start: disable, truthy: disable, line-length: disable}}' .github/workflows/pit-cs2-controller.yml
+exit code: 0
+
+$ python -m json.tool .github/cs2-controller/safety-envelope.schema.json
+$ python -m json.tool .github/cs2-controller/decision-record.schema.json
+both schemas parse as valid JSON
+```
+
+The repository-wide Vitest suite was not run because `node_modules/.bin/vitest` is unavailable in this checkout. W3 archive-identity item `W0-BLK-002` remains unchanged and out of scope; no prior IAA token, session memory, or archival artifact was edited. Foreman QP and the one final IAA reassessment remain pending.

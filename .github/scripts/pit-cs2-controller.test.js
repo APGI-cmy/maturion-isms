@@ -1356,6 +1356,10 @@ test('W0 repair: retry, merge, and successor gates reject a work-item-mismatched
       gate(envelope, { work_item_id: 'pit-issue-999' }),
       { decision: 'STOP_AND_FIX', reason_code: 'ENVELOPE_TASK_INCONSISTENT' },
     );
+    assert.equal(
+      gate(envelope, { work_item_id: '' }).reason_code,
+      'ENVELOPE_TASK_INCONSISTENT',
+    );
   }
 });
 
