@@ -5,8 +5,11 @@ This manually run script validates a fixture against the real, unmodified
 canon schema `governance/schemas/ACTIVE_CS2_JOB_WAVE.schema.json` and checks
 the consistency of fixture data and locally calculated protocol-model
 expectations. The assertions cover typed refusal values, dedup, bounded
-re-entry, counters, stale-fingerprint handling, blocked completion/merge,
-and an undispatched successor as represented by the fixture and local model.
+re-entry, counters, stale-fingerprint handling, blocked completion/merge, and
+an undispatched successor as represented by the fixture and local model. A
+separate isolated stale-only scenario removes the fixture's unrelated
+preceding rejection and reserved-matter event effects from the
+state-transition assertion.
 
 This is only schema-valid protocol-model fixture consistency coverage. It
 does NOT execute or prove active-CS2 evaluator/controller behavior. The script
@@ -288,6 +291,60 @@ def main():
               ev["wave_id"] for ev in record["events"]
           },
           successor)
+
+    # 7. Isolate stale-PASS handling from evt-1..evt-6, especially the prior
+    #    RESERVED_MATTER transition at evt-5. Preserve evt-7's explicit stale
+    #    binding and resulting state so a mutation of only its blocking
+    #    transition cannot be hidden by the main fixture's already-BLOCKED
+    #    state. The isolated scenario starts at pre-review IN_REVIEW and has
+    #    exactly one event: the stale-PASS refusal itself.
+    stale_only_record = copy.deepcopy(record)
+    stale_only_event = copy.deepcopy(stale_refusal)
+    stale_only_event["sequence"] = 1
+    stale_only_event["state_before"] = "IN_REVIEW"
+    stale_only_record["events"] = [stale_only_event]
+    stale_only_record["waves"][0]["status"] = stale_only_event["state_after"]
+    stale_only_record["status"] = "BLOCKED"
+    stale_only_wave = stale_only_record["waves"][0]
+    stale_only_successor = stale_only_record["waves"][1]
+
+    check("stale-only isolated scenario conforms to unmodified canon schema",
+          _validates(stale_only_record, schema), None)
+    check("stale-only scenario has no preceding event or blocker",
+          len(stale_only_record["events"]) == 1
+          and stale_only_event["reason"] == "EVIDENCE_STALE"
+          and stale_only_event["decision"] == "REJECTED",
+          stale_only_record["events"])
+    check("STALE_ONLY_BLOCKING_TRANSITION: EVIDENCE_STALE from IN_REVIEW transitions to CORRECTION or BLOCKED",
+          stale_only_event["state_before"] == "IN_REVIEW"
+          and stale_only_event["state_after"] in {"CORRECTION", "BLOCKED"}
+          and stale_only_wave["status"] == stale_only_event["state_after"],
+          (stale_only_event["state_before"], stale_only_event["state_after"]))
+    check("stale-only refusal keeps final_acceptance null",
+          stale_only_record["final_acceptance"] is None,
+          stale_only_record["final_acceptance"])
+    check("stale-only refusal leaves current wave merge-ineligible",
+          stale_only_record["current_wave_id"] == stale_only_wave["wave_id"]
+          and stale_only_wave["status"] in {"CORRECTION", "BLOCKED"}
+          and stale_only_wave["status"] not in FORBIDDEN_WAVE_STATUSES_WHILE_IAA_UNRESOLVED
+          and not any(ev["stage"] == "MERGE" for ev in stale_only_record["events"]),
+          stale_only_wave["status"])
+    check("stale-only refusal leaves dependent successor PLANNED and undispatched",
+          stale_only_successor["depends_on"] == [stale_only_wave["wave_id"]]
+          and stale_only_successor["status"] == "PLANNED"
+          and stale_only_successor["wave_id"] not in {
+              ev["wave_id"] for ev in stale_only_record["events"]
+          },
+          stale_only_successor)
+    check("stale-only refusal keeps dependent successor ineligible",
+          stale_only_wave["status"] in {"CORRECTION", "BLOCKED"}
+          and stale_only_successor["status"] not in SUCCESSOR_RELEASE_OR_MERGE_STATUSES
+          and not any(
+              ev["wave_id"] == stale_only_successor["wave_id"]
+              and ev["stage"] in {"DISPATCH", "MERGE"}
+              for ev in stale_only_record["events"]
+          ),
+          (stale_only_wave["status"], stale_only_successor["status"]))
 
     print()
     print(f"Passed: {PASS_COUNT}")

@@ -19,9 +19,14 @@ controller, and it is not wired into any CI workflow or runtime.
   outcomes.
 - `validate-rejected-iaa-dedup.test.py` — a Python test runner that validates the fixture
   against the real canon schema and checks consistency of fixture fields and local
-  calculations. Its focused assertions tie stale-PASS/current-fingerprint mismatch to blocked
-  `final_acceptance`, blocked merge eligibility, and an undispatched/ineligible dependent
-  successor. Other assertions cover dedup and modeled counters. They do not exercise durable
+  calculations. In addition to the main fixture's unrelated rejection and reserved-matter
+  coverage, it derives an isolated schema-valid stale-only scenario from the explicit
+  stale-PASS event and binding. That scenario starts in `IN_REVIEW` with no preceding events,
+  and asserts the `EVIDENCE_STALE` refusal itself transitions to `CORRECTION` or `BLOCKED`,
+  keeps `final_acceptance` null and merge ineligible, and leaves the dependent successor
+  `PLANNED`, undispatched, and ineligible. The named
+  `STALE_ONLY_BLOCKING_TRANSITION` assertion fails if the stale event's blocking transition
+  alone is removed. Other assertions cover dedup and modeled counters. None exercise durable
   storage, process restart, evaluator, or controller behavior.
 
 ## Running
@@ -33,14 +38,15 @@ python3 .agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-re
 Expected output:
 
 ```text
-Passed: 24
+Passed: 31
 Failed: 0
 Coverage: schema-valid protocol-model fixture consistency only; active-CS2 evaluator/controller behavior NOT executed or proven.
 ```
 
 Exit code `0` means only that the schema and protocol-model fixture consistency assertions
-passed. It is not evidence that active-CS2 evaluator/controller behavior is executed or
-enforced.
+passed. The isolated scenario is derived and evaluated in the test process; it is not a live
+protocol execution. It is not evidence that active-CS2 evaluator/controller behavior is
+executed or enforced.
 
 ## Why this is not an activation claim
 
