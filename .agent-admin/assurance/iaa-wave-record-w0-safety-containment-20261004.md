@@ -281,6 +281,51 @@ Promote to FAIL-ONLY-ONCE: "any PR adding new `workflow_dispatch` input-gated st
 - **Classification**: Substantive.
 - **Recommended structural prevention**: Promote to FAIL-ONLY-ONCE — "any PR adding new `workflow_dispatch` input-gated step(s) must include at least one real dispatch run (or a properly-invoked S-033 substitute) before IAA final assurance."
 
+### Entry 2 — 2026-10-07 (final substantive reassessment)
+
+- **Binding**: PR #2061 / issue #2053 / work item `W0-2053`, branch
+  `copilot/implement-safety-envelope-containment`; submitted head
+  `045ffd2354e95a578ef2248fbdd3f24d374acc57`. Invoked by CS2 comment
+  `6036068844`. Ceremony-admin: YES; existing ECAP bundle retained.
+- **Classification**: `CI_WORKFLOW` (workflow and executable controller changes), with
+  supplemental `GOVERNANCE_EVIDENCE` checks.
+- **Finding — OVL-CI-001 / OVL-GE-004**: the approved maximum of one material remediation
+  attempt is not enforced across distinct PR-head updates. `initialRegister()` initializes
+  `correction_count: 0` and `max_corrections: 1` (`.github/scripts/pit-cs2-controller.js:92-93`),
+  but `bindPullRequest()` only rejects a different PR and then replaces `submission_head`
+  without incrementing or checking either counter (`:710-721`). On each distinct
+  `pull_request_target` head update, `run()` calls this same bind path (`:1286-1319`).
+  A no-write local probe bound the same PR first to one head and then a different head; the
+  second update was accepted with `correction_count: 0`, `max_corrections: 1`. The register
+  schema only constrains the counter's range; it does not enforce an increment or budget.
+  Thus repeated material corrections can bypass the one-correction limit required by issue
+  #2053. Existing tests cover rejecting a different PR, but do not assert that a second
+  distinct head for the same PR consumes or exceeds the correction budget.
+- **Fix required**: enforce the existing one-use material-correction budget on the
+  authoritative same-PR head-update path: count the correction and fail closed before any
+  register/head write when `max_corrections` is exhausted, or provide equivalent
+  authoritative enforcement. No implementation, scope, or evidence change was made in this
+  invocation; this finding is recorded against the authorized existing scope only.
+- **Classification**: Substantive.
+- **Supporting verification**: IAA independently ran
+  `node --test --test-reporter=tap .github/scripts/pit-cs2-controller.test.js
+  .github/scripts/pit-cs2-controller-workflow.test.js`: 92/92 passed, zero failures,
+  skips, todos, or cancellations. Both W0 JSON schemas parsed; focused workflow YAML lint
+  passed; scope-to-diff exact-set validation passed (17 declared / 17 submitted files).
+  GitHub reports aggregate status success and the required
+  `merge-gate/verdict`, `governance/alignment`, and `stop-and-fix/enforcement` checks green
+  at the bound head. The only in-progress check is the non-required Copilot dynamic task.
+  No workflow was dispatched.
+- **Verdict**: `REJECTION-PACKAGE` — OVL-CI-001 and OVL-GE-004 fail on the same substantive
+  control gap. 29 checks total: 27 PASS, 2 FAIL. `PHASE_B_BLOCKING`; merge blocked.
+- **Handover**: `RCA_REVIEW: REFER_BACK`; `HANDOVER_ALLOWED: no`;
+  `RESULT: REJECTED_BACK_TO_PRODUCER`. Single next substantive correction: enforce the
+  one-correction budget on distinct same-PR head updates.
+- **Token history**: no token issued for head
+  `045ffd2354e95a578ef2248fbdd3f24d374acc57`. Prior rejection and prior token entries
+  above remain unchanged; the earlier token remains bound only to its recorded head,
+  `01e3a866b6c04235378216f8cfc8269ce2c4bd6c`.
+
 ## TOKEN
 
 ### Entry 1 — 2026-10-06 (final independent IAA assurance, bound head `5a3f280`)
