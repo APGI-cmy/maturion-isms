@@ -112,15 +112,6 @@ any_file_matches() {
   return 1
 }
 
-all_files_database_or_evidence() {
-  while IFS= read -r file; do
-    [ -z "$file" ] && continue
-    if is_database_path "$file" || is_evidence_file "$file"; then continue; fi
-    return 1
-  done <<< "$CHANGED_FILES"
-  return 0
-}
-
 all_files_governance_controlled() {
   while IFS= read -r file; do
     [ -z "$file" ] && continue
@@ -216,13 +207,17 @@ CLASS_REASON=""
 if [ "$HAS_APP" = true ] || pr_body_explicit_product_claim; then
   PR_CLASS="APP_FUNCTIONAL_BUILD"
   CLASS_REASON="app/runtime path or explicit product-delivery claim"
-elif all_files_database_or_evidence && [ "$HAS_DB" = true ]; then
+elif [ "$HAS_DB" = true ]; then
+  # A database/security payload is never downgraded to EVIDENCE_ONLY just because
+  # the diff also carries supporting SQL/Python tests, workflow, docs, or admin
+  # files. Those are non-runtime support artifacts, not an app/runtime payload
+  # (already excluded above), so the migration/security evidence gate still applies.
   if pr_body_security_hint || [ "$MANIFEST_CLASS" = "SECURITY_REMEDIATION" ]; then
     PR_CLASS="SECURITY_REMEDIATION"
     CLASS_REASON="database migration with security remediation/advisor context"
   else
     PR_CLASS="DATABASE_MIGRATION"
-    CLASS_REASON="database migration/seed change without app runtime source changes"
+    CLASS_REASON="database migration/seed change (no app runtime source changes); supporting test/workflow/docs/admin files do not downgrade this class"
   fi
 elif all_files_match is_evidence_file; then
   PR_CLASS="EVIDENCE_ONLY"

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/APGI-cmy/maturion-isms/.agent-admin/control/schemas/handover-allowed.schema.json",
   "title": "Foreman Pre-Handover Lane Gate Control",
-  "description": "Machine-readable control artifact used to decide whether Foreman may use handover/completion language at the current HEAD.",
+  "description": "Machine-readable control artifact used to decide whether Foreman may use handover/completion language at the current HEAD. `pr_number` and `current_head_sha` bind this artifact to exactly one live PR/wave; a copy left over from a different (e.g. already-merged) PR is stale and MUST NOT be read as satisfying any other PR's checkpoint (see `pre_iaa_submission_allowed` / `final_cs2_handover_allowed` below, and Foreman FAIL-ONLY-ONCE A-039/A-045).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -11,6 +11,8 @@
     "pr_number",
     "current_head_sha",
     "state",
+    "pre_iaa_submission_allowed",
+    "final_cs2_handover_allowed",
     "handover_allowed",
     "foreman_qp_pass",
     "builder_delegation_verified",
@@ -57,7 +59,18 @@
         "CS2_REVIEW"
       ]
     },
-    "handover_allowed": { "type": "boolean" },
+    "handover_allowed": {
+      "type": "boolean",
+      "description": "DEPRECATED legacy alias, retained for backward compatibility with older consumers. MUST always equal `final_cs2_handover_allowed` — never a bare copy of `pre_iaa_submission_allowed`. New checks should read `final_cs2_handover_allowed` directly."
+    },
+    "pre_iaa_submission_allowed": {
+      "type": "boolean",
+      "description": "True only means: the bundle may now be submitted to IAA for final assurance. Valid true only at state PRE_HANDOVER_GATE_PASS or later. NEVER itself handover, completion, ready-for-review, or merge-readiness language."
+    },
+    "final_cs2_handover_allowed": {
+      "type": "boolean",
+      "description": "True only means: IAA final assurance has returned a current ASSURANCE-TOKEN bound to this exact current_head_sha. This is the first point at which handover/completion language is permitted. Valid true only at state IAA_FINAL_PASS or CS2_REVIEW."
+    },
     "foreman_qp_pass": { "type": "boolean" },
     "builder_delegation_verified": { "type": "boolean" },
     "delegation_precedes_implementation": { "type": "boolean" },

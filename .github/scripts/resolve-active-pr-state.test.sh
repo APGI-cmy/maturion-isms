@@ -28,6 +28,7 @@ run_case() {
   local expected_action="$2"
   local setup_fn="$3"
   local expected_wave_path="${4:-}"
+  local expected_iaa_path="${5:-}"
 
   local ws
   CASE_SEQ=$((CASE_SEQ + 1))
@@ -57,11 +58,15 @@ run_case() {
   actual="$(json_get "$out" next_required_action)"
   local actual_wave
   actual_wave="$(json_get "$out" wave_tasks_path)"
-  if [[ "$actual" == "$expected_action" ]] && { [[ -z "$expected_wave_path" ]] || [[ "$actual_wave" == "$expected_wave_path" ]]; }; then
+  local actual_iaa
+  actual_iaa="$(json_get "$out" iaa_artifact_path)"
+  if [[ "$actual" == "$expected_action" ]] && \
+     { [[ -z "$expected_wave_path" ]] || [[ "$actual_wave" == "$expected_wave_path" ]]; } && \
+     { [[ -z "$expected_iaa_path" ]] || [[ "$actual_iaa" == "$expected_iaa_path" ]]; }; then
     echo "✅ $name"
     PASS=$((PASS+1))
   else
-    echo "❌ $name (expected $expected_action got $actual)"
+    echo "❌ $name (action expected $expected_action got $actual; IAA artifact expected '${expected_iaa_path:-any}' got '${actual_iaa}')"
     cat "$out"
     FAIL=$((FAIL+1))
   fi
@@ -132,7 +137,7 @@ PR: #9001
 WAVE_TASKS_PATH: .agent-admin/prs/pr-9001/wave-current-tasks.md
 WB
   cat > .agent-admin/prs/pr-9001/wave-current-tasks.md <<'WAVE'
-iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-test.md
+iaa_prebrief_path: .agent-admin/assurance/iaa-wave-record-test.md
 PR: #9001
 Branch: feature
 WAVE
@@ -204,7 +209,7 @@ WAVE
 run_case "bootstrap missing artifacts (mismatched legacy wave ignored)" "BOOTSTRAP_REQUIRED" setup_bootstrap_required ".agent-admin/prs/pr-9001/wave-current-tasks.md"
 run_case "identity contradictions block" "BLOCKED" setup_blocked_mismatch
 run_case "substantive delta needs evidence" "EVIDENCE_REQUIRED" setup_evidence_required
-run_case "admin-only delta with bootstrap+evidence passes" "PASS" setup_pass_admin_only
+run_case "admin-only delta resolves active iaa_prebrief_path carrier" "PASS" setup_pass_admin_only "" ".agent-admin/assurance/iaa-wave-record-test.md"
 run_case "pr-scoped wave tasks take precedence over matching legacy copy" "PASS" setup_pr_scoped_preferred ".agent-admin/prs/pr-9001/wave-current-tasks.md"
 run_case "legacy manifest fallback avoids spurious BOOTSTRAP_REQUIRED" "PASS" setup_legacy_manifest_fallback
 run_case "legacy wave-task fallback applies when pr-scoped record is absent" "PASS" setup_legacy_wave_fallback ".agent-workspace/foreman-v2/personal/wave-current-tasks.md"

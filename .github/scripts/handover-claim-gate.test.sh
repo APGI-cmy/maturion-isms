@@ -24,11 +24,17 @@ DETECTION_JS='
 const handoverIntent = require(process.env.INTENT_SCRIPT);
 const GATE_MARKERS = ["<!-- handover-claim-gate-blocked -->", "<!-- handover-claim-gate-ok -->"];
 const CHECKPOINT_REQUIRED_MARKER = "<!-- handover-checkpoint-required -->";
+// GOV-2064-T2: CS2 (apgi-cmy) is the overseer/approver, never the producer. A
+// factual CS2 status/checkpoint request must never be read as the producers
+// own explicit handover/completion claim, regardless of wording. Mirrors
+// .github/workflows/handover-claim-gate.yml CS2_LOGIN / isCs2AuthoredComment.
+const CS2_LOGIN = "apgi-cmy";
 
-const isExplicitHandoverClaimComment = (body) => {
+const isExplicitHandoverClaimComment = (body, authorLogin) => {
   if (!body) return false;
   if (GATE_MARKERS.some(m => body.includes(m))) return false;
   if (body.includes(CHECKPOINT_REQUIRED_MARKER)) return false;
+  if (String(authorLogin || "").toLowerCase() === CS2_LOGIN) return false;
   return handoverIntent.isExplicitHandoverClaimComment(body);
 };
 
@@ -43,14 +49,16 @@ const isCheckpointOrBlockedStatus = (body) => {
 
 const eventName = process.env.EVENT_NAME || "pull_request_target";
 const commentBody = process.env.COMMENT_BODY || "";
+const commentAuthor = process.env.COMMENT_AUTHOR || "";
 const existingComments = JSON.parse(process.env.EXISTING_COMMENTS || "[]");
 const isIssueComment = eventName === "issue_comment";
+const isCs2AuthoredComment = isIssueComment && String(commentAuthor).toLowerCase() === CS2_LOGIN;
 
 let classification;
 
 if (!isIssueComment) {
   // ready_for_review event
-  const hasExplicitClaim = existingComments.some(c => isExplicitHandoverClaimComment(c.body || ""));
+  const hasExplicitClaim = existingComments.some(c => isExplicitHandoverClaimComment(c.body || "", c.author || ""));
   if (!hasExplicitClaim) {
     classification = "CHECKPOINT_REQUIRED";
   } else {
@@ -61,7 +69,10 @@ if (!isIssueComment) {
   // issue_comment event
   if (isCheckpointOrBlockedStatus(commentBody)) {
     classification = "NOT_HANDOVER_CLAIM";
-  } else if (isExplicitHandoverClaimComment(commentBody)) {
+  } else if (isCs2AuthoredComment) {
+    // GOV-2064-T2: factual CS2 status/checkpoint request is never a producer claim.
+    classification = "NOT_HANDOVER_CLAIM";
+  } else if (isExplicitHandoverClaimComment(commentBody, commentAuthor)) {
     // Gate would proceed to check CI state; classify presence of explicit claim
     classification = "EXPLICIT_CLAIM_DETECTED";
   } else {
@@ -79,12 +90,14 @@ run_gate_classification_test() {
   local comment_body="$3"
   local existing_comments_json="$4"
   local expected_classification="$5"
+  local comment_author="${6:-}"
 
   local actual
   actual="$(
     INTENT_SCRIPT="$INTENT_SCRIPT" \
     EVENT_NAME="$event_name" \
     COMMENT_BODY="$comment_body" \
+    COMMENT_AUTHOR="$comment_author" \
     EXISTING_COMMENTS="$existing_comments_json" \
     node -e "$DETECTION_JS"
   )"
@@ -302,6 +315,47 @@ run_gate_classification_test \
   "[]" \
   "NOT_HANDOVER_CLAIM"
 
+echo ""
+echo "Scenario 7 (GOV-2064-T2 bullet d): CS2 status/checkpoint request is never a producer completion claim"
+
+run_gate_classification_test \
+  "T2-D1: issue_comment, CS2-authored, claim-like wording ('merge-ready, is this handover complete?') → NOT_HANDOVER_CLAIM" \
+  "issue_comment" \
+  "merge-ready — is this handover complete? Please confirm current status." \
+  "[]" \
+  "NOT_HANDOVER_CLAIM" \
+  "apgi-cmy"
+
+run_gate_classification_test \
+  "T2-D2: issue_comment, CS2-authored (mixed case login), explicit claim wording → NOT_HANDOVER_CLAIM" \
+  "issue_comment" \
+  "handover-ready — all checks green, ready to merge" \
+  "[]" \
+  "NOT_HANDOVER_CLAIM" \
+  "APGI-CMY"
+
+run_gate_classification_test \
+  "T2-D3 (control): identical claim wording from a NON-CS2 (producer) author → EXPLICIT_CLAIM_DETECTED (no blanket weakening)" \
+  "issue_comment" \
+  "merge-ready — is this handover complete? Please confirm current status." \
+  "[]" \
+  "EXPLICIT_CLAIM_DETECTED" \
+  "some-producer-bot"
+
+run_gate_classification_test \
+  "T2-D4: ready_for_review, only a CS2-authored prior comment with claim-like wording exists → CHECKPOINT_REQUIRED (not read back as producer's own prior claim)" \
+  "pull_request_target" \
+  "" \
+  '[{"body":"merge-ready: is this PR done yet? status check.","author":"apgi-cmy"}]' \
+  "CHECKPOINT_REQUIRED"
+
+run_gate_classification_test \
+  "T2-D5 (control): ready_for_review, identical wording from a non-CS2 prior comment → HANDOVER_BLOCKED (producer's own claim still enforced)" \
+  "pull_request_target" \
+  "" \
+  '[{"body":"merge-ready: is this PR done yet? status check.","author":"some-producer-bot"}]' \
+  "HANDOVER_BLOCKED"
+
 # ── Protected-path ECAP classification tests ─────────────────────────────────
 # These tests validate the inline protected-path detection logic that mirrors
 # the workflow's PROTECTED_PATH_PATTERNS and ECAP evidence detection.
@@ -444,6 +498,202 @@ run_protected_path_test \
   '["governance/canon/ECOSYSTEM_VOCABULARY.md", ".agent-workspace/foreman-v2/memory/PREHANDOVER-session-058-wave9.1-20260514.md", ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-9999-test.md"]' \
   "true" \
   "yes" "yes" "no" "CHECKPOINT_REQUIRED"
+
+# ── Required-checks class-scoping tests (GOV-2064-T2 bullet b) ───────────────
+# Mirrors .github/workflows/handover-claim-gate.yml's REQUIRED_CHECKS /
+# IAA_SCOPED_CHECKS / ECAP_SCOPED_CHECKS / applicableRequiredChecks logic:
+# the canonical REQUIRED_CHECKS catalog (and its length, used for
+# REQUIRED_CHECKS_TOTAL reconciliation) is untouched, but a check that this
+# PR's resolved class does not require (requires_iaa=false / requires_ecap=false)
+# must not be inventoried as "missing" purely because an absent legacy
+# manifest would otherwise default to requiring everything.
+CHECKS_SCOPE_JS='
+const REQUIRED_CHECKS = [
+  "preflight/phase-1-evidence",
+  "preflight/admin-control-router",
+  "preflight/iaa-prebrief-existence",
+  "preflight/iaa-token-self-certification",
+  "preflight/hfmc-ripple-presence",
+  "preflight/evidence-exactness",
+  "preflight/iaa-final-assurance",
+  "preflight/ecap-admin-ceremony",
+  "preflight/scope-declaration-parity",
+  "preflight/mmm-pr-admin",
+  "preflight/product-delivery-gates",
+  "preflight/gate-changing-pr-rule",
+];
+const IAA_SCOPED_CHECKS = new Set([
+  "preflight/iaa-prebrief-existence",
+  "preflight/iaa-token-self-certification",
+  "preflight/iaa-final-assurance",
+]);
+const ECAP_SCOPED_CHECKS = new Set([
+  "preflight/ecap-admin-ceremony",
+]);
+const requiresIaa = process.env.REQUIRES_IAA === "true";
+const requiresEcap = process.env.REQUIRES_ECAP === "true";
+const observedNames = new Set(JSON.parse(process.env.OBSERVED_CHECKS || "[]"));
+
+const applicableRequiredChecks = REQUIRED_CHECKS.filter((name) => {
+  if (IAA_SCOPED_CHECKS.has(name)) return requiresIaa;
+  if (ECAP_SCOPED_CHECKS.has(name)) return requiresEcap;
+  return true;
+});
+const missing = applicableRequiredChecks.filter((req) => !observedNames.has(req));
+
+process.stdout.write(JSON.stringify({
+  requiredChecksTotal: REQUIRED_CHECKS.length,
+  applicableCount: applicableRequiredChecks.length,
+  missing,
+}));
+'
+
+run_required_checks_scope_test() {
+  local name="$1"
+  local requires_iaa="$2"
+  local requires_ecap="$3"
+  local observed_checks_json="$4"
+  local expected_required_checks_total="$5"
+  local expected_applicable_count="$6"
+  local expected_missing_json="$7"
+
+  local output actual_total actual_applicable actual_missing
+  output="$(
+    REQUIRES_IAA="$requires_iaa" \
+    REQUIRES_ECAP="$requires_ecap" \
+    OBSERVED_CHECKS="$observed_checks_json" \
+    node -e "$CHECKS_SCOPE_JS"
+  )"
+
+  actual_total="$(printf '%s' "$output" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>process.stdout.write(String(JSON.parse(d).requiredChecksTotal)))')"
+  actual_applicable="$(printf '%s' "$output" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>process.stdout.write(String(JSON.parse(d).applicableCount)))')"
+  actual_missing="$(printf '%s' "$output" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>process.stdout.write(JSON.stringify(JSON.parse(d).missing)))')"
+
+  if [[ "$actual_total" == "$expected_required_checks_total" && \
+        "$actual_applicable" == "$expected_applicable_count" && \
+        "$actual_missing" == "$expected_missing_json" ]]; then
+    echo "✅ $name"
+    PASS=$((PASS + 1))
+  else
+    echo "❌ $name"
+    echo "   requiredChecksTotal=$actual_total (expected $expected_required_checks_total)"
+    echo "   applicableCount=$actual_applicable (expected $expected_applicable_count)"
+    echo "   missing=$actual_missing (expected $expected_missing_json)"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+echo ""
+echo "Scenario 8 (GOV-2064-T2 bullet b): required-check derivation is class-scoped, not unconditional-default-to-all"
+
+run_required_checks_scope_test \
+  "T2-B1: legacy/no-manifest, product-only class (requires_iaa=false, requires_ecap=false), no IAA/ECAP checks observed → NOT missing (class doesn't require them)" \
+  "false" "false" \
+  '["preflight/phase-1-evidence","preflight/admin-control-router","preflight/hfmc-ripple-presence","preflight/evidence-exactness","preflight/scope-declaration-parity","preflight/mmm-pr-admin","preflight/product-delivery-gates","preflight/gate-changing-pr-rule"]' \
+  "12" "8" "[]"
+
+run_required_checks_scope_test \
+  "T2-B2 (control): legacy PR that DOES touch governance-control paths (requires_iaa=true, requires_ecap=true), IAA/ECAP checks absent → correctly flagged missing (genuine requirement still enforced)" \
+  "true" "true" \
+  '["preflight/phase-1-evidence","preflight/admin-control-router","preflight/hfmc-ripple-presence","preflight/evidence-exactness","preflight/scope-declaration-parity","preflight/mmm-pr-admin","preflight/product-delivery-gates","preflight/gate-changing-pr-rule"]' \
+  "12" "12" '["preflight/iaa-prebrief-existence","preflight/iaa-token-self-certification","preflight/iaa-final-assurance","preflight/ecap-admin-ceremony"]'
+
+run_required_checks_scope_test \
+  "T2-B3: requires_iaa=false but requires_ecap=true (mixed class) — only ECAP check enforced, IAA checks excluded from applicable set" \
+  "false" "true" \
+  '["preflight/phase-1-evidence","preflight/admin-control-router","preflight/hfmc-ripple-presence","preflight/evidence-exactness","preflight/scope-declaration-parity","preflight/mmm-pr-admin","preflight/product-delivery-gates","preflight/gate-changing-pr-rule"]' \
+  "12" "9" '["preflight/ecap-admin-ceremony"]'
+
+run_required_checks_scope_test \
+  "T2-B4: REQUIRED_CHECKS_TOTAL (canonical catalog length) is unaffected by class — always 12 regardless of requires_iaa/requires_ecap" \
+  "false" "false" \
+  '[]' \
+  "12" "8" '["preflight/phase-1-evidence","preflight/admin-control-router","preflight/hfmc-ripple-presence","preflight/evidence-exactness","preflight/scope-declaration-parity","preflight/mmm-pr-admin","preflight/product-delivery-gates","preflight/gate-changing-pr-rule"]'
+
+# ── Manifest-read failure and governance-classification regressions ───────────
+# Mirrors the inline manifest resolver and legacy path classifier in
+# handover-claim-gate.yml. Only a GitHub 404 is treated as absence; malformed
+# payloads and API/read failures retain strict IAA/ECAP requirements.
+MANIFEST_RESOLUTION_JS='
+const { resolveAdminManifest, classifyNoManifestFiles } = require(process.env.ADMIN_MANIFEST_HELPER);
+const mode = process.env.MANIFEST_TEST_MODE;
+const files = JSON.parse(process.env.MANIFEST_TEST_FILES || "[]");
+let calls = 0;
+
+async function resolveManifest() {
+  return resolveAdminManifest({
+    prNumber: 9999,
+    getContent: async (manifestPath) => {
+    calls += 1;
+      if (mode === "malformed") {
+        return { data: { type: "file", content: Buffer.from("{not-json").toString("base64") } };
+      } else if (mode === "unreadable") {
+        return { data: { type: "dir" } };
+      } else if (mode === "api-error") {
+        throw Object.assign(new Error("Unavailable"), { status: 503 });
+      } else {
+        throw Object.assign(new Error("Not Found"), { status: 404 });
+      }
+    },
+  });
+}
+
+(async () => {
+  const result = await resolveManifest();
+  const failClosed = Boolean(result.failure);
+  const noManifestClass = Boolean(result.confirmedAbsent);
+  const legacyClass = noManifestClass ? classifyNoManifestFiles(files) : null;
+  const requiresIaa = failClosed || Boolean(legacyClass?.requiresIaa);
+  const requiresEcap = failClosed || Boolean(legacyClass?.requiresEcap);
+  const touchesGovernance = Boolean(legacyClass?.touchesGovernanceControlPaths);
+  const checks = {
+    malformed: result.failure?.startsWith("Invalid or unreadable PR admin manifest .admin/prs/pr-9999.json:") &&
+      failClosed && requiresIaa && requiresEcap && calls === 1,
+    unreadable: result.failure === "Invalid or unreadable PR admin manifest .admin/prs/pr-9999.json: GitHub content response did not contain a readable file payload." &&
+      failClosed && requiresIaa && requiresEcap && calls === 1,
+    "api-error": result.failure === "Unable to read PR admin manifest .admin/prs/pr-9999.json: GitHub API request failed (HTTP 503)." &&
+      failClosed && requiresIaa && requiresEcap && calls === 1,
+    absence: noManifestClass && !result.failure && !touchesGovernance && !requiresIaa && !requiresEcap && calls === 2,
+    "agent-admin-classification": noManifestClass && touchesGovernance && requiresIaa && requiresEcap,
+    "agent-md-classification": noManifestClass && touchesGovernance && requiresIaa && requiresEcap,
+  };
+  const scenario = mode === "malformed" ? "malformed" :
+    mode === "unreadable" ? "unreadable" :
+    mode === "api-error" ? "api-error" :
+    mode === "absence" ? "absence" :
+    mode === "agent-admin" ? "agent-admin-classification" : "agent-md-classification";
+  if (!checks[scenario]) {
+    console.error(`${scenario} failed: ${JSON.stringify({ result, calls, legacyClass, requiresIaa, requiresEcap })}`);
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`✅ manifest resolution: ${scenario}`);
+})();
+'
+
+run_manifest_resolution_test() {
+  local name="$1"
+  local mode="$2"
+  local files_json="$3"
+  if ADMIN_MANIFEST_HELPER="${SCRIPT_DIR}/handover-admin-manifest.js" \
+     MANIFEST_TEST_MODE="$mode" \
+     MANIFEST_TEST_FILES="$files_json" \
+     node -e "$MANIFEST_RESOLUTION_JS"; then
+    PASS=$((PASS + 1))
+  else
+    echo "❌ $name"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+echo ""
+echo "Scenario 9 (GOV-2064-T2): manifest reads fail closed, governance-control paths retain IAA/ECAP"
+run_manifest_resolution_test "malformed manifest fails closed" "malformed" '[]'
+run_manifest_resolution_test "unreadable manifest response fails closed" "unreadable" '[]'
+run_manifest_resolution_test "API read error fails closed" "api-error" '[]'
+run_manifest_resolution_test "confirmed 404 permits non-governance legacy classification" "absence" '["README.md"]'
+run_manifest_resolution_test "agent-admin paths remain governance-control" "agent-admin" '[".agent-admin/policy.md"]'
+run_manifest_resolution_test "agent.md paths remain governance-control" "agent-md" '["docs/security.agent.md"]'
 
 echo ""
 echo "=== Results: ${PASS} passed, ${FAIL} failed ==="

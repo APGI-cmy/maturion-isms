@@ -28,11 +28,12 @@ exists, validates against:
 .agent-admin/control/schemas/handover-allowed.schema.json
 ```
 
-and contains:
+belongs to the **current** PR (its `pr_number` and `current_head_sha` must match the live PR under evaluation — a leftover control artifact from a different, already-closed/merged PR or wave is stale and does not satisfy this rule for the current PR), and contains:
 
 ```yaml
-state: PRE_HANDOVER_GATE_PASS
-handover_allowed: true
+state: IAA_FINAL_PASS   # or CS2_REVIEW
+final_cs2_handover_allowed: true
+handover_allowed: true   # legacy alias; must equal final_cs2_handover_allowed
 current_head_sha: <current PR head SHA>
 foreman_qp_pass: true
 iaa_prebrief_ready: true
@@ -40,6 +41,8 @@ scope_current: true
 all_required_checks_green: true
 blocking_findings: []
 ```
+
+Reaching `state: PRE_HANDOVER_GATE_PASS` with `pre_iaa_submission_allowed: true` is a **distinct, lesser** signal meaning only "this bundle may now be submitted to IAA for final assurance." It is never itself handover or completion language and does not satisfy this rule; `final_cs2_handover_allowed` stays `false` at that state (see Foreman Tier 2 `foreman-tier2-operating-protocol.md` §§6-7).
 
 If implementation files changed, the artifact must also contain:
 
@@ -64,7 +67,7 @@ Completion language includes:
 - released
 - done
 
-The CI gate scans changed Foreman/ECAP handover artifacts for this language. It does not scan the entire repository and does not treat strategy/control documentation as a handover claim.
+The CI gate scans changed Foreman/ECAP handover artifacts for this language. It does not scan the entire repository and does not treat strategy/control documentation as a handover claim. Stating `state: PRE_HANDOVER_GATE_PASS` (submission-only) is not itself scanned as completion language — only genuine final-state claims (`IAA_FINAL_PASS`, `CS2_REVIEW`, `handover_allowed: true`, `final_cs2_handover_allowed: true`, or the literal completion words above) trip the scan.
 
 ---
 
@@ -107,3 +110,11 @@ Script:
 ## 6. Scope discipline
 
 This overlay intentionally does not rewrite the Foreman contract body. It is a Wave 2 scoped control overlay and may be integrated into Foreman Tier 1 during Wave 5, or into merge-gate inventory during Wave 6.
+
+---
+
+## 7. Change log
+
+| Date | Change |
+|------|--------|
+| 2026-10-05 | §2/§3 updated to require `final_cs2_handover_allowed: true` (state `IAA_FINAL_PASS`/`CS2_REVIEW`) for genuine handover/completion language, and to explicitly state that `PRE_HANDOVER_GATE_PASS` + `pre_iaa_submission_allowed: true` is submission-to-IAA-only and never itself handover/completion language. Added the stale-control-artifact (`pr_number`/`current_head_sha` must match the live PR) rule. Wave: GOV-2064-T4 (issue #2064, PR #2065). |

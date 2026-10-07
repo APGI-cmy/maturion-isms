@@ -210,6 +210,10 @@ for (const check of checks) {
     console.error(`${check.field} missing substring: ${check.contains}; actual=${actual}`);
     ok = false;
   }
+  if (check.notContains && actual.includes(check.notContains)) {
+    console.error(`${check.field} unexpectedly contains substring: ${check.notContains}; actual=${actual}`);
+    ok = false;
+  }
 }
 
 process.exit(ok ? 0 : 1);
@@ -1424,6 +1428,350 @@ IAA_REQUIRED: yes
 HANDOVER_ALLOWED: yes
 RESULT: HANDOVER_ALLOWED" \
   "true"
+
+# ── GOV-2064-T2 regressions ───────────────────────────────────────────────────
+# RCA: .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md
+# CS2 handback (PR #2065 comment 5993621656).
+
+setup_identity_binding_ignores_cross_pr_archive() {
+  seed_manifest_and_scope
+  seed_checkpoint_artifacts
+  seed_green_checks
+  # seed_checkpoint_artifacts() already set TEST_HEAD_SHA_OVERRIDE to the SHA
+  # that all checkpoint artifacts above were stamped with (the commit parent
+  # at the time those files were written) — reuse that same value rather than
+  # re-reading git HEAD now, since this function's own commit below advances
+  # the actual git tree hash further.
+  local head_sha="$TEST_HEAD_SHA_OVERRIDE"
+  # An unrelated archival assurance record explicitly bound to a DIFFERENT PR
+  # (#1111) but sharing this PR's issue and branch context, with a stale SHA.
+  # No active-state.json exists
+  # for this PR, so resolver-selected artifacts are absent and broad
+  # compatibility discovery runs across the whole .agent-admin/assurance
+  # directory — this historical cross-PR file must not be read as if it
+  # bound PR #9999's identity. Scope FILES_CHANGED is bumped to 6 to account
+  # for this additional seeded file so the scope-parity check (unrelated to
+  # this regression) stays green; TEST_HEAD_SHA_OVERRIDE is intentionally left
+  # unchanged so the already-seeded checkpoint artifacts (stamped at the prior
+  # head) remain current — only the unrelated archive is added afterward.
+  cat > .agent-admin/scope-declarations/pr-9999.md <<EOF
+# Scope Declaration — PR #9999
+PR_NUMBER: 9999
+ISSUE: #1583
+FILES_CHANGED: 6
+CURRENT_HEAD_SHA: ${head_sha}
+EOF
+  cat > .agent-admin/assurance/iaa-wave-record-other-pr.md <<'EOF'
+## PRE-BRIEF
+PR: #1111
+Issue: #1583
+Branch: copilot/test-checkpoint
+
+## TOKEN
+**PR**: #1111
+**Issue**: maturion-isms#1583
+**Branch**: copilot/test-checkpoint
+**Reviewed SHA**: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+PHASE_B_BLOCKING_TOKEN: IAA-session-other-pr-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  git add .agent-admin/scope-declarations/pr-9999.md .agent-admin/assurance/iaa-wave-record-other-pr.md
+  git commit -q -m "seed unrelated archival PR #1111 assurance record"
+}
+run_checkpoint_field_test \
+  "31. identity-binding ignores an unrelated archival record from another PR" \
+  setup_identity_binding_ignores_cross_pr_archive \
+  "HANDOVER_ALLOWED" \
+  "yes" \
+  '[
+    {"field":"HANDOVER_ALLOWED","equals":"yes"},
+    {"field":"RESULT","equals":"HANDOVER_ALLOWED"},
+    {"field":"ACTIVE_PR_IDENTITY_BINDING","equals":"PASS"},
+    {"field":"STALE_EVIDENCE_FOUND","equals":"no"}
+  ]'
+
+setup_wave_record_pass_without_evidence_only_commit() {
+  seed_manifest_and_scope
+  seed_green_checks
+  local head_sha
+  head_sha="$(git rev-parse HEAD)"
+  # An immutable pre-token carrier: an earlier PRE-BRIEF-only record for this
+  # same PR, deliberately stale/historical. The regression proves the
+  # checkpoint does not require editing it once a current PASS token exists
+  # elsewhere in the wave record — it is seeded here and never touched again.
+  cat > .agent-admin/assurance/iaa-prebrief-pr-9999.md <<'EOF'
+## PRE-BRIEF
+PR: #9999
+Issue: maturion-isms#1583
+CURRENT_HEAD_SHA: 0000000000000000000000000000000000pre0
+Acknowledged ahead of final review.
+EOF
+  # Scope FILES_CHANGED is bumped from 5 to 6 to account for this regression's
+  # one additional seeded file (the immutable pre-token carrier) beyond the
+  # baseline manifest/scope/proof/bundle/token-record set.
+  cat > .agent-admin/scope-declarations/pr-9999.md <<EOF
+# Scope Declaration — PR #9999
+PR_NUMBER: 9999
+ISSUE: #1583
+FILES_CHANGED: 6
+CURRENT_HEAD_SHA: ${head_sha}
+EOF
+  git add .agent-admin/assurance/iaa-prebrief-pr-9999.md .agent-admin/scope-declarations/pr-9999.md
+  git commit -q -m "seed immutable pre-token carrier"
+  head_sha="$(git rev-parse HEAD)"
+  # The CURRENT, PR-bound PASS token lives directly in the accepted wave-record
+  # location (.agent-admin/assurance/iaa-wave-record-*.md with a ## TOKEN
+  # section) plus the ECAP ceremony evidence, all stamped to this one final
+  # commit's head — this is the authoritative final-state location per the
+  # RCA; no separate dedicated token file or additional evidence-only/
+  # SHA-refresh commit is created or required beyond this single commit.
+  cat > .agent-admin/assurance/iaa-wave-record-test.md <<EOF
+## TOKEN
+**PR**: #9999
+**Issue**: maturion-isms#1583
+**Reviewed SHA**: ${head_sha}
+PHASE_B_BLOCKING_TOKEN: IAA-session-test-PASS
+ADMIN_PASS: yes
+FUNCTIONAL_PASS: yes
+VERDICT: FULL_FUNCTIONAL_DELIVERY
+EOF
+  cat > .agent-admin/prehandover/proof-test.md <<EOF
+gate_snapshot_head_sha: ${head_sha}
+post_push_head_sha: ${head_sha}
+ecap_invoked: yes
+admin_ceremony_compliance: PASS
+iaa_audit_token: .agent-admin/assurance/iaa-wave-record-test.md
+EOF
+  cat > .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md <<EOF
+CURRENT_HEAD_SHA: ${head_sha}
+ecap_session: ecap-session-test
+ecap_verdict: PASS
+EOF
+  git add .agent-admin/assurance/iaa-wave-record-test.md .agent-admin/prehandover/proof-test.md .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-test.md
+  git commit -q -m "add current PR-bound PASS token to wave record"
+  # Use the pre-commit head_sha that was actually stamped into the files
+  # above (not a fresh re-read of git HEAD, which has now advanced one commit
+  # further) — this mirrors seed_checkpoint_artifacts()'s own convention.
+  TEST_HEAD_SHA_OVERRIDE="$head_sha"
+}
+run_checkpoint_field_test \
+  "32. current PR-bound PASS token in wave-record location is recognized without a new evidence-only commit" \
+  setup_wave_record_pass_without_evidence_only_commit \
+  "HANDOVER_ALLOWED" \
+  "yes" \
+  '[
+    {"field":"HANDOVER_ALLOWED","equals":"yes"},
+    {"field":"RESULT","equals":"HANDOVER_ALLOWED"},
+    {"field":"IAA_ARTIFACT_CURRENT","equals":"yes"}
+  ]'
+
+# Bullet (f): the identity-binding scoping fix above must NOT silently suppress
+# a genuine identity mismatch for the CURRENT PR itself (e.g. the manifest
+# declares the wrong PR number) — this remains a real, blocking defect.
+setup_genuine_identity_mismatch_still_blocks() {
+  seed_checkpoint_artifacts
+  seed_green_checks
+  cat > .admin/prs/pr-9999.json <<'EOF'
+{
+  "pr": 1234,
+  "issue": 1583,
+  "type": "governance-change",
+  "owner": "Copilot",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "merge_authority": "CS2"
+}
+EOF
+  cat > .agent-admin/scope-declarations/pr-9999.md <<'EOF'
+# Scope Declaration — PR #9999
+PR_NUMBER: 9999
+ISSUE: #1583
+FILES_CHANGED: 5
+EOF
+  git add .admin/prs/pr-9999.json .agent-admin/scope-declarations/pr-9999.md
+  git commit -q -m "seed manifest declaring the wrong PR number (genuine defect)"
+}
+run_checkpoint_test \
+  "33. manifest declaring a different PR number -> STOP_AND_FIX (genuine identity mismatch still blocks)" \
+  "STOP_AND_FIX" "no" "Active PR identity binding mismatch" setup_genuine_identity_mismatch_still_blocks
+
+setup_same_pr_stale_evidence_still_blocks() {
+  setup_green_checkpoint
+  # A proof artifact that DOES explicitly bind to the active PR (#9999)
+  # but carries a stale SHA must still be flagged stale — proving that
+  # isForeignPrArtifact() (added for GOV-2064-T2) only excludes archives
+  # that are bound to a DIFFERENT PR, never this PR's own evidence, even
+  # when that evidence explicitly names its own PR number.
+  cat > .agent-admin/prehandover/proof-test.md <<'EOF'
+PR: #9999
+gate_snapshot_head_sha: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+post_push_head_sha: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+ecap_invoked: yes
+admin_ceremony_compliance: PASS
+iaa_audit_token: .agent-admin/assurance/iaa-wave-record-test.md
+EOF
+  git add .agent-admin/prehandover/proof-test.md
+  git commit -q -m "stale ecap proof explicitly bound to the active PR"
+}
+run_checkpoint_test \
+  "34. stale SHA in a same-PR-bound ECAP artifact still blocks (no over-exclusion by GOV-2064-T2 fix)" \
+  "STOP_AND_FIX" "no" "stale against current HEAD" setup_same_pr_stale_evidence_still_blocks
+
+setup_alternate_admin_record_non_governance_legacy_payload() {
+  seed_green_checks
+  mkdir -p .agent-admin/prs/pr-9999
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+**CS2 Authorization**: GOV-2064 bounded task appointment
+WAVE
+  git add .agent-admin/prs/pr-9999/wave-current-tasks.md
+  git commit -q -m "seed recognized alternate admin record"
+  TEST_CHANGED_FILES_JSON='["README.md"]'
+}
+run_checkpoint_field_test \
+  "35. recognized alternate admin record permits non-governance legacy payload without IAA/ECAP or missing-manifest reason" \
+  setup_alternate_admin_record_non_governance_legacy_payload \
+  "HANDOVER_ALLOWED" \
+  "yes" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"no"},
+    {"field":"IAA_REQUIRED","equals":"no"},
+    {"field":"ECAP_REQUIRED","equals":"no"},
+    {"field":"REASON","notContains":"PR admin manifest missing."}
+  ]'
+
+setup_alternate_admin_record_governance_control_payload() {
+  mkdir -p .agent-admin/prs/pr-9999
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+**CS2 Authorization**: GOV-2064 bounded task appointment
+WAVE
+  git add .agent-admin/prs/pr-9999/wave-current-tasks.md
+  git commit -q -m "seed recognized alternate admin record"
+  TEST_CHANGED_FILES_JSON='[".agent-admin/policies/control.md"]'
+}
+run_checkpoint_field_test \
+  "36. recognized alternate admin record does not suppress IAA/ECAP for governance-control payload" \
+  setup_alternate_admin_record_governance_control_payload \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"no"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."},
+    {"field":"REASON","notContains":"PR admin manifest missing."}
+  ]'
+
+setup_alternate_admin_record_agent_md_payload() {
+  mkdir -p .agent-admin/prs/pr-9999
+  cat > .agent-admin/prs/pr-9999/wave-current-tasks.md <<'WAVE'
+PR: #9999
+Issue: #1583
+Branch: copilot/test-checkpoint
+CS2 Authorization: GOV-2064 bounded task appointment
+WAVE
+  git add .agent-admin/prs/pr-9999/wave-current-tasks.md
+  git commit -q -m "seed recognized alternate admin record"
+  TEST_CHANGED_FILES_JSON='["docs/security.agent.md"]'
+}
+run_checkpoint_field_test \
+  "37. recognized alternate admin record does not suppress IAA/ECAP for *.agent.md control payload" \
+  setup_alternate_admin_record_agent_md_payload \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"no"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."},
+    {"field":"REASON","notContains":"PR admin manifest missing."}
+  ]'
+
+setup_alternate_admin_record_malformed_per_pr_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  printf '{ malformed manifest\n' > .admin/prs/pr-9999.json
+}
+run_checkpoint_field_test \
+  "38. malformed per-PR manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_malformed_per_pr_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/prs/pr-9999.json: contains malformed JSON"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
+
+setup_alternate_admin_record_unreadable_per_pr_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  rm -f .admin/prs/pr-9999.json
+  mkdir .admin/prs/pr-9999.json
+}
+run_checkpoint_field_test \
+  "39. unreadable per-PR manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_unreadable_per_pr_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/prs/pr-9999.json: could not be read (EISDIR)"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
+
+setup_alternate_admin_record_malformed_legacy_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  printf '{ malformed legacy manifest\n' > .admin/pr.json
+}
+run_checkpoint_field_test \
+  "40. malformed legacy manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_malformed_legacy_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/pr.json: contains malformed JSON"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
+
+setup_alternate_admin_record_unreadable_legacy_manifest() {
+  setup_alternate_admin_record_non_governance_legacy_payload
+  mkdir .admin/pr.json
+}
+run_checkpoint_field_test \
+  "41. unreadable legacy manifest blocks despite recognized alternate admin record" \
+  setup_alternate_admin_record_unreadable_legacy_manifest \
+  "STOP_AND_FIX" \
+  "no" \
+  '[
+    {"field":"ADMIN_MANIFEST_APPLICABLE","equals":"yes"},
+    {"field":"PR_MANIFEST_RESOLUTION","equals":"invalid"},
+    {"field":"IAA_REQUIRED","equals":"yes"},
+    {"field":"ECAP_REQUIRED","equals":"yes"},
+    {"field":"REASON","contains":"PR admin manifest resolution failed at .admin/pr.json: could not be read (EISDIR)"},
+    {"field":"REASON","contains":"IAA pre-brief artifact missing."},
+    {"field":"REASON","contains":"ECAP artifact missing while ECAP is required."}
+  ]'
 
 echo ""
 echo "Passed: $PASS_COUNT"

@@ -117,6 +117,16 @@ function classifyPostHandover({
   const missing = splitList(fields.MISSING_CHECKS);
   const requiresEcapFalse = manifest && manifest.requires_ecap === false;
   const governanceFilesChanged = (changedFiles || []).some((filePath) => GOVERNANCE_CONTROL_PATTERNS.some((pattern) => pattern.test(filePath)));
+  // GOV-2064-T2: a missing manifest is only a defect when a manifest is
+  // actually applicable to this PR's class (e.g. not a legacy/pre-manifest-era
+  // PR, or a PR class recognized as tracked through an alternate CS2-authorized
+  // admin record — see pre-handover-checkpoint.js's ADMIN_MANIFEST_APPLICABLE
+  // field and .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2065.md).
+  // Default to "applicable" (the original strict behavior) when the field is
+  // absent from fields entirely, so other/older callers are unaffected.
+  const manifestApplicable = fields.ADMIN_MANIFEST_APPLICABLE === undefined
+    ? true
+    : isYes(fields.ADMIN_MANIFEST_APPLICABLE);
 
   const allGreen = isYes(fields.HANDOVER_ALLOWED)
     && normalize(fields.RESULT) === 'handover_allowed'
@@ -137,7 +147,7 @@ function classifyPostHandover({
     };
   }
 
-  if (!manifest || (requiresEcapFalse && governanceFilesChanged)) {
+  if ((!manifest && manifestApplicable) || (requiresEcapFalse && governanceFilesChanged)) {
     return {
       handoverAccepted: false,
       readyForHumanEvaluation: false,
