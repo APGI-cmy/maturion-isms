@@ -9,50 +9,21 @@ IAA_PREFLIGHT_BRIEF:
   pr: "#2065"
   issue: "#2064 — Prevent rejected-IAA handover and wrong-class admin loops in Foreman–IAA–CS2 control chain"
   branch: "copilot/prevent-rejected-iaa-handover"
-  repository: "APGI-cmy/maturion-isms"
-  submitted_head_sha: "6cdf1bf99a6a3e36dedb2ad5b3478c2cfa3578bc"
+  current_head_sha: "6cdf1bf99a6a3e36dedb2ad5b3478c2cfa3578bc"
   work_item_id: "issue-2064"
-  bound_task_record: ".agent-admin/prs/pr-2065/wave-current-tasks.md"
   qualifying_tasks:
     - task_id: "GOV-2064-T1"
       summary: "Correct protected Foreman, IAA, and active-CS2 Tier 1 contracts (`.github/agents/foreman-v2-agent.md`, `.github/agents/independent-assurance-agent.md`, `.github/agents/active-cs2-agent.md`) for rejected-assurance and class-first control flow, including the Foreman §4/§6 pre-IAA-vs-final-handover state split."
-      assigned_builder: "CodexAdvisor-agent"
       assurance_category: "AGENT_CONTRACT"
-      note: "IAA must neither edit nor assure its own contract (`independent-assurance-agent.md`). Any change to that file in this PR must be escalated to CS2 for direct review, not self-certified by IAA."
     - task_id: "GOV-2064-T2"
       summary: "Correct PR-class detection in `.github/scripts/validate-product-delivery-gates.sh` (gate router) so a migration/security payload never falls through to EVIDENCE_ONLY when mixed with tests/workflow/docs/admin files, plus focused regression tests for mixed migration/security payload classification."
-      assigned_builder: "qa-builder"
       assurance_category: "CI_WORKFLOW (gate/merge-router script — treated as mandatory-trigger infrastructure under the AMBIGUITY RULE; not a literal `.github/workflows/` path but functionally equivalent merge-gate classification logic)"
     - task_id: "GOV-2064-T3"
       summary: "Align active-CS2 Tier 1 (`merge-and-refusal-protocol.md`), Tier 2 (`evidence-review-and-correction-protocol.md`), and Tier 3 (job-wave schema/evaluator) rejection-deduplication, bounded-correction, and refusal behavior so rejected/missing/stale IAA produces a typed refusal with no completion/merge/successor dispatch."
-      assigned_builder: "active-cs2-agent"
       assurance_category: "KNOWLEDGE_GOVERNANCE (`.agent-workspace/active-cs2-agent/knowledge/` and continuity/runtime bundle files) — remains CONTRACT_READY / INACTIVE scope only; no activation claim permitted"
     - task_id: "GOV-2064-T4"
       summary: "Align Foreman Tier 2 operating/index and FAIL-ONLY-ONCE registry (duplicate-finding/retry rule, A-019/A-039 reconciliation) and the Tier 3 checkpoint field split (`pre_iaa_submission_allowed` vs `final_cs2_handover_allowed` in `.agent-admin/control/handover-allowed.json`); verify whether the local OPOJD copy (v2.0) is behind the publisher's v2.1 and, if so, execute the normal published layer-down route only."
-      assigned_builder: "governance-liaison-isms-agent"
       assurance_category: "LIAISON_ADMIN / CANON_GOVERNANCE (published canon layer-down verification; local OPOJD copy must not be hand-edited into a divergent canon)"
-  applicable_overlay: "MIXED — AGENT_CONTRACT is the controlling/dominant trigger (Task 1 modifies `.github/agents/*.md` for Foreman, IAA, and active-CS2); CI_WORKFLOW/gate-script, KNOWLEDGE_GOVERNANCE, and LIAISON_ADMIN/CANON_GOVERNANCE overlays also apply to Tasks 2–4 respectively. Per the Trigger Table, any triggering artifact activates IAA for the whole PR, and ambiguity (gate script vs literal workflow path) resolves to MANDATORY, not EXEMPT. `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` (AC-01–AC-07) is the organising framework for Task 1 at final assurance."
-  anti_regression_obligations: >-
-    yes — `FAIL-ONLY-ONCE.md` and `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` reviewed. No pre-existing
-    niggle pattern in FUNCTIONAL-BEHAVIOUR-REGISTRY.md or niggle-pattern-library.md covers this
-    control-chain domain (rejected-IAA handover suppression, wrong-class gate routing, admin-loop
-    dedup) — this is a novel control correction, not a repeat of a registered product-build niggle.
-    The binding anti-regression suite for this PR is the issue's own seven acceptance tests and six
-    focused regression scenarios (a)-(f): mixed migration+test/workflow/doc never classifies
-    EVIDENCE_ONLY; runtime UI/API change or explicit functional-delivery claim still forces full
-    functional profile; IAA rejects wrong-class evidence demands without converting a rejection into
-    a conditional PASS; rejected/pending/stale IAA blocks Foreman completion handover and active-CS2
-    merge/successor dispatch; repeated identical findings with no changed substantive evidence
-    produce no new tracked proof artifact or duplicate invocation; a genuine external/canon-conflict
-    blocker yields exactly one CS2 escalation while the job stays BLOCKED. Final IAA assurance must
-    verify these against the actual gate/controller entrypoints (not document wording only), and any
-    newly confirmed recurring pattern must be promoted to FAIL-ONLY-ONCE.md /
-    FUNCTIONAL-BEHAVIOUR-REGISTRY.md per NO-REPEAT-PREVENTABLE-001 at Step 3.4b of final assurance.
-    Relevant existing rules already in force and re-checked at final assurance: A-002 (no class
-    exemption for AGENT_CONTRACT), A-003 (ambiguity -> mandatory), A-005 (`.github/agents/**` is
-    CodexAdvisor-only with explicit CS2 authorization — here, the issue's CS2-proxy appointment
-    comment), A-021 (verify committed artifact, not working tree), A-026 (SCOPE_DECLARATION exact
-    match).
   required_build_gates:
     - "Keep the PR bound to `.agent-admin/prs/pr-2065/wave-current-tasks.md`, PR #2065, issue #2064, branch `copilot/prevent-rejected-iaa-handover`, and the submitted head model (re-verify head SHA at each later phase — do not treat this PRE-BRIEF's observed head as a standing approval of later commits)."
     - "Do not resolve, reassess, merge, or relax any #2058 substantive security/migration finding under this issue; #2058 remains out of scope except for the separate CS2-proxy comment referenced in the issue body."
@@ -84,7 +55,7 @@ IAA_PREFLIGHT_BRIEF:
     - "Confirm IAA is not asked to review its own contract file change; any such change is routed to human CS2 directly."
     - "Confirm no #2058 substantive reassessment, broad governance-automation activation, or new mandatory artifact family is introduced under this bounded issue."
   ecap_required: false
-  ecap_note: "`ceremony_admin_appointed` is not declared as true in `.agent-admin/prs/pr-2065/wave-current-tasks.md` at PRE-BRIEF time. Re-check this field at final assurance — if appointed later, ACR-01..16 admin-ceremony checks become mandatory at that time."
+  ecap_expected_artifacts: []
   final_iaa_focus:
     - "Rejected/stale/missing IAA blocks Foreman completion handover and active-CS2 merge/successor dispatch at the actual checkpoint/controller entrypoints, not only in document wording."
     - "Gate-router classification fix is verified against the actual script with the mixed-fixture regression, with no new fail-open path introduced."
@@ -92,6 +63,18 @@ IAA_PREFLIGHT_BRIEF:
     - "No self-referential evidence-only SHA-refresh loop is accepted as satisfying any of the above."
   result: PREFLIGHT_BRIEF_COMPLETE
 ```
+
+### PRE-BRIEF CONTEXT (outside the canonical schema object)
+
+- Repository: `APGI-cmy/maturion-isms`.
+- Bound task record: `.agent-admin/prs/pr-2065/wave-current-tasks.md`.
+- The `current_head_sha` above preserves the original PRE-BRIEF submission head; it is not approval of later commits.
+- Builder assignments: GOV-2064-T1 — `CodexAdvisor-agent`; GOV-2064-T2 — `qa-builder`; GOV-2064-T3 — `active-cs2-agent`; GOV-2064-T4 — `governance-liaison-isms-agent`.
+- GOV-2064-T1 note: IAA must neither edit nor assure its own contract (`independent-assurance-agent.md`). Any change to that file in this PR must be escalated to CS2 for direct review, not self-certified by IAA.
+- Applicable overlay: MIXED — AGENT_CONTRACT is the controlling/dominant trigger (Task 1 modifies `.github/agents/*.md` for Foreman, IAA, and active-CS2); CI_WORKFLOW/gate-script, KNOWLEDGE_GOVERNANCE, and LIAISON_ADMIN/CANON_GOVERNANCE overlays also apply to Tasks 2–4 respectively. Per the Trigger Table, any triggering artifact activates IAA for the whole PR, and ambiguity (gate script vs literal workflow path) resolves to MANDATORY, not EXEMPT. `IAA_AGENT_CONTRACT_AUDIT_STANDARD.md` (AC-01–AC-07) is the organising framework for Task 1 at final assurance.
+- Anti-regression obligations: `FAIL-ONLY-ONCE.md` and `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` reviewed. No pre-existing niggle pattern in `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` or `niggle-pattern-library.md` covers this control-chain domain (rejected-IAA handover suppression, wrong-class gate routing, admin-loop dedup); this is a novel control correction, not a repeat of a registered product-build niggle. The binding anti-regression suite for this PR is the issue's seven acceptance tests and six focused regression scenarios (a)-(f): mixed migration+test/workflow/doc never classifies EVIDENCE_ONLY; runtime UI/API change or explicit functional-delivery claim still forces full functional profile; IAA rejects wrong-class evidence demands without converting a rejection into a conditional PASS; rejected/pending/stale IAA blocks Foreman completion handover and active-CS2 merge/successor dispatch; repeated identical findings with no changed substantive evidence produce no new tracked proof artifact or duplicate invocation; a genuine external/canon-conflict blocker yields exactly one CS2 escalation while the job stays BLOCKED. Final IAA assurance must verify these against the actual gate/controller entrypoints (not document wording only), and any newly confirmed recurring pattern must be promoted to `FAIL-ONLY-ONCE.md` / `FUNCTIONAL-BEHAVIOUR-REGISTRY.md` per NO-REPEAT-PREVENTABLE-001 at Step 3.4b of final assurance. Relevant existing rules already in force and re-checked at final assurance: A-002 (no class exemption for AGENT_CONTRACT), A-003 (ambiguity -> mandatory), A-005 (`.github/agents/**` is CodexAdvisor-only with explicit CS2 authorization — here, the issue's CS2-proxy appointment comment), A-021 (verify committed artifact, not working tree), A-026 (SCOPE_DECLARATION exact match).
+- ECAP explanation: `ceremony_admin_appointed` was not declared as true in `.agent-admin/prs/pr-2065/wave-current-tasks.md` at PRE-BRIEF time. Re-check this field at final assurance — if appointed later, ACR-01..16 admin-ceremony checks become mandatory at that time.
+- These context notes preserve the original scope and rationale and do not add schema fields or change the assurance result.
 
 ## BINDING
 

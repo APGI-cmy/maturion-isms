@@ -29,7 +29,23 @@
       "depends_on": [],
       "scope": ["rejected-iaa-handling-test"],
       "acceptance_obligations": ["final-iaa-pass-bound-to-reviewed-content"],
-      "merge_evidence": null
+      "merge_evidence": {
+        "policy_version": "stale-iaa-test-policy-v1",
+        "evidence_binding": {
+          "frozen_substantive_fingerprint": {
+            "repository": "APGI-cmy/maturion-isms",
+            "pr": 2065,
+            "head_sha": "43ec0671edd361b87958fb4a6e70c1d1baf87774",
+            "base_sha": "c2d0da0251f952aa0a61276406d4a48ae94fd7ec",
+            "reviewed_content_sha256": "d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa"
+          },
+          "evidence_envelope_id": "evidence-envelope-1",
+          "current_merge_head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+          "token_only_delta_verified": false,
+          "permitted_token_append": null
+        },
+        "iaa_reference": "stale-IAA-PASS:d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa"
+      }
     },
     {
       "wave_id": "wave-successor-test",
@@ -254,6 +270,49 @@
       },
       "evidence_references": [],
       "material_blockers": ["protected-authority-conflict: change requires IAA to edit/assure its own contract file — escalated, not self-certified"],
+      "budget": {
+        "dispatch_runtime_minutes": 14,
+        "total_runtime_minutes": 14,
+        "material_corrections": 1,
+        "stage_attempts": {"FINAL_IAA": 2},
+        "merge_attempts": 1,
+        "spend": 0
+      }
+    },
+    {
+      "event_id": "evt-7-stale-iaa-refusal",
+      "idempotency_key": "stale-iaa-pass::d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa::dab741b6289e7dccc1ed42330cae1accc2b755ce8079c2cd5d4b5366c9f769a6",
+      "sequence": 7,
+      "wave_id": "wave-correction-test",
+      "stage": "FINAL_IAA",
+      "event_type": "stale_iaa_pass_detected",
+      "input_revision": "rev-2",
+      "state_before": "BLOCKED",
+      "state_after": "BLOCKED",
+      "decision": "REJECTED",
+      "reason": "EVIDENCE_STALE",
+      "owner": "active-cs2-agent",
+      "envelope_id": "gov-2064-t3-test-envelope",
+      "delta_class": "UNKNOWN",
+      "evidence_binding": {
+        "frozen_substantive_fingerprint": {
+          "repository": "APGI-cmy/maturion-isms",
+          "pr": 2065,
+          "head_sha": "43ec0671edd361b87958fb4a6e70c1d1baf87774",
+          "base_sha": "c2d0da0251f952aa0a61276406d4a48ae94fd7ec",
+          "reviewed_content_sha256": "d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa"
+        },
+        "evidence_envelope_id": "evidence-envelope-1",
+        "current_merge_head_sha": "373a35784bc1f4e00d67aad46268d016c7f7586a",
+        "token_only_delta_verified": false,
+        "permitted_token_append": null
+      },
+      "evidence_references": [
+        "stale-IAA-PASS:d0b425e00e15a0d36b9b361f02bab63563aed6cb4665083905386c55d5b679fa"
+      ],
+      "material_blockers": [
+        "IAA PASS fingerprint differs from current reviewed-content fingerprint"
+      ],
       "budget": {
         "dispatch_runtime_minutes": 14,
         "total_runtime_minutes": 14,

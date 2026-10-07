@@ -12,14 +12,17 @@ controller, and it is not wired into any CI workflow or runtime.
 - `rejected-iaa-wave-record.json` — a schema-valid protocol-model fixture encoding expected
   values for an IAA rejection (`MATERIAL_BLOCKER`), duplicate finding (`NO_OP`), blocked
   completion attempt while IAA is missing (`GATE_UNSATISFIED`), one modeled bounded re-entry,
-  one modeled protected/reserved-matter escalation, and a successor wave that remains
-  `PLANNED` while the rejected wave remains current and blocked. These are fixture values,
-  not observed runtime outcomes.
+  one modeled protected/reserved-matter escalation, and an explicit stale-PASS
+  `EVIDENCE_STALE` event whose evidence fingerprint differs from the current reviewed
+  fingerprint. Its dependent successor remains `PLANNED` and ineligible for release or merge
+  while the current wave is unresolved. These are fixture values, not observed runtime
+  outcomes.
 - `validate-rejected-iaa-dedup.test.py` — a Python test runner that validates the fixture
   against the real canon schema and checks consistency of fixture fields and local
-  calculations. Its assertions cover stale fingerprint / `EVIDENCE_STALE`, blocked
-  completion and merge eligibility, an undispatched successor, dedup, and modeled counters.
-  They do not exercise durable storage, process restart, evaluator, or controller behavior.
+  calculations. Its focused assertions tie stale-PASS/current-fingerprint mismatch to blocked
+  `final_acceptance`, blocked merge eligibility, and an undispatched/ineligible dependent
+  successor. Other assertions cover dedup and modeled counters. They do not exercise durable
+  storage, process restart, evaluator, or controller behavior.
 
 ## Running
 
@@ -30,7 +33,7 @@ python3 .agent-workspace/active-cs2-agent/evaluator-entrypoint-tests/validate-re
 Expected output:
 
 ```text
-Passed: 23
+Passed: 24
 Failed: 0
 Coverage: schema-valid protocol-model fixture consistency only; active-CS2 evaluator/controller behavior NOT executed or proven.
 ```

@@ -66,6 +66,10 @@ NON_TERMINAL_SAFE_WAVE_STATUSES = {
 FORBIDDEN_WAVE_STATUSES_WHILE_IAA_UNRESOLVED = {
     "MERGE_ELIGIBLE", "MERGED", "VALIDATED",
 }
+SUCCESSOR_RELEASE_OR_MERGE_STATUSES = {
+    "ELIGIBLE", "CLAIMED", "DISPATCHED", "IN_BUILD", "IN_ASSURANCE",
+    "IN_REVIEW", "MERGE_ELIGIBLE", "MERGED", "VALIDATED",
+}
 FORBIDDEN_JOB_STATUSES_WHILE_IAA_UNRESOLVED = {"COMPLETE"}
 
 
@@ -184,6 +188,15 @@ def main():
           successor["status"] == "PLANNED"
           and successor["wave_id"] not in {ev["wave_id"] for ev in record["events"]},
           successor)
+    check("dependent successor is ineligible for release or merge while predecessor is unresolved",
+          wave["status"] in {"CORRECTION", "BLOCKED"}
+          and successor["status"] not in SUCCESSOR_RELEASE_OR_MERGE_STATUSES
+          and not any(
+              ev["wave_id"] == successor["wave_id"]
+              and ev["stage"] in {"DISPATCH", "MERGE"}
+              for ev in record["events"]
+          ),
+          (wave["status"], successor["status"]))
     check("successor dependency points to the rejected current wave",
           successor["depends_on"] == [wave["wave_id"]], successor["depends_on"])
 
@@ -191,9 +204,9 @@ def main():
     #    modeled consistency only; it does not exercise restart behavior.
     result = reconstruct_counters(record["events"])
 
-    check("exactly 3 distinct rejection fingerprints raised (ac-03 MATERIAL_BLOCKER, "
-          "GATE_UNSATISFIED handover attempt, RESERVED_MATTER escalation)",
-          result["distinct_rejection_fingerprints"] == 3, result["distinct_rejection_fingerprints"])
+    check("exactly 4 distinct rejection fingerprints raised (MATERIAL_BLOCKER, "
+          "GATE_UNSATISFIED, RESERVED_MATTER, EVIDENCE_STALE)",
+          result["distinct_rejection_fingerprints"] == 4, result["distinct_rejection_fingerprints"])
     check("exactly 1 escalation emitted for the genuine protected/reserved-matter blocker",
           result["escalation_count"] == 1, result["escalation_count"])
     check("exactly 1 bounded re-entry permitted for the real substantive change",
@@ -229,43 +242,52 @@ def main():
     check("replacement-PR record still schema-valid against unmodified canon schema",
           _validates(replacement_pr_record, schema), None)
 
-    # 6. A prior IAA PASS bound to an older fingerprint is stale against the
-    #    current reviewed fingerprint. Its EVIDENCE_STALE refusal blocks
-    #    handover, merge eligibility, and any dependent successor dispatch.
-    (stale_record, stale_wave, stale_successor, stale_pass_binding,
-     current_fingerprint) = build_stale_iaa_scenario(record)
-    check("stale-IAA scenario conforms to unmodified canon schema",
-          _validates(stale_record, schema), None)
-    stale_refusal = stale_record["events"][-1]
-    check("stale PASS/current-fingerprint mismatch emits typed EVIDENCE_STALE refusal",
-          stale_pass_binding["frozen_substantive_fingerprint"][
-              "reviewed_content_sha256"
-          ] != current_fingerprint["reviewed_content_sha256"]
-          and stale_pass_binding["frozen_substantive_fingerprint"]["head_sha"]
-          != current_fingerprint["head_sha"]
-          and stale_pass_binding["current_merge_head_sha"]
-          == current_fingerprint["head_sha"]
+    # 6. The fixture explicitly records a stale PASS and EVIDENCE_STALE
+    #    refusal. These assertions check only fixture/model consistency.
+    stale_refusal = next(
+        ev for ev in record["events"] if ev["reason"] == "EVIDENCE_STALE"
+    )
+    stale_pass_binding = stale_refusal["evidence_binding"]
+    stale_fingerprint = stale_pass_binding["frozen_substantive_fingerprint"]
+    current_fingerprint = record["events"][3]["evidence_binding"][
+        "frozen_substantive_fingerprint"
+    ]
+    check("fixture contains an explicit stale-PASS EVIDENCE_STALE refusal event",
+          stale_refusal["event_type"] == "stale_iaa_pass_detected"
           and stale_refusal["decision"] == "REJECTED"
-          and stale_refusal["reason"] == "EVIDENCE_STALE",
+          and stale_refusal["evidence_references"]
+          == [record["waves"][0]["merge_evidence"]["iaa_reference"]]
+          and record["waves"][0]["merge_evidence"]["iaa_reference"].startswith(
+              "stale-IAA-PASS:"
+          ),
           stale_refusal)
-    check("stale IAA blocks completion handover",
-          stale_record["status"] == "BLOCKED"
-          and stale_record["final_acceptance"] is None,
-          (stale_record["status"], stale_record["final_acceptance"]))
-    check("stale IAA blocks merge eligibility and keeps current_wave_id unchanged",
-          stale_wave["status"] == "CORRECTION"
-          and stale_record["current_wave_id"] == stale_wave["wave_id"]
+    check("stale PASS fingerprint mismatches current reviewed fingerprint and head",
+          stale_fingerprint["reviewed_content_sha256"]
+          != current_fingerprint["reviewed_content_sha256"]
+          and stale_fingerprint["head_sha"] != current_fingerprint["head_sha"]
+          and stale_pass_binding["current_merge_head_sha"]
+          == current_fingerprint["head_sha"],
+          (stale_fingerprint, current_fingerprint))
+    check("stale PASS mismatch keeps final_acceptance blocked",
+          record["status"] == "BLOCKED" and record["final_acceptance"] is None,
+          (record["status"], record["final_acceptance"]))
+    check("stale PASS mismatch blocks merge eligibility for the unresolved current wave",
+          record["current_wave_id"] == wave["wave_id"]
+          and wave["status"] in {"CORRECTION", "BLOCKED"}
+          and wave["status"] not in FORBIDDEN_WAVE_STATUSES_WHILE_IAA_UNRESOLVED
           and not any(
               ev["state_after"] in FORBIDDEN_WAVE_STATUSES_WHILE_IAA_UNRESOLVED
-              for ev in stale_record["events"]
+              for ev in record["events"]
           ),
-          (stale_wave["status"], stale_record["current_wave_id"]))
-    check("stale IAA keeps dependent successor undispatched",
-          stale_successor["status"] == "PLANNED"
-          and stale_successor["wave_id"] not in {
-              ev["wave_id"] for ev in stale_record["events"]
+          (wave["status"], record["current_wave_id"]))
+    check("stale PASS mismatch leaves dependent successor undispatched and ineligible",
+          successor["depends_on"] == [wave["wave_id"]]
+          and successor["status"] == "PLANNED"
+          and successor["status"] not in SUCCESSOR_RELEASE_OR_MERGE_STATUSES
+          and successor["wave_id"] not in {
+              ev["wave_id"] for ev in record["events"]
           },
-          stale_successor)
+          successor)
 
     print()
     print(f"Passed: {PASS_COUNT}")
@@ -283,68 +305,6 @@ def _validates(instance, schema):
         return True
     except jsonschema.exceptions.ValidationError:
         return False
-
-
-def build_stale_iaa_scenario(record):
-    """Create a schema-valid stale-PASS/current-fingerprint-mismatch case."""
-    stale_record = copy.deepcopy(record)
-    stale_wave = stale_record["waves"][0]
-    successor_wave = stale_record["waves"][1]
-    stale_record["status"] = "BLOCKED"
-    stale_record["current_wave_id"] = stale_wave["wave_id"]
-    stale_record["final_acceptance"] = None
-    stale_wave["status"] = "CORRECTION"
-    stale_record["events"] = stale_record["events"][:4]
-
-    stale_pass_binding = copy.deepcopy(
-        record["events"][0]["evidence_binding"]
-    )
-    current_fingerprint = record["events"][3]["evidence_binding"][
-        "frozen_substantive_fingerprint"
-    ]
-    stale_pass_binding["current_merge_head_sha"] = current_fingerprint["head_sha"]
-    stale_wave["merge_evidence"] = {
-        "policy_version": "stale-iaa-test-policy-v1",
-        "evidence_binding": stale_pass_binding,
-        "iaa_reference": (
-            "stale-IAA-PASS:"
-            + stale_pass_binding["frozen_substantive_fingerprint"][
-                "reviewed_content_sha256"
-            ]
-        ),
-    }
-    stale_record["events"].append(
-        {
-            "event_id": "evt-stale-iaa-refusal",
-            "idempotency_key": (
-                "stale-iaa-pass::"
-                + stale_pass_binding["frozen_substantive_fingerprint"][
-                    "reviewed_content_sha256"
-                ]
-                + "::"
-                + current_fingerprint["reviewed_content_sha256"]
-            ),
-            "sequence": 5,
-            "wave_id": stale_wave["wave_id"],
-            "stage": "FINAL_IAA",
-            "event_type": "stale_iaa_pass_detected",
-            "input_revision": "rev-2",
-            "state_before": "IN_REVIEW",
-            "state_after": "CORRECTION",
-            "decision": "REJECTED",
-            "reason": "EVIDENCE_STALE",
-            "owner": "active-cs2-agent",
-            "envelope_id": stale_record["envelope"]["envelope_id"],
-            "delta_class": "UNKNOWN",
-            "evidence_binding": copy.deepcopy(stale_pass_binding),
-            "evidence_references": [stale_wave["merge_evidence"]["iaa_reference"]],
-            "material_blockers": [
-                "IAA PASS fingerprint differs from current reviewed-content fingerprint"
-            ],
-            "budget": copy.deepcopy(record["events"][3]["budget"]),
-        }
-    )
-    return stale_record, stale_wave, successor_wave, stale_pass_binding, current_fingerprint
 
 
 if __name__ == "__main__":
