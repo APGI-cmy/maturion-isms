@@ -646,6 +646,16 @@ function w0ActivatedLimit(value) {
   return { status: 'approved_active', value };
 }
 
+function w0Usage(overrides = {}) {
+  return {
+    active_work_items: 0,
+    remediation_attempts: 0,
+    dispatch_runtime_seconds: 0,
+    total_runtime_seconds: 0,
+    ...overrides,
+  };
+}
+
 function w0TaskRecord(overrides = {}) {
   return { work_item_id: 'pit-issue-42', pr_number: 2061, ...overrides };
 }
@@ -752,36 +762,36 @@ test('W0: an unmeasurable safety envelope limit fails closed', () => {
 
 test('W0: exactly one active work item is allowed; a second active work item is blocked', () => {
   const envelope = w0BaselineEnvelope();
-  const allowed = controller.enforceWorkItemLimits({ active_work_items: 1 }, envelope);
+  const allowed = controller.enforceWorkItemLimits(w0Usage({ active_work_items: 1 }), envelope);
   assert.equal(allowed.decision, 'ALLOW');
-  const blocked = controller.enforceWorkItemLimits({ active_work_items: 2 }, envelope);
+  const blocked = controller.enforceWorkItemLimits(w0Usage({ active_work_items: 2 }), envelope);
   assert.equal(blocked.decision, 'STOP_AND_FIX');
   assert.equal(blocked.reason_code, 'ACTIVE_WORK_ITEM_LIMIT_EXCEEDED');
 });
 
 test('W0: exactly one material remediation attempt is allowed; a second trips the breaker', () => {
   const envelope = w0BaselineEnvelope();
-  const allowed = controller.enforceWorkItemLimits({ remediation_attempts: 1 }, envelope);
+  const allowed = controller.enforceWorkItemLimits(w0Usage({ remediation_attempts: 1 }), envelope);
   assert.equal(allowed.decision, 'ALLOW');
-  const tripped = controller.enforceWorkItemLimits({ remediation_attempts: 2 }, envelope);
+  const tripped = controller.enforceWorkItemLimits(w0Usage({ remediation_attempts: 2 }), envelope);
   assert.equal(tripped.decision, 'STOP_AND_FIX');
   assert.equal(tripped.reason_code, 'REMEDIATION_ATTEMPT_LIMIT_EXCEEDED');
 });
 
 test('W0: dispatch runtime of exactly 30 minutes is allowed; 30 minutes and one second trips', () => {
   const envelope = w0BaselineEnvelope();
-  const atLimit = controller.enforceWorkItemLimits({ dispatch_runtime_seconds: 30 * 60 }, envelope);
+  const atLimit = controller.enforceWorkItemLimits(w0Usage({ dispatch_runtime_seconds: 30 * 60 }), envelope);
   assert.equal(atLimit.decision, 'ALLOW');
-  const onePast = controller.enforceWorkItemLimits({ dispatch_runtime_seconds: 30 * 60 + 1 }, envelope);
+  const onePast = controller.enforceWorkItemLimits(w0Usage({ dispatch_runtime_seconds: 30 * 60 + 1 }), envelope);
   assert.equal(onePast.decision, 'STOP_AND_FIX');
   assert.equal(onePast.reason_code, 'DISPATCH_RUNTIME_EXCEEDED');
 });
 
 test('W0: total runtime of exactly two hours is allowed; two hours and one second trips', () => {
   const envelope = w0BaselineEnvelope();
-  const atLimit = controller.enforceWorkItemLimits({ total_runtime_seconds: 2 * 60 * 60 }, envelope);
+  const atLimit = controller.enforceWorkItemLimits(w0Usage({ total_runtime_seconds: 2 * 60 * 60 }), envelope);
   assert.equal(atLimit.decision, 'ALLOW');
-  const onePast = controller.enforceWorkItemLimits({ total_runtime_seconds: 2 * 60 * 60 + 1 }, envelope);
+  const onePast = controller.enforceWorkItemLimits(w0Usage({ total_runtime_seconds: 2 * 60 * 60 + 1 }), envelope);
   assert.equal(onePast.decision, 'STOP_AND_FIX');
   assert.equal(onePast.reason_code, 'TOTAL_RUNTIME_EXCEEDED');
 });
@@ -1325,7 +1335,7 @@ test('W0 repair: tripped breaker blocks dispatch, retry, merge, successor releas
     assert.deepEqual(gate(envelope, {}), { decision: 'STOP_AND_FIX', reason_code: 'CIRCUIT_BREAKER_TRIPPED' });
   }
   assert.deepEqual(
-    controller.enforceWorkItemLimits({ active_work_items: 1 }, envelope),
+    controller.enforceWorkItemLimits(w0Usage({ active_work_items: 1 }), envelope),
     { decision: 'STOP_AND_FIX', reason_code: 'CIRCUIT_BREAKER_TRIPPED' },
   );
 });
@@ -1387,7 +1397,7 @@ test('W0 repair: every supplied usage ceiling rejects negative, non-finite, frac
   ];
   for (const field of usageFields) {
     for (const value of [-1, Number.NaN, Number.POSITIVE_INFINITY, '1']) {
-      const result = controller.enforceWorkItemLimits({ [field]: value }, envelope);
+      const result = controller.enforceWorkItemLimits(w0Usage({ [field]: value }), envelope);
       assert.deepEqual(
         result,
         { decision: 'STOP_AND_FIX', reason_code: 'USAGE_UNMEASURABLE' },
@@ -1397,14 +1407,32 @@ test('W0 repair: every supplied usage ceiling rejects negative, non-finite, frac
   }
   for (const field of ['active_work_items', 'remediation_attempts']) {
     assert.equal(
-      controller.enforceWorkItemLimits({ [field]: 0.5 }, envelope).reason_code,
+      controller.enforceWorkItemLimits(w0Usage({ [field]: 0.5 }), envelope).reason_code,
       'USAGE_UNMEASURABLE',
     );
   }
   assert.equal(
-    controller.enforceWorkItemLimits({ untracked_runtime: Number.NaN }, envelope).reason_code,
+    controller.enforceWorkItemLimits(w0Usage({ untracked_runtime: Number.NaN }), envelope).reason_code,
     'USAGE_UNMEASURABLE',
   );
+});
+
+test('W0 repair: absent measurements for any enforced ceiling fail closed', () => {
+  const envelope = w0BaselineEnvelope();
+  for (const field of [
+    'active_work_items',
+    'remediation_attempts',
+    'dispatch_runtime_seconds',
+    'total_runtime_seconds',
+  ]) {
+    const usage = w0Usage();
+    delete usage[field];
+    assert.equal(
+      controller.enforceWorkItemLimits(usage, envelope).reason_code,
+      'USAGE_UNMEASURABLE',
+      `${field} must be measured before an action is allowed`,
+    );
+  }
 });
 
 test('W0 repair: proposal fields require absent values when proposed and valid values when approved active', () => {
@@ -1426,12 +1454,33 @@ test('W0 repair: proposal fields require absent values when proposed and valid v
   ).valid, true);
 });
 
+test('W0 repair: approved expiry rejects impossible calendar dates instead of normalizing them', () => {
+  for (const value of ['2026-02-31T00:00:00Z', '2026-01-01T00:00:00+24:00']) {
+    const envelope = w0BaselineEnvelope({ expiry: w0ActivatedLimit(value) });
+    assert.equal(controller.validateSafetyEnvelopeAgainstSchema(envelope).valid, false);
+    assert.equal(
+      controller.evaluateSafetyEnvelope(envelope, w0TaskRecord(), new Date('2026-02-01T00:00:00Z')).reason_code,
+      'ENVELOPE_SCHEMA_INVALID',
+    );
+  }
+});
+
 test('W0 repair: unknown decision states preserve the observed input and produce schema-valid typed refusals', () => {
   const unknown = controller.buildDecisionRecord(w0SampleEvent({ state_before: 'unexpected-phase' }));
   assert.equal(unknown.state_before, 'unexpected-phase');
   assert.equal(unknown.decision, 'STOP_AND_FIX');
   assert.equal(unknown.reason_code, 'UNKNOWN_STATE');
   assert.equal(controller.validateDecisionRecordAgainstSchema(unknown).valid, true);
+});
+
+test('W0 repair: missing and non-string states become schema-valid UNKNOWN_STATE refusals', () => {
+  for (const stateBefore of [undefined, null, { state: 'unknown' }]) {
+    const record = controller.buildDecisionRecord(w0SampleEvent({ state_before: stateBefore }));
+    assert.equal(record.decision, 'STOP_AND_FIX');
+    assert.equal(record.reason_code, 'UNKNOWN_STATE');
+    assert.equal(controller.validateDecisionRecordAgainstSchema(record).valid, true);
+    assert.equal(typeof record.state_before, 'string');
+  }
 });
 
 test('W0 repair: missing or invalid decision facts become schema-valid STOP_AND_FIX records', () => {
@@ -1473,6 +1522,39 @@ test('W0 repair: claim path refuses missing and tripped persisted safety state b
       assert.equal(state.decision_history.at(-1).reason_code, 'CIRCUIT_BREAKER_TRIPPED');
     }
   }
+});
+
+test('W0 repair: a human-CS2 envelope seed comment makes the claim path reachable without defaults', async () => {
+  const issue = {
+    number: 42,
+    title: '[CS2] PIT controller correction',
+    body: workRequestBody(),
+    labels: [{ name: 'cs2:queued' }],
+    user: CS2_USER,
+    state: 'open',
+  };
+  const harness = createHarness({ issues: [issue] });
+  const context = {
+    repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+    payload: { issue },
+  };
+  await controller.run({ github: harness.github, context, core: harness.core, eventName: 'issues' });
+  assert.equal((harness.comments.get('42') || []).length, 0);
+
+  const seed = { ...w0ControllerStateComment(42), user: CS2_USER };
+  harness.comments.set('42', [seed]);
+  await controller.run({
+    github: harness.github,
+    context: { ...context, payload: { ...context.payload, comment: seed } },
+    core: harness.core,
+    eventName: 'issue_comment',
+  });
+
+  const comments = harness.comments.get('42') || [];
+  assert.equal(comments.some((comment) => comment.body.includes(controller.REGISTER_MARKER)), true);
+  assert.equal(comments.some((comment) => comment.body.includes(controller.FOREMAN_DISPATCH_MARKER)), true);
+  assert.equal(comments.some((comment) => comment.user.login === controller.CONTROLLER_LOGIN
+    && comment.body.includes(controller.CONTROLLER_STATE_MARKER)), true);
 });
 
 test('W0 repair: PR bind path refuses a tripped persisted envelope before changing the register or dispatching', async () => {

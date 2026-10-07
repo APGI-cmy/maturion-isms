@@ -199,6 +199,19 @@ function w0SchemaTypeMatches(value, expected) {
   });
 }
 
+function isValidIsoDateTime(value) {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):([0-5]\d):([0-5]\d)(?:\.\d+)?(Z|([+-])(\d{2}):([0-5]\d))$/);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (year === 0 || month < 1 || month > 12) return false;
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const offsetHour = Number(match[10] || 0);
+  if (day < 1 || day > daysInMonth || offsetHour > 23) return false;
+  return !Number.isNaN(Date.parse(value));
+}
+
 function collectSchemaValidationErrors(value, schema, at, errors) {
   for (const child of schema.allOf || []) {
     collectSchemaValidationErrors(value, child, at, errors);
@@ -245,9 +258,7 @@ function collectSchemaValidationErrors(value, schema, at, errors) {
   if (schema.pattern && typeof value === 'string' && !(new RegExp(schema.pattern).test(value))) {
     errors.push(`${at} does not match required pattern ${schema.pattern}.`);
   }
-  if (schema.format === 'date-time' && typeof value === 'string'
-    && (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:\d\d)$/.test(value)
-      || Number.isNaN(Date.parse(value)))) {
+  if (schema.format === 'date-time' && typeof value === 'string' && !isValidIsoDateTime(value)) {
     errors.push(`${at} must be an ISO-8601 date-time.`);
   }
   if (schema.minLength !== undefined && typeof value === 'string' && value.length < schema.minLength) {
@@ -383,6 +394,9 @@ function enforceWorkItemLimits(usage, envelope) {
     dispatch_runtime_seconds: envelope.maximum_dispatch_runtime.value,
     total_runtime_seconds: envelope.maximum_total_runtime.value,
   };
+  if (Object.keys(limits).some((field) => !Object.hasOwn(usage, field))) {
+    return { decision: 'STOP_AND_FIX', reason_code: 'USAGE_UNMEASURABLE' };
+  }
   for (const [field, value] of Object.entries(usage)) {
     if (!Object.hasOwn(limits, field)
       || typeof value !== 'number' || !Number.isFinite(value) || value < 0
@@ -609,7 +623,7 @@ function buildDecisionRecord(event) {
     record.reason_code = 'DECISION_RECORD_INVALID';
     record.evidence_refs = [...record.evidence_refs, ...invalidFacts.map((field) => `INVALID_FACT:${field}`)];
   }
-  if (typeof supplied.state_before === 'string' && !W0_KNOWN_DECISION_STATES.has(record.state_before)) {
+  if (!W0_KNOWN_DECISION_STATES.has(record.state_before)) {
     record.decision = 'STOP_AND_FIX';
     record.reason_code = 'UNKNOWN_STATE';
   }
@@ -658,7 +672,12 @@ function simulateTwentyFourHourWindow(envelope, clock) {
   for (let tick = 1; tick <= ticks; tick += 1) {
     ticksExecuted = tick;
     const elapsedSeconds = tick * tickSeconds;
-    const limitResult = enforceWorkItemLimits({ total_runtime_seconds: elapsedSeconds }, envelope);
+    const limitResult = enforceWorkItemLimits({
+      active_work_items: 0,
+      remediation_attempts: 0,
+      dispatch_runtime_seconds: 0,
+      total_runtime_seconds: elapsedSeconds,
+    }, envelope);
     if (limitResult.decision === 'STOP_AND_FIX') {
       // Strategy §5.1: a qualifying trip condition is keyed by work item +
       // reason code (NOT by tick), so every subsequent repeat tick for the
@@ -1185,7 +1204,12 @@ async function run({ github, context, core, eventName }) {
     const active = await activeRows(github, owner, repo, issue.number, core);
     if (safetyDecision.decision === 'ALLOW') {
       safetyDecision = enforceWorkItemLimits(
-        { active_work_items: active.length + 1 },
+        {
+          active_work_items: active.length + 1,
+          remediation_attempts: 0,
+          dispatch_runtime_seconds: 0,
+          total_runtime_seconds: 0,
+        },
         safetyState.state.safety_envelope,
       );
     }
@@ -1312,14 +1336,29 @@ async function run({ github, context, core, eventName }) {
 
   if (activeEventName === 'issue_comment' && !context.payload.issue.pull_request) {
     const issue = context.payload.issue;
+    const actor = context.payload.comment.user || {};
+    const body = String(context.payload.comment.body || '').trim();
     const found = await findRegisterComment(github, owner, repo, issue.number, core);
     if (found.status !== 'valid') {
+      if (found.status === 'absent'
+        && actor.login === PILOT_CS2_LOGIN
+        && actor.type === 'User'
+        && body.includes(CONTROLLER_STATE_MARKER)) {
+        const safetyState = await loadStateForWorkItem(github, owner, repo, issue.number, core);
+        if (safetyState.status === 'valid' && safetyState.state.work_item_id === `pit-issue-${issue.number}`) {
+          await run({
+            github,
+            context: { ...context, payload: { ...context.payload, issue } },
+            core,
+            eventName: 'issues',
+          });
+          return;
+        }
+      }
       core.info('No PIT work register on this Issue; no action.');
       return;
     }
-    const actor = context.payload.comment.user || {};
     const author = String(actor.login || '');
-    const body = String(context.payload.comment.body || '').trim();
     if (author === FOREMAN_LOGIN) {
       const nomination = parseForemanNomination(body);
       if (!nomination) {
