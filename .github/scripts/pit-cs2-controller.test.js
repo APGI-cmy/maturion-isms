@@ -1552,6 +1552,35 @@ test('W0 repair: editable workflow input cannot impersonate CS2 for a reset', as
   assert.equal(state.decision_history.length, 0);
 });
 
+test('W0 repair: a human-CS2 seed is preserved and the controller persists updates in its own comment', async () => {
+  const seed = { ...w0ControllerStateComment(42), user: CS2_USER };
+  const seedBody = seed.body;
+  const harness = createHarness({
+    issues: [{ number: 42, title: 'PIT work item', state: 'open' }],
+    initialComments: { 42: [seed] },
+  });
+  const context = {
+    actor: 'APGI-cmy',
+    repo: { owner: 'APGI-cmy', repo: 'maturion-isms' },
+  };
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    await controller.runManualSafetyAction({
+      github: harness.github,
+      context,
+      core: harness.core,
+      action: 'evaluate-envelope',
+      issueNumber: 42,
+    });
+  }
+  const comments = harness.comments.get('42');
+  assert.equal(comments.length, 2);
+  assert.equal(comments[0].body, seedBody);
+  const persisted = comments.find((comment) => comment.user.login === controller.CONTROLLER_LOGIN);
+  const state = controller.parseControllerState(persisted.body);
+  assert.equal(state.work_item_id, 'pit-issue-42');
+  assert.equal(state.decision_history.length, 2);
+});
+
 test('W0 repair: human kill-switch persists envelope, prior history, and one trip ledger atomically across retries', async () => {
   const prior = controller.buildDecisionRecord(w0SampleEvent());
   const harness = createHarness({

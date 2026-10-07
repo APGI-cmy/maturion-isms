@@ -899,35 +899,38 @@ function parseControllerState(body) {
 }
 
 async function findControllerStateComment(github, owner, repo, issueNumber, core) {
-  const candidates = [];
+  const controllerStates = [];
+  const humanSeeds = [];
+  let invalid = false;
   for (const comment of await listAllComments(github, owner, repo, issueNumber)) {
     if (!comment?.body?.includes(CONTROLLER_STATE_MARKER)) continue;
     const user = comment.user || {};
-    const trustedAuthor = (user.login === CONTROLLER_LOGIN && user.type === 'Bot')
-      || (user.login === PILOT_CS2_LOGIN && user.type === 'User');
-    if (!trustedAuthor) {
-      candidates.push({ comment, error: new Error('Controller state has an unauthenticated author.') });
+    const isController = user.login === CONTROLLER_LOGIN && user.type === 'Bot';
+    const isHumanCs2 = user.login === PILOT_CS2_LOGIN && user.type === 'User';
+    if (!isController && !isHumanCs2) {
+      invalid = true;
       continue;
     }
     try {
       const state = parseControllerState(comment.body);
-      if (state) candidates.push({ comment, state });
-    } catch (error) {
-      candidates.push({ comment, error });
+      if (state) (isController ? controllerStates : humanSeeds).push({ comment, state });
+    } catch {
+      invalid = true;
     }
   }
-  if (candidates.some((candidate) => candidate.error) || candidates.length > 1) {
+  if (invalid || controllerStates.length > 1 || (controllerStates.length === 0 && humanSeeds.length > 1)) {
     const message = `Controller safety state on #${issueNumber} is invalid or ambiguous; refusing to continue.`;
     core.warning(message);
     return { status: 'invalid', message };
   }
-  if (candidates.length === 1) return { status: 'valid', ...candidates[0] };
+  if (controllerStates.length === 1) return { status: 'valid', ...controllerStates[0] };
+  if (humanSeeds.length === 1) return { status: 'valid', ...humanSeeds[0] };
   return { status: 'absent' };
 }
 
 async function writeControllerState(github, owner, repo, issueNumber, existingComment, state) {
   const body = renderControllerState(state);
-  if (existingComment) {
+  if (existingComment?.user?.login === CONTROLLER_LOGIN && existingComment.user.type === 'Bot') {
     await github.rest.issues.updateComment({ owner, repo, comment_id: existingComment.id, body });
     return;
   }
