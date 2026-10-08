@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "W0-SAFETY-CONTAINMENT-20261004",
+  "pr_number": 2061,
+  "prebrief_commit_sha": "ed66cc062cec3156abce2b51a563bb34e3bb6df2",
+  "builder_appointment_timestamp": "2026-10-04T09:30:00Z",
+  "builder_appointment_commit_sha": "4e4a6f1093e32b76dad74aacf061e06b5d5adc61",
+  "builder_agent": "qa-builder",
+  "builder_task_ref": ".agent-admin/prs/pr-2061/wave-current-tasks.md#W0-2053-C",
+  "first_implementation_commit_sha": "d2da1392f74673330e56cda2bd24c7161f16d3d9",
+  "qp_review_timestamp": "2026-10-04T09:45:00Z",
+  "result": "DELEGATION_ORDER_VERIFIED"
+}
