@@ -1,19 +1,12 @@
 # Copilot coding agent environment setup steps.
-# Authority: https://docs.github.com/en/copilot/how-tos/agents/copilot-coding-agent/customizing-copilot-coding-agent
-# This file is read by the Copilot coding agent BEFORE it starts work.
+# Legacy setup reference. GitHub's supported setup workflow is
+# .github/workflows/copilot-setup-steps.yml.
 #
-# Session model: COMMENT_ONLY — Copilot sessions produce text/PR-comment output only.
-# Push operations are intentionally disabled for all Copilot sessions.
-# For bot write operations, use .github/workflows/maturion-bot-writer.yml only.
+# Setup prepares dependencies; it does not grant or revoke agent write authority.
+# Execution follows the selected agent contract and exact approved issue scope.
+# Read-only roles remain read-only. Human merge/activation and independent QA remain required.
 
 steps:
-  # Declare session mode — no credentials, no push, comment-only.
-  - name: Declare comment-only session mode (push intentionally disabled)
-    run: |
-      echo "COPILOT_SESSION_MODE: COMMENT_ONLY"
-      echo "PUSH_DISABLED_INTENTIONAL: true"
-      echo "OUTPUT_MODE: PR_COMMENT_OR_ARTIFACT"
-
   # Install Node.js dependencies for MCP server (agent-bootstrap) used during sessions.
   - name: Install agent-bootstrap MCP server dependencies
     run: |
