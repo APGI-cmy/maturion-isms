@@ -1,0 +1,466 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-10-09T06:54:11Z",
+  "pr": {
+    "number": 2072,
+    "title": "Align Copilot setup with scoped agent implementation authority",
+    "head_sha": "f0d4209541ce0addfef72753314cb1fbc459111e"
+  },
+  "overall_status": "REQUIRES_FIX",
+  "gates": [
+    {
+      "name": "copilot-setup-steps",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37775683802/job/113305806192"
+      ],
+      "summary": "GitHub check_run_id=113305806192; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "CodeQL",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/runs/113207567083"
+      ],
+      "summary": "GitHub check_run_id=113207567083; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract/iaa-assurance-token",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933791/job/113207376269"
+      ],
+      "summary": "GitHub check_run_id=113207376269; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract/cs2-authorization",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933791/job/113207375488"
+      ],
+      "summary": "GitHub check_run_id=113207375488; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract/actor-authority",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933791/job/113207375390"
+      ],
+      "summary": "GitHub check_run_id=113207375390; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract/authority-check",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933791/job/113207374247"
+      ],
+      "summary": "GitHub check_run_id=113207374247; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "watchdog/gap2-ready-pr-missing-prebrief",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933679/job/113207370044"
+      ],
+      "summary": "GitHub check_run_id=113207370044; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract-format/placeholder-check",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933740/job/113207359891"
+      ],
+      "summary": "GitHub check_run_id=113207359891; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract-format/yaml-validation",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933740/job/113207358942"
+      ],
+      "summary": "GitHub check_run_id=113207358942; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "governance/alignment",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933810/job/113207358156"
+      ],
+      "summary": "GitHub check_run_id=113207358156; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract-format/verdict",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933740/job/113207357813"
+      ],
+      "summary": "GitHub check_run_id=113207357813; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "merge-gate/verdict",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933810/job/113207356266"
+      ],
+      "summary": "GitHub check_run_id=113207356266; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract/self-modification-prevention",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933810/job/113207356214"
+      ],
+      "summary": "GitHub check_run_id=113207356214; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "governance/artifact-path-enforcement",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933810/job/113207356180"
+      ],
+      "summary": "GitHub check_run_id=113207356180; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "stop-and-fix/enforcement",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933810/job/113207356110"
+      ],
+      "summary": "GitHub check_run_id=113207356110; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "producer/next-action-guidance",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933705/job/113207353851"
+      ],
+      "summary": "GitHub check_run_id=113207353851; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "Supabase Preview",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/runs/113207340352"
+      ],
+      "summary": "GitHub check_run_id=113207340352; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "Vercel Preview Comments",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/runs/113207318382"
+      ],
+      "summary": "GitHub check_run_id=113207318382; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "Scan for deprecated Actions versions",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933687/job/113207304077"
+      ],
+      "summary": "GitHub check_run_id=113207304077; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "watchdog/gap1-no-pr-for-branch",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933679/job/113207303763"
+      ],
+      "summary": "GitHub check_run_id=113207303763; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "cs2/pit-controller",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933823/job/113207303602"
+      ],
+      "summary": "GitHub check_run_id=113207303602; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "iaa-prebrief-gate",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933721/job/113207303471"
+      ],
+      "summary": "GitHub check_run_id=113207303471; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/injection-intake-current",
+      "status": "SKIPPED",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933656/job/113207303055"
+      ],
+      "summary": "GitHub check_run_id=113207303055; status=completed; conclusion=skipped; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "copilot/retry-stopped-sessions",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933872/job/113207302862"
+      ],
+      "summary": "GitHub check_run_id=113207302862; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "Classify PR Type",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933810/job/113207302553"
+      ],
+      "summary": "GitHub check_run_id=113207302553; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract-format/detect",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933740/job/113207302394"
+      ],
+      "summary": "GitHub check_run_id=113207302394; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "watchdog/canon-file-ceiling",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933679/job/113207302346"
+      ],
+      "summary": "GitHub check_run_id=113207302346; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "watchdog/gap2a-prebrief-gate",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933679/job/113207302311"
+      ],
+      "summary": "GitHub check_run_id=113207302311; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "watchdog/gap3-prehandover-pending-token",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933679/job/113207301973"
+      ],
+      "summary": "GitHub check_run_id=113207301973; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "agent-contract/diff-report",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933791/job/113207301960"
+      ],
+      "summary": "GitHub check_run_id=113207301960; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "session-memory-check",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933694/job/113207300887"
+      ],
+      "summary": "GitHub check_run_id=113207300887; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "scope-declaration-check",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933694/job/113207300843"
+      ],
+      "summary": "GitHub check_run_id=113207300843; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "foreman-implementation-check",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933694/job/113207300841"
+      ],
+      "summary": "GitHub check_run_id=113207300841; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "wave-record-count-check",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933694/job/113207300763"
+      ],
+      "summary": "GitHub check_run_id=113207300763; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/iaa-prebrief-contract-alignment",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933690/job/113207300527"
+      ],
+      "summary": "GitHub check_run_id=113207300527; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/ecap-admin-boundary-gate",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933634/job/113207300512"
+      ],
+      "summary": "GitHub check_run_id=113207300512; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/phase-1-evidence",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933656/job/113207300443"
+      ],
+      "summary": "GitHub check_run_id=113207300443; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "Analyze (javascript-typescript)",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933649/job/113207300394"
+      ],
+      "summary": "GitHub check_run_id=113207300394; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "builder-involvement-check",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933694/job/113207300385"
+      ],
+      "summary": "GitHub check_run_id=113207300385; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/merge-gate-required-checks-alignment",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933682/job/113207300372"
+      ],
+      "summary": "GitHub check_run_id=113207300372; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "Analyze (python)",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933649/job/113207300217"
+      ],
+      "summary": "GitHub check_run_id=113207300217; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/delegation-order-gate",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933636/job/113207300094"
+      ],
+      "summary": "GitHub check_run_id=113207300094; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/wave7-governance-validation",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933613/job/113207300007"
+      ],
+      "summary": "GitHub check_run_id=113207300007; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "Test Quality / stub-detection-check",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933549/job/113207299860"
+      ],
+      "summary": "GitHub check_run_id=113207299860; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/foreman-prehandover-lane-gate",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/actions/runs/37745933578/job/113207299706"
+      ],
+      "summary": "GitHub check_run_id=113207299706; status=completed; conclusion=success; head_sha=f0d4209541ce0addfef72753314cb1fbc459111e. CI outcome, not an independent assurance verdict."
+    },
+    {
+      "name": "preflight/iaa-prebrief-existence",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "preflight/iaa-token-self-certification",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "preflight/hfmc-ripple-presence",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "preflight/evidence-exactness",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "preflight/iaa-final-assurance",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "preflight/ecap-admin-ceremony",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "preflight/scope-declaration-parity",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "preflight/mmm-pr-admin",
+      "status": "FAIL",
+      "evidence_paths": [
+        ".agent-admin/control/merge-gate-required-checks.json"
+      ],
+      "summary": "MISSING named check at recorded source. Manifest retains this legacy/external name; applicability/mapping and actual obligation need Foreman verification. No waiver or PASS inferred."
+    },
+    {
+      "name": "Foreman/task-source-QP",
+      "status": "PASS",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6059955248"
+      ],
+      "summary": "Foreman-authored PASS covers three substantive source files and the actual setup run; it does not accept this later administrative bundle."
+    },
+    {
+      "name": "ECAP/admin-acceptance",
+      "status": "FAIL",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6057903034"
+      ],
+      "summary": "MISSING accepted ECAP bundle for PR2072. Earlier reported ECAP result was HALTED; no replacement acceptance supplied."
+    },
+    {
+      "name": "IAA/independent-final-assurance",
+      "status": "FAIL",
+      "evidence_paths": [
+        "https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6057903034"
+      ],
+      "summary": "MISSING IAA-owned canonical PR2072 wave record/token. Foreman reports a historical rejection; IAA must preserve chronology and assess changed evidence."
+    }
+  ],
+  "stop_and_fix": {
+    "required": true,
+    "resolved": false,
+    "reason": "Independent assurance and administrative admission/coherence controls have not passed. Publication repairs missing records without asserting final parity.",
+    "rca_path": ".agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2072.md"
+  }
+}
