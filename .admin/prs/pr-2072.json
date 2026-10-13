@@ -10,6 +10,7 @@
   "substantive_source_sha": "f0d4209541ce0addfef72753314cb1fbc459111e",
   "scope": [
     ".admin/prs/pr-2072.json",
+    ".agent-admin/assurance/iaa-wave-record-pr-2072-setup-repair-20261009.md",
     ".agent-admin/gates/gate-results-pr-2072-20261009.json",
     ".agent-admin/improvements/pr-2072-setup-repair-20261009.md",
     ".agent-admin/prehandover/proof-pr-2072-setup-repair-20261009.md",
@@ -30,7 +31,7 @@
     "Exact-source setup run37775683802/job113305806192",
     "Foreman source QP comment6059955248 and staged reentry disposition",
     "Existing ECAP appointment reconciliation and actual accepted bundle",
-    "Exact ten-path scope and current PR admin manifest",
+    "Exact eleven-path scope and current PR admin manifest",
     "Independent IAA canonical record/verdict/token and preserved rejection",
     "Final source/check/admin coherence and human CS2 merge decision"
   ],
@@ -47,5 +48,13 @@
     "IAA": "PENDING_FOR_ORDERED_STAGE",
     "FINAL_PARITY": "BLOCKED"
   },
-  "authority": "Existing issue2073 human-CS2 staged decision on 2026-10-13 and original author/proxy publication authority. No source change, QA waiver, budget reset, main merge or activation."
+  "authority": "Existing issue2073 human-CS2 staged decision on 2026-10-13 and original author/proxy publication authority. No source change, QA waiver, budget reset, main merge or activation.",
+  "iaa_preparation_publication": {
+    "owner": "independent-assurance-agent",
+    "returned_payload": "https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6144470941",
+    "path": ".agent-admin/assurance/iaa-wave-record-pr-2072-setup-repair-20261009.md",
+    "authorship_date": "2026-10-13",
+    "purpose": "T4 applicability/chronology only; not a retrospective pre-brief or final assurance",
+    "sha256": "271e295a47199c9f5574d0de2affa20644c0044aa34747fae9f9a110aeba8815"
+  }
 }

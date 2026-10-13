@@ -17,9 +17,9 @@ AUTHOR: APGI-cmy via authorized Codex proxy
 - [x] Three-file setup clarification delivered by original author/proxy at substantive source above.
 - [x] Actual changed-setup run succeeded: https://github.com/APGI-cmy/maturion-isms/actions/runs/37775683802/job/113305806192
 - [x] Foreman task-source QP PASS, attributed to https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6059955248.
-- [ ] Foreman assessment of this administrative publication and named-check mapping.
+- [x] Foreman pre-ECAP assessment of publication6e40d595 and named-check mapping; comment6143910595. Final parity is not established.
 - [ ] Accepted ECAP administrative compilation and reconciliation.
-- [ ] IAA-owned canonical record with truthful chronology and preserved rejection.
+- [x] IAA-owned canonical T4 applicability/chronology preparation returned in comment6144470941 and published verbatim; final assurance remains pending.
 - [ ] Valid independent final IAA PASS/token.
 - [ ] Final no-write source/evidence/current-head check coherence and human merge decision.
 
@@ -42,7 +42,7 @@ No new parent, appointment budget, correction allowance or runtime-counter reset
 Current publishing chat: 01a0c811-d0a9-7bc0-a4a8-a6957d7d4146.
 Foreman session identifier was not supplied in the cited response; its actual comment is the supervisory attribution. ECAP and IAA session references are absent and will come from those agents' real outputs.
 
-## Existing ECAP appointment reconciliation - 2026-10-13
+## Historical existing ECAP appointment reconciliation at 6e40d595 - 2026-10-13
 
 ```yaml
 ceremony_admin_appointed: true
@@ -89,3 +89,25 @@ submission before the same ECAP assignment continues. No new appointment,
 backdated pre-brief, accepted ECAP result, IAA carrier or token is created here.
 Original immutable gate/proof records remain historical snapshots; this update
 supplies current ordinary admin inputs and preserves later pending stages.
+
+## IAA preparation publication and retained next owner - 2026-10-13
+
+REAL_IAA_INVOCATION: Foreman reports completed limited independent invocation in comment6144470941.
+IAA_RETURNED_PAYLOAD: https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6144470941
+IAA_CARRIER: .agent-admin/assurance/iaa-wave-record-pr-2072-setup-repair-20261009.md
+IAA_PURPOSE: Current-dated T4 applicability and chronology preparation only.
+IAA_AUTHORED_ON: 2026-10-13
+CANONICAL_PUBLICATION: Exact returned payload; original-author publishing proxy is not its author.
+FINAL_IAA_TOKEN: PENDING
+ECAP_ACCEPTANCE: PENDING_FOR_ORDERED_STAGE
+FINAL_PARITY: BLOCKED
+NEXT_OWNER: foreman-v2-agent under existing issue2073.
+NEXT_ACTION: Verify published IAA carrier and every Phase2/3 admission input together, including Foreman's own approved-path declaration; resume the same recovered ECAP appointment only when these pass. Return real ECAP payload for original-author publication, then actual final independent IAA.
+RESUMPTION_INPUT: This eleven-path source-preserving publication, not another unchanged admission attempt.
+
+Foreman reports that IAA inspected the task/scope/manifest/proof/gate snapshot,
+actual source and setup run, but did not perform the full 49-check audit or certify
+all reported pre-ECAP validators. The historical gate snapshot stays REQUIRES_FIX
+as its actual October9 observation. The original private rejection/session/token
+is unavailable, never reconstructed; later evidence is not a fabricated prior
+PASS. The previous recovered appointment is unchanged and no budget is reset.
