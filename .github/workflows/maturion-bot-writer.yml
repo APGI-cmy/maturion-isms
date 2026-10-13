@@ -1,12 +1,14 @@
 name: Maturion Bot Writer
 
 # Purpose: Dedicated write-capable workflow for Maturion Bot operations.
-# This is intentionally SEPARATE from copilot-setup-steps.yml (COMMENT_ONLY model).
+# This is intentionally SEPARATE from Copilot environment setup.
 #
 # Separation model:
-#   copilot-setup-steps.yml  — Copilot sessions, read-only, no push, COMMENT_ONLY
-#   maturion-bot-writer.yml  — Bot write operations, explicit write permissions,
-#                              requires MATURION_BOT_TOKEN (no github.token fallback)
+#   copilot-setup-steps.yml  — Dependency setup with a read-only setup token.
+#   Copilot task operations — Selected agent contract and exact approved issue scope.
+#   maturion-bot-writer.yml  — Separate bot workflow with explicit write permissions,
+#                              requires MATURION_BOT_TOKEN (no github.token fallback).
+# This workflow is not a fallback for a denied Copilot operation.
 #
 # Fail-fast policy: This workflow MUST NOT silently skip when MATURION_BOT_TOKEN is
 # unavailable. Any missing secret causes an immediate non-zero exit. No continue-on-error
