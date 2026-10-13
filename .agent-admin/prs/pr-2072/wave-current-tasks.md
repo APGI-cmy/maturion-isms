@@ -111,3 +111,24 @@ all reported pre-ECAP validators. The historical gate snapshot stays REQUIRES_FI
 as its actual October9 observation. The original private rejection/session/token
 is unavailable, never reconstructed; later evidence is not a fabricated prior
 PASS. The previous recovered appointment is unchanged and no budget is reset.
+
+## Real ECAP staged publication - 2026-10-13
+
+ECAP_RETURNED_PAYLOAD: https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6144756902
+ECAP_ACTUAL_DISPOSITION: PREPARED_NOT_ACCEPTED; no final accepted handback.
+ECAP_PREPARATION_HEAD: 475f9cd0a801b60d3eed5f5c9aa2c205661c872c
+PUBLISHING_ACTION: Original proxy publishes both exact role-authored outputs; target diff becomes thirteen paths.
+NEXT_OWNER: Existing foreman-v2 and same recovered ECAP appointment.
+NEXT_ACTION: Independently verify actual committed outputs and current scope/check state, complete role-owned post-publication reconciliation, provide any truly required Foreman personal scope/parking record and genuine session attribution, then determine pre-IAA admin acceptance. Do not infer acceptance from publication or repeat all source QP/setup tests.
+FINAL_IAA_TOKEN: NOT_ISSUED
+FINAL_PARITY: BLOCKED
+HANDOVER_ALLOWED: no
+
+The staged ECAP files preserve their actual preparation chronology at 475f9cd0,
+including old 11-path indexes and then-uncommitted output state. Those are not
+claims about this later publication. Their later-stage token rows and source
+proofs do not waive final obligations. The producing proxy authors no ECAP
+acceptance, Foreman judgment, IAA result, new appointment, reset or session ID.
+The actual producer scope owner is the authorized Codex proxy; a separate
+mandatory Foreman-owned personal declaration was not supplied in this return.
+Foreman must verify/correct that ownership/path mapping before final handback.
