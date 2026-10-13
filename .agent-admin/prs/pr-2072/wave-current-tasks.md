@@ -41,3 +41,51 @@ No new parent, appointment budget, correction allowance or runtime-counter reset
 ## Session attribution
 Current publishing chat: 01a0c811-d0a9-7bc0-a4a8-a6957d7d4146.
 Foreman session identifier was not supplied in the cited response; its actual comment is the supervisory attribution. ECAP and IAA session references are absent and will come from those agents' real outputs.
+
+## Existing ECAP appointment reconciliation - 2026-10-13
+
+```yaml
+ceremony_admin_appointed: true
+appointment_timestamp: 2026-10-09T07:06:23Z
+ceremony_admin_appointment_timestamp_utc: 2026-10-09T07:06:23Z
+appointment_reconciled_at: 2026-10-13T10:38:46Z
+appointment_timestamp_source: https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6143552303
+appointment_recovered_by: foreman-v2-agent under existing assignment 2073
+wave_identifier: pr-2072-setup-repair
+job_scope: Prepare the already appointed T4 setup-repair administrative bundle; source remains f0d4209541ce0addfef72753314cb1fbc459111e.
+assigned_scope:
+  - .github/copilot-setup-steps.yml
+  - .github/workflows/copilot-setup-steps.yml
+  - .github/workflows/maturion-bot-writer.yml
+  - .agent-admin/scope-declarations/pr-2072.md
+  - .agent-admin/prs/pr-2072/wave-current-tasks.md
+  - .agent-admin/gates/gate-results-pr-2072-20261009.json
+  - .agent-admin/prehandover/proof-pr-2072-setup-repair-20261009.md
+  - .agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2072.md
+  - .agent-admin/improvements/pr-2072-setup-repair-20261009.md
+  - .admin/prs/pr-2072.json
+expected_return_artifact_paths:
+  - .agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-2072-setup-repair-20261009.md
+  - .agent-workspace/execution-ceremony-admin-agent/bundles/session-pr-2072-setup-repair-20261009.md
+scope_declaration_path: .agent-admin/scope-declarations/pr-2072.md
+pr_admin_manifest_path: .admin/prs/pr-2072.json
+iaa_wave_record_path: .agent-admin/assurance/iaa-wave-record-pr-2072-setup-repair-20261009.md
+qp_pass: true
+qp_pass_scope: Previously independently accepted unchanged source; comment6059955248.
+parity_pass: true
+parity_pass_scope: PRE_ECAP_PREREQUISITES_ONLY under issue2073 staged decision and Foreman comment6143552303; final parity remains blocked.
+working_tree_clean: PENDING_FOREMAN_REENTRY_VERIFICATION
+ECAP_ADMIN_CEREMONY: PENDING_FOR_ORDERED_STAGE
+IAA_FINAL_ASSURANCE: PENDING_FOR_ORDERED_STAGE
+FINAL_PARITY: BLOCKED
+```
+
+This reconciles the existing appointment timestamp recovered by Foreman in
+comment6143552303; it does not claim a new October9 appointment was made today.
+The producer did not independently recover the private earlier session record;
+the timestamp's source and recovering owner are explicitly attributed above.
+Foreman verifies the newly published ten-path bundle and clean committed
+submission before the same ECAP assignment continues. No new appointment,
+backdated pre-brief, accepted ECAP result, IAA carrier or token is created here.
+Original immutable gate/proof records remain historical snapshots; this update
+supplies current ordinary admin inputs and preserves later pending stages.
