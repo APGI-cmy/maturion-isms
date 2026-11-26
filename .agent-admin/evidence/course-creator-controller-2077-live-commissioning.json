@@ -119,6 +119,12 @@
     "Live protocol fixtures.json": "c9c391866764defa22667cc21f843838ad85ad5a4f5a62a9d37beae451e6cf87",
     "Protected comparison.json": "42475d60d7c685bf97ad71612cc330834affe4746c6196a2ac180cde4664492a"
   },
-  "final_independent_assurance": "pending",
-  "activation": "disabled pending actual independent acceptance"
+  "final_independent_assurance": {
+    "token": "IAA-session-CC2077-final-20261126-PASS",
+    "acceptance_sha256": "df03b84ef05344dcced08f2c9b196bfd1f2112deda371afa4ad1a6c826e7b843",
+    "actual_enactment_sha256": "3c4780777e7ec539dde008fe4637cf439b050a5bb727590e5a2a22fb984b7054",
+    "actual_enactment": "PASS_ACTUAL_ACTIVATION"
+  },
+  "activation": "ACTIVE private controller profile; public document-generation runtime unavailable",
+  "actual_activation_record": ".agent-admin/owner-decisions/course-creator-activation-2077.json"
 }

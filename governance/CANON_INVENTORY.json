@@ -2642,8 +2642,8 @@
     {
       "filename": "AGENT_REGISTRY.json",
       "version": "1.0.0",
-      "file_hash": "b48719e00d36e82d3a5bbafb596d5d0dabf97def23e2f3d88a389b7d5c309d05",
-      "file_hash_sha256": "b48719e00d36e82d3a5bbafb596d5d0dabf97def23e2f3d88a389b7d5c309d05",
+      "file_hash": "5e37759b033c98b1a766284e0846ca01c640c64d9d1601076ba356c84a9f2810",
+      "file_hash_sha256": "5e37759b033c98b1a766284e0846ca01c640c64d9d1601076ba356c84a9f2810",
       "effective_date": "2026-11-26",
       "description": "Issue2077 actual scoped agent/controller registration; not an amendment to governance canon.",
       "type": "registry",

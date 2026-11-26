@@ -75,7 +75,20 @@ A full activation decision is unavailable until the new runtime and canonical re
 
 ## TOKEN
 
-No final assurance has been issued. Activation remains held.
+ASSURANCE-TOKEN
+
+PHASE_B_BLOCKING_TOKEN: IAA-session-CC2077-final-20261126-PASS
+iaa_audit_token: IAA-session-CC2077-final-20261126-PASS
+Decision: PASS. Actual independent reviewer: OpenAI Codex instance /root/independent_agent_assurance, session-CC2077-final, under Johan/CS2 issue2077; independent of producer and factory. No hosted custom-agent, Claude execution or Maturion Bot credential use is claimed.
+
+Reviewed submission: 6ad8be1f9d5f2abe3d0c7d4bc1fd1fac11782a34. Immutable implementation: 51c216f62378421898e20b89c0c809e064ed4a9f. Reviewed content: c9228acc6571d7fff60527bc63c00a405657c0b06bab86b7f07b4f61c85f20bb. Runtime knowledge: dc1e983667249388d6c29da83ce713283699437358aee492dc4fea0b6b0ae57a. Scope: controller_scoped_course_creation_v1, actual private Python gateway plus existing local Codex controller, reporting to Maturion.
+
+All12 acceptance criteria,4 core invariants and4 ceremony existence checks PASS; all6 required merge-gate role jobs PASS. No open finding or waiver. The earlier CERT003/004 rejection below is closed by producer H, retaining its history and all functional passes. Original immutable producer proof SHA256 e9cfe04e930ebd9beb2ad0acbc244e20c6f5a1ddeabc492f08055ba431e345a3 is unchanged. Current merge parity: PASS (run45822263169); contract audit/format, delegation, preflight, POLC, routing and ECAP are successful.
+
+This is final independent acceptance of the delivered declared controller profile for the already-authorised owner enablement. It does not assert ordinary flags are already active, certify any real manual, clear held LU1, commission LU2, grant owner signature, enable the unavailable public document runtime, or grant release/publication. CS2 retains merge authority. The owner performs the reviewed registration/runtime transition and verifies the actual authenticated capability/status without a new provider job.
+
+Private structured acceptance SHA256: df03b84ef05344dcced08f2c9b196bfd1f2112deda371afa4ad1a6c826e7b843. Actual receipt is independently authored, not a producer-created or fabricated four-issuer token.
+Issued UTC: 2026-11-26T12:47:10.535739+00:00.
 
 ## REJECTION_HISTORY
 
@@ -105,3 +118,56 @@ iaa_audit_token_location: .agent-admin/assurance/iaa-wave-record-course-creator-
 token_field_meaning: EXPECTED REFERENCE ONLY, NOT ISSUANCE. Only the independent IAA actor may publish the actual matching verdict in TOKEN. Missing/rejected assurance continues to block merge and ordinary enablement.
 
 The original frozen producer proof is unchanged. This separately appended producer supplement supplies the missing field without backdating the declaration, rewriting the proof or altering the independent rejection. All source/runtime/QA/loop evidence and prior findings remain retained. No code, model call, course QA change, source identity reset, retest of passed manual sections or new course hand-off accompanies this correction.
+
+
+## IAA Assurance Verdict
+
+Actual role and scope: AGENT_CONTRACT with BUILD_DELIVERABLE, KNOWLEDGE_GOVERNANCE, CI_WORKFLOW and registration/inventory overlays. No exemption. FAIL-ONLY-ONCE A-001 PRESENT; A-002 CONFIRMED. Current contract, Tier2 checklists, applicable failure/functional patterns and registry integrity were applied. Existing accepted source/test checks are retained; only genuine affected corrections reopened them.
+
+### CORE-026 acceptance-criteria evidence matrix
+
+| Criterion | Decision | Independently verified evidence and boundary |
+|---|---|---|
+| CC2077-01 — Prospective owner authority, separate roles and genuine sequence | PASS | Issue2077; committed A f6924e9e, B c9019513, C dec4b7b0 strict ancestry; delegation-order run45822267308 success; separate factory and this actual independent Codex instance. No backdated appointment or PR2076 waiver. Root is direct-CS2 integration-builder, not Foreman. |
+| CC2077-02 — Canonical three-tier specialist and Maturion relationship | PASS | Committed target contract/Tier2 and only three required Maturion Tier2 entries; factory-owned changes; non-placeholder inventory; installed219-file package and independent preflight c922/dc1e. No Maturion Tier1 or canon amendment; tenant-scoped session records cannot promote themselves into shared authority. |
+| CC2077-03 — Actual controller delegation, approved provider and role coverage | PASS | Eight distinct actual Codex Events turn.completed records with nonzero usage, exact matching Response/validated-return/live-DB hashes and dc1e induction; bridge covers central actual invocation and14 installed source guards. Actual provider codex-chatgpt-local. Producer and Maturion review profiles differ; no claim of hosted custom-agent or replacement public OpenAI production execution. |
+| CC2077-04 — Private authorisation, tenant isolation and trusted registry | PASS | Independent live pg_catalog/grant inspection: both controller tables RLS=true, anon/authenticated DML false, RPC execute false, service grants true. Signed wrong tenant and LU2 probes401; unsigned and forged authority fixtures reject before models. DPAPI/private signing material not copied into source. Caller/model cannot choose files, issue owner approval or mint a permit. |
+| CC2077-05 — Durable claim, exact return, replay and uncertain outcomes | PASS | Live protocol fixtures c9c39186: concurrent claim exactly one execution, changed-same-ID rejected, indeterminate retained; own fresh-process replay existing258c1d28 yields execute=false/completed and same output hash; ledger remains13 rows. No new unique provider job by reviewer; no counter reset or silent retry. Output provenance and pre-reservation stale-file guard independently verified. |
+| CC2077-06 — Rendering and unchanged mandatory QA remain actual gates | PASS | Actual renderer emitted icon-marked fixture aa690f2be34ba88df700f3fdcef0d077dd281153689d9db745f8f7e83dc733f2; real reviewer needs_correction; actual source_manual.accepted rejects missing full report; unchanged25 continuity and4 manual-acceptance fixtures retained. No synthetic protocol pass is asserted to be a complete manual QA pass. No QA rule/validator edits in implementation diff. |
+| CC2077-07 — Finite correction, frozen passes and root-cause policy | PASS | Actual controller source and retained25 controller tests;15 signed live protocol fixtures prove fourth stop, rejected administrative fifth, explicit authorised natural fifth, rejected sixth, counter regression and uncertain/new-ID hold. Passed unchanged sections remain frozen with dependencies; no ability to turn a transport receipt into QA or research-resume authority. |
+| CC2077-08 — Exact final reviewer/artifact/QA provenance and Maturion handover | PASS | FULL03 corrected source and focused tests bind reviewer candidate, raw-output and input hash, assembled QA/duplication and frozen-ledger evidence; live wrong manual/raw-review handovers reject; labelled synthetic handover/replay proves protocol only. Actual full manual/current mandatory QA and human electronic sign-off remain required. Matching operation labels alone do not suffice. |
+| CC2077-09 — Real deployment and approved private routing/registration | PASS | Independent Render deploy dep-dc426td9el5s73a0ok60 live at exact51c; persisted signed Python controller registry and actual commissioned namespace; canonical source identity recomputation; owner activation procedure verifies authenticated scope/bundle/provider/assurance before atomic local enablement. This verdict accepts the delivered controller profile for already-authorised enablement. Actual ordinary flags are still disabled at issuance and must be verified after enactment; no public TypeScript dispatch is approved. |
+| CC2077-10 — Held LU1, untouched LU2 and QA source integrity boundary | PASS | Independent protected snapshot:133 LU2 hashes match; real LU1 remains qa_held, round4, calls4/4/diagnostic1; exact implementation scope contains no QA rules. Two previously disclosed external QA publisher/source changes observed; current commissioning binds8053d5cd. Do not claim global unchanged QA bytes. No real course job, owner signature, release or publication was initiated by commissioning. |
+| CC2077-11 — Current formal gates and immutable evidence | PASS | HEAD H exact108 declared paths; current H contract audit/format, delegation, preflight, POLC, routing and ECAP success. MergeGateInterface run45822263169 has all6 required role jobs successful. Producer proof committed/original SHA e9cfe04e... unchanged. Original rejection preserved; CERT003/004 corrected by actual producer metadata only. No four-issuer receipt or producer-manufactured independent token substituted. |
+| CC2077-12 — Continuous improvement without administrative or hash loops | PASS | Preserved FULL01-FULL05 fixes and affected-only rechecks, uncertain reservations and oversized-fixture pre-reservation hold; semantic source rederived including profiles, with explicit registration/inventory state separated; actual first runtime session and scoped operational lesson. No frozen-pass/full-suite redo or new model call required for the final two-field correction; no automatic promotion of lessons or scope expansion. |
+
+Hard-evidence anchors: committed source51c and submission H; [current merge gate](https://github.com/APGI-cmy/maturion-isms/actions/runs/45822263169), [delegation gate](https://github.com/APGI-cmy/maturion-isms/actions/runs/45822267308), [gateway test/lint gate](https://github.com/APGI-cmy/maturion-isms/actions/runs/45822267249). Actual commissioning record SHA25672d5ea5e2293fe5384587d7e1778dadc7f2739f256bc1e6b76e2956aba4091e0; live protocol SHA256c9c391866764defa22667cc21f843838ad85ad5a4f5a62a9d37beae451e6cf87. Private independent DB/deploy/replay records and affected source checks are hash-bound in the genuine structured acceptance; no private course source or raw model transcript is published here.
+
+### CORE-027 independent risk challenge
+
+1. **What could still fail after merge?** The Windows controller or signed-in local Codex adapter may be unavailable; external QA/source updates can invalidate saved work; network loss can leave an uncertain invocation; an unsafe later registry or public-runtime change could expand scope. These operational failures must hold work rather than repeat it or bypass QA.
+
+2. **What evidence would prove it does not fail?** Actual role-specific provider sessions and ledger returns, exact replay with no new execution, signature/tenant/LU rejection, DB privileges and atomic concurrency, retained uncertainty/counters, stale identity guards, exact reviewer/artifact/QA binding, and actual renderer/manual acceptance gates are required. Current authenticated scope must be verified when the authorised enablement is enacted.
+
+3. **Is that evidence present?** Yes for the accepted controller mechanism: actual eight sessions and exact ledger outputs, independently checked current deployment/DB, own replay and negative scope probes,15 live protocol checks, retained independent source probes, rendering and genuine non-pass QA behavior are present. This is not evidence that a real SSCM manual passed QA. Enablement is a separate already-authorised state transition, not an unproved model capability.
+
+4. **Is there a contradiction between issue intent, architecture requirements and PR evidence?** No within the declared controller profile. Real Course Creator production/review stays on the existing approved local Codex adapter with private Python command/return governance and Maturion profiles; unsupported public TypeScript document-generation remains unavailable. The eight stages are isolated synthetic commissioning and do not clear LU1 or commission LU2. External QA publisher drift is disclosed rather than erased.
+
+5. **Would a reasonable production owner accept this as merge-ready?** Yes for the declared private controller mechanism and its authorised bounded enablement: failures stop before handover, roles and output bindings are enforced, source is exact, current required gates are successful and the real course remains held. Unrestricted public/cloud/SaaS activation or manual acceptance is outside this delivered profile and is not authorised by this token.
+
+CORE-020 PASS: every applicable acceptance check has evidence, none is left open. CORE-021 PASS: no finding is softened or waived. CORE-026 PASS: full issue criteria mapped above. CORE-027 PASS: five substantive risk answers above. CERT001–004 PASS after H; original proof remains immutable. Authorised registration/enablement records may change registry/inventory state, never the accepted immutable source identity. Their enactment is verified separately and must not trigger a circular source-hash/model-review loop.
+
+
+## Independent actual-enactment addendum — 2026-11-26
+
+PASS_ACTUAL_ACTIVATION. Actual independent reviewer: OpenAI Codex instance /root/independent_agent_assurance. This append-only enactment verification preserves the genuine token IAA-session-CC2077-final-20261126-PASS and immutable structured acceptance SHA256 df03b84ef05344dcced08f2c9b196bfd1f2112deda371afa4ad1a6c826e7b843; it does not replace or reissue that receipt.
+
+Following the already-authorised owner transition, my own fresh process verified the installed LocalAppData c922 package, all14 actual imported controller guards, active canonical Maturion/Course Creator registry identities and matching inventory, accepted dc1e runtime knowledge and unchanged df03 assurance reference. A newly signed capability-only request confirms ordinary controller_enabled=true, provider codex-chatgpt-local, specialist course-creator-agent and parent maturion-agent. No reservation, provider call or course job was used to obtain this capability response.
+
+Independent live database reads before and after confirm13 retained controller invocation rows, all synthetic;0 real controller invocations. The real principal has ordinary controller enabled, commissioning disabled and the genuine acceptance reference. The synthetic principal has all ordinary and commissioning flags disabled. The old read-only indeterminate request remains retained. Local HTTP200 and active read-only chat status were independently observed. All133 protected LU2 hashes still match.
+
+Authenticated COURSE/LU01–20 scope is for future owner-initiated operations through the existing accepted sequential locks, source/research decisions, frozen/current QA, finite correction limits and electronic approval. It does not commission LU2 or clear the held LU1. The local Windows controller and signed-in Codex remain required. Public TypeScript document-generation is unavailable; no real manual QA pass, owner signature, publication or unrestricted public runtime is granted.
+
+No immutable Tier1/Tier2/controller code or semantic content identity changed during enactment; state-only registry/inventory/owner records reflect actual activation. Existing source checkout CRLF representations were distinguished from immutable installed byte hashes, which passed without substituting changed bytes. This was an affected state verification, with0 provider calls,0 reservations and0 DB mutations by the reviewer.
+
+Private actual-enactment addendum SHA256: 3c4780777e7ec539dde008fe4637cf439b050a5bb727590e5a2a22fb984b7054. Fresh capability/status and independent DB/source records are hash-bound in that append-only report. The original acceptance report remains unchanged; no circular hash/review cycle was introduced.
