@@ -40,7 +40,12 @@
   "new_course_jobs": 0,
   "QA_edits": false,
   "LU2_changes": false,
-  "independent_changed_evidence_recheck": "pending",
+  "independent_changed_evidence_recheck": {
+    "decision": "PASS",
+    "token": "IAA-session-CC2077-registry-20261126-PASS",
+    "report_sha256": "daaf4d8eddfe446ef060dfa6dcc02cfb5a84085ff688034b5bb854988c22975f"
+  },
   "main_CWT_condition": "Separate main job139925741264 reported21 failed tests across15files in MMM descriptors/migrations/frontend CI. Gateway lint/tests/Render health jobs succeeded. This follow-up makes no global-green claim and does not repair unrelated code/tests.",
-  "improvement_candidate": "Check persona file-to-registry parity before handing over any persona adoption, even when the unchanged CI trigger runs only on main/copilot branches. No CI or QA policy change is made here."
+  "improvement_candidate": "Check persona file-to-registry parity before handing over any persona adoption, even when the unchanged CI trigger runs only on main/copilot branches. No CI or QA policy change is made here.",
+  "main_sync_observation": "Observe the unchanged main-only workflow after merge; its native action result is the release record, not a self-attested pending hash."
 }
