@@ -1,0 +1,28 @@
+{
+  "schema": "course-creator-factory-focused-correction/1",
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "cause": "Independent IAA agent-file audit standard section3 requires machine-consumable protected components; prose is not equivalent.",
+  "policy": {
+    "path": "Private local evidence path withheld.",
+    "sha256": "116f242c4e80fa6fbd7f23991d629e23f1bc89dea1795dd7342235d364e03051",
+    "version": "1.0.0",
+    "section": "3 Required Protected Components"
+  },
+  "scope": "Only target Tier1 contract; unchanged body and unchanged pre-existing prohibition rules. No other contract, knowledge, product, QA or course file edited.",
+  "path": "Private local evidence path withheld.",
+  "original": "Private local evidence path withheld.",
+  "before_sha256": "23eb9f8479440809e4bdf2021702642c6eae74b62debac3fbb83bcb744c9f87f",
+  "after_sha256": "deac93ff0ac75e8e5cb5e37ad1e974898d9649bd342788a287f83aeeaffaea48",
+  "contract_version": "1.1.1",
+  "changes": [
+    "identity.role/mission/class_boundary YAML",
+    "Structured prohibition IDs with SELF-MOD-CC-001 enforcement CONSTITUTIONAL; existing rule wording preserved",
+    "tier2_knowledge.index YAML",
+    "merge_gate_interface.parity_required true and parity_enforcement BLOCKING",
+    "contract_version 1.1.1"
+  ],
+  "body_unchanged": true,
+  "producer_structural_checks": "PASS",
+  "global_parity_checks": "NOT_CLAIMED",
+  "independent_recheck": "PENDING"
+}

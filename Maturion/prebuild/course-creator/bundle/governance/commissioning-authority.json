@@ -1,0 +1,17 @@
+{
+  "schema": "course-creator-agent-commissioning-authority/1",
+  "id": "CC-AGENT-COMMISSION-2075-20261126",
+  "date": "2026-11-26",
+  "actor": "Johan",
+  "source": "direct_user_instruction_recorded_in_GitHub_issue",
+  "exact_instruction": "OK please proceed with the factory review, independent assurance and AIMC registration so we can activate the Course Creator agent reporting to Maturion. Keep the QA suite unchanged and leave LU2 for me.",
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "supersedes_scope_only": "governance/creation-authority.json",
+  "original_authority_preserved": true,
+  "target": "course-creator-agent",
+  "reporting_orchestrator": "maturion-agent",
+  "authorised": ["factory review and target-bundle corrections", "independent assurance", "AIMC registration and routing implementation within the requested course-creator domain", "activation only after independently verified commissioning gates"],
+  "exclusions": ["QA suite changes", "LU2 processing", "held course job restart", "upstream Maturion, CodexAdvisor or IAA contract changes", "credential or course-source publication", "fabricated assurance or runtime registration"],
+  "activation_is_conditional_on_real_evidence": true,
+  "receipt_not_a_runtime_credential": true
+}

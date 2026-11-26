@@ -1,0 +1,91 @@
+{
+  "schema": "course-creator-agent-source-origins/1",
+  "fetched_date": "2026-11-26",
+  "source_commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+  "files": [
+    {
+      "path": "governance/CANON_INVENTORY.json",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/CANON_INVENTORY.json",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 146172
+    },
+    {
+      "path": "governance/AGENT_REGISTRY.json",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/AGENT_REGISTRY.json",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 316
+    },
+    {
+      "path": ".github/agents/maturion-agent.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/.github/agents/maturion-agent.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 12890
+    },
+    {
+      "path": "Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 32734
+    },
+    {
+      "path": "Maturion/strategy/Maturion_agent_network_organigram_strategy.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/Maturion/strategy/Maturion_agent_network_organigram_strategy.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 27280
+    },
+    {
+      "path": "governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 10625
+    },
+    {
+      "path": "governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/canon/THREE_TIER_AGENT_KNOWLEDGE_ARCHITECTURE.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 13380
+    },
+    {
+      "path": "governance/canon/AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/canon/AGENT_CREATION_BUNDLE_REQUIREMENTS.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 9378
+    },
+    {
+      "path": "governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 10134
+    },
+    {
+      "path": "governance/canon/AGENT_DELEGATION_PROTOCOL.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/canon/AGENT_DELEGATION_PROTOCOL.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 7678
+    },
+    {
+      "path": "governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/governance/canon/SPECIALIST_KNOWLEDGE_MANAGEMENT.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 9154
+    },
+    {
+      "path": ".agent-workspace/CodexAdvisor-agent/knowledge/runtime-specialist-bundle-process.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/.agent-workspace/CodexAdvisor-agent/knowledge/runtime-specialist-bundle-process.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 4103
+    },
+    {
+      "path": ".agent-workspace/CodexAdvisor-agent/knowledge/agent-creation-template.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/.agent-workspace/CodexAdvisor-agent/knowledge/agent-creation-template.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 5080
+    },
+    {
+      "path": ".agent-workspace/CodexAdvisor-agent/knowledge/continuous-improvement-protocol.md",
+      "url": "https://github.com/APGI-cmy/maturion-isms/blob/d725c685c732f0fc2252230be3bffbc8252a8881/.agent-workspace/CodexAdvisor-agent/knowledge/continuous-improvement-protocol.md",
+      "commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
+      "original_characters": 2312
+    }
+  ]
+}

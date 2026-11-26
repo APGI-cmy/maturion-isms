@@ -1,0 +1,509 @@
+{
+  "numTotalTestSuites": 9,
+  "numPassedTestSuites": 9,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 41,
+  "numPassedTests": 41,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1795686522836,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "AICentre Gateway"
+          ],
+          "fullName": "AICentre Gateway request() returns AICentreResponse for a valid advisory request",
+          "status": "passed",
+          "title": "request() returns AICentreResponse for a valid advisory request",
+          "duration": 19.073999999999984,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AICentre Gateway"
+          ],
+          "fullName": "AICentre Gateway request() routes to fallback adapter when primary provider is UNAVAILABLE",
+          "status": "passed",
+          "title": "request() routes to fallback adapter when primary provider is UNAVAILABLE",
+          "duration": 31.606799999999993,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AICentre Gateway"
+          ],
+          "fullName": "AICentre Gateway request() returns ALL_PROVIDERS_UNAVAILABLE when all providers are UNAVAILABLE",
+          "status": "passed",
+          "title": "request() returns ALL_PROVIDERS_UNAVAILABLE when all providers are UNAVAILABLE",
+          "duration": 31.125699999999966,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AICentre Gateway"
+          ],
+          "fullName": "AICentre Gateway request() returns UNKNOWN_AGENT when agentId does not match any persona file",
+          "status": "passed",
+          "title": "request() returns UNKNOWN_AGENT when agentId does not match any persona file",
+          "duration": 31.47829999999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AICentre Gateway"
+          ],
+          "fullName": "AICentre Gateway request() writes a TelemetryEvent for every call (success and failure)",
+          "status": "passed",
+          "title": "request() writes a TelemetryEvent for every call (success and failure)",
+          "duration": 31.069500000000005,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AICentre Gateway"
+          ],
+          "fullName": "AICentre Gateway request() never exposes raw provider error messages in AICentreErrorResponse",
+          "status": "passed",
+          "title": "request() never exposes raw provider error messages in AICentreErrorResponse",
+          "duration": 31.64240000000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AICentre Gateway"
+          ],
+          "fullName": "AICentre Gateway request() calls MemoryLifecycle.recordTurn() after every successful response",
+          "status": "passed",
+          "title": "request() calls MemoryLifecycle.recordTurn() after every successful response",
+          "duration": 30.700999999999965,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1795686524041,
+      "endTime": 1795686524248.701,
+      "status": "passed",
+      "message": "",
+      "name": "Private local evidence path withheld from portable export."
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "PersonaLoader"
+          ],
+          "fullName": "PersonaLoader load() returns the full Markdown content of a known agentId",
+          "status": "passed",
+          "title": "load() returns the full Markdown content of a known agentId",
+          "duration": 5.581900000000019,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "PersonaLoader"
+          ],
+          "fullName": "PersonaLoader load() throws PersonaNotFoundError for an unknown agentId",
+          "status": "passed",
+          "title": "load() throws PersonaNotFoundError for an unknown agentId",
+          "duration": 15.206000000000017,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "PersonaLoader"
+          ],
+          "fullName": "PersonaLoader load() rejects agentId values containing path traversal sequences (/, \\, ..)",
+          "status": "passed",
+          "title": "load() rejects agentId values containing path traversal sequences (/, \\, ..)",
+          "duration": 15.063100000000077,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "PersonaLoader"
+          ],
+          "fullName": "PersonaLoader listAvailable() returns all agentIds with a corresponding .md file",
+          "status": "passed",
+          "title": "listAvailable() returns all agentIds with a corresponding .md file",
+          "duration": 16.023199999999974,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-001: load(\"maturion-advisor\") returns non-empty markdown content",
+          "status": "passed",
+          "title": "CL-1-T-001: load(\"maturion-advisor\") returns non-empty markdown content",
+          "duration": 14.761700000000019,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-002: maturion-advisor front-matter contains \"---\" YAML delimiter",
+          "status": "passed",
+          "title": "CL-1-T-002: maturion-advisor front-matter contains \"---\" YAML delimiter",
+          "duration": 15.494100000000003,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-003: maturion-advisor front-matter contains \"agentId:\" field",
+          "status": "passed",
+          "title": "CL-1-T-003: maturion-advisor front-matter contains \"agentId:\" field",
+          "duration": 15.530700000000024,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-004: maturion-advisor front-matter contains \"version:\" field",
+          "status": "passed",
+          "title": "CL-1-T-004: maturion-advisor front-matter contains \"version:\" field",
+          "duration": 16.138400000000047,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-005: listAvailable() includes \"maturion-advisor\"",
+          "status": "passed",
+          "title": "CL-1-T-005: listAvailable() includes \"maturion-advisor\"",
+          "duration": 15.525600000000054,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-006: maturion-advisor front-matter contains \"module:\" field",
+          "status": "passed",
+          "title": "CL-1-T-006: maturion-advisor front-matter contains \"module:\" field",
+          "duration": 15.217600000000061,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-007: maturion-advisor front-matter contains \"last_reviewed:\" field",
+          "status": "passed",
+          "title": "CL-1-T-007: maturion-advisor front-matter contains \"last_reviewed:\" field",
+          "duration": 14.981999999999971,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-008: maturion-advisor front-matter contains \"owner:\" field",
+          "status": "passed",
+          "title": "CL-1-T-008: maturion-advisor front-matter contains \"owner:\" field",
+          "duration": 15.935799999999972,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1)"
+          ],
+          "fullName": "CL-1 \u2014 maturion-advisor persona (LKIAC Wave 1) CL-1-T-009: maturion-advisor front-matter contains \"description:\" field",
+          "status": "passed",
+          "title": "CL-1-T-009: maturion-advisor front-matter contains \"description:\" field",
+          "duration": 15.350299999999947,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-001: load() throws PersonaValidationError when agentId field is missing",
+          "status": "passed",
+          "title": "CL-7-T-001: load() throws PersonaValidationError when agentId field is missing",
+          "duration": 15.54729999999995,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-002: load() throws PersonaValidationError when description field is missing",
+          "status": "passed",
+          "title": "CL-7-T-002: load() throws PersonaValidationError when description field is missing",
+          "duration": 15.00649999999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-003: load() throws PersonaValidationError when module field is missing",
+          "status": "passed",
+          "title": "CL-7-T-003: load() throws PersonaValidationError when module field is missing",
+          "duration": 15.24490000000003,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-004: load() throws PersonaValidationError when version field is missing",
+          "status": "passed",
+          "title": "CL-7-T-004: load() throws PersonaValidationError when version field is missing",
+          "duration": 15.205100000000016,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-005: load() throws PersonaValidationError when last_reviewed field is missing",
+          "status": "passed",
+          "title": "CL-7-T-005: load() throws PersonaValidationError when last_reviewed field is missing",
+          "duration": 15.112499999999955,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-006: load() throws PersonaValidationError when owner field is missing",
+          "status": "passed",
+          "title": "CL-7-T-006: load() throws PersonaValidationError when owner field is missing",
+          "duration": 15.582899999999995,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-007: load() throws PersonaValidationError when no YAML front-matter is present",
+          "status": "passed",
+          "title": "CL-7-T-007: load() throws PersonaValidationError when no YAML front-matter is present",
+          "duration": 15.332399999999893,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate)"
+          ],
+          "fullName": "CL-7-D1 \u2014 PersonaValidationError on invalid YAML front-matter (RED gate) CL-7-T-008: load() throws PersonaValidationError when required fields are blank/empty",
+          "status": "passed",
+          "title": "CL-7-T-008: load() throws PersonaValidationError when required fields are blank/empty",
+          "duration": 15.550899999999956,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-009: listAvailable() returns all agentIds from the Persona Registry",
+          "status": "passed",
+          "title": "CL-7-T-009: listAvailable() returns all agentIds from the Persona Registry",
+          "duration": 15.896399999999971,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-010: every Persona Registry agentId has a corresponding loadable file",
+          "status": "passed",
+          "title": "CL-7-T-010: every Persona Registry agentId has a corresponding loadable file",
+          "duration": 15.603700000000003,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-011: all Persona Registry files contain all required YAML front-matter fields",
+          "status": "passed",
+          "title": "CL-7-T-011: all Persona Registry files contain all required YAML front-matter fields",
+          "duration": 15.293000000000006,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-012: PersonaLoader enforces YAML front-matter validation at load time (missing field)",
+          "status": "passed",
+          "title": "CL-7-T-012: PersonaLoader enforces YAML front-matter validation at load time (missing field)",
+          "duration": 16.009500000000003,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-013: PersonaLoader enforces YAML front-matter validation at load time (blank fields)",
+          "status": "passed",
+          "title": "CL-7-T-013: PersonaLoader enforces YAML front-matter validation at load time (blank fields)",
+          "duration": 16.017799999999966,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-014: load() throws PersonaValidationError when agentId field does not match filename",
+          "status": "passed",
+          "title": "CL-7-T-014: load() throws PersonaValidationError when agentId field does not match filename",
+          "duration": 15.83910000000003,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-015: load() throws PersonaValidationError when version is not valid semver",
+          "status": "passed",
+          "title": "CL-7-T-015: load() throws PersonaValidationError when version is not valid semver",
+          "duration": 15.422500000000014,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CL-7-D2 \u2014 Persona registry sync (RED gate)"
+          ],
+          "fullName": "CL-7-D2 \u2014 Persona registry sync (RED gate) CL-7-T-016: load() throws PersonaValidationError when last_reviewed is not YYYY-MM-DD",
+          "status": "passed",
+          "title": "CL-7-T-016: load() throws PersonaValidationError when last_reviewed is not YYYY-MM-DD",
+          "duration": 15.362799999999993,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1795686523356,
+      "endTime": 1795686523797.3628,
+      "status": "passed",
+      "message": "",
+      "name": "Private local evidence path withheld from portable export."
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Course Creator registration candidate (#2075)"
+          ],
+          "fullName": "Course Creator registration candidate (#2075) binds one specialist/persona identity to Maturion without replacing the legacy persona",
+          "status": "passed",
+          "title": "binds one specialist/persona identity to Maturion without replacing the legacy persona",
+          "duration": 2.159700000000015,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Course Creator registration candidate (#2075)"
+          ],
+          "fullName": "Course Creator registration candidate (#2075) cannot turn registration discovery into activation or an owner-ready result",
+          "status": "passed",
+          "title": "cannot turn registration discovery into activation or an owner-ready result",
+          "duration": 15.046099999999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Course Creator registration candidate (#2075)"
+          ],
+          "fullName": "Course Creator registration candidate (#2075) keeps registration data immutable and never contains provider credentials",
+          "status": "passed",
+          "title": "keeps registration data immutable and never contains provider credentials",
+          "duration": 15.0839,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Course Creator registration candidate (#2075)"
+          ],
+          "fullName": "Course Creator registration candidate (#2075) blocks direct gateway persona invocation for advisory before any model call",
+          "status": "passed",
+          "title": "blocks direct gateway persona invocation for advisory before any model call",
+          "duration": 15.686599999999999,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Course Creator registration candidate (#2075)"
+          ],
+          "fullName": "Course Creator registration candidate (#2075) blocks direct gateway persona invocation for document-generation before any model call",
+          "status": "passed",
+          "title": "blocks direct gateway persona invocation for document-generation before any model call",
+          "duration": 15.606200000000001,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1795686524464,
+      "endTime": 1795686524528.6062,
+      "status": "passed",
+      "message": "",
+      "name": "Private local evidence path withheld from portable export."
+    }
+  ]
+}

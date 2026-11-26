@@ -70,6 +70,8 @@ from routers.kuc_routes import router as kuc_router  # noqa: E402
 
 app.include_router(ai_router)
 app.include_router(kuc_router)
+from routers.course_creator_routes import router as course_creator_router  # noqa: E402
+app.include_router(course_creator_router)
 
 
 # ---------------------------------------------------------------------------
