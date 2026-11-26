@@ -1,0 +1,485 @@
+{
+  "schema": "course-creator-specialist-checklist-equivalence-map/1",
+  "date": "2026-11-26",
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "checklist_source": "governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md v1.0.0",
+  "strategy_source": "Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md",
+  "target_contract_version": "1.1.0",
+  "framework_version": "v6.2.0",
+  "meaning": "This is a complete checklist disposition map, not an assertion of 100% runtime compliance. Present declarations, consumer equivalences and unfulfilled executable/assurance gates remain distinct. No upstream checklist/canon is waived or changed.",
+  "rows": [
+    {
+      "checklist_id": "1.1-F01",
+      "requirement": "id",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "course-creator-agent",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F02",
+      "requirement": "description",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Bounded Course Creator specialist reporting to Maturion",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F03",
+      "requirement": "agent.id",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "course-creator-agent",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F04",
+      "requirement": "agent.class",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "specialist",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F05",
+      "requirement": "agent.version",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "6.2.0",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F06",
+      "requirement": "governance.protocol",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "LIVING_AGENT_SYSTEM",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F07",
+      "requirement": "governance.expected_artifacts",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Five declared pinned constitutional source artifacts",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F08",
+      "requirement": "governance.degraded_on_placeholder_hashes",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "true",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F09",
+      "requirement": "execution_identity.name",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Maturion Bot",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F10",
+      "requirement": "execution_identity.never_push_main",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "true",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F11",
+      "requirement": "execution_identity.write_via_pr",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "true",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F12",
+      "requirement": "specialist.domain",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "course-creation",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F13",
+      "requirement": "specialist.registered_orchestrator",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "maturion-agent",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F14",
+      "requirement": "specialist.tier1_knowledge",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Three explicit constitutional source bindings",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F15",
+      "requirement": "specialist.tier2_knowledge",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Versioned index and methods, including runtime/registration mapping",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F16",
+      "requirement": "prohibitions",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Nine explicit negative-authority rules",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F17",
+      "requirement": "metadata.canonical_home",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "APGI-cmy/maturion-foreman-governance",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F18",
+      "requirement": "metadata.authority",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "CS2",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-F19",
+      "requirement": "metadata.last_updated",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "2026-11-26",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-CANON",
+      "requirement": "governance.canon_inventory",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "CONSUMER_EQUIVALENCE_REQUIRES_ASSURANCE",
+      "evidence": "Pinned source-snapshot inventory with declared upstream SHA256 and actual source bytes.",
+      "equivalence_or_scope_note": "Local authoring layout nests the unmodified consumer snapshot under governance/source-snapshot. Export/runtime owner must map it to the accepted deployed inventory path without forging a canonical registry.",
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-SECRET",
+      "requirement": "execution_identity.secret reference",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "CONSUMER_EQUIVALENCE_REQUIRES_ASSURANCE",
+      "evidence": "secret_env_var: MATURION_BOT_TOKEN; credentials_provisioned:false.",
+      "equivalence_or_scope_note": "Current CodexAdvisor/Maturion contracts use an environment-variable reference. No secret value is embedded. Provisioned runtime identity remains a separate dependency.",
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-COPY",
+      "requirement": "metadata.this_copy",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "CONSUMER_EQUIVALENCE_REQUIRES_ASSURANCE",
+      "evidence": "this_copy: consumer.",
+      "equivalence_or_scope_note": "Checklist literal canonical conflicts with consumer source/approved strategy. Keep truthful consumer metadata; independent factory/IAA must accept the interpretation, not relabel the copy canonical.",
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.1-MODEL",
+      "requirement": "Template nested model binding",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PENDING_APPROVED_RUNTIME_BINDING",
+      "evidence": "agent.model:null and model_policy:AIMC_APPROVED_AT_ACTIVATION.",
+      "equivalence_or_scope_note": "No model is invented by contract authoring. Resolve actual approved model through AIMC registration before live dispatch.",
+      "owner": "AIMC/runtime owner; IAA validates receipt",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.2",
+      "requirement": "Single-domain mission and immutable scope/orchestrator invariants",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Mission includes both required SPECIALIST NEVER ACCEPTS invariants and reporting orchestrator.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.3",
+      "requirement": "Preflight identity, scope examples, authority and degraded behaviour",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Phase1 includes identity, wrong/correct domain examples, missing dependencies, stale binding stop and authenticated principal requirement.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.4-WAKE",
+      "requirement": "Executable induction/wake-up readiness",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PENDING_IMPLEMENTATION_EVIDENCE",
+      "evidence": "Corrected contract names scripts/runtime_preflight.py; the separately supplied script now exists, but this owned author check does not independently assure its implementation or its real externally issued receipts.",
+      "equivalence_or_scope_note": "Authoring validate_bundle.py is expressly not the commissioned runtime gate. Current runtime script/accepted receipts require separate implementation and verification.",
+      "owner": "Runtime implementation owner",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.4-HASH",
+      "requirement": "Tier1 integrity and degraded state",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Phase1 verifies accepted submission and upstream inventory; stale or missing proof halts.",
+      "equivalence_or_scope_note": "Actual runtime validation still needs tested executable proof.",
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.4-T2",
+      "requirement": "Tier2 version check, last five sessions and valid orchestrator",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Phase2 checks method versions against accepted submission and loads at most five applicable tenant-scoped sessions; authority receipt required.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.5-H",
+      "requirement": "SPEC_H validated bounded domain execution and evidence",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Phase3 priority block requires controller-owned execution, no lateral delegation, actual artifact/research/QA bindings.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.5-ML",
+      "requirement": "SPEC_M session/evidence/learning and SPEC_L optimisation",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Medium block records typed progress, counters, findings and session evidence; low block proposes improvements without knowledge/QA self-modification.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.5-RETURN",
+      "requirement": "Typed result, evidence and no silent task discard",
+      "artifact": ".agent-workspace/course-creator-agent/knowledge/delegation-and-reporting.md",
+      "state": "PENDING_ADAPTER_AND_SCHEMA_VERIFICATION",
+      "evidence": "Phase4 and operational method require exact delegation/context/controller/artifact/QA bindings and rejection audit receipt.",
+      "equivalence_or_scope_note": "The target author describes the protocol. Root/runtime owner must update schema and implement/verify binding checks; no passing runtime result is inferred.",
+      "owner": "Runtime/schema owner; IAA validates",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.6",
+      "requirement": "Automated handover, result package, non-empty evidence, session and knowledge delta",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PENDING_RUNTIME_COMMISSIONING",
+      "evidence": "Phase4 specifies immutable prehandover, .agent-admin/specialist-results/<delegation-id>.json, session and proposed knowledge delta.",
+      "equivalence_or_scope_note": "Existing session001 records preparation only. Need actual bounded commissioning receipt and session closure through accepted runtime.",
+      "owner": "Controller/runtime owner",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.7",
+      "requirement": "SPECIALIST_KNOWLEDGE_MANAGEMENT lifecycle, source bindings, version/staleness and delta",
+      "artifact": ".agent-workspace/course-creator-agent/knowledge/memory-and-learning.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Contract and methods distinguish Tier1, versioned Tier2, Tier3 candidates, tenant isolation, stale checks and governed promotion.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.8",
+      "requirement": "domain.primary/in_scope/out_of_scope/escalation_on_boundary_hit",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "Explicit domain block added: course-creation, scoped operations, exclusions, rejected_delegation_to_maturion-agent.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "1.9",
+      "requirement": "All core prohibited specialist behaviours",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "No out-of-domain/invalid orchestration, lateral invocation, silent discard, task-derived constitutional override, scope expansion, push-main or self-granted authority.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "2.1",
+      "requirement": "Non-empty machine-readable domain evidence",
+      "artifact": ".agent-workspace/course-creator-agent/knowledge/delegation-and-reporting.md",
+      "state": "PENDING_ADAPTER_VERIFICATION",
+      "evidence": "JSON envelope with actual non-empty evidence refs; receipt bytes and current QA/artifact/context must be checked.",
+      "equivalence_or_scope_note": "Schema/hash shape is not source-byte verification or independent assurance.",
+      "owner": "Runtime/API owner",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "2.2",
+      "requirement": "Structured rejection detail and recommended_action",
+      "artifact": ".agent-workspace/course-creator-agent/knowledge/delegation-and-reporting.md",
+      "state": "PENDING_SCHEMA_CORRECTION",
+      "evidence": "Method now expressly requires delegation_id, REJECTED reason, detail, recommended_action, next actor and minimal rejection evidence.",
+      "equivalence_or_scope_note": "Existing result schema needs the matching explicit fields or a separate minimal rejection schema; target factory author did not edit product/schema paths.",
+      "owner": "Schema/API owner",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "2.3",
+      "requirement": "Every Tier1 knowledge binding indexed and SHA256 verified",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_FOR_SOURCE_BINDINGS",
+      "evidence": "Five source-canon files correspond to non-placeholder source inventory entries; submitted source bytes were previously hash-verified.",
+      "equivalence_or_scope_note": "Target contract registration/canon participation is not provided by the source snapshot; actual accepted target registration is separate.",
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "3.1",
+      "requirement": "Contract character limit <30000",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRODUCER_VERIFIED",
+      "evidence": "12380 Unicode characters at corrected submission.",
+      "equivalence_or_scope_note": null,
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "3.2",
+      "requirement": "Living Agent System v6.2.0 references",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_DECLARATION",
+      "evidence": "agent.version6.2.0 and governance.version v6.2.0; session001 framework v6.2.0.",
+      "equivalence_or_scope_note": "Target contract_version/Tier2 1.1.0 are their own version namespace, not a change to LAS version.",
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "3.3",
+      "requirement": "All Tier1/Tier2 paths exist and have accepted integrity/index participation",
+      "artifact": ".agent-workspace/course-creator-agent/knowledge/index.md",
+      "state": "PENDING_TARGET_REGISTRATION_AND_ASSURANCE",
+      "evidence": "Local files exist with declared versions and source integrity; corrected submission manifest to be frozen by submission owner.",
+      "equivalence_or_scope_note": "Source CANON_INVENTORY is not modified to falsely register local target knowledge. The appointed registry owner must accept target integrity/index participation and public path mapping.",
+      "owner": "Governance/registry owner; IAA validates",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "METHOD-AUTH",
+      "requirement": "Current exact issue/authority and role separation",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRESENT_AS_SCOPED_RECORD",
+      "evidence": "Issue2075 and governance/commissioning-authority.json exist; exact latest user instruction, exclusions and conditional evidence-gated activation are recorded. Original preparation authority remains separate.",
+      "equivalence_or_scope_note": "This is a scoped authority record, not a runtime credential, independent assurance or proof of activation.",
+      "owner": "Administrative recorder; IAA validates",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "METHOD-IAA",
+      "requirement": "Independent final IAA and no self-assurance",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PENDING_INDEPENDENT_ASSURANCE",
+      "evidence": "Contract preserves independent IAA and denies self-certification; this child now authored corrections and cannot act as final IAA.",
+      "equivalence_or_scope_note": "A different independent reviewer must inspect the stable corrected submission.",
+      "owner": "Independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "METHOD-AIMC",
+      "requirement": "Governance/AIMC identity and dependency mapping",
+      "artifact": ".agent-workspace/course-creator-agent/knowledge/commissioning-and-registration.md",
+      "state": "PRESENT_AS_PROPOSAL",
+      "evidence": "course-creator-agent governance specialist \u2192 proposed course-creator-advisor / course-creator / document-generation; authenticated Maturion reporting; course-crafter-advisor unchanged.",
+      "equivalence_or_scope_note": "No runtime registration, route or model is declared active by the mapping.",
+      "owner": "Factory author / independent IAA",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "METHOD-PUBLIC",
+      "requirement": "Sanitised portable public submission",
+      "artifact": ".agent-workspace/course-creator-agent/knowledge/memory-and-learning.md",
+      "state": "PENDING_EXPORT_VERIFICATION",
+      "evidence": "Operating guidance now requires logical dependency names and private deployment profile; real paths/baselines/session/course data stay local.",
+      "equivalence_or_scope_note": "Root owns allowlisted export and public-path scan; this role did not publish anything.",
+      "owner": "Export owner; IAA validates",
+      "waiver_granted": false
+    }
+  ],
+  "rows_total": 45,
+  "canonical_sections_covered": [
+    "1.1",
+    "1.2",
+    "1.3",
+    "1.4",
+    "1.5",
+    "1.6",
+    "1.7",
+    "1.8",
+    "1.9",
+    "2.1",
+    "2.2",
+    "2.3",
+    "3.1",
+    "3.2",
+    "3.3"
+  ],
+  "independent_IAA_performed": false,
+  "activation_ready": false,
+  "source_file_bindings": {
+    "local-evidence:commissioning-authority.json": "9bce73a5a6acd27ece290bf29cf75d335784fd1a174dd4779a6506ba66ad0a03"
+  }
+}

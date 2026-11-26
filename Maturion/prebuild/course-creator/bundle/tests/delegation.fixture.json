@@ -1,0 +1,64 @@
+{
+  "schema": "course-creator-delegation/1",
+  "delegation_id": "00000000-0000-4000-8000-000000000001",
+  "orchestrator_id": "maturion-agent",
+  "specialist_id": "course-creator-agent",
+  "authority": {
+    "source": "Isolated schema fixture; no dispatch permission.",
+    "receipt": {
+      "path": "fixture/evidence.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "context": {
+    "app": "course-creator",
+    "tenant_id": "fixture-tenant",
+    "user_id": "fixture-user",
+    "role": "fixture-reviewer",
+    "project_id": "fixture-course",
+    "unit_id": "LU01",
+    "entity_id": "fixture-entity"
+  },
+  "task": {
+    "domain": "course-creation",
+    "description": "Validate this isolated interface fixture.",
+    "scope": "Fixture only; no course work.",
+    "allowed_operations": [
+      "inspect"
+    ],
+    "expected_outputs": [
+      "Fixture result"
+    ]
+  },
+  "inputs": {
+    "sources": [
+      {
+        "path": "fixture/evidence.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "operative_requirements": {
+      "path": "fixture/evidence.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "controller_parent": {
+      "path": "fixture/evidence.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "constraints": {
+    "evidence_required": true,
+    "change_QA_suite": false,
+    "self_approve": false,
+    "lateral_delegation": false,
+    "max_ordinary_rounds": 4,
+    "conditional_fifth_only": true,
+    "automatic_sixth": false
+  },
+  "usage": {
+    "chain_id": "fixture-chain",
+    "rounds_completed": 0,
+    "producer_calls": 0,
+    "review_calls": 0
+  }
+}

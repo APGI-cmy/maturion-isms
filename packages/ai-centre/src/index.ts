@@ -43,3 +43,4 @@ export { TelemetryWriter } from './telemetry/TelemetryWriter.js';
 export { PersonaLoader } from './personas/PersonaLoader.js';
 export { SessionMemoryStore } from './memory/SessionMemoryStore.js';
 export { SupabasePersistentMemoryAdapter } from './memory/SupabasePersistentMemoryAdapter.js';
+export { COURSE_CREATOR_REGISTRATION, discoverCourseCreatorRegistration } from './registration/CourseCreatorRegistration.js';

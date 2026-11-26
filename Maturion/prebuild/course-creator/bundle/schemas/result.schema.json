@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:apgi:course-creator:result:1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "course-creator-specialist-result/1"
+    },
+    "delegation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "specialist_id": {
+      "const": "course-creator-agent"
+    },
+    "return_to": {
+      "const": "maturion-agent"
+    },
+    "status": {
+      "enum": [
+        "SUCCESS",
+        "PARTIAL",
+        "FAILED",
+        "ESCALATED",
+        "REJECTED",
+        "UNAVAILABLE",
+        "DEGRADED"
+      ]
+    },
+    "reason": {
+      "enum": [
+        "scoped_task_complete",
+        "out_of_domain",
+        "invalid_authority",
+        "missing_inputs",
+        "QA_failed",
+        "administrative_failure",
+        "missing_dependency",
+        "budget_exhausted",
+        "needs_owner_decision"
+      ]
+    },
+    "result_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "domain_outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "mandatory_QA_passed": {
+      "type": "boolean"
+    },
+    "complete_manual_rendered": {
+      "type": "boolean"
+    },
+    "owner_review_ready": {
+      "type": "boolean"
+    },
+    "owner_approved": {
+      "const": false
+    },
+    "production_activated": {
+      "const": false
+    },
+    "maturion_review_required": {
+      "const": true
+    },
+    "frozen_components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "independent_receipt": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "dependencies_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "id",
+          "independent_receipt",
+          "dependencies_sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "chain_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rounds_completed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "producer_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "review_calls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "chain_id",
+        "rounds_completed",
+        "producer_calls",
+        "review_calls"
+      ],
+      "additionalProperties": false
+    },
+    "lessons_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "observation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          "promotion_status": {
+            "const": "candidate_only"
+          }
+        },
+        "required": [
+          "observation",
+          "evidence",
+          "promotion_status"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "delegation_id",
+    "specialist_id",
+    "return_to",
+    "status",
+    "reason",
+    "result_summary",
+    "evidence_artifacts",
+    "domain_outputs",
+    "blockers",
+    "limits",
+    "mandatory_QA_passed",
+    "complete_manual_rendered",
+    "owner_review_ready",
+    "owner_approved",
+    "production_activated",
+    "maturion_review_required",
+    "frozen_components",
+    "usage",
+    "lessons_candidates"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "owner_review_ready": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "mandatory_QA_passed": {
+            "const": true
+          },
+          "complete_manual_rendered": {
+            "const": true
+          },
+          "status": {
+            "const": "SUCCESS"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "FAILED",
+              "ESCALATED",
+              "REJECTED",
+              "UNAVAILABLE",
+              "DEGRADED"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "owner_review_ready": {
+            "const": false
+          },
+          "blockers": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}
