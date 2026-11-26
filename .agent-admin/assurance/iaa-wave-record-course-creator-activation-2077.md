@@ -80,3 +80,28 @@ No final assurance has been issued. Activation remains held.
 ## REJECTION_HISTORY
 
 Prior PR2076 historical delegation failures remain in that PR; no retrospective waiver or rewritten chronology.
+
+### 2026-11-26 — IAA-session-CC2077-final — consolidated ceremony rejection
+
+REJECTION-PACKAGE — PR2078, submitted head e5d25afa0b8b8d8ad66d63529d57b75c55cae148. Applicable classes: AGENT_CONTRACT, BUILD_DELIVERABLE, KNOWLEDGE_GOVERNANCE and CI_WORKFLOW. Actual reviewer: separately appointed OpenAI Codex independent-assurance instance /root/independent_agent_assurance under CS2 issue2077. No hosted/custom-agent runtime or credential is claimed.
+
+Two existence checks fail against the submitted metadata: CERT-003 — the producing agent has not declared fail_only_once_attested in the session memory preamble; CERT-004 — the immutable producer PREHANDOVER proof contains a prose wave reference but no iaa_audit_token field. Authority: current iaa-category-overlays.md Universal Ceremony Gate. Owner: direct-CS2 implementation producer. Classification: Ceremony. The original producer proof remains read-only.
+
+Single corrective submission: add the actual producer attestation to its session preamble and append a clearly identified producer PREHANDOVER supplement in this wave, preserving the original immutable proof and binding its hash, with an iaa_audit_token reference to the actual canonical TOKEN location. A reference is not issuance. IAA alone issues the token after affected-only recheck. No code, model call, course QA change, source digest reset or repeated functional review is required.
+
+Functional acceptance is retained: FULL01–05 source defects closed; eight actual isolated Codex stages and matching live receipts; 15 signed protocol checks; actual renderer and unchanged manual acceptance rejection; independently verified fresh-process replay, tenant/LU2 rejection, privileged DB isolation and exact deployed source. No unresolved functional finding is known. Scope remains controller_scoped_course_creation_v1; no real manual QA pass or owner approval.
+
+IAA_REJECTION_NOTICE: RESULT: REJECTED_BACK_TO_PRODUCER; HANDOVER_ALLOWED: no; RCA_REVIEW: not applicable. Merge/ordinary full-agent enablement remains blocked until the two producer declarations are present. This metadata correction does not reopen unchanged substantive checks. No activation token has been issued.
+## Producer PREHANDOVER supplement — CERT003/CERT004 correction
+
+Actual producer: OpenAI Codex direct-CS2 integration-builder /root. Authority: issue2077 / PR2078.
+Original immutable producer proof: .agent-admin/prehandover/proof-pr-2078-course-creator-controller.md
+original_frozen_proof_sha256: e9cfe04e930ebd9beb2ad0acbc244e20c6f5a1ddeabc492f08055ba431e345a3
+source_head: 51c216f62378421898e20b89c0c809e064ed4a9f
+reviewed_content_sha256: c9228acc6571d7fff60527bc63c00a405657c0b06bab86b7f07b4f61c85f20bb
+fail_only_once_attested: true — actual declaration is now in the producing session001 preamble.
+iaa_audit_token: IAA-session-CC2077-final-20261126-PASS
+iaa_audit_token_location: .agent-admin/assurance/iaa-wave-record-course-creator-activation-2077.md#token
+token_field_meaning: EXPECTED REFERENCE ONLY, NOT ISSUANCE. Only the independent IAA actor may publish the actual matching verdict in TOKEN. Missing/rejected assurance continues to block merge and ordinary enablement.
+
+The original frozen producer proof is unchanged. This separately appended producer supplement supplies the missing field without backdating the declaration, rewriting the proof or altering the independent rejection. All source/runtime/QA/loop evidence and prior findings remain retained. No code, model call, course QA change, source identity reset, retest of passed manual sections or new course hand-off accompanies this correction.
