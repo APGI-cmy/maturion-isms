@@ -1,0 +1,124 @@
+{
+  "schema": "course-creator-2077-commissioning-summary/1",
+  "source_commit": "51c216f62378421898e20b89c0c809e064ed4a9f",
+  "deploy_id": "dep-dc426td9el5s73a0ok60",
+  "reviewed_content_sha256": "c9228acc6571d7fff60527bc63c00a405657c0b06bab86b7f07b4f61c85f20bb",
+  "producer_probe_status": "PASS_ISOLATED_CONTROLLER_COMMISSIONING",
+  "actual_provider_stages": {
+    "research": {
+      "invocation_id": "9463408e-6742-5286-9a5d-3fb1993784ef",
+      "output_sha256": "3fd7f8529c1dcf2a31e2e2f1a1994db43675e5ceb57c13850678287884adab12",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "producer",
+      "same_result_replay": true
+    },
+    "design": {
+      "invocation_id": "d904d2b0-13bb-577a-b998-f53ec5d58aed",
+      "output_sha256": "6b036ae11fd4932db6527ef503a35fb4e59c42f5701a11100550482d0bae1661",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "producer",
+      "same_result_replay": true
+    },
+    "producer": {
+      "invocation_id": "4d194ecf-cd08-5cec-8876-e788b22ddf4a",
+      "output_sha256": "6d2d0fee5db9bf21d9ce35b163824713d8b3966c1cd88f7054fcd3b24908d9bb",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "producer",
+      "same_result_replay": true
+    },
+    "correction": {
+      "invocation_id": "12821077-305c-5f5b-be12-033b926fef92",
+      "output_sha256": "4df889ec7ed4954847a76608b404fbe784557442c8d28d787f66fc7cc2d1ae41",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "producer",
+      "same_result_replay": true
+    },
+    "duplication": {
+      "invocation_id": "6ded7329-363f-59c4-837b-05df375d2286",
+      "output_sha256": "d26458fdfa96bf5cbab744ff4cfc4dd05e0358276f4aa8d790d70fe47df2d968",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "review",
+      "same_result_replay": true
+    },
+    "reviewer": {
+      "invocation_id": "258c1d28-749f-5f73-beb0-2cf63db13475",
+      "output_sha256": "f033facca81db0a23332b0bfca1f1412da6ca70615cb25c3468fbc84f1e23574",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "review",
+      "same_result_replay": true
+    },
+    "diagnosis": {
+      "invocation_id": "e403089e-7c4d-58c1-968f-22c955529fef",
+      "output_sha256": "7198dc0be755bc9e30098f0d1e647e4d177a8b3aabff1aaa9e479412321f5cf8",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "review",
+      "same_result_replay": true
+    },
+    "reconciliation": {
+      "invocation_id": "e04f482d-6ee3-5ee8-a7b4-bff9a1e28d7c",
+      "output_sha256": "baa4344fd3971c367d77e01c913c3122021c5a728d3d875dcb0f996836785122",
+      "provider": "actual OpenAI Codex local adapter",
+      "phase_profile": "review",
+      "same_result_replay": true
+    }
+  },
+  "provider_calls": "8 actual isolated Codex calls, each retained in its exact phase Events.jsonl/Response.json; subsequent replays reused outputs",
+  "live_protocol_fixture_status": "PASS_LIVE_PROTOCOL_FIXTURES",
+  "live_protocol_checks": [
+    "unsigned_rejected",
+    "cross_project",
+    "AI_cannot_sign",
+    "four_round_stop",
+    "admin_cannot_authorise_fifth",
+    "verified_conditional_fifth_permit",
+    "no_sixth",
+    "retained_counter_cannot_decrease",
+    "uncertain_same_key_does_not_reexecute",
+    "new_ID_cannot_clear_uncertain_chain",
+    "concurrent_single_entitlement",
+    "same_ID_changed_evidence",
+    "unrelated_manual_handover",
+    "unrelated_review_output",
+    "positive_synthetic_handover_protocol_and_replay"
+  ],
+  "positive_handover_test": "Explicit synthetic protocol fixture only. No real course QA pass, owner-ready manual, signature or course release is claimed.",
+  "actual_existing_renderer": {
+    "sha256": "aa690f2be34ba88df700f3fdcef0d077dd281153689d9db745f8f7e83dc733f2",
+    "icons_present": true
+  },
+  "unchanged_manual_acceptance_denied_incomplete_report": true,
+  "unchanged_existing_manual_acceptance_fixture_tests": {
+    "passed": 4,
+    "failed": 0
+  },
+  "LU2": {
+    "checked": 133,
+    "changed": 0,
+    "new": 0
+  },
+  "real_LU1_retained": {
+    "status": "qa_held",
+    "loop_round": 4,
+    "loop_stop": "root_cause_escalated",
+    "producer_calls": 4,
+    "review_calls": 4,
+    "diagnostic_calls": 1
+  },
+  "QA_changes_by_this_implementation": false,
+  "outside_task_change_observed": "The shared publisher detected a changed Digital publication QA protocol and published current8053d5cd at12:02UTC. This implementation did not edit it; no existing QA rule/validator was changed by root. Isolated commissioning bound the current release.",
+  "retained_transport_fixture_hold": [
+    {
+      "error_type": "ValueError",
+      "error": "Complete governed input exceeds transport after lossless pooling. No permit or provider call.",
+      "preserved_record": "Commissioning held oversized fixture.json",
+      "disposition": "Fixture mirrored app image handling. No production source/QA change, no provider reservation on oversized input, and previous completed calls replayed without re-execution."
+    }
+  ],
+  "private_raw_evidence_SHA256": {
+    "Commissioning.json": "72d5ea5e2293fe5384587d7e1778dadc7f2739f256bc1e6b76e2956aba4091e0",
+    "Live protocol fixtures.json": "c9c391866764defa22667cc21f843838ad85ad5a4f5a62a9d37beae451e6cf87",
+    "Protected comparison.json": "42475d60d7c685bf97ad71612cc330834affe4746c6196a2ac180cde4664492a"
+  },
+  "final_independent_assurance": "pending",
+  "activation": "disabled pending actual independent acceptance"
+}
