@@ -4,13 +4,14 @@ import copy
 import json
 import time
 import uuid
+from types import SimpleNamespace
 
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from fastapi import HTTPException
 
-from services.course_creator_runtime import PATH, delegate, digest
+from services.course_creator_runtime import PATH, Model, delegate, digest
 
 
 class MemoryLedger:
@@ -61,7 +62,7 @@ def setup():
             'project_id': 'course-a', 'unit_id': 'LU01', 'operation': 'inspect', 'question': 'What is held?',
             'qa_sha256': 'a' * 64, 'evidence': {'state': {'status': 'qa_held'}},
             'counters': {'rounds_completed': 4, 'producer_calls': 4, 'review_calls': 4},
-            'commissioning': False}
+            'commissioning': False, 'runtime_revision': 'cc-private/1.1'}
     return key, task, MemoryLedger(key), FakeModel()
 
 
@@ -128,6 +129,9 @@ def test_uncertain_outcome_does_not_retry_or_refund(setup):
         send(setup)
     assert exc.value.status_code == 409
     assert len(setup[3].calls) == 1 and setup[2].claims == 1
+    saved = setup[2].saved[setup[1]['request_id']]['result']
+    assert saved['stage'] == 'specialist_call' and saved['model_calls_attempted'] == 1
+    assert saved['error_type'] == 'RuntimeError'
 
 
 def test_disabled_registration_cannot_bypass_commissioning(setup):
@@ -152,3 +156,35 @@ def test_fabricated_evidence_stops_synthesis(setup):
     with pytest.raises(HTTPException):
         send(setup)
     assert len(setup[3].calls) == 1
+
+
+def test_model_uses_strict_schema_and_preserves_truncation_metadata():
+    calls = []
+
+    def create(**kwargs):
+        calls.append(kwargs)
+        return SimpleNamespace(id='response-test', usage=SimpleNamespace(total_tokens=50),
+                               choices=[SimpleNamespace(finish_reason='length', message=SimpleNamespace(
+                                   content='{"summary":"unfinished', refusal=None))])
+    model = Model.__new__(Model)
+    model.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    with pytest.raises(ValueError):
+        model.call('Inspect', {'evidence': {'state': {}}})
+    assert len(calls) == 1
+    assert calls[0]['response_format']['json_schema']['strict'] is True
+    assert model.last_observation['finish_reason'] == 'length'
+    assert model.last_observation['total_tokens'] == 50
+
+
+def test_provider_error_telemetry_does_not_include_secret_error_text():
+    class ProviderRefusal(Exception):
+        status_code, request_id = 401, 'request-test'
+
+    def create(**kwargs):
+        raise ProviderRefusal('must-not-persist-secret-error-text')
+    model = Model.__new__(Model)
+    model.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    with pytest.raises(ProviderRefusal):
+        model.call('Inspect', {'evidence': {'state': {}}})
+    assert model.last_observation['provider_status'] == 401
+    assert 'must-not-persist' not in json.dumps(model.last_observation)

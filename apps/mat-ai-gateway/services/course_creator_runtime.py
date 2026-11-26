@@ -40,6 +40,7 @@ class Delegation(BaseModel):
     evidence: dict
     counters: dict[str, int]
     commissioning: bool = False
+    runtime_revision: Literal['cc-private/1.1']
 
 
 def digest(raw: bytes) -> str:
@@ -123,12 +124,40 @@ class Model:
         self.client = OpenAI(api_key=os.environ['OPENAI_API_KEY'], max_retries=0, timeout=60)
 
     def call(self, system, payload):
-        response = self.client.chat.completions.create(
-            model=os.environ.get('COURSE_CREATOR_MODEL', 'gpt-4.1-mini'),
-            messages=[{'role': 'system', 'content': system},
-                      {'role': 'user', 'content': json.dumps(payload, ensure_ascii=False)}],
-            response_format={'type': 'json_object'}, max_tokens=1800, temperature=0.2)
-        value = json.loads(response.choices[0].message.content)
+        context = payload.get('delegation', payload)
+        output_schema = {'type': 'object', 'additionalProperties': False,
+                         'required': ['summary', 'findings', 'limits'], 'properties': {
+                             'summary': {'type': 'string'},
+                             'findings': {'type': 'array', 'maxItems': 6, 'items': {
+                                 'type': 'object', 'additionalProperties': False,
+                                 'required': ['title', 'evidence_ids', 'recommendation'],
+                                 'properties': {'title': {'type': 'string'},
+                                                'evidence_ids': {'type': 'array', 'minItems': 1,
+                                                                 'items': {'type': 'string',
+                                                                           'enum': list(context['evidence'])}},
+                                                'recommendation': {'type': 'string'}}}},
+                             'limits': {'type': 'array', 'items': {'type': 'string'}}}}
+        self.last_observation = {'model': os.environ.get('COURSE_CREATOR_MODEL', 'gpt-4.1-mini')}
+        try:
+            response = self.client.chat.completions.create(
+                model=self.last_observation['model'],
+                messages=[{'role': 'system', 'content': system + '\nKeep the entire response under 600 words.'},
+                          {'role': 'user', 'content': json.dumps(payload, ensure_ascii=False)}],
+                response_format={'type': 'json_schema', 'json_schema': {
+                    'name': 'course_creator_evaluation', 'strict': True, 'schema': output_schema}},
+                max_tokens=2400, temperature=0.2)
+        except Exception as exc:
+            self.last_observation.update(error_type=type(exc).__name__,
+                                         provider_status=getattr(exc, 'status_code', None),
+                                         provider_request_id=getattr(exc, 'request_id', None))
+            raise
+        choice = response.choices[0]
+        self.last_observation.update(response_id=response.id, finish_reason=choice.finish_reason,
+                                     total_tokens=int(response.usage.total_tokens),
+                                     raw_output=(choice.message.content or '')[:20000])
+        if choice.finish_reason != 'stop' or getattr(choice.message, 'refusal', None):
+            raise ValueError('Incomplete or refused structured agent output')
+        value = json.loads(choice.message.content)
         tokens = int(response.usage.total_tokens)
         return value, tokens
 
@@ -183,28 +212,41 @@ def delegate(raw, headers, ledger=None, model=None):
         if claim['state'] == 'completed':
             return claim['result']
         raise HTTPException(409, 'Saved attempt is running or indeterminate. Inspect it; do not start another loop.')
+    stage, attempted, completed = 'provider_setup', 0, {}
     try:
         model = model or Model()
+        stage, attempted = 'specialist_call', 1
         specialist, n1 = model.call('You are Course Creator specialist reporting to Maturion.\n' +
                                     BOUNDARY + '\nTier 1 and governed Tier 2:\n' + text,
                                     task.model_dump())
+        stage = 'specialist_validation'
         specialist = validate_output(specialist, task.evidence)
+        completed['specialist'] = {'result': specialist, 'total_tokens': n1}
+        stage, attempted = 'maturion_call', 2
         reviewed, n2 = model.call('You are Maturion, the ecosystem orchestrator. Independently inspect the '
                                   'specialist findings against the supplied evidence, reject unsupported claims, '
                                   'and synthesise the final user-facing response.\n' + BOUNDARY,
                                   {'delegation': task.model_dump(), 'specialist_result': specialist})
+        stage = 'maturion_validation'
         reviewed = validate_output(reviewed, task.evidence)
         result = {'schema': 'course-creator-private-result/1', 'request_id': task.request_id,
                   'return_to': 'maturion-agent', 'specialist': 'course-creator-agent',
                   'qa_sha256': task.qa_sha256, 'bundle_sha256': bundle_hash,
                   'context_sha256': digest(raw), 'counters': task.counters,
+                  'runtime_revision': task.runtime_revision,
                   'specialist_result': specialist, 'maturion_review': reviewed,
                   'usage': {'model_calls': 2, 'total_tokens': n1 + n2},
                   'qa_pass': False, 'owner_approved': False, 'changes_implemented': False,
                   'commissioning': task.commissioning}
+        stage = 'result_persistence'
         ledger.finish(task, 'completed', result)
         return result
     except Exception as exc:
         # Reservation survives failure, restarts and lost responses. Never retry models automatically.
-        ledger.finish(task, 'indeterminate', {'error': 'Private evaluation stopped; inspect saved request.'})
+        failure = {'error': 'Private evaluation stopped; inspect saved request.',
+                   'stage': stage, 'error_type': type(exc).__name__,
+                   'model_calls_attempted': attempted, 'completed_stages': completed,
+                   'provider_observation': getattr(model, 'last_observation', {}),
+                   'runtime_revision': task.runtime_revision}
+        ledger.finish(task, 'indeterminate', failure)
         raise HTTPException(503, 'Private evaluation stopped. Saved allowance retained; no automatic retry.') from exc
