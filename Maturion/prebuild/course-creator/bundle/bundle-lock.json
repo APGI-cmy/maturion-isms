@@ -1,8 +1,8 @@
 {
   "schema": "course-creator-agent-submission-lock/1",
   "agent_id": "course-creator-agent",
-  "version": "1.1.0-portable",
-  "source_local_submission_sha256": "ec78a1c566a4cd043ff56b2bc5b80d3e3fd89198d743d45030ce4c601c28d143",
+  "version": "1.1.1-portable",
+  "source_local_submission_sha256": "590b97e6e1ade6ce71aec7a9566544b3bde02ba0f1e2f4420b879c9443f9b029",
   "source_commit": "d725c685c732f0fc2252230be3bffbc8252a8881",
   "authority": "governance/commissioning-authority.json",
   "files": {
@@ -15,10 +15,11 @@
     ".agent-workspace/course-creator-agent/knowledge/qa-and-convergence.md": "a2d1ed45ebec7e846deee4e1c7707f01e620e8ca58a8ce43d2bf343551f5c6e5",
     ".agent-workspace/course-creator-agent/knowledge/specialist-registry.md": "7d642014f70eb3770073115366fa65cc5ca766120ab88b1a040178d14dda925b",
     ".agent-workspace/course-creator-agent/knowledge/workflow-method.md": "f76c87e26841cd7207d2a5771eedf0ed7d3c6b48afc08b09d07e2b75d1fcffee",
-    ".github/agents/course-creator-agent.md": "3dc06fa005524bc04066e3bd6a8bf4f792137653403bdf7841ea5f2dcdd5f423",
+    ".gitattributes": "9f82ce728194b9930bcd4830788de4dfd645a34668e6bef99e457531a59ce094",
+    ".github/agents/course-creator-agent.md": "06eb3ea82fb4080ee4d7154a8570d81394749ddbb0e2d706106e5578ace07ffb",
     "governance/commissioning-authority.json": "9bce73a5a6acd27ece290bf29cf75d335784fd1a174dd4779a6506ba66ad0a03",
     "governance/creation-authority.json": "b48b873360eb561731798a8a8362240eaad74f8335ba9624d20e6415a03cb9f9",
-    "governance/local-context.json": "f1eb740282ef0a6f1dc4e866a3efdbfff59a953d0b92141a699721ef5d66094f",
+    "governance/local-context.json": "fde707ec788da49f0a88f3493ff33cc37a665f7f23aac224e37f747180ea3f81",
     "governance/registration-proposal.json": "9b163f75fa239f20a46bb682aa54d59e9067b63b41f4bfd617c0c69244f4f232",
     "governance/routing-proposal.json": "c574a0c3bd0527d2ad2c46c22e4430425fabd4f3a260a8e24d51b2f42a0df26a",
     "governance/source-origins.json": "381535c24d19e65908210fb9cfb58a7a2b8cbb37d5403665cd1a02d0e8ecf242",
@@ -36,13 +37,13 @@
     "governance/source-snapshot/governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md": "bdac159dd1eec098fc9ff2e5f84c64356238652cff21dd5671e66129a4b6f561",
     "governance/source-snapshot/Maturion/strategy/Maturion_agent_network_organigram_strategy.md": "cc89abc54d9c76ed8f2ab2b287a81bb8c7bb76214310347a1450ad2fe1cdcbc6",
     "governance/source-snapshot/Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md": "ac50c23e4f6cb96094fb9c83d9beef5922255a4418c48f6a162c12bd6878e184",
-    "README.md": "bf3e8767246e41ecb7b31fcbbcd686146359b9386850ae3584033c4a0d3b3fde",
+    "README.md": "9ead1b731955d80b343dffab057305077be7c8bce8bb860e4027761f57355f82",
     "schemas/delegation.schema.json": "f5027a08fa21a819cf1c0a60ec72a2c47321e84e80e3253078caec063067f5cf",
     "schemas/result.schema.json": "b21b39d3eb3ad7d240ad1c71436023bea4b9d1791b8700e8c0571ac74f579572",
-    "scripts/runtime_preflight.py": "6c998b3bf87ff99a9dd403209e3a1acc64e9a4e02c78242956777340e19be9ac",
+    "scripts/runtime_preflight.py": "a811190e32935442b2c1f9dddc87f58e18df35f19bc70a28611ea5df4fb3a1e0",
     "tests/delegation.fixture.json": "0e1d6ebdfe8cc8dd451c9a6bf2d128990375c882d6286aec5fab8f2623cda8d0",
     "tests/result.fixture.json": "9bac58b2a6311c15271b6ceda8911eb8690c06a3b3c900f51e27217479a2954c",
-    "tests/test_runtime_preflight.py": "f853f7411d16580a9b159698bc0a7b362eba62918b75d2914e7f875c6dff0496"
+    "tests/test_runtime_preflight.py": "57bbedde3f131fcd9632a086a3ac1bfaf04e9e74307663816d908706a5a2034b"
   },
   "identity_scope": "Portable submitted files only; excludes this lock and later assurance/status records to avoid self-referential hash loops."
 }

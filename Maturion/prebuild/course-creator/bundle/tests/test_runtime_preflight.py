@@ -25,6 +25,13 @@ class RuntimePreflightTests(unittest.TestCase):
         self.assertTrue(report['ready']);self.assertFalse(report['activation_performed']);self.assertEqual(report['model_calls'],0)
     def test_missing_real_receipts_and_trust_fail_closed(self):
         self.assertFalse(assess(self.root,now=self.now)['ready'])
+    def test_different_issuer_labels_cannot_hide_one_shared_signing_key(self):
+        one=self.keys[GATES[0]]
+        for gate in GATES:
+            self.keys[gate]=one
+            self.trust['keys'][gate]['public_key_hex']=one.public_key().public_bytes(Encoding.Raw,PublicFormat.Raw).hex()
+            self.receipts[gate]=self.sign(gate,self.receipts[gate]['payload'])
+        self.assertFalse(assess(self.root,self.receipts,self.trust,self.now)['ready'])
     def test_forged_or_replayed_changed_submission_rejected(self):
         bad=copy.deepcopy(self.receipts);bad['factory_review']['payload']['subject']='other-agent';self.assertFalse(assess(self.root,bad,self.trust,self.now)['ready'])
         (self.root/'contract.txt').write_text('Changed after independent review.');self.assertFalse(assess(self.root,self.receipts,self.trust,self.now)['ready'])

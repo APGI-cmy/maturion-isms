@@ -44,6 +44,10 @@ def assess(root,receipts=None,trust=None,now=None):
             try:verified[gate]=verify_receipt(receipts[gate],gate,submission,trust,now)
             except Exception as exc:failures.append(gate+': '+(str(exc) or type(exc).__name__))
         if len({r.get('key_id') for r in receipts.values()})!=len(GATES):failures.append('Factory, IAA, registry and runtime issuers must be independently provisioned')
+        try:
+            actual_keys={bytes.fromhex(trust['keys'][receipts[gate]['key_id']]['public_key_hex']) for gate in GATES}
+            if len(actual_keys)!=len(GATES):failures.append('Required issuer roles share a signing key; key aliases cannot prove independent provisioning')
+        except (KeyError,TypeError,ValueError):failures.append('Required issuer signing-key identities could not be verified')
     return {'schema':'course-creator-runtime-preflight/1','subject':'course-creator-agent','submission_sha256':submission,'ready':not failures and len(verified)==len(GATES),'verified_gates':list(verified),'failures':failures,'activation_performed':False,'model_calls':0,'scope':'Read-only signature/integrity preflight. Runtime owner must separately enforce authenticated dispatch, scope, budget and actual route activation. No status flag, model output or fixture is an activation receipt.'}
 
 def main():

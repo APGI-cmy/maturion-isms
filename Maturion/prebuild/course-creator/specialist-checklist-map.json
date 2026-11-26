@@ -4,7 +4,7 @@
   "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
   "checklist_source": "governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md v1.0.0",
   "strategy_source": "Maturion/strategy/Maturion_ecosystem_orchestrator_and_agent_file_system_strategy.md",
-  "target_contract_version": "1.1.0",
+  "target_contract_version": "1.1.1",
   "framework_version": "v6.2.0",
   "meaning": "This is a complete checklist disposition map, not an assertion of 100% runtime compliance. Present declarations, consumer equivalences and unfulfilled executable/assurance gates remain distinct. No upstream checklist/canon is waived or changed.",
   "rows": [
@@ -353,7 +353,7 @@
       "requirement": "All core prohibited specialist behaviours",
       "artifact": ".github/agents/course-creator-agent.md",
       "state": "PRESENT_AS_DECLARATION",
-      "evidence": "No out-of-domain/invalid orchestration, lateral invocation, silent discard, task-derived constitutional override, scope expansion, push-main or self-granted authority.",
+      "evidence": "Every original prohibition rule is retained verbatim as structured YAML; SELF-MOD-CC-001 has enforcement CONSTITUTIONAL, other existing prohibitions remain BLOCKING.",
       "equivalence_or_scope_note": null,
       "owner": "Factory author / independent IAA",
       "waiver_granted": false
@@ -457,9 +457,49 @@
       "equivalence_or_scope_note": "Root owns allowlisted export and public-path scan; this role did not publish anything.",
       "owner": "Export owner; IAA validates",
       "waiver_granted": false
+    },
+    {
+      "checklist_id": "IAA-CORE-004",
+      "requirement": "identity.role/mission/class_boundary required structured YAML",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRODUCER_STRUCTURALLY_VERIFIED_PENDING_FOCUSED_IAA",
+      "evidence": "Present substantive machine-consumable identity fields; same existing domain/authority boundary, no new powers.",
+      "equivalence_or_scope_note": "Actual IAA standard \u00a73 requirement; no prose equivalence or waiver.",
+      "owner": "Factory author; a different IAA performs focused independent recheck.",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "IAA-CORE-008-012",
+      "requirement": "Structured constitutional SELF-MOD prohibition",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRODUCER_STRUCTURALLY_VERIFIED_PENDING_FOCUSED_IAA",
+      "evidence": "SELF-MOD-CC-001 with enforcement CONSTITUTIONAL; all original prohibition rule strings preserved verbatim as rule values.",
+      "equivalence_or_scope_note": "Actual IAA standard \u00a73 requirement; no prose equivalence or waiver.",
+      "owner": "Factory author; a different IAA performs focused independent recheck.",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "IAA-CORE-009",
+      "requirement": "Required merge checks and blocking parity declaration",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRODUCER_STRUCTURALLY_VERIFIED_PENDING_FOCUSED_IAA",
+      "evidence": "Existing non-empty required_checks preserved; parity_required true and parity_enforcement BLOCKING are declarations. No actual global parity pass is asserted.",
+      "equivalence_or_scope_note": "Actual IAA standard \u00a73 requirement; no prose equivalence or waiver.",
+      "owner": "Factory author; a different IAA performs focused independent recheck.",
+      "waiver_granted": false
+    },
+    {
+      "checklist_id": "IAA-CORE-010",
+      "requirement": "Top-level tier2_knowledge.index",
+      "artifact": ".github/agents/course-creator-agent.md",
+      "state": "PRODUCER_STRUCTURALLY_VERIFIED_PENDING_FOCUSED_IAA",
+      "evidence": "Points to the existing non-empty .agent-workspace/course-creator-agent/knowledge/index.md file.",
+      "equivalence_or_scope_note": "Actual IAA standard \u00a73 requirement; no prose equivalence or waiver.",
+      "owner": "Factory author; a different IAA performs focused independent recheck.",
+      "waiver_granted": false
     }
   ],
-  "rows_total": 45,
+  "rows_total": 49,
   "canonical_sections_covered": [
     "1.1",
     "1.2",
@@ -481,5 +521,12 @@
   "activation_ready": false,
   "source_file_bindings": {
     "local-evidence:commissioning-authority.json": "9bce73a5a6acd27ece290bf29cf75d335784fd1a174dd4779a6506ba66ad0a03"
-  }
+  },
+  "additional_audit_standard": {
+    "path": "Private local evidence path withheld.",
+    "sha256": "116f242c4e80fa6fbd7f23991d629e23f1bc89dea1795dd7342235d364e03051",
+    "version": "1.0.0",
+    "section": 3
+  },
+  "focused_correction": "Private local evidence path withheld."
 }
