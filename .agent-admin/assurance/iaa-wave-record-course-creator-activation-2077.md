@@ -192,3 +192,14 @@ Final acceptance of this narrow follow-up will be an independently authored regi
 
 Private original prebrief SHA256: 5f08bff86a9bb51a9b234648b911eaae4c03e48bf3e2f21f42ffd1d1df790d64. This section is prospective scoping, not a new or reissued ASSURANCE-TOKEN.
 
+## Producer operational-registry PREHANDOVER supplement — PR2079
+
+Actual producer: existing OpenAI Codex direct-CS2 registration owner /root, continuing issue2077 and the recorded appointment. This is operational registration metadata only, not a new agent-implementation or provider session.
+fail_only_once_attested: true — ongoing producing session001 declaration is retained; the actual registry omission/root cause is recorded, not erased or promoted into a QA waiver.
+iaa_audit_token: IAA-session-CC2077-registry-20261126-PASS
+iaa_audit_token_location: .agent-admin/assurance/iaa-wave-record-course-creator-activation-2077.md#independent-persona-registry-reconciliation
+token_field_meaning: EXPECTED NARROW REVIEW REFERENCE ONLY, NOT ISSUANCE. The independent IAA actor alone records the actual changed-registration verdict.
+
+Returned correction: exactly the existing course-creator-advisor §2 row matching its1.0.0/date2026-11-26/CS2 frontmatter and a truthful §9 event. Public persona ACTIVE existence/IDLE unavailable public dispatch remains separate from accepted private controller activation. Unchanged lifecycle version/rules, persona bytes, runtime, QA, gates, models and source acceptance remain frozen. Exact sync parity is10registered/10on-disk,0missing/0orphans. Evidence is .agent-admin/evidence/course-creator-persona-registry-2077-reconciliation.json.
+
+Original immutable producer proof remains e9cfe04e930ebd9beb2ad0acbc244e20c6f5a1ddeabc492f08055ba431e345a3. Original actual source c922 and df03/3c478 acceptance/enactment receipts are unchanged. No model call, course QA rerun or LU1/LU2 processing accompanies this correction. The broader main CWT failures remain separately disclosed; global repository green is not claimed.
