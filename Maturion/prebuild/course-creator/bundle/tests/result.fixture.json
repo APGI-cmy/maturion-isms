@@ -1,0 +1,39 @@
+{
+  "schema": "course-creator-specialist-result/1",
+  "delegation_id": "00000000-0000-4000-8000-000000000001",
+  "specialist_id": "course-creator-agent",
+  "return_to": "maturion-agent",
+  "status": "SUCCESS",
+  "reason": "scoped_task_complete",
+  "result_summary": "Isolated fixture only; not an actual manual or assurance verdict.",
+  "evidence_artifacts": [
+    {
+      "path": "fixture/evidence.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "domain_outputs": [
+    {
+      "path": "fixture/evidence.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "blockers": [],
+  "limits": [
+    "Structural fixture only. No evidence or live authority is asserted."
+  ],
+  "mandatory_QA_passed": true,
+  "complete_manual_rendered": true,
+  "owner_review_ready": true,
+  "owner_approved": false,
+  "production_activated": false,
+  "maturion_review_required": true,
+  "frozen_components": [],
+  "usage": {
+    "chain_id": "fixture-chain",
+    "rounds_completed": 0,
+    "producer_calls": 0,
+    "review_calls": 0
+  },
+  "lessons_candidates": []
+}

@@ -1,0 +1,116 @@
+{
+  "schema": "course-creator-factory-review/1",
+  "date": "2026-11-26",
+  "reviewer": "Fresh delegated factory-method reviewer /root/factory_review",
+  "role_limit": "Read-only review applying CodexAdvisor methodology; not the activated GitHub CodexAdvisor custom agent, not an IAA assurance token and not runtime commissioning.",
+  "authority_issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "reviewed_submission": {
+    "path": "Private local evidence path withheld from portable export.",
+    "sha256": "72f589105715effeff5579d724d88176d5907f0bc81b274c2234ab721d113198",
+    "core_files": 35,
+    "core_hash_mismatches": [],
+    "contract_characters": 9510
+  },
+  "verdict": "REQUIRES_CORRECTIONS_AND_RUNTIME_COMMISSIONING",
+  "contract_ready": false,
+  "activation_ready": false,
+  "active": false,
+  "independent_IAA_performed": false,
+  "findings": [
+    {
+      "id": "FAC-01",
+      "severity": "HIGH",
+      "title": "Bind the new commissioning authority without erasing the original preparation scope",
+      "evidence": [
+        ".github/agents/course-creator-agent.md:46 and :76 still identify unassigned local repository and null GitHub issue.",
+        "governance/creation-authority.json:9-18 records only the earlier local instruction, activation false and global registration excluded.",
+        "Issue #2075 now exists and records the subsequent factory/IAA/AIMC request."
+      ],
+      "required_correction": "Preserve the original authority as historical. Add a separately attributed commissioning authority amendment containing issue #2075, the exact latest user instruction, allowed target paths, role ownership and exclusions. Point the current target contract/commissioning work order to that amendment; distinguish user authorisation to pursue activation from evidence that activation actually occurred.",
+      "owner_route": "Appointed target-bundle author/CodexAdvisor route; administrative recorder for immutable authority amendment.",
+      "closure_evidence": "Current issue and amendment are explicit; original record unchanged; no new self-granted powers or fabricated GitHub-identity attestation."
+    },
+    {
+      "id": "FAC-02",
+      "severity": "BLOCKER",
+      "title": "The mandated commissioned preflight can never pass",
+      "evidence": [
+        ".github/agents/course-creator-agent.md:86 requires scripts/validate_bundle.py --activation every commissioned session.",
+        "scripts/validate_bundle.py:25-26 insists status PLANNED/proposed_only and issue null.",
+        "scripts/validate_bundle.py:45 requires the snapshot registry to contain no agents.",
+        "scripts/validate_bundle.py:81 returns exit 2 whenever --activation is supplied, even with all checks passed."
+      ],
+      "required_correction": "Separate the read-only local authoring validator from the genuine commissioned runtime preflight. The contract must name a real readiness gate that validates actual accepted registration/routing, authority, dependencies, scoped policy and proof. Keep the existing activation-negative preparation test as a preparation assertion, not the runtime gate. Do not make activation pass by removing checks, flipping status booleans or pretending a static snapshot is the live registry.",
+      "owner_route": "Target contract author changes the reference; separately appointed implementation owner provides the executable preflight. Factory reviewer does not implement product/runtime code.",
+      "closure_evidence": "Pre-commission negative case blocks; an independently inspected valid commissioned fixture can pass the runtime gate; any missing/forged dependency blocks. Producer validation remains accurately scoped."
+    },
+    {
+      "id": "FAC-03",
+      "severity": "HIGH",
+      "title": "Map the entire canonical specialist checklist and repository packaging rather than the 92 preparation assertions",
+      "evidence": [
+        "evidence/requirement-mapping.json contains ten product-oriented requirements, not a full section-by-section specialist checklist disposition.",
+        "Target metadata uses consumer_local_proposal, nested snapshot canon root, model_policy instead of the template model field, and scope.in_scope rather than the checklist domain declaration.",
+        "The canonical checklist contains literal canonical-copy/field conventions that must be interpreted against the newer consumer/runtime-specialist strategy, not silently declared satisfied.",
+        "The target contract is 9510 characters and all 35 locked core files match; those positive checks do not establish full checklist compliance or hosted gate parity."
+      ],
+      "required_correction": "Create one consolidated specialist-checklist compliance matrix for sections 1.1-1.9, 2.1-2.3 and 3.1-3.3. For each item identify exact artifact, present/pending/not-applicable status, current authoritative interpretation, actual validator and evidence. Resolve repository paths, supported fields/model policy and canon-index participation through the appointed factory route. Do not falsify this_copy=canonical in a consumer package or rewrite upstream canon merely to satisfy a stale literal. Record remaining factory/QP/parity/IAA obligations honestly.",
+      "owner_route": "CodexAdvisor target-bundle author, with protected interpretation disputes routed through the existing governance owner if genuinely unresolved.",
+      "closure_evidence": "No required checklist element is silently omitted; consumer-specific equivalents are evidenced and accepted; an independently reviewed corrected submission is frozen for IAA."
+    },
+    {
+      "id": "FAC-04",
+      "severity": "BLOCKER",
+      "title": "Governance registry proposal is not AIMC runtime registration; existing Course Crafter persona needs an explicit relationship",
+      "evidence": [
+        "governance/registration-proposal.json targets governance/AGENT_REGISTRY.json and has inactive proposed status.",
+        "governance/routing-proposal.json is disabled and has no accepted registry or activation receipt.",
+        "Live packages/ai-centre/src/agents/course-crafter-advisor.md already declares agentId course-crafter-advisor, module course-crafter, capability document-generation, with ISMS-focused instructional scope.",
+        "The governance specialist ID course-creator-agent, orchestrator contract maturion-agent and AIMC persona IDs are different namespaces."
+      ],
+      "required_correction": "Define the exact identity/adapter mapping between the new Course Creator specialist, the existing Course Crafter advisor (reuse, bounded extension or an explicitly justified new persona), and Maturion runtime. Use the actual AIMC PersonaLoader/capability-routing/identity mechanism. Keep governance registration and runtime registration separate. Do not infer a live parent or child from prompt files or add an ACTIVE flag to the empty governance snapshot. Preserve the unified Maturion user identity.",
+      "owner_route": "Foreman/runtime implementation owner plus AIMC registry/persona owner, separately from contract factory author.",
+      "closure_evidence": "Actual source-level route and capability mapping, accepted registration receipts, no duplicate/phantom identity, authenticated Maturion invocation and evidence return through a real bounded commissioning path."
+    },
+    {
+      "id": "FAC-05",
+      "severity": "BLOCKER",
+      "title": "Security, idempotency and QA-ready claims are specified but not proven by an executable adapter",
+      "evidence": [
+        "knowledge/delegation-and-reporting.md explicitly says future adapter and no live provider/controller adapter.",
+        "schemas/delegation.schema.json accepts an authority receipt as an arbitrary path and 64-hex hash; the identity string itself is not authentication.",
+        "schemas/result.schema.json allows owner_review_ready from model-supplied booleans without an artifact-specific operative-QA receipt or authenticated result-context binding.",
+        "The canonical rejection form expects detail/recommended action; the proposed common result schema has no explicit detail/recommended_action fields."
+      ],
+      "required_correction": "Before activation, have the implementation owner enforce authenticated tenant/role/orchestrator authority, exact request/result/artifact/operative-QA binding, original controller lineage and cumulative budgets, durable request replay/dedup, changed-payload rejection, and a Maturion review receipt. Provide a minimal bounded rejection envelope with the failure detail and responsible next action. Add negative tests for forged receipts, cross-tenant result swaps, changed same-ID input, missing actual QA, restart counter resets and invalid fifth-loop requests. These are new agent-adapter checks, not modifications to the learner-guide QA suite.",
+      "owner_route": "Separately appointed runtime/API and QA implementation owners; independent IAA validates their evidence. Factory package records the interfaces and prerequisite honestly.",
+      "closure_evidence": "Executable commissioning evidence on isolated fixtures through the real adapter, not just schema examples; no real LU1/LU2 processing, no frozen-pass regressions and no false handover-ready result."
+    },
+    {
+      "id": "FAC-06",
+      "severity": "HIGH",
+      "title": "Prepare a portable sanitised public submission rather than uploading the local bundle wholesale",
+      "evidence": [
+        "governance/local-context.json:3-8 contains the user home directory, private source/QA paths, review-record path and external protected-baseline path.",
+        "README.md and validation commands contain machine-specific dependency/build paths.",
+        "Local evidence and the lock bind private machine-specific files, and pinned upstream snapshots are packaged beneath a local source-snapshot root."
+      ],
+      "required_correction": "Create an explicit public export allowlist and reproducible export manifest. Publish only generic target contract/operating knowledge and approved schemas/implementation evidence as scoped; keep local context, protected baseline, real job/session/course records, private paths, credentials and machine-specific reports local. Replace public path dependencies with approved logical adapter references; retain a local-to-public provenance map privately. Bind independent IAA to the exact sanitised submission identity. Do not alter original source snapshots or move source courses.",
+      "owner_route": "Factory author defines portable target paths; administrative/export owner applies the explicit allowlist; independent IAA inspects final exported bytes.",
+      "closure_evidence": "Secret/private-path scan clean on public export, explicit file inventory and stable content hash; local originals, QA suite and LU2 remain unchanged."
+    }
+  ],
+  "positive_observations": [
+    "All 35 submitted core hashes match the reviewed manifest.",
+    "Clear three-tier separation, single Maturion reporting line, truthful PLANNED status and disabled proposals.",
+    "Source preservation, unchanged QA, human sign-off, four-round stop-and-fix and conditional fifth-round controls are described coherently.",
+    "No source/course/QA/app files changed during this read-only review."
+  ],
+  "source_references": [
+    "https://github.com/APGI-cmy/maturion-isms/blob/main/.github/agents/CodexAdvisor-agent.md",
+    "https://github.com/APGI-cmy/maturion-isms/blob/main/.agent-workspace/CodexAdvisor-agent/knowledge/runtime-specialist-bundle-process.md",
+    "https://github.com/APGI-cmy/maturion-isms/blob/main/governance/checklists/SPECIALIST_AGENT_CONTRACT_REQUIREMENTS_CHECKLIST.md",
+    "https://github.com/APGI-cmy/maturion-isms/blob/main/packages/ai-centre/src/agents/course-crafter-advisor.md"
+  ],
+  "allowed_next_action": "One bounded correction of the target bundle plus a separately owned runtime integration work package, preserving exclusions; then independently assure the stable corrected submission. Do not activate by changing flags."
+}

@@ -1,0 +1,67 @@
+{
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "version": "1.1.0",
+  "scope": "Target Tier 1 and Tier 2 only",
+  "files": [
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".github/agents/course-creator-agent.md",
+      "sha256": "23eb9f8479440809e4bdf2021702642c6eae74b62debac3fbb83bcb744c9f87f",
+      "original_sha256": "8bf53a039b3d69a0ca9f4a260c1a4f81c1643dcf9c3deec45798efd068185372"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/aimc-dependencies.md",
+      "sha256": "c501e3390745a6ef873f56dde434284efab4f51ff66ec5922f9764d77d4fbae9",
+      "original_sha256": "4fc58b7ae8f523a53bd8d3c60339a0fc5f74d0c5b2c560b2dfb84f8a64f60e75"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/delegation-and-reporting.md",
+      "sha256": "6c527b3ff3cf1bc3bf7e3ad32a79b40308b86013c8ae920d825df469c8fb03b2",
+      "original_sha256": "0adb297cfac58d1c30400f5ddde3e4e438eecb3a686cb24a0078f0161db690e9"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/domain-flag-index.md",
+      "sha256": "af1f32d672f6631f256335eb34779837e54395d7c43e5867974740389f6b6c32",
+      "original_sha256": "b1a79879e4e7fa2e9b7df2f9df870ffd5bf8fd5684445e2d6cf29767a44f06e8"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/index.md",
+      "sha256": "9860b7ba3e18af3beff777600f3b7c31c076d2bb84681adb60b749e6a76b87e7",
+      "original_sha256": "af8792321e814258666c21cc75bba534582b4e89c0396d50801dec87503d8acb"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/memory-and-learning.md",
+      "sha256": "677af36c50643f913c87a5bb3e3091c25d6f594d413d9d00e124c234e1dfcd4f",
+      "original_sha256": "dc6b6ce9cf017a510b0f3a185e33f162969c1c5acd1c32df7976ee00bd83df48"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/qa-and-convergence.md",
+      "sha256": "6131ac82e21a5d1050b24f609735ec74760dcabc95efd8371db3a500d2103422",
+      "original_sha256": "431ddc424cd48aa60f4006070898ff37124d48cf447f7fcc945a3df0b8a48a1d"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/specialist-registry.md",
+      "sha256": "b6de1b90f773ebd88c2bfb6f3578f4b9acc08c462db31752701a0ea4fa67b87c",
+      "original_sha256": "ec5f5586f22b2ecacbf5ec6c9720ef1bbb30460f4498f19efeebbaaba9205c2e"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/workflow-method.md",
+      "sha256": "9644023440f21962ff1811ce70e805c475c3392cbb636ea2ab226bac22548dc8",
+      "original_sha256": "8f82a97d614aba5e70dfcbf8f288501245911ea2f4d51a73a05c123175bb3f22"
+    },
+    {
+      "path": "Private local evidence path withheld from portable export.",
+      "relative": ".agent-workspace/course-creator-agent/knowledge/commissioning-and-registration.md",
+      "sha256": "18cfb66b98a8dd74cd5a918115518e6c0e291b7aaa8325f6dbbbd2ddcf136f63",
+      "original_sha256": null
+    }
+  ]
+}

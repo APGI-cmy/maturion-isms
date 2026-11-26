@@ -1,0 +1,8 @@
+{
+  "schema": "course-creator-agent-portable-context-contract/1",
+  "QA_current_pointer": "Supplied and verified by the tenant controller at actual dispatch; no course data in this export.",
+  "review_records": "Tenant-scoped controller evidence store; not a global knowledge authority.",
+  "private_paths_exported": false,
+  "reserved_unit": "LU02",
+  "no_live_course_dispatch": true
+}

@@ -54,7 +54,9 @@ jobs:
     needs: test
     permissions:
       contents: read
-    if: github.event_name == 'pull_request'
+    # A PR must not deploy the service's unrelated configured main HEAD.
+    # Exact reviewed revisions are commissioned explicitly; Render owns main auto-deploys.
+    if: false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5

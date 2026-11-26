@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:apgi:course-creator:delegation:1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "course-creator-delegation/1"
+    },
+    "delegation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "orchestrator_id": {
+      "const": "maturion-agent"
+    },
+    "specialist_id": {
+      "const": "course-creator-agent"
+    },
+    "authority": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "source",
+        "receipt"
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "const": "course-creator"
+        },
+        "tenant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "user_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^LU(0[1-9]|1[0-9]|20)$"
+        },
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "app",
+        "tenant_id",
+        "user_id",
+        "role",
+        "project_id",
+        "unit_id",
+        "entity_id"
+      ],
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "const": "course-creation"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "allowed_operations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "inspect",
+              "prepare_design",
+              "research",
+              "develop",
+              "reconcile_evidence",
+              "prepare_handover"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "expected_outputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "domain",
+        "description",
+        "scope",
+        "allowed_operations",
+        "expected_outputs"
+      ],
+      "additionalProperties": false
+    },
+    "inputs": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "operative_requirements": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "controller_parent": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "sources",
+        "operative_requirements",
+        "controller_parent"
+      ],
+      "additionalProperties": false
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "evidence_required": {
+          "const": true
+        },
+        "change_QA_suite": {
+          "const": false
+        },
+        "self_approve": {
+          "const": false
+        },
+        "lateral_delegation": {
+          "const": false
+        },
+        "max_ordinary_rounds": {
+          "const": 4
+        },
+        "conditional_fifth_only": {
+          "const": true
+        },
+        "automatic_sixth": {
+          "const": false
+        }
+      },
+      "required": [
+        "evidence_required",
+        "change_QA_suite",
+        "self_approve",
+        "lateral_delegation",
+        "max_ordinary_rounds",
+        "conditional_fifth_only",
+        "automatic_sixth"
+      ],
+      "additionalProperties": false
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "chain_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rounds_completed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "producer_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "review_calls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "chain_id",
+        "rounds_completed",
+        "producer_calls",
+        "review_calls"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "delegation_id",
+    "orchestrator_id",
+    "specialist_id",
+    "authority",
+    "context",
+    "task",
+    "inputs",
+    "constraints",
+    "usage"
+  ],
+  "additionalProperties": false
+}
