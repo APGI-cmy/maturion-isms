@@ -90,6 +90,13 @@ This is final independent acceptance of the delivered declared controller profil
 Private structured acceptance SHA256: df03b84ef05344dcced08f2c9b196bfd1f2112deda371afa4ad1a6c826e7b843. Actual receipt is independently authored, not a producer-created or fabricated four-issuer token.
 Issued UTC: 2026-11-26T12:47:10.535739+00:00.
 
+
+### Narrow operational persona registry assurance — PR2079
+
+ASSURANCE-TOKEN: IAA-session-CC2077-registry-20261126-PASS
+PHASE_B_BLOCKING_TOKEN: IAA-session-CC2077-registry-20261126-PASS
+Actual independent reviewer: OpenAI Codex /root/independent_agent_assurance, continuing issue2077. Scope: operational_persona_registry_reconciliation_only. Reviewed head a5dbce94001529248adfd9ae2effa4d6e02a4137. Decision PASS; all6 changed-scope acceptance criteria and current merge parity PASS. This does not replace the existing c922 source token, df03 acceptance or3c478 actual-activation receipt. Full changed-evidence verdict is under Independent persona registry reconciliation below.
+
 ## REJECTION_HISTORY
 
 Prior PR2076 historical delegation failures remain in that PR; no retrospective waiver or rewritten chronology.
@@ -171,3 +178,69 @@ Authenticated COURSE/LU01–20 scope is for future owner-initiated operations th
 No immutable Tier1/Tier2/controller code or semantic content identity changed during enactment; state-only registry/inventory/owner records reflect actual activation. Existing source checkout CRLF representations were distinguished from immutable installed byte hashes, which passed without substituting changed bytes. This was an affected state verification, with0 provider calls,0 reservations and0 DB mutations by the reviewer.
 
 Private actual-enactment addendum SHA256: 3c4780777e7ec539dde008fe4637cf439b050a5bb727590e5a2a22fb984b7054. Fresh capability/status and independent DB/source records are hash-bound in that append-only report. The original acceptance report remains unchanged; no circular hash/review cycle was introduced.
+
+
+## Prospective persona-registry follow-up prebrief — 2026-11-26
+
+
+Actual reviewer: OpenAI Codex independent instance /root/independent_agent_assurance. Actual authority: continuing owner/CS2 instruction in issue2077 to complete governed AIMC registration and activation. Existing actual direct-CS2 implementation-owner appointment continues for this follow-up; do not invent a new Foreman/Governance Liaison execution or retrospective appointment. This prebrief is prospective to the metadata correction, not final assurance of an unreviewed patch.
+
+Observed baseline: merged commit c5877e28112d1779e92ec99bd97c879f70b6c501. Main-only Persona Registry Sync run45824590919, job139925385315, reports exactly one disk-to-registry orphan: packages/ai-centre/src/agents/course-creator-advisor.md. The operational persona lifecycle table omits it. The existing persona's frontmatter is agentId course-creator-advisor, module course-creator, version1.0.0, last_reviewed2026-11-26, ownerCS2. governance/aimc/AIMC_PERSONA_LIFECYCLE.md is not a CANON_INVENTORY entry.
+
+Permitted corrective payload: add exactly one matching persona row in section2 and one event in section9 of governance/aimc/AIMC_PERSONA_LIFECYCLE.md. Registry status ACTIVE means the versioned persona exists; public AIMC wiring remains IDLE/unavailable. The description or event must explicitly distinguish the already independently accepted private controller_scoped_course_creation_v1 path reporting to Maturion from the still unavailable public TypeScript document-generation candidate. Do not alias course-crafter-advisor or change its row. The event must identify current authority and actual author and must not invent a persona version increment or backdate review.
+
+This is operational registry completion, not a normative policy rewrite, new persona implementation, capability expansion, new model commissioning or source change. Necessary honest PR scope/evidence and this canonical-wave prebrief may accompany the row. No Tier1/Tier2 source, canon inventory, persona source, provider/controller code, QA suite, workflow, test threshold, accepted c922 semantic identity or immutable df03 acceptance receipt may change. Original IAA token/history and actual-activation addendum remain intact.
+
+Focused review after correction: independently compare the exact patch with merged baseline; verify the row matches existing persona frontmatter; reproduce the existing workflow's two-way registry/disk parity including its actual fixture exclusion; confirm only sections2/9 plus legitimate review evidence changed; verify source/QA/public dispatch remain unchanged. Assess current relevant PR/registry gates without repeated model calls, full course QA, blanket suite execution or reopening frozen source findings. A new-PR prebrief binding may name the actual PR once created; it need not invent new implementation ceremony.
+
+Failure attribution: main Deploy MMM AI Gateway run45824590901 contains successful Lint139925384573, Test139925487341 and deploy/health139925687856 jobs, while Combined Wave Test139925741264 fails21 tests across15 files (MMM framework/descriptor/migrations, MAT foundational provenance and frontend CI expectations). Those errors and their logs remain real; no global main/CWT-green claim is authorised. Source paths implicated by those failures were not changed by PR2078 in the inspected diff. No full baseline rerun was performed to claim every failure pre-existed; report only observed scope/evidence and route unrelated repairs to their owners.
+
+Final acceptance of this narrow follow-up will be an independently authored registry/parity addendum tied to its actual commit, retaining the existing source acceptance and activation token. No replacement model or source assurance cycle is required when the correction stays within this scope.
+
+Private original prebrief SHA256: 5f08bff86a9bb51a9b234648b911eaae4c03e48bf3e2f21f42ffd1d1df790d64. This section is prospective scoping, not a new or reissued ASSURANCE-TOKEN.
+
+## Producer operational-registry PREHANDOVER supplement — PR2079
+
+Actual producer: existing OpenAI Codex direct-CS2 registration owner /root, continuing issue2077 and the recorded appointment. This is operational registration metadata only, not a new agent-implementation or provider session.
+fail_only_once_attested: true — ongoing producing session001 declaration is retained; the actual registry omission/root cause is recorded, not erased or promoted into a QA waiver.
+iaa_audit_token: IAA-session-CC2077-registry-20261126-PASS
+iaa_audit_token_location: .agent-admin/assurance/iaa-wave-record-course-creator-activation-2077.md#independent-persona-registry-reconciliation
+token_field_meaning: EXPECTED NARROW REVIEW REFERENCE ONLY, NOT ISSUANCE. The independent IAA actor alone records the actual changed-registration verdict.
+
+Returned correction: exactly the existing course-creator-advisor §2 row matching its1.0.0/date2026-11-26/CS2 frontmatter and a truthful §9 event. Public persona ACTIVE existence/IDLE unavailable public dispatch remains separate from accepted private controller activation. Unchanged lifecycle version/rules, persona bytes, runtime, QA, gates, models and source acceptance remain frozen. Exact sync parity is10registered/10on-disk,0missing/0orphans. Evidence is .agent-admin/evidence/course-creator-persona-registry-2077-reconciliation.json.
+
+Original immutable producer proof remains e9cfe04e930ebd9beb2ad0acbc244e20c6f5a1ddeabc492f08055ba431e345a3. Original actual source c922 and df03/3c478 acceptance/enactment receipts are unchanged. No model call, course QA rerun or LU1/LU2 processing accompanies this correction. The broader main CWT failures remain separately disclosed; global repository green is not claimed.
+
+
+## Independent persona registry reconciliation
+
+ASSURANCE-TOKEN — IAA-session-CC2077-registry-20261126-PASS. PR2079 exact head a5dbce94001529248adfd9ae2effa4d6e02a4137, merged baseline c5877e28112d1779e92ec99bd97c879f70b6c501. Actual independent reviewer: separately appointed OpenAI Codex instance /root/independent_agent_assurance; independent of producer/factory; no hosted-agent execution claimed. Current owner/CS2 issue2077 authority and actual existing appointment continue for operational registration. Prospective narrow prebrief7d0e1df precedes the correction.
+
+All6 changed-scope criteria PASS; no open finding or waiver. Current merge-gate parity PASS (run45826395215, all6 required role jobs successful);10 ordinary current PR workflows including CodeQL are successful. Existing ceremony proof/session and actual producer attestation/reference supplement are present. This is genuine changed-registration assurance, not a reissued full-agent activation receipt.
+
+| Criterion | Decision | Hard evidence |
+|---|---|---|
+| REG2079-01 — Continuing owner authority and prospective narrow scope | PASS | Issue2077 continued registration authority; actual independent prebrief commit7d0e1df145f4100f5a4a1fd579858958711928bc strictly precedes correction a5dbce94001529248adfd9ae2effa4d6e02a4137; no implementation or fictitious appointment. |
+| REG2079-02 — Exact existing persona registration and truthful wiring state | PASS | Committed row matches unchanged persona version1.0.0, date2026-11-26, ownerCS2; ACTIVE describes persona existence, IDLE/unavailable describes public document-generation; distinct accepted private controller active. Legacy course-crafter unchanged. |
+| REG2079-03 — Minimal nonnormative correction and exact scope | PASS | Exactly2 added document lines in sections2 and9; removing those2 lines reproduces merged baseline blob byte-for-byte. Exactly5 declared PR paths; no Tier1/Tier2/persona/controller/provider/QA/workflow/canon-inventory modifications. |
+| REG2079-04 — Existing workflow two-way persona parity | PASS | Independent extraction of section2 IDs and committed flat agents/*.md, excluding cl7-fixture-* exactly as workflow does:10 registered,10 disk,0 missing,0 orphans; blob/root registry SHA2565c09dc86cf2d7073c37ec5a8594031da48b29e8264bd05c3260db67cb99e41e6. |
+| REG2079-05 — Frozen acceptance, limits and failure attribution retained | PASS | Original df03 source acceptance and3c478 activation receipt rehashed unchanged. No new provider or course job. Observed main CWT failure21tests/15files remains disclosed, not waived or relabelled green; accepted private source scope is unchanged. |
+| REG2079-06 — Actual current governance gates and genuine changed-evidence review | PASS | Current merge role jobs in run45826395215 all6 success; current10 ordinary PR workflows incl CodeQL, preflight, delegation, POLC and ECAP success. Producer supplement uses expected narrow reference only; actual independent role writes this verdict. Main-only persona-sync trigger is unchanged and its live postmerge result is not claimed prematurely. |
+
+Independent exact parity evidence SHA256 be8ab2eb0b4f848e5f2beea8b421ce5612df3a15beb13ffaedd4b82f39cc49bb. Registry committed/root byte SHA2565c09dc86cf2d7073c37ec5a8594031da48b29e8264bd05c3260db67cb99e41e6. Private independent assurance SHA256 daaf4d8eddfe446ef060dfa6dcc02cfb5a84085ff688034b5bb854988c22975f. [Current merge gate](https://github.com/APGI-cmy/maturion-isms/actions/runs/45826395215). [Observed main persona failure](https://github.com/APGI-cmy/maturion-isms/actions/runs/45824590919); [separate observed main CWT failure](https://github.com/APGI-cmy/maturion-isms/actions/runs/45824590901).
+
+### Changed-scope independent risk challenge
+
+1. **What could still fail after merge?** The actual main-only persona sync could report another drift introduced concurrently, or unrelated global CWT failures could continue. The row must not be mistaken for enabling the public document runtime.
+
+2. **What evidence would prove it does not fail?** Exact row/frontmatter and registry/disk parity on the reviewed tree, unchanged workflow semantics and public provider state, actual required PR gates, then the real main-only sync outcome after merge.
+
+3. **Is that evidence present?** Yes for this changed metadata: exact2-line source comparison,10/10 parity and0violations, unchanged persona/public candidate/source acceptance and successful current gates are present. The future main-only push run cannot exist before merge and is not claimed; its result is an operational follow-through rather than an untested patch path.
+
+4. **Is there a contradiction between issue intent, architecture and evidence?** No. This completes the operational registration required by the original AIMC activation task. ACTIVE persona existence with explicitly IDLE public wiring accurately differs from the separately accepted active private controller. No lifecycle rule or capability changes.
+
+5. **Would a reasonable owner accept this as merge-ready?** Yes for the exact operational registry correction: it resolves the one observed orphan with matching existing metadata, preserves frozen source and approvals, and leaves unrelated main CWT failures visible for their responsible owners. It is not global main certification.
+
+CORE020/021/026/027 PASS for this declared metadata change. Registered persona existence is ACTIVE, public wiring remains explicitly IDLE/unavailable, and the accepted private controller is separately active. No change to persona bytes, lifecycle rules/version, Tier1/Tier2, canon inventory, runtime/provider, QA, tests/gates or LU2. Legacy course-crafter remains separate. No provider call or course job occurred in this review. Original source acceptance and enactment receipts were rehashed unchanged; no hash or administrative review loop was introduced.
+
+The actual main-only persona-sync result must be observed once after merge; it is not claimed before its push trigger runs. Broader main CWT remains failed21tests/15files in the observed run; this narrow PASS never means global repository green. CS2 retains merge/release authority. No unrelated repair or QA waiver is authorised.
