@@ -1,0 +1,20 @@
+{
+  "schema": "installed-course-controller/1",
+  "files": {
+    "course_agent_runtime.py": "606318e042abd400ca99428440e2ddb3c749bea813430bd8674fe8779071efa7",
+    "course_agent_preflight.py": "3b2a54c7383f5c58256590c4a4aa45b1896391dbc01659396bfbe2403e54edfa",
+    "maturion_evaluation.py": "a2fe7ad69d22c2c5e6b5289b0da5ab9c5736c2c1fb855d927db36eb61e7a0e2f",
+    "unit_design.py": "8df6c2501de40d7f40be89a493cc58e160d0aec41743c6ae7c2c368380cbbe9a",
+    "unit_worker.py": "2b5c8d6bdd8c21743773b9536c81de6fc6dae1cb3c7b7bd9c63716af93f09c63",
+    "unit_research.py": "0ca92283a1c91374c886bf89432a873962edf3aff7ea65210d1e288f8cb3dc0d",
+    "source_manual.py": "8322ad521db4a200a97da17f2ce4e67772ad782d3090ee5c5c4a39c25c671627",
+    "reconciliation.py": "00eebb6e87d09422f00ec6aa65daad19ad7e9dc521ff9b49448bb1e50b98d978",
+    "course_manual_loop.py": "25877216b6975ff8f15954d26cb2543e08d30826d8bcaeb473cf89179442350d",
+    "course_loop_intervention.py": "1ad457cf86c3aec4de23f8c00e8705c51b01490d4d258315ae53923e92d1ae21",
+    "course_review_freeze.py": "582fc1da92ce273f6a7c7dbc31d3a7ef5a7904ef2d14084381a8b610296dee3b",
+    "course_duplication_review.py": "4abcdc512f49564bcc3bdf2d06d1b7125dda69a21b81a2908adc1e36bc2a9ee9",
+    "retained_research.py": "539377a0f322988ce339f5835e50b057f0f4e3065d7be128ddf3ac320b829c2b",
+    "private_maturion.py": "c71216aeeabce5cabdb4c5087c9b6408c3b6cb04b07b5eba14d7755a1846a604"
+  },
+  "scope": "Source integrity for existing controller and changed transport only. QA requirements remain external/current and unchanged."
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "course-creator-agent-registration-proposal/1",
+  "proposal_only": true,
+  "active": false,
+  "canonical_registry": "APGI-cmy/maturion-isms/governance/AGENT_REGISTRY.json",
+  "proposed_entry": {
+    "agent_id": "course-creator-agent",
+    "agent_class": "specialist",
+    "filename": "course-creator-agent.md",
+    "path": ".github/agents/course-creator-agent.md",
+    "domain": "course-creation",
+    "orchestrator_link": "maturion-agent",
+    "status": "inactive",
+    "registered_date": null,
+    "deprecated_date": null,
+    "canon_inventory_ref": "course-creator-agent.md",
+    "description": "Course Creator platform specialist reporting results and evidence to Maturion.",
+    "layer_down_status": "INTERNAL"
+  },
+  "current_active_registry_entries": 0,
+  "registration_accepted": false,
+  "notes": "No upstream/global registry file is changed. Registration date and canon entry must be supplied by the appointed registry owner at acceptance, never fabricated.",
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "runtime_persona_id": "course-creator-advisor",
+  "runtime_module": "course-creator",
+  "runtime_capability": "document-generation",
+  "central_registration_candidate": "packages/ai-centre/src/registration/CourseCreatorRegistration.ts",
+  "runtime_enabled": false
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "course-creator-agent-creation-authority/1",
+  "id": "CC-AGENT-CREATION-20261126",
+  "actor": "Johan",
+  "recorded_date": "2026-11-26",
+  "source": "direct_user_instruction",
+  "exact_instruction": "OK please proceed with creating the Course Creator platform agent with the three-tier structure, reporting to Maturion as per the strategy. Keep the QA suite unchanged and leave LU2 for me.",
+  "local_creation_authorised": true,
+  "github_issue": null,
+  "appointed_factory_route_confirmed": false,
+  "activation_authorised": false,
+  "exclusions": [
+    "QA suite changes",
+    "LU2 processing",
+    "LU1 restart",
+    "production provider integration",
+    "deployment",
+    "global registry activation",
+    "Maturion contract modification"
+  ],
+  "privacy": "Local path omitted from this portable export; original authority remains preserved privately."
+}

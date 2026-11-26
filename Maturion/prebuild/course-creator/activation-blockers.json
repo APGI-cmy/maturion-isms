@@ -1,0 +1,49 @@
+{
+  "schema": "course-creator-AIMC-activation-blockers/1",
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "source_head": "d725c685c732f0fc2252230be3bffbc8252a8881",
+  "activation_permitted": false,
+  "blockers": [
+    {
+      "id": "AIMC-CC-01",
+      "finding": "Existing generic AI gateway accepts JWT shape without verifying token signature; missing organisation claim skips tenant comparison. This cannot authenticate a Maturion specialist delegation.",
+      "source": "api/ai/request.ts",
+      "symbols": [
+        "validateAuthHeader",
+        "extractOrgIdFromToken",
+        "createHandler"
+      ],
+      "repair": "Verify signature/issuer/audience and authenticated organisation/user/role before any provider call. Add an authenticated bounded Maturion delegation route; request JSON identity is insufficient.",
+      "owner": "AIMC gateway/identity implementation owner"
+    },
+    {
+      "id": "AIMC-CC-02",
+      "finding": "Gateway routes document-generation to OpenAI, but OpenAIAdapter.supportedCapabilities excludes document-generation. The legacy course persona does not prove this capability works.",
+      "source": "packages/ai-centre/src/adapters/OpenAIAdapter.ts",
+      "symbols": [
+        "supportedCapabilities",
+        "execute"
+      ],
+      "repair": "Implement and independently test the approved document-generation capability or choose an explicitly approved functioning AIMC adapter. No direct provider bypass.",
+      "owner": "AIMC provider adapter implementation owner"
+    },
+    {
+      "id": "AIMC-CC-03",
+      "finding": "No accepted authenticated Maturion-to-Course-Creator controller integration or real bounded commissioning receipt was found. Local Course Creator uses its existing CodexRuntime; adding a persona or registration constant does not connect it.",
+      "sources": [
+        "packages/ai-centre/src/gateway/AICentre.ts",
+        "packages/ai-centre/src/registration/CourseCreatorRegistration.ts"
+      ],
+      "repair": "Implement the accepted tenant-bound, idempotent controller adapter with current QA binding, retained counters/frozen passes and Maturion return review. Commission with fixtures before real course work.",
+      "owner": "Maturion/AIMC and Course Creator integration owner"
+    }
+  ],
+  "candidate_tests": {
+    "AIMC_tests_passed": 41,
+    "runtime_preflight_tests_passed": 4,
+    "real_provider_calls": 0,
+    "course_jobs_started": 0
+  },
+  "QA_suite_changed": false,
+  "LU2_processed": false
+}

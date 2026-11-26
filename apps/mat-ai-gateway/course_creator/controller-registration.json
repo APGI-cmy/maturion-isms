@@ -1,0 +1,25 @@
+{
+  "schema": "course-creator-controller-registration/1",
+  "specialist": "course-creator-agent",
+  "orchestrator": "maturion-agent",
+  "authority_issue": "https://github.com/APGI-cmy/maturion-isms/issues/2077",
+  "provider": "codex-chatgpt-local",
+  "route": "/api/v1/course-creator/controller",
+  "runtime": "Python gateway + existing Windows Course Creator controller",
+  "capabilities": [
+    "research",
+    "design",
+    "producer",
+    "reviewer",
+    "correction",
+    "duplication",
+    "diagnosis",
+    "reconciliation",
+    "handover"
+  ],
+  "default_state": "unavailable_until_actual_independent_acceptance_and_runtime_enablement",
+  "QA_suite_changes": false,
+  "owner_signoff_automatic": false,
+  "LU2_commissioning_allowed": false,
+  "Maturion_review": "Registered independent review provider + exact final artifact/QA/lineage verification before user handover"
+}

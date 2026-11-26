@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2026-02-20T12:05:28Z",
+  "description": "Registry of active orchestrator and specialist agents in the Maturion ISMS platform. See governance/canon/AGENT_REGISTRY_ARCHITECTURE.md for schema definition and lifecycle operations.",
+  "total_agents": 0,
+  "agents": []
+}

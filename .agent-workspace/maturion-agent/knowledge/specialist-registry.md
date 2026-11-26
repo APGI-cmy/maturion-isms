@@ -213,3 +213,25 @@ for (const specialist of specialistRegistry) {
 **Version:** 2.1.0  
 **Date:** 2026-02-21  
 **Canonical Reference:** `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` Section 10 (Specialist Lifecycle)
+
+
+---
+
+## Course Creator commissioning entry — issue #2077
+
+**Entry version:** 1.2.0, 2026-11-26. **Authority:** `.agent-admin/authorities/course-creator-activation-2077.md`. This addition governs only Course Creator. Existing MAT/PIT/future entries above are retained as historical declarations; this wave neither activates their stubs nor grants them access to Course Creator.
+
+### course-creator-agent
+- **Domain:** Course creation: intake, design proposals, research, controller-owned production/correction/review and evidence reconciliation.
+- **Apps:** `course-creator` only; no lateral specialist delegation.
+- **Routing keywords:** learner guide, learning unit, course design, course research, course QA, course review, duplication, correction, manual handover. Authenticated app context takes priority over generic MAT/PIT keyword matches.
+- **Contract version:** 1.2.0.
+- **Contract:** `.github/agents/course-creator-agent.md`.
+- **Knowledge:** `.agent-workspace/course-creator-agent/knowledge/index.md`.
+- **Governance identity:** `course-creator-agent`; **AIMC persona:** `course-creator-advisor`; **module:** `course-creator`; **reporting orchestrator:** the actually registered bounded `maturion-agent` embodiment.
+- **Availability:** Unavailable until accepted canonical integrity/registry/routing, exact-source independent acceptance and authenticated capability commissioning evidence pass `apps/course-creator-controller/course_agent_preflight.py`. Current availability is determined by that evidence, never by editing this paragraph or a model assertion.
+- **Capability profile:** `controller_scoped_course_creation_v1` requires actual full lifecycle execution-permit/return/final-verification proof. Read-only inspection/evaluation receipts permit only their explicitly accepted scope.
+- **Controller:** The accepted registered Course Creator controller owns original sources/parent, locks, production, independent reviewer separation, QA requirements, frozen passes, counters and human sign-off. Local Codex remains the authorised producer/reviewer when selected; the separate Maturion synthesis policy is not a replacement provider.
+- **Unavailable behaviour:** Return a bounded unavailable/held result with evidence and responsible actor; do not fall back to direct course production or unrelated specialists.
+
+The legacy `course-crafter-advisor` remains ISMS-specific and unchanged. No source-copy, persona declaration or registry text supplies independent acceptance, a human approval or production authority.

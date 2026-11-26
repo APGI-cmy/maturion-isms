@@ -1,0 +1,150 @@
+{
+  "schema": "course-creator-independent-assurance-review/1",
+  "date_utc": "2026-11-26T09:55:42.491679+00:00",
+  "reviewer": "Fresh independent Codex review execution; no producer/factory authorship",
+  "methodology": "Independent IAA methodology applied; not an activated GitHub custom-agent execution and not a fabricated official assurance token.",
+  "independence_confirmed": true,
+  "formal_governance_assurance_token_issued": false,
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2075",
+  "PR": "https://github.com/APGI-cmy/maturion-isms/pull/2076",
+  "reviewed_head": "316666e32592e34df5f707901ed41ff1f54d5700",
+  "remote_branch_head_verified": "316666e32592e34df5f707901ed41ff1f54d5700",
+  "verdict": "FAIL",
+  "activation_verdict": "REJECTED",
+  "merge_ready": false,
+  "required_state": "Keep PR draft and specialist disabled/unactivated. Preserve this submitted head and consolidated findings before bounded corrective recheck.",
+  "verified_positive_evidence": {
+    "exact_remote_head_independently_fetched": true,
+    "detached_worktree": "Private local evidence path withheld.",
+    "AIMC_tests": {
+      "path": "Private local evidence path withheld.",
+      "sha256": "26f1ef5442346b62dc69f16e0ede5145df7ed32d89a211abfe3ab12a48b18fe0",
+      "total": 41,
+      "passed": 41,
+      "failed": 0
+    },
+    "supplied_signature_tests": {
+      "total": 4,
+      "passed": 4,
+      "limits": "Isolated fixtures; no real external receipts or runtime activation."
+    },
+    "direct_invocation_guard": "New Course Creator persona is rejected before persona load/provider execute for both advisory and document-generation. Existing gateway/persona tests remain passing.",
+    "local_private_manifest": {
+      "sha256": "ec78a1c566a4cd043ff56b2bc5b80d3e3fd89198d743d45030ce4c601c28d143",
+      "core_files": 39,
+      "mismatches": 0
+    },
+    "public_privacy_scan": {
+      "changed_files": 48,
+      "private_Windows_path_or_key_pattern_hits": 0,
+      "scope": "Focused content scan; not a guarantee against every possible secret pattern."
+    },
+    "protected_baseline": {
+      "reference": {
+        "path": "Private local evidence path withheld.",
+        "sha256": "6359ab0e8868b1287e8629aa38b32060a1411139aef45ac046f26368d34f17c9"
+      },
+      "files": 426,
+      "changed": 0,
+      "QA_suite_changed": false,
+      "LU2_processed": false
+    },
+    "no_model_or_provider_calls": true,
+    "no_implementation_edits_by_reviewer": true
+  },
+  "acceptance_criteria_matrix": [
+    {
+      "criterion": "Complete three-tier bundle and truthful readiness",
+      "result": "FAIL_FOR_CONTRACT_READY",
+      "evidence": "Three tiers and truthful disabled state exist; IAA-CC-02/03 prevent exact integrity and required protected contract compliance."
+    },
+    {
+      "criterion": "Factory review and independent assurance bound to stable content",
+      "result": "FAIL_FOR_FINAL_ASSURANCE",
+      "evidence": "Factory-method review and corrections are preserved; this independently fetched head is stable, but material findings remain and no official hosted factory/IAA acceptance is inferred."
+    },
+    {
+      "criterion": "AIMC registration/routing uses actual runtime mechanism",
+      "result": "FAIL_FOR_ACTIVE_REGISTRATION",
+      "evidence": "Central candidate plus invocation guard is a real disabled preparation. Accepted authentication/controller/provider route and activation receipts are absent."
+    },
+    {
+      "criterion": "Bounded idempotent commissioning, authority negatives, authentic return and Maturion synthesis",
+      "result": "FAIL",
+      "evidence": "Negative disabled-invocation tests pass. No real authenticated commissioning/return/synthesis evidence exists; fixture signatures cannot substitute."
+    },
+    {
+      "criterion": "QA suite and LU2 unchanged",
+      "result": "PASS_SCOPED",
+      "evidence": "426 current protected files independently compared with zero changes; no course/provider calls made."
+    },
+    {
+      "criterion": "Missing indispensable runtime component identified without false activation",
+      "result": "PASS_SCOPED",
+      "evidence": "activation-blockers.json documents actual source gaps; enabled=false, available=false and no merge/deployment occurred."
+    }
+  ],
+  "independent_risk_challenge": {
+    "what_could_fail_after_merge": "A later enabled flag could expose an unverified caller/tenant route or select an unsupported provider. Author-controlled issuer aliases could satisfy an intended separation check; manifest portability could invalidate every preflight and cause hash loops.",
+    "what_would_prove_it_does_not_fail": "Bounded gateway/controller integration tests with signed authority and tenant denial, supported provider result, idempotent saved-return tests, independent Maturion review evidence, distinct role-key regression and byte-identical commit/checkout manifest verification.",
+    "evidence_present": "No for real activation. Only structural/disabled-path and isolated signature fixtures are present. Two negative risks were independently reproduced despite the supplied green tests.",
+    "contradiction_between_intent_and_evidence": "The issue seeks activation, but this draft deliberately remains inactive and several required integration components do not exist in the inspected route. That truthful limitation is not complete delivery of activation.",
+    "production_owner_accept_as_merge_ready": "No. Keep draft and unactivated; correct the bounded owned defects and obtain actual runtime evidence before final acceptance."
+  },
+  "findings": [
+    {
+      "id": "IAA-CC-01",
+      "classification": "security_control_defect",
+      "title": "Role separation checks key IDs, allowing one signing key to attest all roles",
+      "evidence": [
+        {
+          "path": "Private local evidence path withheld.",
+          "sha256": "dd2935152eda39723651b4738964a7b8149817f4043abf4410cffc945cb565c1"
+        }
+      ],
+      "source": "Maturion/prebuild/course-creator/bundle/scripts/runtime_preflight.py:50",
+      "observed": "Independently constructed fixture with one Ed25519 private/public key copied into four role-labelled key IDs returned ready=true with all four gates verified. No actual activation was performed.",
+      "required_fix": "Validate distinct decoded Ed25519 public-key material for independently provisioned role issuers; keep a trusted runtime-owned anchor policy outside model/session control. Add a regression proving different labels cannot reuse one signing key.",
+      "owner": "Runtime preflight/identity implementation owner"
+    },
+    {
+      "id": "IAA-CC-02",
+      "classification": "hash_portability_and_submitted_evidence_defect",
+      "title": "Portable manifest does not bind committed bytes and fails Windows checkout",
+      "evidence": [
+        {
+          "path": "Private local evidence path withheld.",
+          "sha256": "fe1e6e0cd18139ea585f59e2e0309f9617e954b73e097e6ef6d83a3094245d1e"
+        }
+      ],
+      "source": "Maturion/prebuild/course-creator/bundle/bundle-lock.json",
+      "observed": "At exact remote head, README.md and governance/local-context.json committed Git blobs disagree with their manifest SHA256. With core.autocrlf=true,35/37 checked-out files disagree with manifest. These are separate effects: mixed authoring newline conventions plus checkout conversion.",
+      "required_fix": "Freeze exact public-upload bytes under scoped byte-preserving .gitattributes, regenerate the portable manifest from those bytes, and verify both committed Git blobs and a fresh normal Windows checkout. Do not silently normalize semantic/content changes into a pass. Retain prior manifest and review.",
+      "owner": "Portable bundle/export implementation owner"
+    },
+    {
+      "id": "IAA-CC-03",
+      "classification": "agent_contract_readiness_defect",
+      "title": "Protected machine-consumable contract controls remain missing",
+      "source": "Maturion/prebuild/course-creator/bundle/.github/agents/course-creator-agent.md; .agent-workspace/independent-assurance-agent/knowledge/IAA_AGENT_CONTRACT_AUDIT_STANDARD.md \u00a73",
+      "observed": "Proposed YAML lacks identity.role/mission/class_boundary, top-level tier2_knowledge.index, merge_gate_interface.parity_enforcement:BLOCKING, and structured SELF-MOD prohibition with enforcement:CONSTITUTIONAL. Related prose exists, but the applicable audit standard requires explicit protected components and no approved waiver/equivalence is evidenced.",
+      "required_fix": "Have the appointed target-contract author add the missing structured controls and map them to current audit requirements. Preserve specialist boundaries and no-self-modification. This is a contract-readiness correction, not permission to alter any upstream canon or QA.",
+      "owner": "Target-agent factory author"
+    },
+    {
+      "id": "IAA-CC-04",
+      "classification": "runtime_activation_dependency",
+      "title": "Actual authenticated, capable Maturion/controller route and commissioning evidence are absent",
+      "source": "api/ai/request.ts:253-279,329-357; packages/ai-centre/src/adapters/OpenAIAdapter.ts:36-42; packages/ai-centre/src/registration/CourseCreatorRegistration.ts:14; activation-blockers.json",
+      "observed": "Inspected generic gateway source verifies JWT structure without verifying its signature and permits absent org_id to skip the tenant comparison. It routes document-generation to OpenAI while that adapter excludes the capability. This PR intentionally leaves its new registration disabled and provides no accepted authenticated Maturion-to-controller adapter, provisioned trust anchors, real commissioning receipts, deployed route proof or Maturion synthesis receipt. These observations are source-scoped, not a claim about every deployed environment.",
+      "required_fix": "Gateway/identity owner must prove cryptographic principal and tenant/role verification before provider use; provider owner must implement or bind an approved working document-generation route; integration owner must commission the authenticated idempotent controller path with current QA binding, preserved counters, frozen checks and Maturion review. Do not solve this by flipping enabled or changing a status record.",
+      "owner": "AIMC gateway/provider/integration owners"
+    }
+  ],
+  "recheck_scope": "After meaningful corrections, recheck IAA-CC-01/02/03 and directly affected dependencies only. Retain the already-passed 41 gateway/persona/disabled-registration checks and four existing fixture checks unless their implementation or dependencies change. The actual activation gaps remain open; do not relabel proposal-only success as activation.",
+  "limits": [
+    "No source changes, remote mutations, course QA runs, real provider invocations or deployments were performed by this reviewer.",
+    "This is an independent method-based review, not proof that a registered GitHub IAA actor or hosted required checks accepted the head.",
+    "Memory context used only to preserve prior approval/handoff boundaries; current findings derive from live exact-head evidence."
+  ]
+}

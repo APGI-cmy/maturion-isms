@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "course-creator-activation-2077",
+  "pr_number": 2078,
+  "prebrief_commit_sha": "f6924e9e77ab46093e79b84ecd9b497d72459c8f",
+  "builder_appointment_timestamp": "2026-11-26T11:38:22Z",
+  "builder_appointment_commit_sha": "c9019513a684f422f322ce4f671753bb1c571e24",
+  "builder_agent": "integration-builder (OpenAI Codex, direct-CS2; not Foreman)",
+  "builder_task_ref": ".agent-admin/builder-appointments/course-creator-activation-2077-integration-builder.md",
+  "first_implementation_commit_sha": "dec4b7b0c343606745d44379a6dac908a78d0f75",
+  "qp_review_timestamp": "2026-11-26T12:16:23.781448Z",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "review_evidence": "Independent affected source clearance for 51c216f62378421898e20b89c0c809e064ed4a9f; actual OpenAI Codex reviewer, separate from producer and factory. Isolated commissioning clearance only, not final activation acceptance.",
+  "authority": "https://github.com/APGI-cmy/maturion-isms/issues/2077",
+  "historical_failures": "PR2076 remains unchanged. This prospective sequence does not backdate or waive its chronology."
+}

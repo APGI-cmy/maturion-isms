@@ -18,6 +18,7 @@ import {
 } from '../types/index.js';
 import { CapabilityRouter } from '../routing/CapabilityRouter.js';
 import { PersonaNotFoundError } from '../types/index.js';
+import { COURSE_CREATOR_REGISTRATION } from '../registration/CourseCreatorRegistration.js';
 
 export class AICentre {
   private readonly config: AICentreConfig;
@@ -32,6 +33,13 @@ export class AICentre {
     req: AICentreRequest,
   ): Promise<AICentreResponse | AICentreErrorResponse> {
     const startTime = Date.now();
+
+    // A persona file is discoverable content, not an activation receipt (#2075).
+    // Do not allow a direct generic gateway request to bypass commissioning.
+    if (req.agent === COURSE_CREATOR_REGISTRATION.personaId && !COURSE_CREATOR_REGISTRATION.enabled) {
+      const telId = await this._writeTelemetry(req, undefined, startTime, AICentreErrorCode.UNKNOWN_AGENT);
+      return this._errorResponse(req, AICentreErrorCode.UNKNOWN_AGENT, 'Course Creator specialist is not commissioned.', false, telId, startTime);
+    }
 
     // Resolve persona system prompt
     let personaSystemPrompt = '';

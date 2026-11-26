@@ -1,0 +1,25 @@
+{
+  "schema": "course-creator-agent-routing-proposal/1",
+  "proposal_only": true,
+  "enabled": false,
+  "from": "maturion-agent",
+  "to": "course-creator-agent",
+  "app": "course-creator",
+  "domain": "course-creation",
+  "requires": [
+    "authenticated_orchestrator_registration",
+    "scoped_authority",
+    "tenant_context",
+    "controller_adapter",
+    "AIMC_model_and_budget",
+    "accepted_registry_entry"
+  ],
+  "return_to": "maturion-agent",
+  "maturion_output_review_required": true,
+  "direct_user_response": false,
+  "lateral_specialist_invocation": false,
+  "idempotency_key": "delegation_id",
+  "replay": "Return the same saved receipt for the exact same payload; reject changed payload under an existing ID.",
+  "missing_dependency": "UNAVAILABLE",
+  "activation_receipt": null
+}
