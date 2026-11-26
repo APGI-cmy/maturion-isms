@@ -324,3 +324,19 @@ function planMultiSpecialistChain(query: string): Chain {
 - `governance/canon/ORCHESTRATOR_SPECIALIST_ARCHITECTURE.md` Section 3.1 (Routing Intelligence)
 - `governance/canon/AGENT_DELEGATION_PROTOCOL.md` Section 4 (Transparency Decision)
 - `governance/canon/MULTI_EMBODIMENT_ORCHESTRATION_MODEL.md` Section 6 (App-Context Routing)
+
+
+---
+
+## Course Creator app-context route — issue #2077
+
+**Entry version:** 1.2.0, 2026-11-26. Applies only to authenticated `app=course-creator`; existing rules for other applications are unchanged and confer no new Course Creator authority.
+
+1. Validate authenticated actor, tenant/user/role, project/LU/entity, original controller parent, allowed operation/sources and accepted capability scope. User-supplied app labels or keyword matches alone cannot establish this context.
+2. Resolve the accepted bounded Maturion runtime embodiment and registered Course Creator controller, target `course-creator-agent`, generic persona `course-creator-advisor` and module `course-creator`. Validate their current integrity, independent acceptance, provider policy and actual commissioning receipts through `apps/course-creator-controller/course_agent_preflight.py`. Missing or mismatched evidence returns unavailable/held; it is not replaced with an unrelated historical specialist entry.
+3. Within this authenticated app context, Course Creator topics route to `course-creator-agent` even when terms such as ISO, assessment, evidence or risk also match MAT/PIT rules. This does not activate those specialists or authorise lateral delegation. The legacy `course-crafter-advisor` is not this route.
+4. Keep research/production/correction/independent-review/duplication/root-cause/reconciliation/handover roles in the existing controller. Before any approved local provider invocation, require the registered bridge's atomic execution permit for the exact semantic invocation; verify the saved output return handshake. Preserve local Codex as selected producer/reviewer and the distinct accepted Maturion synthesis policy. Do not create a parallel controller or rerun an indeterminate invocation.
+5. Maturion verifies actual artifact and operative-QA receipts, task/context/parent, allowance and unresolved findings before synthesis. Complete mandatory QA and separate human sign-off remain necessary. Inspection-only acceptance cannot be used to authorise production, and a second model response cannot substitute for final verification.
+6. If a required route/capability is unavailable, return the concrete gap and next responsible actor. Generic direct-response or multi-specialist fallback above must not perform course work, assert a pass, waive QA, sign for the user or silently change provider.
+
+This is a method declaration; acceptance and availability come from actual accepted runtime records. It commissions isolated synthetic bridge proof only under #2077, not a restart of the real held LU1 chain or processing LU2.

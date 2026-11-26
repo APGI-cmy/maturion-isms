@@ -1,0 +1,31 @@
+{
+  "schema": "course-creator-source-checks/1",
+  "actor": "OpenAI Codex direct-CS2 integration-builder",
+  "authority_issue": 2077,
+  "PR": 2078,
+  "gateway_tests": {
+    "passed": 207,
+    "failed": 0,
+    "command": "python -B -m pytest tests/ -q -p no:cacheprovider"
+  },
+  "gateway_lint": {
+    "passed": true,
+    "command": "python -B -m flake8 . --max-line-length=120 --exclude=tests/__pycache__"
+  },
+  "existing_controller_loop_and_continuity_tests": {
+    "passed": 25,
+    "failed": 0,
+    "modules": [
+      "test_course_loop_intervention",
+      "test_course_manual_loop",
+      "test_qa_continuity"
+    ]
+  },
+  "independent_source_findings": "FULL01-FULL05 consolidated; corrected candidate awaits independent affected recheck",
+  "QA_suite_changed": false,
+  "real_course_jobs_started": false,
+  "LU2_processed": false,
+  "course_QA_pass_claimed": false,
+  "live_controller_commissioning": "pending",
+  "activation": "pending_independent_acceptance_and_live_proof"
+}

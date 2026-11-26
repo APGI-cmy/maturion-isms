@@ -299,3 +299,33 @@ To add or modify an entry:
 5. Commit session memory entry documenting the change
 
 **Authority:** CS2 (Johan Ras) | **Version:** 1.0.0 | **Date:** 2026-02-21
+
+
+---
+
+## Course Creator domain entry — issue #2077
+
+**Entry version:** 1.2.0, 2026-11-26. Course-specific addition only; all preceding domain entries and their historical statuses remain unchanged. This wave does not activate other stubs or confer cross-app authority.
+
+```yaml
+domain: Course creation and learner-guide workflow
+specialist: course-creator-agent
+trigger_phrases:
+  - course design
+  - learner guide
+  - learning unit
+  - course research
+  - course QA
+  - course review
+  - duplication
+  - manual handover
+knowledge_base:
+  tier1_live: .github/agents/course-creator-agent.md
+  tier2_cached: .agent-workspace/course-creator-agent/knowledge/index.md
+  tier3_external: accepted_controller_owned_tenant_scoped_job_evidence
+knowledge_status: UNAVAILABLE
+apps: [course-creator]
+notes: "Fail-closed declaration default. Actual accepted capability availability is resolved by apps/course-creator-controller/course_agent_preflight.py against current canonical integrity/registry/routing, independent acceptance and authenticated capability receipts; this static flag is not an activation switch. Generic persona course-creator-advisor reports through the actually registered bounded maturion-agent embodiment; legacy course-crafter-advisor is unchanged. Full controller_scoped_course_creation_v1 needs complete lifecycle proof; read-only acceptance permits only its accepted scope. No unrelated specialist or direct-production fallback."
+```
+
+Authenticated Course Creator app context takes precedence over generic matching domain words; see the Course Creator route in `routing-rules.md`. The controller owns all production/review roles, source/parent, QA, frozen passes, counters and human gates. Maturion owns final evidence verification and synthesis. Actual missing evidence holds execution; no model can promote this entry to active.

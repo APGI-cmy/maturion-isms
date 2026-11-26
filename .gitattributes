@@ -1,0 +1,7 @@
+
+# Issue2077: byte identities for newly installed runtime package and registry data.
+/.github/agents/course-creator-agent.md -text
+/.agent-workspace/course-creator-agent/** -text
+/governance/AGENT_REGISTRY.json -text
+/governance/CANON_INVENTORY.json -text
+/apps/course-creator-controller/** -text

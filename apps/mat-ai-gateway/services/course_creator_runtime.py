@@ -79,7 +79,7 @@ class Ledger:
             'state': 'eq.running'}, json={'state': state, 'result': result})
 
 
-def authenticate(headers, raw, task, ledger):
+def authenticate(headers, raw, task, ledger, path=PATH, purpose='inspection'):
     """60-second Ed25519 signature binds exact body, route, tenant and actor."""
     try:
         client_id = headers['x-cc-client']
@@ -87,15 +87,23 @@ def authenticate(headers, raw, task, ledger):
         if len(client_id) > 100 or abs(time.time() - int(stamp)) > 60:
             raise ValueError('expired')
         client = ledger.client(client_id)
-        message = (stamp + '\nPOST\n' + PATH + '\n' + digest(raw)).encode()
+        message = (stamp + '\nPOST\n' + path + '\n' + digest(raw)).encode()
         Ed25519PublicKey.from_public_bytes(bytes.fromhex(client['public_key'])).verify(
             base64.b64decode(headers['x-cc-signature'], validate=True), message)
         expected = (client['tenant_id'], client['user_id'], client['project_id'])
         if expected != (task.tenant_id, task.user_id, task.project_id):
             raise ValueError('scope')
-        if client['unit_id'] != task.unit_id:
+        if purpose == 'controller' and task.unit_id not in client.get('allowed_unit_ids', []):
+            raise ValueError('controller unit scope')
+        if purpose != 'controller' and client['unit_id'] != task.unit_id:
             raise ValueError('unit scope')
-        if task.commissioning:
+        if purpose == 'controller':
+            if getattr(task, 'operation', None) != 'capability':
+                permitted = (client.get('controller_commissioning') if task.commissioning else
+                             client.get('controller_enabled') and client.get('controller_assurance_ref'))
+                if not permitted:
+                    raise ValueError('controller activation pending assurance')
+        elif task.commissioning:
             if not client['commissioning']:
                 raise ValueError('commissioning disabled')
         elif not client['enabled'] or not client.get('assurance_ref'):

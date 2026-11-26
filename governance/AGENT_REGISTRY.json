@@ -1,7 +1,40 @@
 {
   "schema_version": "1.0.0",
-  "last_updated": "2026-02-20T12:05:28Z",
+  "last_updated": "2026-11-26",
   "description": "Registry of active orchestrator and specialist agents in the Maturion ISMS platform. See governance/canon/AGENT_REGISTRY_ARCHITECTURE.md for schema definition and lifecycle operations.",
   "total_agents": 0,
-  "agents": []
+  "agents": [
+    {
+      "agent_id": "maturion-agent",
+      "agent_class": "orchestrator",
+      "filename": "maturion-agent.md",
+      "path": ".github/agents/maturion-agent.md",
+      "domain": null,
+      "orchestrator_link": null,
+      "status": "inactive",
+      "registered_date": "2026-11-26",
+      "deprecated_date": null,
+      "canon_inventory_ref": "maturion-agent.md",
+      "description": "Bounded Maturion Course Creator orchestration embodiment; unrelated planned capabilities remain unavailable.",
+      "layer_down_status": "INTERNAL",
+      "authority_issue": "https://github.com/APGI-cmy/maturion-isms/issues/2077",
+      "capability_scope": "Course Creator controller lifecycle only; no CS2, infrastructure or publication powers"
+    },
+    {
+      "agent_id": "course-creator-agent",
+      "agent_class": "specialist",
+      "filename": "course-creator-agent.md",
+      "path": ".github/agents/course-creator-agent.md",
+      "domain": "course-creation",
+      "orchestrator_link": "maturion-agent",
+      "status": "inactive",
+      "registered_date": "2026-11-26",
+      "deprecated_date": null,
+      "canon_inventory_ref": "course-creator-agent.md",
+      "description": "Course Creator lifecycle through the existing authorised controller; QA and owner gates retained.",
+      "layer_down_status": "INTERNAL",
+      "authority_issue": "https://github.com/APGI-cmy/maturion-isms/issues/2077",
+      "capability_scope": "Course Creator controller lifecycle only; no CS2, infrastructure or publication powers"
+    }
+  ]
 }

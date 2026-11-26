@@ -1,8 +1,8 @@
 # Delegation and reporting to Maturion
 
-Version: 1.1.0. Effective date: 2026-11-26.
+Version: 1.2.0. Effective date: 2026-11-26.
 
-Use `schemas/delegation.schema.json` and `schemas/result.schema.json`, together with the accepted adapter's authenticated dispatch/result contracts. Validate both structurally and semantically. The package must bind delegation ID, authenticated orchestrator, authority, tenant, user/role, project and current entity, allowed sources, expected outputs, constraints and current cumulative allowance. Identity text in JSON is not authentication. An approved AIMC adapter must supply a verified registration/permission receipt before execution.
+Use `Maturion/prebuild/course-creator/bundle/schemas/delegation.schema.json` and `Maturion/prebuild/course-creator/bundle/schemas/result.schema.json`, together with the accepted adapter's authenticated dispatch/result contracts. Validate both structurally and semantically. The package must bind delegation ID, authenticated orchestrator, authority, tenant, user/role, project and current entity, allowed sources, expected outputs, constraints and current cumulative allowance. Identity text in JSON is not authentication. An approved AIMC adapter must supply a verified registration/permission receipt before execution.
 
 Reject out-of-domain, unregistered or unauthorised requests with `REJECTED` and the reason `out_of_domain`, `invalid_authority` or `missing_inputs`; always return the delegation ID, failure `detail`, `recommended_action` and next responsible actor. An invalid-authority request must receive a minimal rejection audit receipt without reading course artifacts outside its authority. Never silently discard a task or obtain missing powers by requesting another specialist directly.
 

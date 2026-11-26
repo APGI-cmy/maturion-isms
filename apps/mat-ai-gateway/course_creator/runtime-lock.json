@@ -1,16 +1,16 @@
 {
   "schema": "course-creator-runtime-knowledge/1",
-  "source_bundle_sha256": "aeee565acbaea4e5dfe32a78af776bd98339f09933cd10488fb159ed027f25d3",
+  "authority_issue": 2077,
   "files": {
-    "knowledge/.github/agents/course-creator-agent.md": "06eb3ea82fb4080ee4d7154a8570d81394749ddbb0e2d706106e5578ace07ffb",
-    "knowledge/.agent-workspace/course-creator-agent/knowledge/aimc-dependencies.md": "61b2c353f95c699c099dcd4dced203302f8c6c0670dfe9415f691e5e9dcb65c1",
-    "knowledge/.agent-workspace/course-creator-agent/knowledge/commissioning-and-registration.md": "66f17145ab39405728f1c1744ec30f599133fef7756ffc08f8b91ed6b6b8e97f",
-    "knowledge/.agent-workspace/course-creator-agent/knowledge/delegation-and-reporting.md": "f3a1c9cb45efcde818c0ab9075801cdb9cc3ef20723a4a8368ccf939068b773f",
-    "knowledge/.agent-workspace/course-creator-agent/knowledge/domain-flag-index.md": "e1e87909a2095e095eb8e7376ffb3f6b043ef1691f8aeee0fd81c8ee9d7e2b27",
-    "knowledge/.agent-workspace/course-creator-agent/knowledge/index.md": "409d3596005a2fde7a11a9368b0538e1714816096cbc98f775edad0e1b449749",
+    "knowledge/.github/agents/course-creator-agent.md": "a6ada8a2f93bf747a666aef3c745d9e8da0fdb98bfe1f46e3acfcff76a0cc61a",
+    "knowledge/.agent-workspace/course-creator-agent/knowledge/aimc-dependencies.md": "5de8f643e7d591df12c55a8f1272999161d25c4894d4600273404dbeebd8e3f0",
+    "knowledge/.agent-workspace/course-creator-agent/knowledge/commissioning-and-registration.md": "82231377591b218e9f2da76f2b0161af45e64e3ac818988e582436647dc51c80",
+    "knowledge/.agent-workspace/course-creator-agent/knowledge/delegation-and-reporting.md": "6d3a1f0d5688bc08b4f7e7eade41b3e84309d505e360557022690939407a26e8",
+    "knowledge/.agent-workspace/course-creator-agent/knowledge/domain-flag-index.md": "a465e74c4e3f3c5d1179089c1f2eecb4bfca9140a7f35ecc10084414d9c436d4",
+    "knowledge/.agent-workspace/course-creator-agent/knowledge/index.md": "fe71cc8ef7c4f4e90479b9ebe23b35770884a6ca1f1c4fcfb583b781d8ad7eb8",
     "knowledge/.agent-workspace/course-creator-agent/knowledge/memory-and-learning.md": "8d71afc6a282c968b9e3cca00ab91c2bb3d8cdf0e2d1ff444c96f1931a13c78d",
     "knowledge/.agent-workspace/course-creator-agent/knowledge/qa-and-convergence.md": "a2d1ed45ebec7e846deee4e1c7707f01e620e8ca58a8ce43d2bf343551f5c6e5",
-    "knowledge/.agent-workspace/course-creator-agent/knowledge/specialist-registry.md": "7d642014f70eb3770073115366fa65cc5ca766120ab88b1a040178d14dda925b",
-    "knowledge/.agent-workspace/course-creator-agent/knowledge/workflow-method.md": "f76c87e26841cd7207d2a5771eedf0ed7d3c6b48afc08b09d07e2b75d1fcffee"
+    "knowledge/.agent-workspace/course-creator-agent/knowledge/specialist-registry.md": "b75d9f00e698f40557332091e91da9d5c04e72280635501edbbdf03db43b9d6d",
+    "knowledge/.agent-workspace/course-creator-agent/knowledge/workflow-method.md": "c955d4a86ed5677fb352caac2668bb9efc378a137d5b5cd7f7b916bc79572e91"
   }
 }

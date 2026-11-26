@@ -1,19 +1,22 @@
 # Course Creator domain flags
 
-Version: 1.1.0. Effective date: 2026-11-26. Domain: course-creation.
+Version: 1.2.0. Effective date: 2026-11-26. Domain: course-creation. Authority: issue #2077.
 
-| Flag | State | Meaning |
-| --- | --- | --- |
-| COURSE_CREATOR_BUNDLE | COMMISSIONING_REQUESTED | Issue #2075 authorises factory review, assurance and registration; completion still needs evidence |
-| COURSE_CREATOR_RUNTIME | RECEIPT_GATED | Only the authenticated accepted runtime registration/preflight can establish activation; these knowledge flags do not enable it |
-| MATURION_REPORTING | REQUIRED | Every specialist result returns to maturion-agent for review |
-| QA_SUITE_WRITE | PROHIBITED | Read current requirements; never change the suite |
-| FROZEN_PASS_RETENTION | REQUIRED | Preserve genuine unchanged independent passes |
-| ROOT_CAUSE_AFTER_FOUR | REQUIRED | Stop and diagnose before any exceptional fifth loop |
-| INDEPENDENT_ASSURANCE | REQUIRED_PENDING | Local validation does not satisfy IAA |
-| SOURCE_AND_TENANT_ISOLATION | REQUIRED | Customer sources and lessons remain scoped |
-| LU02_CURRENT_SCOPE | EXCLUDED | Johan will test LU2 himself |
+These are operating constraints and required capability proofs. Their presence is not an activation event; the actual accepted canonical/runtime registry and evidence-driven preflight are authoritative for each invocation.
 
-Registry and routing are proposals in `governance/`; none of these flags enable a live route.
+| Flag | Rule / required runtime evidence |
+| --- | --- |
+| COURSE_CREATOR_CANONICAL_BUNDLE | Current adopted target contract/Tier2 and inventory identity independently accepted |
+| MATURION_REPORTING | Actual registered bounded Maturion principal and route; final evidence verified before user synthesis |
+| INSPECT_AND_EVALUATE | Retained private LU1 read-only acceptance applies only to those operations and its actual allowed scope |
+| CONTROLLER_SCOPED_COURSE_CREATION | Full research/review, design/development, correction, duplication review, diagnosis/reconciliation and handover paths require authentic execution/return permits and actual commissioning |
+| ORIGINAL_CONTROLLER_ONLY | Existing parent/source/locks/counters/QA/owner gates stay authoritative; no duplicate controller or silent provider fallback |
+| QA_SUITE_WRITE | PROHIBITED; read current actual requirements and receipts |
+| FROZEN_PASS_RETENTION | Preserve real independently passed unchanged checks; recheck errors and affected dependencies only |
+| FINITE_CORRECTION | Four non-pass rounds stop for independent diagnosis; conditional fifth uses existing authority; administrative/mixed/unknown/regression halt; no automatic sixth |
+| INDEPENDENT_ASSURANCE | Actual separate current-source acceptance; not producer checks, a synthetic issuer role or model prose |
+| SCOPE_AND_TENANT_ISOLATION | Registered role/tenant/project/LU/entity/parent and allowed sources/operations/provider policy verified |
+| LEARNING | Tenant/job observations stay candidates until governed promotion; cannot change QA or powers |
+| REAL_COURSE_COMMISSIONING | Excluded from this isolated activation test; real held LU1 is not restarted and LU2 remains for its owner |
 
-The proposed AIMC persona is `course-creator-advisor` (module `course-creator`, capability `document-generation`). `course-crafter-advisor` remains the unchanged legacy ISMS-specific persona. All capability roles and reviewer execution remain controller-owned; this specialist cannot delegate laterally.
+A missing or mismatched capability/dependency receipt yields UNAVAILABLE/DEGRADED. Never set all flags active because a prompt, persona, registry proposal or read-only HTTP call succeeded. The legacy ISMS-specific `course-crafter-advisor` and unrelated Maturion specialists are unchanged by this flag index.
