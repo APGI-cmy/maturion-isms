@@ -171,3 +171,24 @@ Authenticated COURSE/LU01–20 scope is for future owner-initiated operations th
 No immutable Tier1/Tier2/controller code or semantic content identity changed during enactment; state-only registry/inventory/owner records reflect actual activation. Existing source checkout CRLF representations were distinguished from immutable installed byte hashes, which passed without substituting changed bytes. This was an affected state verification, with0 provider calls,0 reservations and0 DB mutations by the reviewer.
 
 Private actual-enactment addendum SHA256: 3c4780777e7ec539dde008fe4637cf439b050a5bb727590e5a2a22fb984b7054. Fresh capability/status and independent DB/source records are hash-bound in that append-only report. The original acceptance report remains unchanged; no circular hash/review cycle was introduced.
+
+
+## Prospective persona-registry follow-up prebrief — 2026-11-26
+
+
+Actual reviewer: OpenAI Codex independent instance /root/independent_agent_assurance. Actual authority: continuing owner/CS2 instruction in issue2077 to complete governed AIMC registration and activation. Existing actual direct-CS2 implementation-owner appointment continues for this follow-up; do not invent a new Foreman/Governance Liaison execution or retrospective appointment. This prebrief is prospective to the metadata correction, not final assurance of an unreviewed patch.
+
+Observed baseline: merged commit c5877e28112d1779e92ec99bd97c879f70b6c501. Main-only Persona Registry Sync run45824590919, job139925385315, reports exactly one disk-to-registry orphan: packages/ai-centre/src/agents/course-creator-advisor.md. The operational persona lifecycle table omits it. The existing persona's frontmatter is agentId course-creator-advisor, module course-creator, version1.0.0, last_reviewed2026-11-26, ownerCS2. governance/aimc/AIMC_PERSONA_LIFECYCLE.md is not a CANON_INVENTORY entry.
+
+Permitted corrective payload: add exactly one matching persona row in section2 and one event in section9 of governance/aimc/AIMC_PERSONA_LIFECYCLE.md. Registry status ACTIVE means the versioned persona exists; public AIMC wiring remains IDLE/unavailable. The description or event must explicitly distinguish the already independently accepted private controller_scoped_course_creation_v1 path reporting to Maturion from the still unavailable public TypeScript document-generation candidate. Do not alias course-crafter-advisor or change its row. The event must identify current authority and actual author and must not invent a persona version increment or backdate review.
+
+This is operational registry completion, not a normative policy rewrite, new persona implementation, capability expansion, new model commissioning or source change. Necessary honest PR scope/evidence and this canonical-wave prebrief may accompany the row. No Tier1/Tier2 source, canon inventory, persona source, provider/controller code, QA suite, workflow, test threshold, accepted c922 semantic identity or immutable df03 acceptance receipt may change. Original IAA token/history and actual-activation addendum remain intact.
+
+Focused review after correction: independently compare the exact patch with merged baseline; verify the row matches existing persona frontmatter; reproduce the existing workflow's two-way registry/disk parity including its actual fixture exclusion; confirm only sections2/9 plus legitimate review evidence changed; verify source/QA/public dispatch remain unchanged. Assess current relevant PR/registry gates without repeated model calls, full course QA, blanket suite execution or reopening frozen source findings. A new-PR prebrief binding may name the actual PR once created; it need not invent new implementation ceremony.
+
+Failure attribution: main Deploy MMM AI Gateway run45824590901 contains successful Lint139925384573, Test139925487341 and deploy/health139925687856 jobs, while Combined Wave Test139925741264 fails21 tests across15 files (MMM framework/descriptor/migrations, MAT foundational provenance and frontend CI expectations). Those errors and their logs remain real; no global main/CWT-green claim is authorised. Source paths implicated by those failures were not changed by PR2078 in the inspected diff. No full baseline rerun was performed to claim every failure pre-existed; report only observed scope/evidence and route unrelated repairs to their owners.
+
+Final acceptance of this narrow follow-up will be an independently authored registry/parity addendum tied to its actual commit, retaining the existing source acceptance and activation token. No replacement model or source assurance cycle is required when the correction stays within this scope.
+
+Private original prebrief SHA256: 5f08bff86a9bb51a9b234648b911eaae4c03e48bf3e2f21f42ffd1d1df790d64. This section is prospective scoping, not a new or reissued ASSURANCE-TOKEN.
+
