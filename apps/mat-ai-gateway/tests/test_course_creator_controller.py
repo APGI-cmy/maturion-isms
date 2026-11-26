@@ -274,6 +274,10 @@ def test_fifth_context_retains_completed_four_rounds(bridge_module, monkeypatch)
         path='request',
         check=lambda: None)
     before = m.worker_context(worker, Path('root-cause-1'))
+    worker.state.update(loop_round=1, producer_calls=2, draft=None)
+    initial = m.worker_context(worker, Path('producer-2'))
+    assert initial['candidate_sha256'] is None and initial['counters']['rounds_completed'] == 1
+    worker.state.update(loop_round=4, producer_calls=4)
     worker.state.update(fifth_started=True, producer_calls=5, intervention={'sha256': 'c' * 64})
     after = m.worker_context(worker, Path('producer-5'))
     assert before['counters']['rounds_completed'] == after['counters']['rounds_completed'] == 4

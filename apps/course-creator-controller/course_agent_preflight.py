@@ -19,6 +19,13 @@ def verify(config,commissioning=False):
         if sha(path.read_bytes())!=expected:raise ValueError('Agent source changed: '+name)
     if not lock.get('files') or not lock.get('instruction_files'):
         raise ValueError('The registered agent package is incomplete.')
+    immutable={n:v for n,v in lock['files'].items()
+               if n not in ('governance/AGENT_REGISTRY.json','governance/CANON_INVENTORY.json')}
+    policy={k:lock[k] for k in ('schema','authority_issue','instruction_files','instruction_profiles','runtime_knowledge_sha256')}
+    policy['files']=immutable
+    content=sha(json.dumps(policy,sort_keys=True,separators=(',',':')).encode())
+    if content!=lock.get('reviewed_content_sha256'):
+        raise ValueError('Reviewed immutable content identity does not match verified files.')
     authority=root/'.agent-admin/authorities/course-creator-activation-2077.md'
     if not authority.is_file() or '2077' not in authority.read_text(encoding='utf-8'):
         raise ValueError('The actual owner authority record is missing.')
@@ -39,6 +46,11 @@ def verify(config,commissioning=False):
         raise ValueError('The actual provider/controller route is not registered.')
     inventory=read(root/'governance/CANON_INVENTORY.json')
     indexed={r['path']:r for r in inventory['canons']}
+    for name in lock['files']:
+        if name.startswith('governance/canon/') and name in indexed:
+            entry=indexed.get(name,{})
+            if entry.get('file_hash_sha256')!=sha((root/name).read_bytes()):
+                raise ValueError('The canonical inventory does not bind its installed canon: '+name)
     for row in (target,parent):
         entry=indexed.get(row.get('path'),{})
         actual=sha((root/row['path']).read_bytes())

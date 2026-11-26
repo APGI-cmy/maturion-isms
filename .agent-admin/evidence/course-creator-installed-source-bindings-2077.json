@@ -1,6 +1,8 @@
 {
   "schema": "installed-course-controller/1",
   "files": {
+    "course_agent_runtime.py": "606318e042abd400ca99428440e2ddb3c749bea813430bd8674fe8779071efa7",
+    "course_agent_preflight.py": "3b2a54c7383f5c58256590c4a4aa45b1896391dbc01659396bfbe2403e54edfa",
     "maturion_evaluation.py": "a2fe7ad69d22c2c5e6b5289b0da5ab9c5736c2c1fb855d927db36eb61e7a0e2f",
     "unit_design.py": "8df6c2501de40d7f40be89a493cc58e160d0aec41743c6ae7c2c368380cbbe9a",
     "unit_worker.py": "2b5c8d6bdd8c21743773b9536c81de6fc6dae1cb3c7b7bd9c63716af93f09c63",

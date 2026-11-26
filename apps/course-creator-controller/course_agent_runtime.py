@@ -159,7 +159,7 @@ def worker_context(worker,folder):
     context={'project_id':request['project']['id'],'unit_id':request.get('unit','LU01'),
              'chain_id':request.get('controller_chain_id') or request.get('manual_loop',{}).get('lineage') or request['id'],
              'parent':{'sha256':file_sha(worker.path)},'qa_sha256':request['policy'],
-             'phase':phase,'candidate_sha256':state.get('draft',{}).get('artifact',{}).get('sha256'),'loop_stop':state.get('loop_stop'),'fifth_evidence':fifth,
+             'phase':phase,'candidate_sha256':(state.get('draft') or {}).get('artifact',{}).get('sha256'),'loop_stop':state.get('loop_stop'),'fifth_evidence':fifth,
              'counters':{'rounds_completed':completed,'producer_calls':state.get('producer_calls',0),
                          'review_calls':state.get('review_calls',0),'research_calls':state.get('research_calls',0)}}
     return context
