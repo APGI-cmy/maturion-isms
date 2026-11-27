@@ -1,0 +1,19 @@
+{
+  "schema": "course-gateway-lu1-continuation-registration/1",
+  "cases": [
+    {
+      "client_id": "cc-johan-sscm-lu1-2075",
+      "tenant_id": "local-subscriber",
+      "user_id": "Johan",
+      "unit_id": "LU01",
+      "project_id": "6a3a0709-9fbb-4dda-8cef-c887c2bb545b",
+      "chain_id": "fe331a34cfd74163abe5e2a1e4b51436",
+      "qa_sha256": "909bb776233b85348b4ffc6b77645c04bc8975e7b3cf9973e142035d7e398950",
+      "parent_sha256": "1d9d387815956593039a81d9ad25bd92d24e31c4952d0e2268b442af1d781264",
+      "authority_sha256": "6694c0f119bc2e684d065311203326ce3b2780f02804d5c5c9c2d6b8543e4728",
+      "original_job_id": "c093b2c59e2746eb9c4dda632471ae99",
+      "original_candidate_sha256": "bbe76ea73dff53159ea70ff06385e3a8ddc69d811af5d7722ef9e1a4daa91a94",
+      "expires_at": "2026-12-04T11:37:09.331578+00:00"
+    }
+  ]
+}
