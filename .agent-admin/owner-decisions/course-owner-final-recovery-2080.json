@@ -1,0 +1,16 @@
+{
+  "actor": "Johan",
+  "owner_reply": "Authorise one final recovery round for LU1",
+  "case_sha256": "ba3f658e787df92a1de4c82458d735d9d53724ab6174ab384c62782675848492",
+  "QA_changes": false,
+  "maximum_round": 5,
+  "chain_id": "fe331a34cfd74163abe5e2a1e4b51436",
+  "job_id": "c093b2c59e2746eb9c4dda632471ae99",
+  "authority_sha256": "7d14ca8508bb42571f35b40b244a054850515581cfa39bbca3cf843a7ef503cd",
+  "scope": "One final LU1 correction-and-QA recovery after administrative escalation",
+  "schema": "course-owner-final-recovery-authority-reference/1",
+  "LU2_commissioning": false,
+  "source": "direct_user_instruction",
+  "issue": "https://github.com/APGI-cmy/maturion-isms/issues/2080",
+  "owner_manual_signoff": false
+}

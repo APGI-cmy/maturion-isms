@@ -148,9 +148,13 @@ def worker_context(worker,folder):
     if state.get('fifth_started') or state.get('loop_round',0)>4:
         from course_loop_intervention import extension
         if not extension(worker):raise ValueError('The existing controller did not verify a fifth round.')
-        receipt=state['intervention']
-        fifth={'classification':'natural_evolution','allow_fifth':True,'verified_by_existing_controller':True,
-               'original_round':4,'admin_loop':False,'receipt_sha256':receipt['sha256']}
+        if request.get('owner_recovery'):
+            from course_recovery import fifth_evidence
+            fifth=fifth_evidence(worker)
+        else:
+            receipt=state['intervention']
+            fifth={'classification':'natural_evolution','allow_fifth':True,'verified_by_existing_controller':True,
+                   'original_round':4,'admin_loop':False,'receipt_sha256':receipt['sha256']}
     # Count completed rounds before the current reserved producer/reviewer, retaining actual call totals.
     round_number=state.get('loop_round') or state.get('producer_calls',0)
     completed=round_number if phase=='diagnosis' else max(0,round_number-1)
