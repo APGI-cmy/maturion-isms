@@ -8,6 +8,8 @@ from __future__ import annotations
 import json
 from typing import Literal
 from uuid import UUID
+from pathlib import Path
+import re
 
 from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field
@@ -60,8 +62,48 @@ class Command(BaseModel):
     result: dict | None = None
 
 
-def fifth_valid(task):
+def owner_recovery_cases():
+    try:
+        return json.loads((Path(__file__).resolve().parent.parent / 'course_creator' /
+                           'owner-recovery-authorizations.json').read_text(encoding='utf-8'))['cases']
+    except (OSError, ValueError, KeyError) as exc:
+        raise HTTPException(503, 'Owner recovery registration is unavailable') from exc
+
+
+def registered_owner_chain(task):
+    return any(all(case.get(k) == getattr(task, k) for k in
+                   ('tenant_id', 'user_id', 'project_id', 'chain_id'))
+               for case in owner_recovery_cases())
+
+
+def fifth_valid(task, registration=None):
     e = task.fifth_evidence or {}
+    if registered_owner_chain(task) and e.get('classification') != 'owner_authorised_recovery':
+        return False
+    if e.get('classification') == 'owner_authorised_recovery':
+        if (task.commissioning or e.get('allow_fifth') is not True
+                or e.get('verified_by_existing_controller') is not True
+                or e.get('original_round') != 4 or e.get('maximum_round') != 5
+                or task.counters.rounds_completed != 4 or task.counters.producer_calls != 5
+                or task.counters.review_calls < 4 or task.counters.research_calls != 0
+                or task.phase not in ('producer', 'correction', 'duplication', 'reviewer')):
+            return False
+        assurance = (registration or {}).get('controller_assurance_ref', '')
+        repair = e.get('repair_assurance_sha256', '')
+        if not re.fullmatch(SHA, repair) or assurance != 'urn:apgi:independent-assurance:sha256:' + repair:
+            return False
+        for case in owner_recovery_cases():
+            exact = all(case.get(k) == getattr(task, k) for k in
+                        ('tenant_id', 'user_id', 'project_id', 'unit_id', 'chain_id',
+                         'parent_sha256', 'qa_sha256'))
+            if (exact and e.get('owner_authority_sha256') == case['authority_sha256']
+                    and e.get('receipt_sha256') == case['authority_sha256']
+                    and e.get('job_id') == case['job_id']
+                    and e.get('original_request_sha256') == case['original_request_sha256']
+                    and e.get('original_candidate_sha256') == case['original_candidate_sha256']
+                    and case['original_round'] == 4 and case['maximum_round'] == 5):
+                return True
+        return False
     return (e.get('classification') == 'natural_evolution' and e.get('allow_fifth') is True
             and e.get('verified_by_existing_controller') is True and e.get('original_round') == 4
             and e.get('admin_loop') is False and isinstance(e.get('receipt_sha256'), str)
@@ -82,6 +124,9 @@ def controller(raw, headers, ledger=None):
     _, bundle = knowledge()
     if task.bundle_sha256 != bundle:
         raise HTTPException(409, 'Agent knowledge version requires affected-version acceptance')
+    if (task.operation != 'capability' and registered_owner_chain(task)
+            and not fifth_valid(task, ledger.client(client))):
+        raise HTTPException(409, 'This owner-recovery chain cannot change authority or classification')
     if task.operation == 'capability':
         registration = ledger.client(client)
         return {'specialist': 'course-creator-agent', 'orchestrator': 'maturion-agent',
@@ -147,10 +192,11 @@ def controller(raw, headers, ledger=None):
     if task.operation == 'reserve':
         if counters.rounds_completed >= 5:
             raise HTTPException(409, 'Finite-loop limit or missing verified fifth-round authority')
-        if (counters.producer_calls == 5 or counters.review_calls > 8) and not fifth_valid(task):
+        if (counters.producer_calls == 5 or counters.review_calls > 8) and not fifth_valid(task, ledger.client(client)):
             raise HTTPException(409, 'Verified fifth-round authority is required')
     if task.operation == 'reserve':
-        if counters.rounds_completed >= 4 and task.phase in ('producer', 'correction') and not fifth_valid(task):
+        if counters.rounds_completed >= 4 and task.phase in (
+                'producer', 'correction') and not fifth_valid(task, ledger.client(client)):
             raise HTTPException(409, 'Four-round stop: independent root-cause decision required')
         value = task.model_dump(exclude_none=True)
         return ledger.request('POST', '/rpc/cc_controller_reserve', json={
