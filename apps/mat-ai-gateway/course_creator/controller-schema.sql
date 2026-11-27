@@ -54,6 +54,34 @@ begin
  if ch.invocation_count>=32 then raise exception 'controller_chain_allowance_exhausted'; end if;
  if (select count(*) from public.cc_controller_invocations where created_at>=date_trunc('day',now()))>=100
  then raise exception 'controller_daily_allowance_exhausted'; end if;
+ if exists(select 1 from public.cc_controller_invocations
+  where client_id=p_client and chain_id=v_chain
+  and binding->'fifth_evidence'->>'classification'='owner_authorised_recovery')
+  and (p_task->'fifth_evidence'->>'classification' is distinct from 'owner_authorised_recovery')
+ then raise exception 'owner_recovery_classification_changed'; end if;
+ -- An explicitly registered owner recovery consumes one producer and one QA
+ -- pipeline in the original chain. The advisory lock makes new-ID races atomic.
+ if p_task->'fifth_evidence'->>'classification'='owner_authorised_recovery' then
+  if v_round<>4 or v_producer<>5 or p_task->>'unit_id'<>'LU01'
+  then raise exception 'invalid_owner_final_recovery_boundary'; end if;
+  if exists(select 1 from public.cc_controller_invocations
+   where client_id=p_client and chain_id=v_chain
+   and binding->'fifth_evidence'->>'classification'='owner_authorised_recovery'
+   and (binding->'fifth_evidence'->>'owner_authority_sha256' is distinct from
+        p_task->'fifth_evidence'->>'owner_authority_sha256'))
+  then raise exception 'owner_recovery_authority_changed'; end if;
+  if p_task->>'operation'='handover' and exists(select 1 from public.cc_controller_invocations
+   where client_id=p_client and chain_id=v_chain and binding->>'operation'='handover'
+   and binding->'fifth_evidence'->>'classification'='owner_authorised_recovery')
+  then raise exception 'owner_recovery_handover_already_consumed'; end if;
+  if p_task->>'operation'='reserve' and exists(select 1 from public.cc_controller_invocations
+   where client_id=p_client and chain_id=v_chain
+   and binding->'fifth_evidence'->>'classification'='owner_authorised_recovery'
+   and binding->>'operation'='reserve'
+   and ((p_task->>'phase' in ('producer','correction') and binding->>'phase' in ('producer','correction'))
+        or p_task->>'phase'=binding->>'phase'))
+  then raise exception 'owner_recovery_phase_already_consumed'; end if;
+ end if;
  insert into public.cc_controller_invocations(client_id,invocation_id,chain_id,request_sha256,binding)
  values(p_client,v_id,v_chain,p_hash,p_task);
  update public.cc_controller_chains set max_round=v_round,producer_calls=v_producer,review_calls=v_review,

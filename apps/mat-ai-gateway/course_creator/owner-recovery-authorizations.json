@@ -1,0 +1,21 @@
+{
+  "schema": "course-gateway-owner-recovery/1",
+  "cases": [
+    {
+      "authority_sha256": "7d14ca8508bb42571f35b40b244a054850515581cfa39bbca3cf843a7ef503cd",
+      "tenant_id": "local-subscriber",
+      "user_id": "Johan",
+      "project_id": "6a3a0709-9fbb-4dda-8cef-c887c2bb545b",
+      "unit_id": "LU01",
+      "job_id": "c093b2c59e2746eb9c4dda632471ae99",
+      "chain_id": "fe331a34cfd74163abe5e2a1e4b51436",
+      "parent_sha256": "f8ba00a825a979e68277cbebfbdf2da5d129822a6709de4ba3222136f1af89ca",
+      "original_request_sha256": "97e627b91a0f591c049c29cfdbbbe5b71820f466e64426a5cb53bf444b163af3",
+      "original_candidate_sha256": "b01b3026890bd64c7f1a31d49177fcd98ee63f8c1cb6281efaa6e361d0c82dba",
+      "qa_sha256": "909bb776233b85348b4ffc6b77645c04bc8975e7b3cf9973e142035d7e398950",
+      "original_round": 4,
+      "maximum_round": 5,
+      "scope": "One explicit owner-authorised correction and mandatory QA pipeline; no sixth, no QA waiver, no signature, no LU2."
+    }
+  ]
+}
