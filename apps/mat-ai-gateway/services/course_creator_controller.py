@@ -17,13 +17,14 @@ from services.course_creator_runtime import Ledger, authenticate, digest, knowle
 
 PATH = '/api/v1/course-creator/controller'
 SHA = r'^[a-f0-9]{64}$'
+LU1_CONTINUATION = 'owner_authorised_lu1_continuation'
 
 
 class Counters(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
-    rounds_completed: int = Field(ge=0, le=5)
-    producer_calls: int = Field(ge=0, le=5)
-    review_calls: int = Field(ge=0, le=10)
+    rounds_completed: int = Field(ge=0, le=9)
+    producer_calls: int = Field(ge=0, le=10)
+    review_calls: int = Field(ge=0, le=16)
     research_calls: int = Field(ge=0, le=2)
 
 
@@ -76,6 +77,23 @@ def registered_owner_chain(task):
                for case in owner_recovery_cases())
 
 
+def continuation_matches(task, case, client):
+    evidence = task.fifth_evidence or {}
+    counters = task.counters
+    fifth = evidence.get('conditional_fifth_sha256')
+    return (evidence.get('classification') == LU1_CONTINUATION and not task.commissioning
+            and case.get('client_id') == client and task.unit_id == 'LU01'
+            and task.phase in ('producer', 'correction', 'duplication', 'reviewer', 'diagnosis')
+            and all(case.get(k) == getattr(task, k) for k in
+                    ('tenant_id','user_id','project_id','unit_id','chain_id','parent_sha256','qa_sha256'))
+            and all(case.get(k) == evidence.get(k) for k in
+                    ('authority_sha256','original_job_id','original_candidate_sha256'))
+            and 5 <= counters.rounds_completed <= 9 and 6 <= counters.producer_calls <= 10
+            and 6 <= counters.review_calls <= 16 and counters.research_calls == 0
+            and (counters.rounds_completed < 9 or task.phase == 'diagnosis'
+                 or isinstance(fifth, str) and re.fullmatch(SHA, fifth)))
+
+
 def fifth_valid(task, registration=None):
     e = task.fifth_evidence or {}
     if registered_owner_chain(task) and e.get('classification') != 'owner_authorised_recovery':
@@ -124,17 +142,35 @@ def controller(raw, headers, ledger=None):
     _, bundle = knowledge()
     if task.bundle_sha256 != bundle:
         raise HTTPException(409, 'Agent knowledge version requires affected-version acceptance')
-    if (task.operation != 'capability' and registered_owner_chain(task)
+    continuation = (task.fifth_evidence or {}).get('classification') == LU1_CONTINUATION
+    if continuation:
+        cases = json.loads((Path(__file__).resolve().parent.parent/'course_creator'/
+                            'lu1-continuation-authorisation.json').read_text(encoding='utf-8'))['cases']
+        if not any(continuation_matches(task, case, client) for case in cases):
+            raise HTTPException(409, 'This request does not match the approved LU1 continuation')
+    elif (task.counters.rounds_completed > 5 or task.counters.producer_calls > 5 or task.counters.review_calls > 10):
+        raise HTTPException(422, 'Existing controller counter bounds still apply to other jobs')
+    if (not continuation and task.operation != 'capability' and registered_owner_chain(task)
             and not fifth_valid(task, ledger.client(client))):
         raise HTTPException(409, 'This owner-recovery chain cannot change authority or classification')
+    reserve_path = '/rpc/cc_controller_reserve_lu1_continuation' if continuation else '/rpc/cc_controller_reserve'
     if task.operation == 'capability':
-        registration = ledger.client(client)
+        register = ledger.client(client)
+        if continuation:
+            records = ledger.request('GET', '/cc_lu1_continuation_authority', params={
+                'client_id': 'eq.' + client, 'chain_id': 'eq.' + task.chain_id,
+                'authority_sha256': 'eq.' + task.fifth_evidence['authority_sha256'],
+                'parent_sha256': 'eq.' + task.parent_sha256,
+                'expires_at': 'gt.now', 'select': 'authority_sha256'})
+            if len(records) != 1:
+                raise HTTPException(409, 'The exact LU1 authority is not active in the reservation ledger')
         return {'specialist': 'course-creator-agent', 'orchestrator': 'maturion-agent',
                 'provider': task.provider, 'bundle_sha256': bundle,
-                'controller_enabled': registration.get('controller_enabled', False),
-                'assurance_ref': registration.get('controller_assurance_ref'),
+                'controller_enabled': register.get('controller_enabled', False),
+                'assurance_ref': register.get('controller_assurance_ref'),
                 'scope': 'Existing course controller; unchanged QA, finite loops and human sign-off',
-                'allowed_units': registration.get('allowed_unit_ids', [])}
+                'allowed_units': register.get('allowed_unit_ids', []),
+                'lu1_continuation': continuation}
     if task.operation == 'handover':
         result = task.result or {}
         required = ('complete_rendered', 'mandatory_QA_passed', 'duplication_passed', 'current_inputs_verified')
@@ -152,6 +188,9 @@ def controller(raw, headers, ledger=None):
             raise HTTPException(409, 'A completed independent Maturion review is required')
         if review[0]['binding']['phase'] != 'reviewer':
             raise HTTPException(409, 'Producer output cannot attest independent review')
+        if continuation and (review[0]['binding'].get('fifth_evidence') != task.fifth_evidence
+                             or review[0]['binding'].get('counters') != task.counters.model_dump()):
+            raise HTTPException(409, 'Handover must bind the current continuation review and counters')
         if any(review[0]['binding'].get(k) != getattr(task, k)
                for k in ('project_id', 'unit_id', 'parent_sha256', 'qa_sha256', 'bundle_sha256', 'commissioning')):
             raise HTTPException(409, 'Final review does not bind the current parent, scope and requirements')
@@ -177,7 +216,7 @@ def controller(raw, headers, ledger=None):
                                   'for your review and electronic sign-off.'),
                       'scope': ('Controller evidence verification and synthesis; '
                                 'no repeated pedagogical QA or automatic signature.')}
-        reserved = ledger.request('POST', '/rpc/cc_controller_reserve', json={
+        reserved = ledger.request('POST', reserve_path, json={
             'p_client': client, 'p_task': task.model_dump(exclude_none=True), 'p_hash': digest(raw)})
         if not reserved.get('execute'):
             if reserved.get('state') == 'completed':
@@ -189,17 +228,17 @@ def controller(raw, headers, ledger=None):
             'p_result': acceptance, 'p_state': 'completed'})
         return acceptance
     counters = task.counters
-    if task.operation == 'reserve':
+    if task.operation == 'reserve' and not continuation:
         if counters.rounds_completed >= 5:
             raise HTTPException(409, 'Finite-loop limit or missing verified fifth-round authority')
         if (counters.producer_calls == 5 or counters.review_calls > 8) and not fifth_valid(task, ledger.client(client)):
             raise HTTPException(409, 'Verified fifth-round authority is required')
     if task.operation == 'reserve':
-        if counters.rounds_completed >= 4 and task.phase in (
+        if not continuation and counters.rounds_completed >= 4 and task.phase in (
                 'producer', 'correction') and not fifth_valid(task, ledger.client(client)):
             raise HTTPException(409, 'Four-round stop: independent root-cause decision required')
         value = task.model_dump(exclude_none=True)
-        return ledger.request('POST', '/rpc/cc_controller_reserve', json={
+        return ledger.request('POST', reserve_path, json={
             'p_client': client, 'p_task': value, 'p_hash': digest(raw)})
     if not task.invocation_sha256 or not task.outcome:
         raise HTTPException(422, 'A return must identify its exact reserved invocation')
@@ -214,6 +253,8 @@ def controller(raw, headers, ledger=None):
               'specialist', 'commissioning', 'candidate_sha256')
     if any(original.get(k) != actual.get(k) for k in fields):
         raise HTTPException(409, 'Return schema, role, parent or evidence differs from its reservation')
+    if continuation and original.get('fifth_evidence') != actual.get('fifth_evidence'):
+        raise HTTPException(409, 'Return changed the exact continuation authority')
     if task.outcome == 'completed' and not task.output_sha256:
         raise HTTPException(422, 'Completed return requires verified saved output')
     return ledger.request('POST', '/rpc/cc_controller_return', json={
