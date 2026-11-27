@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "course-owner-recovery-2080-reviewed-adoption",
+  "pr_number": 2082,
+  "prebrief_commit_sha": "d6b14b11dc0bfcf97c3f5486bfc2ac21a45f909b",
+  "builder_appointment_timestamp": "2026-11-27T10:38:20+02:00",
+  "builder_appointment_commit_sha": "f551c051ea14daff9cdb793a85dfd14381f0486b",
+  "builder_agent": "integration-builder (OpenAI Codex, direct-CS2; not Foreman)",
+  "builder_task_ref": ".agent-admin/builder-appointments/course-owner-recovery-2080-adoption.md",
+  "first_implementation_commit_sha": "f19fab2f509e584ba6e03bdf3f3a0be9e7c50106",
+  "qp_review_timestamp": "2026-11-27T08:31:08.029065+00:00",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "authority": "https://github.com/APGI-cmy/maturion-isms/issues/2080",
+  "review_evidence": "Carry forward actual independent receipt 05c90034fc44fbd3bacb6cac626285224806b3626bc6b7cf5163aa3a835bfc81 for byte-identical accepted source5bec. No repeated review or learner-guide round.",
+  "historical_failures": "PR2081 remains preserved. This verifies prospective adoption order only, not earlier authorship. Original source author date retained; no backdating, gate waiver or fabricated assurance."
+}
