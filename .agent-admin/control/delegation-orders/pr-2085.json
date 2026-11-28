@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "wave_id": "course-creator-guide13-review-adoption",
+  "pr_number": 2085,
+  "prebrief_commit_sha": "c6b264d72957d9b2b071cfb3a9bc303dbb211eb6",
+  "builder_appointment_timestamp": "2026-11-28T15:23:02+02:00",
+  "builder_appointment_commit_sha": "90c1c7fa42b9b0be290827e0fc49d6942e24eab0",
+  "builder_agent": "OpenAI Codex direct-owner integration builder /root",
+  "builder_task_ref": ".agent-admin/builder-appointments/course-creator-guide13-handover-adoption.md",
+  "first_implementation_commit_sha": "935269a4ada8f5c5f3abf13d62748f7be4b8d5ee",
+  "qp_review_timestamp": "2026-11-28T13:24:43.344Z",
+  "result": "DELEGATION_ORDER_VERIFIED",
+  "authority_sha256": "68fb3f0b242b8cf7dfce4594e00edbb37ced81ad724914e42f63d1d56c8091ae",
+  "review_evidence": "Prospective adoption only. Local lint, 39 gateway tests, exact Guide-13 automated and saved independent evidence passed. Independent installation-source acceptance SHA256 6060eec569fa02432abd7b1c39ff83f61a097135d6267e91ee27942dec4ef621. Final deployment and functional evidence follow.",
+  "history": "PR 2084 remains historical. The original work was not backdated."
+}

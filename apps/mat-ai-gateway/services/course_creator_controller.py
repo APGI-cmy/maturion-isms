@@ -18,6 +18,8 @@ from services.course_creator_runtime import Ledger, authenticate, digest, knowle
 PATH = '/api/v1/course-creator/controller'
 SHA = r'^[a-f0-9]{64}$'
 LU1_CONTINUATION = 'owner_authorised_lu1_continuation'
+LU1_F06_HANDOVER = 'qa16_and_bound_lu01_f06_recheck'
+F06_CASE = Path(__file__).resolve().parent.parent / 'course_creator' / 'lu1-f06-handover.json'
 
 
 class Counters(BaseModel):
@@ -85,9 +87,9 @@ def continuation_matches(task, case, client):
             and case.get('client_id') == client and task.unit_id == 'LU01'
             and task.phase in ('producer', 'correction', 'duplication', 'reviewer', 'diagnosis')
             and all(case.get(k) == getattr(task, k) for k in
-                    ('tenant_id','user_id','project_id','unit_id','chain_id','parent_sha256','qa_sha256'))
+                    ('tenant_id', 'user_id', 'project_id', 'unit_id', 'chain_id', 'parent_sha256', 'qa_sha256'))
             and all(case.get(k) == evidence.get(k) for k in
-                    ('authority_sha256','original_job_id','original_candidate_sha256'))
+                    ('authority_sha256', 'original_job_id', 'original_candidate_sha256'))
             and 5 <= counters.rounds_completed <= 9 and 6 <= counters.producer_calls <= 10
             and 6 <= counters.review_calls <= 16 and counters.research_calls == 0
             and (counters.rounds_completed < 9 or task.phase == 'diagnosis'
@@ -128,6 +130,36 @@ def fifth_valid(task, registration=None):
             and len(e['receipt_sha256']) == 64)
 
 
+def reconcile_lu1_f06(task, client, ledger, prior_review, continuation):
+    """Release only the registered Guide-13 evidence using the existing handover ledger."""
+    if not continuation or task.unit_id != 'LU01' or task.phase != 'reviewer':
+        raise HTTPException(409, 'The F06 reconciliation is restricted to the approved LU01 chain')
+    try:
+        registration = json.loads(F06_CASE.read_text(encoding='utf-8'))
+    except (OSError, ValueError) as exc:
+        raise HTTPException(503, 'The F06 reconciliation registration is unavailable') from exc
+    if (registration['schema'] != 'course-creator-lu01-f06-handover/1'
+            or registration['client_id'] != client
+            or registration['task'] != task.model_dump(exclude_none=True)):
+        raise HTTPException(409, 'The saved F06 approval and complete artifact bindings must match exactly')
+    for field, row in (('review', prior_review), ('duplication_review', None)):
+        expected = registration[field]
+        if row is None:
+            rows = ledger.request('GET', '/cc_controller_invocations', params={
+                'client_id': 'eq.' + client, 'invocation_id': 'eq.' + expected['invocation_id'],
+                'chain_id': 'eq.' + task.chain_id, 'select': '*'})
+            if len(rows) != 1:
+                raise HTTPException(409, 'The original independent duplication receipt is unavailable')
+            row = rows[0]
+        if (row.get('chain_id') != task.chain_id
+                or any(row.get(k) != v for k, v in expected.items())):
+            raise HTTPException(409, 'The saved QA-16 or duplication receipt differs from its original ledger return')
+    provenance = task.result['review_provenance']
+    return {'handover_method': LU1_F06_HANDOVER,
+            'review_provenance': provenance,
+            'counters': task.counters.model_dump()}
+
+
 def controller(raw, headers, ledger=None):
     if len(raw) > 32000:
         raise HTTPException(413, 'Controller receipt is too large')
@@ -144,7 +176,7 @@ def controller(raw, headers, ledger=None):
         raise HTTPException(409, 'Agent knowledge version requires affected-version acceptance')
     continuation = (task.fifth_evidence or {}).get('classification') == LU1_CONTINUATION
     if continuation:
-        cases = json.loads((Path(__file__).resolve().parent.parent/'course_creator'/
+        cases = json.loads((Path(__file__).resolve().parent.parent / 'course_creator' /
                             'lu1-continuation-authorisation.json').read_text(encoding='utf-8'))['cases']
         if not any(continuation_matches(task, case, client) for case in cases):
             raise HTTPException(409, 'This request does not match the approved LU1 continuation')
@@ -203,8 +235,11 @@ def controller(raw, headers, ledger=None):
                     'reviewed_candidate_sha256': refs['manual'],
                     'assembled_QA_sha256': refs['QA'], 'duplication_sha256': refs['duplication'],
                     'assembly_method': 'existing_validated_report_and_retained_freeze'}
-        if review[0]['binding'].get('candidate_sha256') != refs['manual'] or any(
-                provenance.get(k) != v for k, v in expected.items()):
+        evidence = {}
+        if provenance.get('assembly_method') == LU1_F06_HANDOVER:
+            evidence = reconcile_lu1_f06(task, client, ledger, review[0], continuation)
+        elif (review[0]['binding'].get('candidate_sha256') != refs['manual'] or any(
+                provenance.get(k) != v for k, v in expected.items())):
             raise HTTPException(409, 'Final artifact/QA assembly does not trace to the exact independent review')
         if len(provenance.get('assembly_evidence_sha256', '')) != 64:
             raise HTTPException(409, 'Saved report assembly evidence is required')
@@ -215,13 +250,16 @@ def controller(raw, headers, ledger=None):
                       'message': ('The complete rendered work and its independent QA evidence are ready '
                                   'for your review and electronic sign-off.'),
                       'scope': ('Controller evidence verification and synthesis; '
-                                'no repeated pedagogical QA or automatic signature.')}
+                                'no repeated pedagogical QA or automatic signature.'), **evidence}
         reserved = ledger.request('POST', reserve_path, json={
             'p_client': client, 'p_task': task.model_dump(exclude_none=True), 'p_hash': digest(raw)})
         if not reserved.get('execute'):
             if reserved.get('state') == 'completed':
                 return reserved['result']
-            raise HTTPException(409, 'This handover is already reserved; reconcile its saved result')
+            if not evidence or reserved.get('state') != 'reserved':
+                raise HTTPException(409, 'This handover is already reserved; reconcile its saved result')
+            # The exact bound F06 handover is deterministic and launches no provider.
+            # Finishing the same protected reservation preserves its original identity.
         ledger.request('POST', '/rpc/cc_controller_return', json={
             'p_client': client, 'p_id': task.invocation_id, 'p_hash': digest(raw),
             'p_output': digest(json.dumps(acceptance, sort_keys=True).encode()),
