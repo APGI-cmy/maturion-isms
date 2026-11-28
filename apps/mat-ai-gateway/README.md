@@ -21,6 +21,7 @@ Optional:
 | Variable | Default | Description |
 |---|---|---|
 | `CORS_ORIGINS` | `*` | Comma-separated allowed origins (restrict in production) |
+| `MCP_TOKEN` | unset | Token used to authenticate MCP probe and tool requests |
 
 ## Local Development
 
@@ -61,6 +62,19 @@ GET /health
 ```
 
 No authentication required. Used by ECS / Cloud Run readiness probes.
+
+## MCP Endpoint
+
+```
+GET /mcp
+POST /mcp
+```
+
+Use the `Authorization` header with the `Bearer` scheme and the `MCP_TOKEN` value.
+
+- Unauthenticated or invalid-token requests return `401 Unauthorized`
+- If `MCP_TOKEN` is unset on the service, MCP requests return `503`
+- `POST /mcp` supports minimal JSON-RPC-style `tools/list` and `tools/call` requests for `agent_bootstrap`
 
 ## API Routes
 
