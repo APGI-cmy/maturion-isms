@@ -1,0 +1,27 @@
+{
+  "pr": 2040,
+  "issue": 2039,
+  "type": "source-migration-recovery",
+  "wave": "issue-2039-mmm-native-migrations-bootstrap",
+  "owner": "foreman-v2-agent",
+  "builder": "schema-builder",
+  "base_branch": "main",
+  "branch": "copilot/isms-migration-recovery-bootstrap",
+  "phase": "ADMIN_AND_QA_EVIDENCE_COMPLETE_FOREMAN_ACCEPTANCE_PENDING",
+  "qp_status": "NOT_AUTHORIZED",
+  "ecap_status": "NOT_AUTHORIZED",
+  "iaa_status": "PREBRIEF_BOUND_FINAL_ASSURANCE_NOT_AUTHORIZED",
+  "merge_status": "FOREMAN_ACCEPTANCE_PENDING",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "objective": "Restore the missing ordered, idempotent source bootstrap for public.mmm_native_migrations before the MMM security-hardening migration references it, with no production access or runtime changes.",
+  "scope": [
+    "supabase/migrations/20260530000001_mmm_native_migrations_bootstrap.sql",
+    ".admin/prs/pr-2040.json",
+    ".agent-admin/scope-declarations/pr-2040.md",
+    ".agent-admin/prs/pr-2040/active-state.json",
+    ".agent-admin/prs/pr-2040/wave-current-tasks.md",
+    ".agent-admin/evidence/pr-2040-builder-handback.md",
+    ".agent-admin/assurance/iaa-prebrief-pr2040-20260904.md"
+  ]
+}
