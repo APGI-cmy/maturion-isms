@@ -1,0 +1,73 @@
+{
+  "pr": 2072,
+  "issue": 2073,
+  "parent_issue": 2068,
+  "type": "governance-change",
+  "owner": "APGI-cmy",
+  "branch": "codex/clarify-copilot-setup-authority-20261008",
+  "job_id": "job-CS2-AUTOMATION-W1-W2-20261008",
+  "job_alias": "CS2-AUTOMATION-W1-W2-20261008",
+  "substantive_source_sha": "f0d4209541ce0addfef72753314cb1fbc459111e",
+  "scope": [
+    ".admin/prs/pr-2072.json",
+    ".agent-admin/assurance/iaa-wave-record-pr-2072-setup-repair-20261009.md",
+    ".agent-admin/gates/gate-results-pr-2072-20261009.json",
+    ".agent-admin/improvements/pr-2072-setup-repair-20261009.md",
+    ".agent-admin/prehandover/proof-pr-2072-setup-repair-20261009.md",
+    ".agent-admin/prs/pr-2072/wave-current-tasks.md",
+    ".agent-admin/rca/ROOT_CAUSE_CORRECTIVE_ACTION_ASSESSMENT-pr-2072.md",
+    ".agent-admin/scope-declarations/pr-2072.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-2072-setup-repair-20261009.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/session-pr-2072-setup-repair-20261009.md",
+    ".github/copilot-setup-steps.yml",
+    ".github/workflows/copilot-setup-steps.yml",
+    ".github/workflows/maturion-bot-writer.yml"
+  ],
+  "risk": "high",
+  "pr_tier": "T4",
+  "requires_iaa": true,
+  "requires_ecap": true,
+  "merge_authority": "CS2",
+  "posture": "STOP_AND_FIX",
+  "evidence_required": [
+    "Exact-source setup run37775683802/job113305806192",
+    "Foreman source QP comment6059955248 and staged reentry disposition",
+    "Existing ECAP appointment reconciliation and actual accepted bundle",
+    "Exact thirteen-path scope and current PR admin manifest",
+    "Independent IAA canonical record/verdict/token and preserved rejection",
+    "Final source/check/admin coherence and human CS2 merge decision"
+  ],
+  "ceremony_admin_appointed": true,
+  "ceremony_admin_appointment_timestamp_utc": "2026-10-09T07:06:23Z",
+  "appointment_reconciled_at": "2026-10-13T10:38:46Z",
+  "appointment_evidence": "https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6143552303",
+  "expected_return_artifact_paths": [
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-2072-setup-repair-20261009.md",
+    ".agent-workspace/execution-ceremony-admin-agent/bundles/session-pr-2072-setup-repair-20261009.md"
+  ],
+  "ordered_stage_states": {
+    "ECAP": "PENDING_FOR_ORDERED_STAGE",
+    "IAA": "PENDING_FOR_ORDERED_STAGE",
+    "FINAL_PARITY": "BLOCKED"
+  },
+  "authority": "Existing issue2073 human-CS2 staged decision on 2026-10-13 and original author/proxy publication authority. No source change, QA waiver, budget reset, main merge or activation.",
+  "iaa_preparation_publication": {
+    "owner": "independent-assurance-agent",
+    "returned_payload": "https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6144470941",
+    "path": ".agent-admin/assurance/iaa-wave-record-pr-2072-setup-repair-20261009.md",
+    "authorship_date": "2026-10-13",
+    "purpose": "T4 applicability/chronology only; not a retrospective pre-brief or final assurance",
+    "sha256": "271e295a47199c9f5574d0de2affa20644c0044aa34747fae9f9a110aeba8815"
+  },
+  "ecap_staged_publication": {
+    "returned_payload": "https://github.com/APGI-cmy/maturion-isms/pull/2074#issuecomment-6144756902",
+    "owner": "execution-ceremony-admin-agent",
+    "preparation_head": "475f9cd0a801b60d3eed5f5c9aa2c205661c872c",
+    "status": "PREPARED_NOT_ACCEPTED",
+    "published_sha256": {
+      ".agent-workspace/execution-ceremony-admin-agent/bundles/PREHANDOVER-pr-2072-setup-repair-20261009.md": "7c552a132c603fb554d52cac245b354ea62afe7cf4ad7746c3560fdcad19e71d",
+      ".agent-workspace/execution-ceremony-admin-agent/bundles/session-pr-2072-setup-repair-20261009.md": "37c29fed9db7097f083ae04cfadd00a16c5ea84a8c2f908b75e683491c513dcd"
+    },
+    "acceptance": "PENDING_FOREMAN_AND_ECAP_POST_PUBLICATION_VERIFICATION"
+  }
+}

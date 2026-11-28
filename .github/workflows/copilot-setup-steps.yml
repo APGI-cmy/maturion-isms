@@ -5,36 +5,22 @@ name: Copilot Setup Steps
 # missing dist/ files (MODULE_NOT_FOUND) surface as a clear Node stack trace
 # rather than the generic "MCP error -32000: Connection closed".
 #
-# Session model: COMMENT_ONLY — Copilot sessions produce text output only.
-# Push operations are intentionally disabled for Copilot sessions.
-# For bot write operations, use maturion-bot-writer.yml (separate workflow).
+# Setup prepares dependencies; it does not grant or revoke agent write authority.
+# Execution follows the selected agent contract and exact approved issue scope.
+# Read-only roles remain read-only. Human merge/activation and independent QA remain required.
 
 on:
   workflow_dispatch: {}
 
-# Read-only permissions: Copilot sessions do not mutate repository state.
+# Read-only setup token; Copilot receives a separate token for its operations.
+# https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment
 permissions:
   contents: read
-
-# Declare Copilot session mode for all steps and MCP servers.
-env:
-  COPILOT_SESSION_MODE: COMMENT_ONLY
-  PUSH_DISABLED_INTENTIONAL: "true"
-  OUTPUT_MODE: PR_COMMENT_OR_ARTIFACT
 
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
     steps:
-      - name: Declare Copilot session mode (comment-only — push intentionally disabled)
-        run: |
-          echo "COPILOT_SESSION_MODE=${COPILOT_SESSION_MODE}"
-          echo "PUSH_DISABLED_INTENTIONAL=${PUSH_DISABLED_INTENTIONAL}"
-          echo "OUTPUT_MODE=${OUTPUT_MODE}"
-          echo "COPILOT_SESSION_MODE=${COPILOT_SESSION_MODE}" >> "$GITHUB_ENV"
-          echo "PUSH_DISABLED_INTENTIONAL=${PUSH_DISABLED_INTENTIONAL}" >> "$GITHUB_ENV"
-          echo "OUTPUT_MODE=${OUTPUT_MODE}" >> "$GITHUB_ENV"
-
       - name: Checkout repository
         uses: actions/checkout@v5
 
